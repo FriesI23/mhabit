@@ -1,0 +1,53 @@
+name: Build and release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  build-android:
+    name: Build android process
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java SDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Flutter action
+        uses: subosito/flutter-action@v2.9.1
+        with:
+          channel: stable
+          flutter-version: 3.7.12
+
+      - name: Pub Get Packages
+        run: flutter pub get
+
+      - name: Unit test
+        run: flutter test
+
+      - name: Build release APPBUNDLE
+        run: flutter build appbundle --release
+
+      - name: Build debug APPBUNDLE
+        run: flutter build appbundle --debug
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Release apk
+        uses: ncipollo/release-action@v1.5.0
+        with:
+          artifacts: >
+            build/app/outputs/apk/release/app-release.apk,
+            build/app/outputs/apk/debug/app-debug.apk,
+            build/app/outputs/bundle/release/app-release.aab,
+            build/app/outputs/bundle/debug/app-release.aab
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
