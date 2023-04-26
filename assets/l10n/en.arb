@@ -1,0 +1,420 @@
+{
+  "@@locale": "en",
+
+  "appName": "Table Habit",
+
+  "habitEdit_saveButton_text": "Save",
+
+  "habitEdit_habitName_hintText": "Habit Name ...",
+
+  "habitEdit_colorPicker_title": "Pick color",
+
+  "@habitEidt_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_hintText": "Daily goal, default {number}",
+
+  "habitEdit_habitDailyGoalUint_hintText": "Daily goal uint",
+
+  "habitEdit_habitDailyGoalExtra_hintText": "esired Maximum Daily Goal",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or >= {dailyGoal}",
+
+  "habitEdit_frequencySelector_title": "Select frequency",
+
+  "habitEdit_habitFreq_daily": "Daily",
+  "habitEdit_habitFreq_perweek": "",
+  "habitEdit_habitFreq_perweek_ex01": "times per week",
+  "habitEdit_habitFreq_permonth": "",
+  "habitEdit_habitFreq_permonth_ex01": "times per month",
+  "habitEdit_habitFreq_predayfreq": "",
+  "habitEdit_habitFreq_predayfreq_ex01": "times in",
+  "habitEdit_habitFreq_predayfreq_ex02": "days",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+
+  "habitEdit_habitFreq_show_daily": "Daily",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{At least {freq} times per week}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Per month} other{At least {freq} times per month}}",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{In every {days} days} other{At least {freq} times in every {days} days}}",
+
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_title": "{targetDays} days",
+  "habitEidt_targetDays_dialogTitle": "Select Target Days",
+  "habitEdit_targetDays": "days",
+
+  "habitEdit_reminder_hintText": "Reminder",
+  "habitEdit_reminder_freq_weekHelpText": "Any day of week",
+  "habitEdit_reminder_freq_weekPrefixText": "",
+  "habitEdit_reminder_freq_weekSubfixText": " in every week",
+  "habitEdit_reminder_freq_monthHelpText": "Any day of month",
+  "habitEdit_reminder_freq_monthPrefixText": "",
+  "habitEdit_reminder_freq_monthSubfixText": " in every month",
+  "habitEdit_reminderQuest_hintText": "Question, e.g. Did you exercise today?",
+
+  "habitEdit_reminder_dialogTitle": "Choose reminder type",
+  "habitEdit_reminder_dialogType_whenNeeded": "When need to check in",
+  "habitEdit_reminder_dialogType_daily": "Daily",
+  "habitEdit_reminder_dialogType_week": "Per week",
+  "habitEdit_reminder_dialogType_month": "Per month",
+  "habitEdit_reminder_dialogConfirm": "confirm",
+  "habitEdit_reminder_dialogCancel": "cancel",
+
+  "habitEdit_reminder_cancelDialogTitle": "Confirm",
+  "habitEdit_reminder_cancelDialogSubtitle": "Do you confirm to remove this reminder",
+  "habitEdit_reminder_cancelDialogConfirm": "confirm",
+  "habitEdit_reminder_cancelDialogCancel": "cancel",
+
+  "habitEdit_reminder_weekdayText_monday": "Mon",
+  "habitEdit_reminder_weekdayText_tuesday": "Tue",
+  "habitEdit_reminder_weekdayText_wednesday": "Wed",
+  "habitEdit_reminder_weekdayText_tursday": "Tur",
+  "habitEdit_reminder_weekdayText_friday": "Fri",
+  "habitEdit_reminder_weekdayText_saturday": "Sat",
+  "habitEdit_reminder_weekdayText_sunday": "Sun",
+
+  "habitEdit_desc_hintText": "Description",
+
+  "habitEdit_create_datetime_prefix": "Created: ",
+  "habitEdit_modify_datetime_prefix": "Modified: ",
+
+  "habitDisplay_fab_text": "New Habit",
+
+  "habitDisplay_emptyImage_text_01": "A journey of a thousand miles begins with a single step",
+
+  "habitDisplay_archiveHabitsConfirmDialog_title": "Archive Selected Habits?",
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "confirm",
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "cancel",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_archiveHabitsSuccSnackbarText": "Archived {count} habits",
+
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Unarchive Selected Habits?",
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "confirm",
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "cancel",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "Unarchived {count} habits",
+
+  "habitDisplay_deleteHabitsConfirmDialog_title": "Delete Selected Habits?",
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "confirm",
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "cancel",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteHabitsSuccSnackbarText": "Deleted {count} habits",
+
+  "habitDisplay_editPopMenu_selectAll": "Select All",
+  "habitDisplay_editPopMenu_export": "Export",
+  "habitDisplay_editPopMenu_delete": "Delete",
+
+  "habitDisplay_editButton_tooltip": "Edit",
+  "habitDisplay_archiveButton_tooltip": "Archive",
+  "habitDisplay_unarchiveButton_tooltip": "Unarchive",
+  "habitDisplay_settingButton_tooltip": "Setting",
+
+  "habitDisplay_statsMenu_statSubgroupText": "Current",
+  "habitDisplay_statsMenu_complatedTileText": "Complated",
+  "habitDisplay_statsMenu_inProgresTileText": "In Progress",
+  "habitDisplay_statsMenu_archivedTileText": "Archived",
+  "habitDisplay_statsMenu_popularitySubgroupText": "Popularity (Last 30 days)",
+
+  "habitDisplay_mainMenu_lightTheme": "Light Theme",
+  "habitDisplay_mainMenu_darkTheme": "Dart Theme",
+  "habitDisplay_mainMenu_followSystemTheme": "Follow System",
+  "habitDisplay_mainMenu_showArchivedTileText": "Show Archived",
+  "habitDisplay_mainMenu_showCompletedTileText": "Show Complated",
+  "habitDisplay_mainMenu_showActivedTileText": "Show Actived",
+  "habitDisplay_mainMenu_settingTileText": "Settings",
+
+  "habitDisplay_sort_reverseText": "Reverse",
+  "habitDisplay_sortDirection_asc": "(Asc)",
+  "habitDisplay_sortDirection_Desc": "(Desc)",
+  "habitDisplay_sortType_manual": "My order",
+  "habitDisplay_sortType_name": "By Name",
+  "habitDisplay_sortType_colorType": "By Color",
+  "habitDisplay_sortType_progress": "By Rate",
+  "habitDisplay_sortType_startT": "By Start Date",
+  "habitDisplay_sortType_status": "By Status",
+  "habitDisplay_sortTypeDialog_title": "Sort",
+  "habitDisplay_sortTypeDialog_confirm": "confirm",
+  "habitDisplay_sortTypeDialog_cancel": "cancel",
+
+  "habitDisplay_debug_debugSubgroup_title": "🛠️Debug",
+
+  "habitDetail_editButton_tooltip": "Edit",
+  "habitDetail_editPopMenu_unarchive": "Unarchive",
+  "habitDetail_editPopMenu_archive": "Archive",
+  "habitDetail_editPopMenu_export": "Export",
+  "habitDetail_editPopMenu_delete": "Delete",
+
+  "habitDetail_confirmDialog_confirm": "confirm",
+  "habitDetail_confirmDialog_cancel": "cancel",
+  "habitDetail_archiveConfirmDialog_titleText": "Archive Habit?",
+  "habitDetail_unarchiveConfirmDialog_titleText": "Unarchive Habit?",
+  "habitDetail_deleteConfirmDialog_titleText": "Delete Habit?",
+
+  "habitDetail_summary_title": "Summary",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_body": "Current grade is {score}, and it has been {days} days since the start.",
+
+  "habitDetail_heatmap_leftHelpText": "INCOMPLETE",
+  "habitDetail_heatmap_rightHelpText": "OVERFULFIL",
+
+  "habitDetail_descDailyGoal_titleText": "Goal",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitText": "Unit: {unit}",
+  "habitDetail_descDailyGoal_unitEmptyText": "null",
+  "habitDetail_descTargetDays_titleText": "Days",
+  "habitDetail_descTargetDays_unitText": "d",
+  "habitDetail_descRecordsNum_titleText": "Records",
+
+  "habitDetail_scoreChart_title": "Score",
+  "habitDetail_scoreChartCombine_dailyText": "Day",
+  "habitDetail_scoreChartCombine_weeklyText": "Week",
+  "habitDetail_scoreChartCombine_monthlyText": "Month",
+  "habitDetail_scoreChartCombine_yearlyText": "Year",
+
+  "habitDetail_freqChart_freqTitle": "Frequency",
+  "habitDetail_freqChart_historyTitle": "History",
+  "habitDetail_freqChart_combinedTitle": "Frequency & History",
+  "habitDetail_freqChartCombine_weeklyText": "Week",
+  "habitDetail_freqChartCombine_monthlyText": "Month",
+  "habitDetail_freqChartCombine_yearlyText": "Year",
+  "habitDetail_freqChartNaviBar_nowText": "Now",
+  "habitDetail_freqChart_expanded_hideTooltip": "Hide History Chart",
+  "habitDetail_freqChart_expanded_showTooltip": "Show History Chart",
+
+  "habitDetail_otherSubgroup_title": "Other",
+  "habitDetail_reminderTile_title": "Reminder",
+  "habitDetail_freqTile_title": "Repeat",
+  "habitDetail_startDateTile_title": "Start Date",
+  "habitDetail_createDateTile_title": "Created",
+  "habitDetail_modifyDateTile_title": "Modified",
+
+  "habitDetail_editHeatmapCal_dateButtonText": "date",
+  "habitDetail_editHeatmapCal_valueButtonText": "value",
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "back to today",
+
+  "habitDetail_notFoundText": "Load habit failed",
+  "habitDetail_notFoundRetryText": "Try again",
+
+  "appSetting_appbar_titleText": "Settings",
+
+  "appSetting_displaySubgroupText": "Display",
+  "appSetting_dragCalendarByPageTile_titleText": "Drag calendar by page",
+  "appSetting_dragCalendarByPageTile_subtitleText": "If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.",
+  "appSetting_firstDayOfWeek_titleText": "First day of week",
+  "appSetting_firstDayOfWeekDialog_titleText": "Show first day of week",
+  "appSetting_firstDayOfWeekDialog_defaultText": " (Default)",
+
+  "appSetting_reminderSubgroupText": "Reminder",
+  "appSetting_dailyReminder_titleText": "Daily reminder",
+  "appSetting_dailyReminder_hintTile_titleText": "After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.",
+
+  "appSetting_backupAndRestoreSubgroupText": "Backup & restore",
+  "appSetting_export_titleText": "Export",
+  "appSetting_export_subtitleText": "Exported habits as JSON format, This file can be import back.",
+  "appSetting_import_titleText": "Import",
+  "appSetting_import_subtitleText": "Import habits from json file.",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirmTitle": "Confirm import {count} habits?",
+  "appSetting_importDialog_confirmSubtitle": "Note: Import doesn't delete existing habits.",
+  "appSetting_importDialog_confirm_confirmText": "confirm",
+  "appSetting_importDialog_confirm_cancelText": "cancel",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_importingTitle": "Imported {completeCount}/{totalCount}",
+  "@appSetting_importDialog_complateTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_complateTitle": "Complete import {count}",
+  "appSetting_importDialog_complate_closeLabel": "close",
+  "appSetting_resetConfig_titleText": "Reset configs",
+  "appSetting_resetConfig_subtitleText": "Reset all configs to default.",
+  "appSetting_resetConfigDialog_titleText": "Reset configs?",
+  "appSetting_resetConfigDialog_subtitleText": "Reset all configs to default, must restart application to apply.",
+  "appSetting_resetConfigDialog_cancelText": "cancel",
+  "appSetting_resetConfigDialog_confirmText": "comfirm",
+  "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
+
+  "appSetting_otherSubgroupText": "Others",
+  "appSetting_developMode_titleText": "Develop Mode",
+  "appSetting_about_titleText": "About",
+
+  "appAbout_appbarTile_titleText": "About",
+  "@appAbout_verionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_verionTile_titleText": "Version: {appVersion}",
+  "appAbout_verionTile_changeLogPath": "CHANGELOG.md",
+  "appAbout_sourceCodeTile_titleText": "Source code",
+  "appAbout_issueTrackerTile_titleText": "Issue tracker",
+  "appAbout_contactEmailTile_titleText": "Contact me",
+  "appAbout_contactEmailTile_emailBody": "Hi, I'm glad you reached out to me.\nIf you're reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------",
+  "appAbout_licenseTile_titleText": "License",
+  "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
+  "appAbout_licenseThirdPartyTile_titleText": "Third Party Licensing Statement",
+  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "appAbout_donateTile_titleText": "Donate",
+  "appAbout_donateTile_subTitleText": "I'm a personal developer. If you like this app, please buy me a ☕.",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay",
+  "donateWay_paypal": "Paypal",
+  "donateWay_buyMeACoffee": "Buy me a coffee",
+  "donateWay_alipay": "Alipay",
+  "donateWay_wechatPay": "Wechat Pay",
+
+  "appReminder_dailyReminder_title": "🏝 Did you stick to your habits today?",
+  "appReminder_dailyReminder_body": "click to enter app and punch in on time.",
+
+  "common_habitColorType_cc1": "Deep lilac",
+  "common_habitColorType_cc2": "Red",
+  "common_habitColorType_cc3": "Purple",
+  "common_habitColorType_cc4": "Royal blue",
+  "common_habitColorType_cc5": "Dark cyan",
+  "common_habitColorType_cc6": "Green",
+  "common_habitColorType_cc7": "Amber",
+  "common_habitColorType_cc8": "Orange",
+  "common_habitColorType_cc9": "Lime green",
+  "common_habitColorType_cc10": "Dark orchid",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_habitColorType_default": "Color {index}",
+
+  "calendarPicker_clip_today": "Today",
+  "calendarPicker_clip_tomorrow": "Tomorrow",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "calendarPicker_clip_after7Days": "Next {date}",
+
+  "snackbar_undoText": "UNDO",
+  "snackbar_dissmessText": "DISMISS"
+}

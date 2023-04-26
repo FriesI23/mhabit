@@ -1,0 +1,24 @@
+# 类型(<scope>): <主题>
+
+# <正文>
+
+# <页脚>
+
+# 类型应该是以下中的一个：
+# * feat（新功能）
+# * fix（修复错误）
+# * docs（文档更改）
+# * style（格式化、缺少分号等；没有代码更改）
+# * refactor（重构生产代码）
+# * test（添加缺少的测试、重构测试；没有生产代码更改）
+# * chore（更新 grunt 任务等；没有生产代码更改）
+# 范围仅仅是更改的范围。比如（admin）或（teacher）。
+# 主题应该使用命令语气并说明你做了什么。
+# 正文应该详细说明所做的更改。
+# 页脚应包含问题引用或操作。
+
+# 要了解如何编写良好的提交消息的完整示例，请参见
+# https://github.com/sparkbox/how_to/tree/master/style/git
+
+# 版权所有：Linell/.git-commit-template.txt
+# 参见：https://gist.github.com/Linell/bd8100c4e04348c7966d

@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "dart-code.flutter",
+        "dart-code.dart-code",
+        "luanpotter.dart-import",
+        "alexcvzz.vscode-sqlite",
+        "ymotongpoo.licenser",
+        "maptz.regionfolder",
+        "ryanluker.vscode-coverage-gutters",
+        "flutterando.flutter-coverage"
+    ]
+}

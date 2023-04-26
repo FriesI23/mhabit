@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS mh_habits (
+    id_ INTEGER PRIMARY KEY AUTOINCREMENT,
+    type_ INTEGER NOT NULL,
+    create_t INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as int)),
+    modify_t INTEGER NOT NULL DEFAULT (cast(strftime('%s','now') as int)),
+    uuid TEXT NOT NULL UNIQUE,
+    status INTEGER NOT NULL,
+    name TEXT,
+    desc TEXT,
+    color INTEGER,
+    daily_goal REAL NOT NULL,
+    daily_goal_unit TEXT NOT NULL,
+    daily_goal_extra REAL,
+    freq_type INTEGER,
+    freq_custom TEXT,
+    start_date INTEGER NOT NULL,
+    target_days INTEGER,
+    remind_cutsom TEXT,
+    remind_question TEXT,
+    sort_position REAL NOT NULL DEFAULT 9e999
+);

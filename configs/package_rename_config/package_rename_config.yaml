@@ -1,0 +1,11 @@
+package_rename_config:
+  android:
+    app_name: Table Habit
+    package_name: org.friesi23.app.mhabit
+    override_old_package: com.example.mhabit
+    lang: kotlin
+
+  ios:
+    app_name: Table Habit
+    bundle_name: mhabit
+    package_name: org.friesi23.app.mhabit

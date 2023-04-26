@@ -1,0 +1,61 @@
+// Copyright 2023 Fries_I23
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../common/app_info.dart';
+
+class ColorfulNavibar extends StatelessWidget {
+  final Color? systemNavigationBarColor;
+  final Brightness? systemNavigationBarIconBrightness;
+  final Widget child;
+  const ColorfulNavibar({
+    super.key,
+    this.systemNavigationBarColor,
+    this.systemNavigationBarIconBrightness,
+    required this.child,
+  });
+
+  Color? _getSystemtNavigationBarColor(BuildContext context) {
+    if (systemNavigationBarColor != null) {
+      return systemNavigationBarColor;
+    }
+    if (AppInfo().isAndroidAndAdaptToFullScreen()) {
+      return Colors.transparent;
+    }
+    return Theme.of(context).colorScheme.background;
+  }
+
+  Brightness? _getSystemNavigationBarIconBrightness(BuildContext context) {
+    if (systemNavigationBarIconBrightness != null) {
+      return systemNavigationBarIconBrightness;
+    }
+    return Theme.of(context).brightness == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        systemNavigationBarColor: _getSystemtNavigationBarColor(context),
+        systemNavigationBarIconBrightness:
+            _getSystemNavigationBarIconBrightness(context),
+      ),
+      child: child,
+    );
+  }
+}
