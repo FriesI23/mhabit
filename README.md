@@ -6,6 +6,15 @@ habits more effectively.
 
 Moreover, this app completely open source.
 
+## Screenshots
+
+[![Create new habit][create-new-habit-tb]][create-new-habit]
+[![Check habit detail][check-habit-detail-tb]][check-habit-detail]
+[![Habit heatmap calendar][habit-heatmap-tb]][habit-heatmap]
+[![Habit display page][display-page-tb]][display-page]
+[![Habit display page operation][display-op-tb]][display-op]
+[![Habits export and import][export-and-import-tb]][export-and-import]
+
 ## Features
 
 - A scoring system to help develop your own micro habits.
@@ -35,15 +44,6 @@ You can customize each habit with the following options:
 | ------ | -------- | ----- |
 | | Build iOS version | build with iOS, need change some UI to Cupertino style. |
 | | Complete Documentation | [`README.md`](README.md) |
-
-## Screenshots
-
-[![Create new habit][create-new-habit-tb]][create-new-habit]
-[![Check habit detail][check-habit-detail-tb]][check-habit-detail]
-[![Habit heatmap calendar][habit-heatmap-tb]][habit-heatmap]
-[![Habit display page][display-page-tb]][display-page]
-[![Habit display page operation][display-op-tb]][display-op]
-[![Habits export and import][export-and-import-tb]][export-and-import]
 
 ## Install
 
