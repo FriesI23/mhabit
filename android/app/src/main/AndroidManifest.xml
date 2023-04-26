@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.friesi23.app.mhabit">
+    package="io.github.friesi23.mhabit">
     <application
         android:label="@string/appName"
         android:name="${applicationName}"
