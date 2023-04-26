@@ -158,7 +158,7 @@ void main() {
   group('Test HabitReminder getNextRemindDate Daily', () {
     test('daily reminder should return next date', () {
       const reminder = HabitReminder.daily(time: TimeOfDay(hour: 9, minute: 0));
-      final today = DateTime.now();
+      final today = DateTime(2022, 1, 1, 18);
       final nextRemindDate = reminder.getNextRemindDate(crtDate: today);
       final expectedDate = DateTime(today.year, today.month, today.day, 9, 0)
           .add(const Duration(days: 1));
@@ -186,7 +186,7 @@ void main() {
 
     test('daily reminder should return tomorrow date if time has passed', () {
       const reminder = HabitReminder.daily(time: TimeOfDay(hour: 8, minute: 0));
-      final today = DateTime.now();
+      final today = DateTime(2022, 1, 1, 18);
       final nextRemindDate = reminder.getNextRemindDate(crtDate: today);
       final expectedDate = DateTime(today.year, today.month, today.day, 8, 0)
           .add(const Duration(days: 1));
