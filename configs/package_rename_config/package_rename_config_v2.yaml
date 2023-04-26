@@ -1,0 +1,8 @@
+package_rename_config:
+  android:
+    package_name: io.github.friesi23.mhabit
+    override_old_package: org.friesi23.app.mhabit
+    lang: kotlin
+
+  ios:
+    package_name: io.github.friesi23.mhabit

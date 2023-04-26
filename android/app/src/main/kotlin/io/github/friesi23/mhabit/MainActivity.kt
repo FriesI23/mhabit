@@ -1,4 +1,4 @@
-package org.friesi23.app.mhabit
+package io.github.friesi23.mhabit
 
 import io.flutter.embedding.android.FlutterActivity
 
