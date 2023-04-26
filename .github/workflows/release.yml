@@ -15,14 +15,14 @@ jobs:
       - name: Setup Java SDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
       - name: Flutter action
         uses: subosito/flutter-action@v2.9.1
         with:
-          channel: "stable"
-          flutter-version: '3.7.12'
+          channel: stable
+          flutter-version: 3.7.12
 
       - name: Pub Get Packages
         run: flutter pub get
@@ -50,4 +50,4 @@ jobs:
             build/app/outputs/apk/debug/app-debug.apk,
             build/app/outputs/bundle/release/app-release.aab,
             build/app/outputs/bundle/debug/app-release.aab
-          token: ${{ secrets.ANDROID_RElEASE_TOKEN }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
