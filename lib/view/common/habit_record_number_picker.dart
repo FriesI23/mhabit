@@ -34,14 +34,18 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required HabitRecordStatus recordStatus,
   HabitDailyGoal? targetExtraValue,
   HabitDate? recordDate,
+  HabitColorType? colorType,
 }) async {
   return showDialog<HabitDailyGoal>(
     context: context,
-    builder: (context) => HabitRecordCustomNumberPickerDialog(
-      recordForm: recordForm,
-      recordStatus: recordStatus,
-      recordTargetExtraValue: targetExtraValue,
-      recordDate: recordDate,
+    builder: (context) => ThemeWithCustomColors(
+      colorType: colorType,
+      child: HabitRecordCustomNumberPickerDialog(
+        recordForm: recordForm,
+        recordStatus: recordStatus,
+        recordTargetExtraValue: targetExtraValue,
+        recordDate: recordDate,
+      ),
     ),
   );
 }
@@ -102,7 +106,6 @@ class _HabitRecordCustomNumberPickerDialog
     final l10n = L10n.of(context);
 
     final Widget normalValChip = ActionChip(
-      iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
       label: Text(l10n?.habitDetail_changeGoal_doneChipText(
               widget.recordForm.targetValue.toSimpleString()) ??
@@ -116,7 +119,6 @@ class _HabitRecordCustomNumberPickerDialog
     );
 
     final Widget zeroValChip = ActionChip(
-      iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: const FittedBox(child: Icon(MdiIcons.closeCircle)),
       label: l10n != null
           ? Text(l10n.habitDetail_changeGoal_undoneChipText)
@@ -133,7 +135,6 @@ class _HabitRecordCustomNumberPickerDialog
     Widget? buildExtraValChip() {
       if (widget.recordTargetExtraValue == null) return null;
       return ActionChip(
-        iconTheme: IconThemeData(color: colorScheme.primary),
         avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
         label: Text(l10n?.habitDetail_changeGoal_extraChipText(
                 widget.recordTargetExtraValue!.toSimpleString()) ??
@@ -149,7 +150,6 @@ class _HabitRecordCustomNumberPickerDialog
 
     Widget buildLastValChip() {
       return ActionChip(
-        iconTheme: IconThemeData(color: colorScheme.primary),
         label: Text(l10n?.habitDetail_changeGoal_currentChipText(
                 widget.recordForm.value.toSimpleString()) ??
             "Current: ${widget.recordForm.value.toSimpleString()}"),

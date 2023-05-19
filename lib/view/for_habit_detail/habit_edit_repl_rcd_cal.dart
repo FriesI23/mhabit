@@ -128,6 +128,7 @@ class _HabitEditReplacementRecordCalendarDialog
       initReason: initReason,
       recordDate: date,
       chipTextList: skipReasonChipTextList,
+      colorType: viewmodel.habitColorType,
     );
 
     if (result == null || result == initReason || !mounted) return;
@@ -157,6 +158,7 @@ class _HabitEditReplacementRecordCalendarDialog
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: viewmodel.habitDailyGoalExtra,
+      colorType: viewmodel.habitColorType,
     );
 
     if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {

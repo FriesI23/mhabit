@@ -417,6 +417,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       initReason: initReason,
       recordDate: date,
       chipTextList: skipReasonChipTextList,
+      colorType: data.colorType,
     );
 
     if (result == null || result == initReason || !mounted) return;
@@ -453,6 +454,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
+      colorType: data.colorType,
     );
 
     if (result == null || result == orgNum || !mounted) return;
