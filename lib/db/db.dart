@@ -15,7 +15,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mhabit/db/db_helper/habits.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -23,6 +22,7 @@ import '../common/abc.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../common/logging.dart';
+import 'db_helper/habits.dart';
 import 'db_helper/records.dart';
 
 const String _autoUpdateRecordsModifyTimeTrigger = """

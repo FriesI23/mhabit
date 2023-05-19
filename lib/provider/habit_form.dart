@@ -21,6 +21,7 @@ import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
+import '../extension/num_extensions.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
@@ -66,10 +67,11 @@ class HabitFormViewModel extends ChangeNotifier
     initVerticalScrollController(notifyListeners, appbarScrollController);
     if (_form.editMode == HabitDisplayEditMode.edit) {
       _nameFieldInputController.text = _form.name!;
-      _dailyGoalFieldInputController.text = _form.dailyGoal!.toString();
+      _dailyGoalFieldInputController.text = _form.dailyGoal!.toSimpleString();
       _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit!;
-      _dailyGoalExtraFieldInpuController.text =
-          _form.dailyGoalExtra != null ? _form.dailyGoalExtra.toString() : '';
+      _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
+          ? _form.dailyGoalExtra!.toSimpleString()
+          : '';
       _descFieldInputController.text = _form.desc!;
     }
   }

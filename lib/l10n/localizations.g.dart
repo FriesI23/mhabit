@@ -973,13 +973,13 @@ abstract class L10n {
   ///
   /// In en, this message translates to:
   /// **'current: {goal}'**
-  String habitDetail_changeGoal_currentChipText(num goal);
+  String habitDetail_changeGoal_currentChipText(String goal);
 
   /// No description provided for @habitDetail_changeGoal_doneChipText.
   ///
   /// In en, this message translates to:
   /// **'done: {goal}'**
-  String habitDetail_changeGoal_doneChipText(num goal);
+  String habitDetail_changeGoal_doneChipText(String goal);
 
   /// No description provided for @habitDetail_changeGoal_undoneChipText.
   ///
@@ -991,13 +991,13 @@ abstract class L10n {
   ///
   /// In en, this message translates to:
   /// **'{goal}'**
-  String habitDetail_changeGoal_extraChipText(num goal);
+  String habitDetail_changeGoal_extraChipText(String goal);
 
   /// No description provided for @habitDetail_changeGoal_helpText.
   ///
   /// In en, this message translates to:
   /// **'Daily goal, default: {goal}'**
-  String habitDetail_changeGoal_helpText(num goal);
+  String habitDetail_changeGoal_helpText(String goal);
 
   /// No description provided for @habitDetail_changeGoal_cancelText.
   ///

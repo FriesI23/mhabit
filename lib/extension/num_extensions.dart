@@ -14,6 +14,8 @@
 
 import 'dart:math';
 
+import '../common/math.dart';
+
 extension NumExtension on num {
   String toStringAsFixedMixExp(int fixedDigit, {int? expDigit}) {
     if (abs() >= pow(10, -fixedDigit)) {
@@ -31,5 +33,9 @@ extension NumExtension on num {
     } else {
       return (this >= 0 ? minNum : -minNum).toStringAsFixed(fixedDigit);
     }
+  }
+
+  String toSimpleString() {
+    return isInteger(this) ? toStringAsFixed(0) : toString();
   }
 }

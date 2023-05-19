@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mhabit/extension/color_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -29,6 +28,8 @@ import '../component/animation.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/async_extensions.dart';
+import '../extension/color_extensions.dart';
+import '../extension/num_extensions.dart';
 import '../l10n/localizations.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
@@ -515,7 +516,7 @@ class _HabitDetailView extends State<HabitDetailView>
 
         return HabitDescCellTile(
           titleText: l10n?.habitDetail_descDailyGoal_titleText ?? "Goal",
-          subtitleText: viewmodel.habitDailyGoal?.toString() ?? '',
+          subtitleText: viewmodel.habitDailyGoal?.toSimpleString() ?? '',
           tooltipText: isUnitExist
               ? l10n?.habitDetail_descDailyGoal_unitText(unit)
               : null,
