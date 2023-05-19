@@ -284,6 +284,11 @@
   "habitDetail_notFoundText": "Load habit failed",
   "habitDetail_notFoundRetryText": "Try again",
 
+  "habitDetail_skipReason_title": "Skip reason",
+  "habitDetail_skipReason_bodyHelpText": "Write something here...",
+  "habitDetail_skipReason_cancelText": "cancel",
+  "habitDetail_skipReason_saveText": "save",
+
   "appSetting_appbar_titleText": "Settings",
 
   "appSetting_displaySubgroupText": "Display",

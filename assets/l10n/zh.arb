@@ -184,6 +184,11 @@
   "habitDetail_notFoundText": "读取习惯失败",
   "habitDetail_notFoundRetryText": "重试",
 
+  "habitDetail_skipReason_title": "跳过原因",
+  "habitDetail_skipReason_bodyHelpText": "在这里随便写点什么...",
+  "habitDetail_skipReason_cancelText": "取消",
+  "habitDetail_skipReason_saveText": "保存",
+
   "appSetting_appbar_titleText": "设置",
 
   "appSetting_displaySubgroupText": "显示",

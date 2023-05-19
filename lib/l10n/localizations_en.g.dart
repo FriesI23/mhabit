@@ -482,6 +482,18 @@ class L10nEn extends L10n {
   String get habitDetail_notFoundRetryText => 'Try again';
 
   @override
+  String get habitDetail_skipReason_title => 'Skip reason';
+
+  @override
+  String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
+
+  @override
+  String get habitDetail_skipReason_cancelText => 'cancel';
+
+  @override
+  String get habitDetail_skipReason_saveText => 'save';
+
+  @override
   String get appSetting_appbar_titleText => 'Settings';
 
   @override

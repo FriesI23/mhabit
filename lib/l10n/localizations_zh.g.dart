@@ -482,6 +482,18 @@ class L10nZh extends L10n {
   String get habitDetail_notFoundRetryText => '重试';
 
   @override
+  String get habitDetail_skipReason_title => '跳过原因';
+
+  @override
+  String get habitDetail_skipReason_bodyHelpText => '在这里随便写点什么...';
+
+  @override
+  String get habitDetail_skipReason_cancelText => '取消';
+
+  @override
+  String get habitDetail_skipReason_saveText => '保存';
+
+  @override
   String get appSetting_appbar_titleText => '设置';
 
   @override
