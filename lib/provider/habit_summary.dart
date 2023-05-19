@@ -595,6 +595,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     await saveHabitRecord(data.id, data.uuid, record,
         isNew: false, withReason: newReason);
+
+    if (listen) notifyListeners();
     return record;
   }
 

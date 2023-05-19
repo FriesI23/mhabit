@@ -491,6 +491,23 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
+  Future<HabitSummaryRecord?> onLongPressChangeReason(
+      HabitRecordDate date, String newReason,
+      {bool listen = true}) async {
+    if (_habitDetailData == null) return null;
+
+    final data = _habitDetailData!.data;
+
+    final record = data.getRecordByDate(date);
+    if (record == null) return null;
+
+    await saveHabitRecord(data.id, data.uuid, record,
+        isNew: false, withReason: newReason);
+
+    if (listen) notifyListeners();
+    return record;
+  }
+
   Future<HabitSummaryRecord?> onLongPressChangeRecordValue(
       HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
@@ -500,7 +517,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final HabitSummaryRecord? record;
     bool isNew;
 
-    HabitSummaryData data = _habitDetailData!.data;
+    final data = _habitDetailData!.data;
 
     if (data.containsRecordDate(date)) {
       orgRecord = data.getRecordByDate(date)!;

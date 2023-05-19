@@ -96,6 +96,20 @@ const maxTimeOfDayInt = 1440;
 
 //#region components
 const double dialogshowTitleMaxHeight = 400.0;
+
+const skipReasonChipTextList = [
+  '☕',
+  '🛌',
+  '🍔',
+  '💤',
+  '📱',
+  '🍹',
+  '🏝️',
+  '😍',
+  '😃',
+  '😕',
+  '😠',
+];
 //#endregion
 
 //#region assets
