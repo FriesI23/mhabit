@@ -188,6 +188,7 @@
   "habitDetail_changeGoal_currentChipText": "当前: {goal}",
   "habitDetail_changeGoal_doneChipText": "完成: {goal}",
   "habitDetail_changeGoal_undoneChipText": "未完成",
+  "habitDetail_changeGoal_extraChipText": "{goal}",
   "habitDetail_changeGoal_helpText": "每日目标，默认值：{goal}",
   "habitDetail_changeGoal_cancelText": "取消",
   "habitDetail_changeGoal_saveText": "保存",

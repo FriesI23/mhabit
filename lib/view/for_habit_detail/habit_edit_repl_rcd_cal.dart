@@ -156,6 +156,7 @@ class _HabitEditReplacementRecordCalendarDialog
       recordForm: form,
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
+      targetExtraValue: viewmodel.habitDailyGoalExtra,
     );
 
     if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {

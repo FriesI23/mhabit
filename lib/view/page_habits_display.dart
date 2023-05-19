@@ -452,6 +452,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       recordForm: HabitDailyRecordForm(crtNum, data.dailyGoal),
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
+      targetExtraValue: data.dailyGoalExtra,
     );
 
     if (result == null || result == orgNum || !mounted) return;

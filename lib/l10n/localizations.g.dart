@@ -987,6 +987,12 @@ abstract class L10n {
   /// **'undone'**
   String get habitDetail_changeGoal_undoneChipText;
 
+  /// No description provided for @habitDetail_changeGoal_extraChipText.
+  ///
+  /// In en, this message translates to:
+  /// **'{goal}'**
+  String habitDetail_changeGoal_extraChipText(num goal);
+
   /// No description provided for @habitDetail_changeGoal_helpText.
   ///
   /// In en, this message translates to:

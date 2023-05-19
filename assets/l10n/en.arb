@@ -304,6 +304,15 @@
   },
   "habitDetail_changeGoal_doneChipText": "done: {goal}",
   "habitDetail_changeGoal_undoneChipText": "undone",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "num",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_extraChipText": "{goal}",
   "@habitDetail_changeGoal_helpText": {
     "placeholders": {
       "goal": {

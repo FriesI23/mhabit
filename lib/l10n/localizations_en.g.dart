@@ -498,6 +498,11 @@ class L10nEn extends L10n {
   String get habitDetail_changeGoal_undoneChipText => 'undone';
 
   @override
+  String habitDetail_changeGoal_extraChipText(num goal) {
+    return '$goal';
+  }
+
+  @override
   String habitDetail_changeGoal_helpText(num goal) {
     return 'Daily goal, default: $goal';
   }

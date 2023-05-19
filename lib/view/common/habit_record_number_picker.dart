@@ -15,6 +15,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../common/consts.dart';
 import '../../common/re.dart';
@@ -30,6 +31,7 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required BuildContext context,
   required HabitDailyRecordForm recordForm,
   required HabitRecordStatus recordStatus,
+  HabitDailyGoal? targetExtraValue,
   HabitDate? recordDate,
 }) async {
   return showDialog<HabitDailyGoal>(
@@ -37,6 +39,7 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
     builder: (context) => HabitRecordCustomNumberPickerDialog(
       recordForm: recordForm,
       recordStatus: recordStatus,
+      recordTargetExtraValue: targetExtraValue,
       recordDate: recordDate,
     ),
   );
@@ -45,12 +48,14 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
 class HabitRecordCustomNumberPickerDialog extends StatefulWidget {
   final HabitDailyRecordForm recordForm;
   final HabitRecordStatus recordStatus;
+  final HabitDailyGoal? recordTargetExtraValue;
   final HabitDate? recordDate;
 
   const HabitRecordCustomNumberPickerDialog({
     super.key,
     required this.recordForm,
     required this.recordStatus,
+    this.recordTargetExtraValue,
     this.recordDate,
   });
 
@@ -97,7 +102,7 @@ class _HabitRecordCustomNumberPickerDialog
 
     final Widget normalValChip = ActionChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
-      avatar: const FittedBox(child: Icon(Icons.check_circle_rounded)),
+      avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
       label: Text(l10n?.habitDetail_changeGoal_doneChipText(
               widget.recordForm.targetValue) ??
           "Done: ${widget.recordForm.targetValue}"),
@@ -109,7 +114,7 @@ class _HabitRecordCustomNumberPickerDialog
 
     final Widget zeroValChip = ActionChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
-      avatar: const FittedBox(child: Icon(Icons.cancel_rounded)),
+      avatar: const FittedBox(child: Icon(MdiIcons.closeCircle)),
       label: l10n != null
           ? Text(l10n.habitDetail_changeGoal_undoneChipText)
           : const Text("Undone"),
@@ -119,6 +124,21 @@ class _HabitRecordCustomNumberPickerDialog
         _inputController.text = _result.toString();
       },
     );
+
+    Widget? buildExtraValChip() {
+      if (widget.recordTargetExtraValue == null) return null;
+      return ActionChip(
+        iconTheme: IconThemeData(color: colorScheme.primary),
+        avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
+        label: Text(l10n?.habitDetail_changeGoal_extraChipText(
+                widget.recordTargetExtraValue!) ??
+            "Extra: ${widget.recordTargetExtraValue}"),
+        onPressed: () {
+          _result = widget.recordTargetExtraValue;
+          _inputController.text = _result.toString();
+        },
+      );
+    }
 
     Widget buildLastValChip() {
       return ActionChip(
@@ -156,6 +176,7 @@ class _HabitRecordCustomNumberPickerDialog
                   buildLastValChip(),
                 normalValChip,
                 zeroValChip,
+                if (widget.recordTargetExtraValue != null) buildExtraValChip(),
               ],
             ),
             TextField(
