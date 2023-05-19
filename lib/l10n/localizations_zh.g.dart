@@ -485,12 +485,12 @@ class L10nZh extends L10n {
   String get habitDetail_changeGoal_title => '更改目标';
 
   @override
-  String habitDetail_changeGoal_currentChipText(num goal) {
+  String habitDetail_changeGoal_currentChipText(String goal) {
     return '当前: $goal';
   }
 
   @override
-  String habitDetail_changeGoal_doneChipText(num goal) {
+  String habitDetail_changeGoal_doneChipText(String goal) {
     return '完成: $goal';
   }
 
@@ -498,7 +498,12 @@ class L10nZh extends L10n {
   String get habitDetail_changeGoal_undoneChipText => '未完成';
 
   @override
-  String habitDetail_changeGoal_helpText(num goal) {
+  String habitDetail_changeGoal_extraChipText(String goal) {
+    return '$goal';
+  }
+
+  @override
+  String habitDetail_changeGoal_helpText(String goal) {
     return '每日目标，默认值：$goal';
   }
 

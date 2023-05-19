@@ -295,6 +295,9 @@ class HabitDetailViewModel extends ChangeNotifier
 
   HabitDailyGoal? get habitDailyGoal => _habitDetailData?.data.dailyGoal;
 
+  HabitDailyGoal? get habitDailyGoalExtra =>
+      _habitDetailData?.data.dailyGoalExtra;
+
   int? get habitTargetDays => _habitDetailData?.data.targetDays;
 
   String? get habitDailyGoalUnit => _habitDetailData?.dailyGoalUint;

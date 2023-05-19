@@ -15,6 +15,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../common/consts.dart';
 import '../../common/re.dart';
@@ -22,6 +23,7 @@ import '../../common/rules.dart';
 import '../../common/types.dart';
 import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
+import '../../extension/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
@@ -30,14 +32,20 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required BuildContext context,
   required HabitDailyRecordForm recordForm,
   required HabitRecordStatus recordStatus,
+  HabitDailyGoal? targetExtraValue,
   HabitDate? recordDate,
+  HabitColorType? colorType,
 }) async {
   return showDialog<HabitDailyGoal>(
     context: context,
-    builder: (context) => HabitRecordCustomNumberPickerDialog(
-      recordForm: recordForm,
-      recordStatus: recordStatus,
-      recordDate: recordDate,
+    builder: (context) => ThemeWithCustomColors(
+      colorType: colorType,
+      child: HabitRecordCustomNumberPickerDialog(
+        recordForm: recordForm,
+        recordStatus: recordStatus,
+        recordTargetExtraValue: targetExtraValue,
+        recordDate: recordDate,
+      ),
     ),
   );
 }
@@ -45,12 +53,14 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
 class HabitRecordCustomNumberPickerDialog extends StatefulWidget {
   final HabitDailyRecordForm recordForm;
   final HabitRecordStatus recordStatus;
+  final HabitDailyGoal? recordTargetExtraValue;
   final HabitDate? recordDate;
 
   const HabitRecordCustomNumberPickerDialog({
     super.key,
     required this.recordForm,
     required this.recordStatus,
+    this.recordTargetExtraValue,
     this.recordDate,
   });
 
@@ -72,7 +82,7 @@ class _HabitRecordCustomNumberPickerDialog
     switch (widget.recordStatus) {
       case HabitRecordStatus.unknown:
       case HabitRecordStatus.done:
-        initText = widget.recordForm.value.toString();
+        initText = widget.recordForm.value.toSimpleString();
         _result = widget.recordForm.value;
         break;
       case HabitRecordStatus.skip:
@@ -96,39 +106,58 @@ class _HabitRecordCustomNumberPickerDialog
     final l10n = L10n.of(context);
 
     final Widget normalValChip = ActionChip(
-      iconTheme: IconThemeData(color: colorScheme.primary),
-      avatar: const FittedBox(child: Icon(Icons.check_circle_rounded)),
+      avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
       label: Text(l10n?.habitDetail_changeGoal_doneChipText(
-              widget.recordForm.targetValue) ??
-          "Done: ${widget.recordForm.targetValue}"),
+              widget.recordForm.targetValue.toSimpleString()) ??
+          "Done: ${widget.recordForm.targetValue.toSimpleString()}"),
       onPressed: () {
         _result = widget.recordForm.targetValue;
-        _inputController.text = _result.toString();
+        if (_result != null) {
+          _inputController.text = _result!.toSimpleString();
+        }
       },
     );
 
     final Widget zeroValChip = ActionChip(
-      iconTheme: IconThemeData(color: colorScheme.primary),
-      avatar: const FittedBox(child: Icon(Icons.cancel_rounded)),
+      avatar: const FittedBox(child: Icon(MdiIcons.closeCircle)),
       label: l10n != null
           ? Text(l10n.habitDetail_changeGoal_undoneChipText)
           : const Text("Undone"),
       backgroundColor: null,
       onPressed: () {
         _result = minHabitDailyGoal;
-        _inputController.text = _result.toString();
+        if (_result != null) {
+          _inputController.text = _result!.toSimpleString();
+        }
       },
     );
 
+    Widget? buildExtraValChip() {
+      if (widget.recordTargetExtraValue == null) return null;
+      return ActionChip(
+        avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
+        label: Text(l10n?.habitDetail_changeGoal_extraChipText(
+                widget.recordTargetExtraValue!.toSimpleString()) ??
+            "Extra: ${widget.recordTargetExtraValue!.toSimpleString()}"),
+        onPressed: () {
+          _result = widget.recordTargetExtraValue;
+          if (_result != null) {
+            _inputController.text = _result!.toSimpleString();
+          }
+        },
+      );
+    }
+
     Widget buildLastValChip() {
       return ActionChip(
-        iconTheme: IconThemeData(color: colorScheme.primary),
         label: Text(l10n?.habitDetail_changeGoal_currentChipText(
-                widget.recordForm.value) ??
-            "Current: ${widget.recordForm.value}"),
+                widget.recordForm.value.toSimpleString()) ??
+            "Current: ${widget.recordForm.value.toSimpleString()}"),
         onPressed: () {
           _result = widget.recordForm.value;
-          _inputController.text = _result.toString();
+          if (_result != null) {
+            _inputController.text = _result!.toSimpleString();
+          }
         },
       );
     }
@@ -156,14 +185,16 @@ class _HabitRecordCustomNumberPickerDialog
                   buildLastValChip(),
                 normalValChip,
                 zeroValChip,
+                if (widget.recordTargetExtraValue != null) buildExtraValChip(),
               ],
             ),
             TextField(
               controller: _inputController,
               decoration: InputDecoration(
                   hintText: l10n?.habitDetail_changeGoal_helpText(
-                          defaultHabitDailyGoal) ??
-                      "Daily goal, default: $defaultHabitDailyGoal",
+                          defaultHabitDailyGoal.toSimpleString()) ??
+                      "Daily goal, "
+                          "default: ${defaultHabitDailyGoal.toSimpleString()}",
                   hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
                   helperText: widget.recordDate != null
                       ? DateFormat.yMMMd(l10n?.localeName)

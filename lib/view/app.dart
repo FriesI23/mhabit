@@ -15,9 +15,9 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mhabit/common/consts.dart';
 import 'package:provider/provider.dart';
 
+import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';

@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export 'habit_display_main_menu.dart';
 export 'habit_display_sort_type_picker.dart';
 export 'habit_display_stats_menu.dart';
-export 'habit_display_main_menu.dart';

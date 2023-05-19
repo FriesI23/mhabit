@@ -36,6 +36,7 @@ export './widgets/scroll_physics.dart';
 export './widgets/scrollable_chart.dart';
 export './widgets/scrolling_fab.dart';
 export './widgets/svg_template_image.dart';
+export './widgets/theme_with_custom_colors.dart';
 export './widgets/week_picker_cell.dart';
 
 const kExpanedDailogInsetPadding =

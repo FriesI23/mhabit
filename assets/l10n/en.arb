@@ -288,7 +288,7 @@
   "@habitDetail_changeGoal_currentChipText": {
     "placeholders": {
       "goal": {
-        "type": "num",
+        "type": "String",
         "example": "1.5"
       }
     }
@@ -297,17 +297,26 @@
   "@habitDetail_changeGoal_doneChipText": {
     "placeholders": {
       "goal": {
-        "type": "num",
+        "type": "String",
         "example": "1.5"
       }
     }
   },
   "habitDetail_changeGoal_doneChipText": "done: {goal}",
   "habitDetail_changeGoal_undoneChipText": "undone",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_extraChipText": "{goal}",
   "@habitDetail_changeGoal_helpText": {
     "placeholders": {
       "goal": {
-        "type": "num",
+        "type": "String",
         "example": "1.5"
       }
     }

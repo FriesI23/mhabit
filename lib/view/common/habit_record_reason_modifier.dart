@@ -21,19 +21,24 @@ import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
+import '../../model/habit_form.dart';
 
 Future<String?> showHabitRecordReasonModifierDialog({
   required BuildContext context,
   String initReason = '',
   HabitDate? recordDate,
   List<String> chipTextList = const [],
+  HabitColorType? colorType,
 }) {
   return showDialog<String>(
     context: context,
-    builder: (context) => HabitRecordReasonModifierDialog(
-      initReson: initReason,
-      recordDate: recordDate,
-      chipTextList: chipTextList,
+    builder: (context) => ThemeWithCustomColors(
+      colorType: colorType,
+      child: HabitRecordReasonModifierDialog(
+        initReson: initReason,
+        recordDate: recordDate,
+        chipTextList: chipTextList,
+      ),
     ),
   );
 }
