@@ -963,6 +963,72 @@ abstract class L10n {
   /// **'Try again'**
   String get habitDetail_notFoundRetryText;
 
+  /// No description provided for @habitDetail_changeGoal_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change goal'**
+  String get habitDetail_changeGoal_title;
+
+  /// No description provided for @habitDetail_changeGoal_currentChipText.
+  ///
+  /// In en, this message translates to:
+  /// **'current: {goal}'**
+  String habitDetail_changeGoal_currentChipText(num goal);
+
+  /// No description provided for @habitDetail_changeGoal_doneChipText.
+  ///
+  /// In en, this message translates to:
+  /// **'done: {goal}'**
+  String habitDetail_changeGoal_doneChipText(num goal);
+
+  /// No description provided for @habitDetail_changeGoal_undoneChipText.
+  ///
+  /// In en, this message translates to:
+  /// **'undone'**
+  String get habitDetail_changeGoal_undoneChipText;
+
+  /// No description provided for @habitDetail_changeGoal_helpText.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily goal, default: {goal}'**
+  String habitDetail_changeGoal_helpText(num goal);
+
+  /// No description provided for @habitDetail_changeGoal_cancelText.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get habitDetail_changeGoal_cancelText;
+
+  /// No description provided for @habitDetail_changeGoal_saveText.
+  ///
+  /// In en, this message translates to:
+  /// **'save'**
+  String get habitDetail_changeGoal_saveText;
+
+  /// No description provided for @habitDetail_skipReason_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip reason'**
+  String get habitDetail_skipReason_title;
+
+  /// No description provided for @habitDetail_skipReason_bodyHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'Write something here...'**
+  String get habitDetail_skipReason_bodyHelpText;
+
+  /// No description provided for @habitDetail_skipReason_cancelText.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get habitDetail_skipReason_cancelText;
+
+  /// No description provided for @habitDetail_skipReason_saveText.
+  ///
+  /// In en, this message translates to:
+  /// **'save'**
+  String get habitDetail_skipReason_saveText;
+
   /// No description provided for @appSetting_appbar_titleText.
   ///
   /// In en, this message translates to:

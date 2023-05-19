@@ -284,6 +284,43 @@
   "habitDetail_notFoundText": "Load habit failed",
   "habitDetail_notFoundRetryText": "Try again",
 
+  "habitDetail_changeGoal_title": "Change goal",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "num",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_currentChipText": "current: {goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "num",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_doneChipText": "done: {goal}",
+  "habitDetail_changeGoal_undoneChipText": "undone",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "num",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_helpText": "Daily goal, default: {goal}",
+  "habitDetail_changeGoal_cancelText": "cancel",
+  "habitDetail_changeGoal_saveText": "save",
+
+  "habitDetail_skipReason_title": "Skip reason",
+  "habitDetail_skipReason_bodyHelpText": "Write something here...",
+  "habitDetail_skipReason_cancelText": "cancel",
+  "habitDetail_skipReason_saveText": "save",
+
   "appSetting_appbar_titleText": "Settings",
 
   "appSetting_displaySubgroupText": "Display",

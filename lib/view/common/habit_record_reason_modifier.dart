@@ -19,6 +19,7 @@ import 'package:intl/intl.dart';
 import '../../common/consts.dart';
 import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
+import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 
 Future<String?> showHabitRecordReasonModifierDialog({
@@ -73,9 +74,10 @@ class _HabitRecordReasonModifierDialog
 
   @override
   Widget build(BuildContext context) {
-    ThemeData? themeData = Theme.of(context);
-    ColorScheme? colorScheme = themeData.colorScheme;
-    TextTheme? textTheme = themeData.textTheme;
+    final themeData = Theme.of(context);
+    final colorScheme = themeData.colorScheme;
+    final textTheme = themeData.textTheme;
+    final l10n = L10n.of(context);
 
     Widget buildEmojiChip(String emoji) {
       return ActionChip(
@@ -99,7 +101,9 @@ class _HabitRecordReasonModifierDialog
     return LayoutBuilder(builder: (context, constraints) {
       return AlertDialog(
         scrollable: true,
-        title: const Text("Skip reason"),
+        title: l10n != null
+            ? Text(l10n.habitDetail_skipReason_title)
+            : const Text("Skip reason"),
         insetPadding: kExpanedDailogInsetPadding,
         contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
         content: Column(
@@ -117,10 +121,12 @@ class _HabitRecordReasonModifierDialog
               controller: _inputController,
               maxLength: maxRecordReasonTextLenth,
               decoration: InputDecoration(
-                hintText: "Write something here...",
+                hintText: l10n?.habitDetail_skipReason_bodyHelpText ??
+                    "Write something here...",
                 hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
                 helperText: widget.recordDate != null
-                    ? DateFormat.yMd().format(widget.recordDate!)
+                    ? DateFormat.yMMMd(l10n?.localeName)
+                        .format(widget.recordDate!)
                     : null,
               ),
               keyboardType: TextInputType.text,
@@ -137,13 +143,17 @@ class _HabitRecordReasonModifierDialog
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text('cancel'),
+                    child: l10n != null
+                        ? Text(l10n.habitDetail_skipReason_cancelText)
+                        : const Text('cancel'),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context, _inputController.text);
                     },
-                    child: const Text('save'),
+                    child: l10n != null
+                        ? Text(l10n.habitDetail_skipReason_saveText)
+                        : const Text('save'),
                   ),
                 ],
               ),
