@@ -184,6 +184,14 @@
   "habitDetail_notFoundText": "读取习惯失败",
   "habitDetail_notFoundRetryText": "重试",
 
+  "habitDetail_changeGoal_title": "更改目标",
+  "habitDetail_changeGoal_currentChipText": "当前: {goal}",
+  "habitDetail_changeGoal_doneChipText": "完成: {goal}",
+  "habitDetail_changeGoal_undoneChipText": "未完成",
+  "habitDetail_changeGoal_helpText": "每日目标，默认值：{goal}",
+  "habitDetail_changeGoal_cancelText": "取消",
+  "habitDetail_changeGoal_saveText": "保存",
+
   "habitDetail_skipReason_title": "跳过原因",
   "habitDetail_skipReason_bodyHelpText": "在这里随便写点什么...",
   "habitDetail_skipReason_cancelText": "取消",

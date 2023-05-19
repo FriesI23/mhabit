@@ -22,6 +22,7 @@ import '../../common/rules.dart';
 import '../../common/types.dart';
 import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
+import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
 
@@ -92,11 +93,14 @@ class _HabitRecordCustomNumberPickerDialog
     final themeData = Theme.of(context);
     final colorScheme = themeData.colorScheme;
     final textTheme = themeData.textTheme;
+    final l10n = L10n.of(context);
 
     final Widget normalValChip = ActionChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: const FittedBox(child: Icon(Icons.check_circle_rounded)),
-      label: Text("Done: ${widget.recordForm.targetValue}"),
+      label: Text(l10n?.habitDetail_changeGoal_doneChipText(
+              widget.recordForm.targetValue) ??
+          "Done: ${widget.recordForm.targetValue}"),
       onPressed: () {
         _result = widget.recordForm.targetValue;
         _inputController.text = _result.toString();
@@ -106,7 +110,9 @@ class _HabitRecordCustomNumberPickerDialog
     final Widget zeroValChip = ActionChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: const FittedBox(child: Icon(Icons.cancel_rounded)),
-      label: const Text("Undone"),
+      label: l10n != null
+          ? Text(l10n.habitDetail_changeGoal_undoneChipText)
+          : const Text("Undone"),
       backgroundColor: null,
       onPressed: () {
         _result = minHabitDailyGoal;
@@ -117,7 +123,9 @@ class _HabitRecordCustomNumberPickerDialog
     Widget buildLastValChip() {
       return ActionChip(
         iconTheme: IconThemeData(color: colorScheme.primary),
-        label: Text("Current: ${widget.recordForm.value}"),
+        label: Text(l10n?.habitDetail_changeGoal_currentChipText(
+                widget.recordForm.value) ??
+            "Current: ${widget.recordForm.value}"),
         onPressed: () {
           _result = widget.recordForm.value;
           _inputController.text = _result.toString();
@@ -129,7 +137,9 @@ class _HabitRecordCustomNumberPickerDialog
       var complateStatus = widget.recordForm.complateStatus;
       return AlertDialog(
         scrollable: true,
-        title: const Text("Change goal"),
+        title: l10n != null
+            ? Text(l10n.habitDetail_changeGoal_title)
+            : const Text("Change goal"),
         insetPadding: kExpanedDailogInsetPadding,
         contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
         content: Column(
@@ -151,10 +161,13 @@ class _HabitRecordCustomNumberPickerDialog
             TextField(
               controller: _inputController,
               decoration: InputDecoration(
-                  hintText: "Daily goal, default: $defaultHabitDailyGoal",
+                  hintText: l10n?.habitDetail_changeGoal_helpText(
+                          defaultHabitDailyGoal) ??
+                      "Daily goal, default: $defaultHabitDailyGoal",
                   hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
                   helperText: widget.recordDate != null
-                      ? DateFormat.yMd().format(widget.recordDate!)
+                      ? DateFormat.yMMMd(l10n?.localeName)
+                          .format(widget.recordDate!)
                       : null,
                   counterText: "${NumberFormat().format(minHabitDailyGoal)}"
                       " ~ "
@@ -183,13 +196,17 @@ class _HabitRecordCustomNumberPickerDialog
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text('cancel'),
+                    child: l10n != null
+                        ? Text(l10n.habitDetail_changeGoal_cancelText)
+                        : const Text('cancel'),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context, _result);
                     },
-                    child: const Text('save'),
+                    child: l10n != null
+                        ? Text(l10n.habitDetail_changeGoal_saveText)
+                        : const Text('save'),
                   ),
                 ],
               ),

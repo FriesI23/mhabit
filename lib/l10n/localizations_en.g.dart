@@ -482,6 +482,33 @@ class L10nEn extends L10n {
   String get habitDetail_notFoundRetryText => 'Try again';
 
   @override
+  String get habitDetail_changeGoal_title => 'Change goal';
+
+  @override
+  String habitDetail_changeGoal_currentChipText(num goal) {
+    return 'current: $goal';
+  }
+
+  @override
+  String habitDetail_changeGoal_doneChipText(num goal) {
+    return 'done: $goal';
+  }
+
+  @override
+  String get habitDetail_changeGoal_undoneChipText => 'undone';
+
+  @override
+  String habitDetail_changeGoal_helpText(num goal) {
+    return 'Daily goal, default: $goal';
+  }
+
+  @override
+  String get habitDetail_changeGoal_cancelText => 'cancel';
+
+  @override
+  String get habitDetail_changeGoal_saveText => 'save';
+
+  @override
   String get habitDetail_skipReason_title => 'Skip reason';
 
   @override

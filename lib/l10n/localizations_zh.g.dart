@@ -482,6 +482,33 @@ class L10nZh extends L10n {
   String get habitDetail_notFoundRetryText => '重试';
 
   @override
+  String get habitDetail_changeGoal_title => '更改目标';
+
+  @override
+  String habitDetail_changeGoal_currentChipText(num goal) {
+    return '当前: $goal';
+  }
+
+  @override
+  String habitDetail_changeGoal_doneChipText(num goal) {
+    return '完成: $goal';
+  }
+
+  @override
+  String get habitDetail_changeGoal_undoneChipText => '未完成';
+
+  @override
+  String habitDetail_changeGoal_helpText(num goal) {
+    return '每日目标，默认值：$goal';
+  }
+
+  @override
+  String get habitDetail_changeGoal_cancelText => '取消';
+
+  @override
+  String get habitDetail_changeGoal_saveText => '保存';
+
+  @override
   String get habitDetail_skipReason_title => '跳过原因';
 
   @override
