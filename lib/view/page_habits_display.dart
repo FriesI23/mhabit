@@ -416,19 +416,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       context: context,
       initReason: initReason,
       recordDate: date,
-      chipTextList: const [
-        '☕',
-        '🛌',
-        '🍔',
-        '💤',
-        '📱',
-        '🍹',
-        '🏝️',
-        '😍',
-        '😃',
-        '😕',
-        '😠',
-      ],
+      chipTextList: skipReasonChipTextList,
     );
 
     if (result == null || result == initReason || !mounted) return;

@@ -17,7 +17,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
+import '../../common/consts.dart';
+import '../../common/types.dart';
 import '../../component/widget.dart';
+import '../../db/db_helper/records.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
@@ -88,14 +91,58 @@ class _HabitEditReplacementRecordCalendarDialog
   }
 
   void onHeatmapCellLongPressed(DateTime date, num? value) async {
-    HabitDailyRecordForm form;
     final habitDate = HabitDate.dateTime(date);
 
     if (!mounted) return;
-    var viewmodel = context.read<HabitDetailViewModel>();
+    final viewmodel = context.read<HabitDetailViewModel>();
 
     if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
-    var record = viewmodel.getHabitRecordData(habitDate);
+    final record = viewmodel.getHabitRecordData(habitDate);
+    switch (record?.status) {
+      case HabitRecordStatus.skip:
+        _openHabitRecordResonModifierDialog(context, habitDate);
+        break;
+      default:
+        _openHabitRecordCusomNumberPickerDialog(context, habitDate);
+        break;
+    }
+  }
+
+  void _openHabitRecordResonModifierDialog(
+      BuildContext context, HabitRecordDate date) async {
+    String initReason = '';
+
+    if (!mounted) return;
+    final viewmodel = context.read<HabitDetailViewModel>();
+
+    if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
+    final record = viewmodel.getHabitRecordData(date);
+
+    if (record?.uuid != null) {
+      initReason = (await loadSingleRecordFromDB(record!.uuid))?.reason ?? '';
+    }
+
+    if (!mounted) return;
+    final result = await showHabitRecordReasonModifierDialog(
+      context: context,
+      initReason: initReason,
+      recordDate: date,
+      chipTextList: skipReasonChipTextList,
+    );
+
+    if (result == null || result == initReason || !mounted) return;
+    viewmodel.onLongPressChangeReason(date, result);
+  }
+
+  void _openHabitRecordCusomNumberPickerDialog(
+      BuildContext context, HabitRecordDate date) async {
+    late final HabitDailyRecordForm form;
+
+    if (!mounted) return;
+    final viewmodel = context.read<HabitDetailViewModel>();
+
+    if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
+    final record = viewmodel.getHabitRecordData(date);
     num orgNum = record?.value ?? -1;
     if (record != null && record.status == HabitRecordStatus.done) {
       form = HabitDailyRecordForm(record.value, viewmodel.habitDailyGoal!);
@@ -108,12 +155,13 @@ class _HabitEditReplacementRecordCalendarDialog
       context: context,
       recordForm: form,
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
-      recordDate: habitDate,
+      recordDate: date,
     );
+
     if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {
       return;
     }
-    viewmodel.onLongPressChangeRecordValue(habitDate, result);
+    viewmodel.onLongPressChangeRecordValue(date, result);
   }
 
   @override
