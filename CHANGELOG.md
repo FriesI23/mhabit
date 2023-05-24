@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.2.1+3
+
+- Add Fastlane file structure
+- Add android app signing
+
 ## 1.2.0+2
 
 - Feature:
