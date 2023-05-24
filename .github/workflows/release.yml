@@ -3,7 +3,10 @@ name: Build and release
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+env:
+  PROPERTIES_PATH: "./android/key.properties"
 
 jobs:
   build-android:
@@ -24,6 +27,13 @@ jobs:
           channel: stable
           flutter-version: 3.7.12
 
+      - name: Build key.properties
+        run: |
+          echo keyPassword=\${{ secrets.APP_SIGN_KEY_PASSWORD }} > ${{env.PROPERTIES_PATH}}
+          echo storePassword=\${{ secrets.APP_SIGN_STORE_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+          echo keyAlias=\${{ secrets.APP_SIGN_KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+          echo "${{ secrets.APP_SIGN_KEY_JKS }}" | base64 --decode > android/app/key.jks
+
       - name: Pub Get Packages
         run: flutter pub get
 
@@ -32,9 +42,6 @@ jobs:
 
       - name: Build release APPBUNDLE
         run: flutter build appbundle --release
-
-      - name: Build debug APPBUNDLE
-        run: flutter build appbundle --debug
 
       - name: Build release APK
         run: flutter build apk --release
