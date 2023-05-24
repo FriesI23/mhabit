@@ -1,0 +1,2 @@
+- Change package domain to `github.io`
+- New release

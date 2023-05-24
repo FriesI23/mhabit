@@ -1,0 +1,10 @@
+"Table Habit" is an app that helps you establish and track your own micro habit. Its includes a complete set of growth curves and charts to help you establish habits more effectively.
+
+Moreover, this app completely open source and include features below:
+
+- A scoring system to help develop your own micro habits.
+- An easy-to-use interface for habit check in.
+- Different colors used to distinguish between various habits.
+- Easily export and import habits using a human-readable format (JSON).
+- Adapt to Material3 and Dynamic Color for Android 12 and later versions.
+- Adaptation for landscape and large screen devices.
