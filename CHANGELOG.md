@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.2.3+5
+
+- fix artifact path with appbundle
+- fix app signed progress
+
 ## 1.2.2+4
 
 - Fix fastlane locale folder case

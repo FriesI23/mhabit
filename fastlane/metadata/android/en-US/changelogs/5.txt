@@ -1,0 +1,2 @@
+- fix artifact path with appbundle
+- fix app signed progress
