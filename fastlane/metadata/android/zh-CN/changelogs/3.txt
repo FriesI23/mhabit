@@ -1,0 +1,2 @@
+- 添加 Fastlane 文件结构
+- 添加 Android 应用程序签名

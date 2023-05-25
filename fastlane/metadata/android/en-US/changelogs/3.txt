@@ -1,0 +1,2 @@
+- Add Fastlane file structure
+- Add android app signing

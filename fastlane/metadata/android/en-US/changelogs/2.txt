@@ -1,0 +1,9 @@
+- Feature:
+  - Add skip reason dialog on heatmap.
+  - Add 'Maximum Daily Goal' value in Change Goal Dialog.
+  - Add custom color on skipReason/changeGoal dialog.
+- Fixed:
+  - Provide remaining text for translation.
+  - int like 1 shouldn't display decimal point.
+- Other:
+  - Change app logo style.
