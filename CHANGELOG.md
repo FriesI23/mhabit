@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.2.2+4
+
+- Fix fastlane locale folder case
+
 ## 1.2.1+3
 
 - Add Fastlane file structure

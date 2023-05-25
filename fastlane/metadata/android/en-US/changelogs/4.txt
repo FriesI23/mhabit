@@ -1,0 +1,1 @@
+- Fix fastlane locale folder case
