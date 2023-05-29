@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.2.5+7
+
+- Add flutter as submodule
+
 ## 1.2.4+6
 
 - Add distributionSha256Sum, see [here](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/13058#note_1404993220)
