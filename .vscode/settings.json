@@ -9,11 +9,16 @@
   "dartImport.fixOnSave": true,
   "python.formatting.provider": "yapf",
   "java.configuration.updateBuildConfiguration": "automatic",
+  "java.project.resourceFilters": [
+    ".flutter"
+  ],
   "search.exclude": {
-    "**/.fvm": true
+    "**/.fvm": true,
+    "**/.flutter": true
   },
   "files.watcherExclude": {
-    "**/.fvm": true
+    "**/.fvm": true,
+    "**/.flutter": true
   },
   "files.associations": {
     "*.arb": "json"
