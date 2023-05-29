@@ -1,0 +1,1 @@
+- 添加 distributionSha256Sum，详见[此处](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/13058#note_1404993220)

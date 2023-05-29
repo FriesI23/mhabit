@@ -1,5 +1,9 @@
 # 更新日志
 
+## 1.2.4+6
+
+- 添加 distributionSha256Sum，详见[此处](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/13058#note_1404993220)
+
 ## 1.2.3+5
 
 - 修复 appbundle 构件路径
