@@ -1,0 +1,1 @@
+- Fix `pubspec.lock` file changed when run `flutter pub get`

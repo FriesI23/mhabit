@@ -1,5 +1,9 @@
 # 更新日志
 
+## 1.3.0+8
+
+- 修复执行 `flutter pub get` 导致 `pubspec.lock` 被修改的问题
+
 ## 1.2.5+7
 
 - 将 flutter 引入为 submodule

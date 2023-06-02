@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.3.0+8
+
+- Fix `pubspec.lock` file changed when run `flutter pub get`
+
 ## 1.2.5+7
 
 - Add flutter as submodule
