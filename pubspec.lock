@@ -378,10 +378,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_donation_buttons
-      sha256: "66351f6ea52a32b63f78f0a28c353f6a3f420433f9b70416d251e499484deb17"
+      sha256: "922a5b7ffcc27948198b3bc0b270d59cebe61b3a39743953a7f75fa23b18d584"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.6"
+    version: "0.2.7"
   flutter_gen:
     dependency: "direct dev"
     description:

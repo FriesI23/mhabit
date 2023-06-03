@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
 
 import '../../common/enums.dart';
+import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 
 enum DonateDialogResult {
@@ -82,6 +83,7 @@ class _DonateDialogState extends State<DonateDialog> {
       }
       yield BuyMeACoffeeButton(
         buyMeACoffeeName: widget.donateBuyMeACoffeeToken,
+        onLaunchURL: (urlString) => launchExternalUrl(Uri.parse(urlString)),
       );
     }
 

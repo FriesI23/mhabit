@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:tuple/tuple.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
 import '../theme/color.dart';
@@ -177,4 +179,8 @@ String? encodeUrlQueryParameters(Map<String, String> params) {
       .map((MapEntry<String, String> e) =>
           '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
       .join('&');
+}
+
+Future<bool> launchExternalUrl(Uri url) async {
+  return url_launcher.launchUrl(url, mode: LaunchMode.externalApplication);
 }

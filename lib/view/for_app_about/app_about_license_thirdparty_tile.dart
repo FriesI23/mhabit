@@ -15,8 +15,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../common/utils.dart';
 import '../../component/widget.dart';
 import '../../l10n/localizations.dart';
 import '_widget.dart';
@@ -44,7 +44,7 @@ class _AppAboutThirdPartyLicenseTileState
                 data: licenseText,
                 shrinkWrap: false,
                 onTapLink: (text, href, title) =>
-                    href != null ? launchUrl(Uri.parse(href)) : null,
+                    href != null ? launchExternalUrl(Uri.parse(href)) : null,
                 listItemCrossAxisAlignment:
                     MarkdownListItemCrossAxisAlignment.start,
               ),

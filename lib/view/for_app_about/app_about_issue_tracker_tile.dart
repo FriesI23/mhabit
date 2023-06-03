@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/logging.dart';
+import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../model/about_info.dart';
 import '_widget.dart';
@@ -36,7 +37,7 @@ class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
   void onPressed() async {
     final url = Uri.parse(context.read<AboutInfo>().issueTrackerUrl);
     if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+      await launchExternalUrl(url);
     } else {
       ErrorLog.openUrl("failed to open issue tracker url: $url");
     }
