@@ -1,5 +1,13 @@
 # 更新日志
 
+## 1.3.1+9
+
+- 移除应用程序互联网权限
+- 修改 `launchUrl` 模式为外部应用程序
+- 升级 `flutter_donation_buttons` 至 0.2.7
+- 修改导出习惯使其根据手动排序导出
+- 添加自动生成变更日志的Python脚本
+
 ## 1.3.0+8
 
 - 修复执行 `flutter pub get` 导致 `pubspec.lock` 被修改的问题

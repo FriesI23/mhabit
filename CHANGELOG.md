@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.3.1+9
+
+- remove iternet permission on android
+- change launchUrl mode to externel appilication
+- bump flutter_donation_buttons to 0.2.7
+- fix export habits in the order determined by the manual sort position
+- add auto generate changlog python script
+
 ## 1.3.0+8
 
 - Fix `pubspec.lock` file changed when run `flutter pub get`

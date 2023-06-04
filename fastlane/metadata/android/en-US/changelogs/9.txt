@@ -1,0 +1,5 @@
+- remove iternet permission on android
+- change launchUrl mode to externel appilication
+- bump flutter_donation_buttons to 0.2.7
+- fix export habits in the order determined by the manual sort position
+- add auto generate changlog python script
