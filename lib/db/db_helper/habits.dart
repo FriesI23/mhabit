@@ -287,8 +287,9 @@ Future<Iterable<HabitDBCell>> loadHabitsExportDataFromDB(
   var results = await DB().db.query(
         dbHabitsTableName,
         where: "${HabitDBCellKey.uuid} "
-            "IN (${uuidList.map((e) => '?').join(', ')})",
+            "IN (${uuidList.map((e) => '?').join(', ')}) ",
         whereArgs: uuidList,
+        orderBy: HabitDBCellKey.sortPosition,
       );
 
   Iterable<HabitDBCell> iterResult() sync* {
@@ -301,7 +302,10 @@ Future<Iterable<HabitDBCell>> loadHabitsExportDataFromDB(
 }
 
 Future<Iterable<HabitDBCell>> loadAllHabitExportDataFromDB() async {
-  var results = await DB().db.query(dbHabitsTableName);
+  var results = await DB().db.query(
+        dbHabitsTableName,
+        orderBy: HabitDBCellKey.sortPosition,
+      );
 
   Iterable<HabitDBCell> iterResult() sync* {
     for (final cell in results) {
