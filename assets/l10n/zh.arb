@@ -11,7 +11,7 @@
 
   "habitEdit_habitDailyGoal_hintText": "每日目标, 默认为{number}",
 
-  "habitEdit_habitDailyGoalUint_hintText": "单位",
+  "habitEdit_habitDailyGoalUnit_hintText": "单位",
 
   "habitEdit_habitDailyGoalExtra_hintText": "期望的每日最高目标",
   "habitEdit_habitDailyGoalExtra_errorText": "无效的值，必须为空或者>={dailyGoal}",

@@ -123,11 +123,11 @@ abstract class L10n {
   /// **'Daily goal, default {number}'**
   String habitEdit_habitDailyGoal_hintText(Object number);
 
-  /// No description provided for @habitEdit_habitDailyGoalUint_hintText.
+  /// No description provided for @habitEdit_habitDailyGoalUnit_hintText.
   ///
   /// In en, this message translates to:
-  /// **'Daily goal uint'**
-  String get habitEdit_habitDailyGoalUint_hintText;
+  /// **'Daily goal unit'**
+  String get habitEdit_habitDailyGoalUnit_hintText;
 
   /// No description provided for @habitEdit_habitDailyGoalExtra_hintText.
   ///

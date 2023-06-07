@@ -24,7 +24,7 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUint_hintText => '单位';
+  String get habitEdit_habitDailyGoalUnit_hintText => '单位';
 
   @override
   String get habitEdit_habitDailyGoalExtra_hintText => '期望的每日最高目标';

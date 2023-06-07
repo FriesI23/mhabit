@@ -20,7 +20,7 @@
   },
   "habitEdit_habitDailyGoal_hintText": "Daily goal, default {number}",
 
-  "habitEdit_habitDailyGoalUint_hintText": "Daily goal uint",
+  "habitEdit_habitDailyGoalUnit_hintText": "Daily goal unit",
 
   "habitEdit_habitDailyGoalExtra_hintText": "Desired maximum daily goal",
   "@habitEdit_habitDailyGoalExtra_errorText": {

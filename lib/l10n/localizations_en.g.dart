@@ -24,7 +24,7 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUint_hintText => 'Daily goal uint';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
 
   @override
   String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
