@@ -132,7 +132,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_habitDailyGoalExtra_hintText.
   ///
   /// In en, this message translates to:
-  /// **'esired Maximum Daily Goal'**
+  /// **'Desired maximum daily goal'**
   String get habitEdit_habitDailyGoalExtra_hintText;
 
   /// No description provided for @habitEdit_habitDailyGoalExtra_errorText.
