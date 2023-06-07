@@ -271,7 +271,7 @@ class L10nEn extends L10n {
   String get habitDisplay_statsMenu_statSubgroupText => 'Current';
 
   @override
-  String get habitDisplay_statsMenu_complatedTileText => 'Complated';
+  String get habitDisplay_statsMenu_completedTileText => 'Completed';
 
   @override
   String get habitDisplay_statsMenu_inProgresTileText => 'In Progress';
@@ -295,7 +295,7 @@ class L10nEn extends L10n {
   String get habitDisplay_mainMenu_showArchivedTileText => 'Show Archived';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Complated';
+  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
 
   @override
   String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
@@ -590,12 +590,12 @@ class L10nEn extends L10n {
   }
 
   @override
-  String appSetting_importDialog_complateTitle(int count) {
+  String appSetting_importDialog_completeTitle(int count) {
     return 'Complete import $count';
   }
 
   @override
-  String get appSetting_importDialog_complate_closeLabel => 'close';
+  String get appSetting_importDialog_complete_closeLabel => 'close';
 
   @override
   String get appSetting_resetConfig_titleText => 'Reset configs';
