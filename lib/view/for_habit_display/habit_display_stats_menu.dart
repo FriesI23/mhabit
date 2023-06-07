@@ -64,8 +64,8 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
       ),
       ListTile(
         title: l10n != null
-            ? Text(l10n.habitDisplay_statsMenu_complatedTileText)
-            : const Text("Complated"),
+            ? Text(l10n.habitDisplay_statsMenu_completedTileText)
+            : const Text("Completed"),
         leading: const Icon(HabitProgressIcons.progress_100percent),
         trailing: Text(statisticsData.currentComplatedCount.toString()),
         visualDensity: VisualDensity.compact,

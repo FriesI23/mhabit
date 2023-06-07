@@ -101,7 +101,7 @@ class _AppSettingImportHabitsConfirmDialog
     Widget buildTitle(BuildContext context) {
       if (_completed) {
         return Text(
-          l10n?.appSetting_importDialog_complateTitle(totalCount) ??
+          l10n?.appSetting_importDialog_completeTitle(totalCount) ??
               "Completed  $completeCount/$totalCount",
         );
       } else if (_confirmed) {
@@ -139,7 +139,7 @@ class _AppSettingImportHabitsConfirmDialog
             onPressed: () => Navigator.maybeOf(context)?.maybePop(),
             icon: const Icon(Icons.close),
             label: l10n != null
-                ? Text(l10n.appSetting_importDialog_complate_closeLabel)
+                ? Text(l10n.appSetting_importDialog_complete_closeLabel)
                 : const Text('close'),
           ),
         if (!_completed)

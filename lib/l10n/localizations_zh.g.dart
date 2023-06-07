@@ -271,7 +271,7 @@ class L10nZh extends L10n {
   String get habitDisplay_statsMenu_statSubgroupText => '当前';
 
   @override
-  String get habitDisplay_statsMenu_complatedTileText => '已完成';
+  String get habitDisplay_statsMenu_completedTileText => '已完成';
 
   @override
   String get habitDisplay_statsMenu_inProgresTileText => '进行中';
@@ -590,12 +590,12 @@ class L10nZh extends L10n {
   }
 
   @override
-  String appSetting_importDialog_complateTitle(int count) {
+  String appSetting_importDialog_completeTitle(int count) {
     return '完成导入 $count 个习惯';
   }
 
   @override
-  String get appSetting_importDialog_complate_closeLabel => '关闭';
+  String get appSetting_importDialog_complete_closeLabel => '关闭';
 
   @override
   String get appSetting_resetConfig_titleText => '重置配置';
