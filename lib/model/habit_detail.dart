@@ -52,7 +52,7 @@ class HabitDetailData implements DirtyMarkMixin {
 
   DateTime get modifyT => _modifyT;
 
-  String get dailyGoalUint => _dailyGoalUnit;
+  String get dailyGoalUnit => _dailyGoalUnit;
 
   @override
   UniqueKey get diryMark => _data.diryMark;

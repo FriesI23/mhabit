@@ -123,16 +123,16 @@ abstract class L10n {
   /// **'Daily goal, default {number}'**
   String habitEdit_habitDailyGoal_hintText(Object number);
 
-  /// No description provided for @habitEdit_habitDailyGoalUint_hintText.
+  /// No description provided for @habitEdit_habitDailyGoalUnit_hintText.
   ///
   /// In en, this message translates to:
-  /// **'Daily goal uint'**
-  String get habitEdit_habitDailyGoalUint_hintText;
+  /// **'Daily goal unit'**
+  String get habitEdit_habitDailyGoalUnit_hintText;
 
   /// No description provided for @habitEdit_habitDailyGoalExtra_hintText.
   ///
   /// In en, this message translates to:
-  /// **'esired Maximum Daily Goal'**
+  /// **'Desired maximum daily goal'**
   String get habitEdit_habitDailyGoalExtra_hintText;
 
   /// No description provided for @habitEdit_habitDailyGoalExtra_errorText.
@@ -549,11 +549,11 @@ abstract class L10n {
   /// **'Current'**
   String get habitDisplay_statsMenu_statSubgroupText;
 
-  /// No description provided for @habitDisplay_statsMenu_complatedTileText.
+  /// No description provided for @habitDisplay_statsMenu_completedTileText.
   ///
   /// In en, this message translates to:
-  /// **'Complated'**
-  String get habitDisplay_statsMenu_complatedTileText;
+  /// **'Completed'**
+  String get habitDisplay_statsMenu_completedTileText;
 
   /// No description provided for @habitDisplay_statsMenu_inProgresTileText.
   ///
@@ -600,7 +600,7 @@ abstract class L10n {
   /// No description provided for @habitDisplay_mainMenu_showCompletedTileText.
   ///
   /// In en, this message translates to:
-  /// **'Show Complated'**
+  /// **'Show Completed'**
   String get habitDisplay_mainMenu_showCompletedTileText;
 
   /// No description provided for @habitDisplay_mainMenu_showActivedTileText.
@@ -1155,17 +1155,17 @@ abstract class L10n {
   /// **'Imported {completeCount}/{totalCount}'**
   String appSetting_importDialog_importingTitle(int completeCount, int totalCount);
 
-  /// No description provided for @appSetting_importDialog_complateTitle.
+  /// No description provided for @appSetting_importDialog_completeTitle.
   ///
   /// In en, this message translates to:
   /// **'Complete import {count}'**
-  String appSetting_importDialog_complateTitle(int count);
+  String appSetting_importDialog_completeTitle(int count);
 
-  /// No description provided for @appSetting_importDialog_complate_closeLabel.
+  /// No description provided for @appSetting_importDialog_complete_closeLabel.
   ///
   /// In en, this message translates to:
   /// **'close'**
-  String get appSetting_importDialog_complate_closeLabel;
+  String get appSetting_importDialog_complete_closeLabel;
 
   /// No description provided for @appSetting_resetConfig_titleText.
   ///

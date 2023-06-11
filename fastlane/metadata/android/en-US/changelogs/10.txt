@@ -1,0 +1,2 @@
+- fix fastlane/zh-CN app title name
+- fix some spelling errors

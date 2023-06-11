@@ -20,9 +20,9 @@
   },
   "habitEdit_habitDailyGoal_hintText": "Daily goal, default {number}",
 
-  "habitEdit_habitDailyGoalUint_hintText": "Daily goal uint",
+  "habitEdit_habitDailyGoalUnit_hintText": "Daily goal unit",
 
-  "habitEdit_habitDailyGoalExtra_hintText": "esired Maximum Daily Goal",
+  "habitEdit_habitDailyGoalExtra_hintText": "Desired maximum daily goal",
   "@habitEdit_habitDailyGoalExtra_errorText": {
     "placeholders": {
       "dailyGoal": {
@@ -181,7 +181,7 @@
   "habitDisplay_settingButton_tooltip": "Setting",
 
   "habitDisplay_statsMenu_statSubgroupText": "Current",
-  "habitDisplay_statsMenu_complatedTileText": "Complated",
+  "habitDisplay_statsMenu_completedTileText": "Completed",
   "habitDisplay_statsMenu_inProgresTileText": "In Progress",
   "habitDisplay_statsMenu_archivedTileText": "Archived",
   "habitDisplay_statsMenu_popularitySubgroupText": "Popularity (Last 30 days)",
@@ -190,7 +190,7 @@
   "habitDisplay_mainMenu_darkTheme": "Dart Theme",
   "habitDisplay_mainMenu_followSystemTheme": "Follow System",
   "habitDisplay_mainMenu_showArchivedTileText": "Show Archived",
-  "habitDisplay_mainMenu_showCompletedTileText": "Show Complated",
+  "habitDisplay_mainMenu_showCompletedTileText": "Show Completed",
   "habitDisplay_mainMenu_showActivedTileText": "Show Actived",
   "habitDisplay_mainMenu_settingTileText": "Settings",
 
@@ -373,7 +373,7 @@
     }
   },
   "appSetting_importDialog_importingTitle": "Imported {completeCount}/{totalCount}",
-  "@appSetting_importDialog_complateTitle": {
+  "@appSetting_importDialog_completeTitle": {
     "placeholders": {
       "count": {
         "type": "int",
@@ -381,8 +381,8 @@
       }
     }
   },
-  "appSetting_importDialog_complateTitle": "Complete import {count}",
-  "appSetting_importDialog_complate_closeLabel": "close",
+  "appSetting_importDialog_completeTitle": "Complete import {count}",
+  "appSetting_importDialog_complete_closeLabel": "close",
   "appSetting_resetConfig_titleText": "Reset configs",
   "appSetting_resetConfig_subtitleText": "Reset all configs to default.",
   "appSetting_resetConfigDialog_titleText": "Reset configs?",

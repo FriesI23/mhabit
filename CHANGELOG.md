@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.3.2+10
+
+- fix fastlane/zh-CN app title name
+- fix some spelling errors
+
 ## 1.3.1+9
 
 - remove iternet permission on android

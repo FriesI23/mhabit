@@ -229,7 +229,7 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
         CheckboxListTile(
           title: l10n != null
               ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
-              : const Text("Show Complated"),
+              : const Text("Show Completed"),
           secondary: const Icon(HabitProgressIcons.progress_50percent),
           enabled: habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
               HabitsDisplayFilter.allFalse,
@@ -244,7 +244,7 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
         ),
         CheckboxListTile(
           title: l10n != null
-              ? Text(l10n.habitDisplay_statsMenu_complatedTileText)
+              ? Text(l10n.habitDisplay_statsMenu_completedTileText)
               : const Text("Show Actived"),
           secondary: const Icon(HabitProgressIcons.progress_100percent),
           enabled: habitsDisplayFilter.copyWith(allowActivedHabits: false) !=
