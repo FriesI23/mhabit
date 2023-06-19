@@ -6,6 +6,12 @@ habits more effectively.
 
 Moreover, this app completely open source.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/io.github.friesi23.mhabit/)
+
+Or download the latest APK from the [Releases Section](https://github.com/FriesI23/mhabit/releases/latest).
+
 ## Screenshots
 
 [![Create new habit][create-new-habit-tb]][create-new-habit]
