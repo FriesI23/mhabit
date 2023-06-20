@@ -1431,6 +1431,36 @@ abstract class L10n {
   /// **'Next {date}'**
   String calendarPicker_clip_after7Days(DateTime date);
 
+  /// No description provided for @exportConfirmDialog_title_exportAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Export all habits?'**
+  String get exportConfirmDialog_title_exportAll;
+
+  /// No description provided for @exportConfirmDialog_title_exportMulti.
+  ///
+  /// In en, this message translates to:
+  /// **'Export {number, plural, =0{current habit} =1{1 habit} other{{number} habits}}?'**
+  String exportConfirmDialog_title_exportMulti(int number);
+
+  /// No description provided for @exportConfirmDialog_option_includeRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'include records'**
+  String get exportConfirmDialog_option_includeRecords;
+
+  /// No description provided for @exportConfirmDialog_cancel_buttonText.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get exportConfirmDialog_cancel_buttonText;
+
+  /// No description provided for @exportConfirmDialog_confirm_buttonText.
+  ///
+  /// In en, this message translates to:
+  /// **'export'**
+  String get exportConfirmDialog_confirm_buttonText;
+
   /// No description provided for @snackbar_undoText.
   ///
   /// In en, this message translates to:

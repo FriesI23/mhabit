@@ -62,9 +62,9 @@ class HabitFileExporterViewModel extends ChangeNotifier {
   }
 
   Future<String?> exportHabitData(HabitUUID habitUUID,
-      {bool listen = true}) async {
+      {withRecords = true, bool listen = true}) async {
     final exporter = HabitExporter(uuidList: [habitUUID]);
-    final result = await exporter.exportData();
+    final result = await exporter.exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -78,9 +78,9 @@ class HabitFileExporterViewModel extends ChangeNotifier {
   }
 
   Future<String?> exportMultiHabitsData(List<HabitUUID> uuidList,
-      {bool listen = true}) async {
+      {withRecords = true, bool listen = true}) async {
     final exporter = HabitExporter(uuidList: uuidList);
-    final result = await exporter.exportData();
+    final result = await exporter.exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -93,10 +93,12 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     return filePath;
   }
 
-  Future<String?> exportAllHabitsData({bool listen = true}) async {
+  Future<String?> exportAllHabitsData(
+      {withRecords = true, bool listen = true}) async {
     Iterable<HabitExportData> habitExportData;
 
-    habitExportData = await const HabitExportAll().exportData();
+    habitExportData =
+        await const HabitExportAll().exportData(withRecords: withRecords);
 
     final data = formatExportJsonData(habits: habitExportData);
     final jsonData = jsonEncode(data);

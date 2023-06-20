@@ -109,8 +109,17 @@ class _AppSettingView extends State<AppSettingView>
 
   void _onExportAllTilePressed(BuildContext context) async {
     if (!mounted) return;
-    final filePath =
-        await context.read<HabitFileExporterViewModel>().exportAllHabitsData();
+    final confirmResult = await showExporterConfirmDialog(
+      context: context,
+      exportAll: true,
+    );
+
+    if (!mounted || confirmResult == null) return;
+    final filePath = await context
+        .read<HabitFileExporterViewModel>()
+        .exportAllHabitsData(
+          withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+        );
     if (!mounted || filePath == null) return;
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)], context: context);
