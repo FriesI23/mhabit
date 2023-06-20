@@ -383,8 +383,17 @@ class _HabitDetailView extends State<HabitDetailView>
     HabitFileExporterViewModel fileExporter;
 
     if (!mounted) return;
+    final confirmResult = await showExporterConfirmDialog(
+      context: context,
+      exportAll: false,
+    );
+
+    if (!mounted || confirmResult == null) return;
     fileExporter = context.read<HabitFileExporterViewModel>();
-    final filePath = await fileExporter.exportHabitData(widget.habitUUID);
+    final filePath = await fileExporter.exportHabitData(
+      widget.habitUUID,
+      withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+    );
     if (!mounted || filePath == null) return;
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)], text: "Export Habit", context: context);

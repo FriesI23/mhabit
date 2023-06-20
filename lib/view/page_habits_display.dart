@@ -464,13 +464,24 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void _exportSelectedHabitsAndShared(BuildContext context) async {
     if (!mounted) return;
 
-    final habitUUID = context
+    final habitUUIDList = context
         .read<HabitSummaryViewModel>()
         .getExportUseSelectedHabitUUID()
         .toList();
+
+    final confirmResult = await showExporterConfirmDialog(
+      context: context,
+      exportHabitsNumber: habitUUIDList.length,
+      exportAll: false,
+    );
+
+    if (!mounted || confirmResult == null) return;
     final filePath = await context
         .read<HabitFileExporterViewModel>()
-        .exportMultiHabitsData(habitUUID);
+        .exportMultiHabitsData(
+          habitUUIDList,
+          withRecords: confirmResult == ExporterConfirmResultType.withRecords,
+        );
 
     if (!mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();

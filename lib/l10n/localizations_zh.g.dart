@@ -739,6 +739,29 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get exportConfirmDialog_title_exportAll => '导出所有习惯？';
+
+  @override
+  String exportConfirmDialog_title_exportMulti(int number) {
+    String _temp0 = intl.Intl.pluralLogic(
+      number,
+      locale: localeName,
+      other: '$number个习惯',
+      zero: '当前习惯',
+    );
+    return '导出$_temp0?';
+  }
+
+  @override
+  String get exportConfirmDialog_option_includeRecords => '包含习惯记录';
+
+  @override
+  String get exportConfirmDialog_cancel_buttonText => '取消';
+
+  @override
+  String get exportConfirmDialog_confirm_buttonText => '导出';
+
+  @override
   String get snackbar_undoText => '撤回';
 
   @override

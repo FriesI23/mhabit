@@ -739,6 +739,30 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get exportConfirmDialog_title_exportAll => 'Export all habits?';
+
+  @override
+  String exportConfirmDialog_title_exportMulti(int number) {
+    String _temp0 = intl.Intl.pluralLogic(
+      number,
+      locale: localeName,
+      other: '$number habits',
+      one: '1 habit',
+      zero: 'current habit',
+    );
+    return 'Export $_temp0?';
+  }
+
+  @override
+  String get exportConfirmDialog_option_includeRecords => 'include records';
+
+  @override
+  String get exportConfirmDialog_cancel_buttonText => 'cancel';
+
+  @override
+  String get exportConfirmDialog_confirm_buttonText => 'export';
+
+  @override
   String get snackbar_undoText => 'UNDO';
 
   @override
