@@ -1,10 +1,11 @@
 # Table Habit
 
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
-![Latest Stable Version][app-verison-bage-svg]
+[![Latest Stable Version][app-verison-bage-svg]][github-release-page]
 [![License][license-badge]][app-license]
 [![Flutter][flutter-badge]][deps-flutter-version]
 
+[![Trello][app-trello-badge]][app-trello-board]
 
 "Table Habit" is an app that helps you establish and track your own micro habit.
 Its includes a complete set of growth curves and charts to help you establish
@@ -119,8 +120,11 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit/
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml/badge.svg
+[github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
 [flutter-badge]: https://img.shields.io/badge/_Flutter_-3.7.12-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
 [deps-flutter-version]: https://github.com/flutter/flutter/tree/3.7.12
 [license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
+[app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
+[app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
