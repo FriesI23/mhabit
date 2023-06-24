@@ -286,7 +286,7 @@ class L10nEn extends L10n {
   String get habitDisplay_mainMenu_lightTheme => 'Light Theme';
 
   @override
-  String get habitDisplay_mainMenu_darkTheme => 'Dart Theme';
+  String get habitDisplay_mainMenu_darkTheme => 'Dark Theme';
 
   @override
   String get habitDisplay_mainMenu_followSystemTheme => 'Follow System';

@@ -582,7 +582,7 @@ abstract class L10n {
   /// No description provided for @habitDisplay_mainMenu_darkTheme.
   ///
   /// In en, this message translates to:
-  /// **'Dart Theme'**
+  /// **'Dark Theme'**
   String get habitDisplay_mainMenu_darkTheme;
 
   /// No description provided for @habitDisplay_mainMenu_followSystemTheme.

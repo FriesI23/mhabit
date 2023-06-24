@@ -187,7 +187,7 @@
   "habitDisplay_statsMenu_popularitySubgroupText": "Popularity (Last 30 days)",
 
   "habitDisplay_mainMenu_lightTheme": "Light Theme",
-  "habitDisplay_mainMenu_darkTheme": "Dart Theme",
+  "habitDisplay_mainMenu_darkTheme": "Dark Theme",
   "habitDisplay_mainMenu_followSystemTheme": "Follow System",
   "habitDisplay_mainMenu_showArchivedTileText": "Show Archived",
   "habitDisplay_mainMenu_showCompletedTileText": "Show Completed",
