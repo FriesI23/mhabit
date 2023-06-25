@@ -1,10 +1,21 @@
 # Table Habit
 
+[![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
+[![Latest Stable Version][app-verison-bage-svg]][github-release-page]
+[![License][license-badge]][app-license]
+[![Flutter][flutter-badge]][deps-flutter-version]
+
+[![Trello][app-trello-badge]][app-trello-board]
+
 "Table Habit" is an app that helps you establish and track your own micro habit.
 Its includes a complete set of growth curves and charts to help you establish
 habits more effectively.
 
 Moreover, this app completely open source.
+
+[![Get it on F-Droid][fdroid-button]][fdroid-myapp]
+
+Or download the latest APK from the [Releases Section](https://github.com/FriesI23/mhabit/releases/latest).
 
 ## Screenshots
 
@@ -40,10 +51,10 @@ You can customize each habit with the following options:
 
 ## Todo
 
-| status | progress | desc. |
-| ------ | -------- | ----- |
-| | Build iOS version | build with iOS, need change some UI to Cupertino style. |
-| | Complete Documentation | [`README.md`](README.md) |
+| status | progress               | desc.                                                   |
+| ------ | ---------------------- | ------------------------------------------------------- |
+|        | Build iOS version      | build with iOS, need change some UI to Cupertino style. |
+|        | Complete Documentation | [`README.md`](README.md)                                |
 
 ## Install
 
@@ -52,6 +63,9 @@ You can customize each habit with the following options:
 See [Build from source](#build-from-source).
 
 ## Build from source
+
+Make sure your flutter version is `3.7.12`, you can use `fvm` to keep multi
+versions in your local machine.
 
 1. in project folder, run `flutter pub get`
 2. open an android or ios emulator
@@ -102,3 +116,15 @@ limitations under the License.
 [display-op-tb]: docs/README/images/habit-display-op-tb.gif
 [export-and-import]: docs/README/images/export-and-import.gif
 [export-and-import-tb]: docs/README/images/export-and-import-tb.gif
+[fdroid-button]: docs/README/images/fdroid-get-it-on.png
+[fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit/
+[github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml
+[github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml/badge.svg
+[github-release-page]: https://github.com/FriesI23/mhabit/releases
+[app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
+[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.7.12-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
+[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.7.12
+[license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
+[app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
+[app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
+[app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit

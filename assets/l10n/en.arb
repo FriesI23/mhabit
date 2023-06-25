@@ -187,7 +187,7 @@
   "habitDisplay_statsMenu_popularitySubgroupText": "Popularity (Last 30 days)",
 
   "habitDisplay_mainMenu_lightTheme": "Light Theme",
-  "habitDisplay_mainMenu_darkTheme": "Dart Theme",
+  "habitDisplay_mainMenu_darkTheme": "Dark Theme",
   "habitDisplay_mainMenu_followSystemTheme": "Follow System",
   "habitDisplay_mainMenu_showArchivedTileText": "Show Archived",
   "habitDisplay_mainMenu_showCompletedTileText": "Show Completed",
@@ -460,6 +460,20 @@
     }
   },
   "calendarPicker_clip_after7Days": "Next {date}",
+
+  "exportConfirmDialog_title_exportAll": "Export all habits?",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportMulti": "Export {number, plural, =0{current habit} =1{1 habit} other{{number} habits}}?",
+  "exportConfirmDialog_option_includeRecords": "include records",
+  "exportConfirmDialog_cancel_buttonText": "cancel",
+  "exportConfirmDialog_confirm_buttonText": "export",
 
   "snackbar_undoText": "UNDO",
   "snackbar_dissmessText": "DISMISS"

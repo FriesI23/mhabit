@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.4.1+12
+
+- fixed filter issue, see [#38](https://github.com/FriesI23/mhabit/issues/38)
+
+## 1.4.0+11
+
+- add feature to export habit without records
+- update `readme`
+
 ## 1.3.2+10
 
 - fix fastlane/zh-CN app title name

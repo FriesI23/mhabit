@@ -229,14 +229,14 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
         CheckboxListTile(
           title: l10n != null
               ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
-              : const Text("Show Completed"),
+              : const Text("Show Actived"),
           secondary: const Icon(HabitProgressIcons.progress_50percent),
-          enabled: habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
+          enabled: habitsDisplayFilter.copyWith(allowActivedHabits: false) !=
               HabitsDisplayFilter.allFalse,
-          value: habitsDisplayFilter.allowCompleteHabits,
+          value: habitsDisplayFilter.allowActivedHabits,
           onChanged: (value) {
             var newFilter =
-                habitsDisplayFilter.copyWith(allowCompleteHabits: value);
+                habitsDisplayFilter.copyWith(allowActivedHabits: value);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }
@@ -245,14 +245,14 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
         CheckboxListTile(
           title: l10n != null
               ? Text(l10n.habitDisplay_statsMenu_completedTileText)
-              : const Text("Show Actived"),
+              : const Text("Show Completed"),
           secondary: const Icon(HabitProgressIcons.progress_100percent),
-          enabled: habitsDisplayFilter.copyWith(allowActivedHabits: false) !=
+          enabled: habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
               HabitsDisplayFilter.allFalse,
-          value: habitsDisplayFilter.allowActivedHabits,
+          value: habitsDisplayFilter.allowCompleteHabits,
           onChanged: (value) {
             var newFilter =
-                habitsDisplayFilter.copyWith(allowActivedHabits: value);
+                habitsDisplayFilter.copyWith(allowCompleteHabits: value);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }

@@ -273,6 +273,12 @@
   "calendarPicker_clip_tomorrow": "明天",
   "calendarPicker_clip_after7Days": "下{date}",
 
+  "exportConfirmDialog_title_exportAll": "导出所有习惯？",
+  "exportConfirmDialog_title_exportMulti": "导出{number, plural, =0{当前习惯} other{{number}个习惯}}?",
+  "exportConfirmDialog_option_includeRecords": "包含习惯记录",
+  "exportConfirmDialog_cancel_buttonText": "取消",
+  "exportConfirmDialog_confirm_buttonText": "导出",
+
   "snackbar_undoText": "撤回",
   "snackbar_dissmessText": "忽略"
 }

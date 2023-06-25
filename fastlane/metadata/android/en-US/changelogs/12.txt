@@ -1,0 +1,1 @@
+- fixed filter issue, see [#38](https://github.com/FriesI23/mhabit/issues/38)
