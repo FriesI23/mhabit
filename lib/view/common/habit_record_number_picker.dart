@@ -100,9 +100,6 @@ class _HabitRecordCustomNumberPickerDialog
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final colorScheme = themeData.colorScheme;
-    final textTheme = themeData.textTheme;
     final l10n = L10n.of(context);
 
     final Widget normalValChip = ActionChip(
@@ -188,26 +185,11 @@ class _HabitRecordCustomNumberPickerDialog
                 if (widget.recordTargetExtraValue != null) buildExtraValChip(),
               ],
             ),
-            TextField(
-              controller: _inputController,
-              decoration: InputDecoration(
-                  hintText: l10n?.habitDetail_changeGoal_helpText(
-                          defaultHabitDailyGoal.toSimpleString()) ??
-                      "Daily goal, "
-                          "default: ${defaultHabitDailyGoal.toSimpleString()}",
-                  hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
-                  helperText: widget.recordDate != null
-                      ? DateFormat.yMMMd(l10n?.localeName)
-                          .format(widget.recordDate!)
-                      : null,
-                  counterText: "${NumberFormat().format(minHabitDailyGoal)}"
-                      " ~ "
-                      "${NumberFormat().format(maxHabitdailyGoal)}"),
-              keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true, signed: false),
-              inputFormatters: [TextFormatterCustom.decimalr2],
-              style: textTheme.bodyLarge,
-              onChanged: (value) {
+            // TODO: completion code
+            _HabitRecordTextField(
+              recordDate: widget.recordDate,
+              inputController: _inputController,
+              onValueChanged: (value) {
                 num newDailyGoal;
                 try {
                   newDailyGoal = num.parse(value);
@@ -246,5 +228,95 @@ class _HabitRecordCustomNumberPickerDialog
         ),
       );
     });
+  }
+}
+
+class _HabitRecordTextField extends StatelessWidget {
+  final HabitDate? recordDate;
+  final bool increaseButtonEnabled;
+  final bool decreaseButtonEnabled;
+  final TextEditingController? inputController;
+  final ValueChanged<String>? onValueChanged;
+  final VoidCallback? onIncreaseButtonPressed;
+  final VoidCallback? onDecreaseButtonPressed;
+
+  const _HabitRecordTextField({
+    this.recordDate,
+    this.increaseButtonEnabled = false,
+    this.decreaseButtonEnabled = false,
+    this.inputController,
+    this.onValueChanged,
+    this.onIncreaseButtonPressed,
+    this.onDecreaseButtonPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+    final colorScheme = themeData.colorScheme;
+    final textTheme = themeData.textTheme;
+    final l10n = L10n.of(context);
+
+    final double textScaleFactor =
+        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+
+    final increaseButton = IconButton(
+      style: IconButton.styleFrom(
+        padding: EdgeInsets.zero,
+        maximumSize: Size.infinite,
+      ),
+      onPressed: increaseButtonEnabled ? onIncreaseButtonPressed : null,
+      iconSize: 28.0 * textScaleFactor,
+      icon: const Icon(MdiIcons.menuUp),
+    );
+
+    final decreaseButton = IconButton(
+      style: IconButton.styleFrom(
+        padding: EdgeInsets.zero,
+        maximumSize: Size.infinite,
+      ),
+      onPressed: decreaseButtonEnabled ? onDecreaseButtonPressed : null,
+      iconSize: 28.0 * textScaleFactor,
+      icon: const Icon(MdiIcons.menuDown),
+    );
+
+    final textField = TextField(
+      controller: inputController,
+      decoration: InputDecoration(
+          hintText: l10n?.habitDetail_changeGoal_helpText(
+                  defaultHabitDailyGoal.toSimpleString()) ??
+              "Daily goal, "
+                  "default: ${defaultHabitDailyGoal.toSimpleString()}",
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+          helperText: recordDate != null
+              ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
+              : null,
+          counterText: "${NumberFormat().format(minHabitDailyGoal)}"
+              " ~ "
+              "${NumberFormat().format(maxHabitdailyGoal)}"),
+      keyboardType:
+          const TextInputType.numberWithOptions(decimal: true, signed: false),
+      inputFormatters: [TextFormatterCustom.decimalr2],
+      style: textTheme.bodyLarge,
+      onChanged: onValueChanged,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(child: textField),
+        const SizedBox(width: 10),
+        SizedBox(
+          height: 60 * textScaleFactor,
+          width: 30 * textScaleFactor,
+          child: Column(
+            children: [
+              Flexible(child: increaseButton),
+              Flexible(child: decreaseButton),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }
