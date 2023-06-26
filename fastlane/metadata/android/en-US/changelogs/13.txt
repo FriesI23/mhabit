@@ -1,0 +1,1 @@
+- fixed misspelling in theme change button

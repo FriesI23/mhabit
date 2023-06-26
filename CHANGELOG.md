@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.4.2+13
+
+- fixed misspelling in theme change button
+
 ## 1.4.1+12
 
 - fixed filter issue, see [#38](https://github.com/FriesI23/mhabit/issues/38)
