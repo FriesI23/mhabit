@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.5.0+14
+
+- add two faster input buttons to change the daily goal value
+
 ## 1.4.2+13
 
 - fixed misspelling in theme change button
