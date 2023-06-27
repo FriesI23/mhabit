@@ -309,6 +309,11 @@ class _HabitRecordCustomNumberPickerDialog
 }
 
 class _HabitRecordTextField extends StatelessWidget {
+  static const textFieldRightButtonFieldWidth = 40.0;
+  static const textFieldRightButtonFieldHeight = 60.0;
+  static const textFieldRightButtonIconSize = 28.0;
+  static const textFieldRightButtonBorderRadius = Radius.circular(10);
+
   final HabitDate? recordDate;
   final bool increaseButtonEnabled;
   final bool decreaseButtonEnabled;
@@ -340,13 +345,15 @@ class _HabitRecordTextField extends StatelessWidget {
     final increaseButton = _NumberStepButton(
       onUpdate: onIncreaseButtonPressed,
       borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        topLeft: textFieldRightButtonBorderRadius,
+        topRight: textFieldRightButtonBorderRadius,
+      ),
       child: SizedBox(
-        width: 60,
-        height: 40,
+        width: textFieldRightButtonFieldWidth,
+        height: textFieldRightButtonFieldHeight / 2,
         child: Icon(
           MdiIcons.menuUp,
-          size: 28.0 * textScaleFactor,
+          size: textFieldRightButtonIconSize * textScaleFactor,
           color: increaseButtonEnabled
               ? colorScheme.outline
               : colorScheme.outlineVariant,
@@ -357,13 +364,15 @@ class _HabitRecordTextField extends StatelessWidget {
     final decreaseButton = _NumberStepButton(
       onUpdate: onDecreaseButtonPressed,
       borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        bottomLeft: textFieldRightButtonBorderRadius,
+        bottomRight: textFieldRightButtonBorderRadius,
+      ),
       child: SizedBox(
-        width: 60,
-        height: 40,
+        width: textFieldRightButtonFieldWidth,
+        height: textFieldRightButtonFieldHeight / 2,
         child: Icon(
           MdiIcons.menuDown,
-          size: 28.0 * textScaleFactor,
+          size: textFieldRightButtonIconSize * textScaleFactor,
           color: decreaseButtonEnabled
               ? colorScheme.outline
               : colorScheme.outlineVariant,
@@ -398,8 +407,8 @@ class _HabitRecordTextField extends StatelessWidget {
         Expanded(child: textField),
         const SizedBox(width: 10),
         SizedBox(
-          height: 60 * textScaleFactor,
-          width: 40 * textScaleFactor,
+          height: textFieldRightButtonFieldHeight * textScaleFactor,
+          width: textFieldRightButtonFieldWidth * textScaleFactor,
           child: Column(
             children: [
               Expanded(child: increaseButton),
@@ -418,9 +427,9 @@ class _NumberStepButton extends StatefulWidget {
   final VoidCallback? onUpdate;
   final Duration minDelay;
   final Duration initialDelay;
-  final int delaySteps;
+  final int delaySteps = 2;
   final BorderRadius? borderRadius;
-  final ShapeBorder? shape;
+  final ShapeBorder? shape = null;
   final Widget child;
 
   const _NumberStepButton(
@@ -428,9 +437,9 @@ class _NumberStepButton extends StatefulWidget {
       this.onUpdate,
       this.minDelay = const Duration(milliseconds: 60),
       this.initialDelay = const Duration(milliseconds: 1000),
-      this.delaySteps = 2,
+      // this.delaySteps = 2,
       this.borderRadius,
-      this.shape,
+      // this.shape,
       required this.child})
       : assert(minDelay <= initialDelay,
             "The minimum delay cannot be larger than the initial delay"),
