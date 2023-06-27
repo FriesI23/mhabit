@@ -35,7 +35,11 @@ extension NumExtension on num {
     }
   }
 
-  String toSimpleString() {
-    return isInteger(this) ? toStringAsFixed(0) : toString();
+  String toSimpleString({int? fixedDigit}) {
+    return isInteger(this)
+        ? toStringAsFixed(0)
+        : fixedDigit != null
+            ? toStringAsFixed(fixedDigit)
+            : toString();
   }
 }

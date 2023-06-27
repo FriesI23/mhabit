@@ -98,6 +98,89 @@ class _HabitRecordCustomNumberPickerDialog
     _inputController.dispose();
   }
 
+  bool _isTextFieldIncreaseButtonEnabled() {
+    if (_result != null && _result! >= maxHabitdailyGoal) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool _isTextFieldDecreaseButtonEnabled() {
+    if (_result != null && _result! <= minHabitDailyGoal) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool _isButtonNeedRebuild(num lastValue, num newValue) {
+    if (lastValue == minHabitDailyGoal ||
+        newValue == minHabitDailyGoal ||
+        lastValue == maxHabitdailyGoal ||
+        newValue == maxHabitdailyGoal) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void _onTextFieldIncreaseButtonPressed() {
+    final currentValue = num.tryParse(_inputController.text);
+    if (currentValue == null) return;
+    final newValue = currentValue + 1;
+    _inputController.text = newValue.toSimpleString(fixedDigit: 2);
+    _inputController.selection = TextSelection(
+        baseOffset: _inputController.text.length,
+        extentOffset: _inputController.text.length);
+    _result = onDailyGoalTextInputChanged(newValue,
+        controller: _inputController, allowInputZero: true);
+
+    if (_isButtonNeedRebuild(currentValue, _result!)) {
+      setState(() {});
+    }
+  }
+
+  void _onTextFieldDecreaseButtonPressed() {
+    final currentValue = num.tryParse(_inputController.text);
+    if (currentValue == null) return;
+    num newValue;
+    if (currentValue < 1 + minHabitDailyGoal &&
+        currentValue > minHabitDailyGoal) {
+      newValue = 0;
+    } else if (currentValue > 0) {
+      newValue = currentValue - 1;
+    } else {
+      newValue = 0;
+    }
+    _inputController.text = newValue.toSimpleString(fixedDigit: 2);
+    _inputController.selection = TextSelection(
+        baseOffset: _inputController.text.length,
+        extentOffset: _inputController.text.length);
+    _result = onDailyGoalTextInputChanged(newValue,
+        controller: _inputController, allowInputZero: true);
+
+    if (_isButtonNeedRebuild(currentValue, _result!)) {
+      setState(() {});
+    }
+  }
+
+  void _onTextFieldValueChanged(String value) {
+    num newDailyGoal;
+    try {
+      newDailyGoal = num.parse(value);
+    } on FormatException {
+      newDailyGoal = defaultHabitDailyGoal;
+    }
+    final currentValue = _result;
+    _result = onDailyGoalTextInputChanged(newDailyGoal,
+        controller: _inputController, allowInputZero: true);
+
+    if (currentValue != null && _isButtonNeedRebuild(currentValue, _result!)) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
@@ -185,20 +268,14 @@ class _HabitRecordCustomNumberPickerDialog
                 if (widget.recordTargetExtraValue != null) buildExtraValChip(),
               ],
             ),
-            // TODO: completion code
             _HabitRecordTextField(
               recordDate: widget.recordDate,
               inputController: _inputController,
-              onValueChanged: (value) {
-                num newDailyGoal;
-                try {
-                  newDailyGoal = num.parse(value);
-                } on FormatException {
-                  newDailyGoal = defaultHabitDailyGoal;
-                }
-                _result = onDailyGoalTextInputChanged(newDailyGoal,
-                    controller: _inputController, allowInputZero: true);
-              },
+              increaseButtonEnabled: _isTextFieldIncreaseButtonEnabled(),
+              decreaseButtonEnabled: _isTextFieldDecreaseButtonEnabled(),
+              onIncreaseButtonPressed: _onTextFieldIncreaseButtonPressed,
+              onDecreaseButtonPressed: _onTextFieldDecreaseButtonPressed,
+              onValueChanged: _onTextFieldValueChanged,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 24, bottom: 12),
@@ -260,24 +337,38 @@ class _HabitRecordTextField extends StatelessWidget {
     final double textScaleFactor =
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
-    final increaseButton = IconButton(
-      style: IconButton.styleFrom(
-        padding: EdgeInsets.zero,
-        maximumSize: Size.infinite,
+    final increaseButton = _NumberStepButton(
+      onUpdate: onIncreaseButtonPressed,
+      borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+      child: SizedBox(
+        width: 60,
+        height: 40,
+        child: Icon(
+          MdiIcons.menuUp,
+          size: 28.0 * textScaleFactor,
+          color: increaseButtonEnabled
+              ? colorScheme.outline
+              : colorScheme.outlineVariant,
+        ),
       ),
-      onPressed: increaseButtonEnabled ? onIncreaseButtonPressed : null,
-      iconSize: 28.0 * textScaleFactor,
-      icon: const Icon(MdiIcons.menuUp),
     );
 
-    final decreaseButton = IconButton(
-      style: IconButton.styleFrom(
-        padding: EdgeInsets.zero,
-        maximumSize: Size.infinite,
+    final decreaseButton = _NumberStepButton(
+      onUpdate: onDecreaseButtonPressed,
+      borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+      child: SizedBox(
+        width: 60,
+        height: 40,
+        child: Icon(
+          MdiIcons.menuDown,
+          size: 28.0 * textScaleFactor,
+          color: decreaseButtonEnabled
+              ? colorScheme.outline
+              : colorScheme.outlineVariant,
+        ),
       ),
-      onPressed: decreaseButtonEnabled ? onDecreaseButtonPressed : null,
-      iconSize: 28.0 * textScaleFactor,
-      icon: const Icon(MdiIcons.menuDown),
     );
 
     final textField = TextField(
@@ -308,15 +399,95 @@ class _HabitRecordTextField extends StatelessWidget {
         const SizedBox(width: 10),
         SizedBox(
           height: 60 * textScaleFactor,
-          width: 30 * textScaleFactor,
+          width: 40 * textScaleFactor,
           child: Column(
             children: [
-              Flexible(child: increaseButton),
-              Flexible(child: decreaseButton),
+              Expanded(child: increaseButton),
+              Expanded(child: decreaseButton),
             ],
           ),
         )
       ],
     );
+  }
+}
+
+// Copyright: Leo@stackoverflow 2022
+// see: https://stackoverflow.com/a/71945256
+class _NumberStepButton extends StatefulWidget {
+  final VoidCallback? onUpdate;
+  final Duration minDelay;
+  final Duration initialDelay;
+  final int delaySteps;
+  final BorderRadius? borderRadius;
+  final ShapeBorder? shape;
+  final Widget child;
+
+  const _NumberStepButton(
+      {Key? key,
+      this.onUpdate,
+      this.minDelay = const Duration(milliseconds: 60),
+      this.initialDelay = const Duration(milliseconds: 1000),
+      this.delaySteps = 2,
+      this.borderRadius,
+      this.shape,
+      required this.child})
+      : assert(minDelay <= initialDelay,
+            "The minimum delay cannot be larger than the initial delay"),
+        super(key: key);
+
+  @override
+  _NumberStepButtonState createState() => _NumberStepButtonState();
+}
+
+class _NumberStepButtonState extends State<_NumberStepButton> {
+  late bool _holding;
+  late int _tapDownCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _holding = false;
+    _tapDownCount = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _stopHolding(),
+      onTapDown: (_) => _startHolding(),
+      onTapCancel: () => _stopHolding(),
+      borderRadius: widget.borderRadius,
+      customBorder: widget.shape,
+      child: widget.child,
+    );
+  }
+
+  void _startHolding() async {
+    widget.onUpdate?.call();
+    _tapDownCount += 1;
+
+    final int myCount = _tapDownCount;
+    if (_holding) return;
+    _holding = true;
+
+    final step =
+        (widget.initialDelay - widget.minDelay).inMilliseconds.toDouble() /
+            widget.delaySteps;
+    var delay = widget.initialDelay.inMilliseconds.toDouble();
+
+    while (true) {
+      await Future.delayed(Duration(milliseconds: delay.round()));
+      if (_holding && myCount == _tapDownCount) {
+        widget.onUpdate?.call();
+      } else {
+        return;
+      }
+      if (delay > widget.minDelay.inMilliseconds) delay -= step;
+    }
+  }
+
+  void _stopHolding() {
+    _holding = false;
   }
 }
