@@ -26,6 +26,7 @@ import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
 import 'sliver_calendar_bar.dart';
 
+const kHabitSummaryListTileHeight = 64.0;
 const kMaxHabitSummaryListTileTextScale = 1.3;
 
 class HabitSummaryListTile extends StatefulWidget {

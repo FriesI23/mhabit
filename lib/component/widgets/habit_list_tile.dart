@@ -19,9 +19,7 @@ import 'package:flutter/material.dart';
 import '../../common/types.dart';
 import '../widget.dart';
 
-const double kHabitSummaryListTileHeight = 64.0;
-const kDefaultHabitSummaryListTilePadding =
-    EdgeInsets.fromLTRB(2.0, 2.0, 6.0, 2.0);
+const kDefaultHabitListTilePadding = EdgeInsets.fromLTRB(2.0, 2.0, 6.0, 2.0);
 
 class HabitListTile extends StatelessWidget {
   final double sizePrt;
@@ -76,7 +74,7 @@ class HabitListTile extends StatelessWidget {
     return MagnetScrollPhysics(itemSize: itemSize);
   }
 
-  EdgeInsets get _padding => padding ?? kDefaultHabitSummaryListTilePadding;
+  EdgeInsets get _padding => padding ?? kDefaultHabitListTilePadding;
 
   double? get _itemHeight {
     if (itemHeight == null) return null;
