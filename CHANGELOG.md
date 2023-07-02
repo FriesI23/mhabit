@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.5.1+15
+
+- fixed: FAB display overlap with habit
+
 ## 1.5.0+14
 
 - add two faster input buttons to change the daily goal value
