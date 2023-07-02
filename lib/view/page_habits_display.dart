@@ -63,7 +63,7 @@ import 'page_app_setting.dart' as app_setting_view;
 import 'page_habit_detail.dart' as habit_detail_view;
 import 'page_habit_edit.dart' as habit_edit_view;
 
-const double _kCommonEvalation = 2.0;
+const _kCommonEvalation = 2.0;
 
 const _kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
 const _kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
@@ -179,7 +179,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
         if (data.measuring) {
-          return const SizedBox(height: kHabitSummaryListTileHeight);
+          return const SizedBox(height: kHabitDisplayListTileHeight);
         } else if (element is HabitSummaryDataSortCache) {
           return _buildHabitsContentCell(context, element.uuid);
         } else {
@@ -1071,7 +1071,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     //#region bottom placeholder
     Widget buildBottomPlaceHolder(BuildContext context) {
-      return const SliverToBoxAdapter(child: FixedPagePlaceHolder());
+      return const SliverToBoxAdapter(
+        child: FixedPagePlaceHolder(
+          minHeight: kHabitDisplayListTileHeight,
+        ),
+      );
     }
     //#endregion
 

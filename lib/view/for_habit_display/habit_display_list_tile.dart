@@ -22,6 +22,8 @@ import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
 import 'habit_summary_list_tile.dart';
 
+const kHabitDisplayListTileHeight = kHabitSummaryListTileHeight;
+
 class HabitDisplayListTile extends StatelessWidget {
   final HabitDate? startDate;
   final HabitDate? endedData;
@@ -101,6 +103,7 @@ class HabitDisplayListTile extends StatelessWidget {
             enableFeedback: isInEditMode ? false : true,
             child: HabitSummaryListTile(
               key: ValueKey("${data.uuid}|$isSelected"),
+              height: kHabitDisplayListTileHeight,
               data: data,
               startDate: startDate,
               endDate: endedData,
