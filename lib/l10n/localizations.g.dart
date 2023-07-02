@@ -1077,6 +1077,24 @@ abstract class L10n {
   /// **' (Default)'**
   String get appSetting_firstDayOfWeekDialog_defaultText;
 
+  /// No description provided for @appSetting_dateDisplayFormat_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Date display format ({formatTemplate})'**
+  String appSetting_dateDisplayFormat_titleText(String formatTemplate);
+
+  /// No description provided for @appSetting_dateDisplayFormat_titleTemplate_followSystemText.
+  ///
+  /// In en, this message translates to:
+  /// **'follow system setting'**
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText;
+
+  /// No description provided for @appSetting_dateDisplayFormat_subTitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Configed date format will be applied to the date display on habit detail page.'**
+  String get appSetting_dateDisplayFormat_subTitleText;
+
   /// No description provided for @appSetting_reminderSubgroupText.
   ///
   /// In en, this message translates to:
@@ -1412,6 +1430,114 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Color {index}'**
   String common_habitColorType_default(int index);
+
+  /// No description provided for @common_customDateTimeFormatPicker_useSystemFormat_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system format'**
+  String get common_customDateTimeFormatPicker_useSystemFormat_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_fmtTileText.
+  ///
+  /// In en, this message translates to:
+  /// **'Date format'**
+  String get common_customDateTimeFormatPicker_fmtTileText;
+
+  /// No description provided for @common_customDateTimeFormatPicker_ymd_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Year Month Day'**
+  String get common_customDateTimeFormatPicker_ymd_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_mdy_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Month Day Year'**
+  String get common_customDateTimeFormatPicker_mdy_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_dmy_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Day Month Year'**
+  String get common_customDateTimeFormatPicker_dmy_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_SepTileText.
+  ///
+  /// In en, this message translates to:
+  /// **'Separator'**
+  String get common_customDateTimeFormatPicker_SepTileText;
+
+  /// No description provided for @common_customDateTimeFormatPicker_sepDash_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Dash'**
+  String get common_customDateTimeFormatPicker_sepDash_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_sepSlash_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Slash'**
+  String get common_customDateTimeFormatPicker_sepSlash_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_sepSpace_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Space'**
+  String get common_customDateTimeFormatPicker_sepSpace_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_sepDot_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Dot'**
+  String get common_customDateTimeFormatPicker_sepDot_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_empty_text.
+  ///
+  /// In en, this message translates to:
+  /// **'No Separator'**
+  String get common_customDateTimeFormatPicker_empty_text;
+
+  /// split char
+  ///
+  /// In en, this message translates to:
+  /// **'{splitName}: \"{splitChar}\"'**
+  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar);
+
+  /// No description provided for @common_customDateTimeFormatPicker_12Hour_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 12-hour format'**
+  String get common_customDateTimeFormatPicker_12Hour_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_monthName_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Use full name'**
+  String get common_customDateTimeFormatPicker_monthName_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_applyFreqChart_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for Freq Chart'**
+  String get common_customDateTimeFormatPicker_applyFreqChart_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_applyHeapmap_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for Calendar'**
+  String get common_customDateTimeFormatPicker_applyHeapmap_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_cancelButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get common_customDateTimeFormatPicker_cancelButton_text;
+
+  /// No description provided for @common_customDateTimeFormatPicker_confirmButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'confirm'**
+  String get common_customDateTimeFormatPicker_confirmButton_text;
 
   /// No description provided for @calendarPicker_clip_today.
   ///

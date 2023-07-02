@@ -26,6 +26,7 @@ import '../common/global.dart';
 import '../common/logging.dart';
 import '../common/utils.dart';
 import '../model/app_reminder_config.dart';
+import '../model/custom_date_format.dart';
 import '../model/habit_display.dart';
 import '../theme/color.dart';
 
@@ -52,6 +53,9 @@ abstract class ProfileInterface {
 
   AppReminderConfig? getAppReminder();
   Future<bool> setAppReminder(AppReminderConfig newTimeOfDay);
+
+  CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
+  Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
 }
 
 enum ProfileKey {
@@ -62,6 +66,7 @@ enum ProfileKey {
   habitsRecordScrollBehavior,
   firstDay,
   appReminder,
+  customDateYmdHmsConfig,
 }
 
 class Profile implements ProfileInterface, FutureInitializationABC {
@@ -180,5 +185,25 @@ class Profile implements ProfileInterface, FutureInitializationABC {
   Future<bool> setAppReminder(AppReminderConfig newReminder) {
     return _pref.setString(
         ProfileKey.appReminder.name, jsonEncode(newReminder.toJson()));
+  }
+
+  @override
+  CustomDateYmdHmsConfig getCustomDateYmdHmsConfig() {
+    final raw = _pref.getString(ProfileKey.customDateYmdHmsConfig.name);
+    if (raw == null) {
+      return const CustomDateYmdHmsConfig.withDefault();
+    }
+    try {
+      return CustomDateYmdHmsConfig.fromJson(jsonDecode(raw));
+    } catch (e) {
+      ErrorLog.jsonDecode("custom date config in profile decode err.");
+      return const CustomDateYmdHmsConfig.withDefault();
+    }
+  }
+
+  @override
+  Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig) {
+    return _pref.setString(
+        ProfileKey.customDateYmdHmsConfig.name, jsonEncode(newConfig.toJson()));
   }
 }

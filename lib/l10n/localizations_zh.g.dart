@@ -547,6 +547,17 @@ class L10nZh extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => '（默认值）';
 
   @override
+  String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
+    return '日期显示格式 ($formatTemplate)';
+  }
+
+  @override
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => '跟随系统设置';
+
+  @override
+  String get appSetting_dateDisplayFormat_subTitleText => '配置的日期格式将应用于习惯详情页面的日期显示。';
+
+  @override
   String get appSetting_reminderSubgroupText => '提醒';
 
   @override
@@ -723,6 +734,62 @@ class L10nZh extends L10n {
   String common_habitColorType_default(int index) {
     return '颜色-$index';
   }
+
+  @override
+  String get common_customDateTimeFormatPicker_useSystemFormat_text => '使用系统格式';
+
+  @override
+  String get common_customDateTimeFormatPicker_fmtTileText => '日期格式';
+
+  @override
+  String get common_customDateTimeFormatPicker_ymd_text => '年月日';
+
+  @override
+  String get common_customDateTimeFormatPicker_mdy_text => '月日年';
+
+  @override
+  String get common_customDateTimeFormatPicker_dmy_text => '日月年';
+
+  @override
+  String get common_customDateTimeFormatPicker_SepTileText => '分隔符';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepDash_text => '短横线';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepSlash_text => '斜线';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepSpace_text => '空格';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepDot_text => '点号';
+
+  @override
+  String get common_customDateTimeFormatPicker_empty_text => '无分隔符';
+
+  @override
+  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+    return '$splitName: \"$splitChar\"';
+  }
+
+  @override
+  String get common_customDateTimeFormatPicker_12Hour_text => '使用12小时制';
+
+  @override
+  String get common_customDateTimeFormatPicker_monthName_text => '使用完整名称';
+
+  @override
+  String get common_customDateTimeFormatPicker_applyFreqChart_text => '对频率图表生效';
+
+  @override
+  String get common_customDateTimeFormatPicker_applyHeapmap_text => '对补卡日历生效';
+
+  @override
+  String get common_customDateTimeFormatPicker_cancelButton_text => '取消';
+
+  @override
+  String get common_customDateTimeFormatPicker_confirmButton_text => '确认';
 
   @override
   String get calendarPicker_clip_today => '今天';

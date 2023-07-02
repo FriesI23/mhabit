@@ -5,7 +5,14 @@
   "licenser.license": "AL2",
   "debug.openDebug": "openOnDebugBreak",
   "debug.internalConsoleOptions": "openOnSessionStart",
-  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.flutterSdkPaths": [
+    ".fvm/flutter_sdk",
+    ".flutter"
+  ],
+  "dart.analysisExcludedFolders": [
+    ".fvm",
+    ".flutter"
+  ],
   "dartImport.fixOnSave": true,
   "python.formatting.provider": "yapf",
   "java.configuration.updateBuildConfiguration": "automatic",

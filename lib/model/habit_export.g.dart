@@ -256,7 +256,7 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
       startDate: json['start_date'] as int?,
       targetDays: json['target_days'] as int?,
       records: (json['records'] as List<dynamic>?)
-              ?.map((e) => RecordExportData.fromJson(e))
+              ?.map(RecordExportData.fromJson)
               .toList() ??
           const [],
     );

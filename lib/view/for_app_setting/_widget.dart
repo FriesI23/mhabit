@@ -16,3 +16,5 @@ export './app_setting_develop_subgroup.dart';
 export './app_setting_first_day.dart' show AppSettingFirstDayTile;
 export './app_setting_log_level_tile.dart' show AppSettingLogLevelTile;
 export './app_setting_reminder_tile.dart' show AppSettingReminderTile;
+export './app_setting_date_display_format.dart'
+    show AppSettingDateDisplayFormatListTile;
