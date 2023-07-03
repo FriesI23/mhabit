@@ -21,6 +21,7 @@ import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
+import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
@@ -59,6 +60,11 @@ class App extends StatelessWidget {
         ChangeNotifierProxyProvider<Global, AppFirstDayViewModel>(
           create: (context) =>
               AppFirstDayViewModel(global: context.read<Global>()),
+          update: (context, value, previous) => previous!..updateGlobal(value),
+        ),
+        ChangeNotifierProxyProvider<Global, AppCustomDateYmdHmsConfigViewModel>(
+          create: (context) => AppCustomDateYmdHmsConfigViewModel(
+              global: context.read<Global>()),
           update: (context, value, previous) => previous!..updateGlobal(value),
         ),
         ChangeNotifierProxyProvider2<Global, NotificationChannelData,

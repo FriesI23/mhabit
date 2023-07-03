@@ -25,6 +25,7 @@ import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
 import '../../model/habit_form.dart';
+import '../../provider/app_custom_date_format.dart';
 import '../../provider/habit_detail.dart';
 import '../../provider/habit_summary.dart';
 import '../../theme/color.dart';
@@ -173,7 +174,9 @@ class _HabitEditReplacementRecordCalendarDialog
     final textTheme = themeData.textTheme;
     final colorData = themeData.extension<CustomColors>();
 
+    final configvm = context.read<AppCustomDateYmdHmsConfigViewModel>();
     final viewmodel = context.read<HabitDetailViewModel>();
+
     final valueColor = (widget.defaultColorType != null
             ? colorData?.getColor(widget.defaultColorType!)
             : null) ??
@@ -219,7 +222,9 @@ class _HabitEditReplacementRecordCalendarDialog
       monthLabelItemBuilder: (context, date, defaultFormat) {
         return L10nBuilder(
           builder: (context, l10n) => Text(
-            DateFormat('yMMM', l10n?.localeName).format(date),
+            configvm.config
+                .getYMFormatterForHeatmapCal(l10n?.localeName)
+                .format(date),
             style: textTheme.labelLarge
                 ?.copyWith(color: themeData.colorScheme.outline),
           ),

@@ -20,6 +20,7 @@ import '../common/enums.dart';
 import '../db/profile.dart';
 import '../theme/color.dart';
 import 'app_reminder_config.dart';
+import 'custom_date_format.dart';
 import 'habit_display.dart';
 
 abstract class GlobalProxyProviderInterface {
@@ -68,4 +69,7 @@ class Global with GlobalDevelopModeMixin implements GlobalInterface {
   int get firstDay => profile.getFirstDay();
 
   AppReminderConfig get appReminderConfig => profile.getAppReminder();
+
+  CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
+      profile.getCustomDateYmdHmsConfig();
 }

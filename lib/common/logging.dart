@@ -148,4 +148,7 @@ class ErrorLog {
       _log("app:notify", meesage, error: error, track: track);
 
   static openUrl(String message) => _log("app:openUrl", message);
+
+  static jsonDecode(String message, [Object? err]) =>
+      _log("app:jsonDecode", message, error: err);
 }

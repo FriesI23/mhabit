@@ -14,25 +14,25 @@
 
 import 'package:flutter/material.dart';
 
-class GroupTitleListTile extends StatelessWidget {
-  final Widget? title;
-  final Color? textColor;
-  final EdgeInsetsGeometry? contentPadding;
+import '../model/custom_date_format.dart';
+import '../model/global.dart';
 
-  const GroupTitleListTile({
-    super.key,
-    this.title,
-    this.textColor,
-    this.contentPadding,
-  });
+class AppCustomDateYmdHmsConfigViewModel extends ChangeNotifier
+    implements GlobalProxyProviderInterface {
+  Global _g;
+
+  AppCustomDateYmdHmsConfigViewModel({required Global global}) : _g = global;
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      title: title,
-      textColor: textColor ?? Theme.of(context).colorScheme.primary,
-      contentPadding: contentPadding,
-    );
+  Global get g => _g;
+
+  @override
+  void updateGlobal(Global newGloal) => _g = newGloal;
+
+  CustomDateYmdHmsConfig get config => g.customDateYmdHmsConfig;
+
+  Future<void> setNewConfig(CustomDateYmdHmsConfig newConfig) async {
+    await g.profile.setCustomDateYmdHmsConfig(newConfig);
+    notifyListeners();
   }
 }

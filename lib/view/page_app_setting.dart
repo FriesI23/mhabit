@@ -35,6 +35,8 @@ import '../db/profile.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../model/app_reminder_config.dart';
+import '../model/custom_date_format.dart';
+import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
@@ -86,6 +88,16 @@ class AppSettingView extends StatefulWidget {
 
 class _AppSettingView extends State<AppSettingView>
     with XShare<AppSettingView> {
+  void _openCustomDateTimeFormatPickerDialog(BuildContext context) async {
+    if (!mounted) return;
+    final config = context.read<AppCustomDateYmdHmsConfigViewModel>();
+    final result = await showCustomDateTimeFormatPickerDialog(
+        context: context, config: config.config);
+
+    if (!mounted || result == null) return;
+    context.read<AppCustomDateYmdHmsConfigViewModel>().setNewConfig(result);
+  }
+
   void _openAppFirtDaySelectDialog(BuildContext context) async {
     if (!mounted) return;
     final firstday = context.read<AppFirstDayViewModel>();
@@ -311,6 +323,17 @@ class _AppSettingView extends State<AppSettingView>
         builder: (context, firstDay, child) => AppSettingFirstDayTile(
           firstDay: firstDay,
           onPressed: () => _openAppFirtDaySelectDialog(context),
+        ),
+      );
+      // TODO: indev
+      yield Selector<AppCustomDateYmdHmsConfigViewModel,
+          CustomDateYmdHmsConfig>(
+        selector: (context, vm) => vm.config,
+        shouldRebuild: (previous, next) => true,
+        builder: (context, config, child) =>
+            AppSettingDateDisplayFormatListTile(
+          config: config,
+          onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
         ),
       );
     }

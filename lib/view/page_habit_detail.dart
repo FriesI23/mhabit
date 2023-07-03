@@ -31,11 +31,13 @@ import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../extension/num_extensions.dart';
 import '../l10n/localizations.dart';
+import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
 import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
+import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/habit_detail.dart';
@@ -732,8 +734,9 @@ class _HabitDetailView extends State<HabitDetailView>
         );
       }
 
-      return Consumer<HabitDetailFreqChartViewModel>(
-        builder: (context, chartvm, child) => LayoutBuilder(
+      return Consumer2<HabitDetailFreqChartViewModel,
+          AppCustomDateYmdHmsConfigViewModel>(
+        builder: (context, chartvm, configvm, child) => LayoutBuilder(
           builder: (context, constraints) {
             final double textScaleFactor =
                 math.min(MediaQuery.textScaleFactorOf(context), 1.3);
@@ -807,17 +810,17 @@ class _HabitDetailView extends State<HabitDetailView>
                 final l10n = L10n.of(context);
                 switch (chartvm.chartCombine) {
                   case HabitDetailFreqChartCombine.monthly:
-                    return Text(
-                      DateFormat.yM(l10n?.localeName).format(lastDate),
-                    );
+                    return Text(configvm.config
+                        .getYMFormatterForFreqChart(l10n?.localeName)
+                        .format(lastDate));
                   case HabitDetailFreqChartCombine.yearly:
-                    return Text(
-                      DateFormat.y(l10n?.localeName).format(lastDate),
-                    );
+                    return Text(configvm.config
+                        .getYFormatterForFreqChart(l10n?.localeName)
+                        .format(lastDate));
                   case HabitDetailFreqChartCombine.weekly:
-                    return Text(
-                      DateFormat.yMd(l10n?.localeName).format(lastDate),
-                    );
+                    return Text(configvm.config
+                        .getYMDFormatterForFreqChart(l10n?.localeName)
+                        .format(lastDate));
                 }
               },
               getRightDateHelper:
@@ -830,17 +833,17 @@ class _HabitDetailView extends State<HabitDetailView>
                 }
                 switch (chartvm.chartCombine) {
                   case HabitDetailFreqChartCombine.monthly:
-                    return Text(
-                      DateFormat.yM(l10n?.localeName).format(firstDate),
-                    );
+                    return Text(configvm.config
+                        .getYMFormatterForFreqChart(l10n?.localeName)
+                        .format(firstDate));
                   case HabitDetailFreqChartCombine.yearly:
-                    return Text(
-                      DateFormat.y(l10n?.localeName).format(firstDate),
-                    );
+                    return Text(configvm.config
+                        .getYFormatterForFreqChart(l10n?.localeName)
+                        .format(firstDate));
                   case HabitDetailFreqChartCombine.weekly:
-                    return Text(
-                      DateFormat.yMd(l10n?.localeName).format(firstDate),
-                    );
+                    return Text(configvm.config
+                        .getYMDFormatterForFreqChart(l10n?.localeName)
+                        .format(firstDate));
                 }
               },
               onLeftButtonPressed: () {
@@ -1056,36 +1059,48 @@ class _HabitDetailOtherTileList extends StatelessWidget {
               leading: const Icon(Icons.repeat_outlined),
             ),
           // start date
-          HabitOtherInfoTile(
-            title: l10n != null
-                ? Text(l10n.habitDetail_startDateTile_title)
-                : const Text("Start Date"),
-            subTitle: Text(DateFormat.yMd(l10n?.localeName)
-                .format(viewmodel.habitStartDate)),
-            leading: const Icon(Icons.schedule_outlined),
+          Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+            selector: (context, vm) => vm.config,
+            builder: (context, config, child) => HabitOtherInfoTile(
+              title: l10n != null
+                  ? Text(l10n.habitDetail_startDateTile_title)
+                  : const Text("Start Date"),
+              subTitle: Text(config
+                  .getYMDFormatter(l10n?.localeName)
+                  .format(viewmodel.habitStartDate)),
+              leading: const Icon(Icons.schedule_outlined),
+            ),
           ),
           // create date
           if (viewmodel.habitDetailData != null)
-            HabitOtherInfoTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_createDateTile_title)
-                  : const Text("Created"),
-              subTitle: Text(DateFormat.yMd(l10n?.localeName)
-                  .add_jms()
-                  .format(viewmodel.habitDetailData!.createT)),
-              leading: const Icon(HabitCalIcons.calendar_modify),
+            Selector<AppCustomDateYmdHmsConfigViewModel,
+                CustomDateYmdHmsConfig>(
+              selector: (context, vm) => vm.config,
+              builder: (context, config, child) => HabitOtherInfoTile(
+                title: l10n != null
+                    ? Text(l10n.habitDetail_createDateTile_title)
+                    : const Text("Created"),
+                subTitle: Text(config
+                    .getFormatter(l10n?.localeName)
+                    .format(viewmodel.habitDetailData!.createT)),
+                leading: const Icon(HabitCalIcons.calendar_create),
+              ),
             ),
           // modified date
           if (viewmodel.habitDetailData != null)
-            HabitOtherInfoTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_modifyDateTile_title)
-                  : const Text("Modified"),
-              subTitle: Text(DateFormat.yMd(l10n?.localeName)
-                  .add_jms()
-                  .format(viewmodel.habitDetailData!.modifyT)),
-              leading: const Icon(HabitCalIcons.calendar_modify),
-              padding: const EdgeInsets.only(bottom: 6.0),
+            Selector<AppCustomDateYmdHmsConfigViewModel,
+                CustomDateYmdHmsConfig>(
+              selector: (context, vm) => vm.config,
+              builder: (context, config, child) => HabitOtherInfoTile(
+                title: l10n != null
+                    ? Text(l10n.habitDetail_modifyDateTile_title)
+                    : const Text("Modified"),
+                subTitle: Text(config
+                    .getFormatter(l10n?.localeName)
+                    .format(viewmodel.habitDetailData!.modifyT)),
+                leading: const Icon(HabitCalIcons.calendar_modify),
+                padding: const EdgeInsets.only(bottom: 6.0),
+              ),
             ),
         ],
       ),

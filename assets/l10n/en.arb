@@ -339,6 +339,18 @@
   "appSetting_firstDayOfWeekDialog_titleText": "Show first day of week",
   "appSetting_firstDayOfWeekDialog_defaultText": " (Default)",
 
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_dateDisplayFormat_titleText": "Date display format ({formatTemplate})",
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "follow system setting",
+  "appSetting_dateDisplayFormat_subTitleText": "Configed date format will be applied to the date display on habit detail page.",
+
   "appSetting_reminderSubgroupText": "Reminder",
   "appSetting_dailyReminder_titleText": "Daily reminder",
   "appSetting_dailyReminder_hintTile_titleText": "After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.",
@@ -448,6 +460,38 @@
     }
   },
   "common_habitColorType_default": "Color {index}",
+
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "Use system format",
+  "common_customDateTimeFormatPicker_fmtTileText": "Date format",
+  "common_customDateTimeFormatPicker_ymd_text": "Year Month Day",
+  "common_customDateTimeFormatPicker_mdy_text": "Month Day Year",
+  "common_customDateTimeFormatPicker_dmy_text": "Day Month Year",
+  "common_customDateTimeFormatPicker_SepTileText": "Separator",
+  "common_customDateTimeFormatPicker_sepDash_text": "Dash",
+  "common_customDateTimeFormatPicker_sepSlash_text": "Slash",
+  "common_customDateTimeFormatPicker_sepSpace_text": "Space",
+  "common_customDateTimeFormatPicker_sepDot_text": "Dot",
+  "common_customDateTimeFormatPicker_empty_text": "No Separator",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "common_customDateTimeFormatPicker_12Hour_text": "Use 12-hour format",
+  "common_customDateTimeFormatPicker_monthName_text": "Use full name",
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "Apply for Freq Chart",
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "Apply for Calendar",
+  "common_customDateTimeFormatPicker_cancelButton_text": "cancel",
+  "common_customDateTimeFormatPicker_confirmButton_text": "confirm",
 
   "calendarPicker_clip_today": "Today",
   "calendarPicker_clip_tomorrow": "Tomorrow",

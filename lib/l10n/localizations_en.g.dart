@@ -547,6 +547,17 @@ class L10nEn extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
 
   @override
+  String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
+    return 'Date display format ($formatTemplate)';
+  }
+
+  @override
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'follow system setting';
+
+  @override
+  String get appSetting_dateDisplayFormat_subTitleText => 'Configed date format will be applied to the date display on habit detail page.';
+
+  @override
   String get appSetting_reminderSubgroupText => 'Reminder';
 
   @override
@@ -723,6 +734,62 @@ class L10nEn extends L10n {
   String common_habitColorType_default(int index) {
     return 'Color $index';
   }
+
+  @override
+  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Use system format';
+
+  @override
+  String get common_customDateTimeFormatPicker_fmtTileText => 'Date format';
+
+  @override
+  String get common_customDateTimeFormatPicker_ymd_text => 'Year Month Day';
+
+  @override
+  String get common_customDateTimeFormatPicker_mdy_text => 'Month Day Year';
+
+  @override
+  String get common_customDateTimeFormatPicker_dmy_text => 'Day Month Year';
+
+  @override
+  String get common_customDateTimeFormatPicker_SepTileText => 'Separator';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepDash_text => 'Dash';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepSlash_text => 'Slash';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'Space';
+
+  @override
+  String get common_customDateTimeFormatPicker_sepDot_text => 'Dot';
+
+  @override
+  String get common_customDateTimeFormatPicker_empty_text => 'No Separator';
+
+  @override
+  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+    return '$splitName: \"$splitChar\"';
+  }
+
+  @override
+  String get common_customDateTimeFormatPicker_12Hour_text => 'Use 12-hour format';
+
+  @override
+  String get common_customDateTimeFormatPicker_monthName_text => 'Use full name';
+
+  @override
+  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Apply for Freq Chart';
+
+  @override
+  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Apply for Calendar';
+
+  @override
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancel';
+
+  @override
+  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirm';
 
   @override
   String get calendarPicker_clip_today => 'Today';
