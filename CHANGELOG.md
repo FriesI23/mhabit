@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.6.0+16
+
+- add custom datetime format picker
+- fixed wrong use of create date icon
+
 ## 1.5.1+15
 
 - fixed: FAB display overlap with habit
