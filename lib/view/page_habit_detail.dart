@@ -1083,7 +1083,7 @@ class _HabitDetailOtherTileList extends StatelessWidget {
                 subTitle: Text(config
                     .getFormatter(l10n?.localeName)
                     .format(viewmodel.habitDetailData!.createT)),
-                leading: const Icon(HabitCalIcons.calendar_modify),
+                leading: const Icon(HabitCalIcons.calendar_create),
               ),
             ),
           // modified date
