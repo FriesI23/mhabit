@@ -2,4 +2,4 @@
 - 修改 `launchUrl` 模式为外部应用程序
 - 升级 `flutter_donation_buttons` 至 0.2.7
 - 修改导出习惯使其根据手动排序导出
-- 添加自动生成变更日志的Python脚本
+- 添加自动生成变更日志的 Python 脚本

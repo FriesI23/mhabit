@@ -1,0 +1,2 @@
+- add compact UI on habits page
+- add a slider to adjust the habits check area radio

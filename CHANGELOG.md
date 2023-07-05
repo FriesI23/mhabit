@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.7.0+17
+
+- add compact UI on habits page
+- add a slider to adjust the habits check area radio
+
 ## 1.6.0+16
 
 - add custom datetime format picker
