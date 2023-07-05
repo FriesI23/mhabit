@@ -211,6 +211,13 @@
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "跟随系统设置",
   "appSetting_dateDisplayFormat_subTitleText": "配置的日期格式将应用于习惯详情页面的日期显示。",
 
+  "appSetting_compactUISwitcher_titleText": "习惯页中启用紧凑型UI",
+  "appSetting_compactUISwitcher_subtitleText": "允许习惯检查表格显示更多内容，但部分用户界面和文字可能会变小。",
+
+  "appSetting_collapsed_calendar_bararea_titleText": "习惯打卡区域占比调整",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "调整百分比以获取更多/更少的习惯打卡区域。",
+  "appSetting_collapsed_calendar_bararea_defaultText": "默认: 0",
+
   "appSetting_reminderSubgroupText": "提醒",
   "appSetting_dailyReminder_titleText": "每日提醒",
   "appSetting_dailyReminder_hintTile_titleText": "Android 13 之后，必须授予 Alarms & Reminders 权限才能使每日和习惯定时提醒正常工作。",

@@ -28,6 +28,7 @@ import '../common/app_info.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/logging.dart';
+import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../db/db.dart';
@@ -36,10 +37,12 @@ import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
+import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
+import '../provider/app_theme.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
@@ -117,6 +120,11 @@ class _AppSettingView extends State<AppSettingView>
     context
         .read<HabitsRecordScrollBehaviorViewModel>()
         .setScrollBehavior(newBehavior);
+  }
+
+  void _onCompactTileChanged(bool value) {
+    if (!mounted) return;
+    context.read<AppCompactUISwitcherViewModel>().setFlag(value);
   }
 
   void _onExportAllTilePressed(BuildContext context) async {
@@ -325,7 +333,6 @@ class _AppSettingView extends State<AppSettingView>
           onPressed: () => _openAppFirtDaySelectDialog(context),
         ),
       );
-      // TODO: indev
       yield Selector<AppCustomDateYmdHmsConfigViewModel,
           CustomDateYmdHmsConfig>(
         selector: (context, vm) => vm.config,
@@ -334,6 +341,37 @@ class _AppSettingView extends State<AppSettingView>
             AppSettingDateDisplayFormatListTile(
           config: config,
           onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
+        ),
+      );
+      yield Selector<AppThemeViewModel, int>(
+        selector: (context, vm) => vm.displayPageOccupyPrt,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
+          currentPercentage: occupyPrt,
+          lessPercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt - 20),
+          morePercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt + 20),
+          normalPercentage: appCalendarBarDefualtOccupyPrt,
+          onSelectionChanged: (int value) {
+            context.read<AppThemeViewModel>().setNewDisplayPageOccupyPrt(value);
+          },
+        ),
+      );
+      yield Selector<AppCompactUISwitcherViewModel, bool>(
+        selector: (context, vm) => vm.flag,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, flag, child) => L10nBuilder(
+          builder: (context, l10n) => SwitchListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_compactUISwitcher_titleText)
+                : const Text("Drag calendar by page"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_compactUISwitcher_subtitleText)
+                : null,
+            onChanged: _onCompactTileChanged,
+            value: flag,
+          ),
         ),
       );
     }

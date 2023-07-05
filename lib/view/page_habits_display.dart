@@ -42,6 +42,7 @@ import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_stat.dart';
 import "../model/habit_summary.dart";
+import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_theme.dart';
@@ -179,7 +180,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
         if (data.measuring) {
-          return const SizedBox(height: kHabitDisplayListTileHeight);
+          return SizedBox(
+              height: context
+                  .read<AppCompactUISwitcherViewModel>()
+                  .appHabitDisplayListTileHeight);
         } else if (element is HabitSummaryDataSortCache) {
           return _buildHabitsContentCell(context, element.uuid);
         } else {
@@ -729,34 +733,50 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         HabitDateChangeProvider.of(context).dateTime,
       ),
       shouldRebuild: (previous, next) => previous != next,
-      builder: (context, value, child) {
-        final isExtended = value.item1;
-        final crtDate = value.item4;
-        final viewmodel = context.read<HabitSummaryViewModel>();
-        final data = viewmodel.getHabit(uuid);
+      builder: (context, contents, child) => Selector<AppThemeViewModel, int>(
+        selector: (context, vm) => vm.displayPageOccupyPrt,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, occupyPrt, child) =>
+            Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
+          selector: (context, vm) =>
+              Tuple2(vm.flag, vm.appHabitDisplayListTileHeight),
+          builder: (context, value, child) {
+            final isExtended = contents.item1;
+            final crtDate = contents.item4;
+            final viewmodel = context.read<HabitSummaryViewModel>();
+            final data = viewmodel.getHabit(uuid);
+            final useCompactUI = value.item1;
+            final height = value.item2;
 
-        DebugLog.rebuild("HabitSummaryListTile:: $value | "
-            "id=${data?.id}, uuid=${data?.uuid}, sort=${data?.sortPostion}, "
-            "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}");
-        if (data == null) {
-          WarnLog.rebuild("HabitSummaryListTile:: data not found: $uuid");
-          return const SizedBox();
-        }
-        return HabitDisplayListTile(
-          startDate: crtDate,
-          endedData: viewmodel.earliestSummaryDataStartDate?.startDate,
-          isExtended: isExtended,
-          isSelected: viewmodel.isHabitSelected(uuid),
-          isInEditMode: viewmodel.isInEditMode,
-          data: data,
-          verticalScrollController: viewmodel.verticalScrollController,
-          horizonalScrollControllerGroup:
-              viewmodel.horizonalScrollControllerGroup,
-          onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
-          onHabitRecordPressed: _onHabitRecordPressed,
-          onHabitRecordLongPressed: _onHabitRecordLongPressed,
-        );
-      },
+            DebugLog.rebuild(
+              "HabitDisplayListTile:: $contents | "
+              "id=${data?.id}, uuid=${data?.uuid}, sort=${data?.sortPostion}, "
+              "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
+            );
+            if (data == null) {
+              WarnLog.rebuild("HabitDisplayListTile:: data not found: $uuid");
+              return const SizedBox();
+            }
+            return HabitDisplayListTile(
+              startDate: crtDate,
+              endedData: viewmodel.earliestSummaryDataStartDate?.startDate,
+              isExtended: isExtended,
+              isSelected: viewmodel.isHabitSelected(uuid),
+              isInEditMode: viewmodel.isInEditMode,
+              collapsePrt: occupyPrt,
+              height: height,
+              compactVisual: useCompactUI,
+              data: data,
+              verticalScrollController: viewmodel.verticalScrollController,
+              horizonalScrollControllerGroup:
+                  viewmodel.horizonalScrollControllerGroup,
+              onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
+              onHabitRecordPressed: _onHabitRecordPressed,
+              onHabitRecordLongPressed: _onHabitRecordLongPressed,
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -777,32 +797,41 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         key: const ValueKey("view-app-bar"),
         selector: (context, vm) => vm.scrollBehavior,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) {
-          final viewmodel = context.read<HabitSummaryViewModel>();
-          return HabitDisplayAppBarViewMode(
-            scrolledUnderElevation: _kCommonEvalation,
-            title: L10nBuilder(
-              builder: (context, l10n) =>
-                  l10n != null ? Text(l10n.appName) : const Text(appName),
-            ),
-            bottom: SliverCalendarBar(
-              key: const Key('habit_display_calendar_bar'),
-              verticalScrollController: viewmodel.verticalScrollController,
-              horizonalScrollControllerGroup:
-                  viewmodel.horizonalScrollControllerGroup,
-              startDate: HabitDateChangeProvider.of(context).dateTime,
-              endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
-              isExtended: isExtended,
-              onLeftBtnPressed: _onAppbarLeftButtonPressed,
-              scrollPhysicsBuilder: (itemSize, length) => context
-                  .read<HabitsRecordScrollBehaviorViewModel>()
-                  .getPhysics(itemSize),
-            ),
-            onInfoButtonPressed: () =>
-                _openHabitSummaryStatisticsDialog(context),
-            onMenuButtonPressed: () => _openHabitSummaryMenuDialog(context),
-          );
-        },
+        builder: (context, scrollBehavior, child) =>
+            Selector<AppThemeViewModel, int>(
+          selector: (context, vm) => vm.displayPageOccupyPrt,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, occupyPrt, child) {
+            final viewmodel = context.read<HabitSummaryViewModel>();
+            final compactvm = context.read<AppCompactUISwitcherViewModel>();
+            return HabitDisplayAppBarViewMode(
+              scrolledUnderElevation: _kCommonEvalation,
+              title: L10nBuilder(
+                builder: (context, l10n) =>
+                    l10n != null ? Text(l10n.appName) : const Text(appName),
+              ),
+              bottom: SliverCalendarBar(
+                key: const Key('habit_display_calendar_bar'),
+                verticalScrollController: viewmodel.verticalScrollController,
+                horizonalScrollControllerGroup:
+                    viewmodel.horizonalScrollControllerGroup,
+                startDate: HabitDateChangeProvider.of(context).dateTime,
+                endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
+                isExtended: isExtended,
+                collapsePrt: occupyPrt,
+                height: compactvm.appCalendarBarHeight,
+                itemPadding: compactvm.appCalendarBarItemPadding,
+                onLeftBtnPressed: _onAppbarLeftButtonPressed,
+                scrollPhysicsBuilder: (itemSize, length) => context
+                    .read<HabitsRecordScrollBehaviorViewModel>()
+                    .getPhysics(itemSize),
+              ),
+              onInfoButtonPressed: () =>
+                  _openHabitSummaryStatisticsDialog(context),
+              onMenuButtonPressed: () => _openHabitSummaryMenuDialog(context),
+            );
+          },
+        ),
       );
     }
 
@@ -929,24 +958,30 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         key: const ValueKey("edit-app-bar"),
         selector: (context, vm) => vm.scrollBehavior,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) {
-          final viewmodel = context.read<HabitSummaryViewModel>();
-          return HabitDisplayAppBarEditMode(
-            scrolledUnderElevation: _kCommonEvalation,
-            title: buildAppbarTitle(context),
-            bottom: SliverCalendarBar(
-              key: const Key('habit_display_calendar_bar'),
-              verticalScrollController: viewmodel.verticalScrollController,
-              horizonalScrollControllerGroup:
-                  viewmodel.horizonalScrollControllerGroup,
-              startDate: HabitDateChangeProvider.of(context).dateTime,
-              endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
-              isExtended: isExtended,
-            ),
-            actionBuilder: (context) => buildEditAppbarActions(context),
-            onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
-          );
-        },
+        builder: (context, scrollBehavior, child) =>
+            Selector<AppThemeViewModel, int>(
+          selector: (context, vm) => vm.displayPageOccupyPrt,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, occupyPrt, child) {
+            final viewmodel = context.read<HabitSummaryViewModel>();
+            return HabitDisplayAppBarEditMode(
+              scrolledUnderElevation: _kCommonEvalation,
+              title: buildAppbarTitle(context),
+              bottom: SliverCalendarBar(
+                key: const Key('habit_display_calendar_bar'),
+                verticalScrollController: viewmodel.verticalScrollController,
+                horizonalScrollControllerGroup:
+                    viewmodel.horizonalScrollControllerGroup,
+                startDate: HabitDateChangeProvider.of(context).dateTime,
+                endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
+                isExtended: isExtended,
+                collapsePrt: occupyPrt,
+              ),
+              actionBuilder: (context) => buildEditAppbarActions(context),
+              onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
+            );
+          },
+        ),
       );
     }
 
@@ -1073,7 +1108,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     Widget buildBottomPlaceHolder(BuildContext context) {
       return const SliverToBoxAdapter(
         child: FixedPagePlaceHolder(
-          minHeight: kHabitDisplayListTileHeight,
+          minHeight: kDefaultHabitSummaryListTileHeight,
         ),
       );
     }
@@ -1114,67 +1149,77 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       return Selector<HabitSummaryViewModel, int>(
         selector: (context, viewmodel) => viewmodel.lastSortedDataCache.length,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, habitCount, child) => _HabitDisplayEmptyImageFrame(
-          habitCount: habitCount,
-          changedAnimateDuration: _kHabitListFutureLoadDuration,
-          child: L10nBuilder(
-            builder: (context, l10n) {
-              final theme = Theme.of(context);
-              return HabitDisplayEmptyImage(
-                size: const Size.square(300),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
-                descChild: l10n != null
-                    ? Text(l10n.habitDisplay_emptyImage_text_01)
-                    : null,
-                style: HabitDisplayEmptyImageStyle(
-                  fronBoardBackgroundColor: theme.colorScheme.surface,
-                  backBoardBackgroundColor: theme.colorScheme.surfaceVariant,
-                  boardStrokeColor: theme.colorScheme.outlineVariant,
-                  fronBoardTopColor: theme.colorScheme.primaryContainer,
-                  fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
-                  fronBoardOtherLineColor: theme.colorScheme.outlineVariant,
-                  fronBoardSubtitleLineColor:
-                      theme.colorScheme.outlineVariant.lighten(0.14),
-                  backgroundCirlcColor:
-                      theme.colorScheme.outlineVariant.lighten(0.16),
-                ),
-              );
-            },
+        builder: (context, habitCount, child) =>
+            Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
+          selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
+          builder: (context, value, child) => _HabitDisplayEmptyImageFrame(
+            habitCount: habitCount,
+            offsetHeight: -(value.item2 + kToolbarHeight),
+            changedAnimateDuration: _kHabitListFutureLoadDuration,
+            child: L10nBuilder(
+              builder: (context, l10n) {
+                final theme = Theme.of(context);
+                return HabitDisplayEmptyImage(
+                  size: const Size.square(300),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
+                  descChild: l10n != null
+                      ? Text(l10n.habitDisplay_emptyImage_text_01)
+                      : null,
+                  style: HabitDisplayEmptyImageStyle(
+                    fronBoardBackgroundColor: theme.colorScheme.surface,
+                    backBoardBackgroundColor: theme.colorScheme.surfaceVariant,
+                    boardStrokeColor: theme.colorScheme.outlineVariant,
+                    fronBoardTopColor: theme.colorScheme.primaryContainer,
+                    fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
+                    fronBoardOtherLineColor: theme.colorScheme.outlineVariant,
+                    fronBoardSubtitleLineColor:
+                        theme.colorScheme.outlineVariant.lighten(0.14),
+                    backgroundCirlcColor:
+                        theme.colorScheme.outlineVariant.lighten(0.16),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       );
     }
     //#endregion
 
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     return ColorfulNavibar(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: RefreshIndicator(
-          onRefresh: _onRefreshIndicatorTriggered,
-          edgeOffset: kToolbarHeight + kHabitCalendarBarHeight + 20.0,
-          triggerMode: RefreshIndicatorTriggerMode.onEdge,
-          child: Stack(
-            children: [
-              buildEmptyImage(context),
-              CustomScrollView(
-                physics: const ClampingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                controller: viewmodel.verticalScrollController,
-                slivers: [
-                  buildAppbar(context),
-                  const HabitDivider(withSliver: true, height: 1),
-                  EnhancedSafeArea.edgeToEdgeSafe(
-                    withSliver: true,
-                    child: buildHabits(context),
-                  ),
-                  buildDevelopSliverList(context),
-                  buildBottomPlaceHolder(context),
-                  if (kDebugMode) _buildScrollablePlaceHolder(context),
-                ],
-              ),
-            ],
+        body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
+          selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
+          builder: (context, value, child) => RefreshIndicator(
+            onRefresh: _onRefreshIndicatorTriggered,
+            edgeOffset: kToolbarHeight +
+                value.item2 +
+                MediaQuery.of(context).padding.top,
+            triggerMode: RefreshIndicatorTriggerMode.onEdge,
+            child: Stack(
+              children: [
+                buildEmptyImage(context),
+                CustomScrollView(
+                  physics: const ClampingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  controller: viewmodel.verticalScrollController,
+                  slivers: [
+                    buildAppbar(context),
+                    const HabitDivider(withSliver: true, height: 1),
+                    EnhancedSafeArea.edgeToEdgeSafe(
+                      withSliver: true,
+                      child: buildHabits(context),
+                    ),
+                    buildDevelopSliverList(context),
+                    buildBottomPlaceHolder(context),
+                    if (kDebugMode) _buildScrollablePlaceHolder(context),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         floatingActionButton: buildFAB(context),
@@ -1185,26 +1230,26 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
 class _HabitDisplayEmptyImageFrame extends StatelessWidget {
   final int habitCount;
+  final double offsetHeight;
   final Duration changedAnimateDuration;
   final Widget? child;
 
   const _HabitDisplayEmptyImageFrame({
     required this.habitCount,
+    this.offsetHeight = 0.0,
     required this.changedAnimateDuration,
     this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    const barHeight = kHabitCalendarBarHeight + kToolbarHeight;
-
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) => Align(
           alignment: Alignment.bottomCenter,
           child: ConstrainedBox(
             constraints: constraints.copyWith(
-                maxHeight: math.max(constraints.maxHeight - barHeight, 0)),
+                maxHeight: math.max(constraints.maxHeight + offsetHeight, 0)),
             child: AnimatedOpacity(
               opacity: habitCount > 0 ? 0.0 : 1.0,
               duration: changedAnimateDuration,

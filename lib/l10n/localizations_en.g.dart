@@ -558,6 +558,21 @@ class L10nEn extends L10n {
   String get appSetting_dateDisplayFormat_subTitleText => 'Configed date format will be applied to the date display on habit detail page.';
 
   @override
+  String get appSetting_compactUISwitcher_titleText => 'Enable Compact UI on habits page';
+
+  @override
+  String get appSetting_compactUISwitcher_subtitleText => 'Allow habits check table to display more content, but some UI and text may appear smaller.';
+
+  @override
+  String get appSetting_collapsed_calendar_bararea_titleText => 'Habits check area radio adjustment';
+
+  @override
+  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
+
+  @override
+  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+
+  @override
   String get appSetting_reminderSubgroupText => 'Reminder';
 
   @override

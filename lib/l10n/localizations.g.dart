@@ -1095,6 +1095,36 @@ abstract class L10n {
   /// **'Configed date format will be applied to the date display on habit detail page.'**
   String get appSetting_dateDisplayFormat_subTitleText;
 
+  /// No description provided for @appSetting_compactUISwitcher_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Compact UI on habits page'**
+  String get appSetting_compactUISwitcher_titleText;
+
+  /// No description provided for @appSetting_compactUISwitcher_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow habits check table to display more content, but some UI and text may appear smaller.'**
+  String get appSetting_compactUISwitcher_subtitleText;
+
+  /// No description provided for @appSetting_collapsed_calendar_bararea_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits check area radio adjustment'**
+  String get appSetting_collapsed_calendar_bararea_titleText;
+
+  /// No description provided for @appSetting_collapsed_calendar_bararea_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust percentage for more/less space in habits check table area.'**
+  String get appSetting_collapsed_calendar_bararea_subtitleText;
+
+  /// No description provided for @appSetting_collapsed_calendar_bararea_defaultText.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get appSetting_collapsed_calendar_bararea_defaultText;
+
   /// No description provided for @appSetting_reminderSubgroupText.
   ///
   /// In en, this message translates to:

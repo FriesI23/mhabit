@@ -72,4 +72,9 @@ class Global with GlobalDevelopModeMixin implements GlobalInterface {
 
   CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
       profile.getCustomDateYmdHmsConfig();
+
+  int get displayPageCalendarBarOccupyPrt =>
+      profile.getDisplayCalendarBarOccupyPrt();
+
+  bool get compactUISwitcher => profile.getCompactUISwticher();
 }

@@ -351,6 +351,13 @@
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "follow system setting",
   "appSetting_dateDisplayFormat_subTitleText": "Configed date format will be applied to the date display on habit detail page.",
 
+  "appSetting_compactUISwitcher_titleText": "Enable Compact UI on habits page",
+  "appSetting_compactUISwitcher_subtitleText": "Allow habits check table to display more content, but some UI and text may appear smaller.",
+
+  "appSetting_collapsed_calendar_bararea_titleText": "Habits check area radio adjustment",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Adjust percentage for more/less space in habits check table area.",
+  "appSetting_collapsed_calendar_bararea_defaultText": "Default",
+
   "appSetting_reminderSubgroupText": "Reminder",
   "appSetting_dailyReminder_titleText": "Daily reminder",
   "appSetting_dailyReminder_hintTile_titleText": "After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.",

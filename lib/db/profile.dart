@@ -56,6 +56,12 @@ abstract class ProfileInterface {
 
   CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
+
+  int getDisplayCalendarBarOccupyPrt();
+  Future<bool> setDisplayCalendarBarOccupyPrt(int newPrt);
+
+  bool getCompactUISwticher();
+  Future<bool> setCompactUISwitcher(bool newStatus);
 }
 
 enum ProfileKey {
@@ -67,6 +73,8 @@ enum ProfileKey {
   firstDay,
   appReminder,
   customDateYmdHmsConfig,
+  displayCalendarBarOccupyPrt,
+  compactUISwitcher;
 }
 
 class Profile implements ProfileInterface, FutureInitializationABC {
@@ -205,5 +213,27 @@ class Profile implements ProfileInterface, FutureInitializationABC {
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig) {
     return _pref.setString(
         ProfileKey.customDateYmdHmsConfig.name, jsonEncode(newConfig.toJson()));
+  }
+
+  @override
+  int getDisplayCalendarBarOccupyPrt() {
+    return _pref.getInt(ProfileKey.displayCalendarBarOccupyPrt.name) ??
+        appCalendarBarDefualtOccupyPrt;
+  }
+
+  @override
+  Future<bool> setDisplayCalendarBarOccupyPrt(int newPrt) {
+    return _pref.setInt(ProfileKey.displayCalendarBarOccupyPrt.name,
+        normalizeAppCalendarBarOccupyPrt(newPrt));
+  }
+
+  @override
+  bool getCompactUISwticher() {
+    return _pref.getBool(ProfileKey.compactUISwitcher.name) ?? false;
+  }
+
+  @override
+  Future<bool> setCompactUISwitcher(bool newStatus) {
+    return _pref.setBool(ProfileKey.compactUISwitcher.name, newStatus);
   }
 }
