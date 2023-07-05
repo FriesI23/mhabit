@@ -75,4 +75,6 @@ class Global with GlobalDevelopModeMixin implements GlobalInterface {
 
   int get displayPageCalendarBarOccupyPrt =>
       profile.getDisplayCalendarBarOccupyPrt();
+
+  bool get compactUISwitcher => profile.getCompactUISwticher();
 }

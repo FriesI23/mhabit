@@ -558,6 +558,12 @@ class L10nZh extends L10n {
   String get appSetting_dateDisplayFormat_subTitleText => '配置的日期格式将应用于习惯详情页面的日期显示。';
 
   @override
+  String get appSetting_compactUISwitcher_titleText => '习惯页中启用紧凑型UI';
+
+  @override
+  String get appSetting_compactUISwitcher_subtitleText => '允许习惯检查表格显示更多内容，但部分用户界面和文字可能会变小。';
+
+  @override
   String get appSetting_collapsed_calendar_bararea_titleText => '习惯打卡区域占比调整';
 
   @override

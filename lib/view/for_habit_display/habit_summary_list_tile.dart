@@ -26,7 +26,7 @@ import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
 import 'sliver_calendar_bar.dart';
 
-const kHabitSummaryListTileHeight = 64.0;
+const kDefaultHabitSummaryListTileHeight = 64.0;
 const kMaxHabitSummaryListTileTextScale = 1.3;
 
 class HabitSummaryListTile extends StatefulWidget {
@@ -38,6 +38,7 @@ class HabitSummaryListTile extends StatefulWidget {
   final HabitSummaryData data;
   final double? _height;
   final EdgeInsets? _titlePadding;
+  final EdgeInsets? itemPadding;
   final int? collapsePrt;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
   final ScrollController? verticalScrollController;
@@ -54,8 +55,9 @@ class HabitSummaryListTile extends StatefulWidget {
     this.isSelected = false,
     this.selectColor,
     required this.data,
-    height,
-    titlePadding,
+    double? height,
+    EdgeInsets? titlePadding,
+    this.itemPadding,
     this.collapsePrt,
     this.scrollPhysicsBuilder,
     this.verticalScrollController,
@@ -91,12 +93,13 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
       ? widget._titlePadding!
       : const EdgeInsets.fromLTRB(8, 4, 4, 8);
 
-  double get height =>
-      widget._height != null ? widget._height! : kHabitSummaryListTileHeight;
+  double get height => widget._height != null
+      ? widget._height!
+      : kDefaultHabitSummaryListTileHeight;
 
   double get collapsePrt => widget.collapsePrt != null
       ? widget.collapsePrt! / 100
-      : kHabitCalendarBarCollapsePrt;
+      : kDefaultHabitCalendarBarCollapsePrt;
 
   HabitSummaryData get data => widget.data;
 
@@ -151,6 +154,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
       child: FittedBox(
         child: HabitDailyStatusContainer(
           date: showDate,
+          padding: widget.itemPadding,
           colorType: data.colorType,
           habitDailyRecordForm: HabitDailyRecordForm(
               record != null ? record.value : 0.0, data.dailyGoal),
@@ -196,8 +200,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     Widget? leftPartBuilder() {
       return LayoutBuilder(
         builder: (context, constraints) => ConstrainedBox(
-          constraints:
-              const BoxConstraints.tightFor(width: kHabitSummaryListTileHeight),
+          constraints: BoxConstraints.tightFor(width: height),
           child: const SizedBox(),
         ),
       );
@@ -231,7 +234,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     return HabitListTile(
       leftChild: leftPartBuilder(),
       stackedChild: titlePartBuilder(widget.isExtended),
-      sizePrt: widget.isExtended ? kHabitCalendarBarExtendedPrt : collapsePrt,
+      sizePrt:
+          widget.isExtended ? kDefaultHabitCalendarBarExtendedPrt : collapsePrt,
       stackAutoWrap: !widget.isExtended,
       canScroll: widget.isExtended,
       mainScrollController: widget.verticalScrollController,

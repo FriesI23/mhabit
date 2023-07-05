@@ -22,8 +22,6 @@ import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
 import 'habit_summary_list_tile.dart';
 
-const kHabitDisplayListTileHeight = kHabitSummaryListTileHeight;
-
 class HabitDisplayListTile extends StatelessWidget {
   final HabitDate? startDate;
   final HabitDate? endedData;
@@ -31,6 +29,8 @@ class HabitDisplayListTile extends StatelessWidget {
   final bool isSelected;
   final bool isInEditMode;
   final int? collapsePrt;
+  final double? height;
+  final bool compactVisual;
   final HabitSummaryData data;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -46,6 +46,8 @@ class HabitDisplayListTile extends StatelessWidget {
     required this.isSelected,
     required this.isInEditMode,
     this.collapsePrt,
+    this.height,
+    this.compactVisual = false,
     required this.data,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -55,9 +57,12 @@ class HabitDisplayListTile extends StatelessWidget {
   });
 
   ThemeData getThemeData(ThemeData themeData) {
-    var color = themeData.extension<HabitSummaryListTileColor>();
-    if (data.isArchived) {
-      var newColor = color != null
+    Iterable<ThemeExtension<dynamic>>? extensions;
+    TextTheme? textTheme;
+
+    Iterable<ThemeExtension<dynamic>> buildArchivedHabitThemeExtensions() {
+      final color = themeData.extension<HabitSummaryListTileColor>();
+      final newColor = color != null
           ? color.copyWith(
               titleColor: themeData.colorScheme.outline,
               progressCircleColor: themeData.colorScheme.outline,
@@ -66,8 +71,8 @@ class HabitDisplayListTile extends StatelessWidget {
               titleColor: themeData.colorScheme.outline,
               progressCircleColor: themeData.colorScheme.outline,
             );
-      var cellColor = themeData.extension<HabitSummaryDailyStatusColor>();
-      var newCellColor = cellColor != null
+      final cellColor = themeData.extension<HabitSummaryDailyStatusColor>();
+      final newCellColor = cellColor != null
           ? cellColor.copyWith(
               autoMark: themeData.colorScheme.outline,
               skip: themeData.colorScheme.outline,
@@ -80,13 +85,36 @@ class HabitDisplayListTile extends StatelessWidget {
               doneAndGoodjob: themeData.colorScheme.outline,
               doneAndOk: themeData.colorScheme.outline,
             );
-      var newExtensions = Map.of(themeData.extensions);
+      final newExtensions = Map.of(themeData.extensions);
       newExtensions[newColor.type] = newColor;
       newExtensions[newCellColor.type] = newCellColor;
-      return themeData.copyWith(extensions: newExtensions.values);
+      return newExtensions.values;
     }
-    return themeData;
+
+    TextTheme? buildHabitTitleTheme() => compactVisual
+        ? themeData.textTheme.copyWith(
+            bodyLarge: themeData.textTheme.bodyMedium,
+          )
+        : null;
+
+    if (data.isArchived) {
+      extensions = buildArchivedHabitThemeExtensions();
+    }
+
+    textTheme = buildHabitTitleTheme();
+
+    return themeData.copyWith(
+      extensions: extensions,
+      textTheme: textTheme,
+    );
   }
+
+  EdgeInsets getTitlePadding() => compactVisual
+      ? const EdgeInsets.fromLTRB(4, 2, 2, 4)
+      : const EdgeInsets.fromLTRB(8, 4, 4, 8);
+
+  EdgeInsets? getItemPadding() =>
+      compactVisual ? const EdgeInsets.all(2.0) : const EdgeInsets.all(8.0);
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +133,9 @@ class HabitDisplayListTile extends StatelessWidget {
             enableFeedback: isInEditMode ? false : true,
             child: HabitSummaryListTile(
               key: ValueKey("${data.uuid}|$isSelected"),
-              height: kHabitDisplayListTileHeight,
+              height: height,
+              titlePadding: getTitlePadding(),
+              itemPadding: getItemPadding(),
               data: data,
               startDate: startDate,
               endDate: endedData,

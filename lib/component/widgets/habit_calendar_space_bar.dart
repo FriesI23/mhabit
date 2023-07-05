@@ -31,6 +31,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
   final ScrollController? listScrollController;
   final Widget? leftButton;
   final int minItemCoun;
+  final EdgeInsetsGeometry? itemPadding;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const HabitCalendarSpaceBar({
@@ -44,6 +45,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
     this.listScrollController,
     this.leftButton,
     this.minItemCoun = 3,
+    this.itemPadding,
     this.scrollPhysicsBuilder,
   });
 
@@ -62,7 +64,10 @@ class HabitCalendarSpaceBar extends StatelessWidget {
       return ConstrainedBox(
         constraints: BoxConstraints.tightFor(width: realHeight),
         child: FittedBox(
-          child: DateContainer(date: crtDate.subtract(Duration(days: index))),
+          child: DateContainer(
+            padding: itemPadding,
+            date: crtDate.subtract(Duration(days: index)),
+          ),
         ),
       );
     }
