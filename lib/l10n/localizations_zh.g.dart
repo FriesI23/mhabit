@@ -558,6 +558,15 @@ class L10nZh extends L10n {
   String get appSetting_dateDisplayFormat_subTitleText => '配置的日期格式将应用于习惯详情页面的日期显示。';
 
   @override
+  String get appSetting_collapsed_calendar_bararea_titleText => '习惯打卡区域占比调整';
+
+  @override
+  String get appSetting_collapsed_calendar_bararea_subtitleText => '调整百分比以获取更多/更少的习惯打卡区域。';
+
+  @override
+  String get appSetting_collapsed_calendar_bararea_defaultText => '默认: 0';
+
+  @override
   String get appSetting_reminderSubgroupText => '提醒';
 
   @override

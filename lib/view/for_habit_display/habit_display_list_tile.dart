@@ -30,6 +30,7 @@ class HabitDisplayListTile extends StatelessWidget {
   final bool isExtended;
   final bool isSelected;
   final bool isInEditMode;
+  final int? collapsePrt;
   final HabitSummaryData data;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -44,6 +45,7 @@ class HabitDisplayListTile extends StatelessWidget {
     required this.isExtended,
     required this.isSelected,
     required this.isInEditMode,
+    this.collapsePrt,
     required this.data,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -110,6 +112,7 @@ class HabitDisplayListTile extends StatelessWidget {
               isExtended: isExtended,
               isSelected: isSelected,
               selectColor: bgcolor,
+              collapsePrt: collapsePrt,
               verticalScrollController: verticalScrollController,
               horizonalScrollControllerGroup: horizonalScrollControllerGroup,
               onCellPressed: onHabitRecordPressed,

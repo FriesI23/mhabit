@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
 import '../theme/color.dart';
+import 'consts.dart';
 
 ThemeMode transToMaterialThemeType(AppThemeType themeType) {
   switch (themeType) {
@@ -184,3 +185,6 @@ String? encodeUrlQueryParameters(Map<String, String> params) {
 Future<bool> launchExternalUrl(Uri url) async {
   return url_launcher.launchUrl(url, mode: LaunchMode.externalApplication);
 }
+
+int normalizeAppCalendarBarOccupyPrt(int prt) => math.max(
+    math.min(prt, appCalendarBarMaxOccupyPrt), appCalendarBarMinOccupyPrt);

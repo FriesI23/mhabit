@@ -28,6 +28,7 @@ import '../common/app_info.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/logging.dart';
+import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../db/db.dart';
@@ -40,6 +41,7 @@ import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
+import '../provider/app_theme.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
@@ -325,7 +327,6 @@ class _AppSettingView extends State<AppSettingView>
           onPressed: () => _openAppFirtDaySelectDialog(context),
         ),
       );
-      // TODO: indev
       yield Selector<AppCustomDateYmdHmsConfigViewModel,
           CustomDateYmdHmsConfig>(
         selector: (context, vm) => vm.config,
@@ -334,6 +335,22 @@ class _AppSettingView extends State<AppSettingView>
             AppSettingDateDisplayFormatListTile(
           config: config,
           onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
+        ),
+      );
+      // TODO: indev
+      yield Selector<AppThemeViewModel, int>(
+        selector: (context, vm) => vm.displayPageOccupyPrt,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
+          currentPercentage: occupyPrt,
+          lessPercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt - 20),
+          morePercentage: normalizeAppCalendarBarOccupyPrt(
+              appCalendarBarDefualtOccupyPrt + 20),
+          normalPercentage: appCalendarBarDefualtOccupyPrt,
+          onSelectionChanged: (int value) {
+            context.read<AppThemeViewModel>().setNewDisplayPageOccupyPrt(value);
+          },
         ),
       );
     }

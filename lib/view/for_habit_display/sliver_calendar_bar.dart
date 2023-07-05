@@ -32,6 +32,7 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final bool isExtended;
+  final int? collapsePrt;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const SliverCalendarBar({
@@ -42,6 +43,7 @@ class SliverCalendarBar extends StatefulWidget implements PreferredSizeWidget {
     this.startDate,
     this.endDate,
     required this.isExtended,
+    this.collapsePrt,
     this.scrollPhysicsBuilder,
   });
 
@@ -69,6 +71,10 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
     super.dispose();
   }
 
+  double get collapsePrt => widget.collapsePrt != null
+      ? widget.collapsePrt! / 100
+      : kHabitCalendarBarCollapsePrt;
+
   @override
   Widget build(BuildContext context) {
     Widget? expandIcon = widget.onLeftBtnPressed != null
@@ -86,9 +92,7 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
       child: HabitCalendarSpaceBar(
         startDate: widget.startDate,
         endDate: widget.endDate,
-        sizePrt: widget.isExtended
-            ? kHabitCalendarBarExtendedPrt
-            : kHabitCalendarBarCollapsePrt,
+        sizePrt: widget.isExtended ? kHabitCalendarBarExtendedPrt : collapsePrt,
         canScroll: widget.isExtended,
         isExtended: widget.isExtended,
         mainScrollController: widget.verticalScrollController,

@@ -30,6 +30,7 @@ class AppThemeViewModel extends ChangeNotifier
   @override
   void updateGlobal(Global newGloal) => _g = newGloal;
 
+  //#region app theme
   AppThemeType get themeType => _g.themeType;
   ThemeMode get matertialThemeType => transToMaterialThemeType(themeType);
 
@@ -65,4 +66,16 @@ class AppThemeViewModel extends ChangeNotifier
     }
     await setNewthemeType(nextThemeType);
   }
+  //#endregion
+
+  //#region display page occupy percentage
+  int get displayPageOccupyPrt => _g.displayPageCalendarBarOccupyPrt;
+
+  Future<void> setNewDisplayPageOccupyPrt(int newPrt) async {
+    if (_g.displayPageCalendarBarOccupyPrt != newPrt) {
+      await _g.profile.setDisplayCalendarBarOccupyPrt(newPrt);
+      notifyListeners();
+    }
+  }
+  //#endregion
 }

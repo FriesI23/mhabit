@@ -37,6 +37,9 @@ const int appDBVersion = 3;
 //#region app-theme
 const int appDefaultThemeMainColor = 0xFF006493;
 const AppThemeType appDefaultThemeType = AppThemeType.followSystem;
+const int appCalendarBarMaxOccupyPrt = 70;
+const int appCalendarBarMinOccupyPrt = 20;
+const int appCalendarBarDefualtOccupyPrt = 50;
 //#endregion
 
 //#region app-setting

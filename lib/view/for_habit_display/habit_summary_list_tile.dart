@@ -38,6 +38,7 @@ class HabitSummaryListTile extends StatefulWidget {
   final HabitSummaryData data;
   final double? _height;
   final EdgeInsets? _titlePadding;
+  final int? collapsePrt;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -55,6 +56,7 @@ class HabitSummaryListTile extends StatefulWidget {
     required this.data,
     height,
     titlePadding,
+    this.collapsePrt,
     this.scrollPhysicsBuilder,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -91,6 +93,10 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   double get height =>
       widget._height != null ? widget._height! : kHabitSummaryListTileHeight;
+
+  double get collapsePrt => widget.collapsePrt != null
+      ? widget.collapsePrt! / 100
+      : kHabitCalendarBarCollapsePrt;
 
   HabitSummaryData get data => widget.data;
 
@@ -225,9 +231,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     return HabitListTile(
       leftChild: leftPartBuilder(),
       stackedChild: titlePartBuilder(widget.isExtended),
-      sizePrt: widget.isExtended
-          ? kHabitCalendarBarExtendedPrt
-          : kHabitCalendarBarCollapsePrt,
+      sizePrt: widget.isExtended ? kHabitCalendarBarExtendedPrt : collapsePrt,
       stackAutoWrap: !widget.isExtended,
       canScroll: widget.isExtended,
       mainScrollController: widget.verticalScrollController,
