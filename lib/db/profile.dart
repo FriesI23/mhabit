@@ -57,7 +57,7 @@ abstract class ProfileInterface {
   CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
 
-  int? getDisplayCalendarBarOccupyPrt();
+  int getDisplayCalendarBarOccupyPrt();
   Future<bool> setDisplayCalendarBarOccupyPrt(int newPrt);
 
   bool getCompactUISwticher();
