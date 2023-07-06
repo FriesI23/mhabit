@@ -381,6 +381,11 @@ class L10nZh extends L10n {
   }
 
   @override
+  String habitDetail_summary_preBody(int days) {
+    return '距离开始还有 $days 天';
+  }
+
+  @override
   String get habitDetail_heatmap_leftHelpText => '未完成';
 
   @override

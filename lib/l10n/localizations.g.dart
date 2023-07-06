@@ -765,6 +765,12 @@ abstract class L10n {
   /// **'Current grade is {score}, and it has been {days} days since the start.'**
   String habitDetail_summary_body(String score, int days);
 
+  /// No description provided for @habitDetail_summary_preBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Starting tomorrow.} other{Start in {days} days.}}'**
+  String habitDetail_summary_preBody(int days);
+
   /// No description provided for @habitDetail_heatmap_leftHelpText.
   ///
   /// In en, this message translates to:

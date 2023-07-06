@@ -381,6 +381,17 @@ class L10nEn extends L10n {
   }
 
   @override
+  String habitDetail_summary_preBody(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Start in $days days.',
+      one: 'Starting tomorrow.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get habitDetail_heatmap_leftHelpText => 'INCOMPLETE';
 
   @override
