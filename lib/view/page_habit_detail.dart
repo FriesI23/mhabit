@@ -476,7 +476,8 @@ class _HabitDetailView extends State<HabitDetailView>
         selector: (context, vm) => vm.getInsideVersion(),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
-          var viewmodel = context.read<HabitDetailViewModel>();
+          final viewmodel = context.read<HabitDetailViewModel>();
+          final durningDays = viewmodel.duringFromStartDate.inDays;
           DebugLog.rebuild("summary tile: $_ ${viewmodel.habitProgress}");
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(
@@ -488,9 +489,11 @@ class _HabitDetailView extends State<HabitDetailView>
                   ? Text(l10n.habitDetail_summary_title)
                   : const Text("Summary"),
               subtitle: l10n != null
-                  ? Text(l10n.habitDetail_summary_body(
-                      viewmodel.habitProgress.toStringAsFixed(2),
-                      viewmodel.duringFromStartDate.inDays))
+                  ? Text(durningDays >= 0
+                      ? l10n.habitDetail_summary_body(
+                          viewmodel.habitProgress.toStringAsFixed(2),
+                          durningDays)
+                      : l10n.habitDetail_summary_preBody(durningDays.abs()))
                   : null,
             ),
           );

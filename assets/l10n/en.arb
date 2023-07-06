@@ -235,6 +235,15 @@
     }
   },
   "habitDetail_summary_body": "Current grade is {score}, and it has been {days} days since the start.",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} days.}}",
 
   "habitDetail_heatmap_leftHelpText": "INCOMPLETE",
   "habitDetail_heatmap_rightHelpText": "OVERFULFIL",

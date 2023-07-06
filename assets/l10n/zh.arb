@@ -143,6 +143,7 @@
 
   "habitDetail_summary_title": "总览",
   "habitDetail_summary_body": "当前分数为 {score}，距开始已经过 {days} 天。",
+  "habitDetail_summary_preBody": "距离开始还有 {days} 天",
 
   "habitDetail_heatmap_leftHelpText": "未完成",
   "habitDetail_heatmap_rightHelpText": "超额完成",
