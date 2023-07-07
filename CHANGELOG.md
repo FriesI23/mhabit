@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.7.1+18
+
+- fixed summary text show negative number
+- add new target days option
+
 ## 1.7.0+17
 
 - add compact UI on habits page

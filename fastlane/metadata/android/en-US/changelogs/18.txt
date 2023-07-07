@@ -1,0 +1,2 @@
+- fixed summary text show negative number
+- add new target days option
