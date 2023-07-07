@@ -37,7 +37,7 @@ enum _HabitTargetDaysType {
   daysCustom(null);
 
   static const _days21 = 21;
-  static const _days66 = 66;
+  static const _days66 = defaultHabitTargetDays;
   static const _days120 = 120;
   static const _days180 = 180;
 
@@ -103,12 +103,10 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
   }
 
   void _onCustomTargetDaysInputChanged(String? value) {
-    int newValue;
-    try {
-      newValue = int.parse(value ?? '');
-    } on FormatException {
-      newValue = defaultHabitTargetDays;
-    }
+    int newValue = value == null
+        ? defaultHabitTargetDays
+        : int.tryParse(value) ?? defaultHabitTargetDays;
+
     if (newValue >= maxHabitTargetDays) {
     } else if (newValue <= minHabitTargetDays) {
       newValue = minHabitTargetDays;
