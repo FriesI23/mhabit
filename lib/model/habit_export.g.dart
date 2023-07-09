@@ -84,6 +84,7 @@ abstract class _$HabitExportDataCWProxy {
   HabitExportData call({
     int? createT,
     int? modifyT,
+    int? type,
     int? status,
     String? name,
     String? desc,
@@ -118,6 +119,7 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
   HabitExportData call({
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
     Object? desc = const $CopyWithPlaceholder(),
@@ -142,6 +144,10 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
           ? _value.modifyT
           // ignore: cast_nullable_to_non_nullable
           : modifyT as int?,
+      type: type == const $CopyWithPlaceholder()
+          ? _value.type
+          // ignore: cast_nullable_to_non_nullable
+          : type as int?,
       status: status == const $CopyWithPlaceholder()
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
@@ -242,6 +248,7 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
     HabitExportData(
       createT: json['create_t'] as int?,
       modifyT: json['modify_t'] as int?,
+      type: json['type'] as int?,
       status: json['status'] as int?,
       name: json['name'] as String?,
       desc: json['desc'] as String?,
@@ -272,6 +279,7 @@ Map<String, dynamic> _$HabitExportDataToJson(HabitExportData instance) {
 
   writeNotNull('create_t', instance.createT);
   writeNotNull('modify_t', instance.modifyT);
+  writeNotNull('type', instance.type);
   writeNotNull('status', instance.status);
   writeNotNull('name', instance.name);
   writeNotNull('desc', instance.desc);

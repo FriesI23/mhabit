@@ -76,6 +76,7 @@ class RecordExportData implements JsonAdaptor {
 class HabitExportDataKey {
   static const String createT = 'create_t';
   static const String modifyT = 'modify_t';
+  static const String type = 'type';
   static const String status = 'status';
   static const String name = 'name';
   static const String desc = 'desc';
@@ -100,6 +101,8 @@ class HabitExportData implements JsonAdaptor {
   final int? createT;
   @JsonKey(name: HabitExportDataKey.modifyT)
   final int? modifyT;
+  @JsonKey(name: HabitExportDataKey.type)
+  final int? type;
   @JsonKey(name: HabitExportDataKey.status)
   final int? status;
   @JsonKey(name: HabitExportDataKey.name)
@@ -132,6 +135,7 @@ class HabitExportData implements JsonAdaptor {
   const HabitExportData(
       {this.createT,
       this.modifyT,
+      this.type,
       this.status,
       this.name,
       this.desc,
@@ -150,6 +154,7 @@ class HabitExportData implements JsonAdaptor {
   HabitExportData.fromHabitDBCell(HabitDBCell cell, {this.records = const []})
       : createT = cell.createT,
         modifyT = cell.modifyT,
+        type = cell.type,
         status = cell.status,
         name = cell.name,
         desc = cell.desc,
@@ -170,6 +175,7 @@ class HabitExportData implements JsonAdaptor {
   HabitDBCell toHabitDBCell() => HabitDBCell(
         createT: createT,
         modifyT: modifyT,
+        type: type,
         status: status,
         name: name,
         desc: desc,

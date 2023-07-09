@@ -23,9 +23,11 @@ import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
 
+@JsonEnum(valueField: 'code')
 enum HabitType implements EnumWithDBCodeABC {
   unknown(code: 0),
-  normal(code: 1);
+  normal(code: 1),
+  negative(code: 2);
 
   final int _code;
 
