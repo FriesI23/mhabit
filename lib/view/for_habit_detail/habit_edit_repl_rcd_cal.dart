@@ -147,10 +147,12 @@ class _HabitEditReplacementRecordCalendarDialog
     final record = viewmodel.getHabitRecordData(date);
     num orgNum = record?.value ?? -1;
     if (record != null && record.status == HabitRecordStatus.done) {
-      form = HabitDailyRecordForm(record.value, viewmodel.habitDailyGoal!);
+      form = HabitDailyRecordForm(record.value, viewmodel.habitDailyGoal!,
+          habitType: viewmodel.habitType!);
     } else {
       form = HabitDailyRecordForm(
-          viewmodel.habitDailyGoal!, viewmodel.habitDailyGoal!);
+          viewmodel.habitDailyGoal!, viewmodel.habitDailyGoal!,
+          habitType: viewmodel.habitType!);
     }
 
     final result = await showHabitRecordCustomNumberPickerDialog(

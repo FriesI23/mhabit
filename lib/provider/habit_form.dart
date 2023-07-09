@@ -232,6 +232,7 @@ class HabitFormViewModel extends ChangeNotifier
     var freq = frequency.toMap();
     var now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     var dbCell = HabitDBCell(
+        // TODO: indev, save habit from type
         type: HabitType.normal.dbCode,
         uuid: genHabitUUID(),
         status: HabitStatus.activated.dbCode,

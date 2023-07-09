@@ -23,9 +23,11 @@ import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
 
+@JsonEnum(valueField: 'code')
 enum HabitType implements EnumWithDBCodeABC {
   unknown(code: 0),
-  normal(code: 1);
+  normal(code: 1),
+  negative(code: 2);
 
   final int _code;
 
@@ -144,6 +146,7 @@ enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard }
 
 class HabitForm {
   String? name;
+  HabitType? type;
   HabitColorType? colorType;
   HabitDailyGoal? dailyGoal;
   String? dailyGoalUnit;
@@ -159,6 +162,7 @@ class HabitForm {
 
   HabitForm({
     this.name,
+    this.type,
     this.colorType,
     this.dailyGoal,
     this.dailyGoalUnit,
@@ -176,6 +180,7 @@ class HabitForm {
   HabitForm.fromHabitDBCell(HabitDBCell cell,
       {required this.editMode, this.editParams})
       : name = cell.name,
+        type = HabitType.getFromDBCode(cell.type!)!,
         colorType = HabitColorType.getFromDBCode(cell.color!)!,
         dailyGoal = cell.dailyGoal,
         dailyGoalUnit = cell.dailyGoalUnit,
@@ -189,16 +194,29 @@ class HabitForm {
             ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
             : null,
         reminderQuest = cell.remindQuestion;
+
+  @override
+  String toString() {
+    return 'HabitForm(name=$name, type=$type, '
+        'colorType=$colorType, dailyGoal=$dailyGoal, '
+        'dailyGoalUnit=$dailyGoalUnit, dailyGoalExtra=$dailyGoalExtra, '
+        'frequency=$frequency, startDate=$startDate, targetDays=$targetDays, '
+        'desc=$desc, reminder=$reminder, reminderQuest=$reminderQuest, '
+        'editMode=$editMode, editParams=$editParams)';
+  }
 }
 
 class HabitDailyRecordForm {
   final num value;
   final num targetValue;
+  final HabitType habitType;
 
-  const HabitDailyRecordForm(this.value, this.targetValue);
+  const HabitDailyRecordForm(this.value, this.targetValue,
+      {required this.habitType});
 
-  static HabitDailyComplateStatus getComplateStatus(
-      num value, num targetValue) {
+  static HabitDailyComplateStatus getComplateStatus(num value, num targetValue,
+      {required HabitType habitType}) {
+    // TODO: indev, distinguish between normal and negative habit
     if (value > targetValue) {
       return HabitDailyComplateStatus.goodjob;
     } else if (value == targetValue) {
@@ -211,5 +229,5 @@ class HabitDailyRecordForm {
   }
 
   HabitDailyComplateStatus get complateStatus =>
-      getComplateStatus(value, targetValue);
+      getComplateStatus(value, targetValue, habitType: habitType);
 }

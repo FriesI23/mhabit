@@ -31,12 +31,16 @@ class HabitScore {
   final int targetDays;
   final HabitDailyGoal dailyGoal;
   final HabitDailyGoal? dailGoalExtra;
+  final HabitType habitType;
   final num _prtZero;
   final num _prtPartial;
   late final Tuple2<num, num> _interval;
 
   HabitScore(
-      {required this.targetDays, required this.dailyGoal, this.dailGoalExtra})
+      {required this.targetDays,
+      required this.dailyGoal,
+      this.dailGoalExtra,
+      this.habitType = HabitType.normal})
       : _prtZero = -100 / targetDays,
         _prtPartial = -100 / targetDays / 2 {
     _interval = Tuple2(
@@ -88,7 +92,8 @@ class HabitScore {
         case HabitRecordStatus.unknown:
           return prtZero;
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal)) {
+          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
+              habitType: habitType)) {
             case HabitDailyComplateStatus.zero:
               return prtZero;
             case HabitDailyComplateStatus.tryhard:
@@ -110,7 +115,8 @@ class HabitScore {
     if (autoCompleted) {
       switch (status) {
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal)) {
+          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
+              habitType: habitType)) {
             case HabitDailyComplateStatus.goodjob:
               return _calcRealScoreExtra(value);
             default:
@@ -122,7 +128,8 @@ class HabitScore {
     } else {
       switch (status) {
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal)) {
+          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
+              habitType: habitType)) {
             case HabitDailyComplateStatus.ok:
               return scoreNormal;
             case HabitDailyComplateStatus.goodjob:

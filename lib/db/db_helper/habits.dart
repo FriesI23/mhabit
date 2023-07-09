@@ -185,6 +185,7 @@ Future<int> updateExistHabitCellToDB(
 const _loadHabitDetailColums = [
   HabitDBCellKey.id,
   HabitDBCellKey.uuid,
+  HabitDBCellKey.type,
   HabitDBCellKey.name,
   HabitDBCellKey.desc,
   HabitDBCellKey.color,
@@ -217,6 +218,7 @@ Future<HabitDBCell?> loadHabitDetailFromDB(HabitUUID uuid) async {
 const _loadHabitAboutDataCollectionColumns = [
   HabitDBCellKey.id,
   HabitDBCellKey.uuid,
+  HabitDBCellKey.type,
   HabitDBCellKey.name,
   HabitDBCellKey.color,
   HabitDBCellKey.dailyGoal,

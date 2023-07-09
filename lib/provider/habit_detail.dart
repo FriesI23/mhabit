@@ -61,8 +61,10 @@ mixin _HabitDetailHeatmapColorMixin {
         case HabitRecordStatus.skip:
           break;
         case HabitRecordStatus.done:
-          var complateStatus = HabitDailyRecordForm.getComplateStatus(
-              record.value, habitDetailData!.data.dailyGoal);
+          final data = habitDetailData!.data;
+          final complateStatus = HabitDailyRecordForm.getComplateStatus(
+              record.value, data.dailyGoal,
+              habitType: data.type);
           switch (complateStatus) {
             case HabitDailyComplateStatus.zero:
               tmpMap[record.date] = HabitHeatMapColorMapDefine.uncomplate;
@@ -147,8 +149,10 @@ mixin _HabitDetailFreqChartMixin {
         case HabitRecordStatus.unknown:
           break;
         case HabitRecordStatus.done:
-          var status = HabitDailyRecordForm.getComplateStatus(
-              record.value, habitDetailData!.data.dailyGoal);
+          final data = habitDetailData!.data;
+          final status = HabitDailyRecordForm.getComplateStatus(
+              record.value, data.dailyGoal,
+              habitType: data.type);
           switch (status) {
             case HabitDailyComplateStatus.zero:
               if (habitDetailData!.data.isRecordAutoComplated(record.date)) {
@@ -290,6 +294,8 @@ class HabitDetailViewModel extends ChangeNotifier
 
   Duration get duringFromStartDate =>
       HabitDate.now().difference(habitStartDate);
+
+  HabitType? get habitType => _habitDetailData?.data.type;
 
   HabitColorType? get habitColorType => _habitDetailData?.data.colorType;
 
@@ -446,7 +452,8 @@ class HabitDetailViewModel extends ChangeNotifier
     HabitSummaryRecord orgRecord;
     final HabitSummaryRecord? record;
     bool isNew;
-    HabitSummaryData data = _habitDetailData!.data;
+
+    final data = _habitDetailData!.data;
 
     if (data.containsRecordDate(date)) {
       orgRecord = data.getRecordByDate(date)!;
@@ -458,8 +465,9 @@ class HabitDetailViewModel extends ChangeNotifier
 
     // status changed: unknown -> (done(ok), done(zero), skip)
     // status changed(with valued): unknown -> (done(value), skip)
-    var completeStatus =
-        HabitDailyRecordForm(orgRecord.value, data.dailyGoal).complateStatus;
+    final completeStatus = HabitDailyRecordForm(orgRecord.value, data.dailyGoal,
+            habitType: data.type)
+        .complateStatus;
     bool valued = (completeStatus != HabitDailyComplateStatus.zero) &&
         (completeStatus != HabitDailyComplateStatus.ok);
     switch (orgRecord.status) {

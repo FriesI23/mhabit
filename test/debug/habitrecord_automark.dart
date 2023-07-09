@@ -37,6 +37,7 @@ void cusomFreqPerformanceTest(
     var data = HabitSummaryData(
       id: i,
       uuid: 'h$i',
+      type: HabitType.normal,
       name: 'test_$i',
       colorType: HabitColorType.cc1,
       dailyGoal: 10.0,
@@ -87,6 +88,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
   var data = HabitSummaryData(
     id: 1,
     uuid: 'hsingle',
+    type: HabitType.normal,
     name: 'test_single',
     colorType: HabitColorType.cc1,
     dailyGoal: 10.0,
@@ -129,6 +131,7 @@ void functionTest() {
   var data = HabitSummaryData(
     id: 1,
     uuid: 'h1',
+    type: HabitType.normal,
     name: 'test',
     colorType: HabitColorType.cc1,
     dailyGoal: 10.0,

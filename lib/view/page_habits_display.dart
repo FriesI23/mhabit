@@ -454,7 +454,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final result = await showHabitRecordCustomNumberPickerDialog(
       context: context,
-      recordForm: HabitDailyRecordForm(crtNum, data.dailyGoal),
+      recordForm:
+          HabitDailyRecordForm(crtNum, data.dailyGoal, habitType: data.type),
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
