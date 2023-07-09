@@ -285,7 +285,7 @@ class _HabitEditView extends State<HabitEditView> {
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitEditView:: $hashCode");
+    DebugLog.rebuild("HabitEditView:: $hashCode ${widget.initForm}");
 
     //#region private builders
     Widget buildAppbar(BuildContext context) {

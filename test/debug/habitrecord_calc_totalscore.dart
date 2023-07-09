@@ -31,6 +31,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
   var data = HabitSummaryData(
     id: 1,
     uuid: 'hsingle',
+    type: HabitType.normal,
     name: 'test_single',
     colorType: HabitColorType.cc1,
     dailyGoal: 15.0,

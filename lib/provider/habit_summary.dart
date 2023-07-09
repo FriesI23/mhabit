@@ -485,8 +485,9 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     // status changed: unknown -> (done(ok), done(zero), skip)
     // status changed(with valued): unknown -> (done(value), skip)
-    var completeStatus =
-        HabitDailyRecordForm(orgRecord.value, data.dailyGoal).complateStatus;
+    var completeStatus = HabitDailyRecordForm(orgRecord.value, data.dailyGoal,
+            habitType: data.type)
+        .complateStatus;
     bool valued = (completeStatus != HabitDailyComplateStatus.zero) &&
         (completeStatus != HabitDailyComplateStatus.ok);
     switch (orgRecord.status) {

@@ -157,7 +157,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           padding: widget.itemPadding,
           colorType: data.colorType,
           habitDailyRecordForm: HabitDailyRecordForm(
-              record != null ? record.value : 0.0, data.dailyGoal),
+              record != null ? record.value : 0.0, data.dailyGoal,
+              habitType: data.type),
           habitDailyStatus:
               record != null ? record.status : HabitRecordStatus.unknown,
           onPressed: widget.onCellPressed != null
