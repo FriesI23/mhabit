@@ -19,6 +19,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
+import '../l10n/localizations.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
@@ -43,6 +44,19 @@ enum HabitType implements EnumWithDBCodeABC {
     }
     return withDefault;
   }
+
+  static String getHabitTypeName(HabitType type, [L10n? l10n]) {
+    switch (type) {
+      case HabitType.unknown:
+        return '';
+      case HabitType.normal:
+        return "Positive";
+      case HabitType.negative:
+        return "Negative";
+    }
+  }
+
+  String getTypeName([L10n? l10n]) => HabitType.getHabitTypeName(this, l10n);
 }
 
 @JsonEnum(valueField: 'code')

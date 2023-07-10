@@ -22,6 +22,7 @@ export './habit_edit_daily_goal_tile.dart';
 export './habit_edit_daily_goal_unit_tile.dart';
 export './habit_edit_desc_tile.dart';
 export './habit_edit_frequency_tile.dart';
+export './habit_edit_habit_type_tile.dart';
 export './habit_edit_start_date_tile.dart';
 export './habit_edit_target_days_tile.dart';
 export './habit_reminder_tiles.dart';

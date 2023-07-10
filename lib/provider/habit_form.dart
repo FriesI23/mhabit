@@ -120,6 +120,14 @@ class HabitFormViewModel extends ChangeNotifier
         '${_form.name} -> $newName');
   }
 
+  HabitType get habitType => _form.type ?? defaultHabitType;
+  set habitType(HabitType newHabitType) {
+    _form.type = newHabitType;
+    notifyListeners();
+    DebugLog.setValue('HabitFormViewModel.habitType: '
+        '${_form.type} -> $newHabitType');
+  }
+
   HabitColorType get colorType => _form.colorType!;
   set colorType(HabitColorType newColorType) {
     _form.colorType = newColorType;
@@ -232,8 +240,7 @@ class HabitFormViewModel extends ChangeNotifier
     var freq = frequency.toMap();
     var now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     var dbCell = HabitDBCell(
-        // TODO: indev, save habit from type
-        type: HabitType.normal.dbCode,
+        type: habitType.dbCode,
         uuid: genHabitUUID(),
         status: HabitStatus.activated.dbCode,
         name: name,
@@ -268,6 +275,7 @@ class HabitFormViewModel extends ChangeNotifier
   Future<HabitDBCell?> saveExistHabit({bool returnResult = false}) async {
     var freq = frequency.toMap();
     var dbCell = HabitDBCell(
+      type: habitType.dbCode,
       uuid: _form.editParams!.uuid,
       name: name,
       desc: desc,

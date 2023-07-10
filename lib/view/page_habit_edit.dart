@@ -132,6 +132,15 @@ class _HabitEditView extends State<HabitEditView> {
     context.read<HabitFormViewModel>().colorType = result;
   }
 
+  void _openHabitTypePickerDialog() async {
+    if (!mounted) return;
+    final result = await showHabitTypSelectDialog(
+        context: context,
+        habitType: context.read<HabitFormViewModel>().habitType);
+    if (result == null || !mounted) return;
+    context.read<HabitFormViewModel>().habitType = result;
+  }
+
   void _openFrequencyPickerDialog(
       BuildContext context, HabitFrequency frequency) async {
     final result = await showHabitFrequencyPickerDialog(
@@ -335,6 +344,20 @@ class _HabitEditView extends State<HabitEditView> {
       );
     }
 
+    Widget buildHabitTypeField(BuildContext context) {
+      return Selector<HabitFormViewModel, HabitType>(
+        selector: (context, formViewModel) => formViewModel.habitType,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, habitType, child) {
+          DebugLog.rebuild("field habit type: $habitType");
+          return HabitEditHabitTypeTile(
+            habitType: habitType,
+            onPressed: _openHabitTypePickerDialog,
+          );
+        },
+      );
+    }
+
     Widget buildDailyGoalField(BuildContext context) {
       return HabitEditDailyGoalTile(
         controller:
@@ -508,6 +531,8 @@ class _HabitEditView extends State<HabitEditView> {
             _HabitEditSliverList(
               children: [
                 buildColorField(context),
+                habitEditDiv,
+                buildHabitTypeField(context),
                 habitEditDiv,
                 buildDailyGoalField(context),
                 habitEditDiv,
