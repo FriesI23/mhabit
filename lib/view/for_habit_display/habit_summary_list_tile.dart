@@ -21,6 +21,7 @@ import '../../common/types.dart';
 import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
+import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
@@ -156,9 +157,12 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           date: showDate,
           padding: widget.itemPadding,
           colorType: data.colorType,
-          habitDailyRecordForm: HabitDailyRecordForm(
-              record != null ? record.value : 0.0, data.dailyGoal,
-              habitType: data.type),
+          habitDailyRecordForm: HabitDailyRecordForm.getImp(
+            type: data.type,
+            value: record != null ? record.value : 0.0,
+            targetValue: data.dailyGoal,
+            extraTargetValue: data.dailyGoalExtra,
+          ),
           habitDailyStatus:
               record != null ? record.status : HabitRecordStatus.unknown,
           onPressed: widget.onCellPressed != null

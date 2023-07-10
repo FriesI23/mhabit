@@ -22,12 +22,13 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
+import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail.dart';
 import '../model/habit_detail_chart.dart';
 import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
-import '../model/score.dart';
+import '../model/habit_score.dart';
 import '../reminders/notification_service.dart';
 import 'commons.dart';
 
@@ -62,9 +63,12 @@ mixin _HabitDetailHeatmapColorMixin {
           break;
         case HabitRecordStatus.done:
           final data = habitDetailData!.data;
-          final complateStatus = HabitDailyRecordForm.getComplateStatus(
-              record.value, data.dailyGoal,
-              habitType: data.type);
+          final complateStatus = HabitDailyRecordForm.getImp(
+            type: data.type,
+            value: record.value,
+            targetValue: data.dailyGoal,
+            extraTargetValue: data.dailyGoalExtra,
+          ).complateStatus;
           switch (complateStatus) {
             case HabitDailyComplateStatus.zero:
               tmpMap[record.date] = HabitHeatMapColorMapDefine.uncomplate;
@@ -150,9 +154,12 @@ mixin _HabitDetailFreqChartMixin {
           break;
         case HabitRecordStatus.done:
           final data = habitDetailData!.data;
-          final status = HabitDailyRecordForm.getComplateStatus(
-              record.value, data.dailyGoal,
-              habitType: data.type);
+          final status = HabitDailyRecordForm.getImp(
+            type: data.type,
+            value: record.value,
+            targetValue: data.dailyGoal,
+            extraTargetValue: data.dailyGoalExtra,
+          ).complateStatus;
           switch (status) {
             case HabitDailyComplateStatus.zero:
               if (habitDetailData!.data.isRecordAutoComplated(record.date)) {
@@ -465,9 +472,12 @@ class HabitDetailViewModel extends ChangeNotifier
 
     // status changed: unknown -> (done(ok), done(zero), skip)
     // status changed(with valued): unknown -> (done(value), skip)
-    final completeStatus = HabitDailyRecordForm(orgRecord.value, data.dailyGoal,
-            habitType: data.type)
-        .complateStatus;
+    final completeStatus = HabitDailyRecordForm.getImp(
+      type: data.type,
+      value: orgRecord.value,
+      targetValue: data.dailyGoal,
+      extraTargetValue: data.dailyGoalExtra,
+    ).complateStatus;
     bool valued = (completeStatus != HabitDailyComplateStatus.zero) &&
         (completeStatus != HabitDailyComplateStatus.ok);
     switch (orgRecord.status) {

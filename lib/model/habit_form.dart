@@ -19,6 +19,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
+import '../l10n/localizations.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
@@ -43,6 +44,19 @@ enum HabitType implements EnumWithDBCodeABC {
     }
     return withDefault;
   }
+
+  static String getHabitTypeName(HabitType type, [L10n? l10n]) {
+    switch (type) {
+      case HabitType.unknown:
+        return '';
+      case HabitType.normal:
+        return "Positive";
+      case HabitType.negative:
+        return "Negative";
+    }
+  }
+
+  String getTypeName([L10n? l10n]) => HabitType.getHabitTypeName(this, l10n);
 }
 
 @JsonEnum(valueField: 'code')
@@ -204,30 +218,4 @@ class HabitForm {
         'desc=$desc, reminder=$reminder, reminderQuest=$reminderQuest, '
         'editMode=$editMode, editParams=$editParams)';
   }
-}
-
-class HabitDailyRecordForm {
-  final num value;
-  final num targetValue;
-  final HabitType habitType;
-
-  const HabitDailyRecordForm(this.value, this.targetValue,
-      {required this.habitType});
-
-  static HabitDailyComplateStatus getComplateStatus(num value, num targetValue,
-      {required HabitType habitType}) {
-    // TODO: indev, distinguish between normal and negative habit
-    if (value > targetValue) {
-      return HabitDailyComplateStatus.goodjob;
-    } else if (value == targetValue) {
-      return HabitDailyComplateStatus.ok;
-    } else if (value > 0) {
-      return HabitDailyComplateStatus.tryhard;
-    } else {
-      return HabitDailyComplateStatus.zero;
-    }
-  }
-
-  HabitDailyComplateStatus get complateStatus =>
-      getComplateStatus(value, targetValue, habitType: habitType);
 }

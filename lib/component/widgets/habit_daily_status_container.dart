@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import '../../common/types.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
+import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
 
@@ -157,6 +158,8 @@ class HabitDailyStatusContainer extends StatelessWidget {
               } else {
                 return withDoneAndZeroStatus();
               }
+            default:
+              return const SizedBox();
           }
       }
     }
