@@ -26,6 +26,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
+import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -485,9 +486,12 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     // status changed: unknown -> (done(ok), done(zero), skip)
     // status changed(with valued): unknown -> (done(value), skip)
-    var completeStatus = HabitDailyRecordForm(orgRecord.value, data.dailyGoal,
-            habitType: data.type)
-        .complateStatus;
+    final completeStatus = HabitDailyRecordForm.getImp(
+      type: data.type,
+      value: orgRecord.value,
+      targetValue: data.dailyGoal,
+      extraTargetValue: data.dailyGoalExtra,
+    ).complateStatus;
     bool valued = (completeStatus != HabitDailyComplateStatus.zero) &&
         (completeStatus != HabitDailyComplateStatus.ok);
     switch (orgRecord.status) {

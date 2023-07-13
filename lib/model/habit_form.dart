@@ -219,29 +219,3 @@ class HabitForm {
         'editMode=$editMode, editParams=$editParams)';
   }
 }
-
-class HabitDailyRecordForm {
-  final num value;
-  final num targetValue;
-  final HabitType habitType;
-
-  const HabitDailyRecordForm(this.value, this.targetValue,
-      {required this.habitType});
-
-  static HabitDailyComplateStatus getComplateStatus(num value, num targetValue,
-      {required HabitType habitType}) {
-    // TODO: indev, distinguish between normal and negative habit
-    if (value > targetValue) {
-      return HabitDailyComplateStatus.goodjob;
-    } else if (value == targetValue) {
-      return HabitDailyComplateStatus.ok;
-    } else if (value > 0) {
-      return HabitDailyComplateStatus.tryhard;
-    } else {
-      return HabitDailyComplateStatus.zero;
-    }
-  }
-
-  HabitDailyComplateStatus get complateStatus =>
-      getComplateStatus(value, targetValue, habitType: habitType);
-}

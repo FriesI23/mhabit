@@ -19,6 +19,7 @@ import 'package:tuple/tuple.dart';
 
 import '../common/math.dart';
 import '../common/types.dart';
+import 'habit_daily_record_form.dart';
 import 'habit_date.dart';
 import 'habit_form.dart';
 import 'habit_summary.dart';
@@ -92,8 +93,13 @@ class HabitScore {
         case HabitRecordStatus.unknown:
           return prtZero;
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
-              habitType: habitType)) {
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
             case HabitDailyComplateStatus.zero:
               return prtZero;
             case HabitDailyComplateStatus.tryhard:
@@ -115,8 +121,13 @@ class HabitScore {
     if (autoCompleted) {
       switch (status) {
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
-              habitType: habitType)) {
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
             case HabitDailyComplateStatus.goodjob:
               return _calcRealScoreExtra(value);
             default:
@@ -128,8 +139,13 @@ class HabitScore {
     } else {
       switch (status) {
         case HabitRecordStatus.done:
-          switch (HabitDailyRecordForm.getComplateStatus(value, dailyGoal,
-              habitType: habitType)) {
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
             case HabitDailyComplateStatus.ok:
               return scoreNormal;
             case HabitDailyComplateStatus.goodjob:
