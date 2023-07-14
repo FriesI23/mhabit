@@ -19,8 +19,22 @@ class L10nZh extends L10n {
   String get habitEdit_colorPicker_title => '选择颜色';
 
   @override
+  String get habitEdit_habitTypeDialog_title => '习惯类型';
+
+  @override
+  String get habitEdit_habitType_positiveText => '积极（默认）';
+
+  @override
+  String get habitEdit_habitType_negativeText => '消极';
+
+  @override
   String habitEdit_habitDailyGoal_hintText(Object number) {
     return '每日目标, 默认为$number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeHintText(num number) {
+    return '每日最低限度, 默认为$number';
   }
 
   @override
@@ -33,6 +47,9 @@ class L10nZh extends L10n {
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
     return '无效的值，必须为空或者>=$dailyGoal';
   }
+
+  @override
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => '每日最高限额';
 
   @override
   String get habitEdit_frequencySelector_title => '频率';

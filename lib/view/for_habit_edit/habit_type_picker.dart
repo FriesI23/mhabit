@@ -50,7 +50,9 @@ class HabitTypePicker extends StatelessWidget {
     }
 
     return SimpleDialog(
-      title: const Text("Select habit type"),
+      title: l10n != null
+          ? Text(l10n.habitEdit_habitTypeDialog_title)
+          : const Text("Select habit type"),
       children: [
         buildHabitTypeTile(context, HabitType.normal),
         buildHabitTypeTile(context, HabitType.negative),

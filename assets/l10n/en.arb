@@ -9,6 +9,10 @@
 
   "habitEdit_colorPicker_title": "Pick color",
 
+  "habitEdit_habitTypeDialog_title": "Habit type",
+  "habitEdit_habitType_positiveText": "Positive (Default)",
+  "habitEdit_habitType_negativeText": "Negative",
+
   "@habitEidt_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -19,6 +23,16 @@
     }
   },
   "habitEdit_habitDailyGoal_hintText": "Daily goal, default {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "Minimum daily threshold, defualt {number}",
 
   "habitEdit_habitDailyGoalUnit_hintText": "Daily goal unit",
 
@@ -32,6 +46,7 @@
     }
   },
   "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or >= {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximum daily limit",
 
   "habitEdit_frequencySelector_title": "Select frequency",
 

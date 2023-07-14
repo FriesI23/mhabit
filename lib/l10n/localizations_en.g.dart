@@ -19,8 +19,22 @@ class L10nEn extends L10n {
   String get habitEdit_colorPicker_title => 'Pick color';
 
   @override
+  String get habitEdit_habitTypeDialog_title => 'Habit type';
+
+  @override
+  String get habitEdit_habitType_positiveText => 'Positive (Default)';
+
+  @override
+  String get habitEdit_habitType_negativeText => 'Negative';
+
+  @override
   String habitEdit_habitDailyGoal_hintText(Object number) {
     return 'Daily goal, default $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeHintText(num number) {
+    return 'Minimum daily threshold, defualt $number';
   }
 
   @override
@@ -33,6 +47,9 @@ class L10nEn extends L10n {
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
     return 'invalid value, must be empty or >= $dailyGoal';
   }
+
+  @override
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
 
   @override
   String get habitEdit_frequencySelector_title => 'Select frequency';

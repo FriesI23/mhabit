@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:mhabit/provider/_utils/change_record_status_utils.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -26,13 +25,12 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
-import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
+import '../model/habit_score.dart';
 import '../model/habit_stat.dart';
 import '../model/habit_summary.dart';
-import '../model/habit_score.dart';
 import '../reminders/notification_service.dart';
 import 'commons.dart';
 
@@ -469,55 +467,22 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   Future<HabitSummaryRecord?> onTapToChangeRecordStatus(
       HabitUUID habitUUID, HabitRecordDate date,
       {bool listen = true}) async {
-    HabitSummaryRecord orgRecord;
-    final HabitSummaryRecord? record;
-    bool isNew;
-
-    HabitSummaryData? data = _data.getHabitByUUID(habitUUID);
+    final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    if (data.containsRecordDate(date)) {
-      orgRecord = data.getRecordByDate(date)!;
-      isNew = false;
-    } else {
-      orgRecord = HabitSummaryRecord.generate(date);
-      isNew = true;
-    }
+    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final recordTuple = util.getNewRecordOnTap();
+    if (recordTuple == null) return null;
 
-    // status changed: unknown -> (done(ok), done(zero), skip)
-    // status changed(with valued): unknown -> (done(value), skip)
-    final completeStatus = HabitDailyRecordForm.getImp(
-      type: data.type,
-      value: orgRecord.value,
-      targetValue: data.dailyGoal,
-      extraTargetValue: data.dailyGoalExtra,
-    ).complateStatus;
-    bool valued = (completeStatus != HabitDailyComplateStatus.zero) &&
-        (completeStatus != HabitDailyComplateStatus.ok);
-    switch (orgRecord.status) {
-      case HabitRecordStatus.unknown:
-      case HabitRecordStatus.skip:
-        record = orgRecord.copyWith(
-            status: HabitRecordStatus.done,
-            value: valued ? orgRecord.value : data.dailyGoal);
-        break;
-      case HabitRecordStatus.done:
-        if (valued) {
-          record = orgRecord.copyWith(status: HabitRecordStatus.skip);
-        } else {
-          if (completeStatus == HabitDailyComplateStatus.ok) {
-            record = orgRecord.copyWith(value: 0.0);
-          } else {
-            record = orgRecord.copyWith(status: HabitRecordStatus.skip);
-          }
-        }
-        break;
-    }
+    final orgRecord = recordTuple.item1;
+    final record = recordTuple.item2;
+    final isNew = recordTuple.item3;
 
     await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
 
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
+
     DebugLog.setValue("onTapToChangeRecordStatus:: "
         "${data.id} $result score=${data.progress} isNew=$isNew "
         "$orgRecord -> $record");
@@ -530,25 +495,16 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   Future<HabitSummaryRecord?> onLongPressChangeRecordValue(
       HabitUUID habitUUID, HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
-    HabitSummaryRecord orgRecord;
-    final HabitSummaryRecord? record;
-    bool isNew;
-
-    HabitSummaryData? data = _data.getHabitByUUID(habitUUID);
+    final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    if (data.containsRecordDate(date)) {
-      orgRecord = data.getRecordByDate(date)!;
-      isNew = false;
-    } else {
-      orgRecord = HabitSummaryRecord.generate(date);
-      isNew = true;
-    }
+    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final recordTuple = util.getNewRecordOnLongTap(newValue);
+    if (recordTuple == null) return null;
 
-    newValue =
-        math.max(math.min(newValue, maxHabitdailyGoal), minHabitDailyGoal);
-    record =
-        orgRecord.copyWith(value: newValue, status: HabitRecordStatus.done);
+    final orgRecord = recordTuple.item1;
+    final record = recordTuple.item2;
+    final isNew = recordTuple.item3;
 
     await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
 

@@ -117,11 +117,35 @@ abstract class L10n {
   /// **'Pick color'**
   String get habitEdit_colorPicker_title;
 
+  /// No description provided for @habitEdit_habitTypeDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit type'**
+  String get habitEdit_habitTypeDialog_title;
+
+  /// No description provided for @habitEdit_habitType_positiveText.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive (Default)'**
+  String get habitEdit_habitType_positiveText;
+
+  /// No description provided for @habitEdit_habitType_negativeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative'**
+  String get habitEdit_habitType_negativeText;
+
   /// No description provided for @habitEdit_habitDailyGoal_hintText.
   ///
   /// In en, this message translates to:
   /// **'Daily goal, default {number}'**
   String habitEdit_habitDailyGoal_hintText(Object number);
+
+  /// default habit daily goal for negative habit
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum daily threshold, defualt {number}'**
+  String habitEdit_habitDailyGoal_negativeHintText(num number);
 
   /// No description provided for @habitEdit_habitDailyGoalUnit_hintText.
   ///
@@ -140,6 +164,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'invalid value, must be empty or >= {dailyGoal}'**
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal);
+
+  /// No description provided for @habitEdit_habitDailyGoalExtra_negativeHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum daily limit'**
+  String get habitEdit_habitDailyGoalExtra_negativeHintText;
 
   /// No description provided for @habitEdit_frequencySelector_title.
   ///

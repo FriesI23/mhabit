@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:mhabit/common/consts.dart';
+
 import 'habit_form.dart';
 
 abstract class HabitDailyRecordForm {
@@ -23,6 +25,8 @@ abstract class HabitDailyRecordForm {
   HabitType get habitType;
 
   HabitDailyComplateStatus get complateStatus;
+
+  bool get isValued;
 
   factory HabitDailyRecordForm.getImp({
     required HabitType type,
@@ -38,6 +42,14 @@ abstract class HabitDailyRecordForm {
         return NegativeHabitDailyRecordForm(
             value, targetValue, extraTargetValue ?? targetValue);
     }
+  }
+
+  @override
+  String toString() {
+    return 'HabitDailyRecordForm('
+        'value=$value, targetValue=$targetValue, habitType=$habitType, '
+        'complateStatus=$complateStatus, '
+        'complateStatusValued=$isValued)';
   }
 }
 
@@ -59,6 +71,21 @@ class NormalHabitDailyRecordForm extends HabitDailyRecordForm {
       return HabitDailyComplateStatus.zero;
     }
   }
+
+  @override
+  bool get isValued {
+    final status = complateStatus;
+    return (status != HabitDailyComplateStatus.zero) &&
+        (status != HabitDailyComplateStatus.ok);
+  }
+
+  @override
+  String toString() {
+    return 'NormalHabitDailyRecordForm('
+        'value=$value, targetValue=$targetValue, habitType=$habitType, '
+        'complateStatus=$complateStatus, '
+        'complateStatusValued=$isValued)';
+  }
 }
 
 class NegativeHabitDailyRecordForm extends HabitDailyRecordForm {
@@ -72,7 +99,7 @@ class NegativeHabitDailyRecordForm extends HabitDailyRecordForm {
         super(value, targetMinValue);
 
   @override
-  HabitType get habitType => HabitType.normal;
+  HabitType get habitType => HabitType.negative;
 
   num get targetMinValue => targetValue;
 
@@ -82,12 +109,36 @@ class NegativeHabitDailyRecordForm extends HabitDailyRecordForm {
   HabitDailyComplateStatus get complateStatus {
     if (value > targetMaxValue) {
       return HabitDailyComplateStatus.tryhard;
-    } else if (value < targetMinValue) {
-      return HabitDailyComplateStatus.zero;
     } else if (value == targetMaxValue) {
       return HabitDailyComplateStatus.ok;
-    } else {
+    } else if (value >= targetMinValue) {
       return HabitDailyComplateStatus.goodjob;
+    } else if (value == 0) {
+      return HabitDailyComplateStatus.zero;
+    } else {
+      return HabitDailyComplateStatus.noeffect;
     }
+  }
+
+  @override
+  bool get isValued {
+    if (targetMinValue == minHabitDailyGoal) {
+      if (targetMaxValue == targetMinValue) {
+        return complateStatus != HabitDailyComplateStatus.ok;
+      } else if (value == targetMinValue) {
+        return false;
+      }
+    }
+    final status = complateStatus;
+    return (status != HabitDailyComplateStatus.zero) &&
+        (status != HabitDailyComplateStatus.ok);
+  }
+
+  @override
+  String toString() {
+    return 'NegativeHabitDailyRecordForm('
+        'value=$value, targetValue=$targetValue, targetExtraValue=$targetExtraValue, '
+        'habitType=$habitType, complateStatus=$complateStatus, '
+        'complateStatusValued=$isValued)';
   }
 }

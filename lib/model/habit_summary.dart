@@ -235,6 +235,16 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   bool get isArchived => status == HabitStatus.archived;
 
+  HabitDailyGoal get habitOkValue {
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return dailyGoal;
+      case HabitType.negative:
+        return dailyGoalExtra ?? dailyGoal;
+    }
+  }
+
   Iterable<HabitRecordDate> getAllAutoComplateRecordDate() sync* {
     for (var r in _autoMarkedRecords) {
       yield r;

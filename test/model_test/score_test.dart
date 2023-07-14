@@ -339,6 +339,38 @@ void main() {
       });
     });
   });
+  group("test NegativeHabitScore", () {
+    test("NormalHabitScore::init", () {
+      var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+      expect(hs.targetDays, 100);
+      expect(hs.dailyGoal, 10);
+      expect(hs.scoreNormal, 1.0);
+      expect(hs.scoreZero, 0.0);
+      expect(hs.scoreExtraMax, 1.5);
+      expect(hs.prtNormal, 0.0);
+      expect(hs.prtNoEffect, 0.0);
+      expect(hs.prtPartial, -0.5);
+    });
+    test("NormalHabitScore::calcRealScoreExtra", () {
+      var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+      expect(hs.debugCalcRealScoreExtra(99, 100, null), 0);
+      expect(hs.debugCalcRealScoreExtra(100, 100, null), 1.0);
+      expect(hs.debugCalcRealScoreExtra(101, 100, null), 0);
+    });
+
+    test("NormalHabitScore::calcRealScoreExtra with extendedVal", () {
+      var hs = NegativeHabitScore(
+          targetDays: 100, dailyGoal: 10, dailGoalExtra: 100);
+      expect(hs.debugCalcRealScoreExtra(150, 100, 200), 1.25);
+      expect(hs.debugCalcRealScoreExtra(100, 100, 150), 1.5);
+      expect(hs.debugCalcRealScoreExtra(130, 100, 150), 1.2);
+      expect(hs.debugCalcRealScoreExtra(120, 100, 150), 1.3);
+      expect(hs.debugCalcRealScoreExtra(110, 100, 150), 1.4);
+      expect(hs.debugCalcRealScoreExtra(150, 100, 150), 1.0);
+      expect(hs.debugCalcRealScoreExtra(160, 100, 150), 0);
+      expect(hs.debugCalcRealScoreExtra(90, 100, 150), 0);
+    });
+  });
   group("test HabitScoreCalculator calc total score", () {
     test("HabitScoreCalculator calc normal", () {
       var dateList = <HabitDate>[

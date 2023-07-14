@@ -53,7 +53,6 @@ class HabitFormViewModel extends ChangeNotifier
             HabitForm(
                 name: '',
                 colorType: defaultHabitColorType,
-                dailyGoal: defaultHabitDailyGoal,
                 startDate: HabitStartDate.dateTime(DateTime.now()),
                 frequency: HabitFrequency.daily,
                 dailyGoalUnit: defaultHabitDailyGoalUnit,
@@ -136,7 +135,17 @@ class HabitFormViewModel extends ChangeNotifier
         '${_form.colorType} -> $newColorType');
   }
 
-  num get dailyGoal => _form.dailyGoal!;
+  num get dailyGoal {
+    if (_form.dailyGoal != null) return _form.dailyGoal!;
+    switch (habitType) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return defaultHabitDailyGoal;
+      case HabitType.negative:
+        return defaultNegativeHabitDailyGoal;
+    }
+  }
+
   set dailyGoal(num newDailyGoal) {
     _form.dailyGoal = newDailyGoal;
     notifyListeners();
@@ -221,6 +230,16 @@ class HabitFormViewModel extends ChangeNotifier
 
   bool canSaveHabit() {
     return name.isNotEmpty && isDailyGoalExtraValueValid;
+  }
+
+  bool allowZeroDailyGoal() {
+    switch (habitType) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return false;
+      case HabitType.negative:
+        return true;
+    }
   }
 
   Future<HabitDBCell?> saveHabit() async {

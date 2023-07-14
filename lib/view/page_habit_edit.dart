@@ -270,6 +270,7 @@ class _HabitEditView extends State<HabitEditView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Name: ${value.name}"),
+            Text("Name: ${value.habitType}"),
             Text("UUID: ${value.uuid}"),
             Text("Color: ${value.colorType}"),
             Text("DailyGoal: ${value.dailyGoal} ${value.dailyGoalUnit}"),
@@ -359,24 +360,30 @@ class _HabitEditView extends State<HabitEditView> {
     }
 
     Widget buildDailyGoalField(BuildContext context) {
-      return HabitEditDailyGoalTile(
-        controller:
-            context.read<HabitFormViewModel>().dailyGoalFieldInputController,
-        onChanged: (value) {
-          if (!mounted) return;
-          final formvm = context.read<HabitFormViewModel>();
-          final newDailyGoal = num.tryParse(value) ?? defaultHabitDailyGoal;
-          formvm.dailyGoal = onDailyGoalTextInputChanged(
-            newDailyGoal,
-            controller: formvm.dailyGoalFieldInputController,
-          );
-        },
-        onSubmitted: (value) {
-          if (!mounted) return;
-          final formvm = context.read<HabitFormViewModel>();
-          formvm.dailyGoalFieldInputController.text =
-              formvm.dailyGoal.toString();
-        },
+      return Selector<HabitFormViewModel, HabitType>(
+        selector: (context, vm) => vm.habitType,
+        builder: (context, habitType, child) => HabitEditDailyGoalTile(
+          habitType: habitType,
+          habitDailyGoal: context.read<HabitFormViewModel>().dailyGoal,
+          controller:
+              context.read<HabitFormViewModel>().dailyGoalFieldInputController,
+          onChanged: (value) {
+            if (!mounted) return;
+            final formvm = context.read<HabitFormViewModel>();
+            final newDailyGoal = num.tryParse(value) ?? defaultHabitDailyGoal;
+            formvm.dailyGoal = onDailyGoalTextInputChanged(
+              newDailyGoal,
+              controller: formvm.dailyGoalFieldInputController,
+              allowInputZero: formvm.allowZeroDailyGoal(),
+            );
+          },
+          onSubmitted: (value) {
+            if (!mounted) return;
+            final formvm = context.read<HabitFormViewModel>();
+            formvm.dailyGoalFieldInputController.text =
+                formvm.dailyGoal.toString();
+          },
+        ),
       );
     }
 
@@ -402,13 +409,15 @@ class _HabitEditView extends State<HabitEditView> {
 
     Widget buildDailyGoalExtraField(BuildContext context) {
       return Selector<HabitFormViewModel,
-          Tuple2<HabitDailyGoal?, HabitDailyGoal>>(
-        selector: (context, vm) => Tuple2(vm.dailyGoalExtra, vm.dailyGoal),
+          Tuple3<HabitType, HabitDailyGoal?, HabitDailyGoal>>(
+        selector: (context, vm) =>
+            Tuple3(vm.habitType, vm.dailyGoalExtra, vm.dailyGoal),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
           final formvm = context.read<HabitFormViewModel>();
           return HabitEditDailyGoalExtraTile(
             isValid: formvm.isDailyGoalExtraValueValid,
+            habitType: formvm.habitType,
             dailyGoal: formvm.dailyGoal,
             controller: formvm.dailyGoalExtraFieldInpuController,
             onChanged: (value) {

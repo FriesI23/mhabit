@@ -17,9 +17,11 @@ import 'package:flutter/material.dart';
 import '../../common/re.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../model/habit_form.dart';
 
 class HabitEditDailyGoalExtraTile extends StatelessWidget {
   final bool isValid;
+  final HabitType habitType;
   final num? dailyGoal;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
@@ -28,11 +30,23 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
   const HabitEditDailyGoalExtraTile({
     super.key,
     this.isValid = true,
+    required this.habitType,
     this.dailyGoal,
     this.controller,
     this.onChanged,
     this.onSubmitted,
   });
+
+  String? _getHintText([L10n? l10n]) {
+    switch (habitType) {
+      case HabitType.unknown:
+        return null;
+      case HabitType.normal:
+        return l10n?.habitEdit_habitDailyGoalExtra_hintText;
+      case HabitType.negative:
+        return l10n?.habitEdit_habitDailyGoalExtra_negativeHintText;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +60,7 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
-          hintText: l10n?.habitEdit_habitDailyGoalExtra_hintText ??
-              "Desired Maximum Daily Goal",
+          hintText: _getHintText(l10n),
           hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
           border: InputBorder.none,
           errorText: isValid || dailyGoal == null

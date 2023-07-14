@@ -50,9 +50,9 @@ enum HabitType implements EnumWithDBCodeABC {
       case HabitType.unknown:
         return '';
       case HabitType.normal:
-        return "Positive";
+        return l10n?.habitEdit_habitType_positiveText ?? "Positive";
       case HabitType.negative:
-        return "Negative";
+        return l10n?.habitEdit_habitType_negativeText ?? "Negative";
     }
   }
 
@@ -156,7 +156,13 @@ enum HabitRecordStatus implements EnumWithDBCodeABC<HabitRecordStatus> {
   }
 }
 
-enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard }
+enum HabitDailyComplateStatus {
+  zero,
+  ok,
+  goodjob,
+  tryhard,
+  noeffect,
+}
 
 class HabitForm {
   String? name;

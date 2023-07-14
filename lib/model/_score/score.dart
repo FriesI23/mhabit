@@ -34,19 +34,22 @@ abstract class HabitScore {
     required HabitDailyGoal dailyGoal,
     HabitDailyGoal? dailGoalExtra,
   }) {
-    return NormalHabitScore(
-      targetDays: targetDays,
-      dailyGoal: dailyGoal,
-      dailGoalExtra: dailGoalExtra,
-    );
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return NormalHabitScore(
+          targetDays: targetDays,
+          dailyGoal: dailyGoal,
+          dailGoalExtra: dailGoalExtra,
+        );
+      case HabitType.negative:
+        return NegativeHabitScore(
+          targetDays: targetDays,
+          dailyGoal: dailyGoal,
+          dailGoalExtra: dailGoalExtra,
+        );
+    }
   }
-
-  num get scoreNormal;
-  num get scoreExtraMax;
-  num get scoreZero;
-  num get prtPartial;
-  num get prtZero;
-  num get prtNormal;
 
   num calcDecreasedPrt({
     bool autoCompleted = false,
@@ -70,10 +73,6 @@ abstract class HabitScore {
 }
 
 class NormalHabitScore implements HabitScore {
-  static const _scoreNormal = 1.0;
-  static const _scoreExtraMax = 1.5;
-  static const _scoreZero = 0.0;
-
   @override
   late final int targetDays;
   @override
@@ -102,22 +101,11 @@ class NormalHabitScore implements HabitScore {
   @override
   set habitType(HabitType newHabitType) {}
 
-  @override
-  num get scoreNormal => _scoreNormal;
-
-  @override
-  num get scoreExtraMax => _scoreExtraMax;
-
-  @override
-  num get scoreZero => _scoreZero;
-
-  @override
+  num get scoreNormal => 1.0;
+  num get scoreExtraMax => 1.5;
+  num get scoreZero => 0.0;
   num get prtPartial => _prtPartial;
-
-  @override
   num get prtZero => _prtZero;
-
-  @override
   num get prtNormal => 0.0;
 
   @visibleForTesting
@@ -217,6 +205,179 @@ class NormalHabitScore implements HabitScore {
               return scoreNormal;
             case HabitDailyComplateStatus.goodjob:
               return _calcRealScoreExtra(value);
+            default:
+              return scoreZero;
+          }
+        default:
+          return scoreZero;
+      }
+    }
+  }
+
+  @override
+  num calcHabitGrowCurveValue(num x) {
+    return habitGrowCurve(x: x, days: targetDays, interv: _interval);
+  }
+
+  @override
+  num calcHabitGrowCurveDay(num y) {
+    return habitCrowCurveInverse(y: y, days: targetDays, interv: _interval);
+  }
+
+  @override
+  num getNewScore(num score, num offset) {
+    return math.min(math.max(score + offset, 0), 100);
+  }
+
+  @override
+  num getNewDays(num days, num offset, {num targetDays = double.infinity}) {
+    return math.min(math.max(days + offset, 0), targetDays);
+  }
+}
+
+class NegativeHabitScore implements HabitScore {
+  @override
+  late final int targetDays;
+  @override
+  late final HabitDailyGoal dailyGoal;
+  @override
+  late final HabitDailyGoal? dailGoalExtra;
+  final num _prtZero;
+  final num _prtNoEffect;
+  final num _prtPartial;
+  late final Tuple2<num, num> _interval;
+
+  NegativeHabitScore({
+    required this.targetDays,
+    required this.dailyGoal,
+    this.dailGoalExtra,
+  })  : _prtNoEffect = 0,
+        _prtZero = -100 / targetDays,
+        _prtPartial = -100 / targetDays / 2 {
+    _interval = Tuple2(
+      habitGrowCurve(x: 0, days: targetDays),
+      habitGrowCurve(x: targetDays, days: targetDays),
+    );
+  }
+
+  @override
+  HabitType get habitType => HabitType.negative;
+
+  @override
+  set habitType(HabitType newHabitType) {}
+
+  num get scoreNormal => 1.0;
+  num get scoreExtraMax => 1.5;
+  num get scoreZero => 0.0;
+  num get prtPartial => _prtPartial;
+  num get prtZero => _prtZero;
+  num get prtNoEffect => _prtNoEffect;
+  num get prtNormal => 0.0;
+
+  @visibleForTesting
+  num debugCalcRealScoreExtra(HabitDailyGoal value, HabitDailyGoal targetValue,
+      HabitDailyGoal? targetExtendedValue) {
+    return _calcRealScoreExtra(
+      value,
+      targetValue: targetValue,
+      targetExtendedValue: targetExtendedValue,
+    );
+  }
+
+  num _calcRealScoreExtra(HabitDailyGoal value,
+      {HabitDailyGoal? targetValue, HabitDailyGoal? targetExtendedValue}) {
+    targetValue = targetValue ?? dailyGoal;
+    targetExtendedValue = targetExtendedValue ?? dailGoalExtra ?? targetValue;
+    if (value < targetValue) {
+      return scoreZero;
+    } else if (value > targetExtendedValue) {
+      return scoreZero;
+    } else if (value == targetExtendedValue) {
+      return scoreNormal;
+    } else if (value == targetValue) {
+      return scoreExtraMax;
+    } else {
+      final progress =
+          (value - targetValue) / (targetExtendedValue - targetValue);
+      return scoreExtraMax - (progress * (scoreExtraMax - scoreNormal));
+    }
+  }
+
+  @override
+  num calcDecreasedPrt({
+    bool autoCompleted = false,
+    HabitRecordStatus status = HabitRecordStatus.unknown,
+    HabitDailyGoal? value,
+  }) {
+    value = value ?? 0.0;
+    if (autoCompleted) {
+      return prtNormal;
+    } else {
+      switch (status) {
+        case HabitRecordStatus.unknown:
+          return prtZero;
+        case HabitRecordStatus.done:
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
+            case HabitDailyComplateStatus.noeffect:
+              return prtNoEffect;
+            case HabitDailyComplateStatus.tryhard:
+              return prtPartial;
+            default:
+              return prtNormal;
+          }
+        case HabitRecordStatus.skip:
+          return prtNormal;
+      }
+    }
+  }
+
+  @override
+  num calcIncreasedDay({
+    bool autoCompleted = false,
+    HabitRecordStatus status = HabitRecordStatus.unknown,
+    HabitDailyGoal? value,
+  }) {
+    value = value ?? 0.0;
+    if (autoCompleted) {
+      switch (status) {
+        case HabitRecordStatus.done:
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
+            case HabitDailyComplateStatus.goodjob:
+              return _calcRealScoreExtra(value);
+            case HabitDailyComplateStatus.ok:
+            default:
+              return scoreNormal;
+          }
+        default:
+          return scoreNormal;
+      }
+    } else {
+      switch (status) {
+        case HabitRecordStatus.done:
+          final completeStatus = HabitDailyRecordForm.getImp(
+            type: habitType,
+            value: value,
+            targetValue: dailyGoal,
+            extraTargetValue: dailGoalExtra,
+          ).complateStatus;
+          switch (completeStatus) {
+            case HabitDailyComplateStatus.ok:
+              return scoreNormal;
+            case HabitDailyComplateStatus.goodjob:
+              return _calcRealScoreExtra(value);
+            case HabitDailyComplateStatus.noeffect:
             default:
               return scoreZero;
           }
