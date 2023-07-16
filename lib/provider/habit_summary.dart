@@ -16,7 +16,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:mhabit/provider/_utils/change_record_status_utils.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -32,6 +31,7 @@ import '../model/habit_score.dart';
 import '../model/habit_stat.dart';
 import '../model/habit_summary.dart';
 import '../reminders/notification_service.dart';
+import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
 
 mixin _HabitSummarySortableMixin on _HabitSummaryViewModel {

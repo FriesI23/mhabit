@@ -30,6 +30,8 @@ import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
 
+const _kDefaultHabitRecordChipListHeight = 56.0;
+
 Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required BuildContext context,
   required HabitDailyRecordForm recordForm,
@@ -196,7 +198,7 @@ class _HabitRecordCustomNumberPickerDialog
     }) {
       final complateStatus = widget.recordForm.complateStatus;
       return _NormalHabitRecordChipList(
-        height: 56,
+        height: _kDefaultHabitRecordChipListHeight,
         value: widget.recordForm.value,
         targetValue: widget.recordForm.targetValue,
         recordTargetExtraValue: widget.recordTargetExtraValue,
@@ -217,7 +219,7 @@ class _HabitRecordCustomNumberPickerDialog
     }) {
       final complateStatus = widget.recordForm.complateStatus;
       return _NormalHabitRecordChipList(
-        height: 56,
+        height: _kDefaultHabitRecordChipListHeight,
         value: widget.recordForm.value,
         targetValue:
             widget.recordTargetExtraValue ?? widget.recordForm.targetValue,
