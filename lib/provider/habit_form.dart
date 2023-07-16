@@ -22,6 +22,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/num_extensions.dart';
+import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
@@ -137,13 +138,7 @@ class HabitFormViewModel extends ChangeNotifier
 
   num get dailyGoal {
     if (_form.dailyGoal != null) return _form.dailyGoal!;
-    switch (habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        return defaultHabitDailyGoal;
-      case HabitType.negative:
-        return defaultNegativeHabitDailyGoal;
-    }
+    return getDefaultHabitDailyGoal(habitType);
   }
 
   set dailyGoal(num newDailyGoal) {

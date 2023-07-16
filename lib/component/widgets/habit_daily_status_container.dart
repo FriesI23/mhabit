@@ -150,6 +150,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
               return withDoneAndOkStatus();
             case HabitDailyComplateStatus.goodjob:
               return withDoneAndGoodjobStatus();
+            case HabitDailyComplateStatus.noeffect:
             case HabitDailyComplateStatus.tryhard:
               return withDoneAndTryhardStatus();
             case HabitDailyComplateStatus.zero:

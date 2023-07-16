@@ -356,6 +356,8 @@ class HabitDetailViewModel extends ChangeNotifier
 
   HabitType? get habitType => _habitDetailData?.data.type;
 
+  HabitDailyGoal? get habitOkValue => _habitDetailData?.data.habitOkValue;
+
   HabitColorType? get habitColorType => _habitDetailData?.data.colorType;
 
   HabitDailyGoal? get habitDailyGoal => _habitDetailData?.data.dailyGoal;

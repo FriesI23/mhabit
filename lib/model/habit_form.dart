@@ -14,7 +14,9 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../common/enums.dart';
 import '../common/types.dart';
@@ -56,7 +58,19 @@ enum HabitType implements EnumWithDBCodeABC {
     }
   }
 
+  static IconData getHabitTypeFlagIcon(HabitType type) {
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return MdiIcons.circleOutline;
+      case HabitType.negative:
+        return MdiIcons.circleOffOutline;
+    }
+  }
+
   String getTypeName([L10n? l10n]) => HabitType.getHabitTypeName(this, l10n);
+
+  IconData getIcon() => HabitType.getHabitTypeFlagIcon(this);
 }
 
 @JsonEnum(valueField: 'code')

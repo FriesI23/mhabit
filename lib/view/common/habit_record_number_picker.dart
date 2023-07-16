@@ -25,6 +25,7 @@ import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/num_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../model/habit_daily_goal.dart';
 import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
@@ -167,12 +168,8 @@ class _HabitRecordCustomNumberPickerDialog
   }
 
   void _onTextFieldValueChanged(String value) {
-    num newDailyGoal;
-    try {
-      newDailyGoal = num.parse(value);
-    } on FormatException {
-      newDailyGoal = defaultHabitDailyGoal;
-    }
+    final newDailyGoal = num.tryParse(value) ??
+        getDefaultHabitDailyGoal(widget.recordForm.habitType);
     final currentValue = _result;
     _result = onDailyGoalTextInputChanged(newDailyGoal,
         controller: _inputController, allowInputZero: true);
@@ -263,6 +260,7 @@ class _HabitRecordCustomNumberPickerDialog
           children: [
             buildChipList(context, constraints),
             _HabitRecordTextField(
+              habitType: widget.recordForm.habitType,
               recordDate: widget.recordDate,
               inputController: _inputController,
               increaseButtonEnabled: _isTextFieldIncreaseButtonEnabled(),
@@ -308,6 +306,7 @@ class _HabitRecordTextField extends StatelessWidget {
   static const textFieldRightButtonIconSize = 28.0;
   static const textFieldRightButtonBorderRadius = Radius.circular(10);
 
+  final HabitType habitType;
   final HabitDate? recordDate;
   final bool increaseButtonEnabled;
   final bool decreaseButtonEnabled;
@@ -317,6 +316,7 @@ class _HabitRecordTextField extends StatelessWidget {
   final VoidCallback? onDecreaseButtonPressed;
 
   const _HabitRecordTextField({
+    required this.habitType,
     this.recordDate,
     this.increaseButtonEnabled = false,
     this.decreaseButtonEnabled = false,
@@ -374,13 +374,14 @@ class _HabitRecordTextField extends StatelessWidget {
       ),
     );
 
+    final defaultDailyGoal = getDefaultHabitDailyGoal(habitType);
     final textField = TextField(
       controller: inputController,
       decoration: InputDecoration(
           hintText: l10n?.habitDetail_changeGoal_helpText(
-                  defaultHabitDailyGoal.toSimpleString()) ??
+                  defaultDailyGoal.toSimpleString()) ??
               "Daily goal, "
-                  "default: ${defaultHabitDailyGoal.toSimpleString()}",
+                  "default: ${defaultDailyGoal.toSimpleString()}",
           hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
           helperText: recordDate != null
               ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
@@ -529,7 +530,6 @@ class _NormalHabitRecordChipList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    debugPrint('xxxx $value $targetValue');
     final Widget normalValChip = ActionChip(
       avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
       label: Text(l10n?.habitDetail_changeGoal_doneChipText(

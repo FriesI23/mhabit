@@ -13,33 +13,24 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../l10n/localizations.dart';
 import '../../model/habit_form.dart';
 
 class HabitEditHabitTypeTile extends StatelessWidget {
   final HabitType habitType;
+  final bool readOnly;
   final VoidCallback? onPressed;
 
   const HabitEditHabitTypeTile({
     super.key,
     required this.habitType,
+    this.readOnly = false,
     this.onPressed,
   });
 
   String getHabitTypeName([L10n? l10n]) =>
       HabitType.getHabitTypeName(habitType, l10n);
-
-  IconData getHabitTypeFlagIcon() {
-    switch (habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        return MdiIcons.circleOutline;
-      case HabitType.negative:
-        return MdiIcons.circleOffOutline;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +39,12 @@ class HabitEditHabitTypeTile extends StatelessWidget {
 
     return ListTile(
       leading: Icon(
-        getHabitTypeFlagIcon(),
+        habitType.getIcon(),
         color: themeDate.colorScheme.outline,
       ),
       title: Text(getHabitTypeName(l10n)),
-      onTap: onPressed,
+      textColor: readOnly ? themeDate.colorScheme.outlineVariant : null,
+      onTap: readOnly ? null : onPressed,
     );
   }
 }

@@ -15,7 +15,6 @@
 import 'package:flutter/material.dart';
 import 'package:mhabit/common/types.dart';
 
-import '../../common/consts.dart';
 import '../../common/re.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
@@ -23,7 +22,7 @@ import '../../model/habit_form.dart';
 
 class HabitEditDailyGoalTile extends StatelessWidget {
   final HabitType habitType;
-  final HabitDailyGoal habitDailyGoal;
+  final HabitDailyGoal defualtHabitDailyGoal;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
@@ -31,7 +30,7 @@ class HabitEditDailyGoalTile extends StatelessWidget {
   const HabitEditDailyGoalTile({
     super.key,
     required this.habitType,
-    this.habitDailyGoal = -1,
+    this.defualtHabitDailyGoal = -1,
     this.controller,
     this.onChanged,
     this.onSubmitted,
@@ -42,9 +41,10 @@ class HabitEditDailyGoalTile extends StatelessWidget {
       case HabitType.unknown:
         return null;
       case HabitType.normal:
-        return l10n?.habitEdit_habitDailyGoal_hintText(habitDailyGoal);
+        return l10n?.habitEdit_habitDailyGoal_hintText(defualtHabitDailyGoal);
       case HabitType.negative:
-        return l10n?.habitEdit_habitDailyGoal_negativeHintText(habitDailyGoal);
+        return l10n
+            ?.habitEdit_habitDailyGoal_negativeHintText(defualtHabitDailyGoal);
     }
   }
 

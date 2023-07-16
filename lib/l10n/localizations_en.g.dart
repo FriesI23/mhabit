@@ -22,7 +22,7 @@ class L10nEn extends L10n {
   String get habitEdit_habitTypeDialog_title => 'Habit type';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Positive (Default)';
+  String get habitEdit_habitType_positiveText => 'Positive';
 
   @override
   String get habitEdit_habitType_negativeText => 'Negative';
@@ -409,13 +409,39 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get habitDetail_heatmap_leftHelpText => 'INCOMPLETE';
+  String habitDetail_heatmap_leftHelpText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '',
+      two: 'SUBSTANDARD',
+      one: 'INCOMPLETE',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get habitDetail_heatmap_rightHelpText => 'OVERFULFIL';
+  String habitDetail_heatmap_rightHelpText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '',
+      two: 'IMPECCABLE',
+      one: 'OVERFULFIL',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get habitDetail_descDailyGoal_titleText => 'Goal';
+  String habitDetail_descDailyGoal_titleText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: 'Goal',
+      two: 'Threshold',
+    );
+    return '$_temp0';
+  }
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
@@ -426,7 +452,14 @@ class L10nEn extends L10n {
   String get habitDetail_descDailyGoal_unitEmptyText => 'null';
 
   @override
-  String get habitDetail_descTargetDays_titleText => 'Days';
+  String habitDetail_descTargetDays_titleText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: 'Days',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get habitDetail_descTargetDays_unitText => 'd';
@@ -478,6 +511,9 @@ class L10nEn extends L10n {
 
   @override
   String get habitDetail_otherSubgroup_title => 'Other';
+
+  @override
+  String get habitDetail_habitType_title => 'Type';
 
   @override
   String get habitDetail_reminderTile_title => 'Reminder';

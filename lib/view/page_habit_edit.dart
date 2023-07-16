@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../l10n/localizations.dart';
+import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
@@ -353,6 +354,8 @@ class _HabitEditView extends State<HabitEditView> {
           DebugLog.rebuild("field habit type: $habitType");
           return HabitEditHabitTypeTile(
             habitType: habitType,
+            readOnly: context.read<HabitFormViewModel>().editMode ==
+                HabitDisplayEditMode.edit,
             onPressed: _openHabitTypePickerDialog,
           );
         },
@@ -364,13 +367,14 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, vm) => vm.habitType,
         builder: (context, habitType, child) => HabitEditDailyGoalTile(
           habitType: habitType,
-          habitDailyGoal: context.read<HabitFormViewModel>().dailyGoal,
+          defualtHabitDailyGoal: getDefaultHabitDailyGoal(habitType),
           controller:
               context.read<HabitFormViewModel>().dailyGoalFieldInputController,
           onChanged: (value) {
             if (!mounted) return;
             final formvm = context.read<HabitFormViewModel>();
-            final newDailyGoal = num.tryParse(value) ?? defaultHabitDailyGoal;
+            final newDailyGoal =
+                num.tryParse(value) ?? getDefaultHabitDailyGoal(habitType);
             formvm.dailyGoal = onDailyGoalTextInputChanged(
               newDailyGoal,
               controller: formvm.dailyGoalFieldInputController,
