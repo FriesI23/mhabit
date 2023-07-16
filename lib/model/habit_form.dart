@@ -14,18 +14,23 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
+import '../l10n/localizations.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
 
+@JsonEnum(valueField: 'code')
 enum HabitType implements EnumWithDBCodeABC {
   unknown(code: 0),
-  normal(code: 1);
+  normal(code: 1),
+  negative(code: 2);
 
   final int _code;
 
@@ -41,6 +46,31 @@ enum HabitType implements EnumWithDBCodeABC {
     }
     return withDefault;
   }
+
+  static String getHabitTypeName(HabitType type, [L10n? l10n]) {
+    switch (type) {
+      case HabitType.unknown:
+        return '';
+      case HabitType.normal:
+        return l10n?.habitEdit_habitType_positiveText ?? "Positive";
+      case HabitType.negative:
+        return l10n?.habitEdit_habitType_negativeText ?? "Negative";
+    }
+  }
+
+  static IconData getHabitTypeFlagIcon(HabitType type) {
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return MdiIcons.circleOutline;
+      case HabitType.negative:
+        return MdiIcons.circleOffOutline;
+    }
+  }
+
+  String getTypeName([L10n? l10n]) => HabitType.getHabitTypeName(this, l10n);
+
+  IconData getIcon() => HabitType.getHabitTypeFlagIcon(this);
 }
 
 @JsonEnum(valueField: 'code')
@@ -140,10 +170,17 @@ enum HabitRecordStatus implements EnumWithDBCodeABC<HabitRecordStatus> {
   }
 }
 
-enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard }
+enum HabitDailyComplateStatus {
+  zero,
+  ok,
+  goodjob,
+  tryhard,
+  noeffect,
+}
 
 class HabitForm {
   String? name;
+  HabitType? type;
   HabitColorType? colorType;
   HabitDailyGoal? dailyGoal;
   String? dailyGoalUnit;
@@ -159,6 +196,7 @@ class HabitForm {
 
   HabitForm({
     this.name,
+    this.type,
     this.colorType,
     this.dailyGoal,
     this.dailyGoalUnit,
@@ -176,6 +214,7 @@ class HabitForm {
   HabitForm.fromHabitDBCell(HabitDBCell cell,
       {required this.editMode, this.editParams})
       : name = cell.name,
+        type = HabitType.getFromDBCode(cell.type!)!,
         colorType = HabitColorType.getFromDBCode(cell.color!)!,
         dailyGoal = cell.dailyGoal,
         dailyGoalUnit = cell.dailyGoalUnit,
@@ -189,27 +228,14 @@ class HabitForm {
             ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
             : null,
         reminderQuest = cell.remindQuestion;
-}
 
-class HabitDailyRecordForm {
-  final num value;
-  final num targetValue;
-
-  const HabitDailyRecordForm(this.value, this.targetValue);
-
-  static HabitDailyComplateStatus getComplateStatus(
-      num value, num targetValue) {
-    if (value > targetValue) {
-      return HabitDailyComplateStatus.goodjob;
-    } else if (value == targetValue) {
-      return HabitDailyComplateStatus.ok;
-    } else if (value > 0) {
-      return HabitDailyComplateStatus.tryhard;
-    } else {
-      return HabitDailyComplateStatus.zero;
-    }
+  @override
+  String toString() {
+    return 'HabitForm(name=$name, type=$type, '
+        'colorType=$colorType, dailyGoal=$dailyGoal, '
+        'dailyGoalUnit=$dailyGoalUnit, dailyGoalExtra=$dailyGoalExtra, '
+        'frequency=$frequency, startDate=$startDate, targetDays=$targetDays, '
+        'desc=$desc, reminder=$reminder, reminderQuest=$reminderQuest, '
+        'editMode=$editMode, editParams=$editParams)';
   }
-
-  HabitDailyComplateStatus get complateStatus =>
-      getComplateStatus(value, targetValue);
 }

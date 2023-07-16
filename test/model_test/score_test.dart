@@ -17,13 +17,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/model/habit_date.dart';
 import 'package:mhabit/model/habit_form.dart';
 import 'package:mhabit/model/habit_summary.dart';
-import 'package:mhabit/model/score.dart';
+import 'package:mhabit/model/habit_score.dart';
 import 'package:tuple/tuple.dart';
 
 void main() {
-  group("test HabitScore", () {
-    test("HabitScore::init", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+  group("test HabitScore factory", () {
+    test('getImp returns instance of NormalHabitScore', () {
+      final habitScore = HabitScore.getImp(
+        type: HabitType.normal,
+        targetDays: 30,
+        dailyGoal: 5,
+      );
+
+      expect(habitScore, isA<NormalHabitScore>());
+    });
+  });
+  group("test NormalHabitScore", () {
+    test("NormalHabitScore::init", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(hs.targetDays, 100);
       expect(hs.dailyGoal, 10);
       expect(hs.scoreNormal, 1.0);
@@ -33,16 +44,16 @@ void main() {
       expect(hs.prtZero, -1.0);
       expect(hs.prtPartial, -0.5);
     });
-    test("HabitScore::calcRealScoreExtra", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcRealScoreExtra", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(hs.debugCalcRealScoreExtra(10, 100, null), 1.0);
       expect(hs.debugCalcRealScoreExtra(110, 100, null), 1.1);
       expect(hs.debugCalcRealScoreExtra(150, 100, null), 1.5);
       expect(hs.debugCalcRealScoreExtra(200, 100, null), 1.5);
     });
 
-    test("HabitScore::calcRealScoreExtra with extendedVal", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcRealScoreExtra with extendedVal", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(hs.debugCalcRealScoreExtra(100, 100, 150), 1.0);
       expect(hs.debugCalcRealScoreExtra(100, 100, 300), 1.0);
       expect(hs.debugCalcRealScoreExtra(200, 100, 150), 1.5);
@@ -51,8 +62,8 @@ void main() {
       expect(hs.debugCalcRealScoreExtra(300, 100, 300), 1.5);
       expect(hs.debugCalcRealScoreExtra(300, 100, 1100), 1.1);
     });
-    test("HabitScore::calcDecreasedPrt:noAutoComplete", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcDecreasedPrt:noAutoComplete", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(
         hs.calcDecreasedPrt(
           autoCompleted: false,
@@ -118,8 +129,8 @@ void main() {
         hs.prtNormal,
       );
     });
-    test("HabitScore::calcDecreasedPrt:autoComplete", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcDecreasedPrt:autoComplete", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(
         hs.calcDecreasedPrt(
           autoCompleted: true,
@@ -185,8 +196,8 @@ void main() {
         hs.prtNormal,
       );
     });
-    test("HabitScore::calcIncreasedDay:noAutoComplete", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcIncreasedDay:noAutoComplete", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(
         hs.calcIncreasedDay(
           autoCompleted: false,
@@ -244,8 +255,8 @@ void main() {
         hs.debugCalcRealScoreExtra(15.0, 10.0, null),
       );
     });
-    test("HabitScore::calcIncreasedDay:autoComplete", () {
-      var hs = HabitScore(targetDays: 100, dailyGoal: 10);
+    test("NormalHabitScore::calcIncreasedDay:autoComplete", () {
+      var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
       expect(
         hs.calcIncreasedDay(
           autoCompleted: true,
@@ -303,8 +314,8 @@ void main() {
         hs.debugCalcRealScoreExtra(15.0, 10.0, null),
       );
     });
-    test("HabitScore::calcHabitGrowCurveValue", () {
-      var hs = HabitScore(targetDays: 10, dailyGoal: 10);
+    test("NormalHabitScore::calcHabitGrowCurveValue", () {
+      var hs = NormalHabitScore(targetDays: 10, dailyGoal: 10);
       var xlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       var ylist = <num>[];
       var cylist = [
@@ -326,6 +337,38 @@ void main() {
       ylist.forEachIndexed((index, element) {
         assert(cylist[index] == num.parse(element.toStringAsFixed(2)), true);
       });
+    });
+  });
+  group("test NegativeHabitScore", () {
+    test("NormalHabitScore::init", () {
+      var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+      expect(hs.targetDays, 100);
+      expect(hs.dailyGoal, 10);
+      expect(hs.scoreNormal, 1.0);
+      expect(hs.scoreZero, 0.0);
+      expect(hs.scoreExtraMax, 1.5);
+      expect(hs.prtNormal, 0.0);
+      expect(hs.prtNoEffect, 0.0);
+      expect(hs.prtPartial, -0.5);
+    });
+    test("NormalHabitScore::calcRealScoreExtra", () {
+      var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+      expect(hs.debugCalcRealScoreExtra(99, 100, null), 0);
+      expect(hs.debugCalcRealScoreExtra(100, 100, null), 1.0);
+      expect(hs.debugCalcRealScoreExtra(101, 100, null), 0);
+    });
+
+    test("NormalHabitScore::calcRealScoreExtra with extendedVal", () {
+      var hs = NegativeHabitScore(
+          targetDays: 100, dailyGoal: 10, dailGoalExtra: 100);
+      expect(hs.debugCalcRealScoreExtra(150, 100, 200), 1.25);
+      expect(hs.debugCalcRealScoreExtra(100, 100, 150), 1.5);
+      expect(hs.debugCalcRealScoreExtra(130, 100, 150), 1.2);
+      expect(hs.debugCalcRealScoreExtra(120, 100, 150), 1.3);
+      expect(hs.debugCalcRealScoreExtra(110, 100, 150), 1.4);
+      expect(hs.debugCalcRealScoreExtra(150, 100, 150), 1.0);
+      expect(hs.debugCalcRealScoreExtra(160, 100, 150), 0);
+      expect(hs.debugCalcRealScoreExtra(90, 100, 150), 0);
     });
   });
   group("test HabitScoreCalculator calc total score", () {
@@ -355,8 +398,8 @@ void main() {
       }
 
       var calc = HabitScoreCalculator(
-        targetDays: 10,
-        dailyGoal: 1,
+        habitScore: HabitScore.getImp(
+            type: HabitType.normal, targetDays: 10, dailyGoal: 1),
         startDate: HabitDate(2020, 1, 1),
         endDate: HabitDate(2020, 1, 10),
         iterable: data.keys,
@@ -410,8 +453,8 @@ void main() {
       });
 
       var calc = HabitScoreCalculator(
-        targetDays: 10,
-        dailyGoal: 10.0,
+        habitScore: HabitScore.getImp(
+            type: HabitType.normal, targetDays: 10, dailyGoal: 10.0),
         startDate: HabitDate(2020, 1, 1),
         endDate: HabitDate(2020, 1, 10),
         iterable: data.keys,
@@ -464,8 +507,8 @@ void main() {
       });
 
       var calc = HabitScoreCalculator(
-        targetDays: 10,
-        dailyGoal: 10.0,
+        habitScore: HabitScore.getImp(
+            type: HabitType.normal, targetDays: 10, dailyGoal: 10.0),
         startDate: HabitDate(2020, 1, 1),
         endDate: HabitDate(2020, 1, 10),
         iterable: data.keys,

@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 import '../../common/types.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
+import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
 
@@ -149,6 +150,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
               return withDoneAndOkStatus();
             case HabitDailyComplateStatus.goodjob:
               return withDoneAndGoodjobStatus();
+            case HabitDailyComplateStatus.noeffect:
             case HabitDailyComplateStatus.tryhard:
               return withDoneAndTryhardStatus();
             case HabitDailyComplateStatus.zero:
@@ -157,6 +159,8 @@ class HabitDailyStatusContainer extends StatelessWidget {
               } else {
                 return withDoneAndZeroStatus();
               }
+            default:
+              return const SizedBox();
           }
       }
     }

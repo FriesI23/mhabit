@@ -51,9 +51,11 @@ const defaultAppReminder = AppReminderConfig.off;
 //#endregion
 
 //#region habit-field
+const defaultHabitType = HabitType.normal;
 const defaultHabitColorType = HabitColorType.cc1;
 
 const defaultHabitDailyGoal = 1;
+const defaultNegativeHabitDailyGoal = 0;
 const minHabitDailyGoal = 0;
 const maxHabitdailyGoal = 10000000;
 const maxHabitdailyGoalExtra = 50000000;

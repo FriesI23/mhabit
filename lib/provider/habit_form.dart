@@ -22,6 +22,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/num_extensions.dart';
+import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
@@ -53,7 +54,6 @@ class HabitFormViewModel extends ChangeNotifier
             HabitForm(
                 name: '',
                 colorType: defaultHabitColorType,
-                dailyGoal: defaultHabitDailyGoal,
                 startDate: HabitStartDate.dateTime(DateTime.now()),
                 frequency: HabitFrequency.daily,
                 dailyGoalUnit: defaultHabitDailyGoalUnit,
@@ -120,6 +120,14 @@ class HabitFormViewModel extends ChangeNotifier
         '${_form.name} -> $newName');
   }
 
+  HabitType get habitType => _form.type ?? defaultHabitType;
+  set habitType(HabitType newHabitType) {
+    _form.type = newHabitType;
+    notifyListeners();
+    DebugLog.setValue('HabitFormViewModel.habitType: '
+        '${_form.type} -> $newHabitType');
+  }
+
   HabitColorType get colorType => _form.colorType!;
   set colorType(HabitColorType newColorType) {
     _form.colorType = newColorType;
@@ -128,7 +136,11 @@ class HabitFormViewModel extends ChangeNotifier
         '${_form.colorType} -> $newColorType');
   }
 
-  num get dailyGoal => _form.dailyGoal!;
+  num get dailyGoal {
+    if (_form.dailyGoal != null) return _form.dailyGoal!;
+    return getDefaultHabitDailyGoal(habitType);
+  }
+
   set dailyGoal(num newDailyGoal) {
     _form.dailyGoal = newDailyGoal;
     notifyListeners();
@@ -215,6 +227,16 @@ class HabitFormViewModel extends ChangeNotifier
     return name.isNotEmpty && isDailyGoalExtraValueValid;
   }
 
+  bool allowZeroDailyGoal() {
+    switch (habitType) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return false;
+      case HabitType.negative:
+        return true;
+    }
+  }
+
   Future<HabitDBCell?> saveHabit() async {
     if (!canSaveHabit()) {
       WarnLog.saveHabit("habit unsaved, mode=${_form.editMode}");
@@ -232,7 +254,7 @@ class HabitFormViewModel extends ChangeNotifier
     var freq = frequency.toMap();
     var now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     var dbCell = HabitDBCell(
-        type: HabitType.normal.dbCode,
+        type: habitType.dbCode,
         uuid: genHabitUUID(),
         status: HabitStatus.activated.dbCode,
         name: name,
@@ -267,6 +289,7 @@ class HabitFormViewModel extends ChangeNotifier
   Future<HabitDBCell?> saveExistHabit({bool returnResult = false}) async {
     var freq = frequency.toMap();
     var dbCell = HabitDBCell(
+      type: habitType.dbCode,
       uuid: _form.editParams!.uuid,
       name: name,
       desc: desc,

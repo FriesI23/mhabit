@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../common/consts.dart';
 import '../common/logging.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
 import 'habit_export.dart';
-import 'habit_form.dart';
 
 class HabitImport {
   final Iterable<Object?> _jsonData;
@@ -30,7 +30,8 @@ class HabitImport {
       {bool withRecords = true}) async {
     var habitDBCell = habitExportData.toHabitDBCell();
     habitDBCell = habitDBCell.copyWith(
-        uuid: genHabitUUID(), type: HabitType.normal.dbCode);
+        uuid: genHabitUUID(),
+        type: habitDBCell.type ?? defaultHabitType.dbCode);
     final dbid = await insertNewHabitCellToDB(habitDBCell);
     if (withRecords) {
       final results = await insertMultiRecordsCellToDB(

@@ -117,11 +117,35 @@ abstract class L10n {
   /// **'Pick color'**
   String get habitEdit_colorPicker_title;
 
+  /// No description provided for @habitEdit_habitTypeDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit type'**
+  String get habitEdit_habitTypeDialog_title;
+
+  /// No description provided for @habitEdit_habitType_positiveText.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive'**
+  String get habitEdit_habitType_positiveText;
+
+  /// No description provided for @habitEdit_habitType_negativeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative'**
+  String get habitEdit_habitType_negativeText;
+
   /// No description provided for @habitEdit_habitDailyGoal_hintText.
   ///
   /// In en, this message translates to:
   /// **'Daily goal, default {number}'**
   String habitEdit_habitDailyGoal_hintText(Object number);
+
+  /// default habit daily goal for negative habit
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum daily threshold, defualt {number}'**
+  String habitEdit_habitDailyGoal_negativeHintText(num number);
 
   /// No description provided for @habitEdit_habitDailyGoalUnit_hintText.
   ///
@@ -140,6 +164,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'invalid value, must be empty or >= {dailyGoal}'**
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal);
+
+  /// No description provided for @habitEdit_habitDailyGoalExtra_negativeHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum daily limit'**
+  String get habitEdit_habitDailyGoalExtra_negativeHintText;
 
   /// No description provided for @habitEdit_frequencySelector_title.
   ///
@@ -774,20 +804,20 @@ abstract class L10n {
   /// No description provided for @habitDetail_heatmap_leftHelpText.
   ///
   /// In en, this message translates to:
-  /// **'INCOMPLETE'**
-  String get habitDetail_heatmap_leftHelpText;
+  /// **'{habitType, plural, =1{INCOMPLETE} =2{SUBSTANDARD} other{}}'**
+  String habitDetail_heatmap_leftHelpText(int habitType);
 
   /// No description provided for @habitDetail_heatmap_rightHelpText.
   ///
   /// In en, this message translates to:
-  /// **'OVERFULFIL'**
-  String get habitDetail_heatmap_rightHelpText;
+  /// **'{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}'**
+  String habitDetail_heatmap_rightHelpText(int habitType);
 
   /// No description provided for @habitDetail_descDailyGoal_titleText.
   ///
   /// In en, this message translates to:
-  /// **'Goal'**
-  String get habitDetail_descDailyGoal_titleText;
+  /// **'{habitType, plural, =2{Threshold} other{Goal}}'**
+  String habitDetail_descDailyGoal_titleText(int habitType);
 
   /// No description provided for @habitDetail_descDailyGoal_unitText.
   ///
@@ -804,8 +834,8 @@ abstract class L10n {
   /// No description provided for @habitDetail_descTargetDays_titleText.
   ///
   /// In en, this message translates to:
-  /// **'Days'**
-  String get habitDetail_descTargetDays_titleText;
+  /// **'{habitType, plural, other{Days}}'**
+  String habitDetail_descTargetDays_titleText(int habitType);
 
   /// No description provided for @habitDetail_descTargetDays_unitText.
   ///
@@ -908,6 +938,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Other'**
   String get habitDetail_otherSubgroup_title;
+
+  /// No description provided for @habitDetail_habitType_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get habitDetail_habitType_title;
 
   /// No description provided for @habitDetail_reminderTile_title.
   ///

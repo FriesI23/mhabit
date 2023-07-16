@@ -27,12 +27,13 @@ import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
 import 'common.dart';
+import 'habit_daily_record_form.dart';
 import 'habit_date.dart';
 import 'habit_display.dart';
 import 'habit_form.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
-import 'score.dart';
+import 'habit_score.dart';
 
 part 'habit_summary.g.dart';
 
@@ -155,6 +156,7 @@ mixin _HabitSummaryDataRecordsMixin {
 class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   final DBID id;
   final HabitUUID uuid;
+  final HabitType type;
   String name;
   HabitColorType colorType;
   HabitDailyGoal dailyGoal;
@@ -176,6 +178,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   HabitSummaryData({
     required this.id,
     required this.uuid,
+    required this.type,
     required this.name,
     required this.colorType,
     required this.dailyGoal,
@@ -193,6 +196,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   HabitSummaryData.fromDBQueryCell(HabitDBCell cell)
       : id = cell.id!,
         uuid = cell.uuid!,
+        type = HabitType.getFromDBCode(cell.type!)!,
         name = cell.name!,
         colorType = HabitColorType.getFromDBCode(cell.color!)!,
         dailyGoal = cell.dailyGoal!,
@@ -230,6 +234,16 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   bool get isComplated => _progress >= 100.0;
 
   bool get isArchived => status == HabitStatus.archived;
+
+  HabitDailyGoal get habitOkValue {
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        return dailyGoal;
+      case HabitType.negative:
+        return dailyGoalExtra ?? dailyGoal;
+    }
+  }
 
   Iterable<HabitRecordDate> getAllAutoComplateRecordDate() sync* {
     for (var r in _autoMarkedRecords) {
@@ -288,9 +302,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   }
 
   HabitScoreCalculator getCalculator() => HabitScoreCalculator(
-        targetDays: targetDays,
-        dailyGoal: dailyGoal,
-        dailyGoalExtra: dailyGoalExtra,
+        habitScore: HabitScore.getImp(
+          type: type,
+          targetDays: targetDays,
+          dailyGoal: dailyGoal,
+          dailGoalExtra: dailyGoalExtra,
+        ),
         startDate: startDate,
         iterable: combineIterables(
           _autoMarkedRecords,
@@ -319,8 +336,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       if (crtDate > dateNow) break;
 
-      var completeStatus =
-          HabitDailyRecordForm.getComplateStatus(crtRecord.value, dailyGoal);
+      final completeStatus = HabitDailyRecordForm.getImp(
+        type: type,
+        value: crtRecord.value,
+        targetValue: dailyGoal,
+        extraTargetValue: dailyGoalExtra,
+      ).complateStatus;
       // debugPrint("----------------- $crtRecord  $completeStatus");
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
@@ -382,8 +403,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       if (crtDate > dateNow) break;
 
-      var completeStatus =
-          HabitDailyRecordForm.getComplateStatus(crtRecord.value, dailyGoal);
+      final completeStatus = HabitDailyRecordForm.getImp(
+        type: type,
+        value: crtRecord.value,
+        targetValue: dailyGoal,
+        extraTargetValue: dailyGoalExtra,
+      ).complateStatus;
 
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
@@ -424,8 +449,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       if (crtDate > dateNow) break;
 
-      var completeStatus =
-          HabitDailyRecordForm.getComplateStatus(crtRecord.value, dailyGoal);
+      final completeStatus = HabitDailyRecordForm.getImp(
+        type: type,
+        value: crtRecord.value,
+        targetValue: dailyGoal,
+        extraTargetValue: dailyGoalExtra,
+      ).complateStatus;
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
               completeStatus == HabitDailyComplateStatus.ok)) continue;
@@ -470,7 +499,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   @override
   String toString() {
-    return "HabitAboutData(id=$id, uuid=$uuid, name=$name, color=$colorType, "
+    return "HabitAboutData(id=$id, uuid=$uuid, type=${type.dbCode}, "
+        "name=$name, color=$colorType, "
         "dailyGoal=$dailyGoal, freq=$frequency, startDate=$startDate, "
         "status=$status, sort=$sortPostion score=$progress, version=$diryMark, "
         "records={${getAllRecord().toList()}})";

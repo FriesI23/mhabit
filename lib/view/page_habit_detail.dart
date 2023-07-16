@@ -529,8 +529,10 @@ class _HabitDetailView extends State<HabitDetailView>
         }
 
         return HabitDescCellTile(
-          titleText: l10n?.habitDetail_descDailyGoal_titleText ?? "Goal",
-          subtitleText: viewmodel.habitDailyGoal?.toSimpleString() ?? '',
+          titleText: l10n?.habitDetail_descDailyGoal_titleText(
+                  viewmodel.habitType?.dbCode ?? 0) ??
+              "Goal",
+          subtitleText: viewmodel.habitOkValue?.toSimpleString() ?? '',
           tooltipText: isUnitExist
               ? l10n?.habitDetail_descDailyGoal_unitText(unit)
               : null,
@@ -540,7 +542,9 @@ class _HabitDetailView extends State<HabitDetailView>
 
       Widget buildDescTargetDaysTile(BuildContext context, L10n? l10n) {
         return HabitDescCellTile(
-          titleText: l10n?.habitDetail_descTargetDays_titleText ?? "Days",
+          titleText: l10n?.habitDetail_descTargetDays_titleText(
+                  viewmodel.habitType?.dbCode ?? 0) ??
+              "Days",
           subtitleText: "${viewmodel.habitTargetDays!}"
               "${l10n?.habitDetail_descTargetDays_unitText ?? ''}",
         );
@@ -575,10 +579,12 @@ class _HabitDetailView extends State<HabitDetailView>
             colorMap: buildHeatmapColorMap(context),
             valueColorMap: buildHeatmapValueColorMap(context),
             selectedMap: viewmodel.heatmapDateToColorMap,
-            colorTipLeftHelperText:
-                l10n?.habitDetail_heatmap_leftHelpText ?? "",
-            colorTipRightHelperText:
-                l10n?.habitDetail_heatmap_rightHelpText ?? "",
+            colorTipLeftHelperText: l10n?.habitDetail_heatmap_leftHelpText(
+                    viewmodel.habitType?.dbCode ?? 0) ??
+                "",
+            colorTipRightHelperText: l10n?.habitDetail_heatmap_rightHelpText(
+                    viewmodel.habitType?.dbCode ?? 0) ??
+                "",
             heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
               ThemeData themeData = Theme.of(context);
               return FittedBox(
@@ -1038,6 +1044,15 @@ class _HabitDetailOtherTileList extends StatelessWidget {
             child: HabitDetailChartTitle(
                 title: l10n?.habitDetail_otherSubgroup_title ?? "Others"),
           ),
+          // habit type
+          if (viewmodel.habitType != null)
+            HabitOtherInfoTile(
+              title: l10n != null
+                  ? Text(l10n.habitDetail_habitType_title)
+                  : const Text("Habit Type"),
+              subTitle: Text(viewmodel.habitType!.getTypeName(l10n)),
+              leading: Icon(viewmodel.habitType!.getIcon()),
+            ),
           // reminder
           if (viewmodel.habitDetailData?.data.reminder != null)
             HabitOtherInfoTile(

@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../l10n/localizations.dart';
+import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
@@ -130,6 +131,15 @@ class _HabitEditView extends State<HabitEditView> {
         context: context, colorType: colorType);
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().colorType = result;
+  }
+
+  void _openHabitTypePickerDialog() async {
+    if (!mounted) return;
+    final result = await showHabitTypSelectDialog(
+        context: context,
+        habitType: context.read<HabitFormViewModel>().habitType);
+    if (result == null || !mounted) return;
+    context.read<HabitFormViewModel>().habitType = result;
   }
 
   void _openFrequencyPickerDialog(
@@ -261,6 +271,7 @@ class _HabitEditView extends State<HabitEditView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Name: ${value.name}"),
+            Text("Name: ${value.habitType}"),
             Text("UUID: ${value.uuid}"),
             Text("Color: ${value.colorType}"),
             Text("DailyGoal: ${value.dailyGoal} ${value.dailyGoalUnit}"),
@@ -285,7 +296,7 @@ class _HabitEditView extends State<HabitEditView> {
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitEditView:: $hashCode");
+    DebugLog.rebuild("HabitEditView:: $hashCode ${widget.initForm}");
 
     //#region private builders
     Widget buildAppbar(BuildContext context) {
@@ -335,25 +346,48 @@ class _HabitEditView extends State<HabitEditView> {
       );
     }
 
-    Widget buildDailyGoalField(BuildContext context) {
-      return HabitEditDailyGoalTile(
-        controller:
-            context.read<HabitFormViewModel>().dailyGoalFieldInputController,
-        onChanged: (value) {
-          if (!mounted) return;
-          final formvm = context.read<HabitFormViewModel>();
-          final newDailyGoal = num.tryParse(value) ?? defaultHabitDailyGoal;
-          formvm.dailyGoal = onDailyGoalTextInputChanged(
-            newDailyGoal,
-            controller: formvm.dailyGoalFieldInputController,
+    Widget buildHabitTypeField(BuildContext context) {
+      return Selector<HabitFormViewModel, HabitType>(
+        selector: (context, formViewModel) => formViewModel.habitType,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, habitType, child) {
+          DebugLog.rebuild("field habit type: $habitType");
+          return HabitEditHabitTypeTile(
+            habitType: habitType,
+            readOnly: context.read<HabitFormViewModel>().editMode ==
+                HabitDisplayEditMode.edit,
+            onPressed: _openHabitTypePickerDialog,
           );
         },
-        onSubmitted: (value) {
-          if (!mounted) return;
-          final formvm = context.read<HabitFormViewModel>();
-          formvm.dailyGoalFieldInputController.text =
-              formvm.dailyGoal.toString();
-        },
+      );
+    }
+
+    Widget buildDailyGoalField(BuildContext context) {
+      return Selector<HabitFormViewModel, HabitType>(
+        selector: (context, vm) => vm.habitType,
+        builder: (context, habitType, child) => HabitEditDailyGoalTile(
+          habitType: habitType,
+          defualtHabitDailyGoal: getDefaultHabitDailyGoal(habitType),
+          controller:
+              context.read<HabitFormViewModel>().dailyGoalFieldInputController,
+          onChanged: (value) {
+            if (!mounted) return;
+            final formvm = context.read<HabitFormViewModel>();
+            final newDailyGoal =
+                num.tryParse(value) ?? getDefaultHabitDailyGoal(habitType);
+            formvm.dailyGoal = onDailyGoalTextInputChanged(
+              newDailyGoal,
+              controller: formvm.dailyGoalFieldInputController,
+              allowInputZero: formvm.allowZeroDailyGoal(),
+            );
+          },
+          onSubmitted: (value) {
+            if (!mounted) return;
+            final formvm = context.read<HabitFormViewModel>();
+            formvm.dailyGoalFieldInputController.text =
+                formvm.dailyGoal.toString();
+          },
+        ),
       );
     }
 
@@ -379,13 +413,15 @@ class _HabitEditView extends State<HabitEditView> {
 
     Widget buildDailyGoalExtraField(BuildContext context) {
       return Selector<HabitFormViewModel,
-          Tuple2<HabitDailyGoal?, HabitDailyGoal>>(
-        selector: (context, vm) => Tuple2(vm.dailyGoalExtra, vm.dailyGoal),
+          Tuple3<HabitType, HabitDailyGoal?, HabitDailyGoal>>(
+        selector: (context, vm) =>
+            Tuple3(vm.habitType, vm.dailyGoalExtra, vm.dailyGoal),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
           final formvm = context.read<HabitFormViewModel>();
           return HabitEditDailyGoalExtraTile(
             isValid: formvm.isDailyGoalExtraValueValid,
+            habitType: formvm.habitType,
             dailyGoal: formvm.dailyGoal,
             controller: formvm.dailyGoalExtraFieldInpuController,
             onChanged: (value) {
@@ -508,6 +544,8 @@ class _HabitEditView extends State<HabitEditView> {
             _HabitEditSliverList(
               children: [
                 buildColorField(context),
+                habitEditDiv,
+                buildHabitTypeField(context),
                 habitEditDiv,
                 buildDailyGoalField(context),
                 habitEditDiv,

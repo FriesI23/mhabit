@@ -9,6 +9,10 @@
 
   "habitEdit_colorPicker_title": "Pick color",
 
+  "habitEdit_habitTypeDialog_title": "Habit type",
+  "habitEdit_habitType_positiveText": "Positive",
+  "habitEdit_habitType_negativeText": "Negative",
+
   "@habitEidt_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -19,6 +23,16 @@
     }
   },
   "habitEdit_habitDailyGoal_hintText": "Daily goal, default {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "Minimum daily threshold, defualt {number}",
 
   "habitEdit_habitDailyGoalUnit_hintText": "Daily goal unit",
 
@@ -32,6 +46,7 @@
     }
   },
   "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or >= {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximum daily limit",
 
   "habitEdit_frequencySelector_title": "Select frequency",
 
@@ -245,10 +260,34 @@
   },
   "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} days.}}",
 
-  "habitDetail_heatmap_leftHelpText": "INCOMPLETE",
-  "habitDetail_heatmap_rightHelpText": "OVERFULFIL",
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{INCOMPLETE} =2{SUBSTANDARD} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}",
 
-  "habitDetail_descDailyGoal_titleText": "Goal",
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Goal}}",
   "@habitDetail_descDailyGoal_unitText": {
     "placeholders": {
       "unit": {
@@ -259,7 +298,15 @@
   },
   "habitDetail_descDailyGoal_unitText": "Unit: {unit}",
   "habitDetail_descDailyGoal_unitEmptyText": "null",
-  "habitDetail_descTargetDays_titleText": "Days",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Days}}",
   "habitDetail_descTargetDays_unitText": "d",
   "habitDetail_descRecordsNum_titleText": "Records",
 
@@ -280,6 +327,7 @@
   "habitDetail_freqChart_expanded_showTooltip": "Show History Chart",
 
   "habitDetail_otherSubgroup_title": "Other",
+  "habitDetail_habitType_title": "Type",
   "habitDetail_reminderTile_title": "Reminder",
   "habitDetail_freqTile_title": "Repeat",
   "habitDetail_startDateTile_title": "Start Date",

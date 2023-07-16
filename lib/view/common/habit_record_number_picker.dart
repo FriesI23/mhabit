@@ -25,8 +25,12 @@ import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/num_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../model/habit_daily_goal.dart';
+import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
+
+const _kDefaultHabitRecordChipListHeight = 56.0;
 
 Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required BuildContext context,
@@ -166,12 +170,8 @@ class _HabitRecordCustomNumberPickerDialog
   }
 
   void _onTextFieldValueChanged(String value) {
-    num newDailyGoal;
-    try {
-      newDailyGoal = num.parse(value);
-    } on FormatException {
-      newDailyGoal = defaultHabitDailyGoal;
-    }
+    final newDailyGoal = num.tryParse(value) ??
+        getDefaultHabitDailyGoal(widget.recordForm.habitType);
     final currentValue = _result;
     _result = onDailyGoalTextInputChanged(newDailyGoal,
         controller: _inputController, allowInputZero: true);
@@ -181,69 +181,74 @@ class _HabitRecordCustomNumberPickerDialog
     }
   }
 
+  void _onChipValueChanged(num? newValue) {
+    if (newValue != null) {
+      _result = newValue;
+      _inputController.text = _result!.toSimpleString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
 
-    final Widget normalValChip = ActionChip(
-      avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
-      label: Text(l10n?.habitDetail_changeGoal_doneChipText(
-              widget.recordForm.targetValue.toSimpleString()) ??
-          "Done: ${widget.recordForm.targetValue.toSimpleString()}"),
-      onPressed: () {
-        _result = widget.recordForm.targetValue;
-        if (_result != null) {
-          _inputController.text = _result!.toSimpleString();
-        }
-      },
-    );
-
-    final Widget zeroValChip = ActionChip(
-      avatar: const FittedBox(child: Icon(MdiIcons.closeCircle)),
-      label: l10n != null
-          ? Text(l10n.habitDetail_changeGoal_undoneChipText)
-          : const Text("Undone"),
-      backgroundColor: null,
-      onPressed: () {
-        _result = minHabitDailyGoal;
-        if (_result != null) {
-          _inputController.text = _result!.toSimpleString();
-        }
-      },
-    );
-
-    Widget? buildExtraValChip() {
-      if (widget.recordTargetExtraValue == null) return null;
-      return ActionChip(
-        avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
-        label: Text(l10n?.habitDetail_changeGoal_extraChipText(
-                widget.recordTargetExtraValue!.toSimpleString()) ??
-            "Extra: ${widget.recordTargetExtraValue!.toSimpleString()}"),
-        onPressed: () {
-          _result = widget.recordTargetExtraValue;
-          if (_result != null) {
-            _inputController.text = _result!.toSimpleString();
-          }
-        },
+    Widget buildNormalHabitChipList(
+      BuildContext context, {
+      required BoxConstraints constraints,
+    }) {
+      final complateStatus = widget.recordForm.complateStatus;
+      return _NormalHabitRecordChipList(
+        height: _kDefaultHabitRecordChipListHeight,
+        value: widget.recordForm.value,
+        targetValue: widget.recordForm.targetValue,
+        recordTargetExtraValue: widget.recordTargetExtraValue,
+        width: math.min(constraints.maxWidth, dialogMaxWidth),
+        showCurrentValChip: complateStatus != HabitDailyComplateStatus.ok &&
+            complateStatus != HabitDailyComplateStatus.zero,
+        showExtraValChip: widget.recordTargetExtraValue != null,
+        onNormalValChipTapped: _onChipValueChanged,
+        onZeroValChipTapped: _onChipValueChanged,
+        onExtraValChipTapped: _onChipValueChanged,
+        onCurrentValChipTapped: _onChipValueChanged,
       );
     }
 
-    Widget buildLastValChip() {
-      return ActionChip(
-        label: Text(l10n?.habitDetail_changeGoal_currentChipText(
-                widget.recordForm.value.toSimpleString()) ??
-            "Current: ${widget.recordForm.value.toSimpleString()}"),
-        onPressed: () {
-          _result = widget.recordForm.value;
-          if (_result != null) {
-            _inputController.text = _result!.toSimpleString();
-          }
-        },
+    Widget buildNegativeHabitChipList(
+      BuildContext context, {
+      required BoxConstraints constraints,
+    }) {
+      final complateStatus = widget.recordForm.complateStatus;
+      return _NormalHabitRecordChipList(
+        height: _kDefaultHabitRecordChipListHeight,
+        value: widget.recordForm.value,
+        targetValue:
+            widget.recordTargetExtraValue ?? widget.recordForm.targetValue,
+        recordTargetExtraValue: widget.recordForm.targetValue,
+        width: math.min(constraints.maxWidth, dialogMaxWidth),
+        showCurrentValChip: complateStatus != HabitDailyComplateStatus.ok &&
+            complateStatus != HabitDailyComplateStatus.zero,
+        showExtraValChip: widget.recordTargetExtraValue != null &&
+            widget.recordTargetExtraValue! != widget.recordForm.targetValue,
+        showZeroValChip: false,
+        showNormalValChip: true,
+        onNormalValChipTapped: _onChipValueChanged,
+        onZeroValChipTapped: _onChipValueChanged,
+        onExtraValChipTapped: _onChipValueChanged,
+        onCurrentValChipTapped: _onChipValueChanged,
       );
+    }
+
+    Widget buildChipList(BuildContext context, BoxConstraints constraints) {
+      switch (widget.recordForm.habitType) {
+        case HabitType.unknown:
+        case HabitType.normal:
+          return buildNormalHabitChipList(context, constraints: constraints);
+        case HabitType.negative:
+          return buildNegativeHabitChipList(context, constraints: constraints);
+      }
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      var complateStatus = widget.recordForm.complateStatus;
       return AlertDialog(
         scrollable: true,
         title: l10n != null
@@ -255,20 +260,9 @@ class _HabitRecordCustomNumberPickerDialog
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ChipList(
-              height: 56,
-              width: math.min(constraints.maxWidth, dialogMaxWidth),
-              padding: EdgeInsets.zero,
-              children: [
-                if (complateStatus != HabitDailyComplateStatus.ok &&
-                    complateStatus != HabitDailyComplateStatus.zero)
-                  buildLastValChip(),
-                normalValChip,
-                zeroValChip,
-                if (widget.recordTargetExtraValue != null) buildExtraValChip(),
-              ],
-            ),
+            buildChipList(context, constraints),
             _HabitRecordTextField(
+              habitType: widget.recordForm.habitType,
               recordDate: widget.recordDate,
               inputController: _inputController,
               increaseButtonEnabled: _isTextFieldIncreaseButtonEnabled(),
@@ -314,6 +308,7 @@ class _HabitRecordTextField extends StatelessWidget {
   static const textFieldRightButtonIconSize = 28.0;
   static const textFieldRightButtonBorderRadius = Radius.circular(10);
 
+  final HabitType habitType;
   final HabitDate? recordDate;
   final bool increaseButtonEnabled;
   final bool decreaseButtonEnabled;
@@ -323,6 +318,7 @@ class _HabitRecordTextField extends StatelessWidget {
   final VoidCallback? onDecreaseButtonPressed;
 
   const _HabitRecordTextField({
+    required this.habitType,
     this.recordDate,
     this.increaseButtonEnabled = false,
     this.decreaseButtonEnabled = false,
@@ -380,13 +376,14 @@ class _HabitRecordTextField extends StatelessWidget {
       ),
     );
 
+    final defaultDailyGoal = getDefaultHabitDailyGoal(habitType);
     final textField = TextField(
       controller: inputController,
       decoration: InputDecoration(
           hintText: l10n?.habitDetail_changeGoal_helpText(
-                  defaultHabitDailyGoal.toSimpleString()) ??
+                  defaultDailyGoal.toSimpleString()) ??
               "Daily goal, "
-                  "default: ${defaultHabitDailyGoal.toSimpleString()}",
+                  "default: ${defaultDailyGoal.toSimpleString()}",
           hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
           helperText: recordDate != null
               ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
@@ -498,5 +495,98 @@ class _NumberStepButtonState extends State<_NumberStepButton> {
 
   void _stopHolding() {
     _holding = false;
+  }
+}
+
+class _NormalHabitRecordChipList extends StatelessWidget {
+  final double? height;
+  final double? width;
+  final HabitDailyGoal value;
+  final HabitDailyGoal targetValue;
+  final HabitDailyGoal? recordTargetExtraValue;
+  final bool showNormalValChip;
+  final bool showZeroValChip;
+  final bool showExtraValChip;
+  final bool showCurrentValChip;
+  final ValueChanged<HabitDailyGoal>? onNormalValChipTapped;
+  final ValueChanged<HabitDailyGoal>? onZeroValChipTapped;
+  final ValueChanged<HabitDailyGoal?>? onExtraValChipTapped;
+  final ValueChanged<HabitDailyGoal>? onCurrentValChipTapped;
+
+  const _NormalHabitRecordChipList({
+    this.height,
+    this.width,
+    required this.value,
+    required this.targetValue,
+    this.recordTargetExtraValue,
+    this.showNormalValChip = true,
+    this.showZeroValChip = true,
+    this.showExtraValChip = false,
+    this.showCurrentValChip = false,
+    this.onNormalValChipTapped,
+    this.onZeroValChipTapped,
+    this.onExtraValChipTapped,
+    this.onCurrentValChipTapped,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final Widget normalValChip = ActionChip(
+      avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
+      label: Text(l10n?.habitDetail_changeGoal_doneChipText(
+              targetValue.toSimpleString()) ??
+          "Done: ${targetValue.toSimpleString()}"),
+      onPressed: onNormalValChipTapped != null
+          ? () => onNormalValChipTapped!(targetValue)
+          : null,
+    );
+
+    final Widget zeroValChip = ActionChip(
+      avatar: const FittedBox(child: Icon(MdiIcons.closeCircle)),
+      label: l10n != null
+          ? Text(l10n.habitDetail_changeGoal_undoneChipText)
+          : const Text("Undone"),
+      backgroundColor: null,
+      onPressed: onZeroValChipTapped != null
+          ? () => onZeroValChipTapped!(minHabitDailyGoal)
+          : null,
+    );
+
+    Widget? buildExtraValChip() {
+      if (recordTargetExtraValue == null) return null;
+      return ActionChip(
+        avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
+        label: Text(l10n?.habitDetail_changeGoal_extraChipText(
+                recordTargetExtraValue!.toSimpleString()) ??
+            "Extra: ${recordTargetExtraValue!.toSimpleString()}"),
+        onPressed: onExtraValChipTapped != null
+            ? () => onExtraValChipTapped!(recordTargetExtraValue)
+            : null,
+      );
+    }
+
+    Widget buildLastValChip() {
+      return ActionChip(
+        label: Text(l10n?.habitDetail_changeGoal_currentChipText(
+                value.toSimpleString()) ??
+            "Current: ${value.toSimpleString()}"),
+        onPressed: onCurrentValChipTapped != null
+            ? () => onCurrentValChipTapped!(value)
+            : null,
+      );
+    }
+
+    return ChipList(
+      height: height,
+      width: width,
+      padding: EdgeInsets.zero,
+      children: [
+        if (showCurrentValChip) buildLastValChip(),
+        if (showNormalValChip) normalValChip,
+        if (showZeroValChip) zeroValChip,
+        if (showExtraValChip) buildExtraValChip(),
+      ],
+    );
   }
 }

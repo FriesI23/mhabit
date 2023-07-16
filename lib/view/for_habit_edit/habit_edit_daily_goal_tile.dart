@@ -13,23 +13,40 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:mhabit/common/types.dart';
 
-import '../../common/consts.dart';
 import '../../common/re.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../model/habit_form.dart';
 
 class HabitEditDailyGoalTile extends StatelessWidget {
+  final HabitType habitType;
+  final HabitDailyGoal defualtHabitDailyGoal;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
 
   const HabitEditDailyGoalTile({
     super.key,
+    required this.habitType,
+    this.defualtHabitDailyGoal = -1,
     this.controller,
     this.onChanged,
     this.onSubmitted,
   });
+
+  String? _getHintText([L10n? l10n]) {
+    switch (habitType) {
+      case HabitType.unknown:
+        return null;
+      case HabitType.normal:
+        return l10n?.habitEdit_habitDailyGoal_hintText(defualtHabitDailyGoal);
+      case HabitType.negative:
+        return l10n
+            ?.habitEdit_habitDailyGoal_negativeHintText(defualtHabitDailyGoal);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +60,7 @@ class HabitEditDailyGoalTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
-            hintText:
-                l10n?.habitEdit_habitDailyGoal_hintText(defaultHabitDailyGoal),
+            hintText: _getHintText(l10n),
             hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
             border: InputBorder.none),
         keyboardType:

@@ -9,12 +9,18 @@
 
   "habitEdit_colorPicker_title": "选择颜色",
 
+  "habitEdit_habitTypeDialog_title": "习惯类型",
+  "habitEdit_habitType_positiveText": "积极",
+  "habitEdit_habitType_negativeText": "消极",
+
   "habitEdit_habitDailyGoal_hintText": "每日目标, 默认为{number}",
+  "habitEdit_habitDailyGoal_negativeHintText": "每日最低限度, 默认为{number}",
 
   "habitEdit_habitDailyGoalUnit_hintText": "单位",
 
   "habitEdit_habitDailyGoalExtra_hintText": "期望的每日最高目标",
   "habitEdit_habitDailyGoalExtra_errorText": "无效的值，必须为空或者>={dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "每日最高限额",
 
   "habitEdit_frequencySelector_title": "频率",
 
@@ -145,13 +151,13 @@
   "habitDetail_summary_body": "当前分数为 {score}，距开始已经过 {days} 天。",
   "habitDetail_summary_preBody": "距离开始还有 {days} 天",
 
-  "habitDetail_heatmap_leftHelpText": "未完成",
-  "habitDetail_heatmap_rightHelpText": "超额完成",
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{未完成} =2{未达标} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{超额完成} =2{完美达标} other{}}",
 
-  "habitDetail_descDailyGoal_titleText": "每日目标",
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{每日限额} other{每日目标}}",
   "habitDetail_descDailyGoal_unitText": "单位：{unit}",
   "habitDetail_descDailyGoal_unitEmptyText": "无",
-  "habitDetail_descTargetDays_titleText": "完成天数",
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, =2{达标天数} other{完成天数}}",
   "habitDetail_descTargetDays_unitText": "",
   "habitDetail_descRecordsNum_titleText": "记录总数",
 
@@ -172,6 +178,7 @@
   "habitDetail_freqChart_expanded_showTooltip": "显示历史记录",
 
   "habitDetail_otherSubgroup_title": "其他",
+  "habitDetail_habitType_title": "类型",
   "habitDetail_reminderTile_title": "提醒",
   "habitDetail_freqTile_title": "重复",
   "habitDetail_startDateTile_title": "开始日期",

@@ -18,6 +18,7 @@ import '../common/consts.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
 import 'common.dart';
+import 'habit_form.dart';
 import 'habit_summary.dart';
 
 class HabitDetailData implements DirtyMarkMixin {
@@ -47,6 +48,8 @@ class HabitDetailData implements DirtyMarkMixin {
       _data.getAllAutoComplateRecordDate();
 
   String get name => _data.name;
+
+  HabitType get type => _data.type;
 
   DateTime get createT => _data.createTime;
 

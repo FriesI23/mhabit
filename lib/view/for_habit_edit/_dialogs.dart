@@ -22,3 +22,5 @@ export './habit_reminder_type_picker.dart'
     show HabitReminderTypePickerDialog, showHabitReminderTypePickerDialog;
 export './habit_target_days_picker.dart'
     show HabitTargetDaysPickerDialog, showHabitTargetDaysPickerDialog;
+export './habit_type_picker.dart'
+    show HabitTypePicker, showHabitTypSelectDialog;

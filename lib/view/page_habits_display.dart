@@ -36,6 +36,7 @@ import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
+import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
@@ -454,7 +455,12 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final result = await showHabitRecordCustomNumberPickerDialog(
       context: context,
-      recordForm: HabitDailyRecordForm(crtNum, data.dailyGoal),
+      recordForm: HabitDailyRecordForm.getImp(
+        type: data.type,
+        value: crtNum,
+        targetValue: data.dailyGoal,
+        extraTargetValue: data.dailyGoalExtra,
+      ),
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,

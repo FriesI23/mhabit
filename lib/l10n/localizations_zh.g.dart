@@ -19,8 +19,22 @@ class L10nZh extends L10n {
   String get habitEdit_colorPicker_title => '选择颜色';
 
   @override
+  String get habitEdit_habitTypeDialog_title => '习惯类型';
+
+  @override
+  String get habitEdit_habitType_positiveText => '积极';
+
+  @override
+  String get habitEdit_habitType_negativeText => '消极';
+
+  @override
   String habitEdit_habitDailyGoal_hintText(Object number) {
     return '每日目标, 默认为$number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeHintText(num number) {
+    return '每日最低限度, 默认为$number';
   }
 
   @override
@@ -33,6 +47,9 @@ class L10nZh extends L10n {
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
     return '无效的值，必须为空或者>=$dailyGoal';
   }
+
+  @override
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => '每日最高限额';
 
   @override
   String get habitEdit_frequencySelector_title => '频率';
@@ -386,13 +403,39 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get habitDetail_heatmap_leftHelpText => '未完成';
+  String habitDetail_heatmap_leftHelpText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '',
+      two: '未达标',
+      one: '未完成',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get habitDetail_heatmap_rightHelpText => '超额完成';
+  String habitDetail_heatmap_rightHelpText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '',
+      two: '完美达标',
+      one: '超额完成',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get habitDetail_descDailyGoal_titleText => '每日目标';
+  String habitDetail_descDailyGoal_titleText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '每日目标',
+      two: '每日限额',
+    );
+    return '$_temp0';
+  }
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
@@ -403,7 +446,15 @@ class L10nZh extends L10n {
   String get habitDetail_descDailyGoal_unitEmptyText => '无';
 
   @override
-  String get habitDetail_descTargetDays_titleText => '完成天数';
+  String habitDetail_descTargetDays_titleText(int habitType) {
+    String _temp0 = intl.Intl.pluralLogic(
+      habitType,
+      locale: localeName,
+      other: '完成天数',
+      two: '达标天数',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get habitDetail_descTargetDays_unitText => '';
@@ -455,6 +506,9 @@ class L10nZh extends L10n {
 
   @override
   String get habitDetail_otherSubgroup_title => '其他';
+
+  @override
+  String get habitDetail_habitType_title => '类型';
 
   @override
   String get habitDetail_reminderTile_title => '提醒';

@@ -22,6 +22,7 @@ import '../../common/types.dart';
 import '../../component/widget.dart';
 import '../../db/db_helper/records.dart';
 import '../../extension/custom_color_extensions.dart';
+import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
 import '../../model/habit_form.dart';
@@ -147,10 +148,19 @@ class _HabitEditReplacementRecordCalendarDialog
     final record = viewmodel.getHabitRecordData(date);
     num orgNum = record?.value ?? -1;
     if (record != null && record.status == HabitRecordStatus.done) {
-      form = HabitDailyRecordForm(record.value, viewmodel.habitDailyGoal!);
+      form = HabitDailyRecordForm.getImp(
+        type: viewmodel.habitType!,
+        value: record.value,
+        targetValue: viewmodel.habitDailyGoal!,
+        extraTargetValue: viewmodel.habitDailyGoalExtra,
+      );
     } else {
-      form = HabitDailyRecordForm(
-          viewmodel.habitDailyGoal!, viewmodel.habitDailyGoal!);
+      form = HabitDailyRecordForm.getImp(
+        type: viewmodel.habitType!,
+        value: viewmodel.habitDailyGoal!,
+        targetValue: viewmodel.habitDailyGoal!,
+        extraTargetValue: viewmodel.habitDailyGoalExtra,
+      );
     }
 
     final result = await showHabitRecordCustomNumberPickerDialog(
