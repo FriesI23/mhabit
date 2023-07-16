@@ -10,6 +10,11 @@ on:
       - main
       - feature/github-actions
 
+
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   unittest:
     name: Unit Test
