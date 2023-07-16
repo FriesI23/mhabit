@@ -1,0 +1,5 @@
+- Add negative habit
+- Refactor some of the code
+- Add CI
+
+**IMPORTANT**: Please make a full backup before updating this version.
