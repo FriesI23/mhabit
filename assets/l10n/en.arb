@@ -138,7 +138,7 @@
   "habitEdit_reminder_weekdayText_saturday": "Sat",
   "habitEdit_reminder_weekdayText_sunday": "Sun",
 
-  "habitEdit_desc_hintText": "Description",
+  "habitEdit_desc_hintText": "Memo, support Markdown",
 
   "habitEdit_create_datetime_prefix": "Created: ",
   "habitEdit_modify_datetime_prefix": "Modified: ",
@@ -325,6 +325,8 @@
   "habitDetail_freqChartNaviBar_nowText": "Now",
   "habitDetail_freqChart_expanded_hideTooltip": "Hide History Chart",
   "habitDetail_freqChart_expanded_showTooltip": "Show History Chart",
+
+  "habitDetail_descSubgroup_title": "Memo",
 
   "habitDetail_otherSubgroup_title": "Other",
   "habitDetail_habitType_title": "Type",

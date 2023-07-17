@@ -158,6 +158,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   final HabitUUID uuid;
   final HabitType type;
   String name;
+  String desc;
   HabitColorType colorType;
   HabitDailyGoal dailyGoal;
   HabitDailyGoal? dailyGoalExtra;
@@ -180,6 +181,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     required this.uuid,
     required this.type,
     required this.name,
+    required this.desc,
     required this.colorType,
     required this.dailyGoal,
     this.dailyGoalExtra,
@@ -198,6 +200,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         uuid = cell.uuid!,
         type = HabitType.getFromDBCode(cell.type!)!,
         name = cell.name!,
+        desc = cell.desc ?? '',
         colorType = HabitColorType.getFromDBCode(cell.color!)!,
         dailyGoal = cell.dailyGoal!,
         dailyGoalExtra = cell.dailyGoalExtra,

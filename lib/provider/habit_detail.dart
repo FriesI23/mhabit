@@ -371,6 +371,8 @@ class HabitDetailViewModel extends ChangeNotifier
 
   int get habitRecordsTotalNum => _habitDetailData?.data.recordsNum ?? 0;
 
+  String get habitDesc => _habitDetailData?.data.desc ?? '';
+
   bool get isHabitCompleted =>
       _habitDetailData != null ? _habitDetailData!.data.isComplated : false;
 

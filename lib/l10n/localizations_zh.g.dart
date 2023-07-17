@@ -207,7 +207,7 @@ class L10nZh extends L10n {
   String get habitEdit_reminder_weekdayText_sunday => '日';
 
   @override
-  String get habitEdit_desc_hintText => '详细描述';
+  String get habitEdit_desc_hintText => '备忘, 支持Markdown';
 
   @override
   String get habitEdit_create_datetime_prefix => '创建: ';
@@ -503,6 +503,9 @@ class L10nZh extends L10n {
 
   @override
   String get habitDetail_freqChart_expanded_showTooltip => '显示历史记录';
+
+  @override
+  String get habitDetail_descSubgroup_title => '备忘';
 
   @override
   String get habitDetail_otherSubgroup_title => '其他';

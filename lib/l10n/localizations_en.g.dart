@@ -207,7 +207,7 @@ class L10nEn extends L10n {
   String get habitEdit_reminder_weekdayText_sunday => 'Sun';
 
   @override
-  String get habitEdit_desc_hintText => 'Description';
+  String get habitEdit_desc_hintText => 'Memo, support Markdown';
 
   @override
   String get habitEdit_create_datetime_prefix => 'Created: ';
@@ -508,6 +508,9 @@ class L10nEn extends L10n {
 
   @override
   String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
+
+  @override
+  String get habitDetail_descSubgroup_title => 'Memo';
 
   @override
   String get habitDetail_otherSubgroup_title => 'Other';
