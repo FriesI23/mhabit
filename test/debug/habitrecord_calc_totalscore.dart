@@ -33,6 +33,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
     uuid: 'hsingle',
     type: HabitType.normal,
     name: 'test_single',
+    desc: '',
     colorType: HabitColorType.cc1,
     dailyGoal: 15.0,
     targetDays: 100,
