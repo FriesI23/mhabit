@@ -432,7 +432,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_desc_hintText.
   ///
   /// In en, this message translates to:
-  /// **'Description'**
+  /// **'Memo, support Markdown'**
   String get habitEdit_desc_hintText;
 
   /// No description provided for @habitEdit_create_datetime_prefix.
@@ -932,6 +932,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Show History Chart'**
   String get habitDetail_freqChart_expanded_showTooltip;
+
+  /// No description provided for @habitDetail_descSubgroup_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Memo'**
+  String get habitDetail_descSubgroup_title;
 
   /// No description provided for @habitDetail_otherSubgroup_title.
   ///

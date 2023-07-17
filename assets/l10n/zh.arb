@@ -73,7 +73,7 @@
   "habitEdit_reminder_weekdayText_saturday": "六",
   "habitEdit_reminder_weekdayText_sunday": "日",
 
-  "habitEdit_desc_hintText": "详细描述",
+  "habitEdit_desc_hintText": "备忘, 支持Markdown",
 
   "habitEdit_create_datetime_prefix": "创建: ",
   "habitEdit_modify_datetime_prefix": "修改: ",
@@ -176,6 +176,8 @@
   "habitDetail_freqChartNaviBar_nowText": "现在",
   "habitDetail_freqChart_expanded_hideTooltip": "隐藏历史记录",
   "habitDetail_freqChart_expanded_showTooltip": "显示历史记录",
+
+  "habitDetail_descSubgroup_title": "备忘",
 
   "habitDetail_otherSubgroup_title": "其他",
   "habitDetail_habitType_title": "类型",

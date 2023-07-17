@@ -16,6 +16,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -24,6 +25,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../common/consts.dart';
 import '../common/logging.dart';
 import '../common/types.dart';
+import '../common/utils.dart';
 import '../component/animation.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
@@ -874,6 +876,10 @@ class _HabitDetailView extends State<HabitDetailView>
       );
     }
 
+    Widget buildDescInfo(BuildContext conetxt) {
+      return const _HabitDescTileList();
+    }
+
     Widget buildOtherInfo(BuildContext context) {
       return const _HabitDetailOtherTileList();
     }
@@ -981,6 +987,13 @@ class _HabitDetailView extends State<HabitDetailView>
                     buildScoreChartTile(context),
                     _div,
                     buildFreqChartTile(context),
+                    if (context
+                        .read<HabitDetailViewModel>()
+                        .habitDesc
+                        .isNotEmpty) ...[
+                      _div,
+                      buildDescInfo(context),
+                    ],
                     _div,
                     buildOtherInfo(context),
                     if (context
@@ -1022,16 +1035,19 @@ class _HabitDetailView extends State<HabitDetailView>
   }
 }
 
-class _HabitDetailOtherTileList extends StatelessWidget {
-  const _HabitDetailOtherTileList();
+class _HabitDetailTileListFramework extends StatelessWidget {
+  final Widget? title;
+  final List<Widget>? contentChildren;
+
+  const _HabitDetailTileListFramework({
+    this.title,
+    this.contentChildren,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
     final textScaleFactor =
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-
-    final viewmodel = context.read<HabitDetailViewModel>();
     final titleHeight =
         kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
 
@@ -1039,89 +1055,140 @@ class _HabitDetailOtherTileList extends StatelessWidget {
       padding: kHabitDetailWidgetPadding,
       child: Column(
         children: [
-          ConstrainedBox(
-            constraints: BoxConstraints.tightFor(height: titleHeight),
-            child: HabitDetailChartTitle(
-                title: l10n?.habitDetail_otherSubgroup_title ?? "Others"),
+          if (title != null)
+            ConstrainedBox(
+              constraints: BoxConstraints.tightFor(height: titleHeight),
+              child: title,
+            ),
+          ...?contentChildren,
+        ],
+      ),
+    );
+  }
+}
+
+class _HabitDescTileList extends StatelessWidget {
+  const _HabitDescTileList();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final viewmodel = context.read<HabitDetailViewModel>();
+    final textScaleFactor =
+        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final descMinHeight =
+        kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
+
+    return _HabitDetailTileListFramework(
+      title: HabitDetailChartTitle(
+          title: l10n?.habitDetail_descSubgroup_title ?? "Desc"),
+      contentChildren: [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+              minHeight: descMinHeight, minWidth: double.infinity),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MarkdownBody(
+              data: viewmodel.habitDesc,
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                  .copyWith(textScaleFactor: textScaleFactor),
+              shrinkWrap: true,
+              imageBuilder: (uri, title, alt) => const SizedBox(),
+              onTapLink: (text, href, title) =>
+                  href != null ? launchExternalUrl(Uri.parse(href)) : null,
+            ),
           ),
-          // habit type
-          if (viewmodel.habitType != null)
-            HabitOtherInfoTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_habitType_title)
-                  : const Text("Habit Type"),
-              subTitle: Text(viewmodel.habitType!.getTypeName(l10n)),
-              leading: Icon(viewmodel.habitType!.getIcon()),
-            ),
-          // reminder
-          if (viewmodel.habitDetailData?.data.reminder != null)
-            HabitOtherInfoTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_reminderTile_title)
-                  : const Text("Reminder"),
-              subTitle: Text(viewmodel.habitDetailData?.data.reminder
-                      ?.getReminderTypeHelperText(l10n) ??
-                  ''),
-              leading: const Icon(Icons.notifications_outlined),
-            ),
-          // frequency
-          if (viewmodel.habitDetailData != null)
-            HabitOtherInfoTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_freqTile_title)
-                  : const Text("Frequency"),
-              subTitle: Text(l10n != null
-                  ? viewmodel.habitDetailData!.data.frequency
-                      .toLocalString(l10n)
-                  : viewmodel.habitDetailData!.data.frequency.toString()),
-              leading: const Icon(Icons.repeat_outlined),
-            ),
-          // start date
+        ),
+      ],
+    );
+  }
+}
+
+class _HabitDetailOtherTileList extends StatelessWidget {
+  const _HabitDetailOtherTileList();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final viewmodel = context.read<HabitDetailViewModel>();
+
+    return _HabitDetailTileListFramework(
+      title: HabitDetailChartTitle(
+          title: l10n?.habitDetail_otherSubgroup_title ?? "Others"),
+      contentChildren: [
+        if (viewmodel.habitType != null)
+          HabitOtherInfoTile(
+            title: l10n != null
+                ? Text(l10n.habitDetail_habitType_title)
+                : const Text("Habit Type"),
+            subTitle: Text(viewmodel.habitType!.getTypeName(l10n)),
+            leading: Icon(viewmodel.habitType!.getIcon()),
+          ),
+        // reminder
+        if (viewmodel.habitDetailData?.data.reminder != null)
+          HabitOtherInfoTile(
+            title: l10n != null
+                ? Text(l10n.habitDetail_reminderTile_title)
+                : const Text("Reminder"),
+            subTitle: Text(viewmodel.habitDetailData?.data.reminder
+                    ?.getReminderTypeHelperText(l10n) ??
+                ''),
+            leading: const Icon(Icons.notifications_outlined),
+          ),
+        // frequency
+        if (viewmodel.habitDetailData != null)
+          HabitOtherInfoTile(
+            title: l10n != null
+                ? Text(l10n.habitDetail_freqTile_title)
+                : const Text("Frequency"),
+            subTitle: Text(l10n != null
+                ? viewmodel.habitDetailData!.data.frequency.toLocalString(l10n)
+                : viewmodel.habitDetailData!.data.frequency.toString()),
+            leading: const Icon(Icons.repeat_outlined),
+          ),
+        // start date
+        Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+          selector: (context, vm) => vm.config,
+          builder: (context, config, child) => HabitOtherInfoTile(
+            title: l10n != null
+                ? Text(l10n.habitDetail_startDateTile_title)
+                : const Text("Start Date"),
+            subTitle: Text(config
+                .getYMDFormatter(l10n?.localeName)
+                .format(viewmodel.habitStartDate)),
+            leading: const Icon(Icons.schedule_outlined),
+          ),
+        ),
+        // create date
+        if (viewmodel.habitDetailData != null)
           Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
             selector: (context, vm) => vm.config,
             builder: (context, config, child) => HabitOtherInfoTile(
               title: l10n != null
-                  ? Text(l10n.habitDetail_startDateTile_title)
-                  : const Text("Start Date"),
+                  ? Text(l10n.habitDetail_createDateTile_title)
+                  : const Text("Created"),
               subTitle: Text(config
-                  .getYMDFormatter(l10n?.localeName)
-                  .format(viewmodel.habitStartDate)),
-              leading: const Icon(Icons.schedule_outlined),
+                  .getFormatter(l10n?.localeName)
+                  .format(viewmodel.habitDetailData!.createT)),
+              leading: const Icon(HabitCalIcons.calendar_create),
             ),
           ),
-          // create date
-          if (viewmodel.habitDetailData != null)
-            Selector<AppCustomDateYmdHmsConfigViewModel,
-                CustomDateYmdHmsConfig>(
-              selector: (context, vm) => vm.config,
-              builder: (context, config, child) => HabitOtherInfoTile(
-                title: l10n != null
-                    ? Text(l10n.habitDetail_createDateTile_title)
-                    : const Text("Created"),
-                subTitle: Text(config
-                    .getFormatter(l10n?.localeName)
-                    .format(viewmodel.habitDetailData!.createT)),
-                leading: const Icon(HabitCalIcons.calendar_create),
-              ),
+        // modified date
+        if (viewmodel.habitDetailData != null)
+          Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+            selector: (context, vm) => vm.config,
+            builder: (context, config, child) => HabitOtherInfoTile(
+              title: l10n != null
+                  ? Text(l10n.habitDetail_modifyDateTile_title)
+                  : const Text("Modified"),
+              subTitle: Text(config
+                  .getFormatter(l10n?.localeName)
+                  .format(viewmodel.habitDetailData!.modifyT)),
+              leading: const Icon(HabitCalIcons.calendar_modify),
+              padding: const EdgeInsets.only(bottom: 6.0),
             ),
-          // modified date
-          if (viewmodel.habitDetailData != null)
-            Selector<AppCustomDateYmdHmsConfigViewModel,
-                CustomDateYmdHmsConfig>(
-              selector: (context, vm) => vm.config,
-              builder: (context, config, child) => HabitOtherInfoTile(
-                title: l10n != null
-                    ? Text(l10n.habitDetail_modifyDateTile_title)
-                    : const Text("Modified"),
-                subTitle: Text(config
-                    .getFormatter(l10n?.localeName)
-                    .format(viewmodel.habitDetailData!.modifyT)),
-                leading: const Icon(HabitCalIcons.calendar_modify),
-                padding: const EdgeInsets.only(bottom: 6.0),
-              ),
-            ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
