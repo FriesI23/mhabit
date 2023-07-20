@@ -1,0 +1,4 @@
+- Show Memo on Habit detail page
+- Support Markdown formatter on Habit memo
+- Fixed positive habit's daily goal set to 0 problem in edit page
+- Fixed unable to switch habitType when editting exsit habit

@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.8.1+20
+
+- Show Memo on Habit detail page
+- Support Markdown formatter on Habit memo
+- Fixed positive habit's daily goal set to 0 problem in edit page
+- Fixed unable to switch habitType when editting exsit habit
+
 ## 1.8.0+19
 
 - Add negative habit
