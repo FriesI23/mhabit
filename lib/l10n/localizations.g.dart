@@ -147,6 +147,30 @@ abstract class L10n {
   /// **'Minimum daily threshold, defualt {number}'**
   String habitEdit_habitDailyGoal_negativeHintText(num number);
 
+  /// minimum number for habit daily goal
+  ///
+  /// In en, this message translates to:
+  /// **'daily goal must > {number}'**
+  String habitEdit_habitDailyGoal_errorText01(num number);
+
+  /// maximum number for habit daily goal
+  ///
+  /// In en, this message translates to:
+  /// **'daily goal must ≤ {number}'**
+  String habitEdit_habitDailyGoal_errorText02(num number);
+
+  /// minimum number for negative habit daily goal
+  ///
+  /// In en, this message translates to:
+  /// **'daily goal must ≥ {number}'**
+  String habitEdit_habitDailyGoal_negativeErrorText01(num number);
+
+  /// maximum number for negative habit daily goal
+  ///
+  /// In en, this message translates to:
+  /// **'daily goal must ≤ {number}'**
+  String habitEdit_habitDailyGoal_negativeErrorText02(num number);
+
   /// No description provided for @habitEdit_habitDailyGoalUnit_hintText.
   ///
   /// In en, this message translates to:
@@ -162,7 +186,7 @@ abstract class L10n {
   /// No description provided for @habitEdit_habitDailyGoalExtra_errorText.
   ///
   /// In en, this message translates to:
-  /// **'invalid value, must be empty or >= {dailyGoal}'**
+  /// **'invalid value, must be empty or ≥ {dailyGoal}'**
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal);
 
   /// No description provided for @habitEdit_habitDailyGoalExtra_negativeHintText.

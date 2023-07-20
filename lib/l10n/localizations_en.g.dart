@@ -38,6 +38,26 @@ class L10nEn extends L10n {
   }
 
   @override
+  String habitEdit_habitDailyGoal_errorText01(num number) {
+    return 'daily goal must > $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_errorText02(num number) {
+    return 'daily goal must ≤ $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
+    return 'daily goal must ≥ $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
+    return 'daily goal must ≤ $number';
+  }
+
+  @override
   String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
 
   @override
@@ -45,7 +65,7 @@ class L10nEn extends L10n {
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'invalid value, must be empty or >= $dailyGoal';
+    return 'invalid value, must be empty or ≥ $dailyGoal';
   }
 
   @override

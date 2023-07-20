@@ -38,6 +38,26 @@ class L10nZh extends L10n {
   }
 
   @override
+  String habitEdit_habitDailyGoal_errorText01(num number) {
+    return '每日目标须 > $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_errorText02(num number) {
+    return '每日目标须 ≤ $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
+    return '每日目标必须 ≥ $number';
+  }
+
+  @override
+  String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
+    return '每日目标必须 ≤ $number';
+  }
+
+  @override
   String get habitEdit_habitDailyGoalUnit_hintText => '单位';
 
   @override
@@ -45,7 +65,7 @@ class L10nZh extends L10n {
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return '无效的值，必须为空或者>=$dailyGoal';
+    return '无效的值，必须为空或者 ≥ $dailyGoal';
   }
 
   @override

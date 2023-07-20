@@ -171,7 +171,7 @@ class _HabitRecordCustomNumberPickerDialog
 
   void _onTextFieldValueChanged(String value) {
     final newDailyGoal = num.tryParse(value) ??
-        getDefaultHabitDailyGoal(widget.recordForm.habitType);
+        HabitDailyGoalHelper.getDefaultDailyGoal(widget.recordForm.habitType);
     final currentValue = _result;
     _result = onDailyGoalTextInputChanged(newDailyGoal,
         controller: _inputController, allowInputZero: true);
@@ -376,7 +376,8 @@ class _HabitRecordTextField extends StatelessWidget {
       ),
     );
 
-    final defaultDailyGoal = getDefaultHabitDailyGoal(habitType);
+    final defaultDailyGoal =
+        HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
     final textField = TextField(
       controller: inputController,
       decoration: InputDecoration(

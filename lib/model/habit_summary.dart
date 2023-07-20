@@ -232,7 +232,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     return habit;
   }
 
-  num get progress => _progress;
+  num get progress => _progress.isFinite ? _progress : -1.0;
 
   bool get isComplated => _progress >= 100.0;
 

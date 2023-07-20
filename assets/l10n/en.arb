@@ -34,6 +34,47 @@
   },
   "habitEdit_habitDailyGoal_negativeHintText": "Minimum daily threshold, defualt {number}",
 
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText01": "daily goal must > {number}",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText02": "daily goal must ≤ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "daily goal must ≥ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "maximum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText02": "daily goal must ≤ {number}",
+
   "habitEdit_habitDailyGoalUnit_hintText": "Daily goal unit",
 
   "habitEdit_habitDailyGoalExtra_hintText": "Desired maximum daily goal",
@@ -45,7 +86,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or >= {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or ≥ {dailyGoal}",
   "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximum daily limit",
 
   "habitEdit_frequencySelector_title": "Select frequency",
