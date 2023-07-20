@@ -14,8 +14,7 @@ habits more effectively.
 Moreover, this app completely open source.
 
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
-
-Or download the latest APK from the [Releases Section](https://github.com/FriesI23/mhabit/releases/latest).
+[![Get it on F-Droid][github-button]][github-myapp]
 
 ## Screenshots
 
@@ -29,15 +28,18 @@ Or download the latest APK from the [Releases Section](https://github.com/FriesI
 ## Features
 
 - A scoring system to help develop your own micro habits.
+- Support both positive and negative habit.
 - An easy-to-use interface for habit check in.
 - Different colors used to distinguish between various habits.
 - Easily export and import habits using a human-readable format (JSON).
 - Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adaptation for landscape and large screen devices.
+- No ADs in this app.
 
 You can customize each habit with the following options:
 
 - Name
+- Type (positive/negative)
 - Description
 - Color
 - Daily goal
@@ -51,16 +53,12 @@ You can customize each habit with the following options:
 
 ## Todo
 
-| status | progress               | desc.                                                   |
-| ------ | ---------------------- | ------------------------------------------------------- |
-|        | Build iOS version      | build with iOS, need change some UI to Cupertino style. |
-|        | Complete Documentation | [`README.md`](README.md)                                |
-
-## Install
-
-### 1. Source code
-
-See [Build from source](#build-from-source).
+| status  | progress               | desc.                                                        |
+| ------- | ---------------------- | ------------------------------------------------------------ |
+| PLANNED | Sync with Webdav       | Expected sync solution is similar to Joplin's WebDAV method. |
+| -       | Publish to Google Play |                                                              |
+| -       | Build iOS version      | build with iOS, need change some UI to Cupertino style.      |
+| -       | Complete Documentation | [`README.md`](README.md)                                     |
 
 ## Build from source
 
@@ -117,7 +115,9 @@ limitations under the License.
 [export-and-import]: docs/README/images/export-and-import.gif
 [export-and-import-tb]: docs/README/images/export-and-import-tb.gif
 [fdroid-button]: docs/README/images/fdroid-get-it-on.png
-[fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit/
+[fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
+[github-button]: docs/README/images/github-get-it-on.png
+[github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
