@@ -16,10 +16,15 @@
   "habitEdit_habitDailyGoal_hintText": "每日目标, 默认为{number}",
   "habitEdit_habitDailyGoal_negativeHintText": "每日最低限度, 默认为{number}",
 
+  "habitEdit_habitDailyGoal_errorText01": "每日目标须 > {number}",
+  "habitEdit_habitDailyGoal_errorText02": "每日目标须 ≤ {number}",
+  "habitEdit_habitDailyGoal_negativeErrorText01": "每日目标必须 ≥ {number}",
+  "habitEdit_habitDailyGoal_negativeErrorText02": "每日目标必须 ≤ {number}",
+
   "habitEdit_habitDailyGoalUnit_hintText": "单位",
 
   "habitEdit_habitDailyGoalExtra_hintText": "期望的每日最高目标",
-  "habitEdit_habitDailyGoalExtra_errorText": "无效的值，必须为空或者>={dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_errorText": "无效的值，必须为空或者 ≥ {dailyGoal}",
   "habitEdit_habitDailyGoalExtra_negativeHintText": "每日最高限额",
 
   "habitEdit_frequencySelector_title": "频率",

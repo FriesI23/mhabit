@@ -138,8 +138,12 @@ class HabitFormViewModel extends ChangeNotifier
 
   num get dailyGoal {
     if (_form.dailyGoal != null) return _form.dailyGoal!;
-    return getDefaultHabitDailyGoal(habitType);
+    return HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
   }
+
+  bool get isDailyGoalValueValid =>
+      HabitDailyGoalHelper(habitType: habitType, dailyGoal: dailyGoal)
+          .isGoalValid;
 
   set dailyGoal(num newDailyGoal) {
     _form.dailyGoal = newDailyGoal;
@@ -224,7 +228,9 @@ class HabitFormViewModel extends ChangeNotifier
   HabitDisplayEditMode get editMode => _form.editMode;
 
   bool canSaveHabit() {
-    return name.isNotEmpty && isDailyGoalExtraValueValid;
+    return name.isNotEmpty &&
+        isDailyGoalValueValid &&
+        isDailyGoalExtraValueValid;
   }
 
   bool allowZeroDailyGoal() {

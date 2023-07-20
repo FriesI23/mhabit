@@ -13,15 +13,16 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:mhabit/common/types.dart';
 
 import '../../common/re.dart';
+import '../../common/types.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_form.dart';
 
 class HabitEditDailyGoalTile extends StatelessWidget {
   final HabitType habitType;
+  final String? errorHint;
   final HabitDailyGoal defualtHabitDailyGoal;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
@@ -30,6 +31,7 @@ class HabitEditDailyGoalTile extends StatelessWidget {
   const HabitEditDailyGoalTile({
     super.key,
     required this.habitType,
+    this.errorHint,
     this.defualtHabitDailyGoal = -1,
     this.controller,
     this.onChanged,
@@ -60,9 +62,11 @@ class HabitEditDailyGoalTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
-            hintText: _getHintText(l10n),
-            hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
-            border: InputBorder.none),
+          hintText: _getHintText(l10n),
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+          border: InputBorder.none,
+          errorText: errorHint,
+        ),
         keyboardType:
             const TextInputType.numberWithOptions(decimal: true, signed: false),
         inputFormatters: [TextFormatterCustom.decimalr2],
