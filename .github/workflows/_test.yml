@@ -1,0 +1,29 @@
+name: Test CI
+
+on:
+  workflow_call:
+    inputs:
+      with-repoter:
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+  unittest:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup_flutter
+      - run: flutter test --machine > test_report.log
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: ${{ inputs.with-repoter }}
+        with:
+          name: "flutter test"
+          path: "test_report.log"
+          reporter: "flutter-json"
