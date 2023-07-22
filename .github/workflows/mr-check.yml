@@ -1,0 +1,20 @@
+name: Merge request checking
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  analyzing:
+    uses: ./.github/workflows/_analyze.yml
+
+  testing:
+    permissions:
+      checks: write
+      pull-requests: write
+    uses: ./.github/workflows/_test.yml

@@ -1,0 +1,13 @@
+name: Analyze CI
+
+on:
+  workflow_call:
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup_flutter
+      - uses: zgosalvez/github-actions-analyze-dart@v2

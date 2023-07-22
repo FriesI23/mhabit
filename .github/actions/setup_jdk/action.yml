@@ -1,0 +1,10 @@
+name: Setup Java SDK
+description: setup shared JDK environment for build use.
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
