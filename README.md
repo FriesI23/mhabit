@@ -118,8 +118,8 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
-[github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml
-[github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release.yml/badge.svg
+[github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml
+[github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
 [flutter-badge]: https://img.shields.io/badge/_Flutter_-3.7.12-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
