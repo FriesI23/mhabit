@@ -38,6 +38,20 @@ and create new file `strings.xml` with the following code:
 </resources>
 ```
 
+### App language
+
+1. Add your locale in `locales_config.xml` located in `android/app/src/main/res/xml/locales_config.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+  <locale android:name="en" />
+  <locale android:name="zh" />
+  <!-- Add your locale here -->
+  <!-- <locale android:name="xx" /> -->
+</locale-config>
+```
+
 ## iOS
 
 1. Add Localization from `Project -> Runner -> Info`

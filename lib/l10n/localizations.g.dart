@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'localizations_en.g.dart';
+import 'localizations_fa.g.dart';
 import 'localizations_zh.g.dart';
 
 /// Callers can lookup localized strings with an instance of L10n
@@ -90,6 +91,7 @@ abstract class L10n {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('fa'),
     Locale('zh')
   ];
 
@@ -1711,7 +1713,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'fa', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -1723,6 +1725,7 @@ L10n lookupL10n(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en': return L10nEn();
+    case 'fa': return L10nFa();
     case 'zh': return L10nZh();
   }
 
