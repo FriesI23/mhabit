@@ -127,23 +127,28 @@ class _HabitDetailFreqChartSubTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: isLast ? null : onLeftButtonPressed,
-          icon: const Icon(Icons.keyboard_arrow_left),
-          disabledColor: themeData.colorScheme.outlineVariant,
-        ),
-        if (leftDateHelper != null) leftDateHelper!,
-        const Text(" ~ "),
-        if (rightDateHelper != null) rightDateHelper!,
-        IconButton(
-          onPressed: isToday ? null : onRightButtonPressed,
-          icon: const Icon(Icons.keyboard_arrow_right),
-          disabledColor: themeData.colorScheme.outlineVariant,
-        ),
-      ],
+    // TODO: fl_chart not support rtl layout direction yet, keep ltr temporarily
+    // more info see: https://github.com/imaNNeo/fl_chart/issues/129
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: isLast ? null : onLeftButtonPressed,
+            icon: const Icon(Icons.keyboard_arrow_left),
+            disabledColor: themeData.colorScheme.outlineVariant,
+          ),
+          if (leftDateHelper != null) leftDateHelper!,
+          const Text(" ~ "),
+          if (rightDateHelper != null) rightDateHelper!,
+          IconButton(
+            onPressed: isToday ? null : onRightButtonPressed,
+            icon: const Icon(Icons.keyboard_arrow_right),
+            disabledColor: themeData.colorScheme.outlineVariant,
+          ),
+        ],
+      ),
     );
   }
 }

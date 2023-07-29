@@ -84,12 +84,9 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
   @override
   Widget build(BuildContext context) {
     Widget? expandIcon = widget.onLeftBtnPressed != null
-        ? Transform.rotate(
-            angle: math.pi / 2,
-            child: ExpandIcon(
-              onPressed: widget.onLeftBtnPressed,
-              isExpanded: widget.isExtended,
-            ),
+        ? _SliverClanedarBarExpandButton(
+            onPressed: widget.onLeftBtnPressed,
+            isExpanded: widget.isExtended,
           )
         : null;
 
@@ -109,6 +106,28 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
         minItemCoun: kHabitCalendarBarMinShowDate,
         itemPadding: widget.itemPadding,
         scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
+      ),
+    );
+  }
+}
+
+class _SliverClanedarBarExpandButton extends StatelessWidget {
+  final ValueChanged<bool>? onPressed;
+  final bool isExpanded;
+
+  const _SliverClanedarBarExpandButton({
+    required this.isExpanded,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
+    return Transform.rotate(
+      angle: isRTL ? -math.pi / 2 : math.pi / 2,
+      child: ExpandIcon(
+        onPressed: onPressed,
+        isExpanded: isExpanded,
       ),
     );
   }

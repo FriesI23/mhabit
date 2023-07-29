@@ -1,18 +1,12 @@
 {
   "@@locale": "fa",
-
   "appName": "جدول عادت‌ها",
-
   "habitEdit_saveButton_text": "ذخیره",
-
   "habitEdit_habitName_hintText": "نام عادت...",
-
   "habitEdit_colorPicker_title": "انتخاب رنگ",
-
   "habitEdit_habitTypeDialog_title": "نوع عادت",
   "habitEdit_habitType_positiveText": "مثبت",
   "habitEdit_habitType_negativeText": "منفی",
-
   "@habitEidt_habitDailyGoal_hintText": {
     "description": "هدف پیشفرض روزانه برای عادت مورد نظر",
     "placeholders": {
@@ -33,7 +27,6 @@
     }
   },
   "habitEdit_habitDailyGoal_negativeHintText": "حداقل مقدار روزانه، پیش‌فرض {number}",
-
   "@habitEdit_habitDailyGoal_errorText01": {
     "description": "حداقل مقدار برای هدف روزانه عادت",
     "placeholders": {
@@ -74,9 +67,7 @@
     }
   },
   "habitEdit_habitDailyGoal_negativeErrorText02": "هدف روزانه باید حداکثر {number} باشد",
-
   "habitEdit_habitDailyGoalUnit_hintText": "واحد هدف روزانه",
-
   "habitEdit_habitDailyGoalExtra_hintText": "حداکثر هدف روزانه مطلوب",
   "@habitEdit_habitDailyGoalExtra_errorText": {
     "placeholders": {
@@ -88,9 +79,7 @@
   },
   "habitEdit_habitDailyGoalExtra_errorText": "مقدار نامعتبر، باید خالی یا بیشتر یا مساوی {dailyGoal} باشد",
   "habitEdit_habitDailyGoalExtra_negativeHintText": "حداکثر محدوده روزانه",
-  
   "habitEdit_frequencySelector_title": "انتخاب تناوب",
-
   "habitEdit_habitFreq_daily": "روزانه",
   "habitEdit_habitFreq_perweek": "هفتگی",
   "habitEdit_habitFreq_perweek_ex01": "بار در هفته",
@@ -103,7 +92,6 @@
     "description": "اگر به 1 تنظیم شود، لیست نمایش‌دهنده تناوب‌ها برعکس می‌شود."
   },
   "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-
   "habitEdit_habitFreq_show_daily": "روزانه",
   "@habitEdit_habitFreq_show_perweek": {
     "placeholders": {
@@ -136,7 +124,6 @@
     }
   },
   "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{در هر {days} روز} other{حداقل {freq} بار در هر {days} روز}}",
-
   "@habitEdit_targetDays_title": {
     "placeholders": {
       "targetDays": {
@@ -148,7 +135,6 @@
   "habitEdit_targetDays_title": "{targetDays} روز",
   "habitEidt_targetDays_dialogTitle": "انتخاب روزهای هدف",
   "habitEdit_targetDays": "روز",
-
   "habitEdit_reminder_hintText": "یادآور",
   "habitEdit_reminder_freq_weekHelpText": "هر روز هفته",
   "habitEdit_reminder_freq_weekPrefixText": "",
@@ -157,7 +143,6 @@
   "habitEdit_reminder_freq_monthPrefixText": "",
   "habitEdit_reminder_freq_monthSubfixText": " ماهانه",
   "habitEdit_reminderQuest_hintText": "سوال، مثلاً آیا امروز ورزش کرده‌اید؟",
-
   "habitEdit_reminder_dialogTitle": "انتخاب نوع یادآور",
   "habitEdit_reminder_dialogType_whenNeeded": "هنگام نیاز به بررسی",
   "habitEdit_reminder_dialogType_daily": "روزانه",
@@ -165,12 +150,10 @@
   "habitEdit_reminder_dialogType_month": "ماهانه",
   "habitEdit_reminder_dialogConfirm": "تایید",
   "habitEdit_reminder_dialogCancel": "لغو",
-
   "habitEdit_reminder_cancelDialogTitle": "تایید",
   "habitEdit_reminder_cancelDialogSubtitle": "این یادآور حذف خواهد شد، آیا ادامه می‌دهید؟",
   "habitEdit_reminder_cancelDialogConfirm": "تایید",
   "habitEdit_reminder_cancelDialogCancel": "لغو",
-
   "habitEdit_reminder_weekdayText_monday": "دوشنبه",
   "habitEdit_reminder_weekdayText_tuesday": "سه‌شنبه",
   "habitEdit_reminder_weekdayText_wednesday": "چهارشنبه",
@@ -178,16 +161,11 @@
   "habitEdit_reminder_weekdayText_friday": "جمعه",
   "habitEdit_reminder_weekdayText_saturday": "شنبه",
   "habitEdit_reminder_weekdayText_sunday": "یک‌شنبه",
-
   "habitEdit_desc_hintText": "یادداشت، با پشتیبانی از Markdown",
-
   "habitEdit_create_datetime_prefix": "ایجاد شده: ",
   "habitEdit_modify_datetime_prefix": "ویرایش شده: ",
-
   "habitDisplay_fab_text": "عادت جدید",
-
   "habitDisplay_emptyImage_text_01": "سفر هزار کیلومتری با اولین قدم آغاز می‌شود",
-
   "habitDisplay_archiveHabitsConfirmDialog_title": "آرشیو کردن عادت‌های انتخاب شده؟",
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "تایید",
   "habitDisplay_archiveHabitsConfirmDialog_cancel": "لغو",
@@ -200,7 +178,6 @@
     }
   },
   "habitDisplay_archiveHabitsSuccSnackbarText": "{count} عادت آرشیو شدند",
-
   "habitDisplay_unarchiveHabitsConfirmDialog_title": "عادت‌های انتخاب شده از آرشیو خارج شوند؟",
   "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "تایید",
   "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "لغو",
@@ -213,7 +190,6 @@
     }
   },
   "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} عادت از آرشیو خارج شدند",
-
   "habitDisplay_deleteHabitsConfirmDialog_title": "عادت‌های انتخاب شده حذف شوند؟",
   "habitDisplay_deleteHabitsConfirmDialog_confirm": "تایید",
   "habitDisplay_deleteHabitsConfirmDialog_cancel": "لغو",
@@ -226,22 +202,18 @@
     }
   },
   "habitDisplay_deleteHabitsSuccSnackbarText": "{count} عادت حذف شدند",
-
   "habitDisplay_editPopMenu_selectAll": "انتخاب همه",
   "habitDisplay_editPopMenu_export": "خروجی",
   "habitDisplay_editPopMenu_delete": "حذف",
-
   "habitDisplay_editButton_tooltip": "ویرایش",
   "habitDisplay_archiveButton_tooltip": "آرشیو",
   "habitDisplay_unarchiveButton_tooltip": "خروج از آرشیو",
   "habitDisplay_settingButton_tooltip": "تنظیمات",
-
   "habitDisplay_statsMenu_statSubgroupText": "فعلی",
   "habitDisplay_statsMenu_completedTileText": "به اتمام رسیده",
   "habitDisplay_statsMenu_inProgresTileText": "در حال انجام",
   "habitDisplay_statsMenu_archivedTileText": "آرشیو شده",
   "habitDisplay_statsMenu_popularitySubgroupText": "محبوبیت (در ۳۰ روز گذشته)",
-
   "habitDisplay_mainMenu_lightTheme": "تم روشن",
   "habitDisplay_mainMenu_darkTheme": "تم تاریک",
   "habitDisplay_mainMenu_followSystemTheme": "پیروی از تنظیمات سیستم",
@@ -249,7 +221,6 @@
   "habitDisplay_mainMenu_showCompletedTileText": "نمایش به اتمام رسیده‌ها",
   "habitDisplay_mainMenu_showActivedTileText": "نمایش موارد فعال",
   "habitDisplay_mainMenu_settingTileText": "تنظیمات",
-
   "habitDisplay_sort_reverseText": "معکوس",
   "habitDisplay_sortDirection_asc": "(صعودی)",
   "habitDisplay_sortDirection_Desc": "(نزولی)",
@@ -262,21 +233,17 @@
   "habitDisplay_sortTypeDialog_title": "مرتب سازی",
   "habitDisplay_sortTypeDialog_confirm": "تایید",
   "habitDisplay_sortTypeDialog_cancel": "لغو",
-
   "habitDisplay_debug_debugSubgroup_title": "🛠️اشکال‌زدایی",
-
   "habitDetail_editButton_tooltip": "ویرایش",
   "habitDetail_editPopMenu_unarchive": "خارج کردن از حالت آرشیو",
   "habitDetail_editPopMenu_archive": "آرشیو",
   "habitDetail_editPopMenu_export": "خروجی",
   "habitDetail_editPopMenu_delete": "حذف",
-
   "habitDetail_confirmDialog_confirm": "تایید",
   "habitDetail_confirmDialog_cancel": "لغو",
   "habitDetail_archiveConfirmDialog_titleText": "عادت آرشیو شود؟",
   "habitDetail_unarchiveConfirmDialog_titleText": "عادت از آرشیو خارج شود؟",
   "habitDetail_deleteConfirmDialog_titleText": "عادت حذف شود؟",
-
   "habitDetail_summary_title": "خلاصه",
   "@habitDetail_summary_body": {
     "placeholders": {
@@ -300,7 +267,6 @@
     }
   },
   "habitDetail_summary_preBody": "{days, plural, =1{از فردا شروع می‌شود.} other{شروع در {days} روز.}}",
-
   "@habitDetail_heatmap_leftHelpText": {
     "placeholders": {
       "habitType": {
@@ -319,7 +285,6 @@
   },
   "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{تکمیل نشده} =2{ناکافی} other{}}",
   "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{بیش از انتظار} =2{بی‌نقص} other{}}",
-
   "@habitDetail_descDailyGoal_titleText": {
     "placeholders": {
       "habitType": {
@@ -350,13 +315,11 @@
   "habitDetail_descTargetDays_titleText": "{habitType, plural, other{روز}}",
   "habitDetail_descTargetDays_unitText": "روز",
   "habitDetail_descRecordsNum_titleText": "رکوردها",
-
   "habitDetail_scoreChart_title": "امتیاز",
   "habitDetail_scoreChartCombine_dailyText": "روز",
   "habitDetail_scoreChartCombine_weeklyText": "هفته",
   "habitDetail_scoreChartCombine_monthlyText": "ماه",
   "habitDetail_scoreChartCombine_yearlyText": "سال",
-
   "habitDetail_freqChart_freqTitle": "تناوب",
   "habitDetail_freqChart_historyTitle": "تاریخچه",
   "habitDetail_freqChart_combinedTitle": "تناوب و تاریخچه",
@@ -366,9 +329,7 @@
   "habitDetail_freqChartNaviBar_nowText": "اکنون",
   "habitDetail_freqChart_expanded_hideTooltip": "پنهان سازی جدول تاریخچه",
   "habitDetail_freqChart_expanded_showTooltip": "نمایش جدول تاریخچه",
-
   "habitDetail_descSubgroup_title": "یادداشت",
-
   "habitDetail_otherSubgroup_title": "متفرقه",
   "habitDetail_habitType_title": "نوع",
   "habitDetail_reminderTile_title": "یادآور",
@@ -376,14 +337,11 @@
   "habitDetail_startDateTile_title": "تاریخ شروع",
   "habitDetail_createDateTile_title": "ایجاد شده",
   "habitDetail_modifyDateTile_title": "ویرایش شده",
-
   "habitDetail_editHeatmapCal_dateButtonText": "تاریخ",
   "habitDetail_editHeatmapCal_valueButtonText": "مقدار",
   "habitDetail_editHeatmapCal_backToToday_tooltipText": "بازگشت به امروز",
-
   "habitDetail_notFoundText": "بارگذاری عادت ناموفق بود",
   "habitDetail_notFoundRetryText": "تلاش مجدد",
-
   "habitDetail_changeGoal_title": "تغییر هدف",
   "@habitDetail_changeGoal_currentChipText": {
     "placeholders": {
@@ -424,21 +382,17 @@
   "habitDetail_changeGoal_helpText": "هدف روزانه، پیش‌فرض: {goal}",
   "habitDetail_changeGoal_cancelText": "لغو",
   "habitDetail_changeGoal_saveText": "ذخیره",
-
   "habitDetail_skipReason_title": "علت رد کردن",
   "habitDetail_skipReason_bodyHelpText": "در اینجا چیزی بنویسید...",
   "habitDetail_skipReason_cancelText": "لغو",
   "habitDetail_skipReason_saveText": "ذخیره",
-
   "appSetting_appbar_titleText": "تنظیمات",
-
   "appSetting_displaySubgroupText": "نمایش",
   "appSetting_dragCalendarByPageTile_titleText": "جابجایی تقویم صفحه‌ای",
   "appSetting_dragCalendarByPageTile_subtitleText": "در صورت فعال بودن این گزینه، تقویم نوار برنامه در صفحه اصلی صفحه به صفحه جابجا می‌شود. پیش‌فرض این گزینه غیرفعال است.",
   "appSetting_firstDayOfWeek_titleText": "اولین روز هفته",
   "appSetting_firstDayOfWeekDialog_titleText": "نمایش اولین روز هفته",
   "appSetting_firstDayOfWeekDialog_defaultText": " (پیش‌فرض)",
-
   "@appSetting_dateDisplayFormat_titleText": {
     "placeholders": {
       "formatTemplate": {
@@ -450,18 +404,14 @@
   "appSetting_dateDisplayFormat_titleText": "فرمت نمایش تاریخ ({formatTemplate})",
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "پیروی از تنظیمات سیستم",
   "appSetting_dateDisplayFormat_subTitleText": "فرمت‌بندی تاریخ پیکربندی شده بر روی نمایش تاریخ در صفحه جزئیات عادت اعمال خواهد شد.",
-
   "appSetting_compactUISwitcher_titleText": "فعال‌سازی رابط کاربری کم‌حجم در صفحه عادت‌ها",
   "appSetting_compactUISwitcher_subtitleText": "اجازه دهید جدول بررسی عادت‌ها بیشترین محتوا را نشان دهد، اما برخی از رابط کاربری و متن‌ها به صورت کوچکتر نمایش داده می‌شود.",
-
   "appSetting_collapsed_calendar_bararea_titleText": "تنظیمات نسبت محیط بررسی عادت‌ها",
   "appSetting_collapsed_calendar_bararea_subtitleText": "تنظیم درصد بیشتر / کمتر بودن فضای موجود در جدول بررسی عادت‌ها.",
   "appSetting_collapsed_calendar_bararea_defaultText": "پیش‌فرض",
-
   "appSetting_reminderSubgroupText": "یادآور",
   "appSetting_dailyReminder_titleText": "یادآور روزانه",
   "appSetting_dailyReminder_hintTile_titleText": "بعد از اندروید ۱۳، برای قرار دادن یادآور روزانه و یادآور زمان‌بندی شده عادت، باید مجوز آن را در تنظیمات بدهید.",
-
   "appSetting_backupAndRestoreSubgroupText": "پشتیبان‌گیری و بازیابی",
   "appSetting_export_titleText": "خروجی",
   "appSetting_export_subtitleText": "عادت‌ها به عنوان فرمت JSON خروجی داده می‌شود. این پرونده می‌تواند بعداً وارد شود.",
@@ -509,11 +459,9 @@
   "appSetting_resetConfigDialog_cancelText": "لغو",
   "appSetting_resetConfigDialog_confirmText": "تأیید",
   "appSetting_resetConfigSuccess_snackbarText": "بازنشانی تنظیمات برنامه با موفقیت انجام شد",
-
   "appSetting_otherSubgroupText": "سایر",
   "appSetting_developMode_titleText": "حالت توسعه",
   "appSetting_about_titleText": "درباره",
-
   "appAbout_appbarTile_titleText": "درباره",
   "@appAbout_verionTile_titleText": {
     "placeholders": {
@@ -543,10 +491,8 @@
   "donateWay_buyMeACoffee": "یک فنجان قهوه برایم بخرید",
   "donateWay_alipay": "آلی‌پِی",
   "donateWay_wechatPay": "پرداخت ویچت",
-
   "appReminder_dailyReminder_title": "🏝 آیا امروز به عادت‌های خود پایبند بوده‌اید؟",
   "appReminder_dailyReminder_body": "برای ورود به برنامه و انجام به موقع عادت‌ها کلیک کنید.",
-
   "common_habitColorType_cc1": "بنفش عمیق",
   "common_habitColorType_cc2": "قرمز",
   "common_habitColorType_cc3": "بنفش",
@@ -558,7 +504,7 @@
   "common_habitColorType_cc9": "سبز لیمویی",
   "common_habitColorType_cc10": "بنفش تیره",
   "@common_habitColorType_default": {
-    "description": نوع رنگ عادت نامعلوم",
+    "description": "نوع رنگ عادت نامعلوم",
     "placeholders": {
       "index": {
         "type": "int",
@@ -567,7 +513,6 @@
     }
   },
   "common_habitColorType_default": "رنگ {index}",
-
   "common_customDateTimeFormatPicker_useSystemFormat_text": "استفاده از فرمت سیستم",
   "common_customDateTimeFormatPicker_fmtTileText": "فرمت تاریخ",
   "common_customDateTimeFormatPicker_ymd_text": "سال ماه روز",
@@ -598,8 +543,7 @@
   "common_customDateTimeFormatPicker_applyFreqChart_text": "اعمال برای نمودار فراوانی",
   "common_customDateTimeFormatPicker_applyHeapmap_text": "اعمال برای تقویم",
   "common_customDateTimeFormatPicker_cancelButton_text": "لغو",
-  "common_customDateTimeFormatPicker_confirmButton_text": "تأیید"
-
+  "common_customDateTimeFormatPicker_confirmButton_text": "تأیید",
   "calendarPicker_clip_today": "امروز",
   "calendarPicker_clip_tomorrow": "فردا",
   "@calendarPicker_clip_after7Days": {
@@ -611,7 +555,6 @@
     }
   },
   "calendarPicker_clip_after7Days": "بعد از {date}",
-
   "exportConfirmDialog_title_exportAll": "آیا می‌خواهید از تمام عادت‌ها خروجی گرفته شود؟",
   "@exportConfirmDialog_title_exportMulti": {
     "placeholders": {
@@ -625,7 +568,6 @@
   "exportConfirmDialog_option_includeRecords": "شامل رکوردها",
   "exportConfirmDialog_cancel_buttonText": "لغو",
   "exportConfirmDialog_confirm_buttonText": "خروجی گرفتن",
-
   "snackbar_undoText": "بازگشت",
   "snackbar_dissmessText": "رد کردن"
 }
