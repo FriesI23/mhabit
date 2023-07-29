@@ -84,6 +84,13 @@ you can help me improve the documentation, e.g `README.md` file.
 ![Alipay](docs/README/images/donate-alipay.jpg)
 ![WechatPay](docs/README/images/donate-wechatpay.png)
 
+## Translation
+
+Feel free to join and help with the translation for `Table Habit`,
+you can follow [docs/add_new_locale_support][l10n-doc] to get incolved.
+
+![L10nStat][l10n-stat-pic]
+
 ## License
 
 ```text
@@ -128,3 +135,5 @@ limitations under the License.
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
+[l10n-stat-pic]: docs/l10n_stat.svg
+[l10n-doc]: docs/add_new_locale_support.md

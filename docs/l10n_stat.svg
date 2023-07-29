@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="637.44125pt" height="180.72pt" viewBox="0 0 637.44125 180.72" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2023-07-29T14:08:44.263000</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.7.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 180.72 
+L 637.44125 180.72 
+L 637.44125 0 
+L 0 0 
+L 0 180.72 
+z
+" style="fill: none"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 32.84 173.52 
+L 590.84 173.52 
+L 590.84 7.2 
+L 32.84 7.2 
+L 32.84 173.52 
+z
+" style="fill: none"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 32.84 165.96 
+L 590.84 165.96 
+L 590.84 135.72 
+L 32.84 135.72 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #440154"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 590.84 165.96 
+L 590.84 165.96 
+L 590.84 135.72 
+L 590.84 135.72 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #ffffff"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 32.84 105.48 
+L 590.84 105.48 
+L 590.84 75.24 
+L 32.84 75.24 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #21918c"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 590.84 105.48 
+L 590.84 105.48 
+L 590.84 75.24 
+L 590.84 75.24 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #ffffff"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 32.84 45 
+L 590.84 45 
+L 590.84 14.76 
+L 32.84 14.76 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #fde725"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 590.84 45 
+L 590.84 45 
+L 590.84 14.76 
+L 590.84 14.76 
+z
+" clip-path="url(#p2d823dc8b4)" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m6a43de478a" d="M 0 0 
+L -3.5 0 
+" style="stroke: #808080; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m6a43de478a" x="32.84" y="150.84" style="fill: #808080; stroke: #808080; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="fill: #808080; font: 16px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: end" x="25.84" y="157.2075" transform="rotate(-0 25.84 157.2075)">zh</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m6a43de478a" x="32.84" y="90.36" style="fill: #808080; stroke: #808080; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="fill: #808080; font: 16px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: end" x="25.84" y="96.7275" transform="rotate(-0 25.84 96.7275)">fa</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m6a43de478a" x="32.84" y="29.88" style="fill: #808080; stroke: #808080; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="fill: #808080; font: 16px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: end" x="25.84" y="36.2475" transform="rotate(-0 25.84 36.2475)">en</text>
+     </g>
+    </g>
+   </g>
+   <g id="text_4">
+    <g id="patch_9">
+     <path d="M 599.21 160.59 
+L 630.24125 160.59 
+Q 633.84125 160.59 633.84125 156.99 
+L 633.84125 144.69 
+Q 633.84125 141.09 630.24125 141.09 
+L 599.21 141.09 
+Q 595.61 141.09 595.61 144.69 
+L 595.61 156.99 
+Q 595.61 160.59 599.21 160.59 
+z
+" style="fill: #00cc00; stroke: #00cc00; stroke-linejoin: miter"/>
+    </g>
+    <text style="font: 12px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: start" x="599.21" y="154.24125" transform="rotate(-0 599.21 154.24125)">100%</text>
+   </g>
+   <g id="text_5">
+    <g id="patch_10">
+     <path d="M 599.21 100.11 
+L 630.24125 100.11 
+Q 633.84125 100.11 633.84125 96.51 
+L 633.84125 84.21 
+Q 633.84125 80.61 630.24125 80.61 
+L 599.21 80.61 
+Q 595.61 80.61 595.61 84.21 
+L 595.61 96.51 
+Q 595.61 100.11 599.21 100.11 
+z
+" style="fill: #00cc00; stroke: #00cc00; stroke-linejoin: miter"/>
+    </g>
+    <text style="font: 12px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: start" x="599.21" y="93.76125" transform="rotate(-0 599.21 93.76125)">100%</text>
+   </g>
+   <g id="text_6">
+    <g id="patch_11">
+     <path d="M 599.21 39.63 
+L 630.24125 39.63 
+Q 633.84125 39.63 633.84125 36.03 
+L 633.84125 23.73 
+Q 633.84125 20.13 630.24125 20.13 
+L 599.21 20.13 
+Q 595.61 20.13 595.61 23.73 
+L 595.61 36.03 
+Q 595.61 39.63 599.21 39.63 
+z
+" style="fill: #00cc00; stroke: #00cc00; stroke-linejoin: miter"/>
+    </g>
+    <text style="font: 12px 'Noto Sans CJK SC Regular', '思源等宽', '黑体', 'Noto Serif CJK SC', '思源宋体', 'Noto Sans Mono CJK SC Regularsans-serif', sans-serif; text-anchor: start" x="599.21" y="33.28125" transform="rotate(-0 599.21 33.28125)">100%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p2d823dc8b4">
+   <rect x="32.84" y="7.2" width="558" height="166.32"/>
+  </clipPath>
+ </defs>
+</svg>
