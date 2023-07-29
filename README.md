@@ -135,5 +135,5 @@ limitations under the License.
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
-[l10n-stat-pic]: docs/l10n_stat.svg
+[l10n-stat-pic]: docs/README/images/l10n-stat.svg
 [l10n-doc]: docs/add_new_locale_support.md

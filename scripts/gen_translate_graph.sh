@@ -14,4 +14,4 @@
 # limitations under the License.
 SCRIPT_PATH=$(dirname $0)
 echo "Generating localized translation statistics"
-$SCRIPT_PATH/gen_translate_graph.py -p $SCRIPT_PATH/../assets/l10n/ --img-outpath $SCRIPT_PATH/../docs/l10n_stat.svg
+$SCRIPT_PATH/gen_translate_graph.py -p $SCRIPT_PATH/../assets/l10n/ --img-outpath $SCRIPT_PATH/../docs/README/images/l10n-stat.svg
