@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.8.2+21
+
+- Add support for Persian language, Thanks for @chromer030's translation contribution🎉
+- Fixed some display issues with UI style under RTL layout
+- Add translation statistics graph in `readme`
+- Split apk per ABI when releasing new version, only supporting `GitHub/Releases` currently.
+- Optimize file structure of CI scripts
+
 ## 1.8.1+20
 
 - Show Memo on Habit detail page
