@@ -843,6 +843,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     Widget buildAppbarInEditMode(BuildContext context, bool isExtended) {
       Widget buildEditAppbarActions(BuildContext context) {
+        // TODO: make action to single widget
         return Selector<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
           selector: (context, viewmodel) => viewmodel.selectStatistic,
           shouldRebuild: (previous, next) => previous != next,
