@@ -73,12 +73,6 @@ const _kPressFABAnimateDuration = Duration(milliseconds: 500);
 
 const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
 
-enum _EditModePopupItemEnum {
-  delete,
-  exportAll,
-  selectAll,
-}
-
 class PageHabitsDisplay extends StatelessWidget {
   const PageHabitsDisplay({super.key});
 
@@ -596,6 +590,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
+  void _onAppbarCloneActionPressed() {
+    // TODO: implement
+    debugPrint("Clone habit");
+  }
+
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
     context
@@ -880,6 +879,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                     text: l10n?.habitDisplay_editPopMenu_selectAll ??
                         "Select All",
                     callback: _onAppbarSelectAllActionPressed),
+                EditModeActionItemConfig.clone(
+                    visible: stat.selected == 1,
+                    text: "Clone",
+                    callback: _onAppbarCloneActionPressed),
                 EditModeActionItemConfig.exportall(
                     text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
                     callback: _onAppbarExportAllActionPressed),

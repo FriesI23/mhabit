@@ -22,6 +22,7 @@ enum EditModeActionItemCell {
   delete,
   exportall,
   selectall,
+  clone,
 }
 
 enum EditModeActionItemShowStatus {
@@ -93,6 +94,14 @@ class EditModeActionItemConfig {
       this.callback})
       : type = EditModeActionItemCell.exportall,
         icon = MdiIcons.export;
+
+  const EditModeActionItemConfig.clone(
+      {this.showStatus = EditModeActionItemShowStatus.popupitem,
+      this.visible = true,
+      this.text = '',
+      this.callback})
+      : type = EditModeActionItemCell.clone,
+        icon = Icons.copy_rounded;
 }
 
 class HabitDisplayAppBarEditModeActions extends StatelessWidget {
