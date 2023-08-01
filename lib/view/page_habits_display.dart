@@ -18,7 +18,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -583,6 +582,20 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     viewmodel.rockreloadDBToggleSwich();
   }
 
+  void _onAppbarUnArchiveActionPressed() =>
+      _openHabitUnArchiveConfirmDialog(context);
+
+  void _onAppbarArchiveActionPressed() =>
+      _openHabitArchiveConfirmDialog(context);
+
+  void _onAppbarSelectAllActionPressed() =>
+      context.read<HabitSummaryViewModel>().selectAllHabit();
+
+  void _onAppbarExportAllActionPressed() =>
+      _exportSelectedHabitsAndShared(context);
+
+  void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
+
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
     context
@@ -843,105 +856,38 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     Widget buildAppbarInEditMode(BuildContext context, bool isExtended) {
       Widget buildEditAppbarActions(BuildContext context) {
-        // TODO: make action to single widget
         return Selector<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
           selector: (context, viewmodel) => viewmodel.selectStatistic,
           shouldRebuild: (previous, next) => previous != next,
-          builder: (context, stat, child) => Row(
-            children: [
-              L10nBuilder(
-                builder: (context, l10n) => AnimatedSwitcher(
-                  duration: _kEditModeAppbarAnimateDuration,
-                  switchInCurve: Curves.easeInQuart,
-                  child: stat.selected == 1
-                      ? IconButton(
-                          onPressed: _onAppbarEditActionPressed,
-                          icon: const Icon(Icons.edit_rounded),
-                          tooltip: l10n?.habitDisplay_editButton_tooltip ??
-                              "Edit Habit",
-                        )
-                      : const SizedBox(),
-                ),
-              ),
-              L10nBuilder(
-                builder: (context, l10n) => AnimatedSwitcher(
-                  duration: _kEditModeAppbarAnimateDuration,
-                  switchInCurve: Curves.easeInQuart,
-                  child: stat.archived > 0
-                      ? IconButton(
-                          onPressed: () =>
-                              _openHabitUnArchiveConfirmDialog(context),
-                          icon: const Icon(Icons.unarchive_rounded),
-                          tooltip: l10n?.habitDisplay_unarchiveButton_tooltip ??
-                              "Unarchive",
-                        )
-                      : const SizedBox(),
-                ),
-              ),
-              L10nBuilder(
-                builder: (context, l10n) => AnimatedSwitcher(
-                  duration: _kEditModeAppbarAnimateDuration,
-                  switchInCurve: Curves.easeInQuart,
-                  child: stat.activated > 0
-                      ? IconButton(
-                          onPressed: () =>
-                              _openHabitArchiveConfirmDialog(context),
-                          icon: const Icon(Icons.archive_outlined),
-                          tooltip: l10n?.habitDisplay_archiveButton_tooltip ??
-                              "Archive",
-                        )
-                      : const SizedBox(),
-                ),
-              ),
-              PopupMenuButton<_EditModePopupItemEnum>(
-                padding: EdgeInsets.zero,
-                onSelected: (value) {
-                  switch (value) {
-                    case _EditModePopupItemEnum.delete:
-                      _openHabitDeleteConfirmDialog(context);
-                      break;
-                    case _EditModePopupItemEnum.selectAll:
-                      context.read<HabitSummaryViewModel>().selectAllHabit();
-                      break;
-                    case _EditModePopupItemEnum.exportAll:
-                      _exportSelectedHabitsAndShared(context);
-                      break;
-                  }
-                },
-                itemBuilder: (context) {
-                  final l10n = L10n.of(context);
-                  return <PopupMenuItem<_EditModePopupItemEnum>>[
-                    PopupMenuItem<_EditModePopupItemEnum>(
-                      value: _EditModePopupItemEnum.selectAll,
-                      child: ListTile(
-                        title: l10n != null
-                            ? Text(l10n.habitDisplay_editPopMenu_selectAll)
-                            : const Text("Select All"),
-                        leading: const Icon(Icons.select_all_outlined),
-                      ),
-                    ),
-                    PopupMenuItem<_EditModePopupItemEnum>(
-                      value: _EditModePopupItemEnum.exportAll,
-                      child: ListTile(
-                        title: l10n != null
-                            ? Text(l10n.habitDisplay_editPopMenu_export)
-                            : const Text("Export"),
-                        leading: const Icon(MdiIcons.export),
-                      ),
-                    ),
-                    PopupMenuItem<_EditModePopupItemEnum>(
-                      value: _EditModePopupItemEnum.delete,
-                      child: ListTile(
-                        title: l10n != null
-                            ? Text(l10n.habitDisplay_editPopMenu_delete)
-                            : const Text("Delete"),
-                        leading: const Icon(Icons.delete_outline),
-                      ),
-                    ),
-                  ];
-                },
-              ),
-            ],
+          builder: (context, stat, child) => L10nBuilder(
+            builder: (context, l10n) => HabitDisplayAppBarEditModeActions(
+              buttonSwitchAnimateDuration: _kEditModeAppbarAnimateDuration,
+              actionConfigs: [
+                EditModeActionItemConfig.edit(
+                    visible: stat.selected == 1,
+                    text: l10n?.habitDisplay_editButton_tooltip ?? "Edit",
+                    callback: _onAppbarEditActionPressed),
+                EditModeActionItemConfig.unarchive(
+                    visible: stat.archived > 0,
+                    text: l10n?.habitDisplay_unarchiveButton_tooltip ??
+                        "Unarchive",
+                    callback: _onAppbarUnArchiveActionPressed),
+                EditModeActionItemConfig.archive(
+                    visible: stat.activated > 0,
+                    text: l10n?.habitDisplay_archiveButton_tooltip ?? "Archive",
+                    callback: _onAppbarArchiveActionPressed),
+                EditModeActionItemConfig.selectall(
+                    text: l10n?.habitDisplay_editPopMenu_selectAll ??
+                        "Select All",
+                    callback: _onAppbarSelectAllActionPressed),
+                EditModeActionItemConfig.exportall(
+                    text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
+                    callback: _onAppbarExportAllActionPressed),
+                EditModeActionItemConfig.delete(
+                    text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
+                    callback: _onAppbarDeleteActionPressed),
+              ],
+            ),
           ),
         );
       }
