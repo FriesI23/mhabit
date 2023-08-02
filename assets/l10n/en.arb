@@ -230,6 +230,7 @@
   "habitDisplay_editPopMenu_selectAll": "Select All",
   "habitDisplay_editPopMenu_export": "Export",
   "habitDisplay_editPopMenu_delete": "Delete",
+  "habitDisplay_editPopMenu_clone": "Template",
 
   "habitDisplay_editButton_tooltip": "Edit",
   "habitDisplay_archiveButton_tooltip": "Archive",

@@ -293,6 +293,9 @@ class L10nEn extends L10n {
   String get habitDisplay_editPopMenu_delete => 'Delete';
 
   @override
+  String get habitDisplay_editPopMenu_clone => 'Template';
+
+  @override
   String get habitDisplay_editButton_tooltip => 'Edit';
 
   @override

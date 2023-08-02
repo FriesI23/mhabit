@@ -104,6 +104,7 @@ class EditModeActionItemConfig {
         icon = Icons.copy_rounded;
 }
 
+// TODO: Make this class generic so that can be reused in app bar actions
 class HabitDisplayAppBarEditModeActions extends StatelessWidget {
   final Duration buttonSwitchAnimateDuration;
   final List<EditModeActionItemConfig> actionConfigs;

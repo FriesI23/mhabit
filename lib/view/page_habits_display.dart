@@ -534,47 +534,51 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (addResult) viewmodel.rockReloadUIToggleSwitch();
   }
 
-  Future<void> _onAppbarEditActionPressed() async {
+  Future<bool> _enterHabitEditPage({
+    Duration exitEditModeDuration = _kEditModeChangeAnimateDuration,
+    required HabitForm Function(HabitDBCell) formBuilder,
+  }) async {
     HabitSummaryViewModel viewmodel;
-    if (!mounted) return;
+    if (!mounted) return false;
     viewmodel = context.read<HabitSummaryViewModel>();
-    var selectedData = viewmodel.getSelectedHabitsData().firstWhere(
+    if (!viewmodel.mounted) return false;
+    final selectedData = viewmodel.getSelectedHabitsData().firstWhere(
           (element) => element != null,
           orElse: () => null,
         );
 
-    if (selectedData == null) return;
-    var dbcell = await loadHabitDetailFromDB(selectedData.uuid);
+    if (selectedData == null) return false;
+    final dbcell = await loadHabitDetailFromDB(selectedData.uuid);
 
-    if (!mounted || dbcell == null) return;
+    if (!mounted || dbcell == null) return false;
     viewmodel = context.read<HabitSummaryViewModel>();
-    var form = HabitForm.fromHabitDBCell(
-      dbcell,
-      editMode: HabitDisplayEditMode.edit,
-      editParams: HabitDisplayEditParams(
-        uuid: dbcell.uuid!,
-        createT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.createT! * onSecondMS),
-        modifyT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.modifyT! * onSecondMS),
-      ),
-    );
+    if (!viewmodel.mounted) return false;
+    final form = formBuilder(dbcell);
     if (viewmodel.isInEditMode) {
       context.read<HabitSummaryViewModel>().exitEditMode();
-      await Future.delayed(_kEditModeChangeAnimateDuration);
+      await Future.delayed(exitEditModeDuration);
     }
 
-    if (!mounted) return;
+    if (!mounted) return false;
     final result = await habit_edit_view.naviToHabitEidtPage(
         context: context, initForm: form);
 
-    // Editing Habit involves complex state changes (such as sorting by
+    // Edit/Create Habit involves complex state changes (such as sorting by
     // completion rate, calculating the start date of check-in data, etc.),
     // so it is necessary to reload all data from the database.
-    if (result == null || !mounted) return;
+    if (result == null || !mounted) return false;
     viewmodel = context.read<HabitSummaryViewModel>();
     viewmodel.rockreloadDBToggleSwich();
+    return true;
   }
+
+  Future<void> _onAppbarEditActionPressed() async => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell,
+          editMode: HabitDisplayEditMode.edit,
+          editParams: HabitDisplayEditParams.fromDBCell(dbCell),
+        ),
+      );
 
   void _onAppbarUnArchiveActionPressed() =>
       _openHabitUnArchiveConfirmDialog(context);
@@ -590,10 +594,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
-  void _onAppbarCloneActionPressed() {
-    // TODO: implement
-    debugPrint("Clone habit");
-  }
+  void _onAppbarCloneActionPressed() => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell.copyWith(
+            name: '',
+            desc: '',
+            startDate: HabitStartDate.now().epochDay,
+          ),
+          editMode: HabitDisplayEditMode.create,
+        ),
+      );
 
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
@@ -881,7 +891,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                     callback: _onAppbarSelectAllActionPressed),
                 EditModeActionItemConfig.clone(
                     visible: stat.selected == 1,
-                    text: "Clone",
+                    text: l10n?.habitDisplay_editPopMenu_clone ?? "Clone",
                     callback: _onAppbarCloneActionPressed),
                 EditModeActionItemConfig.exportall(
                     text: l10n?.habitDisplay_editPopMenu_export ?? "Export",

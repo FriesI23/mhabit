@@ -293,6 +293,9 @@ class L10nFa extends L10n {
   String get habitDisplay_editPopMenu_delete => 'حذف';
 
   @override
+  String get habitDisplay_editPopMenu_clone => 'Template';
+
+  @override
   String get habitDisplay_editButton_tooltip => 'ویرایش';
 
   @override

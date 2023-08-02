@@ -575,6 +575,12 @@ abstract class L10n {
   /// **'Delete'**
   String get habitDisplay_editPopMenu_delete;
 
+  /// No description provided for @habitDisplay_editPopMenu_clone.
+  ///
+  /// In en, this message translates to:
+  /// **'Template'**
+  String get habitDisplay_editPopMenu_clone;
+
   /// No description provided for @habitDisplay_editButton_tooltip.
   ///
   /// In en, this message translates to:

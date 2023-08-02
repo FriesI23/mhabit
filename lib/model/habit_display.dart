@@ -13,8 +13,10 @@
 // limitations under the License.
 
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:mhabit/db/db_helper/habits.dart';
 import 'package:quiver/core.dart';
 
+import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import 'habit_form.dart';
@@ -94,6 +96,13 @@ class HabitDisplayEditParams {
     required this.createT,
     required this.modifyT,
   });
+
+  HabitDisplayEditParams.fromDBCell(HabitDBCell dbCell)
+      : uuid = dbCell.uuid!,
+        createT =
+            DateTime.fromMillisecondsSinceEpoch(dbCell.createT! * onSecondMS),
+        modifyT =
+            DateTime.fromMillisecondsSinceEpoch(dbCell.modifyT! * onSecondMS);
 
   @override
   String toString() {
