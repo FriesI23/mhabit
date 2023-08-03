@@ -15,105 +15,82 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../extension/custom_color_extensions.dart';
-import '../../l10n/localizations.dart';
-import '../../model/habit_form.dart';
-import '../../theme/color.dart';
+import '../common/_widget.dart';
 
-enum _PopupItemEnum {
+enum DetailAppbarActionItemCell {
   unarchive,
   archive,
   delete,
   export,
+  clone,
 }
 
-class HabitDetailPopupMenuButton extends StatelessWidget {
-  final bool isArchived;
-  final HabitColorType? colorType;
-  final VoidCallback? onUnarchiveButtonPressed;
-  final VoidCallback? onArchiveButtonPressed;
-  final VoidCallback? onDeleteButtonPressed;
-  final VoidCallback? onExportButtonPress;
+class DetailAppbarActionItemConfig
+    extends AppbarActionItemConfig<DetailAppbarActionItemCell> {
+  DetailAppbarActionItemConfig(
+      {required super.type,
+      required super.status,
+      super.visible = true,
+      required super.icon,
+      required super.text});
 
-  const HabitDetailPopupMenuButton({
-    super.key,
-    required this.isArchived,
-    this.colorType,
-    this.onUnarchiveButtonPressed,
-    this.onArchiveButtonPressed,
-    this.onDeleteButtonPressed,
-    this.onExportButtonPress,
-  });
+  const DetailAppbarActionItemConfig.unarchive(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.unarchive,
+          icon: Icons.unarchive_rounded,
+        );
+
+  const DetailAppbarActionItemConfig.archive(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.archive,
+          icon: Icons.archive_outlined,
+        );
+
+  const DetailAppbarActionItemConfig.delete(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.delete,
+          icon: Icons.delete_outline,
+        );
+
+  const DetailAppbarActionItemConfig.export(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.export,
+          icon: MdiIcons.export,
+        );
+
+  const DetailAppbarActionItemConfig.clone(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.clone,
+          icon: Icons.copy_rounded,
+        );
 
   @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final colorData = themeData.extension<CustomColors>();
-    final l10n = L10n.of(context);
-
-    var color = colorType != null
-        ? colorData?.getColor(colorType!)
-        : Colors.transparent;
-
-    return PopupMenuButton<_PopupItemEnum>(
-      padding: EdgeInsets.zero,
-      icon: Icon(Icons.adaptive.more, color: color),
-      onSelected: (value) {
-        switch (value) {
-          case _PopupItemEnum.unarchive:
-            onUnarchiveButtonPressed?.call();
-            break;
-          case _PopupItemEnum.archive:
-            onArchiveButtonPressed?.call();
-            break;
-          case _PopupItemEnum.delete:
-            onDeleteButtonPressed?.call();
-            break;
-          case _PopupItemEnum.export:
-            onExportButtonPress?.call();
-            break;
-        }
-      },
-      itemBuilder: (context) => <PopupMenuItem<_PopupItemEnum>>[
-        if (isArchived)
-          PopupMenuItem<_PopupItemEnum>(
-            value: _PopupItemEnum.unarchive,
-            child: ListTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_editPopMenu_unarchive)
-                  : const Text("Unarchive"),
-              leading: const Icon(Icons.unarchive_rounded),
-            ),
-          ),
-        if (!isArchived)
-          PopupMenuItem<_PopupItemEnum>(
-            value: _PopupItemEnum.archive,
-            child: ListTile(
-              title: l10n != null
-                  ? Text(l10n.habitDetail_editPopMenu_archive)
-                  : const Text("Archive"),
-              leading: const Icon(Icons.archive_outlined),
-            ),
-          ),
-        PopupMenuItem<_PopupItemEnum>(
-          value: _PopupItemEnum.export,
-          child: ListTile(
-            title: l10n != null
-                ? Text(l10n.habitDetail_editPopMenu_export)
-                : const Text("Export"),
-            leading: const Icon(MdiIcons.export),
-          ),
-        ),
-        PopupMenuItem<_PopupItemEnum>(
-          value: _PopupItemEnum.delete,
-          child: ListTile(
-            title: l10n != null
-                ? Text(l10n.habitDetail_editPopMenu_delete)
-                : const Text("Delete"),
-            leading: const Icon(Icons.delete_outline),
-          ),
-        ),
-      ],
-    );
+  bool shouldShow(AppbarActionShowStatus s) {
+    switch (s) {
+      case AppbarActionShowStatus.button:
+        return status == s;
+      case AppbarActionShowStatus.popupitem:
+        return status == s && visible;
+    }
   }
 }

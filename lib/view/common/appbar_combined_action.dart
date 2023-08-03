@@ -58,11 +58,13 @@ abstract class AppbarActionItemConfig<T> {
 class AppBarActions<C extends AppbarActionItemConfig, I>
     extends StatelessWidget {
   final Duration buttonSwitchAnimateDuration;
+  final Widget? popupMenuButtonIcon;
   final List<C> actionConfigs;
 
   const AppBarActions({
     super.key,
     this.buttonSwitchAnimateDuration = Duration.zero,
+    this.popupMenuButtonIcon,
     this.actionConfigs = const [],
   });
 
@@ -110,6 +112,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
         ...children,
         PopupMenuButton<I>(
           padding: EdgeInsets.zero,
+          icon: popupMenuButtonIcon,
           onSelected: (value) {
             for (var config in actionConfigs) {
               if (config.type == value) {
