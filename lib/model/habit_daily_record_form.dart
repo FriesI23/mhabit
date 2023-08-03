@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:mhabit/common/consts.dart';
-
+import '../common/consts.dart';
 import 'habit_form.dart';
 
 abstract class HabitDailyRecordForm {

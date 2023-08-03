@@ -869,7 +869,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           selector: (context, viewmodel) => viewmodel.selectStatistic,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, stat, child) => L10nBuilder(
-            builder: (context, l10n) => HabitDisplayAppBarEditModeActions(
+            builder: (context, l10n) =>
+                AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
               buttonSwitchAnimateDuration: _kEditModeAppbarAnimateDuration,
               actionConfigs: [
                 EditModeActionItemConfig.edit(
