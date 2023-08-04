@@ -18,6 +18,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../common/_widget.dart';
 
 enum DetailAppbarActionItemCell {
+  edit,
   unarchive,
   archive,
   delete,
@@ -32,22 +33,37 @@ class DetailAppbarActionItemConfig
       required super.status,
       super.visible = true,
       required super.icon,
-      required super.text});
+      required super.text,
+      super.color,
+      super.callback});
 
   const DetailAppbarActionItemConfig.unarchive(
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
+      super.color,
       super.callback})
       : super(
           type: DetailAppbarActionItemCell.unarchive,
           icon: Icons.unarchive_rounded,
         );
 
+  const DetailAppbarActionItemConfig.edit(
+      {super.status = AppbarActionShowStatus.button,
+      super.visible = true,
+      super.text = '',
+      super.color,
+      super.callback})
+      : super(
+          type: DetailAppbarActionItemCell.edit,
+          icon: Icons.edit_rounded,
+        );
+
   const DetailAppbarActionItemConfig.archive(
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
+      super.color,
       super.callback})
       : super(
           type: DetailAppbarActionItemCell.archive,
@@ -58,6 +74,7 @@ class DetailAppbarActionItemConfig
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
+      super.color,
       super.callback})
       : super(
           type: DetailAppbarActionItemCell.delete,
@@ -68,6 +85,7 @@ class DetailAppbarActionItemConfig
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
+      super.color,
       super.callback})
       : super(
           type: DetailAppbarActionItemCell.export,
@@ -78,6 +96,7 @@ class DetailAppbarActionItemConfig
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
+      super.color,
       super.callback})
       : super(
           type: DetailAppbarActionItemCell.clone,

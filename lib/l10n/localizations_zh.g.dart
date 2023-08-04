@@ -398,6 +398,9 @@ class L10nZh extends L10n {
   String get habitDetail_editPopMenu_delete => '删除';
 
   @override
+  String get habitDetail_editPopMenu_clone => '模板';
+
+  @override
   String get habitDetail_confirmDialog_confirm => '确定';
 
   @override

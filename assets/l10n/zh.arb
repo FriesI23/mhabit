@@ -146,6 +146,7 @@
   "habitDetail_editPopMenu_archive": "归档",
   "habitDetail_editPopMenu_export": "导出",
   "habitDetail_editPopMenu_delete": "删除",
+  "habitDetail_editPopMenu_clone": "模板",
 
   "habitDetail_confirmDialog_confirm": "确定",
   "habitDetail_confirmDialog_cancel": "取消",

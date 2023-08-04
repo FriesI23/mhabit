@@ -271,6 +271,7 @@
   "habitDetail_editPopMenu_archive": "Archive",
   "habitDetail_editPopMenu_export": "Export",
   "habitDetail_editPopMenu_delete": "Delete",
+  "habitDetail_editPopMenu_clone": "Template",
 
   "habitDetail_confirmDialog_confirm": "confirm",
   "habitDetail_confirmDialog_cancel": "cancel",

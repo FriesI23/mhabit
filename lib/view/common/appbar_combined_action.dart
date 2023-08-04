@@ -25,6 +25,7 @@ abstract class AppbarActionItemConfig<T> {
   final bool visible;
   final IconData icon;
   final String text;
+  final Color? color;
   final VoidCallback? callback;
 
   const AppbarActionItemConfig({
@@ -33,6 +34,7 @@ abstract class AppbarActionItemConfig<T> {
     required this.visible,
     required this.icon,
     required this.text,
+    this.color,
     this.callback,
   });
 
@@ -41,6 +43,7 @@ abstract class AppbarActionItemConfig<T> {
     required this.visible,
     required this.icon,
     required this.text,
+    this.color,
     this.callback,
   }) : status = AppbarActionShowStatus.button;
 
@@ -49,6 +52,7 @@ abstract class AppbarActionItemConfig<T> {
     required this.visible,
     required this.icon,
     required this.text,
+    this.color,
     this.callback,
   }) : status = AppbarActionShowStatus.popupitem;
 
@@ -74,7 +78,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
         value: config.type,
         child: ListTile(
           title: Text(config.text),
-          leading: Icon(config.icon),
+          leading: Icon(config.icon, color: config.color),
         ),
       );
     }
@@ -138,7 +142,7 @@ class _ActionItemButton<C extends AppbarActionItemConfig>
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: config.callback,
-      icon: Icon(config.icon),
+      icon: Icon(config.icon, color: config.color),
       tooltip: config.text,
     );
   }

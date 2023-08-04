@@ -442,6 +442,49 @@ class _HabitDetailView extends State<HabitDetailView>
     DebugLog.rebuild("HabitDetailView:: $hashCode");
 
     Widget buildAppbar(BuildContext context) {
+      Widget buildAppbarAction(
+          BuildContext context, HabitColorType? colorType) {
+        return Selector<HabitDetailViewModel, bool>(
+          selector: (context, viewmodel) => viewmodel.isHabitArchived,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, isArchived, child) {
+            final themeData = Theme.of(context);
+            final colorData = themeData.extension<CustomColors>();
+            final l10n = L10n.of(context);
+            final color = colorType != null
+                ? colorData?.getColor(colorType)
+                : Colors.transparent;
+            return AppBarActions<DetailAppbarActionItemConfig,
+                DetailAppbarActionItemCell>(
+              popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
+              actionConfigs: [
+                DetailAppbarActionItemConfig.edit(
+                    text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
+                    color: color,
+                    callback: _onAppbarEditActionPressed),
+                DetailAppbarActionItemConfig.unarchive(
+                    visible: isArchived,
+                    text:
+                        l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
+                    callback: () => _openHabitUnarchiveConfirmDialog()),
+                DetailAppbarActionItemConfig.archive(
+                    visible: !isArchived,
+                    text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
+                    callback: () => _openHabitArchiveConfirmDialog()),
+                DetailAppbarActionItemConfig.clone(
+                    text: l10n?.habitDetail_editPopMenu_clone ?? "Clone"),
+                DetailAppbarActionItemConfig.export(
+                    text: l10n?.habitDetail_editPopMenu_export ?? "Export",
+                    callback: () => _exportHabitAndShared(context)),
+                DetailAppbarActionItemConfig.delete(
+                    text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
+                    callback: () => _openHabitDeleteConfirmDialog()),
+              ],
+            );
+          },
+        );
+      }
+
       return Selector<HabitDetailViewModel, HabitColorType?>(
         selector: (context, viewmodel) => viewmodel.habitColorType,
         shouldRebuild: (previous, next) => previous != next,
@@ -456,41 +499,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            popMenuButton: Selector<HabitDetailViewModel, bool>(
-              selector: (context, viewmodel) => viewmodel.isHabitArchived,
-              shouldRebuild: (previous, next) => previous != next,
-              builder: (context, isArchived, child) {
-                final themeData = Theme.of(context);
-                final colorData = themeData.extension<CustomColors>();
-                final l10n = L10n.of(context);
-                final color = colorType != null
-                    ? colorData?.getColor(colorType)
-                    : Colors.transparent;
-                return AppBarActions<DetailAppbarActionItemConfig,
-                    DetailAppbarActionItemCell>(
-                  popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
-                  actionConfigs: [
-                    DetailAppbarActionItemConfig.unarchive(
-                        visible: isArchived,
-                        text: l10n?.habitDetail_editPopMenu_unarchive ??
-                            "Unarchive",
-                        callback: () => _openHabitUnarchiveConfirmDialog()),
-                    DetailAppbarActionItemConfig.archive(
-                        visible: !isArchived,
-                        text:
-                            l10n?.habitDetail_editPopMenu_archive ?? "Archive",
-                        callback: () => _openHabitArchiveConfirmDialog()),
-                    DetailAppbarActionItemConfig.export(
-                        text: l10n?.habitDetail_editPopMenu_export ?? "Export",
-                        callback: () => _exportHabitAndShared(context)),
-                    DetailAppbarActionItemConfig.delete(
-                        text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
-                        callback: () => _openHabitDeleteConfirmDialog()),
-                  ],
-                );
-              },
-            ),
-            onEditButtonPressed: _onAppbarEditActionPressed,
+            actionBuilder: (context) => buildAppbarAction(context, colorType),
           );
         },
       );
