@@ -1,5 +1,5 @@
-- 增加对波斯语的支持，感谢 @chromer030 的翻译贡献🎉
-- 修复在RTL布局下UI的显示问题
+- 增加对波斯语的支持，感谢 @chromer030 的翻译贡献 🎉
+- 修复在 RTL 布局下 UI 的显示问题
 - 在 `readme` 中添加翻译统计图
-- 在发布新版本时按ABI拆分APK，目前仅支持 `GitHub/Releases`
-- 优化CI脚本的文件组织结构
+- 在发布新版本时按 ABI 拆分 APK，目前仅支持 `GitHub/Releases`
+- 优化 CI 脚本的文件组织结构

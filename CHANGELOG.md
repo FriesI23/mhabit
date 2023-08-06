@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.8.3+22
+
+- Add 'Habit Template' feature
+- Refactor `Appbar` section of code
+
 ## 1.8.2+21
 
 - Add support for Persian language, Thanks for @chromer030's translation contribution🎉
