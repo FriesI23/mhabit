@@ -65,15 +65,14 @@ class HabitFormViewModel extends ChangeNotifier
         _dailyGoalExtraFieldInpuController = dailyGoalExtraFieldInpuController,
         _descFieldInputController = descFieldInputController {
     initVerticalScrollController(notifyListeners, appbarScrollController);
-    if (_form.editMode == HabitDisplayEditMode.edit) {
-      _nameFieldInputController.text = _form.name!;
-      _dailyGoalFieldInputController.text = _form.dailyGoal!.toSimpleString();
-      _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit!;
-      _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
-          ? _form.dailyGoalExtra!.toSimpleString()
-          : '';
-      _descFieldInputController.text = _form.desc!;
-    }
+    _nameFieldInputController.text = _form.name ?? '';
+    _dailyGoalFieldInputController.text =
+        _form.dailyGoal?.toSimpleString() ?? '';
+    _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
+    _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
+        ? _form.dailyGoalExtra!.toSimpleString()
+        : '';
+    _descFieldInputController.text = _form.desc ?? '';
   }
 
   @override

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './appbar_combined_action.dart'
+    show AppbarActionShowStatus, AppBarActions, AppbarActionItemConfig;
 export './colorful_navibar.dart' show ColorfulNavibar;
 export './date_change.dart';
 export './donate_dialog.dart' show DonateDialogResult;

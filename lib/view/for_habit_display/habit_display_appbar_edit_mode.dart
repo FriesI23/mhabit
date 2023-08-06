@@ -40,6 +40,7 @@ class HabitDisplayAppBarEditMode extends StatelessWidget {
       scrolledUnderElevation: scrolledUnderElevation,
       shadowColor: Theme.of(context).colorScheme.shadow,
       title: title,
+      centerTitle: false,
       leading: PageBackButton(
         reason: PageBackReason.close,
         onPressed: onLeadingButtonPressed,

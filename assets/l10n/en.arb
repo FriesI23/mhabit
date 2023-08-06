@@ -230,6 +230,7 @@
   "habitDisplay_editPopMenu_selectAll": "Select All",
   "habitDisplay_editPopMenu_export": "Export",
   "habitDisplay_editPopMenu_delete": "Delete",
+  "habitDisplay_editPopMenu_clone": "Template",
 
   "habitDisplay_editButton_tooltip": "Edit",
   "habitDisplay_archiveButton_tooltip": "Archive",
@@ -270,6 +271,7 @@
   "habitDetail_editPopMenu_archive": "Archive",
   "habitDetail_editPopMenu_export": "Export",
   "habitDetail_editPopMenu_delete": "Delete",
+  "habitDetail_editPopMenu_clone": "Template",
 
   "habitDetail_confirmDialog_confirm": "confirm",
   "habitDetail_confirmDialog_cancel": "cancel",

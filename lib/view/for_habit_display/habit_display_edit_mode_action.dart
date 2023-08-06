@@ -17,89 +17,94 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../common/_widget.dart';
 
-enum DetailAppbarActionItemCell {
+enum EditModeActionItemCell {
   edit,
-  unarchive,
   archive,
+  unarchive,
   delete,
-  export,
+  exportall,
+  selectall,
   clone,
 }
 
-class DetailAppbarActionItemConfig
-    extends AppbarActionItemConfig<DetailAppbarActionItemCell> {
-  DetailAppbarActionItemConfig(
-      {required super.type,
-      required super.status,
-      super.visible = true,
-      required super.icon,
-      required super.text,
-      super.color,
-      super.callback});
+class EditModeActionItemConfig
+    extends AppbarActionItemConfig<EditModeActionItemCell> {
+  const EditModeActionItemConfig({
+    required super.type,
+    required super.status,
+    super.visible = true,
+    required super.icon,
+    required super.text,
+    super.callback,
+  });
 
-  const DetailAppbarActionItemConfig.unarchive(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.unarchive,
-          icon: Icons.unarchive_rounded,
-        );
-
-  const DetailAppbarActionItemConfig.edit(
+  const EditModeActionItemConfig.edit(
       {super.status = AppbarActionShowStatus.button,
       super.visible = true,
       super.text = '',
-      super.color,
       super.callback})
       : super(
-          type: DetailAppbarActionItemCell.edit,
+          type: EditModeActionItemCell.edit,
           icon: Icons.edit_rounded,
         );
 
-  const DetailAppbarActionItemConfig.archive(
-      {super.status = AppbarActionShowStatus.popupitem,
+  const EditModeActionItemConfig.archive(
+      {super.status = AppbarActionShowStatus.button,
       super.visible = true,
       super.text = '',
-      super.color,
       super.callback})
       : super(
-          type: DetailAppbarActionItemCell.archive,
+          type: EditModeActionItemCell.archive,
           icon: Icons.archive_outlined,
         );
 
-  const DetailAppbarActionItemConfig.delete(
-      {super.status = AppbarActionShowStatus.popupitem,
+  const EditModeActionItemConfig.unarchive(
+      {super.status = AppbarActionShowStatus.button,
       super.visible = true,
       super.text = '',
-      super.color,
       super.callback})
       : super(
-          type: DetailAppbarActionItemCell.delete,
-          icon: Icons.delete_outline,
+          type: EditModeActionItemCell.unarchive,
+          icon: Icons.unarchive_rounded,
         );
 
-  const DetailAppbarActionItemConfig.export(
+  const EditModeActionItemConfig.delete(
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
-      super.color,
       super.callback})
       : super(
-          type: DetailAppbarActionItemCell.export,
+          type: EditModeActionItemCell.delete,
+          icon: MdiIcons.delete,
+        );
+
+  const EditModeActionItemConfig.selectall(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: EditModeActionItemCell.selectall,
+          icon: MdiIcons.selectAll,
+        );
+
+  const EditModeActionItemConfig.exportall(
+      {super.status = AppbarActionShowStatus.popupitem,
+      super.visible = true,
+      super.text = '',
+      super.callback})
+      : super(
+          type: EditModeActionItemCell.exportall,
           icon: MdiIcons.export,
         );
 
-  const DetailAppbarActionItemConfig.clone(
+  const EditModeActionItemConfig.clone(
       {super.status = AppbarActionShowStatus.popupitem,
       super.visible = true,
       super.text = '',
-      super.color,
       super.callback})
       : super(
-          type: DetailAppbarActionItemCell.clone,
+          type: EditModeActionItemCell.clone,
           icon: Icons.copy_rounded,
         );
 

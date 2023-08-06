@@ -22,7 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../common/consts.dart';
+import '../../extension/custom_color_extensions.dart';
 import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
@@ -48,6 +48,7 @@ import '../provider/habit_detail_scorechart.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../reminders/notification_channel.dart';
+import '../theme/color.dart';
 import '../theme/icon.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
@@ -216,37 +217,48 @@ class _HabitDetailView extends State<HabitDetailView>
     with
         HabitHeatmapColorChooseMixin<HabitDetailView>,
         XShare<HabitDetailView> {
-  void _onAppbarEditActionPressed() async {
+  Future<bool> _enterHabitEditPage({
+    required HabitForm Function(HabitDBCell) formBuilder,
+  }) async {
     HabitDetailViewModel viewmodel;
-    HabitSummaryViewModel summary;
-    var dbcell = await loadHabitDetailFromDB(widget.habitUUID);
+    final dbcell = await loadHabitDetailFromDB(widget.habitUUID);
 
-    if (!mounted || dbcell == null) return;
+    if (!mounted || dbcell == null) return false;
     viewmodel = context.read<HabitDetailViewModel>();
-    var form = HabitForm.fromHabitDBCell(
-      dbcell,
-      editMode: HabitDisplayEditMode.edit,
-      editParams: HabitDisplayEditParams(
-        uuid: dbcell.uuid!,
-        createT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.createT! * onSecondMS),
-        modifyT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.modifyT! * onSecondMS),
-      ),
-    );
+    final form = formBuilder(dbcell);
 
     final result = await habit_edit_view.naviToHabitEidtPage(
         context: context, initForm: form);
 
-    if (result == null || !mounted) return;
+    if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
     viewmodel.rockreloadDBToggleSwich();
-    summary = context.read<HabitSummaryViewModel>();
+    final summary = context.read<HabitSummaryViewModel>();
     if (summary.mounted) {
       summary.updateCalendarExpanedStatus(false, listen: false);
       summary.rockreloadDBToggleSwich();
     }
+    return true;
   }
+
+  void _onAppbarEditActionPressed() async => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell,
+          editMode: HabitDisplayEditMode.edit,
+          editParams: HabitDisplayEditParams.fromDBCell(dbCell),
+        ),
+      );
+
+  void _onAppbarCloneActionPressed() => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell.copyWith(
+            name: '',
+            desc: '',
+            startDate: HabitStartDate.now().epochDay,
+          ),
+          editMode: HabitDisplayEditMode.create,
+        ),
+      );
 
   void _openRetryButtonPressed() {
     if (!mounted) return;
@@ -440,6 +452,50 @@ class _HabitDetailView extends State<HabitDetailView>
     DebugLog.rebuild("HabitDetailView:: $hashCode");
 
     Widget buildAppbar(BuildContext context) {
+      Widget buildAppbarAction(
+          BuildContext context, HabitColorType? colorType) {
+        return Selector<HabitDetailViewModel, bool>(
+          selector: (context, viewmodel) => viewmodel.isHabitArchived,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, isArchived, child) {
+            final themeData = Theme.of(context);
+            final colorData = themeData.extension<CustomColors>();
+            final l10n = L10n.of(context);
+            final color = colorType != null
+                ? colorData?.getColor(colorType)
+                : Colors.transparent;
+            return AppBarActions<DetailAppbarActionItemConfig,
+                DetailAppbarActionItemCell>(
+              popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
+              actionConfigs: [
+                DetailAppbarActionItemConfig.edit(
+                    text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
+                    color: color,
+                    callback: _onAppbarEditActionPressed),
+                DetailAppbarActionItemConfig.unarchive(
+                    visible: isArchived,
+                    text:
+                        l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
+                    callback: () => _openHabitUnarchiveConfirmDialog()),
+                DetailAppbarActionItemConfig.archive(
+                    visible: !isArchived,
+                    text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
+                    callback: () => _openHabitArchiveConfirmDialog()),
+                DetailAppbarActionItemConfig.clone(
+                    text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
+                    callback: _onAppbarCloneActionPressed),
+                DetailAppbarActionItemConfig.export(
+                    text: l10n?.habitDetail_editPopMenu_export ?? "Export",
+                    callback: () => _exportHabitAndShared(context)),
+                DetailAppbarActionItemConfig.delete(
+                    text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
+                    callback: () => _openHabitDeleteConfirmDialog()),
+              ],
+            );
+          },
+        );
+      }
+
       return Selector<HabitDetailViewModel, HabitColorType?>(
         selector: (context, viewmodel) => viewmodel.habitColorType,
         shouldRebuild: (previous, next) => previous != next,
@@ -454,20 +510,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            popMenuButton: Selector<HabitDetailViewModel, bool>(
-              selector: (context, viewmodel) => viewmodel.isHabitArchived,
-              shouldRebuild: (previous, next) => previous != next,
-              builder: (context, isArchived, child) =>
-                  HabitDetailPopupMenuButton(
-                isArchived: isArchived,
-                colorType: colorType,
-                onUnarchiveButtonPressed: _openHabitUnarchiveConfirmDialog,
-                onArchiveButtonPressed: _openHabitArchiveConfirmDialog,
-                onDeleteButtonPressed: _openHabitDeleteConfirmDialog,
-                onExportButtonPress: () => _exportHabitAndShared(context),
-              ),
-            ),
-            onEditButtonPressed: _onAppbarEditActionPressed,
+            actionBuilder: (context) => buildAppbarAction(context, colorType),
           );
         },
       );

@@ -22,15 +22,13 @@ import '../../theme/color.dart';
 class HabitDetailAppBar extends StatelessWidget {
   final HabitColorType? colorType;
   final Widget? title;
-  final Widget? popMenuButton;
-  final VoidCallback? onEditButtonPressed;
+  final WidgetBuilder? actionBuilder;
 
   const HabitDetailAppBar({
     super.key,
     this.colorType,
     this.title,
-    this.popMenuButton,
-    this.onEditButtonPressed,
+    this.actionBuilder,
   });
 
   @override
@@ -39,11 +37,6 @@ class HabitDetailAppBar extends StatelessWidget {
     CustomColors? colorData = themeData.extension<CustomColors>();
 
     final color = colorType != null ? colorData?.getColor(colorType!) : null;
-
-    final eidtButtonColor = colorType != null
-        ? colorData?.getColor(colorType!)
-        : Colors.transparent;
-
     final titleFont = themeData.textTheme.titleLarge;
 
     return SliverAppBar(
@@ -58,16 +51,7 @@ class HabitDetailAppBar extends StatelessWidget {
             : null,
       ),
       leading: PageBackButton(reason: PageBackReason.back, color: color),
-      actions: [
-        L10nBuilder(
-          builder: (context, l10n) => IconButton(
-            onPressed: onEditButtonPressed,
-            icon: Icon(Icons.edit_rounded, color: eidtButtonColor),
-            tooltip: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
-          ),
-        ),
-        if (popMenuButton != null) popMenuButton!,
-      ],
+      actions: [if (actionBuilder != null) actionBuilder!(context)],
     );
   }
 }
