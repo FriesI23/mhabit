@@ -23,7 +23,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../extension/custom_color_extensions.dart';
-import '../common/consts.dart';
 import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
