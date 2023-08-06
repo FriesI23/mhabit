@@ -218,37 +218,48 @@ class _HabitDetailView extends State<HabitDetailView>
     with
         HabitHeatmapColorChooseMixin<HabitDetailView>,
         XShare<HabitDetailView> {
-  void _onAppbarEditActionPressed() async {
+  Future<bool> _enterHabitEditPage({
+    required HabitForm Function(HabitDBCell) formBuilder,
+  }) async {
     HabitDetailViewModel viewmodel;
-    HabitSummaryViewModel summary;
-    var dbcell = await loadHabitDetailFromDB(widget.habitUUID);
+    final dbcell = await loadHabitDetailFromDB(widget.habitUUID);
 
-    if (!mounted || dbcell == null) return;
+    if (!mounted || dbcell == null) return false;
     viewmodel = context.read<HabitDetailViewModel>();
-    var form = HabitForm.fromHabitDBCell(
-      dbcell,
-      editMode: HabitDisplayEditMode.edit,
-      editParams: HabitDisplayEditParams(
-        uuid: dbcell.uuid!,
-        createT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.createT! * onSecondMS),
-        modifyT:
-            DateTime.fromMillisecondsSinceEpoch(dbcell.modifyT! * onSecondMS),
-      ),
-    );
+    final form = formBuilder(dbcell);
 
     final result = await habit_edit_view.naviToHabitEidtPage(
         context: context, initForm: form);
 
-    if (result == null || !mounted) return;
+    if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
     viewmodel.rockreloadDBToggleSwich();
-    summary = context.read<HabitSummaryViewModel>();
+    final summary = context.read<HabitSummaryViewModel>();
     if (summary.mounted) {
       summary.updateCalendarExpanedStatus(false, listen: false);
       summary.rockreloadDBToggleSwich();
     }
+    return true;
   }
+
+  void _onAppbarEditActionPressed() async => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell,
+          editMode: HabitDisplayEditMode.edit,
+          editParams: HabitDisplayEditParams.fromDBCell(dbCell),
+        ),
+      );
+
+  void _onAppbarCloneActionPressed() => _enterHabitEditPage(
+        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+          dbCell.copyWith(
+            name: '',
+            desc: '',
+            startDate: HabitStartDate.now().epochDay,
+          ),
+          editMode: HabitDisplayEditMode.create,
+        ),
+      );
 
   void _openRetryButtonPressed() {
     if (!mounted) return;
@@ -472,7 +483,8 @@ class _HabitDetailView extends State<HabitDetailView>
                     text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
                     callback: () => _openHabitArchiveConfirmDialog()),
                 DetailAppbarActionItemConfig.clone(
-                    text: l10n?.habitDetail_editPopMenu_clone ?? "Clone"),
+                    text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
+                    callback: _onAppbarCloneActionPressed),
                 DetailAppbarActionItemConfig.export(
                     text: l10n?.habitDetail_editPopMenu_export ?? "Export",
                     callback: () => _exportHabitAndShared(context)),
