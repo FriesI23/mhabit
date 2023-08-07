@@ -1131,14 +1131,10 @@ class _HabitDescTileList extends StatelessWidget {
               minHeight: descMinHeight, minWidth: double.infinity),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: MarkdownBody(
+            child: ThematicMarkdownBody(
               data: viewmodel.habitDesc,
-              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                  .copyWith(textScaleFactor: textScaleFactor),
-              shrinkWrap: true,
-              imageBuilder: (uri, title, alt) => const SizedBox(),
-              onTapLink: (text, href, title) =>
-                  href != null ? launchExternalUrl(Uri.parse(href)) : null,
+              colorType: viewmodel.habitColorType,
+              textScaleFactor: textScaleFactor,
             ),
           ),
         ),
