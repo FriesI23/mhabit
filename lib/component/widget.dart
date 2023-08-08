@@ -30,6 +30,7 @@ export './widgets/habit_list_tile.dart';
 export './widgets/habit_progress_indicator.dart';
 export './widgets/habit_score_chart.dart';
 export './widgets/l10n_builder.dart';
+export './widgets/markdown_body.dart';
 export './widgets/month_picker_cell.dart';
 export './widgets/page_back_button.dart';
 export './widgets/scroll_physics.dart';

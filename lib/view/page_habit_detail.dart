@@ -16,7 +16,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -25,7 +24,6 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../common/logging.dart';
 import '../common/types.dart';
-import '../common/utils.dart';
 import '../component/animation.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
@@ -1131,14 +1129,10 @@ class _HabitDescTileList extends StatelessWidget {
               minHeight: descMinHeight, minWidth: double.infinity),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: MarkdownBody(
+            child: ThematicMarkdownBody(
               data: viewmodel.habitDesc,
-              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
-                  .copyWith(textScaleFactor: textScaleFactor),
-              shrinkWrap: true,
-              imageBuilder: (uri, title, alt) => const SizedBox(),
-              onTapLink: (text, href, title) =>
-                  href != null ? launchExternalUrl(Uri.parse(href)) : null,
+              colorType: viewmodel.habitColorType,
+              textScaleFactor: textScaleFactor,
             ),
           ),
         ),
