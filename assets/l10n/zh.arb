@@ -116,7 +116,7 @@
   "habitDisplay_statsMenu_completedTileText": "已完成",
   "habitDisplay_statsMenu_inProgresTileText": "进行中",
   "habitDisplay_statsMenu_archivedTileText": "已归档",
-  "habitDisplay_statsMenu_popularitySubgroupText": "最受欢迎（过去 30 天）",
+  "habitDisplay_statsMenu_popularitySubgroupText": "热门习惯: 近30天变化",
 
   "habitDisplay_mainMenu_lightTheme": "明亮主题",
   "habitDisplay_mainMenu_darkTheme": "黑暗主题",

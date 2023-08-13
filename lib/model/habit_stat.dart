@@ -78,14 +78,22 @@ class HabitRangeDayStatistic {
 class HabitLast30DaysProgressChangeData {
   final Map<HabitUUID, HabitRangeDayStatistic> _cacheData = {};
   final List<HabitRangeDayStatistic> _sortedCache = [];
+  bool _dirty = true;
 
-  Iterable<HabitRangeDayStatistic> get iterable => _sortedCache;
+  Iterable<HabitRangeDayStatistic> get iterable {
+    if (_dirty) genSortedCache(force: true);
+    return _sortedCache;
+  }
 
   void clearStatistic(HabitUUID uuid) {
+    _dirty = true;
     _cacheData.remove(uuid);
   }
 
-  void genSortedCache() {
+  HabitRangeDayStatistic? getStatistic(HabitUUID uuid) => _cacheData[uuid];
+
+  void genSortedCache({bool force = false}) {
+    if (!(_dirty || force)) return;
     _sortedCache.clear();
     _sortedCache.addAll(_cacheData.values.sorted((a, b) {
       int r;
@@ -94,12 +102,14 @@ class HabitLast30DaysProgressChangeData {
       r = b.lastEndedRecordDate.compareTo(a.lastEndedRecordDate);
       return r;
     }));
+    _dirty = false;
   }
 
   void addStatistic(
       HabitSummaryData data, HabitDate initDate, HabitDate date, num score) {
     var firstDate = initDate.subtractDays(30);
     if (date < firstDate || date > initDate) return;
+    _dirty = true;
     if (!_cacheData.containsKey(data.uuid)) {
       _cacheData[data.uuid] = HabitRangeDayStatistic(
         uuid: data.uuid,

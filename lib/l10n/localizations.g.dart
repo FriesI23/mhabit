@@ -632,7 +632,7 @@ abstract class L10n {
   /// No description provided for @habitDisplay_statsMenu_popularitySubgroupText.
   ///
   /// In en, this message translates to:
-  /// **'Popularity (Last 30 days)'**
+  /// **'Top Habits: Last 30 Days Changes'**
   String get habitDisplay_statsMenu_popularitySubgroupText;
 
   /// No description provided for @habitDisplay_mainMenu_lightTheme.

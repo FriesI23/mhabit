@@ -320,7 +320,7 @@ class L10nFa extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'آرشیو شده';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'محبوبیت (در ۳۰ روز گذشته)';
+  String get habitDisplay_statsMenu_popularitySubgroupText => 'محبوبیت :در ۳۰ روز گذشته';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'تم روشن';
