@@ -186,18 +186,8 @@ mixin _HabitDetailFreqChartMixin {
 
     if (habitDetailData == null) return result;
 
-    final HabitDailyGoal defVal;
-    switch (habitDetailData!.type) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        defVal = habitDetailData!.data.dailyGoal;
-        break;
-      case HabitType.negative:
-        defVal = habitDetailData!.data.dailyGoalExtra ??
-            habitDetailData!.data.dailyGoal;
-        break;
-    }
-
+    // Fixed #84
+    // Use the user-entered value for auto-complete instead of using dailyGoal
     for (var record in habitDetailData!.records) {
       final useVal = record.value;
       switch (record.status) {
@@ -211,13 +201,12 @@ mixin _HabitDetailFreqChartMixin {
             targetValue: data.dailyGoal,
             extraTargetValue: data.dailyGoalExtra,
           ).complateStatus;
+          final isAutoComplete = data.isRecordAutoComplated(record.date);
           switch (status) {
             case HabitDailyComplateStatus.noeffect:
             case HabitDailyComplateStatus.zero:
-              if (habitDetailData!.data.isRecordAutoComplated(record.date)) {
-                tryAddRecordToResult(record.date,
-                    autoComplate: 1, autoComplateTotalValue: defVal);
-              }
+              tryAddRecordToResult(record.date,
+                  autoComplate: isAutoComplete ? 1 : 0);
               break;
             case HabitDailyComplateStatus.ok:
               tryAddRecordToResult(record.date,
@@ -228,33 +217,29 @@ mixin _HabitDetailFreqChartMixin {
                   overfulfil: 1, overfulfilTotalValue: useVal);
               break;
             case HabitDailyComplateStatus.tryhard:
-              if (habitDetailData!.data.isRecordAutoComplated(record.date)) {
-                tryAddRecordToResult(record.date,
-                    autoComplate: 1, autoComplateTotalValue: defVal);
-              } else {
-                tryAddRecordToResult(record.date,
-                    partiallyCompleted: 1,
-                    partiallyCompletedTotalValue: useVal);
-              }
+              tryAddRecordToResult(record.date,
+                  autoComplate: isAutoComplete ? 1 : 0,
+                  autoComplateTotalValue: isAutoComplete ? useVal : 0,
+                  partiallyCompleted: isAutoComplete ? 0 : 1,
+                  partiallyCompletedTotalValue: isAutoComplete ? 0 : useVal);
               break;
           }
           break;
         case HabitRecordStatus.skip:
-          if (habitDetailData!.data.isRecordAutoComplated(record.date)) {
-            tryAddRecordToResult(record.date,
-                autoComplate: 1, autoComplateTotalValue: defVal);
-          }
+          final data = habitDetailData!.data;
+          final isAutoComplete = data.isRecordAutoComplated(record.date);
+          tryAddRecordToResult(record.date,
+              autoComplate: isAutoComplete ? 1 : 0);
           break;
       }
     }
 
-    for (var autoDate in habitDetailData!.autoRecordsDate) {
+    for (var autoDate
+        in habitDetailData?.autoRecordsDate ?? const Iterable.empty()) {
       if (habitDetailData?.data.getRecordByDate(autoDate) != null) continue;
-
       tryAddRecordToResult(
           getProtoDateByFreqChartCombine(autoDate, freqChartCombine, firstday),
-          autoComplate: 1,
-          autoComplateTotalValue: defVal);
+          autoComplate: 1);
     }
 
     return result;
