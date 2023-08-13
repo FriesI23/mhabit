@@ -61,33 +61,23 @@ class HabitDisplayListTile extends StatelessWidget {
     TextTheme? textTheme;
 
     Iterable<ThemeExtension<dynamic>> buildArchivedHabitThemeExtensions() {
-      final color = themeData.extension<HabitSummaryListTileColor>();
-      final newColor = color != null
-          ? color.copyWith(
-              titleColor: themeData.colorScheme.outline,
-              progressCircleColor: themeData.colorScheme.outline,
-            )
-          : HabitSummaryListTileColor.build(
-              titleColor: themeData.colorScheme.outline,
-              progressCircleColor: themeData.colorScheme.outline,
-            );
-      final cellColor = themeData.extension<HabitSummaryDailyStatusColor>();
-      final newCellColor = cellColor != null
-          ? cellColor.copyWith(
-              autoMark: themeData.colorScheme.outline,
-              skip: themeData.colorScheme.outline,
-              doneAndGoodjob: themeData.colorScheme.outline,
-              doneAndOk: themeData.colorScheme.outline,
-            )
-          : HabitSummaryDailyStatusColor.build(
-              autoMark: themeData.colorScheme.outline,
-              skip: themeData.colorScheme.outline,
-              doneAndGoodjob: themeData.colorScheme.outline,
-              doneAndOk: themeData.colorScheme.outline,
-            );
+      final color = (themeData.extension<HabitSummaryListTileColor>() ??
+              const HabitSummaryListTileColor.build())
+          .copyWith(
+        titleColor: themeData.colorScheme.outline,
+        progressCircleColor: themeData.colorScheme.outline,
+      );
+      final cellColor = (themeData.extension<HabitSummaryDailyStatusColor>() ??
+              const HabitSummaryDailyStatusColor.build())
+          .copyWith(
+        autoMark: themeData.colorScheme.outline,
+        skip: themeData.colorScheme.outline,
+        doneAndGoodjob: themeData.colorScheme.outline,
+        doneAndOk: themeData.colorScheme.outline,
+      );
       final newExtensions = Map.of(themeData.extensions);
-      newExtensions[newColor.type] = newColor;
-      newExtensions[newCellColor.type] = newCellColor;
+      newExtensions[color.type] = color;
+      newExtensions[cellColor.type] = cellColor;
       return newExtensions.values;
     }
 

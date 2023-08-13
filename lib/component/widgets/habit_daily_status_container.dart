@@ -198,10 +198,10 @@ class HabitDailyStatusContainer extends StatelessWidget {
     CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryDailyStatusColor(
       autoMark: colorData?.getColor(colorType),
-      unknown: themeData.colorScheme.outlineOpacity16,
+      unknown: themeData.colorScheme.outlineOpacity48,
       skip: colorData?.getColor(colorType),
       doneAndOk: colorData?.getColor(colorType),
-      doneAndZero: themeData.colorScheme.outlineOpacity16,
+      doneAndZero: themeData.colorScheme.outlineOpacity64,
       doneAndGoodjob: colorData?.getColor(colorType),
       doneAndTryhard: themeData.colorScheme.outline,
     );
