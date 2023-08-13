@@ -186,18 +186,6 @@ mixin _HabitDetailFreqChartMixin {
 
     if (habitDetailData == null) return result;
 
-    final HabitDailyGoal defVal;
-    switch (habitDetailData!.type) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        defVal = habitDetailData!.data.dailyGoal;
-        break;
-      case HabitType.negative:
-        defVal = habitDetailData!.data.dailyGoalExtra ??
-            habitDetailData!.data.dailyGoal;
-        break;
-    }
-
     // Fixed #84
     // Use the user-entered value for auto-complete instead of using dailyGoal
     for (var record in habitDetailData!.records) {
