@@ -320,7 +320,7 @@ class L10nZh extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => '已归档';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => '最受欢迎（过去 30 天）';
+  String get habitDisplay_statsMenu_popularitySubgroupText => '热门习惯: 近30天变化';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => '明亮主题';

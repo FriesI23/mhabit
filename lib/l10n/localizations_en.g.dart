@@ -320,7 +320,7 @@ class L10nEn extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Archived';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Popularity (Last 30 days)';
+  String get habitDisplay_statsMenu_popularitySubgroupText => 'Top Habits: Last 30 Days Changes';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Light Theme';

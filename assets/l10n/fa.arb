@@ -213,7 +213,7 @@
   "habitDisplay_statsMenu_completedTileText": "به اتمام رسیده",
   "habitDisplay_statsMenu_inProgresTileText": "در حال انجام",
   "habitDisplay_statsMenu_archivedTileText": "آرشیو شده",
-  "habitDisplay_statsMenu_popularitySubgroupText": "محبوبیت (در ۳۰ روز گذشته)",
+  "habitDisplay_statsMenu_popularitySubgroupText": "محبوبیت :در ۳۰ روز گذشته",
   "habitDisplay_mainMenu_lightTheme": "تم روشن",
   "habitDisplay_mainMenu_darkTheme": "تم تاریک",
   "habitDisplay_mainMenu_followSystemTheme": "پیروی از تنظیمات سیستم",

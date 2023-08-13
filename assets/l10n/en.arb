@@ -241,7 +241,7 @@
   "habitDisplay_statsMenu_completedTileText": "Completed",
   "habitDisplay_statsMenu_inProgresTileText": "In Progress",
   "habitDisplay_statsMenu_archivedTileText": "Archived",
-  "habitDisplay_statsMenu_popularitySubgroupText": "Popularity (Last 30 days)",
+  "habitDisplay_statsMenu_popularitySubgroupText": "Top Habits: Last 30 Days Changes",
 
   "habitDisplay_mainMenu_lightTheme": "Light Theme",
   "habitDisplay_mainMenu_darkTheme": "Dark Theme",

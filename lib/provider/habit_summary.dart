@@ -119,6 +119,10 @@ mixin _HabitSummaryStatisticsMixin on _HabitSummaryViewModel {
   Iterable<HabitRangeDayStatistic> getLast30DaysProgressChangeData() =>
       _last30daysProgressChangeData.iterable;
 
+  bool isNeedIncludeInLast30DaysStatistic(HabitSummaryData data) {
+    return data.isActived;
+  }
+
   void addLast30DaysScoreChangeStatistic(
       HabitSummaryData data, HabitDate initDate, HabitDate date, num score) {
     _last30daysProgressChangeData.addStatistic(data, initDate, date, score);
@@ -403,23 +407,22 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       .map((e) => e!.uuid);
 
   void calcHabitAutoComplateRecords(HabitSummaryData data) {
-    var now = HabitDate.now();
+    final now = HabitDate.now();
     _last30daysProgressChangeData.clearStatistic(data.uuid);
     data.reCalculateAutoComplateRecords(
       firstDay: firstday,
       onScoreChange: (fromDate, toDate, fromScore, toScore) {
-        var changeData = HabitScoreChangedProtoData(
+        if (!isNeedIncludeInLast30DaysStatistic(data)) return;
+        for (var entry in HabitScoreChangedProtoData(
           fromDate: fromDate,
           toDate: toDate,
           fromScore: fromScore,
           toScore: toScore,
-        );
-        for (var entry in changeData.expandToDate()) {
+        ).expandToDate()) {
           addLast30DaysScoreChangeStatistic(data, now, entry.key, entry.value);
         }
       },
     );
-    _last30daysProgressChangeData.genSortedCache();
   }
 
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
