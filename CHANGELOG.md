@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.8.4+23
+
+- Fixed use the user-entered value for auto-complete instead of using dailyGoal (#85)
+- Fixed Included archived habit in most popular habit section (#83)
+- Fixed incorrect markdown colors on memo string on dark mode (#79)
+- Fixed unclear color for '?' and '×' buttong in dark mode (#75)
+
 ## 1.8.3+22
 
 - Add 'Habit Template' feature
