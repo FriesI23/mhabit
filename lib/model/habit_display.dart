@@ -164,17 +164,11 @@ class HabitsDisplayFilter {
 
   bool Function(HabitSummaryData) getDisplayFilterFunction() {
     bool func(HabitSummaryData data) {
-      if (data.status == HabitStatus.activated) {
-        if (data.isComplated) {
-          return allowCompleteHabits ? true : false;
-        } else {
-          return allowActivedHabits ? true : false;
-        }
-      } else if (data.status == HabitStatus.archived) {
-        return allowArchivedHabits ? true : false;
-      } else {
-        return false;
-      }
+      var show = false;
+      show = show || (data.isActived && allowActivedHabits);
+      show = show || (data.isArchived && allowArchivedHabits);
+      show = show || (data.isComplated && allowCompleteHabits);
+      return show;
     }
 
     return func;
