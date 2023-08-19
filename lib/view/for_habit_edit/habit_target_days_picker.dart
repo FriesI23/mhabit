@@ -21,11 +21,17 @@ import '../../common/consts.dart';
 import '../../common/logging.dart';
 import '../../l10n/localizations.dart';
 
-Future<int?> showHabitTargetDaysPickerDialog(
-    {required BuildContext context, required int targetDays}) async {
+Future<int?> showHabitTargetDaysPickerDialog({
+  required BuildContext context,
+  required int targetDays,
+  int? customShowTargetDays,
+}) async {
   return showDialog<int>(
     context: context,
-    builder: (context) => HabitTargetDaysPickerDialog(targetDays),
+    builder: (context) => HabitTargetDaysPickerDialog(
+      targetDays,
+      customShowTargetDays: customShowTargetDays,
+    ),
   );
 }
 
@@ -63,8 +69,13 @@ enum _HabitTargetDaysType {
 
 class HabitTargetDaysPickerDialog extends StatefulWidget {
   final int targetDays;
+  final int? customShowTargetDays;
 
-  const HabitTargetDaysPickerDialog(this.targetDays, {super.key});
+  const HabitTargetDaysPickerDialog(
+    this.targetDays, {
+    super.key,
+    this.customShowTargetDays,
+  });
 
   @override
   State<StatefulWidget> createState() => _HabitTargetDaysDialogView();
@@ -80,9 +91,10 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
     super.initState();
     selectTargetDaysType =
         _HabitTargetDaysType.getTargetDaysType(widget.targetDays);
-    customTargetDays = selectTargetDaysType != _HabitTargetDaysType.daysCustom
-        ? defaultHabitCustomTargetDays
-        : widget.targetDays;
+    customTargetDays = widget.customShowTargetDays ??
+        (selectTargetDaysType != _HabitTargetDaysType.daysCustom
+            ? defaultHabitCustomTargetDays
+            : widget.targetDays);
     _inputController = TextEditingController();
     _inputController.text = customTargetDays.toString();
   }
