@@ -32,4 +32,37 @@ void main() {
       });
     });
   });
+  group('test clamp', () {
+    test('clamp should return value within range', () {
+      num clampedValue = clamp(5, min: 0, max: 10);
+      expect(clampedValue, 5);
+    });
+
+    test('clamp should return min when value is less than min', () {
+      num clampedValue = clamp(-2, min: 0, max: 10);
+      expect(clampedValue, 0);
+    });
+
+    test('clamp should return max when value is greater than max', () {
+      num clampedValue = clamp(15.0, min: 0.0, max: 10.0);
+      expect(clampedValue, 10.0);
+    });
+  });
+
+  group('test clampInt', () {
+    test('clampInt should return value within range', () {
+      int clampedValue = clampInt(5, min: 0, max: 10);
+      expect(clampedValue, 5);
+    });
+
+    test('clampInt should return min when value is less than min', () {
+      int clampedValue = clampInt(-2, min: 0, max: 10);
+      expect(clampedValue, 0);
+    });
+
+    test('clampInt should return max when value is greater than max', () {
+      int clampedValue = clampInt(15, min: 0, max: 10);
+      expect(clampedValue, 10);
+    });
+  });
 }
