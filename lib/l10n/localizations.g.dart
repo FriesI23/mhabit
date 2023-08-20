@@ -1355,6 +1355,54 @@ abstract class L10n {
   /// **'Develop Mode'**
   String get appSetting_developMode_titleText;
 
+  /// No description provided for @appSetting_clearCache_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get appSetting_clearCache_titleText;
+
+  /// No description provided for @appSetting_clearCacheDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get appSetting_clearCacheDialog_titleText;
+
+  /// No description provided for @appSetting_clearCacheDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'After clearing cache, some custom values will be restored to defaults.'**
+  String get appSetting_clearCacheDialog_subtitleText;
+
+  /// No description provided for @appSetting_clearCacheDialog_cancelText.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get appSetting_clearCacheDialog_cancelText;
+
+  /// No description provided for @appSetting_clearCacheDialog_confirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'confirm'**
+  String get appSetting_clearCacheDialog_confirmText;
+
+  /// No description provided for @appSetting_clearCache_snackBar_partSuccText.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial Cache cleared failed'**
+  String get appSetting_clearCache_snackBar_partSuccText;
+
+  /// No description provided for @appSetting_clearCache_snackBar_succText.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get appSetting_clearCache_snackBar_succText;
+
+  /// No description provided for @appSetting_clearCache_snackBar_failText.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared failed'**
+  String get appSetting_clearCache_snackBar_failText;
+
   /// No description provided for @appSetting_about_titleText.
   ///
   /// In en, this message translates to:

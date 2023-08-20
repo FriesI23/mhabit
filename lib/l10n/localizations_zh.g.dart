@@ -739,6 +739,30 @@ class L10nZh extends L10n {
   String get appSetting_developMode_titleText => '开发模式';
 
   @override
+  String get appSetting_clearCache_titleText => '清理缓存';
+
+  @override
+  String get appSetting_clearCacheDialog_titleText => '清理缓存';
+
+  @override
+  String get appSetting_clearCacheDialog_subtitleText => '清除缓存后，部分自定义值将会恢复默认。';
+
+  @override
+  String get appSetting_clearCacheDialog_cancelText => '取消';
+
+  @override
+  String get appSetting_clearCacheDialog_confirmText => '确认';
+
+  @override
+  String get appSetting_clearCache_snackBar_partSuccText => '部分缓存清理失败';
+
+  @override
+  String get appSetting_clearCache_snackBar_succText => '缓存清理成功';
+
+  @override
+  String get appSetting_clearCache_snackBar_failText => '缓存清理失败';
+
+  @override
   String get appSetting_about_titleText => '关于';
 
   @override

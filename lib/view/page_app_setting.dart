@@ -37,6 +37,7 @@ import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
+import '../model/global.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
@@ -110,6 +111,40 @@ class _AppSettingView extends State<AppSettingView>
     if (!mounted || result == null) return;
     final firtdayvm = context.read<AppFirstDayViewModel>();
     firtdayvm.setNewFirstDay(result);
+  }
+
+  void _openClearAppCacheDialog(BuildContext context) async {
+    if (!mounted) return;
+    final result = await showAppSettingClearCacheDialog(context: context);
+    if (!mounted || result != true) return;
+
+    final resultList = await context.read<Global>().clearAllCache();
+    if (!mounted) return;
+
+    var hasSuss = false, hasFail = false;
+    for (var result in resultList) {
+      if (result) {
+        hasSuss = true;
+      } else {
+        hasFail = true;
+      }
+    }
+
+    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+        content: L10nBuilder(
+      builder: (context, l10n) {
+        final String? snackBarText;
+        if (hasSuss && hasFail) {
+          snackBarText = l10n?.appSetting_clearCache_snackBar_partSuccText;
+        } else if (!hasFail) {
+          snackBarText = l10n?.appSetting_clearCache_snackBar_succText;
+        } else {
+          snackBarText = l10n?.appSetting_clearCache_snackBar_failText;
+        }
+        return Text(snackBarText ?? "Clear cache done");
+      },
+    ));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _onDrageCalendarByPageTileChanged(bool value) {
@@ -479,6 +514,14 @@ class _AppSettingView extends State<AppSettingView>
           onChanged: _onDevelopModeSwitchTilePressed,
           value: value,
         ),
+      );
+      yield ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_clearCache_titleText)
+              : const Text("Clear Cache"),
+        ),
+        onTap: () => _openClearAppCacheDialog(context),
       );
       yield ListTile(
         title: L10nBuilder(

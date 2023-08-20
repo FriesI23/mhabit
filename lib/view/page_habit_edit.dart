@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../l10n/localizations.dart';
+import '../model/global.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -162,9 +163,18 @@ class _HabitEditView extends State<HabitEditView> {
 
   void _openTargetDaysPickerDialog(BuildContext context, int targetDays) async {
     final result = await showHabitTargetDaysPickerDialog(
-        context: context, targetDays: targetDays);
+      context: context,
+      targetDays: targetDays,
+      initialCustomTargetDays:
+          context.read<Global>().habitEditTargetDaysInputFill,
+    );
     if (result == null || !mounted) return;
-    context.read<HabitFormViewModel>().targetDays = result;
+    context.read<HabitFormViewModel>().targetDays = result.targetDays;
+    if (result.isCustomDaysType) {
+      context
+          .read<Global>()
+          .updateHabitEditTargetDaysInputFill(result.targetDays);
+    }
   }
 
   void _openReminderTypePickerDialog(
