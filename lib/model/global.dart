@@ -20,6 +20,7 @@ import '../common/enums.dart';
 import '../db/profile.dart';
 import '../theme/color.dart';
 import 'app_reminder_config.dart';
+import 'cache.dart';
 import 'custom_date_format.dart';
 import 'habit_display.dart';
 
@@ -30,6 +31,27 @@ abstract class GlobalProxyProviderInterface {
 
 abstract class GlobalInterface {}
 // coverage:ignore-end
+
+mixin CacheMixin {
+  late final Cache<String> inputFillCache;
+
+  int? get habitEditTargetDaysInputFill =>
+      inputFillCache.getCache<int>(InputFillCacheKey.habitEditTargetDays.name);
+
+  void updateHabitEditTargetDaysInputFill(int? newTargetDays) {
+    inputFillCache.updateCache<int>(
+        InputFillCacheKey.habitEditTargetDays.name, newTargetDays);
+  }
+
+  Future<List<bool>> clearAllCache() async {
+    List<bool> clearResultList = [];
+    List<Future> futures = [
+      inputFillCache.clear(onClear: (r) => clearResultList.add(r)),
+    ];
+    await Future.wait(futures);
+    return clearResultList;
+  }
+}
 
 mixin GlobalDevelopModeMixin {
   Profile get profile;
@@ -43,7 +65,13 @@ mixin GlobalDevelopModeMixin {
   void switchDisplayDebugMenu(bool value) => _displayDebugMenu = value;
 }
 
-class Global with GlobalDevelopModeMixin implements GlobalInterface {
+class Global
+    with GlobalDevelopModeMixin, CacheMixin
+    implements GlobalInterface {
+  Global() {
+    inputFillCache = InputFillCache(profile: profile);
+  }
+
   @override
   Profile get profile => Profile();
 

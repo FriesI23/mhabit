@@ -16,21 +16,30 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mhabit/common/utils.dart';
 
 import '../../common/consts.dart';
 import '../../common/logging.dart';
 import '../../l10n/localizations.dart';
 
-Future<int?> showHabitTargetDaysPickerDialog({
+class HabitTargetDaysPickerResult {
+  final int targetDays;
+  final bool isCustomDaysType;
+
+  const HabitTargetDaysPickerResult(this.targetDays,
+      {this.isCustomDaysType = false});
+}
+
+Future<HabitTargetDaysPickerResult?> showHabitTargetDaysPickerDialog({
   required BuildContext context,
   required int targetDays,
-  int? customShowTargetDays,
+  int? initialCustomTargetDays,
 }) async {
-  return showDialog<int>(
+  return showDialog<HabitTargetDaysPickerResult>(
     context: context,
     builder: (context) => HabitTargetDaysPickerDialog(
       targetDays,
-      customShowTargetDays: customShowTargetDays,
+      initialCustomTargetDays: initialCustomTargetDays,
     ),
   );
 }
@@ -69,12 +78,12 @@ enum _HabitTargetDaysType {
 
 class HabitTargetDaysPickerDialog extends StatefulWidget {
   final int targetDays;
-  final int? customShowTargetDays;
+  final int? initialCustomTargetDays;
 
   const HabitTargetDaysPickerDialog(
     this.targetDays, {
     super.key,
-    this.customShowTargetDays,
+    this.initialCustomTargetDays,
   });
 
   @override
@@ -91,10 +100,14 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
     super.initState();
     selectTargetDaysType =
         _HabitTargetDaysType.getTargetDaysType(widget.targetDays);
-    customTargetDays = widget.customShowTargetDays ??
-        (selectTargetDaysType != _HabitTargetDaysType.daysCustom
-            ? defaultHabitCustomTargetDays
-            : widget.targetDays);
+    // overwrite the last filled-in number saved in global cache
+    if (selectTargetDaysType != _HabitTargetDaysType.daysCustom) {
+      customTargetDays = widget.initialCustomTargetDays != null
+          ? widget.initialCustomTargetDays!
+          : defaultHabitCustomTargetDays;
+    } else {
+      customTargetDays = widget.targetDays;
+    }
     _inputController = TextEditingController();
     _inputController.text = customTargetDays.toString();
   }
@@ -105,25 +118,30 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
     super.dispose();
   }
 
+  int _validateTargetDays(int day) =>
+      clampInt<int>(day, min: minHabitTargetDays, max: maxHabitTargetDays);
+
   int get currentTargetDay => selectTargetDaysType.days ?? customTargetDays;
 
   void _onRadioChangeCallback(_HabitTargetDaysType? value) {
     if (value != null) {
       selectTargetDaysType = value;
-      Navigator.pop(context, currentTargetDay);
+      // Text field might be empty in custom type when submitted;
+      // recompute the final value and type here.
+      final resultDay = _validateTargetDays(currentTargetDay);
+      final resultDayType = _HabitTargetDaysType.getTargetDaysType(resultDay);
+      final result = HabitTargetDaysPickerResult(resultDay,
+          isCustomDaysType: resultDayType == _HabitTargetDaysType.daysCustom);
+      Navigator.pop(context, result);
     }
   }
 
   void _onCustomTargetDaysInputChanged(String? value) {
-    int newValue = value == null
+    final newValue = value == null
         ? defaultHabitTargetDays
         : int.tryParse(value) ?? defaultHabitTargetDays;
 
-    if (newValue >= maxHabitTargetDays) {
-    } else if (newValue <= minHabitTargetDays) {
-      newValue = minHabitTargetDays;
-    }
-    customTargetDays = newValue;
+    customTargetDays = _validateTargetDays(newValue);
   }
 
   void _onCustomTargetDaysSubmitted(String? value) {

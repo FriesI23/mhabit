@@ -1,6 +1,14 @@
 {
   "fa": [
     "habitDisplay_editPopMenu_clone",
-    "habitDetail_editPopMenu_clone"
+    "habitDetail_editPopMenu_clone",
+    "appSetting_clearCache_titleText",
+    "appSetting_clearCacheDialog_titleText",
+    "appSetting_clearCacheDialog_subtitleText",
+    "appSetting_clearCacheDialog_cancelText",
+    "appSetting_clearCacheDialog_confirmText",
+    "appSetting_clearCache_snackBar_partSuccText",
+    "appSetting_clearCache_snackBar_succText",
+    "appSetting_clearCache_snackBar_failText"
   ]
 }

@@ -30,6 +30,11 @@ import '../model/custom_date_format.dart';
 import '../model/habit_display.dart';
 import '../theme/color.dart';
 
+mixin CacheInterface {
+  Map<String, Object?> getInputFillCache();
+  Future<bool> setInputFillCache(Map<String, Object?> newCache);
+}
+
 abstract class ProfileInterface {
   Future<bool> clearAll();
   int getThemeType();
@@ -74,10 +79,13 @@ enum ProfileKey {
   appReminder,
   customDateYmdHmsConfig,
   displayCalendarBarOccupyPrt,
-  compactUISwitcher;
+  compactUISwitcher,
+  // cache
+  inputFillCache,
 }
 
-class Profile implements ProfileInterface, FutureInitializationABC {
+class Profile
+    implements ProfileInterface, CacheInterface, FutureInitializationABC {
   late final SharedPreferences _pref;
   static Profile? _instance;
 
@@ -235,5 +243,23 @@ class Profile implements ProfileInterface, FutureInitializationABC {
   @override
   Future<bool> setCompactUISwitcher(bool newStatus) {
     return _pref.setBool(ProfileKey.compactUISwitcher.name, newStatus);
+  }
+
+  @override
+  Map<String, Object?> getInputFillCache() {
+    final raw = _pref.getString(ProfileKey.inputFillCache.name);
+    if (raw == null) return {};
+    try {
+      return jsonDecode(raw);
+    } catch (e) {
+      ErrorLog.jsonDecode("input fill cache in profile decode err.");
+      return {};
+    }
+  }
+
+  @override
+  Future<bool> setInputFillCache(Map<String, Object?> newCache) {
+    return _pref.setString(
+        ProfileKey.inputFillCache.name, jsonEncode(newCache));
   }
 }

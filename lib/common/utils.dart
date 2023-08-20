@@ -188,3 +188,23 @@ Future<bool> launchExternalUrl(Uri url) async {
 
 int normalizeAppCalendarBarOccupyPrt(int prt) => math.max(
     math.min(prt, appCalendarBarMaxOccupyPrt), appCalendarBarMinOccupyPrt);
+
+T clamp<T extends Comparable<T>>(T value, {T? min, T? max}) {
+  if (min != null && value.compareTo(min) < 0) {
+    return min;
+  } else if (max != null && value.compareTo(max) > 0) {
+    return max;
+  } else {
+    return value;
+  }
+}
+
+T clampInt<T extends int>(T value, {T? min, T? max}) {
+  if (min != null && value.compareTo(min) < 0) {
+    return min;
+  } else if (max != null && value.compareTo(max) > 0) {
+    return max;
+  } else {
+    return value;
+  }
+}

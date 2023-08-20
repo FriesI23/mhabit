@@ -744,6 +744,30 @@ class L10nEn extends L10n {
   String get appSetting_developMode_titleText => 'Develop Mode';
 
   @override
+  String get appSetting_clearCache_titleText => 'Clear Cache';
+
+  @override
+  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+
+  @override
+  String get appSetting_clearCacheDialog_subtitleText => 'After clearing cache, some custom values will be restored to defaults.';
+
+  @override
+  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+
+  @override
+  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+
+  @override
+  String get appSetting_clearCache_snackBar_partSuccText => 'Partial Cache cleared failed';
+
+  @override
+  String get appSetting_clearCache_snackBar_succText => 'Cache cleared successfully';
+
+  @override
+  String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
+
+  @override
   String get appSetting_about_titleText => 'About';
 
   @override
