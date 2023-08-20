@@ -1,0 +1,3 @@
+- Add Themed icon (#89)
+- Store the last filled number of target days (#88)
+- Show completed habits even when archived (#87)

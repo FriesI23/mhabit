@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.8.5+24
+
+- Add Themed icon (#89)
+- Store the last filled number of target days (#88)
+- Show completed habits even when archived (#87)
+
 ## 1.8.4+23
 
 - Fixed use the user-entered value for auto-complete instead of using dailyGoal (#85)
