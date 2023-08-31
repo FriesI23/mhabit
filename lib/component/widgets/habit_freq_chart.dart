@@ -72,38 +72,49 @@ class HabitFreqChart extends StatelessWidget {
   }
 
   List<BarChartGroupData> _buildBarGroupListWithCount() {
-    var result = <BarChartGroupData>[];
+    final result = <BarChartGroupData>[];
     data.forEachIndexed((i, e) {
-      var record = e.value, index = data.length - i - 1;
+      final record = e.value, index = data.length - i - 1;
 
-      var barRods = <BarChartRodData>[
-        BarChartRodData(
-          toY: record.overfulfil.toDouble(),
-          color: colorMap[HabitHeatMapColorMapDefine.overfulfil],
-          width: barWidth,
-          borderRadius: kHabitFreqChartTopRadius,
-        ),
-        BarChartRodData(
-          toY: record.complate.toDouble(),
-          color: colorMap[HabitHeatMapColorMapDefine.complate],
-          width: barWidth,
-          borderRadius: kHabitFreqChartTopRadius,
-        ),
-        BarChartRodData(
-          toY: record.autoComplate.toDouble(),
-          color: colorMap[HabitHeatMapColorMapDefine.autoComplate],
-          width: barWidth,
-          borderRadius: kHabitFreqChartTopRadius,
-        ),
-        BarChartRodData(
-          toY: record.partiallyCompleted.toDouble(),
-          color: colorMap[HabitHeatMapColorMapDefine.partiallyCompleted],
-          width: barWidth,
-          borderRadius: kHabitFreqChartTopRadius,
-        ),
+      final barRods = <BarChartRodData>[
+        if (record.overfulfil > 0)
+          BarChartRodData(
+            toY: record.overfulfil.toDouble(),
+            color: colorMap[HabitHeatMapColorMapDefine.overfulfil],
+            width: barWidth,
+            borderRadius: kHabitFreqChartTopRadius,
+          ),
+        if (record.complate > 0)
+          BarChartRodData(
+            toY: record.complate.toDouble(),
+            color: colorMap[HabitHeatMapColorMapDefine.complate],
+            width: barWidth,
+            borderRadius: kHabitFreqChartTopRadius,
+          ),
+        if (record.autoComplate > 0)
+          BarChartRodData(
+            toY: record.autoComplate.toDouble(),
+            color: colorMap[HabitHeatMapColorMapDefine.autoComplate],
+            width: barWidth,
+            borderRadius: kHabitFreqChartTopRadius,
+          ),
+        if (record.partiallyCompleted > 0)
+          BarChartRodData(
+            toY: record.partiallyCompleted.toDouble(),
+            color: colorMap[HabitHeatMapColorMapDefine.partiallyCompleted],
+            width: barWidth,
+            borderRadius: kHabitFreqChartTopRadius,
+          ),
       ];
 
-      var cell = BarChartGroupData(
+      final lastLength = math.max(0, barWidth * 4 - barWidth * barRods.length);
+      if (lastLength > 0) {
+        final lastRodData = BarChartRodData(toY: 0.0, width: lastLength / 2);
+        barRods.insert(0, lastRodData);
+        barRods.add(lastRodData);
+      }
+
+      final cell = BarChartGroupData(
         x: index,
         barRods: barRods,
         barsSpace: barSpaceBetween,
