@@ -150,7 +150,7 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
       HabitDate initDate, int offset, int limit, int firstDay) {
     var protoDate = getProtoDateByFreqChartCombine(
         initDate, HabitDetailFreqChartCombine.weekly, firstDay);
-    return protoDate.subtractDays(((offset + 1) * limit + 1) * 7);
+    return protoDate.subtractDays(((offset + 1) * limit - 1) * 7);
   }
 
   HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) {
