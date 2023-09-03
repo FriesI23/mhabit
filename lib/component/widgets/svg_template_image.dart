@@ -26,6 +26,7 @@ class SvgTemplateImage extends StatefulWidget {
   final String? label;
   final String svgTemplatePath;
   final Map<String, dynamic>? svgTemplateFormat;
+  final ColorFilter? colorFilter;
 
   const SvgTemplateImage({
     super.key,
@@ -33,6 +34,7 @@ class SvgTemplateImage extends StatefulWidget {
     this.size,
     required this.svgTemplatePath,
     this.svgTemplateFormat,
+    this.colorFilter,
   });
 
   @override
@@ -69,11 +71,15 @@ class _SvgTemplateImage extends State<SvgTemplateImage> {
       initialData: SvgTemplateImage.emptySVGString,
       future: loadImage(context),
       builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return const SizedBox();
+        }
         return SvgPicture.string(
           formatSVGTemplate(snapshot.data!),
           semanticsLabel: widget.label,
           width: widget.size?.width,
           height: widget.size?.height,
+          colorFilter: widget.colorFilter,
         );
       },
     );
