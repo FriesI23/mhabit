@@ -22,11 +22,13 @@ import '../../l10n/localizations.dart';
 import '_widget.dart';
 
 class AppAboutVersionTile extends StatefulWidget {
+  final bool isMonoLogo;
   final String logoPath;
   final String changeLogPath;
 
   const AppAboutVersionTile({
     super.key,
+    this.isMonoLogo = false,
     required this.logoPath,
     required this.changeLogPath,
   });
@@ -63,11 +65,16 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final colorFilter = widget.isMonoLogo
+        ? ColorFilter.mode(
+            Theme.of(context).colorScheme.primary, BlendMode.srcIn)
+        : null;
     return ListTile(
       leading: SvgTemplateImage(
         size: kAppAboutListTileLeadingSize,
         label: 'app-about-verion-tile-logo',
         svgTemplatePath: widget.logoPath,
+        colorFilter: colorFilter,
       ),
       title: Text(l10n?.appName ?? AppInfo().appName),
       subtitle: Text(

@@ -70,7 +70,8 @@ class _AppAboutView extends State<AppAboutView> {
       body: ListView(
         children: [
           const AppAboutVersionTile(
-            logoPath: "assets/logo/foreground.svg",
+            isMonoLogo: true,
+            logoPath: "assets/logo/icon-momo.svg",
             changeLogPath: "CHANGELOG.md",
           ),
           const AppAboutSourceCodeTile(),
