@@ -1,0 +1,2 @@
+- Change new app icon (#92)
+- Fixed chart bars may overlap problem (#94)

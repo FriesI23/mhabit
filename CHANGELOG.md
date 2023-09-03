@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.9.0+25
+
+- Change new app icon (#92)
+- Fixed chart bars may overlap problem (#94)
+
 ## 1.8.5+24
 
 - Add Themed icon (#89)
