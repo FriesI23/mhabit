@@ -40,7 +40,7 @@ class HabitsFilterViewModel extends ChangeNotifier
 
   int getHabitDisplayFilterAllowedNumber() {
     int result = 0;
-    if (habitsDisplayFilter.allowActivedHabits) result++;
+    if (habitsDisplayFilter.allowInProgressHabits) result++;
     if (habitsDisplayFilter.allowArchivedHabits) result++;
     if (habitsDisplayFilter.allowCompleteHabits) result++;
     return result;
