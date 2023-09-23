@@ -231,12 +231,12 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
               : const Text("Show Actived"),
           secondary: const Icon(HabitProgressIcons.progress_50percent),
-          enabled: habitsDisplayFilter.copyWith(allowActivedHabits: false) !=
+          enabled: habitsDisplayFilter.copyWith(allowInProgressHabits: false) !=
               HabitsDisplayFilter.allFalse,
-          value: habitsDisplayFilter.allowActivedHabits,
+          value: habitsDisplayFilter.allowInProgressHabits,
           onChanged: (value) {
             var newFilter =
-                habitsDisplayFilter.copyWith(allowActivedHabits: value);
+                habitsDisplayFilter.copyWith(allowInProgressHabits: value);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }

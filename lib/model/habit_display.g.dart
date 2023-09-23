@@ -7,7 +7,7 @@ part of 'habit_display.dart';
 // **************************************************************************
 
 abstract class _$HabitsDisplayFilterCWProxy {
-  HabitsDisplayFilter allowActivedHabits(bool allowActivedHabits);
+  HabitsDisplayFilter allowInProgressHabits(bool allowInProgressHabits);
 
   HabitsDisplayFilter allowArchivedHabits(bool allowArchivedHabits);
 
@@ -20,7 +20,7 @@ abstract class _$HabitsDisplayFilterCWProxy {
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitsDisplayFilter call({
-    bool? allowActivedHabits,
+    bool? allowInProgressHabits,
     bool? allowArchivedHabits,
     bool? allowCompleteHabits,
   });
@@ -33,8 +33,8 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   final HabitsDisplayFilter _value;
 
   @override
-  HabitsDisplayFilter allowActivedHabits(bool allowActivedHabits) =>
-      this(allowActivedHabits: allowActivedHabits);
+  HabitsDisplayFilter allowInProgressHabits(bool allowInProgressHabits) =>
+      this(allowInProgressHabits: allowInProgressHabits);
 
   @override
   HabitsDisplayFilter allowArchivedHabits(bool allowArchivedHabits) =>
@@ -53,16 +53,17 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitsDisplayFilter call({
-    Object? allowActivedHabits = const $CopyWithPlaceholder(),
+    Object? allowInProgressHabits = const $CopyWithPlaceholder(),
     Object? allowArchivedHabits = const $CopyWithPlaceholder(),
     Object? allowCompleteHabits = const $CopyWithPlaceholder(),
   }) {
     return HabitsDisplayFilter(
-      allowActivedHabits: allowActivedHabits == const $CopyWithPlaceholder() ||
-              allowActivedHabits == null
-          ? _value.allowActivedHabits
-          // ignore: cast_nullable_to_non_nullable
-          : allowActivedHabits as bool,
+      allowInProgressHabits:
+          allowInProgressHabits == const $CopyWithPlaceholder() ||
+                  allowInProgressHabits == null
+              ? _value.allowInProgressHabits
+              // ignore: cast_nullable_to_non_nullable
+              : allowInProgressHabits as bool,
       allowArchivedHabits:
           allowArchivedHabits == const $CopyWithPlaceholder() ||
                   allowArchivedHabits == null

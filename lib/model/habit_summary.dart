@@ -240,6 +240,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   bool get isActived => status == HabitStatus.activated;
 
+  bool get isInProgress => isActived && !isComplated;
+
   HabitDailyGoal get habitOkValue {
     switch (type) {
       case HabitType.unknown:

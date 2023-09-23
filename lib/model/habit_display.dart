@@ -80,9 +80,16 @@ enum HabitDisplaySortDirection implements EnumWithDBCodeABC {
 enum HabitDisplayEditMode { create, edit }
 
 enum HabitsDisplayFilterKey {
-  allowActivedHabits,
-  allowArchivedHabits,
-  allowCompleteHabits
+  // Compatibility with old version configuration options
+  allowInProgressHabits(key: "allowActivedHabits"),
+  allowArchivedHabits(),
+  allowCompleteHabits();
+
+  final String? _key;
+
+  const HabitsDisplayFilterKey({String? key}) : _key = key;
+
+  String get key => _key ?? name;
 }
 
 class HabitDisplayEditParams {
@@ -111,60 +118,60 @@ class HabitDisplayEditParams {
 
 @CopyWith()
 class HabitsDisplayFilter {
-  static const _defaultAllowActivedHabits = true;
+  static const _defaultAllowInProgressHabits = true;
   static const _defualtAllowArchivedHabits = false;
   static const _defaultAllowCompleteHabits = true;
 
-  final bool allowActivedHabits;
+  final bool allowInProgressHabits;
   final bool allowArchivedHabits;
   final bool allowCompleteHabits;
 
   static const allFalse = HabitsDisplayFilter._(
-    allowActivedHabits: false,
+    allowInProgressHabits: false,
     allowArchivedHabits: false,
     allowCompleteHabits: false,
   );
 
   const HabitsDisplayFilter({
-    required this.allowActivedHabits,
+    required this.allowInProgressHabits,
     required this.allowArchivedHabits,
     required this.allowCompleteHabits,
   });
 
   const HabitsDisplayFilter._({
-    required this.allowActivedHabits,
+    required this.allowInProgressHabits,
     required this.allowArchivedHabits,
     required this.allowCompleteHabits,
   });
 
   const HabitsDisplayFilter.withDefault()
-      : allowActivedHabits = _defaultAllowActivedHabits,
+      : allowInProgressHabits = _defaultAllowInProgressHabits,
         allowArchivedHabits = _defualtAllowArchivedHabits,
         allowCompleteHabits = _defaultAllowCompleteHabits;
 
   HabitsDisplayFilter.fromMap(Map<String, Object?> data)
-      : allowActivedHabits =
-            (data[HabitsDisplayFilterKey.allowActivedHabits.name] ??
-                _defaultAllowActivedHabits) as bool,
+      : allowInProgressHabits =
+            (data[HabitsDisplayFilterKey.allowInProgressHabits.key] ??
+                _defaultAllowInProgressHabits) as bool,
         allowArchivedHabits =
-            (data[HabitsDisplayFilterKey.allowArchivedHabits.name] ??
+            (data[HabitsDisplayFilterKey.allowArchivedHabits.key] ??
                 _defualtAllowArchivedHabits) as bool,
         allowCompleteHabits =
-            (data[HabitsDisplayFilterKey.allowCompleteHabits.name] ??
+            (data[HabitsDisplayFilterKey.allowCompleteHabits.key] ??
                 _defaultAllowCompleteHabits) as bool;
 
   Map<String, Object?> toMap() {
     return {
-      HabitsDisplayFilterKey.allowActivedHabits.name: allowActivedHabits,
-      HabitsDisplayFilterKey.allowArchivedHabits.name: allowArchivedHabits,
-      HabitsDisplayFilterKey.allowCompleteHabits.name: allowCompleteHabits,
+      HabitsDisplayFilterKey.allowInProgressHabits.key: allowInProgressHabits,
+      HabitsDisplayFilterKey.allowArchivedHabits.key: allowArchivedHabits,
+      HabitsDisplayFilterKey.allowCompleteHabits.key: allowCompleteHabits,
     };
   }
 
   bool Function(HabitSummaryData) getDisplayFilterFunction() {
     bool func(HabitSummaryData data) {
       var show = false;
-      show = show || (data.isActived && allowActivedHabits);
+      show = show || (data.isInProgress && allowInProgressHabits);
       show = show || (data.isArchived && allowArchivedHabits);
       show = show || (data.isComplated && allowCompleteHabits);
       return show;
@@ -176,12 +183,12 @@ class HabitsDisplayFilter {
   @override
   bool operator ==(Object other) {
     if (other is! HabitsDisplayFilter) return false;
-    return allowActivedHabits == other.allowActivedHabits &&
+    return allowInProgressHabits == other.allowInProgressHabits &&
         allowArchivedHabits == other.allowArchivedHabits &&
         allowCompleteHabits == other.allowCompleteHabits;
   }
 
   @override
   int get hashCode =>
-      hash3(allowActivedHabits, allowArchivedHabits, allowCompleteHabits);
+      hash3(allowInProgressHabits, allowArchivedHabits, allowCompleteHabits);
 }
