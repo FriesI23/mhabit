@@ -79,10 +79,12 @@ you can help me improve the documentation, e.g `README.md` file.
 
 ## Donate
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/d49cb87qgww)
+[!["Buy Me A Coffee"][buymeacoffee-badge]](https://www.buymeacoffee.com/d49cb87qgww)
+[![Alipay][alipay-badge]](docs/README/images/donate-alipay.jpg)
+[![WechatPay][wechat-badge]](docs/README/images/donate-wechatpay.png)
 
-![Alipay](docs/README/images/donate-alipay.jpg)
-![WechatPay](docs/README/images/donate-wechatpay.png)
+[![ETH][eth-badge]][eth-addr]
+[![BTC][btc-badge]][btc-addr]
 
 ## Translation
 
@@ -137,3 +139,10 @@ limitations under the License.
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
 [l10n-stat-pic]: docs/README/images/l10n-stat.svg
 [l10n-doc]: docs/add_new_locale_support.md
+[buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
+[alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
+[wechat-badge]: https://img.shields.io/badge/WeChat-07C160?style=for-the-badge&logo=wechat&logoColor=white
+[eth-badge]: https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white
+[eth-addr]: https://etherscan.io/address/0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F
+[btc-badge]: https://img.shields.io/badge/Bitcoin-000000?style=for-the-badge&logo=bitcoin&logoColor=white
+[btc-addr]: https://blockchair.com/bitcoin/address/bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49
