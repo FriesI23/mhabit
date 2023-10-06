@@ -1490,7 +1490,7 @@ abstract class L10n {
   /// Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay
   ///
   /// In en, this message translates to:
-  /// **'@paypal,@buyMeACoffee,@alipay,@wechatPay'**
+  /// **'@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll'**
   String get appAbout_donateTile_ways;
 
   /// No description provided for @donateWay_paypal.
@@ -1516,6 +1516,48 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Wechat Pay'**
   String get donateWay_wechatPay;
+
+  /// No description provided for @donateWay_cryptoCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Cryto Currencies'**
+  String get donateWay_cryptoCurrency;
+
+  /// No description provided for @donateWay_cryptoCurrency_BTC.
+  ///
+  /// In en, this message translates to:
+  /// **'BTC'**
+  String get donateWay_cryptoCurrency_BTC;
+
+  /// No description provided for @donateWay_cryptoCurrency_ETH.
+  ///
+  /// In en, this message translates to:
+  /// **'ETH'**
+  String get donateWay_cryptoCurrency_ETH;
+
+  /// No description provided for @donateWay_cryptoCurrency_BNB.
+  ///
+  /// In en, this message translates to:
+  /// **'BNB'**
+  String get donateWay_cryptoCurrency_BNB;
+
+  /// No description provided for @donateWay_cryptoCurrency_AVAX.
+  ///
+  /// In en, this message translates to:
+  /// **'AVAX'**
+  String get donateWay_cryptoCurrency_AVAX;
+
+  /// No description provided for @donateWay_cryptoCurrency_FTM.
+  ///
+  /// In en, this message translates to:
+  /// **'FTM'**
+  String get donateWay_cryptoCurrency_FTM;
+
+  /// No description provided for @donateWay_firstQRGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Alipay & Wechat Pay'**
+  String get donateWay_firstQRGroup;
 
   /// No description provided for @appReminder_dailyReminder_title.
   ///

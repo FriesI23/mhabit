@@ -807,19 +807,40 @@ class L10nZh extends L10n {
   String get appAbout_donateTile_subTitleText => '我是一名个人开发者，如果你觉得这个应用好用，请帮我买一杯☕';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay';
+  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
 
   @override
-  String get donateWay_buyMeACoffee => 'Buy me a coffee';
+  String get donateWay_buyMeACoffee => '请我喝一杯咖啡';
 
   @override
   String get donateWay_alipay => '支付宝';
 
   @override
   String get donateWay_wechatPay => '微信';
+
+  @override
+  String get donateWay_cryptoCurrency => '加密货币';
+
+  @override
+  String get donateWay_cryptoCurrency_BTC => '比特币';
+
+  @override
+  String get donateWay_cryptoCurrency_ETH => '以太坊';
+
+  @override
+  String get donateWay_cryptoCurrency_BNB => '币安币';
+
+  @override
+  String get donateWay_cryptoCurrency_AVAX => 'AVAX';
+
+  @override
+  String get donateWay_cryptoCurrency_FTM => 'FTM';
+
+  @override
+  String get donateWay_firstQRGroup => '支付宝与微信';
 
   @override
   String get appReminder_dailyReminder_title => '🏝 你今天坚持了自己的习惯吗？';

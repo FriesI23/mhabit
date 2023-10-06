@@ -812,7 +812,7 @@ class L10nEn extends L10n {
   String get appAbout_donateTile_subTitleText => 'I\'m a personal developer. If you like this app, please buy me a ☕.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay';
+  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -825,6 +825,27 @@ class L10nEn extends L10n {
 
   @override
   String get donateWay_wechatPay => 'Wechat Pay';
+
+  @override
+  String get donateWay_cryptoCurrency => 'Cryto Currencies';
+
+  @override
+  String get donateWay_cryptoCurrency_BTC => 'BTC';
+
+  @override
+  String get donateWay_cryptoCurrency_ETH => 'ETH';
+
+  @override
+  String get donateWay_cryptoCurrency_BNB => 'BNB';
+
+  @override
+  String get donateWay_cryptoCurrency_AVAX => 'AVAX';
+
+  @override
+  String get donateWay_cryptoCurrency_FTM => 'FTM';
+
+  @override
+  String get donateWay_firstQRGroup => 'Alipay & Wechat Pay';
 
   @override
   String get appReminder_dailyReminder_title => '🏝 Did you stick to your habits today?';

@@ -9,6 +9,13 @@
     "appSetting_clearCacheDialog_confirmText",
     "appSetting_clearCache_snackBar_partSuccText",
     "appSetting_clearCache_snackBar_succText",
-    "appSetting_clearCache_snackBar_failText"
+    "appSetting_clearCache_snackBar_failText",
+    "donateWay_cryptoCurrency",
+    "donateWay_cryptoCurrency_BTC",
+    "donateWay_cryptoCurrency_ETH",
+    "donateWay_cryptoCurrency_BNB",
+    "donateWay_cryptoCurrency_AVAX",
+    "donateWay_cryptoCurrency_FTM",
+    "donateWay_firstQRGroup"
   ]
 }

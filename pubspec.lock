@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  cryptofont:
+    dependency: "direct main"
+    description:
+      name: cryptofont
+      sha256: a7a6264e4148f5e6aa8c5953c8b15839d831f5205a9138e0aa3e8902d2af6d77
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2+1"
   csslib:
     dependency: transitive
     description:

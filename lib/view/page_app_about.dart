@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../common/consts.dart';
 import './common/_dialog.dart';
 import '../component/widget.dart';
 import '../model/about_info.dart';
@@ -31,10 +35,16 @@ Future<void> naviToAppAboutPage({required BuildContext context}) async {
 class PageAppAbout extends StatelessWidget {
   const PageAppAbout({super.key});
 
+  Future<AboutInfo> loadData() async {
+    String rawJson = await rootBundle.loadString(aboutInfoFilePath);
+    Map<String, Object?> data = jsonDecode(rawJson);
+    return AboutInfo.fromJson(data);
+  }
+
   @override
   Widget build(BuildContext context) => FutureProvider<AboutInfo>(
-        create: (_) async => AboutInfo()..loadData(),
-        initialData: AboutInfo(),
+        create: (_) async => loadData(),
+        initialData: const AboutInfo(),
         child: const AppAboutView(),
       );
 }
@@ -53,6 +63,11 @@ class _AppAboutView extends State<AppAboutView> {
       context,
       donateBuyMeACoffeeToken: aboutInfo.donateBuyMeACoffeeToken,
       donatePaypalToken: aboutInfo.donatePaypalToken,
+      btcAddress: aboutInfo.donateCryptoBTCAddr,
+      ethAddress: aboutInfo.donateCryptoETHAddr,
+      bnbAddress: aboutInfo.donateCryptoBNBAddr,
+      avaxAddress: aboutInfo.donateCryptoAVAXAddr,
+      ftmAddress: aboutInfo.donateCryptoFTMAddr,
     );
   }
 

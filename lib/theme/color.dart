@@ -15,6 +15,7 @@
 import '../common/enums.dart';
 
 export '_colors/colors.dart';
+export '_colors/crypto_colors.dart';
 export '_colors/custom_color.g.dart';
 export '_colors/userdefined_color.dart';
 
