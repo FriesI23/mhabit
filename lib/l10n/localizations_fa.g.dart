@@ -827,6 +827,27 @@ class L10nFa extends L10n {
   String get donateWay_wechatPay => 'پرداخت ویچت';
 
   @override
+  String get donateWay_cryptoCurrency => 'Cryto Currencies';
+
+  @override
+  String get donateWay_cryptoCurrency_BTC => 'BTC';
+
+  @override
+  String get donateWay_cryptoCurrency_ETH => 'ETH';
+
+  @override
+  String get donateWay_cryptoCurrency_BNB => 'BNB';
+
+  @override
+  String get donateWay_cryptoCurrency_AVAX => 'AVAX';
+
+  @override
+  String get donateWay_cryptoCurrency_FTM => 'FTM';
+
+  @override
+  String get donateWay_firstQRGroup => 'Alipay & Wechat Pay';
+
+  @override
   String get appReminder_dailyReminder_title => '🏝 آیا امروز به عادت‌های خود پایبند بوده‌اید؟';
 
   @override

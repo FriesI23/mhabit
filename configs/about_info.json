@@ -3,5 +3,10 @@
   "issueTrackerUrl": "https://github.com/FriesI23/mhabit/issues",
   "contactEmail": "FriesI23@outlook.com",
   "donateBuyMeACoffeeToken": "d49cb87qgww",
-  "donatePaypalToken": ""
+  "donatePaypalToken": "",
+  "donateCryptoBTCAddr": "bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49",
+  "donateCryptoETHAddr": "0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F",
+  "donateCryptoBNBAddr": "bnb1v2fnlytjwch5s2mrufjxzqvfq8kmpddpqylrpc",
+  "donateCryptoAVAXAddr": "0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F",
+  "donateCryptoFTMAddr": "0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F"
 }

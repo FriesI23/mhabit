@@ -76,6 +76,7 @@ dependencies:
   flutter_markdown: ^0.6.14
   url_launcher: ^6.1.10
   flutter_donation_buttons: ^0.2.7
+  cryptofont: ^1.0.2+1
 
 dev_dependencies:
   flutter_test:

@@ -67,7 +67,8 @@ enum DonateWay {
   paypal,
   buyMeACoffee,
   alipay,
-  wechatPay;
+  wechatPay,
+  cryptoCurrencyAll;
 
   static final _name2EnumMap = Map<String, DonateWay>.fromEntries(
       DonateWay.values.map((e) => MapEntry(e.name, e)));

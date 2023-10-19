@@ -12,67 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
-
-import '../common/consts.dart';
-
 enum _AboutInfoKey {
   sourceCodeUrl,
   issueTrackerUrl,
   contactEmail,
   donateBuyMeACoffeeToken,
   donatePaypalToken,
+  donateCryptoBTCAddr,
+  donateCryptoETHAddr,
+  donateCryptoBNBAddr,
+  donateCryptoAVAXAddr,
+  donateCryptoFTMAddr
 }
 
 class AboutInfo {
-  String _sourceCodeUrl;
-  String _issueTrackerUrl;
-  String _contactEmail;
-  String _donateBuyMeACoffeeToken;
-  String _donatePaypalToken;
+  final String sourceCodeUrl;
+  final String issueTrackerUrl;
+  final String contactEmail;
+  final String donateBuyMeACoffeeToken;
+  final String donatePaypalToken;
+  final String donateCryptoBTCAddr;
+  final String donateCryptoETHAddr;
+  final String donateCryptoBNBAddr;
+  final String donateCryptoAVAXAddr;
+  final String donateCryptoFTMAddr;
 
-  AboutInfo({
-    String? sourceCodeUrl,
-    String? issueTrackerUrl,
-    String? contactEmail,
-    String? donateBuyMeACoffeeToken,
-    String? donatePaypalToken,
-  })  : _sourceCodeUrl = sourceCodeUrl ?? '',
-        _issueTrackerUrl = issueTrackerUrl ?? '',
-        _contactEmail = contactEmail ?? '',
-        _donateBuyMeACoffeeToken = donateBuyMeACoffeeToken ?? '',
-        _donatePaypalToken = donatePaypalToken ?? '';
+  const AboutInfo({
+    this.sourceCodeUrl = '',
+    this.issueTrackerUrl = '',
+    this.contactEmail = '',
+    this.donateBuyMeACoffeeToken = '',
+    this.donatePaypalToken = '',
+    this.donateCryptoBTCAddr = '',
+    this.donateCryptoETHAddr = '',
+    this.donateCryptoBNBAddr = '',
+    this.donateCryptoAVAXAddr = '',
+    this.donateCryptoFTMAddr = '',
+  });
 
-  String get sourceCodeUrl => _sourceCodeUrl;
-
-  String get issueTrackerUrl => _issueTrackerUrl;
-
-  String get contactEmail => _contactEmail;
-
-  String get donateBuyMeACoffeeToken => _donateBuyMeACoffeeToken;
-
-  String get donatePaypalToken => _donatePaypalToken;
-
-  Future<void> loadData() async {
-    String rawJson = await rootBundle.loadString(aboutInfoFilePath);
-    Map<String, Object?> data = jsonDecode(rawJson);
-    if (data.containsKey(_AboutInfoKey.sourceCodeUrl.name)) {
-      _sourceCodeUrl = data[_AboutInfoKey.sourceCodeUrl.name] as String;
-    }
-    if (data.containsKey(_AboutInfoKey.issueTrackerUrl.name)) {
-      _issueTrackerUrl = data[_AboutInfoKey.issueTrackerUrl.name] as String;
-    }
-    if (data.containsKey(_AboutInfoKey.contactEmail.name)) {
-      _contactEmail = data[_AboutInfoKey.contactEmail.name] as String;
-    }
-    if (data.containsKey(_AboutInfoKey.donateBuyMeACoffeeToken.name)) {
-      _donateBuyMeACoffeeToken =
-          data[_AboutInfoKey.donateBuyMeACoffeeToken.name] as String;
-    }
-    if (data.containsKey(_AboutInfoKey.donatePaypalToken.name)) {
-      _donatePaypalToken = data[_AboutInfoKey.donatePaypalToken.name] as String;
-    }
+  factory AboutInfo.fromJson(Map<String, dynamic> json) {
+    return AboutInfo(
+      sourceCodeUrl: json[_AboutInfoKey.sourceCodeUrl.name] ?? '',
+      issueTrackerUrl: json[_AboutInfoKey.issueTrackerUrl.name] ?? '',
+      contactEmail: json[_AboutInfoKey.contactEmail.name] ?? '',
+      donateBuyMeACoffeeToken:
+          json[_AboutInfoKey.donateBuyMeACoffeeToken.name] ?? '',
+      donatePaypalToken: json[_AboutInfoKey.donatePaypalToken.name] ?? '',
+      donateCryptoBTCAddr: json[_AboutInfoKey.donateCryptoBTCAddr.name] ?? '',
+      donateCryptoETHAddr: json[_AboutInfoKey.donateCryptoETHAddr.name] ?? '',
+      donateCryptoBNBAddr: json[_AboutInfoKey.donateCryptoBNBAddr.name] ?? '',
+      donateCryptoAVAXAddr: json[_AboutInfoKey.donateCryptoAVAXAddr.name] ?? '',
+      donateCryptoFTMAddr: json[_AboutInfoKey.donateCryptoFTMAddr.name] ?? '',
+    );
   }
 }
