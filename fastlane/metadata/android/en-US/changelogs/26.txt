@@ -1,0 +1,2 @@
+- Add donate button for crypto currency (#102)
+- Fixed filtering to correctly hide completed habits (#104)

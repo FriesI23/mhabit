@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.9.1+26
+
+- Add donate button for crypto currency (#102)
+- Fixed filtering to correctly hide completed habits (#104)
+
 ## 1.9.0+25
 
 - Change new app icon (#92)
