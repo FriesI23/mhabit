@@ -127,7 +127,7 @@ class _HabitDetailFreqChartSubTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    // TODO: fl_chart not support rtl layout direction yet, keep ltr temporarily
+    // NOTE: fl_chart isn't support rtl layout direction yet
     // more info see: https://github.com/imaNNeo/fl_chart/issues/129
     return Directionality(
       textDirection: TextDirection.ltr,

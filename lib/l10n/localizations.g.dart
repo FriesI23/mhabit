@@ -1559,6 +1559,12 @@ abstract class L10n {
   /// **'Alipay & Wechat Pay'**
   String get donateWay_firstQRGroup;
 
+  /// No description provided for @appAbout_donateDialog_copiedCrypto_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied {name}\'s Address'**
+  String appAbout_donateDialog_copiedCrypto_msg(String name);
+
   /// No description provided for @appReminder_dailyReminder_title.
   ///
   /// In en, this message translates to:

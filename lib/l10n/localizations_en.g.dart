@@ -848,6 +848,11 @@ class L10nEn extends L10n {
   String get donateWay_firstQRGroup => 'Alipay & Wechat Pay';
 
   @override
+  String appAbout_donateDialog_copiedCrypto_msg(String name) {
+    return 'Copied $name\'s Address';
+  }
+
+  @override
   String get appReminder_dailyReminder_title => '🏝 Did you stick to your habits today?';
 
   @override

@@ -45,11 +45,12 @@ class BuildWidgetHelper {
     BuildContext context, {
     required Widget content,
     String? label,
+    Duration? duration,
     VoidCallback? onPressed,
   }) {
     return SnackBar(
       content: content,
-      duration: const Duration(milliseconds: 2000),
+      duration: duration ?? const Duration(milliseconds: 2000),
       action: SnackBarAction(
         label: label ?? L10n.of(context)?.snackbar_dissmessText ?? 'dismiss',
         onPressed:

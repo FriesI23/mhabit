@@ -16,6 +16,7 @@
     "donateWay_cryptoCurrency_BNB",
     "donateWay_cryptoCurrency_AVAX",
     "donateWay_cryptoCurrency_FTM",
-    "donateWay_firstQRGroup"
+    "donateWay_firstQRGroup",
+    "appAbout_donateDialog_copiedCrypto_msg"
   ]
 }

@@ -15,6 +15,7 @@
 import 'package:cryptofont/cryptofont.dart';
 import 'package:flutter/material.dart';
 
+import '../../extension/color_extensions.dart';
 import '../../theme/color.dart';
 
 enum CryptoDonateButtonType {
@@ -28,8 +29,8 @@ enum CryptoDonateButtonType {
 class CryptoDonateButton extends StatelessWidget {
   final CryptoDonateButtonType cryptoType;
   final String address;
-  final void Function(CryptoDonateButtonType t)? onPressed;
-  final void Function(CryptoDonateButtonType t)? onLongPressed;
+  final void Function()? onPressed;
+  final void Function()? onLongPressed;
 
   const CryptoDonateButton({
     super.key,
@@ -55,41 +56,37 @@ class CryptoDonateButton extends StatelessWidget {
   }
 
   ButtonStyle? getButtonStyle() {
+    ButtonStyle buildStyle(MaterialStatePropertyAll<Color> color) =>
+        ButtonStyle(
+          backgroundColor: color,
+          iconColor: const MaterialStatePropertyAll(Colors.white),
+          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) =>
+                states.contains(MaterialState.pressed)
+                    ? color.value.darken(0.1)
+                    : null,
+          ),
+        );
+
     switch (cryptoType) {
       case CryptoDonateButtonType.btc:
-        return const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(colorBTC),
-          iconColor: MaterialStatePropertyAll(Colors.white),
-        );
+        return buildStyle(const MaterialStatePropertyAll(colorBTC));
       case CryptoDonateButtonType.eth:
-        return const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(colorETH),
-          iconColor: MaterialStatePropertyAll(Colors.white),
-        );
+        return buildStyle(const MaterialStatePropertyAll(colorETH));
       case CryptoDonateButtonType.bnb:
-        return const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(colorBNB),
-          iconColor: MaterialStatePropertyAll(Colors.white),
-        );
+        return buildStyle(const MaterialStatePropertyAll(colorBNB));
       case CryptoDonateButtonType.avax:
-        return const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(colorAVAX),
-          iconColor: MaterialStatePropertyAll(Colors.white),
-        );
+        return buildStyle(const MaterialStatePropertyAll(colorAVAX));
       case CryptoDonateButtonType.ftm:
-        return const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(colorFTM),
-          iconColor: MaterialStatePropertyAll(Colors.white),
-        );
+        return buildStyle(const MaterialStatePropertyAll(colorFTM));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed != null ? () => onPressed!(cryptoType) : null,
-      onLongPress:
-          onLongPressed != null ? () => onLongPressed!(cryptoType) : null,
+      onPressed: onPressed != null ? () => onPressed!() : null,
+      onLongPress: onLongPressed != null ? () => onLongPressed!() : null,
       style: address.isNotEmpty ? getButtonStyle() : null,
       child: Icon(buttonIcon),
     );

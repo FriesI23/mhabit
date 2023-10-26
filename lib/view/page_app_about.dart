@@ -19,9 +19,9 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../common/consts.dart';
-import './common/_dialog.dart';
 import '../component/widget.dart';
 import '../model/about_info.dart';
+import 'common/_dialog.dart';
 import 'for_app_about/_widget.dart';
 
 Future<void> naviToAppAboutPage({required BuildContext context}) async {
@@ -59,7 +59,7 @@ class AppAboutView extends StatefulWidget {
 class _AppAboutView extends State<AppAboutView> {
   void _onDonateTilePressed() async {
     final aboutInfo = context.read<AboutInfo>();
-    await showDonateDialog(
+    showDonateDialog(
       context,
       donateBuyMeACoffeeToken: aboutInfo.donateBuyMeACoffeeToken,
       donatePaypalToken: aboutInfo.donatePaypalToken,

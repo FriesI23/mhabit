@@ -299,6 +299,8 @@
   "donateWay_cryptoCurrency_FTM": "FTM",
   "donateWay_firstQRGroup": "支付宝与微信",
 
+  "appAbout_donateDialog_copiedCrypto_msg": "已复制{name}地址",
+
   "appReminder_dailyReminder_title": "🏝 你今天坚持了自己的习惯吗？",
   "appReminder_dailyReminder_body": "点击进入应用并按时打卡。",
 
