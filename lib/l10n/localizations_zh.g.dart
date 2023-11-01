@@ -843,6 +843,11 @@ class L10nZh extends L10n {
   String get donateWay_firstQRGroup => '支付宝与微信';
 
   @override
+  String appAbout_donateDialog_copiedCrypto_msg(String name) {
+    return '已复制$name地址';
+  }
+
+  @override
   String get appReminder_dailyReminder_title => '🏝 你今天坚持了自己的习惯吗？';
 
   @override

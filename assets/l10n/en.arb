@@ -563,6 +563,16 @@
   "donateWay_cryptoCurrency_FTM": "FTM",
   "donateWay_firstQRGroup": "Alipay & Wechat Pay",
 
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "appAbout_donateDialog_copiedCrypto_msg": "Copied {name}'s Address",
+
   "appReminder_dailyReminder_title": "🏝 Did you stick to your habits today?",
   "appReminder_dailyReminder_body": "click to enter app and punch in on time.",
 
