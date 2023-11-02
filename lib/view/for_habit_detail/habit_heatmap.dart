@@ -82,6 +82,7 @@ class HabitHeatmap extends StatelessWidget {
       firstDay: firstday,
       startDate: startDate,
       endedDate: endedDate,
+      withUTC: true,
       colorMap: colorMap,
       valueColorMap: valueColorMap,
       selectedMap: selectedMap,

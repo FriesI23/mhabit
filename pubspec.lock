@@ -1010,10 +1010,10 @@ packages:
     dependency: "direct main"
     description:
       name: simple_heatmap_calendar
-      sha256: "92ba0e111e519eceb2f6aea5eb77fb1a45df10ac376a3b5083b44f7061f952c6"
+      sha256: "66fc3834424997ba5ecbfaeb0934791cae03520117d2cc9bab8e079a3b714ff2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.2"
+    version: "0.2.0"
   simple_icons:
     dependency: transitive
     description:

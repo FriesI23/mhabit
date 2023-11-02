@@ -197,6 +197,7 @@ class _HabitEditReplacementRecordCalendarDialog
       controller: _heatmapScrollController,
       startDate: viewmodel.habitStartDate,
       endedDate: HabitDate.now(),
+      withUTC: true,
       colorMap: buildHeatmapColorMap(context),
       valueColorMap: buildHeatmapValueColorMap(context),
       selectedMap: viewmodel.heatmapDateToColorMap,
