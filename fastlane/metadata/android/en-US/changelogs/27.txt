@@ -1,0 +1,2 @@
+- Optimize donate dialog (#113)
+- Fixed month name alignment (#114)

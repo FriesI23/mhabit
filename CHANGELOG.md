@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.9.2+27
+
+- Optimize donate dialog (#113)
+- Fixed month name alignment (#114)
+
 ## 1.9.1+26
 
 - Add donate button for crypto currency (#102)
