@@ -127,7 +127,8 @@ mixin _HabitSummaryDataRecordsMixin {
           HabitReocrdAddRepeatedBehaviour.failed}) {
     var tmpList = <HabitSummaryRecord>[];
     for (final r in records) {
-      if (_recordMap.containsKey(r) || _recordDateCacheMap.containsKey(r)) {
+      if (_recordMap.containsKey(r.uuid) ||
+          _recordDateCacheMap.containsKey(r.date)) {
         if (behaviour == HabitReocrdAddRepeatedBehaviour.failed) {
           return false;
         } else if (behaviour == HabitReocrdAddRepeatedBehaviour.skipped) {

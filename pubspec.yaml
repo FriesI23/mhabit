@@ -50,7 +50,7 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   tuple: ^2.0.1
   quiver: ^3.2.1
-  uuid: ^3.0.7
+  uuid: ^4.1.0
   linked_scroll_controller: ^0.2.0
   copy_with_extension: ^5.0.0
   sliver_tools: ^0.2.9
@@ -63,19 +63,19 @@ dependencies:
   named_html_color: ^0.0.3+1
   flutter_svg: ^2.0.4
   json_annotation: ^4.8.0
-  material_design_icons_flutter: ^6.0.7096
-  share_plus: ^6.3.1
+  material_design_icons_flutter: ^6.0.7296
+  share_plus: ^6.3.4
   path_provider: ^2.0.14
   file_picker: ^5.2.6
-  device_info_plus: ^8.1.0
-  flutter_local_notifications: ^13.0.0
-  package_info_plus: ^3.0.3
+  device_info_plus: ^8.2.2
+  flutter_local_notifications: ^16.1.0
+  package_info_plus: ^3.1.2
   timezone: ^0.9.1
   flutter_timezone: ^1.0.4
   crypto: ^3.0.2
   flutter_markdown: ^0.6.14
   url_launcher: ^6.1.10
-  flutter_donation_buttons: ^0.2.7
+  flutter_donation_buttons: ^0.4.8
   cryptofont: ^1.0.2+1
 
 dev_dependencies:

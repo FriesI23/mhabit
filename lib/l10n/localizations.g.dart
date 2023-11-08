@@ -1223,12 +1223,6 @@ abstract class L10n {
   /// **'Daily reminder'**
   String get appSetting_dailyReminder_titleText;
 
-  /// No description provided for @appSetting_dailyReminder_hintTile_titleText.
-  ///
-  /// In en, this message translates to:
-  /// **'After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.'**
-  String get appSetting_dailyReminder_hintTile_titleText;
-
   /// No description provided for @appSetting_backupAndRestoreSubgroupText.
   ///
   /// In en, this message translates to:

@@ -434,20 +434,6 @@ class _AppSettingView extends State<AppSettingView>
           ),
         ),
       );
-      if (Platform.isAndroid &&
-          AppInfo().androidDeviceInfo!.version.sdkInt >= 33) {
-        yield L10nBuilder(
-          builder: (context, l10n) {
-            return ListTile(
-              textColor: Theme.of(context).colorScheme.outline,
-              contentPadding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 14.0),
-              subtitle: l10n != null
-                  ? Text(l10n.appSetting_dailyReminder_hintTile_titleText)
-                  : null,
-            );
-          },
-        );
-      }
     }
 
     Iterable<Widget> buildBackupAndRestoreSubGroup(BuildContext context) sync* {

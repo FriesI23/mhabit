@@ -237,7 +237,6 @@
 
   "appSetting_reminderSubgroupText": "提醒",
   "appSetting_dailyReminder_titleText": "每日提醒",
-  "appSetting_dailyReminder_hintTile_titleText": "Android 13 之后，必须授予 Alarms & Reminders 权限才能使每日和习惯定时提醒正常工作。",
 
   "appSetting_backupAndRestoreSubgroupText": "备份和恢复",
   "appSetting_export_titleText": "导出",
