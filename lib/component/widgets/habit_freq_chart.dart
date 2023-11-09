@@ -285,8 +285,8 @@ class HabitFreqChart extends StatelessWidget {
             BarChartData(
               alignment: BarChartAlignment.spaceAround,
               titlesData: FlTitlesData(
-                topTitles: AxisTitles(),
-                leftTitles: AxisTitles(),
+                topTitles: const AxisTitles(),
+                leftTitles: const AxisTitles(),
                 rightTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: !showTipsTop,

@@ -400,7 +400,7 @@ class HabitDetailViewModel extends ChangeNotifier
 
   @override
   set scoreChartCombine(HabitDetailScoreChartCombine newCombine) {
-    if (newCombine != _freqChartCombine) {
+    if (newCombine != _scoreChartCombine) {
       super.scoreChartCombine = newCombine;
       notifyListeners();
     }

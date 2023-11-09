@@ -26,9 +26,9 @@ class MagnetScrollPhysics extends ScrollPhysics {
 
   /// Creates a new magnet scroll physics instance.
   const MagnetScrollPhysics({
-    ScrollPhysics? parent,
+    super.parent,
     required this.itemSize,
-  }) : super(parent: parent);
+  });
 
   @override
   MagnetScrollPhysics applyTo(ScrollPhysics? ancestor) {

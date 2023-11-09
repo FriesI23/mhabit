@@ -24,7 +24,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tuple/tuple.dart';
 
-import '../common/app_info.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/logging.dart';

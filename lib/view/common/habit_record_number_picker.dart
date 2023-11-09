@@ -431,8 +431,7 @@ class _NumberStepButton extends StatefulWidget {
   final Widget child;
 
   const _NumberStepButton(
-      {Key? key,
-      this.onUpdate,
+      {this.onUpdate,
       this.minDelay = const Duration(milliseconds: 60),
       this.initialDelay = const Duration(milliseconds: 1000),
       // this.delaySteps = 2,
@@ -440,8 +439,7 @@ class _NumberStepButton extends StatefulWidget {
       // this.shape,
       required this.child})
       : assert(minDelay <= initialDelay,
-            "The minimum delay cannot be larger than the initial delay"),
-        super(key: key);
+            "The minimum delay cannot be larger than the initial delay");
 
   @override
   _NumberStepButtonState createState() => _NumberStepButtonState();

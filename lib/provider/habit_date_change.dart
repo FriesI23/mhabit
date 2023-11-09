@@ -68,10 +68,10 @@ class HabitDateChangeProvider
   final HabitDateChangeNotifier dateTimeNotifier;
 
   const HabitDateChangeProvider({
-    Key? key,
+    super.key,
     required this.dateTimeNotifier,
-    required Widget child,
-  }) : super(key: key, notifier: dateTimeNotifier, child: child);
+    required super.child,
+  }) : super(notifier: dateTimeNotifier);
 
   static HabitDateChangeNotifier? maybeOf(BuildContext context) {
     return context

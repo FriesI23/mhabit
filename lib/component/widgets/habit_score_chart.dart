@@ -93,7 +93,7 @@ class HabitScoreChart extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return TouchedSpotIndicatorData(
-      FlLine(color: Colors.transparent),
+      const FlLine(color: Colors.transparent),
       FlDotData(
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
@@ -268,7 +268,7 @@ class HabitScoreChart extends StatelessWidget {
         limit != null ? maxX * math.max((1 - limit! / data.length), 0) : 0;
 
     var titlesData = FlTitlesData(
-      topTitles: AxisTitles(),
+      topTitles: const AxisTitles(),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -278,7 +278,7 @@ class HabitScoreChart extends StatelessWidget {
           interval: 20,
         ),
       ),
-      rightTitles: AxisTitles(),
+      rightTitles: const AxisTitles(),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -331,7 +331,6 @@ class HabitScoreChart extends StatelessWidget {
           scrollRefreshInterval: 0.0,
           builder: (minX, maxX) {
             return LineChart(
-              swapAnimationDuration: Duration.zero,
               LineChartData(
                 maxX: maxX,
                 minX: minX,
@@ -340,10 +339,11 @@ class HabitScoreChart extends StatelessWidget {
                 titlesData: titlesData,
                 lineBarsData: [_buildLineChartBarData(context)],
                 lineTouchData: lineTouchData,
-                clipData: FlClipData.all(),
+                clipData: const FlClipData.all(),
                 borderData: FlBorderData(show: false),
                 gridData: gridData,
               ),
+              duration: Duration.zero,
             );
           },
         ),

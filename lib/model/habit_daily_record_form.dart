@@ -91,11 +91,10 @@ class NegativeHabitDailyRecordForm extends HabitDailyRecordForm {
   final num targetExtraValue;
 
   const NegativeHabitDailyRecordForm(
-    num value,
-    num targetMinValue,
+    super.value,
+    super.targetMinValue,
     num targetMaxValue,
-  )   : targetExtraValue = targetMaxValue,
-        super(value, targetMinValue);
+  ) : targetExtraValue = targetMaxValue;
 
   @override
   HabitType get habitType => HabitType.negative;
