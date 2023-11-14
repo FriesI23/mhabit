@@ -40,12 +40,12 @@ class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
     }
   }
 
-  ScrollPhysics? getPhysics(double itemSize) {
+  ScrollPhysics? getPhysics(double itemSize, ScrollMetrics metrics) {
     switch (scrollBehavior) {
       case HabitsRecordScrollBehavior.page:
         return const PageScrollPhysics();
       case HabitsRecordScrollBehavior.scrollable:
-        return MagnetScrollPhysics(itemSize: itemSize);
+        return MagnetScrollPhysics(itemSize: itemSize, metrics: metrics);
       default:
         return null;
     }

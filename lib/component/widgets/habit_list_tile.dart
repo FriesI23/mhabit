@@ -70,8 +70,19 @@ class HabitListTile extends StatelessWidget {
   static double calcLimitItemSize(double maxHeight, int count) =>
       maxHeight * count;
 
-  ScrollPhysics _defaultScrollPhysicsBuilder(double itemSize, double length) {
-    return MagnetScrollPhysics(itemSize: itemSize);
+  ScrollPhysics _defaultScrollPhysicsBuilder(
+      BuildContext context, itemSize, double length) {
+    return MagnetScrollPhysics(
+      itemSize: itemSize,
+      metrics: FixedScrollMetrics(
+        minScrollExtent: null,
+        maxScrollExtent: null,
+        pixels: null,
+        viewportDimension: null,
+        axisDirection: AxisDirection.down,
+        devicePixelRatio: View.of(context).devicePixelRatio,
+      ),
+    );
   }
 
   EdgeInsets get _padding => padding ?? kDefaultHabitListTilePadding;
@@ -89,7 +100,9 @@ class HabitListTile extends StatelessWidget {
     Widget rightBuilder(BuildContext context, int? itemCount,
         double limitItemSize, double height) {
       final physics = canScroll
-          ? (scrollPhysicsBuilder ?? _defaultScrollPhysicsBuilder)
+          ? (scrollPhysicsBuilder ??
+                  (size, length) =>
+                      _defaultScrollPhysicsBuilder(context, size, length))
               .call(height, limitItemSize)
           : const NeverScrollableScrollPhysics();
       return AnimatedContainer(
