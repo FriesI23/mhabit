@@ -751,6 +751,18 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     });
   }
 
+  ScrollPhysics? _buildScrollPhysics(double itemSize, double length) =>
+      context.read<HabitsRecordScrollBehaviorViewModel>().getPhysics(
+          itemSize,
+          FixedScrollMetrics(
+            minScrollExtent: null,
+            maxScrollExtent: null,
+            pixels: null,
+            viewportDimension: null,
+            axisDirection: AxisDirection.down,
+            devicePixelRatio: View.of(context).devicePixelRatio,
+          ));
+
   Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) {
     return Selector<HabitSummaryViewModel,
         Tuple4<bool, UniqueKey, bool, HabitDate>>(
@@ -850,9 +862,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 height: compactvm.appCalendarBarHeight,
                 itemPadding: compactvm.appCalendarBarItemPadding,
                 onLeftBtnPressed: _onAppbarLeftButtonPressed,
-                scrollPhysicsBuilder: (itemSize, length) => context
-                    .read<HabitsRecordScrollBehaviorViewModel>()
-                    .getPhysics(itemSize),
+                scrollPhysicsBuilder: _buildScrollPhysics,
               ),
               onInfoButtonPressed: () =>
                   _openHabitSummaryStatisticsDialog(context),

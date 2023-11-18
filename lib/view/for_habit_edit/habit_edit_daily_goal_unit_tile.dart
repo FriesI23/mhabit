@@ -40,7 +40,7 @@ class HabitEditDailyGoalUnitTile extends StatelessWidget {
       leading: Icon(Icons.label_outline, color: colorScheme.outline),
       title: TextField(
         controller: controller,
-        decoration: InputDecoration(
+        decoration: InputDecoration.collapsed(
             hintText: l10n?.habitEdit_habitDailyGoalUnit_hintText,
             hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
             border: InputBorder.none),
@@ -52,6 +52,7 @@ class HabitEditDailyGoalUnitTile extends StatelessWidget {
         style: textTheme.bodyLarge,
         onChanged: onChanged,
       ),
+      titleAlignment: ListTileTitleAlignment.titleHeight,
     );
   }
 }

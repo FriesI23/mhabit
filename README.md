@@ -62,8 +62,8 @@ You can customize each habit with the following options:
 
 ## Build from source
 
-Make sure your flutter version is `3.7.12`, you can use `fvm` to keep multi
-versions in your local machine.
+Make sure your flutter version same as `.flutter`, You can use `fvm`` to keep
+multiple versions on your local machine, or simply use this submodule to build it!
 
 1. in project folder, run `flutter pub get`
 2. open an android or ios emulator
@@ -131,8 +131,8 @@ limitations under the License.
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
-[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.7.12-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
-[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.7.12
+[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.13.9-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
+[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.13.9
 [license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white

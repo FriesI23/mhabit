@@ -462,7 +462,6 @@
 
   "appSetting_reminderSubgroupText": "Reminder",
   "appSetting_dailyReminder_titleText": "Daily reminder",
-  "appSetting_dailyReminder_hintTile_titleText": "After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.",
 
   "appSetting_backupAndRestoreSubgroupText": "Backup & restore",
   "appSetting_export_titleText": "Export",

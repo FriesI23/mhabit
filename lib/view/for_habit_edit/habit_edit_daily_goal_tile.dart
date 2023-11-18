@@ -62,6 +62,7 @@ class HabitEditDailyGoalTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
+          isCollapsed: true,
           hintText: _getHintText(l10n),
           hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
           border: InputBorder.none,
@@ -74,6 +75,7 @@ class HabitEditDailyGoalTile extends StatelessWidget {
         onChanged: onChanged,
         onSubmitted: onSubmitted,
       ),
+      titleAlignment: ListTileTitleAlignment.titleHeight,
     );
   }
 }

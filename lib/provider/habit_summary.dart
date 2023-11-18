@@ -167,8 +167,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     implements ProviderMounted, HabitSummaryDirtyMarkABC {
   HabitSummaryViewModel({
     required ScrollController verticalScrollController,
-    required LinkedScrollControllerGroup horizonalScrollControllerGroup,
-  }) : super(horizonalScrollControllerGroup: horizonalScrollControllerGroup) {
+    required super.horizonalScrollControllerGroup,
+  }) {
     initVerticalScrollController(notifyListeners, verticalScrollController);
   }
 

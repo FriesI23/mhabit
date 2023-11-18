@@ -672,9 +672,6 @@ class L10nFa extends L10n {
   String get appSetting_dailyReminder_titleText => 'یادآور روزانه';
 
   @override
-  String get appSetting_dailyReminder_hintTile_titleText => 'بعد از اندروید ۱۳، برای قرار دادن یادآور روزانه و یادآور زمان‌بندی شده عادت، باید مجوز آن را در تنظیمات بدهید.';
-
-  @override
   String get appSetting_backupAndRestoreSubgroupText => 'پشتیبان‌گیری و بازیابی';
 
   @override

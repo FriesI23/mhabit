@@ -54,8 +54,11 @@ void main() {
         useSystemFormat: false,
       );
 
+      // Fixed `\u202f` for DateFormat pattern in new intl version
+      final patternWithRegex = 'M/d/yyyy h:mm:ss a'
+          .replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
       final formatter = config.getFormatter('en_US');
-      expect(formatter.pattern, 'M/d/yyyy h:mm:ss a');
+      expect(formatter.pattern, matches(patternWithRegex));
     });
 
     test('Test getFormatter with custom format', () {
@@ -66,8 +69,11 @@ void main() {
         useSystemFormat: false,
       );
 
+      // Fixed `\u202f` for DateFormat pattern in new intl version
+      final patternWithRegex =
+          'd M yyyy HH:mm:ss'.replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
       final formatter = config.getFormatter('en_US');
-      expect(formatter.pattern, 'd M yyyy HH:mm:ss');
+      expect(formatter.pattern, matches(patternWithRegex));
     });
 
     test('Test getFormatter with custom format and month with name', () {
@@ -79,8 +85,11 @@ void main() {
         useSystemFormat: false,
       );
 
+      // Fixed `\u202f` for DateFormat pattern in new intl version
+      final patternWithRegex =
+          'd LLL y h:mm:ss a'.replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
       final formatter = config.getFormatter('en_US');
-      expect(formatter.pattern, 'd LLL y h:mm:ss a');
+      expect(formatter.pattern, matches(patternWithRegex));
     });
   });
 }

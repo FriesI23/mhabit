@@ -667,9 +667,6 @@ class L10nZh extends L10n {
   String get appSetting_dailyReminder_titleText => '每日提醒';
 
   @override
-  String get appSetting_dailyReminder_hintTile_titleText => 'Android 13 之后，必须授予 Alarms & Reminders 权限才能使每日和习惯定时提醒正常工作。';
-
-  @override
   String get appSetting_backupAndRestoreSubgroupText => '备份和恢复';
 
   @override

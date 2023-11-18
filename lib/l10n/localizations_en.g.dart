@@ -672,9 +672,6 @@ class L10nEn extends L10n {
   String get appSetting_dailyReminder_titleText => 'Daily reminder';
 
   @override
-  String get appSetting_dailyReminder_hintTile_titleText => 'After Android 13, must grant permission for Alarms & Reminders in order to make daily & habit scheduled reminder work properly.';
-
-  @override
   String get appSetting_backupAndRestoreSubgroupText => 'Backup & restore';
 
   @override

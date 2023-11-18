@@ -23,18 +23,21 @@ import 'package:flutter/physics.dart';
 class MagnetScrollPhysics extends ScrollPhysics {
   /// The fixed item size.
   final double itemSize;
+  final ScrollMetrics metrics;
 
   /// Creates a new magnet scroll physics instance.
   const MagnetScrollPhysics({
-    ScrollPhysics? parent,
+    super.parent,
     required this.itemSize,
-  }) : super(parent: parent);
+    required this.metrics,
+  });
 
   @override
   MagnetScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return MagnetScrollPhysics(
       parent: buildParent(ancestor),
       itemSize: itemSize,
+      metrics: metrics,
     );
   }
 
@@ -75,6 +78,7 @@ class MagnetScrollPhysics extends ScrollPhysics {
     );
 
     final double settlingPixels = settlingItemIndex * itemSize;
+    final tolerance = toleranceFor(metrics);
 
     // Scenario 3:
     // If there's no velocity and we're already at where we intend to land,

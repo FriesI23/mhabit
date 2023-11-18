@@ -411,7 +411,6 @@
   "appSetting_collapsed_calendar_bararea_defaultText": "پیش‌فرض",
   "appSetting_reminderSubgroupText": "یادآور",
   "appSetting_dailyReminder_titleText": "یادآور روزانه",
-  "appSetting_dailyReminder_hintTile_titleText": "بعد از اندروید ۱۳، برای قرار دادن یادآور روزانه و یادآور زمان‌بندی شده عادت، باید مجوز آن را در تنظیمات بدهید.",
   "appSetting_backupAndRestoreSubgroupText": "پشتیبان‌گیری و بازیابی",
   "appSetting_export_titleText": "خروجی",
   "appSetting_export_subtitleText": "عادت‌ها به عنوان فرمت JSON خروجی داده می‌شود. این پرونده می‌تواند بعداً وارد شود.",

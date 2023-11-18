@@ -5,6 +5,7 @@
   "licenser.license": "AL2",
   "debug.openDebug": "openOnDebugBreak",
   "debug.internalConsoleOptions": "openOnSessionStart",
+  "dart.flutterSdkPath": ".flutter",
   "dart.flutterSdkPaths": [
     ".fvm/flutter_sdk",
     ".flutter"

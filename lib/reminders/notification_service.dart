@@ -109,7 +109,7 @@ class NotificationService implements FutureInitializationABC {
     final notifyPermissionRequestResult = await plugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+        ?.requestNotificationsPermission();
     if (notifyPermissionRequestResult != true) return false;
 
     return true;
@@ -164,7 +164,7 @@ extension NotificationServiceWithApp on NotificationService {
         details,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.inexact,
         matchDateTimeComponents: DateTimeComponents.time,
       );
       timeout == null
@@ -230,7 +230,7 @@ extension NotificationServiceWithHabits on NotificationService {
         details,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.inexact,
         payload: data.toPayload(),
       );
       timeout == null

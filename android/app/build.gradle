@@ -86,6 +86,7 @@ android {
             signingConfig keystoreProperties['storeFile'] ? signingConfigs.release : signingConfigs.debug
         }
     }
+    namespace 'io.github.friesi23.mhabit'
 }
 
 flutter {
