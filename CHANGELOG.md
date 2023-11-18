@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.0+28
+
+- Upgrade Flutter version to 3.13.9
+- Upgrade dependency packages
+- Modify app release action to use the submodule from the project
+- Fixed some bugs
+
+see changes in [#115](https://github.com/FriesI23/mhabit/pull/115) for
+complete overview.
+
 ## 1.9.2+27
 
 - Optimize donate dialog (#113)
