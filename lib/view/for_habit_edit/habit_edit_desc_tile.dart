@@ -35,12 +35,10 @@ class HabitEditDescTile extends StatelessWidget {
     final l10n = L10n.of(context);
 
     return ListTile(
-      isThreeLine: true,
       leading: Icon(Icons.notes, color: colorScheme.outline),
-      subtitle: const SizedBox.shrink(),
       title: TextField(
         controller: controller,
-        decoration: InputDecoration(
+        decoration: InputDecoration.collapsed(
             hintText: l10n?.habitEdit_desc_hintText,
             hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
             border: InputBorder.none),
@@ -49,6 +47,7 @@ class HabitEditDescTile extends StatelessWidget {
         style: textTheme.bodyLarge,
         onChanged: onDescChanged,
       ),
+      titleAlignment: ListTileTitleAlignment.titleHeight,
     );
   }
 }

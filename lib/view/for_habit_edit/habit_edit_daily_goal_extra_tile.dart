@@ -60,6 +60,7 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
+          isCollapsed: true,
           hintText: _getHintText(l10n),
           hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
           border: InputBorder.none,
@@ -68,6 +69,7 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
               : l10n?.habitEdit_habitDailyGoalExtra_errorText(dailyGoal!) ??
                   "invalid value, must be empty or >= $dailyGoal",
           suffixIcon: isValid ? null : const Icon(Icons.error_outline),
+          suffixIconConstraints: const BoxConstraints.tightFor(height: 0.0),
         ),
         keyboardType:
             const TextInputType.numberWithOptions(decimal: true, signed: false),
@@ -76,6 +78,7 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
         onChanged: onChanged,
         onSubmitted: onSubmitted,
       ),
+      titleAlignment: ListTileTitleAlignment.titleHeight,
     );
   }
 }
