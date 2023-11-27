@@ -69,7 +69,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        resourceConfigurations += ["en", "fa", "zh"]
+        resourceConfigurations += ["en", "de", "fa", "zh"]
     }
 
     signingConfigs {

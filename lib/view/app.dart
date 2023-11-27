@@ -158,9 +158,9 @@ class _AppView extends State<AppView> {
             ],
             supportedLocales: const [
               Locale.fromSubtags(languageCode: 'en'),
+              Locale.fromSubtags(languageCode: 'de'),
               Locale.fromSubtags(languageCode: 'fa'),
               Locale.fromSubtags(languageCode: 'zh'),
-              Locale.fromSubtags(languageCode: 'de')
             ],
             debugShowCheckedModeBanner: false,
           ),
