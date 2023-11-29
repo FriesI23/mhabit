@@ -625,6 +625,9 @@ class L10nEn extends L10n {
   String get appSetting_displaySubgroupText => 'Display';
 
   @override
+  String get appSetting_operationSubgroupText => 'Operation';
+
+  @override
   String get appSetting_dragCalendarByPageTile_titleText => 'Drag calendar by page';
 
   @override

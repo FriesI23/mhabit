@@ -620,6 +620,9 @@ class L10nZh extends L10n {
   String get appSetting_displaySubgroupText => '显示';
 
   @override
+  String get appSetting_operationSubgroupText => '操作';
+
+  @override
   String get appSetting_dragCalendarByPageTile_titleText => '按页拖动日历';
 
   @override

@@ -625,6 +625,9 @@ class L10nFa extends L10n {
   String get appSetting_displaySubgroupText => 'نمایش';
 
   @override
+  String get appSetting_operationSubgroupText => 'عملیات';
+
+  @override
   String get appSetting_dragCalendarByPageTile_titleText => 'جابجایی تقویم صفحه‌ای';
 
   @override

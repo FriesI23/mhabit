@@ -435,6 +435,7 @@
   "appSetting_appbar_titleText": "Settings",
 
   "appSetting_displaySubgroupText": "Display",
+  "appSetting_operationSubgroupText": "Operation",
   "appSetting_dragCalendarByPageTile_titleText": "Drag calendar by page",
   "appSetting_dragCalendarByPageTile_subtitleText": "If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.",
   "appSetting_firstDayOfWeek_titleText": "First day of week",

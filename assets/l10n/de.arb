@@ -435,6 +435,7 @@
   "appSetting_appbar_titleText": "Einstellungen",
 
   "appSetting_displaySubgroupText": "Anzeige",
+  "appSetting_operationSubgroupText": "Bedienen",
   "appSetting_dragCalendarByPageTile_titleText": "Kalender nach Seite ziehen",
   "appSetting_dragCalendarByPageTile_subtitleText": "Wenn der Schalter aktiviert ist, wird der Balkenkalender der App auf der Startseite Seite für Seiten gezogen. Standardmäßig ist diese Funktion deaktiviert.",
   "appSetting_firstDayOfWeek_titleText": "Erster Tag der Woche",

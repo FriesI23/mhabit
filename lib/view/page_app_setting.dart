@@ -342,23 +342,6 @@ class _AppSettingView extends State<AppSettingView>
               : const Text("Display"),
         ),
       );
-      yield Selector<HabitsRecordScrollBehaviorViewModel,
-          HabitsRecordScrollBehavior>(
-        selector: (context, vm) => vm.scrollBehavior,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) => L10nBuilder(
-          builder: (context, l10n) => SwitchListTile(
-            title: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
-                : const Text("Drag calendar by page"),
-            subtitle: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
-                : null,
-            onChanged: _onDrageCalendarByPageTileChanged,
-            value: scrollBehavior == HabitsRecordScrollBehavior.page,
-          ),
-        ),
-      );
       yield Selector<AppFirstDayViewModel, int>(
         selector: (context, vm) => vm.firstDay,
         shouldRebuild: (previous, next) => previous != next,
@@ -405,6 +388,33 @@ class _AppSettingView extends State<AppSettingView>
                 : null,
             onChanged: _onCompactTileChanged,
             value: flag,
+          ),
+        ),
+      );
+    }
+
+    Iterable<Widget> buildOperationSubGroup(BuildContext context) sync* {
+      yield GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_operationSubgroupText)
+              : const Text("Operation"),
+        ),
+      );
+      yield Selector<HabitsRecordScrollBehaviorViewModel,
+          HabitsRecordScrollBehavior>(
+        selector: (context, vm) => vm.scrollBehavior,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, scrollBehavior, child) => L10nBuilder(
+          builder: (context, l10n) => SwitchListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
+                : const Text("Drag calendar by page"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
+                : null,
+            onChanged: _onDrageCalendarByPageTileChanged,
+            value: scrollBehavior == HabitsRecordScrollBehavior.page,
           ),
         ),
       );
@@ -549,6 +559,7 @@ class _AppSettingView extends State<AppSettingView>
           child: ListView(
             children: [
               ...buildDisplaySubGroup(context),
+              ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
               ...buildBackupAndRestoreSubGroup(context),
               ...buildOthersSubGroup(context),

@@ -625,6 +625,9 @@ class L10nDe extends L10n {
   String get appSetting_displaySubgroupText => 'Anzeige';
 
   @override
+  String get appSetting_operationSubgroupText => 'Bedienen';
+
+  @override
   String get appSetting_dragCalendarByPageTile_titleText => 'Kalender nach Seite ziehen';
 
   @override

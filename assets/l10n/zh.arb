@@ -218,6 +218,7 @@
   "appSetting_appbar_titleText": "设置",
 
   "appSetting_displaySubgroupText": "显示",
+  "appSetting_operationSubgroupText": "操作",
   "appSetting_dragCalendarByPageTile_titleText": "按页拖动日历",
   "appSetting_dragCalendarByPageTile_subtitleText": "如果启用开关，则主页上的应用栏日历将逐页拖动。默认情况下，该开关处于禁用状态。",
   "appSetting_firstDayOfWeek_titleText": "一周的第一天",

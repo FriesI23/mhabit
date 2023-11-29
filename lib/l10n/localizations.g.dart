@@ -1135,6 +1135,12 @@ abstract class L10n {
   /// **'Display'**
   String get appSetting_displaySubgroupText;
 
+  /// No description provided for @appSetting_operationSubgroupText.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation'**
+  String get appSetting_operationSubgroupText;
+
   /// No description provided for @appSetting_dragCalendarByPageTile_titleText.
   ///
   /// In en, this message translates to:
