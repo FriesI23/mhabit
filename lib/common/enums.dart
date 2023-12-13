@@ -78,3 +78,25 @@ enum DonateWay {
     return _name2EnumMap[name];
   }
 }
+
+enum UserAction implements EnumWithDBCodeABC {
+  nothing(code: 0),
+  tap(code: 1),
+  doubleTap(code: 2),
+  longTap(code: 3);
+
+  final int _code;
+
+  const UserAction({required int code}) : _code = code;
+
+  @override
+  int get dbCode => _code;
+
+  static UserAction? getFromDBCode(int dbCode,
+      {UserAction? withDefault = UserAction.nothing}) {
+    for (var value in UserAction.values) {
+      if (value.dbCode == dbCode) return value;
+    }
+    return withDefault;
+  }
+}

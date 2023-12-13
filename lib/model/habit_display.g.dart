@@ -86,3 +86,86 @@ extension $HabitsDisplayFilterCopyWith on HabitsDisplayFilter {
   _$HabitsDisplayFilterCWProxy get copyWith =>
       _$HabitsDisplayFilterCWProxyImpl(this);
 }
+
+abstract class _$HabitDisplayOpConfigCWProxy {
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
+  /// ````
+  HabitDisplayOpConfig call({
+    UserAction? changeRecordStatus,
+    UserAction? openRecordStatusDialog,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitDisplayOpConfig.copyWith(...)`.
+class _$HabitDisplayOpConfigCWProxyImpl
+    implements _$HabitDisplayOpConfigCWProxy {
+  const _$HabitDisplayOpConfigCWProxyImpl(this._value);
+
+  final HabitDisplayOpConfig _value;
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
+  /// ````
+  HabitDisplayOpConfig call({
+    Object? changeRecordStatus = const $CopyWithPlaceholder(),
+    Object? openRecordStatusDialog = const $CopyWithPlaceholder(),
+  }) {
+    return HabitDisplayOpConfig(
+      changeRecordStatus: changeRecordStatus == const $CopyWithPlaceholder() ||
+              changeRecordStatus == null
+          ? _value.changeRecordStatus
+          // ignore: cast_nullable_to_non_nullable
+          : changeRecordStatus as UserAction,
+      openRecordStatusDialog:
+          openRecordStatusDialog == const $CopyWithPlaceholder() ||
+                  openRecordStatusDialog == null
+              ? _value.openRecordStatusDialog
+              // ignore: cast_nullable_to_non_nullable
+              : openRecordStatusDialog as UserAction,
+    );
+  }
+}
+
+extension $HabitDisplayOpConfigCopyWith on HabitDisplayOpConfig {
+  /// Returns a callable class that can be used as follows: `instanceOfHabitDisplayOpConfig.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$HabitDisplayOpConfigCWProxy get copyWith =>
+      _$HabitDisplayOpConfigCWProxyImpl(this);
+}
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+HabitDisplayOpConfig _$HabitDisplayOpConfigFromJson(
+        Map<String, dynamic> json) =>
+    HabitDisplayOpConfig(
+      changeRecordStatus:
+          $enumDecode(_$UserActionEnumMap, json['change_record_status']),
+      openRecordStatusDialog:
+          $enumDecode(_$UserActionEnumMap, json['open_record_status_dialog']),
+    );
+
+Map<String, dynamic> _$HabitDisplayOpConfigToJson(
+        HabitDisplayOpConfig instance) =>
+    <String, dynamic>{
+      'change_record_status': _$UserActionEnumMap[instance.changeRecordStatus]!,
+      'open_record_status_dialog':
+          _$UserActionEnumMap[instance.openRecordStatusDialog]!,
+    };
+
+const _$UserActionEnumMap = {
+  UserAction.nothing: 'nothing',
+  UserAction.tap: 'tap',
+  UserAction.doubleTap: 'doubleTap',
+  UserAction.longTap: 'longTap',
+};
