@@ -47,6 +47,7 @@ import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_date_change.dart';
+import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
@@ -612,37 +613,50 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         .updateCalendarExpanedStatus(!lastStatus);
   }
 
-  void _onHabitRecordPressed(
-    HabitUUID puuid,
-    HabitRecordUUID? uuid,
-    HabitRecordDate date,
-    HabitRecordStatus crt,
-  ) async {
-    if (!mounted) return;
-    await context
-        .read<HabitSummaryViewModel>()
-        .onTapToChangeRecordStatus(puuid, date);
-  }
+  OnHabitSummaryPressCallback? _getOnHabitRecordedActionTriggeredFn(
+      UserAction action) {
+    void handleChangeRecordStatus(
+      HabitUUID puuid,
+      HabitRecordUUID? uuid,
+      HabitRecordDate date,
+      HabitRecordStatus crt,
+    ) async {
+      if (!mounted) return;
 
-  void _onHabitRecordLongPressed(
-    HabitUUID puuid,
-    HabitRecordUUID? uuid,
-    HabitRecordDate date,
-    HabitRecordStatus crt,
-  ) async {
-    if (!mounted) return;
-    final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
-    if (data == null) return;
+      context
+          .read<HabitSummaryViewModel>()
+          .onTapToChangeRecordStatus(puuid, date);
+    }
 
-    final record = data.getRecordByDate(date);
-    switch (record?.status) {
-      case HabitRecordStatus.skip:
-        _openHabitRecordResonModifierDialog(context, puuid, uuid, date, crt);
-        break;
-      default:
-        _openHabitRecordCusomNumberPickerDialog(
-            context, puuid, uuid, date, crt);
-        break;
+    void handleOpenRecordStatusDialog(
+      HabitUUID puuid,
+      HabitRecordUUID? uuid,
+      HabitRecordDate date,
+      HabitRecordStatus crt,
+    ) async {
+      if (!mounted) return;
+
+      final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
+      if (data == null) return;
+
+      final record = data.getRecordByDate(date);
+      switch (record?.status) {
+        case HabitRecordStatus.skip:
+          return _openHabitRecordResonModifierDialog(
+              context, puuid, uuid, date, crt);
+        default:
+          return _openHabitRecordCusomNumberPickerDialog(
+              context, puuid, uuid, date, crt);
+      }
+    }
+
+    final opConfig = context.read<HabitOpConfigViewModel>();
+    if (action == opConfig.changeRecordStatus) {
+      return handleChangeRecordStatus;
+    } else if (action == opConfig.openRecordStatusDialog) {
+      return handleOpenRecordStatusDialog;
+    } else {
+      return null;
     }
   }
 
@@ -811,8 +825,12 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
               horizonalScrollControllerGroup:
                   viewmodel.horizonalScrollControllerGroup,
               onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
-              onHabitRecordPressed: _onHabitRecordPressed,
-              onHabitRecordLongPressed: _onHabitRecordLongPressed,
+              onHabitRecordPressed:
+                  _getOnHabitRecordedActionTriggeredFn(UserAction.tap),
+              onHabitRecordLongPressed:
+                  _getOnHabitRecordedActionTriggeredFn(UserAction.longTap),
+              onHabitRecordDoublePressed:
+                  _getOnHabitRecordedActionTriggeredFn(UserAction.doubleTap),
             );
           },
         ),

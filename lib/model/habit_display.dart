@@ -21,6 +21,7 @@ import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
+import 'common.dart';
 import 'habit_summary.dart';
 
 part 'habit_display.g.dart';
@@ -201,7 +202,7 @@ class HabitsDisplayFilter {
   converters: [HabitDisplayOpConfigConverter()],
 )
 @CopyWith(skipFields: true)
-class HabitDisplayOpConfig {
+class HabitDisplayOpConfig implements JsonAdaptor {
   final UserAction changeRecordStatus;
   final UserAction openRecordStatusDialog;
 
@@ -213,4 +214,10 @@ class HabitDisplayOpConfig {
   const HabitDisplayOpConfig.withDefault()
       : changeRecordStatus = UserAction.tap,
         openRecordStatusDialog = UserAction.longTap;
+
+  factory HabitDisplayOpConfig.fromJson(Map<String, dynamic> json) =>
+      _$HabitDisplayOpConfigFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$HabitDisplayOpConfigToJson(this);
 }

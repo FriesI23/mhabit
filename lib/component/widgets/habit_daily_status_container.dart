@@ -165,30 +165,27 @@ class HabitDailyStatusContainer extends StatelessWidget {
       }
     }
 
-    return Container(
+    return Ink(
       padding: padding ?? const EdgeInsets.all(8.0),
       height: height,
       width: width,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            onLongPress: enabled && onLongPressed != null
-                ? () => onLongPressed!(date, habitDailyStatus)
-                : null,
-            onDoubleTap: enabled && onDoublePressed != null
-                ? () => onDoublePressed!(date, habitDailyStatus)
-                : null,
-            child: IconButton(
-              onPressed: enabled && onPressed != null
-                  ? () => onPressed!(date, habitDailyStatus)
-                  : null,
-              icon: getButtonContent(),
-            ),
-          ),
-        ],
+      child: InkWell(
+        onTap: enabled && onPressed != null
+            ? () => onPressed!(date, habitDailyStatus)
+            : null,
+        onLongPress: enabled && onLongPressed != null
+            ? () => onLongPressed!(date, habitDailyStatus)
+            : null,
+        onDoubleTap: enabled && onDoublePressed != null
+            ? () => onDoublePressed!(date, habitDailyStatus)
+            : null,
+        customBorder: const CircleBorder(),
+        excludeFromSemantics: true,
+        child: IconButton(
+          iconSize: 28.0,
+          icon: getButtonContent(),
+          onPressed: null,
+        ),
       ),
     );
   }

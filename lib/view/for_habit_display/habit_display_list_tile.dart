@@ -37,6 +37,7 @@ class HabitDisplayListTile extends StatelessWidget {
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onHabitRecordPressed;
   final OnHabitSummaryPressCallback? onHabitRecordLongPressed;
+  final OnHabitSummaryPressCallback? onHabitRecordDoublePressed;
 
   const HabitDisplayListTile({
     super.key,
@@ -54,6 +55,7 @@ class HabitDisplayListTile extends StatelessWidget {
     this.onHabitSummaryDataPressed,
     this.onHabitRecordPressed,
     this.onHabitRecordLongPressed,
+    this.onHabitRecordDoublePressed,
   });
 
   ThemeData getThemeData(ThemeData themeData) {
@@ -137,6 +139,7 @@ class HabitDisplayListTile extends StatelessWidget {
               horizonalScrollControllerGroup: horizonalScrollControllerGroup,
               onCellPressed: onHabitRecordPressed,
               onCellLongPressed: onHabitRecordLongPressed,
+              onCellDoublePressed: onHabitRecordDoublePressed,
             ),
           );
         },
