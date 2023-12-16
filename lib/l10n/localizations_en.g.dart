@@ -634,6 +634,18 @@ class L10nEn extends L10n {
   String get appSetting_dragCalendarByPageTile_subtitleText => 'If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.';
 
   @override
+  String get appSetting_changeRecordStatusOpTile_titleText => 'Change Record Status';
+
+  @override
+  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
+
+  @override
+  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Open Detailed Record';
+
+  @override
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
+
+  @override
   String get appSetting_firstDayOfWeek_titleText => 'First day of week';
 
   @override
@@ -992,4 +1004,13 @@ class L10nEn extends L10n {
 
   @override
   String get snackbar_dissmessText => 'DISMISS';
+
+  @override
+  String get userAction_tap => 'Tap';
+
+  @override
+  String get userAction_doubleTap => 'Double';
+
+  @override
+  String get userAction_longTap => 'Long';
 }

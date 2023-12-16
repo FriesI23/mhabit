@@ -22,6 +22,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../extension/custom_color_extensions.dart';
+import '../common/consts.dart';
 import '../common/logging.dart';
 import '../common/types.dart';
 import '../component/animation.dart';
@@ -58,7 +59,6 @@ import 'for_habit_detail/_widget.dart';
 import 'page_habit_edit.dart' as habit_edit_view;
 
 const kHabitDetailLoadingCircleIndicatorSize = 64.0;
-const kHabitLargeScreenAdaptWidth = 600.0;
 const kHabitDetailFreqChartHeight = 240.0;
 const kHabitDetailFreqChartTitleHeight = 48.0;
 

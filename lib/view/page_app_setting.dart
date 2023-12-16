@@ -43,6 +43,7 @@ import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
+import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
@@ -415,6 +416,47 @@ class _AppSettingView extends State<AppSettingView>
                 : null,
             onChanged: _onDrageCalendarByPageTileChanged,
             value: scrollBehavior == HabitsRecordScrollBehavior.page,
+          ),
+        ),
+      );
+      yield Selector<HabitOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.changeRecordStatus,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) =>
+                AppSettingDisplayRecordOperationTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              inputAction: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_changeRecordStatusOpTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(l10n.appSetting_changeRecordStatusOpTile_subtitleText)
+                  : null,
+            ),
+          ),
+        ),
+      );
+      yield Selector<HabitOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.openRecordStatusDialog,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) =>
+                AppSettingDisplayRecordOperationTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              inputAction: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_openRecordStatusDialogOpTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(
+                      l10n.appSetting_openRecordStatusDialogOpTile_subtitleText)
+                  : null,
+            ),
           ),
         ),
       );

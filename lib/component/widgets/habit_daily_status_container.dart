@@ -22,9 +22,12 @@ import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
 
+const kDefaultHabitDailyStatusContainerIconSize = 28.0;
+
 class HabitDailyStatusContainer extends StatelessWidget {
   final double? width;
   final double? height;
+  final double? iconSize;
   final EdgeInsetsGeometry? padding;
   final HabitRecordDate date;
   final HabitColorType colorType;
@@ -42,6 +45,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
       {super.key,
       this.width,
       this.height,
+      this.iconSize,
       this.padding,
       required this.date,
       this.colorType = HabitColorType.cc1,
@@ -52,6 +56,8 @@ class HabitDailyStatusContainer extends StatelessWidget {
       this.onDoublePressed,
       this.enabled = true,
       this.isAutoComplated = false});
+
+  double getIconSize() => iconSize ?? kDefaultHabitDailyStatusContainerIconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +188,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
         customBorder: const CircleBorder(),
         excludeFromSemantics: true,
         child: IconButton(
-          iconSize: 28.0,
+          iconSize: getIconSize(),
           icon: getButtonContent(),
           onPressed: null,
         ),
