@@ -650,7 +650,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       }
     }
 
-    final opConfig = context.read<HabitOpConfigViewModel>();
+    final opConfig = context.read<HabitRecordOpConfigViewModel>();
     if (action == opConfig.changeRecordStatus) {
       return handleChangeRecordStatus;
     } else if (action == opConfig.openRecordStatusDialog) {
@@ -794,45 +794,34 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
           selector: (context, vm) =>
               Tuple2(vm.flag, vm.appHabitDisplayListTileHeight),
-          builder: (context, value, child) {
-            final isExtended = contents.item1;
-            final crtDate = contents.item4;
-            final viewmodel = context.read<HabitSummaryViewModel>();
-            final data = viewmodel.getHabit(uuid);
-            final useCompactUI = value.item1;
-            final height = value.item2;
-
-            DebugLog.rebuild(
-              "HabitDisplayListTile:: $contents | "
-              "id=${data?.id}, uuid=${data?.uuid}, sort=${data?.sortPostion}, "
-              "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
-            );
-            if (data == null) {
-              WarnLog.rebuild("HabitDisplayListTile:: data not found: $uuid");
-              return const SizedBox();
-            }
-            return HabitDisplayListTile(
-              startDate: crtDate,
-              endedData: viewmodel.earliestSummaryDataStartDate?.startDate,
-              isExtended: isExtended,
-              isSelected: viewmodel.isHabitSelected(uuid),
-              isInEditMode: viewmodel.isInEditMode,
-              collapsePrt: occupyPrt,
-              height: height,
-              compactVisual: useCompactUI,
-              data: data,
-              verticalScrollController: viewmodel.verticalScrollController,
-              horizonalScrollControllerGroup:
-                  viewmodel.horizonalScrollControllerGroup,
-              onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
-              onHabitRecordPressed:
-                  _getOnHabitRecordedActionTriggeredFn(UserAction.tap),
-              onHabitRecordLongPressed:
-                  _getOnHabitRecordedActionTriggeredFn(UserAction.longTap),
-              onHabitRecordDoublePressed:
-                  _getOnHabitRecordedActionTriggeredFn(UserAction.doubleTap),
-            );
-          },
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, compactUIConf, child) => Selector<
+              HabitRecordOpConfigViewModel, Tuple2<UserAction, UserAction>>(
+            selector: (context, vm) =>
+                Tuple2(vm.changeRecordStatus, vm.openRecordStatusDialog),
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, _, child) {
+              final isExtended = contents.item1;
+              final crtDate = contents.item4;
+              final useCompactUI = compactUIConf.item1;
+              final height = compactUIConf.item2;
+              return _HabitRecordListTile(
+                uuid: uuid,
+                isExtended: isExtended,
+                crtDate: crtDate,
+                displayPageOccupyPrt: occupyPrt,
+                useCompactUI: useCompactUI,
+                height: height,
+                onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
+                onHabitRecordPressed:
+                    _getOnHabitRecordedActionTriggeredFn(UserAction.tap),
+                onHabitRecordLongPressed:
+                    _getOnHabitRecordedActionTriggeredFn(UserAction.longTap),
+                onHabitRecordDoublePressed:
+                    _getOnHabitRecordedActionTriggeredFn(UserAction.doubleTap),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1253,6 +1242,65 @@ class _HabitDisplayEmptyImageFrame extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HabitRecordListTile extends StatelessWidget {
+  final HabitUUID uuid;
+  final bool isExtended;
+  final HabitDate crtDate;
+  final int displayPageOccupyPrt;
+  final bool useCompactUI;
+  final double height;
+  final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
+  final OnHabitSummaryPressCallback? onHabitRecordPressed;
+  final OnHabitSummaryPressCallback? onHabitRecordLongPressed;
+  final OnHabitSummaryPressCallback? onHabitRecordDoublePressed;
+
+  const _HabitRecordListTile({
+    required this.uuid,
+    required this.isExtended,
+    required this.crtDate,
+    required this.displayPageOccupyPrt,
+    required this.useCompactUI,
+    required this.height,
+    this.onHabitSummaryDataPressed,
+    this.onHabitRecordPressed,
+    this.onHabitRecordDoublePressed,
+    this.onHabitRecordLongPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final viewmodel = context.read<HabitSummaryViewModel>();
+    final data = viewmodel.getHabit(uuid);
+
+    DebugLog.rebuild(
+      "HabitDisplayListTile:: $uuid | $isExtended, $crtDate | "
+      "id=${data?.id}, uuid=${data?.uuid}, sort=${data?.sortPostion}, "
+      "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
+    );
+    if (data == null) {
+      WarnLog.rebuild("HabitDisplayListTile:: data not found: $uuid");
+      return const SizedBox();
+    }
+    return HabitDisplayListTile(
+      startDate: crtDate,
+      endedData: viewmodel.earliestSummaryDataStartDate?.startDate,
+      isExtended: isExtended,
+      isSelected: viewmodel.isHabitSelected(uuid),
+      isInEditMode: viewmodel.isInEditMode,
+      collapsePrt: displayPageOccupyPrt,
+      height: height,
+      compactVisual: useCompactUI,
+      data: data,
+      verticalScrollController: viewmodel.verticalScrollController,
+      horizonalScrollControllerGroup: viewmodel.horizonalScrollControllerGroup,
+      onHabitSummaryDataPressed: onHabitSummaryDataPressed,
+      onHabitRecordPressed: onHabitRecordPressed,
+      onHabitRecordLongPressed: onHabitRecordLongPressed,
+      onHabitRecordDoublePressed: onHabitRecordDoublePressed,
     );
   }
 }

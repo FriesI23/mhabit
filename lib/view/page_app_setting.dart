@@ -162,6 +162,20 @@ class _AppSettingView extends State<AppSettingView>
     context.read<AppCompactUISwitcherViewModel>().setFlag(value);
   }
 
+  void _onChangeRecordStatusSelected(UserAction action) {
+    if (!mounted) return;
+    context
+        .read<HabitRecordOpConfigViewModel>()
+        .setChangeRecordStatusAction(action);
+  }
+
+  void _onOpenRecordStatusDialogSelected(UserAction action) {
+    if (!mounted) return;
+    context
+        .read<HabitRecordOpConfigViewModel>()
+        .setOpenRecordStatusDialogAction(action);
+  }
+
   void _onExportAllTilePressed(BuildContext context) async {
     if (!mounted) return;
     final confirmResult = await showExporterConfirmDialog(
@@ -419,7 +433,7 @@ class _AppSettingView extends State<AppSettingView>
           ),
         ),
       );
-      yield Selector<HabitOpConfigViewModel, UserAction>(
+      yield Selector<HabitRecordOpConfigViewModel, UserAction>(
         selector: (context, vm) => vm.changeRecordStatus,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
@@ -435,11 +449,12 @@ class _AppSettingView extends State<AppSettingView>
               subtitle: l10n != null
                   ? Text(l10n.appSetting_changeRecordStatusOpTile_subtitleText)
                   : null,
+              onSelected: _onChangeRecordStatusSelected,
             ),
           ),
         ),
       );
-      yield Selector<HabitOpConfigViewModel, UserAction>(
+      yield Selector<HabitRecordOpConfigViewModel, UserAction>(
         selector: (context, vm) => vm.openRecordStatusDialog,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => L10nBuilder(
@@ -456,6 +471,7 @@ class _AppSettingView extends State<AppSettingView>
                   ? Text(
                       l10n.appSetting_openRecordStatusDialogOpTile_subtitleText)
                   : null,
+              onSelected: _onOpenRecordStatusDialogSelected,
             ),
           ),
         ),

@@ -16,12 +16,13 @@ import 'package:flutter/material.dart';
 
 import '../common/enums.dart';
 import '../model/global.dart';
+import '../model/habit_display.dart';
 
-class HabitOpConfigViewModel extends ChangeNotifier
+class HabitRecordOpConfigViewModel extends ChangeNotifier
     implements GlobalProxyProviderInterface {
   Global _g;
 
-  HabitOpConfigViewModel({required Global global}) : _g = global;
+  HabitRecordOpConfigViewModel({required Global global}) : _g = global;
 
   @override
   Global get g => _g;
@@ -32,4 +33,33 @@ class HabitOpConfigViewModel extends ChangeNotifier
   UserAction get changeRecordStatus => _g.displayOpConfig.changeRecordStatus;
   UserAction get openRecordStatusDialog =>
       _g.displayOpConfig.openRecordStatusDialog;
+
+  HabitDisplayOpConfig _generateExchangeActionsConfig() =>
+      _g.displayOpConfig.copyWith(
+        changeRecordStatus: openRecordStatusDialog,
+        openRecordStatusDialog: changeRecordStatus,
+      );
+
+  void setChangeRecordStatusAction(UserAction newAction) async {
+    late final HabitDisplayOpConfig newOpConfig;
+    if (newAction == openRecordStatusDialog) {
+      newOpConfig = _generateExchangeActionsConfig();
+    } else {
+      newOpConfig = _g.displayOpConfig.copyWith(changeRecordStatus: newAction);
+    }
+    await _g.profile.setDisplayOpConfig(newOpConfig);
+    notifyListeners();
+  }
+
+  void setOpenRecordStatusDialogAction(UserAction newAction) async {
+    late final HabitDisplayOpConfig newOpConfig;
+    if (newAction == changeRecordStatus) {
+      newOpConfig = _generateExchangeActionsConfig();
+    } else {
+      newOpConfig =
+          _g.displayOpConfig.copyWith(openRecordStatusDialog: newAction);
+    }
+    await _g.profile.setDisplayOpConfig(newOpConfig);
+    notifyListeners();
+  }
 }

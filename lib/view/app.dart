@@ -74,9 +74,9 @@ class App extends StatelessWidget {
               global: context.read<Global>()),
           update: (context, value, previous) => previous!..updateGlobal(value),
         ),
-        ChangeNotifierProxyProvider<Global, HabitOpConfigViewModel>(
+        ChangeNotifierProxyProvider<Global, HabitRecordOpConfigViewModel>(
           create: (context) =>
-              HabitOpConfigViewModel(global: context.read<Global>()),
+              HabitRecordOpConfigViewModel(global: context.read<Global>()),
           update: (context, value, previous) => previous!..updateGlobal(value),
         ),
         ChangeNotifierProxyProvider2<Global, NotificationChannelData,

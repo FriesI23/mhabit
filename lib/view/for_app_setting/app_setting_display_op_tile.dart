@@ -24,6 +24,7 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
   final Widget? subtitle;
   final UserAction inputAction;
   final bool isLargeScreen;
+  final void Function(UserAction selectedAction)? onSelected;
 
   const AppSettingDisplayRecordOperationTile({
     super.key,
@@ -31,6 +32,7 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
     this.subtitle,
     required this.inputAction,
     this.isLargeScreen = false,
+    this.onSelected,
   });
 
   Icon? _getActionIcon(UserAction action) {
@@ -39,9 +41,9 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
         return null;
       case UserAction.tap:
         return const Icon(MdiIcons.gestureTap);
-      case UserAction.doubleTap:
-        return const Icon(MdiIcons.gestureTapHold);
       case UserAction.longTap:
+        return const Icon(MdiIcons.gestureTapHold);
+      case UserAction.doubleTap:
         return const Icon(MdiIcons.gestureDoubleTap);
     }
   }
@@ -81,10 +83,14 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
       return SegmentedButton<UserAction>(
         segments: <ButtonSegment<UserAction>>[
           getButtonSegment(UserAction.tap),
-          getButtonSegment(UserAction.longTap),
           getButtonSegment(UserAction.doubleTap),
+          getButtonSegment(UserAction.longTap),
         ],
         selected: selected,
+        onSelectionChanged: onSelected != null
+            ? (selectedSet) => onSelected!(
+                selectedSet.isNotEmpty ? selectedSet.first : UserAction.nothing)
+            : null,
         style: const ButtonStyle(visualDensity: VisualDensity(vertical: -2)),
       );
     }

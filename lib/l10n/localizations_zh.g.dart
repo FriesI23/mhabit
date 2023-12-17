@@ -632,13 +632,13 @@ class L10nZh extends L10n {
   String get appSetting_changeRecordStatusOpTile_titleText => '修改记录状态';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改主页面上每日记录的状态的点击行为.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改主页面上每日记录的状态的点击行为。';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => '打开详细记录';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主页面上打开每日记录详情弹窗的点击行为.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '一周的第一天';
