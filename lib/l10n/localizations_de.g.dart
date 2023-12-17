@@ -634,13 +634,13 @@ class L10nDe extends L10n {
   String get appSetting_dragCalendarByPageTile_subtitleText => 'Wenn der Schalter aktiviert ist, wird der Balkenkalender der App auf der Startseite Seite für Seiten gezogen. Standardmäßig ist diese Funktion deaktiviert.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Change Record Status';
+  String get appSetting_changeRecordStatusOpTile_titleText => 'Status ändern';
 
   @override
   String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Open Detailed Record';
+  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Detaillierte Aufzeichnung öffnen';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
@@ -1006,11 +1006,11 @@ class L10nDe extends L10n {
   String get snackbar_dissmessText => 'Ablehnen';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Tippen';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Doppel';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'Lang';
 }

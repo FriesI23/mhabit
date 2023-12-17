@@ -391,6 +391,8 @@
   "appSetting_operationSubgroupText": "عملیات",
   "appSetting_dragCalendarByPageTile_titleText": "جابجایی تقویم صفحه‌ای",
   "appSetting_dragCalendarByPageTile_subtitleText": "در صورت فعال بودن این گزینه، تقویم نوار برنامه در صفحه اصلی صفحه به صفحه جابجا می‌شود. پیش‌فرض این گزینه غیرفعال است.",
+  "appSetting_changeRecordStatusOpTile_titleText": "تغییر وضعیت رکورد",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "باز کردن رکورد تفصیلی",
   "appSetting_firstDayOfWeek_titleText": "اولین روز هفته",
   "appSetting_firstDayOfWeekDialog_titleText": "نمایش اولین روز هفته",
   "appSetting_firstDayOfWeekDialog_defaultText": " (پیش‌فرض)",
@@ -569,5 +571,9 @@
   "exportConfirmDialog_cancel_buttonText": "لغو",
   "exportConfirmDialog_confirm_buttonText": "خروجی گرفتن",
   "snackbar_undoText": "بازگشت",
-  "snackbar_dissmessText": "رد کردن"
+  "snackbar_dissmessText": "رد کردن",
+
+  "userAction_tap": "ضربه",
+  "userAction_doubleTap": "دوتایی",
+  "userAction_longTap": "طولانی"
 }

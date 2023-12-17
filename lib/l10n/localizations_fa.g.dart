@@ -634,13 +634,13 @@ class L10nFa extends L10n {
   String get appSetting_dragCalendarByPageTile_subtitleText => 'در صورت فعال بودن این گزینه، تقویم نوار برنامه در صفحه اصلی صفحه به صفحه جابجا می‌شود. پیش‌فرض این گزینه غیرفعال است.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Change Record Status';
+  String get appSetting_changeRecordStatusOpTile_titleText => 'تغییر وضعیت رکورد';
 
   @override
   String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Open Detailed Record';
+  String get appSetting_openRecordStatusDialogOpTile_titleText => 'باز کردن رکورد تفصیلی';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
@@ -1006,11 +1006,11 @@ class L10nFa extends L10n {
   String get snackbar_dissmessText => 'رد کردن';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'ضربه';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'دوتایی';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'طولانی';
 }

@@ -1,20 +1,13 @@
 {
   "de": [
-    "appSetting_changeRecordStatusOpTile_titleText",
     "appSetting_changeRecordStatusOpTile_subtitleText",
-    "appSetting_openRecordStatusDialogOpTile_titleText",
-    "appSetting_openRecordStatusDialogOpTile_subtitleText",
-    "userAction_tap",
-    "userAction_doubleTap",
-    "userAction_longTap"
+    "appSetting_openRecordStatusDialogOpTile_subtitleText"
   ],
 
   "fa": [
     "habitDisplay_editPopMenu_clone",
     "habitDetail_editPopMenu_clone",
-    "appSetting_changeRecordStatusOpTile_titleText",
     "appSetting_changeRecordStatusOpTile_subtitleText",
-    "appSetting_openRecordStatusDialogOpTile_titleText",
     "appSetting_openRecordStatusDialogOpTile_subtitleText",
     "appSetting_clearCache_titleText",
     "appSetting_clearCacheDialog_titleText",
@@ -31,9 +24,6 @@
     "donateWay_cryptoCurrency_AVAX",
     "donateWay_cryptoCurrency_FTM",
     "donateWay_firstQRGroup",
-    "appAbout_donateDialog_copiedCrypto_msg",
-    "userAction_tap",
-    "userAction_doubleTap",
-    "userAction_longTap"
+    "appAbout_donateDialog_copiedCrypto_msg"
   ]
 }

@@ -438,6 +438,8 @@
   "appSetting_operationSubgroupText": "Bedienen",
   "appSetting_dragCalendarByPageTile_titleText": "Kalender nach Seite ziehen",
   "appSetting_dragCalendarByPageTile_subtitleText": "Wenn der Schalter aktiviert ist, wird der Balkenkalender der App auf der Startseite Seite für Seiten gezogen. Standardmäßig ist diese Funktion deaktiviert.",
+  "appSetting_changeRecordStatusOpTile_titleText": "Status ändern",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Detaillierte Aufzeichnung öffnen",
   "appSetting_firstDayOfWeek_titleText": "Erster Tag der Woche",
   "appSetting_firstDayOfWeekDialog_titleText": "Ersten Tag der Woche auswählen",
   "appSetting_firstDayOfWeekDialog_defaultText": " (Standard)",
@@ -656,5 +658,9 @@
   "exportConfirmDialog_confirm_buttonText": "Exportieren",
 
   "snackbar_undoText": "Rückgängig",
-  "snackbar_dissmessText": "Ablehnen"
+  "snackbar_dissmessText": "Ablehnen",
+
+  "userAction_tap": "Tippen",
+  "userAction_doubleTap": "Doppel",
+  "userAction_longTap": "Lang"
 }
