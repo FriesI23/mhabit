@@ -218,8 +218,13 @@
   "appSetting_appbar_titleText": "设置",
 
   "appSetting_displaySubgroupText": "显示",
+  "appSetting_operationSubgroupText": "操作",
   "appSetting_dragCalendarByPageTile_titleText": "按页拖动日历",
   "appSetting_dragCalendarByPageTile_subtitleText": "如果启用开关，则主页上的应用栏日历将逐页拖动。默认情况下，该开关处于禁用状态。",
+  "appSetting_changeRecordStatusOpTile_titleText": "修改记录状态",
+  "appSetting_changeRecordStatusOpTile_subtitleText": "修改主页面上每日记录的状态的点击行为。",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "打开详细记录",
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "修改主页面上打开每日记录详情弹窗的点击行为。",
   "appSetting_firstDayOfWeek_titleText": "一周的第一天",
   "appSetting_firstDayOfWeekDialog_titleText": "选择",
   "appSetting_firstDayOfWeekDialog_defaultText": "（默认值）",
@@ -345,5 +350,9 @@
   "exportConfirmDialog_confirm_buttonText": "导出",
 
   "snackbar_undoText": "撤回",
-  "snackbar_dissmessText": "忽略"
+  "snackbar_dissmessText": "忽略",
+
+  "userAction_tap": "单击",
+  "userAction_doubleTap": "双击",
+  "userAction_longTap": "长按"
 }

@@ -67,6 +67,9 @@ abstract class ProfileInterface {
 
   bool getCompactUISwticher();
   Future<bool> setCompactUISwitcher(bool newStatus);
+
+  HabitDisplayOpConfig? getDisplayOpConfig();
+  Future<bool> setDisplayOpConfig(HabitDisplayOpConfig opConfig);
 }
 
 enum ProfileKey {
@@ -80,6 +83,7 @@ enum ProfileKey {
   customDateYmdHmsConfig,
   displayCalendarBarOccupyPrt,
   compactUISwitcher,
+  displayOpConfig,
   // cache
   inputFillCache,
 }
@@ -261,5 +265,19 @@ class Profile
   Future<bool> setInputFillCache(Map<String, Object?> newCache) {
     return _pref.setString(
         ProfileKey.inputFillCache.name, jsonEncode(newCache));
+  }
+
+  @override
+  HabitDisplayOpConfig getDisplayOpConfig() {
+    final raw = _pref.getString(ProfileKey.displayOpConfig.name);
+    return raw != null
+        ? HabitDisplayOpConfig.fromJson(jsonDecode(raw))
+        : const HabitDisplayOpConfig.withDefault();
+  }
+
+  @override
+  Future<bool> setDisplayOpConfig(HabitDisplayOpConfig opConfig) {
+    return _pref.setString(
+        ProfileKey.displayOpConfig.name, jsonEncode(opConfig.toJson()));
   }
 }

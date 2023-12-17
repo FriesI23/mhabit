@@ -43,6 +43,7 @@ import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
+import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
@@ -159,6 +160,20 @@ class _AppSettingView extends State<AppSettingView>
   void _onCompactTileChanged(bool value) {
     if (!mounted) return;
     context.read<AppCompactUISwitcherViewModel>().setFlag(value);
+  }
+
+  void _onChangeRecordStatusSelected(UserAction action) {
+    if (!mounted) return;
+    context
+        .read<HabitRecordOpConfigViewModel>()
+        .setChangeRecordStatusAction(action);
+  }
+
+  void _onOpenRecordStatusDialogSelected(UserAction action) {
+    if (!mounted) return;
+    context
+        .read<HabitRecordOpConfigViewModel>()
+        .setOpenRecordStatusDialogAction(action);
   }
 
   void _onExportAllTilePressed(BuildContext context) async {
@@ -342,23 +357,6 @@ class _AppSettingView extends State<AppSettingView>
               : const Text("Display"),
         ),
       );
-      yield Selector<HabitsRecordScrollBehaviorViewModel,
-          HabitsRecordScrollBehavior>(
-        selector: (context, vm) => vm.scrollBehavior,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) => L10nBuilder(
-          builder: (context, l10n) => SwitchListTile(
-            title: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
-                : const Text("Drag calendar by page"),
-            subtitle: l10n != null
-                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
-                : null,
-            onChanged: _onDrageCalendarByPageTileChanged,
-            value: scrollBehavior == HabitsRecordScrollBehavior.page,
-          ),
-        ),
-      );
       yield Selector<AppFirstDayViewModel, int>(
         selector: (context, vm) => vm.firstDay,
         shouldRebuild: (previous, next) => previous != next,
@@ -405,6 +403,76 @@ class _AppSettingView extends State<AppSettingView>
                 : null,
             onChanged: _onCompactTileChanged,
             value: flag,
+          ),
+        ),
+      );
+    }
+
+    Iterable<Widget> buildOperationSubGroup(BuildContext context) sync* {
+      yield GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_operationSubgroupText)
+              : const Text("Operation"),
+        ),
+      );
+      yield Selector<HabitsRecordScrollBehaviorViewModel,
+          HabitsRecordScrollBehavior>(
+        selector: (context, vm) => vm.scrollBehavior,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, scrollBehavior, child) => L10nBuilder(
+          builder: (context, l10n) => SwitchListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
+                : const Text("Drag calendar by page"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
+                : null,
+            onChanged: _onDrageCalendarByPageTileChanged,
+            value: scrollBehavior == HabitsRecordScrollBehavior.page,
+          ),
+        ),
+      );
+      yield Selector<HabitRecordOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.changeRecordStatus,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) =>
+                AppSettingDisplayRecordOperationTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              inputAction: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_changeRecordStatusOpTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(l10n.appSetting_changeRecordStatusOpTile_subtitleText)
+                  : null,
+              onSelected: _onChangeRecordStatusSelected,
+            ),
+          ),
+        ),
+      );
+      yield Selector<HabitRecordOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.openRecordStatusDialog,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) =>
+                AppSettingDisplayRecordOperationTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              inputAction: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_openRecordStatusDialogOpTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(
+                      l10n.appSetting_openRecordStatusDialogOpTile_subtitleText)
+                  : null,
+              onSelected: _onOpenRecordStatusDialogSelected,
+            ),
           ),
         ),
       );
@@ -549,6 +617,7 @@ class _AppSettingView extends State<AppSettingView>
           child: ListView(
             children: [
               ...buildDisplaySubGroup(context),
+              ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
               ...buildBackupAndRestoreSubGroup(context),
               ...buildOthersSubGroup(context),

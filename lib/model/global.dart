@@ -105,4 +105,6 @@ class Global
       profile.getDisplayCalendarBarOccupyPrt();
 
   bool get compactUISwitcher => profile.getCompactUISwticher();
+
+  HabitDisplayOpConfig get displayOpConfig => profile.getDisplayOpConfig();
 }

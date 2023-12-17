@@ -1,7 +1,14 @@
 {
+  "de": [
+    "appSetting_changeRecordStatusOpTile_subtitleText",
+    "appSetting_openRecordStatusDialogOpTile_subtitleText"
+  ],
+
   "fa": [
     "habitDisplay_editPopMenu_clone",
     "habitDetail_editPopMenu_clone",
+    "appSetting_changeRecordStatusOpTile_subtitleText",
+    "appSetting_openRecordStatusDialogOpTile_subtitleText",
     "appSetting_clearCache_titleText",
     "appSetting_clearCacheDialog_titleText",
     "appSetting_clearCacheDialog_subtitleText",

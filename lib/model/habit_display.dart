@@ -13,12 +13,15 @@
 // limitations under the License.
 
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:quiver/core.dart';
 
+import '../annotation/habit_display_op_config.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../db/db_helper/habits.dart';
+import 'common.dart';
 import 'habit_summary.dart';
 
 part 'habit_display.g.dart';
@@ -191,4 +194,30 @@ class HabitsDisplayFilter {
   @override
   int get hashCode =>
       hash3(allowInProgressHabits, allowArchivedHabits, allowCompleteHabits);
+}
+
+@JsonSerializable(
+  fieldRename: FieldRename.snake,
+  includeIfNull: false,
+  converters: [HabitDisplayOpConfigConverter()],
+)
+@CopyWith(skipFields: true)
+class HabitDisplayOpConfig implements JsonAdaptor {
+  final UserAction changeRecordStatus;
+  final UserAction openRecordStatusDialog;
+
+  const HabitDisplayOpConfig({
+    required this.changeRecordStatus,
+    required this.openRecordStatusDialog,
+  });
+
+  const HabitDisplayOpConfig.withDefault()
+      : changeRecordStatus = UserAction.tap,
+        openRecordStatusDialog = UserAction.longTap;
+
+  factory HabitDisplayOpConfig.fromJson(Map<String, dynamic> json) =>
+      _$HabitDisplayOpConfigFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$HabitDisplayOpConfigToJson(this);
 }

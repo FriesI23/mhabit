@@ -620,10 +620,25 @@ class L10nZh extends L10n {
   String get appSetting_displaySubgroupText => '显示';
 
   @override
+  String get appSetting_operationSubgroupText => '操作';
+
+  @override
   String get appSetting_dragCalendarByPageTile_titleText => '按页拖动日历';
 
   @override
   String get appSetting_dragCalendarByPageTile_subtitleText => '如果启用开关，则主页上的应用栏日历将逐页拖动。默认情况下，该开关处于禁用状态。';
+
+  @override
+  String get appSetting_changeRecordStatusOpTile_titleText => '修改记录状态';
+
+  @override
+  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改主页面上每日记录的状态的点击行为。';
+
+  @override
+  String get appSetting_openRecordStatusDialogOpTile_titleText => '打开详细记录';
+
+  @override
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '一周的第一天';
@@ -983,4 +998,13 @@ class L10nZh extends L10n {
 
   @override
   String get snackbar_dissmessText => '忽略';
+
+  @override
+  String get userAction_tap => '单击';
+
+  @override
+  String get userAction_doubleTap => '双击';
+
+  @override
+  String get userAction_longTap => '长按';
 }

@@ -28,6 +28,7 @@ import '../provider/app_first_day.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_date_change.dart';
+import '../provider/habit_op_config.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
 import '../reminders/notification_channel.dart';
@@ -71,6 +72,11 @@ class App extends StatelessWidget {
         ChangeNotifierProxyProvider<Global, AppCustomDateYmdHmsConfigViewModel>(
           create: (context) => AppCustomDateYmdHmsConfigViewModel(
               global: context.read<Global>()),
+          update: (context, value, previous) => previous!..updateGlobal(value),
+        ),
+        ChangeNotifierProxyProvider<Global, HabitRecordOpConfigViewModel>(
+          create: (context) =>
+              HabitRecordOpConfigViewModel(global: context.read<Global>()),
           update: (context, value, previous) => previous!..updateGlobal(value),
         ),
         ChangeNotifierProxyProvider2<Global, NotificationChannelData,

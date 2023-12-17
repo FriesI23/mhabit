@@ -435,8 +435,13 @@
   "appSetting_appbar_titleText": "Settings",
 
   "appSetting_displaySubgroupText": "Display",
+  "appSetting_operationSubgroupText": "Operation",
   "appSetting_dragCalendarByPageTile_titleText": "Drag calendar by page",
   "appSetting_dragCalendarByPageTile_subtitleText": "If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.",
+  "appSetting_changeRecordStatusOpTile_titleText": "Change Record Status",
+  "appSetting_changeRecordStatusOpTile_subtitleText": "Modify the click behavior to change the status of daily records on main page.",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Open Detailed Record",
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modify the click behavior to open the detailed popup for daily records on main page.",
   "appSetting_firstDayOfWeek_titleText": "First day of week",
   "appSetting_firstDayOfWeekDialog_titleText": "Show first day of week",
   "appSetting_firstDayOfWeekDialog_defaultText": " (Default)",
@@ -655,5 +660,9 @@
   "exportConfirmDialog_confirm_buttonText": "export",
 
   "snackbar_undoText": "UNDO",
-  "snackbar_dissmessText": "DISMISS"
+  "snackbar_dissmessText": "DISMISS",
+
+  "userAction_tap": "Tap",
+  "userAction_doubleTap": "Double",
+  "userAction_longTap": "Long"
 }

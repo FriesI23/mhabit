@@ -40,6 +40,7 @@ const AppThemeType appDefaultThemeType = AppThemeType.followSystem;
 const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
+const int kHabitLargeScreenAdaptWidth = 600;
 //#endregion
 
 //#region app-setting

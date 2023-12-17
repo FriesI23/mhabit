@@ -1135,6 +1135,12 @@ abstract class L10n {
   /// **'Display'**
   String get appSetting_displaySubgroupText;
 
+  /// No description provided for @appSetting_operationSubgroupText.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation'**
+  String get appSetting_operationSubgroupText;
+
   /// No description provided for @appSetting_dragCalendarByPageTile_titleText.
   ///
   /// In en, this message translates to:
@@ -1146,6 +1152,30 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.'**
   String get appSetting_dragCalendarByPageTile_subtitleText;
+
+  /// No description provided for @appSetting_changeRecordStatusOpTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Record Status'**
+  String get appSetting_changeRecordStatusOpTile_titleText;
+
+  /// No description provided for @appSetting_changeRecordStatusOpTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify the click behavior to change the status of daily records on main page.'**
+  String get appSetting_changeRecordStatusOpTile_subtitleText;
+
+  /// No description provided for @appSetting_openRecordStatusDialogOpTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Detailed Record'**
+  String get appSetting_openRecordStatusDialogOpTile_titleText;
+
+  /// No description provided for @appSetting_openRecordStatusDialogOpTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify the click behavior to open the detailed popup for daily records on main page.'**
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText;
 
   /// No description provided for @appSetting_firstDayOfWeek_titleText.
   ///
@@ -1806,6 +1836,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'DISMISS'**
   String get snackbar_dissmessText;
+
+  /// No description provided for @userAction_tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap'**
+  String get userAction_tap;
+
+  /// No description provided for @userAction_doubleTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Double'**
+  String get userAction_doubleTap;
+
+  /// No description provided for @userAction_longTap.
+  ///
+  /// In en, this message translates to:
+  /// **'Long'**
+  String get userAction_longTap;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {
