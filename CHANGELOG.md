@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.1+29
+
+- Add German translation
+- Add Custom tap actions for Habit Record
+
 ## 1.10.0+28
 
 - Upgrade Flutter version to 3.13.9

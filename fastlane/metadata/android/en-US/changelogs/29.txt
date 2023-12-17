@@ -1,0 +1,2 @@
+- Add German translation
+- Add Custom tap actions for Habit Record
