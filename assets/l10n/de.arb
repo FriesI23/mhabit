@@ -149,7 +149,7 @@
   "habitEidt_targetDays_dialogTitle": "Zieltage auswählen",
   "habitEdit_targetDays": "Tage",
 
-  "habitEdit_reminder_hintText": "Reminder",
+  "habitEdit_reminder_hintText": "Erinnerung",
   "habitEdit_reminder_freq_weekHelpText": "Jeden Tag der Woche",
   "habitEdit_reminder_freq_weekPrefixText": "",
   "habitEdit_reminder_freq_weekSubfixText": " in jeder Woche",
@@ -241,11 +241,11 @@
   "habitDisplay_statsMenu_completedTileText": "Abgeschlossen",
   "habitDisplay_statsMenu_inProgresTileText": "In Bearbeitung",
   "habitDisplay_statsMenu_archivedTileText": "Archiviert",
-  "habitDisplay_statsMenu_popularitySubgroupText": "Beste Gewohnheiten: Änderungen der letzten 30 TAge",
+  "habitDisplay_statsMenu_popularitySubgroupText": "Beste Gewohnheiten: Änderungen der letzten 30 Tage",
 
   "habitDisplay_mainMenu_lightTheme": "Helles Thema",
   "habitDisplay_mainMenu_darkTheme": "Dunkles Thema",
-  "habitDisplay_mainMenu_followSystemTheme": "Systemthema",
+  "habitDisplay_mainMenu_followSystemTheme": "System",
   "habitDisplay_mainMenu_showArchivedTileText": "Archivierte anzeigen",
   "habitDisplay_mainMenu_showCompletedTileText": "Abgeschlossene anzeigen",
   "habitDisplay_mainMenu_showActivedTileText": "Aktive anzeigen",
@@ -437,7 +437,7 @@
   "appSetting_displaySubgroupText": "Anzeige",
   "appSetting_operationSubgroupText": "Bedienen",
   "appSetting_dragCalendarByPageTile_titleText": "Kalender nach Seite ziehen",
-  "appSetting_dragCalendarByPageTile_subtitleText": "Wenn der Schalter aktiviert ist, wird der Balkenkalender der App auf der Startseite Seite für Seiten gezogen. Standardmäßig ist diese Funktion deaktiviert.",
+  "appSetting_dragCalendarByPageTile_subtitleText": "Der Kalender des Gewohnheitsverlaufs auf der Startseite kann Seite für Seiten gezogen werden. Standardmäßig ist diese Funktion deaktiviert.",
   "appSetting_changeRecordStatusOpTile_titleText": "Status ändern",
   "appSetting_openRecordStatusDialogOpTile_titleText": "Detaillierte Aufzeichnung öffnen",
   "appSetting_firstDayOfWeek_titleText": "Erster Tag der Woche",
@@ -454,23 +454,23 @@
   },
   "appSetting_dateDisplayFormat_titleText": "Datumsformat ({formatTemplate})",
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "Systemeinstellungen folgen",
-  "appSetting_dateDisplayFormat_subTitleText": "Eingestelltes Datumformat wird auf die Daten der Gewohnheitsseiten angewand.",
+  "appSetting_dateDisplayFormat_subTitleText": "Das ausgewählte Datumsformat wird auf die Zeitstempel der Gewohnheitsseiten angewand.",
 
-  "appSetting_compactUISwitcher_titleText": "Kompate Benutzeroberfläche auf Gewohnheitsseiten",
-  "appSetting_compactUISwitcher_subtitleText": "Es können mehr Informationen angezeigt werden, allerdings sind einige Textelemente kleiner dargestellt.",
+  "appSetting_compactUISwitcher_titleText": "Kompakte Benutzeroberfläche auf Gewohnheitsseiten",
+  "appSetting_compactUISwitcher_subtitleText": "Es werden mehr Informationen angezeigt werden, allerdings sind einige Textelemente kleiner dargestellt.",
 
-  "appSetting_collapsed_calendar_bararea_titleText": "Gewohnheitschecklisten Bereich",
-  "appSetting_collapsed_calendar_bararea_subtitleText": "Zeige mehr oder weniger von der Checkliste auf der Startseite.",
+  "appSetting_collapsed_calendar_bararea_titleText": "Bereich der Gewohnheitslist",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Zeige mehrere oder wenigere Gewohnheiten auf der Startseite.",
   "appSetting_collapsed_calendar_bararea_defaultText": "Standard",
 
   "appSetting_reminderSubgroupText": "Erinnerung",
-  "appSetting_dailyReminder_titleText": "tägliche Erinnerung",
+  "appSetting_dailyReminder_titleText": "Tägliche Erinnerung",
 
   "appSetting_backupAndRestoreSubgroupText": "Sichern & Wiederherstellen",
   "appSetting_export_titleText": "Exportieren",
   "appSetting_export_subtitleText": "Gewohnheiten als JSON Datei exportieren. Diese kann zum wiederherstellen genutzt werden.",
   "appSetting_import_titleText": "Importieren",
-  "appSetting_import_subtitleText": "Gewohnheits JSON Date impotieren.",
+  "appSetting_import_subtitleText": "Gewohnheits JSON Datei impotieren.",
   "@appSetting_importDialog_confirmTitle": {
     "placeholders": {
       "count": {
@@ -526,9 +526,9 @@
   "appSetting_clearCache_snackBar_succText": "Cache erfolgreich geleert",
   "appSetting_clearCache_snackBar_failText": "Cache konnte nicht geleert werden",
 
-  "appSetting_about_titleText": "Über",
+  "appSetting_about_titleText": "Über diese App",
 
-  "appAbout_appbarTile_titleText": "Über",
+  "appAbout_appbarTile_titleText": "Über diese App",
   "@appAbout_verionTile_titleText": {
     "placeholders": {
       "appVersion": {
@@ -541,12 +541,12 @@
   "appAbout_verionTile_changeLogPath": "CHANGELOG.md",
   "appAbout_sourceCodeTile_titleText": "Quellcode",
   "appAbout_issueTrackerTile_titleText": "Fehlerverfolgung",
-  "appAbout_contactEmailTile_titleText": "Kontaktiere mich",
+  "appAbout_contactEmailTile_titleText": "Kontaktiere den Author",
   "appAbout_contactEmailTile_emailBody": "Hi, I'm glad you reached out to me.\nIf you're reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------",
   "appAbout_licenseTile_titleText": "Lizens",
   "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
-  "appAbout_licenseThirdPartyTile_titleText": "Third Party Licensing Statement",
-  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "appAbout_licenseThirdPartyTile_titleText": "Drittanbierterlizensen",
+  "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
   "appAbout_donateTile_titleText": "Spenden",
   "appAbout_donateTile_subTitleText": "Ich entwickle diese App als Hobby. Bitte kaufe mir doch einen ☕.",
   "@appAbout_donateTile_ways": {
