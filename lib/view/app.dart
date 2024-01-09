@@ -166,6 +166,7 @@ class _AppView extends State<AppView> {
               Locale.fromSubtags(languageCode: 'en'),
               Locale.fromSubtags(languageCode: 'de'),
               Locale.fromSubtags(languageCode: 'fa'),
+              Locale.fromSubtags(languageCode: 'vi'),
               Locale.fromSubtags(languageCode: 'zh'),
             ],
             debugShowCheckedModeBanner: false,
