@@ -149,7 +149,7 @@ class L10nDe extends L10n {
   String get habitEdit_targetDays => 'Tage';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'Erinnerung';
 
   @override
   String get habitEdit_reminder_freq_weekHelpText => 'Jeden Tag der Woche';
@@ -320,7 +320,7 @@ class L10nDe extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Archiviert';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Beste Gewohnheiten: Änderungen der letzten 30 TAge';
+  String get habitDisplay_statsMenu_popularitySubgroupText => 'Beste Gewohnheiten: Änderungen der letzten 30 Tage';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Helles Thema';
@@ -329,7 +329,7 @@ class L10nDe extends L10n {
   String get habitDisplay_mainMenu_darkTheme => 'Dunkles Thema';
 
   @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Systemthema';
+  String get habitDisplay_mainMenu_followSystemTheme => 'System';
 
   @override
   String get habitDisplay_mainMenu_showArchivedTileText => 'Archivierte anzeigen';
@@ -631,19 +631,19 @@ class L10nDe extends L10n {
   String get appSetting_dragCalendarByPageTile_titleText => 'Kalender nach Seite ziehen';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Wenn der Schalter aktiviert ist, wird der Balkenkalender der App auf der Startseite Seite für Seiten gezogen. Standardmäßig ist diese Funktion deaktiviert.';
+  String get appSetting_dragCalendarByPageTile_subtitleText => 'Der Kalender des Gewohnheitsverlaufs auf der Startseite kann Seite für Seiten gezogen werden. Standardmäßig ist diese Funktion deaktiviert.';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => 'Status ändern';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Einstellung zur Anpassung des Tipp-Verhaltens, um eine Gewohnheit für ein Datum als abgeschlossen zu markieren.';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => 'Detaillierte Aufzeichnung öffnen';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Einstellung zur Anpassung des Tipp-Verhaltens, um das Pop-Up zur Modifikation eines Datenpunktes einer Gewohnheit zu öffnen.';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'Erster Tag der Woche';
@@ -663,19 +663,19 @@ class L10nDe extends L10n {
   String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'Systemeinstellungen folgen';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Eingestelltes Datumformat wird auf die Daten der Gewohnheitsseiten angewand.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'Das ausgewählte Datumsformat wird auf die Zeitstempel der Gewohnheitsseiten angewand.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Kompate Benutzeroberfläche auf Gewohnheitsseiten';
+  String get appSetting_compactUISwitcher_titleText => 'Kompakte Benutzeroberfläche auf Gewohnheitsseiten';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Es können mehr Informationen angezeigt werden, allerdings sind einige Textelemente kleiner dargestellt.';
+  String get appSetting_compactUISwitcher_subtitleText => 'Es werden mehr Informationen angezeigt werden, allerdings sind einige Textelemente kleiner dargestellt.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Gewohnheitschecklisten Bereich';
+  String get appSetting_collapsed_calendar_bararea_titleText => 'Bereich der Gewohnheitslist';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Zeige mehr oder weniger von der Checkliste auf der Startseite.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Zeige mehrere oder wenigere Gewohnheiten auf der Startseite.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Standard';
@@ -684,7 +684,7 @@ class L10nDe extends L10n {
   String get appSetting_reminderSubgroupText => 'Erinnerung';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'tägliche Erinnerung';
+  String get appSetting_dailyReminder_titleText => 'Tägliche Erinnerung';
 
   @override
   String get appSetting_backupAndRestoreSubgroupText => 'Sichern & Wiederherstellen';
@@ -699,7 +699,7 @@ class L10nDe extends L10n {
   String get appSetting_import_titleText => 'Importieren';
 
   @override
-  String get appSetting_import_subtitleText => 'Gewohnheits JSON Date impotieren.';
+  String get appSetting_import_subtitleText => 'Gewohnheits JSON Datei impotieren.';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -780,10 +780,10 @@ class L10nDe extends L10n {
   String get appSetting_clearCache_snackBar_failText => 'Cache konnte nicht geleert werden';
 
   @override
-  String get appSetting_about_titleText => 'Über';
+  String get appSetting_about_titleText => 'Über diese App';
 
   @override
-  String get appAbout_appbarTile_titleText => 'Über';
+  String get appAbout_appbarTile_titleText => 'Über diese App';
 
   @override
   String appAbout_verionTile_titleText(String appVersion) {
@@ -800,7 +800,7 @@ class L10nDe extends L10n {
   String get appAbout_issueTrackerTile_titleText => 'Fehlerverfolgung';
 
   @override
-  String get appAbout_contactEmailTile_titleText => 'Kontaktiere mich';
+  String get appAbout_contactEmailTile_titleText => 'Kontaktiere den Author';
 
   @override
   String get appAbout_contactEmailTile_emailBody => 'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
@@ -812,10 +812,10 @@ class L10nDe extends L10n {
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Third Party Licensing Statement';
+  String get appAbout_licenseThirdPartyTile_titleText => 'Drittanbierterlizensen';
 
   @override
-  String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
+  String get appAbout_licenseThirdPartyTile_subtitleText => 'Flutter';
 
   @override
   String get appAbout_donateTile_titleText => 'Spenden';
