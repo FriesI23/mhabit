@@ -1,4 +1,5 @@
 {
+  "@@locale": "vi",
   "appName": "Table Habit",
   "habitEdit_saveButton_text": "Lưu",
   "habitEdit_habitName_hintText": "Tên thói quen ...",

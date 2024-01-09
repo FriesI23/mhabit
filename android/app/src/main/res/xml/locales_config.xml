@@ -3,5 +3,6 @@
 	<locale android:name="en" />
 	<locale android:name="de" />
 	<locale android:name="fa" />
+	<locale android:name="vi" />
 	<locale android:name="zh" />
 </locale-config>
