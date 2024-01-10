@@ -129,19 +129,13 @@ class HabitsDisplayFilter {
   final bool allowArchivedHabits;
   final bool allowCompleteHabits;
 
-  static const allFalse = HabitsDisplayFilter._(
+  static const allFalse = HabitsDisplayFilter(
     allowInProgressHabits: false,
     allowArchivedHabits: false,
     allowCompleteHabits: false,
   );
 
   const HabitsDisplayFilter({
-    required this.allowInProgressHabits,
-    required this.allowArchivedHabits,
-    required this.allowCompleteHabits,
-  });
-
-  const HabitsDisplayFilter._({
     required this.allowInProgressHabits,
     required this.allowArchivedHabits,
     required this.allowCompleteHabits,
@@ -173,11 +167,16 @@ class HabitsDisplayFilter {
 
   bool Function(HabitSummaryData) getDisplayFilterFunction() {
     bool func(HabitSummaryData data) {
-      var show = false;
-      show = show || (data.isInProgress && allowInProgressHabits);
-      show = show || (data.isArchived && allowArchivedHabits);
-      show = show || (data.isComplated && allowCompleteHabits);
-      return show;
+      if (data.isArchived) {
+        return allowArchivedHabits;
+      }
+      if (data.isComplated) {
+        return allowCompleteHabits;
+      }
+      if (data.isInProgress) {
+        return allowInProgressHabits;
+      }
+      return true;
     }
 
     return func;
