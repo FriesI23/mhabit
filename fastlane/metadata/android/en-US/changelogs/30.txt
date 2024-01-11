@@ -1,0 +1,3 @@
+- Add Vietnamese translation (#121)
+- Update for German translation (#123)
+- Fix Habit filter (#125)

@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.2+30
+
+- Add Vietnamese translation (#121)
+- Update for German translation (#123)
+- Fix Habit filter (#125)
+
 ## 1.10.1+29
 
 - Add German translation
