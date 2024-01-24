@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'localizations_de.g.dart';
 import 'localizations_en.g.dart';
 import 'localizations_fa.g.dart';
+import 'localizations_fr.g.dart';
 import 'localizations_vi.g.dart';
 import 'localizations_zh.g.dart';
 
@@ -95,6 +96,7 @@ abstract class L10n {
     Locale('de'),
     Locale('en'),
     Locale('fa'),
+    Locale('fr'),
     Locale('vi'),
     Locale('zh')
   ];
@@ -1867,7 +1869,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en', 'fa', 'vi', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['de', 'en', 'fa', 'fr', 'vi', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -1881,6 +1883,7 @@ L10n lookupL10n(Locale locale) {
     case 'de': return L10nDe();
     case 'en': return L10nEn();
     case 'fa': return L10nFa();
+    case 'fr': return L10nFr();
     case 'vi': return L10nVi();
     case 'zh': return L10nZh();
   }
