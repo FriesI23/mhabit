@@ -27,7 +27,7 @@ defaultConfig {
 }
 ```
 
-2. Create new folder at `android/app/main/res/values-<your_language_code>`
+2. Create new folder at `android/app/src/main/res/values-<your_language_code>`
 and create new file `strings.xml` with the following code:
 
 ```xml
