@@ -1,0 +1,2 @@
+- Add French translation (#130)
+- Add Arabic translation (#132)

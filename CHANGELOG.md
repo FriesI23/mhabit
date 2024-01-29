@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.3+31
+
+- Add French translation (#130)
+- Add Arabic translation (#132)
+
 ## 1.10.2+30
 
 - Add Vietnamese translation (#121)
