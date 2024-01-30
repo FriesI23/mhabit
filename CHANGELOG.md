@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.4+32
+
+- Fix incorrect default language (#133)
+
 ## 1.10.3+31
 
 - Add French translation (#130)
