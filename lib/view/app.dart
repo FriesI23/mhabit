@@ -163,8 +163,10 @@ class _AppView extends State<AppView> {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: const [
-              Locale.fromSubtags(languageCode: 'ar'),
+              // Fixed #133
+              // en must be the first item in the list (default language)
               Locale.fromSubtags(languageCode: 'en'),
+              Locale.fromSubtags(languageCode: 'ar'),
               Locale.fromSubtags(languageCode: 'de'),
               Locale.fromSubtags(languageCode: 'fa'),
               Locale.fromSubtags(languageCode: 'fr'),
