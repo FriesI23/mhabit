@@ -34,7 +34,7 @@ class L10nEn extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_negativeHintText(num number) {
-    return 'Minimum daily threshold, defualt $number';
+    return 'Minimum daily threshold, default $number';
   }
 
   @override
