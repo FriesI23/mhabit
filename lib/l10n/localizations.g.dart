@@ -154,7 +154,7 @@ abstract class L10n {
   /// default habit daily goal for negative habit
   ///
   /// In en, this message translates to:
-  /// **'Minimum daily threshold, defualt {number}'**
+  /// **'Minimum daily threshold, default {number}'**
   String habitEdit_habitDailyGoal_negativeHintText(num number);
 
   /// minimum number for habit daily goal

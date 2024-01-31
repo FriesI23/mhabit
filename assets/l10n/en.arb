@@ -32,7 +32,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_negativeHintText": "Minimum daily threshold, defualt {number}",
+  "habitEdit_habitDailyGoal_negativeHintText": "Minimum daily threshold, default {number}",
 
   "@habitEdit_habitDailyGoal_errorText01": {
     "description": "minimum number for habit daily goal",

@@ -1,0 +1,26 @@
+# Type(<scope>): <subject>
+# fix: <title>
+
+# <body>
+
+# <footer>
+# resolved <issue/pr number, e.g. #12345>
+
+# Type should be one of the following:
+# * feat (new feature)
+# * fix (bug fix)
+# * docs (changes to documentation)
+# * style (formatting, missing semi colons, etc; no code change)
+# * refactor (refactoring production code)
+# * test (adding missing tests, refactoring tests; no production code change)
+# * chore (updating grunt tasks etc; no production code change)
+# Scope is just the scope of the change. Something like (admin) or (teacher).
+# Subject should use impertivite tone and say what you did.
+# The body should go into detail about changes made.
+# The footer should contain issue references or actions.
+
+# For a full example of how to write a good commit message, check out
+# https://github.com/sparkbox/how_to/tree/master/style/git
+
+# Copyright: Linell/.git-commit-template.txt
+# see: https://gist.github.com/Linell/bd8100c4e04348c7966d
