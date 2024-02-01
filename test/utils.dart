@@ -36,3 +36,7 @@ class Counter<T> {
   @override
   String toString() => _counts.toString();
 }
+
+abstract class TestCase {
+  void groupCases();
+}

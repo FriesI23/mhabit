@@ -18,6 +18,9 @@ import '../habit_summary.dart';
 import 'score.dart';
 
 class HabitScoreCalculator {
+  static const num kMinScore = 0.0;
+  static const num kMaxScore = 100.0;
+
   final HabitScore habitScore;
   final HabitStartDate startDate;
   final HabitRecordDate? endDate;
@@ -34,11 +37,78 @@ class HabitScoreCalculator {
     required this.getHabitRecord,
   });
 
+  num calcEachScoreBetweenRecordDate(
+      HabitDate crtDate, HabitDate lastDate, num lastScore) {
+    final duringDays = crtDate.epochDay - lastDate.epochDay;
+    return habitScore.getNewScore(
+        lastScore, duringDays * habitScore.calcDecreasedPrt());
+  }
+
+  num calcScoreAfterLastRecordToEnd(
+      HabitDate crtDate, HabitDate endDate, num lastScore) {
+    final lastDuringDays = endDate.epochDay - crtDate.epochDay + 1;
+    return habitScore.getNewScore(
+        lastScore, lastDuringDays * habitScore.calcDecreasedPrt());
+  }
+
+  num calcIncreaseDaysBetweenRecordDate({
+    HabitSummaryRecord? record,
+    required bool isAutoCompleted,
+  }) {
+    if (record != null) {
+      return habitScore.calcIncreasedDay(
+        autoCompleted: isAutoCompleted,
+        status: record.status,
+        value: record.value,
+      );
+    } else {
+      return habitScore.calcIncreasedDay(
+        autoCompleted: isAutoCompleted,
+      );
+    }
+  }
+
+  num calcDecreasePrtBetweenRecordDate({
+    HabitSummaryRecord? record,
+    required bool isAutoCompleted,
+  }) {
+    if (record != null) {
+      return habitScore.calcDecreasedPrt(
+        autoCompleted: isAutoCompleted,
+        status: record.status,
+        value: record.value,
+      );
+    } else {
+      return habitScore.calcDecreasedPrt(
+        autoCompleted: isAutoCompleted,
+      );
+    }
+  }
+
+  bool triggerScoreChangedEvent({
+    required HabitDate fromDate,
+    required num fromScore,
+    HabitDate? toDate,
+    required num toScore,
+    OnScoreChangeCallback? onScoreChanged,
+    void Function(num score)? onTotalScoreCalculated,
+  }) {
+    toDate = toDate ?? fromDate;
+    if (fromScore != toScore) {
+      onScoreChanged?.call(fromDate, toDate, fromScore, toScore);
+    }
+    if (toScore > kMaxScore) {
+      onTotalScoreCalculated?.call(toScore);
+      return true;
+    }
+    return false;
+  }
+
   void calculate({
     void Function(num score)? onTotalScoreCalculated,
     OnScoreChangeCallback? onScoreChanged,
   }) {
-    num crtScore = 0.0;
+    num crtScore = kMinScore;
     num crtDays = 0.0;
     num lastScore = crtScore;
 
@@ -49,82 +119,64 @@ class HabitScoreCalculator {
       if (date > endDate) break;
       if (crtDate > date) continue;
 
-      var duringDays = date.epochDay - crtDate.epochDay;
       lastScore = crtScore;
-      crtScore = habitScore.getNewScore(
-          crtScore, (duringDays * habitScore.calcDecreasedPrt()));
-      if (crtScore != lastScore) {
-        onScoreChanged?.call(crtDate, date, lastScore, crtScore);
-      }
-      if (crtScore >= 100) {
-        onTotalScoreCalculated?.call(crtScore);
-        return;
-      }
+      crtScore = calcEachScoreBetweenRecordDate(date, crtDate, crtScore);
+      if (triggerScoreChangedEvent(
+        fromDate: crtDate,
+        fromScore: lastScore,
+        toDate: date,
+        toScore: crtScore,
+        onScoreChanged: onScoreChanged,
+        onTotalScoreCalculated: onTotalScoreCalculated,
+      )) return;
+
       crtDays = habitScore.calcHabitGrowCurveDay(crtScore);
       crtDate = date.addDays(1);
 
-      num increaseDays, decreasePrt;
-      var autoComplated = isAutoComplated(date);
-      var record = getHabitRecord(date);
-      if (record != null) {
-        increaseDays = habitScore.calcIncreasedDay(
-          autoCompleted: autoComplated,
-          status: record.status,
-          value: record.value,
-        );
-        decreasePrt = habitScore.calcDecreasedPrt(
-          autoCompleted: autoComplated,
-          status: record.status,
-          value: record.value,
-        );
-      } else {
-        increaseDays = habitScore.calcIncreasedDay(
-          autoCompleted: autoComplated,
-        );
-        decreasePrt = habitScore.calcDecreasedPrt(
-          autoCompleted: autoComplated,
-        );
-      }
+      final autoComplated = isAutoComplated(date);
+      final record = getHabitRecord(date);
+      final increaseDays = calcIncreaseDaysBetweenRecordDate(
+          record: record, isAutoCompleted: autoComplated);
+      final decreasePrt = calcDecreasePrtBetweenRecordDate(
+          record: record, isAutoCompleted: autoComplated);
 
-      // debugPrint('calc score:'
-      //     ' $date $crtScore $crtDays $increaseDays $decreasePrt'
-      //     ' $frequency $targetDays');
       lastScore = crtScore;
       crtScore = habitScore.getNewScore(crtScore, decreasePrt);
-      if (crtScore != lastScore) {
-        onScoreChanged?.call(date, date, lastScore, crtScore);
-      }
-      if (crtScore >= 100) {
-        onTotalScoreCalculated?.call(crtScore);
-        return;
-      }
+      if (triggerScoreChangedEvent(
+        fromDate: date,
+        fromScore: lastScore,
+        toScore: crtScore,
+        onScoreChanged: onScoreChanged,
+        onTotalScoreCalculated: onTotalScoreCalculated,
+      )) return;
+
       crtDays = habitScore.calcHabitGrowCurveDay(crtScore);
 
-      // debugPrint('..1 $crtScore $crtDays');
       crtDays = habitScore.getNewDays(crtDays, increaseDays);
       lastScore = crtScore;
       crtScore = habitScore.calcHabitGrowCurveValue(crtDays);
-      if (crtScore != lastScore) {
-        onScoreChanged?.call(date, date, lastScore, crtScore);
-      }
-      if (crtScore >= 100) {
-        onTotalScoreCalculated?.call(crtScore);
-        return;
-      }
-      // debugPrint('..2 $crtScore $crtDays');
+      if (triggerScoreChangedEvent(
+        fromDate: date,
+        fromScore: lastScore,
+        toScore: crtScore,
+        onScoreChanged: onScoreChanged,
+        onTotalScoreCalculated: onTotalScoreCalculated,
+      )) return;
     }
 
-    var lastDuringDays = endDate.epochDay - crtDate.epochDay + 1;
     lastScore = crtScore;
-    crtScore = habitScore.getNewScore(
-        crtScore, (lastDuringDays * habitScore.calcDecreasedPrt()));
-    if (lastScore != crtScore) {
-      onScoreChanged?.call(
-          crtDate.subtractDays(1), endDate, lastScore, crtScore);
+    crtScore = calcScoreAfterLastRecordToEnd(crtDate, endDate, crtScore);
+    if (triggerScoreChangedEvent(
+      fromDate: crtDate.subtractDays(1),
+      fromScore: lastScore,
+      toDate: endDate,
+      toScore: crtScore,
+      onScoreChanged: onScoreChanged,
+      onTotalScoreCalculated: onTotalScoreCalculated,
+    )) {
+      return;
+    } else {
+      onTotalScoreCalculated?.call(crtScore);
     }
-    onTotalScoreCalculated?.call(crtScore);
-    // crtDays = habitScore.calcHabitGrowCurveDay(crtScore);
-    // debugPrint("$startDate -> $endDate | $crtDate "
-    //     "| lastDuringDays=$lastDuringDays, result=$crtScore");
   }
 }
