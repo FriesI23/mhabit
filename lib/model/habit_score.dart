@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './_score/calculator.dart' show HabitScoreCalculator;
+export './_score/calculator.dart'
+    show HabitScoreCalculator, ArchivedHabitScoreCalculator;
 export './_score/data.dart' show HabitScoreChangedProtoData;
 export '_score/score.dart';

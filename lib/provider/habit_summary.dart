@@ -574,14 +574,20 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     await changeSelectedHabitStatus(uuidList, newStatus);
 
     final result = <HabitSummaryStatusChangedRecord>[];
+
+    Future<void> aTask(HabitSummaryData data) async {
+      data.status = newStatus;
+      bumpHatbitVersion(data);
+      calcHabitAutoComplateRecords(data);
+      result.add(HabitSummaryStatusChangedRecord(
+          habitUUID: data.uuid, habitStatus: data.status));
+    }
+
     final futureList = <Future>[];
     for (var habitUUID in uuidList) {
       final data = getHabit(habitUUID);
       if (data == null) continue;
-      result.add(HabitSummaryStatusChangedRecord(
-          habitUUID: habitUUID, habitStatus: data.status));
-      data.status = newStatus;
-      futureList.add(bumpHatbitVersion(data));
+      futureList.add(aTask(data));
     }
 
     await Future.wait(futureList);

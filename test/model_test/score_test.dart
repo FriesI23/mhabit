@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/model/habit_date.dart';
@@ -742,7 +744,108 @@ class HabitScoreCalculatorTestCase extends TestCase {
   }
 }
 
+class ArchivedHabitScoreCalculatorTestCase extends TestCase {
+  static ArchivedHabitScoreCalculatorTestCase? _inst;
+
+  ArchivedHabitScoreCalculatorTestCase._internal() {
+    _inst = this;
+  }
+
+  factory ArchivedHabitScoreCalculatorTestCase() =>
+      _inst ?? ArchivedHabitScoreCalculatorTestCase._internal();
+
+  void groupTestCalc() =>
+      group("test ArchivedHabitScoreCalculator calc total score", () {
+        test("ArchivedHabitScoreCalculator calc normal", () {
+          var dateList = <HabitDate>[
+            HabitDate(2020, 1, 1),
+            HabitDate(2020, 1, 2),
+            HabitDate(2020, 1, 3),
+            HabitDate(2020, 1, 4),
+            HabitDate(2020, 1, 5),
+          ];
+
+          final data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
+          for (var i in dateList) {
+            data[i] = Tuple2(
+                HabitSummaryRecord.generate(
+                  i,
+                  status: HabitRecordStatus.done,
+                  value: 10.0,
+                ),
+                false);
+          }
+
+          final calc = ArchivedHabitScoreCalculator(
+            habitScore: HabitScore.getImp(
+                type: HabitType.normal, targetDays: 10, dailyGoal: 1),
+            startDate: HabitDate(2020, 1, 1),
+            endDate: HabitDate(2020, 1, 10),
+            iterable: data.keys,
+            isAutoComplated: (date) => data[date]!.item2,
+            getHabitRecord: (date) => data[date]!.item1,
+          );
+
+          num result = 0.0;
+          calc.calculate(
+            onTotalScoreCalculated: (score) => result = score,
+          );
+
+          final ctrlCalc = HabitScoreCalculator(
+            habitScore: HabitScore.getImp(
+                type: HabitType.normal, targetDays: 10, dailyGoal: 1),
+            startDate: HabitDate(2020, 1, 1),
+            endDate: HabitDate(2020, 1, 10),
+            iterable: data.keys,
+            isAutoComplated: (date) => data[date]!.item2,
+            getHabitRecord: (date) => data[date]!.item1,
+          );
+
+          num ctrlResult = 0.0;
+          ctrlCalc.calculate(
+            onTotalScoreCalculated: (score) => ctrlResult = score,
+          );
+
+          expect(89 <= result && result <= 90.0, true);
+          expect(39 <= ctrlResult && ctrlResult <= 40.0, true);
+        });
+      });
+
+  void groupTestCalcSubProgress() =>
+      group("test ArchivedHabitScoreCalculator sub methods", () {
+        test('calcScoreAfterLastRecordToEnd', () {
+          final calculator = ArchivedHabitScoreCalculator(
+              habitScore: HabitScore.getImp(
+                  type: HabitType.normal, targetDays: 10, dailyGoal: 1),
+              startDate: HabitDate(2023, 1, 1),
+              iterable: [],
+              isAutoComplated: (date) => false,
+              getHabitRecord: (date) => null);
+
+          num result;
+          final randNum = Random().nextDouble() * 100;
+          result = calculator.calcScoreAfterLastRecordToEnd(
+              HabitDate(2023, 1, 10), HabitDate(2023, 1, 13), randNum);
+          expect(result, equals(randNum));
+          result = calculator.calcScoreAfterLastRecordToEnd(
+              HabitDate(2023, 1, 10), HabitDate(2023, 1, 14), randNum);
+          expect(result, equals(randNum));
+        });
+      });
+
+  @override
+  void groupCases() {
+    groupTestCalc();
+    groupTestCalcSubProgress();
+  }
+}
+
 void main() {
-  HabitScoreTestCase().groupCases();
-  HabitScoreCalculatorTestCase().groupCases();
+  for (var element in <TestCase>[
+    HabitScoreTestCase(),
+    HabitScoreCalculatorTestCase(),
+    ArchivedHabitScoreCalculatorTestCase()
+  ]) {
+    element.groupCases();
+  }
 }
