@@ -1278,7 +1278,8 @@ class _HabitRecordListTile extends StatelessWidget {
 
     DebugLog.rebuild(
       "HabitDisplayListTile:: $uuid | $isExtended, $crtDate | "
-      "id=${data?.id}, uuid=${data?.uuid}, sort=${data?.sortPostion}, "
+      "id=${data?.id}, name=\"${data?.name}\", uuid=${data?.uuid}, "
+      "sort=${data?.sortPostion}, "
       "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
     );
     if (data == null) {

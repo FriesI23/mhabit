@@ -298,7 +298,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       }
     }
 
-    var calculator = getCalculator();
+    final calculator = getCalculator();
     calculator.calculate(
       onTotalScoreCalculated: (score) {
         _progress = math.min(math.max(score, 0), 100);
@@ -309,22 +309,38 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     // debugPrint('debug: last untrack date: ${getFirstUnTrackedDate()}');
   }
 
-  HabitScoreCalculator getCalculator() => HabitScoreCalculator(
-        habitScore: HabitScore.getImp(
+  HabitScoreCalculator getCalculator() {
+    HabitScore createHabitScore() => HabitScore.getImp(
           type: type,
           targetDays: targetDays,
           dailyGoal: dailyGoal,
           dailGoalExtra: dailyGoalExtra,
-        ),
-        startDate: startDate,
-        iterable: combineIterables(
+        );
+
+    Iterable<HabitDate> createIterable() => combineIterables(
           _autoMarkedRecords,
           _recordDateCacheMap.keys,
           compare: (a, b) => a.compareTo(b),
-        ),
+        );
+
+    if (isArchived) {
+      return ArchivedHabitScoreCalculator(
+        habitScore: createHabitScore(),
+        startDate: startDate,
+        iterable: createIterable(),
         isAutoComplated: (date) => _autoMarkedRecords.contains(date),
         getHabitRecord: (date) => _recordDateCacheMap[date],
       );
+    } else {
+      return HabitScoreCalculator(
+        habitScore: createHabitScore(),
+        startDate: startDate,
+        iterable: createIterable(),
+        isAutoComplated: (date) => _autoMarkedRecords.contains(date),
+        getHabitRecord: (date) => _recordDateCacheMap[date],
+      );
+    }
+  }
 
   Iterable<HabitRecordDate> _calculateAutoComplateRecordsCustom() {
     assert(frequency.type == HabitFrequencyType.custom);
