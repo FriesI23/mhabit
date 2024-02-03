@@ -117,6 +117,7 @@ class HabitScoreCalculator {
     void Function(num score)? onTotalScoreCalculated,
     OnScoreChangeCallback? onScoreChanged,
   }) {
+    // performs the calculation of the habit score and triggers regr events
     num crtScore = kMinScore;
     num crtDays = 0.0;
     num lastScore = crtScore;
@@ -128,6 +129,7 @@ class HabitScoreCalculator {
       if (date > endDate) break;
       if (crtDate > date) continue;
 
+      // step 1: Calc new score between two record dates
       lastScore = crtScore;
       crtScore = calcEachScoreBetweenRecordDate(date, crtDate, crtScore);
       if (triggerScoreChangedEvent(
@@ -142,13 +144,14 @@ class HabitScoreCalculator {
       crtDays = _habitScore.calcHabitGrowCurveDay(crtScore);
       crtDate = date.addDays(1);
 
+      // step 2.1: Calc params for score adjustment based on record
       final autoComplated = _isAutoComplated(date);
       final record = _getHabitRecord(date);
       final increaseDays = calcIncreaseDaysBetweenRecordDate(
           record: record, isAutoCompleted: autoComplated);
       final decreasePrt = calcDecreasePrtBetweenRecordDate(
           record: record, isAutoCompleted: autoComplated);
-
+      // step 2.2: Update current score with calculated decrease percentage
       lastScore = crtScore;
       crtScore = _habitScore.getNewScore(crtScore, decreasePrt);
       if (triggerScoreChangedEvent(
@@ -160,7 +163,7 @@ class HabitScoreCalculator {
       )) return;
 
       crtDays = _habitScore.calcHabitGrowCurveDay(crtScore);
-
+      // step 2.3:  Update current score with calculated increase days
       crtDays = _habitScore.getNewDays(crtDays, increaseDays);
       lastScore = crtScore;
       crtScore = _habitScore.calcHabitGrowCurveValue(crtDays);
@@ -173,6 +176,7 @@ class HabitScoreCalculator {
       )) return;
     }
 
+    // step 4: Calc score from last recorded date to the end
     lastScore = crtScore;
     crtScore = calcScoreAfterLastRecordToEnd(crtDate, endDate, crtScore);
     if (triggerScoreChangedEvent(
