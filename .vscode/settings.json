@@ -34,6 +34,7 @@
   "[dart]": {
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
+    "editor.tabSize": 2,
     "editor.rulers": [
       80,
       100
@@ -48,5 +49,9 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
     "editor.indentSize": 2
+  },
+  "[xml]": {
+    "editor.wordWrap": "off",
+    "editor.tabSize": 4
   }
 }

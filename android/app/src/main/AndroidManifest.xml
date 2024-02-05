@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:label="@string/appName"
         android:name="${applicationName}"
@@ -30,6 +31,21 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- #region: for flutter_local_notifications required-->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
+        <!-- #endregion -->
     </application>
     <queries>
         <intent>
@@ -42,5 +58,4 @@
             <data android:scheme="mailto" />
         </intent>
     </queries>
-    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
 </manifest>
