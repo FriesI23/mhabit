@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.5+33
+
+- Freeze score if habit archived (#138)
+- Fix not reminding issue on android (#140)
+- Fix typo issue in project (#137)
+
 ## 1.10.4+32
 
 - Fix incorrect default language (#133)

@@ -1,0 +1,3 @@
+- Freeze score if habit archived (#138)
+- Fix not reminding issue on android (#140)
+- Fix typo issue in project (#137)
