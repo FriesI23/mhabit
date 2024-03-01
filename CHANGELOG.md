@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.10.6+34
+
+- Fix not reminding issue on android (#144)
+
 ## 1.10.5+33
 
 - Freeze score if habit archived (#138)
