@@ -40,43 +40,58 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  shared_preferences: ^2.0.15
-  dynamic_color: ^1.5.4
-  sqflite: ^2.2.2
-  path: ^1.8.2
-  material_color_utilities: ^0.5.0
-  provider: ^6.0.5
+
+  # UI Components
   flutter_colorpicker: ^1.0.3
+  great_list_view: ^0.2.3
+  fl_chart: ^0.64.0
+  simple_heatmap_calendar: ^0.2.0
+  flutter_donation_buttons: ^0.4.8
+
+  # Extra Features
+  dynamic_color: ^1.5.4
+  material_color_utilities: ^0.5.0
+  linked_scroll_controller: ^0.2.0
+  sliver_tools: ^0.2.9
+  share_plus: ^7.2.1
+  file_picker: ^6.1.1
+  path_provider: ^2.0.14
+  device_info_plus: ^9.1.0
+  flutter_local_notifications: ^16.1.0
+  flutter_svg: ^2.0.4
+  flutter_timezone: ^1.0.4
+  flutter_markdown: ^0.6.14
+  url_launcher: ^6.1.10
+  package_info_plus: ^4.2.0
+  copy_with_extension: ^5.0.0
+  json_annotation: ^4.8.0
+
+  # Fonts and Icons
+  named_html_color: ^0.0.3+1
+  cupertino_icons: ^1.0.2
+  material_design_icons_flutter: ^6.0.7296
+  cryptofont: ^1.0.2+1
+
+  # Data Structure
+  provider: ^6.0.5
   tuple: ^2.0.1
   quiver: ^3.2.1
   uuid: ^4.1.0
-  linked_scroll_controller: ^0.2.0
-  copy_with_extension: ^5.0.0
-  sliver_tools: ^0.2.9
   collection: ^1.17.0
-  animated_check: ^1.0.5
-  great_list_view: ^0.2.3
-  animations: ^2.0.7
-  fl_chart: ^0.64.0
-  simple_heatmap_calendar: ^0.2.0
-  named_html_color: ^0.0.3+1
-  flutter_svg: ^2.0.4
-  json_annotation: ^4.8.0
-  material_design_icons_flutter: ^6.0.7296
-  share_plus: ^7.2.1
-  path_provider: ^2.0.14
-  file_picker: ^6.1.1
-  device_info_plus: ^9.1.0
-  flutter_local_notifications: ^16.1.0
-  package_info_plus: ^4.2.0
-  timezone: ^0.9.1
-  flutter_timezone: ^1.0.4
   crypto: ^3.0.2
-  flutter_markdown: ^0.6.14
-  url_launcher: ^6.1.10
-  flutter_donation_buttons: ^0.4.8
-  cryptofont: ^1.0.2+1
+  timezone: ^0.9.1
+
+  # Data Persistence
+  shared_preferences: ^2.0.15
+  sqflite: ^2.2.2
+  path: ^1.8.2
+
+  # Animation
+  animated_check: ^1.0.5
+  animations: ^2.0.7
+
+  # logging
+  logger: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -87,11 +102,15 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+
+  # Testing
   flutter_lints: ^3.0.1
   test: ^1.21.4
   test_cov_console: ^0.2.2
-  copy_with_extension_gen: ^5.0.0
+
+  # Code Generation
   build_runner: ^2.3.3
+  copy_with_extension_gen: ^5.0.0
   icon_font_generator:
     # Can't extract file from a c URI
     # see here: https://github.com/ScerIO/icon_font_generator/pull/20
@@ -100,8 +119,11 @@ dev_dependencies:
       ref: file_path_fix
   flutter_gen: ^5.2.0
   json_serializable: ^6.6.1
+
+  # Utilities
   package_rename: ^1.2.0
   flutter_launcher_icons: ^0.13.1
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
