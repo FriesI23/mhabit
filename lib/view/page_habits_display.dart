@@ -34,6 +34,7 @@ import '../db/db_helper/records.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/global.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
@@ -835,7 +836,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitsDisplayView:: $hashCode");
+    logOf(context).rebuild.debug(context);
 
     //#region: appbar
     Widget buildAppbarInViewMode(BuildContext context, bool isExtended) {
@@ -975,7 +976,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, status, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          DebugLog.rebuild("Appbar:: $status");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [status],
+                name: "$widget.Appbar",
+              );
           return SliverAnimatedSwitcher(
             duration: _kEditModeChangeAnimateDuration,
             child: viewmodel.isInEditMode
@@ -994,7 +999,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          DebugLog.rebuild("HabitSummaryList:: ... $value");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [value],
+                name: "$widget.HabitList",
+              );
           return AnimatedSliverList(
             controller: viewmodel.dispatcherLinkedController,
             delegate: AnimatedSliverChildBuilderDelegate(
@@ -1276,14 +1285,9 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    DebugLog.rebuild(
-      "HabitDisplayListTile:: $uuid | $isExtended, $crtDate | "
-      "id=${data?.id}, name=\"${data?.name}\", uuid=${data?.uuid}, "
-      "sort=${data?.sortPostion}, "
-      "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
-    );
+    logOf(context).rebuild.debug(context, ex: [uuid, isExtended, data]);
     if (data == null) {
-      WarnLog.rebuild("HabitDisplayListTile:: data not found: $uuid");
+      logOf(context).rebuild.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();
     }
     return HabitDisplayListTile(

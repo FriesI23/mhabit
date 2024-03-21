@@ -18,9 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../common/consts.dart';
-import '../../common/logging.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
 
 class HabitTargetDaysPickerResult {
   final int targetDays;
@@ -152,11 +152,12 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("dialog targetDays: "
-        "$selectTargetDaysType, $customTargetDays | $currentTargetDay");
+    logOf(context).rebuild.debug(
+      context,
+      ex: [selectTargetDaysType, customTargetDays, currentTargetDay],
+    );
 
     final l10n = L10n.of(context);
-
     return LayoutBuilder(
       builder: (context, constraints) => AlertDialog(
         title: constraints.maxHeight > dialogshowTitleMaxHeight

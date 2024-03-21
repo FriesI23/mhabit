@@ -247,8 +247,6 @@ class _HabitEditReplacementRecordCalendarDialog
               vm.getHabitHeatmapCellStatus(HabitDate.dateTime(date)),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, status, _) {
-            // DebugLog.rebuild("HabitEditRecordByHeatmapCalendarDialog:: "
-            //     "heatmap cell $date $value");
             return Tooltip(
               message: DateFormat('yyyy-MM-dd').format(date),
               waitDuration: const Duration(seconds: 1),

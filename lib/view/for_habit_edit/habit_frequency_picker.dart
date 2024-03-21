@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../common/consts.dart';
-import '../../common/logging.dart';
 import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_freq.dart';
 
@@ -117,8 +117,10 @@ class _HabitFrequencyPickerDialogView
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("dialog frequency: "
-        "$selectFrequencyType $customFrequency");
+    logOf(context).rebuild.debug(
+      context,
+      ex: [selectFrequencyType, customFrequency],
+    );
 
     void onRadioChangeCallback(_HabitFrequencyPickerType? value) {
       if (value != null) {
@@ -183,7 +185,6 @@ class _HabitFrequencyPickerDialogView
     }
 
     final l10n = L10n.of(context);
-
     return LayoutBuilder(
       builder: (context, constraints) => AlertDialog(
         title: constraints.maxHeight > dialogshowTitleMaxHeight && l10n != null

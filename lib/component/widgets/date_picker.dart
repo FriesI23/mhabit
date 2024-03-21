@@ -20,8 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/logging.dart';
 import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
 import 'chip_list.dart';
 
 const Size _calendarPortraitDialogSize = Size(330.0 + 10, 518.0);
@@ -167,7 +167,10 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("DatePicker: ${widget.currentDate} ${widget.initialDate}");
+    logOf(context).rebuild.debug(
+      context,
+      ex: [widget.currentDate, widget.initialDate],
+    );
 
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;

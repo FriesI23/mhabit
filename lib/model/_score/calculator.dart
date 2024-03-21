@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:mhabit/model/habit_form.dart';
-
 import '../../common/types.dart';
 import '../habit_date.dart';
+import '../habit_form.dart';
 import '../habit_summary.dart';
 import 'score.dart';
 

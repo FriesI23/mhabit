@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../logging/helper.dart';
+
 enum ScrollingFABType {
   small,
   large,
@@ -120,8 +122,10 @@ class ScrollingFAB extends StatelessWidget {
     FloatingActionButtonThemeData fabTheme = theme.floatingActionButtonTheme
         .copyWith(extendedSizeConstraints: getExtendedSizeConstraints(context));
 
-    // DebugLog.rebuild('HabitsList FAB: '
-    //     '"$isExtended, $_extendedLabel, $child');
+    logOf(context).rebuild.debug(
+      context,
+      ex: [isExtended, _extendedLabel, child],
+    );
 
     return Theme(
       data: theme.copyWith(floatingActionButtonTheme: fabTheme),

@@ -32,6 +32,7 @@ import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../extension/num_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
@@ -447,7 +448,7 @@ class _HabitDetailView extends State<HabitDetailView>
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitDetailView:: $hashCode");
+    logOf(context).rebuild.debug(context);
 
     Widget buildAppbar(BuildContext context) {
       Widget buildAppbarAction(
@@ -521,7 +522,8 @@ class _HabitDetailView extends State<HabitDetailView>
         builder: (context, _, child) {
           final viewmodel = context.read<HabitDetailViewModel>();
           final durningDays = viewmodel.duringFromStartDate.inDays;
-          DebugLog.rebuild("summary tile: $_ ${viewmodel.habitProgress}");
+          logOf(context).rebuild.debug(context,
+              ex: [viewmodel.habitProgress], name: "$widget.SummaryList");
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(
               habitProgress: viewmodel.habitProgress,

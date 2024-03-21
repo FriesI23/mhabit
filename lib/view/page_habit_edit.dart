@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/global.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
@@ -306,7 +307,7 @@ class _HabitEditView extends State<HabitEditView> {
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitEditView:: $hashCode ${widget.initForm}");
+    logOf(context).rebuild.debug(context, ex: [widget.initForm]);
 
     //#region private builders
     Widget buildAppbar(BuildContext context) {
@@ -319,7 +320,11 @@ class _HabitEditView extends State<HabitEditView> {
             viewmodel.canSaveHabit()),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
-          DebugLog.rebuild('Appbar habitEdit: "$data');
+          logOf(context).rebuild.debug(
+                context,
+                ex: [data],
+                name: "$widget.Appbar.HabitEdit",
+              );
           final name = data.item1;
           final colorType = data.item2;
           final isAppbarPinned = data.item3;
@@ -347,7 +352,11 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.colorType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, colorType, child) {
-          DebugLog.rebuild("field color: $colorType");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [colorType],
+                name: "$widget.ColorField",
+              );
           return HabitEditColorTile(
             colorType: colorType,
             onPressed: _openColorPickerDialog,
@@ -361,7 +370,11 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.habitType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, habitType, child) {
-          DebugLog.rebuild("field habit type: $habitType");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [habitType],
+                name: "$widget.HabitTypeField",
+              );
           return HabitEditHabitTypeTile(
             habitType: habitType,
             onPressed: _openHabitTypePickerDialog,
@@ -376,7 +389,11 @@ class _HabitEditView extends State<HabitEditView> {
         builder: (context, _, child) {
           final l10n = L10n.of(context);
           final formvm = context.read<HabitFormViewModel>();
-          DebugLog.rebuild("field daily goal, ${formvm.dailyGoal}");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [formvm.dailyGoal],
+                name: "$widget.DailyGoalField",
+              );
           return HabitEditDailyGoalTile(
             errorHint: formvm.isDailyGoalValueValid
                 ? null
@@ -482,7 +499,11 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.frequency,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, frequency, child) {
-          DebugLog.rebuild("field frequency: $frequency");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [frequency],
+                name: "$widget.FrequencyField",
+              );
           return HabitEditFrequencyTile(
             frequency: frequency,
             onPressed: _openFrequencyPickerDialog,
@@ -498,7 +519,11 @@ class _HabitEditView extends State<HabitEditView> {
             Tuple2(formViewModel.startDate, formViewModel.colorType),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
-          DebugLog.rebuild("field targetDays: $data");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [data],
+                name: "$widget.StartDateField",
+              );
           final startDate = data.item1;
           final colorType = data.item2;
           return HabitEditStartDateTile(
@@ -514,7 +539,11 @@ class _HabitEditView extends State<HabitEditView> {
       return Selector<HabitFormViewModel, int>(
         selector: (context, formViewModel) => formViewModel.targetDays,
         builder: (context, targetDays, child) {
-          DebugLog.rebuild("field targetDays: $targetDays");
+          logOf(context).rebuild.debug(
+                context,
+                ex: [targetDays],
+                name: "$widget.TargetDaysField",
+              );
           return HabitEditTargetDaysTile(
             targetDays: targetDays,
             onPressed: _openTargetDaysPickerDialog,
