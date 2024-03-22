@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
@@ -148,6 +147,8 @@ class _HabitEditView extends State<HabitEditView> {
       BuildContext context, HabitFrequency frequency) async {
     final result = await showHabitFrequencyPickerDialog(
         context: context, frequency: frequency);
+    appLog.naviResult
+        .info("$runtimeType._openFrequencyPickerDialog", ex: [result]);
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().frequency = result;
   }
@@ -156,7 +157,7 @@ class _HabitEditView extends State<HabitEditView> {
       HabitColorType colorType) async {
     final result = await showHabitDatePickerDialog(
         context: context, date: startDate, colorType: colorType);
-    DebugLog.naviResult("datePickerDialog: $result");
+    appLog.naviResult.info("$runtimeType._openDatePickerDialog", ex: [result]);
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().startDate =
         HabitStartDate.dateTime(result);

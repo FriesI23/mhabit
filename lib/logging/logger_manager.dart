@@ -16,6 +16,7 @@ import 'package:logger/logger.dart' as l;
 
 import '../common/abc.dart';
 import 'handler/console_handler.dart';
+import 'logger/text_logger.dart';
 import 'logger/value_change_logger.dart';
 import 'logger/widget_logger.dart';
 import 'logger_type.dart';
@@ -26,8 +27,17 @@ abstract interface class AppLoggerMananger with FutureInitializationABC {
   l.Logger get logger;
 
   AppWidgetLogger get rebuild;
-
   AppValueChangeLogger get setValue;
+  AppTextLogger get naviResult;
+  AppTextLogger get db;
+  AppTextLogger get profile;
+  AppTextLogger get load;
+  AppTextLogger get notify;
+  AppTextLogger get import;
+  AppTextLogger get export;
+  AppTextLogger get habit;
+  AppTextLogger get network;
+  AppTextLogger get json;
 
   Future<bool> changeLogger(l.Logger newLogger);
 
@@ -66,6 +76,9 @@ class _AppLoggerManager implements AppLoggerMananger {
     return newAppLogger;
   }
 
+  AppTextLogger _tryGetAppTextLogger(LoggerType t) =>
+      _tryGetAppLogger(t, buildNewLogger: (t) => AppTextLogger(this, t));
+
   @override
   AppWidgetLogger get rebuild => _tryGetAppLogger(
         LoggerType.rebuild,
@@ -77,6 +90,36 @@ class _AppLoggerManager implements AppLoggerMananger {
         LoggerType.setValue,
         buildNewLogger: (t) => AppValueChangeLogger(this, t),
       );
+
+  @override
+  AppTextLogger get naviResult => _tryGetAppTextLogger(LoggerType.naviResult);
+
+  @override
+  AppTextLogger get db => _tryGetAppTextLogger(LoggerType.db);
+
+  @override
+  AppTextLogger get profile => _tryGetAppTextLogger(LoggerType.profile);
+
+  @override
+  AppTextLogger get load => _tryGetAppTextLogger(LoggerType.load);
+
+  @override
+  AppTextLogger get notify => _tryGetAppTextLogger(LoggerType.notify);
+
+  @override
+  AppTextLogger get import => _tryGetAppTextLogger(LoggerType.import);
+
+  @override
+  AppTextLogger get export => _tryGetAppTextLogger(LoggerType.export);
+
+  @override
+  AppTextLogger get habit => _tryGetAppTextLogger(LoggerType.habit);
+
+  @override
+  AppTextLogger get network => _tryGetAppTextLogger(LoggerType.network);
+
+  @override
+  AppTextLogger get json => _tryGetAppTextLogger(LoggerType.json);
 
   @override
   Future<bool> changeLogger(l.Logger newLogger) async {

@@ -25,7 +25,6 @@ import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
@@ -1046,11 +1045,14 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           return FutureBuilder(
             future: getFuture(),
             builder: (context, snapshot) {
-              DebugLog.load("------ "
-                  "Load data ${snapshot.connectionState}, "
-                  "${viewmodel.habitCount}");
+              appLog.load.debug("$widget.buildHabits", ex: [
+                "Loading data",
+                snapshot.connectionState,
+                viewmodel.habitCount
+              ]);
               if (kDebugMode && snapshot.isDone) {
-                DebugLog.load(viewmodel.debugGetDataString());
+                appLog.load.debug("$widget.buildHabits",
+                    ex: ["Loaded", viewmodel.debugGetDataString()]);
               }
 
               return SliverStack(

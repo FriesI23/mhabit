@@ -20,8 +20,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../common/abc.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
+import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_reminder.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
@@ -171,14 +171,11 @@ extension NotificationServiceWithApp on NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      DebugLog.notify(
-        "regr app reminder succeed | id=$appReminderNotifyId, "
-        "scheduledDate=$scheduledDate, "
-        "title='$title', "
-        "subtitle='$subtitle'",
-      );
+      appLog.notify.debug("$runtimeType.regreAppReminderInDaily",
+          ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
     } on PlatformException catch (e) {
-      WarnLog.notify("regr app reminder failed: ${e.message}");
+      appLog.notify.warn("$runtimeType.regreAppReminderInDaily",
+          ex: ["regr app reminder failed"], error: e);
       return false;
     }
 
@@ -237,16 +234,11 @@ extension NotificationServiceWithHabits on NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      DebugLog.notify(
-        "regr reminder succeed | id=${data.id}, "
-        "scheduledDate=$scheduledDate, "
-        "habitUUID='$uuid', "
-        "name='$name', "
-        "quest='$quest', "
-        "payload=$data",
-      );
+      appLog.notify.debug("$runtimeType.regrHabitReminder",
+          ex: [data.id, scheduledDate, uuid, name, quest, data]);
     } on PlatformException catch (e) {
-      WarnLog.notify("regr reminder failed: ${e.message}");
+      appLog.notify.warn("$runtimeType.regrHabitReminder",
+          ex: ["regr reminder failed"], error: e);
       return false;
     }
 

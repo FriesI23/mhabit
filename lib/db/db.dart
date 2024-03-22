@@ -21,11 +21,13 @@ import 'package:sqflite/sqflite.dart';
 import '../common/abc.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
-import '../common/logging.dart';
+import '../logging/helper.dart';
+import '../logging/logger_stack.dart';
 import 'db_helper/habits.dart';
 import 'db_helper/records.dart';
 
-const String _autoUpdateRecordsModifyTimeTrigger = """
+const String _autoUpdateRecordsModifyTimeTrigger =
+    """
 CREATE TRIGGER auto_update_mh_records_modify_t
 AFTER UPDATE ON mh_records
 BEGIN
@@ -34,7 +36,8 @@ BEGIN
   WHERE uuid = NEW.uuid;
 END""";
 
-const String _autoUpdateHabitssModifyTimeTrigger = """
+const String _autoUpdateHabitssModifyTimeTrigger =
+    """
 CREATE TRIGGER auto_update_mh_habits_modify_t
 AFTER UPDATE ON mh_habits
 BEGIN
@@ -44,7 +47,8 @@ BEGIN
 END
 """;
 
-const String _autoAddSortPostionWhenAddNewHabit = """
+const String _autoAddSortPostionWhenAddNewHabit =
+    """
 CREATE TRIGGER auto_insert_mh_habits_sort_position
 AFTER INSERT ON mh_habits
 BEGIN
@@ -125,29 +129,30 @@ class DB implements DBInterface, FutureInitializationABC {
   Future<void> _deleteBD(String dbPath) async {
     try {
       await deleteDatabase(dbPath);
-      DebugLog.db("clear db");
+      appLog.db.info("Delete db");
     } catch (e) {
-      DebugLog.db("debug clear db when app start err, ${e.toString()}");
+      appLog.db.error("error during delete db",
+          error: e, stackTrace: LoggerStackTrace.from(StackTrace.current));
     }
   }
 
   @override
   Future init() async {
-    DebugLog.db('Initializing db ...');
+    appLog.db.info("Initializing db ...");
     String dbPath = join(await getDatabasesPath(), appDBName);
     if (kDebugMode && debugClearDBWhenStart) _deleteBD(dbPath);
     db = await _initDatabase(dbPath);
-    DebugLog.db('Initialized db - $db');
+    appLog.db.info('Initialized db', ex: [db]);
   }
 
   Future reInit() async {
-    DebugLog.db('Re-Initializing db ...');
+    appLog.db.info('Re-Initializing db ...');
     String dbPath = join(await getDatabasesPath(), appDBName);
     final orgDB = db;
     await orgDB.close();
     await _deleteBD(dbPath);
     db = await _initDatabase(dbPath);
-    DebugLog.db('Re-Initialized db - $orgDB -> $db');
+    appLog.db.info('Re-Initialized db', ex: [orgDB, db]);
   }
 }
 

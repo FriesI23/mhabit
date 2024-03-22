@@ -17,7 +17,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
@@ -245,7 +244,8 @@ class HabitFormViewModel extends ChangeNotifier
 
   Future<HabitDBCell?> saveHabit() async {
     if (!canSaveHabit()) {
-      WarnLog.saveHabit("habit unsaved, mode=${_form.editMode}");
+      appLog.habit.warn("$runtimeType.saveHabit",
+          ex: ["Habit unsaved", _form.editMode, name]);
       return null;
     }
     switch (_form.editMode) {
@@ -288,7 +288,7 @@ class HabitFormViewModel extends ChangeNotifier
     }
     int dbid =
         await insertNewHabitCellToDB(dbCell, resultcallback: resultCallback);
-    DebugLog.db("new habit saved: dbid=$dbid, dbcell=$result");
+    appLog.db.info("new habit saved", ex: [dbid, result]);
     return result;
   }
 
@@ -328,7 +328,7 @@ class HabitFormViewModel extends ChangeNotifier
       ],
       resultcallback: resultCallback,
     );
-    DebugLog.db("exist habit saved: dbid=$count, dbcell=$result");
+    appLog.db.info("exist habit saved", ex: [count, result]);
     return result;
   }
 }

@@ -16,7 +16,6 @@ import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
@@ -27,8 +26,8 @@ import '../model/habit_date.dart';
 import '../model/habit_detail.dart';
 import '../model/habit_detail_chart.dart';
 import '../model/habit_form.dart';
-import '../model/habit_summary.dart';
 import '../model/habit_score.dart';
+import '../model/habit_summary.dart';
 import '../reminders/notification_service.dart';
 import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
@@ -437,10 +436,8 @@ class HabitDetailViewModel extends ChangeNotifier
           break;
       }
     } on Exception catch (e) {
-      ErrorLog.notify(
-        "HabitDetailViewModel:: catch err when try regr reminder",
-        error: e,
-      );
+      appLog.notify.error("$runtimeType._regrHabitReminder",
+          ex: ["catch err when try regr reminder"], error: e);
     }
   }
 
@@ -470,7 +467,7 @@ class HabitDetailViewModel extends ChangeNotifier
   Future<HabitDetailLoadDataResult> loadData(HabitUUID uuid,
       {bool listen = true, bool inFutureBuilder = false}) async {
     if (dataloadingFutureCache != null) {
-      WarnLog.load("loadData:: data already loaded $uuid");
+      appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
       return HabitDetailLoadDataResult.alreadyLoaded;
     }
     // debugPrint('------ loadData:: $listen $_isDataLoaded');
@@ -479,7 +476,7 @@ class HabitDetailViewModel extends ChangeNotifier
     var cell = await dataFutureOf;
     var records = await recordFutureOf;
     if (cell == null) {
-      WarnLog.load("loadData:: data load failed $uuid");
+      appLog.load.warn("$runtimeType.load", ex: ["data load failed", uuid]);
       return HabitDetailLoadDataResult.habitMissing;
     }
     _habitDetailData = HabitDetailData.fromDBQueryCell(cell);

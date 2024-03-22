@@ -23,8 +23,8 @@ import '../common/abc.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/global.dart';
-import '../common/logging.dart';
 import '../common/utils.dart';
+import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_display.dart';
@@ -101,13 +101,13 @@ class Profile
 
   @override
   Future<void> init() async {
-    DebugLog.profile('Initializing profiles ...');
+    appLog.profile.info('Initializing profiles ...');
     _pref = await SharedPreferences.getInstance();
     if (kDebugMode && debugClearSharedPrefWhenStart) {
-      DebugLog.db('clear shared preferences');
+      appLog.db.info("Clear shared preferences");
       await clearAll();
     }
-    DebugLog.profile("Initialized profiles - $_pref");
+    appLog.profile.info("Initialized profiles", ex: [_pref]);
   }
 
   @override
@@ -216,7 +216,8 @@ class Profile
     try {
       return CustomDateYmdHmsConfig.fromJson(jsonDecode(raw));
     } catch (e) {
-      ErrorLog.jsonDecode("custom date config in profile decode err.");
+      appLog.json.warn("$runtimeType.getCustomDateYmdHmsConfig",
+          ex: ["profile decode err"], error: e);
       return const CustomDateYmdHmsConfig.withDefault();
     }
   }
@@ -256,7 +257,8 @@ class Profile
     try {
       return jsonDecode(raw);
     } catch (e) {
-      ErrorLog.jsonDecode("input fill cache in profile decode err.");
+      appLog.json.warn("$runtimeType.getInputFillCache",
+          ex: ["profile decode err"], error: e);
       return {};
     }
   }

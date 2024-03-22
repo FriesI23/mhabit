@@ -23,7 +23,6 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../extension/custom_color_extensions.dart';
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../component/animation.dart';
 import '../component/widget.dart';
@@ -960,11 +959,12 @@ class _HabitDetailView extends State<HabitDetailView>
           return FutureBuilder(
             future: getFuture(),
             builder: (context, snapshot) {
-              DebugLog.load(
-                  "------ Load detail data ${snapshot.connectionState}");
+              appLog.load.debug("$widget.buildBody",
+                  ex: ["Loading detail data", snapshot.connectionState]);
 
               if (kDebugMode && snapshot.isDone) {
-                DebugLog.load(viewmodel.debugGetDataString());
+                appLog.load.debug("$widget.buildBody",
+                    ex: ["Loaded", viewmodel.debugGetDataString()]);
               }
 
               Widget switcherWidget;

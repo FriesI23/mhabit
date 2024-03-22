@@ -19,7 +19,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
@@ -319,10 +318,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
           break;
       }
     } on Exception catch (e) {
-      ErrorLog.notify(
-        "HabitSummaryViewModel:: catch err when try regr reminder",
-        error: e,
-      );
+      appLog.notify.error("$runtimeType._regrHabitReminder",
+          ex: ["catch err when try regr reminder"], error: e);
     }
   }
 
@@ -428,7 +425,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
     if (_isDataLoaded) {
-      WarnLog.load("loadData:: data already loaded");
+      appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
       return;
     }
     // debugPrint('------ loadData:: $listen $_isDataLoaded');

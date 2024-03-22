@@ -15,7 +15,8 @@
 import 'dart:math';
 
 import '../common/exceptions.dart';
-import '../common/logging.dart';
+import '../logging/helper.dart';
+import '../logging/logger_stack.dart';
 import 'notification_data.dart';
 
 /// ID range
@@ -51,7 +52,9 @@ int getHabitReminderId(int id, {bool fallback = true}) {
     const reserveRange =
         maxHabitReminderReserveNotifyId - minHabitReminderReserveNotifyId + 1;
     final reserverId = (id % reserveRange) + minHabitReminderReserveNotifyId;
-    WarnLog.notify("getHabitReminderId fallback, id=$id, rid=$reserverId");
+    appLog.notify.warn("getHabitReminderId.fallback",
+        ex: [id, reserverId],
+        stackTrace: LoggerStackTrace.from(StackTrace.current));
     return reserverId;
   }
 }

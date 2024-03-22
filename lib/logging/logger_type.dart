@@ -18,4 +18,34 @@ enum LoggerType {
 
   /// Change Property's value
   setValue,
+
+  /// Navigate result
+  naviResult,
+
+  /// Database operation
+  db,
+
+  /// App Profile
+  profile,
+
+  /// App data loaded
+  load,
+
+  /// Notifaction
+  notify,
+
+  /// Import data
+  import,
+
+  /// Export data
+  export,
+
+  /// Habit operation
+  habit,
+
+  /// Network about
+  network,
+
+  /// Json encode/decode
+  json,
 }

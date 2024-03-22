@@ -26,7 +26,6 @@ import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
-import '../common/logging.dart';
 import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
@@ -34,6 +33,8 @@ import '../db/db.dart';
 import '../db/profile.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
+import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/global.dart';
@@ -200,7 +201,10 @@ class _AppSettingView extends State<AppSettingView>
     try {
       result = await FilePicker.platform.pickFiles();
     } on PlatformException catch (e) {
-      ErrorLog.loadFile("Can't open file picker, reason: $e");
+      appLog.load.error("$widget._onImportAllTilePressed",
+          ex: ["Can't open file picker"],
+          error: e,
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
       //TODO: add feedback
       return;
     }
@@ -213,7 +217,10 @@ class _AppSettingView extends State<AppSettingView>
       rawJsonData = await file.readAsString();
     } on Exception catch (e) {
       //TODO: add feedback
-      ErrorLog.loadFile("Can't read file, reason: $e");
+      appLog.load.error("$widget._onImportAllTilePressed",
+          ex: ["Can't read file", file],
+          error: e,
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
       return;
     }
 
