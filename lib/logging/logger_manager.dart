@@ -26,9 +26,9 @@ abstract interface class AppLoggerMananger with FutureInitializationABC {
 
   l.Logger get logger;
 
-  AppWidgetLogger get rebuild;
-  AppValueChangeLogger get setValue;
-  AppTextLogger get naviResult;
+  AppWidgetLogger get build;
+  AppValueChangeLogger get value;
+  AppTextLogger get navi;
   AppTextLogger get db;
   AppTextLogger get profile;
   AppTextLogger get load;
@@ -80,19 +80,19 @@ class _AppLoggerManager implements AppLoggerMananger {
       _tryGetAppLogger(t, buildNewLogger: (t) => AppTextLogger(this, t));
 
   @override
-  AppWidgetLogger get rebuild => _tryGetAppLogger(
-        LoggerType.rebuild,
+  AppWidgetLogger get build => _tryGetAppLogger(
+        LoggerType.build,
         buildNewLogger: (t) => AppWidgetLogger(this, t),
       );
 
   @override
-  AppValueChangeLogger get setValue => _tryGetAppLogger(
-        LoggerType.setValue,
+  AppValueChangeLogger get value => _tryGetAppLogger(
+        LoggerType.value,
         buildNewLogger: (t) => AppValueChangeLogger(this, t),
       );
 
   @override
-  AppTextLogger get naviResult => _tryGetAppTextLogger(LoggerType.naviResult);
+  AppTextLogger get navi => _tryGetAppTextLogger(LoggerType.navi);
 
   @override
   AppTextLogger get db => _tryGetAppTextLogger(LoggerType.db);

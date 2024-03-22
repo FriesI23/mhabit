@@ -68,7 +68,7 @@ class AppLoggerConsoleOutput implements l.LogOutput {
       log(msg,
           level: event.level.value,
           time: event.origin.time,
-          name: "${Isolate.current.debugName}:${message?.type.name ?? ''}",
+          name: "app:${message?.type.name ?? ''}:${Isolate.current.debugName}",
           error: event.origin.error,
           stackTrace: event.origin.stackTrace);
     }

@@ -19,8 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../logger_manager.dart';
-import '../logger_type.dart';
 import '../logger_message.dart';
+import '../logger_type.dart';
 
 class AppWidgetLoggerMessage implements AppLoggerMessage {
   @override
@@ -50,15 +50,35 @@ abstract interface class AppWidgetLogger {
   LoggerType get type;
 
   void debug(BuildContext context,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace});
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace});
   void info(BuildContext context,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace});
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace});
   void warn(BuildContext context,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace});
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace});
   void error(BuildContext context,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace});
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace});
   void fatal(BuildContext context,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace});
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace});
 
   factory AppWidgetLogger(AppLoggerMananger m, LoggerType t) =>
       _AppWidgetLogger(m, t);
@@ -71,12 +91,19 @@ class _AppWidgetLogger implements AppWidgetLogger {
 
   const _AppWidgetLogger(this.manager, this.type);
 
-  void _log(l.Level level, Widget widget,
-      {Iterable? ex, String? name, Object? error, StackTrace? stackTrace}) {
+  void _log(l.Level level, BuildContext context,
+      {Iterable? ex,
+      Widget? widget,
+      String? name,
+      Object? error,
+      StackTrace? stackTrace}) {
     try {
       manager.logger.log(
         level,
-        AppWidgetLoggerMessage(type, widget: widget, extraInfo: ex, name: name),
+        AppWidgetLoggerMessage(type,
+            widget: context.mounted ? context.widget : widget,
+            extraInfo: ex,
+            name: name),
         error: error,
         stackTrace: stackTrace,
       );
@@ -90,45 +117,70 @@ class _AppWidgetLogger implements AppWidgetLogger {
   @override
   void debug(BuildContext context,
           {Iterable? ex,
+          Widget? widget,
           String? name,
           Object? error,
           StackTrace? stackTrace}) =>
-      _log(l.Level.debug, context.widget,
-          ex: ex, name: name, error: error, stackTrace: stackTrace);
+      _log(l.Level.debug, context,
+          ex: ex,
+          widget: widget,
+          name: name,
+          error: error,
+          stackTrace: stackTrace);
 
   @override
   void info(BuildContext context,
           {Iterable? ex,
+          Widget? widget,
           String? name,
           Object? error,
           StackTrace? stackTrace}) =>
-      _log(l.Level.info, context.widget,
-          ex: ex, name: name, error: error, stackTrace: stackTrace);
+      _log(l.Level.info, context,
+          ex: ex,
+          widget: widget,
+          name: name,
+          error: error,
+          stackTrace: stackTrace);
 
   @override
   void warn(BuildContext context,
           {Iterable? ex,
+          Widget? widget,
           String? name,
           Object? error,
           StackTrace? stackTrace}) =>
-      _log(l.Level.warning, context.widget,
-          ex: ex, name: name, error: error, stackTrace: stackTrace);
+      _log(l.Level.warning, context,
+          ex: ex,
+          widget: widget,
+          name: name,
+          error: error,
+          stackTrace: stackTrace);
 
   @override
   void error(BuildContext context,
           {Iterable? ex,
+          Widget? widget,
           String? name,
           Object? error,
           StackTrace? stackTrace}) =>
-      _log(l.Level.error, context.widget,
-          ex: ex, name: name, error: error, stackTrace: stackTrace);
+      _log(l.Level.error, context,
+          ex: ex,
+          widget: widget,
+          name: name,
+          error: error,
+          stackTrace: stackTrace);
 
   @override
   void fatal(BuildContext context,
           {Iterable? ex,
+          Widget? widget,
           String? name,
           Object? error,
           StackTrace? stackTrace}) =>
-      _log(l.Level.fatal, context.widget,
-          ex: ex, name: name, error: error, stackTrace: stackTrace);
+      _log(l.Level.fatal, context,
+          ex: ex,
+          widget: widget,
+          name: name,
+          error: error,
+          stackTrace: stackTrace);
 }

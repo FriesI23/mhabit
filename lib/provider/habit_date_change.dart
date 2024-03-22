@@ -34,7 +34,7 @@ class HabitDateChangeNotifier extends ChangeNotifier
 
   set dateTime(HabitDate dateTime) {
     if (dateTime != _dateTime) {
-      appLog.setValue.info("$runtimeType.dateTime",
+      appLog.value.info("$runtimeType.dateTime",
           beforeVal: _dateTime, afterVal: dateTime);
       _dateTime = dateTime;
       notifyListeners();
@@ -45,7 +45,7 @@ class HabitDateChangeNotifier extends ChangeNotifier
 
   set tzName(String tzName) {
     if (tzName != _tzName) {
-      appLog.setValue
+      appLog.value
           .info("$runtimeType.tzName", beforeVal: _tzName, afterVal: tzName);
       _tzName = tzName;
       notifyListeners();

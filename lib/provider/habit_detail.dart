@@ -509,7 +509,7 @@ class HabitDetailViewModel extends ChangeNotifier
     var result = data.addRecord(record, replaced: true);
     calcHabitInfo();
 
-    appLog.setValue.info("$runtimeType.onTapToChangeRecordStatus",
+    appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
         beforeVal: orgRecord,
         afterVal: record,
         ex: ["rst=$result", data.id, data.progress, isNew]);
@@ -555,7 +555,7 @@ class HabitDetailViewModel extends ChangeNotifier
     var result = data.addRecord(record, replaced: true);
     calcHabitInfo();
 
-    appLog.setValue.info("$runtimeType.onLongPressChangeRecordValue",
+    appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
         beforeVal: orgRecord,
         afterVal: record,
         ex: ["rst=$result", data.id, data.progress, isNew]);

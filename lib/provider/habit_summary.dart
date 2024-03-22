@@ -484,7 +484,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
 
-    appLog.setValue.info("$runtimeType.onTapToChangeRecordStatus",
+    appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
         beforeVal: orgRecord,
         afterVal: record,
         ex: ["rst=$result", data.id, data.progress, isNew]);
@@ -514,7 +514,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
 
-    appLog.setValue.info("onLongPressChangeRecordValue",
+    appLog.value.info("onLongPressChangeRecordValue",
         beforeVal: orgRecord,
         afterVal: record,
         ex: ["rst=$result", data.id, data.progress, isNew]);
@@ -624,7 +624,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
 
     if (realNeedArchivedUUID.isEmpty) {
-      appLog.setValue.warn("$runtimeType.archivedSelectedHabits",
+      appLog.value.warn("$runtimeType.archivedSelectedHabits",
           beforeVal: _selectUUIDColl,
           afterVal: realNeedArchivedUUID,
           ex: ["real need archived habit uuid not found"]);
@@ -660,7 +660,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
 
     if (realNeedUnarchivedUUID.isEmpty) {
-      appLog.setValue.warn("$runtimeType.unarchivedSelectedHabits",
+      appLog.value.warn("$runtimeType.unarchivedSelectedHabits",
           beforeVal: _selectUUIDColl,
           afterVal: realNeedUnarchivedUUID,
           ex: ["real need unarchived habit uuid not found"]);

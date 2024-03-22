@@ -169,6 +169,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   void initState() {
+    appLog.build.debug(context, ex: ["init"]);
     super.initState();
     var viewmodel = context.read<HabitSummaryViewModel>();
     var dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
@@ -192,6 +193,12 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       ),
     );
     viewmodel.initDispatcher(dispatcher);
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
   }
 
   void _revertHabitsStatus(
@@ -835,7 +842,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   Widget build(BuildContext context) {
-    appLog.rebuild.debug(context);
+    appLog.build.debug(context);
 
     //#region: appbar
     Widget buildAppbarInViewMode(BuildContext context, bool isExtended) {
@@ -975,7 +982,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, status, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          appLog.rebuild.debug(context, ex: [status], name: "$widget.Appbar");
+          appLog.build.debug(context, ex: [status], name: "$widget.Appbar");
           return SliverAnimatedSwitcher(
             duration: _kEditModeChangeAnimateDuration,
             child: viewmodel.isInEditMode
@@ -994,7 +1001,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          appLog.rebuild.debug(context, ex: [value], name: "$widget.HabitList");
+          appLog.build.debug(context, ex: [value], name: "$widget.HabitList");
           return AnimatedSliverList(
             controller: viewmodel.dispatcherLinkedController,
             delegate: AnimatedSliverChildBuilderDelegate(
@@ -1279,9 +1286,9 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    appLog.rebuild.debug(context, ex: [uuid, isExtended, data]);
+    appLog.build.debug(context, ex: [uuid, isExtended, data]);
     if (data == null) {
-      appLog.rebuild.warn(context, ex: ["data not found", uuid]);
+      appLog.build.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();
     }
     return HabitDisplayListTile(

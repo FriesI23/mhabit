@@ -122,7 +122,7 @@ class ScrollingFAB extends StatelessWidget {
     FloatingActionButtonThemeData fabTheme = theme.floatingActionButtonTheme
         .copyWith(extendedSizeConstraints: getExtendedSizeConstraints(context));
 
-    appLog.rebuild.debug(context, ex: [isExtended, _extendedLabel, child]);
+    appLog.build.debug(context, ex: [isExtended, _extendedLabel, child]);
 
     return Theme(
       data: theme.copyWith(floatingActionButtonTheme: fabTheme),

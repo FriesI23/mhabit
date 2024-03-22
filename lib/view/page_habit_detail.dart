@@ -215,6 +215,18 @@ class _HabitDetailView extends State<HabitDetailView>
     with
         HabitHeatmapColorChooseMixin<HabitDetailView>,
         XShare<HabitDetailView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   Future<bool> _enterHabitEditPage({
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
@@ -447,7 +459,7 @@ class _HabitDetailView extends State<HabitDetailView>
 
   @override
   Widget build(BuildContext context) {
-    appLog.rebuild.debug(context);
+    appLog.build.debug(context);
 
     Widget buildAppbar(BuildContext context) {
       Widget buildAppbarAction(
@@ -521,7 +533,7 @@ class _HabitDetailView extends State<HabitDetailView>
         builder: (context, _, child) {
           final viewmodel = context.read<HabitDetailViewModel>();
           final durningDays = viewmodel.duringFromStartDate.inDays;
-          appLog.rebuild.debug(context,
+          appLog.build.debug(context,
               ex: [viewmodel.habitProgress], name: "$widget.SummaryList");
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(

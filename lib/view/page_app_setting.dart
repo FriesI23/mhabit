@@ -93,6 +93,18 @@ class AppSettingView extends StatefulWidget {
 
 class _AppSettingView extends State<AppSettingView>
     with XShare<AppSettingView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   void _openCustomDateTimeFormatPickerDialog(BuildContext context) async {
     if (!mounted) return;
     final config = context.read<AppCustomDateYmdHmsConfigViewModel>();

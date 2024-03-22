@@ -14,13 +14,13 @@
 
 enum LoggerType {
   /// UI component rebuilding
-  rebuild,
+  build,
 
   /// Change Property's value
-  setValue,
+  value,
 
-  /// Navigate result
-  naviResult,
+  /// Navigation between pages
+  navi,
 
   /// Database operation
   db,
