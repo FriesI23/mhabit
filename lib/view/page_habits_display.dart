@@ -836,7 +836,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   Widget build(BuildContext context) {
-    logOf(context).rebuild.debug(context);
+    appLog.rebuild.debug(context);
 
     //#region: appbar
     Widget buildAppbarInViewMode(BuildContext context, bool isExtended) {
@@ -976,11 +976,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, status, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          logOf(context).rebuild.debug(
-                context,
-                ex: [status],
-                name: "$widget.Appbar",
-              );
+          appLog.rebuild.debug(context, ex: [status], name: "$widget.Appbar");
           return SliverAnimatedSwitcher(
             duration: _kEditModeChangeAnimateDuration,
             child: viewmodel.isInEditMode
@@ -999,11 +995,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          logOf(context).rebuild.debug(
-                context,
-                ex: [value],
-                name: "$widget.HabitList",
-              );
+          appLog.rebuild.debug(context, ex: [value], name: "$widget.HabitList");
           return AnimatedSliverList(
             controller: viewmodel.dispatcherLinkedController,
             delegate: AnimatedSliverChildBuilderDelegate(
@@ -1285,9 +1277,9 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    logOf(context).rebuild.debug(context, ex: [uuid, isExtended, data]);
+    appLog.rebuild.debug(context, ex: [uuid, isExtended, data]);
     if (data == null) {
-      logOf(context).rebuild.warn(context, ex: ["data not found", uuid]);
+      appLog.rebuild.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();
     }
     return HabitDisplayListTile(

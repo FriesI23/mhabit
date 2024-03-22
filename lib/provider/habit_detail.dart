@@ -21,6 +21,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
+import '../logging/helper.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail.dart';
@@ -511,9 +512,10 @@ class HabitDetailViewModel extends ChangeNotifier
     var result = data.addRecord(record, replaced: true);
     calcHabitInfo();
 
-    DebugLog.setValue("onTapToChangeRecordStatus:: "
-        "${data.id} $result score=${data.progress} isNew=$isNew "
-        "$orgRecord -> $record");
+    appLog.setValue.info("$runtimeType.onTapToChangeRecordStatus",
+        beforeVal: orgRecord,
+        afterVal: record,
+        ex: ["rst=$result", data.id, data.progress, isNew]);
     if (listen) notifyListeners();
 
     await bumpHatbitVersion(data);
@@ -555,9 +557,12 @@ class HabitDetailViewModel extends ChangeNotifier
 
     var result = data.addRecord(record, replaced: true);
     calcHabitInfo();
-    DebugLog.setValue("onChangeRecordValue:: "
-        "${data.id} $result score=${data.progress} isNew=$isNew "
-        "$orgRecord -> $record");
+
+    appLog.setValue.info("$runtimeType.onLongPressChangeRecordValue",
+        beforeVal: orgRecord,
+        afterVal: record,
+        ex: ["rst=$result", data.id, data.progress, isNew]);
+
     if (listen) notifyListeners();
     await bumpHatbitVersion(data);
     return record;

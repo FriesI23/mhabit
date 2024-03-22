@@ -18,7 +18,7 @@ import 'dart:isolate';
 import 'package:collection/collection.dart';
 import 'package:logger/logger.dart' as l;
 
-import 'logger_message.dart';
+import '../logger_message.dart';
 
 class AppLoggerPrinter implements l.LogPrinter {
   static const prefixMap = {

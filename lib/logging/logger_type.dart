@@ -14,5 +14,8 @@
 
 enum LoggerType {
   /// UI component rebuilding
-  rebuild;
+  rebuild,
+
+  /// Change Property's value
+  setValue,
 }

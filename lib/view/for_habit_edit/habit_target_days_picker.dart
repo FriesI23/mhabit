@@ -152,10 +152,8 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    logOf(context).rebuild.debug(
-      context,
-      ex: [selectTargetDaysType, customTargetDays, currentTargetDay],
-    );
+    appLog.rebuild.debug(context,
+        ex: [selectTargetDaysType, customTargetDays, currentTargetDay]);
 
     final l10n = L10n.of(context);
     return LayoutBuilder(

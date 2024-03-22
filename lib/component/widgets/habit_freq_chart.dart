@@ -274,7 +274,7 @@ class HabitFreqChart extends StatelessWidget {
         break;
     }
 
-    logOf(context).rebuild.debug(context);
+    appLog.rebuild.debug(context);
     return Column(
       children: [
         const SizedBox(height: 30),

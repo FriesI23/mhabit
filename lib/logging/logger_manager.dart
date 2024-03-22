@@ -12,33 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart' as l;
-import 'package:provider/provider.dart';
 
-import 'console_handler.dart';
+import '../common/abc.dart';
+import 'handler/console_handler.dart';
+import 'logger/value_change_logger.dart';
+import 'logger/widget_logger.dart';
 import 'logger_type.dart';
-import 'widget_logger.dart';
 
-abstract interface class AppLoggerMananger {
+abstract interface class AppLoggerMananger with FutureInitializationABC {
+  static AppLoggerMananger? _instance;
+
   l.Logger get logger;
 
   AppWidgetLogger get rebuild;
 
+  AppValueChangeLogger get setValue;
+
   Future<bool> changeLogger(l.Logger newLogger);
 
-  factory AppLoggerMananger({l.Logger? logger}) {
+  factory AppLoggerMananger({l.Logger? logger}) =>
+      _instance ?? AppLoggerMananger._new();
+
+  factory AppLoggerMananger._new({l.Logger? logger}) {
     if (logger != null) assert(logger.isClosed(), false);
-    return _AppLoggerManager(logger ?? _defaultLogger());
+    final mgr = _instance = _AppLoggerManager(logger ?? _defaultLogger());
+    return mgr;
   }
 
   static l.Logger _defaultLogger() => l.Logger(
         printer: AppLoggerPrinter(),
         output: AppLoggerConsoleOutput(),
       );
-
-  static AppLoggerMananger of(BuildContext context) =>
-      context.read<AppLoggerMananger>();
 }
 
 class _AppLoggerManager implements AppLoggerMananger {
@@ -48,17 +53,30 @@ class _AppLoggerManager implements AppLoggerMananger {
 
   _AppLoggerManager(this.logger);
 
-  AppWidgetLogger _tryGetAppWidgetLogger(LoggerType t) {
+  @override
+  Future init() => logger.init;
+
+  T _tryGetAppLogger<T>(LoggerType t,
+      {required T Function(LoggerType t) buildNewLogger}) {
     if (appLoggerInstances.containsKey(t)) {
       return appLoggerInstances[t];
     }
-    final newAppLogger = AppWidgetLogger(this, t);
+    final newAppLogger = buildNewLogger(t);
     appLoggerInstances[t] = newAppLogger;
     return newAppLogger;
   }
 
   @override
-  AppWidgetLogger get rebuild => _tryGetAppWidgetLogger(LoggerType.rebuild);
+  AppWidgetLogger get rebuild => _tryGetAppLogger(
+        LoggerType.rebuild,
+        buildNewLogger: (t) => AppWidgetLogger(this, t),
+      );
+
+  @override
+  AppValueChangeLogger get setValue => _tryGetAppLogger(
+        LoggerType.setValue,
+        buildNewLogger: (t) => AppValueChangeLogger(this, t),
+      );
 
   @override
   Future<bool> changeLogger(l.Logger newLogger) async {

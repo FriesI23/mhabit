@@ -167,10 +167,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
 
   @override
   Widget build(BuildContext context) {
-    logOf(context).rebuild.debug(
-      context,
-      ex: [widget.currentDate, widget.initialDate],
-    );
+    appLog.rebuild.debug(context, ex: [widget.currentDate, widget.initialDate]);
 
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;

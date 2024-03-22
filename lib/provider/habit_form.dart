@@ -22,6 +22,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/num_extensions.dart';
+import '../logging/helper.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -113,26 +114,26 @@ class HabitFormViewModel extends ChangeNotifier
 
   String get name => _form.name!;
   set name(String newName) {
+    appLog.setValue
+        .debug("$runtimeType.name", beforeVal: _form.name, afterVal: newName);
     _form.name = newName;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.name: '
-        '${_form.name} -> $newName');
   }
 
   HabitType get habitType => _form.type ?? defaultHabitType;
   set habitType(HabitType newHabitType) {
+    appLog.setValue.debug("$runtimeType.habitType",
+        beforeVal: _form.type, afterVal: newHabitType);
     _form.type = newHabitType;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.habitType: '
-        '${_form.type} -> $newHabitType');
   }
 
   HabitColorType get colorType => _form.colorType!;
   set colorType(HabitColorType newColorType) {
+    appLog.setValue.debug("$runtimeType.colorType",
+        beforeVal: _form.colorType, afterVal: newColorType);
     _form.colorType = newColorType;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.colorType: '
-        '${_form.colorType} -> $newColorType');
   }
 
   num get dailyGoal {
@@ -145,26 +146,26 @@ class HabitFormViewModel extends ChangeNotifier
           .isGoalValid;
 
   set dailyGoal(num newDailyGoal) {
+    appLog.setValue.debug("$runtimeType.dailyGoal",
+        beforeVal: _form.dailyGoal, afterVal: newDailyGoal);
     _form.dailyGoal = newDailyGoal;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.dailyGoal: '
-        '${_form.dailyGoal} -> $newDailyGoal');
   }
 
   String get dailyGoalUnit => _form.dailyGoalUnit!;
   set dailyGoalUnit(String newDailyGoalUnit) {
+    appLog.setValue.debug("$runtimeType.dailyGoalUnit",
+        beforeVal: _form.dailyGoalUnit, afterVal: newDailyGoalUnit);
     _form.dailyGoalUnit = newDailyGoalUnit;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.dailyGoalUnit: '
-        '${_form.dailyGoalUnit} -> $newDailyGoalUnit');
   }
 
   num? get dailyGoalExtra => _form.dailyGoalExtra;
   set dailyGoalExtra(num? newDailyGoalExtra) {
+    appLog.setValue.debug("$runtimeType.dailyGoalExtra",
+        beforeVal: _form.dailyGoalExtra, afterVal: newDailyGoalExtra);
     _form.dailyGoalExtra = newDailyGoalExtra;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.dailyGoalExtra: '
-        '${_form.dailyGoalExtra} -> $newDailyGoalExtra');
   }
 
   bool get isDailyGoalExtraValueValid =>
@@ -172,50 +173,50 @@ class HabitFormViewModel extends ChangeNotifier
 
   HabitFrequency get frequency => _form.frequency!;
   set frequency(HabitFrequency newHabitFrequency) {
+    appLog.setValue.debug("$runtimeType.frequency",
+        beforeVal: _form.frequency, afterVal: newHabitFrequency);
     _form.frequency = newHabitFrequency;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.habitFrequency: '
-        '${_form.frequency} -> $newHabitFrequency');
   }
 
   HabitStartDate get startDate => _form.startDate!;
   set startDate(HabitStartDate newDate) {
+    appLog.setValue.debug("$runtimeType.startDate",
+        beforeVal: _form.startDate, afterVal: newDate);
     _form.startDate = newDate;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.newDate: '
-        '${_form.startDate} -> $newDate');
   }
 
   int get targetDays => _form.targetDays!;
   set targetDays(int newTargetDays) {
+    appLog.setValue.debug("$runtimeType.targetDays",
+        beforeVal: _form.targetDays, afterVal: newTargetDays);
     _form.targetDays = newTargetDays;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.targetDays: '
-        '${_form.targetDays} -> $newTargetDays');
   }
 
   String get desc => _form.desc!;
   set desc(String newDesc) {
+    appLog.setValue
+        .debug("$runtimeType.desc", beforeVal: _form.desc, afterVal: newDesc);
     _form.desc = newDesc;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.desc: '
-        '${_form.desc} -> $newDesc');
   }
 
   HabitReminder? get reminder => _form.reminder;
   set reminder(HabitReminder? newReminder) {
+    appLog.setValue.debug("$runtimeType.reminder",
+        beforeVal: _form.reminder, afterVal: newReminder);
     _form.reminder = newReminder;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.reminder: '
-        '${_form.reminder} -> $newReminder');
   }
 
   String? get reminderQuest => _form.reminderQuest;
   set reminderQuest(String? newQuest) {
+    appLog.setValue.debug("$runtimeType.reminderQuest",
+        beforeVal: _form.reminderQuest, afterVal: newQuest);
     _form.reminderQuest = newQuest;
     notifyListeners();
-    DebugLog.setValue('HabitFormViewModel.reminderQuest: '
-        '${_form.reminderQuest} -> $newQuest');
   }
 
   HabitUUID? get uuid => _form.editParams?.uuid;

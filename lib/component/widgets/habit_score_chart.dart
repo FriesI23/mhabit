@@ -262,7 +262,7 @@ class HabitScoreChart extends StatelessWidget {
     final double textScaleFactor =
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
-    logOf(context).rebuild.debug(context);
+    appLog.rebuild.debug(context);
     double maxX = (data.length - 1).toDouble();
     double initMinX =
         limit != null ? maxX * math.max((1 - limit! / data.length), 0) : 0;

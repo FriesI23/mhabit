@@ -18,9 +18,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart' as l;
 
-import 'logger_manager.dart';
-import 'logger_type.dart';
-import 'logger_message.dart';
+import '../logger_manager.dart';
+import '../logger_type.dart';
+import '../logger_message.dart';
 
 class AppWidgetLoggerMessage implements AppLoggerMessage {
   @override
@@ -77,6 +77,8 @@ class _AppWidgetLogger implements AppWidgetLogger {
       manager.logger.log(
         level,
         AppWidgetLoggerMessage(type, widget: widget, extraInfo: ex, name: name),
+        error: error,
+        stackTrace: stackTrace,
       );
     } on Exception catch (e) {
       if (kDebugMode) rethrow;

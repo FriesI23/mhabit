@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../common/logging.dart';
+import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import 'commons.dart';
 
@@ -34,7 +34,8 @@ class HabitDateChangeNotifier extends ChangeNotifier
 
   set dateTime(HabitDate dateTime) {
     if (dateTime != _dateTime) {
-      InfoLog.setValue("date change: $_dateTime -> $dateTime");
+      appLog.setValue.info("$runtimeType.dateTime",
+          beforeVal: _dateTime, afterVal: dateTime);
       _dateTime = dateTime;
       notifyListeners();
     }
@@ -44,7 +45,8 @@ class HabitDateChangeNotifier extends ChangeNotifier
 
   set tzName(String tzName) {
     if (tzName != _tzName) {
-      InfoLog.setValue("timezone change: $_tzName -> $tzName");
+      appLog.setValue
+          .info("$runtimeType.tzName", beforeVal: _tzName, afterVal: tzName);
       _tzName = tzName;
       notifyListeners();
     }

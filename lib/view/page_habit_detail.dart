@@ -448,7 +448,7 @@ class _HabitDetailView extends State<HabitDetailView>
 
   @override
   Widget build(BuildContext context) {
-    logOf(context).rebuild.debug(context);
+    appLog.rebuild.debug(context);
 
     Widget buildAppbar(BuildContext context) {
       Widget buildAppbarAction(
@@ -522,7 +522,7 @@ class _HabitDetailView extends State<HabitDetailView>
         builder: (context, _, child) {
           final viewmodel = context.read<HabitDetailViewModel>();
           final durningDays = viewmodel.duringFromStartDate.inDays;
-          logOf(context).rebuild.debug(context,
+          appLog.rebuild.debug(context,
               ex: [viewmodel.habitProgress], name: "$widget.SummaryList");
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(

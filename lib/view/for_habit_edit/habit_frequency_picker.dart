@@ -117,10 +117,7 @@ class _HabitFrequencyPickerDialogView
 
   @override
   Widget build(BuildContext context) {
-    logOf(context).rebuild.debug(
-      context,
-      ex: [selectFrequencyType, customFrequency],
-    );
+    appLog.rebuild.debug(context, ex: [selectFrequencyType, customFrequency]);
 
     void onRadioChangeCallback(_HabitFrequencyPickerType? value) {
       if (value != null) {

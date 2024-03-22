@@ -20,7 +20,6 @@ import 'package:provider/provider.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
-import '../logging/logger_manager.dart';
 import '../model/global.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
@@ -48,9 +47,6 @@ class App extends StatelessWidget {
       providers: [
         Provider<Global>(
           create: (context) => Global(),
-        ),
-        Provider<AppLoggerMananger>(
-          create: (context) => AppLoggerMananger(),
         ),
         ChangeNotifierProvider<NotificationChannelData>(
           create: (context) => NotificationChannelData(),

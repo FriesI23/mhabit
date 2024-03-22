@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
+import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -486,9 +487,11 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
 
-    DebugLog.setValue("onTapToChangeRecordStatus:: "
-        "${data.id} $result score=${data.progress} isNew=$isNew "
-        "$orgRecord -> $record");
+    appLog.setValue.info("$runtimeType.onTapToChangeRecordStatus",
+        beforeVal: orgRecord,
+        afterVal: record,
+        ex: ["rst=$result", data.id, data.progress, isNew]);
+
     if (listen) notifyListeners();
 
     await bumpHatbitVersion(data);
@@ -513,9 +516,12 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
-    DebugLog.setValue("onChangeRecordValue:: "
-        "${data.id} $result score=${data.progress} isNew=$isNew "
-        "$orgRecord -> $record");
+
+    appLog.setValue.info("onLongPressChangeRecordValue",
+        beforeVal: orgRecord,
+        afterVal: record,
+        ex: ["rst=$result", data.id, data.progress, isNew]);
+
     if (listen) notifyListeners();
     await bumpHatbitVersion(data);
     return record;
@@ -621,8 +627,10 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
 
     if (realNeedArchivedUUID.isEmpty) {
-      WarnLog.setValue("archivedSelectedHabits:: "
-          "real need archived habit uuid not found");
+      appLog.setValue.warn("$runtimeType.archivedSelectedHabits",
+          beforeVal: _selectUUIDColl,
+          afterVal: realNeedArchivedUUID,
+          ex: ["real need archived habit uuid not found"]);
       return null;
     }
 
@@ -655,8 +663,10 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
 
     if (realNeedUnarchivedUUID.isEmpty) {
-      WarnLog.setValue("unarchivedSelectedHabits:: "
-          "real need unarchived habit uuid not found");
+      appLog.setValue.warn("$runtimeType.unarchivedSelectedHabits",
+          beforeVal: _selectUUIDColl,
+          afterVal: realNeedUnarchivedUUID,
+          ex: ["real need unarchived habit uuid not found"]);
       return null;
     }
 
