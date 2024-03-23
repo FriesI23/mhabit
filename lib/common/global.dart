@@ -15,7 +15,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'enums.dart';
+import '../logging/level.dart';
 
 //#region debug options
 bool debugClearDBWhenStart = false;

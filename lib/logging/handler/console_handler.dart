@@ -29,6 +29,8 @@ class AppLoggerPrinter implements l.LogPrinter {
     l.Level.fatal: "F",
   };
 
+  const AppLoggerPrinter();
+
   @override
   Future<void> destroy() async {}
 
@@ -55,6 +57,8 @@ class AppLoggerPrinter implements l.LogPrinter {
 }
 
 class AppLoggerConsoleOutput implements l.LogOutput {
+  const AppLoggerConsoleOutput();
+
   @override
   Future<void> destroy() async {}
 

@@ -16,6 +16,7 @@ import 'package:logger/logger.dart' as l;
 
 import '../common/abc.dart';
 import 'handler/console_handler.dart';
+import 'handler/filter.dart';
 import 'logger/text_logger.dart';
 import 'logger/value_change_logger.dart';
 import 'logger/widget_logger.dart';
@@ -51,8 +52,9 @@ abstract interface class AppLoggerMananger with FutureInitializationABC {
   }
 
   static l.Logger _defaultLogger() => l.Logger(
-        printer: AppLoggerPrinter(),
-        output: AppLoggerConsoleOutput(),
+        filter: const AppLogFilter(),
+        printer: const AppLoggerPrinter(),
+        output: const AppLoggerConsoleOutput(),
       );
 }
 

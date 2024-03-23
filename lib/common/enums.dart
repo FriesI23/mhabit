@@ -38,31 +38,6 @@ enum HabitsRecordScrollBehavior implements EnumWithDBCodeABC {
   }
 }
 
-enum LogLevel implements Comparable<LogLevel> {
-  debug(level: 100),
-  info(level: 200),
-  warn(level: 300),
-  warning(level: 300),
-  error(level: 400);
-
-  final int level;
-
-  const LogLevel({required this.level});
-
-  bool operator >(LogLevel other) => level > other.level;
-
-  bool operator <(LogLevel other) => level < other.level;
-
-  bool operator >=(LogLevel other) => level >= other.level;
-
-  bool operator <=(LogLevel other) => level <= other.level;
-
-  @override
-  int compareTo(LogLevel other) {
-    return level.compareTo(other.level);
-  }
-}
-
 enum DonateWay {
   paypal,
   buyMeACoffee,

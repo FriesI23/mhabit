@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../common/enums.dart';
+import '../../logging/level.dart';
 
 class AppSettingLogLevelTile extends StatelessWidget {
   final LogLevel crtLevel;
@@ -33,10 +33,11 @@ class AppSettingLogLevelTile extends StatelessWidget {
       case LogLevel.info:
         return "Info";
       case LogLevel.warn:
-      case LogLevel.warning:
-        return "Warning";
+        return "Warn";
       case LogLevel.error:
         return "Error";
+      case LogLevel.fatal:
+        return "Fatal";
     }
   }
 
@@ -70,6 +71,7 @@ class AppSettingLogLevelTile extends StatelessWidget {
             buildLogLevelOption(context, LogLevel.info),
             buildLogLevelOption(context, LogLevel.warn),
             buildLogLevelOption(context, LogLevel.error),
+            buildLogLevelOption(context, LogLevel.fatal),
           ],
         ),
       ),
