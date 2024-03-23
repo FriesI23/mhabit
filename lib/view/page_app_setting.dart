@@ -80,6 +80,14 @@ class PageAppSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<AppCustomDateYmdHmsConfigViewModel>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
+    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
+    assert(context.maybeRead<HabitFileImporterViewModel>() != null);
+    assert(context.maybeRead<AppDeveloperViewModel>() != null);
+    assert(context.maybeRead<AppReminderViewModel>() != null);
+    assert(context.maybeRead<AppThemeViewModel>() != null);
+    assert(context.maybeRead<Global>() != null);
     return const AppSettingView();
   }
 }

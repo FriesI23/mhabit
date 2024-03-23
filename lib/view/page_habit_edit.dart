@@ -22,6 +22,7 @@ import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
+import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/global.dart';
@@ -44,22 +45,6 @@ import 'for_habit_edit/_dialogs.dart';
 import 'for_habit_edit/_widget.dart';
 
 const double _kCommonEvalation = 1.0;
-
-Future<HabitDBCell?> showHabitEditFullScreenDialog({
-  required BuildContext context,
-  required HabitForm initForm,
-  bool? naviWithFullscreenDialog,
-}) async {
-  return Navigator.of(context).push<HabitDBCell>(
-    MaterialPageRoute(
-      fullscreenDialog: naviWithFullscreenDialog ?? true,
-      builder: (context) => PageHabitEdit(
-        initForm: initForm,
-        showInFullscreenDialog: true,
-      ),
-    ),
-  );
-}
 
 Future<HabitDBCell?> naviToHabitEidtPage({
   required BuildContext context,
@@ -89,6 +74,10 @@ class PageHabitEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<NotificationChannelData>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
+    assert(context.maybeRead<AppDeveloperViewModel>() != null);
+    assert(context.maybeRead<Global>() != null);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(

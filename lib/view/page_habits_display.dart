@@ -32,6 +32,7 @@ import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/global.dart';
@@ -79,9 +80,10 @@ class PageHabitsDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<AppThemeViewModel>() != null);
+    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
     return MultiProvider(
       providers: [
-        // new
         ChangeNotifierProxyProvider<Global, HabitsSortViewModel>(
           create: (context) =>
               HabitsSortViewModel(global: context.read<Global>()),
@@ -104,7 +106,6 @@ class PageHabitsDisplay extends StatelessWidget {
             horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
           ),
         ),
-        // proxy
         ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
             HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),

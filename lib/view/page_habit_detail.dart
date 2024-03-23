@@ -29,6 +29,7 @@ import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../extension/num_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
@@ -76,6 +77,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   HabitColorType? colorType,
   required HabitSummaryViewModel summary,
 }) async {
+  // TODO: Decoupling dependency with `HabitSummaryViewModel`
   return Navigator.of(context).push<DetailPageReturn>(
     MaterialPageRoute(
       builder: (context) => MultiProvider(
@@ -96,9 +98,11 @@ class PageHabitDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<HabitSummaryViewModel>() != null);
+    assert(context.maybeRead<HabitFileExporterViewModel>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
     return MultiProvider(
       providers: [
-        // new
         ChangeNotifierProvider<HabitDetailViewModel>(
           create: (context) => HabitDetailViewModel(),
         ),
@@ -114,7 +118,6 @@ class PageHabitDetail extends StatelessWidget {
             return previous;
           },
         ),
-        // proxy
         ChangeNotifierProxyProvider<HabitDetailViewModel,
             HabitDetailFreqChartViewModel>(
           create: (context) => HabitDetailFreqChartViewModel(),
