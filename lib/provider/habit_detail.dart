@@ -27,6 +27,7 @@ import '../model/habit_detail.dart';
 import '../model/habit_detail_chart.dart';
 import '../model/habit_form.dart';
 import '../model/habit_score.dart';
+import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../reminders/notification_service.dart';
 import '_utils/change_record_status_utils.dart';
@@ -563,6 +564,55 @@ class HabitDetailViewModel extends ChangeNotifier
     if (listen) notifyListeners();
     await bumpHatbitVersion(data);
     return record;
+  }
+
+  Future<HabitStatusChangedRecord?> changeHabitsStatus(
+      HabitUUID habitUUID, HabitStatus newStatus) async {
+    if (habitDetailData == null) return null;
+    final orgStatus = habitDetailData!.data.status;
+    final changes = await changeSelectedHabitStatus([habitUUID], newStatus);
+    if (changes < 1 || !mounted) return null;
+    return HabitStatusChangedRecord(
+        habitUUID: habitUUID, newStatus: newStatus, orgStatus: orgStatus);
+  }
+
+  Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
+      {bool listen = true}) async {
+    appLog.habit.info("$runtimeType.onConfirmToArchiveHabit",
+        ex: [listen, habitDetailData?.data]);
+    if (!(habitDetailData != null &&
+        habitDetailData?.data.status != HabitStatus.deleted)) {
+      return null;
+    }
+    final result = await changeHabitsStatus(habitUUID!, HabitStatus.archived);
+    if (listen) rockreloadDBToggleSwich();
+    return result;
+  }
+
+  Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit(
+      {bool listen = true}) async {
+    appLog.habit.info("$runtimeType.onConfirmToUnarchiveHabit",
+        ex: [listen, habitDetailData?.data]);
+    if (!(habitDetailData != null &&
+        habitDetailData?.data.status != HabitStatus.deleted)) {
+      return null;
+    }
+    final result = await changeHabitsStatus(habitUUID!, HabitStatus.activated);
+    if (listen) rockreloadDBToggleSwich();
+    return result;
+  }
+
+  Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit(
+      {bool listen = false}) async {
+    appLog.habit.info("$runtimeType.onConfirmToDeleteHabit",
+        ex: [listen, habitDetailData?.data]);
+    if (!(habitDetailData != null &&
+        habitDetailData?.data.status != HabitStatus.deleted)) {
+      return null;
+    }
+    final result = await changeHabitsStatus(habitUUID!, HabitStatus.deleted);
+    if (listen) rockreloadDBToggleSwich();
+    return result;
   }
 
   String debugGetDataString() => _habitDetailData.toString();

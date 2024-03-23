@@ -42,6 +42,7 @@ import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_stat.dart';
+import '../model/habit_status.dart';
 import "../model/habit_summary.dart";
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
@@ -202,8 +203,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     super.dispose();
   }
 
-  void _revertHabitsStatus(
-      List<HabitSummaryStatusChangedRecord> recordList) async {
+  void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
     HabitSummaryViewModel viewmodel;
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();

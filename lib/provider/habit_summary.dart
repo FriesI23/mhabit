@@ -29,6 +29,7 @@ import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_score.dart';
 import '../model/habit_stat.dart';
+import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../reminders/notification_service.dart';
 import '_utils/change_record_status_utils.dart';
@@ -129,11 +130,12 @@ mixin _HabitSummaryStatisticsMixin on _HabitSummaryViewModel {
   }
 }
 
-class _HabitSummaryViewModel extends ChangeNotifier {
+abstract class _HabitSummaryViewModel extends ChangeNotifier {
   // scroll controller
   final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   // dispatcher
   late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
+  late final DispatcherForHabitDetail forHabitDetail;
   // data
   final HabitSummaryDataCollection _data = HabitSummaryDataCollection();
   // status
@@ -170,6 +172,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     required super.horizonalScrollControllerGroup,
   }) {
     initVerticalScrollController(notifyListeners, verticalScrollController);
+    forHabitDetail = DispatcherForHabitDetail(this);
   }
 
   void initDispatcher(
@@ -572,18 +575,21 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     await rewriteAllHabitsSortPostion();
   }
 
-  Future<List<HabitSummaryStatusChangedRecord>> changeHabitsStatus(
+  Future<List<HabitStatusChangedRecord>> changeHabitsStatus(
       List<HabitUUID> uuidList, HabitStatus newStatus) async {
+    appLog.habit
+        .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
     await changeSelectedHabitStatus(uuidList, newStatus);
 
-    final result = <HabitSummaryStatusChangedRecord>[];
+    final result = <HabitStatusChangedRecord>[];
 
     Future<void> aTask(HabitSummaryData data) async {
+      final orgStatus = data.status;
       data.status = newStatus;
       bumpHatbitVersion(data);
       calcHabitAutoComplateRecords(data);
-      result.add(HabitSummaryStatusChangedRecord(
-          habitUUID: data.uuid, habitStatus: data.status));
+      result.add(HabitStatusChangedRecord(
+          habitUUID: data.uuid, newStatus: newStatus, orgStatus: orgStatus));
     }
 
     final futureList = <Future>[];
@@ -598,15 +604,17 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   }
 
   Future<void> revertHabitsStatus(
-      List<HabitSummaryStatusChangedRecord> recordList) async {
+      List<HabitStatusChangedRecord> recordList) async {
+    appLog.habit.info("$runtimeType.revertHabitsStatus", ex: [recordList]);
     final recordMap = <HabitStatus, List<HabitUUID>>{};
     for (var record in recordList) {
-      if (!recordMap.containsKey(record.habitStatus)) {
-        recordMap[record.habitStatus] = [];
+      if (!recordMap.containsKey(record.orgStatus)) {
+        recordMap[record.orgStatus] = [];
       }
-      recordMap[record.habitStatus]!.add(record.habitUUID);
+      recordMap[record.orgStatus]!.add(record.habitUUID);
     }
 
+    appLog.habit.debug("$runtimeType.revertHabitsStatus do", ex: [recordList]);
     for (var r in recordMap.entries) {
       await changeHabitsStatus(r.value, r.key);
     }
@@ -614,8 +622,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     resortData();
   }
 
-  Future<List<HabitSummaryStatusChangedRecord>?>
-      archivedSelectedHabits() async {
+  Future<List<HabitStatusChangedRecord>?> archivedSelectedHabits() async {
     var realNeedArchivedUUID = <HabitUUID>[];
     for (var habitUUID in _selectUUIDColl) {
       if (getHabit(habitUUID)?.status != HabitStatus.archived) {
@@ -650,8 +657,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     return result;
   }
 
-  Future<List<HabitSummaryStatusChangedRecord>?>
-      unarchivedSelectedHabits() async {
+  Future<List<HabitStatusChangedRecord>?> unarchivedSelectedHabits() async {
     var realNeedUnarchivedUUID = <HabitUUID>[];
     for (var habitUUID in _selectUUIDColl) {
       if (getHabit(habitUUID)?.status == HabitStatus.archived) {
@@ -678,7 +684,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     return result;
   }
 
-  Future<List<HabitSummaryStatusChangedRecord>?> deleteSelectedHabits() async {
+  Future<List<HabitStatusChangedRecord>?> deleteSelectedHabits() async {
     var result =
         await changeHabitsStatus(_selectUUIDColl.toList(), HabitStatus.deleted);
 
@@ -688,37 +694,52 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     return result;
   }
 
-  Future<List<HabitSummaryStatusChangedRecord>?>
-      onConfirmToArchiveHabitFromDetailPage(HabitUUID habitUUID) async {
-    var habit = getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList =
-        await changeHabitsStatus([habitUUID], HabitStatus.archived);
-    if (mounted) resortData();
-    return recordList;
-  }
-
-  Future<List<HabitSummaryStatusChangedRecord>?>
-      onConfirmToUnarchiveHabitFromDetailPage(HabitUUID habitUUID) async {
-    var habit = getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList =
-        await changeHabitsStatus([habitUUID], HabitStatus.activated);
-    if (mounted) resortData();
-    return recordList;
-  }
-
-  Future<List<HabitSummaryStatusChangedRecord>?>
-      onConfirmToDeleteHabitFromDetailPage(HabitUUID habitUUID) async {
-    var habit = getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList = await changeHabitsStatus([habitUUID], HabitStatus.deleted);
-    if (mounted) resortData();
-    return recordList;
-  }
-
   String debugGetDataString() {
     assert(kDebugMode, true);
     return _data.toString();
+  }
+}
+
+class DispatcherForHabitDetail {
+  final HabitSummaryViewModel _root;
+
+  const DispatcherForHabitDetail(this._root);
+
+  String get _clsName => "${_root.runtimeType}.$runtimeType";
+
+  Future<List<HabitStatusChangedRecord>?> onConfirmToArchiveHabit(
+      HabitUUID habitUUID) async {
+    appLog.habit.info("$_clsName.onConfirmToArchiveHabit", ex: [habitUUID]);
+    if (!_root.mounted) return null;
+    var habit = _root.getHabit(habitUUID);
+    if (habit == null || habit.status == HabitStatus.deleted) return null;
+    var recordList =
+        await _root.changeHabitsStatus([habitUUID], HabitStatus.archived);
+    if (_root.mounted) _root.resortData();
+    return recordList;
+  }
+
+  Future<List<HabitStatusChangedRecord>?> onConfirmToUnarchiveHabit(
+      HabitUUID habitUUID) async {
+    appLog.habit.info("$_clsName.onConfirmToUnarchiveHabit", ex: [habitUUID]);
+    if (!_root.mounted) return null;
+    var habit = _root.getHabit(habitUUID);
+    if (habit == null || habit.status == HabitStatus.deleted) return null;
+    var recordList =
+        await _root.changeHabitsStatus([habitUUID], HabitStatus.activated);
+    if (_root.mounted) _root.resortData();
+    return recordList;
+  }
+
+  Future<List<HabitStatusChangedRecord>?> onConfirmToDeleteHabit(
+      HabitUUID habitUUID) async {
+    appLog.habit.info("$_clsName.onConfirmToDeleteHabit", ex: [habitUUID]);
+    if (!_root.mounted) return null;
+    var habit = _root.getHabit(habitUUID);
+    if (habit == null || habit.status == HabitStatus.deleted) return null;
+    var recordList =
+        await _root.changeHabitsStatus([habitUUID], HabitStatus.deleted);
+    if (_root.mounted) _root.resortData();
+    return recordList;
   }
 }

@@ -28,7 +28,6 @@ import '../../model/habit_detail_chart.dart';
 import '../../model/habit_form.dart';
 import '../../provider/app_custom_date_format.dart';
 import '../../provider/habit_detail.dart';
-import '../../provider/habit_summary.dart';
 import '../../theme/color.dart';
 import '../common/_dialog.dart';
 import '_mixin.dart';
@@ -38,14 +37,12 @@ Future<void> showHabitEditReplacementRecordCalendarDialog({
   HabitColorType? habitColorType,
   required int firstday,
   required HabitDetailViewModel detail,
-  required HabitSummaryViewModel summary,
 }) async {
   return showDialog(
     context: context,
     builder: (context) => MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: detail),
-        ChangeNotifierProvider.value(value: summary),
       ],
       child: HabitEditReplacementRecordCalendarDialog(
         defaultColorType: habitColorType,
