@@ -26,11 +26,11 @@ class AppLogFilter implements LogFilter {
   Future<void> init() async {}
 
   @override
-  Level? get level => kLogLevel.level.toLoggerLevel();
+  Level get level => kLogLevel.level.toLoggerLevel();
 
   @override
   set level(Level? value) {}
 
   @override
-  bool shouldLog(LogEvent event) => event.level.value >= level!.value;
+  bool shouldLog(LogEvent event) => event.level.value >= level.value;
 }
