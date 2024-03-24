@@ -26,8 +26,7 @@ import '../logging/logger_stack.dart';
 import 'db_helper/habits.dart';
 import 'db_helper/records.dart';
 
-const String _autoUpdateRecordsModifyTimeTrigger =
-    """
+const String _autoUpdateRecordsModifyTimeTrigger = """
 CREATE TRIGGER auto_update_mh_records_modify_t
 AFTER UPDATE ON mh_records
 BEGIN
@@ -36,8 +35,7 @@ BEGIN
   WHERE uuid = NEW.uuid;
 END""";
 
-const String _autoUpdateHabitssModifyTimeTrigger =
-    """
+const String _autoUpdateHabitssModifyTimeTrigger = """
 CREATE TRIGGER auto_update_mh_habits_modify_t
 AFTER UPDATE ON mh_habits
 BEGIN
@@ -47,8 +45,7 @@ BEGIN
 END
 """;
 
-const String _autoAddSortPostionWhenAddNewHabit =
-    """
+const String _autoAddSortPostionWhenAddNewHabit = """
 CREATE TRIGGER auto_insert_mh_habits_sort_position
 AFTER INSERT ON mh_habits
 BEGIN

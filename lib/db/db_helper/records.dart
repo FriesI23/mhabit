@@ -118,8 +118,7 @@ const _loadRecordDataColumns = [
 ];
 
 Future<Iterable<RecordDBCell>> loadRecordDataFromDB(HabitUUID uuid) async {
-  var sql =
-      """
+  var sql = """
 SELECT ${_loadRecordDataColumns.map((e) => '$dbRecordsTableName.$e').join(', ')}
 FROM $dbRecordsTableName
 JOIN $dbHabitsTableName
