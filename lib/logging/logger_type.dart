@@ -1,10 +1,10 @@
-// Copyright 2023 Fries_I23
+// Copyright 2024 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,18 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'habit_status.dart';
+enum LoggerType {
+  /// UI component rebuilding
+  build,
 
-enum DetailPageReturnOpr { unknown, deleted }
+  /// Change Property's value
+  value,
 
-class DetailPageReturn {
-  final DetailPageReturnOpr op;
-  final String? habitName;
-  final List<HabitStatusChangedRecord>? recordList;
+  /// Navigation between pages
+  navi,
 
-  const DetailPageReturn({
-    this.op = DetailPageReturnOpr.unknown,
-    this.habitName,
-    this.recordList,
-  });
+  /// Database operation
+  db,
+
+  /// App Profile
+  profile,
+
+  /// App data loaded
+  load,
+
+  /// Notifaction
+  notify,
+
+  /// Import data
+  import,
+
+  /// Export data
+  export,
+
+  /// Habit operation
+  habit,
+
+  /// Network about
+  network,
+
+  /// Json encode/decode
+  json,
 }

@@ -26,7 +26,6 @@ import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
-import '../common/logging.dart';
 import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
@@ -34,6 +33,9 @@ import '../db/db.dart';
 import '../db/profile.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
+import '../logging/level.dart';
+import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/global.dart';
@@ -79,6 +81,14 @@ class PageAppSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<AppCustomDateYmdHmsConfigViewModel>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
+    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
+    assert(context.maybeRead<HabitFileImporterViewModel>() != null);
+    assert(context.maybeRead<AppDeveloperViewModel>() != null);
+    assert(context.maybeRead<AppReminderViewModel>() != null);
+    assert(context.maybeRead<AppThemeViewModel>() != null);
+    assert(context.maybeRead<Global>() != null);
     return const AppSettingView();
   }
 }
@@ -92,6 +102,18 @@ class AppSettingView extends StatefulWidget {
 
 class _AppSettingView extends State<AppSettingView>
     with XShare<AppSettingView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   void _openCustomDateTimeFormatPickerDialog(BuildContext context) async {
     if (!mounted) return;
     final config = context.read<AppCustomDateYmdHmsConfigViewModel>();
@@ -200,7 +222,10 @@ class _AppSettingView extends State<AppSettingView>
     try {
       result = await FilePicker.platform.pickFiles();
     } on PlatformException catch (e) {
-      ErrorLog.loadFile("Can't open file picker, reason: $e");
+      appLog.load.error("$widget._onImportAllTilePressed",
+          ex: ["Can't open file picker"],
+          error: e,
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
       //TODO: add feedback
       return;
     }
@@ -213,7 +238,10 @@ class _AppSettingView extends State<AppSettingView>
       rawJsonData = await file.readAsString();
     } on Exception catch (e) {
       //TODO: add feedback
-      ErrorLog.loadFile("Can't read file, reason: $e");
+      appLog.load.error("$widget._onImportAllTilePressed",
+          ex: ["Can't read file", file],
+          error: e,
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
       return;
     }
 

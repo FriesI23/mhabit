@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../common/enums.dart';
 import '../common/global.dart';
+import '../logging/level.dart';
 import '../model/global.dart';
 
 class AppDeveloperViewModel extends ChangeNotifier

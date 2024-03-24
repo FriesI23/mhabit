@@ -46,8 +46,7 @@ class HabitHeatmap extends StatelessWidget {
     Widget Function(
       BuildContext, {
       Widget? Function(BuildContext context, int? dateDay)? valueBuilder,
-    })
-        childBuilder,
+    }) childBuilder,
     int columnIndex,
     int rowIndex,
     DateTime date,

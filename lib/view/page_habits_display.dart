@@ -25,7 +25,6 @@ import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
@@ -33,7 +32,9 @@ import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/global.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
@@ -41,6 +42,7 @@ import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_stat.dart';
+import '../model/habit_status.dart';
 import "../model/habit_summary.dart";
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
@@ -79,9 +81,10 @@ class PageHabitsDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<AppThemeViewModel>() != null);
+    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
     return MultiProvider(
       providers: [
-        // new
         ChangeNotifierProxyProvider<Global, HabitsSortViewModel>(
           create: (context) =>
               HabitsSortViewModel(global: context.read<Global>()),
@@ -104,7 +107,6 @@ class PageHabitsDisplay extends StatelessWidget {
             horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
           ),
         ),
-        // proxy
         ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
             HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),
@@ -169,6 +171,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   void initState() {
+    appLog.build.debug(context, ex: ["init"]);
     super.initState();
     var viewmodel = context.read<HabitSummaryViewModel>();
     var dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
@@ -194,8 +197,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     viewmodel.initDispatcher(dispatcher);
   }
 
-  void _revertHabitsStatus(
-      List<HabitSummaryStatusChangedRecord> recordList) async {
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
+  void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
     HabitSummaryViewModel viewmodel;
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -835,7 +843,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitsDisplayView:: $hashCode");
+    appLog.build.debug(context);
 
     //#region: appbar
     Widget buildAppbarInViewMode(BuildContext context, bool isExtended) {
@@ -975,7 +983,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, status, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          DebugLog.rebuild("Appbar:: $status");
+          appLog.build.debug(context, ex: [status], name: "$widget.Appbar");
           return SliverAnimatedSwitcher(
             duration: _kEditModeChangeAnimateDuration,
             child: viewmodel.isInEditMode
@@ -994,7 +1002,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
           var viewmodel = context.read<HabitSummaryViewModel>();
-          DebugLog.rebuild("HabitSummaryList:: ... $value");
+          appLog.build.debug(context, ex: [value], name: "$widget.HabitList");
           return AnimatedSliverList(
             controller: viewmodel.dispatcherLinkedController,
             delegate: AnimatedSliverChildBuilderDelegate(
@@ -1045,11 +1053,14 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           return FutureBuilder(
             future: getFuture(),
             builder: (context, snapshot) {
-              DebugLog.load("------ "
-                  "Load data ${snapshot.connectionState}, "
-                  "${viewmodel.habitCount}");
+              appLog.load.debug("$widget.buildHabits", ex: [
+                "Loading data",
+                snapshot.connectionState,
+                viewmodel.habitCount
+              ]);
               if (kDebugMode && snapshot.isDone) {
-                DebugLog.load(viewmodel.debugGetDataString());
+                appLog.load.debug("$widget.buildHabits",
+                    ex: ["Loaded", viewmodel.debugGetDataString()]);
               }
 
               return SliverStack(
@@ -1276,14 +1287,9 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    DebugLog.rebuild(
-      "HabitDisplayListTile:: $uuid | $isExtended, $crtDate | "
-      "id=${data?.id}, name=\"${data?.name}\", uuid=${data?.uuid}, "
-      "sort=${data?.sortPostion}, "
-      "remind[${data?.reminderQuest?.length ?? -1}]=${data?.reminder}",
-    );
+    appLog.build.debug(context, ex: [uuid, isExtended, data]);
     if (data == null) {
-      WarnLog.rebuild("HabitDisplayListTile:: data not found: $uuid");
+      appLog.build.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();
     }
     return HabitDisplayListTile(

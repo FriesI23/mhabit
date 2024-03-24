@@ -15,8 +15,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../common/logging.dart';
 import '../../common/utils.dart';
+import '../../logging/helper.dart';
 
 class SvgTemplateImage extends StatefulWidget {
   static const emptySVGString =
@@ -52,7 +52,7 @@ class _SvgTemplateImage extends State<SvgTemplateImage> {
 
   Future<String> loadImage(BuildContext context) async {
     if (_future != null) return _future!;
-    DebugLog.load("SvgTemplateImage:: load from ${widget.svgTemplatePath}");
+    appLog.load.debug("$runtimeType.loadImage", ex: [widget.svgTemplatePath]);
     _future = DefaultAssetBundle.of(context).loadString(widget.svgTemplatePath);
     return _future!;
   }

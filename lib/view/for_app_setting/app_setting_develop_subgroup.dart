@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../common/enums.dart';
 import '../../component/widget.dart';
+import '../../logging/level.dart';
 import 'app_setting_log_level_tile.dart';
 
 class AppSettingDevelopSubGroup extends StatelessWidget {

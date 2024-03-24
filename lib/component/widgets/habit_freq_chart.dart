@@ -19,9 +19,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/logging.dart';
 import '../../common/types.dart';
 import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
 
@@ -274,7 +274,7 @@ class HabitFreqChart extends StatelessWidget {
         break;
     }
 
-    DebugLog.rebuild("HabitFreqChart(key=$key)");
+    appLog.build.debug(context);
     return Column(
       children: [
         const SizedBox(height: 30),

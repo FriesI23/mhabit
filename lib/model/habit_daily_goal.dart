@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../l10n/localizations.dart';
-
 import '../common/consts.dart';
 import '../common/types.dart';
+import '../l10n/localizations.dart';
 import 'habit_form.dart';
 
 class HabitDailyGoalHelper {

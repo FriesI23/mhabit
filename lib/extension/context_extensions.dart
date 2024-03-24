@@ -16,11 +16,5 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 extension ProviderReadExtension on BuildContext {
-  T? maybeRead<T>() {
-    try {
-      return Provider.of<T>(this, listen: false);
-    } on Exception {
-      return null;
-    }
-  }
+  T? maybeRead<T>() => Provider.of<T?>(this, listen: false);
 }

@@ -19,11 +19,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/logging.dart';
 import '../../common/math.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
 import 'l10n_builder.dart';
@@ -262,7 +262,7 @@ class HabitScoreChart extends StatelessWidget {
     final double textScaleFactor =
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
-    DebugLog.rebuild("HabitScoreChart(key=$key)");
+    appLog.build.debug(context);
     double maxX = (data.length - 1).toDouble();
     double initMinX =
         limit != null ? maxX * math.max((1 - limit! / data.length), 0) : 0;

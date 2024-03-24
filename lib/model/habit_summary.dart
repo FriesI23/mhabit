@@ -800,11 +800,3 @@ class HabitSummaryStatusCache {
     ]);
   }
 }
-
-class HabitSummaryStatusChangedRecord {
-  final HabitUUID habitUUID;
-  final HabitStatus habitStatus;
-
-  const HabitSummaryStatusChangedRecord(
-      {required this.habitUUID, required this.habitStatus});
-}

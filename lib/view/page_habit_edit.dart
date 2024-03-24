@@ -18,12 +18,13 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
+import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/global.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
@@ -44,22 +45,6 @@ import 'for_habit_edit/_dialogs.dart';
 import 'for_habit_edit/_widget.dart';
 
 const double _kCommonEvalation = 1.0;
-
-Future<HabitDBCell?> showHabitEditFullScreenDialog({
-  required BuildContext context,
-  required HabitForm initForm,
-  bool? naviWithFullscreenDialog,
-}) async {
-  return Navigator.of(context).push<HabitDBCell>(
-    MaterialPageRoute(
-      fullscreenDialog: naviWithFullscreenDialog ?? true,
-      builder: (context) => PageHabitEdit(
-        initForm: initForm,
-        showInFullscreenDialog: true,
-      ),
-    ),
-  );
-}
 
 Future<HabitDBCell?> naviToHabitEidtPage({
   required BuildContext context,
@@ -89,6 +74,10 @@ class PageHabitEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<NotificationChannelData>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
+    assert(context.maybeRead<AppDeveloperViewModel>() != null);
+    assert(context.maybeRead<Global>() != null);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -126,6 +115,18 @@ class HabitEditView extends StatefulWidget {
 }
 
 class _HabitEditView extends State<HabitEditView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   void _openColorPickerDialog(
       BuildContext context, HabitColorType colorType) async {
     final result = await showHabitColorPickerDialog(
@@ -147,6 +148,7 @@ class _HabitEditView extends State<HabitEditView> {
       BuildContext context, HabitFrequency frequency) async {
     final result = await showHabitFrequencyPickerDialog(
         context: context, frequency: frequency);
+    appLog.navi.info("$runtimeType._openFrequencyPickerDialog", ex: [result]);
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().frequency = result;
   }
@@ -155,7 +157,7 @@ class _HabitEditView extends State<HabitEditView> {
       HabitColorType colorType) async {
     final result = await showHabitDatePickerDialog(
         context: context, date: startDate, colorType: colorType);
-    DebugLog.naviResult("datePickerDialog: $result");
+    appLog.navi.info("$runtimeType._openDatePickerDialog", ex: [result]);
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().startDate =
         HabitStartDate.dateTime(result);
@@ -306,7 +308,7 @@ class _HabitEditView extends State<HabitEditView> {
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitEditView:: $hashCode ${widget.initForm}");
+    appLog.build.debug(context, ex: [widget.initForm]);
 
     //#region private builders
     Widget buildAppbar(BuildContext context) {
@@ -319,7 +321,8 @@ class _HabitEditView extends State<HabitEditView> {
             viewmodel.canSaveHabit()),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
-          DebugLog.rebuild('Appbar habitEdit: "$data');
+          appLog.build
+              .debug(context, ex: [data], name: "$widget.Appbar.HabitEdit");
           final name = data.item1;
           final colorType = data.item2;
           final isAppbarPinned = data.item3;
@@ -347,7 +350,8 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.colorType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, colorType, child) {
-          DebugLog.rebuild("field color: $colorType");
+          appLog.build
+              .debug(context, ex: [colorType], name: "$widget.ColorField");
           return HabitEditColorTile(
             colorType: colorType,
             onPressed: _openColorPickerDialog,
@@ -361,7 +365,8 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.habitType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, habitType, child) {
-          DebugLog.rebuild("field habit type: $habitType");
+          appLog.build
+              .debug(context, ex: [habitType], name: "$widget.HabitTypeField");
           return HabitEditHabitTypeTile(
             habitType: habitType,
             onPressed: _openHabitTypePickerDialog,
@@ -376,7 +381,8 @@ class _HabitEditView extends State<HabitEditView> {
         builder: (context, _, child) {
           final l10n = L10n.of(context);
           final formvm = context.read<HabitFormViewModel>();
-          DebugLog.rebuild("field daily goal, ${formvm.dailyGoal}");
+          appLog.build.debug(context,
+              ex: [formvm.dailyGoal], name: "$widget.DailyGoalField");
           return HabitEditDailyGoalTile(
             errorHint: formvm.isDailyGoalValueValid
                 ? null
@@ -482,7 +488,8 @@ class _HabitEditView extends State<HabitEditView> {
         selector: (context, formViewModel) => formViewModel.frequency,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, frequency, child) {
-          DebugLog.rebuild("field frequency: $frequency");
+          appLog.build
+              .debug(context, ex: [frequency], name: "$widget.FrequencyField");
           return HabitEditFrequencyTile(
             frequency: frequency,
             onPressed: _openFrequencyPickerDialog,
@@ -498,7 +505,8 @@ class _HabitEditView extends State<HabitEditView> {
             Tuple2(formViewModel.startDate, formViewModel.colorType),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
-          DebugLog.rebuild("field targetDays: $data");
+          appLog.build
+              .debug(context, ex: [data], name: "$widget.StartDateField");
           final startDate = data.item1;
           final colorType = data.item2;
           return HabitEditStartDateTile(
@@ -514,7 +522,8 @@ class _HabitEditView extends State<HabitEditView> {
       return Selector<HabitFormViewModel, int>(
         selector: (context, formViewModel) => formViewModel.targetDays,
         builder: (context, targetDays, child) {
-          DebugLog.rebuild("field targetDays: $targetDays");
+          appLog.build.debug(context,
+              ex: [targetDays], name: "$widget.TargetDaysField");
           return HabitEditTargetDaysTile(
             targetDays: targetDays,
             onPressed: _openTargetDaysPickerDialog,

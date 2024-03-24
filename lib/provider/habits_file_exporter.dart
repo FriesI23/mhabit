@@ -20,8 +20,8 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../common/logging.dart';
 import '../common/types.dart';
+import '../logging/helper.dart';
 import '../model/habit_export.dart';
 
 class HabitFileExporterViewModel extends ChangeNotifier {
@@ -71,7 +71,9 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
-    InfoLog.export(fileName, jsonData);
+
+    appLog.export
+        .info("$runtimeType.exportHabitData", ex: [fileName, jsonData]);
 
     if (listen) notifyListeners();
     return filePath;
@@ -87,7 +89,9 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
-    InfoLog.export(fileName, jsonData);
+
+    appLog.export
+        .info("$runtimeType.exportMultiHabitsData", ex: [fileName, jsonData]);
 
     if (listen) notifyListeners();
     return filePath;
@@ -104,7 +108,9 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName(prefix: "export-all");
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
-    InfoLog.export(fileName, jsonData);
+
+    appLog.export
+        .info("$runtimeType.exportAllHabitsData", ex: [fileName, jsonData]);
 
     if (listen) notifyListeners();
     return filePath;

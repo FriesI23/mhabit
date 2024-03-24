@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/utils.dart';
 import '../db/db_helper/habits.dart';
 import '../db/db_helper/records.dart';
+import '../logging/helper.dart';
 import 'habit_export.dart';
 
 class HabitImport {
@@ -43,9 +43,11 @@ class HabitImport {
               ),
             ),
       );
-      InfoLog.import("dbid=$dbid, cell=$habitDBCell, records=$results");
+      appLog.import.info("$runtimeType._importHabitData",
+          ex: ["with records", dbid, habitDBCell, results]);
     } else {
-      InfoLog.import("dbid=$dbid, cell=$habitDBCell");
+      appLog.import.info("$runtimeType._importHabitData",
+          ex: ["without records", dbid, habitDBCell]);
     }
   }
 

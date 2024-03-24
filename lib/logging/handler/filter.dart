@@ -1,10 +1,10 @@
-// Copyright 2023 Fries_I23
+// Copyright 2024 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,18 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'habit_status.dart';
+import 'package:logger/logger.dart';
 
-enum DetailPageReturnOpr { unknown, deleted }
+import '../../common/global.dart';
 
-class DetailPageReturn {
-  final DetailPageReturnOpr op;
-  final String? habitName;
-  final List<HabitStatusChangedRecord>? recordList;
+class AppLogFilter implements LogFilter {
+  const AppLogFilter();
 
-  const DetailPageReturn({
-    this.op = DetailPageReturnOpr.unknown,
-    this.habitName,
-    this.recordList,
-  });
+  @override
+  Future<void> destroy() async {}
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Level get level => kLogLevel.level.toLoggerLevel();
+
+  @override
+  set level(Level? value) {}
+
+  @override
+  bool shouldLog(LogEvent event) => event.level.value >= level.value;
 }

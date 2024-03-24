@@ -18,7 +18,7 @@ import 'package:test/test.dart';
 void main() {
   group("CustomDateYmdHmsConfig", () {
     test('Test constructor', () {
-      final config = CustomDateYmdHmsConfig(
+      const config = CustomDateYmdHmsConfig(
         ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
         splitChar: DateSplitCharEnum.dash,
         twelveHoursOn: false,
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('Test getFormatter with system format', () {
-      final config = CustomDateYmdHmsConfig(
+      const config = CustomDateYmdHmsConfig(
         ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
         splitChar: DateSplitCharEnum.dash,
         twelveHoursOn: false,
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('Test getFormatter with custom format', () {
-      final config = CustomDateYmdHmsConfig(
+      const config = CustomDateYmdHmsConfig(
         ymdFormat: YearMonthDayFormtEnum.monthDayYear,
         splitChar: DateSplitCharEnum.slash,
         twelveHoursOn: true,
@@ -62,7 +62,7 @@ void main() {
     });
 
     test('Test getFormatter with custom format', () {
-      final config = CustomDateYmdHmsConfig(
+      const config = CustomDateYmdHmsConfig(
         ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
         splitChar: DateSplitCharEnum.space,
         twelveHoursOn: false,
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('Test getFormatter with custom format and month with name', () {
-      final config = CustomDateYmdHmsConfig(
+      const config = CustomDateYmdHmsConfig(
         ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
         splitChar: DateSplitCharEnum.space,
         useMonthWithName: true,

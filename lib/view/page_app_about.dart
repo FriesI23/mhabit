@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 
 import '../common/consts.dart';
 import '../component/widget.dart';
+import '../logging/helper.dart';
 import '../model/about_info.dart';
 import 'common/_dialog.dart';
 import 'for_app_about/_widget.dart';
@@ -69,6 +70,18 @@ class _AppAboutView extends State<AppAboutView> {
       avaxAddress: aboutInfo.donateCryptoAVAXAddr,
       ftmAddress: aboutInfo.donateCryptoFTMAddr,
     );
+  }
+
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
   }
 
   @override

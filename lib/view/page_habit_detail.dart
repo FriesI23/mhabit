@@ -23,15 +23,16 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../extension/custom_color_extensions.dart';
 import '../common/consts.dart';
-import '../common/logging.dart';
 import '../common/types.dart';
 import '../component/animation.dart';
 import '../component/widget.dart';
 import '../db/db_helper/habits.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../extension/num_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
@@ -74,7 +75,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
   required HabitUUID habitUUID,
   HabitColorType? colorType,
-  required HabitSummaryViewModel summary,
+  HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<DetailPageReturn>(
     MaterialPageRoute(
@@ -96,9 +97,10 @@ class PageHabitDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(context.maybeRead<HabitFileExporterViewModel>() != null);
+    assert(context.maybeRead<AppFirstDayViewModel>() != null);
     return MultiProvider(
       providers: [
-        // new
         ChangeNotifierProvider<HabitDetailViewModel>(
           create: (context) => HabitDetailViewModel(),
         ),
@@ -114,7 +116,6 @@ class PageHabitDetail extends StatelessWidget {
             return previous;
           },
         ),
-        // proxy
         ChangeNotifierProxyProvider<HabitDetailViewModel,
             HabitDetailFreqChartViewModel>(
           create: (context) => HabitDetailFreqChartViewModel(),
@@ -215,6 +216,18 @@ class _HabitDetailView extends State<HabitDetailView>
     with
         HabitHeatmapColorChooseMixin<HabitDetailView>,
         XShare<HabitDetailView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   Future<bool> _enterHabitEditPage({
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
@@ -231,8 +244,8 @@ class _HabitDetailView extends State<HabitDetailView>
     if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
     viewmodel.rockreloadDBToggleSwich();
-    final summary = context.read<HabitSummaryViewModel>();
-    if (summary.mounted) {
+    final summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary != null && summary.mounted) {
       summary.updateCalendarExpanedStatus(false, listen: false);
       summary.rockreloadDBToggleSwich();
     }
@@ -265,24 +278,23 @@ class _HabitDetailView extends State<HabitDetailView>
 
   void _openEditDialog() async {
     HabitDetailViewModel viewmodel;
-    HabitSummaryViewModel summary;
 
     if (!mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (viewmodel.habitDetailData == null) return;
-    summary = context.read<HabitSummaryViewModel>();
     var oldVersion = viewmodel.getInsideVersion();
     await showHabitEditReplacementRecordCalendarDialog(
       context: context,
       habitColorType: viewmodel.habitColorType,
       firstday: viewmodel.firstday,
       detail: viewmodel,
-      summary: summary,
     );
 
     if (!mounted) return;
-    summary = context.read<HabitSummaryViewModel>();
-    if (!summary.mounted || viewmodel.getInsideVersion() == oldVersion) return;
+    final summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary == null ||
+        !summary.mounted ||
+        viewmodel.getInsideVersion() == oldVersion) return;
     summary.rockreloadDBToggleSwich();
   }
 
@@ -307,7 +319,7 @@ class _HabitDetailView extends State<HabitDetailView>
   }
 
   void _openHabitArchiveConfirmDialog() async {
-    HabitSummaryViewModel summary;
+    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
     var result = await _openHabitOpConfirmDialog(
@@ -320,12 +332,16 @@ class _HabitDetailView extends State<HabitDetailView>
     );
 
     if (result == null || result == false || !mounted) return;
-    summary = context.read<HabitSummaryViewModel>();
-    if (!summary.mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
+    summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary == null || !summary.mounted) {
+      await viewmodel.onConfirmToArchiveHabit();
+      return;
+    }
 
-    await summary.onConfirmToArchiveHabitFromDetailPage(viewmodel.habitUUID!);
+    // use summary method in default
+    await summary.forHabitDetail.onConfirmToArchiveHabit(viewmodel.habitUUID!);
 
     if (!mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
@@ -334,10 +350,10 @@ class _HabitDetailView extends State<HabitDetailView>
   }
 
   void _openHabitUnarchiveConfirmDialog() async {
-    HabitSummaryViewModel summary;
+    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
-    var result = await _openHabitOpConfirmDialog(
+    final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -347,12 +363,17 @@ class _HabitDetailView extends State<HabitDetailView>
     );
 
     if (result == null || result == false || !mounted) return;
-    summary = context.read<HabitSummaryViewModel>();
-    if (!summary.mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
+    summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary == null || !summary.mounted) {
+      await viewmodel.onConfirmToUnarchiveHabit();
+      return;
+    }
 
-    await summary.onConfirmToUnarchiveHabitFromDetailPage(viewmodel.habitUUID!);
+    // use summary method in default
+    await summary.forHabitDetail
+        .onConfirmToUnarchiveHabit(viewmodel.habitUUID!);
 
     if (!mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
@@ -361,7 +382,7 @@ class _HabitDetailView extends State<HabitDetailView>
   }
 
   void _openHabitDeleteConfirmDialog() async {
-    HabitSummaryViewModel summary;
+    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
     var result = await _openHabitOpConfirmDialog(
@@ -374,21 +395,29 @@ class _HabitDetailView extends State<HabitDetailView>
     );
 
     if (result == null || result == false || !mounted) return;
-    summary = context.read<HabitSummaryViewModel>();
-    if (!summary.mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
+    summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary == null || !summary.mounted) {
+      final change = await viewmodel.onConfirmToDeleteHabit();
+      return Navigator.pop(
+        context,
+        DetailPageReturn(
+          op: DetailPageReturnOpr.deleted,
+          habitName: viewmodel.habitName,
+          recordList: change != null ? [change] : null,
+        ),
+      );
+    }
 
-    var recordList = await summary
-        .onConfirmToDeleteHabitFromDetailPage(viewmodel.habitUUID!);
-
-    if (!mounted) return;
-    Navigator.pop(
+    // use summary method in default
+    return Navigator.pop(
       context,
       DetailPageReturn(
         op: DetailPageReturnOpr.deleted,
         habitName: viewmodel.habitName,
-        recordList: recordList,
+        recordList: await summary.forHabitDetail
+            .onConfirmToDeleteHabit(viewmodel.habitUUID!),
       ),
     );
   }
@@ -447,7 +476,7 @@ class _HabitDetailView extends State<HabitDetailView>
 
   @override
   Widget build(BuildContext context) {
-    DebugLog.rebuild("HabitDetailView:: $hashCode");
+    appLog.build.debug(context);
 
     Widget buildAppbar(BuildContext context) {
       Widget buildAppbarAction(
@@ -521,7 +550,8 @@ class _HabitDetailView extends State<HabitDetailView>
         builder: (context, _, child) {
           final viewmodel = context.read<HabitDetailViewModel>();
           final durningDays = viewmodel.duringFromStartDate.inDays;
-          DebugLog.rebuild("summary tile: $_ ${viewmodel.habitProgress}");
+          appLog.build.debug(context,
+              ex: [viewmodel.habitProgress], name: "$widget.SummaryList");
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(
               habitProgress: viewmodel.habitProgress,
@@ -958,11 +988,12 @@ class _HabitDetailView extends State<HabitDetailView>
           return FutureBuilder(
             future: getFuture(),
             builder: (context, snapshot) {
-              DebugLog.load(
-                  "------ Load detail data ${snapshot.connectionState}");
+              appLog.load.debug("$widget.buildBody",
+                  ex: ["Loading detail data", snapshot.connectionState]);
 
               if (kDebugMode && snapshot.isDone) {
-                DebugLog.load(viewmodel.debugGetDataString());
+                appLog.load.debug("$widget.buildBody",
+                    ex: ["Loaded", viewmodel.debugGetDataString()]);
               }
 
               Widget switcherWidget;
