@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../common/abc.dart';
-import 'handler/console_handler.dart';
+import 'handler/console_output.dart';
+import 'handler/console_printer.dart';
 import 'handler/filter.dart';
 import 'logger/text_logger.dart';
 import 'logger/value_change_logger.dart';
@@ -51,11 +53,17 @@ abstract interface class AppLoggerMananger with FutureInitializationABC {
     return mgr;
   }
 
-  static l.Logger _defaultLogger() => l.Logger(
-        filter: const AppLogFilter(),
-        printer: const AppLoggerPrinter(),
-        output: const AppLoggerConsoleOutput(),
-      );
+  static l.Logger _defaultLogger() => kReleaseMode
+      ? l.Logger(
+          filter: const AppLogFilter(),
+          printer: const AppLoggerConsoleReleasePrinter(),
+          output: const AppLoggerConsoleReleaseOutput(),
+        )
+      : l.Logger(
+          filter: const AppLogFilter(),
+          printer: const AppLoggerConsolePrinter(),
+          output: const AppLoggerConsoleOutput(),
+        );
 }
 
 class _AppLoggerManager implements AppLoggerMananger {

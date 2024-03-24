@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:collection/collection.dart';
 import 'package:logger/logger.dart' as l;
 
+import '../extension.dart';
 import '../logger_message.dart';
 
-class AppLoggerPrinter implements l.LogPrinter {
+class AppLoggerConsolePrinter<T extends AppLoggerMessage>
+    implements l.LogPrinter {
   static const prefixMap = {
     l.Level.debug: "D",
     l.Level.info: "I",
@@ -29,7 +30,7 @@ class AppLoggerPrinter implements l.LogPrinter {
     l.Level.fatal: "F",
   };
 
-  const AppLoggerPrinter();
+  const AppLoggerConsolePrinter();
 
   @override
   Future<void> destroy() async {}
@@ -39,7 +40,7 @@ class AppLoggerPrinter implements l.LogPrinter {
 
   @override
   List<String> log(l.LogEvent event) {
-    final AppLoggerMessage? message = event.message;
+    final T? message = event.message;
 
     Iterable<String?> iterPrefix() sync* {
       yield "[${prefixMap[event.level]}]";
@@ -56,8 +57,25 @@ class AppLoggerPrinter implements l.LogPrinter {
   }
 }
 
-class AppLoggerConsoleOutput implements l.LogOutput {
-  const AppLoggerConsoleOutput();
+class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
+    implements l.LogPrinter {
+  static const prefixMap = {
+    l.Level.debug: "DEBUG",
+    l.Level.info: "INFO",
+    l.Level.warning: "WARN",
+    l.Level.error: "ERROR",
+    l.Level.fatal: "FATAL",
+  };
+
+  static final _errorPrinter = l.PrettyPrinter(
+    methodCount: 10,
+    errorMethodCount: null,
+    printEmojis: false,
+    printTime: true,
+    colors: false,
+  );
+
+  const AppLoggerConsoleReleasePrinter();
 
   @override
   Future<void> destroy() async {}
@@ -66,15 +84,30 @@ class AppLoggerConsoleOutput implements l.LogOutput {
   Future<void> init() async {}
 
   @override
-  void output(l.OutputEvent event) {
-    final AppLoggerMessage? message = event.origin.message;
-    for (var msg in event.lines) {
-      log(msg,
-          level: event.level.value,
-          time: event.origin.time,
-          name: "app:${message?.type.name ?? ''}:${Isolate.current.debugName}",
-          error: event.origin.error,
-          stackTrace: event.origin.stackTrace);
+  List<String> log(l.LogEvent event) {
+    final T? message = event.message;
+
+    Iterable<String?> iterPrefix() sync* {
+      yield "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]";
+      yield "[${prefixMap[event.level]}]";
     }
+
+    Iterable<String> iterMergesMsg({bool addTime = false}) sync* {
+      yield iterPrefix().whereNotNull().join(" ");
+      yield " - ";
+      if (addTime) {
+        yield _errorPrinter.getTime(event.time);
+        yield " - ";
+      }
+      if (message != null) {
+        yield message.toLogPrinterMessage().whereNotNull().join(" | ");
+      }
+    }
+
+    if (event.level.value >= l.Level.error.value) {
+      return _errorPrinter.log(event.copyWith(message: iterMergesMsg().join()));
+    }
+
+    return [iterMergesMsg(addTime: true).join()];
   }
 }
