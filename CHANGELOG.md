@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.11.0+35
+
+- Update dart SDK dependency to >=3.0.0
+- Refactor logging module
+- Specify provider dependencies on pages
+- Remove dependency with summary and detail page
+- Rewrite `context.maybeRead` method
+- Fix habit's revert operation
+
 ## 1.10.6+34
 
 - Fix not reminding issue on android (#144)

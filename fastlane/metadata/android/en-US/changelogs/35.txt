@@ -1,0 +1,6 @@
+- Update dart SDK dependency to >=3.0.0
+- Refactor logging module
+- Specify provider dependencies on pages
+- Remove dependency with summary and detail page
+- Rewrite `context.maybeRead` method
+- Fix habit's revert operation
