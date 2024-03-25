@@ -1,5 +1,6 @@
 {
   "@@locale": "zh",
+  "localeScriptName": "中文",
 
   "appName": "桌上习惯",
 
@@ -351,6 +352,8 @@
 
   "snackbar_undoText": "撤回",
   "snackbar_dissmessText": "忽略",
+
+  "contributors_tile_title": "贡献者",
 
   "userAction_tap": "单击",
   "userAction_doubleTap": "双击",

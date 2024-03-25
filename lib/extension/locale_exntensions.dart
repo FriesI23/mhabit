@@ -12,43 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum LoggerType {
-  /// UI component rebuilding
-  build,
+import 'package:flutter/material.dart';
+import 'package:intl/locale.dart' as intl_locale;
 
-  /// Change Property's value
-  value,
-
-  /// Navigation between pages
-  navi,
-
-  /// Database operation
-  db,
-
-  /// App Profile
-  profile,
-
-  /// App data loaded
-  load,
-
-  /// Notifaction
-  notify,
-
-  /// Import data
-  import,
-
-  /// Export data
-  export,
-
-  /// Habit operation
-  habit,
-
-  /// Network about
-  network,
-
-  /// Json encode/decode
-  json,
-
-  /// Localization
-  l10n,
+extension IntlLocaleExtension on intl_locale.Locale {
+  Locale toLocale() => Locale.fromSubtags(
+      languageCode: languageCode,
+      scriptCode: scriptCode,
+      countryCode: countryCode);
 }

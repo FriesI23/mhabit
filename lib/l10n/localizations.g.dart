@@ -103,6 +103,12 @@ abstract class L10n {
     Locale('zh')
   ];
 
+  /// No description provided for @localeScriptName.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get localeScriptName;
+
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
@@ -1842,6 +1848,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'DISMISS'**
   String get snackbar_dissmessText;
+
+  /// No description provided for @contributors_tile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributors'**
+  String get contributors_tile_title;
 
   /// No description provided for @userAction_tap.
   ///

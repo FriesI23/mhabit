@@ -7,6 +7,9 @@ class L10nFa extends L10n {
   L10nFa([String locale = 'fa']) : super(locale);
 
   @override
+  String get localeScriptName => 'زبان فارسی';
+
+  @override
   String get appName => 'جدول عادت‌ها';
 
   @override
@@ -1004,6 +1007,9 @@ class L10nFa extends L10n {
 
   @override
   String get snackbar_dissmessText => 'رد کردن';
+
+  @override
+  String get contributors_tile_title => 'Contributors';
 
   @override
   String get userAction_tap => 'ضربه';

@@ -1,4 +1,12 @@
 {
+  "ar": [
+    "contributors_tile_title"
+  ],
+
+  "de": [
+    "contributors_tile_title"
+  ],
+
   "fa": [
     "habitDisplay_editPopMenu_clone",
     "habitDetail_editPopMenu_clone",
@@ -19,6 +27,15 @@
     "donateWay_cryptoCurrency_AVAX",
     "donateWay_cryptoCurrency_FTM",
     "donateWay_firstQRGroup",
-    "appAbout_donateDialog_copiedCrypto_msg"
+    "appAbout_donateDialog_copiedCrypto_msg",
+    "contributors_tile_title"
+  ],
+
+  "fr": [
+    "contributors_tile_title"
+  ],
+
+  "vi": [
+    "contributors_tile_title"
   ]
 }

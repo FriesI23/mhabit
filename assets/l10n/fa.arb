@@ -1,5 +1,6 @@
 {
   "@@locale": "fa",
+  "localeScriptName": "زبان فارسی",
   "appName": "جدول عادت‌ها",
   "habitEdit_saveButton_text": "ذخیره",
   "habitEdit_habitName_hintText": "نام عادت...",

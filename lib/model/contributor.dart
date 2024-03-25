@@ -31,6 +31,11 @@ class ContributorInfo {
 
   factory ContributorInfo.fromJson(Map<String, dynamic> json) =>
       _$ContributorInfoFromJson(json);
+
+  @override
+  String toString() {
+    return "$runtimeType(id=$id,name=$name,url=$url)";
+  }
 }
 
 abstract interface class Contributors {

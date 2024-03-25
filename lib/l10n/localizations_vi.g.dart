@@ -7,6 +7,9 @@ class L10nVi extends L10n {
   L10nVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get localeScriptName => 'Tiếng Việt';
+
+  @override
   String get appName => 'Table Habit';
 
   @override
@@ -1004,6 +1007,9 @@ class L10nVi extends L10n {
 
   @override
   String get snackbar_dissmessText => 'MIỄN';
+
+  @override
+  String get contributors_tile_title => 'Contributors';
 
   @override
   String get userAction_tap => 'Nhấn';

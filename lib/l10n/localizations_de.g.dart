@@ -7,6 +7,9 @@ class L10nDe extends L10n {
   L10nDe([String locale = 'de']) : super(locale);
 
   @override
+  String get localeScriptName => 'Deutsch';
+
+  @override
   String get appName => 'Table Habit';
 
   @override
@@ -1004,6 +1007,9 @@ class L10nDe extends L10n {
 
   @override
   String get snackbar_dissmessText => 'Ablehnen';
+
+  @override
+  String get contributors_tile_title => 'Contributors';
 
   @override
   String get userAction_tap => 'Tippen';

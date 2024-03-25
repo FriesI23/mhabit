@@ -14,7 +14,7 @@
 
 import 'localizations.dart';
 
-export 'localizations.g.dart' show L10n;
+export 'localizations.g.dart' show L10n, lookupL10n;
 
 extension L10nExtra on L10n {
   String getHabitEditReminderWeekDayText(int dayOfWeek) {

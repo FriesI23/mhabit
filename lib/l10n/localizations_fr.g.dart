@@ -7,6 +7,9 @@ class L10nFr extends L10n {
   L10nFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get localeScriptName => 'Français';
+
+  @override
   String get appName => 'Table Habit';
 
   @override
@@ -1004,6 +1007,9 @@ class L10nFr extends L10n {
 
   @override
   String get snackbar_dissmessText => 'REJETER';
+
+  @override
+  String get contributors_tile_title => 'Contributors';
 
   @override
   String get userAction_tap => 'Appui';

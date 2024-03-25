@@ -118,6 +118,7 @@ dev_dependencies:
       url: https://github.com/Gaurav192/icon_font_generator.git
       ref: file_path_fix
   flutter_gen: ^5.2.0
+  flutter_gen_runner: ^5.4.0
   json_serializable: ^6.6.1
 
   # Utilities
@@ -144,6 +145,7 @@ flutter:
     - CHANGELOG.md
     - docs/CHANGELOG/
     - configs/about_info.json
+    - configs/contributors.json
     - assets/sql/
     - assets/icons/
     - assets/images/
@@ -188,3 +190,11 @@ flutter:
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_gen:
+  output: lib/assets/
+  integrations:
+    # svg
+    flutter_svg: true
+    # json
+    lottie: true

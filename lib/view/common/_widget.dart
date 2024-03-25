@@ -15,6 +15,7 @@
 export './appbar_combined_action.dart'
     show AppbarActionShowStatus, AppBarActions, AppbarActionItemConfig;
 export './colorful_navibar.dart' show ColorfulNavibar;
+export './contributor_tile.dart';
 export './date_change.dart';
 export './donate_dialog.dart' show DonateDialogResult;
 export './fixed_page_place_holder.dart';
