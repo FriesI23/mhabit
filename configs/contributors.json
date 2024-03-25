@@ -1,0 +1,14 @@
+{
+    "_contributor": [
+        {
+            "id": 1,
+            "name": "test",
+            "comment": "come comment"
+        }
+    ],
+    "contributors": [ ],
+    "translations": {
+        "en": [ ],
+        "zh": [ ]
+    }
+}
