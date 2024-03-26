@@ -47,7 +47,7 @@ class ContributorTile extends StatelessWidget {
             }
           },
           child: Text(
-            info.name,
+            "@${info.name}",
             style: const TextStyle(
                 decoration: TextDecoration.underline, color: Colors.blue),
           ),
