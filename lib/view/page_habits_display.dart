@@ -765,6 +765,22 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
   }
 
+  Future<bool> onWillPop() async {
+    if (!mounted) return true;
+    final viewmodel = context.read<HabitSummaryViewModel>();
+    if (!viewmodel.mounted) return true;
+    if (viewmodel.isInEditMode) {
+      viewmodel.exitEditMode();
+      return false;
+    }
+    if (viewmodel.isCalendarExpanded) {
+      viewmodel.updateCalendarExpanedStatus(false);
+      return false;
+    }
+
+    return true;
+  }
+
   void _onHabitEditAppbarLeadingButtonPressed() {
     if (!mounted) return;
     var viewmodel = context.read<HabitSummaryViewModel>();
@@ -1184,40 +1200,43 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final viewmodel = context.read<HabitSummaryViewModel>();
     return ColorfulNavibar(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
-          selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
-          builder: (context, value, child) => RefreshIndicator(
-            onRefresh: _onRefreshIndicatorTriggered,
-            edgeOffset: kToolbarHeight +
-                value.item2 +
-                MediaQuery.of(context).padding.top,
-            triggerMode: RefreshIndicatorTriggerMode.onEdge,
-            child: Stack(
-              children: [
-                buildEmptyImage(context),
-                CustomScrollView(
-                  physics: const ClampingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics()),
-                  controller: viewmodel.verticalScrollController,
-                  slivers: [
-                    buildAppbar(context),
-                    const HabitDivider(withSliver: true, height: 1),
-                    EnhancedSafeArea.edgeToEdgeSafe(
-                      withSliver: true,
-                      child: buildHabits(context),
-                    ),
-                    buildDevelopSliverList(context),
-                    buildBottomPlaceHolder(context),
-                    if (kDebugMode) _buildScrollablePlaceHolder(context),
-                  ],
-                ),
-              ],
+      child: WillPopScope(
+        onWillPop: onWillPop,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
+            selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
+            builder: (context, value, child) => RefreshIndicator(
+              onRefresh: _onRefreshIndicatorTriggered,
+              edgeOffset: kToolbarHeight +
+                  value.item2 +
+                  MediaQuery.of(context).padding.top,
+              triggerMode: RefreshIndicatorTriggerMode.onEdge,
+              child: Stack(
+                children: [
+                  buildEmptyImage(context),
+                  CustomScrollView(
+                    physics: const ClampingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
+                    controller: viewmodel.verticalScrollController,
+                    slivers: [
+                      buildAppbar(context),
+                      const HabitDivider(withSliver: true, height: 1),
+                      EnhancedSafeArea.edgeToEdgeSafe(
+                        withSliver: true,
+                        child: buildHabits(context),
+                      ),
+                      buildDevelopSliverList(context),
+                      buildBottomPlaceHolder(context),
+                      if (kDebugMode) _buildScrollablePlaceHolder(context),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
+          floatingActionButton: buildFAB(context),
         ),
-        floatingActionButton: buildFAB(context),
       ),
     );
   }
