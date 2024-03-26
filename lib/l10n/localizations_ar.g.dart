@@ -7,6 +7,9 @@ class L10nAr extends L10n {
   L10nAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get localeScriptName => 'العربية';
+
+  @override
   String get appName => 'جدول العادات';
 
   @override
@@ -1004,6 +1007,9 @@ class L10nAr extends L10n {
 
   @override
   String get snackbar_dissmessText => 'إلغاء';
+
+  @override
+  String get contributors_tile_title => 'Contributors';
 
   @override
   String get userAction_tap => 'ضغطة';

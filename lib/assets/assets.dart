@@ -12,43 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum LoggerType {
-  /// UI component rebuilding
-  build,
-
-  /// Change Property's value
-  value,
-
-  /// Navigation between pages
-  navi,
-
-  /// Database operation
-  db,
-
-  /// App Profile
-  profile,
-
-  /// App data loaded
-  load,
-
-  /// Notifaction
-  notify,
-
-  /// Import data
-  import,
-
-  /// Export data
-  export,
-
-  /// Habit operation
-  habit,
-
-  /// Network about
-  network,
-
-  /// Json encode/decode
-  json,
-
-  /// Localization
-  l10n,
-}
+export './assets.gen.dart';
+export './fonts.gen.dart';

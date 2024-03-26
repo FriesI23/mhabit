@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "localeScriptName": "English",
 
   "appName": "Table Habit",
 
@@ -661,6 +662,8 @@
 
   "snackbar_undoText": "UNDO",
   "snackbar_dissmessText": "DISMISS",
+
+  "contributors_tile_title": "Contributors",
 
   "userAction_tap": "Tap",
   "userAction_doubleTap": "Double",

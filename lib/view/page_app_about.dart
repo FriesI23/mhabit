@@ -18,11 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../assets/assets.dart';
 import '../common/consts.dart';
 import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../model/about_info.dart';
+import '../model/contributor.dart';
 import 'common/_dialog.dart';
+import 'common/contributor_tile.dart';
 import 'for_app_about/_widget.dart';
 
 Future<void> naviToAppAboutPage({required BuildContext context}) async {
@@ -86,6 +89,34 @@ class _AppAboutView extends State<AppAboutView> {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildAppAboutContributorTile(BuildContext context) {
+      Future<Contributors>? loadData() async {
+        final source = await rootBundle.loadString(Assets.configs.contributors);
+        return Contributors.fromJson(jsonDecode(source));
+      }
+
+      return FutureBuilder<Contributors>(
+        future: loadData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            appLog.build.error(context,
+                widget: widget,
+                ex: ["contributor content load failed"],
+                error: snapshot.error);
+            return const SizedBox();
+          }
+          if (snapshot.hasData) {
+            return Column(mainAxisSize: MainAxisSize.min, children: [
+              const SizedBox(height: 50),
+              const Divider(),
+              ContributorTile(contributors: snapshot.data!),
+            ]);
+          }
+          return const SizedBox();
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
@@ -108,6 +139,7 @@ class _AppAboutView extends State<AppAboutView> {
           const AppAboutLicenseTile(),
           const AppAboutThirdPartyLicenseTile(),
           AppAboutDonateTile(onPressed: _onDonateTilePressed),
+          buildAppAboutContributorTile(context),
         ],
       ),
     );

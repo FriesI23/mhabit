@@ -13,6 +13,7 @@ analyzer:
   exclude:
     - "build/**"
     - "lib/**.g.dart"
+    - "lib/**.gen.dart"
     - "lib/**.freezed.dart"
 
 linter:

@@ -1,0 +1,55 @@
+{
+    "_contributor": [
+        {
+            "id": 1,
+            "name": "FriesI23",
+            "url": "https://github.com/FriesI23",
+            "comment": "project creator"
+        },
+        {
+            "id": 2,
+            "name": "parselings",
+            "url": "https://github.com/parselings"
+        },
+        {
+            "id": 3,
+            "name": "konstantintutsch",
+            "url": "https://github.com/konstantintutsch"
+        },
+        {
+            "id": 4,
+            "name": "ngocanhtve",
+            "url": "https://github.com/ngocanhtve"
+        },
+        {
+            "id": 5,
+            "name": "chromer030",
+            "url": "https://github.com/chromer030"
+        },
+        {
+            "id": 6,
+            "name": "Poussinou",
+            "url": "https://github.com/Poussinou"
+        }
+    ],
+    "contributors": [ 1, 2, 3, 4, 5, 6 ],
+    "translations": {
+        "ar": [
+            {
+                "name": "aalmalki3"
+            }
+        ],
+        "de": [ 3 ],
+        "fa": [ 5 ],
+        "fr": [ 2 ],
+        "en": [
+            1,
+            {
+                "name": "3Lord3",
+                "url": "https://github.com/3Lord3"
+            }
+        ],
+        "vi": [ 4 ],
+        "zh": [ 1 ]
+    }
+}

@@ -56,9 +56,10 @@ class LoggerStackTrace implements StackTrace {
     final subStr = trace.substring(indexOfWhiteSpace);
     final indexOfFunction = subStr.indexOf(RegExp('[A-Za-z0-9]'));
 
+    final endIndex = subStr.substring(indexOfFunction).indexOf(' ');
     return subStr
         .substring(indexOfFunction)
-        .substring(0, subStr.substring(indexOfFunction).indexOf(' '));
+        .substring(0, endIndex < 0 ? null : endIndex);
   }
 
   @override

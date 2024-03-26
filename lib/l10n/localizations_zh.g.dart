@@ -7,6 +7,9 @@ class L10nZh extends L10n {
   L10nZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get localeScriptName => '中文';
+
+  @override
   String get appName => '桌上习惯';
 
   @override
@@ -998,6 +1001,9 @@ class L10nZh extends L10n {
 
   @override
   String get snackbar_dissmessText => '忽略';
+
+  @override
+  String get contributors_tile_title => '贡献者';
 
   @override
   String get userAction_tap => '单击';
