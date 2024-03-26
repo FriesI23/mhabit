@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../assets/assets.gen.dart';
+import '../assets/assets.dart';
 import '../common/consts.dart';
 import '../component/widget.dart';
 import '../logging/helper.dart';
