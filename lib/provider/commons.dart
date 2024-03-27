@@ -81,7 +81,7 @@ mixin DBOperationsMixin {
   }
 }
 
-abstract class ProviderMounted {
+abstract mixin class ProviderMounted {
   bool get mounted;
 }
 
