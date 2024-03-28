@@ -23,3 +23,4 @@ export './habit_detail_score_chart.dart';
 export './habit_detail_summary_tile.dart';
 export './habit_heatmap.dart';
 export './habit_other_info_tile.dart';
+export './page_providers.dart';

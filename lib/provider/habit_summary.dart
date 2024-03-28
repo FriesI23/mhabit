@@ -21,8 +21,6 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
 import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_display.dart';
@@ -31,6 +29,7 @@ import '../model/habit_score.dart';
 import '../model/habit_stat.dart';
 import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
+import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
 import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
@@ -165,6 +164,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
         _HabitSummarySelectorMixin,
         _HabitSummaryStatisticsMixin,
         NotificationChannelDataMixin,
+        DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted, HabitSummaryDirtyMarkABC {
   HabitSummaryViewModel({
@@ -432,9 +432,9 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       return;
     }
     // debugPrint('------ loadData:: $listen $_isDataLoaded');
-    var result = await loadHabitAboutDataCollectionFromDB();
-    var recordResult = await loadAllRecordDataFromDB();
-    _data.initDataFromDBQueuryResult(result, recordResult);
+    final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
+    final recordLoadTask = recordDBHelper.loadAllRecords();
+    _data.initDataFromDBQueuryResult(await habitLoadTask, await recordLoadTask);
     _data.forEach((_, habit) => calcHabitAutoComplateRecords(habit));
     super.resortData();
     if (listen) {
@@ -482,7 +482,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     final record = recordTuple.item2;
     final isNew = recordTuple.item3;
 
-    await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
+    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
@@ -512,7 +512,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     final record = recordTuple.item2;
     final isNew = recordTuple.item3;
 
-    await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
+    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     var result = data.addRecord(record, replaced: true);
     calcHabitAutoComplateRecords(data);
@@ -550,9 +550,10 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       }
     }
 
-    // debugPrint('rewriteAllHabitsSortPostion:: '
-    //     '$changedUUIDList $changedPosList');
-    await refreshSelectedHabitsSortPostion(changedUUIDList, changedPosList);
+    appLog.habit.debug("$runtimeType.rewriteAllHabitsSortPostion",
+        ex: [changedUUIDList, changedPosList]);
+    await habitDBHelper.updateSelectedHabitsSortPostion(
+        changedUUIDList, changedPosList);
   }
 
   Future<HabitSummaryRecord?> onLongPressChangeReason(
@@ -563,7 +564,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     final record = data.getRecordByDate(date);
     if (record == null) return null;
 
-    await saveHabitRecord(data.id, data.uuid, record,
+    await saveHabitRecordToDB(data.id, data.uuid, record,
         isNew: false, withReason: newReason);
 
     if (listen) notifyListeners();
@@ -579,7 +580,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       List<HabitUUID> uuidList, HabitStatus newStatus) async {
     appLog.habit
         .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
-    await changeSelectedHabitStatus(uuidList, newStatus);
+    await habitDBHelper.updateSelectedHabitStatus(uuidList, newStatus);
 
     final result = <HabitStatusChangedRecord>[];
 

@@ -34,7 +34,7 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
 
   Future _loadingHelper(BuildContext context) async {
     final helper = context.read<DBHelperViewModel>();
-    if (helper.inited != null) await helper.inited;
+    if (helper.waitingInit != null) await helper.waitingInit;
   }
 
   @override

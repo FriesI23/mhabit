@@ -133,6 +133,11 @@ class _DBHelper implements DBHelper {
   void dispose() {
     db.close();
   }
+
+  @override
+  String toString() {
+    return "local.$runtimeType(db=$_db)";
+  }
 }
 
 abstract class DBHelperHandler {

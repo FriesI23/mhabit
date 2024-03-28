@@ -29,7 +29,6 @@ import '../common/enums.dart';
 import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
-import '../db/db.dart';
 import '../db/profile.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
@@ -39,6 +38,7 @@ import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/global.dart';
+import '../persistent/db_helper_provider.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
@@ -361,7 +361,7 @@ class _AppSettingView extends State<AppSettingView>
         return;
     }
 
-    await DB().reInit();
+    await context.read<DBHelperViewModel>().reload();
     await NotificationService().cancelAllHabitReminders();
     if (!mounted) return;
     final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(

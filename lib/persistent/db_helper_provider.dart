@@ -15,6 +15,10 @@
 import 'package:flutter/foundation.dart';
 
 import '../common/abc.dart';
+import '../common/consts.dart';
+import '../common/types.dart';
+import '../logging/helper.dart';
+import '../model/habit_summary.dart';
 import '../provider/commons.dart';
 import 'local/db_helper.dart';
 import 'local/handler/habit.dart';
@@ -23,7 +27,8 @@ import 'local/handler/record.dart';
 class DBHelperViewModel extends ChangeNotifier
     with FutureInitializationABC, ProviderMounted {
   DBHelper local;
-  Future? inited;
+  Future? waitingInit;
+  bool _inited = false;
   bool _mounted = true;
 
   DBHelperViewModel() : local = DBHelper();
@@ -34,8 +39,14 @@ class DBHelperViewModel extends ChangeNotifier
       await local.init();
     }
 
-    inited = initAll();
-    await inited;
+    if (inited) {
+      appLog.load.error("$runtimeType.init",
+          ex: ["already inited", local, _inited, _mounted]);
+      return;
+    }
+
+    waitingInit = initAll()..whenComplete(() => _inited = true);
+    await waitingInit;
   }
 
   @override
@@ -45,8 +56,21 @@ class DBHelperViewModel extends ChangeNotifier
     super.dispose();
   }
 
+  Future reload() async {
+    await local.init(reinit: true);
+    notifyListeners();
+  }
+
   @override
   bool get mounted => _mounted;
+
+  bool get inited => _inited;
+
+  @override
+  String toString() {
+    return "$runtimeType[$hashCode](local=$local,mounted=$mounted,"
+        "inited=$inited)";
+  }
 }
 
 abstract mixin class DBHelperLoadedMixin {
@@ -54,7 +78,54 @@ abstract mixin class DBHelperLoadedMixin {
   late RecordDBHelper recordDBHelper;
 
   void updateDBHelper(DBHelperViewModel newHelper) {
+    appLog.load.info("$runtimeType.updateDBHelper", ex: [newHelper]);
     habitDBHelper = HabitDBHelper(newHelper.local);
     recordDBHelper = RecordDBHelper(newHelper.local);
+  }
+}
+
+mixin DBOperationsMixin on DBHelperLoadedMixin {
+  Future<RecordDBCell> saveHabitRecordToDB(
+      DBID parendId, HabitUUID parendUUID, HabitSummaryRecord record,
+      {bool isNew = false, String? withReason}) async {
+    final int dbid;
+    final RecordDBCell dbCell;
+    if (isNew) {
+      dbCell = RecordDBCell(
+        parentId: parendId,
+        parentUUID: parendUUID,
+        uuid: record.uuid,
+        recordDate: record.date.epochDay,
+        recordType: record.status.dbCode,
+        recordValue: record.value,
+        reason: withReason,
+      );
+      dbid = await recordDBHelper.insertNewRecord(dbCell);
+    } else {
+      dbCell = RecordDBCell(
+        uuid: record.uuid,
+        recordType: record.status.dbCode,
+        recordValue: record.value,
+        reason: withReason,
+      );
+      dbid = await recordDBHelper.updateRecord(dbCell);
+    }
+
+    return dbCell.copyWith(id: dbid);
+  }
+
+  Future<HabitSummaryData?> loadSingleHabitSummaryFromDB(HabitUUID uuid,
+      {int firstDay = defaultFirstDay}) async {
+    final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
+    final recordLoadTask = recordDBHelper.loadRecords(uuid);
+    final cell = await dataLoadTask;
+    final records = await recordLoadTask;
+    if (cell == null) return null;
+    final habit = HabitSummaryData.fromDBQueryCell(cell);
+    habit.initRecords(
+      records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)),
+    );
+    habit.reCalculateAutoComplateRecords(firstDay: firstDay);
+    return habit;
   }
 }

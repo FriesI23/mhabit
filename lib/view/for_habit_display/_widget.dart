@@ -21,4 +21,5 @@ export './habit_display_fab.dart';
 export './habit_display_list_tile.dart';
 export './habit_display_loading_indicator.dart';
 export './habit_summary_list_tile.dart';
+export './page_providers.dart';
 export './sliver_calendar_bar.dart';

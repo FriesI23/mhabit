@@ -14,8 +14,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../common/types.dart';
-import '../db/db_helper/records.dart';
 import '../model/habit_summary.dart';
 import '../reminders/notification_channel.dart';
 
@@ -48,37 +46,6 @@ mixin ScrollControllerChangeNotifierMixin {
   ScrollController get verticalScrollController => _verticalScrollController;
 
   bool get isAppbarPinned => _isAppbarPinned;
-}
-
-mixin DBOperationsMixin {
-  Future<RecordDBCell> saveHabitRecord(
-      DBID parendId, HabitUUID parendUUID, HabitSummaryRecord record,
-      {bool isNew = false, String? withReason}) async {
-    int dbid;
-    RecordDBCell dbCell;
-    if (isNew) {
-      dbCell = RecordDBCell(
-        parentId: parendId,
-        parentUUID: parendUUID,
-        uuid: record.uuid,
-        recordDate: record.date.epochDay,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await insertNewRecordCellToDB(dbCell);
-    } else {
-      dbCell = RecordDBCell(
-        uuid: record.uuid,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await updateRecordDBCell(dbCell);
-    }
-
-    return dbCell.copyWith(id: dbid);
-  }
 }
 
 abstract mixin class ProviderMounted {

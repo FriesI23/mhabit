@@ -16,14 +16,16 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../common/_debug.dart';
 import '../common/consts.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
 import '../model/habit_date.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
+import '../persistent/db_helper_provider.dart';
+import '../persistent/local/handler/habit.dart';
 
 const _defaultSliverScrollChildCount = 10;
 
@@ -47,6 +49,10 @@ class DebugBuilderMethods {
 mixin HabitsDisplayViewDebug {
   Future<void> debugAddMultiTempHabit(BuildContext context,
       {int count = 10}) async {
+    final dbHelper = context.read<DBHelperViewModel>();
+    if (!dbHelper.mounted) return;
+
+    final tasks = <Future>[];
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     final rnd = Random();
     final freq = HabitFrequency.custom().toMap();
@@ -73,7 +79,10 @@ mixin HabitsDisplayViewDebug {
         createT: now,
         modifyT: now,
       );
-      await insertNewHabitCellToDB(dbCell);
+
+      tasks.add(HabitDBHelper(dbHelper.local).insertNewHabit(dbCell));
     }
+
+    await Future.wait(tasks);
   }
 }

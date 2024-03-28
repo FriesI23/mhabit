@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/db/db_helper/records.dart';
+import 'package:mhabit/persistent/local/handler/record.dart';
 
 void main() {
   group("RecordDBCell", () {
@@ -34,11 +34,11 @@ void main() {
         modifyT: 1,
         uuid: 'xxx');
     test("toMap", () {
-      var result1 = record1.toMap();
+      var result1 = record1.toJson();
       expect(result1[RecordDBCellKey.parentId], 1);
       expect(result1[RecordDBCellKey.id], 1);
       expect(result1[RecordDBCellKey.recordType], 1);
-      var result2 = record2.toMap();
+      var result2 = record2.toJson();
       expect(result2[RecordDBCellKey.parentId], 1);
       expect(result2.containsKey(RecordDBCellKey.id), false);
     });

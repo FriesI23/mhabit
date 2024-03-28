@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/db/db_helper/habits.dart';
+import 'package:mhabit/persistent/local/handler/habit.dart';
 
 void main() {
   group("HabitDBCell", () {
@@ -64,13 +64,13 @@ void main() {
         "sort_position": 1.0,
         "create_t": 1677550818,
       };
-      HabitDBCell.fromMap(data);
+      HabitDBCell.fromJson(data);
     });
     test("toMap", () {
-      var result1 = habit1.toMap();
+      var result1 = habit1.toJson();
       expect(result1[HabitDBCellKey.type], 1);
       expect(result1[HabitDBCellKey.id], 1);
-      var result2 = habit2.toMap();
+      var result2 = habit2.toJson();
       expect(result2[HabitDBCellKey.name], 'name');
       expect(result2.containsKey(HabitDBCellKey.id), false);
     });

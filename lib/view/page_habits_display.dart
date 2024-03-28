@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -28,14 +27,11 @@ import '../common/enums.dart';
 import '../common/types.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../model/global.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_page.dart';
@@ -44,19 +40,17 @@ import '../model/habit_form.dart';
 import '../model/habit_stat.dart';
 import '../model/habit_status.dart';
 import "../model/habit_summary.dart";
+import '../persistent/local/handler/habit.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
-import '../provider/app_first_day.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_date_change.dart';
 import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
-import '../provider/habits_file_importer.dart';
 import '../provider/habits_filter.dart';
 import '../provider/habits_record_scroll_behavior.dart';
 import '../provider/habits_sort.dart';
-import '../reminders/notification_channel.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';
@@ -83,78 +77,7 @@ class PageHabitsDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(context.maybeRead<AppThemeViewModel>() != null);
     assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProxyProvider<Global, HabitsSortViewModel>(
-          create: (context) =>
-              HabitsSortViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global, HabitsFilterViewModel>(
-          create: (context) =>
-              HabitsFilterViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global,
-            HabitsRecordScrollBehaviorViewModel>(
-          create: (context) => HabitsRecordScrollBehaviorViewModel(
-              global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProvider<HabitSummaryViewModel>(
-          create: (context) => HabitSummaryViewModel(
-            verticalScrollController: ScrollController(),
-            horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
-          ),
-        ),
-        ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, sortOptions, habitDisplayFilter, previous) {
-            previous!.updateSortOptions(
-                sortOptions.sortType, sortOptions.sortDirection);
-            previous.updateHabitDisplayFilter(
-                habitDisplayFilter.habitsDisplayFilter);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              previous.resortData();
-            });
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<HabitFileImporterViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) {
-            if (value.consumeReloadDisplayFlag()) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous!.rockreloadDBToggleSwich();
-              });
-            }
-            return previous!;
-          },
-        ),
-        ChangeNotifierProxyProvider<AppFirstDayViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) {
-            if (value.firstDay != previous!.firstday) {
-              previous.updateFirstday(value.firstDay);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.rockreloadDBToggleSwich();
-              });
-            }
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<NotificationChannelData,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) =>
-              previous!..setNotificationChannelData(value),
-        ),
-      ],
-      child: const HabitsDisplayView(),
-    );
+    return const PageProviders(child: HabitsDisplayView());
   }
 }
 
@@ -410,12 +333,17 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     HabitRecordStatus crt,
   ) async {
     String initReason = '';
-    final data = context.read<HabitSummaryViewModel>().getHabit(parentUUID);
+    HabitSummaryViewModel viewmodel;
+
+    viewmodel = context.read<HabitSummaryViewModel>();
+    if (!viewmodel.mounted) return;
+    final data = viewmodel.getHabit(parentUUID);
     if (data == null) return;
 
-    final record = data.getRecordByDate(date);
-    if (record?.uuid != null) {
-      initReason = (await loadSingleRecordFromDB(record!.uuid))?.reason ?? '';
+    final recordUUID = data.getRecordByDate(date)?.uuid;
+    if (recordUUID != null) {
+      final rcd = await viewmodel.recordDBHelper.loadSingleRecord(recordUUID);
+      initReason = rcd?.reason ?? '';
     }
 
     if (!mounted) return;
@@ -548,6 +476,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
     HabitSummaryViewModel viewmodel;
+
     if (!mounted) return false;
     viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return false;
@@ -557,7 +486,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         );
 
     if (selectedData == null) return false;
-    final dbcell = await loadHabitDetailFromDB(selectedData.uuid);
+    final dbcell =
+        await viewmodel.habitDBHelper.loadHabitDetail(selectedData.uuid);
 
     if (!mounted || dbcell == null) return false;
     viewmodel = context.read<HabitSummaryViewModel>();

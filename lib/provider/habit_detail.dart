@@ -18,8 +18,6 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
@@ -29,6 +27,7 @@ import '../model/habit_form.dart';
 import '../model/habit_score.dart';
 import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
+import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
 import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
@@ -294,6 +293,7 @@ class HabitDetailViewModel extends ChangeNotifier
         _HabitDetailFreqChartMixin,
         _HabitDetailScoreChartMixin,
         NotificationChannelDataMixin,
+        DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted, HabitSummaryDirtyMarkABC {
   // data
@@ -471,11 +471,12 @@ class HabitDetailViewModel extends ChangeNotifier
       appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
       return HabitDetailLoadDataResult.alreadyLoaded;
     }
-    // debugPrint('------ loadData:: $listen $_isDataLoaded');
-    var dataFutureOf = loadHabitDetailFromDB(uuid);
-    var recordFutureOf = loadRecordDataFromDB(uuid);
-    var cell = await dataFutureOf;
-    var records = await recordFutureOf;
+    appLog.load.debug("$runtimeType.load",
+        ex: ["loading data", listen, inFutureBuilder]);
+    final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
+    final recordLoadTask = recordDBHelper.loadRecords(uuid);
+    final cell = await dataLoadTask;
+    final records = await recordLoadTask;
     if (cell == null) {
       appLog.load.warn("$runtimeType.load", ex: ["data load failed", uuid]);
       return HabitDetailLoadDataResult.habitMissing;
@@ -505,9 +506,9 @@ class HabitDetailViewModel extends ChangeNotifier
     final record = recordTuple.item2;
     final isNew = recordTuple.item3;
 
-    await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
+    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
-    var result = data.addRecord(record, replaced: true);
+    final result = data.addRecord(record, replaced: true);
     calcHabitInfo();
 
     appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
@@ -530,7 +531,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final record = data.getRecordByDate(date);
     if (record == null) return null;
 
-    await saveHabitRecord(data.id, data.uuid, record,
+    await saveHabitRecordToDB(data.id, data.uuid, record,
         isNew: false, withReason: newReason);
 
     if (listen) notifyListeners();
@@ -551,7 +552,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final record = recordTuple.item2;
     final isNew = recordTuple.item3;
 
-    await saveHabitRecord(data.id, data.uuid, record, isNew: isNew);
+    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     var result = data.addRecord(record, replaced: true);
     calcHabitInfo();
@@ -570,7 +571,8 @@ class HabitDetailViewModel extends ChangeNotifier
       HabitUUID habitUUID, HabitStatus newStatus) async {
     if (habitDetailData == null) return null;
     final orgStatus = habitDetailData!.data.status;
-    final changes = await changeSelectedHabitStatus([habitUUID], newStatus);
+    final changes =
+        await habitDBHelper.updateSelectedHabitStatus([habitUUID], newStatus);
     if (changes < 1 || !mounted) return null;
     return HabitStatusChangedRecord(
         habitUUID: habitUUID, newStatus: newStatus, orgStatus: orgStatus);

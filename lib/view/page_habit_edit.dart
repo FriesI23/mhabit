@@ -21,7 +21,6 @@ import '../common/consts.dart';
 import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
-import '../db/db_helper/habits.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
@@ -31,7 +30,7 @@ import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
 import '../model/habit_reminder.dart';
-import '../model/habit_summary.dart';
+import '../persistent/local/handler/habit.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/habit_form.dart';
@@ -78,25 +77,11 @@ class PageHabitEdit extends StatelessWidget {
     assert(context.maybeRead<AppFirstDayViewModel>() != null);
     assert(context.maybeRead<AppDeveloperViewModel>() != null);
     assert(context.maybeRead<Global>() != null);
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => HabitFormViewModel(
-            initForm: initForm,
-            appbarScrollController: ScrollController(),
-            nameFieldInputController: TextEditingController(),
-            dailyGoalFieldInputController: TextEditingController(),
-            dailyGoalUnitFieldInputController: TextEditingController(),
-            dailyGoalExtraFieldInpuController: TextEditingController(),
-            descFieldInputController: TextEditingController(),
-          ),
-        ),
-      ],
-      child: HabitEditView(
+    return PageProviders(
         initForm: initForm,
-        showInFullscreenDialog: showInFullscreenDialog,
-      ),
-    );
+        child: HabitEditView(
+            initForm: initForm,
+            showInFullscreenDialog: showInFullscreenDialog));
   }
 }
 
@@ -251,7 +236,7 @@ class _HabitEditView extends State<HabitEditView> {
     // add reminder
     final details = context.read<NotificationChannelData>().habitReminder;
     if (result != null) {
-      final habit = await HabitSummaryData.loadFromDB(result.uuid!,
+      final habit = await formvm.loadSingleHabitSummaryFromDB(result.uuid!,
           firstDay: context.read<AppFirstDayViewModel>().firstDay);
       if (habit != null && habit.reminder != null) {
         NotificationService().regrHabitReminder(

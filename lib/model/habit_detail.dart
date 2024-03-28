@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../common/consts.dart';
 import '../common/types.dart';
-import '../db/db_helper/habits.dart';
+import '../persistent/local/handler/habit.dart';
 import 'common.dart';
 import 'habit_form.dart';
 import 'habit_summary.dart';
