@@ -17,7 +17,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 
 import 'common/app_info.dart';
 import 'common/utils.dart';
-import 'db/db.dart';
 import 'db/profile.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
@@ -27,7 +26,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AppLoggerMananger().init();
-  await DB().init();
   await Profile().init();
   await AppInfo().init();
   await NotificationService().init();

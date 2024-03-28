@@ -20,7 +20,6 @@ import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../component/widget.dart';
-import '../../db/db_helper/records.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
@@ -117,8 +116,10 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
     final record = viewmodel.getHabitRecordData(date);
 
-    if (record?.uuid != null) {
-      initReason = (await loadSingleRecordFromDB(record!.uuid))?.reason ?? '';
+    final recordUUID = record?.uuid;
+    if (recordUUID != null) {
+      final rcd = await viewmodel.recordDBHelper.loadSingleRecord(recordUUID);
+      initReason = rcd?.reason ?? '';
     }
 
     if (!mounted) return;

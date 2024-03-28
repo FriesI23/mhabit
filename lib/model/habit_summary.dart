@@ -24,8 +24,8 @@ import 'package:quiver/core.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
+import '../persistent/local/handler/habit.dart';
+import '../persistent/local/handler/record.dart';
 import 'common.dart';
 import 'habit_daily_record_form.dart';
 import 'habit_date.dart';
@@ -217,21 +217,6 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         sortPostion = cell.sortPosition!,
         createTime =
             DateTime.fromMillisecondsSinceEpoch(cell.createT! * onSecondMS);
-
-  static Future<HabitSummaryData?> loadFromDB(HabitUUID uuid,
-      {int firstDay = defaultFirstDay}) async {
-    var dataFutureOf = loadHabitDetailFromDB(uuid);
-    var recordFutureOf = loadRecordDataFromDB(uuid);
-    var cell = await dataFutureOf;
-    var records = await recordFutureOf;
-    if (cell == null) return null;
-    final habit = HabitSummaryData.fromDBQueryCell(cell);
-    habit.initRecords(
-      records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)),
-    );
-    habit.reCalculateAutoComplateRecords(firstDay: firstDay);
-    return habit;
-  }
 
   num get progress => _progress.isFinite ? _progress : -1.0;
 

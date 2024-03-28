@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
 import '../extension/num_extensions.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_goal.dart';
@@ -27,10 +26,15 @@ import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
 import '../model/habit_reminder.dart';
+import '../persistent/db_helper_provider.dart';
+import '../persistent/local/handler/habit.dart';
 import 'commons.dart';
 
 class HabitFormViewModel extends ChangeNotifier
-    with ScrollControllerChangeNotifierMixin
+    with
+        ScrollControllerChangeNotifierMixin,
+        DBHelperLoadedMixin,
+        DBOperationsMixin
     implements ProviderMounted {
   final TextEditingController _nameFieldInputController;
   final TextEditingController _dailyGoalFieldInputController;
@@ -257,9 +261,9 @@ class HabitFormViewModel extends ChangeNotifier
   }
 
   Future<HabitDBCell?> saveNewHabit({bool returnResult = false}) async {
-    var freq = frequency.toMap();
-    var now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
-    var dbCell = HabitDBCell(
+    final freq = frequency.toMap();
+    final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
+    final dbCell = HabitDBCell(
         type: habitType.dbCode,
         uuid: genHabitUUID(),
         status: HabitStatus.activated.dbCode,
@@ -280,21 +284,17 @@ class HabitFormViewModel extends ChangeNotifier
         modifyT: now);
 
     HabitDBCell? result;
-    void Function(HabitDBCell? cell)? resultCallback;
-    if (returnResult) {
-      resultCallback = (cell) {
-        result = cell;
-      };
-    }
-    int dbid =
-        await insertNewHabitCellToDB(dbCell, resultcallback: resultCallback);
+    final Function(HabitDBCell? cell)? queryCb =
+        returnResult ? (cell) => result = cell : null;
+
+    final dbid = await habitDBHelper.insertNewHabit(dbCell, queryCb: queryCb);
     appLog.db.info("new habit saved", ex: [dbid, result]);
     return result;
   }
 
   Future<HabitDBCell?> saveExistHabit({bool returnResult = false}) async {
-    var freq = frequency.toMap();
-    var dbCell = HabitDBCell(
+    final freq = frequency.toMap();
+    final dbCell = HabitDBCell(
       type: habitType.dbCode,
       uuid: _form.editParams!.uuid,
       name: name,
@@ -312,22 +312,16 @@ class HabitFormViewModel extends ChangeNotifier
     );
 
     HabitDBCell? result;
-    void Function(HabitDBCell? cell)? resultCallback;
-    if (returnResult) {
-      resultCallback = (cell) {
-        result = cell;
-      };
-    }
+    final Function(HabitDBCell? cell)? queryCb =
+        returnResult ? (cell) => result = cell : null;
 
-    int count = await updateExistHabitCellToDB(
-      dbCell,
-      includeNullKeys: const [
-        HabitDBCellKey.remindCustom,
-        HabitDBCellKey.remindQuestion,
-        HabitDBCellKey.dailyGoalExtra,
-      ],
-      resultcallback: resultCallback,
-    );
+    final count = await habitDBHelper.updateExistHabit(dbCell,
+        includeNullKeys: const [
+          HabitDBCellKey.remindCustom,
+          HabitDBCellKey.remindQuestion,
+          HabitDBCellKey.dailyGoalExtra,
+        ],
+        queryCb: queryCb);
     appLog.db.info("exist habit saved", ex: [count, result]);
     return result;
   }

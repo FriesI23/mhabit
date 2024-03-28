@@ -14,15 +14,20 @@
 
 import '../common/consts.dart';
 import '../common/utils.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
 import '../logging/helper.dart';
+import '../persistent/local/handler/habit.dart';
+import '../persistent/local/handler/record.dart';
 import 'habit_export.dart';
 
 class HabitImport {
+  final HabitDBHelper helper;
+  final RecordDBHelper recordDBHelper;
+
   final Iterable<Object?> _jsonData;
 
-  const HabitImport({Iterable<Object?> data = const []}) : _jsonData = data;
+  const HabitImport(this.helper, this.recordDBHelper,
+      {Iterable<Object?> data = const []})
+      : _jsonData = data;
 
   int get habitsCount => _jsonData.length;
 
@@ -32,9 +37,9 @@ class HabitImport {
     habitDBCell = habitDBCell.copyWith(
         uuid: genHabitUUID(),
         type: habitDBCell.type ?? defaultHabitType.dbCode);
-    final dbid = await insertNewHabitCellToDB(habitDBCell);
+    final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
-      final results = await insertMultiRecordsCellToDB(
+      final results = await recordDBHelper.insertMultiRecords(
         habitExportData.getRecordDBCells().map(
               (e) => e.copyWith(
                 parentId: dbid,

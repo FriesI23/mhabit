@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'records.dart';
+part of 'record.dart';
 
 // **************************************************************************
 // CopyWithGenerator

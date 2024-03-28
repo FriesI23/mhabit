@@ -15,10 +15,11 @@
 import 'package:flutter/material.dart';
 
 import '../model/habit_import.dart';
+import '../persistent/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier
-    implements ProviderMounted {
+    with ProviderMounted, DBHelperLoadedMixin {
   // status
   bool _needReloadDisplayUI = false;
   // inside status
@@ -53,7 +54,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
       if (listen) notifyListeners();
     }
 
-    final importer = HabitImport(data: jsonData);
+    final importer = HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
     final futures = importer.importData();
     if (futures.isEmpty) return false;
 
@@ -70,7 +71,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
   }
 
   HabitImport importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    final importer = HabitImport(data: jsonData);
+    final importer = HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
     return importer;
   }
 

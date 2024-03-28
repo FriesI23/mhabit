@@ -26,7 +26,6 @@ import '../common/consts.dart';
 import '../common/types.dart';
 import '../component/animation.dart';
 import '../component/widget.dart';
-import '../db/db_helper/habits.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
 import '../extension/context_extensions.dart';
@@ -39,6 +38,7 @@ import '../model/habit_detail_chart.dart';
 import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
+import '../persistent/local/handler/habit.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
@@ -47,7 +47,6 @@ import '../provider/habit_detail_freqchart.dart';
 import '../provider/habit_detail_scorechart.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
-import '../reminders/notification_channel.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
 import '_debug.dart';
@@ -99,106 +98,8 @@ class PageHabitDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(context.maybeRead<HabitFileExporterViewModel>() != null);
     assert(context.maybeRead<AppFirstDayViewModel>() != null);
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<HabitDetailViewModel>(
-          create: (context) => HabitDetailViewModel(),
-        ),
-        ChangeNotifierProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) {
-            if (value.firstDay != previous!.firstday) {
-              previous.updateFirstday(value.firstDay);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.rockreloadDBToggleSwich();
-              });
-            }
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<HabitDetailViewModel,
-            HabitDetailFreqChartViewModel>(
-          create: (context) => HabitDetailFreqChartViewModel(),
-          update: (context, value, previous) {
-            var version = value.getInsideVersion();
-            if (previous == null || !previous.isInited) {
-              return (previous ?? HabitDetailFreqChartViewModel())
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.freqChartCombine,
-                  iter: value.getRecordFreqChartDatas().entries,
-                  isFreqChartExpanded: false,
-                  offset: 0,
-                  firstday: value.firstday,
-                );
-            } else if (previous.chartCombine != value.freqChartCombine) {
-              return HabitDetailFreqChartViewModel()
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.freqChartCombine,
-                  iter: value.getRecordFreqChartDatas().entries,
-                  isFreqChartExpanded: previous.isChartExpanded,
-                  offset: 0,
-                  firstday: value.firstday,
-                );
-            } else if (previous.parentVersion != version) {
-              return HabitDetailFreqChartViewModel()
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.freqChartCombine,
-                  iter: value.getRecordFreqChartDatas().entries,
-                  isFreqChartExpanded: previous.isChartExpanded,
-                  offset: previous.offset,
-                  firstday: value.firstday,
-                );
-            } else {
-              return previous;
-            }
-          },
-        ),
-        ChangeNotifierProxyProvider<HabitDetailViewModel,
-            HabitDetailScoreChartViewModel>(
-          create: (context) => HabitDetailScoreChartViewModel(),
-          update: (context, value, previous) {
-            var version = value.getInsideVersion();
-            if (previous == null || !previous.isInited) {
-              return (previous ?? HabitDetailScoreChartViewModel())
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.scoreChartCombine,
-                  iter: value.getRecordScoreChartDatas().entries,
-                  firstday: value.firstday,
-                );
-            } else if (previous.chartCombine != value.scoreChartCombine) {
-              return HabitDetailScoreChartViewModel()
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.scoreChartCombine,
-                  iter: value.getRecordScoreChartDatas().entries,
-                  firstday: value.firstday,
-                );
-            } else if (previous.parentVersion != version) {
-              return HabitDetailScoreChartViewModel()
-                ..initState(
-                  parentVersion: version,
-                  chartCombine: value.scoreChartCombine,
-                  iter: value.getRecordScoreChartDatas().entries,
-                  firstday: value.firstday,
-                );
-            } else {
-              return previous;
-            }
-          },
-        ),
-        ChangeNotifierProxyProvider<NotificationChannelData,
-            HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) =>
-              previous!..setNotificationChannelData(value),
-        ),
-      ],
-      child: HabitDetailView(habitUUID: habitUUID, colorType: colorType),
-    );
+    return PageProviders(
+        child: HabitDetailView(habitUUID: habitUUID, colorType: colorType));
   }
 }
 
@@ -231,13 +132,17 @@ class _HabitDetailView extends State<HabitDetailView>
   Future<bool> _enterHabitEditPage({
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
+    final uuid = widget.habitUUID;
     HabitDetailViewModel viewmodel;
-    final dbcell = await loadHabitDetailFromDB(widget.habitUUID);
 
-    if (!mounted || dbcell == null) return false;
+    if (!mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
-    final form = formBuilder(dbcell);
+    if (!viewmodel.mounted) return false;
 
+    final dbcell = await viewmodel.habitDBHelper.loadHabitDetail(uuid);
+    if (dbcell == null || !mounted) return false;
+
+    final form = formBuilder(dbcell);
     final result = await habit_edit_view.naviToHabitEidtPage(
         context: context, initForm: form);
 

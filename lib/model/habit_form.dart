@@ -20,8 +20,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../common/enums.dart';
 import '../common/types.dart';
-import '../db/db_helper/habits.dart';
 import '../l10n/localizations.dart';
+import '../persistent/local/handler/habit.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'habits.dart';
+part of 'habit.dart';
 
 // **************************************************************************
 // CopyWithGenerator

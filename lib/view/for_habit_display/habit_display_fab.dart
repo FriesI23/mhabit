@@ -16,7 +16,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
 import '../../component/widget.dart';
-import '../../db/db_helper/habits.dart';
+import '../../persistent/local/handler/habit.dart';
 
 class HabitDisplayFAB extends StatelessWidget {
   final double? closedElevation;
