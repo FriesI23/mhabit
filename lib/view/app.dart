@@ -21,19 +21,11 @@ import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
-import '../provider/app_compact_ui_switcher.dart';
-import '../provider/app_custom_date_format.dart';
-import '../provider/app_developer.dart';
-import '../provider/app_first_day.dart';
-import '../provider/app_reminder.dart';
+import '../persistent/local/db_builder.dart';
 import '../provider/app_theme.dart';
-import '../provider/habit_date_change.dart';
-import '../provider/habit_op_config.dart';
-import '../provider/habits_file_exporter.dart';
-import '../provider/habits_file_importer.dart';
-import '../reminders/notification_channel.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
+import 'for_app/_widget.dart';
 import 'page_habits_display.dart' show PageHabitsDisplay;
 
 class App extends StatelessWidget {
@@ -42,65 +34,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('------ App start ------');
-
-    return MultiProvider(
-      providers: [
-        Provider<Global>(
-          create: (context) => Global(),
-        ),
-        ChangeNotifierProvider<NotificationChannelData>(
-          create: (context) => NotificationChannelData(),
-        ),
-        ChangeNotifierProvider<HabitDateChangeNotifier>(
-          create: (context) => HabitDateChangeNotifier(),
-        ),
-        ChangeNotifierProxyProvider<Global, AppThemeViewModel>(
-          create: (context) =>
-              AppThemeViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global, AppCompactUISwitcherViewModel>(
-          create: (context) =>
-              AppCompactUISwitcherViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global, AppFirstDayViewModel>(
-          create: (context) =>
-              AppFirstDayViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global, AppCustomDateYmdHmsConfigViewModel>(
-          create: (context) => AppCustomDateYmdHmsConfigViewModel(
-              global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider<Global, HabitRecordOpConfigViewModel>(
-          create: (context) =>
-              HabitRecordOpConfigViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProxyProvider2<Global, NotificationChannelData,
-            AppReminderViewModel>(
-          lazy: false,
-          create: (context) =>
-              AppReminderViewModel(global: context.read<Global>()),
-          update: (context, global, channel, previous) => previous!
-            ..updateGlobal(global)
-            ..setNotificationChannelData(channel, l10n: L10n.of(context)),
-        ),
-        ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
-          create: (context) =>
-              AppDeveloperViewModel(global: context.read<Global>()),
-          update: (context, value, previous) => previous!..updateGlobal(value),
-        ),
-        ChangeNotifierProvider<HabitFileExporterViewModel>(
-          create: (context) => HabitFileExporterViewModel(),
-        ),
-        ChangeNotifierProvider<HabitFileImporterViewModel>(
-          create: (context) => HabitFileImporterViewModel(),
-        ),
-      ],
+    return DBHelperBuilder(
       child: const AppView(),
+      builder: (context, child) => AppProviders(child: child),
     );
   }
 }

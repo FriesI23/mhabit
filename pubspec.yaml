@@ -80,6 +80,7 @@ dependencies:
   collection: ^1.17.0
   crypto: ^3.0.2
   timezone: ^0.9.1
+  nested: ^1.0.0
 
   # Data Persistence
   shared_preferences: ^2.0.15
