@@ -281,39 +281,3 @@ Future<int> changeSelectedHabitStatus(
       );
   return result;
 }
-
-Future<Iterable<HabitDBCell>> loadHabitsExportDataFromDB(
-    List<HabitUUID> uuidList) async {
-  if (uuidList.isEmpty) return const [];
-
-  var results = await DB().db.query(
-        dbHabitsTableName,
-        where: "${HabitDBCellKey.uuid} "
-            "IN (${uuidList.map((e) => '?').join(', ')}) ",
-        whereArgs: uuidList,
-        orderBy: HabitDBCellKey.sortPosition,
-      );
-
-  Iterable<HabitDBCell> iterResult() sync* {
-    for (final cell in results) {
-      yield HabitDBCell.fromMap(cell);
-    }
-  }
-
-  return iterResult();
-}
-
-Future<Iterable<HabitDBCell>> loadAllHabitExportDataFromDB() async {
-  var results = await DB().db.query(
-        dbHabitsTableName,
-        orderBy: HabitDBCellKey.sortPosition,
-      );
-
-  Iterable<HabitDBCell> iterResult() sync* {
-    for (final cell in results) {
-      yield HabitDBCell.fromMap(cell);
-    }
-  }
-
-  return iterResult();
-}

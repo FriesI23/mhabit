@@ -14,22 +14,24 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../../common/abc.dart';
-import '../../provider/commons.dart';
-import 'db_helper.dart';
+import '../common/abc.dart';
+import '../provider/commons.dart';
+import 'local/db_helper.dart';
+import 'local/handler/habit.dart';
+import 'local/handler/record.dart';
 
 class DBHelperViewModel extends ChangeNotifier
     with FutureInitializationABC, ProviderMounted {
-  DBHelper helper;
+  DBHelper local;
   Future? inited;
   bool _mounted = true;
 
-  DBHelperViewModel() : helper = DBHelper();
+  DBHelperViewModel() : local = DBHelper();
 
   @override
   Future init() async {
     Future initAll() async {
-      await helper.init();
+      await local.init();
     }
 
     inited = initAll();
@@ -39,10 +41,20 @@ class DBHelperViewModel extends ChangeNotifier
   @override
   void dispose() {
     _mounted = false;
-    helper.dispose();
+    local.dispose();
     super.dispose();
   }
 
   @override
   bool get mounted => _mounted;
+}
+
+abstract mixin class DBHelperLoadedMixin {
+  late HabitDBHelper habitDBHelper;
+  late RecordDBHelper recordDBHelper;
+
+  void updateDBHelper(DBHelperViewModel newHelper) {
+    habitDBHelper = HabitDBHelper(newHelper.local);
+    recordDBHelper = RecordDBHelper(newHelper.local);
+  }
 }

@@ -16,8 +16,8 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/types.dart';
-import '../db/db_helper/habits.dart';
-import '../db/db_helper/records.dart';
+import '../persistent/local/handler/habit.dart';
+import '../persistent/local/handler/record.dart';
 import 'common.dart';
 
 part 'habit_export.g.dart';
@@ -233,47 +233,40 @@ mixin HabitExporterMixin {
 
 class HabitExporter with HabitExporterMixin implements HabitExporterABC {
   final List<HabitUUID> uuidList;
+  final HabitDBHelper helper;
+  final RecordDBHelper recordDBHelper;
 
-  const HabitExporter({this.uuidList = const []});
+  const HabitExporter(this.helper, this.recordDBHelper,
+      {this.uuidList = const []});
 
   @override
   Future<Iterable<HabitExportData>> exportData(
       {bool withRecords = true}) async {
-    Iterable<HabitDBCell> habits;
-    Iterable<RecordDBCell> records;
-
-    final habitFuture = loadHabitsExportDataFromDB(uuidList);
-    if (withRecords) {
-      final recordsFuture = loadHRecordsExportDataFromDB(uuidList);
-      records = await recordsFuture;
-    } else {
-      records = [];
-    }
-
-    habits = await habitFuture;
-
+    final loadHabitsTask = helper.loadHabitsExportData(uuidList);
+    final loadRecordsTask = withRecords
+        ? recordDBHelper.loadRecordsExportData(uuidList)
+        : Future.value(const <RecordDBCell>[]);
+    final habits = await loadHabitsTask;
+    final records = await loadRecordsTask;
     return buildExportDataMap(habits, records).values;
   }
 }
 
 class HabitExportAll with HabitExporterMixin implements HabitExporterABC {
-  const HabitExportAll();
+  final HabitDBHelper helper;
+  final RecordDBHelper recordDBHelper;
+
+  const HabitExportAll(this.helper, this.recordDBHelper);
 
   @override
   Future<Iterable<HabitExportData>> exportData(
       {bool withRecords = true}) async {
-    Iterable<HabitDBCell> habits;
-    Iterable<RecordDBCell> records;
-
-    final habitFuture = loadAllHabitExportDataFromDB();
-    if (withRecords) {
-      final recordsFuture = loadHAllRecordExportDataFromDB();
-      records = await recordsFuture;
-    } else {
-      records = [];
-    }
-
-    habits = await habitFuture;
+    final loadHabitsTask = helper.loadAllHabitExportData();
+    final loadRecordsTask = withRecords
+        ? recordDBHelper.loadAllRecordsExportData()
+        : Future.value(const <RecordDBCell>[]);
+    final habits = await loadHabitsTask;
+    final records = await loadRecordsTask;
 
     return buildExportDataMap(habits, records).values;
   }

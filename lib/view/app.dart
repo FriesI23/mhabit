@@ -21,7 +21,7 @@ import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
-import '../persistent/local/db_builder.dart';
+import '../persistent/db_helper_builder.dart';
 import '../provider/app_theme.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';

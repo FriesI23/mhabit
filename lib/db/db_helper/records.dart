@@ -169,33 +169,3 @@ Future<Iterable<RecordDBCell>> loadAllRecordDataFromDB() async {
 
   return iterResult();
 }
-
-Future<Iterable<RecordDBCell>> loadHRecordsExportDataFromDB(
-    List<HabitUUID> uuidList) async {
-  if (uuidList.isEmpty) return const [];
-
-  var result = await DB().db.query(dbRecordsTableName,
-      where: "${RecordDBCellKey.parentUUID} "
-          "IN (${uuidList.map((e) => '?').join(', ')})",
-      whereArgs: uuidList);
-
-  Iterable<RecordDBCell> iterResult() sync* {
-    for (final cell in result) {
-      yield RecordDBCell.fromMap(cell);
-    }
-  }
-
-  return iterResult();
-}
-
-Future<Iterable<RecordDBCell>> loadHAllRecordExportDataFromDB() async {
-  var result = await DB().db.query(dbRecordsTableName);
-
-  Iterable<RecordDBCell> iterResult() sync* {
-    for (final cell in result) {
-      yield RecordDBCell.fromMap(cell);
-    }
-  }
-
-  return iterResult();
-}

@@ -23,8 +23,10 @@ import 'package:path_provider/path_provider.dart';
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../model/habit_export.dart';
+import '../persistent/db_helper_provider.dart';
 
-class HabitFileExporterViewModel extends ChangeNotifier {
+class HabitFileExporterViewModel extends ChangeNotifier
+    with DBHelperLoadedMixin {
   static const defualtExportFileNamePrefix = "export-habits";
 
   String _getExportDataFileName(
@@ -63,7 +65,8 @@ class HabitFileExporterViewModel extends ChangeNotifier {
 
   Future<String?> exportHabitData(HabitUUID habitUUID,
       {withRecords = true, bool listen = true}) async {
-    final exporter = HabitExporter(uuidList: [habitUUID]);
+    final exporter =
+        HabitExporter(habitDBHelper, recordDBHelper, uuidList: [habitUUID]);
     final result = await exporter.exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
@@ -81,7 +84,8 @@ class HabitFileExporterViewModel extends ChangeNotifier {
 
   Future<String?> exportMultiHabitsData(List<HabitUUID> uuidList,
       {withRecords = true, bool listen = true}) async {
-    final exporter = HabitExporter(uuidList: uuidList);
+    final exporter =
+        HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
     final result = await exporter.exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
@@ -101,8 +105,8 @@ class HabitFileExporterViewModel extends ChangeNotifier {
       {withRecords = true, bool listen = true}) async {
     Iterable<HabitExportData> habitExportData;
 
-    habitExportData =
-        await const HabitExportAll().exportData(withRecords: withRecords);
+    habitExportData = await HabitExportAll(habitDBHelper, recordDBHelper)
+        .exportData(withRecords: withRecords);
 
     final data = formatExportJsonData(habits: habitExportData);
     final jsonData = jsonEncode(data);
