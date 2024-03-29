@@ -19,7 +19,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../assets/assets.dart';
-import '../common/consts.dart';
 import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../model/about_info.dart';
@@ -38,12 +37,6 @@ Future<void> naviToAppAboutPage({required BuildContext context}) async {
 
 class PageAppAbout extends StatelessWidget {
   const PageAppAbout({super.key});
-
-  Future<AboutInfo> loadData() async {
-    String rawJson = await rootBundle.loadString(aboutInfoFilePath);
-    Map<String, Object?> data = jsonDecode(rawJson);
-    return AboutInfo.fromJson(data);
-  }
 
   @override
   Widget build(BuildContext context) =>
