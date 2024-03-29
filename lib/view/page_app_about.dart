@@ -46,11 +46,8 @@ class PageAppAbout extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => FutureProvider<AboutInfo>(
-        create: (_) async => loadData(),
-        initialData: const AboutInfo(),
-        child: const AppAboutView(),
-      );
+  Widget build(BuildContext context) =>
+      const PageProviders(child: AppAboutView());
 }
 
 class AppAboutView extends StatefulWidget {
