@@ -431,9 +431,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _openAppSettingsPage(BuildContext context) {
     app_setting_view.naviToAppSettingPage(
-        context: context,
-        scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
-        summary: context.read<HabitSummaryViewModel>());
+      context: context,
+      scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
+      summary: context.read<HabitSummaryViewModel>(),
+    );
   }
 
   Future<void> _onRefreshIndicatorTriggered() async {
