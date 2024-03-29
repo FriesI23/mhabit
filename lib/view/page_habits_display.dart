@@ -44,7 +44,6 @@ import '../persistent/local/handler/habit.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_theme.dart';
-import '../provider/habit_date_change.dart';
 import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
@@ -55,8 +54,8 @@ import '_debug.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
-import 'for_habit_display/_dialog.dart';
-import 'for_habit_display/_widget.dart';
+import 'for_habits_display/_dialog.dart';
+import 'for_habits_display/_widget.dart';
 import 'page_app_setting.dart' as app_setting_view;
 import 'page_habit_detail.dart' as habit_detail_view;
 import 'page_habit_edit.dart' as habit_edit_view;
@@ -432,14 +431,15 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _openAppSettingsPage(BuildContext context) {
     app_setting_view.naviToAppSettingPage(
-        context: context,
-        scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
-        summary: context.read<HabitSummaryViewModel>());
+      context: context,
+      scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
+      summary: context.read<HabitSummaryViewModel>(),
+    );
   }
 
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
-    HabitDateChangeProvider.of(context).dateTime = HabitDate.now();
+    DateChangeProvider.of(context).dateTime = HabitDate.now();
     context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
@@ -738,7 +738,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         viewmodel.isCalendarExpanded,
         viewmodel.getHabitInsideVersion(uuid),
         viewmodel.isHabitSelected(uuid),
-        HabitDateChangeProvider.of(context).dateTime,
+        DateChangeProvider.of(context).dateTime,
       ),
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, contents, child) => Selector<AppThemeViewModel, int>(
@@ -816,7 +816,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 verticalScrollController: viewmodel.verticalScrollController,
                 horizonalScrollControllerGroup:
                     viewmodel.horizonalScrollControllerGroup,
-                startDate: HabitDateChangeProvider.of(context).dateTime,
+                startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
                 isExtended: isExtended,
                 collapsePrt: occupyPrt,
@@ -910,7 +910,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 verticalScrollController: viewmodel.verticalScrollController,
                 horizonalScrollControllerGroup:
                     viewmodel.horizonalScrollControllerGroup,
-                startDate: HabitDateChangeProvider.of(context).dateTime,
+                startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
                 isExtended: isExtended,
                 collapsePrt: occupyPrt,

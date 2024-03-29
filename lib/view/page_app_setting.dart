@@ -61,7 +61,7 @@ import 'page_app_about.dart' as app_about_view;
 Future<void> naviToAppSettingPage({
   required BuildContext context,
   required HabitsRecordScrollBehaviorViewModel scrollBehavior,
-  required HabitSummaryViewModel summary,
+  HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(

@@ -83,7 +83,7 @@ class _AppView extends State<AppView> {
       selector: (context, viewmodel) => viewmodel.matertialThemeType,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, themeMode, child) => DynamicColorBuilder(
-        builder: (lightDynamic, darkDynamic) => HabitDateChangeBuilder(
+        builder: (lightDynamic, darkDynamic) => DateChanger(
           interval: const Duration(seconds: 10),
           builder: (context) => MaterialApp(
             onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,

@@ -25,7 +25,6 @@ import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_reminder.dart';
 import '../../provider/app_theme.dart';
-import '../../provider/habit_date_change.dart';
 import '../../provider/habit_op_config.dart';
 import '../../provider/habits_file_exporter.dart';
 import '../../provider/habits_file_importer.dart';
@@ -64,9 +63,6 @@ class AppProviders extends SingleChildStatelessWidget {
           ),
           ChangeNotifierProvider<NotificationChannelData>(
             create: (context) => NotificationChannelData(),
-          ),
-          ChangeNotifierProvider<HabitDateChangeNotifier>(
-            create: (context) => HabitDateChangeNotifier(),
           ),
           ChangeNotifierProxyProvider<Global, AppThemeViewModel>(
             create: (context) =>
