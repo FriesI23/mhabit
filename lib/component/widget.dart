@@ -18,6 +18,7 @@ export './widgets/chip_list.dart';
 export './widgets/color_display_chip.dart';
 export './widgets/data_arrow_container.dart';
 export './widgets/data_container.dart';
+export './widgets/date_change.dart' show DateChangeBuilder, DateChangeProvider;
 export './widgets/date_picker.dart';
 export './widgets/enhanced_safe_area.dart';
 export './widgets/expanded_section.dart';
