@@ -21,7 +21,6 @@ import '../common/abc.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/global.dart';
-import '../common/utils.dart';
 import '../logging/helper.dart';
 
 mixin CacheInterface {
@@ -38,15 +37,11 @@ abstract class ProfileInterface {
   int getHabitsRecordScrollBehavior();
   Future<bool> setHabitsRecordScrollBehavior(
       HabitsRecordScrollBehavior behavior);
-
-  int getFirstDay();
-  Future<bool> setFirstDay(int newFirstDay);
 }
 
 enum ProfileKey {
   habitDisplayFilter,
   habitsRecordScrollBehavior,
-  firstDay,
   // cache
   inputFillCache,
 }
@@ -101,17 +96,6 @@ class Profile
       HabitsRecordScrollBehavior behavior) {
     return _pref.setInt(
         ProfileKey.habitsRecordScrollBehavior.name, behavior.dbCode);
-  }
-
-  @override
-  int getFirstDay() {
-    return _pref.getInt(ProfileKey.firstDay.name) ?? defaultFirstDay;
-  }
-
-  @override
-  Future<bool> setFirstDay(int newFirstDay) {
-    newFirstDay = standardizeFirstDay(newFirstDay);
-    return _pref.setInt(ProfileKey.firstDay.name, newFirstDay);
   }
 
   @override

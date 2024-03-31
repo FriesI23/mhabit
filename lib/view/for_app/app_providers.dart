@@ -76,11 +76,10 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, AppFirstDayViewModel>(
-            create: (context) =>
-                AppFirstDayViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
+            create: (context) => AppFirstDayViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel,
               AppCustomDateYmdHmsConfigViewModel>(

@@ -80,6 +80,4 @@ class Global
       HabitsRecordScrollBehavior.getFromDBCode(
           profile.getHabitsRecordScrollBehavior(),
           withDefault: defaultHabitsRecordScrollBehavior)!;
-
-  int get firstDay => profile.getFirstDay();
 }
