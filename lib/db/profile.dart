@@ -54,9 +54,6 @@ abstract class ProfileInterface {
 
   CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
-
-  HabitDisplayOpConfig? getDisplayOpConfig();
-  Future<bool> setDisplayOpConfig(HabitDisplayOpConfig opConfig);
 }
 
 enum ProfileKey {
@@ -66,7 +63,6 @@ enum ProfileKey {
   firstDay,
   appReminder,
   customDateYmdHmsConfig,
-  displayOpConfig,
   // cache
   inputFillCache,
 }
@@ -203,19 +199,5 @@ class Profile
   Future<bool> setInputFillCache(Map<String, Object?> newCache) {
     return _pref.setString(
         ProfileKey.inputFillCache.name, jsonEncode(newCache));
-  }
-
-  @override
-  HabitDisplayOpConfig getDisplayOpConfig() {
-    final raw = _pref.getString(ProfileKey.displayOpConfig.name);
-    return raw != null
-        ? HabitDisplayOpConfig.fromJson(jsonDecode(raw))
-        : const HabitDisplayOpConfig.withDefault();
-  }
-
-  @override
-  Future<bool> setDisplayOpConfig(HabitDisplayOpConfig opConfig) {
-    return _pref.setString(
-        ProfileKey.displayOpConfig.name, jsonEncode(opConfig.toJson()));
   }
 }

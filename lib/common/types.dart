@@ -21,6 +21,8 @@ import '../model/habit_form.dart';
 
 typedef DBID = int;
 
+typedef JsonMap = Map<String, dynamic>;
+
 typedef HabitUUID = String;
 typedef HabitRecordUUID = String;
 typedef HabitDailyGoal = num;

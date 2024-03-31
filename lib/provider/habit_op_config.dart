@@ -15,51 +15,51 @@
 import 'package:flutter/material.dart';
 
 import '../common/enums.dart';
-import '../model/global.dart';
+import '../logging/helper.dart';
 import '../model/habit_display.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 
 class HabitRecordOpConfigViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  HabitCellGestureModeProfileHandler? _op;
 
-  HabitRecordOpConfigViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  HabitRecordOpConfigViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _op = newProfile.getHandler<HabitCellGestureModeProfileHandler>();
+  }
 
-  UserAction get changeRecordStatus => _g.displayOpConfig.changeRecordStatus;
-  UserAction get openRecordStatusDialog =>
-      _g.displayOpConfig.openRecordStatusDialog;
+  HabitDisplayOpConfig get _opData =>
+      _op?.get() ?? const HabitDisplayOpConfig.withDefault();
 
-  HabitDisplayOpConfig _generateExchangeActionsConfig() =>
-      _g.displayOpConfig.copyWith(
+  UserAction get changeRecordStatus => _opData.changeRecordStatus;
+  UserAction get openRecordStatusDialog => _opData.openRecordStatusDialog;
+
+  HabitDisplayOpConfig _generateExchangeActionsConfig() => _opData.copyWith(
         changeRecordStatus: openRecordStatusDialog,
         openRecordStatusDialog: changeRecordStatus,
       );
 
   void setChangeRecordStatusAction(UserAction newAction) async {
-    late final HabitDisplayOpConfig newOpConfig;
-    if (newAction == openRecordStatusDialog) {
-      newOpConfig = _generateExchangeActionsConfig();
-    } else {
-      newOpConfig = _g.displayOpConfig.copyWith(changeRecordStatus: newAction);
-    }
-    await _g.profile.setDisplayOpConfig(newOpConfig);
+    final newOpConfig = newAction == openRecordStatusDialog
+        ? _generateExchangeActionsConfig()
+        : _opData.copyWith(changeRecordStatus: newAction);
+    appLog.value.info("$runtimeType.setChangeRecordStatusAction",
+        beforeVal: _opData, afterVal: newOpConfig);
+    await _op?.set(newOpConfig);
     notifyListeners();
   }
 
   void setOpenRecordStatusDialogAction(UserAction newAction) async {
-    late final HabitDisplayOpConfig newOpConfig;
-    if (newAction == changeRecordStatus) {
-      newOpConfig = _generateExchangeActionsConfig();
-    } else {
-      newOpConfig =
-          _g.displayOpConfig.copyWith(openRecordStatusDialog: newAction);
-    }
-    await _g.profile.setDisplayOpConfig(newOpConfig);
+    final newOpConfig = newAction == changeRecordStatus
+        ? _generateExchangeActionsConfig()
+        : _opData.copyWith(openRecordStatusDialog: newAction);
+    appLog.value.info("$runtimeType.setOpenRecordStatusDialogAction",
+        beforeVal: _opData, afterVal: newOpConfig);
+    await _op?.set(newOpConfig);
     notifyListeners();
   }
 }

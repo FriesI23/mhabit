@@ -16,6 +16,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../common/types.dart';
+
 abstract interface class ProfileHelperHandler<T> {
   String get key;
   Future<bool> set(T value);
@@ -70,4 +72,27 @@ abstract class ProfileHelperCovertToBoolHandler<T>
 
   @override
   Future<bool> Function(String key, bool value) get setMethod => _pref.setBool;
+}
+
+abstract class ProfileHelperCovertToJsonHandler<T>
+    extends ProfileHelperConvertHandler<T, JsonMap> {
+  final SharedPreferences _pref;
+
+  const ProfileHelperCovertToJsonHandler(SharedPreferences pref,
+      {required super.codec})
+      : _pref = pref;
+
+  JsonMap? _getMethod(String key) {
+    final source = _pref.getString(key);
+    return source != null ? jsonDecode(source) : null;
+  }
+
+  @override
+  JsonMap? Function(String key) get getMethod => _getMethod;
+
+  Future<bool> _setMethod(String key, JsonMap value) =>
+      _pref.setString(key, jsonEncode(value));
+
+  @override
+  Future<bool> Function(String key, JsonMap value) get setMethod => _setMethod;
 }

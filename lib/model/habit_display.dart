@@ -219,4 +219,7 @@ class HabitDisplayOpConfig implements JsonAdaptor {
 
   @override
   Map<String, dynamic> toJson() => _$HabitDisplayOpConfigToJson(this);
+
+  @override
+  String toString() => "$runtimeType(${toJson()})";
 }

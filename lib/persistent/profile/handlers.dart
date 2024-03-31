@@ -16,3 +16,4 @@ export './handler/app_theme_main_color.dart';
 export './handler/app_theme_type.dart';
 export './handler/compact_ui_switcher.dart';
 export './handler/display_calendar_bar_occupy_prt.dart';
+export './handler/habit_cell_gesture_mode.dart';

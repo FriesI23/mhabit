@@ -94,6 +94,4 @@ class Global
 
   CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
       profile.getCustomDateYmdHmsConfig();
-
-  HabitDisplayOpConfig get displayOpConfig => profile.getDisplayOpConfig();
 }

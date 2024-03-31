@@ -43,10 +43,19 @@ class ProfileViewModel extends ChangeNotifier
   Future init() async {
     if (_completer == null) {
       _completer = Completer();
+      final handlerKeyColl = <String, Type>{};
       _pref = await SharedPreferences.getInstance();
-      _handlers = Map.fromEntries(_handlerBuilders
-          .map((e) => e.call(_pref))
-          .map((e) => MapEntry(e.runtimeType, e)));
+      _handlers =
+          Map.fromEntries(_handlerBuilders.map((e) => e.call(_pref)).where((e) {
+        if (handlerKeyColl.containsKey(e.key)) {
+          appLog.load.error("$runtimeType.init",
+              ex: ["load handler failed", e, e.key, handlerKeyColl[e.key]]);
+          if (kDebugMode) throw FlutterError("load handler failed: $e");
+          return false;
+        }
+        handlerKeyColl[e.key] = e.runtimeType;
+        return true;
+      }).map((e) => MapEntry(e.runtimeType, e)));
       _completer!.complete();
     }
     return _completer!.future;
