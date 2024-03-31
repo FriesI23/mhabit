@@ -248,4 +248,7 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
             : splitChar.char;
     }
   }
+
+  @override
+  String toString() => "$runtimeType(${toJson()})";
 }

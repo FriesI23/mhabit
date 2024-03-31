@@ -24,7 +24,6 @@ import '../common/global.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
-import '../model/custom_date_format.dart';
 
 mixin CacheInterface {
   Map<String, Object?> getInputFillCache();
@@ -46,9 +45,6 @@ abstract class ProfileInterface {
 
   AppReminderConfig? getAppReminder();
   Future<bool> setAppReminder(AppReminderConfig newTimeOfDay);
-
-  CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
-  Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
 }
 
 enum ProfileKey {
@@ -56,7 +52,6 @@ enum ProfileKey {
   habitsRecordScrollBehavior,
   firstDay,
   appReminder,
-  customDateYmdHmsConfig,
   // cache
   inputFillCache,
 }
@@ -136,27 +131,6 @@ class Profile
   Future<bool> setAppReminder(AppReminderConfig newReminder) {
     return _pref.setString(
         ProfileKey.appReminder.name, jsonEncode(newReminder.toJson()));
-  }
-
-  @override
-  CustomDateYmdHmsConfig getCustomDateYmdHmsConfig() {
-    final raw = _pref.getString(ProfileKey.customDateYmdHmsConfig.name);
-    if (raw == null) {
-      return const CustomDateYmdHmsConfig.withDefault();
-    }
-    try {
-      return CustomDateYmdHmsConfig.fromJson(jsonDecode(raw));
-    } catch (e) {
-      appLog.json.warn("$runtimeType.getCustomDateYmdHmsConfig",
-          ex: ["profile decode err"], error: e);
-      return const CustomDateYmdHmsConfig.withDefault();
-    }
-  }
-
-  @override
-  Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig) {
-    return _pref.setString(
-        ProfileKey.customDateYmdHmsConfig.name, jsonEncode(newConfig.toJson()));
   }
 
   @override

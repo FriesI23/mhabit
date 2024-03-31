@@ -82,12 +82,11 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, value, previous) =>
                 previous!..updateGlobal(value),
           ),
-          ChangeNotifierProxyProvider<Global,
+          ChangeNotifierProxyProvider<ProfileViewModel,
               AppCustomDateYmdHmsConfigViewModel>(
-            create: (context) => AppCustomDateYmdHmsConfigViewModel(
-                global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+            create: (context) => AppCustomDateYmdHmsConfigViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel,
               HabitRecordOpConfigViewModel>(
