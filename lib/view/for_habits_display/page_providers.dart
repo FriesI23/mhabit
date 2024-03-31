@@ -17,7 +17,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
 import '../../provider/app_first_day.dart';
@@ -102,11 +101,10 @@ class PageProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, HabitsFilterViewModel>(
-            create: (context) =>
-                HabitsFilterViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
+            create: (context) => HabitsFilterViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel,
               HabitsRecordScrollBehaviorViewModel>(

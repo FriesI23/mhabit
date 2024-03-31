@@ -16,7 +16,6 @@ import 'package:flutter/foundation.dart';
 
 import '../db/profile.dart';
 import 'cache.dart';
-import 'habit_display.dart';
 
 abstract class GlobalProxyProviderInterface {
   Global get g;
@@ -68,9 +67,4 @@ class Global
 
   @override
   Profile get profile => Profile();
-
-  HabitsDisplayFilter get habitsDisplayFilter {
-    var raw = profile.getHabitDisplayFilter();
-    return HabitsDisplayFilter.fromMap(raw);
-  }
 }

@@ -28,13 +28,9 @@ mixin CacheInterface {
 
 abstract class ProfileInterface {
   Future<bool> clearAll();
-
-  Map<String, Object?> getHabitDisplayFilter();
-  Future<bool> setHabitDisplayFilter(Map<String, Object?> filterMap);
 }
 
 enum ProfileKey {
-  habitDisplayFilter,
   // cache
   inputFillCache,
 }
@@ -64,18 +60,6 @@ class Profile
   @override
   Future<bool> clearAll() {
     return _pref.clear();
-  }
-
-  @override
-  Map<String, Object?> getHabitDisplayFilter() {
-    var raw = _pref.getString(ProfileKey.habitDisplayFilter.name);
-    return raw != null ? jsonDecode(raw) : {};
-  }
-
-  @override
-  Future<bool> setHabitDisplayFilter(Map<String, Object?> filterMap) {
-    return _pref.setString(
-        ProfileKey.habitDisplayFilter.name, jsonEncode(filterMap));
   }
 
   @override

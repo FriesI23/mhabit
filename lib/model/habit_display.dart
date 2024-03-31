@@ -193,6 +193,9 @@ class HabitsDisplayFilter {
   @override
   int get hashCode =>
       hash3(allowInProgressHabits, allowArchivedHabits, allowCompleteHabits);
+
+  @override
+  String toString() => "$runtimeType(${toMap()})";
 }
 
 @JsonSerializable(
