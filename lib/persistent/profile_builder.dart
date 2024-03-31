@@ -17,30 +17,36 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../extension/async_extensions.dart';
-import 'db_helper_provider.dart';
+import '../logging/helper.dart';
+import 'profile_provider.dart';
 
-class DBHelperBuilder extends SingleChildStatelessWidget {
+class ProfileBuilder extends SingleChildStatelessWidget {
   final TransitionBuilder builder;
   final TransitionBuilder? loadingBuilder;
   final ErrorWidgetBuilder? errorBuilder;
+  final Iterable<ProfileHandlerBuilder> handlers;
 
-  const DBHelperBuilder({
+  const ProfileBuilder({
     super.key,
     super.child,
     required this.builder,
     this.loadingBuilder,
     this.errorBuilder,
+    this.handlers = const [],
   });
 
   Future _loadingHelper(BuildContext context) async {
-    final helper = context.read<DBHelperViewModel>();
+    appLog.db.info("$runtimeType._loadingHelper", ex: ["processing"]);
+    final helper = context.read<ProfileViewModel>();
     if (helper.mounted && !helper.inited) await helper.init();
+    appLog.db.info("$runtimeType._loadingHelper", ex: ["done"]);
   }
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) =>
       ChangeNotifierProvider(
-        create: (context) => DBHelperViewModel()..init(),
+        create: (context) =>
+            ProfileViewModel(Map.fromIterable(handlers))..init(),
         lazy: false,
         child: child,
         builder: (context, child) => FutureBuilder(
@@ -51,9 +57,9 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
                 return errorBuilder!(FlutterErrorDetails(
                     exception: snapshot.error!,
                     stack: snapshot.stackTrace,
-                    library: "db_builder"));
+                    library: "profile_builder"));
               } else {
-                throw FlutterError("db helper build failed");
+                throw FlutterError("profile build failed");
               }
             } else if (snapshot.isDone) {
               return builder(context, child);

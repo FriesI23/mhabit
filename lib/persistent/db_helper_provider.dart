@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import '../common/abc.dart';
@@ -26,37 +29,39 @@ import 'local/handler/record.dart';
 
 class DBHelperViewModel extends ChangeNotifier
     with FutureInitializationABC, ProviderMounted {
-  DBHelper local;
-  Future? waitingInit;
-  bool _inited = false;
+  final DBHelper local;
+
+  Completer? _completer;
   bool _mounted = true;
 
   DBHelperViewModel() : local = DBHelper();
 
   @override
   Future init() async {
-    Future initAll() async {
+    if (_completer == null) {
+      _completer = Completer();
       await local.init();
+      _completer!.complete();
     }
-
-    if (inited) {
-      appLog.load.error("$runtimeType.init",
-          ex: ["already inited", local, _inited, _mounted]);
-      return;
-    }
-
-    waitingInit = initAll()..whenComplete(() => _inited = true);
-    await waitingInit;
+    return _completer!.future;
   }
 
   @override
   void dispose() {
     _mounted = false;
-    local.dispose();
+    if (inited) local.dispose();
+    if (_completer?.isCompleted != true) {
+      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer = null;
+    }
     super.dispose();
   }
 
   Future reload() async {
+    if (_completer?.isCompleted != true) {
+      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer = null;
+    }
     await local.init(reinit: true);
     notifyListeners();
   }
@@ -64,7 +69,7 @@ class DBHelperViewModel extends ChangeNotifier
   @override
   bool get mounted => _mounted;
 
-  bool get inited => _inited;
+  bool get inited => _completer?.isCompleted ?? false;
 
   @override
   String toString() {

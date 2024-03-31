@@ -22,6 +22,7 @@ import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
 import '../persistent/db_helper_builder.dart';
+import '../persistent/profile_builder.dart';
 import '../provider/app_theme.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
@@ -34,9 +35,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('------ App start ------');
-    return DBHelperBuilder(
-      child: const AppView(),
-      builder: (context, child) => AppProviders(child: child),
+    return ProfileBuilder(
+      builder: (context, child) => DBHelperBuilder(
+        builder: (context, child) => AppProviders(child: child),
+        child: const AppView(),
+      ),
     );
   }
 }
