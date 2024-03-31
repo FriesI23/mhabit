@@ -82,4 +82,9 @@ class AppReminderConfig implements JsonAdaptor {
   @override
   int get hashCode =>
       hash3(enabled.hashCode, type.hashCode, timeOfDay.hashCode);
+
+  @override
+  String toString() {
+    return "$runtimeType(${toJson()})";
+  }
 }

@@ -94,13 +94,12 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider2<Global, NotificationChannelData,
-              AppReminderViewModel>(
+          ChangeNotifierProxyProvider2<ProfileViewModel,
+              NotificationChannelData, AppReminderViewModel>(
             lazy: false,
-            create: (context) =>
-                AppReminderViewModel(global: context.read<Global>()),
-            update: (context, global, channel, previous) => previous!
-              ..updateGlobal(global)
+            create: (context) => AppReminderViewModel(),
+            update: (context, profile, channel, previous) => previous!
+              ..updateProfile(profile)
               ..setNotificationChannelData(channel, l10n: L10n.of(context)),
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(

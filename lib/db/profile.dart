@@ -23,7 +23,6 @@ import '../common/enums.dart';
 import '../common/global.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
-import '../model/app_reminder_config.dart';
 
 mixin CacheInterface {
   Map<String, Object?> getInputFillCache();
@@ -42,16 +41,12 @@ abstract class ProfileInterface {
 
   int getFirstDay();
   Future<bool> setFirstDay(int newFirstDay);
-
-  AppReminderConfig? getAppReminder();
-  Future<bool> setAppReminder(AppReminderConfig newTimeOfDay);
 }
 
 enum ProfileKey {
   habitDisplayFilter,
   habitsRecordScrollBehavior,
   firstDay,
-  appReminder,
   // cache
   inputFillCache,
 }
@@ -117,20 +112,6 @@ class Profile
   Future<bool> setFirstDay(int newFirstDay) {
     newFirstDay = standardizeFirstDay(newFirstDay);
     return _pref.setInt(ProfileKey.firstDay.name, newFirstDay);
-  }
-
-  @override
-  AppReminderConfig getAppReminder() {
-    final raw = _pref.getString(ProfileKey.appReminder.name);
-    return raw != null
-        ? AppReminderConfig.fromJson(jsonDecode(raw))
-        : defaultAppReminder;
-  }
-
-  @override
-  Future<bool> setAppReminder(AppReminderConfig newReminder) {
-    return _pref.setString(
-        ProfileKey.appReminder.name, jsonEncode(newReminder.toJson()));
   }
 
   @override

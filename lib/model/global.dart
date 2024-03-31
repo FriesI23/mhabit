@@ -17,7 +17,6 @@ import 'package:flutter/foundation.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../db/profile.dart';
-import 'app_reminder_config.dart';
 import 'cache.dart';
 import 'habit_display.dart';
 
@@ -83,6 +82,4 @@ class Global
           withDefault: defaultHabitsRecordScrollBehavior)!;
 
   int get firstDay => profile.getFirstDay();
-
-  AppReminderConfig get appReminderConfig => profile.getAppReminder();
 }

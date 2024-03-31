@@ -35,6 +35,7 @@ class App extends StatelessWidget {
   const App({super.key});
 
   Iterable<ProfileHandlerBuilder> _buildProfileHanlder() sync* {
+    yield (pref) => AppReminderProfileHandler(pref);
     yield (pref) => AppThemeTypeProfileHandler(pref);
     yield (pref) => AppThemeMainColorProfileHandler(pref);
     yield (pref) => CompactUISwitcherProfileHandler(pref);
