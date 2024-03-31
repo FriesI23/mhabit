@@ -14,25 +14,29 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/global.dart';
+import '../logging/helper.dart';
+import '../persistent/profile/handler/compact_ui_switcher.dart';
+import '../persistent/profile_provider.dart';
 
 class AppCompactUISwitcherViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  CompactUISwitcherProfileHandler? _compactUI;
 
-  AppCompactUISwitcherViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  AppCompactUISwitcherViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _compactUI = newProfile.getHandler<CompactUISwitcherProfileHandler>();
+  }
 
-  bool get flag => g.compactUISwitcher;
+  bool get flag => _compactUI?.get() ?? false;
 
   Future<void> setFlag(bool newFlag) async {
-    if (g.compactUISwitcher != newFlag) {
-      await g.profile.setCompactUISwitcher(newFlag);
+    if (_compactUI?.get() != newFlag) {
+      appLog.value
+          .info("$runtimeType.flag", beforeVal: flag, afterVal: newFlag);
+      await _compactUI?.set(newFlag);
       notifyListeners();
     }
   }

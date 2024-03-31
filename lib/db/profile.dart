@@ -55,9 +55,6 @@ abstract class ProfileInterface {
   CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
 
-  bool getCompactUISwticher();
-  Future<bool> setCompactUISwitcher(bool newStatus);
-
   HabitDisplayOpConfig? getDisplayOpConfig();
   Future<bool> setDisplayOpConfig(HabitDisplayOpConfig opConfig);
 }
@@ -69,7 +66,6 @@ enum ProfileKey {
   firstDay,
   appReminder,
   customDateYmdHmsConfig,
-  compactUISwitcher,
   displayOpConfig,
   // cache
   inputFillCache,
@@ -188,16 +184,6 @@ class Profile
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig) {
     return _pref.setString(
         ProfileKey.customDateYmdHmsConfig.name, jsonEncode(newConfig.toJson()));
-  }
-
-  @override
-  bool getCompactUISwticher() {
-    return _pref.getBool(ProfileKey.compactUISwitcher.name) ?? false;
-  }
-
-  @override
-  Future<bool> setCompactUISwitcher(bool newStatus) {
-    return _pref.setBool(ProfileKey.compactUISwitcher.name, newStatus);
   }
 
   @override

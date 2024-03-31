@@ -56,3 +56,18 @@ abstract class ProfileHelperCovertToIntHandler<T>
   @override
   Future<bool> Function(String key, int value) get setMethod => _pref.setInt;
 }
+
+abstract class ProfileHelperCovertToBoolHandler<T>
+    extends ProfileHelperConvertHandler<T, bool> {
+  final SharedPreferences _pref;
+
+  const ProfileHelperCovertToBoolHandler(SharedPreferences pref,
+      {required super.codec})
+      : _pref = pref;
+
+  @override
+  bool? Function(String key) get getMethod => _pref.getBool;
+
+  @override
+  Future<bool> Function(String key, bool value) get setMethod => _pref.setBool;
+}

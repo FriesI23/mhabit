@@ -70,11 +70,11 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, AppCompactUISwitcherViewModel>(
-            create: (context) =>
-                AppCompactUISwitcherViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              AppCompactUISwitcherViewModel>(
+            create: (context) => AppCompactUISwitcherViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, AppFirstDayViewModel>(
             create: (context) =>

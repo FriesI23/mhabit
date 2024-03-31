@@ -37,6 +37,7 @@ class App extends StatelessWidget {
   Iterable<ProfileHandlerBuilder> _buildProfileHanlder() sync* {
     yield (pref) => AppThemeTypeProfileHandler(pref);
     yield (pref) => AppThemeMainColorProfileHandler(pref);
+    yield (pref) => CompactUISwitcherProfileHandler(pref);
     yield (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref);
   }
 

@@ -95,7 +95,5 @@ class Global
   CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
       profile.getCustomDateYmdHmsConfig();
 
-  bool get compactUISwitcher => profile.getCompactUISwticher();
-
   HabitDisplayOpConfig get displayOpConfig => profile.getDisplayOpConfig();
 }

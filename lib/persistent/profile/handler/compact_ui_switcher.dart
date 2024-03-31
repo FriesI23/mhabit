@@ -12,21 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
+import '../converter.dart';
+import '../profile_helper.dart';
 
-class SameTypeCodec<T> extends Codec<T, T> {
-  const SameTypeCodec();
-
-  @override
-  Converter<T, T> get decoder => _Converter<T>();
-
-  @override
-  Converter<T, T> get encoder => _Converter<T>();
-}
-
-class _Converter<T> extends Converter<T, T> {
-  const _Converter();
+class CompactUISwitcherProfileHandler
+    extends ProfileHelperCovertToBoolHandler<bool> {
+  const CompactUISwitcherProfileHandler(super.pref)
+      : super(codec: const SameTypeCodec());
 
   @override
-  T convert(T input) => input;
+  String get key => "compactUISwitcher";
 }
