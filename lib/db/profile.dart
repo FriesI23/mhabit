@@ -18,8 +18,6 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/abc.dart';
-import '../common/consts.dart';
-import '../common/enums.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
 
@@ -33,15 +31,10 @@ abstract class ProfileInterface {
 
   Map<String, Object?> getHabitDisplayFilter();
   Future<bool> setHabitDisplayFilter(Map<String, Object?> filterMap);
-
-  int getHabitsRecordScrollBehavior();
-  Future<bool> setHabitsRecordScrollBehavior(
-      HabitsRecordScrollBehavior behavior);
 }
 
 enum ProfileKey {
   habitDisplayFilter,
-  habitsRecordScrollBehavior,
   // cache
   inputFillCache,
 }
@@ -83,19 +76,6 @@ class Profile
   Future<bool> setHabitDisplayFilter(Map<String, Object?> filterMap) {
     return _pref.setString(
         ProfileKey.habitDisplayFilter.name, jsonEncode(filterMap));
-  }
-
-  @override
-  int getHabitsRecordScrollBehavior() {
-    return _pref.getInt(ProfileKey.habitsRecordScrollBehavior.name) ??
-        defaultHabitsRecordScrollBehavior.dbCode;
-  }
-
-  @override
-  Future<bool> setHabitsRecordScrollBehavior(
-      HabitsRecordScrollBehavior behavior) {
-    return _pref.setInt(
-        ProfileKey.habitsRecordScrollBehavior.name, behavior.dbCode);
   }
 
   @override

@@ -14,28 +14,33 @@
 
 import 'package:flutter/material.dart';
 
+import '../common/consts.dart';
 import '../common/enums.dart';
 import '../component/widget.dart';
-import '../model/global.dart';
+import '../logging/helper.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 
 class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  DisplayCalendarScrollModeProfileHandler? _scroll;
 
-  HabitsRecordScrollBehaviorViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  HabitsRecordScrollBehaviorViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _scroll = newProfile.getHandler<DisplayCalendarScrollModeProfileHandler>();
+  }
 
   HabitsRecordScrollBehavior get scrollBehavior =>
-      _g.habitsRecordScrollBehavior;
+      _scroll?.get() ?? defaultHabitsRecordScrollBehavior;
 
   Future<void> setScrollBehavior(HabitsRecordScrollBehavior newBehavior) async {
-    if (_g.habitsRecordScrollBehavior != newBehavior) {
-      await _g.profile.setHabitsRecordScrollBehavior(newBehavior);
+    if (_scroll?.get() != newBehavior) {
+      appLog.value.info("$runtimeType.setScrollBehavior",
+          beforeVal: scrollBehavior, afterVal: newBehavior);
+      await _scroll?.set(newBehavior);
       notifyListeners();
     }
   }

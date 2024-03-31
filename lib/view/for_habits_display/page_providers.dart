@@ -108,12 +108,11 @@ class PageProviders extends SingleChildStatelessWidget {
             update: (context, value, previous) =>
                 previous!..updateGlobal(value),
           ),
-          ChangeNotifierProxyProvider<Global,
+          ChangeNotifierProxyProvider<ProfileViewModel,
               HabitsRecordScrollBehaviorViewModel>(
-            create: (context) => HabitsRecordScrollBehaviorViewModel(
-                global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+            create: (context) => HabitsRecordScrollBehaviorViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ..._buildPageViewModel(),
         ],

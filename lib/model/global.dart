@@ -14,8 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/enums.dart';
 import '../db/profile.dart';
 import 'cache.dart';
 import 'habit_display.dart';
@@ -75,9 +73,4 @@ class Global
     var raw = profile.getHabitDisplayFilter();
     return HabitsDisplayFilter.fromMap(raw);
   }
-
-  HabitsRecordScrollBehavior get habitsRecordScrollBehavior =>
-      HabitsRecordScrollBehavior.getFromDBCode(
-          profile.getHabitsRecordScrollBehavior(),
-          withDefault: defaultHabitsRecordScrollBehavior)!;
 }
