@@ -15,22 +15,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
-import 'package:mhabit/db/profile.dart';
-import 'package:mhabit/model/global.dart';
+import 'package:mhabit/persistent/profile/handlers.dart';
+import 'package:mhabit/persistent/profile_provider.dart';
 import 'package:mhabit/provider/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   SharedPreferences.setMockInitialValues({});
-  await Profile().init();
-  var g = Global();
+  final profile = ProfileViewModel([
+    (pref) => AppThemeTypeProfileHandler(pref),
+  ]);
+  await profile.init();
   group("AppThemeViewModel", () {
     test("getThemeType", () async {
-      final obj = AppThemeViewModel(global: g);
+      final obj = AppThemeViewModel()..updateProfile(profile);
       expect(obj.themeType, appDefaultThemeType);
     });
     test("getMatertialThemeType", () async {
-      final obj = AppThemeViewModel(global: g);
+      final obj = AppThemeViewModel()..updateProfile(profile);
       expect(obj.matertialThemeType, ThemeMode.system);
     });
   });

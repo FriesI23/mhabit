@@ -22,7 +22,9 @@ import '../common/global.dart';
 import '../l10n/localizations.dart';
 import '../model/global.dart';
 import '../persistent/db_helper_builder.dart';
+import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
+import '../persistent/profile_provider.dart';
 import '../provider/app_theme.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
@@ -32,10 +34,16 @@ import 'page_habits_display.dart' show PageHabitsDisplay;
 class App extends StatelessWidget {
   const App({super.key});
 
+  Iterable<ProfileHandlerBuilder> _buildProfileHanlder() sync* {
+    yield (pref) => AppThemeTypeProfileHandler(pref);
+    yield (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref);
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('------ App start ------');
     return ProfileBuilder(
+      handlers: _buildProfileHanlder(),
       builder: (context, child) => DBHelperBuilder(
         builder: (context, child) => AppProviders(child: child),
         child: const AppView(),

@@ -45,8 +45,7 @@ class ProfileBuilder extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget? child) =>
       ChangeNotifierProvider(
-        create: (context) =>
-            ProfileViewModel(Map.fromIterable(handlers))..init(),
+        create: (context) => ProfileViewModel(handlers)..init(),
         lazy: false,
         child: child,
         builder: (context, child) => FutureBuilder(

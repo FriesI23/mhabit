@@ -14,6 +14,8 @@
 
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 abstract interface class ProfileHelperHandler<T> {
   String get key;
   Future<bool> set(T value);
@@ -22,13 +24,9 @@ abstract interface class ProfileHelperHandler<T> {
 
 abstract class ProfileHelperConvertHandler<S, T>
     implements ProfileHelperHandler<S> {
-  @override
-  final String key;
-
   final Codec<S, T> _codec;
 
-  const ProfileHelperConvertHandler(
-      {required this.key, required Codec<S, T> codec})
+  const ProfileHelperConvertHandler({required Codec<S, T> codec})
       : _codec = codec;
 
   @override
@@ -40,6 +38,21 @@ abstract class ProfileHelperConvertHandler<S, T>
     return rawValue != null ? _codec.decode(rawValue) : null;
   }
 
-  Future<bool> Function(String, T) get setMethod;
-  T? Function(String) get getMethod;
+  Future<bool> Function(String key, T value) get setMethod;
+  T? Function(String key) get getMethod;
+}
+
+abstract class ProfileHelperCovertToIntHandler<T>
+    extends ProfileHelperConvertHandler<T, int> {
+  final SharedPreferences _pref;
+
+  const ProfileHelperCovertToIntHandler(SharedPreferences pref,
+      {required super.codec})
+      : _pref = pref;
+
+  @override
+  int? Function(String key) get getMethod => _pref.getInt;
+
+  @override
+  Future<bool> Function(String key, int value) get setMethod => _pref.setInt;
 }

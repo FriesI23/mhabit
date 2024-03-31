@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/localizations.dart';
 import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
+import '../../persistent/profile_provider.dart';
 import '../../provider/app_compact_ui_switcher.dart';
 import '../../provider/app_custom_date_format.dart';
 import '../../provider/app_developer.dart';
@@ -64,11 +65,10 @@ class AppProviders extends SingleChildStatelessWidget {
           ChangeNotifierProvider<NotificationChannelData>(
             create: (context) => NotificationChannelData(),
           ),
-          ChangeNotifierProxyProvider<Global, AppThemeViewModel>(
-            create: (context) =>
-                AppThemeViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppThemeViewModel>(
+            create: (context) => AppThemeViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, AppCompactUISwitcherViewModel>(
             create: (context) =>

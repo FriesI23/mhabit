@@ -28,7 +28,6 @@ import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_display.dart';
-import '../theme/color.dart';
 
 mixin CacheInterface {
   Map<String, Object?> getInputFillCache();
@@ -37,8 +36,6 @@ mixin CacheInterface {
 
 abstract class ProfileInterface {
   Future<bool> clearAll();
-  int getThemeType();
-  Future<bool> setThemeType(AppThemeType newThemeType);
 
   int getSysThemeMainColor();
   Future<bool> setSysThemeMainColor(Color newColor);
@@ -113,20 +110,6 @@ class Profile
   @override
   Future<bool> clearAll() {
     return _pref.clear();
-  }
-
-  @override
-  int getThemeType() {
-    return _pref.getInt(ProfileKey.themeType.name) ??
-        appDefaultThemeType.dbCode;
-  }
-
-  @override
-  Future<bool> setThemeType(AppThemeType newThemeType) async {
-    if (newThemeType == AppThemeType.unknown) {
-      throw TypeError();
-    }
-    return _pref.setInt(ProfileKey.themeType.name, newThemeType.dbCode);
   }
 
   @override

@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/abc.dart';
+import '../logging/helper.dart';
 import '../provider/commons.dart';
 import 'profile/profile_helper.dart';
 
@@ -29,19 +30,23 @@ class ProfileViewModel extends ChangeNotifier
     with FutureInitializationABC, ProviderMounted {
   late final SharedPreferences _pref;
 
-  final Map<String, ProfileHandlerBuilder> _handlers;
+  final Iterable<ProfileHandlerBuilder> _handlerBuilders;
+  late final Map<Type, ProfileHelperHandler> _handlers;
 
   Completer? _completer;
   bool _mounted = true;
 
-  ProfileViewModel(Map<String, ProfileHandlerBuilder> handlers)
-      : _handlers = handlers;
+  ProfileViewModel(Iterable<ProfileHandlerBuilder> builders)
+      : _handlerBuilders = builders;
 
   @override
   Future init() async {
     if (_completer == null) {
       _completer = Completer();
       _pref = await SharedPreferences.getInstance();
+      _handlers = Map.fromEntries(_handlerBuilders
+          .map((e) => e.call(_pref))
+          .map((e) => MapEntry(e.runtimeType, e)));
       _completer!.complete();
     }
     return _completer!.future;
@@ -74,18 +79,21 @@ class ProfileViewModel extends ChangeNotifier
 
   bool get inited => _completer?.isCompleted ?? false;
 
-  T? getHandler<T extends ProfileHelperHandler>() =>
-      _handlers[T.runtimeType.toString()]?.call(_pref) as T?;
-
-  bool addHandler<T extends ProfileHelperHandler>(
-      ProfileHandlerBuilder<T> builder) {
-    _handlers[builder.runtimeType.toString()] = builder;
-    return true;
-  }
+  T? getHandler<T extends ProfileHelperHandler>() => _handlers[T] as T?;
 
   @override
   String toString() {
     return "$runtimeType[$hashCode](pref=$_pref,mounted=$mounted,"
         "inited=$inited)";
+  }
+}
+
+abstract mixin class ProfileHandlerLoadedMixin {
+  late ProfileViewModel profile;
+
+  @mustCallSuper
+  void updateProfile(ProfileViewModel newProfile) {
+    appLog.load.info("$runtimeType.updateDBHelper", ex: [newProfile]);
+    profile = newProfile;
   }
 }

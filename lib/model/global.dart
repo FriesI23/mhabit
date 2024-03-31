@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../db/profile.dart';
-import '../theme/color.dart';
 import 'app_reminder_config.dart';
 import 'cache.dart';
 import 'custom_date_format.dart';
@@ -75,8 +74,6 @@ class Global
   @override
   Profile get profile => Profile();
 
-  AppThemeType get themeType =>
-      AppThemeType.getFromDBCode(profile.getThemeType())!;
   Color get themeMainColor => Color(profile.getSysThemeMainColor());
 
   HabitDisplaySortType get sortType =>
