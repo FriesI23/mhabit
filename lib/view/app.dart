@@ -16,11 +16,11 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
-import '../model/global.dart';
 import '../persistent/db_helper_builder.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
@@ -36,6 +36,7 @@ class App extends StatelessWidget {
 
   Iterable<ProfileHandlerBuilder> _buildProfileHanlder() sync* {
     yield (pref) => AppThemeTypeProfileHandler(pref);
+    yield (pref) => AppThemeMainColorProfileHandler(pref);
     yield (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref);
   }
 
@@ -61,9 +62,9 @@ class AppView extends StatefulWidget {
 
 class _AppView extends State<AppView> {
   ThemeData _getLightThemeData(BuildContext context,
-      {ColorScheme? dynamicColor}) {
+      {ColorScheme? dynamicColor, required Color mainColor}) {
     ColorScheme appColorLight = ColorScheme.fromSeed(
-      seedColor: context.read<Global>().themeMainColor,
+      seedColor: mainColor,
       brightness: Brightness.light,
     );
     return ThemeData(
@@ -74,9 +75,9 @@ class _AppView extends State<AppView> {
   }
 
   ThemeData _getDartThemeData(BuildContext context,
-      {ColorScheme? dynamicColor}) {
+      {ColorScheme? dynamicColor, required Color mainColor}) {
     ColorScheme appColorDark = ColorScheme.fromSeed(
-      seedColor: context.read<Global>().themeMainColor,
+      seedColor: mainColor,
       brightness: Brightness.dark,
     );
     return ThemeData(
@@ -90,40 +91,48 @@ class _AppView extends State<AppView> {
   Widget build(BuildContext context) {
     var homePage = const PageHabitsDisplay();
 
-    return Selector<AppThemeViewModel, ThemeMode>(
-      selector: (context, viewmodel) => viewmodel.matertialThemeType,
+    return Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
+      selector: (context, viewmodel) =>
+          Tuple2(viewmodel.matertialThemeType, viewmodel.mainColor),
       shouldRebuild: (previous, next) => previous != next,
-      builder: (context, themeMode, child) => DynamicColorBuilder(
-        builder: (lightDynamic, darkDynamic) => DateChanger(
-          interval: const Duration(seconds: 10),
-          builder: (context) => MaterialApp(
-            onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
-            scaffoldMessengerKey: snackbarKey,
-            theme: _getLightThemeData(context, dynamicColor: lightDynamic),
-            darkTheme: _getDartThemeData(context, dynamicColor: darkDynamic),
-            themeMode: themeMode,
-            home: child,
-            localizationsDelegates: const [
-              L10n.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              // Fixed #133
-              // en must be the first item in the list (default language)
-              Locale.fromSubtags(languageCode: 'en'),
-              Locale.fromSubtags(languageCode: 'ar'),
-              Locale.fromSubtags(languageCode: 'de'),
-              Locale.fromSubtags(languageCode: 'fa'),
-              Locale.fromSubtags(languageCode: 'fr'),
-              Locale.fromSubtags(languageCode: 'vi'),
-              Locale.fromSubtags(languageCode: 'zh'),
-            ],
-            debugShowCheckedModeBanner: false,
+      builder: (context, appThemeArgs, child) {
+        final themeMode = appThemeArgs.item1;
+        final themeMainColor = appThemeArgs.item2;
+        return DynamicColorBuilder(
+          builder: (lightDynamic, darkDynamic) => DateChanger(
+            interval: const Duration(seconds: 10),
+            builder: (context) => MaterialApp(
+              onGenerateTitle: (context) =>
+                  L10n.of(context)?.appName ?? appName,
+              scaffoldMessengerKey: snackbarKey,
+              theme: _getLightThemeData(context,
+                  dynamicColor: lightDynamic, mainColor: themeMainColor),
+              darkTheme: _getDartThemeData(context,
+                  dynamicColor: darkDynamic, mainColor: themeMainColor),
+              themeMode: themeMode,
+              home: child,
+              localizationsDelegates: const [
+                L10n.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                // Fixed #133
+                // en must be the first item in the list (default language)
+                Locale.fromSubtags(languageCode: 'en'),
+                Locale.fromSubtags(languageCode: 'ar'),
+                Locale.fromSubtags(languageCode: 'de'),
+                Locale.fromSubtags(languageCode: 'fa'),
+                Locale.fromSubtags(languageCode: 'fr'),
+                Locale.fromSubtags(languageCode: 'vi'),
+                Locale.fromSubtags(languageCode: 'zh'),
+              ],
+              debugShowCheckedModeBanner: false,
+            ),
           ),
-        ),
-      ),
+        );
+      },
       child: homePage,
     );
   }

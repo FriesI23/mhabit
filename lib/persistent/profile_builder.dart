@@ -39,7 +39,7 @@ class ProfileBuilder extends SingleChildStatelessWidget {
     appLog.db.info("$runtimeType._loadingHelper", ex: ["processing"]);
     final helper = context.read<ProfileViewModel>();
     if (helper.mounted && !helper.inited) await helper.init();
-    appLog.db.info("$runtimeType._loadingHelper", ex: ["done"]);
+    appLog.db.info("$runtimeType._loadingHelper", ex: ["done", helper]);
   }
 
   @override

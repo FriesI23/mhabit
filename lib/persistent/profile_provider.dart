@@ -84,7 +84,7 @@ class ProfileViewModel extends ChangeNotifier
   @override
   String toString() {
     return "$runtimeType[$hashCode](pref=$_pref,mounted=$mounted,"
-        "inited=$inited)";
+        "inited=$inited,handlers=$_handlers)";
   }
 }
 

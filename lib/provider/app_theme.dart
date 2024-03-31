@@ -22,6 +22,7 @@ import '../theme/color.dart';
 
 class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   AppThemeTypeProfileHandler? _theme;
+  AppThemeMainColorProfileHandler? _mainColor;
   DisplayCalendartBarOccupyPrtProfileHandler? _calOccupy;
 
   AppThemeViewModel();
@@ -30,6 +31,7 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _theme = newProfile.getHandler<AppThemeTypeProfileHandler>();
+    _mainColor = newProfile.getHandler<AppThemeMainColorProfileHandler>();
     _calOccupy =
         newProfile.getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
   }
@@ -69,6 +71,10 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
     }
     await setNewthemeType(nextThemeType);
   }
+  //#endregion
+
+  //#region app theme main color
+  Color get mainColor => _mainColor?.get() ?? appDefaultThemeMainColor;
   //#endregion
 
   //#region display page occupy percentage

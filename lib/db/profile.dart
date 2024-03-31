@@ -15,7 +15,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
@@ -37,9 +36,6 @@ mixin CacheInterface {
 abstract class ProfileInterface {
   Future<bool> clearAll();
 
-  int getSysThemeMainColor();
-  Future<bool> setSysThemeMainColor(Color newColor);
-
   Tuple2<int, int> getSortMode();
   Future<bool> setSortMode(HabitDisplaySortType t, HabitDisplaySortDirection d);
 
@@ -59,9 +55,6 @@ abstract class ProfileInterface {
   CustomDateYmdHmsConfig? getCustomDateYmdHmsConfig();
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig);
 
-  int getDisplayCalendarBarOccupyPrt();
-  Future<bool> setDisplayCalendarBarOccupyPrt(int newPrt);
-
   bool getCompactUISwticher();
   Future<bool> setCompactUISwitcher(bool newStatus);
 
@@ -70,15 +63,12 @@ abstract class ProfileInterface {
 }
 
 enum ProfileKey {
-  themeType,
-  sysThemeMainColor,
   habitSortMode,
   habitDisplayFilter,
   habitsRecordScrollBehavior,
   firstDay,
   appReminder,
   customDateYmdHmsConfig,
-  displayCalendarBarOccupyPrt,
   compactUISwitcher,
   displayOpConfig,
   // cache
@@ -110,17 +100,6 @@ class Profile
   @override
   Future<bool> clearAll() {
     return _pref.clear();
-  }
-
-  @override
-  int getSysThemeMainColor() {
-    return _pref.getInt(ProfileKey.sysThemeMainColor.name) ??
-        appDefaultThemeMainColor;
-  }
-
-  @override
-  Future<bool> setSysThemeMainColor(Color newColor) async {
-    return _pref.setInt(ProfileKey.sysThemeMainColor.name, newColor.value);
   }
 
   @override
@@ -209,18 +188,6 @@ class Profile
   Future<bool> setCustomDateYmdHmsConfig(CustomDateYmdHmsConfig newConfig) {
     return _pref.setString(
         ProfileKey.customDateYmdHmsConfig.name, jsonEncode(newConfig.toJson()));
-  }
-
-  @override
-  int getDisplayCalendarBarOccupyPrt() {
-    return _pref.getInt(ProfileKey.displayCalendarBarOccupyPrt.name) ??
-        appCalendarBarDefualtOccupyPrt;
-  }
-
-  @override
-  Future<bool> setDisplayCalendarBarOccupyPrt(int newPrt) {
-    return _pref.setInt(ProfileKey.displayCalendarBarOccupyPrt.name,
-        normalizeAppCalendarBarOccupyPrt(newPrt));
   }
 
   @override

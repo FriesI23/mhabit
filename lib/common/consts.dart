@@ -13,6 +13,8 @@
 // limitations under the License.
 // coverage:ignore-file
 
+import 'dart:ui';
+
 import '../model/app_reminder_config.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -35,7 +37,7 @@ const int appDBVersion = 3;
 //#endregion
 
 //#region app-theme
-const int appDefaultThemeMainColor = 0xFF006493;
+const Color appDefaultThemeMainColor = Color(0xFF006493);
 const AppThemeType appDefaultThemeType = AppThemeType.followSystem;
 const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;

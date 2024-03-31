@@ -12,5 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './handler/app_theme_main_color.dart';
 export './handler/app_theme_type.dart';
 export './handler/display_calendar_bar_occupy_prt.dart';

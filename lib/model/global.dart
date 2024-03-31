@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
@@ -74,8 +73,6 @@ class Global
   @override
   Profile get profile => Profile();
 
-  Color get themeMainColor => Color(profile.getSysThemeMainColor());
-
   HabitDisplaySortType get sortType =>
       HabitDisplaySortType.getFromDBCode(profile.getSortMode().item1)!;
   HabitDisplaySortDirection get sortDirection =>
@@ -97,9 +94,6 @@ class Global
 
   CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
       profile.getCustomDateYmdHmsConfig();
-
-  int get displayPageCalendarBarOccupyPrt =>
-      profile.getDisplayCalendarBarOccupyPrt();
 
   bool get compactUISwitcher => profile.getCompactUISwticher();
 
