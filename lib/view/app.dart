@@ -38,6 +38,7 @@ class App extends StatelessWidget {
     yield (pref) => AppThemeTypeProfileHandler(pref);
     yield (pref) => AppThemeMainColorProfileHandler(pref);
     yield (pref) => CompactUISwitcherProfileHandler(pref);
+    yield (pref) => DisplaySortModeProfileHandler(pref);
     yield (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref);
     yield (pref) => HabitCellGestureModeProfileHandler(pref);
   }

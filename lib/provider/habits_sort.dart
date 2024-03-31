@@ -13,34 +13,41 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 import '../l10n/localizations.dart';
-import '../model/global.dart';
+import '../logging/helper.dart';
 import '../model/habit_display.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 import '../theme/icon.dart';
 
 class HabitsSortViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  DisplaySortModeProfileHandler? _sortMode;
 
-  HabitsSortViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  HabitsSortViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _sortMode = newProfile.getHandler<DisplaySortModeProfileHandler>();
+  }
 
-  HabitDisplaySortType get sortType => _g.sortType;
-  HabitDisplaySortDirection get sortDirection => _g.sortDirection;
+  HabitDisplaySortType get sortType =>
+      _sortMode?.sortType ?? HabitDisplaySortType.manual;
+  HabitDisplaySortDirection get sortDirection =>
+      _sortMode?.sortDirection ?? HabitDisplaySortDirection.asc;
 
   Future<void> setNewSortMode(
       {HabitDisplaySortType? sortType,
       HabitDisplaySortDirection? sortDirection}) async {
-    var newSortType = (sortType != null) ? sortType : this.sortType;
-    var newSortDirection =
-        (sortDirection != null) ? sortDirection : this.sortDirection;
-    await _g.profile.setSortMode(newSortType, newSortDirection);
+    final Tuple2<HabitDisplaySortType, HabitDisplaySortDirection> newSortMode =
+        Tuple2((sortType != null) ? sortType : this.sortType,
+            (sortDirection != null) ? sortDirection : this.sortDirection);
+    appLog.value.info("$runtimeType.setNewSortMode",
+        beforeVal: [this.sortType, this.sortDirection], afterVal: newSortMode);
+    await _sortMode?.set(newSortMode);
     notifyListeners();
   }
 

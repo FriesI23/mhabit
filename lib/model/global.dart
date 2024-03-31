@@ -73,11 +73,6 @@ class Global
   @override
   Profile get profile => Profile();
 
-  HabitDisplaySortType get sortType =>
-      HabitDisplaySortType.getFromDBCode(profile.getSortMode().item1)!;
-  HabitDisplaySortDirection get sortDirection =>
-      HabitDisplaySortDirection.getFromDBCode(profile.getSortMode().item2)!;
-
   HabitsDisplayFilter get habitsDisplayFilter {
     var raw = profile.getHabitDisplayFilter();
     return HabitsDisplayFilter.fromMap(raw);

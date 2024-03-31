@@ -16,7 +16,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tuple/tuple.dart';
 
 import '../common/abc.dart';
 import '../common/consts.dart';
@@ -26,7 +25,6 @@ import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
-import '../model/habit_display.dart';
 
 mixin CacheInterface {
   Map<String, Object?> getInputFillCache();
@@ -35,9 +33,6 @@ mixin CacheInterface {
 
 abstract class ProfileInterface {
   Future<bool> clearAll();
-
-  Tuple2<int, int> getSortMode();
-  Future<bool> setSortMode(HabitDisplaySortType t, HabitDisplaySortDirection d);
 
   Map<String, Object?> getHabitDisplayFilter();
   Future<bool> setHabitDisplayFilter(Map<String, Object?> filterMap);
@@ -57,7 +52,6 @@ abstract class ProfileInterface {
 }
 
 enum ProfileKey {
-  habitSortMode,
   habitDisplayFilter,
   habitsRecordScrollBehavior,
   firstDay,
@@ -92,23 +86,6 @@ class Profile
   @override
   Future<bool> clearAll() {
     return _pref.clear();
-  }
-
-  @override
-  Tuple2<int, int> getSortMode() {
-    var raw = _pref.getString(ProfileKey.habitSortMode.name);
-    if (raw == null) {
-      return Tuple2(HabitDisplaySortType.manual.dbCode,
-          HabitDisplaySortDirection.asc.dbCode);
-    }
-    return Tuple2.fromList(jsonDecode(raw));
-  }
-
-  @override
-  Future<bool> setSortMode(
-      HabitDisplaySortType t, HabitDisplaySortDirection d) {
-    return _pref.setString(
-        ProfileKey.habitSortMode.name, jsonEncode([t.dbCode, d.dbCode]));
   }
 
   @override

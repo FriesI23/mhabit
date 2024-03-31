@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
+import '../../persistent/profile_provider.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/habit_summary.dart';
 import '../../provider/habits_file_importer.dart';
@@ -96,11 +97,10 @@ class PageProviders extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
-          ChangeNotifierProxyProvider<Global, HabitsSortViewModel>(
-            create: (context) =>
-                HabitsSortViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, HabitsSortViewModel>(
+            create: (context) => HabitsSortViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, HabitsFilterViewModel>(
             create: (context) =>
