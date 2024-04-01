@@ -24,7 +24,6 @@ import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../model/global.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -77,7 +76,7 @@ class PageHabitEdit extends StatelessWidget {
     assert(context.maybeRead<NotificationChannelData>() != null);
     assert(context.maybeRead<AppFirstDayViewModel>() != null);
     assert(context.maybeRead<AppDeveloperViewModel>() != null);
-    assert(context.maybeRead<Global>() != null);
+    assert(context.maybeRead<AppCachesViewModel>() != null);
     return PageProviders(
         initForm: initForm,
         child: HabitEditView(

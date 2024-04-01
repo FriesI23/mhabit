@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../logging/helper.dart';
-import '../persistent/profile/handler/compact_ui_switcher.dart';
+import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 
 class AppCompactUISwitcherViewModel extends ChangeNotifier
