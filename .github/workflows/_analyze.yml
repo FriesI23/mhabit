@@ -10,4 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup_flutter
-      - uses: zgosalvez/github-actions-analyze-dart@v3
+      - uses: FriesI23/github-actions-analyze-dart@v3.1.0
+        with:
+          ignore-suffixes: '.g.dart|.gen.dart|.mock.dart'
