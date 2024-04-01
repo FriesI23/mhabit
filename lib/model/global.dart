@@ -14,40 +14,11 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../db/profile.dart';
-import 'cache.dart';
+import '../logging/helper.dart';
 
-abstract class GlobalProxyProviderInterface {
-  Global get g;
-  void updateGlobal(Global newGloal);
-}
+class Global {
+  Global();
 
-abstract class GlobalInterface {}
-// coverage:ignore-end
-
-mixin CacheMixin {
-  late final Cache<String> inputFillCache;
-
-  int? get habitEditTargetDaysInputFill =>
-      inputFillCache.getCache<int>(InputFillCacheKey.habitEditTargetDays.name);
-
-  void updateHabitEditTargetDaysInputFill(int? newTargetDays) {
-    inputFillCache.updateCache<int>(
-        InputFillCacheKey.habitEditTargetDays.name, newTargetDays);
-  }
-
-  Future<List<bool>> clearAllCache() async {
-    List<bool> clearResultList = [];
-    List<Future> futures = [
-      inputFillCache.clear(onClear: (r) => clearResultList.add(r)),
-    ];
-    await Future.wait(futures);
-    return clearResultList;
-  }
-}
-
-mixin GlobalDevelopModeMixin {
-  Profile get profile;
   bool _isInDevelopMode = kDebugMode ? true : false;
   bool? _displayDebugMenu;
 
@@ -58,13 +29,14 @@ mixin GlobalDevelopModeMixin {
   void switchDisplayDebugMenu(bool value) => _displayDebugMenu = value;
 }
 
-class Global
-    with GlobalDevelopModeMixin, CacheMixin
-    implements GlobalInterface {
-  Global() {
-    inputFillCache = InputFillCache(profile: profile);
-  }
+abstract mixin class GlobalLoadedMixin {
+  late Global _g;
 
-  @override
-  Profile get profile => Profile();
+  Global get g => _g;
+
+  @mustCallSuper
+  void updateGlobal(Global newGloal) {
+    appLog.load.info("$runtimeType.updateGlobal", ex: [newGloal]);
+    _g = newGloal;
+  }
 }

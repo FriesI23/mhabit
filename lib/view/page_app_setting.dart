@@ -29,7 +29,6 @@ import '../common/enums.dart';
 import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
-import '../db/profile.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
@@ -39,6 +38,8 @@ import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
 import '../model/global.dart';
 import '../persistent/db_helper_provider.dart';
+import '../persistent/profile_provider.dart';
+import '../provider/app_caches.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
@@ -88,6 +89,7 @@ class PageAppSetting extends StatelessWidget {
     assert(context.maybeRead<AppDeveloperViewModel>() != null);
     assert(context.maybeRead<AppReminderViewModel>() != null);
     assert(context.maybeRead<AppThemeViewModel>() != null);
+    assert(context.maybeRead<ProfileViewModel>() != null);
     assert(context.maybeRead<Global>() != null);
     return const AppSettingView();
   }
@@ -140,7 +142,7 @@ class _AppSettingView extends State<AppSettingView>
     final result = await showAppSettingClearCacheDialog(context: context);
     if (!mounted || result != true) return;
 
-    final resultList = await context.read<Global>().clearAllCache();
+    final resultList = await context.read<AppCachesViewModel>().clearAllCache();
     if (!mounted) return;
 
     var hasSuss = false, hasFail = false;
@@ -290,8 +292,11 @@ class _AppSettingView extends State<AppSettingView>
     );
 
     if (result == null || !result) return;
-    await Profile().clearAll();
-    await NotificationService().cancelAppReminder();
+    await Future.wait([
+      context.read<ProfileViewModel>().clear(),
+      NotificationService().cancelAppReminder()
+    ]);
+    await context.read<ProfileViewModel>().reload();
 
     if (!mounted) return;
     final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(

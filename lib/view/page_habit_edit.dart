@@ -31,6 +31,7 @@ import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
 import '../model/habit_reminder.dart';
 import '../persistent/local/handler/habit.dart';
+import '../provider/app_caches.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/habit_form.dart';
@@ -153,13 +154,13 @@ class _HabitEditView extends State<HabitEditView> {
       context: context,
       targetDays: targetDays,
       initialCustomTargetDays:
-          context.read<Global>().habitEditTargetDaysInputFill,
+          context.read<AppCachesViewModel>().habitEditTargetDaysInputFill,
     );
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().targetDays = result.targetDays;
     if (result.isCustomDaysType) {
       context
-          .read<Global>()
+          .read<AppCachesViewModel>()
           .updateHabitEditTargetDaysInputFill(result.targetDays);
     }
   }

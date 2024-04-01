@@ -51,4 +51,7 @@ enum LoggerType {
 
   /// Localization
   l10n,
+
+  /// App cache
+  cache,
 }

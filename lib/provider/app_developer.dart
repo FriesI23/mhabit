@@ -18,19 +18,12 @@ import '../common/global.dart';
 import '../logging/level.dart';
 import '../model/global.dart';
 
-class AppDeveloperViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
+  AppDeveloperViewModel({required Global global}) {
+    updateGlobal(global);
+  }
 
-  AppDeveloperViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
-
-  @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
-
-  bool get isInDevelopMode => _g.isInDevelopMode;
+  bool get isInDevelopMode => g.isInDevelopMode;
 
   void switchDevelopMode(bool value) {
     if (g.isInDevelopMode != value) {
@@ -39,7 +32,7 @@ class AppDeveloperViewModel extends ChangeNotifier
     }
   }
 
-  bool get displayDebugMenu => _g.displayDebugMenu;
+  bool get displayDebugMenu => g.displayDebugMenu;
 
   void switchDisplayDebugMenu(bool value) {
     if (g.displayDebugMenu != value) {

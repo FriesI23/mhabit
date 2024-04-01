@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../db/profile.dart';
+import '../common/types.dart';
+import '../logging/helper.dart';
+import '../persistent/profile/profile_helper.dart';
 
 abstract class Cache<K> {
   T? getCache<T>(K key);
@@ -24,24 +26,20 @@ abstract class Cache<K> {
   bool isDirty();
 }
 
-enum InputFillCacheKey {
-  habitEditTargetDays,
-}
-
-class InputFillCache implements Cache<String> {
-  final Map<String, dynamic> _cache;
-  final WeakReference<Profile> _profile;
+class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
+    implements Cache<String> {
+  final JsonMap _cache = {};
+  final WeakReference<T> _handler;
   bool _dirty = false;
 
-  InputFillCache({required Profile profile})
-      : _profile = WeakReference(profile),
-        _cache = {} {
-    reload();
-  }
+  AppCacheDelegate({
+    required T handler,
+  }) : _handler = WeakReference(handler);
 
   @override
   Future<void> clear({void Function(bool)? onClear}) async {
-    if (_profile.target == null) onClear?.call(false);
+    appLog.cache.debug("$runtimeType.clear", ex: [this]);
+    if (_handler.target == null) onClear?.call(false);
     final oldCache = {..._cache};
     _cache.clear();
     _markDirty();
@@ -52,23 +50,25 @@ class InputFillCache implements Cache<String> {
 
   @override
   Future<void> reload({void Function(bool)? onReload}) async {
-    if (_profile.target == null) onReload?.call(false);
-    final raw = _profile.target!.getInputFillCache();
+    appLog.cache.debug("$runtimeType.reload", ex: [this]);
+    if (_handler.target == null) onReload?.call(false);
+    final raw = _handler.target!.get();
     _cache.clear();
-    _cache.addAll(raw);
+    if (raw != null) _cache.addAll(raw);
     onReload?.call(true);
   }
 
   @override
-  T? getCache<T>(key) {
+  V? getCache<V>(String key) {
     return _cache[key];
   }
 
   @override
-  Future<void> removeCache<T>(key,
-      {void Function(bool result, T? removeValue)? onRemoved}) async {
-    if (_profile.target == null) onRemoved?.call(false, null);
-    final oldValue = _cache.remove(key);
+  Future<void> removeCache<V>(String key,
+      {void Function(bool result, V? removeValue)? onRemoved}) async {
+    appLog.cache.debug("$runtimeType.removeCache", ex: [key, this]);
+    if (_handler.target == null) onRemoved?.call(false, null);
+    final V? oldValue = _cache.remove(key);
     _markDirty();
     final result = await writeCache();
     if (!result) _cache[key] = oldValue;
@@ -76,10 +76,11 @@ class InputFillCache implements Cache<String> {
   }
 
   @override
-  Future<void> updateCache<T>(key, T? value,
-      {void Function(bool result, T? oldValue)? onUpdated}) async {
-    if (_profile.target == null) onUpdated?.call(false, null);
-    final oldValue = _cache[key];
+  Future<void> updateCache<V>(String key, V? value,
+      {void Function(bool result, V? oldValue)? onUpdated}) async {
+    appLog.cache.debug("$runtimeType.updateCache", ex: [key, value, this]);
+    if (_handler.target == null) onUpdated?.call(false, null);
+    final V? oldValue = _cache[key];
     _cache[key] = value;
     _markDirty();
     final result = await writeCache();
@@ -97,9 +98,14 @@ class InputFillCache implements Cache<String> {
   void _markClean() => _dirty = false;
 
   Future<bool> writeCache() async {
-    if (_profile.target == null) return false;
-    final result = await _profile.target!.setInputFillCache(_cache);
+    appLog.cache.debug("$runtimeType.writeCache", ex: [this]);
+    if (_handler.target == null) return false;
+    final result = await _handler.target!.set(_cache);
     if (result) _markClean();
     return result;
   }
+
+  @override
+  String toString() =>
+      "$runtimeType(handler=$_handler,dirty=$_dirty,cache=$_cache)";
 }

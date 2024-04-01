@@ -20,6 +20,7 @@ import '../../l10n/localizations.dart';
 import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
+import '../../provider/app_caches.dart';
 import '../../provider/app_compact_ui_switcher.dart';
 import '../../provider/app_custom_date_format.dart';
 import '../../provider/app_developer.dart';
@@ -61,6 +62,11 @@ class AppProviders extends SingleChildStatelessWidget {
         providers: [
           Provider<Global>(
             create: (context) => Global(),
+          ),
+          ProxyProvider<ProfileViewModel, AppCachesViewModel>(
+            create: (context) => AppCachesViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProvider<NotificationChannelData>(
             create: (context) => NotificationChannelData(),

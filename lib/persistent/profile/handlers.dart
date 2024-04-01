@@ -22,4 +22,5 @@ export './handler/display_habits_filter.dart';
 export './handler/display_sort_mode.dart';
 export './handler/first_day.dart';
 export './handler/habit_cell_gesture_mode.dart';
+export './handler/input_fill_cache.dart';
 export './handler/show_data_format.dart';

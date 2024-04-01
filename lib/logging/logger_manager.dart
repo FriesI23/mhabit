@@ -42,6 +42,7 @@ abstract interface class AppLoggerMananger with FutureInitializationABC {
   AppTextLogger get network;
   AppTextLogger get json;
   AppWidgetLogger get l10n;
+  AppTextLogger get cache;
 
   Future<bool> changeLogger(l.Logger newLogger);
 
@@ -137,6 +138,9 @@ class _AppLoggerManager implements AppLoggerMananger {
         LoggerType.l10n,
         buildNewLogger: (t) => AppWidgetLogger(this, t),
       );
+
+  @override
+  AppTextLogger get cache => _tryGetAppTextLogger(LoggerType.cache);
 
   @override
   Future<bool> changeLogger(l.Logger newLogger) async {

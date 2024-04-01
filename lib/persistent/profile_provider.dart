@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/abc.dart';
+import '../common/global.dart';
 import '../logging/helper.dart';
 import '../provider/commons.dart';
 import 'profile/profile_helper.dart';
@@ -41,14 +42,17 @@ class ProfileViewModel extends ChangeNotifier
 
   @override
   Future init() async {
-    if (_completer == null) {
-      _completer = Completer();
+    Future doInit() async {
       final handlerKeyColl = <String, Type>{};
       _pref = await SharedPreferences.getInstance();
+      if (kDebugMode && debugClearSharedPrefWhenStart) {
+        appLog.profile.info("$runtimeType.init", ex: ["clear preferences"]);
+        await clear();
+      }
       _handlers =
           Map.fromEntries(_handlerBuilders.map((e) => e.call(_pref)).where((e) {
         if (handlerKeyColl.containsKey(e.key)) {
-          appLog.load.error("$runtimeType.init",
+          appLog.profile.error("$runtimeType.init",
               ex: ["load handler failed", e, e.key, handlerKeyColl[e.key]]);
           if (kDebugMode) throw FlutterError("load handler failed: $e");
           return false;
@@ -56,6 +60,11 @@ class ProfileViewModel extends ChangeNotifier
         handlerKeyColl[e.key] = e.runtimeType;
         return true;
       }).map((e) => MapEntry(e.runtimeType, e)));
+    }
+
+    if (_completer == null) {
+      _completer = Completer();
+      await doInit();
       _completer!.complete();
     }
     return _completer!.future;
@@ -98,11 +107,13 @@ class ProfileViewModel extends ChangeNotifier
 }
 
 abstract mixin class ProfileHandlerLoadedMixin {
-  late ProfileViewModel profile;
+  late ProfileViewModel _profile;
+
+  ProfileViewModel get profile => _profile;
 
   @mustCallSuper
   void updateProfile(ProfileViewModel newProfile) {
-    appLog.load.info("$runtimeType.updateDBHelper", ex: [newProfile]);
-    profile = newProfile;
+    appLog.profile.info("$runtimeType.updateProfile", ex: [newProfile]);
+    _profile = newProfile;
   }
 }

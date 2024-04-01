@@ -46,6 +46,7 @@ class App extends StatelessWidget {
     yield (pref) => ShowDateFormatProfileHandler(pref);
     yield (pref) => FirstDayProfileHandler(pref);
     yield (pref) => HabitCellGestureModeProfileHandler(pref);
+    yield (pref) => InputFillCacheProfileHandler(pref);
   }
 
   @override
