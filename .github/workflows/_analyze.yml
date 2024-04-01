@@ -8,7 +8,7 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
       - uses: FriesI23/github-actions-analyze-dart@v3.1.0
         with:
