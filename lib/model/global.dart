@@ -13,48 +13,12 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
-import '../common/consts.dart';
-import '../common/enums.dart';
-import '../db/profile.dart';
-import '../theme/color.dart';
-import 'app_reminder_config.dart';
-import 'cache.dart';
-import 'custom_date_format.dart';
-import 'habit_display.dart';
+import '../logging/helper.dart';
 
-abstract class GlobalProxyProviderInterface {
-  Global get g;
-  void updateGlobal(Global newGloal);
-}
+class Global {
+  Global();
 
-abstract class GlobalInterface {}
-// coverage:ignore-end
-
-mixin CacheMixin {
-  late final Cache<String> inputFillCache;
-
-  int? get habitEditTargetDaysInputFill =>
-      inputFillCache.getCache<int>(InputFillCacheKey.habitEditTargetDays.name);
-
-  void updateHabitEditTargetDaysInputFill(int? newTargetDays) {
-    inputFillCache.updateCache<int>(
-        InputFillCacheKey.habitEditTargetDays.name, newTargetDays);
-  }
-
-  Future<List<bool>> clearAllCache() async {
-    List<bool> clearResultList = [];
-    List<Future> futures = [
-      inputFillCache.clear(onClear: (r) => clearResultList.add(r)),
-    ];
-    await Future.wait(futures);
-    return clearResultList;
-  }
-}
-
-mixin GlobalDevelopModeMixin {
-  Profile get profile;
   bool _isInDevelopMode = kDebugMode ? true : false;
   bool? _displayDebugMenu;
 
@@ -65,46 +29,14 @@ mixin GlobalDevelopModeMixin {
   void switchDisplayDebugMenu(bool value) => _displayDebugMenu = value;
 }
 
-class Global
-    with GlobalDevelopModeMixin, CacheMixin
-    implements GlobalInterface {
-  Global() {
-    inputFillCache = InputFillCache(profile: profile);
+abstract mixin class GlobalLoadedMixin {
+  late Global _g;
+
+  Global get g => _g;
+
+  @mustCallSuper
+  void updateGlobal(Global newGloal) {
+    appLog.load.info("$runtimeType.updateGlobal", ex: [newGloal]);
+    _g = newGloal;
   }
-
-  @override
-  Profile get profile => Profile();
-
-  AppThemeType get themeType =>
-      AppThemeType.getFromDBCode(profile.getThemeType())!;
-  Color get themeMainColor => Color(profile.getSysThemeMainColor());
-
-  HabitDisplaySortType get sortType =>
-      HabitDisplaySortType.getFromDBCode(profile.getSortMode().item1)!;
-  HabitDisplaySortDirection get sortDirection =>
-      HabitDisplaySortDirection.getFromDBCode(profile.getSortMode().item2)!;
-
-  HabitsDisplayFilter get habitsDisplayFilter {
-    var raw = profile.getHabitDisplayFilter();
-    return HabitsDisplayFilter.fromMap(raw);
-  }
-
-  HabitsRecordScrollBehavior get habitsRecordScrollBehavior =>
-      HabitsRecordScrollBehavior.getFromDBCode(
-          profile.getHabitsRecordScrollBehavior(),
-          withDefault: defaultHabitsRecordScrollBehavior)!;
-
-  int get firstDay => profile.getFirstDay();
-
-  AppReminderConfig get appReminderConfig => profile.getAppReminder();
-
-  CustomDateYmdHmsConfig get customDateYmdHmsConfig =>
-      profile.getCustomDateYmdHmsConfig();
-
-  int get displayPageCalendarBarOccupyPrt =>
-      profile.getDisplayCalendarBarOccupyPrt();
-
-  bool get compactUISwitcher => profile.getCompactUISwticher();
-
-  HabitDisplayOpConfig get displayOpConfig => profile.getDisplayOpConfig();
 }

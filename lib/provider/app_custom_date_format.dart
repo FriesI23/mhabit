@@ -14,25 +14,30 @@
 
 import 'package:flutter/material.dart';
 
+import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
-import '../model/global.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 
 class AppCustomDateYmdHmsConfigViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  ShowDateFormatProfileHandler? _dataFmt;
 
-  AppCustomDateYmdHmsConfigViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  AppCustomDateYmdHmsConfigViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _dataFmt = newProfile.getHandler<ShowDateFormatProfileHandler>();
+  }
 
-  CustomDateYmdHmsConfig get config => g.customDateYmdHmsConfig;
+  CustomDateYmdHmsConfig get config =>
+      _dataFmt?.get() ?? const CustomDateYmdHmsConfig.withDefault();
 
   Future<void> setNewConfig(CustomDateYmdHmsConfig newConfig) async {
-    await g.profile.setCustomDateYmdHmsConfig(newConfig);
+    appLog.value.info("$runtimeType.setNewConfig",
+        beforeVal: config, afterVal: newConfig);
+    await _dataFmt?.set(newConfig);
     notifyListeners();
   }
 }

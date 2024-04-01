@@ -19,6 +19,8 @@ import 'package:provider/provider.dart';
 import '../../l10n/localizations.dart';
 import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
+import '../../persistent/profile_provider.dart';
+import '../../provider/app_caches.dart';
 import '../../provider/app_compact_ui_switcher.dart';
 import '../../provider/app_custom_date_format.dart';
 import '../../provider/app_developer.dart';
@@ -61,47 +63,48 @@ class AppProviders extends SingleChildStatelessWidget {
           Provider<Global>(
             create: (context) => Global(),
           ),
+          ProxyProvider<ProfileViewModel, AppCachesViewModel>(
+            create: (context) => AppCachesViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
+          ),
           ChangeNotifierProvider<NotificationChannelData>(
             create: (context) => NotificationChannelData(),
           ),
-          ChangeNotifierProxyProvider<Global, AppThemeViewModel>(
-            create: (context) =>
-                AppThemeViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppThemeViewModel>(
+            create: (context) => AppThemeViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, AppCompactUISwitcherViewModel>(
-            create: (context) =>
-                AppCompactUISwitcherViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              AppCompactUISwitcherViewModel>(
+            create: (context) => AppCompactUISwitcherViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, AppFirstDayViewModel>(
-            create: (context) =>
-                AppFirstDayViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
+            create: (context) => AppFirstDayViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global,
+          ChangeNotifierProxyProvider<ProfileViewModel,
               AppCustomDateYmdHmsConfigViewModel>(
-            create: (context) => AppCustomDateYmdHmsConfigViewModel(
-                global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+            create: (context) => AppCustomDateYmdHmsConfigViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<Global, HabitRecordOpConfigViewModel>(
-            create: (context) =>
-                HabitRecordOpConfigViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              HabitRecordOpConfigViewModel>(
+            create: (context) => HabitRecordOpConfigViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider2<Global, NotificationChannelData,
-              AppReminderViewModel>(
+          ChangeNotifierProxyProvider2<ProfileViewModel,
+              NotificationChannelData, AppReminderViewModel>(
             lazy: false,
-            create: (context) =>
-                AppReminderViewModel(global: context.read<Global>()),
-            update: (context, global, channel, previous) => previous!
-              ..updateGlobal(global)
+            create: (context) => AppReminderViewModel(),
+            update: (context, profile, channel, previous) => previous!
+              ..updateProfile(profile)
               ..setNotificationChannelData(channel, l10n: L10n.of(context)),
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(

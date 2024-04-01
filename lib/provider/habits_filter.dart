@@ -14,28 +14,34 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/global.dart';
+import '../logging/helper.dart';
 import '../model/habit_display.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 
 class HabitsFilterViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  DisplayHabitsFilterProfileHandler? _filter;
 
-  HabitsFilterViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  HabitsFilterViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _filter = newProfile.getHandler<DisplayHabitsFilterProfileHandler>();
+  }
 
-  HabitsDisplayFilter get habitsDisplayFilter => _g.habitsDisplayFilter;
+  HabitsDisplayFilter get habitsDisplayFilter =>
+      _filter?.get() ?? const HabitsDisplayFilter.withDefault();
 
   Future<void> setNewHabitsDisplayFilter(HabitsDisplayFilter? newFilter,
       {bool listen = true}) async {
-    var filter = newFilter ?? const HabitsDisplayFilter.withDefault();
-    await _g.profile.setHabitDisplayFilter(filter.toMap());
-    if (listen) notifyListeners();
+    if (_filter?.get() != newFilter) {
+      appLog.value.info("$runtimeType.setNewHabitsDisplayFilter",
+          beforeVal: habitsDisplayFilter, afterVal: newFilter);
+      await _filter?.set(newFilter ?? const HabitsDisplayFilter.withDefault());
+      if (listen) notifyListeners();
+    }
   }
 
   int getHabitDisplayFilterAllowedNumber() {

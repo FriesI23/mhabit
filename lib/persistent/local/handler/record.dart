@@ -17,9 +17,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../common/types.dart';
-import '../table.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
+import '../table.dart';
 import 'habit.dart';
 
 part 'record.g.dart';

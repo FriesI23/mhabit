@@ -14,39 +14,44 @@
 
 import 'package:flutter/material.dart';
 
+import '../common/consts.dart';
 import '../common/utils.dart';
-import '../model/global.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 import '../theme/color.dart';
 
-class AppThemeViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
+  AppThemeTypeProfileHandler? _theme;
+  AppThemeMainColorProfileHandler? _mainColor;
+  DisplayCalendartBarOccupyPrtProfileHandler? _calOccupy;
 
-  AppThemeViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  AppThemeViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _theme = newProfile.getHandler<AppThemeTypeProfileHandler>();
+    _mainColor = newProfile.getHandler<AppThemeMainColorProfileHandler>();
+    _calOccupy =
+        newProfile.getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
+  }
 
   //#region app theme
-  AppThemeType get themeType => _g.themeType;
+  AppThemeType get themeType => _theme?.get() ?? appDefaultThemeType;
   ThemeMode get matertialThemeType => transToMaterialThemeType(themeType);
 
   Future<void> setNewthemeType(AppThemeType newThemeType) async {
-    if (_g.themeType != newThemeType) {
-      await _g.profile.setThemeType(newThemeType);
+    if (_theme?.get() != newThemeType) {
+      await _theme?.set(newThemeType);
       notifyListeners();
     }
   }
 
   Future<void> onTapChangeThemeType(Brightness brightness) async {
-    var crtThemeType = _g.themeType;
-    AppThemeType nextThemeType;
+    final AppThemeType nextThemeType;
     // in lightmode: followSystem -> light -> dark -> followSystem -> ...
     // in darkmode: followSystem -> dart -> light -> followSystem -> ...
-    switch (crtThemeType) {
+    switch (themeType) {
       case AppThemeType.light:
         nextThemeType = brightness == Brightness.light
             ? AppThemeType.dark
@@ -68,12 +73,17 @@ class AppThemeViewModel extends ChangeNotifier
   }
   //#endregion
 
+  //#region app theme main color
+  Color get mainColor => _mainColor?.get() ?? appDefaultThemeMainColor;
+  //#endregion
+
   //#region display page occupy percentage
-  int get displayPageOccupyPrt => _g.displayPageCalendarBarOccupyPrt;
+  int get displayPageOccupyPrt =>
+      _calOccupy?.get() ?? appCalendarBarDefualtOccupyPrt;
 
   Future<void> setNewDisplayPageOccupyPrt(int newPrt) async {
-    if (_g.displayPageCalendarBarOccupyPrt != newPrt) {
-      await _g.profile.setDisplayCalendarBarOccupyPrt(newPrt);
+    if (_calOccupy?.get() != newPrt) {
+      await _calOccupy?.set(newPrt);
       notifyListeners();
     }
   }

@@ -14,25 +14,32 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/global.dart';
+import '../common/consts.dart';
+import '../common/utils.dart';
+import '../logging/helper.dart';
+import '../persistent/profile/handlers.dart';
+import '../persistent/profile_provider.dart';
 
 class AppFirstDayViewModel extends ChangeNotifier
-    implements GlobalProxyProviderInterface {
-  Global _g;
+    with ProfileHandlerLoadedMixin {
+  FirstDayProfileHandler? _firstDay;
 
-  AppFirstDayViewModel({required Global global}) : _g = global;
-
-  @override
-  Global get g => _g;
+  AppFirstDayViewModel();
 
   @override
-  void updateGlobal(Global newGloal) => _g = newGloal;
+  void updateProfile(ProfileViewModel newProfile) {
+    super.updateProfile(newProfile);
+    _firstDay = newProfile.getHandler<FirstDayProfileHandler>();
+  }
 
-  int get firstDay => g.firstDay;
+  int get firstDay => _firstDay?.get() ?? defaultFirstDay;
 
   Future<void> setNewFirstDay(int newFirstDay) async {
-    if (g.firstDay != newFirstDay) {
-      await g.profile.setFirstDay(newFirstDay);
+    if (_firstDay?.get() != newFirstDay) {
+      final stdNewFirstDay = standardizeFirstDay(newFirstDay);
+      appLog.value.info("$runtimeType.setNewFirstDay",
+          beforeVal: firstDay, afterVal: newFirstDay, ex: [stdNewFirstDay]);
+      await _firstDay?.set(stdNewFirstDay);
       notifyListeners();
     }
   }

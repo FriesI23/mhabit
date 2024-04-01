@@ -24,13 +24,13 @@ import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../model/global.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
 import '../model/habit_reminder.dart';
 import '../persistent/local/handler/habit.dart';
+import '../provider/app_caches.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/habit_form.dart';
@@ -76,7 +76,7 @@ class PageHabitEdit extends StatelessWidget {
     assert(context.maybeRead<NotificationChannelData>() != null);
     assert(context.maybeRead<AppFirstDayViewModel>() != null);
     assert(context.maybeRead<AppDeveloperViewModel>() != null);
-    assert(context.maybeRead<Global>() != null);
+    assert(context.maybeRead<AppCachesViewModel>() != null);
     return PageProviders(
         initForm: initForm,
         child: HabitEditView(
@@ -153,13 +153,13 @@ class _HabitEditView extends State<HabitEditView> {
       context: context,
       targetDays: targetDays,
       initialCustomTargetDays:
-          context.read<Global>().habitEditTargetDaysInputFill,
+          context.read<AppCachesViewModel>().habitEditTargetDaysInputFill,
     );
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().targetDays = result.targetDays;
     if (result.isCustomDaysType) {
       context
-          .read<Global>()
+          .read<AppCachesViewModel>()
           .updateHabitEditTargetDaysInputFill(result.targetDays);
     }
   }
