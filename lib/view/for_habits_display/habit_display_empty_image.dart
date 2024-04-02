@@ -15,7 +15,7 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/consts.dart';
+import '../../assets/assets.dart';
 import '../../component/widget.dart';
 import '../../extension/color_extensions.dart';
 
@@ -69,7 +69,7 @@ class _Key {
 class HabitDisplayEmptyImage extends StatelessWidget {
   final Size? size;
   final EdgeInsetsGeometry? padding;
-  final String imagePath;
+  final String? imagePath;
   final Widget? descChild;
   final HabitDisplayEmptyImageStyle? style;
 
@@ -77,7 +77,7 @@ class HabitDisplayEmptyImage extends StatelessWidget {
     super.key,
     this.size,
     this.padding,
-    this.imagePath = emptyHabitsImagePath,
+    this.imagePath,
     this.descChild,
     this.style,
   });
@@ -112,7 +112,7 @@ class HabitDisplayEmptyImage extends StatelessWidget {
               SvgTemplateImage(
                 size: size,
                 label: 'habit-display-empty-image',
-                svgTemplatePath: imagePath,
+                svgTemplatePath: imagePath ?? Assets.images.emptyHabitsSvg,
                 svgTemplateFormat: {
                   _Key.backBoardBackgroundColor:
                       (style?.backBoardBackgroundColor ??

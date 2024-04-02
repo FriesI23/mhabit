@@ -29,7 +29,7 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
-import '_utils/change_record_status_utils.dart';
+import '_utils/habit_record_utils.dart';
 import 'commons.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
@@ -498,7 +498,7 @@ class HabitDetailViewModel extends ChangeNotifier
     if (_habitDetailData == null) return null;
 
     final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnTap();
     if (recordTuple == null) return null;
 
@@ -544,7 +544,7 @@ class HabitDetailViewModel extends ChangeNotifier
     if (_habitDetailData == null) return null;
 
     final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnLongTap(newValue);
     if (recordTuple == null) return null;
 

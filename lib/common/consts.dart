@@ -119,8 +119,3 @@ const skipReasonChipTextList = [
   '😠',
 ];
 //#endregion
-
-//#region assets
-const emptyHabitsImagePath = "assets/images/empty-habits.svg.template";
-const notFoundImagePath = "assets/images/not-found.svg.template";
-//#endregion
