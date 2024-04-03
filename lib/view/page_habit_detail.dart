@@ -674,7 +674,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 if (!mounted) return;
                 final viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
-                viewmodel.scoreChartCombine = combine;
+                viewmodel.updateScoreChartCombine(combine);
               },
               chartBuilder: buildChart,
             );
@@ -770,7 +770,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 if (!mounted) return;
                 var viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
-                viewmodel.freqChartCombine = combine;
+                viewmodel.updateFreqChartCombine(combine);
               },
               countChartBuilder: (context, data, eachSize, barWidth,
                       barSpaceBetween, displayMethod, chartKey) =>
@@ -884,19 +884,14 @@ class _HabitDetailView extends State<HabitDetailView>
           var viewmodel = context.read<HabitDetailViewModel>();
 
           Future<HabitDetailLoadDataResult> loadData() async {
-            var loadedFuture =
+            final loading =
                 viewmodel.loadData(widget.habitUUID, inFutureBuilder: true);
             await Future.delayed(_kHabitDetailFutureLoadDuration);
-            return await loadedFuture;
-          }
-
-          Future<HabitDetailLoadDataResult>? getFuture() {
-            viewmodel.dataloadingFutureCache ??= loadData();
-            return viewmodel.dataloadingFutureCache;
+            return await loading;
           }
 
           return FutureBuilder(
-            future: getFuture(),
+            future: loadData(),
             builder: (context, snapshot) {
               appLog.load.debug("$widget.buildBody",
                   ex: ["Loading detail data", snapshot.connectionState]);
