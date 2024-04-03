@@ -48,11 +48,11 @@ class HabitDetailViewModel extends ChangeNotifier
     implements ProviderMounted, HabitSummaryDirtyMarker {
   // data
   HabitDetailData? _habitDetailData;
-  final Map<HabitDate, num> _heatmapDateToColorMap = {};
-  final Map<HabitDate, num> _habitScoreChangedDateColl = {};
+  final _heatmapDateToColorMap = <HabitDate, num>{};
+  final _habitScoreChangedDateColl = <HabitDate, num>{};
   // status
   bool _reloadDBToggleSwich = false;
-  Future<HabitDetailLoadDataResult>? _loading;
+  Completer<HabitDetailLoadDataResult>? _loading;
   HabitDetailFreqChartCombine _freqChartCombine =
       defaultHabitDetailFreqChardCombine;
   HabitDetailScoreChartCombine _scoreChartCombine =
@@ -146,7 +146,7 @@ class HabitDetailViewModel extends ChangeNotifier
   bool rockreloadDBToggleSwich() {
     _reloadDBToggleSwich = !_reloadDBToggleSwich;
     if (_loading != null) {
-      CancelableOperation.fromFuture(_loading!).cancel();
+      CancelableOperation.fromFuture(_loading!.future).cancel();
       _loading = null;
     }
     notifyListeners();
@@ -157,7 +157,7 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = true, bool inFutureBuilder = false}) async {
     if (_loading != null) {
       appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
-      return _loading!;
+      return _loading!.future;
     }
 
     Future<HabitDetailData?> loadingData() async {
@@ -175,7 +175,7 @@ class HabitDetailViewModel extends ChangeNotifier
       return data;
     }
 
-    final completer = Completer<HabitDetailLoadDataResult>();
+    final completer = _loading = Completer<HabitDetailLoadDataResult>();
     appLog.load.debug("$runtimeType.load",
         ex: ["loading data", listen, inFutureBuilder]);
     _habitDetailData = await loadingData();
@@ -292,7 +292,7 @@ class HabitDetailViewModel extends ChangeNotifier
   //#endregion
 
   //#region actions
-  Future<HabitSummaryRecord?> onTapToChangeRecordStatus(HabitRecordDate date,
+  Future<HabitSummaryRecord?> changeRecordStatus(HabitRecordDate date,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;
 
@@ -320,7 +320,7 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeReason(
+  Future<HabitSummaryRecord?> changeRecordReason(
       HabitRecordDate date, String newReason,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;
@@ -337,7 +337,7 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeRecordValue(
+  Future<HabitSummaryRecord?> changeRecordValue(
       HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;

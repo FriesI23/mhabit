@@ -358,7 +358,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (result == null || result == initReason || !mounted) return;
     context
         .read<HabitSummaryViewModel>()
-        .onLongPressChangeReason(parentUUID, date, result);
+        .changeRecordReason(parentUUID, date, result);
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
@@ -398,7 +398,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     );
 
     if (result == null || result == orgNum || !mounted) return;
-    viewmodel.onLongPressChangeRecordValue(parentUUID, date, result);
+    viewmodel.changeRecordValue(parentUUID, date, result);
   }
 
   void _exportSelectedHabitsAndShared(BuildContext context) async {
@@ -562,9 +562,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     ) async {
       if (!mounted) return;
 
-      context
-          .read<HabitSummaryViewModel>()
-          .onTapToChangeRecordStatus(puuid, date);
+      context.read<HabitSummaryViewModel>().changeRecordStatus(puuid, date);
     }
 
     void handleOpenRecordStatusDialog(
@@ -990,15 +988,9 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             }
           }
 
-          Future? getFuture() {
-            final viewmodel = context.read<HabitSummaryViewModel>();
-            viewmodel.dataloadingFutureCache ??= loadData();
-            return viewmodel.dataloadingFutureCache;
-          }
-
           final viewmodel = context.read<HabitSummaryViewModel>();
           return FutureBuilder(
-            future: getFuture(),
+            future: loadData(),
             builder: (context, snapshot) {
               appLog.load.debug("$widget.buildHabits", ex: [
                 "Loading data",
