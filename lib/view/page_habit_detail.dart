@@ -88,6 +88,13 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
+/// Depend Providers
+/// - Required for builder:
+///   - [AppFirstDayViewModel]
+/// - Required for callback:
+///   - [HabitFileExporterViewModel]
+/// - Optional:
+///   - [HabitSummaryViewModel]
 class PageHabitDetail extends StatelessWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
@@ -96,8 +103,6 @@ class PageHabitDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(context.maybeRead<HabitFileExporterViewModel>() != null);
-    assert(context.maybeRead<AppFirstDayViewModel>() != null);
     return PageProviders(
         child: HabitDetailView(habitUUID: habitUUID, colorType: colorType));
   }

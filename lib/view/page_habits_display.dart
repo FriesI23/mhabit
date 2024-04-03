@@ -29,7 +29,6 @@ import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
-import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_record_form.dart';
@@ -69,13 +68,15 @@ const _kPressFABAnimateDuration = Duration(milliseconds: 500);
 
 const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
 
+/// Depend Providers
+/// - Required for builder:
+///   - [AppThemeViewModel]
+///   - [AppCompactUISwitcherViewModel]
 class PageHabitsDisplay extends StatelessWidget {
   const PageHabitsDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
-    assert(context.maybeRead<AppThemeViewModel>() != null);
-    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
     return const PageProviders(child: HabitsDisplayView());
   }
 }
