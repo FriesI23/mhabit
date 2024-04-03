@@ -27,11 +27,11 @@ import '../persistent/db_helper_provider.dart';
 
 class HabitFileExporterViewModel extends ChangeNotifier
     with DBHelperLoadedMixin {
-  static const defualtExportFileNamePrefix = "export-habits";
+  static const defaultExportFileNamePrefix = "export-habits";
 
   String _getExportDataFileName(
       {DateTime? dateTime,
-      String? prefix = defualtExportFileNamePrefix,
+      String? prefix = defaultExportFileNamePrefix,
       String? suffix}) {
     dateTime = dateTime ?? DateTime.now();
     final dateString = DateFormat('y_MM_dd_H_m_s').format(dateTime);
