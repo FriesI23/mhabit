@@ -28,8 +28,7 @@ typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> = T Function(
     SharedPreferences pref);
 
 class ProfileViewModel extends ChangeNotifier
-    with ProviderMounted
-    implements AsyncInitialization {
+    implements ProviderMounted, AsyncInitialization {
   late final SharedPreferences _pref;
 
   final Iterable<ProfileHandlerBuilder> _handlerBuilders;

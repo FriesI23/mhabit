@@ -48,11 +48,11 @@ mixin ScrollControllerChangeNotifierMixin {
   bool get isAppbarPinned => _isAppbarPinned;
 }
 
-abstract mixin class ProviderMounted {
+abstract interface class ProviderMounted {
   bool get mounted;
 }
 
-abstract class HabitSummaryDirtyMarkABC {
+abstract interface class HabitSummaryDirtyMarker {
   void bumpHatbitVersion(HabitSummaryData data);
 }
 

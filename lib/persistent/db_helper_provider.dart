@@ -28,8 +28,7 @@ import 'local/handler/habit.dart';
 import 'local/handler/record.dart';
 
 class DBHelperViewModel extends ChangeNotifier
-    with ProviderMounted
-    implements AsyncInitialization {
+    implements ProviderMounted, AsyncInitialization {
   final DBHelper local;
 
   Completer? _completer;

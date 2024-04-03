@@ -295,7 +295,7 @@ class HabitDetailViewModel extends ChangeNotifier
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
         DBOperationsMixin
-    implements ProviderMounted, HabitSummaryDirtyMarkABC {
+    implements ProviderMounted, HabitSummaryDirtyMarker {
   // data
   HabitDetailData? _habitDetailData;
   // status

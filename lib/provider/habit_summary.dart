@@ -166,7 +166,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
         DBOperationsMixin
-    implements ProviderMounted, HabitSummaryDirtyMarkABC {
+    implements ProviderMounted, HabitSummaryDirtyMarker {
   HabitSummaryViewModel({
     required ScrollController verticalScrollController,
     required super.horizonalScrollControllerGroup,

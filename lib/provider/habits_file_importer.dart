@@ -19,7 +19,8 @@ import '../persistent/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier
-    with ProviderMounted, DBHelperLoadedMixin {
+    with DBHelperLoadedMixin
+    implements ProviderMounted {
   // status
   bool _needReloadDisplayUI = false;
   // inside status
