@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
@@ -29,278 +32,31 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
-import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
+import 'utils.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
 enum HabitDetailLoadDataResult {
   done,
-  alreadyLoaded,
   habitMissing,
 }
 
-mixin _HabitDetailHeatmapColorMixin {
-  HabitDetailData? habitDetailData;
-  final Map<HabitDate, num> _heatmapDateToColorMap = {};
-
-  Map<HabitDate, num> get heatmapDateToColorMap => _heatmapDateToColorMap;
-
-  num? _getNormalHabitRecordHeatmapColor(HabitSummaryRecord record) {
-    switch (record.status) {
-      case HabitRecordStatus.unknown:
-        return null;
-      case HabitRecordStatus.skip:
-        return null;
-      case HabitRecordStatus.done:
-        final data = habitDetailData!.data;
-        final complateStatus = HabitDailyRecordForm.getImp(
-          type: data.type,
-          value: record.value,
-          targetValue: data.dailyGoal,
-          extraTargetValue: data.dailyGoalExtra,
-        ).complateStatus;
-        switch (complateStatus) {
-          case HabitDailyComplateStatus.zero:
-            return HabitHeatMapColorMapDefine.uncomplate;
-          case HabitDailyComplateStatus.ok:
-            return HabitHeatMapColorMapDefine.complate;
-          case HabitDailyComplateStatus.goodjob:
-            return HabitHeatMapColorMapDefine.overfulfil;
-          case HabitDailyComplateStatus.tryhard:
-            return HabitHeatMapColorMapDefine.partiallyCompleted;
-          default:
-            return null;
-        }
-    }
-  }
-
-  num? _getNegativeHabitRecordHeatmapColor(HabitSummaryRecord record) {
-    switch (record.status) {
-      case HabitRecordStatus.unknown:
-        return null;
-      case HabitRecordStatus.skip:
-        return null;
-      case HabitRecordStatus.done:
-        final data = habitDetailData!.data;
-        final complateStatus = HabitDailyRecordForm.getImp(
-          type: data.type,
-          value: record.value,
-          targetValue: data.dailyGoal,
-          extraTargetValue: data.dailyGoalExtra,
-        ).complateStatus;
-        switch (complateStatus) {
-          case HabitDailyComplateStatus.ok:
-            return HabitHeatMapColorMapDefine.complate;
-          case HabitDailyComplateStatus.goodjob:
-            return HabitHeatMapColorMapDefine.overfulfil;
-          case HabitDailyComplateStatus.tryhard:
-            return HabitHeatMapColorMapDefine.partiallyCompleted;
-          case HabitDailyComplateStatus.noeffect:
-            return HabitHeatMapColorMapDefine.uncomplate;
-          default:
-            return null;
-        }
-    }
-  }
-
-  void calcRecordsHeatmapColorMap() {
-    if (habitDetailData == null) return;
-    Map<HabitDate, num> tmpMap = {};
-
-    for (var date in habitDetailData!.autoRecordsDate) {
-      tmpMap[date] = HabitHeatMapColorMapDefine.autoComplate;
-    }
-
-    for (var record in habitDetailData!.records) {
-      num? colorNum;
-      switch (habitDetailData!.type) {
-        case HabitType.unknown:
-          break;
-        case HabitType.normal:
-          colorNum = _getNormalHabitRecordHeatmapColor(record);
-          break;
-        case HabitType.negative:
-          colorNum = _getNegativeHabitRecordHeatmapColor(record);
-          break;
-      }
-      if (colorNum != null) tmpMap[record.date] = colorNum;
-    }
-
-    _heatmapDateToColorMap
-      ..clear()
-      ..addAll(tmpMap);
-  }
-}
-
-mixin _HabitDetailFreqChartMixin {
-  HabitDetailData? habitDetailData;
-  HabitDetailFreqChartCombine _freqChartCombine =
-      defaultHabitDetailFreqChardCombine;
-
-  HabitDetailFreqChartCombine get freqChartCombine => _freqChartCombine;
-
-  int get firstday;
-
-  set freqChartCombine(HabitDetailFreqChartCombine newCombine) {
-    _freqChartCombine = newCombine;
-  }
-
-  Map<HabitDate, HabitDetailFreqChartData> getRecordFreqChartDatas() {
-    Map<HabitDate, HabitDetailFreqChartData> result = {};
-
-    void tryAddRecordToResult(
-      HabitDate date, {
-      int partiallyCompleted = 0,
-      int autoComplate = 0,
-      int complate = 0,
-      int overfulfil = 0,
-      num partiallyCompletedTotalValue = 0,
-      num autoComplateTotalValue = 0,
-      num complateTotalValue = 0,
-      num overfulfilTotalValue = 0,
-    }) {
-      HabitDetailFreqChartData data;
-
-      var firstDate =
-          getProtoDateByFreqChartCombine(date, freqChartCombine, firstday);
-      if (result.containsKey(firstDate)) {
-        data = result[firstDate]!;
-      } else {
-        data = HabitDetailFreqChartData();
-        result[firstDate] = data;
-      }
-
-      data.increasedOnly(
-        partiallyCompleted: partiallyCompleted,
-        autoComplate: autoComplate,
-        complate: complate,
-        overfulfil: overfulfil,
-        partiallyCompletedTotalValue: partiallyCompletedTotalValue,
-        autoComplateTotalValue: autoComplateTotalValue,
-        complateTotalValue: complateTotalValue,
-        overfulfilTotalValue: overfulfilTotalValue,
-      );
-    }
-
-    if (habitDetailData == null) return result;
-
-    // Fixed #84
-    // Use the user-entered value for auto-complete instead of using dailyGoal
-    for (var record in habitDetailData!.records) {
-      final useVal = record.value;
-      switch (record.status) {
-        case HabitRecordStatus.unknown:
-          break;
-        case HabitRecordStatus.done:
-          final data = habitDetailData!.data;
-          final status = HabitDailyRecordForm.getImp(
-            type: data.type,
-            value: record.value,
-            targetValue: data.dailyGoal,
-            extraTargetValue: data.dailyGoalExtra,
-          ).complateStatus;
-          final isAutoComplete = data.isRecordAutoComplated(record.date);
-          switch (status) {
-            case HabitDailyComplateStatus.noeffect:
-            case HabitDailyComplateStatus.zero:
-              tryAddRecordToResult(record.date,
-                  autoComplate: isAutoComplete ? 1 : 0);
-              break;
-            case HabitDailyComplateStatus.ok:
-              tryAddRecordToResult(record.date,
-                  complate: 1, complateTotalValue: useVal);
-              break;
-            case HabitDailyComplateStatus.goodjob:
-              tryAddRecordToResult(record.date,
-                  overfulfil: 1, overfulfilTotalValue: useVal);
-              break;
-            case HabitDailyComplateStatus.tryhard:
-              tryAddRecordToResult(record.date,
-                  autoComplate: isAutoComplete ? 1 : 0,
-                  autoComplateTotalValue: isAutoComplete ? useVal : 0,
-                  partiallyCompleted: isAutoComplete ? 0 : 1,
-                  partiallyCompletedTotalValue: isAutoComplete ? 0 : useVal);
-              break;
-          }
-          break;
-        case HabitRecordStatus.skip:
-          final data = habitDetailData!.data;
-          final isAutoComplete = data.isRecordAutoComplated(record.date);
-          tryAddRecordToResult(record.date,
-              autoComplate: isAutoComplete ? 1 : 0);
-          break;
-      }
-    }
-
-    for (var autoDate
-        in habitDetailData?.autoRecordsDate ?? const Iterable.empty()) {
-      if (habitDetailData?.data.getRecordByDate(autoDate) != null) continue;
-      tryAddRecordToResult(
-          getProtoDateByFreqChartCombine(autoDate, freqChartCombine, firstday),
-          autoComplate: 1);
-    }
-
-    return result;
-  }
-}
-
-mixin _HabitDetailScoreChartMixin {
-  HabitDetailData? habitDetailData;
-  final Map<HabitDate, num> habitScoreChangedDateColl = {};
-  HabitDetailScoreChartCombine _scoreChartCombine =
-      defaultHabitDetailScoreChartCombine;
-
-  HabitDetailScoreChartCombine get scoreChartCombine => _scoreChartCombine;
-
-  int get firstday;
-
-  set scoreChartCombine(HabitDetailScoreChartCombine newCombine) {
-    _scoreChartCombine = newCombine;
-  }
-
-  Map<HabitDate, HabitDetailScoreChartDate> getRecordScoreChartDatas() {
-    Map<HabitDate, HabitDetailScoreChartDate> result = {};
-    if (habitDetailData == null) return result;
-
-    var crtDate = habitDetailData!.data.startDate;
-    num crtScore = 0.0;
-    var endedDate = HabitDate.now();
-    while (crtDate <= endedDate) {
-      HabitDetailScoreChartDate data;
-
-      var key = getProtoDateByScoreChartCombine(
-          crtDate, _scoreChartCombine, firstday);
-      if (result.containsKey(key)) {
-        data = result[key]!;
-      } else {
-        data = HabitDetailScoreChartDate();
-        result[key] = data;
-      }
-
-      crtScore = habitScoreChangedDateColl[crtDate] ?? crtScore;
-      data.addScore(crtScore);
-      crtDate = crtDate.addDays(1);
-    }
-    return result;
-  }
-}
-
 class HabitDetailViewModel extends ChangeNotifier
-    with
-        _HabitDetailHeatmapColorMixin,
-        _HabitDetailFreqChartMixin,
-        _HabitDetailScoreChartMixin,
-        NotificationChannelDataMixin,
-        DBHelperLoadedMixin,
-        DBOperationsMixin
-    implements ProviderMounted, HabitSummaryDirtyMarkABC {
+    with NotificationChannelDataMixin, DBHelperLoadedMixin, DBOperationsMixin
+    implements ProviderMounted, HabitSummaryDirtyMarker {
   // data
   HabitDetailData? _habitDetailData;
+  final _heatmapDateToColorMap = <HabitDate, num>{};
+  final _habitScoreChangedDateColl = <HabitDate, num>{};
   // status
   bool _reloadDBToggleSwich = false;
-  Future<HabitDetailLoadDataResult>? dataloadingFutureCache;
+  Completer<HabitDetailLoadDataResult>? _loading;
+  HabitDetailFreqChartCombine _freqChartCombine =
+      defaultHabitDetailFreqChardCombine;
+  HabitDetailScoreChartCombine _scoreChartCombine =
+      defaultHabitDetailScoreChartCombine;
   // inside status
   bool _mounted = true;
   // sync from setting
@@ -311,7 +67,6 @@ class HabitDetailViewModel extends ChangeNotifier
   @override
   bool get mounted => _mounted;
 
-  @override
   int get firstday => _firstday;
 
   void updateFirstday(int newFirstDay) {
@@ -322,7 +77,6 @@ class HabitDetailViewModel extends ChangeNotifier
     _firstday = day;
   }
 
-  @override
   HabitDetailData? get habitDetailData => _habitDetailData;
 
   bool get reloadDBToggleSwich => _reloadDBToggleSwich;
@@ -375,36 +129,12 @@ class HabitDetailViewModel extends ChangeNotifier
     return _habitDetailData?.data.getRecordByDate(date);
   }
 
-  HabitHeatmapCellStatus getHabitHeatmapCellStatus(HabitDate date) {
-    var record = getHabitRecordData(date);
-    return HabitHeatmapCellStatus(
-      status: record?.status,
-      value: record?.value,
-      isAutoComplete: _habitDetailData?.data.isRecordAutoComplated(date),
-    );
-  }
-
   @override
   void dispose() {
     if (!_mounted) return;
+    _cancelLoading();
     super.dispose();
     _mounted = false;
-  }
-
-  @override
-  set freqChartCombine(HabitDetailFreqChartCombine newCombine) {
-    if (newCombine != _freqChartCombine) {
-      super.freqChartCombine = newCombine;
-      notifyListeners();
-    }
-  }
-
-  @override
-  set scoreChartCombine(HabitDetailScoreChartCombine newCombine) {
-    if (newCombine != _scoreChartCombine) {
-      super.scoreChartCombine = newCombine;
-      notifyListeners();
-    }
   }
 
   @override
@@ -412,6 +142,79 @@ class HabitDetailViewModel extends ChangeNotifier
     data.bumpVersion();
     // add reminder
     await _regrHabitReminder(data);
+  }
+
+  bool rockreloadDBToggleSwich() {
+    _reloadDBToggleSwich = !_reloadDBToggleSwich;
+    _cancelLoading();
+    notifyListeners();
+    return _reloadDBToggleSwich;
+  }
+
+  void _cancelLoading() {
+    if (_loading != null && !_loading!.isCompleted) {
+      CancelableOperation.fromFuture(_loading!.future).cancel();
+    }
+    _loading = null;
+  }
+
+  Future<HabitDetailLoadDataResult> loadData(HabitUUID uuid,
+      {bool listen = true, bool inFutureBuilder = false}) async {
+    if (_loading != null) {
+      appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
+      return _loading!.future;
+    }
+
+    Future<HabitDetailData?> loadingData() async {
+      final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
+      final recordLoadTask = recordDBHelper.loadRecords(uuid);
+      final cell = await dataLoadTask;
+      final records = await recordLoadTask;
+      if (cell == null) {
+        appLog.load.warn("$runtimeType.load", ex: ["data load failed", uuid]);
+        return null;
+      }
+      final data = HabitDetailData.fromDBQueryCell(cell);
+      data.data.initRecords(
+          records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)));
+      return data;
+    }
+
+    final completer = _loading = Completer<HabitDetailLoadDataResult>();
+    appLog.load.debug("$runtimeType.load",
+        ex: ["loading data", listen, inFutureBuilder]);
+    _habitDetailData = await loadingData();
+    if (_habitDetailData != null) _calcHabitInfo();
+    if (listen) {
+      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
+      notifyListeners();
+    }
+    appLog.load.debug("$runtimeType.load",
+        ex: ["loaded", listen, inFutureBuilder, _habitDetailData]);
+    completer.complete(_habitDetailData != null
+        ? HabitDetailLoadDataResult.done
+        : HabitDetailLoadDataResult.habitMissing);
+    return completer.future;
+  }
+
+  void _calcHabitInfo() {
+    _habitScoreChangedDateColl.clear();
+    _habitDetailData?.data.reCalculateAutoComplateRecords(
+      firstDay: firstday,
+      onScoreChange: (fromDate, toDate, fromScore, toScore) {
+        _habitScoreChangedDateColl.addEntries(HabitScoreChangedProtoData(
+          fromDate: fromDate,
+          toDate: toDate,
+          fromScore: fromScore,
+          toScore: toScore,
+        ).expandToDate());
+      },
+    );
+    if (habitDetailData != null) {
+      _heatmapDateToColorMap
+        ..clear()
+        ..addAll(HeatmapColorsCalculator(habitDetailData!).calculate());
+    }
   }
 
   Future<void> _regrHabitReminder(HabitSummaryData data) async {
@@ -442,63 +245,66 @@ class HabitDetailViewModel extends ChangeNotifier
     }
   }
 
-  bool rockreloadDBToggleSwich() {
-    _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    dataloadingFutureCache = null;
-    notifyListeners();
-    return _reloadDBToggleSwich;
-  }
+  //#region heatmap
+  Map<HabitDate, num> get heatmapDateToColorMap => _heatmapDateToColorMap;
 
-  void calcHabitInfo() {
-    habitScoreChangedDateColl.clear();
-    _habitDetailData?.data.reCalculateAutoComplateRecords(
-      firstDay: firstday,
-      onScoreChange: (fromDate, toDate, fromScore, toScore) {
-        habitScoreChangedDateColl.addEntries(HabitScoreChangedProtoData(
-          fromDate: fromDate,
-          toDate: toDate,
-          fromScore: fromScore,
-          toScore: toScore,
-        ).expandToDate());
-      },
+  HabitHeatmapCellStatus getHabitHeatmapCellStatus(HabitDate date) {
+    var record = getHabitRecordData(date);
+    return HabitHeatmapCellStatus(
+      status: record?.status,
+      value: record?.value,
+      isAutoComplete: _habitDetailData?.data.isRecordAutoComplated(date),
     );
-    calcRecordsHeatmapColorMap();
+  }
+  //#endregion
+
+  //#region freq chart
+  HabitDetailFreqChartCombine get freqChartCombine => _freqChartCombine;
+
+  void updateFreqChartCombine(HabitDetailFreqChartCombine newCombine,
+      {bool listen = true}) {
+    if (newCombine != _freqChartCombine) {
+      _freqChartCombine = newCombine;
+      if (listen) notifyListeners();
+    }
   }
 
-  Future<HabitDetailLoadDataResult> loadData(HabitUUID uuid,
-      {bool listen = true, bool inFutureBuilder = false}) async {
-    if (dataloadingFutureCache != null) {
-      appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
-      return HabitDetailLoadDataResult.alreadyLoaded;
-    }
-    appLog.load.debug("$runtimeType.load",
-        ex: ["loading data", listen, inFutureBuilder]);
-    final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
-    final recordLoadTask = recordDBHelper.loadRecords(uuid);
-    final cell = await dataLoadTask;
-    final records = await recordLoadTask;
-    if (cell == null) {
-      appLog.load.warn("$runtimeType.load", ex: ["data load failed", uuid]);
-      return HabitDetailLoadDataResult.habitMissing;
-    }
-    _habitDetailData = HabitDetailData.fromDBQueryCell(cell);
-    _habitDetailData!.data
-        .initRecords(records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)));
+  Map<HabitDate, HabitDetailFreqChartData> getRecordFreqChartDatas() =>
+      habitDetailData != null
+          ? FreqChartCalculator(habitDetailData!,
+                  firstday: firstday, combine: freqChartCombine)
+              .calculate()
+          : const {};
+  //#endregion
 
-    calcHabitInfo();
-    if (listen) {
-      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
-      notifyListeners();
+  //#region score chart
+  HabitDetailScoreChartCombine get scoreChartCombine => _scoreChartCombine;
+
+  void updateScoreChartCombine(HabitDetailScoreChartCombine newCombine,
+      {bool listen = true}) {
+    if (newCombine != _scoreChartCombine) {
+      _scoreChartCombine = newCombine;
+      if (listen) notifyListeners();
     }
-    return HabitDetailLoadDataResult.done;
   }
 
-  Future<HabitSummaryRecord?> onTapToChangeRecordStatus(HabitRecordDate date,
+  Map<HabitDate, HabitDetailScoreChartDate> getRecordScoreChartDatas() =>
+      habitDetailData != null
+          ? ScoreChartCalculator(habitDetailData!,
+                  firstday: firstday,
+                  combine: scoreChartCombine,
+                  scoreOverride: (date) => _habitScoreChangedDateColl[date])
+              .calculate()
+          : const {};
+  //#endregion
+
+  //#region actions
+  Future<HabitSummaryRecord?> changeRecordStatus(HabitRecordDate date,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;
 
     final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnTap();
     if (recordTuple == null) return null;
 
@@ -509,7 +315,7 @@ class HabitDetailViewModel extends ChangeNotifier
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     final result = data.addRecord(record, replaced: true);
-    calcHabitInfo();
+    _calcHabitInfo();
 
     appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
         beforeVal: orgRecord,
@@ -521,7 +327,7 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeReason(
+  Future<HabitSummaryRecord?> changeRecordReason(
       HabitRecordDate date, String newReason,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;
@@ -538,13 +344,13 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeRecordValue(
+  Future<HabitSummaryRecord?> changeRecordValue(
       HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
     if (_habitDetailData == null) return null;
 
     final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnLongTap(newValue);
     if (recordTuple == null) return null;
 
@@ -555,7 +361,7 @@ class HabitDetailViewModel extends ChangeNotifier
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     var result = data.addRecord(record, replaced: true);
-    calcHabitInfo();
+    _calcHabitInfo();
 
     appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
         beforeVal: orgRecord,
@@ -567,7 +373,7 @@ class HabitDetailViewModel extends ChangeNotifier
     return record;
   }
 
-  Future<HabitStatusChangedRecord?> changeHabitsStatus(
+  Future<HabitStatusChangedRecord?> _changeHabitsStatus(
       HabitUUID habitUUID, HabitStatus newStatus) async {
     if (habitDetailData == null) return null;
     final orgStatus = habitDetailData!.data.status;
@@ -586,7 +392,7 @@ class HabitDetailViewModel extends ChangeNotifier
         habitDetailData?.data.status != HabitStatus.deleted)) {
       return null;
     }
-    final result = await changeHabitsStatus(habitUUID!, HabitStatus.archived);
+    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.archived);
     if (listen) rockreloadDBToggleSwich();
     return result;
   }
@@ -599,7 +405,7 @@ class HabitDetailViewModel extends ChangeNotifier
         habitDetailData?.data.status != HabitStatus.deleted)) {
       return null;
     }
-    final result = await changeHabitsStatus(habitUUID!, HabitStatus.activated);
+    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.activated);
     if (listen) rockreloadDBToggleSwich();
     return result;
   }
@@ -612,12 +418,239 @@ class HabitDetailViewModel extends ChangeNotifier
         habitDetailData?.data.status != HabitStatus.deleted)) {
       return null;
     }
-    final result = await changeHabitsStatus(habitUUID!, HabitStatus.deleted);
+    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.deleted);
     if (listen) rockreloadDBToggleSwich();
     return result;
   }
+  //#endregion
 
+  //#region debug
   String debugGetDataString() => _habitDetailData.toString();
 
   HabitDetailData? debugGetData() => _habitDetailData;
+  //#endregion
+}
+
+class HeatmapColorsCalculator {
+  const HeatmapColorsCalculator(HabitDetailData data) : _data = data;
+
+  final HabitDetailData _data;
+
+  num? _getNormalHeatmapColor(HabitSummaryRecord record) {
+    switch (record.status) {
+      case HabitRecordStatus.unknown:
+        return null;
+      case HabitRecordStatus.skip:
+        return null;
+      case HabitRecordStatus.done:
+        final data = _data.data;
+        final complateStatus = HabitDailyRecordForm.getImp(
+          type: data.type,
+          value: record.value,
+          targetValue: data.dailyGoal,
+          extraTargetValue: data.dailyGoalExtra,
+        ).complateStatus;
+        switch (complateStatus) {
+          case HabitDailyComplateStatus.zero:
+            return HabitHeatMapColorMapDefine.uncomplate;
+          case HabitDailyComplateStatus.ok:
+            return HabitHeatMapColorMapDefine.complate;
+          case HabitDailyComplateStatus.goodjob:
+            return HabitHeatMapColorMapDefine.overfulfil;
+          case HabitDailyComplateStatus.tryhard:
+            return HabitHeatMapColorMapDefine.partiallyCompleted;
+          default:
+            return null;
+        }
+    }
+  }
+
+  num? _getNegativeHeatmapColor(HabitSummaryRecord record) {
+    switch (record.status) {
+      case HabitRecordStatus.unknown:
+        return null;
+      case HabitRecordStatus.skip:
+        return null;
+      case HabitRecordStatus.done:
+        final data = _data.data;
+        final complateStatus = HabitDailyRecordForm.getImp(
+          type: data.type,
+          value: record.value,
+          targetValue: data.dailyGoal,
+          extraTargetValue: data.dailyGoalExtra,
+        ).complateStatus;
+        switch (complateStatus) {
+          case HabitDailyComplateStatus.ok:
+            return HabitHeatMapColorMapDefine.complate;
+          case HabitDailyComplateStatus.goodjob:
+            return HabitHeatMapColorMapDefine.overfulfil;
+          case HabitDailyComplateStatus.tryhard:
+            return HabitHeatMapColorMapDefine.partiallyCompleted;
+          case HabitDailyComplateStatus.noeffect:
+            return HabitHeatMapColorMapDefine.uncomplate;
+          default:
+            return null;
+        }
+    }
+  }
+
+  Map<HabitDate, num> calculate() {
+    Map<HabitDate, num> tmpMap = {};
+
+    for (var date in _data.autoRecordsDate) {
+      tmpMap[date] = HabitHeatMapColorMapDefine.autoComplate;
+    }
+
+    for (var record in _data.records) {
+      num? colorNum;
+      switch (_data.type) {
+        case HabitType.unknown:
+          break;
+        case HabitType.normal:
+          colorNum = _getNormalHeatmapColor(record);
+          break;
+        case HabitType.negative:
+          colorNum = _getNegativeHeatmapColor(record);
+          break;
+      }
+      if (colorNum != null) tmpMap[record.date] = colorNum;
+    }
+
+    return tmpMap;
+  }
+}
+
+class FreqChartCalculator {
+  final HabitDetailData _data;
+  final HabitDetailFreqChartCombine combine;
+  final int firstday;
+
+  const FreqChartCalculator(HabitDetailData data,
+      {required this.firstday, required this.combine})
+      : _data = data;
+
+  Map<HabitDate, HabitDetailFreqChartData> calculate() {
+    final Map<HabitDate, HabitDetailFreqChartData> result = {};
+    final data = _data.data;
+
+    void tryAddToResult(
+      HabitDate date, {
+      int partiallyCompleted = 0,
+      int autoComplate = 0,
+      int complate = 0,
+      int overfulfil = 0,
+      num partiallyCompletedTotalValue = 0,
+      num autoComplateTotalValue = 0,
+      num complateTotalValue = 0,
+      num overfulfilTotalValue = 0,
+    }) {
+      final firstDate = freqChartHelper.getProtoDate(date, firstday, combine);
+      result.update(
+        firstDate,
+        (value) => value
+          ..increasedOnly(
+            partiallyCompleted: partiallyCompleted,
+            autoComplate: autoComplate,
+            complate: complate,
+            overfulfil: overfulfil,
+            partiallyCompletedTotalValue: partiallyCompletedTotalValue,
+            autoComplateTotalValue: autoComplateTotalValue,
+            complateTotalValue: complateTotalValue,
+            overfulfilTotalValue: overfulfilTotalValue,
+          ),
+        ifAbsent: () => HabitDetailFreqChartData()
+          ..increasedOnly(
+              partiallyCompleted: partiallyCompleted,
+              autoComplate: autoComplate,
+              complate: complate,
+              overfulfil: overfulfil,
+              partiallyCompletedTotalValue: partiallyCompletedTotalValue,
+              autoComplateTotalValue: autoComplateTotalValue,
+              complateTotalValue: complateTotalValue,
+              overfulfilTotalValue: overfulfilTotalValue),
+      );
+    }
+
+    // Fixed #84
+    // Use the user-entered value for auto-complete instead of using dailyGoal
+    for (var record in _data.records) {
+      final useVal = record.value;
+      switch (record.status) {
+        case HabitRecordStatus.unknown:
+          break;
+        case HabitRecordStatus.done:
+          final status = HabitDailyRecordForm.getImp(
+            type: data.type,
+            value: record.value,
+            targetValue: data.dailyGoal,
+            extraTargetValue: data.dailyGoalExtra,
+          ).complateStatus;
+          final isAutoComplete = data.isRecordAutoComplated(record.date);
+          switch (status) {
+            case HabitDailyComplateStatus.noeffect:
+            case HabitDailyComplateStatus.zero:
+              tryAddToResult(record.date, autoComplate: isAutoComplete ? 1 : 0);
+              break;
+            case HabitDailyComplateStatus.ok:
+              tryAddToResult(record.date,
+                  complate: 1, complateTotalValue: useVal);
+              break;
+            case HabitDailyComplateStatus.goodjob:
+              tryAddToResult(record.date,
+                  overfulfil: 1, overfulfilTotalValue: useVal);
+              break;
+            case HabitDailyComplateStatus.tryhard:
+              tryAddToResult(record.date,
+                  autoComplate: isAutoComplete ? 1 : 0,
+                  autoComplateTotalValue: isAutoComplete ? useVal : 0,
+                  partiallyCompleted: isAutoComplete ? 0 : 1,
+                  partiallyCompletedTotalValue: isAutoComplete ? 0 : useVal);
+              break;
+          }
+          break;
+        case HabitRecordStatus.skip:
+          final isAutoComplete = data.isRecordAutoComplated(record.date);
+          tryAddToResult(record.date, autoComplate: isAutoComplete ? 1 : 0);
+          break;
+      }
+    }
+
+    for (var autoDate in _data.autoRecordsDate) {
+      if (data.getRecordByDate(autoDate) != null) continue;
+      final date = freqChartHelper.getProtoDate(autoDate, firstday, combine);
+      tryAddToResult(date, autoComplate: 1);
+    }
+
+    return result;
+  }
+}
+
+class ScoreChartCalculator {
+  final HabitDetailData _data;
+  final HabitDetailScoreChartCombine combine;
+  final int firstday;
+  final num? Function(HabitDate date)? scoreOverride;
+
+  const ScoreChartCalculator(HabitDetailData data,
+      {required this.firstday, required this.combine, this.scoreOverride})
+      : _data = data;
+
+  Map<HabitDate, HabitDetailScoreChartDate> calculate() {
+    final Map<HabitDate, HabitDetailScoreChartDate> result = {};
+    final endedDate = HabitDate.now();
+
+    HabitDate crtDate = _data.data.startDate;
+    num crtScore = 0.0;
+    while (crtDate <= endedDate) {
+      final key = scoreChartHelp.getProtoDate(crtDate, firstday, combine);
+      crtScore = scoreOverride?.call(crtDate) ?? crtScore;
+      result.update(
+        key,
+        (value) => value..addScore(crtScore),
+        ifAbsent: () => HabitDetailScoreChartDate()..addScore(crtScore),
+      );
+      crtDate = crtDate.addDays(1);
+    }
+    return result;
+  }
 }

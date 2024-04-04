@@ -22,11 +22,11 @@ import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_summary.dart';
 
-class ChangeRecordStatusUtil {
+class ChangeRecordStatusHelper {
   final HabitSummaryData? data;
   final HabitRecordDate date;
 
-  const ChangeRecordStatusUtil({
+  const ChangeRecordStatusHelper({
     required this.date,
     this.data,
   });

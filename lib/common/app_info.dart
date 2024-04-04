@@ -18,9 +18,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'abc.dart';
+import 'async.dart';
 
-class AppInfo implements FutureInitializationABC {
+class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();
 
   AndroidDeviceInfo? _androidDeviceInfo;

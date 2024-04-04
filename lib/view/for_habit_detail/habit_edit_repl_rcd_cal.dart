@@ -85,7 +85,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!mounted) return;
     var viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted) return;
-    await viewmodel.onTapToChangeRecordStatus(HabitDate.dateTime(date));
+    await viewmodel.changeRecordStatus(HabitDate.dateTime(date));
   }
 
   void onHeatmapCellLongPressed(DateTime date, num? value) async {
@@ -132,7 +132,7 @@ class _HabitEditReplacementRecordCalendarDialog
     );
 
     if (result == null || result == initReason || !mounted) return;
-    viewmodel.onLongPressChangeReason(date, result);
+    viewmodel.changeRecordReason(date, result);
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
@@ -173,7 +173,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {
       return;
     }
-    viewmodel.onLongPressChangeRecordValue(date, result);
+    viewmodel.changeRecordValue(date, result);
   }
 
   @override

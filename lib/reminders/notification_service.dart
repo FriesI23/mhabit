@@ -19,7 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import '../common/abc.dart';
+import '../common/async.dart';
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../model/habit_date.dart';
@@ -29,7 +29,7 @@ import 'notification_channel.dart';
 import 'notification_data.dart';
 import 'notification_id_range.dart';
 
-class NotificationService implements FutureInitializationABC {
+class NotificationService implements AsyncInitialization {
   //#region singleton
   static final NotificationService _singleton = NotificationService._internal();
 

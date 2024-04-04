@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import 'package:async/async.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -31,114 +35,34 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
-import '_utils/change_record_status_utils.dart';
 import 'commons.dart';
+import 'utils.dart';
 
-mixin _HabitSummarySortableMixin on _HabitSummaryViewModel {
-  List<HabitSortCache> _lastSortedDataCache = [];
-  late HabitDisplaySortType _sortType;
-  late HabitDisplaySortDirection _sortDirection;
-  late HabitsDisplayFilter _habitDisplayFilter;
+part 'habit_summary.g.dart';
 
-  AnimatedListController get dispatcherLinkedController =>
-      _dispatcher.controller;
-
-  AnimatedListDiffBuilder<List<HabitSortCache>> get dispatcherLinkedBuilder =>
-      _dispatcher.builder;
-
-  List<HabitSortCache> get lastSortedDataCache => _lastSortedDataCache;
-
-  void updateSortOptions(
-      HabitDisplaySortType sortType, HabitDisplaySortDirection sortDirection) {
-    _sortType = sortType;
-    _sortDirection = sortDirection;
-  }
-
-  void updateHabitDisplayFilter(HabitsDisplayFilter newFilter) {
-    _habitDisplayFilter = newFilter;
-  }
-
-  HabitSortCache? getHabitBySortId(int index) {
-    if (index < 0 || index >= _lastSortedDataCache.length) {
-      return null;
-    } else {
-      return _lastSortedDataCache[index];
-    }
-  }
-
-  void resortData() {
-    var result = _data.sort(_sortType, _sortDirection);
-    var newSortCache = result
-        .where(_habitDisplayFilter.getDisplayFilterFunction())
-        .map((e) => HabitSummaryDataSortCache(data: e))
-        .toList();
-
-    saveAndDispatchLastSortedData(newSortCache);
-  }
-
-  void saveAndDispatchLastSortedData(List<HabitSortCache> result) {
-    _lastSortedDataCache = result;
-    _dispatcher.dispatchNewList(_lastSortedDataCache);
-  }
-}
-
-mixin _HabitSummarySelectorMixin on _HabitSummaryViewModel {
-  final Set<HabitUUID> _selectUUIDColl = {};
-
-  int get selectedHabitsCount => _selectUUIDColl.length;
-
-  bool get isNoHabitSelected => selectedHabitsCount <= 0;
-
-  bool isHabitSelected(HabitUUID uuid) => _selectUUIDColl.contains(uuid);
-
-  void selectHabit(HabitUUID uuid) {
-    // debugPrint('selectHabit:: $uuid $_selectUUIDColl');
-    _selectUUIDColl.add(uuid);
-  }
-
-  void unselectHabit(HabitUUID uuid) {
-    // debugPrint('unselectHabit:: $uuid $_selectUUIDColl');
-    _selectUUIDColl.remove(uuid);
-  }
-
-  void clearAllSelectHabits() {
-    _selectUUIDColl.clear();
-  }
-}
-
-mixin _HabitSummaryStatisticsMixin on _HabitSummaryViewModel {
-  HabitSummaryStatisticsData _statisticsData = HabitSummaryStatisticsData.zero;
-  final HabitLast30DaysProgressChangeData _last30daysProgressChangeData =
-      HabitLast30DaysProgressChangeData();
-
-  HabitSummaryStatisticsData get statisticsData => _statisticsData;
-  set statisticsData(HabitSummaryStatisticsData newData) {
-    _statisticsData = newData;
-  }
-
-  Iterable<HabitRangeDayStatistic> getLast30DaysProgressChangeData() =>
-      _last30daysProgressChangeData.iterable;
-
-  bool isNeedIncludeInLast30DaysStatistic(HabitSummaryData data) {
-    return data.isActived;
-  }
-
-  void addLast30DaysScoreChangeStatistic(
-      HabitSummaryData data, HabitDate initDate, HabitDate date, num score) {
-    _last30daysProgressChangeData.addStatistic(data, initDate, date, score);
-  }
-}
-
-abstract class _HabitSummaryViewModel extends ChangeNotifier {
+class HabitSummaryViewModel extends ChangeNotifier
+    with
+        ScrollControllerChangeNotifierMixin,
+        NotificationChannelDataMixin,
+        DBHelperLoadedMixin,
+        DBOperationsMixin
+    implements ProviderMounted, HabitSummaryDirtyMarker {
   // scroll controller
   final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   // dispatcher
   late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
   late final DispatcherForHabitDetail forHabitDetail;
   // data
-  final HabitSummaryDataCollection _data = HabitSummaryDataCollection();
+  final _data = HabitSummaryDataCollection();
+  var _sortableCache = const _HabitsSortableCache(
+    sortType: defaultSortType,
+    sortDirection: defaultSortDirection,
+    filter: HabitsDisplayFilter.withDefault(),
+  );
+  final _selectorData = _SelectedHabitsData();
+  final _last30daysProgressChangeData = HabitLast30DaysProgressChangeData();
   // status
-  Future? dataloadingFutureCache;
+  Completer<void>? _loading;
   bool _reloadDBToggleSwich = false;
   bool _nextRefreshClearSnackBar = false;
   bool _reloadUIToggleSwitch = false;
@@ -149,45 +73,24 @@ abstract class _HabitSummaryViewModel extends ChangeNotifier {
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
+  // data
 
-  _HabitSummaryViewModel({
-    required LinkedScrollControllerGroup horizonalScrollControllerGroup,
-  }) : _horizonalScrollControllerGroup = horizonalScrollControllerGroup;
-
-  bool get _isDataLoaded => dataloadingFutureCache != null;
-}
-
-class HabitSummaryViewModel extends _HabitSummaryViewModel
-    with
-        ScrollControllerChangeNotifierMixin,
-        _HabitSummarySortableMixin,
-        _HabitSummarySelectorMixin,
-        _HabitSummaryStatisticsMixin,
-        NotificationChannelDataMixin,
-        DBHelperLoadedMixin,
-        DBOperationsMixin
-    implements ProviderMounted, HabitSummaryDirtyMarkABC {
   HabitSummaryViewModel({
     required ScrollController verticalScrollController,
-    required super.horizonalScrollControllerGroup,
-  }) {
+    required LinkedScrollControllerGroup horizonalScrollControllerGroup,
+  }) : _horizonalScrollControllerGroup = horizonalScrollControllerGroup {
     initVerticalScrollController(notifyListeners, verticalScrollController);
     forHabitDetail = DispatcherForHabitDetail(this);
   }
 
-  void initDispatcher(
-      AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    _dispatcher = dispatcher;
-  }
+  LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
+      _horizonalScrollControllerGroup;
 
-  @override
-  void dispose() {
-    if (!_mounted) return;
-    _dispatcher.discard();
-    disposeVerticalScrollController();
-    super.dispose();
-    _mounted = false;
-  }
+  AnimatedListController get dispatcherLinkedController =>
+      _dispatcher.controller;
+
+  AnimatedListDiffBuilder<List<HabitSortCache>> get dispatcherLinkedBuilder =>
+      _dispatcher.builder;
 
   @override
   bool get mounted => _mounted;
@@ -201,35 +104,6 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
     _firstday = day;
   }
-
-  @override
-  HabitSummaryStatisticsData get statisticsData {
-    int archivedCount = 0, complatedCount = 0, inProgressCount = 0;
-    var now = HabitDate.now();
-    _data.forEach((habitUUID, summaryData) {
-      if (summaryData.status == HabitStatus.archived) {
-        archivedCount++;
-      } else if (summaryData.isComplated) {
-        complatedCount++;
-      } else if (!summaryData.startDate.isAfter(now)) {
-        inProgressCount++;
-      }
-    });
-    var firstThreeData = <HabitRangeDayStatistic>[];
-    for (var entry in getLast30DaysProgressChangeData()) {
-      firstThreeData.add(entry);
-      if (firstThreeData.length >= 3) break;
-    }
-    return super.statisticsData.copyWith(
-          currentArchivedCount: archivedCount,
-          currentComplatedCount: complatedCount,
-          currentInProgressCount: inProgressCount,
-          currentPopularityData: firstThreeData,
-        );
-  }
-
-  LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
-      _horizonalScrollControllerGroup;
 
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
         isAppbarPinned: isAppbarPinned,
@@ -250,37 +124,13 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       if (scrollDuration == Duration.zero) {
         _horizonalScrollControllerGroup.jumpTo(0);
       } else {
-        var future = _horizonalScrollControllerGroup.animateTo(0,
+        final future = _horizonalScrollControllerGroup.animateTo(0,
             duration: scrollDuration ?? const Duration(milliseconds: 500),
             curve: Curves.fastOutSlowIn);
         if (waitingScroll) await future;
       }
       if (listen) notifyListeners();
     }
-  }
-
-  bool get isInEditMode => _isInEditMode;
-
-  void switchToEditMode(
-      {bool clearAllSelected = true, bool listen = true}) async {
-    _canBeDragged = false;
-    _isInEditMode = true;
-    if (clearAllSelected) clearAllSelectHabits();
-    await updateCalendarExpanedStatus(false,
-        scrollDuration: Duration.zero, waitingScroll: true, listen: false);
-    if (listen) notifyListeners();
-  }
-
-  void exitEditMode({bool clearAllSelected = true, bool listen = true}) {
-    if (clearAllSelected) clearAllSelectHabits();
-    _canBeDragged = true;
-    _isInEditMode = false;
-    if (listen) notifyListeners();
-  }
-
-  void exitEditModeOnly({bool listen = true}) {
-    _isInEditMode = false;
-    if (listen) notifyListeners();
   }
 
   bool get canBeDragged => _canBeDragged;
@@ -326,10 +176,230 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
   }
 
+  HabitSummaryData? get earliestSummaryDataStartDate {
+    HabitSummaryData? result;
+    _data.forEach((k, v) {
+      if (result == null || (result!.startDate > v.startDate)) {
+        result = v;
+      }
+    });
+    return result;
+  }
+
+  void initDispatcher(
+      AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
+    _dispatcher = dispatcher;
+  }
+
+  @override
+  void dispose() {
+    if (!_mounted) return;
+    _dispatcher.discard();
+    disposeVerticalScrollController();
+    _cancelLoading();
+    super.dispose();
+    _mounted = false;
+  }
+
+  bool rockReloadUIToggleSwitch() {
+    _reloadUIToggleSwitch = !_reloadUIToggleSwitch;
+    notifyListeners();
+    return _reloadUIToggleSwitch;
+  }
+
+  bool rockreloadDBToggleSwich({bool clearSnackBar = true}) {
+    _reloadDBToggleSwich = !_reloadDBToggleSwich;
+    _nextRefreshClearSnackBar = clearSnackBar;
+    _cancelLoading();
+    notifyListeners();
+    return _reloadDBToggleSwich;
+  }
+
+  bool consumeClearSnackBarFlag() {
+    final tmp = _nextRefreshClearSnackBar;
+    _nextRefreshClearSnackBar = false;
+    return tmp;
+  }
+
+  UniqueKey getHabitInsideVersion(HabitUUID uuid) {
+    final data = _data.getHabitByUUID(uuid);
+    return data != null ? data.diryMark : UniqueKey();
+  }
+
+  void _calcHabitAutoComplateRecords(HabitSummaryData data) {
+    final now = HabitDate.now();
+    _last30daysProgressChangeData.clearStatistic(data.uuid);
+    data.reCalculateAutoComplateRecords(
+      firstDay: firstday,
+      onScoreChange: (fromDate, toDate, fromScore, toScore) {
+        if (!_isNeedIncludeInLast30DaysStatistic(data)) return;
+        for (var entry in HabitScoreChangedProtoData(
+          fromDate: fromDate,
+          toDate: toDate,
+          fromScore: fromScore,
+          toScore: toScore,
+        ).expandToDate()) {
+          _last30daysProgressChangeData.addStatistic(
+              data, now, entry.key, entry.value);
+        }
+      },
+    );
+  }
+
+  void _cancelLoading() {
+    if (_loading != null && !_loading!.isCompleted) {
+      CancelableOperation.fromFuture(_loading!.future).cancel();
+    }
+    _loading = null;
+  }
+
+  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
+    if (_loading != null) {
+      appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
+      return _loading!.future;
+    }
+    final completer = _loading = Completer<void>();
+    final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
+    final recordLoadTask = recordDBHelper.loadAllRecords();
+    _data.initDataFromDBQueuryResult(await habitLoadTask, await recordLoadTask);
+    _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
+    _resortData();
+    completer.complete();
+    if (listen) {
+      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
+      notifyListeners();
+    }
+    // init reminders
+    final futureList = <Future>[];
+    _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
+    await Future.wait(futureList);
+    return completer.future;
+  }
+
+  HabitSummaryData? getHabit(HabitUUID habitUUID) {
+    return _data.getHabitByUUID(habitUUID);
+  }
+
+  bool addNewData(HabitSummaryData cell, {bool listen = false}) {
+    bool addResult = _data.addNewHabit(cell, forceAdd: false);
+    final data = _data.getHabitByUUID(cell.uuid);
+    if (data != null) _calcHabitAutoComplateRecords(data);
+    resortData();
+    if (listen) notifyListeners();
+    return addResult;
+  }
+
+  //#region: edit mode
+  bool get isInEditMode => _isInEditMode;
+
+  void switchToEditMode(
+      {bool clearAllSelected = true, bool listen = true}) async {
+    _canBeDragged = false;
+    _isInEditMode = true;
+    if (clearAllSelected) clearAllSelectHabits();
+    await updateCalendarExpanedStatus(false,
+        scrollDuration: Duration.zero, waitingScroll: true, listen: false);
+    if (listen) notifyListeners();
+  }
+
+  void exitEditMode({bool clearAllSelected = true, bool listen = true}) {
+    if (clearAllSelected) clearAllSelectHabits();
+    _canBeDragged = true;
+    _isInEditMode = false;
+    if (listen) notifyListeners();
+  }
+
+  void exitEditModeOnly({bool listen = true}) {
+    _isInEditMode = false;
+    if (listen) notifyListeners();
+  }
+  //#endregion
+
+  //#region statistics
+  HabitSummaryStatisticsData get statisticsData {
+    int archivedCount = 0, complatedCount = 0, inProgressCount = 0;
+    final now = HabitDate.now();
+    _data.forEach((habitUUID, summaryData) {
+      if (summaryData.status == HabitStatus.archived) {
+        archivedCount++;
+      } else if (summaryData.isComplated) {
+        complatedCount++;
+      } else if (!summaryData.startDate.isAfter(now)) {
+        inProgressCount++;
+      }
+    });
+    final firstThreeData = <HabitRangeDayStatistic>[];
+    for (var entry in _last30daysProgressChangeData.iterable) {
+      firstThreeData.add(entry);
+      if (firstThreeData.length >= 3) break;
+    }
+    return HabitSummaryStatisticsData(
+      currentArchivedCount: archivedCount,
+      currentComplatedCount: complatedCount,
+      currentInProgressCount: inProgressCount,
+      currentPopularityData: firstThreeData,
+    );
+  }
+
+  bool _isNeedIncludeInLast30DaysStatistic(HabitSummaryData data) {
+    return data.isActived;
+  }
+  //#endregion
+
+  //#region sortbale habits list
+  List<HabitSortCache> get lastSortedDataCache =>
+      _sortableCache.lastSortedDataCache;
+
+  void updateSortOptions(HabitDisplaySortType sortType,
+          HabitDisplaySortDirection sortDirection) =>
+      _sortableCache = _sortableCache.copyWith(
+          sortDirection: sortDirection, sortType: sortType);
+
+  void updateHabitDisplayFilter(HabitsDisplayFilter newFilter) =>
+      _sortableCache = _sortableCache.copyWith(filter: newFilter);
+
+  HabitSortCache? getHabitBySortId(int index) =>
+      _sortableCache.getSortCache(index);
+
+  void resortData({bool listen = true}) {
+    if (!(_loading?.isCompleted ?? false)) return;
+    _resortData();
+    if (listen) notifyListeners();
+  }
+
+  void _resortData() {
+    final newObj = _sortableCache.copyWithSortableData(_data);
+    _saveAndDispatch(newObj);
+  }
+
+  void _saveAndDispatch(_HabitsSortableCache newSortbaleData) {
+    if (identical(newSortbaleData.lastSortedDataCache,
+        _sortableCache.lastSortedDataCache)) {
+      appLog.load.warn("$runtimeType._saveAndDispatch",
+          ex: ["fixed cache", newSortbaleData, _sortableCache]);
+      newSortbaleData = newSortbaleData.copyWith(
+          lastSortedDataCache: List.of(newSortbaleData.lastSortedDataCache));
+    }
+    _dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
+    _sortableCache = newSortbaleData;
+  }
+  //#endregion
+
+  //#region exporter
+  Iterable<HabitUUID> getExportUseSelectedHabitUUID() => getSelectedHabitsData()
+      .where((element) => element != null)
+      .map((e) => e!.uuid);
+  //#endregion
+
+  //#region: hasbits selector
+  int get selectedHabitsCount => _selectorData.selecedCount;
+
+  bool get isNoHabitSelected => _selectorData.nothingSelected;
+
   HabitSummarySelectedStatistic get selectStatistic {
     int activatedNum = 0;
     int archivedNum = 0;
-    for (var data in _selectUUIDColl.map((habitUUID) => getHabit(habitUUID))) {
+    for (var data in _selectorData.selectedColl.map((uuid) => getHabit(uuid))) {
       if (data == null) {
         continue;
       } else if (data.status == HabitStatus.activated) {
@@ -342,55 +412,20 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
         activated: activatedNum, archived: archivedNum);
   }
 
-  HabitSummaryData? get earliestSummaryDataStartDate {
-    HabitSummaryData? result;
-    _data.forEach((k, v) {
-      if (result == null || (result!.startDate > v.startDate)) {
-        result = v;
-      }
-    });
-    return result;
-  }
+  bool isHabitSelected(HabitUUID uuid) => _selectorData.isSelected(uuid);
 
-  bool rockReloadUIToggleSwitch() {
-    _reloadUIToggleSwitch = !_reloadUIToggleSwitch;
-    notifyListeners();
-    return _reloadUIToggleSwitch;
-  }
-
-  bool rockreloadDBToggleSwich({bool clearSnackBar = true}) {
-    _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    dataloadingFutureCache = null;
-    _nextRefreshClearSnackBar = clearSnackBar;
-    notifyListeners();
-    return _reloadDBToggleSwich;
-  }
-
-  bool consumeClearSnackBarFlag() {
-    final tmp = _nextRefreshClearSnackBar;
-    _nextRefreshClearSnackBar = false;
-    return tmp;
-  }
-
-  UniqueKey getHabitInsideVersion(HabitUUID uuid) {
-    var data = _data.getHabitByUUID(uuid);
-    return data != null ? data.diryMark : UniqueKey();
-  }
-
-  @override
   void selectHabit(HabitUUID uuid, {bool listen = true}) {
-    super.selectHabit(uuid);
+    _selectorData.select(uuid);
     if (listen) notifyListeners();
   }
 
-  @override
   void unselectHabit(HabitUUID uuid, {bool listen = true}) {
-    super.unselectHabit(uuid);
-    if (isNoHabitSelected) {
-      exitEditMode(listen: false);
-    }
+    _selectorData.unselect(uuid);
+    if (isNoHabitSelected) exitEditMode(listen: false);
     if (listen) notifyListeners();
   }
+
+  void clearAllSelectHabits() => _selectorData.clearAll();
 
   void selectAllHabit({bool listen = true}) {
     _data.forEach((k, _) => selectHabit(k, listen: false));
@@ -398,83 +433,20 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   }
 
   Iterable<HabitSummaryData?> getSelectedHabitsData() sync* {
-    for (var habitUUID in _selectUUIDColl) {
+    for (var habitUUID in _selectorData._selectUUIDColl.toList()) {
       yield getHabit(habitUUID);
     }
   }
+  //#endregion
 
-  Iterable<HabitUUID> getExportUseSelectedHabitUUID() => getSelectedHabitsData()
-      .where((element) => element != null)
-      .map((e) => e!.uuid);
-
-  void calcHabitAutoComplateRecords(HabitSummaryData data) {
-    final now = HabitDate.now();
-    _last30daysProgressChangeData.clearStatistic(data.uuid);
-    data.reCalculateAutoComplateRecords(
-      firstDay: firstday,
-      onScoreChange: (fromDate, toDate, fromScore, toScore) {
-        if (!isNeedIncludeInLast30DaysStatistic(data)) return;
-        for (var entry in HabitScoreChangedProtoData(
-          fromDate: fromDate,
-          toDate: toDate,
-          fromScore: fromScore,
-          toScore: toScore,
-        ).expandToDate()) {
-          addLast30DaysScoreChangeStatistic(data, now, entry.key, entry.value);
-        }
-      },
-    );
-  }
-
-  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    if (_isDataLoaded) {
-      appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
-      return;
-    }
-    // debugPrint('------ loadData:: $listen $_isDataLoaded');
-    final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
-    final recordLoadTask = recordDBHelper.loadAllRecords();
-    _data.initDataFromDBQueuryResult(await habitLoadTask, await recordLoadTask);
-    _data.forEach((_, habit) => calcHabitAutoComplateRecords(habit));
-    super.resortData();
-    if (listen) {
-      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
-      notifyListeners();
-    }
-    // init reminders
-    final futureList = <Future>[];
-    _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
-    await Future.wait(futureList);
-  }
-
-  @override
-  void resortData({bool listen = true}) {
-    // debugPrint('resortData:: listen=$listen, isDataLoaded=$_isDataLoaded');
-    if (!_isDataLoaded) return;
-    super.resortData();
-    if (listen) notifyListeners();
-  }
-
-  HabitSummaryData? getHabit(HabitUUID habitUUID) {
-    return _data.getHabitByUUID(habitUUID);
-  }
-
-  bool addNewData(HabitSummaryData cell, {bool listen = false}) {
-    bool addResult = _data.addNewHabit(cell, forceAdd: false);
-    final data = _data.getHabitByUUID(cell.uuid);
-    if (data != null) calcHabitAutoComplateRecords(data);
-    resortData();
-    if (listen) notifyListeners();
-    return addResult;
-  }
-
-  Future<HabitSummaryRecord?> onTapToChangeRecordStatus(
+  //#region actions
+  Future<HabitSummaryRecord?> changeRecordStatus(
       HabitUUID habitUUID, HabitRecordDate date,
       {bool listen = true}) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnTap();
     if (recordTuple == null) return null;
 
@@ -484,8 +456,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
-    var result = data.addRecord(record, replaced: true);
-    calcHabitAutoComplateRecords(data);
+    final result = data.addRecord(record, replaced: true);
+    _calcHabitAutoComplateRecords(data);
 
     appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
         beforeVal: orgRecord,
@@ -498,13 +470,13 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     return record;
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeRecordValue(
+  Future<HabitSummaryRecord?> changeRecordValue(
       HabitUUID habitUUID, HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final util = ChangeRecordStatusUtil(date: date, data: data);
+    final util = ChangeRecordStatusHelper(date: date, data: data);
     final recordTuple = util.getNewRecordOnLongTap(newValue);
     if (recordTuple == null) return null;
 
@@ -514,8 +486,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
-    var result = data.addRecord(record, replaced: true);
-    calcHabitAutoComplateRecords(data);
+    final result = data.addRecord(record, replaced: true);
+    _calcHabitAutoComplateRecords(data);
 
     appLog.value.info("onLongPressChangeRecordValue",
         beforeVal: orgRecord,
@@ -527,8 +499,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     return record;
   }
 
-  Future<void> rewriteAllHabitsSortPostion() async {
-    var posList = <num>[];
+  Future<void> _writeChangedSortPositionToDB() async {
+    final posList = <num>[];
     for (var e in lastSortedDataCache) {
       if (e is HabitSummaryDataSortCache && e.data != null) {
         posList.add(e.data!.sortPostion);
@@ -536,12 +508,12 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
     }
     posList.sort();
 
-    var changedUUIDList = <HabitUUID>[];
-    var changedPosList = <num>[];
+    final changedUUIDList = <HabitUUID>[];
+    final changedPosList = <num>[];
     var currentIndex = 0;
     for (var e in lastSortedDataCache) {
       if (e is HabitSummaryDataSortCache && e.data != null) {
-        var currentPos = posList[currentIndex++];
+        final currentPos = posList[currentIndex++];
         if (e.data!.sortPostion != currentPos) {
           e.data!.sortPostion = currentPos;
           changedUUIDList.add(e.uuid);
@@ -556,7 +528,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
         changedUUIDList, changedPosList);
   }
 
-  Future<HabitSummaryRecord?> onLongPressChangeReason(
+  Future<HabitSummaryRecord?> changeRecordReason(
       HabitUUID habitUUID, HabitRecordDate date, String newReason,
       {bool listen = true}) async {
     final data = _data.getHabitByUUID(habitUUID);
@@ -573,10 +545,10 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
   void onHabitReorderComplate(int index, int dropIndex) async {
     lastSortedDataCache.insert(dropIndex, lastSortedDataCache.removeAt(index));
-    await rewriteAllHabitsSortPostion();
+    await _writeChangedSortPositionToDB();
   }
 
-  Future<List<HabitStatusChangedRecord>> changeHabitsStatus(
+  Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
       List<HabitUUID> uuidList, HabitStatus newStatus) async {
     appLog.habit
         .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
@@ -588,7 +560,7 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
       final orgStatus = data.status;
       data.status = newStatus;
       bumpHatbitVersion(data);
-      calcHabitAutoComplateRecords(data);
+      _calcHabitAutoComplateRecords(data);
       result.add(HabitStatusChangedRecord(
           habitUUID: data.uuid, newStatus: newStatus, orgStatus: orgStatus));
     }
@@ -617,15 +589,15 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     appLog.habit.debug("$runtimeType.revertHabitsStatus do", ex: [recordList]);
     for (var r in recordMap.entries) {
-      await changeHabitsStatus(r.value, r.key);
+      await _changeHabitsStatus(r.value, r.key);
     }
 
     resortData();
   }
 
   Future<List<HabitStatusChangedRecord>?> archivedSelectedHabits() async {
-    var realNeedArchivedUUID = <HabitUUID>[];
-    for (var habitUUID in _selectUUIDColl) {
+    final realNeedArchivedUUID = <HabitUUID>[];
+    for (var habitUUID in _selectorData.selectedColl) {
       if (getHabit(habitUUID)?.status != HabitStatus.archived) {
         realNeedArchivedUUID.add(habitUUID);
       }
@@ -633,17 +605,17 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     if (realNeedArchivedUUID.isEmpty) {
       appLog.value.warn("$runtimeType.archivedSelectedHabits",
-          beforeVal: _selectUUIDColl,
+          beforeVal: _selectorData,
           afterVal: realNeedArchivedUUID,
           ex: ["real need archived habit uuid not found"]);
       return null;
     }
 
-    var result =
-        await changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
+    final result =
+        await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
 
-    if (!_habitDisplayFilter.allowArchivedHabits) {
-      var filteredSortCache = List.of(
+    if (!_sortableCache.filter.allowArchivedHabits) {
+      final filteredSortCache = List.of(
         lastSortedDataCache.where(
           (element) => element is HabitSummaryDataSortCache &&
                   realNeedArchivedUUID.contains(element.uuid)
@@ -651,7 +623,9 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
               : true,
         ),
       );
-      saveAndDispatchLastSortedData(filteredSortCache);
+      _sortableCache =
+          _sortableCache.copyWith(lastSortedDataCache: filteredSortCache);
+      _saveAndDispatch(_sortableCache);
     }
 
     exitEditMode();
@@ -659,8 +633,8 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   }
 
   Future<List<HabitStatusChangedRecord>?> unarchivedSelectedHabits() async {
-    var realNeedUnarchivedUUID = <HabitUUID>[];
-    for (var habitUUID in _selectUUIDColl) {
+    final realNeedUnarchivedUUID = <HabitUUID>[];
+    for (var habitUUID in _selectorData.selectedColl) {
       if (getHabit(habitUUID)?.status == HabitStatus.archived) {
         realNeedUnarchivedUUID.add(habitUUID);
       }
@@ -668,16 +642,16 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
 
     if (realNeedUnarchivedUUID.isEmpty) {
       appLog.value.warn("$runtimeType.unarchivedSelectedHabits",
-          beforeVal: _selectUUIDColl,
+          beforeVal: _selectorData,
           afterVal: realNeedUnarchivedUUID,
           ex: ["real need unarchived habit uuid not found"]);
       return null;
     }
 
-    var result =
-        await changeHabitsStatus(realNeedUnarchivedUUID, HabitStatus.activated);
+    final result = await _changeHabitsStatus(
+        realNeedUnarchivedUUID, HabitStatus.activated);
 
-    if (_habitDisplayFilter.allowArchivedHabits) {
+    if (_sortableCache.filter.allowArchivedHabits) {
       resortData(listen: false);
     }
 
@@ -686,19 +660,81 @@ class HabitSummaryViewModel extends _HabitSummaryViewModel
   }
 
   Future<List<HabitStatusChangedRecord>?> deleteSelectedHabits() async {
-    var result =
-        await changeHabitsStatus(_selectUUIDColl.toList(), HabitStatus.deleted);
+    final result = await _changeHabitsStatus(
+        _selectorData.selectedColl.toList(), HabitStatus.deleted);
 
     resortData(listen: false);
 
     exitEditMode();
     return result;
   }
+  //#endregion
 
+  //#region debug
   String debugGetDataString() {
     assert(kDebugMode, true);
     return _data.toString();
   }
+  //#endregion
+}
+
+@CopyWith(skipFields: true)
+class _HabitsSortableCache {
+  final HabitDisplaySortType sortType;
+  final HabitDisplaySortDirection sortDirection;
+  final HabitsDisplayFilter filter;
+  final List<HabitSortCache> lastSortedDataCache;
+
+  const _HabitsSortableCache(
+      {required this.sortType,
+      required this.sortDirection,
+      required this.filter,
+      this.lastSortedDataCache = const []});
+
+  HabitSortCache? getSortCache(int index) {
+    if (index < 0 || index >= lastSortedDataCache.length) {
+      return null;
+    } else {
+      return lastSortedDataCache[index];
+    }
+  }
+
+  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data) =>
+      copyWith(
+        lastSortedDataCache: data
+            .sort(sortType, sortDirection)
+            .where(filter.getDisplayFilterFunction())
+            .map((e) => HabitSummaryDataSortCache(data: e))
+            .toList(),
+      );
+
+  @override
+  String toString() =>
+      "$runtimeType(st=$sortType,sd=$sortDirection,flt=$filter,"
+      "cache=$lastSortedDataCache)";
+}
+
+class _SelectedHabitsData {
+  final Set<HabitUUID> _selectUUIDColl = {};
+
+  _SelectedHabitsData();
+
+  Iterable<HabitUUID> get selectedColl => _selectUUIDColl;
+
+  int get selecedCount => _selectUUIDColl.length;
+
+  bool get nothingSelected => selecedCount <= 0;
+
+  bool isSelected(HabitUUID uuid) => _selectUUIDColl.contains(uuid);
+
+  void select(HabitUUID uuid) => _selectUUIDColl.add(uuid);
+
+  void unselect(HabitUUID uuid) => _selectUUIDColl.remove(uuid);
+
+  void clearAll() => _selectUUIDColl.clear();
+
+  @override
+  String toString() => "$runtimeType(data=$_selectUUIDColl)";
 }
 
 class DispatcherForHabitDetail {
@@ -712,10 +748,10 @@ class DispatcherForHabitDetail {
       HabitUUID habitUUID) async {
     appLog.habit.info("$_clsName.onConfirmToArchiveHabit", ex: [habitUUID]);
     if (!_root.mounted) return null;
-    var habit = _root.getHabit(habitUUID);
+    final habit = _root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList =
-        await _root.changeHabitsStatus([habitUUID], HabitStatus.archived);
+    final recordList =
+        await _root._changeHabitsStatus([habitUUID], HabitStatus.archived);
     if (_root.mounted) _root.resortData();
     return recordList;
   }
@@ -724,10 +760,10 @@ class DispatcherForHabitDetail {
       HabitUUID habitUUID) async {
     appLog.habit.info("$_clsName.onConfirmToUnarchiveHabit", ex: [habitUUID]);
     if (!_root.mounted) return null;
-    var habit = _root.getHabit(habitUUID);
+    final habit = _root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList =
-        await _root.changeHabitsStatus([habitUUID], HabitStatus.activated);
+    final recordList =
+        await _root._changeHabitsStatus([habitUUID], HabitStatus.activated);
     if (_root.mounted) _root.resortData();
     return recordList;
   }
@@ -736,10 +772,10 @@ class DispatcherForHabitDetail {
       HabitUUID habitUUID) async {
     appLog.habit.info("$_clsName.onConfirmToDeleteHabit", ex: [habitUUID]);
     if (!_root.mounted) return null;
-    var habit = _root.getHabit(habitUUID);
+    final habit = _root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
-    var recordList =
-        await _root.changeHabitsStatus([habitUUID], HabitStatus.deleted);
+    final recordList =
+        await _root._changeHabitsStatus([habitUUID], HabitStatus.deleted);
     if (_root.mounted) _root.resortData();
     return recordList;
   }

@@ -17,7 +17,7 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
-import '../common/abc.dart';
+import '../common/async.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../logging/helper.dart';
@@ -28,7 +28,7 @@ import 'local/handler/habit.dart';
 import 'local/handler/record.dart';
 
 class DBHelperViewModel extends ChangeNotifier
-    with FutureInitializationABC, ProviderMounted {
+    implements ProviderMounted, AsyncInitialization {
   final DBHelper local;
 
   Completer? _completer;

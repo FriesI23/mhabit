@@ -12,4 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './_utils/change_record_status_utils.dart';
+export '_utils/habit_chart_utils.dart';
+export '_utils/habit_record_utils.dart';

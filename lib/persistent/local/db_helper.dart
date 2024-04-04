@@ -19,18 +19,18 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../assets/assets.dart';
-import '../../common/abc.dart';
+import '../../common/async.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../utils.dart';
-import 'table.dart';
 import 'handler/habit.dart';
 import 'handler/record.dart';
 import 'sql.dart';
+import 'table.dart';
 
-abstract interface class DBHelper with FutureInitializationABC {
+abstract interface class DBHelper implements AsyncInitialization {
   Database get db;
 
   factory DBHelper() => _DBHelper();

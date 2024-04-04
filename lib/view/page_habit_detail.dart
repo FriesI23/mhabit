@@ -47,6 +47,7 @@ import '../provider/habit_detail_freqchart.dart';
 import '../provider/habit_detail_scorechart.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
+import '../provider/utils.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
 import '_debug.dart';
@@ -88,6 +89,13 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
+/// Depend Providers
+/// - Required for builder:
+///   - [AppFirstDayViewModel]
+/// - Required for callback:
+///   - [HabitFileExporterViewModel]
+/// - Optional:
+///   - [HabitSummaryViewModel]
 class PageHabitDetail extends StatelessWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
@@ -96,8 +104,6 @@ class PageHabitDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(context.maybeRead<HabitFileExporterViewModel>() != null);
-    assert(context.maybeRead<AppFirstDayViewModel>() != null);
     return PageProviders(
         child: HabitDetailView(habitUUID: habitUUID, colorType: colorType));
   }
@@ -653,10 +659,10 @@ class _HabitDetailView extends State<HabitDetailView>
                   chartvm.getCurrentChartFirstDate(now, limit),
               getLastDate: (limit) =>
                   chartvm.getCurrentChartLastDate(now, limit),
-              startDate: getProtoDateByScoreChartCombine(
+              startDate: scoreChartHelp.getProtoDate(
                 context.read<HabitDetailViewModel>().habitStartDate,
-                chartvm.chartCombine,
                 context.read<AppFirstDayViewModel>().firstDay,
+                chartvm.chartCombine,
               ),
               getData: (firstDate, lastDate) =>
                   chartvm.getCurrentOffsetChartData(
@@ -669,7 +675,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 if (!mounted) return;
                 final viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
-                viewmodel.scoreChartCombine = combine;
+                viewmodel.updateScoreChartCombine(combine);
               },
               chartBuilder: buildChart,
             );
@@ -765,7 +771,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 if (!mounted) return;
                 var viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
-                viewmodel.freqChartCombine = combine;
+                viewmodel.updateFreqChartCombine(combine);
               },
               countChartBuilder: (context, data, eachSize, barWidth,
                       barSpaceBetween, displayMethod, chartKey) =>
@@ -879,19 +885,14 @@ class _HabitDetailView extends State<HabitDetailView>
           var viewmodel = context.read<HabitDetailViewModel>();
 
           Future<HabitDetailLoadDataResult> loadData() async {
-            var loadedFuture =
+            final loading =
                 viewmodel.loadData(widget.habitUUID, inFutureBuilder: true);
             await Future.delayed(_kHabitDetailFutureLoadDuration);
-            return await loadedFuture;
-          }
-
-          Future<HabitDetailLoadDataResult>? getFuture() {
-            viewmodel.dataloadingFutureCache ??= loadData();
-            return viewmodel.dataloadingFutureCache;
+            return await loading;
           }
 
           return FutureBuilder(
-            future: getFuture(),
+            future: loadData(),
             builder: (context, snapshot) {
               appLog.load.debug("$widget.buildBody",
                   ex: ["Loading detail data", snapshot.connectionState]);

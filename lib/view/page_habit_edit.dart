@@ -21,7 +21,6 @@ import '../common/consts.dart';
 import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
-import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_goal.dart';
@@ -61,6 +60,13 @@ Future<HabitDBCell?> naviToHabitEidtPage({
   );
 }
 
+/// Depend Providers
+/// - Required for builder:
+///   - [AppFirstDayViewModel]
+///   - [AppDeveloperViewModel]
+/// - Required for callback:
+///   - [NotificationChannelData]
+///   - [AppCachesViewModel]
 class PageHabitEdit extends StatelessWidget {
   final HabitForm? initForm;
   final bool showInFullscreenDialog;
@@ -73,10 +79,6 @@ class PageHabitEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(context.maybeRead<NotificationChannelData>() != null);
-    assert(context.maybeRead<AppFirstDayViewModel>() != null);
-    assert(context.maybeRead<AppDeveloperViewModel>() != null);
-    assert(context.maybeRead<AppCachesViewModel>() != null);
     return PageProviders(
         initForm: initForm,
         child: HabitEditView(

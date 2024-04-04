@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-abstract mixin class FutureInitializationABC {
+abstract interface class AsyncInitialization {
   Future init();
 }

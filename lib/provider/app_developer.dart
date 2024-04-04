@@ -41,11 +41,11 @@ class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
     }
   }
 
-  LogLevel get loggingLevel => kLogLevel.level;
+  LogLevel get loggingLevel => kAppLogLevel;
 
   set loggingLevel(LogLevel newLevel) {
-    if (kLogLevel.level != newLevel) {
-      kLogLevel.level = newLevel;
+    if (kAppLogLevel != newLevel) {
+      kAppLogLevel = newLevel;
       notifyListeners();
     }
   }

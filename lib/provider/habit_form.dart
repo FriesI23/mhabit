@@ -254,13 +254,13 @@ class HabitFormViewModel extends ChangeNotifier
     }
     switch (_form.editMode) {
       case HabitDisplayEditMode.create:
-        return await saveNewHabit(returnResult: true);
+        return await _saveNewHabit(returnResult: true);
       case HabitDisplayEditMode.edit:
-        return await saveExistHabit(returnResult: true);
+        return await _saveExistHabit(returnResult: true);
     }
   }
 
-  Future<HabitDBCell?> saveNewHabit({bool returnResult = false}) async {
+  Future<HabitDBCell?> _saveNewHabit({bool returnResult = false}) async {
     final freq = frequency.toMap();
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     final dbCell = HabitDBCell(
@@ -292,7 +292,7 @@ class HabitFormViewModel extends ChangeNotifier
     return result;
   }
 
-  Future<HabitDBCell?> saveExistHabit({bool returnResult = false}) async {
+  Future<HabitDBCell?> _saveExistHabit({bool returnResult = false}) async {
     final freq = frequency.toMap();
     final dbCell = HabitDBCell(
       type: habitType.dbCode,

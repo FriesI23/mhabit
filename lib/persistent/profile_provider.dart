@@ -18,7 +18,7 @@ import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../common/abc.dart';
+import '../common/async.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
 import '../provider/commons.dart';
@@ -28,7 +28,7 @@ typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> = T Function(
     SharedPreferences pref);
 
 class ProfileViewModel extends ChangeNotifier
-    with FutureInitializationABC, ProviderMounted {
+    implements ProviderMounted, AsyncInitialization {
   late final SharedPreferences _pref;
 
   final Iterable<ProfileHandlerBuilder> _handlerBuilders;

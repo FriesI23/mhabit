@@ -23,6 +23,8 @@ import '../common/exceptions.dart';
 import '../common/utils.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
+import '../utils/habit_date.dart';
+import 'utils.dart';
 
 class HabitDetailFreqChartViewModel extends ChangeNotifier {
   late final UniqueKey _parentVersion;
@@ -110,115 +112,23 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
     return tmp;
   }
 
-  static HabitDate getChartLastDateInMonthly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.monthly, firstDay);
-    return protoDate.copyWith(month: protoDate.month - offset * limit);
-  }
+  HabitDate getCurrentChartLastDate(
+          HabitDate? initDate, int limit) =>
+      _reversedData
+          ? freqChartHelper.getFirstDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday, chartCombine: chartCombine)
+          : freqChartHelper.getLastDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday,
+              chartCombine: chartCombine);
 
-  static HabitDate getChartFirstDateInMonthly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.monthly, firstDay);
-    return protoDate.copyWith(
-        month: protoDate.month - (offset + 1) * limit + 1);
-  }
-
-  static HabitDate getChartLastDateInYearly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.yearly, firstDay);
-    return protoDate.copyWith(year: protoDate.year - offset * limit);
-  }
-
-  static HabitDate getChartFirstDateInYearly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.yearly, firstDay);
-    return protoDate.copyWith(year: protoDate.year - (offset + 1) * limit + 1);
-  }
-
-  static HabitDate getChartLastDateInWeekly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.weekly, firstDay);
-    return protoDate.subtractDays(offset * limit * 7);
-  }
-
-  static HabitDate getChartFirstDateInWeekly(
-      HabitDate initDate, int offset, int limit, int firstDay) {
-    var protoDate = getProtoDateByFreqChartCombine(
-        initDate, HabitDetailFreqChartCombine.weekly, firstDay);
-    return protoDate.subtractDays(((offset + 1) * limit - 1) * 7);
-  }
-
-  HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    switch (chartCombine) {
-      case HabitDetailFreqChartCombine.monthly:
-        return _reversedData
-            ? getChartFirstDateInMonthly(initDate, offset, limit, firstday)
-            : getChartLastDateInMonthly(initDate, offset, limit, firstday);
-      case HabitDetailFreqChartCombine.yearly:
-        return _reversedData
-            ? getChartFirstDateInYearly(initDate, offset, limit, firstday)
-            : getChartLastDateInYearly(initDate, offset, limit, firstday);
-      case HabitDetailFreqChartCombine.weekly:
-        return _reversedData
-            ? getChartFirstDateInWeekly(initDate, offset, limit, firstday)
-            : getChartLastDateInWeekly(initDate, offset, limit, firstday);
-    }
-  }
-
-  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    switch (chartCombine) {
-      case HabitDetailFreqChartCombine.monthly:
-        return _reversedData
-            ? getChartLastDateInMonthly(initDate, offset, limit, firstday)
-            : getChartFirstDateInMonthly(initDate, offset, limit, firstday);
-      case HabitDetailFreqChartCombine.yearly:
-        return _reversedData
-            ? getChartLastDateInYearly(initDate, offset, limit, firstday)
-            : getChartFirstDateInYearly(initDate, offset, limit, firstday);
-      case HabitDetailFreqChartCombine.weekly:
-        return _reversedData
-            ? getChartLastDateInWeekly(initDate, offset, limit, firstday)
-            : getChartFirstDateInWeekly(initDate, offset, limit, firstday);
-    }
-  }
-
-  bool isOutOfDataRange(
-      HabitDate date, HabitDate firstDate, HabitDate lastDate) {
-    if (_reversedData) {
-      return date.isAfter(firstDate) || date.isBefore(lastDate);
-    } else {
-      return date.isBefore(firstDate) || date.isAfter(lastDate);
-    }
-  }
-
-  Iterable<MapEntry<HabitDate, HabitDetailFreqChartData>>
-      _getCurrentOffsetChartData({
-    required HabitDate initDate,
-    required HabitDate firstDate,
-    required HabitDate lastDate,
-  }) sync* {
-    bool outRangeBreaked = false;
-    for (var e in _data.entries) {
-      var date = e.key;
-      if (isOutOfDataRange(date, firstDate, lastDate)) {
-        if (outRangeBreaked) {
-          return;
-        } else {
-          continue;
-        }
-      } else {
-        if (!outRangeBreaked) outRangeBreaked = true;
-        yield e;
-      }
-    }
-  }
+  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
+      _reversedData
+          ? freqChartHelper.getLastDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine)
+          : freqChartHelper.getFirstDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine);
 
   List<MapEntry<HabitDate, HabitDetailFreqChartData>>
       getCurrentOffsetChartData({
@@ -227,45 +137,27 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
     HabitDate? lastDate,
     int? limit,
   }) {
+    assert(!(firstDate == null && limit == null));
+    assert(!(lastDate == null && limit == null));
+
     initDate ??= HabitDate.now();
     firstDate ??= getCurrentChartFirstDate(initDate, limit!);
     lastDate ??= getCurrentChartLastDate(initDate, limit!);
-    var existMap = Map.fromEntries(_getCurrentOffsetChartData(
-      initDate: initDate,
+
+    final existMap = Map.fromEntries(filterWithDateRange(
       firstDate: firstDate,
       lastDate: lastDate,
+      data: _data.entries,
+      reversed: _reversedData,
     ));
-
-    var result = <MapEntry<HabitDate, HabitDetailFreqChartData>>[];
-    var currentDate = firstDate;
-    while (_reversedData
-        ? !lastDate.isAfter(currentDate)
-        : !lastDate.isBefore(currentDate)) {
-      if (existMap.containsKey(currentDate)) {
-        result.add(MapEntry(currentDate, existMap[currentDate]!));
-      } else {
-        result.add(MapEntry(currentDate, HabitDetailFreqChartData()));
-      }
-
-      switch (chartCombine) {
-        case HabitDetailFreqChartCombine.monthly:
-          currentDate = _reversedData
-              ? currentDate.copyWith(month: currentDate.month - 1)
-              : currentDate.copyWith(month: currentDate.month + 1);
-          break;
-        case HabitDetailFreqChartCombine.yearly:
-          currentDate = _reversedData
-              ? currentDate.copyWith(year: currentDate.year - 1)
-              : currentDate.copyWith(year: currentDate.year + 1);
-          break;
-        case HabitDetailFreqChartCombine.weekly:
-          currentDate = _reversedData
-              ? currentDate.subtractDays(7)
-              : currentDate.addDays(7);
-          break;
-      }
-    }
-
-    return result;
+    return freqChartHelper
+        .fetchDataByOffset(
+          firstDate,
+          lastDate,
+          reversed: _reversedData,
+          chartCombine: chartCombine,
+          dataBuilder: (date) => existMap[date] ?? HabitDetailFreqChartData(),
+        )
+        .toList();
   }
 }

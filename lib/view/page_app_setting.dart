@@ -36,7 +36,6 @@ import '../logging/level.dart';
 import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
-import '../model/global.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile_provider.dart';
 import '../provider/app_caches.dart';
@@ -77,20 +76,25 @@ Future<void> naviToAppSettingPage({
   );
 }
 
+/// Depend Providers
+/// - Required for builder:
+///   - [AppCustomDateYmdHmsConfigViewModel]
+///   - [AppFirstDayViewModel]
+///   - [AppCompactUISwitcherViewModel]
+///   - [AppDeveloperViewModel]
+///   - [AppReminderViewModel]
+///   - [AppThemeViewModel]
+///   - [HabitsRecordScrollBehaviorViewModel]
+/// - Required for callback:
+///   - [HabitFileImporterViewModel]
+///   - [ProfileViewModel]
+/// - Optional:
+///   - [HabitSummaryViewModel]
 class PageAppSetting extends StatelessWidget {
   const PageAppSetting({super.key});
 
   @override
   Widget build(BuildContext context) {
-    assert(context.maybeRead<AppCustomDateYmdHmsConfigViewModel>() != null);
-    assert(context.maybeRead<AppFirstDayViewModel>() != null);
-    assert(context.maybeRead<AppCompactUISwitcherViewModel>() != null);
-    assert(context.maybeRead<HabitFileImporterViewModel>() != null);
-    assert(context.maybeRead<AppDeveloperViewModel>() != null);
-    assert(context.maybeRead<AppReminderViewModel>() != null);
-    assert(context.maybeRead<AppThemeViewModel>() != null);
-    assert(context.maybeRead<ProfileViewModel>() != null);
-    assert(context.maybeRead<Global>() != null);
     return const AppSettingView();
   }
 }

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../logging/level.dart';
+import 'utils.dart';
 
 //#region debug options
 bool debugClearDBWhenStart = false;
@@ -23,24 +23,8 @@ bool debugClearSharedPrefWhenStart = false;
 //#endregion
 
 //#region log level
-final kLogLevel = _LoggingLevel();
+LogLevel kAppLogLevel = getDefaultLogLevel();
 //#endregion
 
 final GlobalKey<ScaffoldMessengerState> snackbarKey =
     GlobalKey<ScaffoldMessengerState>();
-
-class _LoggingLevel {
-  late LogLevel level;
-
-  _LoggingLevel() {
-    if (kDebugMode) {
-      level = LogLevel.debug;
-    } else if (kProfileMode) {
-      level = LogLevel.info;
-    } else if (kReleaseMode) {
-      level = LogLevel.warn;
-    } else {
-      level = LogLevel.debug;
-    }
-  }
-}

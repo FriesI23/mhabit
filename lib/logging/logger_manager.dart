@@ -15,7 +15,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
-import '../common/abc.dart';
+import '../common/async.dart';
 import 'handler/console_output.dart';
 import 'handler/console_printer.dart';
 import 'handler/filter.dart';
@@ -24,7 +24,7 @@ import 'logger/value_change_logger.dart';
 import 'logger/widget_logger.dart';
 import 'logger_type.dart';
 
-abstract interface class AppLoggerMananger with FutureInitializationABC {
+abstract interface class AppLoggerMananger implements AsyncInitialization {
   static AppLoggerMananger? _instance;
 
   l.Logger get logger;

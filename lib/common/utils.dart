@@ -23,6 +23,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
+import '../logging/level.dart';
 import '../theme/color.dart';
 import 'consts.dart';
 
@@ -206,5 +207,17 @@ T clampInt<T extends int>(T value, {T? min, T? max}) {
     return max;
   } else {
     return value;
+  }
+}
+
+LogLevel getDefaultLogLevel() {
+  if (kDebugMode) {
+    return LogLevel.debug;
+  } else if (kProfileMode) {
+    return LogLevel.info;
+  } else if (kReleaseMode) {
+    return LogLevel.warn;
+  } else {
+    return LogLevel.debug;
   }
 }

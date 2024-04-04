@@ -22,6 +22,8 @@ import '../common/exceptions.dart';
 import '../common/utils.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
+import '../utils/habit_date.dart';
+import 'utils.dart';
 
 class HabitDetailScoreChartViewModel extends ChangeNotifier {
   late final UniqueKey _parentVersion;
@@ -84,137 +86,23 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     return tmp;
   }
 
-  static HabitDate getChartLastDateInMonthly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.monthly, firstday);
-    return protoDate.copyWith(month: protoDate.month - offset * limit);
-  }
+  HabitDate getCurrentChartLastDate(
+          HabitDate? initDate, int limit) =>
+      _reversedData
+          ? scoreChartHelp.getFirstDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday, chartCombine: chartCombine)
+          : scoreChartHelp.getLastDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday,
+              chartCombine: chartCombine);
 
-  static HabitDate getChartFirstDateInMonthly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.monthly, firstday);
-    return protoDate.copyWith(
-        month: protoDate.month - (offset + 1) * limit + 1);
-  }
-
-  static HabitDate getChartLastDateInYearly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.yearly, firstday);
-    return protoDate.copyWith(year: protoDate.year - offset * limit);
-  }
-
-  static HabitDate getChartFirstDateInYearly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.yearly, firstday);
-    return protoDate.copyWith(year: protoDate.year - (offset + 1) * limit + 1);
-  }
-
-  static HabitDate getChartLastDateInWeekly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.weekly, firstday);
-    return protoDate.subtractDays(offset * limit * 7);
-  }
-
-  static HabitDate getChartFirstDateInWeekly(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.weekly, firstday);
-    return protoDate.subtractDays(((offset + 1) * limit + 1) * 7);
-  }
-
-  static HabitDate getChartLastDateInDaily(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.daily, firstday);
-    return protoDate.subtractDays(offset * limit);
-  }
-
-  static HabitDate getChartFirstDateInDaily(
-      HabitDate initDate, int offset, int limit, int firstday) {
-    var protoDate = getProtoDateByScoreChartCombine(
-        initDate, HabitDetailScoreChartCombine.daily, firstday);
-    return protoDate.subtractDays((offset + 1) * limit + 1);
-  }
-
-  HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    switch (chartCombine) {
-      case HabitDetailScoreChartCombine.monthly:
-        return _reversedData
-            ? getChartFirstDateInMonthly(initDate, offset, limit, firstday)
-            : getChartLastDateInMonthly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.yearly:
-        return _reversedData
-            ? getChartFirstDateInYearly(initDate, offset, limit, firstday)
-            : getChartLastDateInYearly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.weekly:
-        return _reversedData
-            ? getChartFirstDateInWeekly(initDate, offset, limit, firstday)
-            : getChartLastDateInWeekly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.daily:
-        return _reversedData
-            ? getChartFirstDateInDaily(initDate, offset, limit, firstday)
-            : getChartLastDateInDaily(initDate, offset, limit, firstday);
-    }
-  }
-
-  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    switch (chartCombine) {
-      case HabitDetailScoreChartCombine.monthly:
-        return _reversedData
-            ? getChartLastDateInMonthly(initDate, offset, limit, firstday)
-            : getChartFirstDateInMonthly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.yearly:
-        return _reversedData
-            ? getChartLastDateInYearly(initDate, offset, limit, firstday)
-            : getChartFirstDateInYearly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.weekly:
-        return _reversedData
-            ? getChartLastDateInWeekly(initDate, offset, limit, firstday)
-            : getChartFirstDateInWeekly(initDate, offset, limit, firstday);
-      case HabitDetailScoreChartCombine.daily:
-        return _reversedData
-            ? getChartLastDateInDaily(initDate, offset, limit, firstday)
-            : getChartFirstDateInDaily(initDate, offset, limit, firstday);
-    }
-  }
-
-  bool isOutOfDataRange(
-      HabitDate date, HabitDate firstDate, HabitDate lastDate) {
-    if (_reversedData) {
-      return date.isAfter(firstDate) || date.isBefore(lastDate);
-    } else {
-      return date.isBefore(firstDate) || date.isAfter(lastDate);
-    }
-  }
-
-  Iterable<MapEntry<HabitDate, HabitDetailScoreChartDate>>
-      _getCurrentOffsetChartData({
-    required HabitDate initDate,
-    required HabitDate firstDate,
-    required HabitDate lastDate,
-  }) sync* {
-    bool outRangeBreaked = false;
-    for (var e in _data.entries) {
-      var date = e.key;
-      if (isOutOfDataRange(date, firstDate, lastDate)) {
-        if (outRangeBreaked) {
-          return;
-        } else {
-          continue;
-        }
-      } else {
-        if (!outRangeBreaked) outRangeBreaked = true;
-        yield e;
-      }
-    }
-  }
+  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
+      _reversedData
+          ? scoreChartHelp.getLastDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine)
+          : scoreChartHelp.getFirstDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine);
 
   List<MapEntry<HabitDate, HabitDetailScoreChartDate>>
       getCurrentOffsetChartData({
@@ -223,50 +111,27 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     HabitDate? lastDate,
     int? limit,
   }) {
+    assert(!(firstDate == null && limit == null));
+    assert(!(lastDate == null && limit == null));
+
     initDate ??= HabitDate.now();
     firstDate ??= getCurrentChartFirstDate(initDate, limit!);
     lastDate ??= getCurrentChartLastDate(initDate, limit!);
-    var existMap = Map.fromEntries(_getCurrentOffsetChartData(
-      initDate: initDate,
+
+    final existMap = Map.fromEntries(filterWithDateRange(
       firstDate: firstDate,
       lastDate: lastDate,
+      data: _data.entries,
+      reversed: _reversedData,
     ));
-
-    var result = <MapEntry<HabitDate, HabitDetailScoreChartDate>>[];
-    var currentDate = firstDate;
-    while (_reversedData
-        ? !lastDate.isAfter(currentDate)
-        : !lastDate.isBefore(currentDate)) {
-      if (existMap.containsKey(currentDate)) {
-        result.add(MapEntry(currentDate, existMap[currentDate]!));
-      } else {
-        result.add(MapEntry(currentDate, HabitDetailScoreChartDate()));
-      }
-
-      switch (chartCombine) {
-        case HabitDetailScoreChartCombine.monthly:
-          currentDate = _reversedData
-              ? currentDate.copyWith(month: currentDate.month - 1)
-              : currentDate.copyWith(month: currentDate.month + 1);
-          break;
-        case HabitDetailScoreChartCombine.yearly:
-          currentDate = _reversedData
-              ? currentDate.copyWith(year: currentDate.year - 1)
-              : currentDate.copyWith(year: currentDate.year + 1);
-          break;
-        case HabitDetailScoreChartCombine.weekly:
-          currentDate = _reversedData
-              ? currentDate.subtractDays(7)
-              : currentDate.addDays(7);
-          break;
-        case HabitDetailScoreChartCombine.daily:
-          currentDate = _reversedData
-              ? currentDate.subtractDays(1)
-              : currentDate.addDays(1);
-          break;
-      }
-    }
-
-    return result;
+    return scoreChartHelp
+        .fetchDataByOffset(
+          firstDate,
+          lastDate,
+          reversed: _reversedData,
+          chartCombine: chartCombine,
+          dataBuilder: (date) => existMap[date] ?? HabitDetailScoreChartDate(),
+        )
+        .toList();
   }
 }
