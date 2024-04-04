@@ -291,7 +291,9 @@ class HabitDetailViewModel extends ChangeNotifier
   Map<HabitDate, HabitDetailScoreChartDate> getRecordScoreChartDatas() =>
       habitDetailData != null
           ? ScoreChartCalculator(habitDetailData!,
-                  firstday: firstday, combine: scoreChartCombine)
+                  firstday: firstday,
+                  combine: scoreChartCombine,
+                  scoreOverride: (date) => _habitScoreChangedDateColl[date])
               .calculate()
           : const {};
   //#endregion
@@ -627,7 +629,7 @@ class ScoreChartCalculator {
   final HabitDetailData _data;
   final HabitDetailScoreChartCombine combine;
   final int firstday;
-  final num Function(HabitDate date)? scoreOverride;
+  final num? Function(HabitDate date)? scoreOverride;
 
   const ScoreChartCalculator(HabitDetailData data,
       {required this.firstday, required this.combine, this.scoreOverride})
