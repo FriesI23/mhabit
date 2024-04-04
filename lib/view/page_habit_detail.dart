@@ -47,6 +47,7 @@ import '../provider/habit_detail_freqchart.dart';
 import '../provider/habit_detail_scorechart.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
+import '../provider/utils.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
 import '_debug.dart';
@@ -658,10 +659,10 @@ class _HabitDetailView extends State<HabitDetailView>
                   chartvm.getCurrentChartFirstDate(now, limit),
               getLastDate: (limit) =>
                   chartvm.getCurrentChartLastDate(now, limit),
-              startDate: getProtoDateByScoreChartCombine(
+              startDate: scoreChartHelp.getProtoDate(
                 context.read<HabitDetailViewModel>().habitStartDate,
-                chartvm.chartCombine,
                 context.read<AppFirstDayViewModel>().firstDay,
+                chartvm.chartCombine,
               ),
               getData: (firstDate, lastDate) =>
                   chartvm.getCurrentOffsetChartData(

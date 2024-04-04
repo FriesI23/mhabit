@@ -17,40 +17,11 @@ import 'package:flutter/foundation.dart';
 import 'package:quiver/core.dart';
 
 import '../common/types.dart';
-import 'habit_date.dart';
 import 'habit_form.dart';
 
 enum HabitDetailFreqChartCombine { weekly, monthly, yearly }
 
 enum HabitDetailScoreChartCombine { daily, weekly, monthly, yearly }
-
-HabitDate getProtoDateByFreqChartCombine(
-    HabitDate date, HabitDetailFreqChartCombine combine, int firstDay) {
-  switch (combine) {
-    case HabitDetailFreqChartCombine.monthly:
-      return date.firstDayOfMonth;
-    case HabitDetailFreqChartCombine.yearly:
-      return date.copyWith(month: 1, day: 1);
-    case HabitDetailFreqChartCombine.weekly:
-      return date
-          .subtract(Duration(days: date.weekDayWithStartDay(firstDay) - 1));
-  }
-}
-
-HabitDate getProtoDateByScoreChartCombine(
-    HabitDate date, HabitDetailScoreChartCombine combine, int firstDay) {
-  switch (combine) {
-    case HabitDetailScoreChartCombine.monthly:
-      return date.firstDayOfMonth;
-    case HabitDetailScoreChartCombine.yearly:
-      return date.copyWith(month: 1, day: 1);
-    case HabitDetailScoreChartCombine.weekly:
-      return date
-          .subtract(Duration(days: date.weekDayWithStartDay(firstDay) - 1));
-    case HabitDetailScoreChartCombine.daily:
-      return date;
-  }
-}
 
 class HabitHeatMapColorMapDefine {
   static num uncomplate = 0;

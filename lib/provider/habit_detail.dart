@@ -32,8 +32,8 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
-import '_utils/habit_record_utils.dart';
 import 'commons.dart';
+import 'utils.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
@@ -132,6 +132,7 @@ class HabitDetailViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
+    _cancelLoading();
     super.dispose();
     _mounted = false;
   }
@@ -145,12 +146,16 @@ class HabitDetailViewModel extends ChangeNotifier
 
   bool rockreloadDBToggleSwich() {
     _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    if (_loading != null) {
-      CancelableOperation.fromFuture(_loading!.future).cancel();
-      _loading = null;
-    }
+    _cancelLoading();
     notifyListeners();
     return _reloadDBToggleSwich;
+  }
+
+  void _cancelLoading() {
+    if (_loading != null && !_loading!.isCompleted) {
+      CancelableOperation.fromFuture(_loading!.future).cancel();
+    }
+    _loading = null;
   }
 
   Future<HabitDetailLoadDataResult> loadData(HabitUUID uuid,
@@ -537,7 +542,7 @@ class FreqChartCalculator {
       num complateTotalValue = 0,
       num overfulfilTotalValue = 0,
     }) {
-      final firstDate = getProtoDateByFreqChartCombine(date, combine, firstday);
+      final firstDate = freqChartHelper.getProtoDate(date, firstday, combine);
       result.update(
         firstDate,
         (value) => value
@@ -610,7 +615,7 @@ class FreqChartCalculator {
 
     for (var autoDate in _data.autoRecordsDate) {
       if (data.getRecordByDate(autoDate) != null) continue;
-      final date = getProtoDateByFreqChartCombine(autoDate, combine, firstday);
+      final date = freqChartHelper.getProtoDate(autoDate, firstday, combine);
       tryAddToResult(date, autoComplate: 1);
     }
 
@@ -635,7 +640,7 @@ class ScoreChartCalculator {
     HabitDate crtDate = _data.data.startDate;
     num crtScore = 0.0;
     while (crtDate <= endedDate) {
-      final key = getProtoDateByScoreChartCombine(crtDate, combine, firstday);
+      final key = scoreChartHelp.getProtoDate(crtDate, firstday, combine);
       crtScore = scoreOverride?.call(crtDate) ?? crtScore;
       result.update(
         key,

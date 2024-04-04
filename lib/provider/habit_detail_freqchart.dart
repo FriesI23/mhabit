@@ -112,25 +112,23 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
     return tmp;
   }
 
-  HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    const helper = HabitDetailFreqChartHelper();
-    return _reversedData
-        ? helper.getFirstDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine)
-        : helper.getLastDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine);
-  }
+  HabitDate getCurrentChartLastDate(
+          HabitDate? initDate, int limit) =>
+      _reversedData
+          ? freqChartHelper.getFirstDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday, chartCombine: chartCombine)
+          : freqChartHelper.getLastDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday,
+              chartCombine: chartCombine);
 
-  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    const helper = HabitDetailFreqChartHelper();
-    return _reversedData
-        ? helper.getLastDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine)
-        : helper.getFirstDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine);
-  }
+  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
+      _reversedData
+          ? freqChartHelper.getLastDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine)
+          : freqChartHelper.getFirstDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine);
 
   List<MapEntry<HabitDate, HabitDetailFreqChartData>>
       getCurrentOffsetChartData({
@@ -152,7 +150,7 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
       data: _data.entries,
       reversed: _reversedData,
     ));
-    return const HabitDetailFreqChartHelper()
+    return freqChartHelper
         .fetchDataByOffset(
           firstDate,
           lastDate,

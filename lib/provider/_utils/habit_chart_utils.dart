@@ -25,6 +25,10 @@ typedef HabitDetailChartHelperDateBuilderCb<T> = HabitDate Function(
 typedef HabitDetailChartHelperDataOffsetCb = HabitDate Function(
     HabitDate date, bool reversed);
 
+const HabitDetailChartHelper scoreChartHelp = HabitDetailScoreChartHelper();
+
+const HabitDetailChartHelper freqChartHelper = HabitDetailFreqChartHelper();
+
 abstract class HabitDetailChartHelper<T> {
   const HabitDetailChartHelper();
 
@@ -35,10 +39,8 @@ abstract class HabitDetailChartHelper<T> {
       {required T chartCombine, required bool isLast}) {
     assert(_fetchDateHandlers.containsKey(chartCombine));
     assert(_buildDateHandlers.containsKey(chartCombine));
-    final fetcher = _fetchDateHandlers[chartCombine]!;
-    final protoDate = fetcher(initDate, firstday);
-    final builder = _buildDateHandlers[chartCombine]!;
-    return builder(
+    final protoDate = getProtoDate(initDate, firstday, chartCombine);
+    return _buildDateHandlers[chartCombine]!(
         HabitDateRangeCalculator(date: protoDate, offset: offset, limit: limit),
         isLast);
   }
@@ -55,6 +57,9 @@ abstract class HabitDetailChartHelper<T> {
           {required T chartCombine}) =>
       _getDate(initDate, offset, limit, firstday,
           chartCombine: chartCombine, isLast: true);
+
+  HabitDate getProtoDate(HabitDate date, int firstDay, T combine) =>
+      _fetchDateHandlers[combine]!.call(date, firstDay);
 
   Iterable<MapEntry<HabitDate, V>> fetchDataByOffset<V>(
     HabitDate firstDate,
@@ -77,18 +82,13 @@ final class HabitDetailScoreChartHelper
     extends HabitDetailChartHelper<HabitDetailScoreChartCombine> {
   static final _fetchersMap =
       <HabitDetailScoreChartCombine, HabitDetailChartHelperDateFetcherCb>{
-    HabitDetailScoreChartCombine.yearly: (initDate, firstday) =>
-        getProtoDateByScoreChartCombine(
-            initDate, HabitDetailScoreChartCombine.yearly, firstday),
-    HabitDetailScoreChartCombine.monthly: (initDate, firstday) =>
-        getProtoDateByScoreChartCombine(
-            initDate, HabitDetailScoreChartCombine.monthly, firstday),
-    HabitDetailScoreChartCombine.weekly: (initDate, firstday) =>
-        getProtoDateByScoreChartCombine(
-            initDate, HabitDetailScoreChartCombine.weekly, firstday),
-    HabitDetailScoreChartCombine.daily: (initDate, firstday) =>
-        getProtoDateByScoreChartCombine(
-            initDate, HabitDetailScoreChartCombine.daily, firstday)
+    HabitDetailScoreChartCombine.yearly: (date, firstday) =>
+        date.copyWith(month: 1, day: 1),
+    HabitDetailScoreChartCombine.monthly: (date, firstday) =>
+        date.firstDayOfMonth,
+    HabitDetailScoreChartCombine.weekly: (date, firstday) =>
+        date.subtract(Duration(days: date.weekDayWithStartDay(firstday) - 1)),
+    HabitDetailScoreChartCombine.daily: (date, firstday) => date,
   };
 
   static final _buildersMap =
@@ -114,7 +114,7 @@ final class HabitDetailScoreChartHelper
     HabitDetailScoreChartCombine.weekly: (date, reversed) =>
         reversed ? date.subtractDays(7) : date.addDays(7),
     HabitDetailScoreChartCombine.daily: (date, reversed) =>
-        reversed ? date.subtractDays(1) : date.addDays(1)
+        reversed ? date.subtractDays(1) : date.addDays(1),
   };
 
   const HabitDetailScoreChartHelper();
@@ -136,15 +136,12 @@ final class HabitDetailFreqChartHelper
     extends HabitDetailChartHelper<HabitDetailFreqChartCombine> {
   static final _fetchersMap =
       <HabitDetailFreqChartCombine, HabitDetailChartHelperDateFetcherCb>{
-    HabitDetailFreqChartCombine.yearly: (initDate, firstday) =>
-        getProtoDateByFreqChartCombine(
-            initDate, HabitDetailFreqChartCombine.yearly, firstday),
-    HabitDetailFreqChartCombine.monthly: (initDate, firstday) =>
-        getProtoDateByFreqChartCombine(
-            initDate, HabitDetailFreqChartCombine.monthly, firstday),
-    HabitDetailFreqChartCombine.weekly: (initDate, firstday) =>
-        getProtoDateByFreqChartCombine(
-            initDate, HabitDetailFreqChartCombine.weekly, firstday),
+    HabitDetailFreqChartCombine.yearly: (date, firstday) =>
+        date.copyWith(month: 1, day: 1),
+    HabitDetailFreqChartCombine.monthly: (date, firstday) =>
+        date.firstDayOfMonth,
+    HabitDetailFreqChartCombine.weekly: (date, firstday) =>
+        date.subtract(Duration(days: date.weekDayWithStartDay(firstday) - 1)),
   };
 
   static final _buildersMap =
@@ -166,7 +163,7 @@ final class HabitDetailFreqChartHelper
         ? date.copyWith(month: date.month - 1)
         : date.copyWith(month: date.month + 1),
     HabitDetailFreqChartCombine.weekly: (date, reversed) =>
-        reversed ? date.subtractDays(7) : date.addDays(7)
+        reversed ? date.subtractDays(7) : date.addDays(7),
   };
 
   const HabitDetailFreqChartHelper();

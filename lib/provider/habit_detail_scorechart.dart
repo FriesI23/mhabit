@@ -86,25 +86,23 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     return tmp;
   }
 
-  HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    const helper = HabitDetailScoreChartHelper();
-    return _reversedData
-        ? helper.getFirstDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine)
-        : helper.getLastDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine);
-  }
+  HabitDate getCurrentChartLastDate(
+          HabitDate? initDate, int limit) =>
+      _reversedData
+          ? scoreChartHelp.getFirstDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday, chartCombine: chartCombine)
+          : scoreChartHelp.getLastDate(initDate ?? HabitDate.now(), offset,
+              limit, firstday,
+              chartCombine: chartCombine);
 
-  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) {
-    initDate ??= HabitDate.now();
-    const helper = HabitDetailScoreChartHelper();
-    return _reversedData
-        ? helper.getLastDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine)
-        : helper.getFirstDate(initDate, offset, limit, firstday,
-            chartCombine: chartCombine);
-  }
+  HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
+      _reversedData
+          ? scoreChartHelp.getLastDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine)
+          : scoreChartHelp.getFirstDate(
+              initDate ?? HabitDate.now(), offset, limit, firstday,
+              chartCombine: chartCombine);
 
   List<MapEntry<HabitDate, HabitDetailScoreChartDate>>
       getCurrentOffsetChartData({
@@ -126,7 +124,7 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
       data: _data.entries,
       reversed: _reversedData,
     ));
-    return const HabitDetailScoreChartHelper()
+    return scoreChartHelp
         .fetchDataByOffset(
           firstDate,
           lastDate,

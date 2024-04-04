@@ -35,8 +35,8 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
-import '_utils/habit_record_utils.dart';
 import 'commons.dart';
+import 'utils.dart';
 
 part 'habit_summary.g.dart';
 
@@ -62,7 +62,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   final _selectorData = _SelectedHabitsData();
   final _last30daysProgressChangeData = HabitLast30DaysProgressChangeData();
   // status
-  Completer? _loading;
+  Completer<void>? _loading;
   bool _reloadDBToggleSwich = false;
   bool _nextRefreshClearSnackBar = false;
   bool _reloadUIToggleSwitch = false;
@@ -196,6 +196,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (!_mounted) return;
     _dispatcher.discard();
     disposeVerticalScrollController();
+    _cancelLoading();
     super.dispose();
     _mounted = false;
   }
@@ -208,11 +209,8 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool rockreloadDBToggleSwich({bool clearSnackBar = true}) {
     _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    if (_loading != null) {
-      CancelableOperation.fromFuture(_loading!.future).cancel();
-      _loading = null;
-    }
     _nextRefreshClearSnackBar = clearSnackBar;
+    _cancelLoading();
     notifyListeners();
     return _reloadDBToggleSwich;
   }
@@ -248,12 +246,19 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
   }
 
+  void _cancelLoading() {
+    if (_loading != null && !_loading!.isCompleted) {
+      CancelableOperation.fromFuture(_loading!.future).cancel();
+    }
+    _loading = null;
+  }
+
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
     if (_loading != null) {
       appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
       return _loading!.future;
     }
-    final completer = _loading = Completer();
+    final completer = _loading = Completer<void>();
     final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
     final recordLoadTask = recordDBHelper.loadAllRecords();
     _data.initDataFromDBQueuryResult(await habitLoadTask, await recordLoadTask);
