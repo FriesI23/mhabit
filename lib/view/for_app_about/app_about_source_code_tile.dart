@@ -21,7 +21,7 @@ import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
-import '../../model/about_info.dart';
+import '../../provider/about_info.dart';
 import '_widget.dart';
 
 class AppAboutSourceCodeTile extends StatefulWidget {
