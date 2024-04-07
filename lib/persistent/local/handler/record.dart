@@ -81,7 +81,7 @@ class RecordDBCell with DBCell {
 }
 
 class RecordDBHelper extends DBHelperHandler {
-  RecordDBHelper(super.helper);
+  const RecordDBHelper(super.helper);
 
   @override
   String get table => TableName.records;

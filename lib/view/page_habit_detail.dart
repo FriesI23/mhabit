@@ -35,7 +35,6 @@ import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
-import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../persistent/local/handler/habit.dart';
@@ -882,15 +881,15 @@ class _HabitDetailView extends State<HabitDetailView>
         selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
-          var viewmodel = context.read<HabitDetailViewModel>();
-
-          Future<HabitDetailLoadDataResult> loadData() async {
-            final loading =
-                viewmodel.loadData(widget.habitUUID, inFutureBuilder: true);
+          Future<void> loadData() async {
+            final loading = context
+                .read<HabitDetailViewModel>()
+                .loadData(widget.habitUUID, inFutureBuilder: true);
             await Future.delayed(_kHabitDetailFutureLoadDuration);
-            return await loading;
+            await loading;
           }
 
+          final viewmodel = context.read<HabitDetailViewModel>();
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {
@@ -914,8 +913,7 @@ class _HabitDetailView extends State<HabitDetailView>
                     colorType: viewmodel.habitColorType,
                   ),
                 );
-              } else if (snapshot.isDone &&
-                  snapshot.data == HabitDetailLoadDataResult.habitMissing) {
+              } else if (snapshot.hasError) {
                 switcherWidget = SliverFillRemaining(
                   hasScrollBody: false,
                   child: L10nBuilder(

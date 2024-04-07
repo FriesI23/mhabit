@@ -27,7 +27,7 @@ import 'habit_freq.dart';
 import 'habit_reminder.dart';
 
 @JsonEnum(valueField: 'code')
-enum HabitType implements EnumWithDBCodeABC {
+enum HabitType implements EnumWithDBCode {
   unknown(code: 0),
   normal(code: 1),
   negative(code: 2);
@@ -74,7 +74,7 @@ enum HabitType implements EnumWithDBCodeABC {
 }
 
 @JsonEnum(valueField: 'code')
-enum HabitStatus implements EnumWithDBCodeABC<HabitStatus> {
+enum HabitStatus implements EnumWithDBCode<HabitStatus> {
   unknown(code: 0),
   activated(code: 1),
   deleted(code: 2),
@@ -97,7 +97,7 @@ enum HabitStatus implements EnumWithDBCodeABC<HabitStatus> {
 }
 
 @JsonEnum(valueField: 'code')
-enum HabitColorType implements EnumWithDBCodeABC<HabitColorType> {
+enum HabitColorType implements EnumWithDBCode<HabitColorType> {
   cc1(code: 1),
   cc2(code: 2),
   cc3(code: 3),
@@ -126,7 +126,7 @@ enum HabitColorType implements EnumWithDBCodeABC<HabitColorType> {
 }
 
 @JsonEnum(valueField: 'code')
-enum HabitFrequencyType implements EnumWithDBCodeABC<HabitRecordStatus> {
+enum HabitFrequencyType implements EnumWithDBCode<HabitRecordStatus> {
   unknown(code: 0),
   weekly(code: 1),
   monthly(code: 2),
@@ -149,7 +149,7 @@ enum HabitFrequencyType implements EnumWithDBCodeABC<HabitRecordStatus> {
 }
 
 @JsonEnum(valueField: 'code')
-enum HabitRecordStatus implements EnumWithDBCodeABC<HabitRecordStatus> {
+enum HabitRecordStatus implements EnumWithDBCode<HabitRecordStatus> {
   unknown(code: 0),
   done(code: 1),
   skip(code: 2);
@@ -219,7 +219,7 @@ class HabitForm {
         dailyGoal = cell.dailyGoal,
         dailyGoalUnit = cell.dailyGoalUnit,
         dailyGoalExtra = cell.dailyGoalExtra,
-        frequency = HabitFrequency.fromMap(
+        frequency = HabitFrequency.fromJson(
             {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)}),
         startDate = HabitStartDate.fromEpochDay(cell.startDate!),
         targetDays = cell.targetDays,
@@ -231,11 +231,11 @@ class HabitForm {
 
   @override
   String toString() {
-    return 'HabitForm(name=$name, type=$type, '
-        'colorType=$colorType, dailyGoal=$dailyGoal, '
-        'dailyGoalUnit=$dailyGoalUnit, dailyGoalExtra=$dailyGoalExtra, '
-        'frequency=$frequency, startDate=$startDate, targetDays=$targetDays, '
-        'desc=$desc, reminder=$reminder, reminderQuest=$reminderQuest, '
-        'editMode=$editMode, editParams=$editParams)';
+    return 'HabitForm(name=$name,type=$type,colorType=$colorType,'
+        'dailyGoal=$dailyGoal,dailyGoalUnit=$dailyGoalUnit,'
+        'dailyGoalExtra=$dailyGoalExtra,frequency=$frequency,'
+        'startDate=$startDate,targetDays=$targetDays,desc=$desc,'
+        'reminder=$reminder,reminderQuest=$reminderQuest,editMode=$editMode,'
+        'editParams=$editParams)';
   }
 }

@@ -20,7 +20,6 @@ import 'types.dart';
 HabitDailyGoal onDailyGoalTextInputChanged(
   num newDailyGoal, {
   required TextEditingController controller,
-  num defaultValue = defaultHabitDailyGoal,
   num maxValue = maxHabitdailyGoal,
   bool allowInputZero = false,
 }) {

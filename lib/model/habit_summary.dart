@@ -175,7 +175,6 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   num _progress = 0.0;
   final SplayTreeSet<HabitRecordDate> _autoMarkedRecords =
       SplayTreeSet((a, b) => a.compareTo(b));
-  // final Set<HabitRecordDate> _autoMarkedRecords = {};
 
   HabitSummaryData({
     required this.id,
@@ -206,7 +205,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         dailyGoal = cell.dailyGoal!,
         dailyGoalExtra = cell.dailyGoalExtra,
         targetDays = cell.targetDays!,
-        frequency = HabitFrequency.fromMap(
+        frequency = HabitFrequency.fromJson(
             {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)}),
         startDate = HabitStartDate.fromEpochDay(cell.startDate!),
         status = HabitStatus.getFromDBCode(cell.status!)!,
@@ -252,7 +251,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   num debugCalcTotalScore({HabitRecordDate? endDate}) {
     assert(kDebugMode);
     num result = 0.0;
-    var calculator = getCalculator();
+    final calculator = getCalculator();
     calculator.calculate(
       onTotalScoreCalculated: (score) {
         result = math.min(math.max(score, 0), 100);
@@ -330,9 +329,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   Iterable<HabitRecordDate> _calculateAutoComplateRecordsCustom() {
     assert(frequency.type == HabitFrequencyType.custom);
 
-    var markedDateSet = <HabitRecordDate>{};
-    var window = Queue<HabitRecordDate>();
-    var dateNow = HabitDate.now();
+    final markedDateSet = <HabitRecordDate>{};
+    final window = Queue<HabitRecordDate>();
+    final dateNow = HabitDate.now();
 
     HabitRecordDate crtDate;
     HabitSummaryRecord crtRecord;
@@ -360,7 +359,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       // debugPrint("window: $window");
       if (window.length < frequency.freq) continue;
 
-      int insideDays = window.last.epochDay - window.first.epochDay + 1;
+      final insideDays = window.last.epochDay - window.first.epochDay + 1;
       if (insideDays > frequency.days) {
         window.removeFirst();
         continue;
@@ -374,7 +373,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       int lastDays = frequency.days - insideDays;
 
-      var leftLastDays = lastDays;
+      final leftLastDays = lastDays;
       for (var i = 1; i <= leftLastDays; i++) {
         var leftMarkDate = window.first.subtractDays(i);
         if (markedDateSet.contains(leftMarkDate) || leftMarkDate < startDate) {
@@ -386,7 +385,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       }
 
       for (var i = 1; i <= lastDays; i++) {
-        var rightMarkDate = window.last.addDays(i);
+        final rightMarkDate = window.last.addDays(i);
         // debugPrint("right add[$lastDays]: $rightMarkDate");
         // calculate full automarks
         // if (rightMarkDate > dateNow) break;
@@ -403,12 +402,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       int firstDay) sync* {
     assert(frequency.type == HabitFrequencyType.weekly);
 
-    var yearWeekRecordMap = <HabitRecordDate, int>{};
-    var dateNow = HabitDate.now();
+    final yearWeekRecordMap = <HabitRecordDate, int>{};
+    final dateNow = HabitDate.now();
 
     for (var e in _recordDateCacheMap.entries) {
-      var crtDate = e.key;
-      var crtRecord = e.value;
+      final crtDate = e.key;
+      final crtRecord = e.value;
 
       if (crtDate > dateNow) break;
 
@@ -437,7 +436,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       crtCount = e.value;
       if (crtCount < frequency.freq) continue;
       for (var i = DateTime.daysPerWeek - 1; i >= 0; i--) {
-        var result = crtFirstDate.add(Duration(days: i));
+        final result = crtFirstDate.add(Duration(days: i));
         // calculate full automarks
         // if (result > dateNow) continue;
         if (result < startDate) break;
@@ -449,12 +448,12 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   Iterable<HabitRecordDate> _calculateAutoComplateRecordsMonthly() sync* {
     assert(frequency.type == HabitFrequencyType.monthly);
 
-    var yearMonthRecordMap = <HabitRecordDate, int>{};
-    var dateNow = HabitDate.now();
+    final yearMonthRecordMap = <HabitRecordDate, int>{};
+    final dateNow = HabitDate.now();
 
     for (var e in _recordDateCacheMap.entries) {
-      var crtDate = e.key;
-      var crtRecord = e.value;
+      final crtDate = e.key;
+      final crtRecord = e.value;
 
       if (crtDate > dateNow) break;
 
@@ -482,7 +481,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       crtCount = e.value;
       if (crtCount < frequency.freq) continue;
       for (var i = 0; i < crtLastDate.day; i++) {
-        var result = crtLastDate.subtract(Duration(days: i));
+        final result = crtLastDate.subtract(Duration(days: i));
         // calculate full automarks
         // if (result > dateNow) continue;
         if (result < startDate) break;
@@ -508,11 +507,21 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   @override
   String toString() {
-    return "HabitAboutData(id=$id, uuid=$uuid, type=${type.dbCode}, "
-        "name=$name, color=$colorType, "
-        "dailyGoal=$dailyGoal, freq=$frequency, startDate=$startDate, "
-        "status=$status, sort=$sortPostion score=$progress, version=$diryMark, "
-        "records={${getAllRecord().toList()}})";
+    String getRecordsString() {
+      final iterable = getAllRecord();
+      return iterable.length > 10
+          ? [
+              ...iterable.take(5),
+              '... [ignore ${iterable.length - 10} records] ...',
+              ...iterable.skip(iterable.length - 5)
+            ].join("|")
+          : iterable.join("|");
+    }
+
+    return "HabitAboutData(id=$id,uuid=$uuid,type=${type.dbCode},name=$name,"
+        "color=$colorType,dailyGoal=$dailyGoal,freq=$frequency,"
+        "startDate=$startDate,status=$status,sort=$sortPostion,score=$progress,"
+        "version=$diryMark,records={${getRecordsString()}})";
   }
 }
 
@@ -534,12 +543,12 @@ class HabitSummaryDataCollection {
       _dataMap[data.uuid] = data;
     }
     for (final cell in recordResult) {
-      var habitCell = getHabitByUUID(cell.parentUUID!);
+      final habitCell = getHabitByUUID(cell.parentUUID!);
       if (habitCell == null) continue;
       // Memory optimization: Don't cache records before start date.
       // When the StartDate changes, it is necessary to reload the data from
       // database to ensure that the cache is complete.
-      var record = HabitSummaryRecord.fromDBQueryCell(cell);
+      final record = HabitSummaryRecord.fromDBQueryCell(cell);
       if (record.date.isBefore(habitCell.startDate)) continue;
       habitCell.addRecord(record);
     }
@@ -584,7 +593,7 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sortDataByName(
       HabitDisplaySortDirection sortDirecton) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
-      var r1 = a.name.compareTo(b.name);
+      final r1 = a.name.compareTo(b.name);
       if (r1 != 0) {
         return r1;
       } else {
@@ -598,7 +607,7 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sortDataByColorType(
       HabitDisplaySortDirection sortDirecton) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
-      var r1 = a.colorType.dbCode.compareTo(b.colorType.dbCode);
+      final r1 = a.colorType.dbCode.compareTo(b.colorType.dbCode);
       if (r1 != 0) {
         return r1;
       } else {
@@ -612,7 +621,7 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sortDataByProgress(
       HabitDisplaySortDirection sortDirecton) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
-      var r1 = b.progress.compareTo(a.progress);
+      final r1 = b.progress.compareTo(a.progress);
       if (r1 != 0) {
         return r1;
       } else {
@@ -735,7 +744,7 @@ class HabitSummaryDataSortCache
 
   @override
   String toString() {
-    return "HabitSummaryDataSortCache(uuid=$uuid, weakrefData=$data)";
+    return "HabitSummaryDataSortCache(uuid=$uuid,weakrefData=$data)";
   }
 }
 
@@ -756,16 +765,13 @@ class HabitSummaryStatusCache {
 
   @override
   String toString() {
-    return "HabitSummaryStatusCache($isAppbarPinned, $reloadDBToggleSwich, "
-        "$reloadUIToggleSwitch, $isClandarExpanded, $isInEditMode)";
+    return "HabitSummaryStatusCache($isAppbarPinned|$reloadDBToggleSwich|"
+        "$reloadUIToggleSwitch|$isClandarExpanded|$isInEditMode)";
   }
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
+    if (identical(this, other)) return true;
     return other is HabitSummaryStatusCache &&
         isAppbarPinned == other.isAppbarPinned &&
         reloadDBToggleSwich == other.reloadDBToggleSwich &&

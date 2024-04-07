@@ -94,6 +94,7 @@ class _DBHelper implements DBHelper {
       onConfigure: (db) async {
         db.execute("PRAGMA foreign_keys = ON");
       },
+      singleInstance: false,
     );
   }
 
@@ -115,7 +116,7 @@ class _DBHelper implements DBHelper {
       appLog.db.info("local.$runtimeType.init", ex: ["processing"]);
       if (kDebugMode && debugClearDBWhenStart) await _deleteBD(dbPath);
       _db = await _openDB(dbPath);
-      appLog.db.info("local.$runtimeType.init", ex: ["done"]);
+      appLog.db.info("local.$runtimeType.init", ex: ["done", _db]);
     }
 
     Future initOld() async {
@@ -131,7 +132,12 @@ class _DBHelper implements DBHelper {
 
   @override
   void dispose() {
-    db.close();
+    appLog.db.info("local.$runtimeType.dispose", ex: [db]);
+    final orginDB = db;
+    Future.delayed(const Duration(seconds: 1)).then((_) {
+      appLog.db.info("local.$runtimeType.dispose", ex: ["close db", orginDB]);
+      if (orginDB.isOpen) orginDB.close();
+    });
   }
 
   @override

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-abstract class EnumWithDBCodeABC<T> {
+abstract interface class EnumWithDBCode<T> {
   int get dbCode;
 }
 
-enum HabitsRecordScrollBehavior implements EnumWithDBCodeABC {
+enum HabitsRecordScrollBehavior implements EnumWithDBCode {
   unknown(code: 0),
   scrollable(code: 1),
   page(code: 2);
@@ -54,7 +54,7 @@ enum DonateWay {
   }
 }
 
-enum UserAction implements EnumWithDBCodeABC {
+enum UserAction implements EnumWithDBCode {
   nothing(code: 0),
   tap(code: 1),
   doubleTap(code: 2),

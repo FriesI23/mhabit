@@ -43,12 +43,12 @@ final class _Decoder extends Converter<JsonMap, HabitsDisplayFilter> {
 
   @override
   HabitsDisplayFilter convert(JsonMap input) =>
-      HabitsDisplayFilter.fromMap(input);
+      HabitsDisplayFilter.fromJson(input);
 }
 
 final class _Encoder extends Converter<HabitsDisplayFilter, JsonMap> {
   const _Encoder();
 
   @override
-  JsonMap convert(HabitsDisplayFilter input) => input.toMap();
+  JsonMap convert(HabitsDisplayFilter input) => input.toJson();
 }

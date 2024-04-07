@@ -33,7 +33,6 @@ import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
-import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_stat.dart';
@@ -43,6 +42,7 @@ import '../persistent/local/handler/habit.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_theme.dart';
+import '../provider/habit_detail.dart';
 import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
@@ -96,8 +96,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    var viewmodel = context.read<HabitSummaryViewModel>();
-    var dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
+    final viewmodel = context.read<HabitSummaryViewModel>();
+    final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
         if (data.measuring) {
@@ -974,8 +974,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
-          Future loadData() async {
-            var loadedFuture = context
+          Future<void> loadData() async {
+            final loadedFuture = context
                 .read<HabitSummaryViewModel>()
                 .loadData(inFutureBuilder: true);
             await Future.delayed(_kHabitListFutureLoadDuration);

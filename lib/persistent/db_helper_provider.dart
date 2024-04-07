@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../common/async.dart';
 import '../common/consts.dart';
@@ -31,19 +32,23 @@ class DBHelperViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {
   final DBHelper local;
 
-  Completer? _completer;
+  CancelableCompleter? _completer;
   bool _mounted = true;
 
   DBHelperViewModel() : local = DBHelper();
 
   @override
   Future init() async {
-    if (_completer == null) {
-      _completer = Completer();
+    Future doInit() async {
       await local.init();
-      _completer!.complete();
+      _completer?.complete();
     }
-    return _completer!.future;
+
+    if (_completer == null) {
+      _completer = CancelableCompleter();
+      doInit();
+    }
+    return _completer?.operation.value;
   }
 
   @override
@@ -51,7 +56,7 @@ class DBHelperViewModel extends ChangeNotifier
     _mounted = false;
     if (inited) local.dispose();
     if (_completer?.isCompleted != true) {
-      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer?.operation.cancel();
       _completer = null;
     }
     super.dispose();
@@ -59,7 +64,7 @@ class DBHelperViewModel extends ChangeNotifier
 
   Future reload() async {
     if (_completer?.isCompleted != true) {
-      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer?.operation.cancel();
       _completer = null;
     }
     await local.init(reinit: true);

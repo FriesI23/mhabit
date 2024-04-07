@@ -17,6 +17,7 @@ import 'dart:math' as math;
 import 'package:quiver/core.dart';
 
 import '../common/exceptions.dart';
+import '../common/types.dart';
 import '../l10n/localizations.dart';
 import 'habit_form.dart';
 
@@ -58,7 +59,7 @@ class HabitFrequency {
     }
   }
 
-  static HabitFrequency fromMap(Map<String, dynamic> data) {
+  static HabitFrequency fromJson(JsonMap data) {
     final type = HabitFrequencyType.getFromDBCode(data["type"])!;
     switch (type) {
       case HabitFrequencyType.weekly:
@@ -73,7 +74,7 @@ class HabitFrequency {
     }
   }
 
-  Map<String, dynamic> toMap() {
+  JsonMap toJson() {
     Map<String, dynamic> result = {"type": type.dbCode};
     switch (type) {
       case HabitFrequencyType.weekly:

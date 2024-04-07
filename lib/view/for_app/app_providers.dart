@@ -17,7 +17,6 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
-import '../../model/global.dart';
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
 import '../../provider/app_caches.dart';
@@ -27,6 +26,7 @@ import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_reminder.dart';
 import '../../provider/app_theme.dart';
+import '../../provider/global.dart';
 import '../../provider/habit_op_config.dart';
 import '../../provider/habits_file_exporter.dart';
 import '../../provider/habits_file_importer.dart';

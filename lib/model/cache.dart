@@ -16,7 +16,7 @@ import '../common/types.dart';
 import '../logging/helper.dart';
 import '../persistent/profile/profile_helper.dart';
 
-abstract class Cache<K> {
+abstract interface class Cache<K> {
   T? getCache<T>(K key);
   Future<void> updateCache<T>(K key, T? value,
       {void Function(bool, T?)? onUpdated});

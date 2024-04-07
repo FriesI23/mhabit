@@ -22,6 +22,7 @@ import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
+import '../logging/logger_stack.dart';
 import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail.dart';
@@ -38,11 +39,6 @@ import 'utils.dart';
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
-enum HabitDetailLoadDataResult {
-  done,
-  habitMissing,
-}
-
 class HabitDetailViewModel extends ChangeNotifier
     with NotificationChannelDataMixin, DBHelperLoadedMixin, DBOperationsMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
@@ -52,7 +48,7 @@ class HabitDetailViewModel extends ChangeNotifier
   final _habitScoreChangedDateColl = <HabitDate, num>{};
   // status
   bool _reloadDBToggleSwich = false;
-  Completer<HabitDetailLoadDataResult>? _loading;
+  CancelableCompleter<void>? _loading;
   HabitDetailFreqChartCombine _freqChartCombine =
       defaultHabitDetailFreqChardCombine;
   HabitDetailScoreChartCombine _scoreChartCombine =
@@ -152,49 +148,66 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   void _cancelLoading() {
-    if (_loading != null && !_loading!.isCompleted) {
-      CancelableOperation.fromFuture(_loading!.future).cancel();
+    if (_loading?.isCompleted != true) {
+      appLog.load.info("$runtimeType._cancelLoading", ex: [_loading]);
+      _loading?.operation.cancel();
     }
     _loading = null;
   }
 
-  Future<HabitDetailLoadDataResult> loadData(HabitUUID uuid,
+  Future<void> loadData(HabitUUID uuid,
       {bool listen = true, bool inFutureBuilder = false}) async {
     if (_loading != null) {
       appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
-      return _loading!.future;
+      return _loading!.operation.value;
     }
 
-    Future<HabitDetailData?> loadingData() async {
+    void loadingFailed(List errmsg) {
+      appLog.load.error("$runtimeType.load",
+          ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
+      _loading?.completeError(
+          FlutterError(errmsg.join(" ")), StackTrace.current);
+    }
+
+    Future<void> loadingData() async {
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loading data", listen, inFutureBuilder]);
+      if (!mounted) {
+        loadingFailed(["viewmodel disposed"]);
+        return;
+      }
+      // init habit
       final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
       final recordLoadTask = recordDBHelper.loadRecords(uuid);
       final cell = await dataLoadTask;
       final records = await recordLoadTask;
       if (cell == null) {
-        appLog.load.warn("$runtimeType.load", ex: ["data load failed", uuid]);
-        return null;
+        loadingFailed(["data load failed", uuid]);
+        return;
+      }
+      if (!mounted) {
+        loadingFailed(["viewmodel disposed", uuid]);
+        return;
       }
       final data = HabitDetailData.fromDBQueryCell(cell);
       data.data.initRecords(
           records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)));
-      return data;
+      _habitDetailData = data;
+      _calcHabitInfo();
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loaded", listen, inFutureBuilder, data]);
+      // complete
+      _loading?.complete();
+      // reload
+      if (listen) {
+        if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
+        notifyListeners();
+      }
     }
 
-    final completer = _loading = Completer<HabitDetailLoadDataResult>();
-    appLog.load.debug("$runtimeType.load",
-        ex: ["loading data", listen, inFutureBuilder]);
-    _habitDetailData = await loadingData();
-    if (_habitDetailData != null) _calcHabitInfo();
-    if (listen) {
-      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
-      notifyListeners();
-    }
-    appLog.load.debug("$runtimeType.load",
-        ex: ["loaded", listen, inFutureBuilder, _habitDetailData]);
-    completer.complete(_habitDetailData != null
-        ? HabitDetailLoadDataResult.done
-        : HabitDetailLoadDataResult.habitMissing);
-    return completer.future;
+    _loading = CancelableCompleter<void>();
+    loadingData();
+    return _loading?.operation.value;
   }
 
   void _calcHabitInfo() {
@@ -653,4 +666,18 @@ class ScoreChartCalculator {
     }
     return result;
   }
+}
+
+enum DetailPageReturnOpr { unknown, deleted }
+
+class DetailPageReturn {
+  final DetailPageReturnOpr op;
+  final String? habitName;
+  final List<HabitStatusChangedRecord>? recordList;
+
+  const DetailPageReturn({
+    this.op = DetailPageReturnOpr.unknown,
+    this.habitName,
+    this.recordList,
+  });
 }

@@ -34,7 +34,7 @@ class ProfileViewModel extends ChangeNotifier
   final Iterable<ProfileHandlerBuilder> _handlerBuilders;
   late final Map<Type, ProfileHelperHandler> _handlers;
 
-  Completer? _completer;
+  CancelableCompleter? _completer;
   bool _mounted = true;
 
   ProfileViewModel(Iterable<ProfileHandlerBuilder> builders)
@@ -60,21 +60,21 @@ class ProfileViewModel extends ChangeNotifier
         handlerKeyColl[e.key] = e.runtimeType;
         return true;
       }).map((e) => MapEntry(e.runtimeType, e)));
+      _completer?.complete();
     }
 
     if (_completer == null) {
-      _completer = Completer();
-      await doInit();
-      _completer!.complete();
+      _completer = CancelableCompleter();
+      doInit();
     }
-    return _completer!.future;
+    return _completer?.operation.value;
   }
 
   @override
   void dispose() {
     _mounted = false;
     if (_completer?.isCompleted != true) {
-      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer?.operation.cancel();
       _completer = null;
     }
     super.dispose();
@@ -82,7 +82,7 @@ class ProfileViewModel extends ChangeNotifier
 
   Future reload() async {
     if (_completer?.isCompleted != true) {
-      CancelableOperation.fromFuture(_completer!.future).cancel();
+      _completer?.operation.cancel();
       _completer = null;
     }
     await _pref.reload();
@@ -101,8 +101,8 @@ class ProfileViewModel extends ChangeNotifier
 
   @override
   String toString() {
-    return "$runtimeType[$hashCode](pref=$_pref,mounted=$mounted,"
-        "inited=$inited,handlers=$_handlers)";
+    return "$runtimeType[$hashCode](pref=${inited ? _pref : null},"
+        "mounted=$mounted,inited=$inited,handlers=$_handlers)";
   }
 }
 

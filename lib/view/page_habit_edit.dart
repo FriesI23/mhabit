@@ -451,7 +451,6 @@ class _HabitEditView extends State<HabitEditView> {
                   ? onDailyGoalTextInputChanged(
                       newDailyGoalExtra,
                       controller: formvm.dailyGoalExtraFieldInpuController,
-                      defaultValue: formvm.dailyGoal,
                       maxValue: maxHabitdailyGoalExtra,
                       allowInputZero: true,
                     )

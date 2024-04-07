@@ -20,7 +20,7 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
-import '../../model/about_info.dart';
+import '../../provider/about_info.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
@@ -36,7 +36,7 @@ class PageProviders extends SingleChildStatelessWidget {
         providers: [
           FutureProvider<AboutInfo>(
             create: (_) async => loadAboutInfoData(),
-            initialData: const AboutInfo(),
+            initialData: const AboutInfo.empty(),
           ),
         ],
         child: child,

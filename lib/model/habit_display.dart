@@ -26,7 +26,7 @@ import 'habit_summary.dart';
 
 part 'habit_display.g.dart';
 
-enum HabitDisplaySortType implements EnumWithDBCodeABC {
+enum HabitDisplaySortType implements EnumWithDBCode {
   manual(code: 1),
   name(code: 2),
   colorType(code: 3),
@@ -59,7 +59,7 @@ enum HabitDisplaySortType implements EnumWithDBCodeABC {
       ];
 }
 
-enum HabitDisplaySortDirection implements EnumWithDBCodeABC {
+enum HabitDisplaySortDirection implements EnumWithDBCode {
   asc(code: 1),
   desc(code: 2);
 
@@ -82,19 +82,6 @@ enum HabitDisplaySortDirection implements EnumWithDBCodeABC {
 
 enum HabitDisplayEditMode { create, edit }
 
-enum HabitsDisplayFilterKey {
-  // Compatibility with old version configuration options
-  allowInProgressHabits(key: "allowActivedHabits"),
-  allowArchivedHabits(),
-  allowCompleteHabits();
-
-  final String? _key;
-
-  const HabitsDisplayFilterKey({String? key}) : _key = key;
-
-  String get key => _key ?? name;
-}
-
 class HabitDisplayEditParams {
   final HabitUUID uuid;
   final DateTime createT;
@@ -115,16 +102,18 @@ class HabitDisplayEditParams {
 
   @override
   String toString() {
-    return "HabitEditParams($uuid, $createT, $modifyT)";
+    return "HabitEditParams($uuid,$createT,$modifyT)";
   }
 }
 
 @CopyWith()
+@JsonSerializable()
 class HabitsDisplayFilter {
   static const _defaultAllowInProgressHabits = true;
   static const _defualtAllowArchivedHabits = false;
   static const _defaultAllowCompleteHabits = true;
 
+  @JsonKey(name: "allowActivedHabits")
   final bool allowInProgressHabits;
   final bool allowArchivedHabits;
   final bool allowCompleteHabits;
@@ -146,24 +135,10 @@ class HabitsDisplayFilter {
         allowArchivedHabits = _defualtAllowArchivedHabits,
         allowCompleteHabits = _defaultAllowCompleteHabits;
 
-  HabitsDisplayFilter.fromMap(Map<String, Object?> data)
-      : allowInProgressHabits =
-            (data[HabitsDisplayFilterKey.allowInProgressHabits.key] ??
-                _defaultAllowInProgressHabits) as bool,
-        allowArchivedHabits =
-            (data[HabitsDisplayFilterKey.allowArchivedHabits.key] ??
-                _defualtAllowArchivedHabits) as bool,
-        allowCompleteHabits =
-            (data[HabitsDisplayFilterKey.allowCompleteHabits.key] ??
-                _defaultAllowCompleteHabits) as bool;
+  factory HabitsDisplayFilter.fromJson(JsonMap data) =>
+      _$HabitsDisplayFilterFromJson(data);
 
-  Map<String, Object?> toMap() {
-    return {
-      HabitsDisplayFilterKey.allowInProgressHabits.key: allowInProgressHabits,
-      HabitsDisplayFilterKey.allowArchivedHabits.key: allowArchivedHabits,
-      HabitsDisplayFilterKey.allowCompleteHabits.key: allowCompleteHabits,
-    };
-  }
+  JsonMap toJson() => _$HabitsDisplayFilterToJson(this);
 
   bool Function(HabitSummaryData) getDisplayFilterFunction() {
     bool func(HabitSummaryData data) {
@@ -195,7 +170,7 @@ class HabitsDisplayFilter {
       hash3(allowInProgressHabits, allowArchivedHabits, allowCompleteHabits);
 
   @override
-  String toString() => "$runtimeType(${toMap()})";
+  String toString() => "$runtimeType(${toJson()})";
 }
 
 @JsonSerializable(

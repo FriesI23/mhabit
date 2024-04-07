@@ -146,6 +146,21 @@ extension $HabitDisplayOpConfigCopyWith on HabitDisplayOpConfig {
 // JsonSerializableGenerator
 // **************************************************************************
 
+HabitsDisplayFilter _$HabitsDisplayFilterFromJson(Map<String, dynamic> json) =>
+    HabitsDisplayFilter(
+      allowInProgressHabits: json['allowActivedHabits'] as bool,
+      allowArchivedHabits: json['allowArchivedHabits'] as bool,
+      allowCompleteHabits: json['allowCompleteHabits'] as bool,
+    );
+
+Map<String, dynamic> _$HabitsDisplayFilterToJson(
+        HabitsDisplayFilter instance) =>
+    <String, dynamic>{
+      'allowActivedHabits': instance.allowInProgressHabits,
+      'allowArchivedHabits': instance.allowArchivedHabits,
+      'allowCompleteHabits': instance.allowCompleteHabits,
+    };
+
 HabitDisplayOpConfig _$HabitDisplayOpConfigFromJson(
         Map<String, dynamic> json) =>
     HabitDisplayOpConfig(

@@ -24,7 +24,7 @@ import 'common.dart';
 part 'app_reminder_config.g.dart';
 
 @JsonEnum(valueField: "code")
-enum AppReminderConfigType implements EnumWithDBCodeABC<AppReminderConfigType> {
+enum AppReminderConfigType implements EnumWithDBCode<AppReminderConfigType> {
   daily(code: 1);
 
   final int code;
@@ -80,8 +80,7 @@ class AppReminderConfig implements JsonAdaptor {
   }
 
   @override
-  int get hashCode =>
-      hash3(enabled.hashCode, type.hashCode, timeOfDay.hashCode);
+  int get hashCode => hash3(enabled, type, timeOfDay);
 
   @override
   String toString() {
