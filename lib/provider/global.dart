@@ -12,10 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../logging/helper.dart';
-import '../model/global.dart';
+
+class Global {
+  Global();
+
+  bool _isInDevelopMode = kDebugMode ? true : false;
+  bool? _displayDebugMenu;
+
+  bool get isInDevelopMode => _isInDevelopMode;
+  void switchDevelopMode(bool value) => _isInDevelopMode = value;
+
+  bool get displayDebugMenu => _displayDebugMenu ?? kDebugMode ? true : false;
+  void switchDisplayDebugMenu(bool value) => _displayDebugMenu = value;
+}
 
 abstract mixin class GlobalLoadedMixin {
   late Global _g;
