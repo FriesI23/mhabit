@@ -26,6 +26,7 @@ import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
+import '../logging/logger_stack.dart';
 import '../model/habit_date.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -261,8 +262,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
 
     void loadingFailed(List errmsg) {
-      appLog.load.warn("$runtimeType.load", ex: errmsg);
-      _loading?.completeError(errmsg);
+      appLog.load.error("$runtimeType.load",
+          ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
+      _loading?.completeError(
+          FlutterError(errmsg.join(" ")), StackTrace.current);
     }
 
     Future<void> loadingData() async {
