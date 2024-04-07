@@ -23,7 +23,7 @@ import 'common.dart';
 part 'custom_date_format.g.dart';
 
 @JsonEnum(valueField: 'code')
-enum YearMonthDayFormtEnum implements EnumWithDBCodeABC {
+enum YearMonthDayFormtEnum implements EnumWithDBCode {
   yearMonthDay(code: 1),
   monthDayYear(code: 2),
   dayMonthYear(code: 3);
@@ -37,7 +37,7 @@ enum YearMonthDayFormtEnum implements EnumWithDBCodeABC {
 }
 
 @JsonEnum(valueField: 'code')
-enum DateSplitCharEnum implements EnumWithDBCodeABC {
+enum DateSplitCharEnum implements EnumWithDBCode {
   dash(code: 1, char: '-'),
   slash(code: 2, char: '/'),
   space(code: 3, char: ' '),

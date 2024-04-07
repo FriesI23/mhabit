@@ -14,8 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../logging/helper.dart';
-
 class Global {
   Global();
 
@@ -27,16 +25,4 @@ class Global {
 
   bool get displayDebugMenu => _displayDebugMenu ?? kDebugMode ? true : false;
   void switchDisplayDebugMenu(bool value) => _displayDebugMenu = value;
-}
-
-abstract mixin class GlobalLoadedMixin {
-  late Global _g;
-
-  Global get g => _g;
-
-  @mustCallSuper
-  void updateGlobal(Global newGloal) {
-    appLog.load.info("$runtimeType.updateGlobal", ex: [newGloal]);
-    _g = newGloal;
-  }
 }

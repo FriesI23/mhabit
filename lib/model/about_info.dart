@@ -12,19 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum _AboutInfoKey {
-  sourceCodeUrl,
-  issueTrackerUrl,
-  contactEmail,
-  donateBuyMeACoffeeToken,
-  donatePaypalToken,
-  donateCryptoBTCAddr,
-  donateCryptoETHAddr,
-  donateCryptoBNBAddr,
-  donateCryptoAVAXAddr,
-  donateCryptoFTMAddr
-}
+import 'package:json_annotation/json_annotation.dart';
 
+part 'about_info.g.dart';
+
+@JsonSerializable(createToJson: false)
 class AboutInfo {
   final String sourceCodeUrl;
   final String issueTrackerUrl;
@@ -38,31 +30,30 @@ class AboutInfo {
   final String donateCryptoFTMAddr;
 
   const AboutInfo({
-    this.sourceCodeUrl = '',
-    this.issueTrackerUrl = '',
-    this.contactEmail = '',
-    this.donateBuyMeACoffeeToken = '',
-    this.donatePaypalToken = '',
-    this.donateCryptoBTCAddr = '',
-    this.donateCryptoETHAddr = '',
-    this.donateCryptoBNBAddr = '',
-    this.donateCryptoAVAXAddr = '',
-    this.donateCryptoFTMAddr = '',
+    required this.sourceCodeUrl,
+    required this.issueTrackerUrl,
+    required this.contactEmail,
+    required this.donateBuyMeACoffeeToken,
+    required this.donatePaypalToken,
+    required this.donateCryptoBTCAddr,
+    required this.donateCryptoETHAddr,
+    required this.donateCryptoBNBAddr,
+    required this.donateCryptoAVAXAddr,
+    required this.donateCryptoFTMAddr,
   });
 
-  factory AboutInfo.fromJson(Map<String, dynamic> json) {
-    return AboutInfo(
-      sourceCodeUrl: json[_AboutInfoKey.sourceCodeUrl.name] ?? '',
-      issueTrackerUrl: json[_AboutInfoKey.issueTrackerUrl.name] ?? '',
-      contactEmail: json[_AboutInfoKey.contactEmail.name] ?? '',
-      donateBuyMeACoffeeToken:
-          json[_AboutInfoKey.donateBuyMeACoffeeToken.name] ?? '',
-      donatePaypalToken: json[_AboutInfoKey.donatePaypalToken.name] ?? '',
-      donateCryptoBTCAddr: json[_AboutInfoKey.donateCryptoBTCAddr.name] ?? '',
-      donateCryptoETHAddr: json[_AboutInfoKey.donateCryptoETHAddr.name] ?? '',
-      donateCryptoBNBAddr: json[_AboutInfoKey.donateCryptoBNBAddr.name] ?? '',
-      donateCryptoAVAXAddr: json[_AboutInfoKey.donateCryptoAVAXAddr.name] ?? '',
-      donateCryptoFTMAddr: json[_AboutInfoKey.donateCryptoFTMAddr.name] ?? '',
-    );
-  }
+  const AboutInfo.empty()
+      : sourceCodeUrl = '',
+        issueTrackerUrl = '',
+        contactEmail = '',
+        donateBuyMeACoffeeToken = '',
+        donatePaypalToken = '',
+        donateCryptoBTCAddr = '',
+        donateCryptoETHAddr = '',
+        donateCryptoBNBAddr = '',
+        donateCryptoAVAXAddr = '',
+        donateCryptoFTMAddr = '';
+
+  factory AboutInfo.fromJson(Map<String, dynamic> json) =>
+      _$AboutInfoFromJson(json);
 }

@@ -36,7 +36,7 @@ class PageProviders extends SingleChildStatelessWidget {
         providers: [
           FutureProvider<AboutInfo>(
             create: (_) async => loadAboutInfoData(),
-            initialData: const AboutInfo(),
+            initialData: const AboutInfo.empty(),
           ),
         ],
         child: child,

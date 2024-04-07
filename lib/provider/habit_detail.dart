@@ -654,3 +654,17 @@ class ScoreChartCalculator {
     return result;
   }
 }
+
+enum DetailPageReturnOpr { unknown, deleted }
+
+class DetailPageReturn {
+  final DetailPageReturnOpr op;
+  final String? habitName;
+  final List<HabitStatusChangedRecord>? recordList;
+
+  const DetailPageReturn({
+    this.op = DetailPageReturnOpr.unknown,
+    this.habitName,
+    this.recordList,
+  });
+}

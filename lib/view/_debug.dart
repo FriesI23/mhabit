@@ -55,7 +55,7 @@ mixin HabitsDisplayViewDebug {
     final tasks = <Future>[];
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     final rnd = Random();
-    final freq = HabitFrequency.custom().toMap();
+    final freq = HabitFrequency.custom().toJson();
     for (var i = 0; i < count; i++) {
       final uuid = genHabitUUID();
       final meta = debugGetRandomHabitMeta(rnd);

@@ -29,7 +29,7 @@ import 'habit_date.dart';
 part 'habit_reminder.g.dart';
 
 @JsonEnum(valueField: 'code')
-enum HabitReminderType implements EnumWithDBCodeABC<HabitReminderType> {
+enum HabitReminderType implements EnumWithDBCode<HabitReminderType> {
   unknown(code: 0),
   whenNeeded(code: 1),
   day(code: 2),
@@ -287,7 +287,5 @@ class HabitReminder implements JsonAdaptor {
   }
 
   @override
-  String toString() {
-    return toJson().toString();
-  }
+  String toString() => "$runtimeType($toJson())";
 }

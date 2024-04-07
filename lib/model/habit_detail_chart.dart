@@ -187,12 +187,12 @@ class HabitDetailFreqChartData {
   }
 
   @override
-  String toString() {
-    return 'HabitDetailFreqChartData(p=$_partiallyCompleted,a=$_autoComplate,'
-        'c=$_complate,o=$_overfulfil || pv=$_partiallyCompletedTotalValue,'
-        'av=$_autoComplateTotalValue,cv=$_complateTotalValue,'
-        'ov=$_overfulfilTotalValue}';
-  }
+  String toString() => 'HabitDetailFreqChartData('
+      'pavo=$_partiallyCompleted|$_autoComplate|$_complate|$_overfulfil,'
+      'pv=$_partiallyCompletedTotalValue,'
+      'av=$_autoComplateTotalValue,'
+      'cv=$_complateTotalValue,'
+      'ov=$_overfulfilTotalValue)';
 }
 
 class HabitDetailScoreChartDate {
@@ -212,8 +212,6 @@ class HabitDetailScoreChartDate {
   }
 
   @override
-  String toString() {
-    return 'HabitDetailScoreChartDate{totalScore: '
-        '$totalScore, count: $count, avgScore: $avgScore}';
-  }
+  String toString() =>
+      'HabitDetailScoreChartDate(ts=$totalScore,c=$count,avs=$avgScore)';
 }

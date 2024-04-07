@@ -261,7 +261,7 @@ class HabitFormViewModel extends ChangeNotifier
   }
 
   Future<HabitDBCell?> _saveNewHabit({bool returnResult = false}) async {
-    final freq = frequency.toMap();
+    final freq = frequency.toJson();
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
     final dbCell = HabitDBCell(
         type: habitType.dbCode,
@@ -293,7 +293,7 @@ class HabitFormViewModel extends ChangeNotifier
   }
 
   Future<HabitDBCell?> _saveExistHabit({bool returnResult = false}) async {
-    final freq = frequency.toMap();
+    final freq = frequency.toJson();
     final dbCell = HabitDBCell(
       type: habitType.dbCode,
       uuid: _form.editParams!.uuid,

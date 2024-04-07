@@ -35,7 +35,6 @@ import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
-import '../model/habit_detail_page.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../persistent/local/handler/habit.dart';

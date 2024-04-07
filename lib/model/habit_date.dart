@@ -146,9 +146,7 @@ class HabitDate implements DateTime, DateTimeExtensionsABC {
   int get hashCode => _date.hashCode;
 
   @override
-  String toString() {
-    return _date.toString();
-  }
+  String toString() => "${_date.year}-${_date.month}-${_date.day}";
 
   @override
   bool operator <(DateTime other) => _date < other;

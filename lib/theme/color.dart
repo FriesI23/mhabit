@@ -19,7 +19,7 @@ export '_colors/crypto_colors.dart';
 export '_colors/custom_color.g.dart';
 export '_colors/userdefined_color.dart';
 
-enum AppThemeType implements EnumWithDBCodeABC {
+enum AppThemeType implements EnumWithDBCode {
   unknown(code: 0),
   light(code: 1),
   dark(code: 2),

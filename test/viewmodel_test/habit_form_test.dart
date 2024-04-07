@@ -179,21 +179,21 @@ void main() {
     });
     test('toMap:monthly', () {
       var obj2 = const HabitFrequency.monthly(freq: 3);
-      var obj2map = obj2.toMap();
+      var obj2map = obj2.toJson();
       expect(obj2map['type'], HabitFrequencyType.monthly.dbCode);
       expect((obj2map['args'] as List).length, 1);
       expect(obj2map['args'][0], 3);
     });
     test('toMap:weekly', () {
       var obj3 = const HabitFrequency.weekly(freq: 1);
-      var obj3map = obj3.toMap();
+      var obj3map = obj3.toJson();
       expect(obj3map['type'], HabitFrequencyType.weekly.dbCode);
       expect((obj3map['args'] as List).length, 1);
       expect(obj3map['args'][0], 1);
     });
     test('toMap:daily', () {
       var obj1 = HabitFrequency.custom(days: 5, freq: 2);
-      var obj1map = obj1.toMap();
+      var obj1map = obj1.toJson();
       expect(obj1map['type'], HabitFrequencyType.custom.dbCode);
       expect((obj1map['args'] as List).length, 2);
       expect(obj1map['args'][0], 2);
@@ -201,14 +201,14 @@ void main() {
     });
     test('toMapError', () {
       var obj = const HabitFrequency(type: HabitFrequencyType.unknown, freq: 0);
-      expect(() => obj.toMap(), throwsA(isA<UnknownHabitFrequencyError>()));
+      expect(() => obj.toJson(), throwsA(isA<UnknownHabitFrequencyError>()));
     });
     test('fromMap:monthly', () {
       var data1 = {
         "type": HabitFrequencyType.monthly.dbCode,
         "args": [10],
       };
-      var obj1 = HabitFrequency.fromMap(data1);
+      var obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.monthly);
       expect(obj1.freq, 10);
     });
@@ -217,7 +217,7 @@ void main() {
         "type": HabitFrequencyType.weekly.dbCode,
         "args": [5],
       };
-      var obj1 = HabitFrequency.fromMap(data1);
+      var obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.weekly);
       expect(obj1.freq, 5);
     });
@@ -226,7 +226,7 @@ void main() {
         "type": HabitFrequencyType.custom.dbCode,
         "args": [2, 10],
       };
-      var obj1 = HabitFrequency.fromMap(data1);
+      var obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.custom);
       expect(obj1.freq, 2);
       expect(obj1.days, 10);
@@ -236,7 +236,7 @@ void main() {
         "type": HabitFrequencyType.unknown.dbCode,
         "args": [1],
       };
-      expect(() => HabitFrequency.fromMap(data1),
+      expect(() => HabitFrequency.fromJson(data1),
           throwsA(isA<UnknownHabitFrequencyError>()));
     });
   });
