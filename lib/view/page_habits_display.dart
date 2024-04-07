@@ -96,8 +96,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    var viewmodel = context.read<HabitSummaryViewModel>();
-    var dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
+    final viewmodel = context.read<HabitSummaryViewModel>();
+    final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
         if (data.measuring) {
@@ -974,8 +974,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
-          Future loadData() async {
-            var loadedFuture = context
+          Future<void> loadData() async {
+            final loadedFuture = context
                 .read<HabitSummaryViewModel>()
                 .loadData(inFutureBuilder: true);
             await Future.delayed(_kHabitListFutureLoadDuration);

@@ -62,7 +62,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   final _selectorData = _SelectedHabitsData();
   final _last30daysProgressChangeData = HabitLast30DaysProgressChangeData();
   // status
-  Completer<void>? _loading;
+  CancelableCompleter<void>? _loading;
   bool _reloadDBToggleSwich = false;
   bool _nextRefreshClearSnackBar = false;
   bool _reloadUIToggleSwitch = false;
@@ -247,8 +247,9 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _cancelLoading() {
-    if (_loading != null && !_loading!.isCompleted) {
-      CancelableOperation.fromFuture(_loading!.future).cancel();
+    if (_loading?.isCompleted != true) {
+      appLog.load.info("$runtimeType._cancelLoading", ex: [_loading]);
+      _loading?.operation.cancel();
     }
     _loading = null;
   }
@@ -256,24 +257,50 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
     if (_loading != null) {
       appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
-      return _loading!.future;
+      return _loading?.operation.value;
     }
-    final completer = _loading = Completer<void>();
-    final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
-    final recordLoadTask = recordDBHelper.loadAllRecords();
-    _data.initDataFromDBQueuryResult(await habitLoadTask, await recordLoadTask);
-    _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
-    _resortData();
-    completer.complete();
-    if (listen) {
-      if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
-      notifyListeners();
+
+    void loadingFailed(List errmsg) {
+      appLog.load.warn("$runtimeType.load", ex: errmsg);
+      _loading?.completeError(errmsg);
     }
-    // init reminders
-    final futureList = <Future>[];
-    _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
-    await Future.wait(futureList);
-    return completer.future;
+
+    Future<void> loadingData() async {
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loading data", _loading.hashCode, listen, inFutureBuilder]);
+      if (!mounted) {
+        loadingFailed(["viewmodel disposed"]);
+        return;
+      }
+      // init habits
+      final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
+      final recordLoadTask = recordDBHelper.loadAllRecords();
+      _data.initDataFromDBQueuryResult(
+          await habitLoadTask, await recordLoadTask);
+      if (!mounted) {
+        loadingFailed(["viewmodel disposed"]);
+        return;
+      }
+      _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
+      _resortData();
+      // complete
+      _loading?.complete();
+      // init reminders
+      final futureList = <Future>[];
+      _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
+      await Future.wait(futureList);
+      // reload
+      if (listen) {
+        if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
+        notifyListeners();
+      }
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loaded", _loading.hashCode, listen, inFutureBuilder]);
+    }
+
+    _loading = CancelableCompleter<void>();
+    loadingData();
+    return _loading?.operation.value;
   }
 
   HabitSummaryData? getHabit(HabitUUID habitUUID) {
