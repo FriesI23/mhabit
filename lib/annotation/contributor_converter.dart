@@ -26,7 +26,7 @@ class ContributorCollectionConverter
   Iterable<ContributorInfo> buildDefinedContributors(Iterable rawData) =>
       rawData
           .whereType<Map<String, dynamic>>()
-          .map((e) => ContributorInfo.fromJson(e));
+          .map(ContributorInfo.fromJson);
 
   Iterable<ContributorInfo> buildContributors(Iterable rawData,
       [Map<int, ContributorInfo> definedContributors = const {}]) sync* {

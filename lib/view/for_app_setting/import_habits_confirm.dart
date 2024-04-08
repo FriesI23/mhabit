@@ -89,9 +89,7 @@ class _AppSettingImportHabitsConfirmDialog
       Navigator.of(context).maybePop();
       return;
     }
-    setState(() {
-      confirmed();
-    });
+    setState(confirmed);
   }
 
   @override

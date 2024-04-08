@@ -915,7 +915,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 isExtended: isExtended,
                 collapsePrt: occupyPrt,
               ),
-              actionBuilder: (context) => buildEditAppbarActions(context),
+              actionBuilder: buildEditAppbarActions,
               onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
             );
           },

@@ -183,9 +183,7 @@ class HabitListTile extends StatelessWidget {
           color: themeData.colorScheme.surface,
           surfaceTintColor: themeData.colorScheme.surfaceTint,
           child: LayoutBuilder(
-            builder: (context, constraints) {
-              return tileBuilder(context, constraints);
-            },
+            builder: tileBuilder,
           ),
         ),
       ),

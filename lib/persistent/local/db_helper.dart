@@ -55,9 +55,7 @@ class _DBHelper implements DBHelper {
     final indexesBatch = db.batch();
     const LineSplitter()
         .convert(await getSqlFromFile(Assets.sql.indexes))
-        .forEach((sql) {
-      indexesBatch.execute(sql);
-    });
+        .forEach(indexesBatch.execute);
     await indexesBatch.commit();
     await db.execute(CustomSql.autoUpdateHabitssModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);

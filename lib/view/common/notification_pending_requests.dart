@@ -24,7 +24,7 @@ Future<void> showNotificationPendingRequestsDialog({
 }) async {
   return showDialog(
     context: context,
-    builder: (BuildContext context) =>
+    builder: (context) =>
         const NotificationPendingRequestsDialog(),
   );
 }

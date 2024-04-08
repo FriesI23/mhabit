@@ -413,11 +413,11 @@ class _HabitDetailView extends State<HabitDetailView>
                     visible: isArchived,
                     text:
                         l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
-                    callback: () => _openHabitUnarchiveConfirmDialog()),
+                    callback: _openHabitUnarchiveConfirmDialog),
                 DetailAppbarActionItemConfig.archive(
                     visible: !isArchived,
                     text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
-                    callback: () => _openHabitArchiveConfirmDialog()),
+                    callback: _openHabitArchiveConfirmDialog),
                 DetailAppbarActionItemConfig.clone(
                     text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
                     callback: _onAppbarCloneActionPressed),
@@ -426,7 +426,7 @@ class _HabitDetailView extends State<HabitDetailView>
                     callback: () => _exportHabitAndShared(context)),
                 DetailAppbarActionItemConfig.delete(
                     text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
-                    callback: () => _openHabitDeleteConfirmDialog()),
+                    callback: _openHabitDeleteConfirmDialog),
               ],
             );
           },
@@ -632,7 +632,7 @@ class _HabitDetailView extends State<HabitDetailView>
           switchInCurve: Curves.easeIn,
           switchOutCurve: Curves.easeInOut,
           transitionBuilder: direction != null
-              ? (Widget child, Animation<double> animation) => SlideTransitionX(
+              ? (child, animation) => SlideTransitionX(
                     direction: direction,
                     position: animation,
                     child: child,
@@ -716,7 +716,7 @@ class _HabitDetailView extends State<HabitDetailView>
           switchInCurve: Curves.easeIn,
           switchOutCurve: Curves.easeInOut,
           transitionBuilder: animatedDirection != null
-              ? (Widget child, Animation<double> animation) => SlideTransitionX(
+              ? (child, animation) => SlideTransitionX(
                     direction: animatedDirection,
                     position: animation,
                     child: child,
@@ -871,7 +871,7 @@ class _HabitDetailView extends State<HabitDetailView>
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, habitColorType, child) => HabitDetailFAB(
           colorType: habitColorType ?? widget.colorType,
-          onPressed: () => _openEditDialog(),
+          onPressed: _openEditDialog,
         ),
       );
     }

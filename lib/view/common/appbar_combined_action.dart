@@ -125,7 +125,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
               }
             }
           },
-          itemBuilder: (context) => _getPopupItemList(context),
+          itemBuilder: _getPopupItemList,
         ),
       ],
     );

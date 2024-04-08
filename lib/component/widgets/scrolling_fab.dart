@@ -133,7 +133,7 @@ class ScrollingFAB extends StatelessWidget {
         onPressed: onPressed,
         label: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          transitionBuilder: (Widget child, Animation<double> animation) =>
+          transitionBuilder: (child, animation) =>
               FadeTransition(
             opacity: animation,
             child: SizeTransition(

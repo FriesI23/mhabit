@@ -421,7 +421,7 @@ class _AppSettingView extends State<AppSettingView>
               morePercentage: normalizeAppCalendarBarOccupyPrt(
                   appCalendarBarDefualtOccupyPrt + 20),
               normalPercentage: appCalendarBarDefualtOccupyPrt,
-              onSelectionChanged: (int value) {
+              onSelectionChanged: (value) {
                 context
                     .read<AppThemeViewModel>()
                     .setNewDisplayPageOccupyPrt(value);

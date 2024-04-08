@@ -313,10 +313,10 @@ class HabitFreqChart extends StatelessWidget {
                   tooltipPadding: EdgeInsets.zero,
                   tooltipMargin: 2,
                   getTooltipItem: (
-                    BarChartGroupData group,
-                    int groupIndex,
-                    BarChartRodData rod,
-                    int rodIndex,
+                    group,
+                    groupIndex,
+                    rod,
+                    rodIndex,
                   ) {
                     final value = rod.toY.round();
                     if (value == 0) return null;

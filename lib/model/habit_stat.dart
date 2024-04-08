@@ -31,7 +31,7 @@ class HabitSummarySelectedStatistic {
   int get selected => activated + archived;
 
   @override
-  operator ==(Object? other) {
+  bool operator ==(Object? other) {
     if (other is! HabitSummarySelectedStatistic) return false;
     return activated == other.activated && archived == other.archived;
   }

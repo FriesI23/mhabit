@@ -134,7 +134,7 @@ WHERE $table.${RecordDBCellKey.recordDate}
       $table.${RecordDBCellKey.parentUUID} = "$uuid";
 """;
     final results = await db.rawQuery(sql);
-    return results.map((e) => RecordDBCell.fromJson(e));
+    return results.map(RecordDBCell.fromJson);
   }
 
   Future<RecordDBCell?> loadSingleRecord(HabitRecordUUID uuid) async {
@@ -153,7 +153,7 @@ WHERE $table.${RecordDBCellKey.recordDate}
 
   Future<Iterable<RecordDBCell>> loadAllRecords() async {
     final results = await db.query(table, columns: _loadAllRecordDataColumns);
-    return results.map((e) => RecordDBCell.fromJson(e));
+    return results.map(RecordDBCell.fromJson);
   }
 
   Future<Iterable<RecordDBCell>> loadRecordsExportData(
@@ -164,11 +164,11 @@ WHERE $table.${RecordDBCellKey.recordDate}
         where: "${RecordDBCellKey.parentUUID} "
             "IN (${uuidList.map((e) => '?').join(', ')})",
         whereArgs: uuidList);
-    return results.map((e) => RecordDBCell.fromJson(e));
+    return results.map(RecordDBCell.fromJson);
   }
 
   Future<Iterable<RecordDBCell>> loadAllRecordsExportData() async {
     final results = await db.query(table);
-    return results.map((e) => RecordDBCell.fromJson(e));
+    return results.map(RecordDBCell.fromJson);
   }
 }

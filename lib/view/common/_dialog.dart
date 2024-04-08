@@ -16,8 +16,8 @@ export './confirm_dialog.dart';
 export './donate_dialog.dart' show DonateDialog, showDonateDialog;
 export './exporter_confirm_dialog.dart'
     show
-        ExporterConfirmResultType,
         ExporterConfirmDialog,
+        ExporterConfirmResultType,
         showExporterConfirmDialog;
 export './habit_record_number_picker.dart';
 export './habit_record_reason_modifier.dart';

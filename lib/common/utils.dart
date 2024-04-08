@@ -113,18 +113,18 @@ class TemplateString {
   }
 
   String format(Map<String, dynamic> params) {
-    String result = '';
+    final result = StringBuffer();
 
     int fixedComponent = 0;
-    for (int i = 0; i < totalComponents; i++) {
+    for (var i = 0; i < totalComponents; i++) {
       if (genericComponents.containsKey(i)) {
-        result += params[genericComponents[i]].toString();
-        continue;
+        result.write(params[genericComponents[i]]);
+      } else {
+        result.write(fixedComponents[fixedComponent++]);
       }
-      result += fixedComponents[fixedComponent++];
     }
 
-    return result;
+    return result.toString();
   }
 }
 
@@ -178,7 +178,7 @@ Iterable<Tuple2<int, int>> getContinuousRanges(List<int> input) sync* {
 
 String? encodeUrlQueryParameters(Map<String, String> params) {
   return params.entries
-      .map((MapEntry<String, String> e) =>
+      .map((e) =>
           '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
       .join('&');
 }

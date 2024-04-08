@@ -77,6 +77,9 @@ documentation and project management.
 If you have relevant knowledge and are willing to contribute to this project,
 you can help me improve the documentation, e.g `README.md` file.
 
+When contribute code to this project, please try to follow
+[this][style-guide-for-flutter] guideline.
+
 ## Donate
 
 [!["Buy Me A Coffee"][buymeacoffee-badge]](https://www.buymeacoffee.com/d49cb87qgww)
@@ -146,3 +149,4 @@ limitations under the License.
 [eth-addr]: https://etherscan.io/address/0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F
 [btc-badge]: https://img.shields.io/badge/Bitcoin-000000?style=for-the-badge&logo=bitcoin&logoColor=white
 [btc-addr]: https://blockchair.com/bitcoin/address/bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49
+[style-guide-for-flutter]: https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo

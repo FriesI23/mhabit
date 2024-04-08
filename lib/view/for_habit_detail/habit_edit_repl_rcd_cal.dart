@@ -214,9 +214,8 @@ class _HabitEditReplacementRecordCalendarDialog
         showCellText: true,
       ),
       callbackModel: HeatmapCallbackModel(
-        onCellPressed: (date, value) => onHeatmapCellPressed(date, value),
-        onCellLongPressed: (date, value) =>
-            onHeatmapCellLongPressed(date, value),
+        onCellPressed: onHeatmapCellPressed,
+        onCellLongPressed: onHeatmapCellLongPressed,
       ),
       weekLabelValueBuilder: (context, protoDate, defaultFormat) {
         return FittedBox(

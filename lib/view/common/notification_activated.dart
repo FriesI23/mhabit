@@ -26,7 +26,7 @@ Future<void> showNotificationActivatedDialog({
 }) async {
   return showDialog(
     context: context,
-    builder: (BuildContext context) => const NotificationActivatedDialog(),
+    builder: (context) => const NotificationActivatedDialog(),
   );
 }
 

@@ -33,18 +33,18 @@ import 'page_habits_display.dart' show PageHabitsDisplay;
 
 class App extends StatelessWidget {
   static final _profileHandlers = <ProfileHandlerBuilder>[
-    (pref) => AppReminderProfileHandler(pref),
-    (pref) => AppThemeTypeProfileHandler(pref),
-    (pref) => AppThemeMainColorProfileHandler(pref),
-    (pref) => CompactUISwitcherProfileHandler(pref),
-    (pref) => DisplaySortModeProfileHandler(pref),
-    (pref) => DisplayHabitsFilterProfileHandler(pref),
-    (pref) => DisplayCalendarScrollModeProfileHandler(pref),
-    (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref),
-    (pref) => ShowDateFormatProfileHandler(pref),
-    (pref) => FirstDayProfileHandler(pref),
-    (pref) => HabitCellGestureModeProfileHandler(pref),
-    (pref) => InputFillCacheProfileHandler(pref),
+    AppReminderProfileHandler.new,
+    AppThemeTypeProfileHandler.new,
+    AppThemeMainColorProfileHandler.new,
+    CompactUISwitcherProfileHandler.new,
+    DisplaySortModeProfileHandler.new,
+    DisplayHabitsFilterProfileHandler.new,
+    DisplayCalendarScrollModeProfileHandler.new,
+    DisplayCalendartBarOccupyPrtProfileHandler.new,
+    ShowDateFormatProfileHandler.new,
+    FirstDayProfileHandler.new,
+    HabitCellGestureModeProfileHandler.new,
+    InputFillCacheProfileHandler.new,
   ];
 
   const App({super.key});

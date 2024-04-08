@@ -32,7 +32,7 @@ const _defaultSliverScrollChildCount = 10;
 class DebugBuilderMethods {
   static SliverChildDelegate debugBuildSliverScrollDelegate({int? childCount}) {
     return SliverChildBuilderDelegate(
-      (BuildContext context, int index) {
+      (context, index) {
         return Container(
           color: index.isOdd ? Colors.white : Colors.black12,
           height: 100.0,

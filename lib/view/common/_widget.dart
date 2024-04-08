@@ -13,7 +13,7 @@
 // limitations under the License.
 
 export './appbar_combined_action.dart'
-    show AppbarActionShowStatus, AppBarActions, AppbarActionItemConfig;
+    show AppBarActions, AppbarActionItemConfig, AppbarActionShowStatus;
 export './colorful_navibar.dart' show ColorfulNavibar;
 export './contributor_tile.dart';
 export './date_changer.dart';

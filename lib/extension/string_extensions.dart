@@ -13,5 +13,5 @@
 // limitations under the License.
 
 extension UUIDStringExtensions on String {
-  toUUIDInt() => int.parse(replaceAll('-', ''), radix: 16);
+  int toUUIDInt() => int.parse(replaceAll('-', ''), radix: 16);
 }

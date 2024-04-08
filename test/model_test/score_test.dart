@@ -18,8 +18,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/model/habit_date.dart';
 import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_summary.dart';
 import 'package:mhabit/model/habit_score.dart';
+import 'package:mhabit/model/habit_summary.dart';
 import 'package:tuple/tuple.dart';
 
 import '../stub/habit_score.dart';

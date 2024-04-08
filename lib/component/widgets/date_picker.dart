@@ -404,7 +404,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
           data: MediaQuery.of(context).copyWith(
             textScaleFactor: textScaleFactor,
           ),
-          child: Builder(builder: (BuildContext context) {
+          child: Builder(builder: (context) {
             switch (orientation) {
               case Orientation.portrait:
                 return Column(

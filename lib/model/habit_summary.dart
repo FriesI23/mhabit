@@ -306,7 +306,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         habitScore: createHabitScore(),
         startDate: startDate,
         iterable: createIterable(),
-        isAutoComplated: (date) => _autoMarkedRecords.contains(date),
+        isAutoComplated: _autoMarkedRecords.contains,
         getHabitRecord: (date) => _recordDateCacheMap[date],
       );
     } else {
@@ -314,7 +314,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         habitScore: createHabitScore(),
         startDate: startDate,
         iterable: createIterable(),
-        isAutoComplated: (date) => _autoMarkedRecords.contains(date),
+        isAutoComplated: _autoMarkedRecords.contains,
         getHabitRecord: (date) => _recordDateCacheMap[date],
       );
     }

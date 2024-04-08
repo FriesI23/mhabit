@@ -61,7 +61,7 @@ class CryptoDonateButton extends StatelessWidget {
           backgroundColor: color,
           iconColor: const MaterialStatePropertyAll(Colors.white),
           overlayColor: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) =>
+            (states) =>
                 states.contains(MaterialState.pressed)
                     ? color.value.darken(0.1)
                     : null,

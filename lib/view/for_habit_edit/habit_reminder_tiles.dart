@@ -124,13 +124,13 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Builder(builder: (context) => buildReminderTimeTile(context)),
+        Builder(builder: buildReminderTimeTile),
         ExpandedSection(
           expand: widget.reminder != null,
           child: Column(
             children: [
-              Builder(builder: (context) => buildReminderTypeTile(context)),
-              Builder(builder: (context) => buildReminderQuestTile(context)),
+              Builder(builder: buildReminderTypeTile),
+              Builder(builder: buildReminderQuestTile),
             ],
           ),
         ),

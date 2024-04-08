@@ -133,7 +133,7 @@ mixin DBOperationsMixin on DBHelperLoadedMixin {
     if (cell == null) return null;
     final habit = HabitSummaryData.fromDBQueryCell(cell);
     habit.initRecords(
-      records.map((e) => HabitSummaryRecord.fromDBQueryCell(e)),
+      records.map(HabitSummaryRecord.fromDBQueryCell),
     );
     habit.reCalculateAutoComplateRecords(firstDay: firstDay);
     return habit;

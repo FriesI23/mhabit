@@ -459,9 +459,9 @@ class _NumberStepButtonState extends State<_NumberStepButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _stopHolding(),
+      onTap: _stopHolding,
       onTapDown: (_) => _startHolding(),
-      onTapCancel: () => _stopHolding(),
+      onTapCancel: _stopHolding,
       borderRadius: widget.borderRadius,
       customBorder: widget.shape,
       child: widget.child,

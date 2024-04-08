@@ -429,7 +429,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitSummarySelectedStatistic get selectStatistic {
     int activatedNum = 0;
     int archivedNum = 0;
-    for (var data in _selectorData.selectedColl.map((uuid) => getHabit(uuid))) {
+    for (var data in _selectorData.selectedColl.map(getHabit)) {
       if (data == null) {
         continue;
       } else if (data.status == HabitStatus.activated) {
@@ -463,7 +463,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Iterable<HabitSummaryData?> getSelectedHabitsData() =>
-      _selectorData._selectUUIDColl.map((e) => getHabit(e));
+      _selectorData._selectUUIDColl.map(getHabit);
   //#endregion
 
   //#region actions
