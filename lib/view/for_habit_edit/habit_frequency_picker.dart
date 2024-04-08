@@ -61,7 +61,7 @@ class _HabitFrequencyPickerDialogView
   @override
   void initState() {
     super.initState();
-    var pickerType = getFrequencyPickerType(widget.frequency);
+    final pickerType = getFrequencyPickerType(widget.frequency);
     selectFrequencyType = pickerType;
     _preweekInputController = TextEditingController()
       ..text = defaultFrequencyPreWeekFreq.toString();

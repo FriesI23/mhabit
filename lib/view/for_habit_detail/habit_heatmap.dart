@@ -74,10 +74,10 @@ class HabitHeatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    TextTheme textTheme = themeData.textTheme;
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
 
-    var heatmap = HeatmapCalendar<num>(
+    final heatmap = HeatmapCalendar<num>(
       firstDay: firstday,
       startDate: startDate,
       endedDate: endedDate,

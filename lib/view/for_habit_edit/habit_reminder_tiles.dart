@@ -98,9 +98,9 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
     }
 
     Widget buildReminderQuestTile(BuildContext context) {
-      ThemeData? themeData = Theme.of(context);
-      ColorScheme? colorScheme = themeData.colorScheme;
-      TextTheme? textTheme = themeData.textTheme;
+      final ThemeData themeData = Theme.of(context);
+      final ColorScheme colorScheme = themeData.colorScheme;
+      final TextTheme textTheme = themeData.textTheme;
       return ListTile(
         leading: const SizedBox(),
         title: TextField(

@@ -110,7 +110,7 @@ class _HabitDisplaySortTypePickerDialog
             enabled: crtSortType != HabitDisplaySortType.manual,
             controlAffinity: ListTileControlAffinity.leading,
             onChanged: (value) {
-              var newSortDirection = value == true
+              final newSortDirection = value == true
                   ? HabitDisplaySortDirection.desc
                   : HabitDisplaySortDirection.asc;
               setState(() {

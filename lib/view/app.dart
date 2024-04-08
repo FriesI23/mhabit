@@ -72,7 +72,7 @@ class AppView extends StatefulWidget {
 class _AppView extends State<AppView> {
   ThemeData _getLightThemeData(BuildContext context,
       {ColorScheme? dynamicColor, required Color mainColor}) {
-    ColorScheme appColorLight = ColorScheme.fromSeed(
+    final ColorScheme appColorLight = ColorScheme.fromSeed(
       seedColor: mainColor,
       brightness: Brightness.light,
     );
@@ -85,7 +85,7 @@ class _AppView extends State<AppView> {
 
   ThemeData _getDartThemeData(BuildContext context,
       {ColorScheme? dynamicColor, required Color mainColor}) {
-    ColorScheme appColorDark = ColorScheme.fromSeed(
+    final ColorScheme appColorDark = ColorScheme.fromSeed(
       seedColor: mainColor,
       brightness: Brightness.dark,
     );
@@ -98,7 +98,7 @@ class _AppView extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    var homePage = const PageHabitsDisplay();
+    const homePage = PageHabitsDisplay();
 
     return Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
       selector: (context, viewmodel) =>

@@ -27,7 +27,7 @@ extension NumExtension on num {
 
   String toStringAsFixedWithMin(int fixedDigit) {
     if (this == 0) return toStringAsFixed(fixedDigit);
-    var minNum = pow(10, -fixedDigit);
+    final minNum = pow(10, -fixedDigit);
     if (abs() >= minNum) {
       return toStringAsFixed(fixedDigit);
     } else {

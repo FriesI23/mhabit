@@ -95,7 +95,7 @@ class HabitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
 
     Widget rightBuilder(BuildContext context, int? itemCount,
         double limitItemSize, double height) {
@@ -123,11 +123,11 @@ class HabitListTile extends StatelessWidget {
 
     Widget tileBuilder(BuildContext context, BoxConstraints constraints) {
       final height = _itemHeight ?? constraints.maxHeight;
-      int limitItemCount = calcLimitItemCount(
+      final int limitItemCount = calcLimitItemCount(
           constraints.maxWidth, height, sizePrt,
           minCount: minItemCoun);
 
-      double limitItemSize = calcLimitItemSize(height, limitItemCount);
+      final double limitItemSize = calcLimitItemSize(height, limitItemCount);
 
       int? itemCount;
       if (!useDefaultItemCount) {
@@ -138,11 +138,11 @@ class HabitListTile extends StatelessWidget {
         }
       }
 
-      Widget rowWidget = Row(
+      final Widget rowWidget = Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: () {
-          var result = <Widget>[];
+          final result = <Widget>[];
           if (leftChild != null) result.add(leftChild!);
           result.add(
             Flexible(

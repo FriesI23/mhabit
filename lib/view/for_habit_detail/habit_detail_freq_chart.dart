@@ -66,7 +66,7 @@ class _HabitDetailFreqChartTitle extends StatelessWidget {
         initialValue: chartCombine,
         onSelected: onPopMenuSelected,
         itemBuilder: (context) {
-          var result = <PopupMenuEntry<HabitDetailFreqChartCombine>>[
+          final result = <PopupMenuEntry<HabitDetailFreqChartCombine>>[
             CheckedPopupMenuItem<HabitDetailFreqChartCombine>(
               padding: const EdgeInsets.symmetric(horizontal: 1.0),
               checked: chartCombine == HabitDetailFreqChartCombine.weekly,
@@ -125,7 +125,7 @@ class _HabitDetailFreqChartSubTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
 
     // NOTE: fl_chart isn't support rtl layout direction yet
     // more info see: https://github.com/imaNNeo/fl_chart/issues/129
@@ -425,15 +425,15 @@ class HabitDetailFreqChart extends StatelessWidget {
     final double textScaleFactor =
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
-    var eachSize = this.eachSize * textScaleFactor;
-    var limit = math.max(1, allowWidth ~/ math.max(eachSize, cellWidth));
-    var firstDate = getFirstDate(limit);
-    var lastDate = getLastDate(limit);
-    var titleHeight = this.titleHeight * math.max(1.0, textScaleFactor);
+    final eachSize = this.eachSize * textScaleFactor;
+    final limit = math.max(1, allowWidth ~/ math.max(eachSize, cellWidth));
+    final firstDate = getFirstDate(limit);
+    final lastDate = getLastDate(limit);
+    final titleHeight = this.titleHeight * math.max(1.0, textScaleFactor);
 
-    var isToday = offset == 0;
-    var isLast = lastDate.isBefore(habitStartDate);
-    var data = getData(firstDate, lastDate, limit);
+    final isToday = offset == 0;
+    final isLast = lastDate.isBefore(habitStartDate);
+    final data = getData(firstDate, lastDate, limit);
     if (isLargeScreen) {
       return Padding(
         padding: padding,

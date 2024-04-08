@@ -25,10 +25,10 @@ void main() {
 }
 
 void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
-  var rng = Random();
-  var starDate = HabitStartDate(2022, 1, 1);
+  final rng = Random();
+  final starDate = HabitStartDate(2022, 1, 1);
   var crtDate = starDate;
-  var data = HabitSummaryData(
+  final data = HabitSummaryData(
     id: 1,
     uuid: 'hsingle',
     type: HabitType.normal,
@@ -53,10 +53,10 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
     ));
   }
 
-  Stopwatch stopwatch = Stopwatch();
+  final Stopwatch stopwatch = Stopwatch();
   data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
   stopwatch.start();
-  var r = data.debugCalcTotalScore(endDate: starDate.addDays(preRecordNum));
+  final r = data.debugCalcTotalScore(endDate: starDate.addDays(preRecordNum));
   stopwatch.stop();
   debugPrint('run in: ${stopwatch.elapsed.inMilliseconds} ms, r=$r');
 }

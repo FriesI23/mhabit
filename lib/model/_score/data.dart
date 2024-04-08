@@ -36,7 +36,7 @@ class HabitScoreChangedProtoData {
       return;
     }
 
-    var changed = dailyScoreChangedValue;
+    final changed = dailyScoreChangedValue;
     var crtDate = fromDate;
     var crtScore = fromScore;
 

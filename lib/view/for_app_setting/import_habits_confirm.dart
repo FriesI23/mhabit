@@ -78,7 +78,7 @@ class _AppSettingImportHabitsConfirmDialog
 
   void _onConfirmButtonPressed() {
     if (!mounted || _confirmed) return;
-    var dataImporter = context.read<HabitFileImporterViewModel>();
+    final dataImporter = context.read<HabitFileImporterViewModel>();
     if (!dataImporter.mounted) return;
     final result = dataImporter.importHabitsData(
       widget.data,

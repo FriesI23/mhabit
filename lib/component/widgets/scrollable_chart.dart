@@ -95,7 +95,7 @@ class _ScrollableChartState extends State<ScrollableChart>
   }
 
   void _onScroll(double horizontalDistance, {bool refresh = true}) {
-    var lastMinMaxDistance = math.max(lastMaxXValue - lastMinXValue, 0.0);
+    final lastMinMaxDistance = math.max(lastMaxXValue - lastMinXValue, 0.0);
 
     lastCacheMinX = lastCacheMinX ?? minX;
     lastCacheMaxX = lastCacheMaxX ?? maxX;
@@ -131,7 +131,7 @@ class _ScrollableChartState extends State<ScrollableChart>
   }
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    var horizontalDistance = details.primaryDelta ?? 0;
+    final horizontalDistance = details.primaryDelta ?? 0;
     if (horizontalDistance == 0) return;
     _lastDistance = horizontalDistance;
     _onScroll(horizontalDistance);

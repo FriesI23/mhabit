@@ -141,7 +141,7 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
         return 0.0;
       }
 
-      var indicator = CircularProgressIndicator(
+      final indicator = CircularProgressIndicator(
         backgroundColor: widget.backgroundColor,
         valueColor:
             AlwaysStoppedAnimation<Color>(widget.color ?? colorScheme.primary),

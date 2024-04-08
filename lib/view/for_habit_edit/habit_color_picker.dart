@@ -56,8 +56,8 @@ class HabitColorPickerDialog extends StatelessWidget {
             ),
           ),
           itemBuilder: (color, isCurrentColor, changeColor) {
-            HabitColorType? colorType = colorData?.getHabitColorTypeByCC(color);
-            Color? onColor = colorData?.getOnColor(colorType!);
+            final HabitColorType? colorType = colorData?.getHabitColorTypeByCC(color);
+            final Color? onColor = colorData?.getOnColor(colorType!);
             return IconButton(
               onPressed: changeColor,
               icon: isCurrentColor ? const Icon(Icons.check) : const Icon(null),

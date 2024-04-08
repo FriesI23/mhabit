@@ -192,7 +192,7 @@ class _HabitDetailView extends State<HabitDetailView>
     if (!mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (viewmodel.habitDetailData == null) return;
-    var oldVersion = viewmodel.getInsideVersion();
+    final oldVersion = viewmodel.getInsideVersion();
     await showHabitEditReplacementRecordCalendarDialog(
       context: context,
       habitColorType: viewmodel.habitColorType,
@@ -232,7 +232,7 @@ class _HabitDetailView extends State<HabitDetailView>
     HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
-    var result = await _openHabitOpConfirmDialog(
+    final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -295,7 +295,7 @@ class _HabitDetailView extends State<HabitDetailView>
     HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
-    var result = await _openHabitOpConfirmDialog(
+    final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -356,7 +356,7 @@ class _HabitDetailView extends State<HabitDetailView>
     assert(kDebugMode);
     return Builder(
       builder: (context) {
-        var viewmodel = context.read<HabitDetailViewModel>();
+        final viewmodel = context.read<HabitDetailViewModel>();
         return ListTile(
           leading:
               Icon(Icons.error, color: Theme.of(context).colorScheme.error),
@@ -569,7 +569,7 @@ class _HabitDetailView extends State<HabitDetailView>
                     viewmodel.habitType?.dbCode ?? 0) ??
                 "",
             heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
-              ThemeData themeData = Theme.of(context);
+              final ThemeData themeData = Theme.of(context);
               return FittedBox(
                 child: Text(
                   DateFormat(defaultFormat, localeString).format(protoDate),
@@ -578,8 +578,8 @@ class _HabitDetailView extends State<HabitDetailView>
               );
             },
             heatmapMonthLabelItemBuilder: (context, date, defaultFormat) {
-              ThemeData themeData = Theme.of(context);
-              TextTheme textTheme = themeData.textTheme;
+              final ThemeData themeData = Theme.of(context);
+              final TextTheme textTheme = themeData.textTheme;
               return Text(
                 DateFormat(defaultFormat, localeString).format(date),
                 style: textTheme.labelSmall
@@ -608,12 +608,12 @@ class _HabitDetailView extends State<HabitDetailView>
         int? limit,
         ValueKey<String>? chartKey,
       ) {
-        ThemeData themeData = Theme.of(context);
-        TextTheme textTheme = themeData.textTheme;
+        final ThemeData themeData = Theme.of(context);
+        final TextTheme textTheme = themeData.textTheme;
 
-        var chartvm = context.read<HabitDetailScoreChartViewModel>();
-        var direction = chartvm.consumeCachedAnimateDirection();
-        var chart = HabitScoreChart(
+        final chartvm = context.read<HabitDetailScoreChartViewModel>();
+        final direction = chartvm.consumeCachedAnimateDirection();
+        final chart = HabitScoreChart(
           key: chartKey,
           height: kHabitDetailFreqChartHeight,
           eachSize: eachSize,
@@ -647,7 +647,7 @@ class _HabitDetailView extends State<HabitDetailView>
           builder: (context, constraints) {
             final double textScaleFactor =
                 math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-            var now = HabitDate.now();
+            final now = HabitDate.now();
             return HabitDetailScoreChart(
               padding: kHabitDetailWidgetPadding,
               eachSize: 48.0,
@@ -694,11 +694,11 @@ class _HabitDetailView extends State<HabitDetailView>
         AxisDirection? animatedDirection,
         ValueKey<String>? chartKey,
       }) {
-        ThemeData themeData = Theme.of(context);
-        TextTheme textTheme = themeData.textTheme;
+        final ThemeData themeData = Theme.of(context);
+        final TextTheme textTheme = themeData.textTheme;
 
-        var chartvm = context.read<HabitDetailFreqChartViewModel>();
-        var chart = HabitFreqChart(
+        final chartvm = context.read<HabitDetailFreqChartViewModel>();
+        final chart = HabitFreqChart(
           key: chartKey,
           height: kHabitDetailFreqChartHeight,
           eachSize: eachSize,
@@ -733,12 +733,12 @@ class _HabitDetailView extends State<HabitDetailView>
             final double textScaleFactor =
                 math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
-            var viewmodel = context.read<HabitDetailViewModel>();
-            var now = HabitDate.now();
+            final viewmodel = context.read<HabitDetailViewModel>();
+            final now = HabitDate.now();
 
-            bool isLargeScreen =
+            final isLargeScreen =
                 constraints.maxWidth > kHabitLargeScreenAdaptWidth;
-            var animatedDirection = chartvm.consumeCachedAnimateDirection();
+            final animatedDirection = chartvm.consumeCachedAnimateDirection();
 
             return HabitDetailFreqChart(
               padding: kHabitDetailWidgetPadding,
@@ -768,7 +768,7 @@ class _HabitDetailView extends State<HabitDetailView>
               ),
               onPopMenuSelected: (combine) {
                 if (!mounted) return;
-                var viewmodel = context.read<HabitDetailViewModel>();
+                final viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
                 viewmodel.updateFreqChartCombine(combine);
               },
@@ -889,10 +889,10 @@ class _HabitDetailView extends State<HabitDetailView>
             await loading;
           }
 
-          final viewmodel = context.read<HabitDetailViewModel>();
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {
+              final viewmodel = context.read<HabitDetailViewModel>();
               appLog.load.debug("$widget.buildBody",
                   ex: ["Loading detail data", snapshot.connectionState]);
 
@@ -901,7 +901,7 @@ class _HabitDetailView extends State<HabitDetailView>
                     ex: ["Loaded", viewmodel.debugGetDataString()]);
               }
 
-              Widget switcherWidget;
+              final Widget switcherWidget;
 
               if (snapshot.inProgress) {
                 switcherWidget = SliverFillRemaining(

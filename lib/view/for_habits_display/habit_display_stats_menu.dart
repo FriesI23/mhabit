@@ -116,10 +116,10 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
     var crtIndex = 0;
     for (var sd in statisticsData.currentPopularityData) {
       if (crtIndex > 2) break;
-      var habit = viewmodel.getHabit(sd.uuid);
+      final habit = viewmodel.getHabit(sd.uuid);
       if (habit == null) continue;
-      var changed = sd.getLast30DaysChanged(now);
-      var symbol = changed > 0
+      final changed = sd.getLast30DaysChanged(now);
+      final symbol = changed > 0
           ? "+"
           : changed < 0
               ? "-"

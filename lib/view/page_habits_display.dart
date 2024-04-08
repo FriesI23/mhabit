@@ -139,6 +139,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _openHabitArchiveConfirmDialog(BuildContext context) async {
     HabitSummaryViewModel viewmodel;
+
     final result = await showConfirmDialog(
       context: context,
       titleBuilder: (context) {
@@ -164,10 +165,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
-    var recordList = await viewmodel.archivedSelectedHabits();
+    final recordList = await viewmodel.archivedSelectedHabits();
     if (!mounted || recordList == null) return;
 
-    var archivedCount = recordList.length;
+    final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
       context,
@@ -212,10 +213,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
-    var recordList = await viewmodel.unarchivedSelectedHabits();
+    final recordList = await viewmodel.unarchivedSelectedHabits();
     if (!mounted || recordList == null) return;
 
-    var archivedCount = recordList.length;
+    final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
       context,
@@ -260,10 +261,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
-    var recordList = await viewmodel.deleteSelectedHabits();
+    final recordList = await viewmodel.deleteSelectedHabits();
     if (!mounted || recordList == null) return;
 
-    var deletedCount = recordList.length;
+    final deletedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
       context,
@@ -368,14 +369,15 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    HabitDailyGoal crtNum;
+    HabitSummaryViewModel viewmodel;
 
-    var viewmodel = context.read<HabitSummaryViewModel>();
-    var data = viewmodel.getHabit(parentUUID);
+    viewmodel = context.read<HabitSummaryViewModel>();
+    final data = viewmodel.getHabit(parentUUID);
     if (data == null) return;
 
-    var record = data.getRecordByDate(date);
-    num orgNum = record?.value ?? -1;
+    final HabitDailyGoal crtNum;
+    final record = data.getRecordByDate(date);
+    final orgNum = record?.value ?? -1;
     if (record != null) {
       if (record.status != HabitRecordStatus.done) return;
       crtNum = record.value;
@@ -398,6 +400,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     );
 
     if (result == null || result == orgNum || !mounted) return;
+    viewmodel = context.read<HabitSummaryViewModel>();
+    if (!viewmodel.mounted) return;
     viewmodel.changeRecordValue(parentUUID, date, result);
   }
 
@@ -446,7 +450,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   Future<void> _onFABPressed() async {
     if (!mounted) return;
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     if (viewmodel.isInEditMode) {
       context.read<HabitSummaryViewModel>().exitEditMode();
       await Future.delayed(_kPressFABAnimateDuration);
@@ -600,7 +604,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   bool _onHabitListReorderStart(int index, double dx, double dy) {
     if (!mounted) return false;
 
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.canBeDragged) return false;
 
     if (!viewmodel.isInEditMode) {
@@ -608,13 +612,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         ..hideCurrentSnackBar()
         ..clearSnackBars();
       viewmodel.switchToEditMode();
-      var data = viewmodel.getHabitBySortId(index);
+      final data = viewmodel.getHabitBySortId(index);
       if (data is HabitSummaryDataSortCache) {
         viewmodel.selectHabit(data.uuid, listen: false);
       }
     }
 
-    var sortOptions = context.read<HabitsSortViewModel>();
+    final sortOptions = context.read<HabitsSortViewModel>();
     if (sortOptions.sortType != HabitDisplaySortType.manual) return false;
 
     return true;
@@ -623,7 +627,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   bool _onHabitListReorderMove(int index, int dropIndex) {
     if (!mounted) return false;
 
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex && viewmodel.isInEditMode) {
       viewmodel.exitEditModeOnly();
     }
@@ -633,7 +637,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   bool _onHabitListReorderComplete(int index, int dropIndex, Object? slot) {
     if (!mounted) return false;
 
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
       viewmodel.onHabitReorderComplate(index, dropIndex);
       viewmodel.exitEditMode(listen: false);
@@ -648,8 +652,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     void preessedInEditMode() {
       if (!mounted) return;
-      var viewmodel = context.read<HabitSummaryViewModel>();
-
+      final viewmodel = context.read<HabitSummaryViewModel>();
       if (viewmodel.isHabitSelected(uuid)) {
         viewmodel.unselectHabit(uuid);
       } else {
@@ -712,7 +715,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   void _onHabitEditAppbarLeadingButtonPressed() {
     if (!mounted) return;
-    var viewmodel = context.read<HabitSummaryViewModel>();
+    final viewmodel = context.read<HabitSummaryViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewmodel.exitEditMode();
     });
@@ -927,7 +930,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         selector: (context, viewmodel) => viewmodel.currentState,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, status, child) {
-          var viewmodel = context.read<HabitSummaryViewModel>();
+          final viewmodel = context.read<HabitSummaryViewModel>();
           appLog.build.debug(context, ex: [status], name: "$widget.Appbar");
           return SliverAnimatedSwitcher(
             duration: _kEditModeChangeAnimateDuration,
@@ -946,14 +949,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         selector: (context, viewmodel) => viewmodel.reloadUIToggleSwitch,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
-          var viewmodel = context.read<HabitSummaryViewModel>();
+          final viewmodel = context.read<HabitSummaryViewModel>();
           appLog.build.debug(context, ex: [value], name: "$widget.HabitList");
           return AnimatedSliverList(
             controller: viewmodel.dispatcherLinkedController,
             delegate: AnimatedSliverChildBuilderDelegate(
               (context, index, data) {
-                return viewmodel.dispatcherLinkedBuilder(
-                    context, viewmodel.lastSortedDataCache, index, data);
+                return context
+                    .read<HabitSummaryViewModel>()
+                    .dispatcherLinkedBuilder(
+                        context, viewmodel.lastSortedDataCache, index, data);
               },
               viewmodel.lastSortedDataCache.length,
               addAnimatedElevation: _kCommonEvalation,
@@ -988,10 +993,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             }
           }
 
-          final viewmodel = context.read<HabitSummaryViewModel>();
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {
+              final viewmodel = context.read<HabitSummaryViewModel>();
               appLog.load.debug("$widget.buildHabits", ex: [
                 "Loading data",
                 snapshot.connectionState,

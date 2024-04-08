@@ -118,9 +118,9 @@ class _AppAboutView extends State<AppAboutView> {
       ),
       body: ListView(
         children: [
-          const AppAboutVersionTile(
+          AppAboutVersionTile(
             isMonoLogo: true,
-            logoPath: "assets/logo/icon-momo.svg",
+            logoPath: Assets.logo.iconMomo.path,
             changeLogPath: "CHANGELOG.md",
           ),
           const AppAboutSourceCodeTile(),

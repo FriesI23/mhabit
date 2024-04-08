@@ -110,7 +110,7 @@ class _DBHelper implements DBHelper {
 
   @override
   Future init({bool reinit = false}) async {
-    String dbPath = join(await getDatabasesPath(), appDBName);
+    final String dbPath = join(await getDatabasesPath(), appDBName);
 
     Future initNew() async {
       appLog.db.info("local.$runtimeType.init", ex: ["processing"]);

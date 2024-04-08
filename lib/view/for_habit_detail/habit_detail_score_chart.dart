@@ -155,7 +155,7 @@ class HabitDetailScoreChart extends StatelessWidget {
     var lastDate = getLastDate(limit);
     lastDate = lastDate.isBefore(startDate) ? lastDate : startDate;
 
-    var chartKey = ValueKey<String>("scoreChart"
+    final chartKey = ValueKey<String>("scoreChart"
         "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
         "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
         "|${chartCombine.index}");

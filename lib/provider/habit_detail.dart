@@ -262,7 +262,7 @@ class HabitDetailViewModel extends ChangeNotifier
   Map<HabitDate, num> get heatmapDateToColorMap => _heatmapDateToColorMap;
 
   HabitHeatmapCellStatus getHabitHeatmapCellStatus(HabitDate date) {
-    var record = getHabitRecordData(date);
+    final record = getHabitRecordData(date);
     return HabitHeatmapCellStatus(
       status: record?.status,
       value: record?.value,
@@ -373,7 +373,7 @@ class HabitDetailViewModel extends ChangeNotifier
 
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
-    var result = data.addRecord(record, replaced: true);
+    final result = data.addRecord(record, replaced: true);
     _calcHabitInfo();
 
     appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
@@ -508,7 +508,7 @@ class HeatmapColorsCalculator {
   }
 
   Map<HabitDate, num> calculate() {
-    Map<HabitDate, num> tmpMap = {};
+    final Map<HabitDate, num> tmpMap = {};
 
     for (var date in _data.autoRecordsDate) {
       tmpMap[date] = HabitHeatMapColorMapDefine.autoComplate;

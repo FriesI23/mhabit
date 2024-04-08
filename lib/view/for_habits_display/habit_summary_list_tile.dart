@@ -145,10 +145,10 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   Widget? _buildCellItem(
       BuildContext context, int index, double realHeight, DateTime crtDate) {
-    var showDate =
+    final showDate =
         HabitRecordDate.dateTime(crtDate.subtract(Duration(days: index)));
-    var record = data.getRecordByDate(showDate);
-    var isAutoComplated = data.isRecordAutoComplated(showDate);
+    final record = data.getRecordByDate(showDate);
+    final isAutoComplated = data.isRecordAutoComplated(showDate);
 
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: realHeight),
@@ -186,16 +186,16 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    HabitSummaryListTileColor? themeColor =
+    final ThemeData themeData = Theme.of(context);
+    final HabitSummaryListTileColor? themeColor =
         themeData.extension<HabitSummaryListTileColor>();
-    HabitSummaryListTileColor defaultThemeColor =
+    final HabitSummaryListTileColor defaultThemeColor =
         _getDefaultListTileColor(themeData);
-    TextTheme? textTheme = themeData.textTheme;
+    final TextTheme textTheme = themeData.textTheme;
 
     final double textScaleFactor = getTextScaleFactor(context);
 
-    DateTime crtDate = widget.startDate ?? DateTime.now();
+    final DateTime crtDate = widget.startDate ?? DateTime.now();
     int? limitItemCount;
 
     limitItemCount = widget.endDate == null
@@ -261,7 +261,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   }
 
   HabitSummaryListTileColor _getDefaultListTileColor(ThemeData themeData) {
-    CustomColors? colorData = themeData.extension<CustomColors>();
+    final CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryListTileColor(
       titleColor: colorData?.getColor(data.colorType),
       progressCircleColor: colorData?.getColor(data.colorType),

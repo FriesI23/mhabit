@@ -307,7 +307,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
       entryModeButton: entryModeButton,
     );
 
-    bool isTodaySelected = _selectedDate.value == widget.currentDate;
+    final bool isTodaySelected = _selectedDate.value == widget.currentDate;
     final Widget todayChip = ChoiceChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
       avatar:
@@ -320,7 +320,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
       onSelected: (value) => _handleDateChanged(widget.currentDate),
     );
 
-    bool isTomorrowSelected = _selectedDate.value == tomorrowDate;
+    final bool isTomorrowSelected = _selectedDate.value == tomorrowDate;
     final Widget tomorrowChip = ChoiceChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: isTomorrowSelected
@@ -334,7 +334,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
       onSelected: (value) => _handleDateChanged(tomorrowDate),
     );
 
-    bool isNextDateSelected = _selectedDate.value == nextDate;
+    final bool isNextDateSelected = _selectedDate.value == nextDate;
     final Widget nextDateChip = ChoiceChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
       avatar: isNextDateSelected
@@ -357,7 +357,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
 
     Widget? otherDateChip;
     if (otherDate != null) {
-      bool isOtherDateSelected = _selectedDate.value == otherDate;
+      final bool isOtherDateSelected = _selectedDate.value == otherDate;
       otherDateChip = ChoiceChip(
         iconTheme: IconThemeData(color: colorScheme.primary),
         avatar: isOtherDateSelected

@@ -59,7 +59,7 @@ class HabitRangeDayStatistic {
   num get changed => enededProgress - startProgress;
 
   num getLast30DaysChanged(HabitDate initDate) {
-    var firstDate = initDate.subtractDays(30);
+    final firstDate = initDate.subtractDays(30);
     if (firstDate <= lastStartRecordData) {
       return enededProgress - 0;
     } else {
@@ -107,7 +107,7 @@ class HabitLast30DaysProgressChangeData {
 
   void addStatistic(
       HabitSummaryData data, HabitDate initDate, HabitDate date, num score) {
-    var firstDate = initDate.subtractDays(30);
+    final firstDate = initDate.subtractDays(30);
     if (date < firstDate || date > initDate) return;
     _dirty = true;
     if (!_cacheData.containsKey(data.uuid)) {
@@ -121,7 +121,7 @@ class HabitLast30DaysProgressChangeData {
       return;
     }
 
-    var orgRecord = _cacheData[data.uuid]!;
+    final orgRecord = _cacheData[data.uuid]!;
     if (date < orgRecord.lastStartRecordData &&
         orgRecord.startProgress != score) {
       _cacheData[data.uuid] = _cacheData[data.uuid]!.copyWith(

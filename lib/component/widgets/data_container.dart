@@ -25,19 +25,19 @@ class DateContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     var labelStyle = theme.textTheme.labelMedium
         ?.copyWith(color: theme.colorScheme.onSurface);
 
-    var today = DateTime.now();
-    var showDate = date ?? today;
-    var content = <Widget>[];
+    final today = DateTime.now();
+    final showDate = date ?? today;
+    final content = <Widget>[];
     if (showDate.isSameDate(today)) {
       labelStyle = labelStyle?.copyWith(color: theme.colorScheme.primary);
     } else if (showDate.difference(today).inDays.abs() == 1) {
       labelStyle = labelStyle?.copyWith(color: theme.colorScheme.secondary);
     }
-    var localeString = Localizations.localeOf(context).toLanguageTag();
+    final localeString = Localizations.localeOf(context).toLanguageTag();
     content.addAll([
       Text(DateFormat("MM/dd", localeString).format(showDate),
           style: labelStyle),

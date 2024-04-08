@@ -223,7 +223,7 @@ class _AppSettingView extends State<AppSettingView>
   }
 
   void _onImportAllTilePressed() async {
-    FilePickerResult? result;
+    final FilePickerResult? result;
     if (!mounted) return;
     try {
       result = await FilePicker.platform.pickFiles();
@@ -331,7 +331,7 @@ class _AppSettingView extends State<AppSettingView>
 
   void _onExportDBTilePressed(BuildContext context) async {
     if (!mounted) return;
-    String dbPath = path.join(await getDatabasesPath(), appDBName);
+    final dbPath = path.join(await getDatabasesPath(), appDBName);
     if (!mounted) return;
     shareXFiles([XFile(dbPath)], context: context);
   }

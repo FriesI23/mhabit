@@ -60,7 +60,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
     if (futures.isEmpty) return false;
 
     var completeCount = 0;
-    var allCount = futures.length;
+    final allCount = futures.length;
     for (var future in futures) {
       future.whenComplete(() {
         completeCount += 1;

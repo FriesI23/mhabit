@@ -26,8 +26,8 @@ class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
   Future<AboutInfo> loadAboutInfoData() async {
-    String rawJson = await rootBundle.loadString(aboutInfoFilePath);
-    Map<String, Object?> data = jsonDecode(rawJson);
+    final String rawJson = await rootBundle.loadString(aboutInfoFilePath);
+    final Map<String, Object?> data = jsonDecode(rawJson);
     return AboutInfo.fromJson(data);
   }
 

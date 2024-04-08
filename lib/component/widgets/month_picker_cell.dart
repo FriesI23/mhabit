@@ -43,8 +43,8 @@ class MonthPickerCell extends StatelessWidget {
   }) : assert(monthday > 0 && monthday < 32);
 
   Color? getBackgroundColor(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    CustomColors? colorData = theme.extension<CustomColors>();
+    final ThemeData theme = Theme.of(context);
+    final CustomColors? colorData = theme.extension<CustomColors>();
 
     if (selected) {
       return (colorType != null ? colorData?.getColor(colorType!) : null) ??
@@ -55,8 +55,8 @@ class MonthPickerCell extends StatelessWidget {
   }
 
   TextStyle? getTextStyle(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    CustomColors? colorData = theme.extension<CustomColors>();
+    final ThemeData theme = Theme.of(context);
+    final CustomColors? colorData = theme.extension<CustomColors>();
 
     if (selected) {
       return selectedStyle ??

@@ -46,8 +46,8 @@ class AppCachesViewModel with ProfileHandlerLoadedMixin {
   }
 
   Future<List<bool>> clearAllCache() async {
-    List<bool> clearResultList = [];
-    List<Future> futures = [
+    final List<bool> clearResultList = [];
+    final List<Future> futures = [
       if (_inputFill != null)
         _inputFill!.clear(onClear: (r) => clearResultList.add(r)),
     ];

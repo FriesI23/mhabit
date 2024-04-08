@@ -34,7 +34,7 @@ class HabitDisplayFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
 
     return OpenContainer<HabitDBCell>(
       transitionDuration: const Duration(milliseconds: 250),

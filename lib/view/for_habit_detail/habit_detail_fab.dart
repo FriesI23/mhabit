@@ -26,8 +26,8 @@ class HabitDetailFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
 
     Color? backgroundColor = themeData.colorScheme.secondaryContainer;
     Color? iconColor = themeData.colorScheme.onSecondaryContainer;

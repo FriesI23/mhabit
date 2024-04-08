@@ -35,7 +35,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
       String? suffix}) {
     dateTime = dateTime ?? DateTime.now();
     final dateString = DateFormat('y_MM_dd_H_m_s').format(dateTime);
-    var fileStringList = [
+    final fileStringList = [
       if (prefix != null) prefix,
       dateString,
       if (suffix != null) suffix,

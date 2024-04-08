@@ -34,6 +34,9 @@ linter:
     # FIXME: ignore with 3.13.x's linter bug, see https://github.com/dart-lang/linter/issues/4753
     use_build_context_synchronously: false
     prefer_relative_imports: true
+    await_only_futures: true
+    prefer_final_fields: true
+    prefer_final_locals: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

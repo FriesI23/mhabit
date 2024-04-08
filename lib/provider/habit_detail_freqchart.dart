@@ -107,7 +107,7 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
   }
 
   AxisDirection? consumeCachedAnimateDirection() {
-    var tmp = _cachedScrollDirection;
+    final tmp = _cachedScrollDirection;
     _cachedScrollDirection = null;
     return tmp;
   }

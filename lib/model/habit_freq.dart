@@ -75,7 +75,7 @@ class HabitFrequency {
   }
 
   JsonMap toJson() {
-    Map<String, dynamic> result = {"type": type.dbCode};
+    final Map<String, dynamic> result = {"type": type.dbCode};
     switch (type) {
       case HabitFrequencyType.weekly:
         result["args"] = [freq];

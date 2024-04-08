@@ -78,8 +78,8 @@ class NotFoundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    TextTheme textTheme = theme.textTheme;
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
 
     Widget buildDescChild(BuildContext context) {
       if (textTheme.headlineSmall != null) {

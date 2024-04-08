@@ -114,8 +114,8 @@ class HabitDisplayListTile extends StatelessWidget {
       data: getThemeData(Theme.of(context)),
       child: Builder(
         builder: (context) {
-          ThemeData themeData = Theme.of(context);
-          var bgcolor = themeData.colorScheme.onSurfaceOpacity08;
+          final ThemeData themeData = Theme.of(context);
+          final bgcolor = themeData.colorScheme.onSurfaceOpacity08;
           return InkWell(
             onTap: onHabitSummaryDataPressed != null
                 ? () => onHabitSummaryDataPressed!(data.uuid)

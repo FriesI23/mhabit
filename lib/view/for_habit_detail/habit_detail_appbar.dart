@@ -33,8 +33,8 @@ class HabitDetailAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
 
     final color = colorType != null ? colorData?.getColor(colorType!) : null;
     final titleFont = themeData.textTheme.titleLarge;

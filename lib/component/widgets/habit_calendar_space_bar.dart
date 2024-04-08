@@ -51,7 +51,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime crtDate = startDate ?? DateTime.now();
+    final DateTime crtDate = startDate ?? DateTime.now();
     int? limitItemCount;
 
     if (endDate == null) {

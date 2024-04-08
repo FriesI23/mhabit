@@ -311,7 +311,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   bool addNewData(HabitSummaryData cell, {bool listen = false}) {
-    bool addResult = _data.addNewHabit(cell, forceAdd: false);
+    final bool addResult = _data.addNewHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _calcHabitAutoComplateRecords(data);
     resortData();
