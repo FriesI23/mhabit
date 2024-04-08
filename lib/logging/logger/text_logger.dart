@@ -30,12 +30,11 @@ class AppTextLoggerMessage implements AppLoggerMessage {
   const AppTextLoggerMessage(this.type, {this.message, this.extraInfo});
 
   @override
-  Iterable<String?> toLogPrinterMessage() sync* {
-    if (message != null) yield message;
-    if (extraInfo != null) {
-      yield* extraInfo!.where((e) => e != null).map((e) => e.toString());
-    }
-  }
+  Iterable<String?> toLogPrinterMessage() => [
+        if (message != null) message,
+        if (extraInfo != null)
+          ...extraInfo!.where((e) => e != null).map((e) => e.toString()),
+      ];
 }
 
 abstract interface class AppTextLogger {

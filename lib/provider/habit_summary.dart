@@ -462,11 +462,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
-  Iterable<HabitSummaryData?> getSelectedHabitsData() sync* {
-    for (var habitUUID in _selectorData._selectUUIDColl.toList()) {
-      yield getHabit(habitUUID);
-    }
-  }
+  Iterable<HabitSummaryData?> getSelectedHabitsData() =>
+      _selectorData._selectUUIDColl.map((e) => getHabit(e));
   //#endregion
 
   //#region actions

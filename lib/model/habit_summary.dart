@@ -91,11 +91,8 @@ mixin _HabitSummaryDataRecordsMixin {
     _recordDateCacheMap.clear();
   }
 
-  Iterable<HabitSummaryRecord> getAllRecord() sync* {
-    for (var r in _recordDateCacheMap.entries) {
-      yield r.value;
-    }
-  }
+  Iterable<HabitSummaryRecord> getAllRecord() =>
+      _recordDateCacheMap.entries.map((e) => e.value);
 
   HabitSummaryRecord? removeRecordWithUUID(HabitRecordUUID uuid) {
     final result = _recordMap.remove(uuid);
@@ -237,11 +234,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     }
   }
 
-  Iterable<HabitRecordDate> getAllAutoComplateRecordDate() sync* {
-    for (var r in _autoMarkedRecords) {
-      yield r;
-    }
-  }
+  Iterable<HabitRecordDate> getAllAutoComplateRecordDate() =>
+      _autoMarkedRecords;
 
   Set<HabitRecordDate> debugGetAutoMarkedRecordsCopy() {
     assert(kDebugMode);

@@ -76,16 +76,15 @@ class _HabitDisplaySortTypePickerDialog
 
   @override
   Widget build(BuildContext context) {
-    Iterable<Widget> buildSortTypeRadioListTiles(BuildContext context) sync* {
-      for (var sortType in HabitDisplaySortType.menuOrderedList) {
-        yield _SortTypeRadioListTile(
-          sortType: sortType,
-          sortDirection: crtShowDirecitonWithDefault,
-          crtSortType: crtSortType,
-          onChanged: _onRadioTapChanged,
+    Iterable<Widget> buildSortTypeRadioListTiles(BuildContext context) =>
+        HabitDisplaySortType.menuOrderedList.map(
+          (sortType) => _SortTypeRadioListTile(
+            sortType: sortType,
+            sortDirection: crtShowDirecitonWithDefault,
+            crtSortType: crtSortType,
+            onChanged: _onRadioTapChanged,
+          ),
         );
-      }
-    }
 
     return AlertDialog(
       scrollable: true,

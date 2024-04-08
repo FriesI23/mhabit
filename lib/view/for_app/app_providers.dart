@@ -35,27 +35,29 @@ import '../../reminders/notification_channel.dart';
 class AppProviders extends SingleChildStatelessWidget {
   const AppProviders({super.key, super.child});
 
-  Iterable<SingleChildWidget> _buildHabitExportModel() sync* {
-    yield ChangeNotifierProvider<HabitFileExporterViewModel>(
-      create: (context) => HabitFileExporterViewModel(),
-    );
-    yield ChangeNotifierProxyProvider<DBHelperViewModel,
-        HabitFileExporterViewModel>(
-      create: (context) => context.read<HabitFileExporterViewModel>(),
-      update: (context, value, previous) => previous!..updateDBHelper(value),
-    );
-  }
+  Iterable<SingleChildWidget> _buildHabitExportModel() => [
+        ChangeNotifierProvider<HabitFileExporterViewModel>(
+          create: (context) => HabitFileExporterViewModel(),
+        ),
+        ChangeNotifierProxyProvider<DBHelperViewModel,
+            HabitFileExporterViewModel>(
+          create: (context) => context.read<HabitFileExporterViewModel>(),
+          update: (context, value, previous) =>
+              previous!..updateDBHelper(value),
+        ),
+      ];
 
-  Iterable<SingleChildWidget> _buildHabitImportModel() sync* {
-    yield ChangeNotifierProvider<HabitFileImporterViewModel>(
-      create: (context) => HabitFileImporterViewModel(),
-    );
-    yield ChangeNotifierProxyProvider<DBHelperViewModel,
-        HabitFileImporterViewModel>(
-      create: (context) => context.read<HabitFileImporterViewModel>(),
-      update: (context, value, previous) => previous!..updateDBHelper(value),
-    );
-  }
+  Iterable<SingleChildWidget> _buildHabitImportModel() => [
+        ChangeNotifierProvider<HabitFileImporterViewModel>(
+          create: (context) => HabitFileImporterViewModel(),
+        ),
+        ChangeNotifierProxyProvider<DBHelperViewModel,
+            HabitFileImporterViewModel>(
+          create: (context) => context.read<HabitFileImporterViewModel>(),
+          update: (context, value, previous) =>
+              previous!..updateDBHelper(value),
+        ),
+      ];
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(

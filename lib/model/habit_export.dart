@@ -194,11 +194,8 @@ class HabitExportData implements JsonAdaptor {
   @override
   Map<String, dynamic> toJson() => _$HabitExportDataToJson(this);
 
-  Iterable<RecordDBCell> getRecordDBCells() sync* {
-    for (var record in records) {
-      yield record.toRecordDBCell();
-    }
-  }
+  Iterable<RecordDBCell> getRecordDBCells() =>
+      records.map((e) => e.toRecordDBCell());
 
   static List<Map<String, dynamic>> _recordsToJson(
       List<RecordExportData> records) {
