@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.11.1+36
+
+- Add contributor page
+- Fixed where pressing back button would exit app in edit mode
+- Refactor code pertaining to `db` / `profile` / `provider` / `view`, etc.
+- Add lint options to `analysis_options.yaml`
+
+**WARNING**: Strongly recommend backup habits before updating this version.
+
 ## 1.11.0+35
 
 - Update dart SDK dependency to >=3.0.0

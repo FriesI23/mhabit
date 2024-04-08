@@ -1,0 +1,6 @@
+- Add contributor page
+- Fixed where pressing back button would exit app in edit mode
+- Refactor code pertaining to `db` / `profile` / `provider` / `view`, etc.
+- Add lint options to `analysis_options.yaml`
+
+**WARNING**: Strongly recommend backup habits before updating this version.
