@@ -312,12 +312,7 @@ class HabitFreqChart extends StatelessWidget {
                   tooltipBgColor: Colors.transparent,
                   tooltipPadding: EdgeInsets.zero,
                   tooltipMargin: 2,
-                  getTooltipItem: (
-                    group,
-                    groupIndex,
-                    rod,
-                    rodIndex,
-                  ) {
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     final value = rod.toY.round();
                     if (value == 0) return null;
                     return BarTooltipItem(
