@@ -716,9 +716,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void _onHabitEditAppbarLeadingButtonPressed() {
     if (!mounted) return;
     final viewmodel = context.read<HabitSummaryViewModel>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewmodel.exitEditMode();
-    });
+    viewmodel.exitEditMode();
   }
 
   ScrollPhysics? _buildScrollPhysics(double itemSize, double length) =>
