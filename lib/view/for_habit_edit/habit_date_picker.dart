@@ -44,9 +44,9 @@ class HabitDatePickerDialog extends StatefulWidget {
 class _HabitDatePickerDialogView extends State<HabitDatePickerDialog> {
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
-    DateTime now = DateTime.now();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
+    final DateTime now = DateTime.now();
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(

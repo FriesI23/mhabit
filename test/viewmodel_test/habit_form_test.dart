@@ -80,7 +80,7 @@ void main() {
       final provider = getMockViewModel();
       expect(
           provider.startDate == HabitStartDate.dateTime(DateTime.now()), true);
-      var newDate = HabitStartDate.dateTime(DateTime(2020, 1, 20));
+      final newDate = HabitStartDate.dateTime(DateTime(2020, 1, 20));
       provider.addListener(() async {
         expect(provider.startDate == newDate, true);
       });
@@ -105,30 +105,30 @@ void main() {
   });
   group("HabitFrequency", () {
     test("Constructor", () {
-      var obj = const HabitFrequency(
-          type: HabitFrequencyType.custom, freq: 1, days: 2);
+      const obj =
+          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 2);
       expect(obj.freq, 1);
       expect(obj.days, 2);
       expect(obj.type, HabitFrequencyType.custom);
     });
     test("Constructor.daily", () {
-      var obj1 = HabitFrequency.custom(days: 5, freq: 2);
+      final obj1 = HabitFrequency.custom(days: 5, freq: 2);
       expect(obj1.freq, 2);
       expect(obj1.days, 5);
       expect(obj1.type, HabitFrequencyType.custom);
-      var obj2 = HabitFrequency.custom(days: 5, freq: 5);
+      final obj2 = HabitFrequency.custom(days: 5, freq: 5);
       expect(obj2.freq, 1);
       expect(obj2.days, 1);
       expect(obj2.type, HabitFrequencyType.custom);
     });
     test("Constructor.weekly", () {
-      var obj = const HabitFrequency.weekly(freq: 2);
+      const obj = HabitFrequency.weekly(freq: 2);
       expect(obj.freq, 2);
       expect(obj.days, 0);
       expect(obj.type, HabitFrequencyType.weekly);
     });
     test("Constructor.monthly", () {
-      var obj = const HabitFrequency.monthly(freq: 10);
+      const obj = HabitFrequency.monthly(freq: 10);
       expect(obj.freq, 10);
       expect(obj.days, 0);
       expect(obj.type, HabitFrequencyType.monthly);
@@ -178,61 +178,61 @@ void main() {
           "At least 2 times in every 3 days");
     });
     test('toMap:monthly', () {
-      var obj2 = const HabitFrequency.monthly(freq: 3);
-      var obj2map = obj2.toJson();
+      const obj2 = HabitFrequency.monthly(freq: 3);
+      final obj2map = obj2.toJson();
       expect(obj2map['type'], HabitFrequencyType.monthly.dbCode);
       expect((obj2map['args'] as List).length, 1);
       expect(obj2map['args'][0], 3);
     });
     test('toMap:weekly', () {
-      var obj3 = const HabitFrequency.weekly(freq: 1);
-      var obj3map = obj3.toJson();
+      const obj3 = HabitFrequency.weekly(freq: 1);
+      final obj3map = obj3.toJson();
       expect(obj3map['type'], HabitFrequencyType.weekly.dbCode);
       expect((obj3map['args'] as List).length, 1);
       expect(obj3map['args'][0], 1);
     });
     test('toMap:daily', () {
-      var obj1 = HabitFrequency.custom(days: 5, freq: 2);
-      var obj1map = obj1.toJson();
+      final obj1 = HabitFrequency.custom(days: 5, freq: 2);
+      final obj1map = obj1.toJson();
       expect(obj1map['type'], HabitFrequencyType.custom.dbCode);
       expect((obj1map['args'] as List).length, 2);
       expect(obj1map['args'][0], 2);
       expect(obj1map['args'][1], 5);
     });
     test('toMapError', () {
-      var obj = const HabitFrequency(type: HabitFrequencyType.unknown, freq: 0);
+      const obj = HabitFrequency(type: HabitFrequencyType.unknown, freq: 0);
       expect(() => obj.toJson(), throwsA(isA<UnknownHabitFrequencyError>()));
     });
     test('fromMap:monthly', () {
-      var data1 = {
+      final data1 = {
         "type": HabitFrequencyType.monthly.dbCode,
         "args": [10],
       };
-      var obj1 = HabitFrequency.fromJson(data1);
+      final obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.monthly);
       expect(obj1.freq, 10);
     });
     test('fromMap:weekly', () {
-      var data1 = {
+      final data1 = {
         "type": HabitFrequencyType.weekly.dbCode,
         "args": [5],
       };
-      var obj1 = HabitFrequency.fromJson(data1);
+      final obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.weekly);
       expect(obj1.freq, 5);
     });
     test('fromMap:custom', () {
-      var data1 = {
+      final data1 = {
         "type": HabitFrequencyType.custom.dbCode,
         "args": [2, 10],
       };
-      var obj1 = HabitFrequency.fromJson(data1);
+      final obj1 = HabitFrequency.fromJson(data1);
       expect(obj1.type, HabitFrequencyType.custom);
       expect(obj1.freq, 2);
       expect(obj1.days, 10);
     });
     test('fromMap:error', () {
-      var data1 = {
+      final data1 = {
         "type": HabitFrequencyType.unknown.dbCode,
         "args": [1],
       };

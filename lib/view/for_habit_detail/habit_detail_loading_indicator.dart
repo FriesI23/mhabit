@@ -30,8 +30,8 @@ class HabitDetailLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
     return Center(
       child: SizedBox(
         width: size.width,

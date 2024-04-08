@@ -56,41 +56,50 @@ class ContributorTile extends StatelessWidget {
       return Text(info.name);
     }
 
-    Iterable<Widget> buildContributor(BuildContext context,
-        [L10n? l10n]) sync* {
+    Iterable<Widget> buildContributor(BuildContext context, [L10n? l10n]) {
       final cs = contributors.getContributors();
-      if (cs.isEmpty) return;
-      yield GroupTitleListTile(
-          title: Text(l10n?.contributors_tile_title ?? "Contributors"));
-      yield ListTile(
-        visualDensity: VisualDensity.compact,
-        leading: leadingBuilder?.call(null),
-        title: Wrap(
+      if (cs.isEmpty) return const [];
+      return [
+        GroupTitleListTile(
+          title: Text(l10n?.contributors_tile_title ?? "Contributors"),
+        ),
+        ListTile(
+          visualDensity: VisualDensity.compact,
+          leading: leadingBuilder?.call(null),
+          title: Wrap(
             spacing: 12,
-            children: cs.map((e) => buildContributorCell(context, e)).toList()),
-      );
+            children: cs.map((e) => buildContributorCell(context, e)).toList(),
+          ),
+        ),
+      ];
     }
 
-    Iterable<Widget> buildTranslation(BuildContext context, Locale locale,
-        [L10n? l10n]) sync* {
+    Iterable<Widget> buildTranslation(BuildContext context, Locale locale) {
       final cs = contributors.getTranslations(locale);
-      if (cs == null || cs.isEmpty) return;
-      try {
-        yield GroupTitleListTile(
-            title: Text(lookupL10n(locale.toLocale()).localeScriptName));
-      } on FlutterError catch (e) {
-        appLog.l10n.warn(context,
-            widget: this, ex: ["lockup l10n failed", locale], error: e);
-        yield GroupTitleListTile(title: Text(locale.toString()));
+      if (cs == null || cs.isEmpty) return const [];
+
+      Widget buildTitle(BuildContext context) {
+        try {
+          return GroupTitleListTile(
+              title: Text(lookupL10n(locale.toLocale()).localeScriptName));
+        } on FlutterError catch (e) {
+          appLog.l10n.warn(context,
+              widget: this, ex: ["lockup l10n failed", locale], error: e);
+          return GroupTitleListTile(title: Text(locale.toString()));
+        }
       }
 
-      yield ListTile(
-        visualDensity: VisualDensity.compact,
-        leading: leadingBuilder?.call(locale),
-        title: Wrap(
+      return [
+        buildTitle(context),
+        ListTile(
+          visualDensity: VisualDensity.compact,
+          leading: leadingBuilder?.call(locale),
+          title: Wrap(
             spacing: 12,
-            children: cs.map((e) => buildContributorCell(context, e)).toList()),
-      );
+            children: cs.map((e) => buildContributorCell(context, e)).toList(),
+          ),
+        ),
+      ];
     }
 
     return L10nBuilder(
@@ -98,7 +107,7 @@ class ContributorTile extends StatelessWidget {
         children: [
           ...buildContributor(context, l10n),
           for (var locale in contributors.locales)
-            ...buildTranslation(context, locale, l10n),
+            ...buildTranslation(context, locale),
         ],
       ),
     );

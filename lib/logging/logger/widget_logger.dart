@@ -33,16 +33,19 @@ class AppWidgetLoggerMessage implements AppLoggerMessage {
       {this.widget, this.extraInfo, this.name});
 
   @override
-  Iterable<String?> toLogPrinterMessage() sync* {
+  Iterable<String?> toLogPrinterMessage() {
+    final result = <String>[];
     if (widget != null) {
-      yield "${name ?? widget!.runtimeType}"
-          "[${widget!.key},${widget!.hashCode}]";
+      result.add(
+          "${name ?? widget!.runtimeType}[${widget!.key},${widget!.hashCode}]");
     } else if (name != null) {
-      yield name;
+      result.add(name!);
     }
     if (extraInfo != null) {
-      yield* extraInfo!.where((e) => e != null).map((e) => e.toString());
+      result
+          .addAll(extraInfo!.where((e) => e != null).map((e) => e.toString()));
     }
+    return result;
   }
 }
 

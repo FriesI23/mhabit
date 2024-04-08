@@ -61,12 +61,12 @@ class HabitScoreChart extends StatelessWidget {
   Size get protoLeftWidgetSize => calcTextSize('100', leftTipsTextStyle);
 
   LineChartBarData _buildLineChartBarData(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     LineChartBarData result;
 
-    var spots = <FlSpot>[];
+    final spots = <FlSpot>[];
     data.forEachIndexed((i, e) {
-      var record = e.value, index = data.length - i - 1;
+      final record = e.value, index = data.length - i - 1;
       spots.add(FlSpot(index.toDouble(), record.avgScore.toDouble()));
     });
     result = LineChartBarData(
@@ -90,7 +90,7 @@ class HabitScoreChart extends StatelessWidget {
 
   TouchedSpotIndicatorData? _buildTouchedSpotData(
       BuildContext context, LineChartBarData barData, int spotIndexes) {
-    ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return TouchedSpotIndicatorData(
       const FlLine(color: Colors.transparent),
@@ -187,8 +187,8 @@ class HabitScoreChart extends StatelessWidget {
   }
 
   Widget _buildBottomTitle(BuildContext context, double value, TitleMeta meta) {
-    var index = math.max(0, data.length - math.max(0, value) - 1).ceil();
-    var date = data[index].key;
+    final index = math.max(0, data.length - math.max(0, value) - 1).ceil();
+    final date = data[index].key;
     if (value > 0 && meta.min == value) {
       return SideTitleWidget(
         axisSide: meta.axisSide,
@@ -263,11 +263,11 @@ class HabitScoreChart extends StatelessWidget {
         math.min(MediaQuery.textScaleFactorOf(context), 1.3);
 
     appLog.build.debug(context);
-    double maxX = (data.length - 1).toDouble();
-    double initMinX =
+    final double maxX = (data.length - 1).toDouble();
+    final double initMinX =
         limit != null ? maxX * math.max((1 - limit! / data.length), 0) : 0;
 
-    var titlesData = FlTitlesData(
+    final titlesData = FlTitlesData(
       topTitles: const AxisTitles(),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
@@ -289,7 +289,7 @@ class HabitScoreChart extends StatelessWidget {
       ),
     );
 
-    var lineTouchData = LineTouchData(
+    final lineTouchData = LineTouchData(
       getTouchedSpotIndicator: (barData, spotIndexes) => spotIndexes
           .map(
               (spotIndex) => _buildTouchedSpotData(context, barData, spotIndex))
@@ -300,8 +300,8 @@ class HabitScoreChart extends StatelessWidget {
         tooltipMargin: 10,
         showOnTopOfTheChartBoxArea: true,
         getTooltipItems: (touchedSpots) {
-          var sp = touchedSpots[0];
-          var result = LineTooltipItem(
+          final sp = touchedSpots[0];
+          final result = LineTooltipItem(
             sp.y.toStringAsFixed(2),
             TextStyle(
               color: sp.bar.gradient?.colors[0] ?? sp.bar.color,
@@ -312,7 +312,7 @@ class HabitScoreChart extends StatelessWidget {
       ),
     );
 
-    var gridData = FlGridData(
+    final gridData = FlGridData(
       show: true,
       drawVerticalLine: false,
       drawHorizontalLine: true,

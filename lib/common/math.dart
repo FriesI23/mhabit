@@ -32,18 +32,18 @@ num intervalTrans(
 
 num habitGrowCurve(
     {int days = 30, num x = 1, Tuple2<num, num> interv = _defualtInterv}) {
-  num x0 = 0;
-  num k = 0.4;
-  num minX = -10;
-  num maxX = 10;
+  const num x0 = 0;
+  const num k = 0.4;
+  const num minX = -10;
+  const num maxX = 10;
 
-  var newX = intervalTrans(
+  final newX = intervalTrans(
     x,
     itervFrom: Tuple2(0, days),
-    itervTo: Tuple2(minX, maxX),
+    itervTo: const Tuple2(minX, maxX),
   );
 
-  var y = 1 / (1 + math.exp(-k * (newX - x0)));
+  final y = 1 / (1 + math.exp(-k * (newX - x0)));
   return intervalTrans(
     y,
     itervFrom: interv,
@@ -53,21 +53,21 @@ num habitGrowCurve(
 
 num habitCrowCurveInverse(
     {int days = 30, num y = 0, Tuple2<num, num> interv = _defualtInterv}) {
-  num x0 = 0;
-  num k = 0.4;
-  num minX = -10;
-  num maxX = 10;
+  const num x0 = 0;
+  const num k = 0.4;
+  const num minX = -10;
+  const num maxX = 10;
 
-  var newY = intervalTrans(
+  final newY = intervalTrans(
     y,
     itervFrom: _defualtInterv,
     itervTo: interv,
   );
 
-  var x = x0 - math.log(1 / newY - 1) / k;
+  final x = x0 - math.log(1 / newY - 1) / k;
   return intervalTrans(
     x,
-    itervFrom: Tuple2(minX, maxX),
+    itervFrom: const Tuple2(minX, maxX),
     itervTo: Tuple2(0, days),
   );
 }

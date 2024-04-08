@@ -20,7 +20,7 @@ import 'package:tuple/tuple.dart';
 void main() {
   group('test intervalTrans', () {
     test("intervalTrans 01", () {
-      var result = intervalTrans(
+      final result = intervalTrans(
         55,
         itervFrom: const Tuple2(0, 100),
         itervTo: const Tuple2(-10, 10),
@@ -28,7 +28,7 @@ void main() {
       expect(result, 1.0);
     });
     test("intervalTrans 02", () {
-      var result = intervalTrans(
+      final result = intervalTrans(
         24,
         itervFrom: const Tuple2(0, 100),
         itervTo: const Tuple2(-10, 10),
@@ -38,9 +38,9 @@ void main() {
   });
   group('test habitGrowCurve', () {
     test('baisc 10', () {
-      var xlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      var ylist = <num>[];
-      var cylist = [
+      final xlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      final ylist = <num>[];
+      final cylist = [
         0.0,
         2.2,
         6.76,
@@ -53,8 +53,8 @@ void main() {
         97.8,
         100.0
       ];
-      var days = 10;
-      var interv = Tuple2(
+      const days = 10;
+      final interv = Tuple2(
         habitGrowCurve(x: 0, days: days),
         habitGrowCurve(x: days, days: days),
       );
@@ -66,7 +66,7 @@ void main() {
       });
     });
     test('baisc 66', () {
-      var xlist = [
+      final xlist = [
         0,
         1,
         2,
@@ -135,8 +135,8 @@ void main() {
         65,
         66
       ];
-      var ylist = <num>[];
-      var cylist = [
+      final ylist = <num>[];
+      final cylist = [
         0.0,
         0.24,
         0.5,
@@ -205,8 +205,8 @@ void main() {
         99.76,
         100.0
       ];
-      var days = 66;
-      var interv = Tuple2(
+      const days = 66;
+      final interv = Tuple2(
         habitGrowCurve(x: 0, days: days),
         habitGrowCurve(x: days, days: days),
       );
@@ -221,9 +221,9 @@ void main() {
 
   group('test habitCrowCurveInverse', () {
     test('basic 10', () {
-      var cxlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      var xlist = <num>[];
-      var ylist = [
+      final cxlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      final xlist = <num>[];
+      final ylist = [
         0.0,
         2.2,
         6.76,
@@ -236,8 +236,8 @@ void main() {
         97.8,
         100.0
       ];
-      var days = 10;
-      var interv = Tuple2(
+      const days = 10;
+      final interv = Tuple2(
         habitGrowCurve(x: 0, days: days),
         habitGrowCurve(x: days, days: days),
       );

@@ -30,11 +30,11 @@ void main() {
 
 void cusomFreqPerformanceTest(
     {int preRecordNum = 365, dataNum = 1, days = 99, freq = 3}) {
-  var rng = Random();
+  final rng = Random();
   var crtDate = HabitStartDate(2022, 1, 1);
-  var dataList = <HabitSummaryData>[];
+  final dataList = <HabitSummaryData>[];
   for (var i = 1; i <= dataNum; i++) {
-    var data = HabitSummaryData(
+    final data = HabitSummaryData(
       id: i,
       uuid: 'h$i',
       type: HabitType.normal,
@@ -54,7 +54,7 @@ void cusomFreqPerformanceTest(
 
   for (var data in dataList) {
     for (var _ = 0; _ < preRecordNum; _++) {
-      var nextDayOffset = rng.nextInt(2);
+      final nextDayOffset = rng.nextInt(2);
       crtDate = crtDate.addDays(nextDayOffset);
       data.addRecord(HabitSummaryRecord.generate(
         crtDate,
@@ -64,16 +64,16 @@ void cusomFreqPerformanceTest(
     }
   }
 
-  var dl = <int>[];
-  Stopwatch stopwatch = Stopwatch();
+  final dl = <int>[];
+  final Stopwatch stopwatch = Stopwatch();
   for (var data in dataList) {
     stopwatch.start();
     data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
     stopwatch.stop();
-    var count = stopwatch.elapsed;
+    final count = stopwatch.elapsed;
     debugPrint('data $data recalc executed in $count ms');
     dl.add(count.inMicroseconds);
-    var sortedData =
+    final sortedData =
         data.debugGetAutoMarkedRecordsCopy().sorted((a, b) => a.compareTo(b));
     debugPrint('dateCount: ${sortedData.length}');
     debugPrint('--------------------------------------------');
@@ -84,9 +84,9 @@ void cusomFreqPerformanceTest(
 }
 
 void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
-  var rng = Random();
+  final rng = Random();
   var crtDate = HabitStartDate(2022, 1, 1);
-  var data = HabitSummaryData(
+  final data = HabitSummaryData(
     id: 1,
     uuid: 'hsingle',
     type: HabitType.normal,
@@ -111,15 +111,15 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
     ));
   }
 
-  var dl = <int>[];
-  Stopwatch stopwatch = Stopwatch();
+  final dl = <int>[];
+  final Stopwatch stopwatch = Stopwatch();
   stopwatch.start();
   data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
   stopwatch.stop();
-  var count = stopwatch.elapsed;
+  final count = stopwatch.elapsed;
   debugPrint('data $data recalc executed in $count ms');
   dl.add(count.inMicroseconds);
-  var sortedData =
+  final sortedData =
       data.debugGetAutoMarkedRecordsCopy().sorted((a, b) => a.compareTo(b));
   debugPrint('dateCount: ${sortedData.length}');
   debugPrint('--------------------------------------------');
@@ -130,7 +130,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
 
 void functionTest() {
   debugPrint("debug::habit reocrd auto mark");
-  var data = HabitSummaryData(
+  final data = HabitSummaryData(
     id: 1,
     uuid: 'h1',
     type: HabitType.normal,
@@ -202,7 +202,7 @@ void functionTest() {
     value: 10.0,
   ));
 
-  Stopwatch stopwatch = Stopwatch()..start();
+  final Stopwatch stopwatch = Stopwatch()..start();
   data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);
   stopwatch.stop();
   debugPrint('executed in ${stopwatch.elapsed.inMilliseconds} ms');

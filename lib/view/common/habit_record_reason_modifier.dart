@@ -119,8 +119,7 @@ class _HabitRecordReasonModifierDialog
               height: 56,
               width: math.min(constraints.maxWidth, dialogMaxWidth),
               padding: EdgeInsets.zero,
-              children:
-                  widget.chipTextList.map((e) => buildEmojiChip(e)).toList(),
+              children: widget.chipTextList.map(buildEmojiChip).toList(),
             ),
             TextField(
               controller: _inputController,

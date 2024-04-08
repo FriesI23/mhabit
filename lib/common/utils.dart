@@ -40,15 +40,15 @@ ThemeMode transToMaterialThemeType(AppThemeType themeType) {
 
 Iterable<T> combineIterables<T>(Iterable<T> first, Iterable<T> second,
     {required int Function(T a, T b) compare}) sync* {
-  var firstIterator = first.iterator;
-  var secondIterator = second.iterator;
+  final firstIterator = first.iterator;
+  final secondIterator = second.iterator;
 
   var firstHasNext = firstIterator.moveNext();
   var secondHasNext = secondIterator.moveNext();
 
   while (firstHasNext && secondHasNext) {
-    var firstElement = firstIterator.current;
-    var secondElement = secondIterator.current;
+    final firstElement = firstIterator.current;
+    final secondElement = secondIterator.current;
 
     if (compare(firstElement, secondElement) <= 0) {
       yield firstElement;
@@ -113,18 +113,18 @@ class TemplateString {
   }
 
   String format(Map<String, dynamic> params) {
-    String result = '';
+    final result = StringBuffer();
 
     int fixedComponent = 0;
-    for (int i = 0; i < totalComponents; i++) {
+    for (var i = 0; i < totalComponents; i++) {
       if (genericComponents.containsKey(i)) {
-        result += params[genericComponents[i]].toString();
-        continue;
+        result.write(params[genericComponents[i]]);
+      } else {
+        result.write(fixedComponents[fixedComponent++]);
       }
-      result += fixedComponents[fixedComponent++];
     }
 
-    return result;
+    return result.toString();
   }
 }
 
@@ -136,12 +136,12 @@ String truncateString(String s, int x, int l, int r, {String midStr = "..."}) {
 }
 
 String genHabitUUID() {
-  var uuid = const Uuid();
+  const uuid = Uuid();
   return uuid.v4();
 }
 
 String genRecordUUID() {
-  var uuid = const Uuid();
+  const uuid = Uuid();
   return uuid.v4();
 }
 
@@ -178,7 +178,7 @@ Iterable<Tuple2<int, int>> getContinuousRanges(List<int> input) sync* {
 
 String? encodeUrlQueryParameters(Map<String, String> params) {
   return params.entries
-      .map((MapEntry<String, String> e) =>
+      .map((e) =>
           '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
       .join('&');
 }

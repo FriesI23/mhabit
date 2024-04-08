@@ -61,10 +61,10 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    var habitListTileColor = themeData.extension<HabitSummaryListTileColor>();
-    var globalColor = themeData.extension<HabitSummaryDailyStatusColor>();
-    var defaultColor = _getDefaultDailyStatusColor(themeData);
+    final ThemeData themeData = Theme.of(context);
+    final habitListTileColor = themeData.extension<HabitSummaryListTileColor>();
+    final globalColor = themeData.extension<HabitSummaryDailyStatusColor>();
+    final defaultColor = _getDefaultDailyStatusColor(themeData);
 
     Widget withAutoMarkStatus() {
       return Icon(
@@ -198,7 +198,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
   HabitSummaryDailyStatusColor _getDefaultDailyStatusColor(
       ThemeData themeData) {
-    CustomColors? colorData = themeData.extension<CustomColors>();
+    final CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryDailyStatusColor(
       autoMark: colorData?.getColor(colorType),
       unknown: themeData.colorScheme.outlineOpacity48,

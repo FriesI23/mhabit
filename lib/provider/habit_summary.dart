@@ -311,7 +311,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   bool addNewData(HabitSummaryData cell, {bool listen = false}) {
-    bool addResult = _data.addNewHabit(cell, forceAdd: false);
+    final bool addResult = _data.addNewHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
     if (data != null) _calcHabitAutoComplateRecords(data);
     resortData();
@@ -429,7 +429,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitSummarySelectedStatistic get selectStatistic {
     int activatedNum = 0;
     int archivedNum = 0;
-    for (var data in _selectorData.selectedColl.map((uuid) => getHabit(uuid))) {
+    for (var data in _selectorData.selectedColl.map(getHabit)) {
       if (data == null) {
         continue;
       } else if (data.status == HabitStatus.activated) {
@@ -462,11 +462,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
-  Iterable<HabitSummaryData?> getSelectedHabitsData() sync* {
-    for (var habitUUID in _selectorData._selectUUIDColl.toList()) {
-      yield getHabit(habitUUID);
-    }
-  }
+  Iterable<HabitSummaryData?> getSelectedHabitsData() =>
+      _selectorData._selectUUIDColl.map(getHabit);
   //#endregion
 
   //#region actions

@@ -20,9 +20,9 @@ import 'package:sqflite/sqflite.dart';
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../model/habit_form.dart';
-import '../table.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
+import '../table.dart';
 
 part 'habit.g.dart';
 
@@ -230,7 +230,7 @@ class HabitDBHelper extends DBHelperHandler {
         where: "${HabitDBCellKey.status} "
             "IN (${queryArgs.map((e) => '?').join(', ')})",
         whereArgs: queryArgs);
-    return result.map((e) => HabitDBCell.fromJson(e));
+    return result.map(HabitDBCell.fromJson);
   }
 
   Future<void> updateSelectedHabitsSortPostion(
@@ -265,11 +265,11 @@ class HabitDBHelper extends DBHelperHandler {
             "IN (${uuidList.map((e) => '?').join(', ')}) ",
         whereArgs: uuidList,
         orderBy: HabitDBCellKey.sortPosition);
-    return results.map((e) => HabitDBCell.fromJson(e));
+    return results.map(HabitDBCell.fromJson);
   }
 
   Future<Iterable<HabitDBCell>> loadAllHabitExportData() async {
     final results = await db.query(table, orderBy: HabitDBCellKey.sortPosition);
-    return results.map((e) => HabitDBCell.fromJson(e));
+    return results.map(HabitDBCell.fromJson);
   }
 }

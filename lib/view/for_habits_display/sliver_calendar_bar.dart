@@ -83,7 +83,7 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
 
   @override
   Widget build(BuildContext context) {
-    Widget? expandIcon = widget.onLeftBtnPressed != null
+    final Widget? expandIcon = widget.onLeftBtnPressed != null
         ? _SliverClanedarBarExpandButton(
             onPressed: widget.onLeftBtnPressed,
             isExpanded: widget.isExtended,

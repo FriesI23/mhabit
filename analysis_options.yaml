@@ -31,9 +31,54 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-    # FIXME: ignore with 3.13.x's linter bug, see https://github.com/dart-lang/linter/issues/4753
+    # FIXME: ignore with 3.13.x's linter bug.
+    # see https://github.com/dart-lang/linter/issues/4753
     use_build_context_synchronously: false
+    # Prefer relative imports for files in lib/.
+    # see: https://dart.dev/tools/linter-rules/prefer_relative_imports
     prefer_relative_imports: true
+    # Private field could be final.
+    # see: https://dart.dev/tools/linter-rules/prefer_final_fields
+    prefer_final_fields: true
+    # Prefer final for variable declarations if they are not reassigned.
+    # see: https://dart.dev/tools/linter-rules/prefer_final_locals
+    prefer_final_locals: true
+    # Don't use the Null type, unless you are positive that you don't want void.
+    # see: https://dart.dev/tools/linter-rules/prefer_void_to_null
+    prefer_void_to_null: true
+    # Test type arguments in operator ==(Object other).
+    # see: https://dart.dev/tools/linter-rules/test_types_in_equals
+    test_types_in_equals: true
+    # Declare method return types.
+    # see: https://dart.dev/tools/linter-rules/always_declare_return_types
+    always_declare_return_types: true
+    # Avoid annotating types for function expression parameters.
+    # see: https://dart.dev/tools/linter-rules/avoid_types_on_closure_parameters
+    avoid_types_on_closure_parameters: true
+    # Sort combinator names alphabetically.
+    # see: https://dart.dev/tools/linter-rules/combinators_ordering
+    combinators_ordering: true
+    # Adhere to Effective Dart Guide directives sorting conventions.
+    # see: https://dart.dev/tools/linter-rules/directives_ordering
+    directives_ordering: true
+    # Put a single newline at end of file.
+    # see: https://dart.dev/tools/linter-rules/eol_at_end_of_file
+    eol_at_end_of_file: true
+    # Missing whitespace between adjacent strings.
+    # see: https://dart.dev/tools/linter-rules/missing_whitespace_between_adjacent_strings
+    missing_whitespace_between_adjacent_strings: true
+    # Don't create a lambda when a tear-off will do.
+    # see: https://dart.dev/tools/linter-rules/unnecessary_lambdas
+    unnecessary_lambdas: true
+    # Use enums rather than classes that behave like enums.
+    # see: https://dart.dev/tools/linter-rules/use_enums
+    use_enums: true
+    # Use string buffers to compose strings.
+    # see: https://dart.dev/tools/linter-rules/use_string_buffers
+    use_string_buffers: true
+    # Start the name of the method with to/_to or as/_as if applicable.
+    # see: https://dart.dev/tools/linter-rules/use_to_and_as_if_applicable
+    use_to_and_as_if_applicable: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -30,68 +30,64 @@ import '../../reminders/notification_channel.dart';
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
-  Iterable<SingleChildWidget> _buildPageViewModel() sync* {
-    yield ChangeNotifierProvider<HabitSummaryViewModel>(
-      create: (context) => HabitSummaryViewModel(
-        verticalScrollController: ScrollController(),
-        horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
-      ),
-    );
-
-    yield ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
-      create: (context) => context.read<HabitSummaryViewModel>(),
-      update: (context, value, previous) => previous!..updateDBHelper(value),
-    );
-
-    yield ChangeNotifierProxyProvider2<HabitsSortViewModel,
-        HabitsFilterViewModel, HabitSummaryViewModel>(
-      create: (context) => context.read<HabitSummaryViewModel>(),
-      update: (context, sortOptions, habitDisplayFilter, previous) {
-        previous!
-            .updateSortOptions(sortOptions.sortType, sortOptions.sortDirection);
-        previous
-            .updateHabitDisplayFilter(habitDisplayFilter.habitsDisplayFilter);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          previous.resortData();
-        });
-        return previous;
-      },
-    );
-
-    yield ChangeNotifierProxyProvider<HabitFileImporterViewModel,
-        HabitSummaryViewModel>(
-      create: (context) => context.read<HabitSummaryViewModel>(),
-      update: (context, value, previous) {
-        if (value.consumeReloadDisplayFlag()) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            previous!.rockreloadDBToggleSwich();
-          });
-        }
-        return previous!;
-      },
-    );
-
-    yield ChangeNotifierProxyProvider<AppFirstDayViewModel,
-        HabitSummaryViewModel>(
-      create: (context) => context.read<HabitSummaryViewModel>(),
-      update: (context, value, previous) {
-        if (value.firstDay != previous!.firstday) {
-          previous.updateFirstday(value.firstDay);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            previous.rockreloadDBToggleSwich();
-          });
-        }
-        return previous;
-      },
-    );
-
-    yield ChangeNotifierProxyProvider<NotificationChannelData,
-        HabitSummaryViewModel>(
-      create: (context) => context.read<HabitSummaryViewModel>(),
-      update: (context, value, previous) =>
-          previous!..setNotificationChannelData(value),
-    );
-  }
+  Iterable<SingleChildWidget> _buildPageViewModel() => [
+        ChangeNotifierProvider<HabitSummaryViewModel>(
+          create: (context) => HabitSummaryViewModel(
+            verticalScrollController: ScrollController(),
+            horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
+          ),
+        ),
+        ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) =>
+              previous!..updateDBHelper(value),
+        ),
+        ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
+            HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, sortOptions, habitDisplayFilter, previous) {
+            previous!.updateSortOptions(
+                sortOptions.sortType, sortOptions.sortDirection);
+            previous.updateHabitDisplayFilter(
+                habitDisplayFilter.habitsDisplayFilter);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              previous.resortData();
+            });
+            return previous;
+          },
+        ),
+        ChangeNotifierProxyProvider<HabitFileImporterViewModel,
+            HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) {
+            if (value.consumeReloadDisplayFlag()) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                previous!.rockreloadDBToggleSwich();
+              });
+            }
+            return previous!;
+          },
+        ),
+        ChangeNotifierProxyProvider<AppFirstDayViewModel,
+            HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) {
+            if (value.firstDay != previous!.firstday) {
+              previous.updateFirstday(value.firstDay);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                previous.rockreloadDBToggleSwich();
+              });
+            }
+            return previous;
+          },
+        ),
+        ChangeNotifierProxyProvider<NotificationChannelData,
+            HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) =>
+              previous!..setNotificationChannelData(value),
+        ),
+      ];
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(

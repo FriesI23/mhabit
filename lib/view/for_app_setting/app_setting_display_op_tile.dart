@@ -65,21 +65,22 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget buildSegmentedTile(BuildContext context, [L10n? l10n]) {
       final selected = <UserAction>{inputAction};
-      getMaxLine(action) => selected.contains(action) ? null : 1;
-      getOverflow(action) => selected.contains(action)
-          ? TextOverflow.visible
-          : TextOverflow.ellipsis;
-      getButtonSegment(UserAction action) => ButtonSegment<UserAction>(
+
+      ButtonSegment<UserAction> getButtonSegment(UserAction action) =>
+          ButtonSegment<UserAction>(
             value: action,
             icon: _getActionIcon(action),
             label: l10n != null
                 ? Text(
                     _getActionText(action, l10n) ?? '',
-                    overflow: getOverflow(action),
-                    maxLines: getMaxLine(action),
+                    overflow: selected.contains(action)
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    maxLines: selected.contains(action) ? null : 1,
                   )
                 : null,
           );
+
       return SegmentedButton<UserAction>(
         segments: <ButtonSegment<UserAction>>[
           getButtonSegment(UserAction.tap),

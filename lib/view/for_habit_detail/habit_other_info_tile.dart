@@ -30,8 +30,8 @@ class HabitOtherInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    TextTheme textTheme = themeData.textTheme;
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     Widget? titleWidget = title, subtitleWidget = subTitle;
 
     if (title != null && textTheme.bodySmall != null) {

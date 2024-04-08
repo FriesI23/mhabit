@@ -17,7 +17,7 @@ import 'package:mhabit/persistent/local/handler/record.dart';
 
 void main() {
   group("RecordDBCell", () {
-    var record1 = RecordDBCell(
+    final record1 = RecordDBCell(
         id: 1,
         parentId: 1,
         recordDate: 1,
@@ -26,7 +26,7 @@ void main() {
         createT: 1,
         modifyT: 1,
         uuid: 'xxx');
-    var record2 = RecordDBCell(
+    final record2 = RecordDBCell(
         parentId: 1,
         recordDate: 1,
         recordValue: 1.2,
@@ -34,11 +34,11 @@ void main() {
         modifyT: 1,
         uuid: 'xxx');
     test("toMap", () {
-      var result1 = record1.toJson();
+      final result1 = record1.toJson();
       expect(result1[RecordDBCellKey.parentId], 1);
       expect(result1[RecordDBCellKey.id], 1);
       expect(result1[RecordDBCellKey.recordType], 1);
-      var result2 = record2.toJson();
+      final result2 = record2.toJson();
       expect(result2[RecordDBCellKey.parentId], 1);
       expect(result2.containsKey(RecordDBCellKey.id), false);
     });

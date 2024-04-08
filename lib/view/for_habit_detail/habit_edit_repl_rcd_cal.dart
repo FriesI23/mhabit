@@ -83,7 +83,7 @@ class _HabitEditReplacementRecordCalendarDialog
 
   void onHeatmapCellPressed(DateTime date, num? value) async {
     if (!mounted) return;
-    var viewmodel = context.read<HabitDetailViewModel>();
+    final viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted) return;
     await viewmodel.changeRecordStatus(HabitDate.dateTime(date));
   }
@@ -144,7 +144,7 @@ class _HabitEditReplacementRecordCalendarDialog
 
     if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
     final record = viewmodel.getHabitRecordData(date);
-    num orgNum = record?.value ?? -1;
+    final num orgNum = record?.value ?? -1;
     if (record != null && record.status == HabitRecordStatus.done) {
       form = HabitDailyRecordForm.getImp(
         type: viewmodel.habitType!,
@@ -214,9 +214,8 @@ class _HabitEditReplacementRecordCalendarDialog
         showCellText: true,
       ),
       callbackModel: HeatmapCallbackModel(
-        onCellPressed: (date, value) => onHeatmapCellPressed(date, value),
-        onCellLongPressed: (date, value) =>
-            onHeatmapCellLongPressed(date, value),
+        onCellPressed: onHeatmapCellPressed,
+        onCellLongPressed: onHeatmapCellLongPressed,
       ),
       weekLabelValueBuilder: (context, protoDate, defaultFormat) {
         return FittedBox(
@@ -254,7 +253,7 @@ class _HabitEditReplacementRecordCalendarDialog
                   Widget? valueWidget;
                   if (dateDay == null) return null;
                   if (_showDailyGoalValue) {
-                    var value = status.value ?? 0;
+                    final value = status.value ?? 0;
                     switch (status.status) {
                       case HabitRecordStatus.done:
                         valueWidget = FittedBox(

@@ -98,9 +98,9 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
     }
 
     Widget buildReminderQuestTile(BuildContext context) {
-      ThemeData? themeData = Theme.of(context);
-      ColorScheme? colorScheme = themeData.colorScheme;
-      TextTheme? textTheme = themeData.textTheme;
+      final ThemeData themeData = Theme.of(context);
+      final ColorScheme colorScheme = themeData.colorScheme;
+      final TextTheme textTheme = themeData.textTheme;
       return ListTile(
         leading: const SizedBox(),
         title: TextField(
@@ -124,13 +124,13 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Builder(builder: (context) => buildReminderTimeTile(context)),
+        Builder(builder: buildReminderTimeTile),
         ExpandedSection(
           expand: widget.reminder != null,
           child: Column(
             children: [
-              Builder(builder: (context) => buildReminderTypeTile(context)),
-              Builder(builder: (context) => buildReminderQuestTile(context)),
+              Builder(builder: buildReminderTypeTile),
+              Builder(builder: buildReminderQuestTile),
             ],
           ),
         ),

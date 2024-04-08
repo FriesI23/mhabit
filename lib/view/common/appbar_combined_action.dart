@@ -83,7 +83,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
       );
     }
 
-    List<PopupMenuItem<I>> children = [];
+    final List<PopupMenuItem<I>> children = [];
     for (var config in actionConfigs) {
       if (config.shouldShow(AppbarActionShowStatus.popupitem)) {
         children.add(getPopupItem(context, config));
@@ -104,7 +104,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
       );
     }
 
-    List<Widget> children = [];
+    final List<Widget> children = [];
     for (var config in actionConfigs) {
       if (config.shouldShow(AppbarActionShowStatus.button)) {
         children.add(buildActionButton(context, config));
@@ -125,7 +125,7 @@ class AppBarActions<C extends AppbarActionItemConfig, I>
               }
             }
           },
-          itemBuilder: (context) => _getPopupItemList(context),
+          itemBuilder: _getPopupItemList,
         ),
       ],
     );

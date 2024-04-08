@@ -129,11 +129,11 @@ class HabitFreqChart extends StatelessWidget {
   }
 
   List<BarChartGroupData> _buildBarGroupListWithValue() {
-    var result = <BarChartGroupData>[];
+    final result = <BarChartGroupData>[];
     data.forEachIndexed((i, e) {
-      var record = e.value, index = data.length - i - 1;
+      final record = e.value, index = data.length - i - 1;
 
-      var includeList = [];
+      final includeList = [];
       var currentHeight = 0.0;
       includeList.add({
         'fromY': currentHeight,
@@ -160,12 +160,12 @@ class HabitFreqChart extends StatelessWidget {
       });
       currentHeight += record.overfulfilTotalValue;
 
-      var barRods = <BarChartRodData>[];
+      final barRods = <BarChartRodData>[];
       includeList.forEachIndexed((index, element) {
-        var radius = index == includeList.length - 1
+        final radius = index == includeList.length - 1
             ? kHabitFreqChartTopRadius
             : BorderRadius.zero;
-        var rodData = BarChartRodData(
+        final rodData = BarChartRodData(
           fromY: element["fromY"],
           toY: element["toY"],
           color: element["color"],
@@ -175,7 +175,7 @@ class HabitFreqChart extends StatelessWidget {
         barRods.add(rodData);
       });
 
-      var cell = BarChartGroupData(
+      final cell = BarChartGroupData(
         x: index,
         groupVertically: true,
         barRods: barRods,
@@ -240,8 +240,8 @@ class HabitFreqChart extends StatelessWidget {
   }
 
   Widget _buildBottomTitle(BuildContext context, double value, TitleMeta meta) {
-    var index = math.max(0, data.length - value - 1).toInt();
-    var date = data[index].key;
+    final index = math.max(0, data.length - value - 1).toInt();
+    final date = data[index].key;
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: _buildBottomTitleCell(context, date, value),
@@ -312,13 +312,8 @@ class HabitFreqChart extends StatelessWidget {
                   tooltipBgColor: Colors.transparent,
                   tooltipPadding: EdgeInsets.zero,
                   tooltipMargin: 2,
-                  getTooltipItem: (
-                    BarChartGroupData group,
-                    int groupIndex,
-                    BarChartRodData rod,
-                    int rodIndex,
-                  ) {
-                    var value = rod.toY.round();
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    final value = rod.toY.round();
                     if (value == 0) return null;
                     return BarTooltipItem(
                       NumberFormat.compact().format(value),

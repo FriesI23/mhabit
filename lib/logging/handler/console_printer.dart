@@ -42,13 +42,9 @@ class AppLoggerConsolePrinter<T extends AppLoggerMessage>
   List<String> log(l.LogEvent event) {
     final T? message = event.message;
 
-    Iterable<String?> iterPrefix() sync* {
-      yield "[${prefixMap[event.level]}]";
-    }
-
     return [
       [
-        iterPrefix().whereNotNull().join(" "),
+        "[${prefixMap[event.level]}]",
         " - ",
         if (message != null)
           message.toLogPrinterMessage().whereNotNull().join(" | "),
@@ -87,27 +83,18 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
   List<String> log(l.LogEvent event) {
     final T? message = event.message;
 
-    Iterable<String?> iterPrefix() sync* {
-      yield "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]";
-      yield "[${prefixMap[event.level]}]";
-    }
-
-    Iterable<String> iterMergesMsg({bool addTime = false}) sync* {
-      yield iterPrefix().whereNotNull().join(" ");
-      yield " - ";
-      if (addTime) {
-        yield _errorPrinter.getTime(event.time);
-        yield " - ";
-      }
-      if (message != null) {
-        yield message.toLogPrinterMessage().whereNotNull().join(" | ");
-      }
-    }
+    String getMsg({bool addTime = false}) => [
+          "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]"
+              " [${prefixMap[event.level]}]",
+          if (addTime) _errorPrinter.getTime(event.time),
+          if (message != null)
+            message.toLogPrinterMessage().whereNotNull().join(" | "),
+        ].join(" - ");
 
     if (event.level.value >= l.Level.error.value) {
-      return _errorPrinter.log(event.copyWith(message: iterMergesMsg().join()));
+      return _errorPrinter.log(event.copyWith(message: getMsg()));
     }
 
-    return [iterMergesMsg(addTime: true).join()];
+    return [getMsg()];
   }
 }

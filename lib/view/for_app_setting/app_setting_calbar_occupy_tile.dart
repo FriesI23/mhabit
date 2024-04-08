@@ -67,7 +67,7 @@ class AppSettingCalbarOccupyTile extends StatelessWidget {
             min: lessPercentage.toDouble(),
             divisions: (morePercentage - lessPercentage) ~/ splitLen,
             label: _getLabel(l10n),
-            onChanged: (double value) {
+            onChanged: (value) {
               onSelectionChanged(value.toInt());
             },
           ),

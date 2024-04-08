@@ -18,8 +18,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/model/habit_date.dart';
 import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_summary.dart';
 import 'package:mhabit/model/habit_score.dart';
+import 'package:mhabit/model/habit_summary.dart';
 import 'package:tuple/tuple.dart';
 
 import '../stub/habit_score.dart';
@@ -48,7 +48,7 @@ class HabitScoreTestCase extends TestCase {
 
   void groupTestScore() => group("test NormalHabitScore", () {
         test("NormalHabitScore::init", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(hs.targetDays, 100);
           expect(hs.dailyGoal, 10);
           expect(hs.scoreNormal, 1.0);
@@ -59,7 +59,7 @@ class HabitScoreTestCase extends TestCase {
           expect(hs.prtPartial, -0.5);
         });
         test("NormalHabitScore::calcRealScoreExtra", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(hs.debugCalcRealScoreExtra(10, 100, null), 1.0);
           expect(hs.debugCalcRealScoreExtra(110, 100, null), 1.1);
           expect(hs.debugCalcRealScoreExtra(150, 100, null), 1.5);
@@ -67,7 +67,7 @@ class HabitScoreTestCase extends TestCase {
         });
 
         test("NormalHabitScore::calcRealScoreExtra with extendedVal", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(hs.debugCalcRealScoreExtra(100, 100, 150), 1.0);
           expect(hs.debugCalcRealScoreExtra(100, 100, 300), 1.0);
           expect(hs.debugCalcRealScoreExtra(200, 100, 150), 1.5);
@@ -77,7 +77,7 @@ class HabitScoreTestCase extends TestCase {
           expect(hs.debugCalcRealScoreExtra(300, 100, 1100), 1.1);
         });
         test("NormalHabitScore::calcDecreasedPrt:noAutoComplete", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(
             hs.calcDecreasedPrt(
               autoCompleted: false,
@@ -144,7 +144,7 @@ class HabitScoreTestCase extends TestCase {
           );
         });
         test("NormalHabitScore::calcDecreasedPrt:autoComplete", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(
             hs.calcDecreasedPrt(
               autoCompleted: true,
@@ -211,7 +211,7 @@ class HabitScoreTestCase extends TestCase {
           );
         });
         test("NormalHabitScore::calcIncreasedDay:noAutoComplete", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(
             hs.calcIncreasedDay(
               autoCompleted: false,
@@ -270,7 +270,7 @@ class HabitScoreTestCase extends TestCase {
           );
         });
         test("NormalHabitScore::calcIncreasedDay:autoComplete", () {
-          var hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NormalHabitScore(targetDays: 100, dailyGoal: 10);
           expect(
             hs.calcIncreasedDay(
               autoCompleted: true,
@@ -329,10 +329,10 @@ class HabitScoreTestCase extends TestCase {
           );
         });
         test("NormalHabitScore::calcHabitGrowCurveValue", () {
-          var hs = NormalHabitScore(targetDays: 10, dailyGoal: 10);
-          var xlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-          var ylist = <num>[];
-          var cylist = [
+          final hs = NormalHabitScore(targetDays: 10, dailyGoal: 10);
+          final xlist = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+          final ylist = <num>[];
+          final cylist = [
             0.0,
             2.2,
             6.76,
@@ -357,7 +357,7 @@ class HabitScoreTestCase extends TestCase {
 
   void groupTestNeScore() => group("test NegativeHabitScore", () {
         test("NormalHabitScore::init", () {
-          var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
           expect(hs.targetDays, 100);
           expect(hs.dailyGoal, 10);
           expect(hs.scoreNormal, 1.0);
@@ -368,13 +368,13 @@ class HabitScoreTestCase extends TestCase {
           expect(hs.prtPartial, -0.5);
         });
         test("NormalHabitScore::calcRealScoreExtra", () {
-          var hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
+          final hs = NegativeHabitScore(targetDays: 100, dailyGoal: 10);
           expect(hs.debugCalcRealScoreExtra(99, 100, null), 0);
           expect(hs.debugCalcRealScoreExtra(100, 100, null), 1.0);
           expect(hs.debugCalcRealScoreExtra(101, 100, null), 0);
         });
         test("NormalHabitScore::calcRealScoreExtra with extendedVal", () {
-          var hs = NegativeHabitScore(
+          final hs = NegativeHabitScore(
               targetDays: 100, dailyGoal: 10, dailGoalExtra: 100);
           expect(hs.debugCalcRealScoreExtra(150, 100, 200), 1.25);
           expect(hs.debugCalcRealScoreExtra(100, 100, 150), 1.5);
@@ -408,7 +408,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
   void groupTestCalc() =>
       group("test HabitScoreCalculator calc total score", () {
         test("HabitScoreCalculator calc normal", () {
-          var dateList = <HabitDate>[
+          final dateList = <HabitDate>[
             HabitDate(2020, 1, 1),
             HabitDate(2020, 1, 2),
             HabitDate(2020, 1, 3),
@@ -421,7 +421,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
             HabitDate(2020, 1, 10),
           ];
 
-          var data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
+          final data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
           for (var i in dateList) {
             data[i] = Tuple2(
                 HabitSummaryRecord.generate(
@@ -432,7 +432,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
                 false);
           }
 
-          var calc = HabitScoreCalculator(
+          final calc = HabitScoreCalculator(
             habitScore: HabitScore.getImp(
                 type: HabitType.normal, targetDays: 10, dailyGoal: 1),
             startDate: HabitDate(2020, 1, 1),
@@ -450,7 +450,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
           expect(result >= 100.0, true);
         });
         test("HabitScoreCalculator calc with some failed", () {
-          var dateList = <HabitDate>[
+          final dateList = <HabitDate>[
             HabitDate(2020, 1, 1),
             HabitDate(2020, 1, 2),
             HabitDate(2020, 1, 3),
@@ -462,7 +462,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
             HabitDate(2020, 1, 9),
             HabitDate(2020, 1, 10),
           ];
-          var valueList = <num>[
+          final valueList = <num>[
             0.0, // d: 0.00 s: 0.00
             0.0, // d: 0.00 s: 0.00
             10.0, // d: 1.00 s: 3.92
@@ -475,7 +475,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
             10.0 // d: 7.55 s: 89.97
           ];
 
-          var data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
+          final data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
           dateList.forEachIndexed((index, element) {
             data[element] = Tuple2(
                 HabitSummaryRecord.generate(
@@ -486,7 +486,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
                 false);
           });
 
-          var calc = HabitScoreCalculator(
+          final calc = HabitScoreCalculator(
             habitScore: HabitScore.getImp(
                 type: HabitType.normal, targetDays: 10, dailyGoal: 10.0),
             startDate: HabitDate(2020, 1, 1),
@@ -504,7 +504,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
           expect(double.parse(result.toStringAsFixed(2)), 89.97);
         });
         test("HabitScoreCalculator calc with automarked", () {
-          var dateList = <HabitDate>[
+          final dateList = <HabitDate>[
             HabitDate(2020, 1, 1),
             HabitDate(2020, 1, 2),
             HabitDate(2020, 1, 3),
@@ -516,7 +516,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
             HabitDate(2020, 1, 9),
             HabitDate(2020, 1, 10),
           ];
-          var valueList = <num>[
+          final valueList = <num>[
             0.0, // d: 0.00 s: 0.00
             0.0, // d: 0.00 s: 0.00
             10.0, // d: 1.00 s: 3.92
@@ -529,7 +529,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
             10.0 // d: 7.55 s: 89.97
           ];
 
-          var data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
+          final data = <HabitDate, Tuple2<HabitSummaryRecord?, bool>>{};
           dateList.forEachIndexed((index, element) {
             data[element] = Tuple2(
                 HabitSummaryRecord.generate(
@@ -540,7 +540,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
                 true);
           });
 
-          var calc = HabitScoreCalculator(
+          final calc = HabitScoreCalculator(
             habitScore: HabitScore.getImp(
                 type: HabitType.normal, targetDays: 10, dailyGoal: 10.0),
             startDate: HabitDate(2020, 1, 1),
@@ -562,7 +562,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
   void groupTestCalcSubProgress() =>
       group("test HabitScoreCalculator sub methods", () {
         test('calcEachScoreBetweenRecordDate', () {
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScore.getImp(
                   type: HabitType.normal, targetDays: 20, dailyGoal: 1),
               startDate: HabitDate(2023, 1, 1),
@@ -580,7 +580,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
         });
 
         test('calcScoreAfterLastRecordToEnd', () {
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScore.getImp(
                   type: HabitType.normal, targetDays: 10, dailyGoal: 1),
               startDate: HabitDate(2023, 1, 1),
@@ -600,7 +600,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
         test('calcIncreaseDaysBetweenRecordDate, no record', () {
           const mockValue = 9.8;
           bool called = false;
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScoreStub.easeTest(
                 hookCalcIncreasedDay: (autoCompleted, status, value) {
                   expect(value, null);
@@ -615,7 +615,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
               isAutoComplated: (date) => false,
               getHabitRecord: (date) => null);
 
-          num result = calculator.calcIncreaseDaysBetweenRecordDate(
+          final num result = calculator.calcIncreaseDaysBetweenRecordDate(
               record: null, isAutoCompleted: false);
           expect(result, equals(mockValue));
           expect(called, true);
@@ -625,7 +625,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
           const mockValue = 9.8;
           const mockStatus = HabitRecordStatus.done;
           bool called = false;
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScoreStub.easeTest(
                 hookCalcIncreasedDay: (autoCompleted, status, value) {
                   expect(value, mockValue);
@@ -642,7 +642,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
 
           final record = HabitSummaryRecord.generate(HabitDate.now(),
               status: mockStatus, value: mockValue);
-          num result = calculator.calcIncreaseDaysBetweenRecordDate(
+          final num result = calculator.calcIncreaseDaysBetweenRecordDate(
               record: record, isAutoCompleted: true);
           expect(result, equals(mockValue));
           expect(called, true);
@@ -651,7 +651,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
         test('calcDecreasePrtBetweenRecordDate, no record', () {
           const mockValue = 9.8;
           bool called = false;
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScoreStub.easeTest(
                 hookCalcDecreasedPrt: (autoCompleted, status, value) {
                   expect(value, null);
@@ -666,7 +666,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
               isAutoComplated: (date) => false,
               getHabitRecord: (date) => null);
 
-          num result = calculator.calcDecreasePrtBetweenRecordDate(
+          final num result = calculator.calcDecreasePrtBetweenRecordDate(
               record: null, isAutoCompleted: false);
           expect(result, equals(mockValue));
           expect(called, true);
@@ -676,7 +676,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
           const mockValue = 9.8;
           const mockStatus = HabitRecordStatus.done;
           bool called = false;
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScoreStub.easeTest(
                 hookCalcDecreasedPrt: (autoCompleted, status, value) {
                   expect(value, mockValue);
@@ -693,21 +693,21 @@ class HabitScoreCalculatorTestCase extends TestCase {
 
           final record = HabitSummaryRecord.generate(HabitDate.now(),
               status: mockStatus, value: mockValue);
-          num result = calculator.calcDecreasePrtBetweenRecordDate(
+          final num result = calculator.calcDecreasePrtBetweenRecordDate(
               record: record, isAutoCompleted: true);
           expect(result, equals(mockValue));
           expect(called, true);
         });
 
         test('triggerScoreChangedEvent', () {
-          HabitScoreCalculator calculator = HabitScoreCalculator(
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScoreStub.easeTest(),
               startDate: HabitDate(2023, 1, 1),
               iterable: [],
               isAutoComplated: (date) => false,
               getHabitRecord: (date) => null);
 
-          bool result1 = calculator.triggerScoreChangedEvent(
+          final bool result1 = calculator.triggerScoreChangedEvent(
               fromDate: HabitDate(2023, 1, 1),
               fromScore: 50.0,
               toDate: HabitDate(2023, 1, 5),
@@ -721,7 +721,7 @@ class HabitScoreCalculatorTestCase extends TestCase {
               });
           expect(result1, equals(false));
 
-          bool result2 = calculator.triggerScoreChangedEvent(
+          final bool result2 = calculator.triggerScoreChangedEvent(
               fromDate: HabitDate(2023, 1, 1),
               fromScore: 50.0,
               toDate: HabitDate(2023, 1, 5),
@@ -757,7 +757,7 @@ class ArchivedHabitScoreCalculatorTestCase extends TestCase {
   void groupTestCalc() =>
       group("test ArchivedHabitScoreCalculator calc total score", () {
         test("ArchivedHabitScoreCalculator calc normal", () {
-          var dateList = <HabitDate>[
+          final dateList = <HabitDate>[
             HabitDate(2020, 1, 1),
             HabitDate(2020, 1, 2),
             HabitDate(2020, 1, 3),

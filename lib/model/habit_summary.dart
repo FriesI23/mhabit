@@ -91,20 +91,17 @@ mixin _HabitSummaryDataRecordsMixin {
     _recordDateCacheMap.clear();
   }
 
-  Iterable<HabitSummaryRecord> getAllRecord() sync* {
-    for (var r in _recordDateCacheMap.entries) {
-      yield r.value;
-    }
-  }
+  Iterable<HabitSummaryRecord> getAllRecord() =>
+      _recordDateCacheMap.entries.map((e) => e.value);
 
   HabitSummaryRecord? removeRecordWithUUID(HabitRecordUUID uuid) {
-    var result = _recordMap.remove(uuid);
+    final result = _recordMap.remove(uuid);
     if (result != null) _recordDateCacheMap.remove(result.date);
     return result;
   }
 
   HabitSummaryRecord? removeRecordWithDate(HabitRecordDate date) {
-    var result = _recordDateCacheMap.remove(date);
+    final result = _recordDateCacheMap.remove(date);
     if (result != null) _recordMap.remove(result.uuid);
     return result;
   }
@@ -125,7 +122,7 @@ mixin _HabitSummaryDataRecordsMixin {
   bool addAllRecords(Iterable<HabitSummaryRecord> records,
       {HabitReocrdAddRepeatedBehaviour behaviour =
           HabitReocrdAddRepeatedBehaviour.failed}) {
-    var tmpList = <HabitSummaryRecord>[];
+    final tmpList = <HabitSummaryRecord>[];
     for (final r in records) {
       if (_recordMap.containsKey(r.uuid) ||
           _recordDateCacheMap.containsKey(r.date)) {
@@ -237,11 +234,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     }
   }
 
-  Iterable<HabitRecordDate> getAllAutoComplateRecordDate() sync* {
-    for (var r in _autoMarkedRecords) {
-      yield r;
-    }
-  }
+  Iterable<HabitRecordDate> getAllAutoComplateRecordDate() =>
+      _autoMarkedRecords;
 
   Set<HabitRecordDate> debugGetAutoMarkedRecordsCopy() {
     assert(kDebugMode);
@@ -312,7 +306,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         habitScore: createHabitScore(),
         startDate: startDate,
         iterable: createIterable(),
-        isAutoComplated: (date) => _autoMarkedRecords.contains(date),
+        isAutoComplated: _autoMarkedRecords.contains,
         getHabitRecord: (date) => _recordDateCacheMap[date],
       );
     } else {
@@ -320,7 +314,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
         habitScore: createHabitScore(),
         startDate: startDate,
         iterable: createIterable(),
-        isAutoComplated: (date) => _autoMarkedRecords.contains(date),
+        isAutoComplated: _autoMarkedRecords.contains,
         getHabitRecord: (date) => _recordDateCacheMap[date],
       );
     }
@@ -366,7 +360,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       }
 
       for (var i = 0; i < insideDays; i++) {
-        var insideMarkDate = window.first.addDays(i);
+        final insideMarkDate = window.first.addDays(i);
         // debugPrint("inside add [$insideDays]: $insideMarkDate");
         markedDateSet.add(insideMarkDate);
       }
@@ -375,7 +369,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       final leftLastDays = lastDays;
       for (var i = 1; i <= leftLastDays; i++) {
-        var leftMarkDate = window.first.subtractDays(i);
+        final leftMarkDate = window.first.subtractDays(i);
         if (markedDateSet.contains(leftMarkDate) || leftMarkDate < startDate) {
           break;
         }
@@ -539,7 +533,7 @@ class HabitSummaryDataCollection {
       Iterable<HabitDBCell> result, Iterable<RecordDBCell> recordResult) {
     _dataMap.clear();
     for (final cell in result) {
-      var data = HabitSummaryData.fromDBQueryCell(cell);
+      final data = HabitSummaryData.fromDBQueryCell(cell);
       _dataMap[data.uuid] = data;
     }
     for (final cell in recordResult) {
@@ -672,7 +666,7 @@ class HabitSummaryDataCollection {
     result = List.from(
       _dataMap.values.toList()
         ..sort((a, b) {
-          var r1 = a.sortPostion.compareTo(b.sortPostion);
+          final r1 = a.sortPostion.compareTo(b.sortPostion);
           if (r1 != 0) {
             return r1;
           } else {
@@ -704,7 +698,7 @@ class HabitSummaryDataCollection {
 
   @override
   String toString() {
-    List<String> dataStringList = [];
+    final List<String> dataStringList = [];
     _dataMap.forEach((key, value) {
       final valueStr = truncateString(value.toString(), 120, 100, 10);
       dataStringList.add("    $valueStr");

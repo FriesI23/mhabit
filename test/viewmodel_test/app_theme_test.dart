@@ -23,7 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([
-    (pref) => AppThemeTypeProfileHandler(pref),
+    AppThemeTypeProfileHandler.new,
   ]);
   await profile.init();
   group("AppThemeViewModel", () {

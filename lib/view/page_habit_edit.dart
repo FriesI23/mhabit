@@ -189,7 +189,7 @@ class _HabitEditView extends State<HabitEditView> {
     final result =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (!mounted || result == null) return;
-    var newReminder = (context.read<HabitFormViewModel>().reminder ??
+    final newReminder = (context.read<HabitFormViewModel>().reminder ??
             HabitReminder.dailyMidnight)
         .copyWith(time: result);
     context.read<HabitFormViewModel>().reminder = newReminder;
@@ -555,7 +555,7 @@ class _HabitEditView extends State<HabitEditView> {
     //#endregion
 
     //#engion build main
-    var formvm = context.read<HabitFormViewModel>();
+    final formvm = context.read<HabitFormViewModel>();
     return ColorfulNavibar(
       child: Scaffold(
         body: CustomScrollView(

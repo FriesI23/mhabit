@@ -32,28 +32,28 @@ import 'for_app/_widget.dart';
 import 'page_habits_display.dart' show PageHabitsDisplay;
 
 class App extends StatelessWidget {
-  const App({super.key});
+  static final _profileHandlers = <ProfileHandlerBuilder>[
+    AppReminderProfileHandler.new,
+    AppThemeTypeProfileHandler.new,
+    AppThemeMainColorProfileHandler.new,
+    CompactUISwitcherProfileHandler.new,
+    DisplaySortModeProfileHandler.new,
+    DisplayHabitsFilterProfileHandler.new,
+    DisplayCalendarScrollModeProfileHandler.new,
+    DisplayCalendartBarOccupyPrtProfileHandler.new,
+    ShowDateFormatProfileHandler.new,
+    FirstDayProfileHandler.new,
+    HabitCellGestureModeProfileHandler.new,
+    InputFillCacheProfileHandler.new,
+  ];
 
-  Iterable<ProfileHandlerBuilder> _buildProfileHanlder() sync* {
-    yield (pref) => AppReminderProfileHandler(pref);
-    yield (pref) => AppThemeTypeProfileHandler(pref);
-    yield (pref) => AppThemeMainColorProfileHandler(pref);
-    yield (pref) => CompactUISwitcherProfileHandler(pref);
-    yield (pref) => DisplaySortModeProfileHandler(pref);
-    yield (pref) => DisplayHabitsFilterProfileHandler(pref);
-    yield (pref) => DisplayCalendarScrollModeProfileHandler(pref);
-    yield (pref) => DisplayCalendartBarOccupyPrtProfileHandler(pref);
-    yield (pref) => ShowDateFormatProfileHandler(pref);
-    yield (pref) => FirstDayProfileHandler(pref);
-    yield (pref) => HabitCellGestureModeProfileHandler(pref);
-    yield (pref) => InputFillCacheProfileHandler(pref);
-  }
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
     debugPrint('------ App start ------');
     return ProfileBuilder(
-      handlers: _buildProfileHanlder(),
+      handlers: _profileHandlers,
       builder: (context, child) => DBHelperBuilder(
         builder: (context, child) => AppProviders(child: child),
         child: const AppView(),
@@ -72,7 +72,7 @@ class AppView extends StatefulWidget {
 class _AppView extends State<AppView> {
   ThemeData _getLightThemeData(BuildContext context,
       {ColorScheme? dynamicColor, required Color mainColor}) {
-    ColorScheme appColorLight = ColorScheme.fromSeed(
+    final ColorScheme appColorLight = ColorScheme.fromSeed(
       seedColor: mainColor,
       brightness: Brightness.light,
     );
@@ -85,7 +85,7 @@ class _AppView extends State<AppView> {
 
   ThemeData _getDartThemeData(BuildContext context,
       {ColorScheme? dynamicColor, required Color mainColor}) {
-    ColorScheme appColorDark = ColorScheme.fromSeed(
+    final ColorScheme appColorDark = ColorScheme.fromSeed(
       seedColor: mainColor,
       brightness: Brightness.dark,
     );
@@ -98,7 +98,7 @@ class _AppView extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    var homePage = const PageHabitsDisplay();
+    const homePage = PageHabitsDisplay();
 
     return Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
       selector: (context, viewmodel) =>

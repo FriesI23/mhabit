@@ -24,9 +24,9 @@ import '../../theme/color.dart';
 
 mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
   Map<HabitDailyGoal, Color> buildHeatmapColorMap(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
-    var viewmodel = context.read<HabitDetailViewModel>();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
+    final viewmodel = context.read<HabitDetailViewModel>();
     return {
       HabitHeatMapColorMapDefine.uncomplate:
           (colorData?.getColor(viewmodel.habitColorType!) ??
@@ -51,9 +51,9 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
   }
 
   Map<HabitDailyGoal, Color> buildHeatmapValueColorMap(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    CustomColors? colorData = themeData.extension<CustomColors>();
-    var viewmodel = context.read<HabitDetailViewModel>();
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
+    final viewmodel = context.read<HabitDetailViewModel>();
     return {
       HabitHeatMapColorMapDefine.uncomplate:
           colorData?.getColor(viewmodel.habitColorType!) ??

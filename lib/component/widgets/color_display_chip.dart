@@ -26,7 +26,7 @@ class ColorDisplayChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CustomColors? colorData = Theme.of(context).extension<CustomColors>();
+    final CustomColors? colorData = Theme.of(context).extension<CustomColors>();
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

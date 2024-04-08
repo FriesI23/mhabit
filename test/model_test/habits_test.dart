@@ -17,7 +17,7 @@ import 'package:mhabit/persistent/local/handler/habit.dart';
 
 void main() {
   group("HabitDBCell", () {
-    var habit1 = const HabitDBCell(
+    const habit1 = HabitDBCell(
         id: 1,
         type: 1,
         createT: 0,
@@ -36,7 +36,7 @@ void main() {
         remindCustom: "remindCustasdam",
         remindQuestion: "remindQuestion",
         sortPosition: 2);
-    var habit2 = const HabitDBCell(
+    const habit2 = HabitDBCell(
         name: 'name',
         desc: 'desc',
         color: 1,
@@ -50,7 +50,7 @@ void main() {
         remindQuestion: "remindQuestion",
         sortPosition: 2);
     test("Constructor::fromMap", () {
-      var data = {
+      final data = {
         "id_": 1,
         "uuid": "31db76a6-da84-4eca-abc4-a419b4920a11",
         "name": "0 overleisured",
@@ -67,10 +67,10 @@ void main() {
       HabitDBCell.fromJson(data);
     });
     test("toMap", () {
-      var result1 = habit1.toJson();
+      final result1 = habit1.toJson();
       expect(result1[HabitDBCellKey.type], 1);
       expect(result1[HabitDBCellKey.id], 1);
-      var result2 = habit2.toJson();
+      final result2 = habit2.toJson();
       expect(result2[HabitDBCellKey.name], 'name');
       expect(result2.containsKey(HabitDBCellKey.id), false);
     });
