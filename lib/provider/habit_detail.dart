@@ -190,8 +190,7 @@ class HabitDetailViewModel extends ChangeNotifier
         return;
       }
       final data = HabitDetailData.fromDBQueryCell(cell);
-      data.data.initRecords(
-          records.map(HabitSummaryRecord.fromDBQueryCell));
+      data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;
       _calcHabitInfo();
       appLog.load.debug("$runtimeType.load",

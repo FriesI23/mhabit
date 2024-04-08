@@ -119,7 +119,8 @@ class ScrollingFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final FloatingActionButtonThemeData fabTheme = theme.floatingActionButtonTheme
+    final FloatingActionButtonThemeData fabTheme = theme
+        .floatingActionButtonTheme
         .copyWith(extendedSizeConstraints: getExtendedSizeConstraints(context));
 
     appLog.build.debug(context, ex: [isExtended, _extendedLabel, child]);
@@ -133,8 +134,7 @@ class ScrollingFAB extends StatelessWidget {
         onPressed: onPressed,
         label: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          transitionBuilder: (child, animation) =>
-              FadeTransition(
+          transitionBuilder: (child, animation) => FadeTransition(
             opacity: animation,
             child: SizeTransition(
               sizeFactor: animation,

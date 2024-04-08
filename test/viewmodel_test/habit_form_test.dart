@@ -105,8 +105,8 @@ void main() {
   });
   group("HabitFrequency", () {
     test("Constructor", () {
-      const obj = HabitFrequency(
-          type: HabitFrequencyType.custom, freq: 1, days: 2);
+      const obj =
+          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 2);
       expect(obj.freq, 1);
       expect(obj.days, 2);
       expect(obj.type, HabitFrequencyType.custom);
