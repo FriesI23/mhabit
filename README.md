@@ -1,6 +1,7 @@
 # Table Habit
 
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
+[![Translation][weblate-badge]][weblate]
 [![Latest Stable Version][app-verison-bage-svg]][github-release-page]
 [![License][license-badge]][app-license]
 [![Flutter][flutter-badge]][deps-flutter-version]
@@ -94,7 +95,8 @@ When contribute code to this project, please try to follow
 Feel free to join and help with the translation for `Table Habit`,
 you can follow [docs/add_new_locale_support][l10n-doc] to get incolved.
 
-![L10nStat][l10n-stat-pic]
+<!-- ![L10nStat][l10n-stat-pic] -->
+[![Engage][weblate-engage-badge]][weblate-engage]
 
 ## License
 
@@ -140,7 +142,7 @@ limitations under the License.
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
-[l10n-stat-pic]: docs/README/images/l10n-stat.svg
+<!-- [l10n-stat-pic]: docs/README/images/l10n-stat.svg -->
 [l10n-doc]: docs/add_new_locale_support.md
 [buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 [alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
@@ -150,3 +152,7 @@ limitations under the License.
 [btc-badge]: https://img.shields.io/badge/Bitcoin-000000?style=for-the-badge&logo=bitcoin&logoColor=white
 [btc-addr]: https://blockchair.com/bitcoin/address/bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49
 [style-guide-for-flutter]: https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo
+[weblate-badge]: https://hosted.weblate.org/widget/mhabit/svg-badge.svg
+[weblate]: https://hosted.weblate.org/engage/mhabit/
+[weblate-engage-badge]: https://hosted.weblate.org/widget/mhabit/multi-auto.svg
+[weblate-engage]: https://hosted.weblate.org/engage/mhabit/
