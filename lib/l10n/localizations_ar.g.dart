@@ -491,7 +491,7 @@ class L10nAr extends L10n {
   }
 
   @override
-  String get habitDetail_descTargetDays_unitText => '';
+  String get habitDetail_descTargetDays_unitText => 'ي';
 
   @override
   String get habitDetail_descRecordsNum_titleText => 'سجلات';
@@ -1009,7 +1009,7 @@ class L10nAr extends L10n {
   String get snackbar_dissmessText => 'إلغاء';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'المساهمون';
 
   @override
   String get userAction_tap => 'ضغطة';

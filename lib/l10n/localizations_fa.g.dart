@@ -296,7 +296,7 @@ class L10nFa extends L10n {
   String get habitDisplay_editPopMenu_delete => 'حذف';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Template';
+  String get habitDisplay_editPopMenu_clone => 'الگو';
 
   @override
   String get habitDisplay_editButton_tooltip => 'ویرایش';
@@ -401,7 +401,7 @@ class L10nFa extends L10n {
   String get habitDetail_editPopMenu_delete => 'حذف';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'الگو';
 
   @override
   String get habitDetail_confirmDialog_confirm => 'تایید';
@@ -640,13 +640,13 @@ class L10nFa extends L10n {
   String get appSetting_changeRecordStatusOpTile_titleText => 'تغییر وضعیت رکورد';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => 'اصلاح رفتار کلیک برای تغییر وضعیت سوابق روزانه در صفحه اصلی.';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => 'باز کردن رکورد تفصیلی';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'اصلاح رفتار کلیک برای باز کردن پاپ آپ دقیق برای سوابق روزانه در صفحه اصلی.';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'اولین روز هفته';
@@ -759,28 +759,28 @@ class L10nFa extends L10n {
   String get appSetting_developMode_titleText => 'حالت توسعه';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'پنهان کردن';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'پنهان کردن';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'After clearing cache, some custom values will be restored to defaults.';
+  String get appSetting_clearCacheDialog_subtitleText => 'پس از پاک کردن حافظه، برخی از ارزش های سفارشی به طور پیش فرض بازسازی می شوند.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+  String get appSetting_clearCacheDialog_cancelText => 'لغو';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+  String get appSetting_clearCacheDialog_confirmText => 'تایید';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Partial Cache cleared failed';
+  String get appSetting_clearCache_snackBar_partSuccText => 'پنهان کردن جزئی که شکست خورد';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Cache cleared successfully';
+  String get appSetting_clearCache_snackBar_succText => 'پنهان کردن با موفقیت';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
+  String get appSetting_clearCache_snackBar_failText => 'پنهان کردن شکست خورده';
 
   @override
   String get appSetting_about_titleText => 'درباره';
@@ -827,7 +827,7 @@ class L10nFa extends L10n {
   String get appAbout_donateTile_subTitleText => 'من یک توسعه‌دهنده شخصی هستم. اگر از این برنامه خوشتان آمده، لطفاً یک فنجان قهوه برایم بخرید ☕.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay';
+  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'پی‌پال';
@@ -842,7 +842,7 @@ class L10nFa extends L10n {
   String get donateWay_wechatPay => 'پرداخت ویچت';
 
   @override
-  String get donateWay_cryptoCurrency => 'Cryto Currencies';
+  String get donateWay_cryptoCurrency => 'رمزارز';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -864,7 +864,7 @@ class L10nFa extends L10n {
 
   @override
   String appAbout_donateDialog_copiedCrypto_msg(String name) {
-    return 'Copied $name\'s Address';
+    return 'کپی شد $name آدرس';
   }
 
   @override
@@ -1009,7 +1009,7 @@ class L10nFa extends L10n {
   String get snackbar_dissmessText => 'رد کردن';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'مشارکت کنندگان';
 
   @override
   String get userAction_tap => 'ضربه';

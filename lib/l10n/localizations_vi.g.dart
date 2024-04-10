@@ -1009,7 +1009,7 @@ class L10nVi extends L10n {
   String get snackbar_dissmessText => 'MIỄN';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Cộng tác viên';
 
   @override
   String get userAction_tap => 'Nhấn';
