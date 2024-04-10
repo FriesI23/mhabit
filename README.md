@@ -1,12 +1,12 @@
 # Table Habit
 
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
-[![Translation][weblate-badge]][weblate]
 [![Latest Stable Version][app-verison-bage-svg]][github-release-page]
 [![License][license-badge]][app-license]
 [![Flutter][flutter-badge]][deps-flutter-version]
 
 [![Trello][app-trello-badge]][app-trello-board]
+[![Translation][weblate-badge]][weblate]
 
 "Table Habit" is an app that helps you establish and track your own micro habit.
 Its includes a complete set of growth curves and charts to help you establish
@@ -152,7 +152,7 @@ limitations under the License.
 [btc-badge]: https://img.shields.io/badge/Bitcoin-000000?style=for-the-badge&logo=bitcoin&logoColor=white
 [btc-addr]: https://blockchair.com/bitcoin/address/bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49
 [style-guide-for-flutter]: https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo
-[weblate-badge]: https://hosted.weblate.org/widget/mhabit/svg-badge.svg
-[weblate]: https://hosted.weblate.org/engage/mhabit/
+[weblate-badge]: https://hosted.weblate.org/widget/mhabit/app/88x31-black.png
+[weblate]: https://hosted.weblate.org/projects/mhabit/
 [weblate-engage-badge]: https://hosted.weblate.org/widget/mhabit/multi-auto.svg
 [weblate-engage]: https://hosted.weblate.org/engage/mhabit/
