@@ -14,7 +14,7 @@
   "habitEdit_habitType_positiveText": "Positive",
   "habitEdit_habitType_negativeText": "Negative",
 
-  "@habitEidt_habitDailyGoal_hintText": {
+  "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
       "number": {

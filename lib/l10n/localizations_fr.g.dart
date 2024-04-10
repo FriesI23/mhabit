@@ -1009,7 +1009,7 @@ class L10nFr extends L10n {
   String get snackbar_dissmessText => 'REJETER';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Contributeurs';
 
   @override
   String get userAction_tap => 'Appui';

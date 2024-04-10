@@ -1009,7 +1009,7 @@ class L10nDe extends L10n {
   String get snackbar_dissmessText => 'Ablehnen';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Mitwirkende';
 
   @override
   String get userAction_tap => 'Tippen';
