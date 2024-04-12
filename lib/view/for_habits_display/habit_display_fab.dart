@@ -16,13 +16,12 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
 import '../../component/widget.dart';
-import '../../persistent/local/handler/habit.dart';
 
-class HabitDisplayFAB extends StatelessWidget {
+class HabitDisplayFAB<T> extends StatelessWidget {
   final double? closedElevation;
   final CloseContainerBuilder closeBuilder;
-  final OpenContainerBuilder<HabitDBCell> openBuilder;
-  final ClosedCallback<HabitDBCell?>? onClosed;
+  final OpenContainerBuilder<T> openBuilder;
+  final ClosedCallback<T?>? onClosed;
 
   const HabitDisplayFAB({
     super.key,
@@ -36,7 +35,7 @@ class HabitDisplayFAB extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
 
-    return OpenContainer<HabitDBCell>(
+    return OpenContainer<T>(
       transitionDuration: const Duration(milliseconds: 250),
       transitionType: ContainerTransitionType.fadeThrough,
       middleColor: themeData.colorScheme.primaryContainer.withOpacity(0.5),

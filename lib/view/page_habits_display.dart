@@ -14,6 +14,7 @@
 
 import 'dart:math' as math;
 
+import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -65,6 +66,7 @@ const _kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
 const _kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
 
 const _kPressFABAnimateDuration = Duration(milliseconds: 500);
+const _kFABModeChangeDuration = Duration(milliseconds: 300);
 
 const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
 
@@ -90,8 +92,6 @@ class HabitsDisplayView extends StatefulWidget {
 
 class _HabitsDisplayView extends State<HabitsDisplayView>
     with HabitsDisplayViewDebug, XShare<HabitsDisplayView> {
-  VoidCallback? _onFABPressedAction;
-
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -448,7 +448,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
-  Future<void> _onFABPressed() async {
+  Future<void> _onFABPressed(VoidCallback action) async {
     if (!mounted) return;
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (viewmodel.isInEditMode) {
@@ -458,7 +458,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     if (!mounted) return;
     Navigator.of(context).popUntil((route) => route.isFirst);
-    _onFABPressedAction?.call();
+    action();
   }
 
   void _onCreateNewHabitPageClosed(HabitDBCell? result) {
@@ -1053,30 +1053,9 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     //#region: fab
     Widget buildFAB(BuildContext context) {
-      return Selector<HabitSummaryViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.isAppbarPinned,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, isAppbarPinned, child) {
-          return HabitDisplayFAB(
-            closeBuilder: (context, action) {
-              _onFABPressedAction = action;
-              return ScrollingFAB.small(
-                onPressed: _onFABPressed,
-                label: L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(l10n.habitDisplay_fab_text)
-                      : const Text('New Habit'),
-                ),
-                icon: const Icon(Icons.add),
-                isExtended: isAppbarPinned,
-              );
-            },
-            openBuilder: (context, action) =>
-                const habit_edit_view.PageHabitEdit(
-                    showInFullscreenDialog: true),
-            onClosed: _onCreateNewHabitPageClosed,
-          );
-        },
+      return _FAB(
+        normalOnPressed: _onFABPressed,
+        normalOnClosed: _onCreateNewHabitPageClosed,
       );
     }
     //#endregion
@@ -1255,4 +1234,70 @@ class _HabitRecordListTile extends StatelessWidget {
       onHabitRecordDoublePressed: onHabitRecordDoublePressed,
     );
   }
+}
+
+class _FAB extends StatelessWidget {
+  final void Function(VoidCallback action)? normalOnPressed;
+  final ClosedCallback<HabitDBCell?>? normalOnClosed;
+  final void Function(VoidCallback action)? editOnPressed;
+  final ClosedCallback<int?>? editOnClosed;
+
+  const _FAB({
+    this.normalOnPressed,
+    this.normalOnClosed,
+    this.editOnPressed,
+    this.editOnClosed,
+  });
+
+  Widget _buildFAB(BuildContext context,
+      {required bool isAppbarPinned, required bool isInEditMode}) {
+    Widget iconBuidler(BuildContext context) => AnimatedCrossFade(
+        firstChild: const Icon(Icons.add),
+        secondChild: const Icon(Icons.calendar_view_day_rounded),
+        crossFadeState:
+            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: _kFABModeChangeDuration);
+
+    Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
+        firstChild: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_fab_text)
+              : const Text('New Habit'),
+        ),
+        secondChild: const SizedBox(),
+        crossFadeState:
+            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: _kFABModeChangeDuration);
+
+    return HabitDisplayFAB<Object?>(
+      closeBuilder: (context, action) {
+        return ScrollingFAB.small(
+          onPressed: () =>
+              (isInEditMode ? editOnPressed : normalOnPressed)?.call(action),
+          label: labelBuilder(context),
+          icon: iconBuidler(context),
+          isExtended: isInEditMode ? true : isAppbarPinned,
+        );
+      },
+      openBuilder: (context, action) =>
+          const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
+      onClosed: isInEditMode
+          ? editOnClosed != null
+              ? (data) => editOnClosed!(data as int?)
+              : null
+          : normalOnClosed != null
+              ? (data) => normalOnClosed!(data as HabitDBCell?)
+              : null,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<HabitSummaryViewModel, Tuple2<bool, bool>>(
+        selector: (context, viewmodel) =>
+            Tuple2(viewmodel.isAppbarPinned, viewmodel.isInEditMode),
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => _buildFAB(context,
+            isAppbarPinned: value.item1, isInEditMode: value.item2),
+      );
 }
