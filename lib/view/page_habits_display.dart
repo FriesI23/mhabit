@@ -15,6 +15,7 @@
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -45,6 +46,7 @@ import '../provider/app_developer.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_detail.dart';
 import '../provider/habit_op_config.dart';
+import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_filter.dart';
@@ -59,6 +61,7 @@ import 'for_habits_display/_widget.dart';
 import 'page_app_setting.dart' as app_setting_view;
 import 'page_habit_detail.dart' as habit_detail_view;
 import 'page_habit_edit.dart' as habit_edit_view;
+import 'page_habits_status_changer.dart' as habits_status_changer_view;
 
 const _kCommonEvalation = 2.0;
 
@@ -450,19 +453,12 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   Future<void> _onFABPressed(VoidCallback action) async {
     if (!mounted) return;
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    if (viewmodel.isInEditMode) {
-      context.read<HabitSummaryViewModel>().exitEditMode();
-      await Future.delayed(_kPressFABAnimateDuration);
-    }
-
-    if (!mounted) return;
     Navigator.of(context).popUntil((route) => route.isFirst);
     action();
   }
 
-  void _onCreateNewHabitPageClosed(HabitDBCell? result) {
-    if (result == null || !mounted) return;
+  void _onCreateNewHabitPageClosed(HabitDBCell result) {
+    if (!mounted) return;
     _onNewHabitCreated(result);
   }
 
@@ -474,6 +470,18 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final habit = HabitSummaryData.fromDBQueryCell(result);
     final addResult = viewmodel.addNewData(habit);
     if (addResult) viewmodel.rockReloadUIToggleSwitch();
+  }
+
+  void _onHabitsStatusChangerDialogClosed(int changedCount) async {
+    if (!mounted || changedCount <= 0) return;
+    final viewmodel = context.read<HabitSummaryViewModel>();
+    if (!viewmodel.mounted) return;
+    if (viewmodel.isInEditMode) {
+      context.read<HabitSummaryViewModel>().exitEditMode();
+      await Future.delayed(_kPressFABAnimateDuration);
+    }
+    if (!mounted) return;
+    viewmodel.rockreloadDBToggleSwich();
   }
 
   Future<bool> _enterHabitEditPage({
@@ -1054,8 +1062,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     //#region: fab
     Widget buildFAB(BuildContext context) {
       return _FAB(
-        normalOnPressed: _onFABPressed,
-        normalOnClosed: _onCreateNewHabitPageClosed,
+        onPressed: _onFABPressed,
+        onClosed: _onCreateNewHabitPageClosed,
+        editModeOnPressed: _onFABPressed,
+        editModeOnClosed: (data) =>
+            _onHabitsStatusChangerDialogClosed(data.changedCount),
       );
     }
     //#endregion
@@ -1103,7 +1114,6 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
     //#endregion
 
-    final viewmodel = context.read<HabitSummaryViewModel>();
     return ColorfulNavibar(
       child: WillPopScope(
         onWillPop: onWillPop,
@@ -1112,6 +1122,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
             selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
             builder: (context, value, child) => RefreshIndicator(
+              notificationPredicate: (notification) {
+                final context = notification.context;
+                if (context == null) {
+                  return defaultScrollNotificationPredicate(notification);
+                }
+                if (context.read<HabitSummaryViewModel>().isInEditMode) {
+                  return false;
+                }
+                return defaultScrollNotificationPredicate(notification);
+              },
               onRefresh: _onRefreshIndicatorTriggered,
               edgeOffset: kToolbarHeight +
                   value.item2 +
@@ -1123,7 +1143,9 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                   CustomScrollView(
                     physics: const ClampingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
-                    controller: viewmodel.verticalScrollController,
+                    controller: context
+                        .read<HabitSummaryViewModel>()
+                        .verticalScrollController,
                     slivers: [
                       buildAppbar(context),
                       const HabitDivider(withSliver: true, height: 1),
@@ -1237,16 +1259,16 @@ class _HabitRecordListTile extends StatelessWidget {
 }
 
 class _FAB extends StatelessWidget {
-  final void Function(VoidCallback action)? normalOnPressed;
-  final ClosedCallback<HabitDBCell?>? normalOnClosed;
-  final void Function(VoidCallback action)? editOnPressed;
-  final ClosedCallback<int?>? editOnClosed;
+  final void Function(VoidCallback action)? onPressed;
+  final ClosedCallback<HabitDBCell>? onClosed;
+  final void Function(VoidCallback action)? editModeOnPressed;
+  final ClosedCallback<PageHabitsStatusChangerResult>? editModeOnClosed;
 
   const _FAB({
-    this.normalOnPressed,
-    this.normalOnClosed,
-    this.editOnPressed,
-    this.editOnClosed,
+    this.onPressed,
+    this.onClosed,
+    this.editModeOnPressed,
+    this.editModeOnClosed,
   });
 
   Widget _buildFAB(BuildContext context,
@@ -1269,33 +1291,44 @@ class _FAB extends StatelessWidget {
             isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
         duration: _kFABModeChangeDuration);
 
+    final dl = context
+        .read<HabitSummaryViewModel>()
+        .getSelectedHabitsData()
+        .whereNotNull()
+        .toList();
     return HabitDisplayFAB<Object?>(
       closeBuilder: (context, action) {
         return ScrollingFAB.small(
           onPressed: () =>
-              (isInEditMode ? editOnPressed : normalOnPressed)?.call(action),
+              (isInEditMode ? editModeOnPressed : onPressed)?.call(action),
           label: labelBuilder(context),
           icon: iconBuidler(context),
           isExtended: isInEditMode ? true : isAppbarPinned,
         );
       },
-      openBuilder: (context, action) =>
-          const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
-      onClosed: isInEditMode
-          ? editOnClosed != null
-              ? (data) => editOnClosed!(data as int?)
-              : null
-          : normalOnClosed != null
-              ? (data) => normalOnClosed!(data as HabitDBCell?)
-              : null,
+      openBuilder: (context, action) => isInEditMode
+          ? habits_status_changer_view.PageHabitsStatusChanger(dataList: dl)
+          : const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
+      onClosed: (data) {
+        switch (data) {
+          case HabitDBCell():
+            return onClosed?.call(data);
+          case PageHabitsStatusChangerResult():
+            return editModeOnClosed?.call(data);
+          case null:
+            return;
+          default:
+            throw FlutterError("unhandled container close type, $data");
+        }
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) =>
-      Selector<HabitSummaryViewModel, Tuple2<bool, bool>>(
-        selector: (context, viewmodel) =>
-            Tuple2(viewmodel.isAppbarPinned, viewmodel.isInEditMode),
+      Selector<HabitSummaryViewModel, Tuple3<bool, bool, int>>(
+        selector: (context, viewmodel) => Tuple3(viewmodel.isAppbarPinned,
+            viewmodel.isInEditMode, viewmodel.selectedHabitsCount),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => _buildFAB(context,
             isAppbarPinned: value.item1, isInEditMode: value.item2),
