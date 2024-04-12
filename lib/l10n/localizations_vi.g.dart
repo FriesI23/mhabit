@@ -31,7 +31,7 @@ class L10nVi extends L10n {
   String get habitEdit_habitType_negativeText => 'Tiêu cực';
 
   @override
-  String habitEdit_habitDailyGoal_hintText(Object number) {
+  String habitEdit_habitDailyGoal_hintText(num number) {
     return 'Mục tiêu hàng ngày, mặc định $number';
   }
 

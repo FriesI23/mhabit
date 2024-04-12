@@ -31,7 +31,7 @@ class L10nFa extends L10n {
   String get habitEdit_habitType_negativeText => 'منفی';
 
   @override
-  String habitEdit_habitDailyGoal_hintText(Object number) {
+  String habitEdit_habitDailyGoal_hintText(num number) {
     return 'هدف روزانه ، پیش‌فرض $number';
   }
 

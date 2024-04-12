@@ -151,11 +151,11 @@ abstract class L10n {
   /// **'Negative'**
   String get habitEdit_habitType_negativeText;
 
-  /// No description provided for @habitEdit_habitDailyGoal_hintText.
+  /// default habit daily goal
   ///
   /// In en, this message translates to:
   /// **'Daily goal, default {number}'**
-  String habitEdit_habitDailyGoal_hintText(Object number);
+  String habitEdit_habitDailyGoal_hintText(num number);
 
   /// default habit daily goal for negative habit
   ///

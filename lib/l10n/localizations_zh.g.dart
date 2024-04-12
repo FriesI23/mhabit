@@ -31,7 +31,7 @@ class L10nZh extends L10n {
   String get habitEdit_habitType_negativeText => '消极';
 
   @override
-  String habitEdit_habitDailyGoal_hintText(Object number) {
+  String habitEdit_habitDailyGoal_hintText(num number) {
     return '每日目标, 默认为$number';
   }
 

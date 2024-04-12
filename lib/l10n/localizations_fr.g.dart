@@ -31,7 +31,7 @@ class L10nFr extends L10n {
   String get habitEdit_habitType_negativeText => 'Négative';
 
   @override
-  String habitEdit_habitDailyGoal_hintText(Object number) {
+  String habitEdit_habitDailyGoal_hintText(num number) {
     return 'Objectif journalier, par défaut à $number';
   }
 
