@@ -13,10 +13,14 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
+import '../model/habit_date.dart';
 import '../model/habit_summary.dart';
 import '../provider/habit_status_changer.dart';
-import 'for_habits_status_changer/page_providers.dart';
+import '../utils/safe_sliver_tools.dart';
+import 'for_habits_status_changer/_widget.dart';
 
 class PageHabitsStatusChanger extends StatelessWidget {
   final List<HabitSummaryData> dataList;
@@ -37,14 +41,59 @@ class HabitsStatusChangerView extends StatefulWidget {
   State<StatefulWidget> createState() => _HabitsStatusChangerView();
 }
 
+Widget _buildDebugInfo(BuildContext context) =>
+    Consumer<HabitStatusChangerViewModel>(
+      builder: (context, value, child) => ListTile(
+        leading: Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+        isThreeLine: true,
+        title: const Text('DEBUG'),
+        subtitle: Column(
+          children: [
+            Text(context.read<HabitStatusChangerViewModel>().toString()),
+          ],
+        ),
+      ),
+    );
+
 class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
+  void _onSelectedDateChanged(HabitDate od, HabitDate nd) {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    vm.updateSelectDate(nd);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Placeholder(
-      child: IconButton(
-        icon: Icon(Icons.abc_outlined),
-        onPressed: () => Navigator.of(context)
-            .pop(PageHabitsStatusChangerResult.fromNum(10)),
+    Widget buildDatePickerTile(BuildContext context) {
+      final vm = context.read<HabitStatusChangerViewModel>();
+      return DatePickerTile(
+        initDate: vm.selectDate,
+        firstDate: vm.earlistStartDate,
+        onSelectDateChanged: _onSelectedDateChanged,
+      );
+    }
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            title: Text("text"),
+            pinned: true,
+          ),
+          SafedMultiSliver(
+            pushPinnedChildren: false,
+            children: [
+              SliverPinnedHeader(child: buildDatePickerTile(context)),
+            ],
+          ),
+          SafedSliverList(
+            children: [
+              Placeholder(fallbackHeight: 1000),
+              _buildDebugInfo(context),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -12,4 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './date_picker_tile.dart' show DatePickerTile;
 export './page_providers.dart';

@@ -23,6 +23,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
+import '../extension/datetime_extensions.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';
 import 'consts.dart';
@@ -220,4 +221,10 @@ LogLevel getDefaultLogLevel() {
   } else {
     return LogLevel.debug;
   }
+}
+
+T stampDateTime<T extends DateTime>(T t, {required T max, required T min}) {
+  t = t > max ? max : t;
+  t = t < min ? min : t;
+  return t;
 }
