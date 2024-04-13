@@ -54,6 +54,12 @@ class _DatePickerTileState extends State<DatePickerTile> {
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(covariant DatePickerTile oldWidget) {
+    _selectDate = widget.initDate;
+    super.didUpdateWidget(oldWidget);
+  }
+
   void _updateSelectedDate(HabitDate newDate) {
     final nd = stampDateTime(newDate, min: firstDate, max: lastDate);
     final od = _selectDate;

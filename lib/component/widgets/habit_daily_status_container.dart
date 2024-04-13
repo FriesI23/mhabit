@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
@@ -68,7 +69,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withAutoMarkStatus() {
       return Icon(
-        Icons.done_outline,
+        kRecordDoneStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.autoMark ??
             globalColor?.autoMark ??
             defaultColor.autoMark,
@@ -77,7 +78,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withUnknownStatus() {
       return Icon(
-        Icons.question_mark_outlined,
+        kRecordUnknownStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.unknown ??
             globalColor?.unknown ??
             defaultColor.unknown,
@@ -86,7 +87,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withSkipStatus() {
       return Icon(
-        Icons.remove_outlined,
+        kRecordSkipStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.skip ??
             globalColor?.skip ??
             defaultColor.skip,
@@ -95,7 +96,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withDoneAndOkStatus() {
       return Icon(
-        Icons.check_outlined,
+        kRecordDoneStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.doneAndOk ??
             globalColor?.doneAndOk ??
             defaultColor.doneAndOk,
@@ -104,7 +105,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withDoneAndZeroStatus() {
       return Icon(
-        Icons.close_sharp,
+        kRecordZeroStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.doneAndZero ??
             globalColor?.doneAndZero ??
             defaultColor.doneAndZero,

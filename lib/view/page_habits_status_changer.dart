@@ -22,6 +22,10 @@ import '../provider/habit_status_changer.dart';
 import '../utils/safe_sliver_tools.dart';
 import 'for_habits_status_changer/_widget.dart';
 
+/// Depend Providers
+/// - Required for builder:
+/// - Required for callback:
+/// - Optional:
 class PageHabitsStatusChanger extends StatelessWidget {
   final List<HabitSummaryData> dataList;
 
@@ -50,6 +54,10 @@ Widget _buildDebugInfo(BuildContext context) =>
         subtitle: Column(
           children: [
             Text(context.read<HabitStatusChangerViewModel>().toString()),
+            Text(context
+                .read<HabitStatusChangerViewModel>()
+                .selectDateAllowedStatus
+                .toString()),
           ],
         ),
       ),
@@ -63,6 +71,14 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     vm.updateSelectDate(nd);
   }
 
+  void _onSelectedStatusChanged(
+      RecordStatusChangerStatus? od, RecordStatusChangerStatus? nd) {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    vm.updateSelectStatus(nd);
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buildDatePickerTile(BuildContext context) {
@@ -73,6 +89,20 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         onSelectDateChanged: _onSelectedDateChanged,
       );
     }
+
+    Widget buildStatusChangeTile(BuildContext context) =>
+        Selector<HabitStatusChangerViewModel, HabitDate>(
+          selector: (context, vm) => vm.selectDate,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, _, child) {
+            final vm = context.read<HabitStatusChangerViewModel>();
+            return RecordStatusChangeTile(
+              initStatus: vm.selectStatus,
+              allowedStatus: vm.selectDateAllowedStatus,
+              onSelectedNewStatus: _onSelectedStatusChanged,
+            );
+          },
+        );
 
     return Scaffold(
       body: CustomScrollView(
@@ -85,6 +115,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
             pushPinnedChildren: false,
             children: [
               SliverPinnedHeader(child: buildDatePickerTile(context)),
+              SliverPinnedHeader(child: buildStatusChangeTile(context)),
             ],
           ),
           SafedSliverList(

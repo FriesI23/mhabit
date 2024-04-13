@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../model/habit_date.dart';
+import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
 import 'commons.dart';
 
@@ -26,6 +27,26 @@ abstract interface class PageHabitsStatusChangerResult {
 
   factory PageHabitsStatusChangerResult.fromNum(int num) =>
       PageHabitsStatusChangerNumberResult(num);
+}
+
+enum RecordStatusChangerStatus {
+  skip,
+  ok,
+  goodjob,
+  zero; // only for normal habit
+
+  static const normalStatus = {
+    RecordStatusChangerStatus.skip,
+    RecordStatusChangerStatus.ok,
+    RecordStatusChangerStatus.goodjob,
+    RecordStatusChangerStatus.zero,
+  };
+
+  static const negativeStatus = {
+    RecordStatusChangerStatus.skip,
+    RecordStatusChangerStatus.ok,
+    RecordStatusChangerStatus.goodjob,
+  };
 }
 
 final class PageHabitsStatusChangerNumberResult
@@ -42,6 +63,7 @@ class HabitStatusChangerViewModel
     implements ProviderMounted {
   HabitSummaryDataCollection _dataColl = HabitSummaryDataCollection();
   HabitDate _selectDate = HabitDate.now();
+  RecordStatusChangerStatus? _selectStatus;
   bool _mounted = true;
 
   HabitStatusChangerViewModel({List<HabitSummaryData>? dataList}) {
@@ -63,7 +85,41 @@ class HabitStatusChangerViewModel
   void updateSelectDate(HabitDate newDate, {bool listen = true}) {
     if (newDate.isAfter(HabitDate.now())) return;
     _selectDate = newDate;
+    _clearSelectedStatus();
     if (listen) notifyListeners();
+  }
+
+  RecordStatusChangerStatus? get selectStatus => _selectStatus;
+
+  Set<RecordStatusChangerStatus> get selectDateAllowedStatus {
+    Set<RecordStatusChangerStatus> statusColl =
+        Set.from(RecordStatusChangerStatus.values);
+    _dataColl.forEach((k, data) {
+      switch (data.type) {
+        case HabitType.unknown:
+          return;
+        case HabitType.normal:
+          statusColl =
+              statusColl.intersection(RecordStatusChangerStatus.normalStatus);
+          break;
+        case HabitType.negative:
+          statusColl =
+              statusColl.intersection(RecordStatusChangerStatus.negativeStatus);
+          break;
+      }
+    });
+    return statusColl;
+  }
+
+  void updateSelectStatus(RecordStatusChangerStatus? newStatus,
+      {bool listen = true}) {
+    if (newStatus == _selectStatus) return;
+    _selectStatus = newStatus;
+    if (listen) notifyListeners();
+  }
+
+  void _clearSelectedStatus() {
+    _selectStatus = null;
   }
 
   void updateDataColl(List<HabitSummaryData> dataList,
@@ -86,5 +142,6 @@ class HabitStatusChangerViewModel
   }
 
   @override
-  String toString() => "$runtimeType($_dataColl,select=$_selectDate)";
+  String toString() =>
+      "$runtimeType(select=$_selectDate|$_selectStatus,data=$_dataColl)";
 }

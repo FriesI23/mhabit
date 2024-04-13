@@ -14,3 +14,4 @@
 
 export './date_picker_tile.dart' show DatePickerTile;
 export './page_providers.dart';
+export './record_status_change_tile.dart' show RecordStatusChangeTile;
