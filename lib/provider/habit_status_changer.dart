@@ -65,9 +65,9 @@ class HabitStatusChangerViewModel
     with ChangeNotifier
     implements ProviderMounted {
   // data
-  HabitSummaryDataCollection _dataColl = HabitSummaryDataCollection();
+  HabitSummaryDataCollection _data = HabitSummaryDataCollection();
+  late HabitsDataDelagate _dataDelate;
   late HabitStatusChangerForm _form;
-  // status
   // controller
   late final ScrollController mainScrollController;
   // inside status
@@ -83,6 +83,7 @@ class HabitStatusChangerViewModel
     _form = HabitStatusChangerForm(
         selectDate: HabitDate.now(),
         skipInputController: TextEditingController());
+    _dataDelate = HabitsDataDelagate(this);
     if (dataList != null && dataList.isNotEmpty) {
       updateDataColl(dataList, listen: false);
     }
@@ -90,13 +91,15 @@ class HabitStatusChangerViewModel
 
   TextEditingController get skipInputController => _form.skipInputController;
 
+  HabitsDataDelagate get dataDelegate => _dataDelate;
+
   HabitDate get selectDate => _form.selectDate;
 
   HabitDate get earlistStartDate {
     var startDate = selectDate;
-    _dataColl.forEach((k, v) {
-      if (v.startDate.isBefore(startDate)) startDate = v.startDate;
-    });
+    for (var d in _data.values) {
+      if (d.startDate.isBefore(startDate)) startDate = d.startDate;
+    }
     return startDate;
   }
 
@@ -111,10 +114,8 @@ class HabitStatusChangerViewModel
   Set<RecordStatusChangerStatus> get selectDateAllowedStatus {
     Set<RecordStatusChangerStatus> statusColl =
         Set.from(RecordStatusChangerStatus.values);
-    _dataColl.forEach((k, data) {
-      switch (data.type) {
-        case HabitType.unknown:
-          return;
+    for (var d in _data.values) {
+      switch (d.type) {
         case HabitType.normal:
           statusColl =
               statusColl.intersection(RecordStatusChangerStatus.normalStatus);
@@ -123,8 +124,10 @@ class HabitStatusChangerViewModel
           statusColl =
               statusColl.intersection(RecordStatusChangerStatus.negativeStatus);
           break;
+        case HabitType.unknown:
+          continue;
       }
-    });
+    }
     return statusColl;
   }
 
@@ -146,11 +149,11 @@ class HabitStatusChangerViewModel
 
   void updateDataColl(List<HabitSummaryData> dataList,
       {bool needClear = false, bool listen = true}) {
-    final newDataColl = needClear ? HabitSummaryDataCollection() : _dataColl;
-    for (var data in dataList) {
-      newDataColl.addNewHabit(data);
-    }
-    _dataColl = newDataColl;
+    _data = needClear ? HabitSummaryDataCollection() : _data;
+    _dataDelate.updateData(dataList, listen: listen);
+  }
+
+  void _onUpdateDataColl({required bool listen}) {
     if (listen) notifyListeners();
   }
 
@@ -164,7 +167,7 @@ class HabitStatusChangerViewModel
   }
 
   @override
-  String toString() => "$runtimeType(form=$_form,data=$_dataColl)";
+  String toString() => "$runtimeType(form=$_form,data=$_dataDelate)";
 }
 
 @CopyWith(skipFields: true)
@@ -191,4 +194,38 @@ final class HabitStatusChangerForm {
   String toString() =>
       "HabitStatusChangerForm(date=$selectDate,status=$selectStatus,"
       "skipInputController=$skipInputController)";
+}
+
+final class HabitsDataDelagate {
+  final HabitStatusChangerViewModel _vm;
+  UniqueKey _updateFlag;
+
+  HabitsDataDelagate(HabitStatusChangerViewModel vm)
+      : _vm = vm,
+        _updateFlag = UniqueKey();
+
+  Iterable<HabitSummaryData> get habits => _vm._data.values;
+
+  void _reUpdateFlag() => _updateFlag = UniqueKey();
+
+  void updateData(List<HabitSummaryData> dataList, {bool listen = false}) {
+    for (var data in dataList) {
+      _vm._data.addNewHabit(data, forceAdd: true);
+    }
+    _reUpdateFlag();
+    _vm._onUpdateDataColl(listen: listen);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! HabitsDataDelagate) return false;
+    return _updateFlag == other._updateFlag;
+  }
+
+  @override
+  int get hashCode => _updateFlag.hashCode;
+
+  @override
+  String toString() =>
+      "HabitsDataDelagate(upflag=$_updateFlag,data=${_vm._data})";
 }

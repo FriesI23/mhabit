@@ -550,6 +550,13 @@ class HabitSummaryDataCollection {
 
   int get length => _dataMap.length;
 
+  Iterable<HabitUUID> get keys => _dataMap.keys;
+
+  Iterable<HabitSummaryData> get values => _dataMap.values;
+
+  Iterable<MapEntry<HabitUUID, HabitSummaryData>> get entries =>
+      _dataMap.entries;
+
   void forEach(Function(HabitUUID k, HabitSummaryData v) action) {
     _dataMap.forEach(action);
   }

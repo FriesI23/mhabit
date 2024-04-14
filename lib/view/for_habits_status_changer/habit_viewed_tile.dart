@@ -12,9 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './confirm_button.dart' show ConfirmButton;
-export './date_picker_tile.dart' show DatePickerTile;
-export './habit_viewed_tile.dart' show HabitSpecialDateViewedTile;
-export './page_providers.dart';
-export './record_status_change_tile.dart' show RecordStatusChangeTile;
-export './record_status_skip_reason_tile.dart' show RecordStatusSkipReasonTile;
+import 'package:flutter/material.dart';
+
+import '../../model/habit_date.dart';
+import '../../model/habit_summary.dart';
+import '../common/_widget.dart';
+
+class HabitSpecialDateViewedTile extends StatelessWidget {
+  final HabitSummaryData data;
+  final HabitDate date;
+
+  const HabitSpecialDateViewedTile({
+    super.key,
+    required this.data,
+    required this.date,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return HabitSummaryListTile(
+      data: data,
+      startDate: date,
+      endDate: date,
+      collapsePrt: 0,
+      isExtended: false,
+    );
+  }
+}

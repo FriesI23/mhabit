@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:tuple/tuple.dart';
 
 import '../component/widget.dart';
 import '../model/habit_date.dart';
@@ -135,6 +136,13 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       );
     }
 
+    Widget buildDivider(BuildContext context) => Builder(
+          builder: (context) => ColoredBox(
+            color: Theme.of(context).colorScheme.background,
+            child: const Divider(height: 1),
+          ),
+        );
+
     final vm = context.read<HabitStatusChangerViewModel>();
     return Scaffold(
       body: CustomScrollView(
@@ -153,7 +161,10 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
               SliverPinnedHeader(child: buildConfirmButton(context)),
             ],
           ),
-          SafedSliverList(
+          SliverPinnedHeader(child: buildDivider(context)),
+          _HabitListList(),
+          SafedMultiSliver(
+            pushPinnedChildren: false,
             children: [
               _buildDebugInfo(context),
               Placeholder(fallbackHeight: 1000),
@@ -161,6 +172,26 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _HabitListList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Selector<HabitStatusChangerViewModel,
+        Tuple2<HabitsDataDelagate, HabitDate>>(
+      selector: (context, vm) => Tuple2(vm.dataDelegate, vm.selectDate),
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, value, child) {
+        final data = value.item1;
+        final selectDate = value.item2;
+        return SafedSliverList(
+          children: data.habits
+              .map((e) => HabitSpecialDateViewedTile(data: e, date: selectDate))
+              .toList(),
+        );
+      },
     );
   }
 }

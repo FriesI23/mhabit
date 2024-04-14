@@ -25,7 +25,7 @@ import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
-import 'sliver_calendar_bar.dart';
+import '../for_habits_display/sliver_calendar_bar.dart';
 
 const kDefaultHabitSummaryListTileHeight = 64.0;
 const kMaxHabitSummaryListTileTextScale = 1.3;
