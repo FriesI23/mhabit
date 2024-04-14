@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../model/habit_date.dart';
 import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
 import 'commons.dart';
+
+part 'habit_status_changer.g.dart';
 
 abstract interface class PageHabitsStatusChangerResult {
   int get changedCount;
@@ -63,12 +66,10 @@ class HabitStatusChangerViewModel
     implements ProviderMounted {
   // data
   HabitSummaryDataCollection _dataColl = HabitSummaryDataCollection();
+  late HabitStatusChangerForm _form;
   // status
-  HabitDate _selectDate = HabitDate.now();
-  RecordStatusChangerStatus? _selectStatus;
   // controller
   late final ScrollController mainScrollController;
-  final TextEditingController skipInputController = TextEditingController();
   // inside status
   bool _mounted = true;
 
@@ -79,15 +80,20 @@ class HabitStatusChangerViewModel
       {ScrollController? mainScrollController,
       List<HabitSummaryData>? dataList}) {
     this.mainScrollController = mainScrollController ?? ScrollController();
+    _form = HabitStatusChangerForm(
+        selectDate: HabitDate.now(),
+        skipInputController: TextEditingController());
     if (dataList != null && dataList.isNotEmpty) {
       updateDataColl(dataList, listen: false);
     }
   }
 
-  HabitDate get selectDate => _selectDate;
+  TextEditingController get skipInputController => _form.skipInputController;
+
+  HabitDate get selectDate => _form.selectDate;
 
   HabitDate get earlistStartDate {
-    var startDate = _selectDate;
+    var startDate = selectDate;
     _dataColl.forEach((k, v) {
       if (v.startDate.isBefore(startDate)) startDate = v.startDate;
     });
@@ -96,13 +102,11 @@ class HabitStatusChangerViewModel
 
   void updateSelectDate(HabitDate newDate, {bool listen = true}) {
     if (newDate.isAfter(HabitDate.now())) return;
-    _selectDate = newDate;
-    skipInputController.clear();
-    _clearSelectedStatus();
+    _form = _form.toNewDate(newDate);
     if (listen) notifyListeners();
   }
 
-  RecordStatusChangerStatus? get selectStatus => _selectStatus;
+  RecordStatusChangerStatus? get selectStatus => _form.selectStatus;
 
   Set<RecordStatusChangerStatus> get selectDateAllowedStatus {
     Set<RecordStatusChangerStatus> statusColl =
@@ -126,17 +130,18 @@ class HabitStatusChangerViewModel
 
   void updateSelectStatus(RecordStatusChangerStatus? newStatus,
       {bool listen = true}) {
-    if (newStatus == _selectStatus) return;
-    _selectStatus = newStatus;
-    if (_selectStatus == RecordStatusChangerStatus.skip) {
+    if (newStatus == selectStatus) return;
+    _form = _form.copyWith(selectStatus: newStatus);
+    if (selectStatus == RecordStatusChangerStatus.skip) {
       mainScrollController.animateTo(0,
           duration: mainScrollAnimatedDuration, curve: mainScrollAnimatedCurve);
     }
     if (listen) notifyListeners();
   }
 
-  void _clearSelectedStatus() {
-    updateSelectStatus(null);
+  void resetStatusForm({bool listen = true}) {
+    _form = _form.toDefault();
+    if (listen) notifyListeners();
   }
 
   void updateDataColl(List<HabitSummaryData> dataList,
@@ -159,6 +164,31 @@ class HabitStatusChangerViewModel
   }
 
   @override
+  String toString() => "$runtimeType(form=$_form,data=$_dataColl)";
+}
+
+@CopyWith(skipFields: true)
+final class HabitStatusChangerForm {
+  final HabitDate selectDate;
+  final RecordStatusChangerStatus? selectStatus;
+  final TextEditingController skipInputController;
+
+  const HabitStatusChangerForm({
+    required this.selectDate,
+    this.selectStatus,
+    required this.skipInputController,
+  });
+
+  HabitStatusChangerForm toNewDate(HabitDate newDate) => copyWith(
+      selectDate: newDate,
+      selectStatus: null,
+      skipInputController: skipInputController..clear());
+
+  HabitStatusChangerForm toDefault() => copyWith(
+      selectStatus: null, skipInputController: skipInputController..clear());
+
+  @override
   String toString() =>
-      "$runtimeType(select=$_selectDate|$_selectStatus,data=$_dataColl)";
+      "HabitStatusChangerForm(date=$selectDate,status=$selectStatus,"
+      "skipInputController=$skipInputController)";
 }

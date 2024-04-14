@@ -80,6 +80,13 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     vm.updateSelectStatus(nd);
   }
 
+  void _onResetButtonPressed() {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    vm.resetStatusForm();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buildDatePickerTile(BuildContext context) {
@@ -92,8 +99,8 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     }
 
     Widget buildStatusChangeTile(BuildContext context) =>
-        Selector<HabitStatusChangerViewModel, HabitDate>(
-          selector: (context, vm) => vm.selectDate,
+        Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
+          selector: (context, vm) => vm.selectStatus,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, _, child) {
             final vm = context.read<HabitStatusChangerViewModel>();
@@ -122,6 +129,12 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       );
     }
 
+    Widget buildConfirmButton(BuildContext context) {
+      return ConfirmButton(
+        onResetPressed: _onResetButtonPressed,
+      );
+    }
+
     final vm = context.read<HabitStatusChangerViewModel>();
     return Scaffold(
       body: CustomScrollView(
@@ -137,12 +150,13 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
               SliverPinnedHeader(child: buildDatePickerTile(context)),
               SliverPinnedHeader(child: buildStatusChangeTile(context)),
               buildSkipStatusReasonField(context),
+              SliverPinnedHeader(child: buildConfirmButton(context)),
             ],
           ),
           SafedSliverList(
             children: [
-              Placeholder(fallbackHeight: 1000),
               _buildDebugInfo(context),
+              Placeholder(fallbackHeight: 1000),
             ],
           ),
         ],
