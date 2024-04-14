@@ -20,7 +20,8 @@ export './exporter_confirm_dialog.dart'
         ExporterConfirmResultType,
         showExporterConfirmDialog;
 export './habit_record_number_picker.dart';
-export './habit_record_reason_modifier.dart';
+export './habit_record_reason_modifier.dart'
+    show HabitRecordReasonModifierDialog, showHabitRecordReasonModifierDialog;
 export './notification_activated.dart'
     show NotificationActivatedDialog, showNotificationActivatedDialog;
 export './notification_pending_requests.dart'

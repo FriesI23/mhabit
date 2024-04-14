@@ -61,12 +61,24 @@ final class PageHabitsStatusChangerNumberResult
 class HabitStatusChangerViewModel
     with ChangeNotifier
     implements ProviderMounted {
+  // data
   HabitSummaryDataCollection _dataColl = HabitSummaryDataCollection();
+  // status
   HabitDate _selectDate = HabitDate.now();
   RecordStatusChangerStatus? _selectStatus;
+  // controller
+  late final ScrollController mainScrollController;
+  final TextEditingController skipInputController = TextEditingController();
+  // inside status
   bool _mounted = true;
 
-  HabitStatusChangerViewModel({List<HabitSummaryData>? dataList}) {
+  Duration get mainScrollAnimatedDuration => const Duration(milliseconds: 300);
+  Curve get mainScrollAnimatedCurve => Curves.fastOutSlowIn;
+
+  HabitStatusChangerViewModel(
+      {ScrollController? mainScrollController,
+      List<HabitSummaryData>? dataList}) {
+    this.mainScrollController = mainScrollController ?? ScrollController();
     if (dataList != null && dataList.isNotEmpty) {
       updateDataColl(dataList, listen: false);
     }
@@ -85,6 +97,7 @@ class HabitStatusChangerViewModel
   void updateSelectDate(HabitDate newDate, {bool listen = true}) {
     if (newDate.isAfter(HabitDate.now())) return;
     _selectDate = newDate;
+    skipInputController.clear();
     _clearSelectedStatus();
     if (listen) notifyListeners();
   }
@@ -115,11 +128,15 @@ class HabitStatusChangerViewModel
       {bool listen = true}) {
     if (newStatus == _selectStatus) return;
     _selectStatus = newStatus;
+    if (_selectStatus == RecordStatusChangerStatus.skip) {
+      mainScrollController.animateTo(0,
+          duration: mainScrollAnimatedDuration, curve: mainScrollAnimatedCurve);
+    }
     if (listen) notifyListeners();
   }
 
   void _clearSelectedStatus() {
-    _selectStatus = null;
+    updateSelectStatus(null);
   }
 
   void updateDataColl(List<HabitSummaryData> dataList,

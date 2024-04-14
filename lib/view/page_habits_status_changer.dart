@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../component/widget.dart';
 import '../model/habit_date.dart';
 import '../model/habit_summary.dart';
 import '../provider/habit_status_changer.dart';
@@ -104,8 +105,27 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
           },
         );
 
+    Widget buildSkipStatusReasonField(BuildContext context) {
+      return Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
+        selector: (context, vm) => vm.selectStatus,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, selectStatus, child) {
+          final vm = context.read<HabitStatusChangerViewModel>();
+          return ExpandedSection(
+            duration: vm.mainScrollAnimatedDuration,
+            curve: vm.mainScrollAnimatedCurve,
+            expand: selectStatus == RecordStatusChangerStatus.skip,
+            child: RecordStatusSkipReasonTile(
+                inputController: vm.skipInputController),
+          );
+        },
+      );
+    }
+
+    final vm = context.read<HabitStatusChangerViewModel>();
     return Scaffold(
       body: CustomScrollView(
+        controller: vm.mainScrollController,
         slivers: [
           SliverAppBar(
             title: Text("text"),
@@ -116,6 +136,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
             children: [
               SliverPinnedHeader(child: buildDatePickerTile(context)),
               SliverPinnedHeader(child: buildStatusChangeTile(context)),
+              buildSkipStatusReasonField(context),
             ],
           ),
           SafedSliverList(

@@ -79,29 +79,7 @@ class _HabitRecordReasonModifierDialog
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final colorScheme = themeData.colorScheme;
-    final textTheme = themeData.textTheme;
     final l10n = L10n.of(context);
-
-    Widget buildEmojiChip(String emoji) {
-      return ActionChip(
-        iconTheme: IconThemeData(color: colorScheme.primary),
-        label: Text(emoji),
-        onPressed: () {
-          var cursorPosition = _inputController.selection.baseOffset;
-          if (cursorPosition < 0) {
-            cursorPosition = _inputController.text.length;
-          }
-          final oldText = _inputController.text;
-          final newText =
-              oldText.replaceRange(cursorPosition, cursorPosition, emoji);
-          _inputController.text = newText;
-          _inputController.selection = TextSelection.fromPosition(
-              TextPosition(offset: cursorPosition + emoji.length));
-        },
-      );
-    }
 
     return LayoutBuilder(builder: (context, constraints) {
       return AlertDialog(
@@ -115,28 +93,12 @@ class _HabitRecordReasonModifierDialog
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ChipList(
-              height: 56,
-              width: math.min(constraints.maxWidth, dialogMaxWidth),
-              padding: EdgeInsets.zero,
-              children: widget.chipTextList.map(buildEmojiChip).toList(),
-            ),
-            TextField(
-              controller: _inputController,
-              maxLength: maxRecordReasonTextLenth,
-              decoration: InputDecoration(
-                hintText: l10n?.habitDetail_skipReason_bodyHelpText ??
-                    "Write something here...",
-                hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
-                helperText: widget.recordDate != null
-                    ? DateFormat.yMMMd(l10n?.localeName)
-                        .format(widget.recordDate!)
-                    : null,
-              ),
-              keyboardType: TextInputType.text,
-              style: textTheme.bodyLarge,
-              minLines: 1,
-              maxLines: 4,
+            HabitRecordReasonField(
+              chipHeight: 56,
+              chipWidth: math.min(constraints.maxWidth, dialogMaxWidth),
+              recordDate: widget.recordDate,
+              chipTextList: widget.chipTextList,
+              inputController: _inputController,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 24, bottom: 12),
@@ -166,5 +128,76 @@ class _HabitRecordReasonModifierDialog
         ),
       );
     });
+  }
+}
+
+class HabitRecordReasonField extends StatelessWidget {
+  final double? chipHeight;
+  final double? chipWidth;
+  final HabitDate? recordDate;
+  final List<String> chipTextList;
+  final TextEditingController inputController;
+
+  const HabitRecordReasonField({
+    super.key,
+    this.chipHeight,
+    this.chipWidth,
+    this.recordDate,
+    this.chipTextList = const [],
+    required this.inputController,
+  });
+
+  Widget _buildEmojiChip(BuildContext context, String emoji) {
+    final themeData = Theme.of(context);
+    return ActionChip(
+      iconTheme: IconThemeData(color: themeData.colorScheme.primary),
+      label: Text(emoji),
+      onPressed: () {
+        var cursorPosition = inputController.selection.baseOffset;
+        if (cursorPosition < 0) {
+          cursorPosition = inputController.text.length;
+        }
+        final oldText = inputController.text;
+        final newText =
+            oldText.replaceRange(cursorPosition, cursorPosition, emoji);
+        inputController.text = newText;
+        inputController.selection = TextSelection.fromPosition(
+            TextPosition(offset: cursorPosition + emoji.length));
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final themeData = Theme.of(context);
+    Widget emojiChipBuilder(e) => _buildEmojiChip(context, e);
+
+    return Column(
+      children: [
+        ChipList(
+          height: chipHeight,
+          width: chipWidth,
+          padding: EdgeInsets.zero,
+          children: chipTextList.map(emojiChipBuilder).toList(),
+        ),
+        TextField(
+          controller: inputController,
+          maxLength: maxRecordReasonTextLenth,
+          decoration: InputDecoration(
+            hintText: l10n?.habitDetail_skipReason_bodyHelpText ??
+                "Write something here...",
+            hintStyle: TextStyle(color: themeData.colorScheme.outlineOpacity16),
+            helperText: recordDate != null
+                ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
+                : null,
+          ),
+          keyboardType: TextInputType.text,
+          style: themeData.textTheme.bodyLarge,
+          minLines: 1,
+          maxLines: 4,
+        ),
+      ],
+    );
   }
 }
