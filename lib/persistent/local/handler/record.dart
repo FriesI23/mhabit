@@ -151,8 +151,25 @@ WHERE $table.${RecordDBCellKey.recordDate}
     RecordDBCellKey.recordValue
   ];
 
-  Future<Iterable<RecordDBCell>> loadAllRecords() async {
+  Future<Iterable<RecordDBCell>> loadAllRecords(
+      {List<HabitUUID>? uuidFilter}) async {
+    if (uuidFilter != null) {
+      return _loadRecords(uuidFilter);
+    }
+    return _loadAllRecords();
+  }
+
+  Future<Iterable<RecordDBCell>> _loadAllRecords() async {
     final results = await db.query(table, columns: _loadAllRecordDataColumns);
+    return results.map(RecordDBCell.fromJson);
+  }
+
+  Future<Iterable<RecordDBCell>> _loadRecords(List<HabitUUID> uuidList) async {
+    final results = await db.query(table,
+        where: "${RecordDBCellKey.parentUUID} "
+            "IN (${uuidList.map((e) => '?').join(', ')}) ",
+        whereArgs: uuidList,
+        columns: _loadAllRecordDataColumns);
     return results.map(RecordDBCell.fromJson);
   }
 

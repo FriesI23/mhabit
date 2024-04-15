@@ -12,30 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
+import '../common/types.dart';
 import '../component/widget.dart';
+import '../extension/async_extensions.dart';
+import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_summary.dart';
+import '../provider/app_compact_ui_switcher.dart';
 import '../provider/habit_status_changer.dart';
 import '../utils/safe_sliver_tools.dart';
 import 'for_habits_status_changer/_widget.dart';
 
 /// Depend Providers
 /// - Required for builder:
+///   - [AppCompactUISwitcherViewModel]
 /// - Required for callback:
 /// - Optional:
 class PageHabitsStatusChanger extends StatelessWidget {
-  final List<HabitSummaryData> dataList;
+  final List<HabitUUID> uuidList;
 
-  const PageHabitsStatusChanger({super.key, required this.dataList});
+  const PageHabitsStatusChanger({super.key, required this.uuidList});
 
   @override
   Widget build(BuildContext context) => PageProviders(
-        dataList: dataList,
+        uuidList: uuidList,
         child: const HabitsStatusChangerView(),
       );
 }
@@ -131,8 +138,12 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     }
 
     Widget buildConfirmButton(BuildContext context) {
-      return ConfirmButton(
-        onResetPressed: _onResetButtonPressed,
+      return Selector<HabitStatusChangerViewModel, bool>(
+        selector: (context, vm) => vm.canSave,
+        builder: (context, canSave, child) => ConfirmButton(
+          enbaleConfirm: canSave,
+          onResetPressed: _onResetButtonPressed,
+        ),
       );
     }
 
@@ -176,22 +187,97 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
   }
 }
 
-class _HabitListList extends StatelessWidget {
+class _HabitListList extends StatefulWidget {
+  @override
+  State<_HabitListList> createState() => _HabitListListState();
+}
+
+class _HabitListListState extends State<_HabitListList> {
+  @override
+  void initState() {
+    final viewmodel = context.read<HabitStatusChangerViewModel>();
+    final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
+      controller: AnimatedListController(),
+      itemBuilder: (context, element, data) {
+        if (data.measuring) {
+          return SizedBox(
+              height: context
+                  .read<AppCompactUISwitcherViewModel>()
+                  .appHabitDisplayListTileHeight);
+        } else if (element is HabitSummaryDataSortCache) {
+          return _buildHabitsContentCell(context, element.uuid);
+        } else {
+          return const SizedBox();
+        }
+      },
+      currentList: viewmodel.dataDelegate.habitsSortableCache.toList(),
+      comparator: AnimatedListDiffListComparator<HabitSortCache>(
+        sameItem: (a, b) => a.isSameItem(b),
+        sameContent: (a, b) => a.isSameContent(b),
+      ),
+    );
+    viewmodel.initDispatcher(dispatcher);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) =>
+      Selector<HabitStatusChangerViewModel,
+          Tuple2<HabitSummaryData?, HabitDate>>(
+        selector: (context, vm) =>
+            Tuple2(vm.dataDelegate.getHabitByUUID(uuid), vm.selectDate),
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) {
+          final data = value.item1;
+          if (data == null) return const SizedBox();
+          final selectDate = value.item2;
+          return HabitSpecialDateViewedTile(data: data, date: selectDate);
+        },
+      );
+
   @override
   Widget build(BuildContext context) {
-    return Selector<HabitStatusChangerViewModel,
-        Tuple2<HabitsDataDelagate, HabitDate>>(
-      selector: (context, vm) => Tuple2(vm.dataDelegate, vm.selectDate),
+    Widget buildHabitsTileList(BuildContext context) {
+      final viewmodel = context.read<HabitStatusChangerViewModel>();
+      return AnimatedSliverList(
+        controller: viewmodel.dispatcherLinkedController,
+        delegate: AnimatedSliverChildBuilderDelegate(
+          (context, index, data) {
+            return context
+                .read<HabitStatusChangerViewModel>()
+                .dispatcherLinkedBuilder(
+                    context, viewmodel.lastSortedDataCache, index, data);
+          },
+          viewmodel.lastSortedDataCache.length,
+          addLongPressReorderable: false,
+        ),
+      );
+    }
+
+    return Selector<HabitStatusChangerViewModel, HabitsDataDelagate>(
+      selector: (context, vm) => vm.dataDelegate,
       shouldRebuild: (previous, next) => previous != next,
-      builder: (context, value, child) {
-        final data = value.item1;
-        final selectDate = value.item2;
-        return SafedSliverList(
-          children: data.habits
-              .map((e) => HabitSpecialDateViewedTile(data: e, date: selectDate))
-              .toList(),
-        );
-      },
+      builder: (context, _, child) => FutureBuilder(
+        future: context
+            .read<HabitStatusChangerViewModel>()
+            .loadData(inFutureBuilder: true),
+        builder: (context, snapshot) {
+          final viewmodel = context.read<HabitStatusChangerViewModel>();
+          appLog.load.debug("$this.buildHabits", ex: [
+            "Loading data",
+            snapshot.connectionState,
+            viewmodel.dataDelegate.habitCount,
+          ]);
+          if (kDebugMode && snapshot.isDone) {
+            appLog.load.debug("$this.buildHabits", ex: ["Loaded", viewmodel]);
+          }
+          return buildHabitsTileList(context);
+        },
+      ),
     );
   }
 }

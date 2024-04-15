@@ -16,20 +16,41 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/habit_summary.dart';
+import '../../common/types.dart';
+import '../../persistent/db_helper_provider.dart';
+import '../../provider/app_first_day.dart';
 import '../../provider/habit_status_changer.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
-  final List<HabitSummaryData>? dataList;
+  final List<HabitUUID> uuidList;
 
-  const PageProviders({super.key, super.child, this.dataList});
+  const PageProviders({super.key, super.child, required this.uuidList});
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
-          ChangeNotifierProvider(
+          ChangeNotifierProvider<HabitStatusChangerViewModel>(
             create: (context) =>
-                HabitStatusChangerViewModel(dataList: dataList),
+                HabitStatusChangerViewModel(uuidList: uuidList),
+          ),
+          ChangeNotifierProxyProvider<DBHelperViewModel,
+              HabitStatusChangerViewModel>(
+            create: (context) => context.read<HabitStatusChangerViewModel>(),
+            update: (context, value, previous) =>
+                previous!..updateDBHelper(value),
+          ),
+          ChangeNotifierProxyProvider<AppFirstDayViewModel,
+              HabitStatusChangerViewModel>(
+            create: (context) => context.read<HabitStatusChangerViewModel>(),
+            update: (context, value, previous) {
+              if (value.firstDay != previous!.firstday) {
+                previous.updateFirstday(value.firstDay);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  previous.regToReloadData();
+                });
+              }
+              return previous;
+            },
           ),
         ],
         child: child,

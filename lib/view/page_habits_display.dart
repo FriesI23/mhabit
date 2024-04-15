@@ -1291,10 +1291,11 @@ class _FAB extends StatelessWidget {
             isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
         duration: _kFABModeChangeDuration);
 
-    final dl = context
+    final selectedUUIDList = context
         .read<HabitSummaryViewModel>()
         .getSelectedHabitsData()
         .whereNotNull()
+        .map((e) => e.uuid)
         .toList();
     return HabitDisplayFAB<Object?>(
       closeBuilder: (context, action) {
@@ -1307,7 +1308,8 @@ class _FAB extends StatelessWidget {
         );
       },
       openBuilder: (context, action) => isInEditMode
-          ? habits_status_changer_view.PageHabitsStatusChanger(dataList: dl)
+          ? habits_status_changer_view.PageHabitsStatusChanger(
+              uuidList: selectedUUIDList)
           : const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {
