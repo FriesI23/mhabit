@@ -46,7 +46,6 @@ import '../provider/app_developer.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_detail.dart';
 import '../provider/habit_op_config.dart';
-import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../provider/habits_file_exporter.dart';
 import '../provider/habits_filter.dart';
@@ -472,8 +471,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (addResult) viewmodel.rockReloadUIToggleSwitch();
   }
 
-  void _onHabitsStatusChangerDialogClosed(int changedCount) async {
-    if (!mounted || changedCount <= 0) return;
+  void _onHabitsStatusChangerDialogClosed(bool changed) async {
+    if (!mounted || !changed) return;
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return;
     if (viewmodel.isInEditMode) {
@@ -1065,8 +1064,6 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         onPressed: _onFABPressed,
         onClosed: _onCreateNewHabitPageClosed,
         editModeOnPressed: _onFABPressed,
-        editModeOnClosed: (data) =>
-            _onHabitsStatusChangerDialogClosed(data.changedCount),
       );
     }
     //#endregion
@@ -1262,7 +1259,7 @@ class _FAB extends StatelessWidget {
   final void Function(VoidCallback action)? onPressed;
   final ClosedCallback<HabitDBCell>? onClosed;
   final void Function(VoidCallback action)? editModeOnPressed;
-  final ClosedCallback<PageHabitsStatusChangerResult>? editModeOnClosed;
+  final ClosedCallback<void>? editModeOnClosed;
 
   const _FAB({
     this.onPressed,
@@ -1315,8 +1312,6 @@ class _FAB extends StatelessWidget {
         switch (data) {
           case HabitDBCell():
             return onClosed?.call(data);
-          case PageHabitsStatusChangerResult():
-            return editModeOnClosed?.call(data);
           case null:
             return;
           default:

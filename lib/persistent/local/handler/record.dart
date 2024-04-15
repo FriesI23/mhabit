@@ -73,6 +73,18 @@ class RecordDBCell with DBCell {
       this.parentUUID,
       this.reason});
 
+  RecordDBCell.build(
+      {required this.parentId,
+      required this.parentUUID,
+      required this.recordDate,
+      required this.recordType,
+      required this.recordValue,
+      this.createT,
+      this.modifyT,
+      this.uuid,
+      this.reason})
+      : id = null;
+
   factory RecordDBCell.fromJson(Map<String, Object?> cell) =>
       _$RecordDBCellFromJson(cell);
 
@@ -93,12 +105,14 @@ class RecordDBHelper extends DBHelperHandler {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<Iterable<int>> insertMultiRecords(
-      Iterable<RecordDBCell> records) async {
+  Future<Iterable<int>> insertMultiRecords(Iterable<RecordDBCell> records,
+      {bool updateIfExist = false}) async {
     final bath = db.batch();
     for (var record in records) {
       bath.insert(table, record.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.ignore);
+          conflictAlgorithm: updateIfExist
+              ? ConflictAlgorithm.replace
+              : ConflictAlgorithm.ignore);
     }
     final result = await bath.commit(noResult: false);
     return result.map((e) => e as int);

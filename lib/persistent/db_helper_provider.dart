@@ -100,7 +100,7 @@ mixin DBOperationsMixin on DBHelperLoadedMixin {
     final int dbid;
     final RecordDBCell dbCell;
     if (isNew) {
-      dbCell = RecordDBCell(
+      dbCell = RecordDBCell.build(
         parentId: parendId,
         parentUUID: parendUUID,
         uuid: record.uuid,

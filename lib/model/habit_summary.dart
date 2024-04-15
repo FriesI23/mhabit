@@ -65,8 +65,10 @@ class HabitSummaryRecord {
         value = cell.recordValue!;
 
   HabitSummaryRecord.generate(this.date,
-      {this.status = HabitRecordStatus.unknown, this.value = 0.0})
-      : uuid = genRecordUUID();
+      {this.status = HabitRecordStatus.unknown,
+      this.value = 0.0,
+      HabitUUID? uuid})
+      : uuid = uuid ?? genRecordUUID();
 
   @override
   String toString() {

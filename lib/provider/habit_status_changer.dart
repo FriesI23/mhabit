@@ -17,6 +17,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
+import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -28,47 +29,29 @@ import '../model/habit_date.dart';
 import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
+import '../persistent/local/handler/record.dart';
 import 'commons.dart';
 
 part 'habit_status_changer.g.dart';
 
-abstract interface class PageHabitsStatusChangerResult {
-  int get changedCount;
-
-  factory PageHabitsStatusChangerResult.empty() =>
-      const PageHabitsStatusChangerNumberResult(0);
-
-  factory PageHabitsStatusChangerResult.fromNum(int num) =>
-      PageHabitsStatusChangerNumberResult(num);
-}
-
 enum RecordStatusChangerStatus {
   skip,
   ok,
-  goodjob,
+  double,
   zero; // only for normal habit
 
   static const normalStatus = {
     RecordStatusChangerStatus.skip,
     RecordStatusChangerStatus.ok,
-    RecordStatusChangerStatus.goodjob,
+    RecordStatusChangerStatus.double,
     RecordStatusChangerStatus.zero,
   };
 
   static const negativeStatus = {
     RecordStatusChangerStatus.skip,
     RecordStatusChangerStatus.ok,
-    RecordStatusChangerStatus.goodjob,
+    RecordStatusChangerStatus.double,
   };
-}
-
-final class PageHabitsStatusChangerNumberResult
-    implements PageHabitsStatusChangerResult {
-  @override
-  final int changedCount;
-
-  const PageHabitsStatusChangerNumberResult(this.changedCount)
-      : assert(changedCount >= 0);
 }
 
 class HabitStatusChangerViewModel
@@ -183,6 +166,21 @@ class HabitStatusChangerViewModel
   }
   //#endregion
 
+  //#region: firstday
+  int get firstday => _firstday;
+
+  void updateFirstday(int newFirstDay) {
+    final day = standardizeFirstDay(newFirstDay);
+    if (kDebugMode && newFirstDay != day) {
+      throw UnknownWeekdayNumber(newFirstDay);
+    }
+    _firstday = day;
+  }
+
+  @override
+  bool get mounted => _mounted;
+  //#endregion
+
   TextEditingController get skipInputController => _form.skipInputController;
 
   HabitsDataDelagate get dataDelegate => _dataDelate;
@@ -243,6 +241,33 @@ class HabitStatusChangerViewModel
     if (listen) notifyListeners();
   }
 
+  Future<int> saveSelectStatus({bool listen = true}) async {
+    final skipReason = skipInputController.text;
+    final records = dataDelegate.habits
+        .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
+        .where((e) => e.item1 != null)
+        .map((e) {
+      final record = e.item1!;
+      final habit = e.item2;
+      return RecordDBCell.build(
+          parentId: habit.id,
+          parentUUID: habit.uuid,
+          recordDate: record.date.epochDay,
+          recordType: record.status.dbCode,
+          recordValue: record.value,
+          uuid: record.uuid,
+          reason: selectStatus == RecordStatusChangerStatus.skip
+              ? skipReason
+              : null);
+    }).toList();
+    await recordDBHelper.insertMultiRecords(records, updateIfExist: true);
+    if (!mounted) return 0;
+
+    regToReloadData();
+    if (listen) notifyListeners();
+    return records.length;
+  }
+
   void updateDataColl(List<HabitSummaryData> dataList,
       {bool needClear = false, bool listen = true}) {
     _data = needClear ? HabitSummaryDataCollection() : _data;
@@ -252,19 +277,6 @@ class HabitStatusChangerViewModel
   void _onUpdateDataColl({required bool listen}) {
     if (listen) notifyListeners();
   }
-
-  int get firstday => _firstday;
-
-  void updateFirstday(int newFirstDay) {
-    final day = standardizeFirstDay(newFirstDay);
-    if (kDebugMode && newFirstDay != day) {
-      throw UnknownWeekdayNumber(newFirstDay);
-    }
-    _firstday = day;
-  }
-
-  @override
-  bool get mounted => _mounted;
 
   @override
   void dispose() {
@@ -304,6 +316,40 @@ final class HabitStatusChangerForm {
 
   HabitStatusChangerForm toDefault() => copyWith(
       selectStatus: null, skipInputController: skipInputController..clear());
+
+  HabitSummaryRecord? buildRecordFromHabit(HabitSummaryData data) {
+    final uuid = data.getRecordByDate(selectDate)?.uuid;
+    switch (selectStatus) {
+      case RecordStatusChangerStatus.skip:
+        return HabitSummaryRecord.generate(selectDate,
+            status: HabitRecordStatus.skip, uuid: uuid);
+      case RecordStatusChangerStatus.ok:
+        return HabitSummaryRecord.generate(selectDate,
+            status: HabitRecordStatus.done,
+            value: data.habitOkValue,
+            uuid: uuid);
+      case RecordStatusChangerStatus.double:
+        switch (data.type) {
+          case HabitType.normal:
+            return HabitSummaryRecord.generate(selectDate,
+                status: HabitRecordStatus.done,
+                value: data.dailyGoalExtra ?? data.habitOkValue * 2,
+                uuid: uuid);
+          case HabitType.negative:
+            return HabitSummaryRecord.generate(selectDate,
+                status: HabitRecordStatus.done,
+                value: data.dailyGoal,
+                uuid: uuid);
+          case HabitType.unknown:
+            return null;
+        }
+      case RecordStatusChangerStatus.zero:
+        return HabitSummaryRecord.generate(selectDate,
+            status: HabitRecordStatus.done, value: 0, uuid: uuid);
+      case null:
+        return null;
+    }
+  }
 
   @override
   String toString() =>

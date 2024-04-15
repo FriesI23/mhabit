@@ -91,7 +91,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
                 status: RecordStatusChangerStatus.ok,
                 icon: const Icon(kRecordDoneStatusIcon)),
             buildButtonSegment(context,
-                status: RecordStatusChangerStatus.goodjob,
+                status: RecordStatusChangerStatus.double,
                 icon: const Icon(MdiIcons.checkAll)),
             buildButtonSegment(context,
                 status: RecordStatusChangerStatus.zero,

@@ -20,6 +20,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/types.dart';
+import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
 import '../logging/helper.dart';
@@ -88,6 +89,17 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     vm.updateSelectStatus(nd);
   }
 
+  void _onConfirmButtonpressed() async {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    final changedCount = await vm.saveSelectStatus();
+    if (!mounted || changedCount <= 0) return;
+    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+        content: Text("Changed: $changedCount"));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   void _onResetButtonPressed() {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
@@ -142,6 +154,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         selector: (context, vm) => vm.canSave,
         builder: (context, canSave, child) => ConfirmButton(
           enbaleConfirm: canSave,
+          onConfirmPressed: _onConfirmButtonpressed,
           onResetPressed: _onResetButtonPressed,
         ),
       );
