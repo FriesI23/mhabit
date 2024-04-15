@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
+
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +27,7 @@ import '../common/types.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
+import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
@@ -58,7 +61,7 @@ class HabitStatusChangerViewModel
     with ChangeNotifier, DBHelperLoadedMixin
     implements ProviderMounted {
   // data
-  List<HabitUUID> _selectedUUIDList;
+  final List<HabitUUID> _selectedUUIDList;
   HabitSummaryDataCollection _data = HabitSummaryDataCollection();
   late HabitsDataDelagate _dataDelate;
   late HabitStatusChangerForm _form;
@@ -70,6 +73,7 @@ class HabitStatusChangerViewModel
   late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
   // inside status
   bool _mounted = true;
+  bool _isSkipReasonEdited = false;
   // sync from setting
   int _firstday = defaultFirstDay;
 
@@ -84,6 +88,10 @@ class HabitStatusChangerViewModel
     _form = HabitStatusChangerForm(
         selectDate: HabitDate.now(),
         skipInputController: TextEditingController());
+    _form.skipInputController.addListener(() {
+      _isSkipReasonEdited = true;
+      notifyListeners();
+    });
     _dataDelate = HabitsDataDelagate(this);
   }
 
@@ -130,6 +138,7 @@ class HabitStatusChangerViewModel
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
       _redispach();
+      _updateForm(_form, withDefaultChangerStatus: true);
       // complete
       _loading?.complete();
       // reload
@@ -185,9 +194,16 @@ class HabitStatusChangerViewModel
 
   HabitsDataDelagate get dataDelegate => _dataDelate;
 
-  bool get canSave => selectStatus != null;
+  bool get canSave {
+    if (_form.selectStatus == RecordStatusChangerStatus.skip &&
+        _isSkipReasonEdited) return true;
+    return _form.selectStatus != null &&
+        _form.selectStatus != getDefaultChangerStatus(_form);
+  }
 
   HabitDate get selectDate => _form.selectDate;
+
+  String get skipReason => skipInputController.text;
 
   HabitDate get earlistStartDate {
     var startDate = selectDate;
@@ -199,8 +215,16 @@ class HabitStatusChangerViewModel
 
   void updateSelectDate(HabitDate newDate, {bool listen = true}) {
     if (newDate.isAfter(HabitDate.now())) return;
-    _form = _form.toNewDate(newDate);
+    _updateForm(_form.toNewDate(newDate), withDefaultChangerStatus: true);
     if (listen) notifyListeners();
+  }
+
+  void _updateForm(HabitStatusChangerForm newForm,
+      {bool withDefaultChangerStatus = false}) {
+    _form = withDefaultChangerStatus
+        ? newForm.copyWith(selectStatus: getDefaultChangerStatus(newForm))
+        : newForm;
+    _isSkipReasonEdited = false;
   }
 
   RecordStatusChangerStatus? get selectStatus => _form.selectStatus;
@@ -225,10 +249,18 @@ class HabitStatusChangerViewModel
     return statusColl;
   }
 
+  RecordStatusChangerStatus? getDefaultChangerStatus(
+          HabitStatusChangerForm form) =>
+      _data.length <= 0
+          ? null
+          : _data.values
+              .map((e) => form.convertStatusFromHabit(e))
+              .reduce((value, element) => value == element ? value : null);
+
   void updateSelectStatus(RecordStatusChangerStatus? newStatus,
       {bool listen = true}) {
     if (newStatus == selectStatus) return;
-    _form = _form.copyWith(selectStatus: newStatus);
+    _updateForm(_form.copyWith(selectStatus: newStatus));
     if (selectStatus == RecordStatusChangerStatus.skip) {
       mainScrollController.animateTo(0,
           duration: mainScrollAnimatedDuration, curve: mainScrollAnimatedCurve);
@@ -237,13 +269,14 @@ class HabitStatusChangerViewModel
   }
 
   void resetStatusForm({bool listen = true}) {
-    _form = _form.toDefault();
+    _updateForm(_form.toDefault(), withDefaultChangerStatus: true);
     if (listen) notifyListeners();
   }
 
   Future<int> saveSelectStatus({bool listen = true}) async {
-    final skipReason = skipInputController.text;
+    if (!mounted || !canSave) return 0;
     final records = dataDelegate.habits
+        .where((e) => e.startDate.isBefore(_form.selectDate))
         .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
         .where((e) => e.item1 != null)
         .map((e) {
@@ -333,7 +366,9 @@ final class HabitStatusChangerForm {
           case HabitType.normal:
             return HabitSummaryRecord.generate(selectDate,
                 status: HabitRecordStatus.done,
-                value: data.dailyGoalExtra ?? data.habitOkValue * 2,
+                value: data.dailyGoalExtra != null
+                    ? math.max(data.dailyGoalExtra!, data.habitOkValue * 2)
+                    : data.habitOkValue * 2,
                 uuid: uuid);
           case HabitType.negative:
             return HabitSummaryRecord.generate(selectDate,
@@ -348,6 +383,46 @@ final class HabitStatusChangerForm {
             status: HabitRecordStatus.done, value: 0, uuid: uuid);
       case null:
         return null;
+    }
+  }
+
+  RecordStatusChangerStatus? convertStatusFromHabit(HabitSummaryData data) {
+    final record = data.getRecordByDate(selectDate);
+    switch (record?.status) {
+      case null:
+      case HabitRecordStatus.unknown:
+        return null;
+      case HabitRecordStatus.done:
+        final recordForm = HabitDailyRecordForm.getImp(
+            type: data.type,
+            value: record!.value,
+            targetValue: data.dailyGoal,
+            extraTargetValue: data.dailyGoalExtra);
+        switch (recordForm.complateStatus) {
+          case HabitDailyComplateStatus.zero:
+            return RecordStatusChangerStatus.zero;
+          case HabitDailyComplateStatus.ok:
+            return RecordStatusChangerStatus.ok;
+          case HabitDailyComplateStatus.goodjob:
+            switch (recordForm.habitType) {
+              case HabitType.unknown:
+                return null;
+              case HabitType.normal:
+                return (record.value == data.dailyGoalExtra ||
+                        record.value == data.habitOkValue * 2)
+                    ? RecordStatusChangerStatus.double
+                    : null;
+              case HabitType.negative:
+                return record.value == data.dailyGoal
+                    ? RecordStatusChangerStatus.double
+                    : null;
+            }
+          case HabitDailyComplateStatus.tryhard:
+          case HabitDailyComplateStatus.noeffect:
+            return null;
+        }
+      case HabitRecordStatus.skip:
+        return RecordStatusChangerStatus.skip;
     }
   }
 

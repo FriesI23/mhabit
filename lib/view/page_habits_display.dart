@@ -67,7 +67,6 @@ const _kCommonEvalation = 2.0;
 const _kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
 const _kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
 
-const _kPressFABAnimateDuration = Duration(milliseconds: 500);
 const _kFABModeChangeDuration = Duration(milliseconds: 300);
 
 const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
@@ -469,18 +468,6 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final habit = HabitSummaryData.fromDBQueryCell(result);
     final addResult = viewmodel.addNewData(habit);
     if (addResult) viewmodel.rockReloadUIToggleSwitch();
-  }
-
-  void _onHabitsStatusChangerDialogClosed(bool changed) async {
-    if (!mounted || !changed) return;
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return;
-    if (viewmodel.isInEditMode) {
-      context.read<HabitSummaryViewModel>().exitEditMode();
-      await Future.delayed(_kPressFABAnimateDuration);
-    }
-    if (!mounted) return;
-    viewmodel.rockreloadDBToggleSwich();
   }
 
   Future<bool> _enterHabitEditPage({
@@ -1259,13 +1246,11 @@ class _FAB extends StatelessWidget {
   final void Function(VoidCallback action)? onPressed;
   final ClosedCallback<HabitDBCell>? onClosed;
   final void Function(VoidCallback action)? editModeOnPressed;
-  final ClosedCallback<void>? editModeOnClosed;
 
   const _FAB({
     this.onPressed,
     this.onClosed,
     this.editModeOnPressed,
-    this.editModeOnClosed,
   });
 
   Widget _buildFAB(BuildContext context,
@@ -1294,6 +1279,19 @@ class _FAB extends StatelessWidget {
         .whereNotNull()
         .map((e) => e.uuid)
         .toList();
+    final summary = context.read<HabitSummaryViewModel>();
+
+    Widget pageHabitsStatusChangerBuilder(BuildContext context) {
+      if (summary.mounted) {
+        return ChangeNotifierProvider.value(
+            value: summary,
+            child: habits_status_changer_view.PageHabitsStatusChanger(
+                uuidList: selectedUUIDList));
+      }
+      return habits_status_changer_view.PageHabitsStatusChanger(
+          uuidList: selectedUUIDList);
+    }
+
     return HabitDisplayFAB<Object?>(
       closeBuilder: (context, action) {
         return ScrollingFAB.small(
@@ -1305,8 +1303,7 @@ class _FAB extends StatelessWidget {
         );
       },
       openBuilder: (context, action) => isInEditMode
-          ? habits_status_changer_view.PageHabitsStatusChanger(
-              uuidList: selectedUUIDList)
+          ? pageHabitsStatusChangerBuilder(context)
           : const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {

@@ -36,18 +36,14 @@ class ConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.background,
-      child: ListTile(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            FilledButton.tonal(
-                onPressed: realConfirmCallback, child: const Text("Save")),
-            TextButton(
-                onPressed: realCancelCallback, child: const Text("Reset")),
-          ],
-        ),
+    return ListTile(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FilledButton.tonal(
+              onPressed: realConfirmCallback, child: const Text("Save")),
+          TextButton(onPressed: realCancelCallback, child: const Text("Reset")),
+        ],
       ),
     );
   }

@@ -79,30 +79,27 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
             enabled: widget.allowedStatus.contains(status));
 
     appLog.build.debug(context);
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.background,
-      child: ListTile(
-        title: SegmentedButton<RecordStatusChangerStatus>(
-          segments: [
-            buildButtonSegment(context,
-                status: RecordStatusChangerStatus.skip,
-                icon: const Icon(kRecordSkipStatusIcon)),
-            buildButtonSegment(context,
-                status: RecordStatusChangerStatus.ok,
-                icon: const Icon(kRecordDoneStatusIcon)),
-            buildButtonSegment(context,
-                status: RecordStatusChangerStatus.double,
-                icon: const Icon(MdiIcons.checkAll)),
-            buildButtonSegment(context,
-                status: RecordStatusChangerStatus.zero,
-                icon: const Icon(kRecordZeroStatusIcon)),
-          ],
-          selected: currentSelection,
-          onSelectionChanged: _onSelectionChanged,
-          emptySelectionAllowed: true,
-          showSelectedIcon: false,
-          style: const ButtonStyle(visualDensity: VisualDensity.compact),
-        ),
+    return ListTile(
+      title: SegmentedButton<RecordStatusChangerStatus>(
+        segments: [
+          buildButtonSegment(context,
+              status: RecordStatusChangerStatus.skip,
+              icon: const Icon(kRecordSkipStatusIcon)),
+          buildButtonSegment(context,
+              status: RecordStatusChangerStatus.ok,
+              icon: const Icon(kRecordDoneStatusIcon)),
+          buildButtonSegment(context,
+              status: RecordStatusChangerStatus.double,
+              icon: const Icon(MdiIcons.checkAll)),
+          buildButtonSegment(context,
+              status: RecordStatusChangerStatus.zero,
+              icon: const Icon(kRecordZeroStatusIcon)),
+        ],
+        selected: currentSelection,
+        onSelectionChanged: _onSelectionChanged,
+        emptySelectionAllowed: true,
+        showSelectedIcon: false,
+        style: const ButtonStyle(visualDensity: VisualDensity.compact),
       ),
     );
   }

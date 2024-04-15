@@ -103,25 +103,30 @@ class _DatePickerTileState extends State<DatePickerTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.background,
-      child: ListTile(
-        leading: IconButton.outlined(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        IconButton.outlined(
           onPressed: _selectDate <= firstDate ? null : _onLeftButtonPressed,
           icon: const Icon(Icons.arrow_left_outlined),
         ),
-        trailing: IconButton.outlined(
+        const Spacer(flex: 1),
+        Expanded(
+          flex: 10,
+          child: L10nBuilder(
+            builder: (context, l10n) => _DateTimeCell(
+              formatter: _getDateFormat(l10n),
+              date: _selectDate,
+              onPressed: _onDatePressed,
+            ),
+          ),
+        ),
+        const Spacer(flex: 1),
+        IconButton.outlined(
           onPressed: _selectDate >= lastDate ? null : _onRightButtonPressed,
           icon: const Icon(Icons.arrow_right_outlined),
         ),
-        title: L10nBuilder(
-          builder: (context, l10n) => _DateTimeCell(
-            formatter: _getDateFormat(l10n),
-            date: _selectDate,
-            onPressed: _onDatePressed,
-          ),
-        ),
-      ),
+      ],
     );
   }
 }
@@ -143,9 +148,11 @@ class _DateTimeCell extends StatelessWidget {
       child: TextButton.icon(
         onPressed: onPressed != null ? () => onPressed!(date) : null,
         icon: const Icon(MdiIcons.calendarEditOutline, size: 16),
-        label: Text(
-          formatter.format(date),
-          style: Theme.of(context).textTheme.titleLarge,
+        label: FittedBox(
+          child: Text(
+            formatter.format(date),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
       ),
     );

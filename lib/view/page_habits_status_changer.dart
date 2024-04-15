@@ -23,19 +23,24 @@ import '../common/types.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_summary.dart';
 import '../provider/app_compact_ui_switcher.dart';
+import '../provider/app_developer.dart';
 import '../provider/habit_status_changer.dart';
+import '../provider/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
 import 'for_habits_status_changer/_widget.dart';
 
 /// Depend Providers
 /// - Required for builder:
 ///   - [AppCompactUISwitcherViewModel]
+///   - [AppDeveloperViewModel]
 /// - Required for callback:
 /// - Optional:
+///   - [HabitSummaryViewModel]
 class PageHabitsStatusChanger extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -55,25 +60,19 @@ class HabitsStatusChangerView extends StatefulWidget {
   State<StatefulWidget> createState() => _HabitsStatusChangerView();
 }
 
-Widget _buildDebugInfo(BuildContext context) =>
-    Consumer<HabitStatusChangerViewModel>(
-      builder: (context, value, child) => ListTile(
-        leading: Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-        isThreeLine: true,
-        title: const Text('DEBUG'),
-        subtitle: Column(
-          children: [
-            Text(context.read<HabitStatusChangerViewModel>().toString()),
-            Text(context
-                .read<HabitStatusChangerViewModel>()
-                .selectDateAllowedStatus
-                .toString()),
-          ],
-        ),
-      ),
-    );
-
 class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    super.dispose();
+  }
+
   void _onSelectedDateChanged(HabitDate od, HabitDate nd) {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
@@ -95,6 +94,10 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     if (!vm.mounted) return;
     final changedCount = await vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
+    context
+        .maybeRead<HabitSummaryViewModel>()
+        ?.forHabitsStatusChanger
+        .onHabitDataChanged();
     final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
         content: Text("Changed: $changedCount"));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -107,16 +110,42 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     vm.resetStatusForm();
   }
 
+  Widget _buildDebugInfo(BuildContext context) =>
+      Consumer<HabitStatusChangerViewModel>(
+        builder: (context, value, child) => ListTile(
+          leading:
+              Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+          isThreeLine: true,
+          title: const Text('DEBUG'),
+          subtitle: Column(
+            children: [
+              Text(context.read<HabitStatusChangerViewModel>().toString()),
+              Text(context
+                  .read<HabitStatusChangerViewModel>()
+                  .selectDateAllowedStatus
+                  .toString()),
+            ],
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    Widget buildDatePickerTile(BuildContext context) {
-      final vm = context.read<HabitStatusChangerViewModel>();
-      return DatePickerTile(
-        initDate: vm.selectDate,
-        firstDate: vm.earlistStartDate,
-        onSelectDateChanged: _onSelectedDateChanged,
-      );
-    }
+    appLog.build.debug(context);
+
+    Widget buildDatePickerTile(BuildContext context) =>
+        Selector<HabitStatusChangerViewModel, HabitsDataDelagate>(
+          selector: (context, vm) => vm.dataDelegate,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, _, child) {
+            final vm = context.read<HabitStatusChangerViewModel>();
+            return DatePickerTile(
+              initDate: vm.selectDate,
+              firstDate: vm.earlistStartDate,
+              onSelectDateChanged: _onSelectedDateChanged,
+            );
+          },
+        );
 
     Widget buildStatusChangeTile(BuildContext context) =>
         Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
@@ -124,10 +153,13 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, _, child) {
             final vm = context.read<HabitStatusChangerViewModel>();
-            return RecordStatusChangeTile(
-              initStatus: vm.selectStatus,
-              allowedStatus: vm.selectDateAllowedStatus,
-              onSelectedNewStatus: _onSelectedStatusChanged,
+            return ColoredBox(
+              color: Theme.of(context).colorScheme.background,
+              child: RecordStatusChangeTile(
+                initStatus: vm.selectStatus,
+                allowedStatus: vm.selectDateAllowedStatus,
+                onSelectedNewStatus: _onSelectedStatusChanged,
+              ),
             );
           },
         );
@@ -152,10 +184,13 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     Widget buildConfirmButton(BuildContext context) {
       return Selector<HabitStatusChangerViewModel, bool>(
         selector: (context, vm) => vm.canSave,
-        builder: (context, canSave, child) => ConfirmButton(
-          enbaleConfirm: canSave,
-          onConfirmPressed: _onConfirmButtonpressed,
-          onResetPressed: _onResetButtonPressed,
+        builder: (context, canSave, child) => ColoredBox(
+          color: Theme.of(context).colorScheme.background,
+          child: ConfirmButton(
+            enbaleConfirm: canSave,
+            onConfirmPressed: _onConfirmButtonpressed,
+            onResetPressed: _onResetButtonPressed,
+          ),
         ),
       );
     }
@@ -168,44 +203,37 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         );
 
     final vm = context.read<HabitStatusChangerViewModel>();
+    final div = buildDivider(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: CustomScrollView(
         controller: vm.mainScrollController,
         slivers: [
-          SliverAppBar(
-            title: Text("text"),
-            pinned: true,
-          ),
+          _AppBar(title: buildDatePickerTile(context)),
           SafedMultiSliver(
             pushPinnedChildren: false,
             children: [
-              SliverPinnedHeader(child: buildDatePickerTile(context)),
               SliverPinnedHeader(child: buildStatusChangeTile(context)),
               buildSkipStatusReasonField(context),
               SliverPinnedHeader(child: buildConfirmButton(context)),
             ],
           ),
-          SliverPinnedHeader(child: buildDivider(context)),
-          _HabitListList(),
-          SafedMultiSliver(
-            pushPinnedChildren: false,
-            children: [
-              _buildDebugInfo(context),
-              Placeholder(fallbackHeight: 1000),
-            ],
-          ),
+          SliverPinnedHeader(child: div),
+          _HabitList(),
+          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+            SafedSliverList(children: [div, _buildDebugInfo(context)]),
         ],
       ),
     );
   }
 }
 
-class _HabitListList extends StatefulWidget {
+class _HabitList extends StatefulWidget {
   @override
-  State<_HabitListList> createState() => _HabitListListState();
+  State<_HabitList> createState() => _HabitListState();
 }
 
-class _HabitListListState extends State<_HabitListList> {
+class _HabitListState extends State<_HabitList> {
   @override
   void initState() {
     final viewmodel = context.read<HabitStatusChangerViewModel>();
@@ -291,6 +319,22 @@ class _HabitListListState extends State<_HabitListList> {
           return buildHabitsTileList(context);
         },
       ),
+    );
+  }
+}
+
+class _AppBar extends StatelessWidget {
+  final Widget? title;
+
+  const _AppBar({this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar.large(
+      leading: const PageBackButton(reason: PageBackReason.close),
+      title: title,
+      automaticallyImplyLeading: false,
+      pinned: true,
     );
   }
 }

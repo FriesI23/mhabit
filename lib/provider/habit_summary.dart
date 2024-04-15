@@ -53,6 +53,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   // dispatcher
   late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
   late final DispatcherForHabitDetail forHabitDetail;
+  late final DispatcherForHabitsStatusChanger forHabitsStatusChanger;
   // data
   final _data = HabitSummaryDataCollection();
   var _sortableCache = const _HabitsSortableCache(
@@ -82,6 +83,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }) : _horizonalScrollControllerGroup = horizonalScrollControllerGroup {
     initVerticalScrollController(notifyListeners, verticalScrollController);
     forHabitDetail = DispatcherForHabitDetail(this);
+    forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
   }
 
   LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
@@ -764,12 +766,16 @@ class _SelectedHabitsData {
   String toString() => "$runtimeType(data=$_selectUUIDColl)";
 }
 
-class DispatcherForHabitDetail {
+abstract class _ForSummaryDispatcher {
   final HabitSummaryViewModel _root;
 
-  const DispatcherForHabitDetail(this._root);
+  const _ForSummaryDispatcher(this._root);
+}
 
-  String get _clsName => "${_root.runtimeType}.$runtimeType";
+final class DispatcherForHabitDetail extends _ForSummaryDispatcher {
+  DispatcherForHabitDetail(super.root);
+
+  String get _clsName => "${_root.runtimeType}.DispatcherForHabitDetail";
 
   Future<List<HabitStatusChangedRecord>?> onConfirmToArchiveHabit(
       HabitUUID habitUUID) async {
@@ -805,5 +811,18 @@ class DispatcherForHabitDetail {
         await _root._changeHabitsStatus([habitUUID], HabitStatus.deleted);
     if (_root.mounted) _root.resortData();
     return recordList;
+  }
+}
+
+final class DispatcherForHabitsStatusChanger extends _ForSummaryDispatcher {
+  DispatcherForHabitsStatusChanger(super.root);
+
+  String get _clsName => "${_root.runtimeType}.DispatcherForHabitsStausChanger";
+
+  Future onHabitDataChanged() async {
+    appLog.habit.info("$_clsName.onHabitDataChanged");
+    if (!_root.mounted) return null;
+    _root.exitEditMode();
+    _root.rockreloadDBToggleSwich(clearSnackBar: false);
   }
 }
