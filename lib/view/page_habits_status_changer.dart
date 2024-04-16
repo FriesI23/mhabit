@@ -30,6 +30,7 @@ import '../provider/app_developer.dart';
 import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
+import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'for_habits_status_changer/_widget.dart';
 
@@ -88,9 +89,27 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
   }
 
   void _onConfirmButtonpressed() async {
+    HabitStatusChangerViewModel vm;
     if (!mounted) return;
-    final vm = context.read<HabitStatusChangerViewModel>();
+    vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
+
+    if (vm.selectDateRecords.isNotEmpty) {
+      final result = (await showConfirmDialog(
+            context: context,
+            title: const Text("Overwrite Existing Records"),
+            subtitle:
+                const Text("Existing records will be overwritten After saving, "
+                    "previous records will be lost."),
+            confirmText: const Text("save"),
+            cancelText: const Text("cancel"),
+          )) ??
+          false;
+      if (!mounted || !result) return;
+    }
+    vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+
     final changedCount = await vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
     context
@@ -107,6 +126,24 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     final vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
     vm.resetStatusForm();
+  }
+
+  void _onClosePageButtonPressed({bool defaultConfirmResult = false}) async {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    final bool result = vm.canSave
+        ? (await showConfirmDialog(
+              context: context,
+              title: const Text("Unsaved Check-in Status"),
+              subtitle: const Text("Changes will not be applied before saved"),
+              confirmText: const Text("exit"),
+              cancelText: const Text("cancel"),
+            ) ??
+            defaultConfirmResult)
+        : true;
+    if (!mounted) return;
+    if (result) Navigator.of(context).pop();
   }
 
   Widget _buildDebugInfo(BuildContext context) =>
@@ -217,22 +254,31 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
 
     final vm = context.read<HabitStatusChangerViewModel>();
     final div = buildDivider(context);
-    return PageFramework(
-      appbar: _AppBar(title: buildDatePickerTile(context)),
-      content: SafedMultiSliver(
-        pushPinnedChildren: false,
-        children: [
-          SliverPinnedHeader(child: buildStatusChangeTile(context)),
-          buildSkipStatusReasonField(context),
-          SliverPinnedHeader(child: buildConfirmButton(context)),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        _onClosePageButtonPressed(defaultConfirmResult: true);
+        return false;
+      },
+      child: PageFramework(
+        appbar: _AppBar(
+          title: buildDatePickerTile(context),
+          onCloseButtonPressed: _onClosePageButtonPressed,
+        ),
+        content: SafedMultiSliver(
+          pushPinnedChildren: false,
+          children: [
+            SliverPinnedHeader(child: buildStatusChangeTile(context)),
+            buildSkipStatusReasonField(context),
+            SliverPinnedHeader(child: buildConfirmButton(context)),
+          ],
+        ),
+        habitTitle: SliverPinnedHeader(child: buildHabitTitle(context)),
+        habitsContent: const _HabitList(key: ValueKey(1)),
+        debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
+            ? SafedSliverList(children: [div, _buildDebugInfo(context)])
+            : null,
+        mainController: vm.mainScrollController,
       ),
-      habitTitle: SliverPinnedHeader(child: buildHabitTitle(context)),
-      habitsContent: const _HabitList(key: ValueKey(1)),
-      debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
-          ? SafedSliverList(children: [div, _buildDebugInfo(context)])
-          : null,
-      mainController: vm.mainScrollController,
     );
   }
 }
@@ -366,13 +412,17 @@ class _HabitListState extends State<_HabitList> {
 
 class _AppBar extends StatelessWidget {
   final Widget? title;
+  final VoidCallback? onCloseButtonPressed;
 
-  const _AppBar({this.title});
+  const _AppBar({this.title, this.onCloseButtonPressed});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.large(
-      leading: const PageBackButton(reason: PageBackReason.close),
+      leading: PageBackButton(
+        reason: PageBackReason.close,
+        onPressed: onCloseButtonPressed,
+      ),
       title: title,
       automaticallyImplyLeading: false,
       pinned: true,

@@ -62,7 +62,7 @@ class ConfirmDialog extends StatelessWidget {
         if (cancelText != null)
           TextButton(
             onPressed: () {
-              Navigator.maybePop(context);
+              Navigator.maybePop(context, false);
             },
             child: cancelText!,
           ),

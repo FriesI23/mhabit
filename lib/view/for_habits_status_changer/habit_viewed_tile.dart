@@ -14,9 +14,11 @@
 
 import 'package:flutter/material.dart';
 
+import '../../extension/custom_color_extensions.dart';
 import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_summary.dart';
+import '../../theme/color.dart';
 import '../common/_widget.dart';
 
 class HabitSpecialDateViewedTile extends StatelessWidget {
@@ -36,8 +38,24 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
       data: data,
       startDate: date,
       endDate: date,
-      collapsePrt: 0,
+      collapsePrt: 30,
       isExtended: false,
+      cellBuilder: (context, cell, date) {
+        if (date != this.date || date.isBefore(data.startDate)) return cell;
+        final themeData = Theme.of(context);
+        final colorData = themeData.extension<CustomColors>();
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                  color: colorData?.getColorContainer(data.colorType) ??
+                      themeData.colorScheme.primaryContainer,
+                  width: 6.0),
+            ),
+          ),
+          child: cell,
+        );
+      },
     );
   }
 }

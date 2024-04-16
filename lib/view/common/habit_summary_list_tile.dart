@@ -41,6 +41,8 @@ class HabitSummaryListTile extends StatefulWidget {
   final EdgeInsets? _titlePadding;
   final EdgeInsets? itemPadding;
   final int? collapsePrt;
+  final Widget Function(
+      BuildContext context, Widget cell, HabitRecordDate date)? cellBuilder;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -60,6 +62,7 @@ class HabitSummaryListTile extends StatefulWidget {
     EdgeInsets? titlePadding,
     this.itemPadding,
     this.collapsePrt,
+    this.cellBuilder,
     this.scrollPhysicsBuilder,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -150,36 +153,40 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     final record = data.getRecordByDate(showDate);
     final isAutoComplated = data.isRecordAutoComplated(showDate);
 
+    final recordCell = HabitDailyStatusContainer(
+      date: showDate,
+      padding: widget.itemPadding,
+      colorType: data.colorType,
+      habitDailyRecordForm: HabitDailyRecordForm.getImp(
+        type: data.type,
+        value: record != null ? record.value : 0.0,
+        targetValue: data.dailyGoal,
+        extraTargetValue: data.dailyGoalExtra,
+      ),
+      habitDailyStatus:
+          record != null ? record.status : HabitRecordStatus.unknown,
+      onPressed: widget.onCellPressed != null
+          ? (date, crt) =>
+              widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      onLongPressed: widget.onCellLongPressed != null
+          ? (date, crt) =>
+              widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      onDoublePressed: widget.onCellDoublePressed != null
+          ? (date, crt) =>
+              widget.onCellDoublePressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      enabled: showDate >= data.startDate,
+      isAutoComplated: isAutoComplated,
+    );
+
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: realHeight),
       child: FittedBox(
-        child: HabitDailyStatusContainer(
-          date: showDate,
-          padding: widget.itemPadding,
-          colorType: data.colorType,
-          habitDailyRecordForm: HabitDailyRecordForm.getImp(
-            type: data.type,
-            value: record != null ? record.value : 0.0,
-            targetValue: data.dailyGoal,
-            extraTargetValue: data.dailyGoalExtra,
-          ),
-          habitDailyStatus:
-              record != null ? record.status : HabitRecordStatus.unknown,
-          onPressed: widget.onCellPressed != null
-              ? (date, crt) =>
-                  widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
-              : null,
-          onLongPressed: widget.onCellLongPressed != null
-              ? (date, crt) =>
-                  widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
-              : null,
-          onDoublePressed: widget.onCellDoublePressed != null
-              ? (date, crt) => widget.onCellDoublePressed!(
-                  data.uuid, record?.uuid, date, crt)
-              : null,
-          enabled: showDate >= data.startDate,
-          isAutoComplated: isAutoComplated,
-        ),
+        child: widget.cellBuilder != null
+            ? widget.cellBuilder!(context, recordCell, showDate)
+            : recordCell,
       ),
     );
   }
