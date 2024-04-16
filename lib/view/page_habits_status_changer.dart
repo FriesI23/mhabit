@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +21,6 @@ import 'package:tuple/tuple.dart';
 import '../common/types.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
-import '../extension/async_extensions.dart';
 import '../extension/context_extensions.dart';
 import '../logging/helper.dart';
 import '../model/habit_date.dart';
@@ -32,6 +30,7 @@ import '../provider/app_developer.dart';
 import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
+import 'common/_widget.dart';
 import 'for_habits_status_changer/_widget.dart';
 
 /// Depend Providers
@@ -195,6 +194,20 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       );
     }
 
+    Widget buildHabitTitle(BuildContext context) {
+      return Selector<HabitStatusChangerViewModel, int>(
+        selector: (context, vm) => vm.dataDelegate.habitCount,
+        builder: (context, habitCount, child) {
+          return ColoredBox(
+            color: Theme.of(context).colorScheme.background,
+            child: GroupTitleListTile(
+              title: Text("$habitCount Habits selected"),
+            ),
+          );
+        },
+      );
+    }
+
     Widget buildDivider(BuildContext context) => Builder(
           builder: (context) => ColoredBox(
             color: Theme.of(context).colorScheme.background,
@@ -204,39 +217,41 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
 
     final vm = context.read<HabitStatusChangerViewModel>();
     final div = buildDivider(context);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: CustomScrollView(
-        controller: vm.mainScrollController,
-        slivers: [
-          _AppBar(title: buildDatePickerTile(context)),
-          SafedMultiSliver(
-            pushPinnedChildren: false,
-            children: [
-              SliverPinnedHeader(child: buildStatusChangeTile(context)),
-              buildSkipStatusReasonField(context),
-              SliverPinnedHeader(child: buildConfirmButton(context)),
-            ],
-          ),
-          SliverPinnedHeader(child: div),
-          _HabitList(),
-          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-            SafedSliverList(children: [div, _buildDebugInfo(context)]),
+    return PageFramework(
+      appbar: _AppBar(title: buildDatePickerTile(context)),
+      content: SafedMultiSliver(
+        pushPinnedChildren: false,
+        children: [
+          SliverPinnedHeader(child: buildStatusChangeTile(context)),
+          buildSkipStatusReasonField(context),
+          SliverPinnedHeader(child: buildConfirmButton(context)),
         ],
       ),
+      habitTitle: SliverPinnedHeader(child: buildHabitTitle(context)),
+      habitsContent: const _HabitList(key: ValueKey(1)),
+      debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
+          ? SafedSliverList(children: [div, _buildDebugInfo(context)])
+          : null,
+      mainController: vm.mainScrollController,
     );
   }
 }
 
 class _HabitList extends StatefulWidget {
+  const _HabitList({super.key});
+
   @override
   State<_HabitList> createState() => _HabitListState();
 }
 
 class _HabitListState extends State<_HabitList> {
+  late final Key identity;
+  late HabitStatusChangerViewModel? viewmodel;
+
   @override
   void initState() {
-    final viewmodel = context.read<HabitStatusChangerViewModel>();
+    final viewmodel =
+        this.viewmodel = context.read<HabitStatusChangerViewModel>();
     final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
@@ -257,13 +272,21 @@ class _HabitListState extends State<_HabitList> {
         sameContent: (a, b) => a.isSameContent(b),
       ),
     );
-    viewmodel.initDispatcher(dispatcher);
+    identity = UniqueKey();
+    viewmodel.regDispatcher(identity, dispatcher);
     super.initState();
   }
 
   @override
   void dispose() {
+    viewmodel?.unRegDispatcher(identity);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    viewmodel = context.maybeRead<HabitStatusChangerViewModel>();
+    super.didChangeDependencies();
   }
 
   Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) =>
@@ -283,17 +306,19 @@ class _HabitListState extends State<_HabitList> {
   @override
   Widget build(BuildContext context) {
     Widget buildHabitsTileList(BuildContext context) {
-      final viewmodel = context.read<HabitStatusChangerViewModel>();
+      final viewmodel = this.viewmodel!;
+      final dispatcher = viewmodel.getDispatcher(identity)!;
       return AnimatedSliverList(
-        controller: viewmodel.dispatcherLinkedController,
+        controller: dispatcher.controller,
         delegate: AnimatedSliverChildBuilderDelegate(
           (context, index, data) {
-            return context
+            final dispatcher = context
                 .read<HabitStatusChangerViewModel>()
-                .dispatcherLinkedBuilder(
-                    context, viewmodel.lastSortedDataCache, index, data);
+                .getDispatcher(identity)!;
+            return dispatcher.builder(
+                context, dispatcher.currentList, index, data);
           },
-          viewmodel.lastSortedDataCache.length,
+          dispatcher.currentList.length,
           addLongPressReorderable: false,
         ),
       );
@@ -308,15 +333,31 @@ class _HabitListState extends State<_HabitList> {
             .loadData(inFutureBuilder: true),
         builder: (context, snapshot) {
           final viewmodel = context.read<HabitStatusChangerViewModel>();
-          appLog.load.debug("$this.buildHabits", ex: [
-            "Loading data",
-            snapshot.connectionState,
-            viewmodel.dataDelegate.habitCount,
-          ]);
-          if (kDebugMode && snapshot.isDone) {
-            appLog.load.debug("$this.buildHabits", ex: ["Loaded", viewmodel]);
-          }
-          return buildHabitsTileList(context);
+          // appLog.load.debug("$this.buildHabits", ex: [
+          //   "Loading data",
+          //   snapshot.connectionState,
+          //   viewmodel.dataDelegate.habitCount,
+          // ]);
+          // if (kDebugMode && snapshot.isDone) {
+          //   appLog.load.debug("$this.buildHabits", ex: ["Loaded", viewmodel]);
+          // }
+          return SliverStack(
+            children: [
+              SliverAnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: snapshot.connectionState == ConnectionState.waiting &&
+                        viewmodel.dataDelegate.habitCount == 0
+                    ? 1.0
+                    : 0.0,
+                sliver: SliverFillRemaining(
+                  key: ValueKey<ConnectionState>(snapshot.connectionState),
+                  hasScrollBody: false,
+                  child: const PageLoadingIndicator(),
+                ),
+              ),
+              buildHabitsTileList(context),
+            ],
+          );
         },
       ),
     );

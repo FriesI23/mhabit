@@ -988,16 +988,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {
-              final viewmodel = context.read<HabitSummaryViewModel>();
-              appLog.load.debug("$widget.buildHabits", ex: [
-                "Loading data",
-                snapshot.connectionState,
-                viewmodel.habitCount
-              ]);
-              if (kDebugMode && snapshot.isDone) {
-                appLog.load.debug("$widget.buildHabits",
-                    ex: ["Loaded", viewmodel.debugGetDataString()]);
-              }
+              // final viewmodel = context.read<HabitSummaryViewModel>();
+              // appLog.load.debug("$widget.buildHabits", ex: [
+              //   "Loading data",
+              //   snapshot.connectionState,
+              //   viewmodel.habitCount
+              // ]);
+              // if (kDebugMode && snapshot.isDone) {
+              //   appLog.load.debug("$widget.buildHabits",
+              //       ex: ["Loaded", viewmodel.debugGetDataString()]);
+              // }
 
               return SliverStack(
                 children: [
@@ -1217,7 +1217,7 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    appLog.build.debug(context, ex: [uuid, isExtended, data]);
+    appLog.build.debug(context, ex: [isExtended, uuid, data?.name]);
     if (data == null) {
       appLog.build.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();

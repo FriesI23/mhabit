@@ -17,7 +17,6 @@ export './habit_detail_appbar.dart';
 export './habit_detail_chart_title.dart';
 export './habit_detail_fab.dart';
 export './habit_detail_freq_chart.dart';
-export './habit_detail_loading_indicator.dart';
 export './habit_detail_popup_menu.dart';
 export './habit_detail_score_chart.dart';
 export './habit_detail_summary_tile.dart';

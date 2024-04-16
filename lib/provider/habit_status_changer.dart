@@ -70,7 +70,8 @@ class HabitStatusChangerViewModel
   // controller
   late final ScrollController mainScrollController;
   // dispatcher
-  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
+  final Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>> _dispatchers =
+      {};
   // inside status
   bool _mounted = true;
   bool _isSkipReasonEdited = false;
@@ -131,7 +132,7 @@ class HabitStatusChangerViewModel
       if (!mounted) return loadingFailed(["viewmodel disposed"]);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
-      _redispach();
+      _reDispached();
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
       _loading?.complete();
@@ -151,21 +152,27 @@ class HabitStatusChangerViewModel
   //#endregion
 
   //#region dispatcher
-  AnimatedListController get dispatcherLinkedController =>
-      _dispatcher.controller;
+  @visibleForTesting
+  Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>>
+      get debugDispatchers => _dispatchers;
 
-  AnimatedListDiffBuilder<List<HabitSortCache>> get dispatcherLinkedBuilder =>
-      _dispatcher.builder;
+  AnimatedListDiffListDispatcher<HabitSortCache>? getDispatcher(Key? key) =>
+      _dispatchers[key];
 
-  List<HabitSortCache> get lastSortedDataCache => _dispatcher.currentList;
-
-  void initDispatcher(
-      AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    _dispatcher = dispatcher;
+  void regDispatcher(
+      Key? key, AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
+    assert(!_dispatchers.containsKey(key));
+    _dispatchers[key] = dispatcher;
   }
 
-  void _redispach() {
-    _dispatcher.dispatchNewList(dataDelegate.habitsSortableCache.toList());
+  void unRegDispatcher(Key? key) => _dispatchers.remove(key)?.discard();
+
+  void _reDispached({List<Key>? keys}) {
+    for (var key in _dispatchers.keys) {
+      if (keys != null && !keys.contains(key)) continue;
+      _dispatchers[key]!
+          .dispatchNewList(dataDelegate.habitsSortableCache.toList());
+    }
   }
   //#endregion
 
@@ -308,7 +315,9 @@ class HabitStatusChangerViewModel
   @override
   void dispose() {
     if (!_mounted) return;
-    _dispatcher.discard();
+    for (var dispatcher in _dispatchers.values) {
+      dispatcher.discard();
+    }
     _cancelLoading();
     super.dispose();
     _mounted = false;

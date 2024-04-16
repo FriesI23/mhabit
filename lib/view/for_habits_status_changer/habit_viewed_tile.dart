@@ -31,7 +31,7 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    appLog.build.debug(context, ex: [date, data]);
+    appLog.build.debug(context, ex: [date, data.uuid, data.name]);
     return HabitSummaryListTile(
       data: data,
       startDate: date,

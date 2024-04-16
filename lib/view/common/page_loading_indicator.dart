@@ -18,13 +18,15 @@ import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
 
-class HabitDetailLoadingIndicator extends StatelessWidget {
+const kPageLoadingCircleIndicatorSize = 64.0;
+
+class PageLoadingIndicator extends StatelessWidget {
   final Size size;
   final HabitColorType? colorType;
 
-  const HabitDetailLoadingIndicator({
+  const PageLoadingIndicator({
     super.key,
-    required this.size,
+    this.size = const Size.square(kPageLoadingCircleIndicatorSize),
     this.colorType,
   });
 
