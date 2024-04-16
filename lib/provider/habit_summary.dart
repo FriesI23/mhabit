@@ -282,10 +282,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       final recordLoadTask = recordDBHelper.loadAllRecords();
       _data.initDataFromDBQueuryResult(
           await habitLoadTask, await recordLoadTask);
-      if (!mounted) {
-        loadingFailed(["viewmodel disposed"]);
-        return;
-      }
+      if (!mounted) return loadingFailed(["viewmodel disposed"]);
       _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
       _resortData();
       // complete
@@ -294,6 +291,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       final futureList = <Future>[];
       _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
       await Future.wait(futureList);
+      if (!mounted) return loadingFailed(["viewmodel disposed"]);
       // reload
       if (listen) {
         if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;

@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_summary.dart';
 import '../common/_widget.dart';
@@ -30,6 +31,7 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    appLog.build.debug(context, ex: [date, data]);
     return HabitSummaryListTile(
       data: data,
       startDate: date,

@@ -120,10 +120,7 @@ class HabitStatusChangerViewModel
     Future<void> loadingData() async {
       appLog.load.debug("$runtimeType.load",
           ex: ["loading data", _loading.hashCode, listen]);
-      if (!mounted) {
-        loadingFailed(["viewmodel disposed"]);
-        return;
-      }
+      if (!mounted) return loadingFailed(["viewmodel disposed"]);
       // init habits
       final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
           uuidFilter: _selectedUUIDList);
@@ -131,10 +128,7 @@ class HabitStatusChangerViewModel
           recordDBHelper.loadAllRecords(uuidFilter: _selectedUUIDList);
       _data.initDataFromDBQueuryResult(
           await habitLoadTask, await recordLoadTask);
-      if (!mounted) {
-        loadingFailed(["viewmodel disposed"]);
-        return;
-      }
+      if (!mounted) return loadingFailed(["viewmodel disposed"]);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
       _redispach();
