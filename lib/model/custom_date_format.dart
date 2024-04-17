@@ -131,6 +131,14 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     }
   }
 
+  DateFormat getYMDBatchCheckinFormatter([String? locale]) {
+    if (useSystemFormat) {
+      return DateFormat.yMMMMd(locale);
+    } else {
+      return _getYMDFormatterWithConfig(locale);
+    }
+  }
+
   DateFormat getYMDFormatterForFreqChart([String? locale]) {
     if (useSystemFormat || !isApplyFreqChart) {
       return DateFormat.yMd(locale);

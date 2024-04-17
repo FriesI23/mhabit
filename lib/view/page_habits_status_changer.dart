@@ -23,9 +23,11 @@ import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../logging/helper.dart';
+import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
 import '../model/habit_summary.dart';
 import '../provider/app_compact_ui_switcher.dart';
+import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
@@ -36,6 +38,7 @@ import 'for_habits_status_changer/_widget.dart';
 
 /// Depend Providers
 /// - Required for builder:
+///   - [AppCustomDateYmdHmsConfigViewModel]
 ///   - [AppCompactUISwitcherViewModel]
 ///   - [AppDeveloperViewModel]
 /// - Required for callback:
@@ -170,15 +173,21 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     appLog.build.debug(context);
 
     Widget buildDatePickerTile(BuildContext context) =>
-        Selector<HabitStatusChangerViewModel, HabitsDataDelagate>(
-          selector: (context, vm) => vm.dataDelegate,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, _, child) {
-            final vm = context.read<HabitStatusChangerViewModel>();
-            return DatePickerTile(
-              initDate: vm.selectDate,
-              firstDate: vm.earlistStartDate,
-              onSelectDateChanged: _onSelectedDateChanged,
+        Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+          selector: (context, vm) => vm.config,
+          builder: (context, formatter, child) {
+            return Selector<HabitStatusChangerViewModel, HabitsDataDelagate>(
+              selector: (context, vm) => vm.dataDelegate,
+              shouldRebuild: (previous, next) => previous != next,
+              builder: (context, _, child) {
+                final vm = context.read<HabitStatusChangerViewModel>();
+                return DatePickerTile(
+                  initDate: vm.selectDate,
+                  firstDate: vm.earlistStartDate,
+                  formatter: formatter,
+                  onSelectDateChanged: _onSelectedDateChanged,
+                );
+              },
             );
           },
         );
@@ -261,7 +270,8 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       },
       child: PageFramework(
         appbar: _AppBar(
-          title: buildDatePickerTile(context),
+          title: const Text("Batch Check-in"),
+          bottomWidget: buildDatePickerTile(context),
           onCloseButtonPressed: _onClosePageButtonPressed,
         ),
         content: SafedMultiSliver(
@@ -412,20 +422,27 @@ class _HabitListState extends State<_HabitList> {
 
 class _AppBar extends StatelessWidget {
   final Widget? title;
+  final Widget? bottomWidget;
   final VoidCallback? onCloseButtonPressed;
 
-  const _AppBar({this.title, this.onCloseButtonPressed});
+  const _AppBar({this.title, this.bottomWidget, this.onCloseButtonPressed});
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar.large(
+    return SliverAppBar(
       leading: PageBackButton(
         reason: PageBackReason.close,
         onPressed: onCloseButtonPressed,
       ),
       title: title,
+      bottom: bottomWidget != null
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: bottomWidget!)
+          : null,
       automaticallyImplyLeading: false,
       pinned: true,
+      floating: true,
     );
   }
 }

@@ -27,6 +27,7 @@ class DatePickerTile extends StatefulWidget {
   final HabitDate? lastDate;
   final HabitDate firstDate;
   final CustomDateYmdHmsConfig? formatter;
+  final EdgeInsetsGeometry? padding;
   final void Function(HabitDate od, HabitDate nd)? onSelectDateChanged;
 
   const DatePickerTile({
@@ -35,6 +36,7 @@ class DatePickerTile extends StatefulWidget {
     required this.firstDate,
     this.lastDate,
     this.formatter,
+    this.padding,
     this.onSelectDateChanged,
   });
 
@@ -71,11 +73,9 @@ class _DatePickerTileState extends State<DatePickerTile> {
     }
   }
 
-  DateFormat _getDateFormat([L10n? l10n]) {
-    final formatter = widget.formatter;
-    if (formatter != null) return formatter.getYMDFormatter(l10n?.localeName);
-    return DateFormat.yMd(l10n?.localeName);
-  }
+  DateFormat _getDateFormat([L10n? l10n]) =>
+      widget.formatter?.getYMDBatchCheckinFormatter(l10n?.localeName) ??
+      DateFormat.yMMMMd(l10n?.localeName);
 
   void _onDatePressed(HabitDate date) async {
     if (!mounted) return;
@@ -103,30 +103,33 @@ class _DatePickerTileState extends State<DatePickerTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        IconButton.outlined(
-          onPressed: _selectDate <= firstDate ? null : _onLeftButtonPressed,
-          icon: const Icon(Icons.arrow_left_outlined),
-        ),
-        const Spacer(flex: 1),
-        Expanded(
-          flex: 10,
-          child: L10nBuilder(
-            builder: (context, l10n) => _DateTimeCell(
-              formatter: _getDateFormat(l10n),
-              date: _selectDate,
-              onPressed: _onDatePressed,
+    return Padding(
+      padding: widget.padding ?? kListTileContentPadding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton.outlined(
+            onPressed: _selectDate <= firstDate ? null : _onLeftButtonPressed,
+            icon: const Icon(Icons.arrow_left_outlined),
+          ),
+          const Spacer(flex: 1),
+          Expanded(
+            flex: 10,
+            child: L10nBuilder(
+              builder: (context, l10n) => _DateTimeCell(
+                formatter: _getDateFormat(l10n),
+                date: _selectDate,
+                onPressed: _onDatePressed,
+              ),
             ),
           ),
-        ),
-        const Spacer(flex: 1),
-        IconButton.outlined(
-          onPressed: _selectDate >= lastDate ? null : _onRightButtonPressed,
-          icon: const Icon(Icons.arrow_right_outlined),
-        ),
-      ],
+          const Spacer(flex: 1),
+          IconButton.outlined(
+            onPressed: _selectDate >= lastDate ? null : _onRightButtonPressed,
+            icon: const Icon(Icons.arrow_right_outlined),
+          ),
+        ],
+      ),
     );
   }
 }
