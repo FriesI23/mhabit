@@ -868,66 +868,66 @@ class L10nDe extends L10n {
   }
 
   @override
-  String get batchCheckin_appbar_title => 'Batch Check-in';
+  String get batchCheckin_appbar_title => 'Stapel-Check-in';
 
   @override
-  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+  String get batchCheckin_datePicker_prevButton_tooltip => 'Vorheriger Tag';
 
   @override
-  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+  String get batchCheckin_datePicker_nextButton_tooltip => 'Nächster Tag';
 
   @override
-  String get batchCheckin_status_skip_text => 'Skip';
+  String get batchCheckin_status_skip_text => 'Überspringen';
 
   @override
-  String get batchCheckin_status_ok_text => 'Complete';
+  String get batchCheckin_status_ok_text => 'Abgeschlossen';
 
   @override
-  String get batchCheckin_status_double_text => 'x2 Hit!';
+  String get batchCheckin_status_double_text => 'Doppelter Erfolg!';
 
   @override
-  String get batchCheckin_status_zero_text => 'Incomplete';
+  String get batchCheckin_status_zero_text => 'Unvollständig';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits',
-      one: 'Habit',
+      other: 'Gewohnheiten',
+      one: 'Gewohnheit',
     );
-    return '$count $_temp0 selected';
+    return '$_temp0 ausgewählt';
   }
 
   @override
-  String get batchCheckin_save_button_text => 'Save';
+  String get batchCheckin_save_button_text => 'Speichern';
 
   @override
-  String get batchCheckin_reset_button_text => 'Reset';
+  String get batchCheckin_reset_button_text => 'Zurücksetzen';
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Overwrite Existing Records';
+  String get batchCheckin_save_confirmDialog_title => 'Bestehende Einträge überschreiben';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Existing records will be overwritten After saving, previous records will be lost.';
+  String get batchCheckin_save_confirmDialog_body => 'Bestehende Einträge werden überschrieben. Nach dem Speichern gehen frühere Einträge verloren.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'Speichern';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'Abbrechen';
 
   @override
-  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+  String get batchCheckin_close_confirmDialog_title => 'Rückkehr bestätigen';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Check-in Status Changes won\'t be applied before saved';
+  String get batchCheckin_close_confirmDialog_body => 'Änderungen am Eincheckstatus werden erst nach dem Speichern angewendet.';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'Beenden';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'Abbrechen';
 
   @override
   String get appReminder_dailyReminder_title => '🏝 Bist du heute bei deinen Gewohnheiten geblieben?';

@@ -597,7 +597,7 @@
   "batchCheckin_status_ok_text": "完成",
   "batchCheckin_status_double_text": "超量完成",
   "batchCheckin_status_zero_text": "未完成",
-  "batchCheckin_habits_groupTitle": "已选择{count}个习惯}",
+  "batchCheckin_habits_groupTitle": "已选择{count}个习惯",
   "batchCheckin_save_button_text": "保存",
   "batchCheckin_reset_button_text": "重置",
   "batchCheckin_save_confirmDialog_title": "覆盖现有记录",
