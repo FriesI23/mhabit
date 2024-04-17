@@ -1,0 +1,4 @@
+- Add Batch Check-in feature
+
+After long press to select multi habits, `Batch Check-in` feature can be
+accessed by clicking `FAB` button at bottom right of screen.

@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.12.0+37
+
+- Add Batch Check-in feature
+
+After long press to select multi habits, `Batch Check-in` feature can be
+accessed by clicking `FAB` button at bottom right of screen.
+
 ## 1.11.1+36
 
 - Add contributor page
