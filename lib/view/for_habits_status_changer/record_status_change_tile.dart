@@ -71,7 +71,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
         return l10n?.batchCheckin_status_skip_text;
       case RecordStatusChangerStatus.ok:
         return l10n?.batchCheckin_status_ok_text;
-      case RecordStatusChangerStatus.double:
+      case RecordStatusChangerStatus.dual:
         return l10n?.batchCheckin_status_double_text;
       case RecordStatusChangerStatus.zero:
         return l10n?.batchCheckin_status_zero_text;
@@ -104,7 +104,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
               status: RecordStatusChangerStatus.ok,
               icon: const Icon(kRecordDoneStatusIcon)),
           buildButtonSegment(context,
-              status: RecordStatusChangerStatus.double,
+              status: RecordStatusChangerStatus.dual,
               icon: const Icon(MdiIcons.checkAll)),
           buildButtonSegment(context,
               status: RecordStatusChangerStatus.zero,

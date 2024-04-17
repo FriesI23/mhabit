@@ -41,20 +41,20 @@ part 'habit_status_changer.g.dart';
 enum RecordStatusChangerStatus {
   skip,
   ok,
-  double,
+  dual,
   zero; // only for normal habit
 
   static const normalStatus = {
     RecordStatusChangerStatus.skip,
     RecordStatusChangerStatus.ok,
-    RecordStatusChangerStatus.double,
+    RecordStatusChangerStatus.dual,
     RecordStatusChangerStatus.zero,
   };
 
   static const negativeStatus = {
     RecordStatusChangerStatus.skip,
     RecordStatusChangerStatus.ok,
-    RecordStatusChangerStatus.double,
+    RecordStatusChangerStatus.dual,
   };
 }
 
@@ -370,7 +370,7 @@ final class HabitStatusChangerForm {
             status: HabitRecordStatus.done,
             value: data.habitOkValue,
             uuid: uuid);
-      case RecordStatusChangerStatus.double:
+      case RecordStatusChangerStatus.dual:
         switch (data.type) {
           case HabitType.normal:
             return HabitSummaryRecord.generate(selectDate,
@@ -419,11 +419,11 @@ final class HabitStatusChangerForm {
               case HabitType.normal:
                 return (record.value == data.dailyGoalExtra ||
                         record.value == data.habitOkValue * 2)
-                    ? RecordStatusChangerStatus.double
+                    ? RecordStatusChangerStatus.dual
                     : null;
               case HabitType.negative:
                 return record.value == data.dailyGoal
-                    ? RecordStatusChangerStatus.double
+                    ? RecordStatusChangerStatus.dual
                     : null;
             }
           case HabitDailyComplateStatus.tryhard:

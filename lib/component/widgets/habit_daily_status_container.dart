@@ -69,7 +69,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
     Widget withAutoMarkStatus() {
       return Icon(
-        kRecordDoneStatusIcon,
+        kRecordAutoMarkStatusIcon,
         color: habitListTileColor?.dailyStatusTheme?.autoMark ??
             globalColor?.autoMark ??
             defaultColor.autoMark,
