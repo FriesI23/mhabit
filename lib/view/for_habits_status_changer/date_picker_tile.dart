@@ -109,6 +109,7 @@ class _DatePickerTileState extends State<DatePickerTile> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton.outlined(
+            tooltip: "Previous day",
             onPressed: _selectDate <= firstDate ? null : _onLeftButtonPressed,
             icon: const Icon(Icons.arrow_left_outlined),
           ),
@@ -125,6 +126,7 @@ class _DatePickerTileState extends State<DatePickerTile> {
           ),
           const Spacer(flex: 1),
           IconButton.outlined(
+            tooltip: "Next day",
             onPressed: _selectDate >= lastDate ? null : _onRightButtonPressed,
             icon: const Icon(Icons.arrow_right_outlined),
           ),

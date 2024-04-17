@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../common/consts.dart';
+import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../provider/habit_status_changer.dart';
 
@@ -64,6 +65,19 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
     });
   }
 
+  String? _getTooltipByStatus(RecordStatusChangerStatus status, [L10n? l10n]) {
+    switch (status) {
+      case RecordStatusChangerStatus.skip:
+        return "Skip";
+      case RecordStatusChangerStatus.ok:
+        return "Complete";
+      case RecordStatusChangerStatus.double:
+        return "Double Check-in";
+      case RecordStatusChangerStatus.zero:
+        return "Incomplete";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ButtonSegment<RecordStatusChangerStatus> buildButtonSegment(
@@ -76,6 +90,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
             value: status,
             label: label,
             icon: icon,
+            tooltip: _getTooltipByStatus(status),
             enabled: widget.allowedStatus.contains(status));
 
     appLog.build.debug(context);
