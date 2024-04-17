@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/localizations.dart';
+
 class ConfirmButton extends StatelessWidget {
   final bool enbaleConfirm;
   final VoidCallback? onConfirmPressed;
@@ -36,13 +38,21 @@ class ConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FilledButton.tonal(
-              onPressed: realConfirmCallback, child: const Text("Save")),
-          TextButton(onPressed: realCancelCallback, child: const Text("Reset")),
+              onPressed: realConfirmCallback,
+              child: l10n != null
+                  ? Text(l10n.batchCheckin_save_button_text)
+                  : const Text("Save")),
+          TextButton(
+              onPressed: realCancelCallback,
+              child: l10n != null
+                  ? Text(l10n.batchCheckin_reset_button_text)
+                  : const Text("Reset")),
         ],
       ),
     );

@@ -100,12 +100,24 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     if (vm.selectDateRecords.isNotEmpty) {
       final result = (await showConfirmDialog(
             context: context,
-            title: const Text("Overwrite Existing Records"),
-            subtitle:
-                const Text("Existing records will be overwritten After saving, "
-                    "previous records will be lost."),
-            confirmText: const Text("save"),
-            cancelText: const Text("cancel"),
+            titleBuilder: (context) => L10nBuilder(
+                builder: (context, l10n) => l10n != null
+                    ? Text(l10n.batchCheckin_save_confirmDialog_title)
+                    : const Text("Overwrite Existing Records")),
+            subtitleBuilder: (context) => L10nBuilder(
+                builder: (context, l10n) => l10n != null
+                    ? Text(l10n.batchCheckin_save_confirmDialog_body)
+                    : const SizedBox()),
+            confirmTextBuilder: (context) => L10nBuilder(
+                builder: (context, l10n) => l10n != null
+                    ? Text(
+                        l10n.batchCheckin_save_confirmDialog_confirmButton_text)
+                    : const Text("save")),
+            cancelText: L10nBuilder(
+                builder: (context, l10n) => l10n != null
+                    ? Text(
+                        l10n.batchCheckin_save_confirmDialog_cancelButton_text)
+                    : const Text("cancel")),
           )) ??
           false;
       if (!mounted || !result) return;
@@ -138,10 +150,24 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     final bool result = vm.canSave
         ? (await showConfirmDialog(
               context: context,
-              title: const Text("Unsaved Check-in Status"),
-              subtitle: const Text("Changes will not be applied before saved"),
-              confirmText: const Text("exit"),
-              cancelText: const Text("cancel"),
+              titleBuilder: (context) => L10nBuilder(
+                  builder: (context, l10n) => l10n != null
+                      ? Text(l10n.batchCheckin_close_confirmDialog_title)
+                      : const Text("Unsaved Check-in Status")),
+              subtitleBuilder: (context) => L10nBuilder(
+                  builder: (context, l10n) => l10n != null
+                      ? Text(l10n.batchCheckin_close_confirmDialog_body)
+                      : const SizedBox()),
+              confirmTextBuilder: (context) => L10nBuilder(
+                  builder: (context, l10n) => l10n != null
+                      ? Text(l10n
+                          .batchCheckin_close_confirmDialog_confirmButton_text)
+                      : const Text("exit")),
+              cancelText: L10nBuilder(
+                  builder: (context, l10n) => l10n != null
+                      ? Text(l10n
+                          .batchCheckin_close_confirmDialog_cancelButton_text)
+                      : const Text("cancel")),
             ) ??
             defaultConfirmResult)
         : true;
@@ -246,8 +272,12 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         builder: (context, habitCount, child) {
           return ColoredBox(
             color: Theme.of(context).colorScheme.background,
-            child: GroupTitleListTile(
-              title: Text("$habitCount Habits selected"),
+            child: L10nBuilder(
+              builder: (context, l10n) => GroupTitleListTile(
+                title: l10n != null
+                    ? Text(l10n.batchCheckin_habits_groupTitle(habitCount))
+                    : const Text("Selected Habits"),
+              ),
             ),
           );
         },
@@ -270,7 +300,11 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       },
       child: PageFramework(
         appbar: _AppBar(
-          title: const Text("Batch Check-in"),
+          title: L10nBuilder(
+            builder: (context, l10n) => l10n != null
+                ? Text(l10n.batchCheckin_appbar_title)
+                : const Text("Multi Check-in"),
+          ),
           bottomWidget: buildDatePickerTile(context),
           onCloseButtonPressed: _onClosePageButtonPressed,
         ),

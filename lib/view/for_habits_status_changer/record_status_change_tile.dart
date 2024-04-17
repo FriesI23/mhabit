@@ -68,13 +68,13 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
   String? _getTooltipByStatus(RecordStatusChangerStatus status, [L10n? l10n]) {
     switch (status) {
       case RecordStatusChangerStatus.skip:
-        return "Skip";
+        return l10n?.batchCheckin_status_skip_text;
       case RecordStatusChangerStatus.ok:
-        return "Complete";
+        return l10n?.batchCheckin_status_ok_text;
       case RecordStatusChangerStatus.double:
-        return "Double Check-in";
+        return l10n?.batchCheckin_status_double_text;
       case RecordStatusChangerStatus.zero:
-        return "Incomplete";
+        return l10n?.batchCheckin_status_zero_text;
     }
   }
 
@@ -90,7 +90,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
             value: status,
             label: label,
             icon: icon,
-            tooltip: _getTooltipByStatus(status),
+            tooltip: _getTooltipByStatus(status, L10n.of(context)),
             enabled: widget.allowedStatus.contains(status));
 
     appLog.build.debug(context);

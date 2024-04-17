@@ -578,6 +578,35 @@
   },
   "appAbout_donateDialog_copiedCrypto_msg": "Copied {name}'s Address",
 
+  "batchCheckin_appbar_title": "Batch Check-in",
+  "batchCheckin_datePicker_prevButton_tooltip": "Previous day",
+  "batchCheckin_datePicker_nextButton_tooltip": "Next day",
+  "batchCheckin_status_skip_text": "Skip",
+  "batchCheckin_status_ok_text": "Complete",
+  "batchCheckin_status_double_text": "x2 Hit!",
+  "batchCheckin_status_zero_text": "Incomplete",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} selected",
+  "batchCheckin_save_button_text": "Save",
+  "batchCheckin_reset_button_text": "Reset",
+
+  "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
+  "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
+  "batchCheckin_save_confirmDialog_confirmButton_text": "save",
+  "batchCheckin_save_confirmDialog_cancelButton_text": "cancel",
+
+  "batchCheckin_close_confirmDialog_title": "Confirm Return",
+  "batchCheckin_close_confirmDialog_body": "Check-in Status Changes won't be applied before saved",
+  "batchCheckin_close_confirmDialog_confirmButton_text": "exit",
+  "batchCheckin_close_confirmDialog_cancelButton_text": "cancel",
+
   "appReminder_dailyReminder_title": "🏝 Did you stick to your habits today?",
   "appReminder_dailyReminder_body": "click to enter app and punch in on time.",
 

@@ -103,13 +103,14 @@ class _DatePickerTileState extends State<DatePickerTile> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return Padding(
       padding: widget.padding ?? kListTileContentPadding,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton.outlined(
-            tooltip: "Previous day",
+            tooltip: l10n?.batchCheckin_datePicker_prevButton_tooltip,
             onPressed: _selectDate <= firstDate ? null : _onLeftButtonPressed,
             icon: const Icon(Icons.arrow_left_outlined),
           ),
@@ -126,7 +127,7 @@ class _DatePickerTileState extends State<DatePickerTile> {
           ),
           const Spacer(flex: 1),
           IconButton.outlined(
-            tooltip: "Next day",
+            tooltip: l10n?.batchCheckin_datePicker_nextButton_tooltip,
             onPressed: _selectDate >= lastDate ? null : _onRightButtonPressed,
             icon: const Icon(Icons.arrow_right_outlined),
           ),

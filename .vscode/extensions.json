@@ -7,6 +7,7 @@
         "ymotongpoo.licenser",
         "maptz.regionfolder",
         "ryanluker.vscode-coverage-gutters",
-        "flutterando.flutter-coverage"
+        "flutterando.flutter-coverage",
+        "google.arb-editor"
     ]
 }

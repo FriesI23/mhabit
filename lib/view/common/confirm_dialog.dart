@@ -28,13 +28,10 @@ Future<bool?> showConfirmDialog({
   return showDialog<bool>(
     context: context,
     builder: (context) => ConfirmDialog(
-      title: titleBuilder != null ? titleBuilder(context) : title,
-      subtitle: subtitleBuilder != null ? subtitleBuilder(context) : subtitle,
-      cancelText:
-          cancelTextBuilder != null ? cancelTextBuilder(context) : cancelText,
-      confirmText: confirmTextBuilder != null
-          ? confirmTextBuilder(context)
-          : confirmText,
+      title: titleBuilder?.call(context) ?? title,
+      subtitle: subtitleBuilder?.call(context) ?? subtitle,
+      cancelText: cancelTextBuilder?.call(context) ?? cancelText,
+      confirmText: confirmTextBuilder?.call(context) ?? confirmText,
     ),
   );
 }
