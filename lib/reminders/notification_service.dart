@@ -73,6 +73,7 @@ class NotificationService implements AsyncInitialization {
     final initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
+      macOS: darwinSettings,
     );
 
     await plugin.initialize(initializationSettings);
