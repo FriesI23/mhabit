@@ -181,14 +181,8 @@ class HabitDetailViewModel extends ChangeNotifier
       final recordLoadTask = recordDBHelper.loadRecords(uuid);
       final cell = await dataLoadTask;
       final records = await recordLoadTask;
-      if (cell == null) {
-        loadingFailed(["data load failed", uuid]);
-        return;
-      }
-      if (!mounted) {
-        loadingFailed(["viewmodel disposed", uuid]);
-        return;
-      }
+      if (cell == null) return loadingFailed(["data load failed", uuid]);
+      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
       final data = HabitDetailData.fromDBQueryCell(cell);
       data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;

@@ -73,6 +73,18 @@ class RecordDBCell with DBCell {
       this.parentUUID,
       this.reason});
 
+  RecordDBCell.build(
+      {required this.parentId,
+      required this.parentUUID,
+      required this.recordDate,
+      required this.recordType,
+      required this.recordValue,
+      this.createT,
+      this.modifyT,
+      this.uuid,
+      this.reason})
+      : id = null;
+
   factory RecordDBCell.fromJson(Map<String, Object?> cell) =>
       _$RecordDBCellFromJson(cell);
 
@@ -93,12 +105,14 @@ class RecordDBHelper extends DBHelperHandler {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<Iterable<int>> insertMultiRecords(
-      Iterable<RecordDBCell> records) async {
+  Future<Iterable<int>> insertMultiRecords(Iterable<RecordDBCell> records,
+      {bool updateIfExist = false}) async {
     final bath = db.batch();
     for (var record in records) {
       bath.insert(table, record.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.ignore);
+          conflictAlgorithm: updateIfExist
+              ? ConflictAlgorithm.replace
+              : ConflictAlgorithm.ignore);
     }
     final result = await bath.commit(noResult: false);
     return result.map((e) => e as int);
@@ -151,8 +165,25 @@ WHERE $table.${RecordDBCellKey.recordDate}
     RecordDBCellKey.recordValue
   ];
 
-  Future<Iterable<RecordDBCell>> loadAllRecords() async {
+  Future<Iterable<RecordDBCell>> loadAllRecords(
+      {List<HabitUUID>? uuidFilter}) async {
+    if (uuidFilter != null) {
+      return _loadRecords(uuidFilter);
+    }
+    return _loadAllRecords();
+  }
+
+  Future<Iterable<RecordDBCell>> _loadAllRecords() async {
     final results = await db.query(table, columns: _loadAllRecordDataColumns);
+    return results.map(RecordDBCell.fromJson);
+  }
+
+  Future<Iterable<RecordDBCell>> _loadRecords(List<HabitUUID> uuidList) async {
+    final results = await db.query(table,
+        where: "${RecordDBCellKey.parentUUID} "
+            "IN (${uuidList.map((e) => '?').join(', ')}) ",
+        whereArgs: uuidList,
+        columns: _loadAllRecordDataColumns);
     return results.map(RecordDBCell.fromJson);
   }
 

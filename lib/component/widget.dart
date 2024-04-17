@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' show EdgeInsets;
+import 'package:flutter/material.dart' show EdgeInsets, EdgeInsetsDirectional;
 
 export './widgets/chip_list.dart';
 export './widgets/color_display_chip.dart';
@@ -43,3 +43,5 @@ export './widgets/week_picker_cell.dart';
 
 const kExpanedDailogInsetPadding =
     EdgeInsets.only(left: 40.0, right: 40.0, bottom: 10.0);
+const kListTileContentPadding =
+    EdgeInsetsDirectional.only(start: 16.0, end: 24.0);

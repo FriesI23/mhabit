@@ -893,13 +893,13 @@ class _HabitDetailView extends State<HabitDetailView>
             future: loadData(),
             builder: (context, snapshot) {
               final viewmodel = context.read<HabitDetailViewModel>();
-              appLog.load.debug("$widget.buildBody",
-                  ex: ["Loading detail data", snapshot.connectionState]);
+              // appLog.load.debug("$widget.buildBody",
+              //     ex: ["Loading detail data", snapshot.connectionState]);
 
-              if (kDebugMode && snapshot.isDone) {
-                appLog.load.debug("$widget.buildBody",
-                    ex: ["Loaded", viewmodel.debugGetDataString()]);
-              }
+              // if (kDebugMode && snapshot.isDone) {
+              //   appLog.load.debug("$widget.buildBody",
+              //       ex: ["Loaded", viewmodel.debugGetDataString()]);
+              // }
 
               final Widget switcherWidget;
 
@@ -907,7 +907,7 @@ class _HabitDetailView extends State<HabitDetailView>
                 switcherWidget = SliverFillRemaining(
                   key: ValueKey<ConnectionState>(snapshot.connectionState),
                   hasScrollBody: false,
-                  child: HabitDetailLoadingIndicator(
+                  child: PageLoadingIndicator(
                     size: const Size.square(
                         kHabitDetailLoadingCircleIndicatorSize),
                     colorType: viewmodel.habitColorType,

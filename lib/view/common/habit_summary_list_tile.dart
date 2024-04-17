@@ -25,10 +25,12 @@ import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_summary.dart';
 import '../../theme/color.dart';
-import 'sliver_calendar_bar.dart';
 
 const kDefaultHabitSummaryListTileHeight = 64.0;
 const kMaxHabitSummaryListTileTextScale = 1.3;
+const double kDefaultHabitSummaryListTileExtendedPrt = 0.85;
+const double kDefaultHabitSummaryListTileCollapsePrt = 0.5;
+const int kHabitSummaryListTilMinShowDate = 1;
 
 class HabitSummaryListTile extends StatefulWidget {
   final DateTime? startDate;
@@ -41,6 +43,8 @@ class HabitSummaryListTile extends StatefulWidget {
   final EdgeInsets? _titlePadding;
   final EdgeInsets? itemPadding;
   final int? collapsePrt;
+  final Widget Function(
+      BuildContext context, Widget cell, HabitRecordDate date)? cellBuilder;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -60,6 +64,7 @@ class HabitSummaryListTile extends StatefulWidget {
     EdgeInsets? titlePadding,
     this.itemPadding,
     this.collapsePrt,
+    this.cellBuilder,
     this.scrollPhysicsBuilder,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -100,7 +105,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   double get collapsePrt => widget.collapsePrt != null
       ? widget.collapsePrt! / 100
-      : kDefaultHabitCalendarBarCollapsePrt;
+      : kDefaultHabitSummaryListTileCollapsePrt;
 
   HabitSummaryData get data => widget.data;
 
@@ -150,36 +155,40 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     final record = data.getRecordByDate(showDate);
     final isAutoComplated = data.isRecordAutoComplated(showDate);
 
+    final recordCell = HabitDailyStatusContainer(
+      date: showDate,
+      padding: widget.itemPadding,
+      colorType: data.colorType,
+      habitDailyRecordForm: HabitDailyRecordForm.getImp(
+        type: data.type,
+        value: record != null ? record.value : 0.0,
+        targetValue: data.dailyGoal,
+        extraTargetValue: data.dailyGoalExtra,
+      ),
+      habitDailyStatus:
+          record != null ? record.status : HabitRecordStatus.unknown,
+      onPressed: widget.onCellPressed != null
+          ? (date, crt) =>
+              widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      onLongPressed: widget.onCellLongPressed != null
+          ? (date, crt) =>
+              widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      onDoublePressed: widget.onCellDoublePressed != null
+          ? (date, crt) =>
+              widget.onCellDoublePressed!(data.uuid, record?.uuid, date, crt)
+          : null,
+      enabled: showDate >= data.startDate,
+      isAutoComplated: isAutoComplated,
+    );
+
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: realHeight),
       child: FittedBox(
-        child: HabitDailyStatusContainer(
-          date: showDate,
-          padding: widget.itemPadding,
-          colorType: data.colorType,
-          habitDailyRecordForm: HabitDailyRecordForm.getImp(
-            type: data.type,
-            value: record != null ? record.value : 0.0,
-            targetValue: data.dailyGoal,
-            extraTargetValue: data.dailyGoalExtra,
-          ),
-          habitDailyStatus:
-              record != null ? record.status : HabitRecordStatus.unknown,
-          onPressed: widget.onCellPressed != null
-              ? (date, crt) =>
-                  widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
-              : null,
-          onLongPressed: widget.onCellLongPressed != null
-              ? (date, crt) =>
-                  widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
-              : null,
-          onDoublePressed: widget.onCellDoublePressed != null
-              ? (date, crt) => widget.onCellDoublePressed!(
-                  data.uuid, record?.uuid, date, crt)
-              : null,
-          enabled: showDate >= data.startDate,
-          isAutoComplated: isAutoComplated,
-        ),
+        child: widget.cellBuilder != null
+            ? widget.cellBuilder!(context, recordCell, showDate)
+            : recordCell,
       ),
     );
   }
@@ -239,8 +248,9 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     return HabitListTile(
       leftChild: leftPartBuilder(),
       stackedChild: titlePartBuilder(widget.isExtended),
-      sizePrt:
-          widget.isExtended ? kDefaultHabitCalendarBarExtendedPrt : collapsePrt,
+      sizePrt: widget.isExtended
+          ? kDefaultHabitSummaryListTileExtendedPrt
+          : collapsePrt,
       stackAutoWrap: !widget.isExtended,
       canScroll: widget.isExtended,
       mainScrollController: widget.verticalScrollController,
@@ -255,7 +265,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           : null,
       height: height * textScaleFactor,
       itemHeight: height,
-      minItemCoun: kHabitCalendarBarMinShowDate,
+      minItemCoun: kHabitSummaryListTilMinShowDate,
       scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
     );
   }

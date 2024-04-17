@@ -60,7 +60,7 @@ class HabitListTile extends StatelessWidget {
     this.backgroundColor,
     this.padding,
     this.scrollPhysicsBuilder,
-  }) : assert(sizePrt > 0 && sizePrt < 1);
+  }) : assert(sizePrt >= 0 && sizePrt < 1);
 
   static int calcLimitItemCount(
           double maxWidth, double maxHeight, double sizePrt,

@@ -13,7 +13,7 @@
 // limitations under the License.
 // coverage:ignore-file
 
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 import '../model/app_reminder_config.dart';
 import '../model/habit_display.dart';
@@ -118,4 +118,10 @@ const skipReasonChipTextList = [
   '😕',
   '😠',
 ];
+
+const kRecordAutoMarkStatusIcon = Icons.done_outline;
+const kRecordUnknownStatusIcon = Icons.question_mark_outlined;
+const kRecordSkipStatusIcon = Icons.remove_outlined;
+const kRecordDoneStatusIcon = Icons.check_outlined;
+const kRecordZeroStatusIcon = Icons.close_sharp;
 //#endregion

@@ -868,6 +868,68 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get batchCheckin_appbar_title => 'Batch Check-in';
+
+  @override
+  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+
+  @override
+  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+
+  @override
+  String get batchCheckin_status_skip_text => 'Skip';
+
+  @override
+  String get batchCheckin_status_ok_text => 'Complete';
+
+  @override
+  String get batchCheckin_status_double_text => 'x2 Hit!';
+
+  @override
+  String get batchCheckin_status_zero_text => 'Incomplete';
+
+  @override
+  String batchCheckin_habits_groupTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Habits',
+      one: 'Habit',
+    );
+    return '$count $_temp0 selected';
+  }
+
+  @override
+  String get batchCheckin_save_button_text => 'Save';
+
+  @override
+  String get batchCheckin_reset_button_text => 'Reset';
+
+  @override
+  String get batchCheckin_save_confirmDialog_title => 'Overwrite Existing Records';
+
+  @override
+  String get batchCheckin_save_confirmDialog_body => 'Existing records will be overwritten After saving, previous records will be lost.';
+
+  @override
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+
+  @override
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+
+  @override
+  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+
+  @override
+  String get batchCheckin_close_confirmDialog_body => 'Check-in Status Changes won\'t be applied before saved';
+
+  @override
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+
+  @override
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+
+  @override
   String get appReminder_dailyReminder_title => '🏝 Did you stick to your habits today?';
 
   @override

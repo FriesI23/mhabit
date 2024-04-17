@@ -863,6 +863,62 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get batchCheckin_appbar_title => '批量打卡';
+
+  @override
+  String get batchCheckin_datePicker_prevButton_tooltip => '前一天';
+
+  @override
+  String get batchCheckin_datePicker_nextButton_tooltip => '后一天';
+
+  @override
+  String get batchCheckin_status_skip_text => '跳过';
+
+  @override
+  String get batchCheckin_status_ok_text => '完成';
+
+  @override
+  String get batchCheckin_status_double_text => '超量完成';
+
+  @override
+  String get batchCheckin_status_zero_text => '未完成';
+
+  @override
+  String batchCheckin_habits_groupTitle(int count) {
+    return '已选择$count个习惯';
+  }
+
+  @override
+  String get batchCheckin_save_button_text => '保存';
+
+  @override
+  String get batchCheckin_reset_button_text => '重置';
+
+  @override
+  String get batchCheckin_save_confirmDialog_title => '覆盖现有记录';
+
+  @override
+  String get batchCheckin_save_confirmDialog_body => '保存后将覆盖现有记录，之前记录将丢失。';
+
+  @override
+  String get batchCheckin_save_confirmDialog_confirmButton_text => '保存';
+
+  @override
+  String get batchCheckin_save_confirmDialog_cancelButton_text => '取消';
+
+  @override
+  String get batchCheckin_close_confirmDialog_title => '确认返回';
+
+  @override
+  String get batchCheckin_close_confirmDialog_body => '未保存的打卡状态更改将不会生效。';
+
+  @override
+  String get batchCheckin_close_confirmDialog_confirmButton_text => '确认';
+
+  @override
+  String get batchCheckin_close_confirmDialog_cancelButton_text => '取消';
+
+  @override
   String get appReminder_dailyReminder_title => '🏝 你今天坚持了自己的习惯吗？';
 
   @override

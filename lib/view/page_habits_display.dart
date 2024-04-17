@@ -14,6 +14,8 @@
 
 import 'dart:math' as math;
 
+import 'package:animations/animations.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -58,13 +60,14 @@ import 'for_habits_display/_widget.dart';
 import 'page_app_setting.dart' as app_setting_view;
 import 'page_habit_detail.dart' as habit_detail_view;
 import 'page_habit_edit.dart' as habit_edit_view;
+import 'page_habits_status_changer.dart' as habits_status_changer_view;
 
 const _kCommonEvalation = 2.0;
 
 const _kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
 const _kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
 
-const _kPressFABAnimateDuration = Duration(milliseconds: 500);
+const _kFABModeChangeDuration = Duration(milliseconds: 300);
 
 const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
 
@@ -90,8 +93,6 @@ class HabitsDisplayView extends StatefulWidget {
 
 class _HabitsDisplayView extends State<HabitsDisplayView>
     with HabitsDisplayViewDebug, XShare<HabitsDisplayView> {
-  VoidCallback? _onFABPressedAction;
-
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -448,21 +449,14 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
-  Future<void> _onFABPressed() async {
-    if (!mounted) return;
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    if (viewmodel.isInEditMode) {
-      context.read<HabitSummaryViewModel>().exitEditMode();
-      await Future.delayed(_kPressFABAnimateDuration);
-    }
-
+  Future<void> _onFABPressed(VoidCallback action) async {
     if (!mounted) return;
     Navigator.of(context).popUntil((route) => route.isFirst);
-    _onFABPressedAction?.call();
+    action();
   }
 
-  void _onCreateNewHabitPageClosed(HabitDBCell? result) {
-    if (result == null || !mounted) return;
+  void _onCreateNewHabitPageClosed(HabitDBCell result) {
+    if (!mounted) return;
     _onNewHabitCreated(result);
   }
 
@@ -994,16 +988,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {
-              final viewmodel = context.read<HabitSummaryViewModel>();
-              appLog.load.debug("$widget.buildHabits", ex: [
-                "Loading data",
-                snapshot.connectionState,
-                viewmodel.habitCount
-              ]);
-              if (kDebugMode && snapshot.isDone) {
-                appLog.load.debug("$widget.buildHabits",
-                    ex: ["Loaded", viewmodel.debugGetDataString()]);
-              }
+              // final viewmodel = context.read<HabitSummaryViewModel>();
+              // appLog.load.debug("$widget.buildHabits", ex: [
+              //   "Loading data",
+              //   snapshot.connectionState,
+              //   viewmodel.habitCount
+              // ]);
+              // if (kDebugMode && snapshot.isDone) {
+              //   appLog.load.debug("$widget.buildHabits",
+              //       ex: ["Loaded", viewmodel.debugGetDataString()]);
+              // }
 
               return SliverStack(
                 children: [
@@ -1053,30 +1047,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     //#region: fab
     Widget buildFAB(BuildContext context) {
-      return Selector<HabitSummaryViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.isAppbarPinned,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, isAppbarPinned, child) {
-          return HabitDisplayFAB(
-            closeBuilder: (context, action) {
-              _onFABPressedAction = action;
-              return ScrollingFAB.small(
-                onPressed: _onFABPressed,
-                label: L10nBuilder(
-                  builder: (context, l10n) => l10n != null
-                      ? Text(l10n.habitDisplay_fab_text)
-                      : const Text('New Habit'),
-                ),
-                icon: const Icon(Icons.add),
-                isExtended: isAppbarPinned,
-              );
-            },
-            openBuilder: (context, action) =>
-                const habit_edit_view.PageHabitEdit(
-                    showInFullscreenDialog: true),
-            onClosed: _onCreateNewHabitPageClosed,
-          );
-        },
+      return _FAB(
+        onPressed: _onFABPressed,
+        onClosed: _onCreateNewHabitPageClosed,
+        editModeOnPressed: _onFABPressed,
       );
     }
     //#endregion
@@ -1124,7 +1098,6 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
     //#endregion
 
-    final viewmodel = context.read<HabitSummaryViewModel>();
     return ColorfulNavibar(
       child: WillPopScope(
         onWillPop: onWillPop,
@@ -1133,6 +1106,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
             selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
             builder: (context, value, child) => RefreshIndicator(
+              notificationPredicate: (notification) {
+                final context = notification.context;
+                if (context == null) {
+                  return defaultScrollNotificationPredicate(notification);
+                }
+                if (context.read<HabitSummaryViewModel>().isInEditMode) {
+                  return false;
+                }
+                return defaultScrollNotificationPredicate(notification);
+              },
               onRefresh: _onRefreshIndicatorTriggered,
               edgeOffset: kToolbarHeight +
                   value.item2 +
@@ -1144,7 +1127,9 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                   CustomScrollView(
                     physics: const ClampingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
-                    controller: viewmodel.verticalScrollController,
+                    controller: context
+                        .read<HabitSummaryViewModel>()
+                        .verticalScrollController,
                     slivers: [
                       buildAppbar(context),
                       const HabitDivider(withSliver: true, height: 1),
@@ -1232,7 +1217,7 @@ class _HabitRecordListTile extends StatelessWidget {
     final viewmodel = context.read<HabitSummaryViewModel>();
     final data = viewmodel.getHabit(uuid);
 
-    appLog.build.debug(context, ex: [uuid, isExtended, data]);
+    appLog.build.debug(context, ex: [isExtended, uuid, data?.name]);
     if (data == null) {
       appLog.build.warn(context, ex: ["data not found", uuid]);
       return const SizedBox();
@@ -1255,4 +1240,91 @@ class _HabitRecordListTile extends StatelessWidget {
       onHabitRecordDoublePressed: onHabitRecordDoublePressed,
     );
   }
+}
+
+class _FAB extends StatelessWidget {
+  final void Function(VoidCallback action)? onPressed;
+  final ClosedCallback<HabitDBCell>? onClosed;
+  final void Function(VoidCallback action)? editModeOnPressed;
+
+  const _FAB({
+    this.onPressed,
+    this.onClosed,
+    this.editModeOnPressed,
+  });
+
+  Widget _buildFAB(BuildContext context,
+      {required bool isAppbarPinned, required bool isInEditMode}) {
+    Widget iconBuidler(BuildContext context) => AnimatedCrossFade(
+        firstChild: const Icon(Icons.add),
+        secondChild: const Icon(Icons.calendar_view_day_rounded),
+        crossFadeState:
+            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: _kFABModeChangeDuration);
+
+    Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
+        firstChild: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_fab_text)
+              : const Text('New Habit'),
+        ),
+        secondChild: const SizedBox(),
+        crossFadeState:
+            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: _kFABModeChangeDuration);
+
+    final selectedUUIDList = context
+        .read<HabitSummaryViewModel>()
+        .getSelectedHabitsData()
+        .whereNotNull()
+        .map((e) => e.uuid)
+        .toList();
+    final summary = context.read<HabitSummaryViewModel>();
+
+    Widget pageHabitsStatusChangerBuilder(BuildContext context) {
+      if (summary.mounted) {
+        return ChangeNotifierProvider.value(
+            value: summary,
+            child: habits_status_changer_view.PageHabitsStatusChanger(
+                uuidList: selectedUUIDList));
+      }
+      return habits_status_changer_view.PageHabitsStatusChanger(
+          uuidList: selectedUUIDList);
+    }
+
+    return HabitDisplayFAB<Object?>(
+      closeBuilder: (context, action) {
+        return ScrollingFAB.small(
+          onPressed: () =>
+              (isInEditMode ? editModeOnPressed : onPressed)?.call(action),
+          label: labelBuilder(context),
+          icon: iconBuidler(context),
+          isExtended: isInEditMode ? true : isAppbarPinned,
+        );
+      },
+      openBuilder: (context, action) => isInEditMode
+          ? pageHabitsStatusChangerBuilder(context)
+          : const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
+      onClosed: (data) {
+        switch (data) {
+          case HabitDBCell():
+            return onClosed?.call(data);
+          case null:
+            return;
+          default:
+            throw FlutterError("unhandled container close type, $data");
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<HabitSummaryViewModel, Tuple3<bool, bool, int>>(
+        selector: (context, viewmodel) => Tuple3(viewmodel.isAppbarPinned,
+            viewmodel.isInEditMode, viewmodel.selectedHabitsCount),
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => _buildFAB(context,
+            isAppbarPinned: value.item1, isInEditMode: value.item2),
+      );
 }

@@ -223,13 +223,34 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.createT,
   ];
 
-  Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection() async {
+  Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection(
+      {List<HabitUUID>? uuidFilter}) async {
+    if (uuidFilter != null) {
+      return _loadHabitsAboutDataCollection(uuidFilter);
+    }
+    return _loadAllHabitAboutDataCollection();
+  }
+
+  Future<Iterable<HabitDBCell>> _loadAllHabitAboutDataCollection() async {
     final queryArgs = loadedHabitStatus.map((e) => e.dbCode).toList();
     final result = await db.query(table,
         columns: _loadHabitAboutDataCollectionColumns,
         where: "${HabitDBCellKey.status} "
             "IN (${queryArgs.map((e) => '?').join(', ')})",
         whereArgs: queryArgs);
+    return result.map(HabitDBCell.fromJson);
+  }
+
+  Future<Iterable<HabitDBCell>> _loadHabitsAboutDataCollection(
+      List<HabitUUID> uuidList) async {
+    final statusList = loadedHabitStatus.map((e) => e.dbCode).toList();
+    final result = await db.query(table,
+        columns: _loadHabitAboutDataCollectionColumns,
+        where: "${HabitDBCellKey.status} "
+            "IN (${statusList.map((e) => '?').join(', ')}) "
+            "AND ${HabitDBCellKey.uuid} "
+            "IN (${uuidList.map((e) => '?').join(', ')}) ",
+        whereArgs: [...statusList, ...uuidList]);
     return result.map(HabitDBCell.fromJson);
   }
 

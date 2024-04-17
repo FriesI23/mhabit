@@ -15,7 +15,6 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/async.dart';
@@ -101,7 +100,7 @@ mixin DBOperationsMixin on DBHelperLoadedMixin {
     final int dbid;
     final RecordDBCell dbCell;
     if (isNew) {
-      dbCell = RecordDBCell(
+      dbCell = RecordDBCell.build(
         parentId: parendId,
         parentUUID: parendUUID,
         uuid: record.uuid,

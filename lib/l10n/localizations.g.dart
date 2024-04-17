@@ -1603,6 +1603,114 @@ abstract class L10n {
   /// **'Copied {name}\'s Address'**
   String appAbout_donateDialog_copiedCrypto_msg(String name);
 
+  /// No description provided for @batchCheckin_appbar_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Check-in'**
+  String get batchCheckin_appbar_title;
+
+  /// No description provided for @batchCheckin_datePicker_prevButton_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get batchCheckin_datePicker_prevButton_tooltip;
+
+  /// No description provided for @batchCheckin_datePicker_nextButton_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get batchCheckin_datePicker_nextButton_tooltip;
+
+  /// No description provided for @batchCheckin_status_skip_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get batchCheckin_status_skip_text;
+
+  /// No description provided for @batchCheckin_status_ok_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get batchCheckin_status_ok_text;
+
+  /// No description provided for @batchCheckin_status_double_text.
+  ///
+  /// In en, this message translates to:
+  /// **'x2 Hit!'**
+  String get batchCheckin_status_double_text;
+
+  /// No description provided for @batchCheckin_status_zero_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Incomplete'**
+  String get batchCheckin_status_zero_text;
+
+  /// No description provided for @batchCheckin_habits_groupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {count, plural, =1{Habit} other{Habits}} selected'**
+  String batchCheckin_habits_groupTitle(int count);
+
+  /// No description provided for @batchCheckin_save_button_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get batchCheckin_save_button_text;
+
+  /// No description provided for @batchCheckin_reset_button_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get batchCheckin_reset_button_text;
+
+  /// No description provided for @batchCheckin_save_confirmDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite Existing Records'**
+  String get batchCheckin_save_confirmDialog_title;
+
+  /// No description provided for @batchCheckin_save_confirmDialog_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing records will be overwritten After saving, previous records will be lost.'**
+  String get batchCheckin_save_confirmDialog_body;
+
+  /// No description provided for @batchCheckin_save_confirmDialog_confirmButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'save'**
+  String get batchCheckin_save_confirmDialog_confirmButton_text;
+
+  /// No description provided for @batchCheckin_save_confirmDialog_cancelButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get batchCheckin_save_confirmDialog_cancelButton_text;
+
+  /// No description provided for @batchCheckin_close_confirmDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Return'**
+  String get batchCheckin_close_confirmDialog_title;
+
+  /// No description provided for @batchCheckin_close_confirmDialog_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Status Changes won\'t be applied before saved'**
+  String get batchCheckin_close_confirmDialog_body;
+
+  /// No description provided for @batchCheckin_close_confirmDialog_confirmButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'exit'**
+  String get batchCheckin_close_confirmDialog_confirmButton_text;
+
+  /// No description provided for @batchCheckin_close_confirmDialog_cancelButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get batchCheckin_close_confirmDialog_cancelButton_text;
+
   /// No description provided for @appReminder_dailyReminder_title.
   ///
   /// In en, this message translates to:

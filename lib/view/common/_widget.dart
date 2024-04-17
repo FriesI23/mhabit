@@ -20,4 +20,7 @@ export './date_changer.dart';
 export './donate_dialog.dart' show DonateDialogResult;
 export './fixed_page_place_holder.dart';
 export './habit_divider.dart';
+export './habit_record_reason_modifier.dart' show HabitRecordReasonField;
+export './habit_summary_list_tile.dart';
 export './not_found_image.dart';
+export './page_loading_indicator.dart';

@@ -46,12 +46,12 @@
     "editor.wordBasedSuggestions": "off"
   },
   "[json]": {
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
+    "editor.formatOnSave": false,
+    "editor.formatOnType": false,
     "editor.indentSize": 2
   },
   "[xml]": {
     "editor.wordWrap": "off",
     "editor.tabSize": 4
-  }
+  },
 }

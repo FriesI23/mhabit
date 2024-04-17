@@ -36,8 +36,8 @@ class AppWidgetLoggerMessage implements AppLoggerMessage {
   Iterable<String?> toLogPrinterMessage() {
     final result = <String>[];
     if (widget != null) {
-      result.add(
-          "${name ?? widget!.runtimeType}[${widget!.key},${widget!.hashCode}]");
+      result.add("${name ?? widget!.runtimeType}"
+          "[${widget!.key},${widget!.hashCode.toString().padLeft(10, ' ')}]");
     } else if (name != null) {
       result.add(name!);
     }
