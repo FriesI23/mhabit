@@ -73,7 +73,7 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
     }
 
     try {
-      actives = await NotificationService().plugin.getActiveNotifications();
+      actives = await NotificationService().getActiveNotifications();
     } on PlatformException catch (error) {
       debugPrint('Error calling "getActiveNotifications"\n'
           'code: ${error.code}\n'

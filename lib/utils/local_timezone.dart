@@ -31,7 +31,7 @@ final class LocalTimeZoneManager implements LocalTimeZone, AsyncInitialization {
 
   final Map<TargetPlatform, LocalTimeZone> _handlers = {};
 
-  factory LocalTimeZoneManager() => _instance ?? LocalTimeZoneManager._();
+  factory LocalTimeZoneManager() => _instance ??= LocalTimeZoneManager._();
 
   LocalTimeZoneManager._();
 

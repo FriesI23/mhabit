@@ -47,8 +47,7 @@ class _NotificationPendingRequestsDialog
   }
 
   Future<void> _loadData() async {
-    pendingRequests =
-        await NotificationService().plugin.pendingNotificationRequests();
+    pendingRequests = await NotificationService().pendingNotificationRequests();
   }
 
   @override
