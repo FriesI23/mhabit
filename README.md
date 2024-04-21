@@ -52,13 +52,23 @@ You can customize each habit with the following options:
 - Reminder
 - etc.
 
+## Supported platforms
+
+| platform | build | publish                                          | desc.                      |
+| -------- | ----- | ------------------------------------------------ | -------------------------- |
+| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                            |
+| ios      | ✅     |                                                  |                            |
+| macos    | ✅     |                                                  |                            |
+| windows  | ✅     |                                                  | limit features: `reminder` |
+| linux    |       |                                                  |                            |
+| web      |       |                                                  |                            |
+
 ## Todo
 
 | status  | progress               | desc.                                                        |
 | ------- | ---------------------- | ------------------------------------------------------------ |
 | PLANNED | Sync with Webdav       | Expected sync solution is similar to Joplin's WebDAV method. |
 | -       | Publish to Google Play |                                                              |
-| -       | Build iOS version      | build with iOS, need change some UI to Cupertino style.      |
 | -       | Complete Documentation | [`README.md`](README.md)                                     |
 
 ## Build from source
