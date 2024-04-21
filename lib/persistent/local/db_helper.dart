@@ -42,7 +42,7 @@ abstract interface class DBHelper implements AsyncInitialization {
 }
 
 class _DBHelper implements DBHelper {
-  final Set<TargetPlatform> useffiPlafroms = {
+  static const Set<TargetPlatform> useffiPlafroms = {
     TargetPlatform.linux,
     TargetPlatform.windows
   };

@@ -46,7 +46,7 @@ abstract interface class NotificationService implements AsyncInitialization {
       required NotificationChannelId channelId,
       required NotificationDetails details});
 
-  Future<bool> regreAppReminderInDaily(
+  Future<bool> regrAppReminderInDaily(
       {required String title,
       required String subtitle,
       required TimeOfDay timeOfDay,
@@ -194,7 +194,7 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> regreAppReminderInDaily(
+  Future<bool> regrAppReminderInDaily(
       {required String title,
       required String subtitle,
       required TimeOfDay timeOfDay,
@@ -368,7 +368,7 @@ final class FakeNotificationService implements NotificationService {
       Future.value(false);
 
   @override
-  Future<bool> regreAppReminderInDaily(
+  Future<bool> regrAppReminderInDaily(
           {required String title,
           required String subtitle,
           required TimeOfDay timeOfDay,

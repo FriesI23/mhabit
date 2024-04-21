@@ -97,7 +97,7 @@ class AppReminderViewModel extends ChangeNotifier
       switch (reminder.type) {
         case AppReminderConfigType.daily:
           if (reminder.timeOfDay != null) {
-            await NotificationService().regreAppReminderInDaily(
+            await NotificationService().regrAppReminderInDaily(
               title: l10n.appReminder_dailyReminder_title,
               subtitle: l10n.appReminder_dailyReminder_body,
               timeOfDay: reminder.timeOfDay!,
