@@ -17,10 +17,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/utils.dart';
 import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
 import '../../provider/commons.dart';
+import '../../utils/local_timezone.dart';
 
 class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {
   late HabitDate _dateTime;
@@ -117,7 +117,7 @@ class _DateChangeBuilder extends State<DateChangeBuilder> {
       final tzName = now.timeZoneName;
       if (changeNotifer.tzName != tzName) {
         changeNotifer.tzName = tzName;
-        await configureLocalTimeZone();
+        await LocalTimeZoneManager().updateTimeZone();
       }
     });
     super.initState();
