@@ -16,8 +16,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -152,11 +150,6 @@ int standardizeFirstDay(int firstDay) {
 
 DateTime getProtoDateWithFirstDay(int firstDay) {
   return DateTime(2023, 5, firstDay);
-}
-
-Future<void> configureLocalTimeZone() async {
-  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 Iterable<Tuple2<int, int>> getContinuousRanges(List<int> input) sync* {

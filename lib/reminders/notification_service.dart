@@ -29,19 +29,70 @@ import 'notification_channel.dart';
 import 'notification_data.dart';
 import 'notification_id_range.dart';
 
-class NotificationService implements AsyncInitialization {
-  //#region singleton
-  static final NotificationService _singleton = NotificationService._internal();
+abstract interface class NotificationService implements AsyncInitialization {
+  static NotificationService? _instance;
 
-  NotificationService._internal();
+  Future<bool?> requestPermissions();
 
-  factory NotificationService() => _singleton;
-  //#endregion
+  Future<List<ActiveNotification>> getActiveNotifications();
 
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests();
+
+  Future<void> show(
+      {required int id,
+      required String title,
+      String? body,
+      required NotificationDataType type,
+      required NotificationChannelId channelId,
+      required NotificationDetails details});
+
+  Future<bool> regrAppReminderInDaily(
+      {required String title,
+      required String subtitle,
+      required TimeOfDay timeOfDay,
+      required NotificationDetails details,
+      Duration? timeout});
+
+  Future<bool> cancelAppReminder({Duration? timeout});
+
+  Future<bool> regrHabitReminder<T>(
+      {required DBID id,
+      required HabitUUID uuid,
+      required String name,
+      String? quest,
+      required HabitReminder reminder,
+      required HabitDate? lastUntrackDate,
+      required NotificationDetails details,
+      DateTime? crtDate,
+      Duration? timeout});
+
+  Future<bool> cancelHabitReminder({required DBID id, Duration? timeout});
+
+  Future<bool> cancelAllHabitReminders({Duration? timeout});
+
+  factory NotificationService() {
+    if (_instance != null) return _instance!;
+    if (Platform.isWindows) return _instance = const FakeNotificationService();
+    return _instance = const NotificationServiceImpl();
+  }
+}
+
+final class NotificationServiceImpl implements NotificationService {
   static const androidIconPath = "@mipmap/ic_launcher";
+  static const defaultTimeout = Duration(seconds: 2);
+
+  const NotificationServiceImpl();
 
   FlutterLocalNotificationsPlugin get plugin =>
       FlutterLocalNotificationsPlugin();
+
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() =>
+      plugin.getActiveNotifications();
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
+      plugin.pendingNotificationRequests();
 
   @override
   Future<void> init() async {
@@ -79,6 +130,7 @@ class NotificationService implements AsyncInitialization {
     await plugin.initialize(initializationSettings);
   }
 
+  @override
   Future<bool?> requestPermissions() async {
     if (Platform.isIOS) {
       return plugin
@@ -116,14 +168,14 @@ class NotificationService implements AsyncInitialization {
     return true;
   }
 
-  Future<void> show({
-    required int id,
-    required String title,
-    String? body,
-    required NotificationDataType type,
-    required NotificationChannelId channelId,
-    required NotificationDetails details,
-  }) async {
+  @override
+  Future<void> show(
+      {required int id,
+      required String title,
+      String? body,
+      required NotificationDataType type,
+      required NotificationChannelId channelId,
+      required NotificationDetails details}) async {
     final data = NotificationData(
       id: id,
       title: title,
@@ -140,18 +192,14 @@ class NotificationService implements AsyncInitialization {
       payload: data.toPayload(),
     );
   }
-}
 
-extension NotificationServiceWithApp on NotificationService {
-  static const _kDefaultTimeout = Duration(seconds: 2);
-
-  Future<bool> regreAppReminderInDaily({
-    required String title,
-    required String subtitle,
-    required TimeOfDay timeOfDay,
-    required NotificationDetails details,
-    Duration? timeout = _kDefaultTimeout,
-  }) async {
+  @override
+  Future<bool> regrAppReminderInDaily(
+      {required String title,
+      required String subtitle,
+      required TimeOfDay timeOfDay,
+      required NotificationDetails details,
+      Duration? timeout = defaultTimeout}) async {
     try {
       final now = DateTime.now();
       final scheduledDate = DateTime(
@@ -183,29 +231,26 @@ extension NotificationServiceWithApp on NotificationService {
     return true;
   }
 
-  Future<bool> cancelAppReminder({Duration? timeout = _kDefaultTimeout}) async {
+  @override
+  Future<bool> cancelAppReminder({Duration? timeout = defaultTimeout}) async {
     final future = plugin.cancel(appReminderNotifyId);
     timeout == null
         ? await future
         : future.timeout(timeout, onTimeout: () => null);
     return true;
   }
-}
 
-extension NotificationServiceWithHabits on NotificationService {
-  static const _kDefaultTimeout = Duration(seconds: 2);
-
-  Future<bool> regrHabitReminder<T>({
-    required DBID id,
-    required HabitUUID uuid,
-    required String name,
-    String? quest,
-    required HabitReminder reminder,
-    required HabitDate? lastUntrackDate,
-    required NotificationDetails details,
-    DateTime? crtDate,
-    Duration? timeout = _kDefaultTimeout,
-  }) async {
+  @override
+  Future<bool> regrHabitReminder<T>(
+      {required DBID id,
+      required HabitUUID uuid,
+      required String name,
+      String? quest,
+      required HabitReminder reminder,
+      required HabitDate? lastUntrackDate,
+      required NotificationDetails details,
+      DateTime? crtDate,
+      Duration? timeout = defaultTimeout}) async {
     try {
       final scheduledDate = reminder.getNextRemindDate(
           crtDate: crtDate, lastUntrackDate: lastUntrackDate);
@@ -246,10 +291,9 @@ extension NotificationServiceWithHabits on NotificationService {
     return true;
   }
 
-  Future<bool> cancelHabitReminder({
-    required DBID id,
-    Duration? timeout = _kDefaultTimeout,
-  }) async {
+  @override
+  Future<bool> cancelHabitReminder(
+      {required DBID id, Duration? timeout = defaultTimeout}) async {
     final future = plugin.cancel(id);
     timeout == null
         ? await future
@@ -257,18 +301,78 @@ extension NotificationServiceWithHabits on NotificationService {
     return true;
   }
 
-  Future<bool> cancelAllHabitReminders({
-    Duration? eachTimeout = _kDefaultTimeout,
-  }) async {
+  @override
+  Future<bool> cancelAllHabitReminders(
+      {Duration? timeout = defaultTimeout}) async {
     final futureList = <Future>[];
     for (var pendingReqeust in await plugin.pendingNotificationRequests()) {
       if (notifyid.isValidHabitReminderId(pendingReqeust.id)) {
         futureList.add(
-          cancelHabitReminder(id: pendingReqeust.id, timeout: eachTimeout),
+          cancelHabitReminder(id: pendingReqeust.id, timeout: timeout),
         );
       }
     }
     await Future.wait(futureList);
     return true;
   }
+}
+
+final class FakeNotificationService implements NotificationService {
+  const FakeNotificationService();
+
+  @override
+  Future init() => Future.value();
+
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() => Future.value([]);
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
+      Future.value([]);
+
+  @override
+  Future<bool?> requestPermissions() => Future.value(false);
+
+  @override
+  Future<void> show(
+          {required int id,
+          required String title,
+          String? body,
+          required NotificationDataType type,
+          required NotificationChannelId channelId,
+          required NotificationDetails details}) =>
+      Future.value();
+
+  @override
+  Future<bool> cancelAllHabitReminders({Duration? timeout}) =>
+      Future.value(false);
+
+  @override
+  Future<bool> cancelAppReminder({Duration? timeout}) => Future.value(false);
+
+  @override
+  Future<bool> cancelHabitReminder({required DBID id, Duration? timeout}) =>
+      Future.value(false);
+
+  @override
+  Future<bool> regrHabitReminder<T>(
+          {required DBID id,
+          required HabitUUID uuid,
+          required String name,
+          String? quest,
+          required HabitReminder reminder,
+          required HabitDate? lastUntrackDate,
+          required NotificationDetails details,
+          DateTime? crtDate,
+          Duration? timeout}) =>
+      Future.value(false);
+
+  @override
+  Future<bool> regrAppReminderInDaily(
+          {required String title,
+          required String subtitle,
+          required TimeOfDay timeOfDay,
+          required NotificationDetails details,
+          Duration? timeout}) =>
+      Future.value(false);
 }

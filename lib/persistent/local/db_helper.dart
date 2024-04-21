@@ -16,7 +16,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../assets/assets.dart';
 import '../../common/async.dart';
@@ -42,6 +42,11 @@ abstract interface class DBHelper implements AsyncInitialization {
 }
 
 class _DBHelper implements DBHelper {
+  static const Set<TargetPlatform> useffiPlafroms = {
+    TargetPlatform.linux,
+    TargetPlatform.windows
+  };
+
   late Database _db;
 
   @override
@@ -108,6 +113,11 @@ class _DBHelper implements DBHelper {
 
   @override
   Future init({bool reinit = false}) async {
+    if (!reinit && useffiPlafroms.contains(defaultTargetPlatform)) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
     final String dbPath = join(await getDatabasesPath(), appDBName);
 
     Future initNew() async {

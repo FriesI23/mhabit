@@ -13,12 +13,11 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 
 import 'common/app_info.dart';
-import 'common/utils.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
+import 'utils/local_timezone.dart';
 import 'view/app.dart';
 
 Future<void> main() async {
@@ -27,9 +26,7 @@ Future<void> main() async {
   await AppLoggerMananger().init();
   await AppInfo().init();
   await NotificationService().init();
-
-  tz.initializeTimeZones();
-  await configureLocalTimeZone();
+  await LocalTimeZoneManager().init();
 
   runApp(const App());
 }
