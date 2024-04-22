@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../common/utils.dart';
+
 enum PageBackReason { back, close }
 
 class PageBackButton extends StatelessWidget {
@@ -28,16 +30,23 @@ class PageBackButton extends StatelessWidget {
     this.onPressed,
   });
 
+  void _onPressedCallback(BuildContext context) =>
+      dismissAllToolTips().then((_) => Navigator.maybePop(context));
+
   @override
   Widget build(BuildContext context) {
     switch (reason) {
       case PageBackReason.back:
         return Center(
-          child: BackButton(onPressed: onPressed, color: color),
+          child: BackButton(
+              onPressed: onPressed ?? () => _onPressedCallback(context),
+              color: color),
         );
       case PageBackReason.close:
         return Center(
-          child: CloseButton(onPressed: onPressed, color: color),
+          child: CloseButton(
+              onPressed: onPressed ?? () => _onPressedCallback(context),
+              color: color),
         );
     }
   }
