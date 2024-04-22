@@ -1119,7 +1119,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
               onRefresh: _onRefreshIndicatorTriggered,
               edgeOffset: kToolbarHeight +
                   value.item2 +
-                  MediaQuery.of(context).padding.top,
+                  MediaQuery.paddingOf(context).top,
               triggerMode: RefreshIndicatorTriggerMode.onEdge,
               child: Stack(
                 children: [

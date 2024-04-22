@@ -226,8 +226,7 @@ class _DonateDialogState extends State<DonateDialog> {
         ];
 
     Iterable<Widget> buildFirstQRGroup(BuildContext context) {
-      final orientation = MediaQuery.of(context).orientation;
-      switch (orientation) {
+      switch (MediaQuery.orientationOf(context)) {
         case Orientation.portrait:
           return [
             if (donateWays.contains(DonateWay.alipay))

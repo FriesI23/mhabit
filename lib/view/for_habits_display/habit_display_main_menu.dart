@@ -86,7 +86,7 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
       return heroIcon;
     }
 
-    final sysBrightness = MediaQuery.of(context).platformBrightness;
+    final sysBrightness = MediaQuery.platformBrightnessOf(context);
     final appBrightness = Theme.of(context).brightness;
     final habitFilter = context.read<HabitsFilterViewModel>();
 

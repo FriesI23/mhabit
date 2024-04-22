@@ -138,7 +138,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
   }
 
   Size _dialogSize(BuildContext context) {
-    final Orientation orientation = MediaQuery.of(context).orientation;
+    final Orientation orientation = MediaQuery.orientationOf(context);
     switch (_entryMode.value) {
       case DatePickerEntryMode.calendar:
       case DatePickerEntryMode.calendarOnly:
@@ -173,7 +173,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
     final ColorScheme colorScheme = theme.colorScheme;
     final MaterialLocalizations localizations =
         MaterialLocalizations.of(context);
-    final Orientation orientation = MediaQuery.of(context).orientation;
+    final Orientation orientation = MediaQuery.orientationOf(context);
     final TextTheme textTheme = theme.textTheme;
     // Constrain the textScaleFactor to the largest supported value to prevent
     // layout issues.
