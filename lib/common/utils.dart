@@ -16,6 +16,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -220,4 +221,12 @@ T stampDateTime<T extends DateTime>(T t, {required T max, required T min}) {
   t = t > max ? max : t;
   t = t < min ? min : t;
   return t;
+}
+
+Future<bool> dismissAllToolTips() async {
+  final result = Tooltip.dismissAllToolTips();
+  await Future.delayed(result
+      ? const Duration(milliseconds: 150) * timeDilation
+      : Duration.zero);
+  return result;
 }

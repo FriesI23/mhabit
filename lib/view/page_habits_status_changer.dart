@@ -19,6 +19,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/types.dart';
+import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/context_extensions.dart';
@@ -172,7 +173,8 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
             defaultConfirmResult)
         : true;
     if (!mounted) return;
-    if (result) Navigator.of(context).pop();
+
+    if (result) dismissAllToolTips().then((_) => Navigator.pop(context));
   }
 
   Widget _buildDebugInfo(BuildContext context) =>
