@@ -38,7 +38,7 @@ class HabitFormFlexibleSpaceBar extends StatelessWidget {
     final FlexibleSpaceBarSettings settings =
         context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>()!;
     final double topPadding =
-        primary ? MediaQuery.of(context).viewPadding.top : 0;
+        primary ? MediaQuery.viewPaddingOf(context).top : 0;
     final double collapsedHeight = settings.minExtent - topPadding;
     final double scrollUnderHeight = settings.maxExtent - settings.minExtent;
 
