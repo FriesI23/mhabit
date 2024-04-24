@@ -88,7 +88,7 @@
     }
   },
   "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or ≥ {dailyGoal}",
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximum daily limit",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Максимальный дневной предел",
 
   "habitEdit_frequencySelector_title": "Выберете частоту",
 
@@ -101,7 +101,7 @@
   "habitEdit_habitFreq_predayfreq_ex01": "раз в",
   "habitEdit_habitFreq_predayfreq_ex02": "дней",
   "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
+    "description": "Если установить на 1, отображение виджета списка будет обратным.",
   },
   "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
 
@@ -114,7 +114,7 @@
       }
     }
   },
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{At least {freq} times per week}}",
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{В неделю} other{Хотя бы {freq} раз в неделю}}",
   "@habitEdit_habitFreq_show_permonth": {
     "placeholders": {
       "freq": {
@@ -123,7 +123,7 @@
       }
     }
   },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Per month} other{At least {freq} times per month}}",
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{В месяц} other{Хотя бы {freq} раз в месяц}}",
   "@habitEdit_habitFreq_show_perdayfreq": {
     "placeholders": {
       "freq": {
