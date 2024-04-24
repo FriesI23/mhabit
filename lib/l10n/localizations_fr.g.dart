@@ -146,7 +146,7 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => 'Sélectionner le nombre de jours ciblé';
+  String get habitEdit_targetDays_dialogTitle => 'Sélectionner le nombre de jours ciblé';
 
   @override
   String get habitEdit_targetDays => 'jours';
@@ -218,7 +218,7 @@ class L10nFr extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'Mer';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => 'Jeu';
+  String get habitEdit_reminder_weekdayText_thursday => 'Jeu';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'Ven';
@@ -789,12 +789,12 @@ class L10nFr extends L10n {
   String get appAbout_appbarTile_titleText => 'À propos';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return 'Version: $appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'CHANGELOG.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => 'Code source';
@@ -1068,7 +1068,7 @@ class L10nFr extends L10n {
   String get snackbar_undoText => 'ANNULER';
 
   @override
-  String get snackbar_dissmessText => 'REJETER';
+  String get snackbar_dismissText => 'REJETER';
 
   @override
   String get contributors_tile_title => 'Contributeurs';

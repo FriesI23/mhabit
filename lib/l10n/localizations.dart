@@ -26,7 +26,7 @@ extension L10nExtra on L10n {
       case 3:
         return habitEdit_reminder_weekdayText_wednesday;
       case 4:
-        return habitEdit_reminder_weekdayText_tursday;
+        return habitEdit_reminder_weekdayText_thursday;
       case 5:
         return habitEdit_reminder_weekdayText_friday;
       case 6:

@@ -147,8 +147,8 @@
       }
     }
   },
-  "habitEidt_targetDays_dialogTitle": "انتخاب روزهای هدف",
-  "@habitEidt_targetDays_dialogTitle": {},
+  "habitEdit_targetDays_dialogTitle": "انتخاب روزهای هدف",
+  "@habitEdit_targetDays_dialogTitle": {},
   "habitEdit_targetDays": "روز",
   "@habitEdit_targetDays": {},
   "habitEdit_reminder_hintText": "یادآور",
@@ -195,8 +195,8 @@
   "@habitEdit_reminder_weekdayText_tuesday": {},
   "habitEdit_reminder_weekdayText_wednesday": "چهارشنبه",
   "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_tursday": "پنج‌شنبه",
-  "@habitEdit_reminder_weekdayText_tursday": {},
+  "habitEdit_reminder_weekdayText_thursday": "پنج‌شنبه",
+  "@habitEdit_reminder_weekdayText_thursday": {},
   "habitEdit_reminder_weekdayText_friday": "جمعه",
   "@habitEdit_reminder_weekdayText_friday": {},
   "habitEdit_reminder_weekdayText_saturday": "شنبه",
@@ -641,8 +641,8 @@
   "@appSetting_about_titleText": {},
   "appAbout_appbarTile_titleText": "درباره",
   "@appAbout_appbarTile_titleText": {},
-  "appAbout_verionTile_titleText": "نسخه: {appVersion}",
-  "@appAbout_verionTile_titleText": {
+  "appAbout_versionTile_titleText": "نسخه: {appVersion}",
+  "@appAbout_versionTile_titleText": {
     "placeholders": {
       "appVersion": {
         "type": "String",
@@ -650,8 +650,8 @@
       }
     }
   },
-  "appAbout_verionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_verionTile_changeLogPath": {},
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
   "appAbout_sourceCodeTile_titleText": "کد منبع",
   "@appAbout_sourceCodeTile_titleText": {},
   "appAbout_issueTrackerTile_titleText": "پیگیری مشکلات",
@@ -798,8 +798,8 @@
   "@exportConfirmDialog_confirm_buttonText": {},
   "snackbar_undoText": "بازگشت",
   "@snackbar_undoText": {},
-  "snackbar_dissmessText": "رد کردن",
-  "@snackbar_dissmessText": {},
+  "snackbar_dismissText": "رد کردن",
+  "@snackbar_dismissText": {},
   "userAction_tap": "ضربه",
   "@userAction_tap": {},
   "userAction_doubleTap": "دوتایی",
