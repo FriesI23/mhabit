@@ -20,6 +20,7 @@
   "java.project.resourceFilters": [
     ".flutter"
   ],
+  "github-actions.remote-name": "github",
   "search.exclude": {
     "**/.fvm": true,
     "**/.flutter": true
