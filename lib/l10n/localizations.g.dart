@@ -101,11 +101,8 @@ abstract class L10n {
     Locale('en'),
     Locale('fa'),
     Locale('fr'),
-<<<<<<< HEAD
     Locale('nb'),
-=======
     Locale('ru'),
->>>>>>> github/main
     Locale('vi'),
     Locale('zh')
   ];
@@ -1998,11 +1995,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-<<<<<<< HEAD
-  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'fa', 'fr', 'nb', 'vi', 'zh'].contains(locale.languageCode);
-=======
-  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'fa', 'fr', 'ru', 'vi', 'zh'].contains(locale.languageCode);
->>>>>>> github/main
+  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'fa', 'fr', 'nb', 'ru', 'vi', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -2018,11 +2011,8 @@ L10n lookupL10n(Locale locale) {
     case 'en': return L10nEn();
     case 'fa': return L10nFa();
     case 'fr': return L10nFr();
-<<<<<<< HEAD
     case 'nb': return L10nNb();
-=======
     case 'ru': return L10nRu();
->>>>>>> github/main
     case 'vi': return L10nVi();
     case 'zh': return L10nZh();
   }
