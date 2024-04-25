@@ -14,7 +14,7 @@
 
 export './app_setting_clear_cache.dart'
     show AppSettingClearCacheDialog, showAppSettingClearCacheDialog;
-export './app_setting_comfirm_clear_db.dart';
+export './app_setting_confirm_clear_db.dart';
 export './app_setting_first_day.dart'
     show AppSettingFirstDaySelectDialog, showAppSettingFirstDaySelectDialog;
 export './import_habits_confirm.dart';

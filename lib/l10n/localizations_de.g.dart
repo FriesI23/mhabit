@@ -146,7 +146,7 @@ class L10nDe extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => 'Zieltage auswählen';
+  String get habitEdit_targetDays_dialogTitle => 'Zieltage auswählen';
 
   @override
   String get habitEdit_targetDays => 'Tage';
@@ -218,7 +218,7 @@ class L10nDe extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'Mi';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => 'Do';
+  String get habitEdit_reminder_weekdayText_thursday => 'Do';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'Fr';
@@ -789,12 +789,12 @@ class L10nDe extends L10n {
   String get appAbout_appbarTile_titleText => 'Über diese App';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return 'Version: $appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'CHANGELOG.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => 'Quellcode';
@@ -842,7 +842,7 @@ class L10nDe extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Cryto Currencies';
+  String get donateWay_cryptoCurrency => 'Crypto Currencies';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -1068,7 +1068,7 @@ class L10nDe extends L10n {
   String get snackbar_undoText => 'Rückgängig';
 
   @override
-  String get snackbar_dissmessText => 'Ablehnen';
+  String get snackbar_dismissText => 'Ablehnen';
 
   @override
   String get contributors_tile_title => 'Mitwirkende';

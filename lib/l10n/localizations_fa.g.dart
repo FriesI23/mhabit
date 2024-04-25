@@ -146,7 +146,7 @@ class L10nFa extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => 'انتخاب روزهای هدف';
+  String get habitEdit_targetDays_dialogTitle => 'انتخاب روزهای هدف';
 
   @override
   String get habitEdit_targetDays => 'روز';
@@ -218,7 +218,7 @@ class L10nFa extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'چهارشنبه';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => 'پنج‌شنبه';
+  String get habitEdit_reminder_weekdayText_thursday => 'پنج‌شنبه';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'جمعه';
@@ -789,12 +789,12 @@ class L10nFa extends L10n {
   String get appAbout_appbarTile_titleText => 'درباره';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return 'نسخه: $appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'CHANGELOG.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => 'کد منبع';
@@ -1062,7 +1062,7 @@ class L10nFa extends L10n {
   String get snackbar_undoText => 'بازگشت';
 
   @override
-  String get snackbar_dissmessText => 'رد کردن';
+  String get snackbar_dismissText => 'رد کردن';
 
   @override
   String get contributors_tile_title => 'مشارکت کنندگان';

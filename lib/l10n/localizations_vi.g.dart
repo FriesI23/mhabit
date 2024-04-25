@@ -146,7 +146,7 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => 'Chọn ngày mục tiêu';
+  String get habitEdit_targetDays_dialogTitle => 'Chọn ngày mục tiêu';
 
   @override
   String get habitEdit_targetDays => 'ngày';
@@ -218,7 +218,7 @@ class L10nVi extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'T.Tư';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => 'T.Năm';
+  String get habitEdit_reminder_weekdayText_thursday => 'T.Năm';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'T.Sáu';
@@ -789,12 +789,12 @@ class L10nVi extends L10n {
   String get appAbout_appbarTile_titleText => 'Giới thiệu';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return 'Phiên bản: $appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'CHANGELOG.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => 'Mã nguồn';
@@ -1068,7 +1068,7 @@ class L10nVi extends L10n {
   String get snackbar_undoText => 'HOÀN TÁC';
 
   @override
-  String get snackbar_dissmessText => 'MIỄN';
+  String get snackbar_dismissText => 'MIỄN';
 
   @override
   String get contributors_tile_title => 'Cộng tác viên';

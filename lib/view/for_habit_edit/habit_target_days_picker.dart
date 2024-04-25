@@ -159,7 +159,7 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
     return LayoutBuilder(
       builder: (context, constraints) => AlertDialog(
         title: constraints.maxHeight > dialogshowTitleMaxHeight
-            ? Text(l10n?.habitEidt_targetDays_dialogTitle ?? '')
+            ? Text(l10n?.habitEdit_targetDays_dialogTitle ?? '')
             : null,
         content: SingleChildScrollView(
           child: Column(

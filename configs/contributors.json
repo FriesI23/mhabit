@@ -30,9 +30,14 @@
             "id": 6,
             "name": "Poussinou",
             "url": "https://github.com/Poussinou"
+        },
+        {
+            "id": 7,
+            "name": "yurtpage",
+            "url": "https://github.com/yurtpage"
         }
     ],
-    "contributors": [ 1, 2, 3, 4, 5, 6 ],
+    "contributors": [ 1, 2, 3, 4, 5, 6, 7 ],
     "translations": {
         "ar": [
             {
@@ -49,6 +54,7 @@
                 "url": "https://github.com/3Lord3"
             }
         ],
+        "ru": [ 7 ],
         "vi": [ 4 ],
         "zh": [ 1 ]
     }

@@ -146,7 +146,7 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => '选择目标';
+  String get habitEdit_targetDays_dialogTitle => '选择目标';
 
   @override
   String get habitEdit_targetDays => '日';
@@ -218,7 +218,7 @@ class L10nZh extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => '三';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => '四';
+  String get habitEdit_reminder_weekdayText_thursday => '四';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => '五';
@@ -784,12 +784,12 @@ class L10nZh extends L10n {
   String get appAbout_appbarTile_titleText => '关于';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return '版本：$appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'docs/CHANGELOG/zh.md';
+  String get appAbout_versionTile_changeLogPath => 'docs/CHANGELOG/zh.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => '源码';
@@ -1056,7 +1056,7 @@ class L10nZh extends L10n {
   String get snackbar_undoText => '撤回';
 
   @override
-  String get snackbar_dissmessText => '忽略';
+  String get snackbar_dismissText => '忽略';
 
   @override
   String get contributors_tile_title => '贡献者';

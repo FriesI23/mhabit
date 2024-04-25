@@ -10,6 +10,7 @@ import 'localizations_de.g.dart';
 import 'localizations_en.g.dart';
 import 'localizations_fa.g.dart';
 import 'localizations_fr.g.dart';
+import 'localizations_ru.g.dart';
 import 'localizations_vi.g.dart';
 import 'localizations_zh.g.dart';
 
@@ -99,6 +100,7 @@ abstract class L10n {
     Locale('en'),
     Locale('fa'),
     Locale('fr'),
+    Locale('ru'),
     Locale('vi'),
     Locale('zh')
   ];
@@ -301,11 +303,11 @@ abstract class L10n {
   /// **'{targetDays} days'**
   String habitEdit_targetDays_title(int targetDays);
 
-  /// No description provided for @habitEidt_targetDays_dialogTitle.
+  /// No description provided for @habitEdit_targetDays_dialogTitle.
   ///
   /// In en, this message translates to:
   /// **'Select Target Days'**
-  String get habitEidt_targetDays_dialogTitle;
+  String get habitEdit_targetDays_dialogTitle;
 
   /// No description provided for @habitEdit_targetDays.
   ///
@@ -445,11 +447,11 @@ abstract class L10n {
   /// **'Wed'**
   String get habitEdit_reminder_weekdayText_wednesday;
 
-  /// No description provided for @habitEdit_reminder_weekdayText_tursday.
+  /// No description provided for @habitEdit_reminder_weekdayText_thursday.
   ///
   /// In en, this message translates to:
   /// **'Tur'**
-  String get habitEdit_reminder_weekdayText_tursday;
+  String get habitEdit_reminder_weekdayText_thursday;
 
   /// No description provided for @habitEdit_reminder_weekdayText_friday.
   ///
@@ -1222,7 +1224,7 @@ abstract class L10n {
   /// No description provided for @appSetting_dateDisplayFormat_subTitleText.
   ///
   /// In en, this message translates to:
-  /// **'Configed date format will be applied to the date display on habit detail page.'**
+  /// **'Configured date format will be applied to the date display on habit detail page.'**
   String get appSetting_dateDisplayFormat_subTitleText;
 
   /// No description provided for @appSetting_compactUISwitcher_titleText.
@@ -1372,7 +1374,7 @@ abstract class L10n {
   /// No description provided for @appSetting_resetConfigDialog_confirmText.
   ///
   /// In en, this message translates to:
-  /// **'comfirm'**
+  /// **'confirm'**
   String get appSetting_resetConfigDialog_confirmText;
 
   /// No description provided for @appSetting_resetConfigSuccess_snackbarText.
@@ -1453,17 +1455,17 @@ abstract class L10n {
   /// **'About'**
   String get appAbout_appbarTile_titleText;
 
-  /// No description provided for @appAbout_verionTile_titleText.
+  /// No description provided for @appAbout_versionTile_titleText.
   ///
   /// In en, this message translates to:
   /// **'Version: {appVersion}'**
-  String appAbout_verionTile_titleText(String appVersion);
+  String appAbout_versionTile_titleText(String appVersion);
 
-  /// No description provided for @appAbout_verionTile_changeLogPath.
+  /// No description provided for @appAbout_versionTile_changeLogPath.
   ///
   /// In en, this message translates to:
   /// **'CHANGELOG.md'**
-  String get appAbout_verionTile_changeLogPath;
+  String get appAbout_versionTile_changeLogPath;
 
   /// No description provided for @appAbout_sourceCodeTile_titleText.
   ///
@@ -1558,7 +1560,7 @@ abstract class L10n {
   /// No description provided for @donateWay_cryptoCurrency.
   ///
   /// In en, this message translates to:
-  /// **'Cryto Currencies'**
+  /// **'Crypto Currencies'**
   String get donateWay_cryptoCurrency;
 
   /// No description provided for @donateWay_cryptoCurrency_BTC.
@@ -1951,11 +1953,11 @@ abstract class L10n {
   /// **'UNDO'**
   String get snackbar_undoText;
 
-  /// No description provided for @snackbar_dissmessText.
+  /// No description provided for @snackbar_dismissText.
   ///
   /// In en, this message translates to:
   /// **'DISMISS'**
-  String get snackbar_dissmessText;
+  String get snackbar_dismissText;
 
   /// No description provided for @contributors_tile_title.
   ///
@@ -1991,7 +1993,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'fa', 'fr', 'vi', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'fa', 'fr', 'ru', 'vi', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -2007,6 +2009,7 @@ L10n lookupL10n(Locale locale) {
     case 'en': return L10nEn();
     case 'fa': return L10nFa();
     case 'fr': return L10nFr();
+    case 'ru': return L10nRu();
     case 'vi': return L10nVi();
     case 'zh': return L10nZh();
   }
