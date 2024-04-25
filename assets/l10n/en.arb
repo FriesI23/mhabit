@@ -147,7 +147,7 @@
     }
   },
   "habitEdit_targetDays_title": "{targetDays} days",
-  "habitEidt_targetDays_dialogTitle": "Select Target Days",
+  "habitEdit_targetDays_dialogTitle": "Select Target Days",
   "habitEdit_targetDays": "days",
 
   "habitEdit_reminder_hintText": "Reminder",
@@ -175,7 +175,7 @@
   "habitEdit_reminder_weekdayText_monday": "Mon",
   "habitEdit_reminder_weekdayText_tuesday": "Tue",
   "habitEdit_reminder_weekdayText_wednesday": "Wed",
-  "habitEdit_reminder_weekdayText_tursday": "Tur",
+  "habitEdit_reminder_weekdayText_thursday": "Tur",
   "habitEdit_reminder_weekdayText_friday": "Fri",
   "habitEdit_reminder_weekdayText_saturday": "Sat",
   "habitEdit_reminder_weekdayText_sunday": "Sun",
@@ -457,7 +457,7 @@
   },
   "appSetting_dateDisplayFormat_titleText": "Date display format ({formatTemplate})",
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "follow system setting",
-  "appSetting_dateDisplayFormat_subTitleText": "Configed date format will be applied to the date display on habit detail page.",
+  "appSetting_dateDisplayFormat_subTitleText": "Configured date format will be applied to the date display on habit detail page.",
 
   "appSetting_compactUISwitcher_titleText": "Enable Compact UI on habits page",
   "appSetting_compactUISwitcher_subtitleText": "Allow habits check table to display more content, but some UI and text may appear smaller.",
@@ -514,7 +514,7 @@
   "appSetting_resetConfigDialog_titleText": "Reset configs?",
   "appSetting_resetConfigDialog_subtitleText": "Reset all configs to default, must restart application to apply.",
   "appSetting_resetConfigDialog_cancelText": "cancel",
-  "appSetting_resetConfigDialog_confirmText": "comfirm",
+  "appSetting_resetConfigDialog_confirmText": "confirm",
   "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
 
   "appSetting_otherSubgroupText": "Others",
@@ -532,7 +532,7 @@
   "appSetting_about_titleText": "About",
 
   "appAbout_appbarTile_titleText": "About",
-  "@appAbout_verionTile_titleText": {
+  "@appAbout_versionTile_titleText": {
     "placeholders": {
       "appVersion": {
         "type": "String",
@@ -540,8 +540,8 @@
       }
     }
   },
-  "appAbout_verionTile_titleText": "Version: {appVersion}",
-  "appAbout_verionTile_changeLogPath": "CHANGELOG.md",
+  "appAbout_versionTile_titleText": "Version: {appVersion}",
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
   "appAbout_sourceCodeTile_titleText": "Source code",
   "appAbout_issueTrackerTile_titleText": "Issue tracker",
   "appAbout_contactEmailTile_titleText": "Contact me",
@@ -560,7 +560,7 @@
   "donateWay_buyMeACoffee": "Buy me a coffee",
   "donateWay_alipay": "Alipay",
   "donateWay_wechatPay": "Wechat Pay",
-  "donateWay_cryptoCurrency": "Cryto Currencies",
+  "donateWay_cryptoCurrency": "Crypto Currencies",
   "donateWay_cryptoCurrency_BTC": "BTC",
   "donateWay_cryptoCurrency_ETH": "ETH",
   "donateWay_cryptoCurrency_BNB": "BNB",
@@ -690,7 +690,7 @@
   "exportConfirmDialog_confirm_buttonText": "export",
 
   "snackbar_undoText": "UNDO",
-  "snackbar_dissmessText": "DISMISS",
+  "snackbar_dismissText": "DISMISS",
 
   "contributors_tile_title": "Contributors",
 

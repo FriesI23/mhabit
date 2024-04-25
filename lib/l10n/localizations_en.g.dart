@@ -146,7 +146,7 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get habitEidt_targetDays_dialogTitle => 'Select Target Days';
+  String get habitEdit_targetDays_dialogTitle => 'Select Target Days';
 
   @override
   String get habitEdit_targetDays => 'days';
@@ -218,7 +218,7 @@ class L10nEn extends L10n {
   String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
 
   @override
-  String get habitEdit_reminder_weekdayText_tursday => 'Tur';
+  String get habitEdit_reminder_weekdayText_thursday => 'Tur';
 
   @override
   String get habitEdit_reminder_weekdayText_friday => 'Fri';
@@ -666,7 +666,7 @@ class L10nEn extends L10n {
   String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'follow system setting';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Configed date format will be applied to the date display on habit detail page.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'Configured date format will be applied to the date display on habit detail page.';
 
   @override
   String get appSetting_compactUISwitcher_titleText => 'Enable Compact UI on habits page';
@@ -747,7 +747,7 @@ class L10nEn extends L10n {
   String get appSetting_resetConfigDialog_cancelText => 'cancel';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'comfirm';
+  String get appSetting_resetConfigDialog_confirmText => 'confirm';
 
   @override
   String get appSetting_resetConfigSuccess_snackbarText => 'reset app configs succeed';
@@ -789,12 +789,12 @@ class L10nEn extends L10n {
   String get appAbout_appbarTile_titleText => 'About';
 
   @override
-  String appAbout_verionTile_titleText(String appVersion) {
+  String appAbout_versionTile_titleText(String appVersion) {
     return 'Version: $appVersion';
   }
 
   @override
-  String get appAbout_verionTile_changeLogPath => 'CHANGELOG.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
   String get appAbout_sourceCodeTile_titleText => 'Source code';
@@ -842,7 +842,7 @@ class L10nEn extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Cryto Currencies';
+  String get donateWay_cryptoCurrency => 'Crypto Currencies';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -1068,7 +1068,7 @@ class L10nEn extends L10n {
   String get snackbar_undoText => 'UNDO';
 
   @override
-  String get snackbar_dissmessText => 'DISMISS';
+  String get snackbar_dismissText => 'DISMISS';
 
   @override
   String get contributors_tile_title => 'Contributors';

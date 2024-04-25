@@ -1,0 +1,700 @@
+{
+  "@@locale": "ru",
+  "localeScriptName": "Русский",
+
+  "appName": "Таблица Привычек",
+
+  "habitEdit_saveButton_text": "Сохранить",
+
+  "habitEdit_habitName_hintText": "Название привычки ...",
+
+  "habitEdit_colorPicker_title": "Выберете цвет",
+
+  "habitEdit_habitTypeDialog_title": "Тип привычки",
+  "habitEdit_habitType_positiveText": "Хорошая",
+  "habitEdit_habitType_negativeText": "Вредная",
+
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "дневная цель для привычки, по умолчанию",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_hintText": "Дневная цель, по умолчанию {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "дневная цель для вредной привычки, по умолчанию",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "Минимальный дневной порог, по умолчанию {number}",
+
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "минимальное число для дневной цели привычки",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText01": "дневная цель должна быть > {number}",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "максимальное число для дневной цели привычки",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText02": "дневная цель должна быть ≤ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "минимальное число для дневной цели вредной привычки",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "дневная цель должна быть ≥ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "максимальное число для дневной цели вредной привычки",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText02": "дневная цель должна быть ≤ {number}",
+
+  "habitEdit_habitDailyGoalUnit_hintText": "Единицы дневной цель",
+
+  "habitEdit_habitDailyGoalExtra_hintText": "Желаемый максимум дневная цель",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_errorText": "invalid value, must be empty or ≥ {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Максимальный дневной предел",
+
+  "habitEdit_frequencySelector_title": "Выберете частоту",
+
+  "habitEdit_habitFreq_daily": "Ежедневно",
+  "habitEdit_habitFreq_perweek": "",
+  "habitEdit_habitFreq_perweek_ex01": "раз в неделю",
+  "habitEdit_habitFreq_permonth": "",
+  "habitEdit_habitFreq_permonth_ex01": "раз в месяц",
+  "habitEdit_habitFreq_predayfreq": "",
+  "habitEdit_habitFreq_predayfreq_ex01": "раз в",
+  "habitEdit_habitFreq_predayfreq_ex02": "дней",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "Если установить на 1, отображение виджета списка будет обратным."
+  },
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+
+  "habitEdit_habitFreq_show_daily": "Ежедневно",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{В неделю} other{Хотя бы {freq} раз в неделю}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{В месяц} other{Хотя бы {freq} раз в месяц}}",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{В каждые {days} дней} other{Хотя бы {freq} раз в каждые {days} дней}}",
+
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_title": "{targetDays} дней",
+  "habitEdit_targetDays_dialogTitle": "Выберете целевых дней",
+  "habitEdit_targetDays": "дней",
+
+  "habitEdit_reminder_hintText": "Напоминание",
+  "habitEdit_reminder_freq_weekHelpText": "Любой день недели",
+  "habitEdit_reminder_freq_weekPrefixText": "",
+  "habitEdit_reminder_freq_weekSubfixText": " в любую неделю",
+  "habitEdit_reminder_freq_monthHelpText": "Любой день месяца",
+  "habitEdit_reminder_freq_monthPrefixText": "",
+  "habitEdit_reminder_freq_monthSubfixText": " в любой месяц",
+  "habitEdit_reminderQuest_hintText": "Вопрос, н.п. Вы занимались сегодня?",
+
+  "habitEdit_reminder_dialogTitle": "Выберете тип напоминания",
+  "habitEdit_reminder_dialogType_whenNeeded": "Когда нужно чекиниться",
+  "habitEdit_reminder_dialogType_daily": "Ежедневно",
+  "habitEdit_reminder_dialogType_week": "Еженедельно",
+  "habitEdit_reminder_dialogType_month": "Ежемесячно",
+  "habitEdit_reminder_dialogConfirm": "подтвердить",
+  "habitEdit_reminder_dialogCancel": "отмена",
+
+  "habitEdit_reminder_cancelDialogTitle": "Подтвердить",
+  "habitEdit_reminder_cancelDialogSubtitle": "Вы уверены, что хотите удалить это напоминание",
+  "habitEdit_reminder_cancelDialogConfirm": "подтвердить",
+  "habitEdit_reminder_cancelDialogCancel": "отмена",
+
+  "habitEdit_reminder_weekdayText_monday": "Пн",
+  "habitEdit_reminder_weekdayText_tuesday": "Вт",
+  "habitEdit_reminder_weekdayText_wednesday": "Ср",
+  "habitEdit_reminder_weekdayText_thursday": "Чт",
+  "habitEdit_reminder_weekdayText_friday": "Пт",
+  "habitEdit_reminder_weekdayText_saturday": "Сб",
+  "habitEdit_reminder_weekdayText_sunday": "Вс",
+
+  "habitEdit_desc_hintText": "Редактор, поддерживает Markdown",
+
+  "habitEdit_create_datetime_prefix": "Создано: ",
+  "habitEdit_modify_datetime_prefix": "Изменено: ",
+
+  "habitDisplay_fab_text": "Новая Привычка",
+
+  "habitDisplay_emptyImage_text_01": "Путешествие в тысячу миль начинается с первого шага",
+
+  "habitDisplay_archiveHabitsConfirmDialog_title": "Архивировать выбранные привычки?",
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "подтвердить",
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "отмена",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_archiveHabitsSuccSnackbarText": "Архивировать {count} привычек",
+
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Разархивировать выбранные привычки?",
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "подтвердить",
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "отмена",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "Разархивировано {count} привычек",
+
+  "habitDisplay_deleteHabitsConfirmDialog_title": "Удалить выбранные привычки?",
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "подтвердить",
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "отмена",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteHabitsSuccSnackbarText": "Удалено {count} привычек",
+
+  "habitDisplay_editPopMenu_selectAll": "Выбрать всё",
+  "habitDisplay_editPopMenu_export": "Экспорт",
+  "habitDisplay_editPopMenu_delete": "Удалить",
+  "habitDisplay_editPopMenu_clone": "Шаблон",
+
+  "habitDisplay_editButton_tooltip": "Редактировать",
+  "habitDisplay_archiveButton_tooltip": "Архивировать",
+  "habitDisplay_unarchiveButton_tooltip": "Разархивировать",
+  "habitDisplay_settingButton_tooltip": "Настройки",
+
+  "habitDisplay_statsMenu_statSubgroupText": "Текущие",
+  "habitDisplay_statsMenu_completedTileText": "Завершённые",
+  "habitDisplay_statsMenu_inProgresTileText": "В прогрессе",
+  "habitDisplay_statsMenu_archivedTileText": "Архивировано",
+  "habitDisplay_statsMenu_popularitySubgroupText": "Топ привычек: изменения за последние 30 дней",
+
+  "habitDisplay_mainMenu_lightTheme": "Светлая тема",
+  "habitDisplay_mainMenu_darkTheme": "Тёмная тема",
+  "habitDisplay_mainMenu_followSystemTheme": "Как в системе",
+  "habitDisplay_mainMenu_showArchivedTileText": "Показать Архивированные",
+  "habitDisplay_mainMenu_showCompletedTileText": "Показать Завершённые",
+  "habitDisplay_mainMenu_showActivedTileText": "Показать Активные",
+  "habitDisplay_mainMenu_settingTileText": "Настройки",
+
+  "habitDisplay_sort_reverseText": "Обратная",
+  "habitDisplay_sortDirection_asc": "(Восходящая)",
+  "habitDisplay_sortDirection_Desc": "(Нисходящая)",
+  "habitDisplay_sortType_manual": "Свой порядок",
+  "habitDisplay_sortType_name": "По Названию",
+  "habitDisplay_sortType_colorType": "По цвету",
+  "habitDisplay_sortType_progress": "По Рейту",
+  "habitDisplay_sortType_startT": "По Дате Начала",
+  "habitDisplay_sortType_status": "По Статусу",
+  "habitDisplay_sortTypeDialog_title": "Сортировка",
+  "habitDisplay_sortTypeDialog_confirm": "подтвердить",
+  "habitDisplay_sortTypeDialog_cancel": "отменить",
+
+  "habitDisplay_debug_debugSubgroup_title": "🛠 Отладка",
+
+  "habitDetail_editButton_tooltip": "Редактировать",
+  "habitDetail_editPopMenu_unarchive": "Разархивировать",
+  "habitDetail_editPopMenu_archive": "Архивировать",
+  "habitDetail_editPopMenu_export": "Экспорт",
+  "habitDetail_editPopMenu_delete": "Удалить",
+  "habitDetail_editPopMenu_clone": "Шаблон",
+
+  "habitDetail_confirmDialog_confirm": "подтвердить",
+  "habitDetail_confirmDialog_cancel": "отмена",
+  "habitDetail_archiveConfirmDialog_titleText": "Архивировать Привычку?",
+  "habitDetail_unarchiveConfirmDialog_titleText": "Разархивировать Привычку?",
+  "habitDetail_deleteConfirmDialog_titleText": "Удалить Привычку?",
+
+  "habitDetail_summary_title": "Итоги",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_body": "Текущее достижение {score}, и уже прошло {days} дней со времени начала.",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_preBody": "{days, plural, =1{Начиная с завтра.} other{Начиная через {days} дней.}}",
+
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{НЕЗАКОНЧЕНО} =2{НЕИСКОРЕНО} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{ПЕРЕВЫПОЛНЕНО} =2{БЕЗУПРЕЧНО} other{}}",
+
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Порог} other{Цель}}",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitText": "Единицы: {unit}",
+  "habitDetail_descDailyGoal_unitEmptyText": "null",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Дней}}",
+  "habitDetail_descTargetDays_unitText": "д",
+  "habitDetail_descRecordsNum_titleText": "Записей",
+
+  "habitDetail_scoreChart_title": "Достижения",
+  "habitDetail_scoreChartCombine_dailyText": "День",
+  "habitDetail_scoreChartCombine_weeklyText": "Неделя",
+  "habitDetail_scoreChartCombine_monthlyText": "Месяц",
+  "habitDetail_scoreChartCombine_yearlyText": "Год",
+
+  "habitDetail_freqChart_freqTitle": "Частота",
+  "habitDetail_freqChart_historyTitle": "История",
+  "habitDetail_freqChart_combinedTitle": "Частота и История",
+  "habitDetail_freqChartCombine_weeklyText": "Неделя",
+  "habitDetail_freqChartCombine_monthlyText": "Месяц",
+  "habitDetail_freqChartCombine_yearlyText": "Год",
+  "habitDetail_freqChartNaviBar_nowText": "Сейчас",
+  "habitDetail_freqChart_expanded_hideTooltip": "Спрятать историческую диаграмму",
+  "habitDetail_freqChart_expanded_showTooltip": "Показать историческую диаграмму",
+
+  "habitDetail_descSubgroup_title": "Редактор",
+
+  "habitDetail_otherSubgroup_title": "Другое",
+  "habitDetail_habitType_title": "Тип",
+  "habitDetail_reminderTile_title": "Напоминание",
+  "habitDetail_freqTile_title": "Повторять",
+  "habitDetail_startDateTile_title": "Дата начала",
+  "habitDetail_createDateTile_title": "Создано",
+  "habitDetail_modifyDateTile_title": "Изменено",
+
+  "habitDetail_editHeatmapCal_dateButtonText": "date",
+  "habitDetail_editHeatmapCal_valueButtonText": "value",
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "назад к сегодня",
+
+  "habitDetail_notFoundText": "Загрузка привычки не удалась",
+  "habitDetail_notFoundRetryText": "Попробовать снова",
+
+  "habitDetail_changeGoal_title": "Изменить цель",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_currentChipText": "текущая: {goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_doneChipText": "сделано: {goal}",
+  "habitDetail_changeGoal_undoneChipText": "не сделано",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_extraChipText": "{goal}",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_helpText": "Дневная цель, по умолчанию: {goal}",
+  "habitDetail_changeGoal_cancelText": "отмена",
+  "habitDetail_changeGoal_saveText": "сохранить",
+
+  "habitDetail_skipReason_title": "Причина пропуска",
+  "habitDetail_skipReason_bodyHelpText": "Напишите что нибудь здесь...",
+  "habitDetail_skipReason_cancelText": "отмена",
+  "habitDetail_skipReason_saveText": "сохранить",
+
+  "appSetting_appbar_titleText": "Настройки",
+
+  "appSetting_displaySubgroupText": "Отобразить",
+  "appSetting_operationSubgroupText": "Операция",
+  "appSetting_dragCalendarByPageTile_titleText": "Перетаскивать календарь по странице",
+  "appSetting_dragCalendarByPageTile_subtitleText": "Если переключатель включен, календарь панели приложений на домашней странице будет перетаскиваться по странице. По умолчанию переключатель отключен.",
+  "appSetting_changeRecordStatusOpTile_titleText": "Изменить статус записи",
+  "appSetting_changeRecordStatusOpTile_subtitleText": "Измените поведение клика, чтобы изменить статус ежедневных записей на главной странице.",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Открыть подробную запись",
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Измените поведение клика, чтобы открыть подробное всплывающее окно для ежедневных записей на главной странице.",
+  "appSetting_firstDayOfWeek_titleText": "Первый день недели",
+  "appSetting_firstDayOfWeekDialog_titleText": "Показывать первый день недели",
+  "appSetting_firstDayOfWeekDialog_defaultText": " (По умолчанию)",
+
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy-M-d"
+      }
+    }
+  },
+  "appSetting_dateDisplayFormat_titleText": "Формат отображения даты ({formatTemplate})",
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "как в системе",
+  "appSetting_dateDisplayFormat_subTitleText": "Настроенный формат даты будет применен к отображению даты на странице «Подробности привычки».",
+
+  "appSetting_compactUISwitcher_titleText": "Включить компактный интерфейс на странице привычек",
+  "appSetting_compactUISwitcher_subtitleText": "Разрешить привычки проверить таблицу для отображения большего количества контента, но некоторые пользовательские и текст могут показаться меньше.",
+
+  "appSetting_collapsed_calendar_bararea_titleText": "Habits check area radio adjustment",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Adjust percentage for more/less space in habits check table area.",
+  "appSetting_collapsed_calendar_bararea_defaultText": "По умолчанию",
+
+  "appSetting_reminderSubgroupText": "Напоминание",
+  "appSetting_dailyReminder_titleText": "Ежедневное напоминание",
+
+  "appSetting_backupAndRestoreSubgroupText": "Резервное копирование и восстановление",
+  "appSetting_export_titleText": "Экспорт",
+  "appSetting_export_subtitleText": "Привычки экспортируются в формате JSON. Этот файл можно импортировать назад.",
+  "appSetting_import_titleText": "Импорт",
+  "appSetting_import_subtitleText": "Импорт привычек из json файла.",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirmTitle": "Подтвердите импорт {count} привычек?",
+  "appSetting_importDialog_confirmSubtitle": "Примечание: импорт не удаляет существующие привычки.",
+  "appSetting_importDialog_confirm_confirmText": "подтвердить",
+  "appSetting_importDialog_confirm_cancelText": "отмена",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_importingTitle": "Импортировано {completeCount}/{totalCount}",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_completeTitle": "Завершён импорт {count}",
+  "appSetting_importDialog_complete_closeLabel": "закрыть",
+  "appSetting_resetConfig_titleText": "Сбросить настройки",
+  "appSetting_resetConfig_subtitleText": "Сбросить все настройки к значениям по умолчанию.",
+  "appSetting_resetConfigDialog_titleText": "Сбросить настройки?",
+  "appSetting_resetConfigDialog_subtitleText": "После сброса нужно будет перезапустить приложение.",
+  "appSetting_resetConfigDialog_cancelText": "отмена",
+  "appSetting_resetConfigDialog_confirmText": "подтвердить",
+  "appSetting_resetConfigSuccess_snackbarText": "настройки приложения сброшены",
+
+  "appSetting_otherSubgroupText": "Другие",
+  "appSetting_developMode_titleText": "Режим Разработчика",
+
+  "appSetting_clearCache_titleText": "Очистить кэш",
+  "appSetting_clearCacheDialog_titleText": "Очистить кеш",
+  "appSetting_clearCacheDialog_subtitleText": "После очистки кэша некоторые пользовательские значения будут восстановлены по умолчанию.",
+  "appSetting_clearCacheDialog_cancelText": "отмена",
+  "appSetting_clearCacheDialog_confirmText": "подтвердить",
+  "appSetting_clearCache_snackBar_partSuccText": "Не удалось частично очистить кэш",
+  "appSetting_clearCache_snackBar_succText": "Кэш очищен",
+  "appSetting_clearCache_snackBar_failText": "Не удалось очистить кэш",
+
+  "appSetting_about_titleText": "О приложении",
+
+  "appAbout_appbarTile_titleText": "О приложении",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_versionTile_titleText": "Версия: {appVersion}",
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "appAbout_sourceCodeTile_titleText": "Исходный код",
+  "appAbout_issueTrackerTile_titleText": "Баг трекер",
+  "appAbout_contactEmailTile_titleText": "Написать мне",
+  "appAbout_contactEmailTile_emailBody": "Hi, I'm glad you reached out to me.\nIf you're reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------",
+  "appAbout_licenseTile_titleText": "Лицензия",
+  "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
+  "appAbout_licenseThirdPartyTile_titleText": "Third Party Licensing Statement",
+  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "appAbout_donateTile_titleText": "Пожертвовать",
+  "appAbout_donateTile_subTitleText": "Я индивидуальный разработчик. Если вам нравится это приложение, купите мне ☕.",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "donateWay_paypal": "Paypal",
+  "donateWay_buyMeACoffee": "Buy me a coffee",
+  "donateWay_alipay": "Alipay",
+  "donateWay_wechatPay": "Wechat Pay",
+  "donateWay_cryptoCurrency": "Crypto Currencies",
+  "donateWay_cryptoCurrency_BTC": "BTC",
+  "donateWay_cryptoCurrency_ETH": "ETH",
+  "donateWay_cryptoCurrency_BNB": "BNB",
+  "donateWay_cryptoCurrency_AVAX": "AVAX",
+  "donateWay_cryptoCurrency_FTM": "FTM",
+  "donateWay_firstQRGroup": "Alipay & Wechat Pay",
+
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "appAbout_donateDialog_copiedCrypto_msg": "Скопирован адрес {name}",
+
+  "batchCheckin_appbar_title": "Групповой чекин",
+  "batchCheckin_datePicker_prevButton_tooltip": "Предыдущий день",
+  "batchCheckin_datePicker_nextButton_tooltip": "Следующий день",
+  "batchCheckin_status_skip_text": "Пропустить",
+  "batchCheckin_status_ok_text": "Завершено",
+  "batchCheckin_status_double_text": "x2 Hit!",
+  "batchCheckin_status_zero_text": "Незавершенно",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} selected",
+  "batchCheckin_save_button_text": "Сохранить",
+  "batchCheckin_reset_button_text": "Сбросить",
+
+  "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
+  "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
+  "batchCheckin_save_confirmDialog_confirmButton_text": "сохранить",
+  "batchCheckin_save_confirmDialog_cancelButton_text": "отмена",
+
+  "batchCheckin_close_confirmDialog_title": "Confirm Return",
+  "batchCheckin_close_confirmDialog_body": "Check-in Status Changes won't be applied before saved",
+  "batchCheckin_close_confirmDialog_confirmButton_text": "выход",
+  "batchCheckin_close_confirmDialog_cancelButton_text": "отмена",
+
+  "appReminder_dailyReminder_title": "🏝 Вы сегодня придерживались своих привычек?",
+  "appReminder_dailyReminder_body": "Нажмите чтобы войти в приложение и вписаться вовремя.",
+
+  "common_habitColorType_cc1": "Deep lilac",
+  "common_habitColorType_cc2": "Red",
+  "common_habitColorType_cc3": "Purple",
+  "common_habitColorType_cc4": "Royal blue",
+  "common_habitColorType_cc5": "Dark cyan",
+  "common_habitColorType_cc6": "Green",
+  "common_habitColorType_cc7": "Amber",
+  "common_habitColorType_cc8": "Orange",
+  "common_habitColorType_cc9": "Lime green",
+  "common_habitColorType_cc10": "Dark orchid",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_habitColorType_default": "Цвет {index}",
+
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "Использовать системный формат",
+  "common_customDateTimeFormatPicker_fmtTileText": "Формат даты",
+  "common_customDateTimeFormatPicker_ymd_text": "Год Месяц День",
+  "common_customDateTimeFormatPicker_mdy_text": "Месяц День Год",
+  "common_customDateTimeFormatPicker_dmy_text": "День Month Год",
+  "common_customDateTimeFormatPicker_SepTileText": "Разделитель",
+  "common_customDateTimeFormatPicker_sepDash_text": "Минус",
+  "common_customDateTimeFormatPicker_sepSlash_text": "Слэш",
+  "common_customDateTimeFormatPicker_sepSpace_text": "Пробел",
+  "common_customDateTimeFormatPicker_sepDot_text": "Точка",
+  "common_customDateTimeFormatPicker_empty_text": "Без разделителя",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "разделительный символ",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "common_customDateTimeFormatPicker_12Hour_text": "Использовать 12ти часовой формат",
+  "common_customDateTimeFormatPicker_monthName_text": "Использовать полное название",
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "Применить для Диаграммы Частоты",
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "Применить для Календаря",
+  "common_customDateTimeFormatPicker_cancelButton_text": "отмена",
+  "common_customDateTimeFormatPicker_confirmButton_text": "подтвердить",
+
+  "calendarPicker_clip_today": "Сегодня",
+  "calendarPicker_clip_tomorrow": "Завтра",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "calendarPicker_clip_after7Days": "Следующий {date}",
+
+  "exportConfirmDialog_title_exportAll": "Экспортировать все привычки?",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportMulti": "Экспорт {number, plural, =0{current habit} =1{1 habit} other{{number} habits}}?",
+  "exportConfirmDialog_option_includeRecords": "включая записи",
+  "exportConfirmDialog_cancel_buttonText": "отмена",
+  "exportConfirmDialog_confirm_buttonText": "export",
+
+  "snackbar_undoText": "UNDO",
+  "snackbar_dismissText": "DISMISS",
+
+  "contributors_tile_title": "Авторы",
+
+  "userAction_tap": "Tap",
+  "userAction_doubleTap": "Double",
+  "userAction_longTap": "Long"
+}

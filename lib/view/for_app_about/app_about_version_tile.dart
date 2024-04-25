@@ -40,7 +40,7 @@ class AppAboutVersionTile extends StatefulWidget {
 class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
   void onLongPressed() async {
     final text = await rootBundle.loadString(
-        L10n.of(context)?.appAbout_verionTile_changeLogPath ??
+        L10n.of(context)?.appAbout_versionTile_changeLogPath ??
             widget.changeLogPath);
     if (!mounted) return;
     await showDialog(
@@ -78,7 +78,7 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
       ),
       title: Text(l10n?.appName ?? AppInfo().appName),
       subtitle: Text(
-          l10n?.appAbout_verionTile_titleText(AppInfo().appVersion) ??
+          l10n?.appAbout_versionTile_titleText(AppInfo().appVersion) ??
               "Version: ${AppInfo().appVersion}"),
       onLongPress: onLongPressed,
     );

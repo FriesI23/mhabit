@@ -52,7 +52,7 @@ class BuildWidgetHelper {
       content: content,
       duration: duration ?? const Duration(milliseconds: 2000),
       action: SnackBarAction(
-        label: label ?? L10n.of(context)?.snackbar_dissmessText ?? 'dismiss',
+        label: label ?? L10n.of(context)?.snackbar_dismissText ?? 'dismiss',
         onPressed:
             onPressed ?? () => snackbarKey.currentState?.hideCurrentSnackBar(),
       ),

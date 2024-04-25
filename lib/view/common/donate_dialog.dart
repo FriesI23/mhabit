@@ -197,7 +197,7 @@ class _DonateDialogState extends State<DonateDialog> {
           Image.asset(widget.wechatPayQRCodePath, width: 300),
         ];
 
-    Iterable<Widget> buildCrytoButtonList(BuildContext context) => [
+    Iterable<Widget> buildCryptoButtonList(BuildContext context) => [
           if (l10n != null)
             ListTile(
               title: Text(l10n.donateWay_cryptoCurrency),
@@ -262,7 +262,7 @@ class _DonateDialogState extends State<DonateDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (donateWays.contains(DonateWay.cryptoCurrencyAll))
-            ...buildCrytoButtonList(context),
+            ...buildCryptoButtonList(context),
           if (donateWays.contains(DonateWay.buyMeACoffee))
             ...buildBuyMeACoffeeList(context),
           if (donateWays.contains(DonateWay.paypal) &&

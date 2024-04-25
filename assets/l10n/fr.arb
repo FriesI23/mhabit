@@ -147,8 +147,8 @@
       }
     }
   },
-  "habitEidt_targetDays_dialogTitle": "Sélectionner le nombre de jours ciblé",
-  "@habitEidt_targetDays_dialogTitle": {},
+  "habitEdit_targetDays_dialogTitle": "Sélectionner le nombre de jours ciblé",
+  "@habitEdit_targetDays_dialogTitle": {},
   "habitEdit_targetDays": "jours",
   "@habitEdit_targetDays": {},
   "habitEdit_reminder_hintText": "Rappel",
@@ -195,8 +195,8 @@
   "@habitEdit_reminder_weekdayText_tuesday": {},
   "habitEdit_reminder_weekdayText_wednesday": "Mer",
   "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_tursday": "Jeu",
-  "@habitEdit_reminder_weekdayText_tursday": {},
+  "habitEdit_reminder_weekdayText_thursday": "Jeu",
+  "@habitEdit_reminder_weekdayText_thursday": {},
   "habitEdit_reminder_weekdayText_friday": "Ven",
   "@habitEdit_reminder_weekdayText_friday": {},
   "habitEdit_reminder_weekdayText_saturday": "Sam",
@@ -665,8 +665,8 @@
   "@appSetting_about_titleText": {},
   "appAbout_appbarTile_titleText": "À propos",
   "@appAbout_appbarTile_titleText": {},
-  "appAbout_verionTile_titleText": "Version: {appVersion}",
-  "@appAbout_verionTile_titleText": {
+  "appAbout_versionTile_titleText": "Version: {appVersion}",
+  "@appAbout_versionTile_titleText": {
     "placeholders": {
       "appVersion": {
         "type": "String",
@@ -674,8 +674,8 @@
       }
     }
   },
-  "appAbout_verionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_verionTile_changeLogPath": {},
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
   "appAbout_sourceCodeTile_titleText": "Code source",
   "@appAbout_sourceCodeTile_titleText": {},
   "appAbout_issueTrackerTile_titleText": "Suivi des tickets",
@@ -845,8 +845,8 @@
   "@exportConfirmDialog_confirm_buttonText": {},
   "snackbar_undoText": "ANNULER",
   "@snackbar_undoText": {},
-  "snackbar_dissmessText": "REJETER",
-  "@snackbar_dissmessText": {},
+  "snackbar_dismissText": "REJETER",
+  "@snackbar_dismissText": {},
   "userAction_tap": "Appui",
   "@userAction_tap": {},
   "userAction_doubleTap": "Double",
