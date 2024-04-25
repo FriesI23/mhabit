@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
+      - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
 
 env:
   PROPERTIES_PATH: "./android/key.properties"
@@ -20,11 +21,27 @@ jobs:
     with:
       with-repoter: false
 
-  build-android:
-    name: Build android APK
+  pre-build:
+    name: Pre Building
     needs:
       - analyzing
       - testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Released - Basic
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: ${{ startsWith(github.ref_name, 'pre-') }}
+          bodyFile: "docs/release.md"
+          artifactErrorsFailBuild: true
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-android:
+    name: Build android APK
+    needs:
+      - pre-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,13 +62,45 @@ jobs:
           md5sum build/app/outputs/flutter-apk/app-release.apk
       - name: Build APK
         run: flutter build apk --split-per-abi
-      - name: Released
-        uses: ncipollo/release-action@v1.5.0
+      - name: Released - Android
+        uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
           artifacts: >
             build/app/outputs/bundle/release/app-release.aab,
             build/app/outputs/flutter-apk/app-release.apk,
             build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk,
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk,
             build/app/outputs/flutter-apk/app-x86_64-release.apk
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-macos-dmg:
+    name: "Build macos DMG"
+    needs:
+      - pre-build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - name: Build APP
+        run: flutter build macos --release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+      - run: npm install -g appdmg
+      - name: Build DMP
+        run: appdmg ./installers/dmg_creator/config.json ./build/macos/Build/Products/Release/mhabit.dmg
+      - name: Released - MacOS
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            build/macos/Build/Products/Release/mhabit.dmg
           token: ${{ secrets.APP_RELEASE_TOKEN }}
