@@ -68,45 +68,11 @@ class $AssetsImagesGen {
 class $AssetsLogoGen {
   const $AssetsLogoGen();
 
-  /// File path: assets/logo/background-1024x1024.png
-  AssetGenImage get background1024x1024 =>
-      const AssetGenImage('assets/logo/background-1024x1024.png');
-
-  /// File path: assets/logo/background.svg
-  SvgGenImage get background => const SvgGenImage('assets/logo/background.svg');
-
-  /// File path: assets/logo/foreground-1024x1024.png
-  AssetGenImage get foreground1024x1024 =>
-      const AssetGenImage('assets/logo/foreground-1024x1024.png');
-
-  /// File path: assets/logo/foreground.svg
-  SvgGenImage get foreground => const SvgGenImage('assets/logo/foreground.svg');
-
-  /// File path: assets/logo/icon-1024x1024.png
-  AssetGenImage get icon1024x1024 =>
-      const AssetGenImage('assets/logo/icon-1024x1024.png');
-
-  /// File path: assets/logo/icon-momo-1024x1024.png
-  AssetGenImage get iconMomo1024x1024 =>
-      const AssetGenImage('assets/logo/icon-momo-1024x1024.png');
-
   /// File path: assets/logo/icon-momo.svg
   SvgGenImage get iconMomo => const SvgGenImage('assets/logo/icon-momo.svg');
 
-  /// File path: assets/logo/icon.svg
-  SvgGenImage get icon => const SvgGenImage('assets/logo/icon.svg');
-
   /// List of all assets
-  List<dynamic> get values => [
-        background1024x1024,
-        background,
-        foreground1024x1024,
-        foreground,
-        icon1024x1024,
-        iconMomo1024x1024,
-        iconMomo,
-        icon
-      ];
+  List<SvgGenImage> get values => [iconMomo];
 }
 
 class $AssetsSqlGen {
