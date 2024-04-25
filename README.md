@@ -3,6 +3,7 @@
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
 [![Translation][weblate-badge]][weblate]
 [![Latest Stable Version][app-verison-bage-svg]][github-release-page]
+[![Latest Version][app-pre-verison-bage-svg]][github-release-page]
 [![License][license-badge]][app-license]
 [![Flutter][flutter-badge]][deps-flutter-version]
 
@@ -150,6 +151,7 @@ limitations under the License.
 [deps-flutter-version]: https://github.com/flutter/flutter/tree/3.13.9
 [license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
+[app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
 <!-- [l10n-stat-pic]: docs/README/images/l10n-stat.svg -->
