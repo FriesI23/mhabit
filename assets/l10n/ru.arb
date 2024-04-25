@@ -101,7 +101,7 @@
   "habitEdit_habitFreq_predayfreq_ex01": "раз в",
   "habitEdit_habitFreq_predayfreq_ex02": "дней",
   "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "Если установить на 1, отображение виджета списка будет обратным.",
+    "description": "Если установить на 1, отображение виджета списка будет обратным."
   },
   "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
 
