@@ -8,3 +8,7 @@ flutter_launcher_icons:
   ios: true
   image_path_ios: "assets/logo/icon-1024x1024.png"
   remove_alpha_ios: true
+  # MacOS
+  macos:
+    generate: true
+    image_path: "assets/logo/macos-1024x1024.png"
