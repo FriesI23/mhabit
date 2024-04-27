@@ -40,9 +40,14 @@
             "id": 8,
             "name": "rxzheng",
             "url": "https://github.com/rxzheng"
+        },
+        {
+            "id": 9,
+            "name": "spar34vi",
+            "url": "https://github.com/spar34vi"
         }
     ],
-    "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8 ],
+    "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
     "translations": {
         "ar": [
             {
@@ -59,6 +64,7 @@
                 "url": "https://github.com/3Lord3"
             }
         ],
+        "it": [ 9 ],
         "ru": [ 7 ],
         "vi": [ 4 ],
         "zh": [ 1 ]

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -135,7 +136,9 @@ class _AppView extends State<AppView> {
                 Locale.fromSubtags(languageCode: 'fa'),
                 Locale.fromSubtags(languageCode: 'fr'),
                 Locale.fromSubtags(languageCode: 'it'),
-                Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
+                // TODO: remove kDebugMode below after translation
+                if (kDebugMode)
+                  Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
                 Locale.fromSubtags(languageCode: 'ru'),
                 Locale.fromSubtags(languageCode: 'vi'),
                 Locale.fromSubtags(languageCode: 'zh'),

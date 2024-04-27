@@ -2,7 +2,7 @@
   "@@locale": "it",
   "localeScriptName": "Italiano",
   "@localeScriptName": {},
-  "appName": "🚧(it) - Table Habit",
+  "appName": "Table Habit",
   "@appName": {},
   "habitEdit_habitDailyGoal_errorText01": "Obiettivo giornaliero > {number}",
   "@habitEdit_habitDailyGoal_errorText01": {
