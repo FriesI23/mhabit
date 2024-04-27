@@ -1,16 +1,19 @@
-# Pre-Released
+<!--
+Title: Pre-Released or Released: v1.2.3+xx
+-->
 
-## 1.12.1+38
+# Released: v1.12.2+39
 
+- Add Russian translation. (#169, thanks for @yurtpage's contribution)
+- Add Italian translation. (from Weblate, thanks for @spar34vi's translation)
 - Add support for the Windows platform. (#164)
-- Add Russian translation. (#169)
-- Add Add support for `dmg` build on macos. (#168)
+- Add support for `dmg` build on macOS. (#168, thanks for @rxzheng's contribution)
 - Add `pre-release` version build process. (#171)
 - Fixed issue in `OpenContainer` raise exception when navigating via `Tooltips` enabled. (#166)
 - Update iOS dependency package versions.
 - Optimize code quality.
 
-### Build Windows version of `Table Habit`
+### Build Windows version
 
 ```sh
 flutter config --enable-windows-desktop

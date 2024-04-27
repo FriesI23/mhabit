@@ -1,0 +1,8 @@
+- 添加俄语翻译。 (#169, 感谢 @yurtpage 的贡献)
+- 添加意大利语翻译。 (来自 Weblate，感谢 @spar34vi 的翻译)
+- 添加对 Windows 支持。 (#164)
+- 添加对 macOS 上 dmg 支持。 (#168, 感谢 @rxzheng 的贡献)
+- 添加 `pre-release` 版本构建流程。 (#171)
+- 修复了通过 `OpenContainer` 导航时, 如果启用 `Tooltips` 会引发异常的问题。 (#166)
+- 更新 iOS 依赖版本。
+- 优化代码质量。

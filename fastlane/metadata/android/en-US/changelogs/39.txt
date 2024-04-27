@@ -1,0 +1,8 @@
+- Add Russian translation. (#169, thanks for @yurtpage's contribution)
+- Add Italian translation. (from Weblate, thanks for @spar34vi's translation)
+- Add support for the Windows platform. (#164)
+- Add Add support for `dmg` build on macOS. (#168, thanks for @rxzheng's contribution)
+- Add `pre-release` version build process. (#171)
+- Fixed issue in `OpenContainer` raise exception when navigating via `Tooltips` enabled. (#166)
+- Update iOS dependency package versions.
+- Optimize code quality.
