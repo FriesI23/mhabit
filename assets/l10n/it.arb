@@ -1,0 +1,907 @@
+{
+  "@@locale": "it",
+  "localeScriptName": "Italiano",
+  "@localeScriptName": {},
+  "appName": "🚧(it) - Table Habit",
+  "@appName": {},
+  "habitEdit_habitDailyGoal_errorText01": "Obiettivo giornaliero > {number}",
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalUnit_hintText": "Unità obiettivo giornaliero",
+  "@habitEdit_habitDailyGoalUnit_hintText": {},
+  "habitEdit_frequencySelector_title": "Seleziona frequenza",
+  "@habitEdit_frequencySelector_title": {},
+  "habitEdit_habitFreq_daily": "Giornaliero",
+  "@habitEdit_habitFreq_daily": {},
+  "habitEdit_habitFreq_perweek_ex01": "volte a settimana",
+  "@habitEdit_habitFreq_perweek_ex01": {},
+  "habitEdit_habitFreq_permonth_ex01": "volte al mese",
+  "@habitEdit_habitFreq_permonth_ex01": {},
+  "habitEdit_habitFreq_predayfreq_ex02": "giorni",
+  "@habitEdit_habitFreq_predayfreq_ex02": {},
+  "habitEdit_reminder_freq_monthHelpText": "Qualsiasi giorno del mese",
+  "@habitEdit_reminder_freq_monthHelpText": {},
+  "habitEdit_reminderQuest_hintText": "Domanda, ad es. \"Ti sei allenato oggi?\"",
+  "@habitEdit_reminderQuest_hintText": {},
+  "habitEdit_reminder_dialogTitle": "Scegli tipologia di promemoria",
+  "@habitEdit_reminder_dialogTitle": {},
+  "habitEdit_reminder_dialogType_daily": "Quotidianamente",
+  "@habitEdit_reminder_dialogType_daily": {},
+  "habitEdit_reminder_dialogType_week": "Settimanalmente",
+  "@habitEdit_reminder_dialogType_week": {},
+  "habitEdit_reminder_weekdayText_tuesday": "Mar",
+  "@habitEdit_reminder_weekdayText_tuesday": {},
+  "habitEdit_reminder_dialogType_month": "Mensilmente",
+  "@habitEdit_reminder_dialogType_month": {},
+  "habitEdit_reminder_weekdayText_wednesday": "Mer",
+  "@habitEdit_reminder_weekdayText_wednesday": {},
+  "habitEdit_reminder_weekdayText_thursday": "Gio",
+  "@habitEdit_reminder_weekdayText_thursday": {},
+  "habitEdit_reminder_dialogConfirm": "conferma",
+  "@habitEdit_reminder_dialogConfirm": {},
+  "habitEdit_reminder_weekdayText_friday": "Ven",
+  "@habitEdit_reminder_weekdayText_friday": {},
+  "habitEdit_reminder_weekdayText_saturday": "Sab",
+  "@habitEdit_reminder_weekdayText_saturday": {},
+  "habitEdit_reminder_weekdayText_sunday": "Dom",
+  "@habitEdit_reminder_weekdayText_sunday": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "annulla",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
+  "habitDisplay_editPopMenu_delete": "Elimina",
+  "@habitDisplay_editPopMenu_delete": {},
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "conferma",
+  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
+  "habitDisplay_statsMenu_statSubgroupText": "Attuale",
+  "@habitDisplay_statsMenu_statSubgroupText": {},
+  "habitDisplay_mainMenu_showArchivedTileText": "Visualizza archiviate",
+  "@habitDisplay_mainMenu_showArchivedTileText": {},
+  "habitDisplay_statsMenu_completedTileText": "Completato",
+  "@habitDisplay_statsMenu_completedTileText": {},
+  "habitDetail_scoreChart_title": "Punteggio",
+  "@habitDetail_scoreChart_title": {},
+  "habitDetail_scoreChartCombine_weeklyText": "Settimana",
+  "@habitDetail_scoreChartCombine_weeklyText": {},
+  "habitDetail_modifyDateTile_title": "Modificato",
+  "@habitDetail_modifyDateTile_title": {},
+  "habitDetail_scoreChartCombine_monthlyText": "Mese",
+  "@habitDetail_scoreChartCombine_monthlyText": {},
+  "habitDetail_confirmDialog_cancel": "annulla",
+  "@habitDetail_confirmDialog_cancel": {},
+  "habitDetail_notFoundRetryText": "Prova ancora",
+  "@habitDetail_notFoundRetryText": {},
+  "habitDetail_changeGoal_saveText": "salva",
+  "@habitDetail_changeGoal_saveText": {},
+  "appSetting_appbar_titleText": "Impostazioni",
+  "@appSetting_appbar_titleText": {},
+  "appSetting_displaySubgroupText": "Mostra",
+  "@appSetting_displaySubgroupText": {},
+  "habitDetail_skipReason_cancelText": "annulla",
+  "@habitDetail_skipReason_cancelText": {},
+  "habitDetail_skipReason_saveText": "salva",
+  "@habitDetail_skipReason_saveText": {},
+  "appSetting_operationSubgroupText": "Operazione",
+  "@appSetting_operationSubgroupText": {},
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{INCOMPLETO} =2{INSUFFICIENTE} other{}}",
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportAll": "Esportare tutte le abitudini?",
+  "@exportConfirmDialog_title_exportAll": {},
+  "calendarPicker_clip_tomorrow": "Domani",
+  "@calendarPicker_clip_tomorrow": {},
+  "calendarPicker_clip_today": "Oggi",
+  "@calendarPicker_clip_today": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "conferma",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "common_customDateTimeFormatPicker_mdy_text": "Mese Giorno Anno",
+  "@common_customDateTimeFormatPicker_mdy_text": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "annulla",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "common_customDateTimeFormatPicker_monthName_text": "Usa nome completo",
+  "@common_customDateTimeFormatPicker_monthName_text": {},
+  "common_customDateTimeFormatPicker_12Hour_text": "Usa il formato 12 ore",
+  "@common_customDateTimeFormatPicker_12Hour_text": {},
+  "common_customDateTimeFormatPicker_empty_text": "Nessun separatore",
+  "@common_customDateTimeFormatPicker_empty_text": {},
+  "common_customDateTimeFormatPicker_sepDot_text": "Punto",
+  "@common_customDateTimeFormatPicker_sepDot_text": {},
+  "common_customDateTimeFormatPicker_sepSpace_text": "Spazio",
+  "@common_customDateTimeFormatPicker_sepSpace_text": {},
+  "common_customDateTimeFormatPicker_sepSlash_text": "Slash",
+  "@common_customDateTimeFormatPicker_sepSlash_text": {},
+  "common_customDateTimeFormatPicker_sepDash_text": "Trattino",
+  "@common_customDateTimeFormatPicker_sepDash_text": {},
+  "common_customDateTimeFormatPicker_SepTileText": "Separatore",
+  "@common_customDateTimeFormatPicker_SepTileText": {},
+  "common_customDateTimeFormatPicker_dmy_text": "Giorno Mese Anno",
+  "@common_customDateTimeFormatPicker_dmy_text": {},
+  "common_customDateTimeFormatPicker_ymd_text": "Anno Mese Giorno",
+  "@common_customDateTimeFormatPicker_ymd_text": {},
+  "common_customDateTimeFormatPicker_fmtTileText": "Formato data",
+  "@common_customDateTimeFormatPicker_fmtTileText": {},
+  "common_habitColorType_default": "Colore {index}",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "Usa formato di sistema",
+  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+  "batchCheckin_status_skip_text": "Salta",
+  "@batchCheckin_status_skip_text": {},
+  "appAbout_licenseThirdPartyTile_titleText": "Dichiarazione Licenza Di Terze Parti",
+  "@appAbout_licenseThirdPartyTile_titleText": {},
+  "batchCheckin_status_zero_text": "Incompleto",
+  "@batchCheckin_status_zero_text": {},
+  "appAbout_donateTile_titleText": "Dona",
+  "@appAbout_donateTile_titleText": {},
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Abitudine} other{Abitudini}} selezionate",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appAbout_licenseTile_subtitleText": "Licenza Apache, Versione 2.0",
+  "@appAbout_licenseTile_subtitleText": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "Prossimo giorno",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "common_habitColorType_cc8": "Arancio",
+  "@common_habitColorType_cc8": {},
+  "common_habitColorType_cc7": "Ambra",
+  "@common_habitColorType_cc7": {},
+  "common_habitColorType_cc9": "Verde lime",
+  "@common_habitColorType_cc9": {},
+  "appSetting_clearCacheDialog_confirmText": "conferma",
+  "@appSetting_clearCacheDialog_confirmText": {},
+  "appSetting_clearCacheDialog_cancelText": "annulla",
+  "@appSetting_clearCacheDialog_cancelText": {},
+  "appSetting_clearCacheDialog_titleText": "Svuota Cache",
+  "@appSetting_clearCacheDialog_titleText": {},
+  "appSetting_clearCache_titleText": "Svuota Cache",
+  "@appSetting_clearCache_titleText": {},
+  "appSetting_resetConfigDialog_confirmText": "conferma",
+  "@appSetting_resetConfigDialog_confirmText": {},
+  "appSetting_resetConfig_subtitleText": "Ripristina tutte le impostazioni.",
+  "@appSetting_resetConfig_subtitleText": {},
+  "appSetting_importDialog_complete_closeLabel": "chiudi",
+  "@appSetting_importDialog_complete_closeLabel": {},
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Giorni}}",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_resetConfigDialog_cancelText": "annulla",
+  "@appSetting_resetConfigDialog_cancelText": {},
+  "appSetting_resetConfig_titleText": "Ripristina impostazioni",
+  "@appSetting_resetConfig_titleText": {},
+  "appSetting_importDialog_importingTitle": "{completeCount}/{totalCount} importati",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_export_subtitleText": "Esporta le abitudini in formato JSON, questo file può essere poi importato.",
+  "@appSetting_export_subtitleText": {},
+  "appSetting_export_titleText": "Esporta",
+  "@appSetting_export_titleText": {},
+  "appSetting_clearCacheDialog_subtitleText": "Dopo aver svuotato la cache, alcuni valori saranno ripristinati a quelli predefiniti.",
+  "@appSetting_clearCacheDialog_subtitleText": {},
+  "appSetting_compactUISwitcher_titleText": "Abilita interfaccia compatta nella pagina delle abitudini",
+  "@appSetting_compactUISwitcher_titleText": {},
+  "appSetting_dateDisplayFormat_titleText": "Formato visualizzazione data ({formatTemplate})",
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_firstDayOfWeekDialog_defaultText": " (Predefinito)",
+  "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "donateWay_cryptoCurrency_BTC": "BTC",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "donateWay_cryptoCurrency_ETH": "ETH",
+  "@donateWay_cryptoCurrency_ETH": {},
+  "donateWay_firstQRGroup": "Alipay & Wechat Pay",
+  "@donateWay_firstQRGroup": {},
+  "batchCheckin_status_double_text": "x2 Hit!",
+  "@batchCheckin_status_double_text": {},
+  "habitDetail_changeGoal_extraChipText": "{goal}",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDisplay_statsMenu_popularitySubgroupText": "Abitudini Principali: i cambiamenti degli ultimi 30 giorni",
+  "@habitDisplay_statsMenu_popularitySubgroupText": {},
+  "habitDisplay_sortType_progress": "Per Rateo",
+  "@habitDisplay_sortType_progress": {},
+  "habitDetail_archiveConfirmDialog_titleText": "Archiviare l'Abitudine?",
+  "@habitDetail_archiveConfirmDialog_titleText": {},
+  "habitDetail_unarchiveConfirmDialog_titleText": "Rimuovere dall'archivio l'Abitudine?",
+  "@habitDetail_unarchiveConfirmDialog_titleText": {},
+  "habitEdit_saveButton_text": "Salva",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitName_hintText": "Nome Abitudine ...",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "Scegli colore",
+  "@habitEdit_colorPicker_title": {},
+  "habitEdit_habitTypeDialog_title": "Tipologia abitudine",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitDailyGoal_hintText": "Obiettivo giornaliero, predefinito {number}",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitType_positiveText": "Positiva",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitType_negativeText": "Negativa",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitDailyGoal_errorText02": "Obiettivo giornaliero ≤ {number}",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "Obiettivo giornaliero ≥ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText02": "Obiettivo giornaliero ≤ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "maximum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_hintText": "Obiettivo giornaliero massimo desiderato",
+  "@habitEdit_habitDailyGoalExtra_hintText": {},
+  "habitEdit_habitDailyGoalExtra_errorText": "Valore non valido, deve essere vuoto o ≥ {dailyGoal}",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Limite massimo giornaliero",
+  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+  "habitEdit_habitDailyGoal_negativeHintText": "Soglia minima giornaliera, predefinito {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_daily": "Giornaliero",
+  "@habitEdit_habitFreq_show_daily": {},
+  "habitEdit_targetDays_title": "{targetDays} giorni",
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_dialogTitle": "Seleziona giorni target",
+  "@habitEdit_targetDays_dialogTitle": {},
+  "habitEdit_targetDays": "giorni",
+  "@habitEdit_targetDays": {},
+  "habitEdit_reminder_hintText": "Promemoria",
+  "@habitEdit_reminder_hintText": {},
+  "habitEdit_reminder_freq_weekHelpText": "Qualsiasi giorno della settimana",
+  "@habitEdit_reminder_freq_weekHelpText": {},
+  "habitEdit_habitFreq_predayfreq_ex01": "Volte al",
+  "@habitEdit_habitFreq_predayfreq_ex01": {},
+  "habitEdit_reminder_freq_monthSubfixText": " al mese",
+  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_weekSubfixText": " a settimana",
+  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{A settimana} other{Almeno {freq} volte a settimana}}",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Al mese} other{Almeno {freq} volte al mese}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Ogni {days} giorni} other{Almeno {freq} volte ogni {days} giorni}}",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_perweek": "Completamento Settimanale",
+  "@habitEdit_habitFreq_perweek": {},
+  "habitEdit_habitFreq_permonth": "Completamento Mensile",
+  "@habitEdit_habitFreq_permonth": {},
+  "habitEdit_reminder_freq_weekPrefixText": "Giornaliero",
+  "@habitEdit_reminder_freq_weekPrefixText": {},
+  "habitEdit_reminder_freq_monthPrefixText": "Mensile",
+  "@habitEdit_reminder_freq_monthPrefixText": {},
+  "habitEdit_reminder_dialogCancel": "annulla",
+  "@habitEdit_reminder_dialogCancel": {},
+  "habitEdit_reminder_cancelDialogTitle": "Conferma",
+  "@habitEdit_reminder_cancelDialogTitle": {},
+  "habitEdit_reminder_cancelDialogConfirm": "conferma",
+  "@habitEdit_reminder_cancelDialogConfirm": {},
+  "habitEdit_reminder_cancelDialogCancel": "annulla",
+  "@habitEdit_reminder_cancelDialogCancel": {},
+  "habitEdit_reminder_weekdayText_monday": "Lun",
+  "@habitEdit_reminder_weekdayText_monday": {},
+  "habitDisplay_fab_text": "Nuova Abitudine",
+  "@habitDisplay_fab_text": {},
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "conferma",
+  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "annulla",
+  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
+  "habitDisplay_archiveHabitsSuccSnackbarText": "{count} abitudini archiviate",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Rimuovere dall'archivio le abitudini selezionate?",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "conferma",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+  "habitEdit_reminder_dialogType_whenNeeded": "Quando è il momento di fare il check-in",
+  "@habitEdit_reminder_dialogType_whenNeeded": {},
+  "habitEdit_reminder_cancelDialogSubtitle": "Sei sicuro di voler eliminare questo promemoria?",
+  "@habitEdit_reminder_cancelDialogSubtitle": {},
+  "habitEdit_desc_hintText": "Note, supportano Markdown",
+  "@habitEdit_desc_hintText": {},
+  "habitEdit_create_datetime_prefix": "Creato il: ",
+  "@habitEdit_create_datetime_prefix": {},
+  "habitEdit_modify_datetime_prefix": "Modificato il: ",
+  "@habitEdit_modify_datetime_prefix": {},
+  "habitDisplay_emptyImage_text_01": "Un viaggio di mille chilometri inizia con un solo passo",
+  "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_archiveHabitsConfirmDialog_title": "Archivia le Abitudini Selezionate?",
+  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} abitudini non archiviate",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteHabitsConfirmDialog_title": "Eliminare le abitudini selezionate?",
+  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "annulla",
+  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
+  "habitDisplay_deleteHabitsSuccSnackbarText": "{count} abitudini eliminate",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_editPopMenu_selectAll": "Seleziona tutto",
+  "@habitDisplay_editPopMenu_selectAll": {},
+  "habitDisplay_editPopMenu_export": "Esporta",
+  "@habitDisplay_editPopMenu_export": {},
+  "habitDisplay_editPopMenu_clone": "Template",
+  "@habitDisplay_editPopMenu_clone": {},
+  "habitDisplay_editButton_tooltip": "Modifica",
+  "@habitDisplay_editButton_tooltip": {},
+  "habitDisplay_settingButton_tooltip": "Impostazioni",
+  "@habitDisplay_settingButton_tooltip": {},
+  "habitDisplay_statsMenu_inProgresTileText": "In Svolgimento",
+  "@habitDisplay_statsMenu_inProgresTileText": {},
+  "habitDisplay_statsMenu_archivedTileText": "Archiviata",
+  "@habitDisplay_statsMenu_archivedTileText": {},
+  "habitDisplay_mainMenu_lightTheme": "Tema chiaro",
+  "@habitDisplay_mainMenu_lightTheme": {},
+  "habitDisplay_mainMenu_darkTheme": "Tema scuro",
+  "@habitDisplay_mainMenu_darkTheme": {},
+  "habitDisplay_mainMenu_followSystemTheme": "Segui sistema",
+  "@habitDisplay_mainMenu_followSystemTheme": {},
+  "habitDisplay_mainMenu_showCompletedTileText": "Visualizza completate",
+  "@habitDisplay_mainMenu_showCompletedTileText": {},
+  "habitDisplay_mainMenu_showActivedTileText": "Mostra attive",
+  "@habitDisplay_mainMenu_showActivedTileText": {},
+  "habitDisplay_mainMenu_settingTileText": "Impostazioni",
+  "@habitDisplay_mainMenu_settingTileText": {},
+  "habitDisplay_sort_reverseText": "Inverso",
+  "@habitDisplay_sort_reverseText": {},
+  "habitDisplay_sortDirection_asc": "(Asc)",
+  "@habitDisplay_sortDirection_asc": {},
+  "habitDisplay_sortDirection_Desc": "(Disc)",
+  "@habitDisplay_sortDirection_Desc": {},
+  "habitDisplay_sortType_name": "Per Nome",
+  "@habitDisplay_sortType_name": {},
+  "habitDisplay_sortType_colorType": "Per Colore",
+  "@habitDisplay_sortType_colorType": {},
+  "habitDisplay_sortType_startT": "Per data di inizio",
+  "@habitDisplay_sortType_startT": {},
+  "habitDisplay_sortType_status": "Per stato",
+  "@habitDisplay_sortType_status": {},
+  "habitDisplay_sortTypeDialog_title": "Ordina",
+  "@habitDisplay_sortTypeDialog_title": {},
+  "habitDisplay_sortTypeDialog_confirm": "conferma",
+  "@habitDisplay_sortTypeDialog_confirm": {},
+  "habitDisplay_sortTypeDialog_cancel": "annulla",
+  "@habitDisplay_sortTypeDialog_cancel": {},
+  "habitDisplay_debug_debugSubgroup_title": "🛠️Debug",
+  "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDetail_editButton_tooltip": "Modifica",
+  "@habitDetail_editButton_tooltip": {},
+  "habitDetail_editPopMenu_unarchive": "Rimuovi dall'archivio",
+  "@habitDetail_editPopMenu_unarchive": {},
+  "habitDetail_editPopMenu_archive": "Archivia",
+  "@habitDetail_editPopMenu_archive": {},
+  "habitDetail_editPopMenu_export": "Esporta",
+  "@habitDetail_editPopMenu_export": {},
+  "habitDetail_editPopMenu_delete": "Elimina",
+  "@habitDetail_editPopMenu_delete": {},
+  "habitDetail_editPopMenu_clone": "Template",
+  "@habitDetail_editPopMenu_clone": {},
+  "habitDetail_confirmDialog_confirm": "conferma",
+  "@habitDetail_confirmDialog_confirm": {},
+  "habitDisplay_unarchiveButton_tooltip": "Rimuovi dall'archivio",
+  "@habitDisplay_unarchiveButton_tooltip": {},
+  "habitDisplay_sortType_manual": "Personale",
+  "@habitDisplay_sortType_manual": {},
+  "habitDisplay_archiveButton_tooltip": "Archivia",
+  "@habitDisplay_archiveButton_tooltip": {},
+  "habitDetail_summary_title": "Riepilogo",
+  "@habitDetail_summary_title": {},
+  "habitDetail_summary_body": "Il punteggio attuale è {score}, e sono passati {days} giorni dall'inizio.",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitText": "Unità: {unit}",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitEmptyText": "vuoto",
+  "@habitDetail_descDailyGoal_unitEmptyText": {},
+  "habitDetail_descTargetDays_unitText": "g",
+  "@habitDetail_descTargetDays_unitText": {},
+  "habitDetail_summary_preBody": "{days, plural, =1{A partire da domani.} other{Tra {days} giorni.}}",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABILE} other{}}",
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Soglia} other{Obiettivo}}",
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descRecordsNum_titleText": "Voci",
+  "@habitDetail_descRecordsNum_titleText": {},
+  "habitDetail_deleteConfirmDialog_titleText": "Eliminare l'abitudine?",
+  "@habitDetail_deleteConfirmDialog_titleText": {},
+  "habitDetail_scoreChartCombine_dailyText": "Giorno",
+  "@habitDetail_scoreChartCombine_dailyText": {},
+  "habitDetail_scoreChartCombine_yearlyText": "Anno",
+  "@habitDetail_scoreChartCombine_yearlyText": {},
+  "habitDetail_freqChart_freqTitle": "Frequenza",
+  "@habitDetail_freqChart_freqTitle": {},
+  "habitDetail_freqChart_historyTitle": "Cronologia",
+  "@habitDetail_freqChart_historyTitle": {},
+  "habitDetail_freqChart_combinedTitle": "Frequenza & Cronologia",
+  "@habitDetail_freqChart_combinedTitle": {},
+  "habitDetail_freqChartCombine_weeklyText": "Settimana",
+  "@habitDetail_freqChartCombine_weeklyText": {},
+  "habitDetail_freqChartCombine_monthlyText": "Mese",
+  "@habitDetail_freqChartCombine_monthlyText": {},
+  "habitDetail_freqChartCombine_yearlyText": "Anno",
+  "@habitDetail_freqChartCombine_yearlyText": {},
+  "habitDetail_freqChartNaviBar_nowText": "Adesso",
+  "@habitDetail_freqChartNaviBar_nowText": {},
+  "habitDetail_freqChart_expanded_hideTooltip": "Nascondi Grafico Cronologia",
+  "@habitDetail_freqChart_expanded_hideTooltip": {},
+  "habitDetail_freqChart_expanded_showTooltip": "Mostra Grafico Cronologia",
+  "@habitDetail_freqChart_expanded_showTooltip": {},
+  "habitDetail_descSubgroup_title": "Note",
+  "@habitDetail_descSubgroup_title": {},
+  "habitDetail_otherSubgroup_title": "Altro",
+  "@habitDetail_otherSubgroup_title": {},
+  "habitDetail_habitType_title": "Tipologia",
+  "@habitDetail_habitType_title": {},
+  "habitDetail_reminderTile_title": "Promemoria",
+  "@habitDetail_reminderTile_title": {},
+  "habitDetail_freqTile_title": "Ripeti",
+  "@habitDetail_freqTile_title": {},
+  "habitDetail_startDateTile_title": "Data d'inizio",
+  "@habitDetail_startDateTile_title": {},
+  "habitDetail_createDateTile_title": "Creato",
+  "@habitDetail_createDateTile_title": {},
+  "habitDetail_editHeatmapCal_dateButtonText": "data",
+  "@habitDetail_editHeatmapCal_dateButtonText": {},
+  "habitDetail_editHeatmapCal_valueButtonText": "valore",
+  "@habitDetail_editHeatmapCal_valueButtonText": {},
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "torna ad oggi",
+  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+  "habitDetail_notFoundText": "Caricamento abitudini fallito",
+  "@habitDetail_notFoundText": {},
+  "habitDetail_changeGoal_title": "Cambia obiettivo",
+  "@habitDetail_changeGoal_title": {},
+  "habitDetail_changeGoal_currentChipText": "Attuale: {goal}",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_doneChipText": "fatto: {goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_undoneChipText": "annullato",
+  "@habitDetail_changeGoal_undoneChipText": {},
+  "habitDetail_changeGoal_helpText": "Obiettivo giornaliero, predefinito:{goal}",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_cancelText": "annulla",
+  "@habitDetail_changeGoal_cancelText": {},
+  "habitDetail_skipReason_title": "Salta motivazione",
+  "@habitDetail_skipReason_title": {},
+  "habitDetail_skipReason_bodyHelpText": "Scrivi qualcosa qui...",
+  "@habitDetail_skipReason_bodyHelpText": {},
+  "appSetting_dragCalendarByPageTile_titleText": "Scorri calendario per pagina",
+  "@appSetting_dragCalendarByPageTile_titleText": {},
+  "appSetting_changeRecordStatusOpTile_subtitleText": "Modifica il comportamento del tocco per cambiare lo stato dei record giornalieri sulla pagina principale.",
+  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+  "appSetting_firstDayOfWeekDialog_titleText": "Mostra il primo giorno della settimana",
+  "@appSetting_firstDayOfWeekDialog_titleText": {},
+  "appSetting_firstDayOfWeek_titleText": "Primo giorno della settimana",
+  "@appSetting_firstDayOfWeek_titleText": {},
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Mostra Rapporto Dettagliato",
+  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modifica il comportamento del tocco per aprire il popup dettagliato dei record giornalieri nella pagina principale.",
+  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+  "appSetting_dragCalendarByPageTile_subtitleText": "Se l'interruttore è attivato, il calendario della barra delle applicazioni nella pagina iniziale verrà trascinato pagina per pagina. Per impostazione predefinita, l'interruttore è disattivato.",
+  "@appSetting_dragCalendarByPageTile_subtitleText": {},
+  "appSetting_changeRecordStatusOpTile_titleText": "Cambia Stato delle Voci",
+  "@appSetting_changeRecordStatusOpTile_titleText": {},
+  "appSetting_resetConfigDialog_subtitleText": "Ripristina tutte le impostazioni, serve un riavvio dell'app per applicare.",
+  "@appSetting_resetConfigDialog_subtitleText": {},
+  "appSetting_resetConfigDialog_titleText": "Ripristina le impostazioni?",
+  "@appSetting_resetConfigDialog_titleText": {},
+  "appSetting_importDialog_completeTitle": "Importazione completata {count}",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirm_cancelText": "annulla",
+  "@appSetting_importDialog_confirm_cancelText": {},
+  "appSetting_importDialog_confirm_confirmText": "conferma",
+  "@appSetting_importDialog_confirm_confirmText": {},
+  "appSetting_importDialog_confirmSubtitle": "Nota: l'importazione non elimina le abitudini esistenti.",
+  "@appSetting_importDialog_confirmSubtitle": {},
+  "appSetting_importDialog_confirmTitle": "Confermi l'importazione di {count} abitudini?",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_import_subtitleText": "Importa le abitudini da un file JSON.",
+  "@appSetting_import_subtitleText": {},
+  "appSetting_import_titleText": "Importa",
+  "@appSetting_import_titleText": {},
+  "appSetting_backupAndRestoreSubgroupText": "Backup & Ripristino",
+  "@appSetting_backupAndRestoreSubgroupText": {},
+  "appSetting_dailyReminder_titleText": "Promemoria giornaliero",
+  "@appSetting_dailyReminder_titleText": {},
+  "appSetting_reminderSubgroupText": "Promemoria",
+  "@appSetting_reminderSubgroupText": {},
+  "appSetting_collapsed_calendar_bararea_defaultText": "Predefinito",
+  "@appSetting_collapsed_calendar_bararea_defaultText": {},
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Regola la percentuale per più o meno spazio nell'area di conferma delle abitudini.",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "appSetting_compactUISwitcher_subtitleText": "Permetti alla tabella di conferma delle abitudini di visualizzare più contenuto, ma il testo e alcuni elementi dell'interfaccia potrebbero diventare più piccoli.",
+  "@appSetting_compactUISwitcher_subtitleText": {},
+  "appSetting_dateDisplayFormat_subTitleText": "Il formato data impostato sarà applicata alla data visualizzata sulla pagina dei dettagli dell'abitudine.",
+  "@appSetting_dateDisplayFormat_subTitleText": {},
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "segui le impostazioni di sistema",
+  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "Modifica del raggio dell'area di spunta dell'abitudine",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appAbout_licenseTile_titleText": "Licenza",
+  "@appAbout_licenseTile_titleText": {},
+  "appAbout_contactEmailTile_titleText": "Contattami",
+  "@appAbout_contactEmailTile_titleText": {},
+  "appAbout_sourceCodeTile_titleText": "Codice sorgente",
+  "@appAbout_sourceCodeTile_titleText": {},
+  "appSetting_developMode_titleText": "Modalità Sviluppatore",
+  "@appSetting_developMode_titleText": {},
+  "appSetting_otherSubgroupText": "Altri",
+  "@appSetting_otherSubgroupText": {},
+  "appSetting_resetConfigSuccess_snackbarText": "ripristino impostazioni app riuscito",
+  "@appSetting_resetConfigSuccess_snackbarText": {},
+  "appAbout_versionTile_titleText": "Versione: {appVersion}",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_appbarTile_titleText": "Riguardo a",
+  "@appAbout_appbarTile_titleText": {},
+  "appSetting_about_titleText": "Riguardo a",
+  "@appSetting_about_titleText": {},
+  "appSetting_clearCache_snackBar_failText": "Eliminazione Cache fallita",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "appSetting_clearCache_snackBar_succText": "Cache eliminata correttamente",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "appSetting_clearCache_snackBar_partSuccText": "Eliminazione parziale Cache fallita",
+  "@appSetting_clearCache_snackBar_partSuccText": {},
+  "appAbout_donateTile_subTitleText": "Sono uno sviluppatore personale. Se ti piace quest'app, comprami un ☕.",
+  "@appAbout_donateTile_subTitleText": {},
+  "appAbout_issueTrackerTile_titleText": "Issue tracker",
+  "@appAbout_issueTrackerTile_titleText": {},
+  "appAbout_contactEmailTile_emailBody": "Ciao, sono lieto che tu mi abbia contattato.\nSe stai segnalando un bug, indica la versione dell'app e descrivi i passaggi per riprodurlo.\n--------------------------------------",
+  "@appAbout_contactEmailTile_emailBody": {},
+  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "donateWay_paypal": "Paypal",
+  "@donateWay_paypal": {},
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
+  "batchCheckin_status_ok_text": "Completo",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "Giorno precedente",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "appAbout_donateDialog_copiedCrypto_msg": "Indirizzo di {name} copiato",
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "donateWay_buyMeACoffee": "Comprami un caffè",
+  "@donateWay_buyMeACoffee": {},
+  "batchCheckin_appbar_title": "Check-In di gruppo",
+  "@batchCheckin_appbar_title": {},
+  "donateWay_alipay": "Alipay",
+  "@donateWay_alipay": {},
+  "donateWay_wechatPay": "Wechat Pay",
+  "@donateWay_wechatPay": {},
+  "donateWay_cryptoCurrency": "Criptovalute",
+  "@donateWay_cryptoCurrency": {},
+  "donateWay_cryptoCurrency_BNB": "BNB",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "donateWay_cryptoCurrency_AVAX": "AVAX",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "donateWay_cryptoCurrency_FTM": "FTM",
+  "@donateWay_cryptoCurrency_FTM": {},
+  "common_habitColorType_cc6": "Verde",
+  "@common_habitColorType_cc6": {},
+  "common_habitColorType_cc5": "Ciano scuro",
+  "@common_habitColorType_cc5": {},
+  "common_habitColorType_cc3": "Viola",
+  "@common_habitColorType_cc3": {},
+  "common_habitColorType_cc2": "Rosso",
+  "@common_habitColorType_cc2": {},
+  "common_habitColorType_cc1": "Lilla intenso",
+  "@common_habitColorType_cc1": {},
+  "appReminder_dailyReminder_title": "🏝 Hai mantenuto le tue abitudini oggi?",
+  "@appReminder_dailyReminder_title": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "annulla",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "esci",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "annulla",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "salva",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_button_text": "Salva",
+  "@batchCheckin_save_button_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "Applica per il Calendario",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "Applica per il Grafico della Frequenza",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_habitColorType_cc4": "Blu Reale",
+  "@common_habitColorType_cc4": {},
+  "common_habitColorType_cc10": "Orchidea scura",
+  "@common_habitColorType_cc10": {},
+  "appReminder_dailyReminder_body": "tocca per entrare nell'app ed effettuare il check-in in tempo.",
+  "@appReminder_dailyReminder_body": {},
+  "batchCheckin_close_confirmDialog_body": "Le modifiche allo stato del Check-In non saranno applicate prima di aver salavto",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_save_confirmDialog_title": "Sovrascrivi Voci Esistenti",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "batchCheckin_save_confirmDialog_body": "Le voci esistenti saranno sovrascritte. Dopo il salvataggio, le voci precedenti andranno perse.",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_title": "Conferma di Tornare Indietro",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "calendarPicker_clip_after7Days": "Prossima {date}",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "batchCheckin_reset_button_text": "Ripristina",
+  "@batchCheckin_reset_button_text": {},
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "userAction_longTap": "Lungo",
+  "@userAction_longTap": {},
+  "userAction_doubleTap": "Doppio",
+  "@userAction_doubleTap": {},
+  "contributors_tile_title": "Contributori",
+  "@contributors_tile_title": {},
+  "snackbar_undoText": "ANNULLA",
+  "@snackbar_undoText": {},
+  "snackbar_dismissText": "IGNORA",
+  "@snackbar_dismissText": {},
+  "exportConfirmDialog_confirm_buttonText": "esporta",
+  "@exportConfirmDialog_confirm_buttonText": {},
+  "exportConfirmDialog_cancel_buttonText": "annulla",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "userAction_tap": "Tocco",
+  "@userAction_tap": {},
+  "exportConfirmDialog_option_includeRecords": "includi voci",
+  "@exportConfirmDialog_option_includeRecords": {},
+  "exportConfirmDialog_title_exportMulti": "Esporta {number, plural, =0{l'abitudine corrente} =1{1 abitudine} other{{number} abitudini}}?",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  }
+}
