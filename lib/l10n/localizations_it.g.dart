@@ -78,16 +78,16 @@ class L10nIt extends L10n {
   String get habitEdit_frequencySelector_title => 'Seleziona frequenza';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Giornaliero';
+  String get habitEdit_habitFreq_daily => 'Ogni giorno';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'Completamento Settimanale';
+  String get habitEdit_habitFreq_perweek => '';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'volte a settimana';
 
   @override
-  String get habitEdit_habitFreq_permonth => 'Completamento Mensile';
+  String get habitEdit_habitFreq_permonth => '';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'volte al mese';
@@ -96,7 +96,7 @@ class L10nIt extends L10n {
   String get habitEdit_habitFreq_predayfreq => '';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'Volte al';
+  String get habitEdit_habitFreq_predayfreq_ex01 => 'volte in';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex02 => 'giorni';
@@ -105,7 +105,7 @@ class L10nIt extends L10n {
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Giornaliero';
+  String get habitEdit_habitFreq_show_daily => 'Ogni Giorno';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
@@ -158,7 +158,7 @@ class L10nIt extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Qualsiasi giorno della settimana';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'Giornaliero';
+  String get habitEdit_reminder_freq_weekPrefixText => 'Ogni Giorno';
 
   @override
   String get habitEdit_reminder_freq_weekSubfixText => ' a settimana';
@@ -191,10 +191,10 @@ class L10nIt extends L10n {
   String get habitEdit_reminder_dialogType_month => 'Mensilmente';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'conferma';
+  String get habitEdit_reminder_dialogConfirm => 'Conferma';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'annulla';
+  String get habitEdit_reminder_dialogCancel => 'Annulla';
 
   @override
   String get habitEdit_reminder_cancelDialogTitle => 'Conferma';
@@ -203,10 +203,10 @@ class L10nIt extends L10n {
   String get habitEdit_reminder_cancelDialogSubtitle => 'Sei sicuro di voler eliminare questo promemoria?';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'conferma';
+  String get habitEdit_reminder_cancelDialogConfirm => 'Conferma';
 
   @override
-  String get habitEdit_reminder_cancelDialogCancel => 'annulla';
+  String get habitEdit_reminder_cancelDialogCancel => 'Annulla';
 
   @override
   String get habitEdit_reminder_weekdayText_monday => 'Lun';
@@ -248,10 +248,10 @@ class L10nIt extends L10n {
   String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archivia le Abitudini Selezionate?';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'conferma';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'Conferma';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'annulla';
+  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'Annulla';
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
@@ -262,10 +262,10 @@ class L10nIt extends L10n {
   String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Rimuovere dall\'archivio le abitudini selezionate?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'conferma';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'Conferma';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'annulla';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'Annulla';
 
   @override
   String habitDisplay_unarchiveHabitsSuccSnackbarText(int count) {
@@ -276,10 +276,10 @@ class L10nIt extends L10n {
   String get habitDisplay_deleteHabitsConfirmDialog_title => 'Eliminare le abitudini selezionate?';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'conferma';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'Conferma';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'annulla';
+  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'Annulla';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
@@ -314,13 +314,13 @@ class L10nIt extends L10n {
   String get habitDisplay_statsMenu_statSubgroupText => 'Attuale';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Completato';
+  String get habitDisplay_statsMenu_completedTileText => 'Completate';
 
   @override
   String get habitDisplay_statsMenu_inProgresTileText => 'In Svolgimento';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Archiviata';
+  String get habitDisplay_statsMenu_archivedTileText => 'Archiviate';
 
   @override
   String get habitDisplay_statsMenu_popularitySubgroupText => 'Abitudini Principali: i cambiamenti degli ultimi 30 giorni';
@@ -347,7 +347,7 @@ class L10nIt extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'Impostazioni';
 
   @override
-  String get habitDisplay_sort_reverseText => 'Inverso';
+  String get habitDisplay_sort_reverseText => 'Inverti';
 
   @override
   String get habitDisplay_sortDirection_asc => '(Asc)';
@@ -377,10 +377,10 @@ class L10nIt extends L10n {
   String get habitDisplay_sortTypeDialog_title => 'Ordina';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'conferma';
+  String get habitDisplay_sortTypeDialog_confirm => 'Conferma';
 
   @override
-  String get habitDisplay_sortTypeDialog_cancel => 'annulla';
+  String get habitDisplay_sortTypeDialog_cancel => 'Annulla';
 
   @override
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Debug';
@@ -404,10 +404,10 @@ class L10nIt extends L10n {
   String get habitDetail_editPopMenu_clone => 'Template';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'conferma';
+  String get habitDetail_confirmDialog_confirm => 'Conferma';
 
   @override
-  String get habitDetail_confirmDialog_cancel => 'annulla';
+  String get habitDetail_confirmDialog_cancel => 'Annulla';
 
   @override
   String get habitDetail_archiveConfirmDialog_titleText => 'Archiviare l\'Abitudine?';
@@ -591,7 +591,7 @@ class L10nIt extends L10n {
   }
 
   @override
-  String get habitDetail_changeGoal_undoneChipText => 'annullato';
+  String get habitDetail_changeGoal_undoneChipText => 'Annullato';
 
   @override
   String habitDetail_changeGoal_extraChipText(String goal) {
@@ -604,7 +604,7 @@ class L10nIt extends L10n {
   }
 
   @override
-  String get habitDetail_changeGoal_cancelText => 'annulla';
+  String get habitDetail_changeGoal_cancelText => 'Annulla';
 
   @override
   String get habitDetail_changeGoal_saveText => 'salva';
@@ -616,7 +616,7 @@ class L10nIt extends L10n {
   String get habitDetail_skipReason_bodyHelpText => 'Scrivi qualcosa qui...';
 
   @override
-  String get habitDetail_skipReason_cancelText => 'annulla';
+  String get habitDetail_skipReason_cancelText => 'Annulla';
 
   @override
   String get habitDetail_skipReason_saveText => 'salva';
@@ -634,7 +634,7 @@ class L10nIt extends L10n {
   String get appSetting_dragCalendarByPageTile_titleText => 'Scorri calendario per pagina';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Se l\'interruttore è attivato, il calendario della barra delle applicazioni nella pagina iniziale verrà trascinato pagina per pagina. Per impostazione predefinita, l\'interruttore è disattivato.';
+  String get appSetting_dragCalendarByPageTile_subtitleText => 'Se attivo, il calendario della barra delle applicazioni nella pagina iniziale verrà trascinato pagina per pagina. Per impostazione predefinita, è disattivato.';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => 'Cambia Stato delle Voci';
@@ -666,7 +666,7 @@ class L10nIt extends L10n {
   String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'segui le impostazioni di sistema';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Il formato data impostato sarà applicata alla data visualizzata sulla pagina dei dettagli dell\'abitudine.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'Il formato impostato sarà applicato alla data visualizzata sulla pagina dei dettagli dell\'abitudine.';
 
   @override
   String get appSetting_compactUISwitcher_titleText => 'Abilita interfaccia compatta nella pagina delle abitudini';
@@ -675,10 +675,10 @@ class L10nIt extends L10n {
   String get appSetting_compactUISwitcher_subtitleText => 'Permetti alla tabella di conferma delle abitudini di visualizzare più contenuto, ma il testo e alcuni elementi dell\'interfaccia potrebbero diventare più piccoli.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Modifica del raggio dell\'area di spunta dell\'abitudine';
+  String get appSetting_collapsed_calendar_bararea_titleText => 'Modifica dell\'area di conferma dell\'abitudine';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Regola la percentuale per più o meno spazio nell\'area di conferma delle abitudini.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Regola per avere più o meno spazio nell\'area di conferma delle abitudini.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Predefinito';
@@ -713,10 +713,10 @@ class L10nIt extends L10n {
   String get appSetting_importDialog_confirmSubtitle => 'Nota: l\'importazione non elimina le abitudini esistenti.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'conferma';
+  String get appSetting_importDialog_confirm_confirmText => 'Conferma';
 
   @override
-  String get appSetting_importDialog_confirm_cancelText => 'annulla';
+  String get appSetting_importDialog_confirm_cancelText => 'Annulla';
 
   @override
   String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
@@ -744,10 +744,10 @@ class L10nIt extends L10n {
   String get appSetting_resetConfigDialog_subtitleText => 'Ripristina tutte le impostazioni, serve un riavvio dell\'app per applicare.';
 
   @override
-  String get appSetting_resetConfigDialog_cancelText => 'annulla';
+  String get appSetting_resetConfigDialog_cancelText => 'Annulla';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'conferma';
+  String get appSetting_resetConfigDialog_confirmText => 'Conferma';
 
   @override
   String get appSetting_resetConfigSuccess_snackbarText => 'ripristino impostazioni app riuscito';
@@ -768,10 +768,10 @@ class L10nIt extends L10n {
   String get appSetting_clearCacheDialog_subtitleText => 'Dopo aver svuotato la cache, alcuni valori saranno ripristinati a quelli predefiniti.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'annulla';
+  String get appSetting_clearCacheDialog_cancelText => 'Annulla';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'conferma';
+  String get appSetting_clearCacheDialog_confirmText => 'Conferma';
 
   @override
   String get appSetting_clearCache_snackBar_partSuccText => 'Eliminazione parziale Cache fallita';
@@ -915,7 +915,7 @@ class L10nIt extends L10n {
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'salva';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'annulla';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'Annulla';
 
   @override
   String get batchCheckin_close_confirmDialog_title => 'Conferma di Tornare Indietro';
@@ -927,7 +927,7 @@ class L10nIt extends L10n {
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'esci';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'annulla';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'Annulla';
 
   @override
   String get appReminder_dailyReminder_title => '🏝 Hai mantenuto le tue abitudini oggi?';
@@ -1021,10 +1021,10 @@ class L10nIt extends L10n {
   String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Applica per il Calendario';
 
   @override
-  String get common_customDateTimeFormatPicker_cancelButton_text => 'annulla';
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'Annulla';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'conferma';
+  String get common_customDateTimeFormatPicker_confirmButton_text => 'Conferma';
 
   @override
   String get calendarPicker_clip_today => 'Oggi';
@@ -1037,7 +1037,7 @@ class L10nIt extends L10n {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Prossima $dateString';
+    return 'Prossimo $dateString';
   }
 
   @override
@@ -1059,7 +1059,7 @@ class L10nIt extends L10n {
   String get exportConfirmDialog_option_includeRecords => 'includi voci';
 
   @override
-  String get exportConfirmDialog_cancel_buttonText => 'annulla';
+  String get exportConfirmDialog_cancel_buttonText => 'Annulla';
 
   @override
   String get exportConfirmDialog_confirm_buttonText => 'esporta';
