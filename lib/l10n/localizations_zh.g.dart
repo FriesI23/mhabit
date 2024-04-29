@@ -895,6 +895,11 @@ class L10nZh extends L10n {
   String get batchCheckin_reset_button_text => '重置';
 
   @override
+  String batchCheckin_completed_snackbar_text(int count) {
+    return '已修改$count个习惯的状态';
+  }
+
+  @override
   String get batchCheckin_save_confirmDialog_title => '覆盖现有记录';
 
   @override

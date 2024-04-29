@@ -906,6 +906,17 @@ class L10nFr extends L10n {
   String get batchCheckin_reset_button_text => 'Réinitialiser';
 
   @override
+  String batchCheckin_completed_snackbar_text(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'status of $count habits',
+      one: 'habit\'s status',
+    );
+    return 'Modified $_temp0';
+  }
+
+  @override
   String get batchCheckin_save_confirmDialog_title => 'Écraser les enregistrements existants';
 
   @override

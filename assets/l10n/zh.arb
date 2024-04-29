@@ -610,6 +610,8 @@
   "@batchCheckin_save_button_text": {},
   "batchCheckin_reset_button_text": "重置",
   "@batchCheckin_reset_button_text": {},
+  "batchCheckin_completed_snackbar_text": "已修改{count}个习惯的状态",
+  "@batchCheckin_completed_snackbar_text": {},
   "batchCheckin_save_confirmDialog_title": "覆盖现有记录",
   "@batchCheckin_save_confirmDialog_title": {},
   "batchCheckin_save_confirmDialog_body": "保存后将覆盖现有记录，之前记录将丢失。",

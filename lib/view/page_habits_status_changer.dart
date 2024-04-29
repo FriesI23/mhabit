@@ -133,7 +133,10 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         ?.forHabitsStatusChanger
         .onHabitDataChanged();
     final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
-        content: Text("Changed: $changedCount"));
+        content: L10nBuilder(
+            builder: (context, l10n) => Text(
+                l10n?.batchCheckin_completed_snackbar_text(changedCount) ??
+                    "Changed: $changedCount")));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 

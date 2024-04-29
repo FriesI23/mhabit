@@ -1669,6 +1669,12 @@ abstract class L10n {
   /// **'Reset'**
   String get batchCheckin_reset_button_text;
 
+  /// No description provided for @batchCheckin_completed_snackbar_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Modified {count, plural, =1{habit\'s status} other{status of {count} habits}}'**
+  String batchCheckin_completed_snackbar_text(int count);
+
   /// No description provided for @batchCheckin_save_confirmDialog_title.
   ///
   /// In en, this message translates to:

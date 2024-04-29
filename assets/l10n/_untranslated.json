@@ -1,6 +1,23 @@
 {
+  "ar": [
+    "batchCheckin_completed_snackbar_text"
+  ],
+
+  "de": [
+    "batchCheckin_completed_snackbar_text"
+  ],
+
+  "fa": [
+    "batchCheckin_completed_snackbar_text"
+  ],
+
+  "fr": [
+    "batchCheckin_completed_snackbar_text"
+  ],
+
   "it": [
-    "habitEdit_habitFreq_predayfreq"
+    "habitEdit_habitFreq_predayfreq",
+    "batchCheckin_completed_snackbar_text"
   ],
 
   "nb": [
@@ -262,6 +279,7 @@
     "batchCheckin_habits_groupTitle",
     "batchCheckin_save_button_text",
     "batchCheckin_reset_button_text",
+    "batchCheckin_completed_snackbar_text",
     "batchCheckin_save_confirmDialog_title",
     "batchCheckin_save_confirmDialog_body",
     "batchCheckin_save_confirmDialog_confirmButton_text",
@@ -315,5 +333,13 @@
     "userAction_tap",
     "userAction_doubleTap",
     "userAction_longTap"
+  ],
+
+  "ru": [
+    "batchCheckin_completed_snackbar_text"
+  ],
+
+  "vi": [
+    "batchCheckin_completed_snackbar_text"
   ]
 }

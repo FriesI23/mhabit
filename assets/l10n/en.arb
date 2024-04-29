@@ -596,6 +596,15 @@
   "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} selected",
   "batchCheckin_save_button_text": "Save",
   "batchCheckin_reset_button_text": "Reset",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_completed_snackbar_text": "Modified {count, plural, =1{habit's status} other{status of {count} habits}}",
 
   "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
   "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
