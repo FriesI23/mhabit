@@ -16,11 +16,11 @@ import 'package:flutter/material.dart';
 
 import '../../logging/level.dart';
 
-class AppSettingLogLevelTile extends StatelessWidget {
+class LogLevelChangerTile extends StatelessWidget {
   final LogLevel crtLevel;
   final void Function(LogLevel newLevel)? onSelected;
 
-  const AppSettingLogLevelTile({
+  const LogLevelChangerTile({
     super.key,
     required this.crtLevel,
     this.onSelected,
