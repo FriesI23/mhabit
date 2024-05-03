@@ -120,11 +120,16 @@ final class NotificationServiceImpl implements NotificationService {
       ],
     );
 
+    // linux setting
+    const linuxSettings =
+        LinuxInitializationSettings(defaultActionName: "Open notification");
+
     // combine settings
     final initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
+      linux: linuxSettings,
     );
 
     await plugin.initialize(initializationSettings);
