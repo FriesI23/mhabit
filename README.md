@@ -81,6 +81,10 @@ multiple versions on your local machine, or simply use this submodule to build i
 2. open an android or ios emulator
 3. run `flutter run --debug`
 
+Building for Linux requires installing the following packages for the [SQFlite database](https://pub.dev/packages/sqflite_common_ffi#linux):
+
+```sudo apt-get -y install libsqlite3-0 libsqlite3-dev```
+
 ## Contributing
 
 I am an independent developer and do not have professional expertise in writing
