@@ -76,6 +76,14 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
               filter: const AppLogFilter(),
               printer: const AppLoggerConsoleReleasePrinter(),
               output: l.MultiOutput([
+                l.AdvancedFileOutput(
+                  path: filePath,
+                  overrideExisting: false,
+                  writeImmediately: l.Level.values
+                      .where((e) => e.value >= l.Level.warning.value)
+                      .toList(),
+                  maxFileSizeKB: 0,
+                ),
                 const AppLoggerConsoleReleaseOutput(),
               ]),
             )
@@ -104,7 +112,30 @@ class _AppLoggerManager implements AppLoggerMananger {
   _AppLoggerManager(this.logger);
 
   @override
-  Future init() => logger.init;
+  Future init() async {
+    await logger.init;
+    FlutterError.onError = _onFlutterErrorCatched;
+    PlatformDispatcher.instance.onError = _onPlatformErrorCatched;
+  }
+
+  void _onFlutterErrorCatched(FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugger.fatal(
+      "------- Catched UN-HANDLED Exception -------",
+      ex: [details.context, details.library, details.summary],
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  }
+
+  bool _onPlatformErrorCatched(Object exception, StackTrace stackTrace) {
+    debugger.fatal(
+      "------- Catched UN-HANDLED Exception -------",
+      error: exception,
+      stackTrace: stackTrace,
+    );
+    return true;
+  }
 
   T _tryGetAppLogger<T>(LoggerType t,
       {required T Function(LoggerType t) buildNewLogger}) {
