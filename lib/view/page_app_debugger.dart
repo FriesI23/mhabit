@@ -91,7 +91,69 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
               );
             },
           ),
+          const _Sperator(),
+          Selector<AppDebuggerViewModel, bool>(
+            selector: (context, vm) => vm.isCollectLogs,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, isCollectLogs, child) => _DownlaodLogButton(
+              // TODO(INDEV): add logic
+              onPressed: isCollectLogs ? () {} : null,
+            ),
+          ),
+          _ClearLogButton(onPressed: () {}),
         ],
+      ),
+    );
+  }
+}
+
+class _Sperator extends StatelessWidget {
+  const _Sperator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: [
+        Spacer(),
+        Flexible(
+          flex: 10,
+          child: Divider(),
+        ),
+        Spacer(),
+      ],
+    );
+  }
+}
+
+class _DownlaodLogButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+
+  const _DownlaodLogButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: FilledButton(
+        onPressed: onPressed,
+        // TODO(INDEV): l10n
+        child: const Text("Download logs"),
+      ),
+    );
+  }
+}
+
+class _ClearLogButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+
+  const _ClearLogButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: FilledButton.tonal(
+        onPressed: onPressed,
+        // TODO(INDEV): l10n
+        child: const Text("Clear logs"),
       ),
     );
   }
