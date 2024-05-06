@@ -114,6 +114,7 @@ class AppProviders extends SingleChildStatelessWidget {
             create: (context) => AppDebuggerViewModel(),
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
+            lazy: false,
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
             create: (context) =>

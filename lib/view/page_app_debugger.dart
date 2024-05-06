@@ -12,12 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../common/consts.dart';
+import '../component/helper.dart';
 import '../component/widget.dart';
 import '../logging/level.dart';
 import '../provider/app_debugger.dart';
+import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';
 
@@ -50,7 +58,7 @@ class AppDebuggerView extends StatefulWidget {
   State<StatefulWidget> createState() => AppDebuggerViewState();
 }
 
-class AppDebuggerViewState extends State<AppDebuggerView> {
+class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   void _onLogLevelChanged(LogLevel newLevel) async {
     if (!mounted) return;
     context.read<AppDebuggerViewModel>().updateLoggingLevel(newLevel);
@@ -59,6 +67,45 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
   void _onCollectLogsSwitcherChanged(bool newStatus) async {
     if (!mounted) return;
     context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
+  }
+
+  void _onDownloadLogButtonPressed() async {
+    final docDir = await getApplicationDocumentsDirectory();
+    final filePath = path.join(docDir.path, debuggerLogFileName);
+    final fileExist = await File(filePath).exists();
+    if (!mounted) return;
+    if (!fileExist) {
+      _showDebugLogFileDismissSnackbar();
+      return;
+    }
+    // TODO(INDEV): l10n
+    shareXFiles([XFile(filePath)],
+        context: context, subject: "Downloading debugging logs");
+  }
+
+  void _onClearLogButtongPressed() async {
+    final docDir = await getApplicationDocumentsDirectory();
+    final file = File(path.join(docDir.path, debuggerLogFileName));
+    final fileExist = await file.exists();
+    if (!mounted) return;
+    if (!fileExist) {
+      _showDebugLogFileDismissSnackbar();
+      return;
+    }
+    await file.delete();
+    if (!mounted) return;
+    // TODO(INDEV): l10n
+    final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+        content: const Text("Debug log cleared"));
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
+
+  void _showDebugLogFileDismissSnackbar() {
+    if (!mounted) return;
+    // TODO(INDEV): l10n
+    final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+        content: const Text("Log file not exist"));
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   @override
@@ -91,15 +138,8 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
             },
           ),
           const _Sperator(),
-          Selector<AppDebuggerViewModel, bool>(
-            selector: (context, vm) => vm.isCollectLogs,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, isCollectLogs, child) => _DownlaodLogButton(
-              // TODO(INDEV): add logic
-              onPressed: isCollectLogs ? () {} : null,
-            ),
-          ),
-          _ClearLogButton(onPressed: () {}),
+          _DownlaodLogButton(onPressed: _onDownloadLogButtonPressed),
+          _ClearLogButton(onPressed: _onClearLogButtongPressed),
         ],
       ),
     );

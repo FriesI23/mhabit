@@ -12,10 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart' as l;
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
+import '../common/consts.dart';
 import '../common/global.dart';
+import '../logging/helper.dart';
 import '../logging/level.dart';
+import '../logging/logger_manager.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 
@@ -34,6 +41,7 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
     isCollectLogs
         ? kAppLogLevel = _loggingLevel?.get() ?? kAppLogLevel
         : _loggingLevel?.remove();
+    _updateLoggerProcesser();
   }
 
   bool get isCollectLogs => _collectLogsSwitcher?.get() ?? false;
@@ -41,7 +49,10 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   Future<void> setCollectLogsSatus(bool newStatus) async {
     if (newStatus != isCollectLogs) {
       await _collectLogsSwitcher?.set(newStatus);
-      await _syncLoggingLevelToProfile(newStatus ? kAppLogLevel : null);
+      await Future.wait([
+        _syncLoggingLevelToProfile(newStatus ? kAppLogLevel : null),
+        _updateLoggerProcesser(),
+      ].whereNotNull());
       notifyListeners();
     }
   }
@@ -58,4 +69,16 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
 
   Future<bool>? _syncLoggingLevelToProfile(LogLevel? newLevel) =>
       newLevel != null ? _loggingLevel?.set(newLevel) : _loggingLevel?.remove();
+
+  Future<void> _updateLoggerProcesser() async {
+    final l.Logger newLogger;
+    if (isCollectLogs) {
+      final docDir = await getApplicationDocumentsDirectory();
+      final filePath = path.join(docDir.path, debuggerLogFileName);
+      newLogger = AppLoggerMananger.getCollectionLogger(filePath: filePath);
+    } else {
+      newLogger = AppLoggerMananger.getDefaultLogger();
+    }
+    await appLog.changeLogger(newLogger);
+  }
 }

@@ -66,6 +66,33 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
           printer: const AppLoggerConsolePrinter(),
           output: const AppLoggerConsoleOutput(),
         );
+
+  static l.Logger getDefaultLogger() => _defaultLogger();
+
+  static l.Logger getCollectionLogger({required String filePath}) =>
+      kReleaseMode
+          ? l.Logger(
+              filter: const AppLogFilter(),
+              printer: const AppLoggerConsoleReleasePrinter(),
+              output: l.MultiOutput([
+                const AppLoggerConsoleReleaseOutput(),
+              ]),
+            )
+          : l.Logger(
+              filter: const AppLogFilter(),
+              printer: const AppLoggerConsolePrinter(),
+              output: l.MultiOutput([
+                l.AdvancedFileOutput(
+                  path: filePath,
+                  overrideExisting: false,
+                  writeImmediately: l.Level.values
+                      .where((e) => e.value >= l.Level.warning.value)
+                      .toList(),
+                  maxFileSizeKB: 0,
+                ),
+                const AppLoggerConsoleOutput(),
+              ]),
+            );
 }
 
 class _AppLoggerManager implements AppLoggerMananger {
@@ -148,7 +175,15 @@ class _AppLoggerManager implements AppLoggerMananger {
     await newLogger.init;
     final oldLogger = logger;
     logger = newLogger;
+    value.warn("AppLoggerMananger.changeLogger",
+        beforeVal: oldLogger.hashCode,
+        afterVal: newLogger.hashCode,
+        ex: ["before", oldLogger.isClosed(), newLogger.isClosed()]);
     oldLogger.close();
+    value.warn("AppLoggerMananger.changeLogger",
+        beforeVal: oldLogger.hashCode,
+        afterVal: newLogger.hashCode,
+        ex: ["after", oldLogger.isClosed(), newLogger.isClosed()]);
     return true;
   }
 }
