@@ -43,6 +43,7 @@ class LogLevelChangerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO(INDEV): support l10n
     Widget buildLogLevelOption(BuildContext context, LogLevel level) {
       return SimpleDialogOption(
         child: Row(

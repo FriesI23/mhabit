@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './handler/app_reminder.dart';
-export './handler/app_theme_main_color.dart';
-export './handler/app_theme_type.dart';
-export './handler/collect_logs_switcher.dart';
-export './handler/compact_ui_switcher.dart';
-export './handler/display_calendar_bar_occupy_prt.dart';
-export './handler/display_calendar_scroll_mode.dart';
-export './handler/display_habits_filter.dart';
-export './handler/display_sort_mode.dart';
-export './handler/first_day.dart';
-export './handler/habit_cell_gesture_mode.dart';
-export './handler/input_fill_cache.dart';
-export './handler/show_data_format.dart';
+import '../converter.dart';
+import '../profile_helper.dart';
+
+class CollectLogswitcherProfileHandler
+    extends ProfileHelperCovertToBoolHandler<bool> {
+  const CollectLogswitcherProfileHandler(super.pref)
+      : super(codec: const SameTypeCodec());
+
+  @override
+  String get key => "collectLogsSwitcher";
+}

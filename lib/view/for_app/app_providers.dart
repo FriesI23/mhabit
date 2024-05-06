@@ -22,6 +22,7 @@ import '../../persistent/profile_provider.dart';
 import '../../provider/app_caches.dart';
 import '../../provider/app_compact_ui_switcher.dart';
 import '../../provider/app_custom_date_format.dart';
+import '../../provider/app_debugger.dart';
 import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_reminder.dart';
@@ -108,6 +109,11 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, channel, previous) => previous!
               ..updateProfile(profile)
               ..setNotificationChannelData(channel, l10n: L10n.of(context)),
+          ),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppDebuggerViewModel>(
+            create: (context) => AppDebuggerViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
             create: (context) =>

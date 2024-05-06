@@ -17,8 +17,10 @@ import 'package:provider/provider.dart';
 
 import '../component/widget.dart';
 import '../logging/level.dart';
+import '../provider/app_debugger.dart';
 import '../provider/app_developer.dart';
 import 'common/_widget.dart';
+import 'for_app_debugger/_widget.dart';
 
 Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
@@ -55,6 +57,11 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
     context.read<AppDeveloperViewModel>().loggingLevel = newLevel;
   }
 
+  void _onCollectLogsSwitcherChanged(bool newStatus) async {
+    if (!mounted) return;
+    context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +71,16 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
       ),
       body: ListView(
         children: [
+          Selector<AppDebuggerViewModel, bool>(
+            selector: (context, vm) => vm.isCollectLogs,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, isCollectLogs, child) {
+              return ChangeLogsSwitcherTile(
+                value: isCollectLogs,
+                onChanged: _onCollectLogsSwitcherChanged,
+              );
+            },
+          ),
           Selector<AppDeveloperViewModel, LogLevel>(
             selector: (context, vm) => vm.loggingLevel,
             shouldRebuild: (previous, next) => previous != next,
