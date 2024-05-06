@@ -22,6 +22,7 @@ abstract interface class ProfileHelperHandler<T> {
   String get key;
   Future<bool> set(T value);
   T? get();
+  Future<bool> remove();
 }
 
 abstract class ProfileHelperConvertHandler<S, T>
@@ -57,6 +58,9 @@ abstract class ProfileHelperCovertToIntHandler<T>
 
   @override
   Future<bool> Function(String key, int value) get setMethod => _pref.setInt;
+
+  @override
+  Future<bool> remove() => _pref.remove(key);
 }
 
 abstract class ProfileHelperCovertToBoolHandler<T>
@@ -72,6 +76,9 @@ abstract class ProfileHelperCovertToBoolHandler<T>
 
   @override
   Future<bool> Function(String key, bool value) get setMethod => _pref.setBool;
+
+  @override
+  Future<bool> remove() => _pref.remove(key);
 }
 
 abstract class ProfileHelperCovertToJsonHandler<T>
@@ -95,4 +102,7 @@ abstract class ProfileHelperCovertToJsonHandler<T>
 
   @override
   Future<bool> Function(String key, JsonMap value) get setMethod => _setMethod;
+
+  @override
+  Future<bool> remove() => _pref.remove(key);
 }

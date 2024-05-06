@@ -47,6 +47,9 @@ final class DisplaySortModeProfileHandler extends ProfileHelperConvertHandler<
 
   @override
   Future<bool> Function(String key, List value) get setMethod => _setMethod;
+
+  @override
+  Future<bool> remove() => _pref.remove(key);
 }
 
 final class DisplaySortModeCodec extends Codec<

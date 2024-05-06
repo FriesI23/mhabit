@@ -14,11 +14,14 @@
 
 import 'package:flutter/material.dart';
 
+import '../common/global.dart';
+import '../logging/level.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 
 class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   CollectLogswitcherProfileHandler? _collectLogsSwitcher;
+  LoggingLevelProfileHandler? _loggingLevel;
 
   AppDebuggerViewModel();
 
@@ -27,6 +30,10 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
     super.updateProfile(newProfile);
     _collectLogsSwitcher =
         newProfile.getHandler<CollectLogswitcherProfileHandler>();
+    _loggingLevel = newProfile.getHandler<LoggingLevelProfileHandler>();
+    isCollectLogs
+        ? kAppLogLevel = _loggingLevel?.get() ?? kAppLogLevel
+        : _loggingLevel?.remove();
   }
 
   bool get isCollectLogs => _collectLogsSwitcher?.get() ?? false;
@@ -34,7 +41,21 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   Future<void> setCollectLogsSatus(bool newStatus) async {
     if (newStatus != isCollectLogs) {
       await _collectLogsSwitcher?.set(newStatus);
+      await _syncLoggingLevelToProfile(newStatus ? kAppLogLevel : null);
       notifyListeners();
     }
   }
+
+  LogLevel get loggingLevel => kAppLogLevel;
+
+  Future<void> updateLoggingLevel(LogLevel newLevel) async {
+    if (kAppLogLevel != newLevel) {
+      kAppLogLevel = newLevel;
+      await _syncLoggingLevelToProfile(newLevel);
+      notifyListeners();
+    }
+  }
+
+  Future<bool>? _syncLoggingLevelToProfile(LogLevel? newLevel) =>
+      newLevel != null ? _loggingLevel?.set(newLevel) : _loggingLevel?.remove();
 }

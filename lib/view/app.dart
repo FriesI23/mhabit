@@ -47,6 +47,7 @@ class App extends StatelessWidget {
     HabitCellGestureModeProfileHandler.new,
     InputFillCacheProfileHandler.new,
     CollectLogswitcherProfileHandler.new,
+    LoggingLevelProfileHandler.new,
   ];
 
   const App({super.key});

@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import '../component/widget.dart';
 import '../logging/level.dart';
 import '../provider/app_debugger.dart';
-import '../provider/app_developer.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';
 
@@ -32,7 +31,7 @@ Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
 
 /// Depend Providers
 /// - Required for builder:
-///   - [AppDeveloperViewModel]
+///   - [AppDebuggerViewModel]
 /// - Required for callback:
 /// - Optional:
 class PageAppDebugger extends StatelessWidget {
@@ -54,7 +53,7 @@ class AppDebuggerView extends StatefulWidget {
 class AppDebuggerViewState extends State<AppDebuggerView> {
   void _onLogLevelChanged(LogLevel newLevel) async {
     if (!mounted) return;
-    context.read<AppDeveloperViewModel>().loggingLevel = newLevel;
+    context.read<AppDebuggerViewModel>().updateLoggingLevel(newLevel);
   }
 
   void _onCollectLogsSwitcherChanged(bool newStatus) async {
@@ -81,7 +80,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> {
               );
             },
           ),
-          Selector<AppDeveloperViewModel, LogLevel>(
+          Selector<AppDebuggerViewModel, LogLevel>(
             selector: (context, vm) => vm.loggingLevel,
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, logLevel, child) {

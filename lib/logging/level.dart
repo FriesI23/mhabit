@@ -14,7 +14,9 @@
 
 import 'package:logger/logger.dart' as l;
 
-enum LogLevel implements Comparable<LogLevel> {
+import '../common/enums.dart';
+
+enum LogLevel implements Comparable<LogLevel>, EnumWithDBCode {
   debug(2000),
   info(3000),
   warn(4000),
@@ -24,6 +26,16 @@ enum LogLevel implements Comparable<LogLevel> {
   final int value;
 
   const LogLevel(this.value);
+
+  @override
+  int get dbCode => value;
+
+  static LogLevel? getFromDBCode(int dbCode, {LogLevel? withDefault}) {
+    for (var value in LogLevel.values) {
+      if (value.dbCode == dbCode) return value;
+    }
+    return withDefault;
+  }
 
   bool operator >(LogLevel other) => value > other.value;
 
