@@ -13,6 +13,9 @@
 // limitations under the License.
 
 enum LoggerType {
+  /// debugger
+  debugger,
+
   /// UI component rebuilding
   build,
 

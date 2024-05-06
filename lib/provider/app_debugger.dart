@@ -18,6 +18,7 @@ import 'package:logger/logger.dart' as l;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import '../common/app_info.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
@@ -48,11 +49,14 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
 
   Future<void> setCollectLogsSatus(bool newStatus) async {
     if (newStatus != isCollectLogs) {
+      Future<String>? appDebugInfo;
+      if (newStatus) appDebugInfo = AppInfo().generateAppDebugInfo();
       await _collectLogsSwitcher?.set(newStatus);
       await Future.wait([
         _syncLoggingLevelToProfile(newStatus ? kAppLogLevel : null),
         _updateLoggerProcesser(),
       ].whereNotNull());
+      await appDebugInfo?.then((value) => appLog.debugger.info(value));
       notifyListeners();
     }
   }

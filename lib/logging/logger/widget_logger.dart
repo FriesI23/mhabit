@@ -47,6 +47,9 @@ class AppWidgetLoggerMessage implements AppLoggerMessage {
     }
     return result;
   }
+
+  @override
+  bool get forceLogging => false;
 }
 
 abstract interface class AppWidgetLogger {

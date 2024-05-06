@@ -15,6 +15,7 @@
 import 'package:logger/logger.dart';
 
 import '../../common/global.dart';
+import '../logger_message.dart';
 
 class AppLogFilter implements LogFilter {
   const AppLogFilter();
@@ -32,5 +33,7 @@ class AppLogFilter implements LogFilter {
   set level(Level? value) {}
 
   @override
-  bool shouldLog(LogEvent event) => event.level.value >= level.value;
+  bool shouldLog(LogEvent event) =>
+      (event.message is AppLoggerMessage && event.message.forceLogging) ||
+      event.level.value >= level.value;
 }

@@ -29,6 +29,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
 
   l.Logger get logger;
 
+  AppTextLogger get debugger;
   AppWidgetLogger get build;
   AppValueChangeLogger get value;
   AppTextLogger get navi;
@@ -186,4 +187,7 @@ class _AppLoggerManager implements AppLoggerMananger {
         ex: ["after", oldLogger.isClosed(), newLogger.isClosed()]);
     return true;
   }
+
+  @override
+  AppTextLogger get debugger => _tryGetAppTextLogger(LoggerType.debugger);
 }

@@ -14,6 +14,8 @@
 
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -78,9 +80,15 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
       _showDebugLogFileDismissSnackbar();
       return;
     }
-    // TODO(INDEV): l10n
-    shareXFiles([XFile(filePath)],
-        context: context, subject: "Downloading debugging logs");
+    switch (defaultTargetPlatform) {
+      // TODO(INDEV): support macos
+      case TargetPlatform.windows:
+        FilePicker.platform.saveFile(fileName: debuggerLogFileName);
+      default:
+        // TODO(INDEV): l10n
+        shareXFiles([XFile(filePath)],
+            context: context, subject: "Downloading debugging logs");
+    }
   }
 
   void _onClearLogButtongPressed() async {

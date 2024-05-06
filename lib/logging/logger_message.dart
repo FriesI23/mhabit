@@ -16,6 +16,7 @@ import 'logger_type.dart';
 
 abstract interface class AppLoggerMessage {
   LoggerType get type;
+  bool get forceLogging;
 
   Iterable<String?> toLogPrinterMessage();
 }
