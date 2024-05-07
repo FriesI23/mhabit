@@ -33,6 +33,8 @@ import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';
 
+const _kCardPadding = EdgeInsets.only(top: 4.0, bottom: 2.0);
+
 Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
@@ -240,47 +242,52 @@ class _DebuggerLogCard extends StatelessWidget {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.primaryContainerOpacity32,
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.article_outlined),
-            title: l10n != null ? Text(l10n.debug_debuggerLogCard_title) : null,
-            subtitle:
-                l10n != null ? Text(l10n.debug_debuggerLogCard_subtitle) : null,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Builder(builder: (context) {
-                return TextButton(
-                  onPressed: onDownloadPressed != null
-                      ? () => onDownloadPressed!(context)
-                      : null,
-                  child: Text(
-                    l10n?.debug_debuggerLogCard_saveButton_text ?? 'Downlaod',
-                    style: TextStyle(
-                        color:
-                            Theme.of(context).colorScheme.onPrimaryContainer),
-                  ),
-                );
-              }),
-              const SizedBox(width: 8),
-              Builder(builder: (context) {
-                return TextButton(
-                  onPressed: onClearPressed != null
-                      ? () => onClearPressed!(context)
-                      : null,
-                  child: Text(
-                    l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.error),
-                  ),
-                );
-              }),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ],
+      child: Padding(
+        padding: _kCardPadding,
+        child: Column(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.article_outlined),
+              title:
+                  l10n != null ? Text(l10n.debug_debuggerLogCard_title) : null,
+              subtitle: l10n != null
+                  ? Text(l10n.debug_debuggerLogCard_subtitle)
+                  : null,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Builder(builder: (context) {
+                  return TextButton(
+                    onPressed: onDownloadPressed != null
+                        ? () => onDownloadPressed!(context)
+                        : null,
+                    child: Text(
+                      l10n?.debug_debuggerLogCard_saveButton_text ?? 'Downlaod',
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer),
+                    ),
+                  );
+                }),
+                const SizedBox(width: 8),
+                Builder(builder: (context) {
+                  return TextButton(
+                    onPressed: onClearPressed != null
+                        ? () => onClearPressed!(context)
+                        : null,
+                    child: Text(
+                      l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
+                    ),
+                  );
+                }),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -330,24 +337,27 @@ class _DebuggerInfoCard extends StatelessWidget {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.primaryContainerOpacity32,
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.adb_outlined),
-            title:
-                l10n != null ? Text(l10n.debug_debuggerInfoCard_title) : null,
-            subtitle: l10n != null
-                ? Text(l10n.debug_debuggerInfoCard_subtitle)
-                : null,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Builder(builder: buildMainButton),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ],
+      child: Padding(
+        padding: _kCardPadding,
+        child: Column(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.adb_outlined),
+              title:
+                  l10n != null ? Text(l10n.debug_debuggerInfoCard_title) : null,
+              subtitle: l10n != null
+                  ? Text(l10n.debug_debuggerInfoCard_subtitle)
+                  : null,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Builder(builder: buildMainButton),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

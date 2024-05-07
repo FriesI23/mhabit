@@ -15,6 +15,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -106,6 +107,9 @@ final class _AppDebugInfoBuilder {
     buffer.writeln("│");
     buffer.writeln("├─ Package Info: ─────────────────────────────────────");
     await _buildPackageInfo(buffer, intent: 4);
+    buffer.writeln("    BuildMode: debug=$kDebugMode, profile=$kProfileMode, "
+        "release=$kReleaseMode | isWeb=$kIsWeb");
+    buffer.writeln("    TargetPlatform: $defaultTargetPlatform");
     buffer.writeln("├─ Package Info Ended ────────────────────────────────");
     buffer.writeln("│");
     buffer.writeln("└────────────────── Debug Info: Ended ────────────────");
