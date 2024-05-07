@@ -14,7 +14,6 @@
 
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
@@ -71,7 +70,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
   }
 
-  void _onDownloadLogButtonPressed() async {
+  void _onDownloadLogButtonPressed(BuildContext context) async {
     final docDir = await getApplicationDocumentsDirectory();
     final filePath = path.join(docDir.path, debuggerLogFileName);
     final fileExist = await File(filePath).exists();
@@ -80,18 +79,20 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
       _showDebugLogFileDismissSnackbar();
       return;
     }
+    // TODO(INDEV): l10n
+    const subject = "Downloading debugging logs";
     switch (defaultTargetPlatform) {
-      // TODO(INDEV): support macos
       case TargetPlatform.windows:
-        FilePicker.platform.saveFile(fileName: debuggerLogFileName);
+      case TargetPlatform.macOS:
+      case TargetPlatform.linux:
+        pickAndSaveToFile(filePath,
+            fileName: debuggerLogFileName, subject: subject);
       default:
-        // TODO(INDEV): l10n
-        shareXFiles([XFile(filePath)],
-            context: context, subject: "Downloading debugging logs");
+        shareXFiles([XFile(filePath)], context: context, subject: subject);
     }
   }
 
-  void _onClearLogButtongPressed() async {
+  void _onClearLogButtongPressed(BuildContext context) async {
     final docDir = await getApplicationDocumentsDirectory();
     final file = File(path.join(docDir.path, debuggerLogFileName));
     final fileExist = await file.exists();
@@ -173,7 +174,7 @@ class _Sperator extends StatelessWidget {
 }
 
 class _DownlaodLogButton extends StatelessWidget {
-  final VoidCallback? onPressed;
+  final void Function(BuildContext context)? onPressed;
 
   const _DownlaodLogButton({required this.onPressed});
 
@@ -181,7 +182,7 @@ class _DownlaodLogButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: FilledButton(
-        onPressed: onPressed,
+        onPressed: onPressed != null ? () => onPressed!(context) : null,
         // TODO(INDEV): l10n
         child: const Text("Download logs"),
       ),
@@ -190,7 +191,7 @@ class _DownlaodLogButton extends StatelessWidget {
 }
 
 class _ClearLogButton extends StatelessWidget {
-  final VoidCallback? onPressed;
+  final void Function(BuildContext context)? onPressed;
 
   const _ClearLogButton({required this.onPressed});
 
@@ -198,7 +199,7 @@ class _ClearLogButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: FilledButton.tonal(
-        onPressed: onPressed,
+        onPressed: onPressed != null ? () => onPressed!(context) : null,
         // TODO(INDEV): l10n
         child: const Text("Clear logs"),
       ),

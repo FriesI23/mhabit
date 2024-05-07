@@ -86,12 +86,8 @@ final class _AppDebugInfoBuilder {
     }
   }
 
-  Future<void> _buildAndroidInfo(StringBuffer buffer, {int intent = 0}) =>
-      devicePlugin.androidInfo
-          .then((value) => _buildInfoByMap(buffer, value.data, intent: intent));
-
-  Future<void> _buildWindowsInfo(StringBuffer buffer, {int intent = 0}) =>
-      devicePlugin.windowsInfo
+  Future<void> _buildDeviceInfo(StringBuffer buffer, {int intent = 0}) =>
+      devicePlugin.deviceInfo
           .then((value) => _buildInfoByMap(buffer, value.data, intent: intent));
 
   Future<void> _buildPackageInfo(StringBuffer buffer, {int intent = 0}) =>
@@ -100,21 +96,12 @@ final class _AppDebugInfoBuilder {
       });
 
   Future<String> build() async {
-    // TODO(INDEV): support macos/ios
     final StringBuffer buffer = StringBuffer();
     buffer.writeln();
-
     buffer.writeln("┌──────────────── Debug Info: Started ────────────────");
     buffer.writeln("│");
     buffer.writeln("├─ Device Info: ──────────────────────────────────────");
-    if (Platform.isAndroid) {
-      await _buildAndroidInfo(buffer, intent: 4);
-    } else if (Platform.isWindows) {
-      await _buildWindowsInfo(buffer, intent: 4);
-    } else {
-      buffer.writeln(
-          "    Target platform no debug info: ${Platform.operatingSystem}");
-    }
+    await _buildDeviceInfo(buffer, intent: 4);
     buffer.writeln("├─ Device Info Ended ─────────────────────────────────");
     buffer.writeln("│");
     buffer.writeln("├─ Package Info: ─────────────────────────────────────");
