@@ -1447,6 +1447,12 @@ abstract class L10n {
   /// **'Cache cleared failed'**
   String get appSetting_clearCache_snackBar_failText;
 
+  /// No description provided for @appSetting_debugger_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug Info'**
+  String get appSetting_debugger_titleText;
+
   /// No description provided for @appSetting_about_titleText.
   ///
   /// In en, this message translates to:
@@ -1956,6 +1962,120 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'export'**
   String get exportConfirmDialog_confirm_buttonText;
+
+  /// No description provided for @debug_logLevelTile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging Level'**
+  String get debug_logLevelTile_title;
+
+  /// No description provided for @debug_logLevelDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Logging Level'**
+  String get debug_logLevelDialog_title;
+
+  /// No description provided for @debug_logLevel_debug.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug'**
+  String get debug_logLevel_debug;
+
+  /// No description provided for @debug_logLevel_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get debug_logLevel_info;
+
+  /// No description provided for @debug_logLevel_warn.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get debug_logLevel_warn;
+
+  /// No description provided for @debug_logLevel_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get debug_logLevel_error;
+
+  /// No description provided for @debug_logLevel_fatal.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatal'**
+  String get debug_logLevel_fatal;
+
+  /// No description provided for @debug_collectLogTile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Collecting Logs'**
+  String get debug_collectLogTile_title;
+
+  /// No description provided for @debug_collectLogTile_enable_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to stop logging collection.'**
+  String get debug_collectLogTile_enable_subtitle;
+
+  /// No description provided for @debug_collectLogTile_disable_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start logging collection.'**
+  String get debug_collectLogTile_disable_subtitle;
+
+  /// No description provided for @debug_downladDebugLogs_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading debugging logs'**
+  String get debug_downladDebugLogs_subject;
+
+  /// No description provided for @dbeug_clearDebugLogs_complete_snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Debugging logs Cleared.'**
+  String get dbeug_clearDebugLogs_complete_snackbar;
+
+  /// No description provided for @debug_downladDebugInfo_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading debugging information'**
+  String get debug_downladDebugInfo_subject;
+
+  /// No description provided for @debug_downladDebugZip_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {fileName}'**
+  String debug_downladDebugZip_subject(String fileName);
+
+  /// No description provided for @debug_missingDebugLogFile_snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug log doesn\'t exist.'**
+  String get debug_missingDebugLogFile_snackbar;
+
+  /// No description provided for @debug_debuggerLogCard_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging Information'**
+  String get debug_debuggerLogCard_title;
+
+  /// No description provided for @debug_debuggerLogCard_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes local debugging log information, need to turn on the log collection switcher.'**
+  String get debug_debuggerLogCard_subtitle;
+
+  /// No description provided for @debug_debuggerInfoCard_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Debugging Information'**
+  String get debug_debuggerInfoCard_title;
+
+  /// No description provided for @debug_debuggerInfoCard_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes app\'s debugging information.'**
+  String get debug_debuggerInfoCard_subtitle;
 
   /// No description provided for @snackbar_undoText.
   ///

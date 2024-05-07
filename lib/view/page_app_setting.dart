@@ -613,9 +613,12 @@ class _AppSettingView extends State<AppSettingView>
             ),
             onTap: () => _openClearAppCacheDialog(context),
           ),
-          // TODO(INDEV): support l10n
           ListTile(
-            title: const Text("Debugger"),
+            title: L10nBuilder(
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.appSetting_debugger_titleText)
+                  : const Text("Debugger"),
+            ),
             onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
           ),
           ListTile(

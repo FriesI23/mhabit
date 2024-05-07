@@ -529,6 +529,7 @@
   "appSetting_clearCache_snackBar_succText": "Cache cleared successfully",
   "appSetting_clearCache_snackBar_failText": "Cache cleared failed",
 
+  "appSetting_debugger_titleText": "Debug Info",
   "appSetting_about_titleText": "About",
 
   "appAbout_appbarTile_titleText": "About",
@@ -697,6 +698,34 @@
   "exportConfirmDialog_option_includeRecords": "include records",
   "exportConfirmDialog_cancel_buttonText": "cancel",
   "exportConfirmDialog_confirm_buttonText": "export",
+
+  "debug_logLevelTile_title": "Logging Level",
+  "debug_logLevelDialog_title": "Change Logging Level",
+  "debug_logLevel_debug": "Debug",
+  "debug_logLevel_info": "Info",
+  "debug_logLevel_warn": "Warning",
+  "debug_logLevel_error": "Error",
+  "debug_logLevel_fatal": "Fatal",
+  "debug_collectLogTile_title": "Collecting Logs",
+  "debug_collectLogTile_enable_subtitle": "Tap to stop logging collection.",
+  "debug_collectLogTile_disable_subtitle": "Tap to start logging collection.",
+  "debug_downladDebugLogs_subject": "Downloading debugging logs",
+  "dbeug_clearDebugLogs_complete_snackbar": "Debugging logs Cleared.",
+  "debug_downladDebugInfo_subject": "Downloading debugging information",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_downladDebugZip_subject": "Downloading {fileName}",
+  "debug_missingDebugLogFile_snackbar": "Debug log doesn't exist.",
+  "debug_debuggerLogCard_title": "Logging Information",
+  "debug_debuggerLogCard_subtitle": "Includes local debugging log information, need to turn on the log collection switcher.",
+  "debug_debuggerInfoCard_title": "Debugging Information",
+  "debug_debuggerInfoCard_subtitle": "Includes app's debugging information.",
 
   "snackbar_undoText": "UNDO",
   "snackbar_dismissText": "DISMISS",

@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/localizations.dart';
 import '../../logging/level.dart';
 
 class LogLevelChangerTile extends StatelessWidget {
@@ -27,23 +28,23 @@ class LogLevelChangerTile extends StatelessWidget {
   });
 
   String _getLogName(BuildContext context, {LogLevel? level}) {
+    final l10n = L10n.of(context);
     switch (level ?? crtLevel) {
       case LogLevel.debug:
-        return "Debug";
+        return l10n?.debug_logLevel_debug ?? "Debug";
       case LogLevel.info:
-        return "Info";
+        return l10n?.debug_logLevel_info ?? "Info";
       case LogLevel.warn:
-        return "Warn";
+        return l10n?.debug_logLevel_warn ?? "Warn";
       case LogLevel.error:
-        return "Error";
+        return l10n?.debug_logLevel_error ?? "Error";
       case LogLevel.fatal:
-        return "Fatal";
+        return l10n?.debug_logLevel_fatal ?? "Fatal";
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO(INDEV): support l10n
     Widget buildLogLevelOption(BuildContext context, LogLevel level) {
       return SimpleDialogOption(
         child: Row(
@@ -60,13 +61,18 @@ class LogLevelChangerTile extends StatelessWidget {
       );
     }
 
+    final l10n = L10n.of(context);
     return ListTile(
-      title: const Text("Logging level"),
+      title: l10n != null
+          ? Text(l10n.debug_logLevelTile_title)
+          : const Text("Logging level"),
       subtitle: Text(_getLogName(context)),
       onTap: () => showDialog(
         context: context,
         builder: (context) => SimpleDialog(
-          title: const Text("Change logging level"),
+          title: l10n != null
+              ? Text(l10n.debug_logLevelDialog_title)
+              : const Text("Change logging level"),
           children: [
             buildLogLevelOption(context, LogLevel.debug),
             buildLogLevelOption(context, LogLevel.info),

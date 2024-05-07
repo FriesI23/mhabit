@@ -25,6 +25,7 @@ import '../common/consts.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/colorscheme_extensions.dart';
+import '../l10n/localizations.dart';
 import '../logging/level.dart';
 import '../provider/app_debugger.dart';
 import '../utils/debug_info.dart';
@@ -77,8 +78,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     final fileExist = await File(filePath).exists();
     if (!mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
-    // TODO(INDEV): l10n
-    const subject = "Downloading debugging logs";
+    final subject = L10n.of(context)?.debug_downladDebugLogs_subject;
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
       case TargetPlatform.macOS:
@@ -97,9 +97,12 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     await fileObj.delete();
     if (!mounted) return;
-    // TODO(INDEV): l10n
     final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
-        content: const Text("Debug log cleared"));
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.dbeug_clearDebugLogs_complete_snackbar)
+              : const Text("Debug log cleared"),
+        ));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
@@ -116,15 +119,15 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     final debugInfo = await AppInfo().generateAppDebugInfo();
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
     if (!mounted) return;
-    // TODO(INDEV): l10n
-    pickAndSaveToFile(filePath, subject: "Downloading debugging info");
+    final subject = L10n.of(context)?.debug_downladDebugInfo_subject;
+    pickAndSaveToFile(filePath, subject: subject);
   }
 
   void _onFABPressed(BuildContext context) async {
     final zipFilePath = await generateZippedDebugInfo();
     if (!mounted) return;
-    // TODO(INDEV): l10n
-    const subject = "Share $debuggerZipFile";
+    final subject =
+        L10n.of(context)?.debug_downladDebugZip_subject(debuggerZipFile);
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
       case TargetPlatform.macOS:
@@ -137,9 +140,12 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
 
   void _showDebugLogFileDismissSnackbar() {
     if (!mounted) return;
-    // TODO(INDEV): l10n
     final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
-        content: const Text("Log file not exist"));
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.debug_missingDebugLogFile_snackbar)
+              : const Text("Log file missing"),
+        ));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
@@ -229,17 +235,17 @@ class _DebuggerLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO(INDEV): l10n
+    final l10n = L10n.of(context);
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.primaryContainerOpacity32,
       child: Column(
         children: [
-          const ListTile(
-            leading: Icon(Icons.article_outlined),
-            title: Text("Logging Information"),
-            subtitle: Text("Includes local debugging log information, "
-                "need to turn on the log collection switch"),
+          ListTile(
+            leading: const Icon(Icons.article_outlined),
+            title: l10n != null ? Text(l10n.debug_debuggerLogCard_title) : null,
+            subtitle:
+                l10n != null ? Text(l10n.debug_debuggerLogCard_subtitle) : null,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

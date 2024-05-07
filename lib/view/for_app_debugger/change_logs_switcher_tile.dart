@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/localizations.dart';
+
 class ChangeLogsSwitcherTile extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
@@ -24,12 +26,16 @@ class ChangeLogsSwitcherTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = L10n.of(context);
     return SwitchListTile.adaptive(
-      // TODO(INDEV): support l10n
-      title: const Text("Collect logs"),
-      subtitle: value
-          ? const Text("Tap to stop logging collection")
-          : const Text("Tap to start logging collection"),
+      title: l10n != null
+          ? Text(l10n.debug_collectLogTile_title)
+          : const Text("Collect logs"),
+      subtitle: l10n != null
+          ? Text(value
+              ? l10n.debug_collectLogTile_enable_subtitle
+              : l10n.debug_collectLogTile_disable_subtitle)
+          : null,
       thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
         (states) {
           if (states.contains(MaterialState.selected)) {
