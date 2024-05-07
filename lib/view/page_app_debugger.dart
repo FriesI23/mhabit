@@ -16,17 +16,18 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../common/app_info.dart';
 import '../common/consts.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/colorscheme_extensions.dart';
 import '../logging/level.dart';
 import '../provider/app_debugger.dart';
+import '../utils/debug_info.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';
@@ -72,42 +73,66 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   }
 
   void _onDownloadLogButtonPressed(BuildContext context) async {
-    final docDir = await getApplicationDocumentsDirectory();
-    final filePath = path.join(docDir.path, debuggerLogFileName);
+    final filePath = await debugLogFilePath;
     final fileExist = await File(filePath).exists();
     if (!mounted) return;
-    if (!fileExist) {
-      _showDebugLogFileDismissSnackbar();
-      return;
-    }
+    if (!fileExist) return _showDebugLogFileDismissSnackbar();
     // TODO(INDEV): l10n
     const subject = "Downloading debugging logs";
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
       case TargetPlatform.macOS:
       case TargetPlatform.linux:
-        pickAndSaveToFile(filePath,
-            fileName: debuggerLogFileName, subject: subject);
+        pickAndSaveToFile(filePath, subject: subject);
       default:
         shareXFiles([XFile(filePath)], context: context, subject: subject);
     }
   }
 
   void _onClearLogButtongPressed(BuildContext context) async {
-    final docDir = await getApplicationDocumentsDirectory();
-    final file = File(path.join(docDir.path, debuggerLogFileName));
-    final fileExist = await file.exists();
+    final filePath = await debugLogFilePath;
+    final fileObj = File(filePath);
+    final fileExist = await fileObj.exists();
     if (!mounted) return;
-    if (!fileExist) {
-      _showDebugLogFileDismissSnackbar();
-      return;
-    }
-    await file.delete();
+    if (!fileExist) return _showDebugLogFileDismissSnackbar();
+    await fileObj.delete();
     if (!mounted) return;
     // TODO(INDEV): l10n
     final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
         content: const Text("Debug log cleared"));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
+
+  void _onOpenDebugButtonPressed(BuildContext context) async {
+    final filePath = await debugInfoFilePath;
+    final debugInfo = await AppInfo().generateAppDebugInfo();
+    await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
+    if (!mounted) return;
+    OpenFile.open(filePath, type: "text/plain", uti: "public.plain-text");
+  }
+
+  void _onSaveDebugButtonPressed(BuildContext context) async {
+    final filePath = await debugInfoFilePath;
+    final debugInfo = await AppInfo().generateAppDebugInfo();
+    await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
+    if (!mounted) return;
+    // TODO(INDEV): l10n
+    pickAndSaveToFile(filePath, subject: "Downloading debugging info");
+  }
+
+  void _onFABPressed(BuildContext context) async {
+    final zipFilePath = await generateZippedDebugInfo();
+    if (!mounted) return;
+    // TODO(INDEV): l10n
+    const subject = "Share $debuggerZipFile";
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.windows:
+      case TargetPlatform.macOS:
+      case TargetPlatform.linux:
+        pickAndSaveToFile(zipFilePath, subject: subject);
+      default:
+        shareXFiles([XFile(zipFilePath)], context: context, subject: subject);
+    }
   }
 
   void _showDebugLogFileDismissSnackbar() {
@@ -125,6 +150,12 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
         leading: const PageBackButton(),
         automaticallyImplyLeading: false,
       ),
+      floatingActionButton: Builder(builder: (context) {
+        return FloatingActionButton(
+          child: const Icon(Icons.share),
+          onPressed: () => _onFABPressed(context),
+        );
+      }),
       body: ListView(
         children: [
           Selector<AppDebuggerViewModel, bool>(
@@ -150,10 +181,17 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
           const _Sperator(),
           const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16.0, end: 24.0),
+            padding: kListTileContentPadding,
             child: _DebuggerLogCard(
               onDownloadPressed: _onDownloadLogButtonPressed,
               onClearPressed: _onClearLogButtongPressed,
+            ),
+          ),
+          Padding(
+            padding: kListTileContentPadding,
+            child: _DebuggerInfoCard(
+              onOpenPressed: _onOpenDebugButtonPressed,
+              onSavePressed: _onSaveDebugButtonPressed,
             ),
           ),
         ],
@@ -232,6 +270,68 @@ class _DebuggerLogCard extends StatelessWidget {
                   ),
                 );
               }),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DebuggerInfoCard extends StatelessWidget {
+  final void Function(BuildContext context)? onOpenPressed;
+  final void Function(BuildContext conetxt)? onSavePressed;
+
+  const _DebuggerInfoCard({this.onOpenPressed, this.onSavePressed});
+
+  Widget _buildOpenButton(BuildContext context) => TextButton(
+        onPressed: onOpenPressed != null ? () => onOpenPressed!(context) : null,
+        child: Text(
+          'Open',
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimaryContainer),
+        ),
+      );
+
+  Widget _buildSaveButton(BuildContext context) => TextButton(
+        onPressed: onSavePressed != null ? () => onSavePressed!(context) : null,
+        child: Text(
+          'Open',
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimaryContainer),
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    Widget buildMainButton(BuildContext context) {
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.android:
+        case TargetPlatform.iOS:
+        case TargetPlatform.windows:
+        case TargetPlatform.linux:
+        case TargetPlatform.macOS:
+          return _buildOpenButton(context);
+        default:
+          return _buildSaveButton(context);
+      }
+    }
+
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.primaryContainerOpacity32,
+      child: Column(
+        children: [
+          const ListTile(
+            leading: Icon(Icons.adb_outlined),
+            title: Text("Debug Information"),
+            subtitle: Text("Includes app's debugging information"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Builder(builder: buildMainButton),
               const SizedBox(width: 8),
             ],
           ),

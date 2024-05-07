@@ -15,17 +15,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart' as l;
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 import '../common/app_info.dart';
-import '../common/consts.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../logging/logger_manager.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
+import '../utils/debug_info.dart';
 
 class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   CollectLogswitcherProfileHandler? _collectLogsSwitcher;
@@ -77,8 +75,7 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   Future<void> _updateLoggerProcesser() async {
     final l.Logger newLogger;
     if (isCollectLogs) {
-      final docDir = await getApplicationDocumentsDirectory();
-      final filePath = path.join(docDir.path, debuggerLogFileName);
+      final filePath = await debugLogFilePath;
       newLogger = AppLoggerMananger.getCollectionLogger(filePath: filePath);
     } else {
       newLogger = AppLoggerMananger.getDefaultLogger();

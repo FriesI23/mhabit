@@ -38,9 +38,6 @@ dependencies:
     sdk: flutter
   intl: ^0.18.1
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-
   # UI Components
   flutter_colorpicker: ^1.0.3
   great_list_view: ^0.2.3
@@ -66,9 +63,12 @@ dependencies:
   copy_with_extension: ^5.0.0
   json_annotation: ^4.8.0
   win2iana_tz_converter: ^0.1.2
+  open_file_plus: ^3.4.1+1
 
   # Fonts and Icons
   named_html_color: ^0.0.3+1
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   material_design_icons_flutter: ^6.0.7296
   cryptofont: ^1.0.2+1
@@ -96,6 +96,7 @@ dependencies:
 
   # logging
   logger: ^2.1.0
+  archive: ^3.5.1
 
 dev_dependencies:
   flutter_test:
