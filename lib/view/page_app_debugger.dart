@@ -24,6 +24,7 @@ import 'package:share_plus/share_plus.dart';
 import '../common/consts.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
+import '../extension/colorscheme_extensions.dart';
 import '../logging/level.dart';
 import '../provider/app_debugger.dart';
 import 'common/_mixin.dart';
@@ -147,8 +148,14 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
             },
           ),
           const _Sperator(),
-          _DownlaodLogButton(onPressed: _onDownloadLogButtonPressed),
-          _ClearLogButton(onPressed: _onClearLogButtongPressed),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16.0, end: 24.0),
+            child: _DebuggerLogCard(
+              onDownloadPressed: _onDownloadLogButtonPressed,
+              onClearPressed: _onClearLogButtongPressed,
+            ),
+          ),
         ],
       ),
     );
@@ -173,35 +180,62 @@ class _Sperator extends StatelessWidget {
   }
 }
 
-class _DownlaodLogButton extends StatelessWidget {
-  final void Function(BuildContext context)? onPressed;
+class _DebuggerLogCard extends StatelessWidget {
+  final void Function(BuildContext context)? onDownloadPressed;
+  final void Function(BuildContext context)? onClearPressed;
 
-  const _DownlaodLogButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: FilledButton(
-        onPressed: onPressed != null ? () => onPressed!(context) : null,
-        // TODO(INDEV): l10n
-        child: const Text("Download logs"),
-      ),
-    );
-  }
-}
-
-class _ClearLogButton extends StatelessWidget {
-  final void Function(BuildContext context)? onPressed;
-
-  const _ClearLogButton({required this.onPressed});
+  const _DebuggerLogCard({
+    required this.onDownloadPressed,
+    required this.onClearPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: FilledButton.tonal(
-        onPressed: onPressed != null ? () => onPressed!(context) : null,
-        // TODO(INDEV): l10n
-        child: const Text("Clear logs"),
+    // TODO(INDEV): l10n
+    return Card(
+      elevation: 0,
+      color: Theme.of(context).colorScheme.primaryContainerOpacity32,
+      child: Column(
+        children: [
+          const ListTile(
+            leading: Icon(Icons.article_outlined),
+            title: Text("Logging Information"),
+            subtitle: Text("Includes local debugging log information, "
+                "need to turn on the log collection switch"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Builder(builder: (context) {
+                return TextButton(
+                  onPressed: onDownloadPressed != null
+                      ? () => onDownloadPressed!(context)
+                      : null,
+                  child: Text(
+                    'Downlaod',
+                    style: TextStyle(
+                        color:
+                            Theme.of(context).colorScheme.onPrimaryContainer),
+                  ),
+                );
+              }),
+              const SizedBox(width: 8),
+              Builder(builder: (context) {
+                return TextButton(
+                  onPressed: onClearPressed != null
+                      ? () => onClearPressed!(context)
+                      : null,
+                  child: Text(
+                    'Clear',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                );
+              }),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ],
       ),
     );
   }
