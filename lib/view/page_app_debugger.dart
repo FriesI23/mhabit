@@ -200,6 +200,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
               onSavePressed: _onSaveDebugButtonPressed,
             ),
           ),
+          const FixedPagePlaceHolder(minHeight: 82.0),
         ],
       ),
     );
