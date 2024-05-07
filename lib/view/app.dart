@@ -22,6 +22,7 @@ import 'package:tuple/tuple.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../persistent/db_helper_builder.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
@@ -54,7 +55,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('------ App start ------');
+    appLog.debugger.info("App Running Now", ex: [DateTime.now()]);
     return ProfileBuilder(
       handlers: _profileHandlers,
       builder: (context, child) => DBHelperBuilder(

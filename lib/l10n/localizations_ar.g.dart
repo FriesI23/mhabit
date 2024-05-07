@@ -1126,10 +1126,22 @@ class L10nAr extends L10n {
   String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
 
   @override
+  String get debug_debuggerLogCard_saveButton_text => 'Download';
+
+  @override
+  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+
+  @override
   String get debug_debuggerInfoCard_title => 'Debugging Information';
 
   @override
   String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+
+  @override
+  String get debug_debuggerInfoCard_openButton_text => 'Open';
+
+  @override
+  String get debug_debuggerInfoCard_saveButton_text => 'Save';
 
   @override
   String get snackbar_undoText => 'تراجع';

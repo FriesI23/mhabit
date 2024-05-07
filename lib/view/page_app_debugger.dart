@@ -256,7 +256,7 @@ class _DebuggerLogCard extends StatelessWidget {
                       ? () => onDownloadPressed!(context)
                       : null,
                   child: Text(
-                    'Downlaod',
+                    l10n?.debug_debuggerLogCard_saveButton_text ?? 'Downlaod',
                     style: TextStyle(
                         color:
                             Theme.of(context).colorScheme.onPrimaryContainer),
@@ -270,7 +270,7 @@ class _DebuggerLogCard extends StatelessWidget {
                       ? () => onClearPressed!(context)
                       : null,
                   child: Text(
-                    'Clear',
+                    l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
@@ -291,19 +291,19 @@ class _DebuggerInfoCard extends StatelessWidget {
 
   const _DebuggerInfoCard({this.onOpenPressed, this.onSavePressed});
 
-  Widget _buildOpenButton(BuildContext context) => TextButton(
+  Widget _buildOpenButton(BuildContext context, [L10n? l10n]) => TextButton(
         onPressed: onOpenPressed != null ? () => onOpenPressed!(context) : null,
         child: Text(
-          'Open',
+          l10n?.debug_debuggerInfoCard_openButton_text ?? 'Open',
           style: TextStyle(
               color: Theme.of(context).colorScheme.onPrimaryContainer),
         ),
       );
 
-  Widget _buildSaveButton(BuildContext context) => TextButton(
+  Widget _buildSaveButton(BuildContext context, [L10n? l10n]) => TextButton(
         onPressed: onSavePressed != null ? () => onSavePressed!(context) : null,
         child: Text(
-          'Open',
+          l10n?.debug_debuggerInfoCard_saveButton_text ?? 'Save',
           style: TextStyle(
               color: Theme.of(context).colorScheme.onPrimaryContainer),
         ),
@@ -312,27 +312,32 @@ class _DebuggerInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget buildMainButton(BuildContext context) {
+      final l10n = L10n.of(context);
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
         case TargetPlatform.iOS:
         case TargetPlatform.windows:
         case TargetPlatform.linux:
         case TargetPlatform.macOS:
-          return _buildOpenButton(context);
+          return _buildOpenButton(context, l10n);
         default:
-          return _buildSaveButton(context);
+          return _buildSaveButton(context, l10n);
       }
     }
 
+    final l10n = L10n.of(context);
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.primaryContainerOpacity32,
       child: Column(
         children: [
-          const ListTile(
-            leading: Icon(Icons.adb_outlined),
-            title: Text("Debug Information"),
-            subtitle: Text("Includes app's debugging information"),
+          ListTile(
+            leading: const Icon(Icons.adb_outlined),
+            title:
+                l10n != null ? Text(l10n.debug_debuggerInfoCard_title) : null,
+            subtitle: l10n != null
+                ? Text(l10n.debug_debuggerInfoCard_subtitle)
+                : null,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

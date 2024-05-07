@@ -1114,10 +1114,22 @@ class L10nZh extends L10n {
   String get debug_debuggerLogCard_subtitle => '包括本地调试日志信息，需要打开日志收集开关。';
 
   @override
+  String get debug_debuggerLogCard_saveButton_text => '下载';
+
+  @override
+  String get debug_debuggerLogCard_clearButton_text => '清除';
+
+  @override
   String get debug_debuggerInfoCard_title => '调试信息';
 
   @override
   String get debug_debuggerInfoCard_subtitle => '包括应用程序的调试信息。';
+
+  @override
+  String get debug_debuggerInfoCard_openButton_text => '打开';
+
+  @override
+  String get debug_debuggerInfoCard_saveButton_text => '保存';
 
   @override
   String get snackbar_undoText => '撤回';

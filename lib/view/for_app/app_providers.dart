@@ -66,6 +66,12 @@ class AppProviders extends SingleChildStatelessWidget {
           Provider<Global>(
             create: (context) => Global(),
           ),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppDebuggerViewModel>(
+            create: (context) => AppDebuggerViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
+            lazy: false,
+          ),
           ProxyProvider<ProfileViewModel, AppCachesViewModel>(
             create: (context) => AppCachesViewModel(),
             update: (context, profile, previous) =>
@@ -109,12 +115,6 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, channel, previous) => previous!
               ..updateProfile(profile)
               ..setNotificationChannelData(channel, l10n: L10n.of(context)),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel, AppDebuggerViewModel>(
-            create: (context) => AppDebuggerViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-            lazy: false,
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
             create: (context) =>

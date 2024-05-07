@@ -19,8 +19,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "de": [
@@ -43,8 +47,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "fa": [
@@ -67,8 +75,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "fr": [
@@ -91,8 +103,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "it": [
@@ -116,8 +132,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "nb": [
@@ -445,8 +465,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
     "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text",
     "snackbar_undoText",
     "snackbar_dismissText",
     "contributors_tile_title",
@@ -475,8 +499,12 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ],
 
   "vi": [
@@ -499,7 +527,11 @@
     "debug_missingDebugLogFile_snackbar",
     "debug_debuggerLogCard_title",
     "debug_debuggerLogCard_subtitle",
+    "debug_debuggerLogCard_saveButton_text",
+    "debug_debuggerLogCard_clearButton_text",
     "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle"
+    "debug_debuggerInfoCard_subtitle",
+    "debug_debuggerInfoCard_openButton_text",
+    "debug_debuggerInfoCard_saveButton_text"
   ]
 }

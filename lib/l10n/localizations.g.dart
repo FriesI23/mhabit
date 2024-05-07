@@ -2065,6 +2065,18 @@ abstract class L10n {
   /// **'Includes local debugging log information, need to turn on the log collection switcher.'**
   String get debug_debuggerLogCard_subtitle;
 
+  /// No description provided for @debug_debuggerLogCard_saveButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get debug_debuggerLogCard_saveButton_text;
+
+  /// No description provided for @debug_debuggerLogCard_clearButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get debug_debuggerLogCard_clearButton_text;
+
   /// No description provided for @debug_debuggerInfoCard_title.
   ///
   /// In en, this message translates to:
@@ -2076,6 +2088,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Includes app\'s debugging information.'**
   String get debug_debuggerInfoCard_subtitle;
+
+  /// No description provided for @debug_debuggerInfoCard_openButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get debug_debuggerInfoCard_openButton_text;
+
+  /// No description provided for @debug_debuggerInfoCard_saveButton_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get debug_debuggerInfoCard_saveButton_text;
 
   /// No description provided for @snackbar_undoText.
   ///

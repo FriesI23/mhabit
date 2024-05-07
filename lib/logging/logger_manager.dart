@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../common/async.dart';
+import '../utils/debug_info.dart';
 import 'handler/console_output.dart';
 import 'handler/console_printer.dart';
 import 'handler/filter.dart';
@@ -24,8 +25,16 @@ import 'logger/value_change_logger.dart';
 import 'logger/widget_logger.dart';
 import 'logger_type.dart';
 
+enum AppLoggerHandlerType {
+  custom,
+  normal,
+  debugging,
+}
+
 abstract interface class AppLoggerMananger implements AsyncInitialization {
   static AppLoggerMananger? _instance;
+  static late final l.Logger normalLogger;
+  static late final l.Logger debuggingLogger;
 
   l.Logger get logger;
 
@@ -46,17 +55,19 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
   AppTextLogger get cache;
 
   Future<bool> changeLogger(l.Logger newLogger);
+  bool changeLoggerByType(AppLoggerHandlerType t);
 
-  factory AppLoggerMananger({l.Logger? logger}) =>
-      _instance ?? AppLoggerMananger._new();
+  factory AppLoggerMananger(
+          {AppLoggerHandlerType t = AppLoggerHandlerType.normal}) =>
+      _instance ?? AppLoggerMananger._new(t: t);
 
-  factory AppLoggerMananger._new({l.Logger? logger}) {
-    if (logger != null) assert(logger.isClosed(), false);
-    final mgr = _instance = _AppLoggerManager(logger ?? _defaultLogger());
+  factory AppLoggerMananger._new(
+      {AppLoggerHandlerType t = AppLoggerHandlerType.normal}) {
+    final mgr = _instance = _AppLoggerManager(t);
     return mgr;
   }
 
-  static l.Logger _defaultLogger() => kReleaseMode
+  static l.Logger buildNormalLogger() => kReleaseMode
       ? l.Logger(
           filter: const AppLogFilter(),
           printer: const AppLoggerConsoleReleasePrinter(),
@@ -68,9 +79,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
           output: const AppLoggerConsoleOutput(),
         );
 
-  static l.Logger getDefaultLogger() => _defaultLogger();
-
-  static l.Logger getCollectionLogger({required String filePath}) =>
+  static l.Logger buildDebuggingLogger({required String filePath}) =>
       kReleaseMode
           ? l.Logger(
               filter: const AppLogFilter(),
@@ -102,18 +111,38 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
                 const AppLoggerConsoleOutput(),
               ]),
             );
+
+  static l.Logger getLoggerByType(AppLoggerHandlerType t) {
+    switch (t) {
+      case AppLoggerHandlerType.normal:
+        return normalLogger;
+      case AppLoggerHandlerType.debugging:
+        return debuggingLogger;
+      default:
+        throw UnsupportedError("Un-supported named AppLoggerType, $t");
+    }
+  }
 }
 
 class _AppLoggerManager implements AppLoggerMananger {
   @override
-  l.Logger logger;
+  late l.Logger logger;
+  AppLoggerHandlerType loggerType;
   final Map<LoggerType, dynamic> appLoggerInstances = {};
 
-  _AppLoggerManager(this.logger);
+  _AppLoggerManager(AppLoggerHandlerType t) : loggerType = t;
 
   @override
   Future init() async {
-    await logger.init;
+    AppLoggerMananger.normalLogger = AppLoggerMananger.buildNormalLogger();
+    AppLoggerMananger.debuggingLogger = AppLoggerMananger.buildDebuggingLogger(
+        filePath: await debugLogFilePath);
+    logger = AppLoggerMananger.getLoggerByType(loggerType);
+    await Future.wait([
+      AppLoggerMananger.normalLogger.init,
+      AppLoggerMananger.debuggingLogger.init,
+    ]);
+
     FlutterError.onError = _onFlutterErrorCatched;
     PlatformDispatcher.instance.onError = _onPlatformErrorCatched;
   }
@@ -205,17 +234,37 @@ class _AppLoggerManager implements AppLoggerMananger {
   Future<bool> changeLogger(l.Logger newLogger) async {
     if (newLogger.isClosed()) return false;
     await newLogger.init;
+    final oldLoggerType = loggerType;
     final oldLogger = logger;
     logger = newLogger;
+    loggerType = AppLoggerHandlerType.custom;
     value.warn("AppLoggerMananger.changeLogger",
-        beforeVal: oldLogger.hashCode,
+        beforeVal: (oldLogger.hashCode, oldLoggerType),
         afterVal: newLogger.hashCode,
         ex: ["before", oldLogger.isClosed(), newLogger.isClosed()]);
-    oldLogger.close();
+    if (oldLoggerType == AppLoggerHandlerType.custom) oldLogger.close();
     value.warn("AppLoggerMananger.changeLogger",
-        beforeVal: oldLogger.hashCode,
+        beforeVal: (oldLogger.hashCode, oldLoggerType),
         afterVal: newLogger.hashCode,
         ex: ["after", oldLogger.isClosed(), newLogger.isClosed()]);
+    return true;
+  }
+
+  @override
+  bool changeLoggerByType(AppLoggerHandlerType t) {
+    if (t == loggerType) return false;
+    final oldLoggerType = loggerType;
+    final oldLogger = logger;
+    value.warn("AppLoggerMananger.changeLoggerByType",
+        beforeVal: oldLoggerType,
+        afterVal: t,
+        ex: ["before", oldLogger.isClosed()]);
+    logger = AppLoggerMananger.getLoggerByType(t);
+    loggerType = t;
+    value.warn("AppLoggerMananger.changeLoggerByType",
+        beforeVal: oldLoggerType,
+        afterVal: loggerType,
+        ex: ["after", t, oldLogger.isClosed(), logger.isClosed()]);
     return true;
   }
 
