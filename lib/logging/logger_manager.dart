@@ -269,6 +269,7 @@ class _AppLoggerManager implements AppLoggerMananger {
         beforeVal: oldLoggerType,
         afterVal: t,
         ex: ["before", oldLogger.isClosed()]);
+    if (oldLoggerType == AppLoggerHandlerType.custom) oldLogger.close();
     loggerType = t;
     value.warn("AppLoggerMananger.changeLoggerByType",
         beforeVal: oldLoggerType,
