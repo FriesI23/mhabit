@@ -24,7 +24,8 @@ part 'notification_data.g.dart';
 enum NotificationDataType {
   debug(id: 1),
   habitReminder(id: 2),
-  appReminder(id: 3);
+  appReminder(id: 3),
+  appDebugger(id: 4);
 
   final int id;
 

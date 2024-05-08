@@ -16,12 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../l10n/localizations.dart';
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
 import '../../provider/app_caches.dart';
 import '../../provider/app_compact_ui_switcher.dart';
 import '../../provider/app_custom_date_format.dart';
+import '../../provider/app_debugger.dart';
 import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_reminder.dart';
@@ -65,13 +65,21 @@ class AppProviders extends SingleChildStatelessWidget {
           Provider<Global>(
             create: (context) => Global(),
           ),
+          ChangeNotifierProvider<NotificationChannelData>(
+            create: (context) => NotificationChannelData(),
+          ),
+          ChangeNotifierProxyProvider2<ProfileViewModel,
+              NotificationChannelData, AppDebuggerViewModel>(
+            lazy: false,
+            create: (context) => AppDebuggerViewModel(),
+            update: (context, profile, channel, previous) => previous!
+              ..setNotificationChannelData(channel)
+              ..updateProfile(profile),
+          ),
           ProxyProvider<ProfileViewModel, AppCachesViewModel>(
             create: (context) => AppCachesViewModel(),
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProvider<NotificationChannelData>(
-            create: (context) => NotificationChannelData(),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel, AppThemeViewModel>(
             create: (context) => AppThemeViewModel(),
@@ -106,8 +114,8 @@ class AppProviders extends SingleChildStatelessWidget {
             lazy: false,
             create: (context) => AppReminderViewModel(),
             update: (context, profile, channel, previous) => previous!
-              ..updateProfile(profile)
-              ..setNotificationChannelData(channel, l10n: L10n.of(context)),
+              ..setNotificationChannelData(channel)
+              ..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
             create: (context) =>

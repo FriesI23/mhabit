@@ -15,6 +15,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -23,8 +24,7 @@ import 'async.dart';
 class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();
 
-  AndroidDeviceInfo? _androidDeviceInfo;
-  IosDeviceInfo? _iosDeviceInfo;
+  AndroidBuildVersion? _androidBuildVersion;
   late String _packageName;
   late String _appName;
   late String _appVersion;
@@ -34,10 +34,6 @@ class AppInfo implements AsyncInitialization {
   }
 
   AppInfo._internal();
-
-  AndroidDeviceInfo? get androidDeviceInfo => _androidDeviceInfo;
-
-  IosDeviceInfo? get iosDeviceInfo => _iosDeviceInfo;
 
   String get packageName => _packageName;
 
@@ -49,11 +45,8 @@ class AppInfo implements AsyncInitialization {
   Future<void> init() async {
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
-      _androidDeviceInfo = await deviceInfo.androidInfo;
-      _iosDeviceInfo = null;
-    } else if (Platform.isIOS) {
-      _iosDeviceInfo = await deviceInfo.iosInfo;
-      _androidDeviceInfo = null;
+      final androidInfo = await deviceInfo.androidInfo;
+      _androidBuildVersion = androidInfo.version;
     }
 
     final packageInfo = await PackageInfo.fromPlatform();
@@ -67,8 +60,59 @@ class AppInfo implements AsyncInitialization {
   }
 
   bool isAndroidAndAdaptToFullScreen() {
-    return Platform.isAndroid &&
-        androidDeviceInfo != null &&
-        androidDeviceInfo!.version.sdkInt >= 29;
+    return Platform.isAndroid && _androidBuildVersion!.sdkInt >= 29;
+  }
+
+  Future<String> generateAppDebugInfo() => _AppDebugInfoBuilder().build();
+}
+
+final class _AppDebugInfoBuilder {
+  late final DeviceInfoPlugin devicePlugin;
+
+  _AppDebugInfoBuilder({DeviceInfoPlugin? devicePlugin}) {
+    this.devicePlugin = devicePlugin ?? DeviceInfoPlugin();
+  }
+
+  void _buildInfoByMap(StringBuffer buffer, Map<String, dynamic> data,
+      {int intent = 0}) {
+    void appendToBuffer(StringBuffer buffer, String key, dynamic value) {
+      for (var i = 0; i < intent; i++) {
+        buffer.write(" ");
+      }
+      buffer.writeln('$key: $value');
+    }
+
+    for (var entry in data.entries) {
+      appendToBuffer(buffer, entry.key, entry.value);
+    }
+  }
+
+  Future<void> _buildDeviceInfo(StringBuffer buffer, {int intent = 0}) =>
+      devicePlugin.deviceInfo
+          .then((value) => _buildInfoByMap(buffer, value.data, intent: intent));
+
+  Future<void> _buildPackageInfo(StringBuffer buffer, {int intent = 0}) =>
+      PackageInfo.fromPlatform().then((value) {
+        _buildInfoByMap(buffer, value.data, intent: intent);
+      });
+
+  Future<String> build() async {
+    final StringBuffer buffer = StringBuffer();
+    buffer.writeln();
+    buffer.writeln("┌──────────────── Debug Info: Started ────────────────");
+    buffer.writeln("│");
+    buffer.writeln("├─ Device Info: ──────────────────────────────────────");
+    await _buildDeviceInfo(buffer, intent: 4);
+    buffer.writeln("├─ Device Info Ended ─────────────────────────────────");
+    buffer.writeln("│");
+    buffer.writeln("├─ Package Info: ─────────────────────────────────────");
+    await _buildPackageInfo(buffer, intent: 4);
+    buffer.writeln("    BuildMode: debug=$kDebugMode, profile=$kProfileMode, "
+        "release=$kReleaseMode | isWeb=$kIsWeb");
+    buffer.writeln("    TargetPlatform: $defaultTargetPlatform");
+    buffer.writeln("├─ Package Info Ended ────────────────────────────────");
+    buffer.writeln("│");
+    buffer.writeln("└────────────────── Debug Info: Ended ────────────────");
+    return buffer.toString();
   }
 }

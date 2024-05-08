@@ -26,8 +26,11 @@ class AppTextLoggerMessage implements AppLoggerMessage {
   final LoggerType type;
   final String? message;
   final Iterable? extraInfo;
+  @override
+  final bool forceLogging;
 
-  const AppTextLoggerMessage(this.type, {this.message, this.extraInfo});
+  const AppTextLoggerMessage(this.type,
+      {this.message, this.extraInfo, this.forceLogging = false});
 
   @override
   Iterable<String?> toLogPrinterMessage() => [
@@ -46,8 +49,10 @@ abstract interface class AppTextLogger {
   void error(String msg, {Iterable? ex, Object? error, StackTrace? stackTrace});
   void fatal(String msg, {Iterable? ex, Object? error, StackTrace? stackTrace});
 
-  factory AppTextLogger(AppLoggerMananger m, LoggerType t) =>
-      _AppTextLogger(m, t);
+  factory AppTextLogger(AppLoggerMananger m, LoggerType t) {
+    if (t == LoggerType.debugger) return _DebuggerAppTextLogger(m, t);
+    return _AppTextLogger(m, t);
+  }
 }
 
 class _AppTextLogger implements AppTextLogger {
@@ -97,4 +102,26 @@ class _AppTextLogger implements AppTextLogger {
   void fatal(String msg,
           {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
       _log(l.Level.fatal, msg, ex: ex, error: error, stackTrace: stackTrace);
+}
+
+final class _DebuggerAppTextLogger extends _AppTextLogger {
+  const _DebuggerAppTextLogger(super.manager, super.type);
+
+  @override
+  void _log(l.Level level, String msg,
+      {Iterable? ex, Object? error, StackTrace? stackTrace}) {
+    try {
+      manager.logger.log(
+        level,
+        AppTextLoggerMessage(type,
+            message: msg, extraInfo: ex, forceLogging: true),
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } on Exception catch (e) {
+      if (kDebugMode) rethrow;
+      log("catch exception while logging",
+          level: l.Level.fatal.value, error: e, stackTrace: StackTrace.current);
+    }
+  }
 }

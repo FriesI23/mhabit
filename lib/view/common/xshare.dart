@@ -14,7 +14,9 @@
 
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
 mixin XShare<T extends StatefulWidget> on State<T> {
@@ -31,5 +33,16 @@ mixin XShare<T extends StatefulWidget> on State<T> {
     } else {
       return Share.shareXFiles(files, subject: subject, text: text);
     }
+  }
+
+  Future<bool> pickAndSaveToFile(String savedFile,
+      {String? fileName, String? subject}) async {
+    fileName ??= path.basename(savedFile);
+    final filePath = await FilePicker.platform
+        .saveFile(fileName: fileName, dialogTitle: subject);
+    if (filePath == null) return false;
+    final savedFileFp = File(savedFile);
+    if (!(await savedFileFp.exists())) return false;
+    return savedFileFp.copy(filePath).then((value) => value.exists());
   }
 }

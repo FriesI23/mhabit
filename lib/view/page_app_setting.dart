@@ -32,7 +32,6 @@ import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../logging/level.dart';
 import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
@@ -57,6 +56,7 @@ import 'common/_widget.dart';
 import 'for_app_setting/_dialog.dart';
 import 'for_app_setting/_widget.dart';
 import 'page_app_about.dart' as app_about_view;
+import 'page_app_debugger.dart' as app_debugger;
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
@@ -317,11 +317,6 @@ class _AppSettingView extends State<AppSettingView>
   void _onDevelopModeSwitchTilePressed(bool value) async {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().switchDevelopMode(value);
-  }
-
-  void _onLogLevelChanged(LogLevel newLevel) async {
-    if (!mounted) return;
-    context.read<AppDeveloperViewModel>().loggingLevel = newLevel;
   }
 
   void _onDisplayDebugMenuSelectChanged(bool value) {
@@ -621,6 +616,14 @@ class _AppSettingView extends State<AppSettingView>
           ListTile(
             title: L10nBuilder(
               builder: (context, l10n) => l10n != null
+                  ? Text(l10n.appSetting_debugger_titleText)
+                  : const Text("Debugger"),
+            ),
+            onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
+          ),
+          ListTile(
+            title: L10nBuilder(
+              builder: (context, l10n) => l10n != null
                   ? Text(l10n.appSetting_about_titleText)
                   : const Text("About"),
             ),
@@ -629,15 +632,13 @@ class _AppSettingView extends State<AppSettingView>
         ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<AppDeveloperViewModel, Tuple3<bool, bool, LogLevel>>(
+        Selector<AppDeveloperViewModel, Tuple2<bool, bool>>(
           selector: (context, vm) =>
-              Tuple3(vm.isInDevelopMode, vm.displayDebugMenu, vm.loggingLevel),
+              Tuple2(vm.isInDevelopMode, vm.displayDebugMenu),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AppSettingDevelopSubGroup(
             isInDevelopMode: value.item1,
             isDisplayDebugMenuSelect: value.item2,
-            logLevel: value.item3,
-            onLogLevelChanged: _onLogLevelChanged,
             onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
             onExportDBTilePressed: _onExportDBTilePressed,
             onClearDBTilePressed: _onClearDBTilePressed,

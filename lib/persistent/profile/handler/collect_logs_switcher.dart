@@ -12,28 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:logger/logger.dart';
+import '../converter.dart';
+import '../profile_helper.dart';
 
-import '../../common/global.dart';
-import '../logger_message.dart';
-
-class AppLogFilter implements LogFilter {
-  const AppLogFilter();
-
-  @override
-  Future<void> destroy() async {}
+class CollectLogswitcherProfileHandler
+    extends ProfileHelperCovertToBoolHandler<bool> {
+  const CollectLogswitcherProfileHandler(super.pref)
+      : super(codec: const SameTypeCodec());
 
   @override
-  Future<void> init() async {}
-
-  @override
-  Level get level => kAppLogLevel.toLoggerLevel();
-
-  @override
-  set level(Level? value) {}
-
-  @override
-  bool shouldLog(LogEvent event) =>
-      (event.message is AppLoggerMessage && event.message.forceLogging) ||
-      event.level.value >= level.value;
+  String get key => "collectLogsSwitcher";
 }

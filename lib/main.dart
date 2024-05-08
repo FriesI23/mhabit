@@ -23,7 +23,7 @@ import 'view/app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await AppLoggerMananger().init();
+  await AppLoggerMananger(t: AppLoggerHandlerType.debugging).init();
   await AppInfo().init();
   await NotificationService().init();
   await LocalTimeZoneManager().init();

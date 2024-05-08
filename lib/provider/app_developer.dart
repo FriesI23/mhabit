@@ -14,8 +14,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../common/global.dart';
-import '../logging/level.dart';
 import 'global.dart';
 
 class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
@@ -37,15 +35,6 @@ class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
   void switchDisplayDebugMenu(bool value) {
     if (g.displayDebugMenu != value) {
       g.switchDisplayDebugMenu(value);
-      notifyListeners();
-    }
-  }
-
-  LogLevel get loggingLevel => kAppLogLevel;
-
-  set loggingLevel(LogLevel newLevel) {
-    if (kAppLogLevel != newLevel) {
-      kAppLogLevel = newLevel;
       notifyListeners();
     }
   }

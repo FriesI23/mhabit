@@ -24,6 +24,9 @@ import 'enums.dart';
 const String appName = "mhabit";
 const String appDBName = "mhabit.db";
 const String aboutInfoFilePath = "configs/about_info.json";
+const String debuggerLogFileName = "app_debug.log";
+const String debuggerInfoFileName = "debug.txt";
+const String debuggerZipFile = "debug.zip";
 
 /// # Sqlite versions
 ///

@@ -12,28 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:logger/logger.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../../common/global.dart';
-import '../logger_message.dart';
+import 'notification_id_range.dart';
 
-class AppLogFilter implements LogFilter {
-  const AppLogFilter();
-
-  @override
-  Future<void> destroy() async {}
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Level get level => kAppLogLevel.toLoggerLevel();
-
-  @override
-  set level(Level? value) {}
-
-  @override
-  bool shouldLog(LogEvent event) =>
-      (event.message is AppLoggerMessage && event.message.forceLogging) ||
-      event.level.value >= level.value;
+void notificationTap(NotificationResponse notificationResponse) {
+  final nid = notificationResponse.id;
+  if (nid == appDebuggerNotifyId) {
+    // TODO: need to implement
+  }
 }

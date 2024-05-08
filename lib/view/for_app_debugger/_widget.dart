@@ -12,28 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:logger/logger.dart';
-
-import '../../common/global.dart';
-import '../logger_message.dart';
-
-class AppLogFilter implements LogFilter {
-  const AppLogFilter();
-
-  @override
-  Future<void> destroy() async {}
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Level get level => kAppLogLevel.toLoggerLevel();
-
-  @override
-  set level(Level? value) {}
-
-  @override
-  bool shouldLog(LogEvent event) =>
-      (event.message is AppLoggerMessage && event.message.forceLogging) ||
-      event.level.value >= level.value;
-}
+export './change_logs_switcher_tile.dart' show ChangeLogsSwitcherTile;

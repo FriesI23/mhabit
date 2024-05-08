@@ -24,4 +24,6 @@ extension CustomColorScheme on ColorScheme {
   Color get outlineOpacity16 => outline.withOpacity(0.16);
 
   Color get onSurfaceOpacity08 => onSurface.withOpacity(0.08);
+
+  Color get primaryContainerOpacity32 => primaryContainer.withOpacity(0.32);
 }

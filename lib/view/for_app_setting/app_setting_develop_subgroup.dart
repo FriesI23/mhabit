@@ -15,15 +15,11 @@
 import 'package:flutter/material.dart';
 
 import '../../component/widget.dart';
-import '../../logging/level.dart';
-import 'app_setting_log_level_tile.dart';
 
 class AppSettingDevelopSubGroup extends StatelessWidget {
   final bool isInDevelopMode;
   final bool isDisplayDebugMenuSelect;
-  final LogLevel logLevel;
   final ValueChanged<bool>? onDisplayDebugMenuSelectChanged;
-  final ValueChanged<LogLevel>? onLogLevelChanged;
   final void Function(BuildContext context)? onExportDBTilePressed;
   final void Function(BuildContext context)? onClearDBTilePressed;
 
@@ -31,9 +27,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
     super.key,
     this.isInDevelopMode = false,
     this.isDisplayDebugMenuSelect = false,
-    required this.logLevel,
     this.onDisplayDebugMenuSelectChanged,
-    this.onLogLevelChanged,
     this.onExportDBTilePressed,
     this.onClearDBTilePressed,
   });
@@ -44,11 +38,7 @@ class AppSettingDevelopSubGroup extends StatelessWidget {
       expand: isInDevelopMode,
       child: Column(
         children: [
-          const GroupTitleListTile(title: Text("Debug")),
-          AppSettingLogLevelTile(
-            crtLevel: logLevel,
-            onSelected: onLogLevelChanged,
-          ),
+          const GroupTitleListTile(title: Text("Developer")),
           SwitchListTile(
             title: const Text("Show debug menu"),
             value: isDisplayDebugMenuSelect,

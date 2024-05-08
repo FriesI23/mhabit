@@ -15,6 +15,8 @@
 (
 flutter pub run flutter_launcher_icons --file flutter_launcher_momo_icons.yaml
 ) & (
+flutter pub run flutter_launcher_icons --file flutter_launcher_notification_icons.yaml
+) & (
 flutter pub run flutter_launcher_icons
 ) & (
 set "SOURCE_FILE=configs\flutter_launcher_incons\ic_launcher.xml"

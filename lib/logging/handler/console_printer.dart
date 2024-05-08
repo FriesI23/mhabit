@@ -15,6 +15,7 @@
 import 'dart:isolate';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../extension.dart';
@@ -83,7 +84,7 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
   List<String> log(l.LogEvent event) {
     final T? message = event.message;
 
-    String getMsg({bool addTime = false}) => [
+    String getMsg({bool addTime = kReleaseMode}) => [
           "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]"
               " [${prefixMap[event.level]}]",
           if (addTime) _errorPrinter.getTime(event.time),
@@ -92,7 +93,7 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
         ].join(" - ");
 
     if (event.level.value >= l.Level.error.value) {
-      return _errorPrinter.log(event.copyWith(message: getMsg()));
+      return _errorPrinter.log(event.copyWith(message: getMsg(addTime: true)));
     }
 
     return [getMsg()];

@@ -1,0 +1,4 @@
+flutter_launcher_icons:
+  # Android
+  android: "ic_notification"
+  image_path_android: "assets/logo/icon-notification-1024x1024.png"
