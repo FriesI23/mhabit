@@ -238,17 +238,17 @@ class _AppLoggerManager implements AppLoggerMananger {
     await newLogger.init;
     final oldLoggerType = loggerType;
     final oldLogger = logger;
-    logger = newLogger;
-    loggerType = AppLoggerHandlerType.custom;
     value.warn("AppLoggerMananger.changeLogger",
         beforeVal: (oldLogger.hashCode, oldLoggerType),
         afterVal: newLogger.hashCode,
         ex: ["before", oldLogger.isClosed(), newLogger.isClosed()]);
+    logger = newLogger;
+    loggerType = AppLoggerHandlerType.custom;
     if (oldLoggerType == AppLoggerHandlerType.custom) oldLogger.close();
     value.warn("AppLoggerMananger.changeLogger",
         beforeVal: (oldLogger.hashCode, oldLoggerType),
-        afterVal: newLogger.hashCode,
-        ex: ["after", oldLogger.isClosed(), newLogger.isClosed()]);
+        afterVal: logger.hashCode,
+        ex: ["after", oldLogger.isClosed(), logger.isClosed()]);
     return true;
   }
 

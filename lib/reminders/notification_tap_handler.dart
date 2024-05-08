@@ -18,5 +18,7 @@ import 'notification_id_range.dart';
 
 void notificationTap(NotificationResponse notificationResponse) {
   final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {}
+  if (nid == appDebuggerNotifyId) {
+    // TODO: need to implement
+  }
 }
