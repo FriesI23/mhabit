@@ -2,27 +2,15 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.12.2+39
+# Pre Released
 
-- Add Russian translation. (#169, thanks for @yurtpage's contribution)
-- Add Italian translation. (from Weblate, thanks for @spar34vi's translation)
-- Add support for the Windows platform. (#164)
-- Add support for `dmg` build on macOS. (#168, thanks for @rxzheng's contribution)
-- Add `pre-release` version build process. (#171)
-- Fixed issue in `OpenContainer` raise exception when navigating via `Tooltips` enabled. (#166)
-- Update iOS dependency package versions.
-- Optimize code quality.
+## v1.12.3+40
 
-### Build Windows version
+- Add Debug log Collection feature.
+- Fixed issue where notification icon wasn't shown on native Android platform.
+- Fixed: Localization for batched check-in's changed snackbar text.
 
-```sh
-flutter config --enable-windows-desktop
-flutter build windows --release
-```
+### New Feature: Debugging Information
 
-### Build `dmg` package on `MacOS`
-
-1. Install `node` if not exist. if using `brew`, a simple way to install with `brew install node` commaned.
-2. Install `appdmg` with executing `npm install -g appdmg`
-3. Run `./scripts/build_dmg.sh` and wait this job done.
-4. Target is located at `./build/macos_dmg/mhabit-yyyy-mm-dd-HH-MM-SS.dmg`.
+<img src="https://github.com/FriesI23/mhabit/assets/20661034/cfbd70a0-fea4-417f-aaef-b91c11b8f7e7" alt="1" style="max-width:240px;">
+<img src="https://github.com/FriesI23/mhabit/assets/20661034/159437a8-f38e-4a5d-8ff5-64489cace92a" alt="2" style="max-width:240px;">
