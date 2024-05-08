@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
@@ -33,8 +34,8 @@ enum AppLoggerHandlerType {
 
 abstract interface class AppLoggerMananger implements AsyncInitialization {
   static AppLoggerMananger? _instance;
-  static late l.Logger _normalLogger;
-  static late l.Logger _debuggingLogger;
+  static l.Logger? _normalLogger;
+  static l.Logger? _debuggingLogger;
 
   l.Logger get logger;
 
@@ -114,7 +115,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
 
   static Future<void> reloadDebuggingLogger({required String filePath}) async {
     final newLogger = buildDebuggingLogger(filePath: filePath);
-    await _debuggingLogger.close();
+    await _debuggingLogger?.close();
     await newLogger.init;
     _debuggingLogger = newLogger;
   }
@@ -135,9 +136,9 @@ class _AppLoggerManager implements AppLoggerMananger {
     AppLoggerMananger._debuggingLogger = AppLoggerMananger.buildDebuggingLogger(
         filePath: await debugLogFilePath);
     await Future.wait([
-      AppLoggerMananger._normalLogger.init,
-      AppLoggerMananger._debuggingLogger.init,
-    ]);
+      AppLoggerMananger._normalLogger?.init,
+      AppLoggerMananger._debuggingLogger?.init,
+    ].whereNotNull());
 
     FlutterError.onError = _onFlutterErrorCatched;
     PlatformDispatcher.instance.onError = _onPlatformErrorCatched;
@@ -147,9 +148,9 @@ class _AppLoggerManager implements AppLoggerMananger {
   l.Logger get logger {
     switch (loggerType) {
       case AppLoggerHandlerType.normal:
-        return AppLoggerMananger._normalLogger;
+        return AppLoggerMananger._normalLogger ?? _logger;
       case AppLoggerHandlerType.debugging:
-        return AppLoggerMananger._debuggingLogger;
+        return AppLoggerMananger._debuggingLogger ?? _logger;
       case AppLoggerHandlerType.custom:
         return _logger;
     }
