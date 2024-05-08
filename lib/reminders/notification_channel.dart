@@ -164,13 +164,12 @@ class NotificationIosChannelData
           categoryIdentifier: NotificationChannelId.habitReminder.category);
 
   @override
-  // TODO: implement appDebugger
   DarwinNotificationDetails get appDebugger =>
       _appDebugger ??
       DarwinNotificationDetails(
           presentSound: false,
           categoryIdentifier: NotificationChannelId.appDebugger.category,
-          interruptionLevel: InterruptionLevel.active);
+          interruptionLevel: InterruptionLevel.passive);
 }
 
 class NotificationChannelData extends ChangeNotifier
