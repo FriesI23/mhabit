@@ -130,7 +130,9 @@ class _AppLoggerManager implements AppLoggerMananger {
   AppLoggerHandlerType loggerType;
   final Map<LoggerType, dynamic> appLoggerInstances = {};
 
-  _AppLoggerManager(AppLoggerHandlerType t) : loggerType = t;
+  _AppLoggerManager(AppLoggerHandlerType t) : loggerType = t {
+    logger = l.Logger(level: l.Level.warning);
+  }
 
   @override
   Future init() async {
