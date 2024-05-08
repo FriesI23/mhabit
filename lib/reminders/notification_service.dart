@@ -82,7 +82,7 @@ abstract interface class NotificationService implements AsyncInitialization {
 }
 
 final class NotificationServiceImpl implements NotificationService {
-  static const androidIconPath = "@mipmap/ic_launcher";
+  static const androidIconPath = "@mipmap/ic_notification";
   static const defaultTimeout = Duration(seconds: 2);
 
   const NotificationServiceImpl();

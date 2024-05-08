@@ -122,6 +122,8 @@ class NotificationAndroidChannelData
         autoCancel: false,
         showWhen: false,
         silent: true,
+        color: Colors.red,
+        colorized: true,
       );
 }
 
