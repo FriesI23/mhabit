@@ -27,6 +27,7 @@ import '../component/widget.dart';
 import '../extension/colorscheme_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/level.dart';
+import '../logging/logger_manager.dart';
 import '../provider/app_debugger.dart';
 import '../utils/debug_info.dart';
 import 'common/_mixin.dart';
@@ -102,6 +103,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     if (!mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     await fileObj.delete();
+    AppLoggerMananger.reloadDebuggingLogger(filePath: filePath);
     if (!mounted) return;
     final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
         content: L10nBuilder(
