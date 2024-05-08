@@ -2101,6 +2101,12 @@ abstract class L10n {
   /// **'Save'**
   String get debug_debuggerInfoCard_saveButton_text;
 
+  /// No description provided for @debug_debuggerInfo_notificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collecting App\'s Info...'**
+  String get debug_debuggerInfo_notificationTitle;
+
   /// No description provided for @snackbar_undoText.
   ///
   /// In en, this message translates to:

@@ -16,13 +16,23 @@ import 'package:flutter/material.dart';
 
 import '../common/app_info.dart';
 import '../common/global.dart';
+import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../logging/logger_manager.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
+import '../reminders/notification_channel.dart';
+import '../reminders/notification_data.dart';
+import '../reminders/notification_id_range.dart';
+import '../reminders/notification_service.dart';
+import 'commons.dart';
 
-class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
+class AppDebuggerViewModel
+    with
+        ChangeNotifier,
+        ProfileHandlerLoadedMixin,
+        NotificationChannelDataMixin {
   CollectLogswitcherProfileHandler? _collectLogsSwitcher;
   LoggingLevelProfileHandler? _loggingLevel;
 
@@ -70,4 +80,19 @@ class AppDebuggerViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   void _updateLoggerProcesser() => appLog.changeLoggerByType(isCollectLogs
       ? AppLoggerHandlerType.debugging
       : AppLoggerHandlerType.normal);
+
+  void processDebuggingNotification([L10n? l10n]) {
+    if (isCollectLogs) {
+      NotificationService().show(
+          id: appDebuggerNotifyId,
+          title: l10n?.debug_debuggerInfo_notificationTitle ??
+              "Collecting App's Info...",
+          // body: "Tap to view details.",
+          type: NotificationDataType.appDebugger,
+          channelId: NotificationChannelId.appDebugger,
+          details: channelData.appDebugger);
+    } else {
+      NotificationService().cancel(id: appDebuggerNotifyId);
+    }
+  }
 }

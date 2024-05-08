@@ -1150,6 +1150,9 @@ class L10nVi extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => 'Save';
 
   @override
+  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+
+  @override
   String get snackbar_undoText => 'HOÀN TÁC';
 
   @override

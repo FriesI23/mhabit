@@ -28,6 +28,7 @@ import '../reminders/notification_id_range.dart' as notifyid;
 import 'notification_channel.dart';
 import 'notification_data.dart';
 import 'notification_id_range.dart';
+import 'notification_tap_handler.dart';
 
 abstract interface class NotificationService implements AsyncInitialization {
   static NotificationService? _instance;
@@ -38,13 +39,16 @@ abstract interface class NotificationService implements AsyncInitialization {
 
   Future<List<PendingNotificationRequest>> pendingNotificationRequests();
 
-  Future<void> show(
+  Future<bool> show(
       {required int id,
       required String title,
       String? body,
       required NotificationDataType type,
       required NotificationChannelId channelId,
-      required NotificationDetails details});
+      required NotificationDetails details,
+      Duration? timeout});
+
+  Future<bool> cancel({required int id, Duration? timeout});
 
   Future<bool> regrAppReminderInDaily(
       {required String title,
@@ -117,6 +121,13 @@ final class NotificationServiceImpl implements NotificationService {
             DarwinNotificationCategoryOption.allowAnnouncement,
           },
         ),
+        DarwinNotificationCategory(
+          NotificationChannelId.appDebugger.category,
+          options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+            DarwinNotificationCategoryOption.hiddenPreviewShowSubtitle,
+          },
+        ),
       ],
     );
 
@@ -127,7 +138,10 @@ final class NotificationServiceImpl implements NotificationService {
       macOS: darwinSettings,
     );
 
-    await plugin.initialize(initializationSettings);
+    await plugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: notificationTap,
+    );
   }
 
   @override
@@ -169,13 +183,14 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<void> show(
+  Future<bool> show(
       {required int id,
       required String title,
       String? body,
       required NotificationDataType type,
       required NotificationChannelId channelId,
-      required NotificationDetails details}) async {
+      required NotificationDetails details,
+      Duration? timeout = defaultTimeout}) async {
     final data = NotificationData(
       id: id,
       title: title,
@@ -184,13 +199,36 @@ final class NotificationServiceImpl implements NotificationService {
       channelId: channelId,
     );
 
-    return plugin.show(
-      data.id,
-      data.title,
-      data.body,
-      details,
-      payload: data.toPayload(),
-    );
+    try {
+      final future = plugin.show(
+        data.id,
+        data.title,
+        data.body,
+        details,
+        payload: data.toPayload(),
+      );
+
+      timeout == null
+          ? await future
+          : await future.timeout(timeout, onTimeout: () => null);
+
+      appLog.notify.debug("$runtimeType.show", ex: [appReminderNotifyId, data]);
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$runtimeType.show",
+          ex: ["show notification failed"], error: e);
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  Future<bool> cancel(
+      {required int id, Duration? timeout = defaultTimeout}) async {
+    final future = plugin.cancel(id);
+    timeout == null
+        ? await future
+        : future.timeout(timeout, onTimeout: () => null);
+    return true;
   }
 
   @override
@@ -334,14 +372,19 @@ final class FakeNotificationService implements NotificationService {
   Future<bool?> requestPermissions() => Future.value(false);
 
   @override
-  Future<void> show(
+  Future<bool> show(
           {required int id,
           required String title,
           String? body,
           required NotificationDataType type,
           required NotificationChannelId channelId,
-          required NotificationDetails details}) =>
-      Future.value();
+          required NotificationDetails details,
+          Duration? timeout}) =>
+      Future.value(false);
+
+  @override
+  Future<bool> cancel({required int id, Duration? timeout}) =>
+      Future.value(false);
 
   @override
   Future<bool> cancelAllHabitReminders({Duration? timeout}) =>

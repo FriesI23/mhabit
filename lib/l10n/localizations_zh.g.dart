@@ -1132,6 +1132,9 @@ class L10nZh extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => '保存';
 
   @override
+  String get debug_debuggerInfo_notificationTitle => '正在收集应用信息……';
+
+  @override
   String get snackbar_undoText => '撤回';
 
   @override

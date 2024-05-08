@@ -72,7 +72,11 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
 
   void _onCollectLogsSwitcherChanged(bool newStatus) async {
     if (!mounted) return;
-    context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
+    await context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
+    if (!mounted) return;
+    context
+        .read<AppDebuggerViewModel>()
+        .processDebuggingNotification(L10n.of(context));
   }
 
   void _onDownloadLogButtonPressed(BuildContext context) async {

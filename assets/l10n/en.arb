@@ -730,6 +730,7 @@
   "debug_debuggerInfoCard_subtitle": "Includes app's debugging information.",
   "debug_debuggerInfoCard_openButton_text": "Open",
   "debug_debuggerInfoCard_saveButton_text": "Save",
+  "debug_debuggerInfo_notificationTitle": "Collecting App's Info...",
 
   "snackbar_undoText": "UNDO",
   "snackbar_dismissText": "DISMISS",
