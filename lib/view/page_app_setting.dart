@@ -42,6 +42,7 @@ import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
+import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_op_config.dart';
@@ -84,6 +85,7 @@ Future<void> naviToAppSettingPage({
 ///   - [AppDeveloperViewModel]
 ///   - [AppReminderViewModel]
 ///   - [AppThemeViewModel]
+///   - [AppLanguageViewModel]
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImporterViewModel]
@@ -139,6 +141,16 @@ class _AppSettingView extends State<AppSettingView>
     if (!mounted || result == null) return;
     final firtdayvm = context.read<AppFirstDayViewModel>();
     firtdayvm.setNewFirstDay(result);
+  }
+
+  void _onAppLanguageTilePressed(BuildContext context) async {
+    if (!mounted) return;
+    final currentLocale = context.read<AppLanguageViewModel>().languange;
+    final result = await showAppLanguageChangerDialog(
+        context: context, selectedLocale: currentLocale);
+
+    if (!mounted || result == null) return;
+    context.read<AppLanguageViewModel>().switchLanguage(result.choosenLanguage);
   }
 
   void _openClearAppCacheDialog(BuildContext context) async {
@@ -436,6 +448,21 @@ class _AppSettingView extends State<AppSettingView>
                     : null,
                 onChanged: _onCompactTileChanged,
                 value: flag,
+              ),
+            ),
+          ),
+          Selector<AppLanguageViewModel, Locale?>(
+            selector: (context, vm) => vm.languange,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => L10nBuilder(
+              builder: (context, l10n) => ListTile(
+                title: l10n != null
+                    ? Text(l10n.appSetting_changeLanguageTile_titleText)
+                    : const Text("Language"),
+                subtitle: Text(context
+                    .read<AppLanguageViewModel>()
+                    .getAppLanguageText(l10n)),
+                onTap: () => _onAppLanguageTilePressed(context),
               ),
             ),
           ),
