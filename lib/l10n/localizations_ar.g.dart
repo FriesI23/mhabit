@@ -658,6 +658,20 @@ class L10nAr extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (افتراضي)';
 
   @override
+  String appSetting_changeLanguage_followSystem_text(String localeName) {
+    return 'Follow System ($localeName)';
+  }
+
+  @override
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+
+  @override
+  String get appSetting_changeLanguageTile_titleText => 'Language';
+
+  @override
+  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'طريقة عرض التاريخ ($formatTemplate)';
   }

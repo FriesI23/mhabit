@@ -653,6 +653,20 @@ class L10nZh extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => '（默认值）';
 
   @override
+  String appSetting_changeLanguage_followSystem_text(String localeName) {
+    return '跟随系统（$localeName）';
+  }
+
+  @override
+  String get appSetting_changeLanguage_followSystem_noLocale_text => '跟随系统';
+
+  @override
+  String get appSetting_changeLanguageTile_titleText => '多语言';
+
+  @override
+  String get appSetting_changeLanguageDialog_titleText => '选择语言';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return '日期显示格式 ($formatTemplate)';
   }

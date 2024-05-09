@@ -652,5 +652,9 @@
   "debug_debuggerLogCard_clearButton_text": "清除",
   "debug_debuggerInfoCard_openButton_text": "打开",
   "debug_debuggerInfoCard_saveButton_text": "保存",
-  "debug_debuggerInfo_notificationTitle": "正在收集应用信息……"
+  "debug_debuggerInfo_notificationTitle": "正在收集应用信息……",
+  "appSetting_changeLanguage_followSystem_text": "跟随系统（{localeName}）",
+  "appSetting_changeLanguage_followSystem_noLocale_text": "跟随系统",
+  "appSetting_changeLanguageTile_titleText": "多语言",
+  "appSetting_changeLanguageDialog_titleText": "选择语言"
 }

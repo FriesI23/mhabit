@@ -447,6 +447,19 @@
   "appSetting_firstDayOfWeekDialog_titleText": "Show first day of week",
   "appSetting_firstDayOfWeekDialog_defaultText": " (Default)",
 
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_text": "Follow System ({localeName})",
+  "appSetting_changeLanguage_followSystem_noLocale_text": "Follow System",
+  "appSetting_changeLanguageTile_titleText": "Language",
+  "appSetting_changeLanguageDialog_titleText": "Select Language",
+
   "@appSetting_dateDisplayFormat_titleText": {
     "placeholders": {
       "formatTemplate": {

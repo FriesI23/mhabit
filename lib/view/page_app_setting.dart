@@ -456,8 +456,9 @@ class _AppSettingView extends State<AppSettingView>
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, value, child) => L10nBuilder(
               builder: (context, l10n) => ListTile(
-                // TODO(INDEV): l10n
-                title: const Text("Language"),
+                title: l10n != null
+                    ? Text(l10n.appSetting_changeLanguageTile_titleText)
+                    : const Text("Language"),
                 subtitle: Text(context
                     .read<AppLanguageViewModel>()
                     .getAppLanguageText(l10n)),

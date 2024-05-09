@@ -38,12 +38,11 @@ class AppLanguageViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   }
 
   String getAppLanguageText([L10n? l10n, String fallbackText = ""]) {
-    // TODO(INDEV): l10n
     final languange = this.languange;
     if (languange == null) {
-      return l10n == null
-          ? "Follow System"
-          : "Follow System (${l10n.localeScriptName})";
+      return l10n?.appSetting_changeLanguage_followSystem_text(
+              l10n.localeScriptName) ??
+          "Follow System";
     }
     try {
       return lookupL10n(languange).localeScriptName;

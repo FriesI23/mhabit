@@ -1,5 +1,9 @@
 {
   "ar": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -29,6 +33,10 @@
   ],
 
   "de": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -58,6 +66,10 @@
   ],
 
   "fa": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -87,6 +99,10 @@
   ],
 
   "fr": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -117,6 +133,10 @@
 
   "it": [
     "habitEdit_habitFreq_predayfreq",
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -328,6 +348,10 @@
     "appSetting_firstDayOfWeek_titleText",
     "appSetting_firstDayOfWeekDialog_titleText",
     "appSetting_firstDayOfWeekDialog_defaultText",
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_dateDisplayFormat_titleText",
     "appSetting_dateDisplayFormat_titleTemplate_followSystemText",
     "appSetting_dateDisplayFormat_subTitleText",
@@ -486,6 +510,10 @@
   ],
 
   "ru": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",
@@ -515,6 +543,10 @@
   ],
 
   "vi": [
+    "appSetting_changeLanguage_followSystem_text",
+    "appSetting_changeLanguage_followSystem_noLocale_text",
+    "appSetting_changeLanguageTile_titleText",
+    "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
     "debug_logLevelTile_title",

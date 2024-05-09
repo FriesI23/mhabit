@@ -1213,6 +1213,30 @@ abstract class L10n {
   /// **' (Default)'**
   String get appSetting_firstDayOfWeekDialog_defaultText;
 
+  /// No description provided for @appSetting_changeLanguage_followSystem_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow System ({localeName})'**
+  String appSetting_changeLanguage_followSystem_text(String localeName);
+
+  /// No description provided for @appSetting_changeLanguage_followSystem_noLocale_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow System'**
+  String get appSetting_changeLanguage_followSystem_noLocale_text;
+
+  /// No description provided for @appSetting_changeLanguageTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get appSetting_changeLanguageTile_titleText;
+
+  /// No description provided for @appSetting_changeLanguageDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get appSetting_changeLanguageDialog_titleText;
+
   /// No description provided for @appSetting_dateDisplayFormat_titleText.
   ///
   /// In en, this message translates to:

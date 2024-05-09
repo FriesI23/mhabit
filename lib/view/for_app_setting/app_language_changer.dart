@@ -55,10 +55,15 @@ class AppLanguageChangerDialog extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // TODO(INDEV): l10n
-              Text(systemLocaleScriptName.isEmpty
-                  ? "Follow System"
-                  : "Follow System ($systemLocaleScriptName)"),
+              l10n != null
+                  ? Text(systemLocaleScriptName.isEmpty
+                      ? l10n
+                          .appSetting_changeLanguage_followSystem_noLocale_text
+                      : l10n.appSetting_changeLanguage_followSystem_text(
+                          systemLocaleScriptName))
+                  : Text(systemLocaleScriptName.isEmpty
+                      ? "Follow System"
+                      : "Follow System ($systemLocaleScriptName)"),
               if (selectedLocale == null) const Icon(Icons.check),
             ],
           ),
@@ -83,8 +88,9 @@ class AppLanguageChangerDialog extends StatelessWidget {
 
     final l10n = L10n.of(context);
     return SimpleDialog(
-      // TODO(INDEV): l10n
-      title: const Text("Select Language"),
+      title: l10n != null
+          ? Text(l10n.appSetting_changeLanguageDialog_titleText)
+          : null,
       children: buildOptions(context, l10n),
     );
   }
