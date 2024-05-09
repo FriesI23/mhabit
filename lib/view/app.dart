@@ -26,6 +26,7 @@ import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../persistent/db_helper_builder.dart';
+import '../persistent/profile/handler/app_language.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
 import '../persistent/profile_provider.dart';
@@ -57,6 +58,7 @@ class App extends StatelessWidget {
     InputFillCacheProfileHandler.new,
     CollectLogswitcherProfileHandler.new,
     LoggingLevelProfileHandler.new,
+    AppLanguageProfileHanlder.new,
   ];
 
   const App({super.key});

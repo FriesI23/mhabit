@@ -42,6 +42,7 @@ import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
+import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_op_config.dart';
@@ -84,6 +85,7 @@ Future<void> naviToAppSettingPage({
 ///   - [AppDeveloperViewModel]
 ///   - [AppReminderViewModel]
 ///   - [AppThemeViewModel]
+///   - [AppLanguageViewModel]
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImporterViewModel]
@@ -436,6 +438,19 @@ class _AppSettingView extends State<AppSettingView>
                     : null,
                 onChanged: _onCompactTileChanged,
                 value: flag,
+              ),
+            ),
+          ),
+          Selector<AppLanguageViewModel, Locale?>(
+            selector: (context, vm) => vm.languange,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => L10nBuilder(
+              builder: (context, l10n) => ListTile(
+                // TODO(INDEV): l10n
+                title: const Text("Language"),
+                subtitle: Text(context
+                    .read<AppLanguageViewModel>()
+                    .getAppLanguageText(l10n)),
               ),
             ),
           ),
