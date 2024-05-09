@@ -136,22 +136,7 @@ class _AppView extends State<AppView> {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              supportedLocales: const [
-                // Fixed #133
-                // en must be the first item in the list (default language)
-                Locale.fromSubtags(languageCode: 'en'),
-                Locale.fromSubtags(languageCode: 'ar'),
-                Locale.fromSubtags(languageCode: 'de'),
-                Locale.fromSubtags(languageCode: 'fa'),
-                Locale.fromSubtags(languageCode: 'fr'),
-                Locale.fromSubtags(languageCode: 'it'),
-                // TODO: remove kDebugMode below after translation
-                if (kDebugMode)
-                  Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
-                Locale.fromSubtags(languageCode: 'ru'),
-                Locale.fromSubtags(languageCode: 'vi'),
-                Locale.fromSubtags(languageCode: 'zh'),
-              ],
+              supportedLocales: appSupportedLocales,
               debugShowCheckedModeBanner: false,
             ),
           ),
