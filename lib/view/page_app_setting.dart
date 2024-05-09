@@ -143,6 +143,16 @@ class _AppSettingView extends State<AppSettingView>
     firtdayvm.setNewFirstDay(result);
   }
 
+  void _onAppLanguageTilePressed(BuildContext context) async {
+    if (!mounted) return;
+    final currentLocale = context.read<AppLanguageViewModel>().languange;
+    final result = await showAppLanguageChangerDialog(
+        context: context, selectedLocale: currentLocale);
+
+    if (!mounted || result == null) return;
+    context.read<AppLanguageViewModel>().switchLanguage(result.choosenLanguage);
+  }
+
   void _openClearAppCacheDialog(BuildContext context) async {
     if (!mounted) return;
     final result = await showAppSettingClearCacheDialog(context: context);
@@ -451,6 +461,7 @@ class _AppSettingView extends State<AppSettingView>
                 subtitle: Text(context
                     .read<AppLanguageViewModel>()
                     .getAppLanguageText(l10n)),
+                onTap: () => _onAppLanguageTilePressed(context),
               ),
             ),
           ),

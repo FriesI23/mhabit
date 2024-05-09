@@ -31,6 +31,7 @@ import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
 import '../persistent/profile_provider.dart';
 import '../provider/app_debugger.dart';
+import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
 import '../theme/color.dart';
@@ -69,8 +70,10 @@ class App extends StatelessWidget {
     return ProfileBuilder(
       handlers: _profileHandlers,
       builder: (context, child) => DBHelperBuilder(
-        builder: (context, child) => AppProviders(child: child),
-        child: const AppView(),
+        builder: (context, child) => DateChanger(
+          interval: const Duration(seconds: 10),
+          builder: (context) => const AppProviders(child: AppView()),
+        ),
       ),
     );
   }
@@ -112,17 +115,22 @@ class _AppView extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
-      selector: (context, viewmodel) =>
-          Tuple2(viewmodel.matertialThemeType, viewmodel.mainColor),
-      shouldRebuild: (previous, next) => previous != next,
-      builder: (context, appThemeArgs, child) {
-        final themeMode = appThemeArgs.item1;
-        final themeMainColor = appThemeArgs.item2;
-        return DynamicColorBuilder(
-          builder: (lightDynamic, darkDynamic) => DateChanger(
-            interval: const Duration(seconds: 10),
-            builder: (context) => MaterialApp(
+    const homePage = _AppPostInit(child: PageHabitsDisplay());
+
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) =>
+          Selector<AppLanguageViewModel, Locale?>(
+        selector: (context, vm) => vm.languange,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, language, child) =>
+            Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
+          selector: (context, viewmodel) =>
+              Tuple2(viewmodel.matertialThemeType, viewmodel.mainColor),
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, appThemeArgs, child) {
+            final themeMode = appThemeArgs.item1;
+            final themeMainColor = appThemeArgs.item2;
+            return MaterialApp(
               onGenerateTitle: (context) =>
                   L10n.of(context)?.appName ?? appName,
               scaffoldMessengerKey: snackbarKey,
@@ -131,6 +139,7 @@ class _AppView extends State<AppView> {
               darkTheme: _getDartThemeData(context,
                   dynamicColor: darkDynamic, mainColor: themeMainColor),
               themeMode: themeMode,
+              locale: language,
               home: child,
               localizationsDelegates: const [
                 L10n.delegate,
@@ -140,12 +149,11 @@ class _AppView extends State<AppView> {
               ],
               supportedLocales: appSupportedLocales,
               debugShowCheckedModeBanner: false,
-            ),
-          ),
-        );
-      },
-      child: const _AppPostInit(
-        child: PageHabitsDisplay(),
+            );
+          },
+          child: child,
+        ),
+        child: homePage,
       ),
     );
   }
