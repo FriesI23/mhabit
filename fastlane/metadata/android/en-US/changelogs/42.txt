@@ -1,0 +1,5 @@
+- Add In-App Language Switching
+- Add Debug log Collection feature.
+- Fixed: Notification icon wasn't shown on native Android platform.
+- Fixed: Localization for batched check-in's changed snackbar text.
+- Bump dependencies' versions.

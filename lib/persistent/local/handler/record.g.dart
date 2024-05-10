@@ -109,13 +109,13 @@ extension $RecordDBCellCopyWith on RecordDBCell {
 // **************************************************************************
 
 RecordDBCell _$RecordDBCellFromJson(Map<String, dynamic> json) => RecordDBCell(
-      id: json['id_'] as int?,
-      parentId: json['parent_id'] as int?,
-      recordDate: json['record_date'] as int?,
-      recordType: json['record_type'] as int?,
+      id: (json['id_'] as num?)?.toInt(),
+      parentId: (json['parent_id'] as num?)?.toInt(),
+      recordDate: (json['record_date'] as num?)?.toInt(),
+      recordType: (json['record_type'] as num?)?.toInt(),
       recordValue: json['record_value'] as num?,
-      createT: json['create_t'] as int?,
-      modifyT: json['modify_t'] as int?,
+      createT: (json['create_t'] as num?)?.toInt(),
+      modifyT: (json['modify_t'] as num?)?.toInt(),
       uuid: json['uuid'] as String?,
       parentUUID: json['parent_uuid'] as String?,
       reason: json['reason'] as String?,

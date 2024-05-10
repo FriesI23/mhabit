@@ -220,11 +220,11 @@ extension $HabitExportDataCopyWith on HabitExportData {
 
 RecordExportData _$RecordExportDataFromJson(Map<String, dynamic> json) =>
     RecordExportData(
-      recordDate: json['record_date'] as int?,
-      recordType: json['record_type'] as int?,
+      recordDate: (json['record_date'] as num?)?.toInt(),
+      recordType: (json['record_type'] as num?)?.toInt(),
       recordValue: json['record_value'] as num?,
-      createT: json['create_t'] as int?,
-      modifyT: json['modify_t'] as int?,
+      createT: (json['create_t'] as num?)?.toInt(),
+      modifyT: (json['modify_t'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) {
@@ -246,22 +246,22 @@ Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) {
 
 HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
     HabitExportData(
-      createT: json['create_t'] as int?,
-      modifyT: json['modify_t'] as int?,
-      type: json['type'] as int?,
-      status: json['status'] as int?,
+      createT: (json['create_t'] as num?)?.toInt(),
+      modifyT: (json['modify_t'] as num?)?.toInt(),
+      type: (json['type'] as num?)?.toInt(),
+      status: (json['status'] as num?)?.toInt(),
       name: json['name'] as String?,
       desc: json['desc'] as String?,
-      color: json['color'] as int?,
+      color: (json['color'] as num?)?.toInt(),
       dailyGoal: json['daily_goal'] as num?,
       dailyGoalUnit: json['daily_goal_unit'] as String?,
       dailyGoalExtra: json['daily_goal_extra'] as num?,
-      freqType: json['freq_type'] as int?,
+      freqType: (json['freq_type'] as num?)?.toInt(),
       freqCustom: json['freq_custom'] as String?,
       reminder: json['reminder'] as String?,
       reminderQuest: json['reminder_quest'] as String?,
-      startDate: json['start_date'] as int?,
-      targetDays: json['target_days'] as int?,
+      startDate: (json['start_date'] as num?)?.toInt(),
+      targetDays: (json['target_days'] as num?)?.toInt(),
       records: (json['records'] as List<dynamic>?)
               ?.map(RecordExportData.fromJson)
               .toList() ??

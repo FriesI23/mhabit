@@ -11,7 +11,7 @@ NotificationData<T> _$NotificationDataFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     NotificationData<T>(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       type: $enumDecode(_$NotificationDataTypeEnumMap, json['type']),
       title: json['title'] as String,
       body: json['body'] as String?,

@@ -8,7 +8,7 @@ part of 'contributor.dart';
 
 ContributorInfo _$ContributorInfoFromJson(Map<String, dynamic> json) =>
     ContributorInfo(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String,
       url: json['url'] as String?,
     );
