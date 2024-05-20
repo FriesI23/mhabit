@@ -8,8 +8,9 @@
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
 class $ConfigsGen {
   const $ConfigsGen();
@@ -27,6 +28,7 @@ class $ConfigsGen {
 class $DocsGen {
   const $DocsGen();
 
+  /// Directory path: docs/CHANGELOG
   $DocsCHANGELOGGen get changelog => const $DocsCHANGELOGGen();
 }
 
@@ -104,17 +106,25 @@ class $DocsCHANGELOGGen {
 class Assets {
   Assets._();
 
+  static const String changelog = 'CHANGELOG.md';
+  static const String license = 'LICENSE';
+  static const String licenseThirdparty = 'LICENSE_THIRDPARTY.md';
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogoGen logo = $AssetsLogoGen();
   static const $AssetsSqlGen sql = $AssetsSqlGen();
   static const $ConfigsGen configs = $ConfigsGen();
   static const $DocsGen docs = $DocsGen();
+
+  /// List of all assets
+  static List<String> get values => [changelog, license, licenseThirdparty];
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(this._assetName, {this.size = null});
 
   final String _assetName;
+
+  final Size? size;
 
   Image image({
     Key? key,
@@ -186,9 +196,20 @@ class AssetGenImage {
 }
 
 class SvgGenImage {
-  const SvgGenImage(this._assetName);
+  const SvgGenImage(
+    this._assetName, {
+    this.size = null,
+  }) : _isVecFormat = false;
+
+  const SvgGenImage.vec(
+    this._assetName, {
+    this.size = null,
+  }) : _isVecFormat = true;
 
   final String _assetName;
+
+  final Size? size;
+  final bool _isVecFormat;
 
   SvgPicture svg({
     Key? key,
@@ -203,19 +224,21 @@ class SvgGenImage {
     WidgetBuilder? placeholderBuilder,
     String? semanticsLabel,
     bool excludeFromSemantics = false,
-    SvgTheme theme = const SvgTheme(),
+    SvgTheme? theme,
     ColorFilter? colorFilter,
     Clip clipBehavior = Clip.hardEdge,
     @deprecated Color? color,
     @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
     @deprecated bool cacheColorFilter = false,
   }) {
-    return SvgPicture.asset(
-      _assetName,
+    return SvgPicture(
+      _isVecFormat
+          ? AssetBytesLoader(_assetName,
+              assetBundle: bundle, packageName: package)
+          : SvgAssetLoader(_assetName,
+              assetBundle: bundle, packageName: package),
       key: key,
       matchTextDirection: matchTextDirection,
-      bundle: bundle,
-      package: package,
       width: width,
       height: height,
       fit: fit,
@@ -225,9 +248,8 @@ class SvgGenImage {
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
       theme: theme,
-      colorFilter: colorFilter,
-      color: color,
-      colorBlendMode: colorBlendMode,
+      colorFilter: colorFilter ??
+          (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,
       cacheColorFilter: cacheColorFilter,
     );

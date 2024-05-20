@@ -378,10 +378,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_colorpicker
-      sha256: "458a6ed8ea480eb16ff892aedb4b7092b2804affd7e046591fb03127e8d8ef8b"
+      sha256: "969de5f6f9e2a570ac660fb7b501551451ea2a1ab9e2097e89475f60e07816ea"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3"
+    version: "1.1.0"
   flutter_donation_buttons:
     dependency: "direct main"
     description:
@@ -394,26 +394,26 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_gen
-      sha256: e46c44b2d612d660f913ebfa4423a5171513f4828c029a98aa847f4aecf624a4
+      sha256: a518a4a319511346ace92e550e14df35797f15d56ff1c79dc481c069d063259b
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.0"
+    version: "5.5.0+1"
   flutter_gen_core:
     dependency: transitive
     description:
       name: flutter_gen_core
-      sha256: "3a6c3dbc1c0e260088e9c7ed1ba905436844e8c01a44799f6281edada9e45308"
+      sha256: b9894396b2a790cc2d6eb3ed86e5e113aaed993765b21d4b981c9da4476e0f52
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.0"
+    version: "5.5.0+1"
   flutter_gen_runner:
     dependency: "direct dev"
     description:
       name: flutter_gen_runner
-      sha256: "24889d5140b03997f7148066a9c5fab8b606dff36093434c782d7a7fb22c6fb6"
+      sha256: b4c4c54e4dd89022f5e405fe96f16781be2dfbeabe8a70ccdf73b7af1302c655
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.0"
+    version: "5.5.0+1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -533,6 +533,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.3"
+  hashcodes:
+    dependency: transitive
+    description:
+      name: hashcodes
+      sha256: "80f9410a5b3c8e110c4b7604546034749259f5d6dcca63e0d3c17c9258f1a651"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   html:
     dependency: transitive
     description:
@@ -582,6 +590,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.7"
+  image_size_getter:
+    dependency: transitive
+    description:
+      name: image_size_getter
+      sha256: f98c4246144e9b968899d2dfde69091e22a539bb64bc9b0bea51505fbb490e57
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.3"
   intl:
     dependency: "direct main"
     description:
@@ -642,10 +658,10 @@ packages:
     dependency: "direct main"
     description:
       name: logger
-      sha256: "8c94b8c219e7e50194efc8771cd0e9f10807d8d3e219af473d89b06cc2ee4e04"
+      sha256: af05cc8714f356fd1f3888fb6741cbe9fbe25cdb6eedbab80e1a6db21047d4a4
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.0"
   logging:
     dependency: transitive
     description:
@@ -762,10 +778,10 @@ packages:
     dependency: "direct dev"
     description:
       name: package_rename
-      sha256: ea5d3da076a6fcb82c1fcbb7ea9d01f278e2a26f145b753362ec9c093e1e5e59
+      sha256: "5066d021830f7a984f66a3d6912b0b95efb1d91f14322ba26ceacce2a62fd312"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.3"
+    version: "1.6.0"
   path:
     dependency: "direct main"
     description:
@@ -1271,10 +1287,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_macos
-      sha256: b7244901ea3cf489c5335bdacda07264a6e960b1c1b1a9f91e4bc371d9e68234
+      sha256: "9a1a42d5d2d95400c795b2914c36fdcb525870c752569438e4ebb09a2b5d90de"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.2.0"
   url_launcher_platform_interface:
     dependency: transitive
     description:
@@ -1383,10 +1399,10 @@ packages:
     dependency: "direct main"
     description:
       name: win2iana_tz_converter
-      sha256: db9e1101b69feefe19c678fcf21e24775201032aeac363b990b5310c94a6097f
+      sha256: "909d845145c5e7303ed36437094ba07524661bcb2c6a76c5d428c302bab338fb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.3"
   win32:
     dependency: transitive
     description:
