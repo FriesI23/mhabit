@@ -336,7 +336,7 @@
   "@habitDetail_changeGoal_cancelText": {},
   "habitDetail_changeGoal_saveText": "lưu",
   "@habitDetail_changeGoal_saveText": {},
-  "habitDetail_skipReason_title": "Bỏ qua lý do",
+  "habitDetail_skipReason_title": "Lý do bỏ qua",
   "@habitDetail_skipReason_title": {},
   "habitDetail_skipReason_bodyHelpText": "Viết gì đó vào đây...",
   "@habitDetail_skipReason_bodyHelpText": {},
@@ -625,5 +625,84 @@
   "batchCheckin_close_confirmDialog_confirmButton_text": "Thoát",
   "@batchCheckin_close_confirmDialog_confirmButton_text": {},
   "batchCheckin_close_confirmDialog_cancelButton_text": "Hủy",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {}
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "appSetting_changeLanguage_followSystem_text": "Theo hệ thống ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "debug_logLevelTile_title": "Cấp độ ghi nhật ký",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevel_warn": "Cảnh báo",
+  "@debug_logLevel_warn": {},
+  "appSetting_changeLanguage_followSystem_noLocale_text": "Theo hệ thống",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "Ngôn ngữ",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "Chọn ngôn ngữ",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_debugger_titleText": "Thông tin gỡ lỗi",
+  "@appSetting_debugger_titleText": {},
+  "debug_logLevelDialog_title": "Thay đổi cấp độ ghi nhật ký",
+  "@debug_logLevelDialog_title": {},
+  "debug_logLevel_debug": "Gỡ lỗi",
+  "@debug_logLevel_debug": {},
+  "debug_logLevel_info": "Thông tin",
+  "@debug_logLevel_info": {},
+  "debug_logLevel_error": "Lỗi",
+  "@debug_logLevel_error": {},
+  "debug_collectLogTile_title": "Thu thập nhật ký",
+  "@debug_collectLogTile_title": {},
+  "debug_collectLogTile_enable_subtitle": "Nhấn để dừng thu thập nhật ký.",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "debug_collectLogTile_disable_subtitle": "Nhấn để bắt đầu thu thập nhật ký.",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_downladDebugLogs_subject": "Đang tải xuống nhật ký gỡ lỗi",
+  "@debug_downladDebugLogs_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "Đã dọn nhật ký gỡ lỗi.",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_downladDebugInfo_subject": "Đang tải xuống thông tin gỡ lỗi",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_downladDebugZip_subject": "Đang tải xuống {fileName}",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_missingDebugLogFile_snackbar": "Nhật ký gỡ lỗi không tồn tại.",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "debug_debuggerLogCard_title": "Thông tin nhật ký",
+  "@debug_debuggerLogCard_title": {},
+  "debug_debuggerLogCard_subtitle": "Bao gồm thông tin nhật ký gỡ lỗi cục bộ, cần bật trình chuyển đổi bộ sưu tập nhật ký.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerLogCard_saveButton_text": "Tải xuống",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "debug_debuggerLogCard_clearButton_text": "Dọn",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "Thông tin gỡ lỗi",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_subtitle": "Bao gồm thông tin gỡ lỗi của ứng dụng.",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "debug_debuggerInfoCard_openButton_text": "Mở",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_debuggerInfoCard_saveButton_text": "Lưu",
+  "@debug_debuggerInfoCard_saveButton_text": {},
+  "debug_debuggerInfo_notificationTitle": "Đang thu thập thông tin của ứng dụng...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "batchCheckin_completed_snackbar_text": "Đã sửa đổi {count, plural, =1{habit's status} other{status of {count} habits}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  }
 }
