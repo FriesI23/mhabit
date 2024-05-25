@@ -543,35 +543,6 @@
   ],
 
   "vi": [
-    "appSetting_changeLanguage_followSystem_text",
-    "appSetting_changeLanguage_followSystem_noLocale_text",
-    "appSetting_changeLanguageTile_titleText",
-    "appSetting_changeLanguageDialog_titleText",
-    "appSetting_debugger_titleText",
-    "batchCheckin_completed_snackbar_text",
-    "debug_logLevelTile_title",
-    "debug_logLevelDialog_title",
-    "debug_logLevel_debug",
-    "debug_logLevel_info",
-    "debug_logLevel_warn",
-    "debug_logLevel_error",
-    "debug_logLevel_fatal",
-    "debug_collectLogTile_title",
-    "debug_collectLogTile_enable_subtitle",
-    "debug_collectLogTile_disable_subtitle",
-    "debug_downladDebugLogs_subject",
-    "dbeug_clearDebugLogs_complete_snackbar",
-    "debug_downladDebugInfo_subject",
-    "debug_downladDebugZip_subject",
-    "debug_missingDebugLogFile_snackbar",
-    "debug_debuggerLogCard_title",
-    "debug_debuggerLogCard_subtitle",
-    "debug_debuggerLogCard_saveButton_text",
-    "debug_debuggerLogCard_clearButton_text",
-    "debug_debuggerInfoCard_title",
-    "debug_debuggerInfoCard_subtitle",
-    "debug_debuggerInfoCard_openButton_text",
-    "debug_debuggerInfoCard_saveButton_text",
-    "debug_debuggerInfo_notificationTitle"
+    "debug_logLevel_fatal"
   ]
 }
