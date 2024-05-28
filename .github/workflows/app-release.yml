@@ -14,18 +14,23 @@ jobs:
     uses: ./.github/workflows/_analyze.yml
 
   testing:
-    permissions:
-      checks: write
-      pull-requests: write
     uses: ./.github/workflows/_test.yml
-    with:
-      with-repoter: false
+
+  testing-report:
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+    needs:
+      - testing
+    uses: ./.github/workflows/_test_report.yml
 
   pre-build:
     name: Pre Building
     needs:
       - analyzing
       - testing
+      - testing-report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

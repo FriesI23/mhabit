@@ -77,6 +77,7 @@ abstract interface class NotificationService implements AsyncInitialization {
   factory NotificationService() {
     if (_instance != null) return _instance!;
     if (Platform.isWindows) return _instance = const FakeNotificationService();
+    if (Platform.isLinux) return _instance = const LinuxNotificationService();
     return _instance = const NotificationServiceImpl();
   }
 }
@@ -131,11 +132,16 @@ final class NotificationServiceImpl implements NotificationService {
       ],
     );
 
+    // linux setting
+    const linuxSettings =
+        LinuxInitializationSettings(defaultActionName: "Open notification");
+
     // combine settings
     final initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
+      linux: linuxSettings,
     );
 
     await plugin.initialize(
@@ -353,6 +359,36 @@ final class NotificationServiceImpl implements NotificationService {
     await Future.wait(futureList);
     return true;
   }
+}
+
+final class LinuxNotificationService extends NotificationServiceImpl {
+  const LinuxNotificationService();
+
+  //TODO: Lame implementation; plugin doesn't support scheduling on Linux,
+  //      need to find some solutions.
+  @override
+  Future<bool> regrAppReminderInDaily(
+          {required String title,
+          required String subtitle,
+          required TimeOfDay timeOfDay,
+          required NotificationDetails details,
+          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
+      Future.value(false);
+
+  //TODO: Lame implementation; plugin doesn't support scheduling on Linux,
+  //      need to find some solutions.
+  @override
+  Future<bool> regrHabitReminder<T>(
+          {required DBID id,
+          required HabitUUID uuid,
+          required String name,
+          String? quest,
+          required HabitReminder reminder,
+          required HabitDate? lastUntrackDate,
+          required NotificationDetails details,
+          DateTime? crtDate,
+          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
+      Future.value(false);
 }
 
 final class FakeNotificationService implements NotificationService {

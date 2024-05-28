@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - github-action-dev
   pull_request:
     branches:
       - main
@@ -14,7 +15,6 @@ jobs:
     uses: ./.github/workflows/_analyze.yml
 
   testing:
-    permissions:
-      checks: write
-      pull-requests: write
     uses: ./.github/workflows/_test.yml
+    with:
+      with-artifact: true
