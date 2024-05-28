@@ -1,0 +1,21 @@
+# see: https://github.com/dorny/test-reporter#recommended-setup-for-public-repositories
+name: "Test CI Report"
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dorny/test-reporter@v1
+        with:
+          artifact: flutter-unitTest-output
+          name: "flutter test"
+          path: "test_report.log"
+          reporter: "flutter-json"

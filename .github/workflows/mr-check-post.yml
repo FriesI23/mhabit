@@ -1,0 +1,17 @@
+name: Post Merge request checking
+
+on:
+  workflow_run:
+    workflows:
+      - Merge request checking
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    uses: ./.github/workflows/_test_report.yml
