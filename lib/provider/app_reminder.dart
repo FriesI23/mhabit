@@ -83,7 +83,7 @@ class AppReminderViewModel extends ChangeNotifier
   Future<bool> processAppReminder(L10n? l10n) async {
     final reminder = this.reminder;
     if (reminder.enabled && l10n != null) {
-      if (await NotificationService().requestPermissions() != true) {
+      if (await NotificationService().requestPermissions() == false) {
         return false;
       }
       switch (reminder.type) {

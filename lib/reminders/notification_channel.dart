@@ -172,33 +172,76 @@ class NotificationIosChannelData
           interruptionLevel: InterruptionLevel.passive);
 }
 
+class NotificationLinuxChannelData
+    implements NotificationChannelDataABC<LinuxNotificationDetails> {
+  final LinuxNotificationDetails? _debug;
+  final LinuxNotificationDetails? _habitReminder;
+  final LinuxNotificationDetails? _appReminder;
+  final LinuxNotificationDetails? _appDebugger;
+
+  const NotificationLinuxChannelData({
+    LinuxNotificationDetails? debug,
+    LinuxNotificationDetails? habitReminder,
+    LinuxNotificationDetails? appReminder,
+    LinuxNotificationDetails? appDebugger,
+  })  : _debug = debug,
+        _habitReminder = habitReminder,
+        _appReminder = appReminder,
+        _appDebugger = appDebugger;
+
+  @override
+  LinuxNotificationDetails get debug =>
+      _debug ?? const LinuxNotificationDetails();
+
+  @override
+  LinuxNotificationDetails get habitReminder =>
+      _habitReminder ?? const LinuxNotificationDetails();
+
+  @override
+  LinuxNotificationDetails get appReminder =>
+      _appReminder ?? const LinuxNotificationDetails();
+
+  @override
+  LinuxNotificationDetails get appDebugger =>
+      _appDebugger ?? const LinuxNotificationDetails();
+}
+
 class NotificationChannelData extends ChangeNotifier
     implements NotificationChannelDataABC<NotificationDetails> {
   final NotificationAndroidChannelData _androidChannel;
   final NotificationIosChannelData _iosChannel;
+  final NotificationLinuxChannelData _linuxChannel;
 
   NotificationChannelData({
     NotificationAndroidChannelData? androidChannel,
     NotificationIosChannelData? iosChannel,
+    NotificationLinuxChannelData? linuxChannel,
   })  : _androidChannel =
             androidChannel ?? const NotificationAndroidChannelData(),
-        _iosChannel = iosChannel ?? const NotificationIosChannelData();
+        _iosChannel = iosChannel ?? const NotificationIosChannelData(),
+        _linuxChannel = linuxChannel ?? const NotificationLinuxChannelData();
 
   @override
   NotificationDetails get debug => NotificationDetails(
         android: _androidChannel.debug,
         iOS: _iosChannel.debug,
+        linux: _linuxChannel.debug,
         macOS: _iosChannel.debug,
       );
 
   @override
   NotificationDetails get habitReminder => NotificationDetails(
-      android: _androidChannel.habitReminder, iOS: _iosChannel.habitReminder);
+        android: _androidChannel.habitReminder,
+        iOS: _iosChannel.habitReminder,
+        linux: _linuxChannel.habitReminder,
+        macOS: _iosChannel.debug,
+      );
 
   @override
   NotificationDetails get appReminder => NotificationDetails(
         android: _androidChannel.appReminder,
         iOS: _iosChannel.appReminder,
+        linux: _linuxChannel.appReminder,
         macOS: _iosChannel.appReminder,
       );
 
@@ -206,6 +249,7 @@ class NotificationChannelData extends ChangeNotifier
   NotificationDetails get appDebugger => NotificationDetails(
         android: _androidChannel.appDebugger,
         iOS: _iosChannel.appDebugger,
+        linux: _linuxChannel.appReminder,
         macOS: _iosChannel.appDebugger,
       );
 }
