@@ -2,11 +2,6 @@ name: Test CI
 
 on:
   workflow_call:
-    inputs:
-      with-repoter:
-        required: false
-        type: boolean
-        default: true
 
 permissions:
   checks: write
@@ -19,11 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
-      - run: flutter test --machine > test_report.log
-      - name: Report
-        uses: dorny/test-reporter@v1
-        if: ${{ inputs.with-repoter }}
+      - run: |
+          set -o pipefail
+          flutter test --machine | tee test_report.log
+          set +o pipefail
+      - uses: actions/upload-artifact@v4
+        if: success() || failure()
         with:
-          name: "flutter test"
-          path: "test_report.log"
-          reporter: "flutter-json"
+          name: flutter-unitTest-output
+          path: test_report.log
