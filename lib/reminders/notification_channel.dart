@@ -177,14 +177,17 @@ class NotificationLinuxChannelData
   final LinuxNotificationDetails? _debug;
   final LinuxNotificationDetails? _habitReminder;
   final LinuxNotificationDetails? _appReminder;
+  final LinuxNotificationDetails? _appDebugger;
 
   const NotificationLinuxChannelData({
     LinuxNotificationDetails? debug,
     LinuxNotificationDetails? habitReminder,
     LinuxNotificationDetails? appReminder,
+    LinuxNotificationDetails? appDebugger,
   })  : _debug = debug,
         _habitReminder = habitReminder,
-        _appReminder = appReminder;
+        _appReminder = appReminder,
+        _appDebugger = appDebugger;
 
   @override
   LinuxNotificationDetails get debug =>
@@ -197,6 +200,10 @@ class NotificationLinuxChannelData
   @override
   LinuxNotificationDetails get appReminder =>
       _appReminder ?? const LinuxNotificationDetails();
+
+  @override
+  LinuxNotificationDetails get appDebugger =>
+      _appDebugger ?? const LinuxNotificationDetails();
 }
 
 class NotificationChannelData extends ChangeNotifier
