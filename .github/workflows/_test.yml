@@ -2,6 +2,11 @@ name: Test CI
 
 on:
   workflow_call:
+    inputs:
+      with-artifact:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   unittest:
