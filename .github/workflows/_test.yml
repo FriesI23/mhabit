@@ -3,10 +3,6 @@ name: Test CI
 on:
   workflow_call:
 
-permissions:
-  checks: write
-  pull-requests: write
-
 jobs:
   unittest:
     name: Unit Test

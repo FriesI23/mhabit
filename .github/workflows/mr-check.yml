@@ -14,7 +14,4 @@ jobs:
     uses: ./.github/workflows/_analyze.yml
 
   testing:
-    permissions:
-      checks: write
-      pull-requests: write
     uses: ./.github/workflows/_test.yml
