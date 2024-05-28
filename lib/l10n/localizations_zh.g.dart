@@ -653,6 +653,20 @@ class L10nZh extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => '（默认值）';
 
   @override
+  String appSetting_changeLanguage_followSystem_text(String localeName) {
+    return '跟随系统（$localeName）';
+  }
+
+  @override
+  String get appSetting_changeLanguage_followSystem_noLocale_text => '跟随系统';
+
+  @override
+  String get appSetting_changeLanguageTile_titleText => '多语言';
+
+  @override
+  String get appSetting_changeLanguageDialog_titleText => '选择语言';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return '日期显示格式 ($formatTemplate)';
   }
@@ -776,6 +790,9 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_clearCache_snackBar_failText => '缓存清理失败';
+
+  @override
+  String get appSetting_debugger_titleText => '调试信息';
 
   @override
   String get appSetting_about_titleText => '关于';
@@ -1056,6 +1073,80 @@ class L10nZh extends L10n {
 
   @override
   String get exportConfirmDialog_confirm_buttonText => '导出';
+
+  @override
+  String get debug_logLevelTile_title => '日志级别';
+
+  @override
+  String get debug_logLevelDialog_title => '更改日志级别';
+
+  @override
+  String get debug_logLevel_debug => '调试';
+
+  @override
+  String get debug_logLevel_info => '信息';
+
+  @override
+  String get debug_logLevel_warn => '警告';
+
+  @override
+  String get debug_logLevel_error => '错误';
+
+  @override
+  String get debug_logLevel_fatal => '致命';
+
+  @override
+  String get debug_collectLogTile_title => '正在收集日志';
+
+  @override
+  String get debug_collectLogTile_enable_subtitle => '单击停止日志收集。';
+
+  @override
+  String get debug_collectLogTile_disable_subtitle => '单击开始日志收集。';
+
+  @override
+  String get debug_downladDebugLogs_subject => '下载调试日志';
+
+  @override
+  String get dbeug_clearDebugLogs_complete_snackbar => '已清除调试日志。';
+
+  @override
+  String get debug_downladDebugInfo_subject => '下载调试信息';
+
+  @override
+  String debug_downladDebugZip_subject(String fileName) {
+    return '下载 $fileName';
+  }
+
+  @override
+  String get debug_missingDebugLogFile_snackbar => '调试日志不存在。';
+
+  @override
+  String get debug_debuggerLogCard_title => '日志信息';
+
+  @override
+  String get debug_debuggerLogCard_subtitle => '包括本地调试日志信息，需要打开日志收集开关。';
+
+  @override
+  String get debug_debuggerLogCard_saveButton_text => '下载';
+
+  @override
+  String get debug_debuggerLogCard_clearButton_text => '清除';
+
+  @override
+  String get debug_debuggerInfoCard_title => '调试信息';
+
+  @override
+  String get debug_debuggerInfoCard_subtitle => '包括应用程序的调试信息。';
+
+  @override
+  String get debug_debuggerInfoCard_openButton_text => '打开';
+
+  @override
+  String get debug_debuggerInfoCard_saveButton_text => '保存';
+
+  @override
+  String get debug_debuggerInfo_notificationTitle => '正在收集应用信息……';
 
   @override
   String get snackbar_undoText => '撤回';

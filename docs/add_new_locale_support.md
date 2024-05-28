@@ -5,16 +5,14 @@
 1. Add `<localeName>.arb` file in `assets/l10n`.
 2. Translate all fields in `en.arb` file.
 3. run `flutter gen-l10n` in library root path.
-4. Add new locale to `MaterialApp` in `lib/view/app.dart`
+4. Add new locale to `appSupportedLocales` in `lib/common/consts.dart`
 
 ```dart
- MaterialApp(
-  supportedLocales: const [
-    Locale.fromSubtags(languageCode: 'en'),
-    Locale.fromSubtags(languageCode: 'zh'),
-    // Add new locale here
-  ],
-),
+const appSupportedLocales = [
+  Locale.fromSubtags(languageCode: 'en'),
+  Locale.fromSubtags(languageCode: 'zh'),
+  // Add new locale here
+];
 ```
 
 ## Android

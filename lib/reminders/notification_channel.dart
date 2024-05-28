@@ -34,6 +34,11 @@ enum NotificationChannelId {
     id: 3,
     channelName: "Prompt",
     category: "app_reminder",
+  ),
+  appDebugger(
+    id: 4,
+    channelName: "Debugger",
+    category: "app_debugger",
   );
 
   final int id;
@@ -55,6 +60,7 @@ abstract class NotificationChannelDataABC<T> {
   T get debug;
   T get habitReminder;
   T get appReminder;
+  T get appDebugger;
 }
 
 class NotificationAndroidChannelData
@@ -62,14 +68,17 @@ class NotificationAndroidChannelData
   final AndroidNotificationDetails? _debug;
   final AndroidNotificationDetails? _habitReminder;
   final AndroidNotificationDetails? _appReminder;
+  final AndroidNotificationDetails? _appDebugger;
 
   const NotificationAndroidChannelData({
     AndroidNotificationDetails? debug,
     AndroidNotificationDetails? habitReminder,
     AndroidNotificationDetails? appReminder,
+    AndroidNotificationDetails? appDebugger,
   })  : _debug = debug,
         _habitReminder = habitReminder,
-        _appReminder = appReminder;
+        _appReminder = appReminder,
+        _appDebugger = appDebugger;
 
   @override
   AndroidNotificationDetails get debug =>
@@ -100,6 +109,22 @@ class NotificationAndroidChannelData
         importance: Importance.high,
         priority: Priority.high,
       );
+
+  @override
+  AndroidNotificationDetails get appDebugger =>
+      _appDebugger ??
+      AndroidNotificationDetails(
+        _getChannelId(NotificationChannelId.appDebugger.name),
+        NotificationChannelId.appDebugger.channelName,
+        importance: Importance.max,
+        priority: Priority.max,
+        playSound: false,
+        autoCancel: false,
+        showWhen: false,
+        silent: true,
+        color: Colors.red,
+        colorized: true,
+      );
 }
 
 class NotificationIosChannelData
@@ -107,14 +132,17 @@ class NotificationIosChannelData
   final DarwinNotificationDetails? _debug;
   final DarwinNotificationDetails? _habitReminder;
   final DarwinNotificationDetails? _appReminder;
+  final DarwinNotificationDetails? _appDebugger;
 
   const NotificationIosChannelData({
     DarwinNotificationDetails? debug,
     DarwinNotificationDetails? habitReminder,
     DarwinNotificationDetails? appReminder,
+    DarwinNotificationDetails? appDebugger,
   })  : _debug = debug,
         _habitReminder = habitReminder,
-        _appReminder = appReminder;
+        _appReminder = appReminder,
+        _appDebugger = appDebugger;
 
   @override
   DarwinNotificationDetails get appReminder =>
@@ -134,6 +162,14 @@ class NotificationIosChannelData
       _habitReminder ??
       DarwinNotificationDetails(
           categoryIdentifier: NotificationChannelId.habitReminder.category);
+
+  @override
+  DarwinNotificationDetails get appDebugger =>
+      _appDebugger ??
+      DarwinNotificationDetails(
+          presentSound: false,
+          categoryIdentifier: NotificationChannelId.appDebugger.category,
+          interruptionLevel: InterruptionLevel.passive);
 }
 
 class NotificationLinuxChannelData
@@ -183,6 +219,7 @@ class NotificationChannelData extends ChangeNotifier
         android: _androidChannel.debug,
         iOS: _iosChannel.debug,
         linux: _linuxChannel.debug,
+        macOS: _iosChannel.debug,
       );
 
   @override
@@ -190,6 +227,7 @@ class NotificationChannelData extends ChangeNotifier
         android: _androidChannel.habitReminder,
         iOS: _iosChannel.habitReminder,
         linux: _linuxChannel.habitReminder,
+        macOS: _iosChannel.debug,
       );
 
   @override
@@ -197,5 +235,14 @@ class NotificationChannelData extends ChangeNotifier
         android: _androidChannel.appReminder,
         iOS: _iosChannel.appReminder,
         linux: _linuxChannel.appReminder,
+        macOS: _iosChannel.appReminder,
+      );
+
+  @override
+  NotificationDetails get appDebugger => NotificationDetails(
+        android: _androidChannel.appDebugger,
+        iOS: _iosChannel.appDebugger,
+        linux: _linuxChannel.appReminder,
+        macOS: _iosChannel.appDebugger,
       );
 }

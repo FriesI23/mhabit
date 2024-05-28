@@ -20,7 +20,6 @@ import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
-import '../reminders/notification_channel.dart';
 import '../reminders/notification_service.dart';
 import 'commons.dart';
 
@@ -34,13 +33,6 @@ class AppReminderViewModel extends ChangeNotifier
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _rmd = newProfile.getHandler<AppReminderProfileHandler>();
-  }
-
-  @override
-  void setNotificationChannelData(NotificationChannelData newData,
-      {L10n? l10n}) {
-    super.setNotificationChannelData(newData);
-    _handleChangeReminder(l10n);
   }
 
   AppReminderConfig get reminder => _rmd?.get() ?? defaultAppReminder;

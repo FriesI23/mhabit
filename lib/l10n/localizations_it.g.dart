@@ -658,6 +658,20 @@ class L10nIt extends L10n {
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (Predefinito)';
 
   @override
+  String appSetting_changeLanguage_followSystem_text(String localeName) {
+    return 'Follow System ($localeName)';
+  }
+
+  @override
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+
+  @override
+  String get appSetting_changeLanguageTile_titleText => 'Language';
+
+  @override
+  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+
+  @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
     return 'Formato visualizzazione data ($formatTemplate)';
   }
@@ -781,6 +795,9 @@ class L10nIt extends L10n {
 
   @override
   String get appSetting_clearCache_snackBar_failText => 'Eliminazione Cache fallita';
+
+  @override
+  String get appSetting_debugger_titleText => 'Debug Info';
 
   @override
   String get appSetting_about_titleText => 'Riguardo a';
@@ -1074,6 +1091,80 @@ class L10nIt extends L10n {
 
   @override
   String get exportConfirmDialog_confirm_buttonText => 'esporta';
+
+  @override
+  String get debug_logLevelTile_title => 'Logging Level';
+
+  @override
+  String get debug_logLevelDialog_title => 'Change Logging Level';
+
+  @override
+  String get debug_logLevel_debug => 'Debug';
+
+  @override
+  String get debug_logLevel_info => 'Info';
+
+  @override
+  String get debug_logLevel_warn => 'Warning';
+
+  @override
+  String get debug_logLevel_error => 'Error';
+
+  @override
+  String get debug_logLevel_fatal => 'Fatal';
+
+  @override
+  String get debug_collectLogTile_title => 'Collecting Logs';
+
+  @override
+  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+
+  @override
+  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+
+  @override
+  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+
+  @override
+  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+
+  @override
+  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+
+  @override
+  String debug_downladDebugZip_subject(String fileName) {
+    return 'Downloading $fileName';
+  }
+
+  @override
+  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+
+  @override
+  String get debug_debuggerLogCard_title => 'Logging Information';
+
+  @override
+  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+
+  @override
+  String get debug_debuggerLogCard_saveButton_text => 'Download';
+
+  @override
+  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+
+  @override
+  String get debug_debuggerInfoCard_title => 'Debugging Information';
+
+  @override
+  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+
+  @override
+  String get debug_debuggerInfoCard_openButton_text => 'Open';
+
+  @override
+  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+
+  @override
+  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
 
   @override
   String get snackbar_undoText => 'ANNULLA';

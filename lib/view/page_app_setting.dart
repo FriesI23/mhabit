@@ -32,7 +32,6 @@ import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../logging/level.dart';
 import '../logging/logger_stack.dart';
 import '../model/app_reminder_config.dart';
 import '../model/custom_date_format.dart';
@@ -43,6 +42,7 @@ import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
+import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_op_config.dart';
@@ -57,6 +57,7 @@ import 'common/_widget.dart';
 import 'for_app_setting/_dialog.dart';
 import 'for_app_setting/_widget.dart';
 import 'page_app_about.dart' as app_about_view;
+import 'page_app_debugger.dart' as app_debugger;
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
@@ -84,6 +85,7 @@ Future<void> naviToAppSettingPage({
 ///   - [AppDeveloperViewModel]
 ///   - [AppReminderViewModel]
 ///   - [AppThemeViewModel]
+///   - [AppLanguageViewModel]
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImporterViewModel]
@@ -139,6 +141,16 @@ class _AppSettingView extends State<AppSettingView>
     if (!mounted || result == null) return;
     final firtdayvm = context.read<AppFirstDayViewModel>();
     firtdayvm.setNewFirstDay(result);
+  }
+
+  void _onAppLanguageTilePressed(BuildContext context) async {
+    if (!mounted) return;
+    final currentLocale = context.read<AppLanguageViewModel>().languange;
+    final result = await showAppLanguageChangerDialog(
+        context: context, selectedLocale: currentLocale);
+
+    if (!mounted || result == null) return;
+    context.read<AppLanguageViewModel>().switchLanguage(result.choosenLanguage);
   }
 
   void _openClearAppCacheDialog(BuildContext context) async {
@@ -319,11 +331,6 @@ class _AppSettingView extends State<AppSettingView>
     context.read<AppDeveloperViewModel>().switchDevelopMode(value);
   }
 
-  void _onLogLevelChanged(LogLevel newLevel) async {
-    if (!mounted) return;
-    context.read<AppDeveloperViewModel>().loggingLevel = newLevel;
-  }
-
   void _onDisplayDebugMenuSelectChanged(bool value) {
     if (!mounted) return;
     context.read<AppDeveloperViewModel>().switchDisplayDebugMenu(value);
@@ -441,6 +448,21 @@ class _AppSettingView extends State<AppSettingView>
                     : null,
                 onChanged: _onCompactTileChanged,
                 value: flag,
+              ),
+            ),
+          ),
+          Selector<AppLanguageViewModel, Locale?>(
+            selector: (context, vm) => vm.languange,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => L10nBuilder(
+              builder: (context, l10n) => ListTile(
+                title: l10n != null
+                    ? Text(l10n.appSetting_changeLanguageTile_titleText)
+                    : const Text("Language"),
+                subtitle: Text(context
+                    .read<AppLanguageViewModel>()
+                    .getAppLanguageText(l10n)),
+                onTap: () => _onAppLanguageTilePressed(context),
               ),
             ),
           ),
@@ -621,6 +643,14 @@ class _AppSettingView extends State<AppSettingView>
           ListTile(
             title: L10nBuilder(
               builder: (context, l10n) => l10n != null
+                  ? Text(l10n.appSetting_debugger_titleText)
+                  : const Text("Debugger"),
+            ),
+            onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
+          ),
+          ListTile(
+            title: L10nBuilder(
+              builder: (context, l10n) => l10n != null
                   ? Text(l10n.appSetting_about_titleText)
                   : const Text("About"),
             ),
@@ -629,15 +659,13 @@ class _AppSettingView extends State<AppSettingView>
         ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
-        Selector<AppDeveloperViewModel, Tuple3<bool, bool, LogLevel>>(
+        Selector<AppDeveloperViewModel, Tuple2<bool, bool>>(
           selector: (context, vm) =>
-              Tuple3(vm.isInDevelopMode, vm.displayDebugMenu, vm.loggingLevel),
+              Tuple2(vm.isInDevelopMode, vm.displayDebugMenu),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AppSettingDevelopSubGroup(
             isInDevelopMode: value.item1,
             isDisplayDebugMenuSelect: value.item2,
-            logLevel: value.item3,
-            onLogLevelChanged: _onLogLevelChanged,
             onDisplayDebugMenuSelectChanged: _onDisplayDebugMenuSelectChanged,
             onExportDBTilePressed: _onExportDBTilePressed,
             onClearDBTilePressed: _onClearDBTilePressed,

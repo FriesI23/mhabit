@@ -36,4 +36,7 @@ final class InputFillCacheProfileHandler
 
   @override
   Future<bool> set(JsonMap value) => _pref.setString(key, jsonEncode(value));
+
+  @override
+  Future<bool> remove() => _pref.remove(key);
 }

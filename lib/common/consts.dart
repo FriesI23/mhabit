@@ -13,6 +13,7 @@
 // limitations under the License.
 // coverage:ignore-file
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../model/app_reminder_config.dart';
@@ -24,6 +25,9 @@ import 'enums.dart';
 const String appName = "mhabit";
 const String appDBName = "mhabit.db";
 const String aboutInfoFilePath = "configs/about_info.json";
+const String debuggerLogFileName = "app_debug.log";
+const String debuggerInfoFileName = "debug.txt";
+const String debuggerZipFile = "debug.zip";
 
 /// # Sqlite versions
 ///
@@ -43,6 +47,24 @@ const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
 const int kHabitLargeScreenAdaptWidth = 600;
+//#endregion
+
+//#region l10n
+const appSupportedLocales = [
+  // Fixed #133
+  // en must be the first item in the list (default language)
+  Locale.fromSubtags(languageCode: 'en'),
+  Locale.fromSubtags(languageCode: 'ar'),
+  Locale.fromSubtags(languageCode: 'de'),
+  Locale.fromSubtags(languageCode: 'fa'),
+  Locale.fromSubtags(languageCode: 'fr'),
+  Locale.fromSubtags(languageCode: 'it'),
+  // TODO: remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
+  Locale.fromSubtags(languageCode: 'ru'),
+  Locale.fromSubtags(languageCode: 'vi'),
+  Locale.fromSubtags(languageCode: 'zh'),
+];
 //#endregion
 
 //#region app-setting

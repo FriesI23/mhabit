@@ -69,7 +69,9 @@ extension $HabitReminderCopyWith on HabitReminder {
 HabitReminder _$HabitReminderFromJson(Map<String, dynamic> json) =>
     HabitReminder(
       type: $enumDecode(_$HabitReminderTypeEnumMap, json['type']),
-      extra: (json['extra'] as List<dynamic>).map((e) => e as int).toList(),
+      extra: (json['extra'] as List<dynamic>)
+          .map((e) => (e as num).toInt())
+          .toList(),
       time: const TimeOfDayConverter()
           .fromJson(json['time'] as Map<String, dynamic>),
     );

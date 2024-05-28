@@ -11,7 +11,7 @@ NotificationData<T> _$NotificationDataFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     NotificationData<T>(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       type: $enumDecode(_$NotificationDataTypeEnumMap, json['type']),
       title: json['title'] as String,
       body: json['body'] as String?,
@@ -40,12 +40,14 @@ const _$NotificationDataTypeEnumMap = {
   NotificationDataType.debug: 1,
   NotificationDataType.habitReminder: 2,
   NotificationDataType.appReminder: 3,
+  NotificationDataType.appDebugger: 4,
 };
 
 const _$NotificationChannelIdEnumMap = {
   NotificationChannelId.debug: 1,
   NotificationChannelId.habitReminder: 2,
   NotificationChannelId.appReminder: 3,
+  NotificationChannelId.appDebugger: 4,
 };
 
 T? _$nullableGenericFromJson<T>(

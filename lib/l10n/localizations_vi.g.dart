@@ -610,7 +610,7 @@ class L10nVi extends L10n {
   String get habitDetail_changeGoal_saveText => 'lưu';
 
   @override
-  String get habitDetail_skipReason_title => 'Bỏ qua lý do';
+  String get habitDetail_skipReason_title => 'Lý do bỏ qua';
 
   @override
   String get habitDetail_skipReason_bodyHelpText => 'Viết gì đó vào đây...';
@@ -656,6 +656,20 @@ class L10nVi extends L10n {
 
   @override
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (Mặc định)';
+
+  @override
+  String appSetting_changeLanguage_followSystem_text(String localeName) {
+    return 'Theo hệ thống ($localeName)';
+  }
+
+  @override
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Theo hệ thống';
+
+  @override
+  String get appSetting_changeLanguageTile_titleText => 'Ngôn ngữ';
+
+  @override
+  String get appSetting_changeLanguageDialog_titleText => 'Chọn ngôn ngữ';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -781,6 +795,9 @@ class L10nVi extends L10n {
 
   @override
   String get appSetting_clearCache_snackBar_failText => 'Xóa bộ nhớ đệm không thành công';
+
+  @override
+  String get appSetting_debugger_titleText => 'Thông tin gỡ lỗi';
 
   @override
   String get appSetting_about_titleText => 'Giới thiệu';
@@ -913,7 +930,7 @@ class L10nVi extends L10n {
       other: 'status of $count habits',
       one: 'habit\'s status',
     );
-    return 'Modified $_temp0';
+    return 'Đã sửa đổi $_temp0';
   }
 
   @override
@@ -1074,6 +1091,80 @@ class L10nVi extends L10n {
 
   @override
   String get exportConfirmDialog_confirm_buttonText => 'xuất';
+
+  @override
+  String get debug_logLevelTile_title => 'Cấp độ ghi nhật ký';
+
+  @override
+  String get debug_logLevelDialog_title => 'Thay đổi cấp độ ghi nhật ký';
+
+  @override
+  String get debug_logLevel_debug => 'Gỡ lỗi';
+
+  @override
+  String get debug_logLevel_info => 'Thông tin';
+
+  @override
+  String get debug_logLevel_warn => 'Cảnh báo';
+
+  @override
+  String get debug_logLevel_error => 'Lỗi';
+
+  @override
+  String get debug_logLevel_fatal => 'Fatal';
+
+  @override
+  String get debug_collectLogTile_title => 'Thu thập nhật ký';
+
+  @override
+  String get debug_collectLogTile_enable_subtitle => 'Nhấn để dừng thu thập nhật ký.';
+
+  @override
+  String get debug_collectLogTile_disable_subtitle => 'Nhấn để bắt đầu thu thập nhật ký.';
+
+  @override
+  String get debug_downladDebugLogs_subject => 'Đang tải xuống nhật ký gỡ lỗi';
+
+  @override
+  String get dbeug_clearDebugLogs_complete_snackbar => 'Đã dọn nhật ký gỡ lỗi.';
+
+  @override
+  String get debug_downladDebugInfo_subject => 'Đang tải xuống thông tin gỡ lỗi';
+
+  @override
+  String debug_downladDebugZip_subject(String fileName) {
+    return 'Đang tải xuống $fileName';
+  }
+
+  @override
+  String get debug_missingDebugLogFile_snackbar => 'Nhật ký gỡ lỗi không tồn tại.';
+
+  @override
+  String get debug_debuggerLogCard_title => 'Thông tin nhật ký';
+
+  @override
+  String get debug_debuggerLogCard_subtitle => 'Bao gồm thông tin nhật ký gỡ lỗi cục bộ, cần bật trình chuyển đổi bộ sưu tập nhật ký.';
+
+  @override
+  String get debug_debuggerLogCard_saveButton_text => 'Tải xuống';
+
+  @override
+  String get debug_debuggerLogCard_clearButton_text => 'Dọn';
+
+  @override
+  String get debug_debuggerInfoCard_title => 'Thông tin gỡ lỗi';
+
+  @override
+  String get debug_debuggerInfoCard_subtitle => 'Bao gồm thông tin gỡ lỗi của ứng dụng.';
+
+  @override
+  String get debug_debuggerInfoCard_openButton_text => 'Mở';
+
+  @override
+  String get debug_debuggerInfoCard_saveButton_text => 'Lưu';
+
+  @override
+  String get debug_debuggerInfo_notificationTitle => 'Đang thu thập thông tin của ứng dụng...';
 
   @override
   String get snackbar_undoText => 'HOÀN TÁC';

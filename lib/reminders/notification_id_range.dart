@@ -21,6 +21,7 @@ import 'notification_data.dart';
 
 /// ID range
 /// ` -0x80000000 -> -0x40000000` : habitReminder id (reserved)
+/// ` -0x00000102`                : app debugger id
 /// ` -0x00000101`                : app remind id
 /// ` -0x00000100 -> -0x00000001` : debug id
 /// `  0x00000000 ->  0x7FFFFFFE` : habitReminder id
@@ -32,6 +33,7 @@ const maxDebugReverseNotifyId = -0x00000001;
 const minHabitReminderReserveNotifyId = -0x80000000;
 const maxHabitReminderReserveNotifyId = -0x40000000;
 const appReminderNotifyId = -0x00000101;
+const appDebuggerNotifyId = -0x00000102;
 
 bool isValidHabitReminderId(int id) =>
     (id >= minHabitReminderNotifyId && id <= maxHabitReminderNotifyId) ||

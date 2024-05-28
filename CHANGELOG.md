@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.12.5+42
+
+- Add In-App Language Switching
+- Add Debug log Collection feature.
+- Fixed: Notification icon wasn't shown on native Android platform.
+- Fixed: Localization for batched check-in's changed snackbar text.
+- Bump dependencies' versions.
+
 ## 1.12.2+39
 
 - Add Russian translation. (#169, thanks for @yurtpage's contribution)
