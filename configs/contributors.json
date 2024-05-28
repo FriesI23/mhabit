@@ -46,8 +46,14 @@
             "name": "spar34vi",
             "url": "https://github.com/spar34vi"
         }
+
     ],
-    "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+    "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        {
+            "name": "12people",
+            "url": "https://github.com/12people"
+        }
+    ],
     "translations": {
         "ar": [
             {

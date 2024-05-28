@@ -55,14 +55,14 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                          | desc.                      |
-| -------- | ----- | ------------------------------------------------ | -------------------------- |
-| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                            |
-| ios      | ✅     |                                                  |                            |
-| macos    | ✅     |                                                  |                            |
-| windows  | ✅     |                                                  | limit features: `reminder` |
-| linux    |       |                                                  |                            |
-| web      |       |                                                  |                            |
+| platform | build | publish                                          | desc.                              |
+| -------- | ----- | ------------------------------------------------ | ---------------------------------- |
+| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
+| ios      | ✅    |                                                  |                                    |
+| macos    | ✅    |                                                  |                                    |
+| windows  | 🟨    |                                                  | unimplemented features: `reminder` |
+| linux    | 🟨    |                                                  | limit features: `reminder`         |
+| ~~web~~  |       |                                                  |                                    |
 
 ## Todo
 
@@ -81,9 +81,16 @@ multiple versions on your local machine, or simply use this submodule to build i
 2. open an android or ios emulator
 3. run `flutter run --debug`
 
-Building for Linux requires installing the following packages for the [SQFlite database](https://pub.dev/packages/sqflite_common_ffi#linux):
+Building for Linux requires:
 
-```sudo apt-get -y install libsqlite3-0 libsqlite3-dev```
+1. installing the following packages for the [SQFlite database][sqflite-ffi-linux]:
+
+```shell
+sudo apt-get -y install libsqlite3-0 libsqlite3-dev
+```
+
+2. If an error occurs during the build process, please follow these
+   [steps][flutter-linux] strictly.
 
 ## Contributing
 
@@ -111,6 +118,7 @@ Feel free to join and help with the translation for `Table Habit`,
 you can follow [docs/add_new_locale_support][l10n-doc] to get incolved.
 
 <!-- ![L10nStat][l10n-stat-pic] -->
+
 [![Engage][weblate-engage-badge]][weblate-engage]
 
 ## License
@@ -158,7 +166,9 @@ limitations under the License.
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
+
 <!-- [l10n-stat-pic]: docs/README/images/l10n-stat.svg -->
+
 [l10n-doc]: docs/add_new_locale_support.md
 [buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 [alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
@@ -172,3 +182,5 @@ limitations under the License.
 [weblate]: https://hosted.weblate.org/projects/mhabit/
 [weblate-engage-badge]: https://hosted.weblate.org/widget/mhabit/app-view/multi-auto.svg
 [weblate-engage]: https://hosted.weblate.org/engage/mhabit/
+[sqflite-ffi-linux]: https://pub.dev/packages/sqflite_common_ffi#linux
+[flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
