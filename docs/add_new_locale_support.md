@@ -17,6 +17,9 @@ const appSupportedLocales = [
 
 ## Android
 
+> Use format `values-xx-rXX` instead of `values-xx-XX` or `values-xx_XX`
+> which including a `countryCode`.
+
 1. Add your locale in `resourceConfigurations` located in `android/app/build.gradle`
 
 ```gradle
@@ -26,7 +29,7 @@ defaultConfig {
 ```
 
 2. Create new folder at `android/app/src/main/res/values-<your_language_code>`
-and create new file `strings.xml` with the following code:
+   and create new file `strings.xml` with the following code:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
