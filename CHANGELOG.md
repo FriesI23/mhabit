@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.12.8+45
+
+- Update Translation file (vi)
+- Add linux platform support (#174)
+- Fix test reporter action HTTP Error (#181)
+- Bump dependencies version
+
 ## 1.12.5+42
 
 - Add In-App Language Switching

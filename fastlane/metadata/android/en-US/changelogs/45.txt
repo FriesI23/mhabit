@@ -1,0 +1,4 @@
+- Update Translation file (vi)
+- Add linux platform support (#174)
+- Fix test reporter action HTTP Error (#181)
+- Bump dependencies version
