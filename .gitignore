@@ -48,6 +48,9 @@ coverage/html/
 
 # fvm
 .fvm/flutter_sdk
+.fvm/release
+.fvm/version
+.fvm/versions/
 
 # coverage
 coverage/

@@ -47,7 +47,7 @@ dependencies:
 
   # Extra Features
   dynamic_color: ^1.5.4
-  material_color_utilities: ^0.5.0
+  material_color_utilities: ^0.8.0
   linked_scroll_controller: ^0.2.0
   sliver_tools: ^0.2.9
   share_plus: ^7.2.1
