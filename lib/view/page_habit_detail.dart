@@ -1050,10 +1050,9 @@ class _HabitDescTileList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final viewmodel = context.read<HabitDetailViewModel>();
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-    final descMinHeight =
-        kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
+    final TextScaler textScaler = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final descMinHeight = textScaler.scale(kHabitDetailFreqChartTitleHeight);
 
     return _HabitDetailTileListFramework(
       title: HabitDetailChartTitle(
@@ -1067,7 +1066,7 @@ class _HabitDescTileList extends StatelessWidget {
             child: ThematicMarkdownBody(
               data: viewmodel.habitDesc,
               colorType: viewmodel.habitColorType,
-              textScaleFactor: textScaleFactor,
+              textScaler: textScaler,
             ),
           ),
         ),

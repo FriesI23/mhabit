@@ -33,7 +33,7 @@ linter:
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
     # FIXME: ignore with 3.13.x's linter bug.
     # see https://github.com/dart-lang/linter/issues/4753
-    use_build_context_synchronously: false
+    # use_build_context_synchronously: false
     # Prefer relative imports for files in lib/.
     # see: https://dart.dev/tools/linter-rules/prefer_relative_imports
     prefer_relative_imports: true

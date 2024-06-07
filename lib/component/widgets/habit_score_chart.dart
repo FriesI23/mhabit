@@ -259,8 +259,8 @@ class HabitScoreChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final TextScaler textScaler =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
     appLog.build.debug(context);
     final double maxX = (data.length - 1).toDouble();
@@ -274,7 +274,7 @@ class HabitScoreChart extends StatelessWidget {
           showTitles: true,
           getTitlesWidget: _buildRightTitle,
           reservedSize:
-              protoLeftWidgetSize.width * textScaleFactor + leftTipsSpace,
+              textScaler.scale(protoLeftWidgetSize.width) + leftTipsSpace,
           interval: 20,
         ),
       ),
