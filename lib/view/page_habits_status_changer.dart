@@ -298,10 +298,11 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
 
     final vm = context.read<HabitStatusChangerViewModel>();
     final div = buildDivider(context);
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
         _onClosePageButtonPressed(defaultConfirmResult: true);
-        return false;
       },
       child: PageFramework(
         appbar: _AppBar(

@@ -1099,8 +1099,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     //#endregion
 
     return ColorfulNavibar(
-      child: WillPopScope(
-        onWillPop: onWillPop,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          final canPopNow = await onWillPop();
+          if (mounted && canPopNow) Navigator.pop(this.context);
+        },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
