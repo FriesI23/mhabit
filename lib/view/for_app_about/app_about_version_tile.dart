@@ -47,8 +47,9 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
       context: context,
       builder: (context) => L10nBuilder(
         builder: (context, l10n) => AlertDialog(
-          content: RawScrollbar(
+          content: Scrollbar(
             child: SingleChildScrollView(
+              primary: true,
               scrollDirection: Axis.vertical,
               child: MarkdownBody(
                 data: text,
