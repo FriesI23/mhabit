@@ -66,9 +66,8 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
   @override
   void initState() {
     super.initState();
-    _horizonalScrollController = widget.horizonalScrollControllerGroup != null
-        ? widget.horizonalScrollControllerGroup!.addAndGet()
-        : null;
+    _horizonalScrollController =
+        widget.horizonalScrollControllerGroup?.addAndGet();
   }
 
   @override

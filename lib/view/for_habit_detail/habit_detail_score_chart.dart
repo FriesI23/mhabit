@@ -144,12 +144,13 @@ class HabitDetailScoreChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final double textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final TextScaler textScaler =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
-    final eachSize = this.eachSize * textScaleFactor;
+    final eachSize = textScaler.scale(this.eachSize);
     final limit = math.max(1, allowWidth ~/ eachSize);
-    final titleHeight = this.titleHeight * math.max(1.0, textScaleFactor);
+    final titleHeight =
+        textScaler.clamp(minScaleFactor: 1.0).scale(this.titleHeight);
 
     final firstDate = getFirstDate(limit);
     var lastDate = getLastDate(limit);

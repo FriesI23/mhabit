@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -238,8 +236,8 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final textScaler =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
     final themeData = Theme.of(context);
     final textTheme = themeData.textTheme;
@@ -258,8 +256,8 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
         children: [
           Flexible(
             child: SizedBox(
-              height: 30 * textScaleFactor,
-              width: 48 * textScaleFactor,
+              height: textScaler.scale(30.0),
+              width: textScaler.scale(48.0),
               child: TextField(
                 textAlign: TextAlign.center,
                 controller: inputController,

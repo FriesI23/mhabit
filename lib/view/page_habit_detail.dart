@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -645,15 +643,14 @@ class _HabitDetailView extends State<HabitDetailView>
       return Consumer<HabitDetailScoreChartViewModel>(
         builder: (context, chartvm, child) => LayoutBuilder(
           builder: (context, constraints) {
-            final double textScaleFactor =
-                math.min(MediaQuery.textScaleFactorOf(context), 1.3);
             final now = HabitDate.now();
             return HabitDetailScoreChart(
               padding: kHabitDetailWidgetPadding,
               eachSize: 48.0,
               allowWidth: constraints.maxWidth,
-              titleHeight: kHabitDetailFreqChartTitleHeight *
-                  math.max(1.0, textScaleFactor),
+              titleHeight: MediaQuery.textScalerOf(context)
+                  .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+                  .scale(kHabitDetailFreqChartTitleHeight),
               getFirstDate: (limit) =>
                   chartvm.getCurrentChartFirstDate(now, limit),
               getLastDate: (limit) =>
@@ -730,9 +727,6 @@ class _HabitDetailView extends State<HabitDetailView>
           AppCustomDateYmdHmsConfigViewModel>(
         builder: (context, chartvm, configvm, child) => LayoutBuilder(
           builder: (context, constraints) {
-            final double textScaleFactor =
-                math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-
             final viewmodel = context.read<HabitDetailViewModel>();
             final now = HabitDate.now();
 
@@ -748,8 +742,9 @@ class _HabitDetailView extends State<HabitDetailView>
               allowWidth: isLargeScreen
                   ? (constraints.maxWidth - _largeScreenTwoChartBetween) / 2
                   : constraints.maxWidth,
-              titleHeight: kHabitDetailFreqChartTitleHeight *
-                  math.max(1.0, textScaleFactor),
+              titleHeight: MediaQuery.textScalerOf(context)
+                  .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+                  .scale(kHabitDetailFreqChartTitleHeight),
               largeScreenTwoChartBetween: _largeScreenTwoChartBetween,
               getFirstDate: (limit) =>
                   chartvm.getCurrentChartFirstDate(now, limit),
@@ -1022,10 +1017,9 @@ class _HabitDetailTileListFramework extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-    final titleHeight =
-        kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
+    final titleHeight = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+        .scale(kHabitDetailFreqChartTitleHeight);
 
     return Padding(
       padding: kHabitDetailWidgetPadding,
