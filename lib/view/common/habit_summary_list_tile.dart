@@ -84,9 +84,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   @override
   void initState() {
     super.initState();
-    _horizonalScrollController = widget.horizonalScrollControllerGroup != null
-        ? widget.horizonalScrollControllerGroup!.addAndGet()
-        : null;
+    _horizonalScrollController =
+        widget.horizonalScrollControllerGroup?.addAndGet();
   }
 
   @override
@@ -109,8 +108,9 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   HabitSummaryData get data => widget.data;
 
-  double getTextScaleFactor(BuildContext context) => math.min(
-      MediaQuery.textScaleFactorOf(context), kMaxHabitSummaryListTileTextScale);
+  TextScaler getTextScaler(BuildContext context) =>
+      MediaQuery.textScalerOf(context)
+          .clamp(maxScaleFactor: kMaxHabitSummaryListTileTextScale);
 
   Widget _buildProgressCircle(BuildContext context,
       {Color? color, Color? backgroundColor}) {
@@ -120,7 +120,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
         value: data.progress.toDouble() / 100,
         color: color,
         backgroundColor: backgroundColor,
-        strokeWidth: 6 * getTextScaleFactor(context),
+        strokeWidth: getTextScaler(context).scale(6.0),
         isComplated: data.isComplated,
         isArchived: data.isArchived,
       ),
@@ -141,7 +141,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
             softWrap: false,
-            textScaleFactor: getTextScaleFactor(context),
+            textScaler: getTextScaler(context),
           ),
         ),
       ),
@@ -202,13 +202,9 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
         _getDefaultListTileColor(themeData);
     final TextTheme textTheme = themeData.textTheme;
 
-    final double textScaleFactor = getTextScaleFactor(context);
-
     final DateTime crtDate = widget.startDate ?? DateTime.now();
-    int? limitItemCount;
-
-    limitItemCount = widget.endDate == null
-        ? limitItemCount
+    final int? limitItemCount = widget.endDate == null
+        ? null
         : math.max(crtDate.difference(widget.endDate!).inDays, 0) + 1;
 
     Widget? leftPartBuilder() {
@@ -263,7 +259,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
               themeColor?.selectedColor ??
               defaultThemeColor.selectedColor
           : null,
-      height: height * textScaleFactor,
+      height: getTextScaler(context).scale(height),
       itemHeight: height,
       minItemCoun: kHabitSummaryListTilMinShowDate,
       scrollPhysicsBuilder: widget.scrollPhysicsBuilder,
