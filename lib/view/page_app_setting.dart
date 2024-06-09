@@ -123,43 +123,43 @@ class _AppSettingView extends State<AppSettingView>
   }
 
   void _openCustomDateTimeFormatPickerDialog(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final config = context.read<AppCustomDateYmdHmsConfigViewModel>();
     final result = await showCustomDateTimeFormatPickerDialog(
         context: context, config: config.config);
 
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     context.read<AppCustomDateYmdHmsConfigViewModel>().setNewConfig(result);
   }
 
   void _openAppFirtDaySelectDialog(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final firstday = context.read<AppFirstDayViewModel>();
     final result = await showAppSettingFirstDaySelectDialog(
         context: context, firstDay: firstday.firstDay);
 
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     final firtdayvm = context.read<AppFirstDayViewModel>();
     firtdayvm.setNewFirstDay(result);
   }
 
   void _onAppLanguageTilePressed(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final currentLocale = context.read<AppLanguageViewModel>().languange;
     final result = await showAppLanguageChangerDialog(
         context: context, selectedLocale: currentLocale);
 
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     context.read<AppLanguageViewModel>().switchLanguage(result.choosenLanguage);
   }
 
   void _openClearAppCacheDialog(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final result = await showAppSettingClearCacheDialog(context: context);
-    if (!mounted || result != true) return;
+    if (!context.mounted || result != true) return;
 
     final resultList = await context.read<AppCachesViewModel>().clearAllCache();
-    if (!mounted) return;
+    if (!context.mounted) return;
 
     var hasSuss = false, hasFail = false;
     for (var result in resultList) {
@@ -217,19 +217,19 @@ class _AppSettingView extends State<AppSettingView>
   }
 
   void _onExportAllTilePressed(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: true,
     );
 
-    if (!mounted || confirmResult == null) return;
+    if (!context.mounted || confirmResult == null) return;
     final filePath = await context
         .read<HabitFileExporterViewModel>()
         .exportAllHabitsData(
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
-    if (!mounted || filePath == null) return;
+    if (!context.mounted || filePath == null) return;
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)], context: context);
   }
@@ -307,11 +307,13 @@ class _AppSettingView extends State<AppSettingView>
       },
     );
 
-    if (result == null || !result) return;
+    if (!mounted || result == null || !result) return;
     await Future.wait([
       context.read<ProfileViewModel>().clear(),
       NotificationService().cancelAppReminder()
     ]);
+
+    if (!mounted) return;
     await context.read<ProfileViewModel>().reload();
 
     if (!mounted) return;
@@ -337,17 +339,17 @@ class _AppSettingView extends State<AppSettingView>
   }
 
   void _onExportDBTilePressed(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final dbPath = path.join(await getDatabasesPath(), appDBName);
-    if (!mounted) return;
+    if (!context.mounted) return;
     shareXFiles([XFile(dbPath)], context: context);
   }
 
   void _onClearDBTilePressed(BuildContext context) async {
-    if (!mounted) return;
+    if (!context.mounted) return;
     final result = await showAppSettingConfirmClearDBDiloag(context: context);
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     switch (result) {
       case AppSettingConfirmClearDBOp.confirm:
         break;
@@ -356,14 +358,14 @@ class _AppSettingView extends State<AppSettingView>
             .read<HabitFileExporterViewModel>()
             .exportAllHabitsData();
         final dbPath = path.join(await getDatabasesPath(), appDBName);
-        if (!mounted) return;
+        if (!context.mounted) return;
         final result = await shareXFiles(
             [if (filePath != null) XFile(filePath), XFile(dbPath)],
             context: context);
         if (result.status == ShareResultStatus.success) {
           break;
         } else {
-          if (!mounted) return;
+          if (!context.mounted) return;
           final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
             context,
             content: const Text("clear failed, must saved backup first"),
@@ -379,11 +381,9 @@ class _AppSettingView extends State<AppSettingView>
 
     await context.read<DBHelperViewModel>().reload();
     await NotificationService().cancelAllHabitReminders();
-    if (!mounted) return;
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
-      context,
-      content: const Text("clear database success"),
-    );
+    if (!context.mounted) return;
+    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+        content: const Text("clear database success"));
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
     context

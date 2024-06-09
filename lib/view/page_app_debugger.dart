@@ -83,7 +83,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   void _onDownloadLogButtonPressed(BuildContext context) async {
     final filePath = await debugLogFilePath;
     final fileExist = await File(filePath).exists();
-    if (!mounted) return;
+    if (!context.mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     final subject = L10n.of(context)?.debug_downladDebugLogs_subject;
     switch (defaultTargetPlatform) {
@@ -100,11 +100,11 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     final filePath = await debugLogFilePath;
     final fileObj = File(filePath);
     final fileExist = await fileObj.exists();
-    if (!mounted) return;
+    if (!context.mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     await fileObj.delete();
     AppLoggerMananger.reloadDebuggingLogger(filePath: filePath);
-    if (!mounted) return;
+    if (!context.mounted) return;
     final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
@@ -126,14 +126,14 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     final filePath = await debugInfoFilePath;
     final debugInfo = await AppInfo().generateAppDebugInfo();
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
-    if (!mounted) return;
+    if (!context.mounted) return;
     final subject = L10n.of(context)?.debug_downladDebugInfo_subject;
     pickAndSaveToFile(filePath, subject: subject);
   }
 
   void _onFABPressed(BuildContext context) async {
     final zipFilePath = await generateZippedDebugInfo();
-    if (!mounted) return;
+    if (!context.mounted) return;
     final subject =
         L10n.of(context)?.debug_downladDebugZip_subject(debuggerZipFile);
     switch (defaultTargetPlatform) {

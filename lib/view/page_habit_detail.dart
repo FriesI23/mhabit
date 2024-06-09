@@ -306,46 +306,51 @@ class _HabitDetailView extends State<HabitDetailView>
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
     summary = context.maybeRead<HabitSummaryViewModel>();
-    if (summary == null || !summary.mounted) {
-      final change = await viewmodel.onConfirmToDeleteHabit();
-      return Navigator.pop(
-        context,
-        DetailPageReturn(
-          op: DetailPageReturnOpr.deleted,
-          habitName: viewmodel.habitName,
-          recordList: change != null ? [change] : null,
-        ),
-      );
-    }
 
-    // use summary method in default
-    return Navigator.pop(
-      context,
-      DetailPageReturn(
-        op: DetailPageReturnOpr.deleted,
-        habitName: viewmodel.habitName,
-        recordList: await summary.forHabitDetail
-            .onConfirmToDeleteHabit(viewmodel.habitUUID!),
-      ),
-    );
+    if (summary != null && summary.mounted) {
+      final changes = await summary.forHabitDetail
+          .onConfirmToDeleteHabit(viewmodel.habitUUID!);
+      if (mounted) {
+        Navigator.pop(
+          context,
+          DetailPageReturn(
+            op: DetailPageReturnOpr.deleted,
+            habitName: viewmodel.habitName,
+            recordList: changes,
+          ),
+        );
+      }
+    } else {
+      final change = await viewmodel.onConfirmToDeleteHabit();
+      if (mounted) {
+        Navigator.pop(
+          context,
+          DetailPageReturn(
+            op: DetailPageReturnOpr.deleted,
+            habitName: viewmodel.habitName,
+            recordList: change != null ? [change] : null,
+          ),
+        );
+      }
+    }
   }
 
   void _exportHabitAndShared(BuildContext context) async {
     HabitFileExporterViewModel fileExporter;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: false,
     );
 
-    if (!mounted || confirmResult == null) return;
+    if (!context.mounted || confirmResult == null) return;
     fileExporter = context.read<HabitFileExporterViewModel>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,
     );
-    if (!mounted || filePath == null) return;
+    if (!context.mounted || filePath == null) return;
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)], text: "Export Habit", context: context);
   }
