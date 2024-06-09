@@ -30,7 +30,8 @@
     "**/.flutter": true
   },
   "files.associations": {
-    "*.arb": "json"
+    "*.arb": "json",
+    "*.gradle": "groovy"
   },
   "[dart]": {
     "editor.formatOnSave": true,

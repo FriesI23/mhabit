@@ -1,14 +1,18 @@
+/* groovylint-disable CompileStatic, DuplicateStringLiteral, NoDef, VariableTypeRequired */
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id 'dev.flutter.flutter-gradle-plugin'
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
     }
-}
-
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -20,10 +24,6 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def customCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion')
 if (customCompileSdkVersion == null) {
@@ -62,15 +62,16 @@ android {
 
     defaultConfig {
         multiDexEnabled true
+        /* groovylint-disable-next-line LineLength */
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "io.github.friesi23.mhabit"
+        applicationId 'io.github.friesi23.mhabit'
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        resourceConfigurations += ["en", "ar", "de", "es", "fa", "fr", "it", "nb-rNO", "pt-rBR", "ru", "vi", "zh"]
+        resourceConfigurations += ['en', 'ar', 'de', 'es', 'fa', 'fr', 'it', 'nb-rNO', 'pt-rBR', 'ru', 'vi', 'zh']
     }
 
     signingConfigs {
@@ -87,6 +88,7 @@ android {
             signingConfig keystoreProperties['storeFile'] ? signingConfigs.release : signingConfigs.debug
         }
     }
+
     namespace 'io.github.friesi23.mhabit'
 }
 
@@ -95,7 +97,6 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.window:window:1.0.0'
     implementation 'androidx.window:window-java:1.0.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
