@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../../component/widget.dart';
@@ -102,14 +100,14 @@ class _CustomDateTimeFormatPickerDialogState
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
     const div = Divider();
 
     Widget buildTitle(BuildContext context, {L10n? l10n}) {
       final formatter = _crtConfig.getFormatter(l10n?.localeName);
       return SizedBox(
-        height: 40.0 * textScaleFactor,
+        height: MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: 1.3)
+            .scale(40.0),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 100),
           child: FittedBox(
