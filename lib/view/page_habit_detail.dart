@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -308,46 +306,51 @@ class _HabitDetailView extends State<HabitDetailView>
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
     summary = context.maybeRead<HabitSummaryViewModel>();
-    if (summary == null || !summary.mounted) {
-      final change = await viewmodel.onConfirmToDeleteHabit();
-      return Navigator.pop(
-        context,
-        DetailPageReturn(
-          op: DetailPageReturnOpr.deleted,
-          habitName: viewmodel.habitName,
-          recordList: change != null ? [change] : null,
-        ),
-      );
-    }
 
-    // use summary method in default
-    return Navigator.pop(
-      context,
-      DetailPageReturn(
-        op: DetailPageReturnOpr.deleted,
-        habitName: viewmodel.habitName,
-        recordList: await summary.forHabitDetail
-            .onConfirmToDeleteHabit(viewmodel.habitUUID!),
-      ),
-    );
+    if (summary != null && summary.mounted) {
+      final changes = await summary.forHabitDetail
+          .onConfirmToDeleteHabit(viewmodel.habitUUID!);
+      if (mounted) {
+        Navigator.pop(
+          context,
+          DetailPageReturn(
+            op: DetailPageReturnOpr.deleted,
+            habitName: viewmodel.habitName,
+            recordList: changes,
+          ),
+        );
+      }
+    } else {
+      final change = await viewmodel.onConfirmToDeleteHabit();
+      if (mounted) {
+        Navigator.pop(
+          context,
+          DetailPageReturn(
+            op: DetailPageReturnOpr.deleted,
+            habitName: viewmodel.habitName,
+            recordList: change != null ? [change] : null,
+          ),
+        );
+      }
+    }
   }
 
   void _exportHabitAndShared(BuildContext context) async {
     HabitFileExporterViewModel fileExporter;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
       context: context,
       exportAll: false,
     );
 
-    if (!mounted || confirmResult == null) return;
+    if (!context.mounted || confirmResult == null) return;
     fileExporter = context.read<HabitFileExporterViewModel>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,
     );
-    if (!mounted || filePath == null) return;
+    if (!context.mounted || filePath == null) return;
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)], text: "Export Habit", context: context);
   }
@@ -645,15 +648,14 @@ class _HabitDetailView extends State<HabitDetailView>
       return Consumer<HabitDetailScoreChartViewModel>(
         builder: (context, chartvm, child) => LayoutBuilder(
           builder: (context, constraints) {
-            final double textScaleFactor =
-                math.min(MediaQuery.textScaleFactorOf(context), 1.3);
             final now = HabitDate.now();
             return HabitDetailScoreChart(
               padding: kHabitDetailWidgetPadding,
               eachSize: 48.0,
               allowWidth: constraints.maxWidth,
-              titleHeight: kHabitDetailFreqChartTitleHeight *
-                  math.max(1.0, textScaleFactor),
+              titleHeight: MediaQuery.textScalerOf(context)
+                  .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+                  .scale(kHabitDetailFreqChartTitleHeight),
               getFirstDate: (limit) =>
                   chartvm.getCurrentChartFirstDate(now, limit),
               getLastDate: (limit) =>
@@ -730,9 +732,6 @@ class _HabitDetailView extends State<HabitDetailView>
           AppCustomDateYmdHmsConfigViewModel>(
         builder: (context, chartvm, configvm, child) => LayoutBuilder(
           builder: (context, constraints) {
-            final double textScaleFactor =
-                math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-
             final viewmodel = context.read<HabitDetailViewModel>();
             final now = HabitDate.now();
 
@@ -748,8 +747,9 @@ class _HabitDetailView extends State<HabitDetailView>
               allowWidth: isLargeScreen
                   ? (constraints.maxWidth - _largeScreenTwoChartBetween) / 2
                   : constraints.maxWidth,
-              titleHeight: kHabitDetailFreqChartTitleHeight *
-                  math.max(1.0, textScaleFactor),
+              titleHeight: MediaQuery.textScalerOf(context)
+                  .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+                  .scale(kHabitDetailFreqChartTitleHeight),
               largeScreenTwoChartBetween: _largeScreenTwoChartBetween,
               getFirstDate: (limit) =>
                   chartvm.getCurrentChartFirstDate(now, limit),
@@ -1022,10 +1022,9 @@ class _HabitDetailTileListFramework extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-    final titleHeight =
-        kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
+    final titleHeight = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
+        .scale(kHabitDetailFreqChartTitleHeight);
 
     return Padding(
       padding: kHabitDetailWidgetPadding,
@@ -1050,10 +1049,9 @@ class _HabitDescTileList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final viewmodel = context.read<HabitDetailViewModel>();
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-    final descMinHeight =
-        kHabitDetailFreqChartTitleHeight * math.max(1.0, textScaleFactor);
+    final TextScaler textScaler = MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final descMinHeight = textScaler.scale(kHabitDetailFreqChartTitleHeight);
 
     return _HabitDetailTileListFramework(
       title: HabitDetailChartTitle(
@@ -1067,7 +1065,7 @@ class _HabitDescTileList extends StatelessWidget {
             child: ThematicMarkdownBody(
               data: viewmodel.habitDesc,
               colorType: viewmodel.habitColorType,
-              textScaleFactor: textScaleFactor,
+              textScaler: textScaler,
             ),
           ),
         ),

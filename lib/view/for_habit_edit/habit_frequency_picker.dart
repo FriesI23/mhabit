@@ -242,12 +242,12 @@ class _HabitFrequencyTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final textTheme = themeData.textTheme;
-    final textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final textScaler =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
     return SizedBox(
-      height: _kDefaultHabitFreqTextFieldHeight * textScaleFactor,
-      width: _kDefualtHabitFreqTextFieldWidth * textScaleFactor,
+      height: textScaler.scale(_kDefaultHabitFreqTextFieldHeight),
+      width: textScaler.scale(_kDefualtHabitFreqTextFieldWidth),
       child: TextField(
         textAlign: TextAlign.center,
         controller: controller,

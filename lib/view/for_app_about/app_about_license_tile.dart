@@ -35,8 +35,9 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
       context: context,
       builder: (context) => L10nBuilder(
         builder: (context, l10n) => AlertDialog(
-          content: RawScrollbar(
+          content: Scrollbar(
             child: SingleChildScrollView(
+              primary: true,
               scrollDirection: Axis.vertical,
               child: MarkdownBody(
                 data: "```text\n$licenseText\n```",

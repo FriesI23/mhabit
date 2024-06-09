@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
@@ -24,7 +22,7 @@ import '../widget.dart';
 class ThematicMarkdownBody extends StatelessWidget {
   final String data;
   final HabitColorType? colorType;
-  final double? textScaleFactor;
+  final TextScaler? textScaler;
   final MarkdownImageBuilder? imageBuilder;
   final MarkdownTapLinkCallback? onTapLink;
 
@@ -32,18 +30,15 @@ class ThematicMarkdownBody extends StatelessWidget {
     super.key,
     required this.data,
     this.colorType,
-    this.textScaleFactor,
+    this.textScaler,
     this.imageBuilder,
     this.onTapLink,
   });
 
-  double _getDefaultTextScaleFactor(BuildContext context) =>
-      math.min(MediaQuery.textScaleFactorOf(context), 1.3);
-
   MarkdownStyleSheet _getStyleSheet(BuildContext context) {
     final themeData = Theme.of(context);
     return MarkdownStyleSheet.fromTheme(themeData).copyWith(
-      textScaleFactor: textScaleFactor ?? _getDefaultTextScaleFactor(context),
+      textScaler: textScaler ?? MediaQuery.textScalerOf(context),
       a: TextStyle(color: themeData.colorScheme.primary),
       blockquote: themeData.textTheme.bodyMedium!
           .copyWith(color: themeData.colorScheme.primary),

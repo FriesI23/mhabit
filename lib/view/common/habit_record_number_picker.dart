@@ -335,8 +335,8 @@ class _HabitRecordTextField extends StatelessWidget {
     final textTheme = themeData.textTheme;
     final l10n = L10n.of(context);
 
-    final double textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final TextScaler textScaler =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
     final increaseButton = _NumberStepButton(
       onUpdate: onIncreaseButtonPressed,
@@ -349,7 +349,7 @@ class _HabitRecordTextField extends StatelessWidget {
         height: textFieldRightButtonFieldHeight / 2,
         child: Icon(
           MdiIcons.menuUp,
-          size: textFieldRightButtonIconSize * textScaleFactor,
+          size: textScaler.scale(textFieldRightButtonIconSize),
           color: increaseButtonEnabled
               ? colorScheme.outline
               : colorScheme.outlineVariant,
@@ -368,7 +368,7 @@ class _HabitRecordTextField extends StatelessWidget {
         height: textFieldRightButtonFieldHeight / 2,
         child: Icon(
           MdiIcons.menuDown,
-          size: textFieldRightButtonIconSize * textScaleFactor,
+          size: textScaler.scale(textFieldRightButtonIconSize),
           color: decreaseButtonEnabled
               ? colorScheme.outline
               : colorScheme.outlineVariant,
@@ -405,8 +405,8 @@ class _HabitRecordTextField extends StatelessWidget {
         Expanded(child: textField),
         const SizedBox(width: 10),
         SizedBox(
-          height: textFieldRightButtonFieldHeight * textScaleFactor,
-          width: textFieldRightButtonFieldWidth * textScaleFactor,
+          height: textScaler.scale(textFieldRightButtonFieldHeight),
+          width: textScaler.scale(textFieldRightButtonFieldWidth),
           child: Column(
             children: [
               Expanded(child: increaseButton),

@@ -108,10 +108,11 @@ class _HabitEditReplacementRecordCalendarDialog
 
   void _openHabitRecordResonModifierDialog(
       BuildContext context, HabitRecordDate date) async {
+    HabitDetailViewModel viewmodel;
     String initReason = '';
 
-    if (!mounted) return;
-    final viewmodel = context.read<HabitDetailViewModel>();
+    if (!context.mounted) return;
+    viewmodel = context.read<HabitDetailViewModel>();
 
     if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
     final record = viewmodel.getHabitRecordData(date);
@@ -122,7 +123,7 @@ class _HabitEditReplacementRecordCalendarDialog
       initReason = rcd?.reason ?? '';
     }
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
       context: context,
       initReason: initReason,
@@ -131,7 +132,9 @@ class _HabitEditReplacementRecordCalendarDialog
       colorType: viewmodel.habitColorType,
     );
 
-    if (result == null || result == initReason || !mounted) return;
+    if (result == null || result == initReason || !context.mounted) return;
+    viewmodel = context.read<HabitDetailViewModel>();
+    if (!viewmodel.mounted) return;
     viewmodel.changeRecordReason(date, result);
   }
 

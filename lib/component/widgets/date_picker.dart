@@ -14,12 +14,12 @@
 //
 // Copy source code from flutter: flutter/lib/src/material/date_picker.dart
 // Flutter license place at LICENSE_THIRDPARTY.md
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../../extension/textscale_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import 'chip_list.dart';
@@ -53,8 +53,8 @@ class HabitDatetimePickerDialog extends DatePickerDialog {
 
 class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
     with RestorationMixin {
-  late final RestorableDateTime _selectedDate =
-      RestorableDateTime(widget.initialDate);
+  late final RestorableDateTimeN _selectedDate =
+      RestorableDateTimeN(widget.initialDate);
   late final _RestorableDatePickerEntryMode _entryMode =
       _RestorableDatePickerEntryMode(widget.initialEntryMode);
   final _RestorableAutovalidateMode _autovalidateMode =
@@ -97,9 +97,9 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
     Navigator.pop(
         context,
         widget.currentDateTime.copyWith(
-          year: _selectedDate.value.year,
-          month: _selectedDate.value.month,
-          day: _selectedDate.value.day,
+          year: _selectedDate.value?.year,
+          month: _selectedDate.value?.month,
+          day: _selectedDate.value?.day,
         ));
   }
 
@@ -177,12 +177,14 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
     final TextTheme textTheme = theme.textTheme;
     // Constrain the textScaleFactor to the largest supported value to prevent
     // layout issues.
-    final double textScaleFactor =
-        math.min(MediaQuery.textScaleFactorOf(context), 1.3);
+    final TextScaler textScale =
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
 
     final l10n = L10n.of(context);
 
-    final String dateText = localizations.formatMediumDate(_selectedDate.value);
+    final String dateText = _selectedDate.value == null
+        ? ""
+        : localizations.formatMediumDate(_selectedDate.value!);
     final Color onPrimarySurface = colorScheme.brightness == Brightness.light
         ? colorScheme.onPrimary
         : colorScheme.onSurface;
@@ -390,7 +392,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
                 nextDateChip: nextDateChip,
               ));
 
-    final Size dialogSize = _dialogSize(context) * textScaleFactor;
+    final Size dialogSize = textScale.scaleForSize(_dialogSize(context));
     return Dialog(
       insetPadding:
           const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
@@ -401,9 +403,7 @@ class _HabitDatetimePickerDialog extends State<HabitDatetimePickerDialog>
         duration: _dialogSizeAnimationDuration,
         curve: Curves.easeIn,
         child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaleFactor: textScaleFactor,
-          ),
+          data: MediaQuery.of(context).copyWith(textScaler: textScale),
           child: Builder(builder: (context) {
             switch (orientation) {
               case Orientation.portrait:

@@ -118,7 +118,7 @@ class _HabitEditView extends State<HabitEditView> {
       BuildContext context, HabitColorType colorType) async {
     final result = await showHabitColorPickerDialog(
         context: context, colorType: colorType);
-    if (result == null || !mounted) return;
+    if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().colorType = result;
   }
 
@@ -136,7 +136,7 @@ class _HabitEditView extends State<HabitEditView> {
     final result = await showHabitFrequencyPickerDialog(
         context: context, frequency: frequency);
     appLog.navi.info("$runtimeType._openFrequencyPickerDialog", ex: [result]);
-    if (result == null || !mounted) return;
+    if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().frequency = result;
   }
 
@@ -145,7 +145,7 @@ class _HabitEditView extends State<HabitEditView> {
     final result = await showHabitDatePickerDialog(
         context: context, date: startDate, colorType: colorType);
     appLog.navi.info("$runtimeType._openDatePickerDialog", ex: [result]);
-    if (result == null || !mounted) return;
+    if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().startDate =
         HabitStartDate.dateTime(result);
   }
@@ -157,7 +157,7 @@ class _HabitEditView extends State<HabitEditView> {
       initialCustomTargetDays:
           context.read<AppCachesViewModel>().habitEditTargetDaysInputFill,
     );
-    if (result == null || !mounted) return;
+    if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().targetDays = result.targetDays;
     if (result.isCustomDaysType) {
       context
@@ -175,7 +175,7 @@ class _HabitEditView extends State<HabitEditView> {
       reminder: reminder ?? HabitReminder.dailyMidnight,
       colorType: colorType,
     );
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     context.read<HabitFormViewModel>().reminder = context
         .read<HabitFormViewModel>()
         .reminder
@@ -185,10 +185,10 @@ class _HabitEditView extends State<HabitEditView> {
   void _openTimerPickerDialog(
       BuildContext context, HabitReminder? reminder) async {
     await NotificationService().requestPermissions();
-    if (!mounted) return;
+    if (!context.mounted) return;
     final result =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     final newReminder = (context.read<HabitFormViewModel>().reminder ??
             HabitReminder.dailyMidnight)
         .copyWith(time: result);

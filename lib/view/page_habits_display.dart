@@ -164,10 +164,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     );
     if (result == null || result == false) return;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     final recordList = await viewmodel.archivedSelectedHabits();
-    if (!mounted || recordList == null) return;
+    if (!context.mounted || recordList == null) return;
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -212,10 +212,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     );
     if (result == null || result == false) return;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     final recordList = await viewmodel.unarchivedSelectedHabits();
-    if (!mounted || recordList == null) return;
+    if (!context.mounted || recordList == null) return;
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -260,10 +260,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     );
     if (result == null || result == false) return;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     final recordList = await viewmodel.deleteSelectedHabits();
-    if (!mounted || recordList == null) return;
+    if (!context.mounted || recordList == null) return;
 
     final deletedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -296,11 +296,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         return;
       case HabitDisplayMainMenuDialogOpr.showSortMenu:
         await Future.delayed(const Duration(milliseconds: 300));
-        if (!mounted) return;
+        if (!context.mounted) return;
         _openHabitSummarySortSelectorDialog(context);
         break;
       case HabitDisplayMainMenuDialogOpr.openSettings:
-        if (!mounted) return;
+        if (!context.mounted) return;
         _openAppSettingsPage(context);
         break;
     }
@@ -321,7 +321,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       sortDirection: context.read<HabitsSortViewModel>().sortDirection,
     );
 
-    if (!mounted || result == null) return;
+    if (!context.mounted || result == null) return;
     context
         .read<HabitsSortViewModel>()
         .setNewSortMode(sortType: result.item1, sortDirection: result.item2);
@@ -348,7 +348,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       initReason = rcd?.reason ?? '';
     }
 
-    if (!mounted) return;
+    if (!context.mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
       context: context,
       initReason: initReason,
@@ -357,7 +357,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       colorType: data.colorType,
     );
 
-    if (result == null || result == initReason || !mounted) return;
+    if (result == null || result == initReason || !context.mounted) return;
     context
         .read<HabitSummaryViewModel>()
         .changeRecordReason(parentUUID, date, result);
@@ -400,7 +400,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       colorType: data.colorType,
     );
 
-    if (result == null || result == orgNum || !mounted) return;
+    if (result == null || result == orgNum || !context.mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return;
     viewmodel.changeRecordValue(parentUUID, date, result);
@@ -420,7 +420,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       exportAll: false,
     );
 
-    if (!mounted || confirmResult == null) return;
+    if (!context.mounted || confirmResult == null) return;
     final filePath = await context
         .read<HabitFileExporterViewModel>()
         .exportMultiHabitsData(
@@ -428,7 +428,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
 
-    if (!mounted || filePath == null) return;
+    if (!context.mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();
     //TODO: add snackbar result
     shareXFiles([XFile(filePath)],
@@ -977,7 +977,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 .loadData(inFutureBuilder: true);
             await Future.delayed(_kHabitListFutureLoadDuration);
             await loadedFuture;
-            if (mounted &&
+            if (context.mounted &&
                 context
                     .read<HabitSummaryViewModel>()
                     .consumeClearSnackBarFlag()) {
@@ -1025,7 +1025,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             child: HabitDisplayDevelopSliverList(
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
-                if (!mounted) return;
+                if (!context.mounted) return;
                 context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
               },
             ),
@@ -1099,8 +1099,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     //#endregion
 
     return ColorfulNavibar(
-      child: WillPopScope(
-        onWillPop: onWillPop,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          final canPopNow = await onWillPop();
+          if (mounted && canPopNow) Navigator.pop(this.context);
+        },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
