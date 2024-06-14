@@ -1,5 +1,69 @@
 {
-    "@@locale": "es",
-    "localeScriptName": "Español",
-    "appName": "🚧(es) - Table Habit"
+  "@@locale": "es",
+  "localeScriptName": "Español",
+  "@localeScriptName": {},
+  "appName": "Table Habit",
+  "@appName": {},
+  "habitEdit_saveButton_text": "Guardar",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitName_hintText": "Nombre del hábito",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "Escoge un color",
+  "@habitEdit_colorPicker_title": {},
+  "habitEdit_habitTypeDialog_title": "Tipo de hábito",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitType_positiveText": "Positivo",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitType_negativeText": "Negativo",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitDailyGoal_hintText": "Meta diaria, estándar {número}",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "Mínimo diario, estándar {número}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText01": "Reto diario debe llegar a {número}",
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText02": "Reto diario debe ser menor que {número}",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "Reto diario debe ser mayor que {número}",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  }
 }
