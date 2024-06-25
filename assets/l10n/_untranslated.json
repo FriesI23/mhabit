@@ -66,17 +66,6 @@
   ],
 
   "es": [
-    "habitEdit_saveButton_text",
-    "habitEdit_habitName_hintText",
-    "habitEdit_colorPicker_title",
-    "habitEdit_habitTypeDialog_title",
-    "habitEdit_habitType_positiveText",
-    "habitEdit_habitType_negativeText",
-    "habitEdit_habitDailyGoal_hintText",
-    "habitEdit_habitDailyGoal_negativeHintText",
-    "habitEdit_habitDailyGoal_errorText01",
-    "habitEdit_habitDailyGoal_errorText02",
-    "habitEdit_habitDailyGoal_negativeErrorText01",
     "habitEdit_habitDailyGoal_negativeErrorText02",
     "habitEdit_habitDailyGoalUnit_hintText",
     "habitEdit_habitDailyGoalExtra_hintText",
