@@ -63,6 +63,12 @@
         "de": [ 3 ],
         "fa": [ 5 ],
         "fr": [ 2 ],
+        "es": [
+            {
+                "name": "Andres Blasco Arnáiz",
+                "email": "andresbarnaiz@gmail.com"
+            }
+        ],
         "en": [
             1,
             {

@@ -2,9 +2,12 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Released
+# Released: v.13.1+47
 
-## pre-v1.13.0+46
+- Upgrade flutter to 3.19.6.
+- Add Spain translation, thank for Andres Blasco Arnáiz's contribution on weblate.
+
+## Upgrade flutter to 3.19.6
 
 Upgrade flutter version to 3.19.6 (last stable version with dart 3.3 (3.3.4). Main reason for upgrading this version is:
 
