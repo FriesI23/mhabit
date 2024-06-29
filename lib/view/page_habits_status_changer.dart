@@ -23,6 +23,7 @@ import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/context_extensions.dart';
+import '../extension/navigator_extensions.dart';
 import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
 import '../model/habit_date.dart';
@@ -177,7 +178,9 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         : true;
     if (!mounted) return;
 
-    if (result) dismissAllToolTips().then((_) => Navigator.pop(context));
+    if (result) {
+      dismissAllToolTips().then((_) => Navigator.of(context).popOrExit());
+    }
   }
 
   Widget _buildDebugInfo(BuildContext context) =>
