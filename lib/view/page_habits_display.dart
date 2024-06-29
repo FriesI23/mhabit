@@ -31,6 +31,7 @@ import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/navigator_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_record_form.dart';
@@ -1104,7 +1105,9 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         onPopInvoked: (didPop) async {
           if (didPop) return;
           final canPopNow = await onWillPop();
-          if (mounted && canPopNow) Navigator.pop(this.context);
+          if (mounted && canPopNow) {
+            await Navigator.of(this.context).popOrExit();
+          }
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
