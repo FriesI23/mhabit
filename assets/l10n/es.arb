@@ -530,5 +530,57 @@
   "habitDetail_skipReason_saveText": "guardar",
   "@habitDetail_skipReason_saveText": {},
   "appSetting_appbar_titleText": "Ajustes",
-  "@appSetting_appbar_titleText": {}
+  "@appSetting_appbar_titleText": {},
+  "appSetting_dragCalendarByPageTile_titleText": "Arrastrar calendario por página",
+  "@appSetting_dragCalendarByPageTile_titleText": {},
+  "appSetting_dragCalendarByPageTile_subtitleText": "Si la función está habilitada, la navegación por la lista del calendario se realizará arrastrándola página por página. La posición predeterminada está inactiva.",
+  "@appSetting_dragCalendarByPageTile_subtitleText": {},
+  "appSetting_changeRecordStatusOpTile_titleText": "Cambiar estado del registro",
+  "@appSetting_changeRecordStatusOpTile_titleText": {},
+  "appSetting_changeRecordStatusOpTile_subtitleText": "Modificar el comportamiento del clic para cambiar el estado de los registros diarios en la página principal.",
+  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Abrir registro detallado",
+  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modifique el comportamiento del clic para abrir la ventana emergente detallada de los registros diarios en la página principal.",
+  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+  "appSetting_firstDayOfWeek_titleText": "Primer dia de la semana",
+  "@appSetting_firstDayOfWeek_titleText": {},
+  "appSetting_firstDayOfWeekDialog_titleText": "Mostrar el primer día de la semana",
+  "@appSetting_firstDayOfWeekDialog_titleText": {},
+  "appSetting_firstDayOfWeekDialog_defaultText": " (Por defecto)",
+  "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "appSetting_changeLanguage_followSystem_text": "Por el sistema ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "Del sistema",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "Idioma",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_dateDisplayFormat_titleText": "Formato de visualización de la fecha ({formatTemplate})",
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_compactUISwitcher_titleText": "Habilitar la interfaz de usuario compacta en la página de hábitos",
+  "@appSetting_compactUISwitcher_titleText": {},
+  "appSetting_compactUISwitcher_subtitleText": "Permitir que la tabla de control de hábitos muestre más contenido, pero algunos UI y texto pueden aparecer más pequeños.",
+  "@appSetting_compactUISwitcher_subtitleText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "Ajuste de la zona de validación de hábitos.",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "Seleccionar el idioma",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "seguir la configuración del sistema",
+  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+  "appSetting_dateDisplayFormat_subTitleText": "El formato de fecha configurado se aplicará a la visualización de la fecha en la página de detalles del hábito.",
+  "@appSetting_dateDisplayFormat_subTitleText": {}
 }
