@@ -2,6 +2,13 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.13.3+49
+
+- Update Spain translation, thank for Andres Blasco Arnáiz and gallegonovato's contribution on weblate.
+- Fix show black screen when back from main screen.
+
+full changes on this realese see: [release.md](https://github.com/FriesI23/mhabit/blob/v1.13.3%2B49/docs/release.md)
+
 ## 1.13.1+47
 
 - Upgrade flutter to 3.19.6.

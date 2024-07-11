@@ -1,5 +1,12 @@
 # 更新日志
 
+## 1.13.3+49
+
+- 更新西班牙语翻译，感谢 Andres Blasco Arnáiz 和 gallegonovato 在 Weblate 上的贡献。
+- 修复从主屏幕返回时黑屏的问题。
+
+完整的更新内容详见：[release.md](https://github.com/FriesI23/mhabit/blob/v1.13.3%2B49/docs/release.md)
+
 ## 1.13.1+47
 
 - 升级 Flutter 到 3.19.6 版本。
