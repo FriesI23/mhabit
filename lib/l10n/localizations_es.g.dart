@@ -7,7 +7,7 @@ class L10nEs extends L10n {
   L10nEs([String locale = 'es']) : super(locale);
 
   @override
-  String get localeScriptName => 'Español';
+  String get localeScriptName => 'Inglés';
 
   @override
   String get appName => 'Table Habit';
@@ -57,63 +57,63 @@ class L10nEs extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
-    return 'daily goal must ≤ $number';
+    return 'La meta diaria debe ser inferior a $number';
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Unidad de meta diaria';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
+  String get habitEdit_habitDailyGoalExtra_hintText => 'Objetivo máximo de meta diaria';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'invalid value, must be empty or ≥ $dailyGoal';
+    return 'Valor no válido, debe permanecer vacío o ser mayor o igual que $dailyGoal';
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Límite máximo diario';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Select frequency';
+  String get habitEdit_frequencySelector_title => 'Seleccionar frecuencia';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Daily';
+  String get habitEdit_habitFreq_daily => 'Diariamente';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
+  String get habitEdit_habitFreq_perweek_ex01 => 'Veces por semana';
 
   @override
   String get habitEdit_habitFreq_permonth => '';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'times per month';
+  String get habitEdit_habitFreq_permonth_ex01 => 'veces al mes';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
+  String get habitEdit_habitFreq_predayfreq_ex01 => 'veces en';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
+  String get habitEdit_habitFreq_predayfreq_ex02 => 'días';
 
   @override
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Daily';
+  String get habitEdit_habitFreq_show_daily => 'Diariamente';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per week',
-      one: 'Per week',
+      other: 'Al menos $freq veces por semana',
+      one: 'Por semana',
     );
     return '$_temp0';
   }
@@ -123,8 +123,8 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per month',
-      one: 'Per month',
+      other: 'Al menos $freq veces al mes',
+      one: 'Al mes',
     );
     return '$_temp0';
   }
@@ -134,220 +134,220 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times in every $days days',
-      one: 'In every $days days',
+      other: 'Al menos $freq veces cada $days días',
+      one: 'Cada $days días',
     );
     return '$_temp0';
   }
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays days';
+    return '$targetDays días';
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => 'Select Target Days';
+  String get habitEdit_targetDays_dialogTitle => 'Seleccionar días';
 
   @override
-  String get habitEdit_targetDays => 'days';
+  String get habitEdit_targetDays => 'días';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'Recordatorio';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
+  String get habitEdit_reminder_freq_weekHelpText => 'Cualquier día de la semana';
 
   @override
   String get habitEdit_reminder_freq_weekPrefixText => '';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
+  String get habitEdit_reminder_freq_weekSubfixText => ' cada semana';
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => 'Any day of month';
+  String get habitEdit_reminder_freq_monthHelpText => 'Cualquier día del mes';
 
   @override
   String get habitEdit_reminder_freq_monthPrefixText => '';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
+  String get habitEdit_reminder_freq_monthSubfixText => ' cada mes';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Question, e.g. Did you exercise today?';
+  String get habitEdit_reminderQuest_hintText => 'Pregunta, ej, ¿Has hecho ejercicio hoy?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Choose reminder type';
+  String get habitEdit_reminder_dialogTitle => 'Escoge el tipo de recordatorio';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'When need to check in';
+  String get habitEdit_reminder_dialogType_whenNeeded => 'Cuándo es necesario comprobarlo';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Daily';
+  String get habitEdit_reminder_dialogType_daily => 'Diariamente';
 
   @override
-  String get habitEdit_reminder_dialogType_week => 'Per week';
+  String get habitEdit_reminder_dialogType_week => 'Semanalmente';
 
   @override
-  String get habitEdit_reminder_dialogType_month => 'Per month';
+  String get habitEdit_reminder_dialogType_month => 'Mensualmente';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'confirm';
+  String get habitEdit_reminder_dialogConfirm => 'confirmar';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'cancel';
+  String get habitEdit_reminder_dialogCancel => 'cancelar';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
+  String get habitEdit_reminder_cancelDialogTitle => 'Confirmar';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Do you confirm to remove this reminder';
+  String get habitEdit_reminder_cancelDialogSubtitle => '¿Quieres borrar este recordatorio?';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
+  String get habitEdit_reminder_cancelDialogConfirm => 'confirmar';
 
   @override
-  String get habitEdit_reminder_cancelDialogCancel => 'cancel';
+  String get habitEdit_reminder_cancelDialogCancel => 'cancelar';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => 'Mon';
+  String get habitEdit_reminder_weekdayText_monday => 'Lun';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => 'Tue';
+  String get habitEdit_reminder_weekdayText_tuesday => 'Mar';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
+  String get habitEdit_reminder_weekdayText_wednesday => 'Mie';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Tur';
+  String get habitEdit_reminder_weekdayText_thursday => 'Jue';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => 'Fri';
+  String get habitEdit_reminder_weekdayText_friday => 'Vie';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => 'Sat';
+  String get habitEdit_reminder_weekdayText_saturday => 'Sáb';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => 'Sun';
+  String get habitEdit_reminder_weekdayText_sunday => 'Dom';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo, support Markdown';
+  String get habitEdit_desc_hintText => 'Memo, acepta Markdown';
 
   @override
-  String get habitEdit_create_datetime_prefix => 'Created: ';
+  String get habitEdit_create_datetime_prefix => 'Creado por: ';
 
   @override
-  String get habitEdit_modify_datetime_prefix => 'Modified: ';
+  String get habitEdit_modify_datetime_prefix => 'Modificado: ';
 
   @override
-  String get habitDisplay_fab_text => 'New Habit';
+  String get habitDisplay_fab_text => 'Nuevo hábito';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'A journey of a thousand miles begins with a single step';
+  String get habitDisplay_emptyImage_text_01 => 'Un viaje de cientos de kilómetros empieza con un único paso';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archive Selected Habits?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title => '¿Quieres archivar los hábitos seleccionados?';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirmar';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'cancelar';
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
-    return 'Archived $count habits';
+    return '$count hábitos archivados';
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Unarchive Selected Habits?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title => '¿Quieres desarchivar los hábitos seleccionados?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'confirmar';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'cancelar';
 
   @override
   String habitDisplay_unarchiveHabitsSuccSnackbarText(int count) {
-    return 'Unarchived $count habits';
+    return '$count hábitos desarchivados';
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Delete Selected Habits?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title => '¿Quieres borrar los hábitos seleccionados?';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirmar';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'cancelar';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
-    return 'Deleted $count habits';
+    return '$count hábitos borrados';
   }
 
   @override
-  String get habitDisplay_editPopMenu_selectAll => 'Select All';
+  String get habitDisplay_editPopMenu_selectAll => 'Seleccionar todo';
 
   @override
-  String get habitDisplay_editPopMenu_export => 'Export';
+  String get habitDisplay_editPopMenu_export => 'Exportar';
 
   @override
-  String get habitDisplay_editPopMenu_delete => 'Delete';
+  String get habitDisplay_editPopMenu_delete => 'Borrar';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Template';
+  String get habitDisplay_editPopMenu_clone => 'Plantilla';
 
   @override
-  String get habitDisplay_editButton_tooltip => 'Edit';
+  String get habitDisplay_editButton_tooltip => 'Editar';
 
   @override
-  String get habitDisplay_archiveButton_tooltip => 'Archive';
+  String get habitDisplay_archiveButton_tooltip => 'Archivar';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => 'Unarchive';
+  String get habitDisplay_unarchiveButton_tooltip => 'Desarchivar';
 
   @override
-  String get habitDisplay_settingButton_tooltip => 'Setting';
+  String get habitDisplay_settingButton_tooltip => 'Ajustes';
 
   @override
-  String get habitDisplay_statsMenu_statSubgroupText => 'Current';
+  String get habitDisplay_statsMenu_statSubgroupText => 'En curso';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Completed';
+  String get habitDisplay_statsMenu_completedTileText => 'Completados';
 
   @override
-  String get habitDisplay_statsMenu_inProgresTileText => 'In Progress';
+  String get habitDisplay_statsMenu_inProgresTileText => 'En progreso';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Archived';
+  String get habitDisplay_statsMenu_archivedTileText => 'Archivados';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Top Habits: Last 30 Days Changes';
+  String get habitDisplay_statsMenu_popularitySubgroupText => 'Hábitos principales: Cambios en 30 días';
 
   @override
-  String get habitDisplay_mainMenu_lightTheme => 'Light Theme';
+  String get habitDisplay_mainMenu_lightTheme => 'Tema Claro';
 
   @override
-  String get habitDisplay_mainMenu_darkTheme => 'Dark Theme';
+  String get habitDisplay_mainMenu_darkTheme => 'Tema Oscuro';
 
   @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Follow System';
+  String get habitDisplay_mainMenu_followSystemTheme => 'Según el sistema';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Show Archived';
+  String get habitDisplay_mainMenu_showArchivedTileText => 'Mostrar archivados';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
+  String get habitDisplay_mainMenu_showCompletedTileText => 'Mostrar completados';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
+  String get habitDisplay_mainMenu_showActivedTileText => 'Mostrar Activos';
 
   @override
-  String get habitDisplay_mainMenu_settingTileText => 'Settings';
+  String get habitDisplay_mainMenu_settingTileText => 'Ajustes';
 
   @override
-  String get habitDisplay_sort_reverseText => 'Reverse';
+  String get habitDisplay_sort_reverseText => 'Deshacer';
 
   @override
   String get habitDisplay_sortDirection_asc => '(Asc)';
@@ -356,74 +356,74 @@ class L10nEs extends L10n {
   String get habitDisplay_sortDirection_Desc => '(Desc)';
 
   @override
-  String get habitDisplay_sortType_manual => 'My order';
+  String get habitDisplay_sortType_manual => 'Orden propio';
 
   @override
-  String get habitDisplay_sortType_name => 'By Name';
+  String get habitDisplay_sortType_name => 'Por nombre';
 
   @override
-  String get habitDisplay_sortType_colorType => 'By Color';
+  String get habitDisplay_sortType_colorType => 'Por color';
 
   @override
-  String get habitDisplay_sortType_progress => 'By Rate';
+  String get habitDisplay_sortType_progress => 'Por puntuación';
 
   @override
-  String get habitDisplay_sortType_startT => 'By Start Date';
+  String get habitDisplay_sortType_startT => 'Por día de comienzo';
 
   @override
-  String get habitDisplay_sortType_status => 'By Status';
+  String get habitDisplay_sortType_status => 'Por estado';
 
   @override
-  String get habitDisplay_sortTypeDialog_title => 'Sort';
+  String get habitDisplay_sortTypeDialog_title => 'Ordenar';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'confirm';
+  String get habitDisplay_sortTypeDialog_confirm => 'confirmar';
 
   @override
-  String get habitDisplay_sortTypeDialog_cancel => 'cancel';
+  String get habitDisplay_sortTypeDialog_cancel => 'cancelar';
 
   @override
-  String get habitDisplay_debug_debugSubgroup_title => '🛠️Debug';
+  String get habitDisplay_debug_debugSubgroup_title => '🛠️Búsqueda de errores';
 
   @override
-  String get habitDetail_editButton_tooltip => 'Edit';
+  String get habitDetail_editButton_tooltip => 'Editar';
 
   @override
-  String get habitDetail_editPopMenu_unarchive => 'Unarchive';
+  String get habitDetail_editPopMenu_unarchive => 'Desarchivar';
 
   @override
-  String get habitDetail_editPopMenu_archive => 'Archive';
+  String get habitDetail_editPopMenu_archive => 'Archivar';
 
   @override
-  String get habitDetail_editPopMenu_export => 'Export';
+  String get habitDetail_editPopMenu_export => 'Exportar';
 
   @override
-  String get habitDetail_editPopMenu_delete => 'Delete';
+  String get habitDetail_editPopMenu_delete => 'Borrar';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'Plantilla';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'confirm';
+  String get habitDetail_confirmDialog_confirm => 'confirmar';
 
   @override
-  String get habitDetail_confirmDialog_cancel => 'cancel';
+  String get habitDetail_confirmDialog_cancel => 'cancelar';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archive Habit?';
+  String get habitDetail_archiveConfirmDialog_titleText => '¿Quieres archivar este hábito?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Unarchive Habit?';
+  String get habitDetail_unarchiveConfirmDialog_titleText => '¿Quieres desarchivar este hábito?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Delete Habit?';
+  String get habitDetail_deleteConfirmDialog_titleText => '¿Quieres borrar este hábito?';
 
   @override
-  String get habitDetail_summary_title => 'Summary';
+  String get habitDetail_summary_title => 'Resumen';
 
   @override
   String habitDetail_summary_body(String score, int days) {
-    return 'Current grade is $score, and it has been $days days since the start.';
+    return 'La puntuación actual es $score, y han pasado $days días desde el inicio.';
   }
 
   @override
@@ -431,8 +431,8 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days days.',
-      one: 'Starting tomorrow.',
+      other: 'Empezar en $days días. ',
+      one: 'Empezar mañana.',
     );
     return '$_temp0';
   }
@@ -443,8 +443,8 @@ class L10nEs extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'SUBSTANDARD',
-      one: 'INCOMPLETE',
+      two: 'DEBAJO DEL OBJETIVO',
+      one: 'NO COMPLETADO',
     );
     return '$_temp0';
   }
@@ -455,8 +455,8 @@ class L10nEs extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'IMPECCABLE',
-      one: 'OVERFULFIL',
+      two: 'PERFECTO',
+      one: 'DEMASIADO',
     );
     return '$_temp0';
   }
@@ -466,26 +466,26 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Goal',
-      two: 'Threshold',
+      other: 'Meta',
+      two: 'Umbral',
     );
     return '$_temp0';
   }
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
-    return 'Unit: $unit';
+    return 'Unidad: $unit';
   }
 
   @override
-  String get habitDetail_descDailyGoal_unitEmptyText => 'null';
+  String get habitDetail_descDailyGoal_unitEmptyText => 'vacío';
 
   @override
   String habitDetail_descTargetDays_titleText(int habitType) {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Days',
+      other: 'Días',
     );
     return '$_temp0';
   }
@@ -494,104 +494,104 @@ class L10nEs extends L10n {
   String get habitDetail_descTargetDays_unitText => 'd';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Records';
+  String get habitDetail_descRecordsNum_titleText => 'Registros';
 
   @override
-  String get habitDetail_scoreChart_title => 'Score';
+  String get habitDetail_scoreChart_title => 'Puntuación';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => 'Day';
+  String get habitDetail_scoreChartCombine_dailyText => 'Día';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'Week';
+  String get habitDetail_scoreChartCombine_weeklyText => 'Semana';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'Month';
+  String get habitDetail_scoreChartCombine_monthlyText => 'Mes';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'Year';
+  String get habitDetail_scoreChartCombine_yearlyText => 'Año';
 
   @override
-  String get habitDetail_freqChart_freqTitle => 'Frequency';
+  String get habitDetail_freqChart_freqTitle => 'Frecuencia';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'History';
+  String get habitDetail_freqChart_historyTitle => 'Historial';
 
   @override
-  String get habitDetail_freqChart_combinedTitle => 'Frequency & History';
+  String get habitDetail_freqChart_combinedTitle => 'Frencuencia e historial';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'Week';
+  String get habitDetail_freqChartCombine_weeklyText => 'Semana';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'Month';
+  String get habitDetail_freqChartCombine_monthlyText => 'Mes';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'Year';
+  String get habitDetail_freqChartCombine_yearlyText => 'Año';
 
   @override
-  String get habitDetail_freqChartNaviBar_nowText => 'Now';
+  String get habitDetail_freqChartNaviBar_nowText => 'Presente';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Hide History Chart';
+  String get habitDetail_freqChart_expanded_hideTooltip => 'Esconder gráfico de historial';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
+  String get habitDetail_freqChart_expanded_showTooltip => 'Mostrar gráfico de historial';
 
   @override
   String get habitDetail_descSubgroup_title => 'Memo';
 
   @override
-  String get habitDetail_otherSubgroup_title => 'Other';
+  String get habitDetail_otherSubgroup_title => 'Otros';
 
   @override
-  String get habitDetail_habitType_title => 'Type';
+  String get habitDetail_habitType_title => 'Tipo';
 
   @override
-  String get habitDetail_reminderTile_title => 'Reminder';
+  String get habitDetail_reminderTile_title => 'Recordatorio';
 
   @override
-  String get habitDetail_freqTile_title => 'Repeat';
+  String get habitDetail_freqTile_title => 'Repetición';
 
   @override
-  String get habitDetail_startDateTile_title => 'Start Date';
+  String get habitDetail_startDateTile_title => 'Fecha de inicio';
 
   @override
-  String get habitDetail_createDateTile_title => 'Created';
+  String get habitDetail_createDateTile_title => 'Creado';
 
   @override
-  String get habitDetail_modifyDateTile_title => 'Modified';
+  String get habitDetail_modifyDateTile_title => 'Modificado';
 
   @override
-  String get habitDetail_editHeatmapCal_dateButtonText => 'date';
+  String get habitDetail_editHeatmapCal_dateButtonText => 'fecha';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => 'value';
+  String get habitDetail_editHeatmapCal_valueButtonText => 'valor';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'back to today';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'Volver a hoy';
 
   @override
-  String get habitDetail_notFoundText => 'Load habit failed';
+  String get habitDetail_notFoundText => 'Error al cargar el hábito';
 
   @override
-  String get habitDetail_notFoundRetryText => 'Try again';
+  String get habitDetail_notFoundRetryText => 'Volver a intentar';
 
   @override
-  String get habitDetail_changeGoal_title => 'Change goal';
+  String get habitDetail_changeGoal_title => 'Cambiar meta';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
-    return 'current: $goal';
+    return 'Actualmente: $goal';
   }
 
   @override
   String habitDetail_changeGoal_doneChipText(String goal) {
-    return 'done: $goal';
+    return 'realizado: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_undoneChipText => 'undone';
+  String get habitDetail_changeGoal_undoneChipText => 'no realizado';
 
   @override
   String habitDetail_changeGoal_extraChipText(String goal) {
@@ -600,96 +600,96 @@ class L10nEs extends L10n {
 
   @override
   String habitDetail_changeGoal_helpText(String goal) {
-    return 'Daily goal, default: $goal';
+    return 'Meta diaria, predeterminado: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_cancelText => 'cancel';
+  String get habitDetail_changeGoal_cancelText => 'cancelar';
 
   @override
-  String get habitDetail_changeGoal_saveText => 'save';
+  String get habitDetail_changeGoal_saveText => 'guardar';
 
   @override
-  String get habitDetail_skipReason_title => 'Skip reason';
+  String get habitDetail_skipReason_title => 'Saltar razón';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
+  String get habitDetail_skipReason_bodyHelpText => 'Escribe algo aquí...';
 
   @override
-  String get habitDetail_skipReason_cancelText => 'cancel';
+  String get habitDetail_skipReason_cancelText => 'cancelar';
 
   @override
-  String get habitDetail_skipReason_saveText => 'save';
+  String get habitDetail_skipReason_saveText => 'guardar';
 
   @override
-  String get appSetting_appbar_titleText => 'Settings';
+  String get appSetting_appbar_titleText => 'Ajustes';
 
   @override
-  String get appSetting_displaySubgroupText => 'Display';
+  String get appSetting_displaySubgroupText => 'Mostrar';
 
   @override
-  String get appSetting_operationSubgroupText => 'Operation';
+  String get appSetting_operationSubgroupText => 'Operación';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Drag calendar by page';
+  String get appSetting_dragCalendarByPageTile_titleText => 'Arrastrar calendario por página';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.';
+  String get appSetting_dragCalendarByPageTile_subtitleText => 'Si la función está habilitada, la navegación por la lista del calendario se realizará arrastrándola página por página. La posición predeterminada está inactiva.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Change Record Status';
+  String get appSetting_changeRecordStatusOpTile_titleText => 'Cambiar estado del registro';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modificar el comportamiento del clic para cambiar el estado de los registros diarios en la página principal.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Open Detailed Record';
+  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Abrir registro detallado';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modifique el comportamiento del clic para abrir la ventana emergente detallada de los registros diarios en la página principal.';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => 'First day of week';
+  String get appSetting_firstDayOfWeek_titleText => 'Primer dia de la semana';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Show first day of week';
+  String get appSetting_firstDayOfWeekDialog_titleText => 'Mostrar el primer día de la semana';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Por defecto)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'Por el sistema ($localeName)';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Del sistema';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Idioma';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Seleccionar el idioma';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
-    return 'Date display format ($formatTemplate)';
+    return 'Formato de visualización de la fecha ($formatTemplate)';
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'follow system setting';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'seguir la configuración del sistema';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Configured date format will be applied to the date display on habit detail page.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'El formato de fecha configurado se aplicará a la visualización de la fecha en la página de detalles del hábito.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Enable Compact UI on habits page';
+  String get appSetting_compactUISwitcher_titleText => 'Habilitar la interfaz de usuario compacta en la página de hábitos';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Allow habits check table to display more content, but some UI and text may appear smaller.';
+  String get appSetting_compactUISwitcher_subtitleText => 'Permitir que la tabla de control de hábitos muestre más contenido, pero algunos UI y texto pueden aparecer más pequeños.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Habits check area radio adjustment';
+  String get appSetting_collapsed_calendar_bararea_titleText => 'Ajuste de la zona de validación de hábitos.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
