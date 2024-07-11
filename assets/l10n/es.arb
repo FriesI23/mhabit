@@ -270,7 +270,7 @@
   "@habitEdit_habitDailyGoalUnit_hintText": {},
   "habitEdit_habitDailyGoalExtra_hintText": "Objetivo máximo de meta diaria",
   "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitDailyGoalExtra_errorText": "Valor no válido, debe permanecer vacío o ser mayor o igual que {dialyGoal}",
+  "habitEdit_habitDailyGoalExtra_errorText": "Valor no válido, debe permanecer vacío o ser mayor o igual que {dailyGoal}",
   "@habitEdit_habitDailyGoalExtra_errorText": {
     "placeholders": {
       "dailyGoal": {
