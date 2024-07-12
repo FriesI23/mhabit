@@ -582,5 +582,105 @@
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "seguir la configuración del sistema",
   "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
   "appSetting_dateDisplayFormat_subTitleText": "El formato de fecha configurado se aplicará a la visualización de la fecha en la página de detalles del hábito.",
-  "@appSetting_dateDisplayFormat_subTitleText": {}
+  "@appSetting_dateDisplayFormat_subTitleText": {},
+  "appSetting_about_titleText": "Acerca de",
+  "@appSetting_about_titleText": {},
+  "appAbout_appbarTile_titleText": "Acerca de",
+  "@appAbout_appbarTile_titleText": {},
+  "donateWay_alipay": "Alipay",
+  "@donateWay_alipay": {},
+  "donateWay_cryptoCurrency_BNB": "BNB",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "donateWay_cryptoCurrency_BTC": "BTC",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "cancelar",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "appSetting_clearCache_snackBar_failText": "Error al borrar la caché",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "appSetting_clearCacheDialog_cancelText": "cancelar",
+  "@appSetting_clearCacheDialog_cancelText": {},
+  "exportConfirmDialog_cancel_buttonText": "cancelar",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "debug_debuggerLogCard_clearButton_text": "Limpiar",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
+  "batchCheckin_close_confirmDialog_body": "Los cambios en el estado de la verificación solo se aplicarán después de guardarlos.",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "appSetting_clearCache_titleText": "Limpiar la caché",
+  "@appSetting_clearCache_titleText": {},
+  "appSetting_clearCacheDialog_titleText": "Limpiar la caché",
+  "@appSetting_clearCacheDialog_titleText": {},
+  "debug_debuggerInfo_notificationTitle": "Recopilando información de la aplicación...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "common_habitColorType_default": "Color {index}",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Ajusta el porcentaje para tener más o menos espacio en el área de validación de hábitos.",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "appSetting_clearCacheDialog_subtitleText": "Después de borrar la caché, algunos valores personalizados se restaurarán a los valores predeterminados.",
+  "@appSetting_clearCacheDialog_subtitleText": {},
+  "appAbout_licenseTile_subtitleText": "Licencia Apache versión 2.0",
+  "@appAbout_licenseTile_subtitleText": {},
+  "appSetting_backupAndRestoreSubgroupText": "Copia de seguridad y restauración",
+  "@appSetting_backupAndRestoreSubgroupText": {},
+  "appSetting_clearCache_snackBar_succText": "Caché borrada con éxito",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "appSetting_importDialog_confirm_cancelText": "cancelar",
+  "@appSetting_importDialog_confirm_cancelText": {},
+  "appSetting_resetConfigDialog_cancelText": "cancelar",
+  "@appSetting_resetConfigDialog_cancelText": {},
+  "appSetting_importDialog_complete_closeLabel": "cerrar",
+  "@appSetting_importDialog_complete_closeLabel": {},
+  "appSetting_importDialog_completeTitle": "Importación completada {count}",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirm_confirmText": "confirmar",
+  "@appSetting_importDialog_confirm_confirmText": {},
+  "appSetting_resetConfigDialog_confirmText": "confirmar",
+  "@appSetting_resetConfigDialog_confirmText": {},
+  "appSetting_clearCacheDialog_confirmText": "confirmar",
+  "@appSetting_clearCacheDialog_confirmText": {},
+  "appSetting_importDialog_confirmTitle": "¿Confirmar la importación de {count} hábitos?",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "donateWay_firstQRGroup": "Alipay y Wechat Pay",
+  "@donateWay_firstQRGroup": {},
+  "common_habitColorType_cc7": "Ámbar",
+  "@common_habitColorType_cc7": {},
+  "donateWay_cryptoCurrency_AVAX": "AVAX",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "batchCheckin_appbar_title": "Registro por lotes",
+  "@batchCheckin_appbar_title": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "cancelar",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "cancelar",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "appReminder_dailyReminder_body": "Haz clic para ingresar a la aplicación y registrar tu entrada a tiempo.",
+  "@appReminder_dailyReminder_body": {},
+  "batchCheckin_status_ok_text": "Terminado",
+  "@batchCheckin_status_ok_text": {},
+  "debug_collectLogTile_title": "Recopilando los registros",
+  "@debug_collectLogTile_title": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "confirmar",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {}
 }
