@@ -7,10 +7,10 @@ class L10nFa extends L10n {
   L10nFa([String locale = 'fa']) : super(locale);
 
   @override
-  String get localeScriptName => 'زبان فارسی';
+  String get localeScriptName => 'پارسی';
 
   @override
-  String get appName => 'جدول عادت‌ها';
+  String get appName => 'زیگ عادت‌ها';
 
   @override
   String get habitEdit_saveButton_text => 'ذخیره';
@@ -19,7 +19,7 @@ class L10nFa extends L10n {
   String get habitEdit_habitName_hintText => 'نام عادت...';
 
   @override
-  String get habitEdit_colorPicker_title => 'انتخاب رنگ';
+  String get habitEdit_colorPicker_title => 'گزینش رنگ';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'نوع عادت';
@@ -102,7 +102,7 @@ class L10nFa extends L10n {
   String get habitEdit_habitFreq_predayfreq_ex02 => 'روز';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_reverse_flag => '۰';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'روزانه';
@@ -663,13 +663,13 @@ class L10nFa extends L10n {
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'پیروی از سامانه';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'زبان';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'گزیدن زبان';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -970,7 +970,7 @@ class L10nFa extends L10n {
   String get common_habitColorType_cc4 => 'آبی سلطنتی';
 
   @override
-  String get common_habitColorType_cc5 => 'فیروزه‌ای تیره';
+  String get common_habitColorType_cc5 => 'پیروزه‌ای تیره';
 
   @override
   String get common_habitColorType_cc6 => 'سبز';
@@ -1096,13 +1096,13 @@ class L10nFa extends L10n {
   String get debug_logLevel_debug => 'Debug';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'گزارش';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'هشدار';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'ایرنگ';
 
   @override
   String get debug_logLevel_fatal => 'Fatal';
