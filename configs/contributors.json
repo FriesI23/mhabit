@@ -61,7 +61,12 @@
             }
         ],
         "de": [ 3 ],
-        "fa": [ 5 ],
+        "fa": [ 5,
+            {
+                "name": "ulracte",
+                "email": "ulracte@users.noreply.hosted.weblate.org"
+            }
+        ],
         "fr": [ 2 ],
         "es": [
             {
