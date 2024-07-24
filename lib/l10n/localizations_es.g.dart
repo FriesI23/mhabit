@@ -692,156 +692,156 @@ class L10nEs extends L10n {
   String get appSetting_collapsed_calendar_bararea_titleText => 'Ajuste de la zona de validación de hábitos.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Ajusta el porcentaje para tener más o menos espacio en el área de validación de hábitos.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+  String get appSetting_collapsed_calendar_bararea_defaultText => 'Por defecto';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Reminder';
+  String get appSetting_reminderSubgroupText => 'Recordatorio';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'Daily reminder';
+  String get appSetting_dailyReminder_titleText => 'Recordatorio diario';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Backup & restore';
+  String get appSetting_backupAndRestoreSubgroupText => 'Copia de seguridad y restauración';
 
   @override
-  String get appSetting_export_titleText => 'Export';
+  String get appSetting_export_titleText => 'Exportar';
 
   @override
-  String get appSetting_export_subtitleText => 'Exported habits as JSON format, This file can be import back.';
+  String get appSetting_export_subtitleText => 'Hábitos exportados en formato JSON. Este archivo se puede volver a importar.';
 
   @override
-  String get appSetting_import_titleText => 'Import';
+  String get appSetting_import_titleText => 'Importar';
 
   @override
-  String get appSetting_import_subtitleText => 'Import habits from json file.';
+  String get appSetting_import_subtitleText => 'Importar hábitos desde el archivo json.';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
-    return 'Confirm import $count habits?';
+    return '¿Confirmar la importación de $count hábitos?';
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Note: Import doesn\'t delete existing habits.';
+  String get appSetting_importDialog_confirmSubtitle => 'Nota: La importación no elimina los hábitos existentes.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'confirm';
+  String get appSetting_importDialog_confirm_confirmText => 'confirmar';
 
   @override
-  String get appSetting_importDialog_confirm_cancelText => 'cancel';
+  String get appSetting_importDialog_confirm_cancelText => 'cancelar';
 
   @override
   String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
-    return 'Imported $completeCount/$totalCount';
+    return 'Importado $completeCount/$totalCount';
   }
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Complete import $count';
+    return 'Importación completada $count';
   }
 
   @override
-  String get appSetting_importDialog_complete_closeLabel => 'close';
+  String get appSetting_importDialog_complete_closeLabel => 'cerrar';
 
   @override
-  String get appSetting_resetConfig_titleText => 'Reset configs';
+  String get appSetting_resetConfig_titleText => 'Restablecer los ajustes';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Reset all configs to default.';
+  String get appSetting_resetConfig_subtitleText => 'Restablecer todas los ajustes a los valores predeterminados.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Reset configs?';
+  String get appSetting_resetConfigDialog_titleText => '¿Restablecer los ajustes?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'Reset all configs to default, must restart application to apply.';
+  String get appSetting_resetConfigDialog_subtitleText => 'Restablecer todas los ajustes a los valores predeterminados, debes reiniciar la aplicación para aplicar los cambios.';
 
   @override
-  String get appSetting_resetConfigDialog_cancelText => 'cancel';
+  String get appSetting_resetConfigDialog_cancelText => 'cancelar';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'confirm';
+  String get appSetting_resetConfigDialog_confirmText => 'confirmar';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'reset app configs succeed';
+  String get appSetting_resetConfigSuccess_snackbarText => 'Restablecimiento de los ajustes fue exitoso';
 
   @override
-  String get appSetting_otherSubgroupText => 'Others';
+  String get appSetting_otherSubgroupText => 'Otros';
 
   @override
-  String get appSetting_developMode_titleText => 'Develop Mode';
+  String get appSetting_developMode_titleText => 'Modo desarrollador';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'Limpiar la caché';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'Limpiar la caché';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'After clearing cache, some custom values will be restored to defaults.';
+  String get appSetting_clearCacheDialog_subtitleText => 'Después de borrar la caché, algunos valores personalizados se restaurarán a los valores predeterminados.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+  String get appSetting_clearCacheDialog_cancelText => 'cancelar';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+  String get appSetting_clearCacheDialog_confirmText => 'confirmar';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Partial Cache cleared failed';
+  String get appSetting_clearCache_snackBar_partSuccText => 'Error al borrar parcialmente la memoria caché';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Cache cleared successfully';
+  String get appSetting_clearCache_snackBar_succText => 'Caché borrada con éxito';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
+  String get appSetting_clearCache_snackBar_failText => 'Error al borrar la caché';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Información de depuración';
 
   @override
-  String get appSetting_about_titleText => 'About';
+  String get appSetting_about_titleText => 'Acerca de';
 
   @override
-  String get appAbout_appbarTile_titleText => 'About';
+  String get appAbout_appbarTile_titleText => 'Acerca de';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
-    return 'Version: $appVersion';
+    return 'Versión: $appVersion';
   }
 
   @override
   String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
-  String get appAbout_sourceCodeTile_titleText => 'Source code';
+  String get appAbout_sourceCodeTile_titleText => 'Código fuente';
 
   @override
-  String get appAbout_issueTrackerTile_titleText => 'Issue tracker';
+  String get appAbout_issueTrackerTile_titleText => 'Seguimiento de errores';
 
   @override
-  String get appAbout_contactEmailTile_titleText => 'Contact me';
+  String get appAbout_contactEmailTile_titleText => 'Contáctame';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody => 'Hola, me alegro de que te hayas comunicado conmigo.\nSi estás informando de un error, indica la versión de la aplicación y describe los pasos para reproducirlo.\n--------------------------------------';
 
   @override
-  String get appAbout_licenseTile_titleText => 'License';
+  String get appAbout_licenseTile_titleText => 'Licencia';
 
   @override
-  String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
+  String get appAbout_licenseTile_subtitleText => 'Licencia Apache versión 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Third Party Licensing Statement';
+  String get appAbout_licenseThirdPartyTile_titleText => 'Declaración de licencias de terceros';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_donateTile_titleText => 'Donate';
+  String get appAbout_donateTile_titleText => 'Donar';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'I\'m a personal developer. If you like this app, please buy me a ☕.';
+  String get appAbout_donateTile_subTitleText => 'Estoy desarrollando esta aplicación como hobby. Por favor cómprame un ☕.';
 
   @override
   String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
@@ -850,7 +850,7 @@ class L10nEs extends L10n {
   String get donateWay_paypal => 'Paypal';
 
   @override
-  String get donateWay_buyMeACoffee => 'Buy me a coffee';
+  String get donateWay_buyMeACoffee => 'Invítame a un café';
 
   @override
   String get donateWay_alipay => 'Alipay';
@@ -859,7 +859,7 @@ class L10nEs extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Crypto Currencies';
+  String get donateWay_cryptoCurrency => 'CRIPTOMONEDAS';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -877,118 +877,118 @@ class L10nEs extends L10n {
   String get donateWay_cryptoCurrency_FTM => 'FTM';
 
   @override
-  String get donateWay_firstQRGroup => 'Alipay & Wechat Pay';
+  String get donateWay_firstQRGroup => 'Alipay y Wechat Pay';
 
   @override
   String appAbout_donateDialog_copiedCrypto_msg(String name) {
-    return 'Copied $name\'s Address';
+    return 'Copiada la dirección de $name';
   }
 
   @override
-  String get batchCheckin_appbar_title => 'Batch Check-in';
+  String get batchCheckin_appbar_title => 'Registro por lotes';
 
   @override
-  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+  String get batchCheckin_datePicker_prevButton_tooltip => 'El día anterior';
 
   @override
-  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+  String get batchCheckin_datePicker_nextButton_tooltip => 'El día siguiente';
 
   @override
-  String get batchCheckin_status_skip_text => 'Skip';
+  String get batchCheckin_status_skip_text => 'Omitir';
 
   @override
-  String get batchCheckin_status_ok_text => 'Complete';
+  String get batchCheckin_status_ok_text => 'Terminado';
 
   @override
   String get batchCheckin_status_double_text => 'x2 Hit!';
 
   @override
-  String get batchCheckin_status_zero_text => 'Incomplete';
+  String get batchCheckin_status_zero_text => 'Incompleto';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Habits',
-      one: 'Habit',
+      other: 'Hábitos',
+      one: 'Hábito',
     );
-    return '$count $_temp0 selected';
+    return '$count $_temp0 seleccionados';
   }
 
   @override
-  String get batchCheckin_save_button_text => 'Save';
+  String get batchCheckin_save_button_text => 'Guardar';
 
   @override
-  String get batchCheckin_reset_button_text => 'Reset';
+  String get batchCheckin_reset_button_text => 'Restablecer';
 
   @override
   String batchCheckin_completed_snackbar_text(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: 'estado de $count hábitos',
+      one: 'estado del hábito',
     );
-    return 'Modified $_temp0';
+    return 'Modificado $_temp0';
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Overwrite Existing Records';
+  String get batchCheckin_save_confirmDialog_title => 'Sobrescribir registros existentes';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Existing records will be overwritten After saving, previous records will be lost.';
+  String get batchCheckin_save_confirmDialog_body => 'Los registros existentes se sobrescribirán. Después de guardar, se perderán los registros anteriores.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'guardar';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancelar';
 
   @override
-  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+  String get batchCheckin_close_confirmDialog_title => 'Confirmar devolución';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Check-in Status Changes won\'t be applied before saved';
+  String get batchCheckin_close_confirmDialog_body => 'Los cambios en el estado de la verificación solo se aplicarán después de guardarlos.';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'salir';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancelar';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Did you stick to your habits today?';
+  String get appReminder_dailyReminder_title => '🏝 ¿Sigues con tus hábitos?';
 
   @override
-  String get appReminder_dailyReminder_body => 'click to enter app and punch in on time.';
+  String get appReminder_dailyReminder_body => 'Haz clic para ingresar a la aplicación y registrar tu entrada a tiempo.';
 
   @override
-  String get common_habitColorType_cc1 => 'Deep lilac';
+  String get common_habitColorType_cc1 => 'Lila oscuro';
 
   @override
-  String get common_habitColorType_cc2 => 'Red';
+  String get common_habitColorType_cc2 => 'Rojo';
 
   @override
-  String get common_habitColorType_cc3 => 'Purple';
+  String get common_habitColorType_cc3 => 'Morado';
 
   @override
-  String get common_habitColorType_cc4 => 'Royal blue';
+  String get common_habitColorType_cc4 => 'Azul';
 
   @override
-  String get common_habitColorType_cc5 => 'Dark cyan';
+  String get common_habitColorType_cc5 => 'Cian oscuro';
 
   @override
-  String get common_habitColorType_cc6 => 'Green';
+  String get common_habitColorType_cc6 => 'Verde';
 
   @override
-  String get common_habitColorType_cc7 => 'Amber';
+  String get common_habitColorType_cc7 => 'Ámbar';
 
   @override
-  String get common_habitColorType_cc8 => 'Orange';
+  String get common_habitColorType_cc8 => 'Naranja';
 
   @override
-  String get common_habitColorType_cc9 => 'Lime green';
+  String get common_habitColorType_cc9 => 'Lima';
 
   @override
   String get common_habitColorType_cc10 => 'Dark orchid';
@@ -999,37 +999,37 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Use system format';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Usar el del sistema';
 
   @override
-  String get common_customDateTimeFormatPicker_fmtTileText => 'Date format';
+  String get common_customDateTimeFormatPicker_fmtTileText => 'Formato de fecha';
 
   @override
-  String get common_customDateTimeFormatPicker_ymd_text => 'Year Month Day';
+  String get common_customDateTimeFormatPicker_ymd_text => 'Año mes día';
 
   @override
-  String get common_customDateTimeFormatPicker_mdy_text => 'Month Day Year';
+  String get common_customDateTimeFormatPicker_mdy_text => 'Mes día año';
 
   @override
-  String get common_customDateTimeFormatPicker_dmy_text => 'Day Month Year';
+  String get common_customDateTimeFormatPicker_dmy_text => 'Día mes año';
 
   @override
-  String get common_customDateTimeFormatPicker_SepTileText => 'Separator';
+  String get common_customDateTimeFormatPicker_SepTileText => 'Separador';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDash_text => 'Dash';
+  String get common_customDateTimeFormatPicker_sepDash_text => 'Guión';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSlash_text => 'Slash';
+  String get common_customDateTimeFormatPicker_sepSlash_text => 'Barra oblicua';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSpace_text => 'Space';
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'Espacio';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDot_text => 'Dot';
+  String get common_customDateTimeFormatPicker_sepDot_text => 'Punto';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => 'No Separator';
+  String get common_customDateTimeFormatPicker_empty_text => 'Sin separador';
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
@@ -1037,75 +1037,75 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => 'Use 12-hour format';
+  String get common_customDateTimeFormatPicker_12Hour_text => 'Utilizar el formato de 12 horas';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Use full name';
+  String get common_customDateTimeFormatPicker_monthName_text => 'Usar nombre completo';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Apply for Freq Chart';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Solicitar tabla de frecuencia';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Apply for Calendar';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Solicitar calendario';
 
   @override
-  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancel';
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancelar';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirm';
+  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirmar';
 
   @override
-  String get calendarPicker_clip_today => 'Today';
+  String get calendarPicker_clip_today => 'Hoy';
 
   @override
-  String get calendarPicker_clip_tomorrow => 'Tomorrow';
+  String get calendarPicker_clip_tomorrow => 'Mañana';
 
   @override
   String calendarPicker_clip_after7Days(DateTime date) {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Next $dateString';
+    return 'Próximo $dateString';
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Export all habits?';
+  String get exportConfirmDialog_title_exportAll => '¿Exportar todos los hábitos?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number habits',
-      one: '1 habit',
-      zero: 'current habit',
+      other: '$number hábitos',
+      one: '1 hábito',
+      zero: 'hábitos',
     );
-    return 'Export $_temp0?';
+    return '¿Exportar $_temp0?';
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => 'include records';
+  String get exportConfirmDialog_option_includeRecords => 'incluir registros';
 
   @override
-  String get exportConfirmDialog_cancel_buttonText => 'cancel';
+  String get exportConfirmDialog_cancel_buttonText => 'cancelar';
 
   @override
-  String get exportConfirmDialog_confirm_buttonText => 'export';
+  String get exportConfirmDialog_confirm_buttonText => 'exportar';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title => 'Nivel del registro';
 
   @override
-  String get debug_logLevelDialog_title => 'Change Logging Level';
+  String get debug_logLevelDialog_title => 'Cambiar el nivel del registro';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'Depurar';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'Información';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'Advertencia';
 
   @override
   String get debug_logLevel_error => 'Error';
@@ -1114,73 +1114,73 @@ class L10nEs extends L10n {
   String get debug_logLevel_fatal => 'Fatal';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'Recopilando los registros';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+  String get debug_collectLogTile_enable_subtitle => 'Haz clic para detener la recopilación de registros.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+  String get debug_collectLogTile_disable_subtitle => 'Haz clic para iniciar la recopilación de registros.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+  String get debug_downladDebugLogs_subject => 'Descargar registros de depuración';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+  String get dbeug_clearDebugLogs_complete_snackbar => 'Registros de depuración borrados.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+  String get debug_downladDebugInfo_subject => 'Descargar la información de depuración';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'Descargando $fileName';
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+  String get debug_missingDebugLogFile_snackbar => 'El registro de depuración no existe.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'Información del registro';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+  String get debug_debuggerLogCard_subtitle => 'Para incluir información de registro de depuración local, es necesario habilitar el convertidor del recopilador de registros.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'Descargar';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'Limpiar';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'Información de depuración';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+  String get debug_debuggerInfoCard_subtitle => 'Incluir información de depuración de la aplicación.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'Abrir';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'Guardar';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+  String get debug_debuggerInfo_notificationTitle => 'Recopilando información de la aplicación...';
 
   @override
-  String get snackbar_undoText => 'UNDO';
+  String get snackbar_undoText => 'DESHACER';
 
   @override
-  String get snackbar_dismissText => 'DISMISS';
+  String get snackbar_dismissText => 'RECHAZAR';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Colaboradores';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Pulsar';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Doble';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'Longitud';
 }
