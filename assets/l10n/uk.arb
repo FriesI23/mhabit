@@ -1,5 +1,67 @@
 {
-    "@@locale": "uk",
-    "localeScriptName": "українська мова",
-    "appName": "🚧(uk) - Table Habit"
+  "@@locale": "uk",
+  "localeScriptName": "Українська",
+  "@localeScriptName": {},
+  "appName": "Table Habit",
+  "@appName": {},
+  "habitEdit_habitName_hintText": "Назва звички...",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "Оберіть колір",
+  "@habitEdit_colorPicker_title": {},
+  "habitEdit_habitTypeDialog_title": "Тип звички",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitType_positiveText": "Позитивна",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitType_negativeText": "Негативна",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitDailyGoal_hintText": "Щоденна мета, за замовчуванням {number}",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalUnit_hintText": "Одиниця вимірювання мети",
+  "@habitEdit_habitDailyGoalUnit_hintText": {},
+  "habitEdit_frequencySelector_title": "Оберіть частоту",
+  "@habitEdit_frequencySelector_title": {},
+  "habitEdit_habitFreq_predayfreq_ex01": "разів за",
+  "@habitEdit_habitFreq_predayfreq_ex01": {},
+  "habitEdit_habitFreq_predayfreq_ex02": "днів",
+  "@habitEdit_habitFreq_predayfreq_ex02": {},
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{За місяць} other{Щонайменше {freq} разів за місяць}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_saveButton_text": "Зберегти",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitFreq_daily": "Щоденно",
+  "@habitEdit_habitFreq_daily": {},
+  "habitEdit_habitFreq_perweek_ex01": "разів за тиждень",
+  "@habitEdit_habitFreq_perweek_ex01": {},
+  "habitEdit_habitFreq_permonth_ex01": "разів за місяць",
+  "@habitEdit_habitFreq_permonth_ex01": {},
+  "habitEdit_habitFreq_show_daily": "Щоденно",
+  "@habitEdit_habitFreq_show_daily": {},
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{За тиждень} other{Щонайменше {freq} разів за тиждень}}",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  }
 }
