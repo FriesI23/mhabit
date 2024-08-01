@@ -24,7 +24,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoalUnit_hintText": "Одиниця вимірювання мети",
+  "habitEdit_habitDailyGoalUnit_hintText": "Одиниці вимірювання щоденної мети",
   "@habitEdit_habitDailyGoalUnit_hintText": {},
   "habitEdit_frequencySelector_title": "Оберіть частоту",
   "@habitEdit_frequencySelector_title": {},
@@ -63,5 +63,18 @@
         "example": "1"
       }
     }
-  }
+  },
+  "habitEdit_habitDailyGoalExtra_errorText": "введене значення має бути порожнім або ≥ {dailyGoal}",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Максимальне щоденне обмеження",
+  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+  "habitEdit_habitDailyGoalExtra_hintText": "Бажана максимальна щоденна мета",
+  "@habitEdit_habitDailyGoalExtra_hintText": {}
 }
