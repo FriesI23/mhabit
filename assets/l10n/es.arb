@@ -972,5 +972,9 @@
   "userAction_tap": "Pulsar",
   "@userAction_tap": {},
   "userAction_longTap": "Longitud",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "batchCheckin_status_double_text": "¡Doble éxito!",
+  "@batchCheckin_status_double_text": {},
+  "common_habitColorType_cc10": "Morado oscuro",
+  "@common_habitColorType_cc10": {}
 }
