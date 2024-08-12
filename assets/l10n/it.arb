@@ -903,5 +903,14 @@
         "example": "1"
       }
     }
+  },
+  "appSetting_changeLanguage_followSystem_text": "Segui Sistema ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
   }
 }
