@@ -1,0 +1,756 @@
+{
+  "@@locale": "zh_TW",
+  "localeScriptName": "繁體中文",
+
+  "appName": "Table Habit",
+
+  "habitEdit_saveButton_text": "儲存",
+
+  "habitEdit_habitName_hintText": "習慣名稱…",
+
+  "habitEdit_colorPicker_title": "選擇顏色",
+
+  "habitEdit_habitTypeDialog_title": "習慣類型",
+  "habitEdit_habitType_positiveText": "正面",
+  "habitEdit_habitType_negativeText": "負面",
+
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "預設習慣每日目標",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_hintText": "每日目標，預設 {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "負面習慣的預設每日目標",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "每日最低門檻，預設 {number}",
+
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "習慣每日目標的最小數值",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText01": "每日目標必須 > {number}",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "習慣每日目標的最大數值",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText02": "每日目標必須 ≤ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "負面習慣每日目標的最小數值",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "每日目標必須 ≥ {number}",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "負面習慣每日目標的最大數值",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText02": "每日目標必須 ≤ {number}",
+
+  "habitEdit_habitDailyGoalUnit_hintText": "每日目標單位",
+
+  "habitEdit_habitDailyGoalExtra_hintText": "理想的每日最高目標",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_errorText": "無效值，必須為空值或 ≥ {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "每日上限",
+
+  "habitEdit_frequencySelector_title": "選擇頻率",
+
+  "habitEdit_habitFreq_daily": "每日",
+  "habitEdit_habitFreq_perweek": "",
+  "habitEdit_habitFreq_perweek_ex01": "次／週",
+  "habitEdit_habitFreq_permonth": "",
+  "habitEdit_habitFreq_permonth_ex01": "次／月",
+  "habitEdit_habitFreq_predayfreq": "",
+  "habitEdit_habitFreq_predayfreq_ex01": "次／",
+  "habitEdit_habitFreq_predayfreq_ex02": "天",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "如果設定為 1，顯示的小工具列表將會反轉。"
+  },
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+
+  "habitEdit_habitFreq_show_daily": "每日",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{每週} other{每週至少 {freq} 次}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{每月} other{每月至少 {freq} 次}}",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{每 {days} 天} other{每 {days} 天至少 {freq} 次}}",
+
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_title": "{targetDays} 天",
+  "habitEdit_targetDays_dialogTitle": "選擇目標天數",
+  "habitEdit_targetDays": "天",
+
+  "habitEdit_reminder_hintText": "提醒",
+  "habitEdit_reminder_freq_weekHelpText": "每週的任一天",
+  "habitEdit_reminder_freq_weekPrefixText": "每週",
+  "habitEdit_reminder_freq_weekSubfixText": "",
+  "habitEdit_reminder_freq_monthHelpText": "每月的任一天",
+  "habitEdit_reminder_freq_monthPrefixText": "每月",
+  "habitEdit_reminder_freq_monthSubfixText": "",
+  "habitEdit_reminderQuest_hintText": "問題，例如：你今天運動了嗎？",
+
+  "habitEdit_reminder_dialogTitle": "選擇提醒類型",
+  "habitEdit_reminder_dialogType_whenNeeded": "需要打卡時",
+  "habitEdit_reminder_dialogType_daily": "每日",
+  "habitEdit_reminder_dialogType_week": "每週",
+  "habitEdit_reminder_dialogType_month": "每月",
+  "habitEdit_reminder_dialogConfirm": "確認",
+  "habitEdit_reminder_dialogCancel": "取消",
+
+  "habitEdit_reminder_cancelDialogTitle": "確認",
+  "habitEdit_reminder_cancelDialogSubtitle": "確定要移除這個提醒嗎？",
+  "habitEdit_reminder_cancelDialogConfirm": "確認",
+  "habitEdit_reminder_cancelDialogCancel": "取消",
+
+  "habitEdit_reminder_weekdayText_monday": "週一",
+  "habitEdit_reminder_weekdayText_tuesday": "週二",
+  "habitEdit_reminder_weekdayText_wednesday": "週三",
+  "habitEdit_reminder_weekdayText_thursday": "週四",
+  "habitEdit_reminder_weekdayText_friday": "週五",
+  "habitEdit_reminder_weekdayText_saturday": "週六",
+  "habitEdit_reminder_weekdayText_sunday": "週日",
+
+  "habitEdit_desc_hintText": "備註，支援 Markdown",
+
+  "habitEdit_create_datetime_prefix": "建立時間：",
+  "habitEdit_modify_datetime_prefix": "修改時間：",
+
+  "habitDisplay_fab_text": "新增習慣",
+
+  "habitDisplay_emptyImage_text_01": "千里之行，始於足下",
+
+  "habitDisplay_archiveHabitsConfirmDialog_title": "封存選取的習慣？",
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "確認",
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "取消",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_archiveHabitsSuccSnackbarText": "已封存 {count} 個習慣",
+
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "解除封存選取的習慣？",
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "確認",
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "取消",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "已解除封存 {count} 個習慣",
+
+  "habitDisplay_deleteHabitsConfirmDialog_title": "刪除選取的習慣？",
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "確認",
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "取消",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteHabitsSuccSnackbarText": "已刪除 {count} 個習慣",
+
+  "habitDisplay_editPopMenu_selectAll": "全選",
+  "habitDisplay_editPopMenu_export": "匯出",
+  "habitDisplay_editPopMenu_delete": "刪除",
+  "habitDisplay_editPopMenu_clone": "複製為範本",
+
+  "habitDisplay_editButton_tooltip": "編輯",
+  "habitDisplay_archiveButton_tooltip": "封存",
+  "habitDisplay_unarchiveButton_tooltip": "解除封存",
+  "habitDisplay_settingButton_tooltip": "設定",
+
+  "habitDisplay_statsMenu_statSubgroupText": "目前",
+  "habitDisplay_statsMenu_completedTileText": "已完成",
+  "habitDisplay_statsMenu_inProgresTileText": "進行中",
+  "habitDisplay_statsMenu_archivedTileText": "已封存",
+  "habitDisplay_statsMenu_popularitySubgroupText": "熱門習慣：近 30 天變化",
+
+  "habitDisplay_mainMenu_lightTheme": "淺色主題",
+  "habitDisplay_mainMenu_darkTheme": "深色主題",
+  "habitDisplay_mainMenu_followSystemTheme": "依照系統設定",
+  "habitDisplay_mainMenu_showArchivedTileText": "顯示已封存",
+  "habitDisplay_mainMenu_showCompletedTileText": "顯示已完成",
+  "habitDisplay_mainMenu_showActivedTileText": "顯示進行中",
+  "habitDisplay_mainMenu_settingTileText": "設定",
+
+  "habitDisplay_sort_reverseText": "反向",
+  "habitDisplay_sortDirection_asc": "（升冪）",
+  "habitDisplay_sortDirection_Desc": "（降冪）",
+  "habitDisplay_sortType_manual": "自訂順序",
+  "habitDisplay_sortType_name": "依名稱",
+  "habitDisplay_sortType_colorType": "依顏色",
+  "habitDisplay_sortType_progress": "依完成率",
+  "habitDisplay_sortType_startT": "依開始日期",
+  "habitDisplay_sortType_status": "依狀態",
+  "habitDisplay_sortTypeDialog_title": "排序",
+  "habitDisplay_sortTypeDialog_confirm": "確認",
+  "habitDisplay_sortTypeDialog_cancel": "取消",
+
+  "habitDisplay_debug_debugSubgroup_title": "🛠️ 除錯",
+
+  "habitDetail_editButton_tooltip": "編輯",
+  "habitDetail_editPopMenu_unarchive": "解除封存",
+  "habitDetail_editPopMenu_archive": "封存",
+  "habitDetail_editPopMenu_export": "匯出",
+  "habitDetail_editPopMenu_delete": "刪除",
+  "habitDetail_editPopMenu_clone": "複製為範本",
+
+  "habitDetail_confirmDialog_confirm": "確認",
+  "habitDetail_confirmDialog_cancel": "取消",
+  "habitDetail_archiveConfirmDialog_titleText": "封存習慣？",
+  "habitDetail_unarchiveConfirmDialog_titleText": "解除封存習慣？",
+  "habitDetail_deleteConfirmDialog_titleText": "刪除習慣？",
+
+  "habitDetail_summary_title": "摘要",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_body": "目前評分為 {score}，從開始至今已經 {days} 天。",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_preBody": "{days, plural, =1{明天開始。} other{還有 {days} 天開始。}}",
+
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{未完成} =2{未達標} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{超額完成} =2{完美達標} other{}}",
+
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{門檻} other{目標}}",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitText": "單位：{unit}",
+  "habitDetail_descDailyGoal_unitEmptyText": "無",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{天數}}",
+  "habitDetail_descTargetDays_unitText": "天",
+  "habitDetail_descRecordsNum_titleText": "記錄數",
+
+  "habitDetail_scoreChart_title": "評分",
+  "habitDetail_scoreChartCombine_dailyText": "每日",
+  "habitDetail_scoreChartCombine_weeklyText": "每週",
+  "habitDetail_scoreChartCombine_monthlyText": "每月",
+  "habitDetail_scoreChartCombine_yearlyText": "每年",
+
+  "habitDetail_freqChart_freqTitle": "頻率",
+  "habitDetail_freqChart_historyTitle": "歷史紀錄",
+  "habitDetail_freqChart_combinedTitle": "頻率與歷史紀錄",
+  "habitDetail_freqChartCombine_weeklyText": "每週",
+  "habitDetail_freqChartCombine_monthlyText": "每月",
+  "habitDetail_freqChartCombine_yearlyText": "每年",
+  "habitDetail_freqChartNaviBar_nowText": "現在",
+  "habitDetail_freqChart_expanded_hideTooltip": "隱藏歷史紀錄圖表",
+  "habitDetail_freqChart_expanded_showTooltip": "顯示歷史紀錄圖表",
+
+  "habitDetail_descSubgroup_title": "備註",
+
+  "habitDetail_otherSubgroup_title": "其他",
+  "habitDetail_habitType_title": "類型",
+  "habitDetail_reminderTile_title": "提醒",
+  "habitDetail_freqTile_title": "重複",
+  "habitDetail_startDateTile_title": "開始日期",
+  "habitDetail_createDateTile_title": "建立日期",
+  "habitDetail_modifyDateTile_title": "修改日期",
+
+  "habitDetail_editHeatmapCal_dateButtonText": "日期",
+  "habitDetail_editHeatmapCal_valueButtonText": "數值",
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "回到今天",
+
+  "habitDetail_notFoundText": "載入習慣失敗",
+  "habitDetail_notFoundRetryText": "重試",
+
+  "habitDetail_changeGoal_title": "變更目標",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_currentChipText": "目前：{goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_doneChipText": "完成：{goal}",
+  "habitDetail_changeGoal_undoneChipText": "未完成",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_extraChipText": "{goal}",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_helpText": "每日目標，預設值：{goal}",
+  "habitDetail_changeGoal_cancelText": "取消",
+  "habitDetail_changeGoal_saveText": "儲存",
+
+  "habitDetail_skipReason_title": "跳過原因",
+  "habitDetail_skipReason_bodyHelpText": "在此輸入…",
+  "habitDetail_skipReason_cancelText": "取消",
+  "habitDetail_skipReason_saveText": "儲存",
+
+  "appSetting_appbar_titleText": "設定",
+
+  "appSetting_displaySubgroupText": "顯示",
+  "appSetting_operationSubgroupText": "操作",
+  "appSetting_dragCalendarByPageTile_titleText": "以頁面為單位拖曳行事曆",
+  "appSetting_dragCalendarByPageTile_subtitleText": "如果開啟此開關，首頁的應用程式列行事曆將以頁面為單位進行拖曳。預設為關閉。",
+  "appSetting_changeRecordStatusOpTile_titleText": "變更記錄狀態",
+  "appSetting_changeRecordStatusOpTile_subtitleText": "修改點選行為以變更主頁面上每日記錄的狀態。",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "開啟詳細記錄",
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。",
+  "appSetting_firstDayOfWeek_titleText": "每週的第一天",
+  "appSetting_firstDayOfWeekDialog_titleText": "顯示每週的第一天",
+  "appSetting_firstDayOfWeekDialog_defaultText": "（預設）",
+
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_text": "依照系統設定（{localeName}）",
+  "appSetting_changeLanguage_followSystem_noLocale_text": "依照系統設定",
+  "appSetting_changeLanguageTile_titleText": "語言",
+  "appSetting_changeLanguageDialog_titleText": "選擇語言",
+
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_dateDisplayFormat_titleText": "日期顯示格式（{formatTemplate}）",
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "依照系統設定",
+  "appSetting_dateDisplayFormat_subTitleText": "設定的日期格式將套用於習慣詳細頁面的日期顯示。",
+
+  "appSetting_compactUISwitcher_titleText": "在習慣頁面啟用精簡 UI",
+  "appSetting_compactUISwitcher_subtitleText": "允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。",
+
+  "appSetting_collapsed_calendar_bararea_titleText": "習慣打卡區域比例調整",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "調整百分比以在習慣打卡表格區域取得更多或更少空間。",
+  "appSetting_collapsed_calendar_bararea_defaultText": "預設",
+
+  "appSetting_reminderSubgroupText": "提醒",
+  "appSetting_dailyReminder_titleText": "每日提醒",
+
+  "appSetting_backupAndRestoreSubgroupText": "備份與還原",
+  "appSetting_export_titleText": "匯出",
+  "appSetting_export_subtitleText": "將習慣匯出為 JSON 格式，此檔案可以再匯入。",
+  "appSetting_import_titleText": "匯入",
+  "appSetting_import_subtitleText": "從 JSON 檔案匯入習慣。",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirmTitle": "確認匯入 {count} 個習慣？",
+  "appSetting_importDialog_confirmSubtitle": "注意：匯入不會刪除現有的習慣。",
+  "appSetting_importDialog_confirm_confirmText": "確認",
+  "appSetting_importDialog_confirm_cancelText": "取消",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_importingTitle": "已匯入 {completeCount}/{totalCount}",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_completeTitle": "完成匯入 {count} 個",
+  "appSetting_importDialog_complete_closeLabel": "關閉",
+  "appSetting_resetConfig_titleText": "重設設定",
+  "appSetting_resetConfig_subtitleText": "將所有設定重設為預設值。",
+  "appSetting_resetConfigDialog_titleText": "重設設定？",
+  "appSetting_resetConfigDialog_subtitleText": "將所有設定重設為預設值，必須重新啟動應用程式才能套用。",
+  "appSetting_resetConfigDialog_cancelText": "取消",
+  "appSetting_resetConfigDialog_confirmText": "確認",
+  "appSetting_resetConfigSuccess_snackbarText": "已成功重設應用程式設定",
+
+  "appSetting_otherSubgroupText": "其他",
+  "appSetting_developMode_titleText": "開發者模式",
+
+  "appSetting_clearCache_titleText": "清除快取",
+  "appSetting_clearCacheDialog_titleText": "清除快取",
+  "appSetting_clearCacheDialog_subtitleText": "清除快取後，部分自訂值將恢復為預設值。",
+  "appSetting_clearCacheDialog_cancelText": "取消",
+  "appSetting_clearCacheDialog_confirmText": "確認",
+  "appSetting_clearCache_snackBar_partSuccText": "部分快取清除失敗",
+  "appSetting_clearCache_snackBar_succText": "快取清除成功",
+  "appSetting_clearCache_snackBar_failText": "快取清除失敗",
+
+  "appSetting_debugger_titleText": "除錯資訊",
+  "appSetting_about_titleText": "關於",
+
+  "appAbout_appbarTile_titleText": "關於",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_versionTile_titleText": "版本：{appVersion}",
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "appAbout_sourceCodeTile_titleText": "原始碼",
+  "appAbout_issueTrackerTile_titleText": "問題追蹤",
+  "appAbout_contactEmailTile_titleText": "聯絡我",
+  "appAbout_contactEmailTile_emailBody": "您好，很高興您與我聯繫。\n如果您要回報錯誤，請提供應用程式版本和重現步驟。\n--------------------------------------",
+  "appAbout_licenseTile_titleText": "授權",
+  "appAbout_licenseTile_subtitleText": "Apache 授權，版本 2.0",
+  "appAbout_licenseThirdPartyTile_titleText": "第三方授權聲明",
+  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "appAbout_donateTile_titleText": "贊助",
+  "appAbout_donateTile_subTitleText": "我是一位獨立開發者。如果您喜歡這個應用程式，可以考慮贊助我一杯 ☕。",
+  "@appAbout_donateTile_ways": {
+    "description": "贊助方式以 `@` 開頭並以 `,` 分隔，可用方式：paypal、buyMeACoffee、alipay、wechatPay"
+  },
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "donateWay_paypal": "PayPal",
+  "donateWay_buyMeACoffee": "買杯咖啡",
+  "donateWay_alipay": "支付寶",
+  "donateWay_wechatPay": "微信支付",
+  "donateWay_cryptoCurrency": "加密貨幣",
+  "donateWay_cryptoCurrency_BTC": "比特幣",
+  "donateWay_cryptoCurrency_ETH": "以太幣",
+  "donateWay_cryptoCurrency_BNB": "幣安幣",
+  "donateWay_cryptoCurrency_AVAX": "雪崩幣",
+  "donateWay_cryptoCurrency_FTM": "FTM",
+  "donateWay_firstQRGroup": "支付寶及微信支付",
+
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "appAbout_donateDialog_copiedCrypto_msg": "已複製 {name} 的地址",
+
+  "batchCheckin_appbar_title": "批次打卡",
+  "batchCheckin_datePicker_prevButton_tooltip": "前一天",
+  "batchCheckin_datePicker_nextButton_tooltip": "後一天",
+  "batchCheckin_status_skip_text": "跳過",
+  "batchCheckin_status_ok_text": "完成",
+  "batchCheckin_status_double_text": "雙倍達成！",
+  "batchCheckin_status_zero_text": "未完成",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_habits_groupTitle": "已選擇 {count} 個{count, plural, =1{習慣} other{習慣}}",
+  "batchCheckin_save_button_text": "儲存",
+  "batchCheckin_reset_button_text": "重設",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_completed_snackbar_text": "已修改 {count, plural, =1{個習慣的狀態} other{{count} 個習慣的狀態}}",
+
+  "batchCheckin_save_confirmDialog_title": "覆蓋現有記錄",
+  "batchCheckin_save_confirmDialog_body": "儲存後，現有記錄將被覆蓋，之前的記錄將會遺失。",
+  "batchCheckin_save_confirmDialog_confirmButton_text": "儲存",
+  "batchCheckin_save_confirmDialog_cancelButton_text": "取消",
+
+  "batchCheckin_close_confirmDialog_title": "確認返回",
+  "batchCheckin_close_confirmDialog_body": "打卡狀態的變更在儲存前不會被套用",
+  "batchCheckin_close_confirmDialog_confirmButton_text": "離開",
+  "batchCheckin_close_confirmDialog_cancelButton_text": "取消",
+
+  "appReminder_dailyReminder_title": "🏝 你今天堅持習慣了嗎？",
+  "appReminder_dailyReminder_body": "點選進入應用程式並準時打卡。",
+
+  "common_habitColorType_cc1": "深丁香紫",
+  "common_habitColorType_cc2": "紅色",
+  "common_habitColorType_cc3": "紫色",
+  "common_habitColorType_cc4": "寶藍色",
+  "common_habitColorType_cc5": "深青色",
+  "common_habitColorType_cc6": "綠色",
+  "common_habitColorType_cc7": "琥珀色",
+  "common_habitColorType_cc8": "橙色",
+  "common_habitColorType_cc9": "萊姆綠",
+  "common_habitColorType_cc10": "深蘭花紫",
+  "@common_habitColorType_default": {
+    "description": "未知習慣顏色類型名稱",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_habitColorType_default": "顏色 {index}",
+
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "使用系統格式",
+  "common_customDateTimeFormatPicker_fmtTileText": "日期格式",
+  "common_customDateTimeFormatPicker_ymd_text": "年月日",
+  "common_customDateTimeFormatPicker_mdy_text": "月日年",
+  "common_customDateTimeFormatPicker_dmy_text": "日月年",
+  "common_customDateTimeFormatPicker_SepTileText": "分隔符號",
+  "common_customDateTimeFormatPicker_sepDash_text": "破折號",
+  "common_customDateTimeFormatPicker_sepSlash_text": "斜線",
+  "common_customDateTimeFormatPicker_sepSpace_text": "空格",
+  "common_customDateTimeFormatPicker_sepDot_text": "點",
+  "common_customDateTimeFormatPicker_empty_text": "無分隔符號",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "分隔符",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}：「{splitChar}」",
+  "common_customDateTimeFormatPicker_12Hour_text": "使用 12 小時制",
+  "common_customDateTimeFormatPicker_monthName_text": "使用完整名稱",
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "套用於頻率圖表",
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "套用於行事曆",
+  "common_customDateTimeFormatPicker_cancelButton_text": "取消",
+  "common_customDateTimeFormatPicker_confirmButton_text": "確認",
+
+  "calendarPicker_clip_today": "今天",
+  "calendarPicker_clip_tomorrow": "明天",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "calendarPicker_clip_after7Days": "下週 {date}",
+
+  "exportConfirmDialog_title_exportAll": "匯出所有習慣？",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportMulti": "匯出 {number, plural, =0{目前習慣} =1{1 個習慣} other{{number} 個習慣}}？",
+  "exportConfirmDialog_option_includeRecords": "包含記錄",
+  "exportConfirmDialog_cancel_buttonText": "取消",
+  "exportConfirmDialog_confirm_buttonText": "匯出",
+
+  "debug_logLevelTile_title": "日誌層級",
+  "debug_logLevelDialog_title": "變更日誌層級",
+  "debug_logLevel_debug": "除錯",
+  "debug_logLevel_info": "資訊",
+  "debug_logLevel_warn": "警告",
+  "debug_logLevel_error": "錯誤",
+  "debug_logLevel_fatal": "嚴重",
+  "debug_collectLogTile_title": "收集日誌",
+  "debug_collectLogTile_enable_subtitle": "點選以停止收集日誌。",
+  "debug_collectLogTile_disable_subtitle": "點選以開始收集日誌。",
+  "debug_downladDebugLogs_subject": "下載除錯日誌",
+  "dbeug_clearDebugLogs_complete_snackbar": "已清除除錯日誌。",
+  "debug_downladDebugInfo_subject": "下載除錯資訊",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_downladDebugZip_subject": "下載 {fileName}",
+  "debug_missingDebugLogFile_snackbar": "除錯日誌檔不存在。",
+  "debug_debuggerLogCard_title": "日誌資訊",
+  "debug_debuggerLogCard_subtitle": "包含本機除錯日誌資訊，需要開啟日誌收集開關。",
+  "debug_debuggerLogCard_saveButton_text": "下載",
+  "debug_debuggerLogCard_clearButton_text": "清除",
+  "debug_debuggerInfoCard_title": "除錯資訊",
+  "debug_debuggerInfoCard_subtitle": "包含應用程式的除錯資訊。",
+  "debug_debuggerInfoCard_openButton_text": "開啟",
+  "debug_debuggerInfoCard_saveButton_text": "儲存",
+  "debug_debuggerInfo_notificationTitle": "正在收集應用程式資訊…",
+
+  "snackbar_undoText": "復原",
+  "snackbar_dismissText": "關閉",
+
+  "contributors_tile_title": "貢獻者",
+
+  "userAction_tap": "點選",
+  "userAction_doubleTap": "點選兩次",
+  "userAction_longTap": "長按"
+}

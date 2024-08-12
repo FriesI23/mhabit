@@ -71,6 +71,7 @@ const appSupportedLocales = [
   if (kDebugMode) Locale.fromSubtags(languageCode: 'uk'),
   Locale.fromSubtags(languageCode: 'vi'),
   Locale.fromSubtags(languageCode: 'zh'),
+  Locale.fromSubtags(languageCode: 'zh', countryCode: 'TW'),
 ];
 //#endregion
 
