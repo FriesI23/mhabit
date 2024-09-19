@@ -7,7 +7,7 @@ class L10nZh extends L10n {
   L10nZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get localeScriptName => '中文';
+  String get localeScriptName => '简体中文';
 
   @override
   String get appName => '桌上习惯';
@@ -1165,17 +1165,6 @@ class L10nZh extends L10n {
 
   @override
   String get userAction_longTap => '长按';
-}
-
-/// The translations for Chinese, using the Han script (`zh_Hans`).
-class L10nZhHans extends L10nZh {
-  L10nZhHans(): super('zh_Hans');
-
-  @override
-  String get localeScriptName => '简体中文';
-
-  @override
-  String get appName => '桌上习惯';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

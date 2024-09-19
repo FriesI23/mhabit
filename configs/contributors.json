@@ -100,7 +100,12 @@
             }
         ],
         "vi": [ 4 ],
-        "zh-hans": [ 1 ],
-        "zh-hant": [ 1 ]
+        "zh": [ 1 ],
+        "zh-hant": [
+            {
+                "name": "PeterDaveHello",
+                "url": "https://github.com/PeterDaveHello"
+            }
+        ]
     }
 }
