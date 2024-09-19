@@ -44,7 +44,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
     createTime: DateTime.now(),
   );
 
-  for (var _ = 0; _ < preRecordNum; _++) {
+  for (var i = 0; i < preRecordNum; i++) {
     crtDate = crtDate.addDays(1);
     data.addRecord(HabitSummaryRecord.generate(
       crtDate,

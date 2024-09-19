@@ -68,7 +68,7 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
     methodCount: 10,
     errorMethodCount: null,
     printEmojis: false,
-    printTime: true,
+    dateTimeFormat: l.DateTimeFormat.dateAndTime,
     colors: false,
   );
 

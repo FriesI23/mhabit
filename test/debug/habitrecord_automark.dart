@@ -53,7 +53,7 @@ void cusomFreqPerformanceTest(
   }
 
   for (var data in dataList) {
-    for (var _ = 0; _ < preRecordNum; _++) {
+    for (var i = 0; i < preRecordNum; i++) {
       final nextDayOffset = rng.nextInt(2);
       crtDate = crtDate.addDays(nextDayOffset);
       data.addRecord(HabitSummaryRecord.generate(
@@ -102,7 +102,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
     createTime: DateTime.now(),
   );
 
-  for (var _ = 0; _ < preRecordNum; _++) {
+  for (var i = 0; i < preRecordNum; i++) {
     crtDate = crtDate.addDays(1);
     data.addRecord(HabitSummaryRecord.generate(
       crtDate,
