@@ -900,7 +900,7 @@ class L10nEs extends L10n {
   String get batchCheckin_status_ok_text => 'Terminado';
 
   @override
-  String get batchCheckin_status_double_text => 'x2 Hit!';
+  String get batchCheckin_status_double_text => '¡Doble éxito!';
 
   @override
   String get batchCheckin_status_zero_text => 'Incompleto';
@@ -991,7 +991,7 @@ class L10nEs extends L10n {
   String get common_habitColorType_cc9 => 'Lima';
 
   @override
-  String get common_habitColorType_cc10 => 'Dark orchid';
+  String get common_habitColorType_cc10 => 'Morado oscuro';
 
   @override
   String common_habitColorType_default(int index) {

@@ -7,32 +7,32 @@ class L10nUk extends L10n {
   L10nUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get localeScriptName => 'українська мова';
+  String get localeScriptName => 'Українська';
 
   @override
-  String get appName => '🚧(uk) - Table Habit';
+  String get appName => 'Table Habit';
 
   @override
-  String get habitEdit_saveButton_text => 'Save';
+  String get habitEdit_saveButton_text => 'Зберегти';
 
   @override
-  String get habitEdit_habitName_hintText => 'Habit Name ...';
+  String get habitEdit_habitName_hintText => 'Назва звички...';
 
   @override
-  String get habitEdit_colorPicker_title => 'Pick color';
+  String get habitEdit_colorPicker_title => 'Оберіть колір';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Habit type';
+  String get habitEdit_habitTypeDialog_title => 'Тип звички';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Positive';
+  String get habitEdit_habitType_positiveText => 'Позитивна';
 
   @override
-  String get habitEdit_habitType_negativeText => 'Negative';
+  String get habitEdit_habitType_negativeText => 'Негативна';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Daily goal, default $number';
+    return 'Щоденна мета, за замовчуванням $number';
   }
 
   @override
@@ -61,59 +61,59 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Одиниці вимірювання щоденної мети';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
+  String get habitEdit_habitDailyGoalExtra_hintText => 'Бажана максимальна щоденна мета';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'invalid value, must be empty or ≥ $dailyGoal';
+    return 'введене значення має бути порожнім або ≥ $dailyGoal';
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Максимальне щоденне обмеження';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Select frequency';
+  String get habitEdit_frequencySelector_title => 'Оберіть частоту';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Daily';
+  String get habitEdit_habitFreq_daily => 'Щоденно';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
+  String get habitEdit_habitFreq_perweek_ex01 => 'разів за тиждень';
 
   @override
   String get habitEdit_habitFreq_permonth => '';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'times per month';
+  String get habitEdit_habitFreq_permonth_ex01 => 'разів за місяць';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
+  String get habitEdit_habitFreq_predayfreq_ex01 => 'разів за';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
+  String get habitEdit_habitFreq_predayfreq_ex02 => 'днів';
 
   @override
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Daily';
+  String get habitEdit_habitFreq_show_daily => 'Щоденно';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per week',
-      one: 'Per week',
+      other: 'Щонайменше $freq разів за тиждень',
+      one: 'За тиждень',
     );
     return '$_temp0';
   }
@@ -123,8 +123,8 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per month',
-      one: 'Per month',
+      other: 'Щонайменше $freq разів за місяць',
+      one: 'За місяць',
     );
     return '$_temp0';
   }
