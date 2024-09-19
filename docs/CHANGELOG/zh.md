@@ -1,5 +1,15 @@
 # 更新日志
 
+## 1.13.6+52
+
+- 添加波兰语翻译（需要翻译）。
+- 添加繁体中文翻译，感谢 PeterDaveHello 在 GitHub 上的贡献。
+- 添加乌克兰语翻译，感谢 Fqwe1 在 Weblate 上的贡献。
+- 更新西班牙语翻译，感谢 gallegonovato 在 Weblate 上的贡献。
+- 更新意大利语翻译，感谢 glemco 在 Weblate 上的贡献。
+- 更新波斯语翻译，感谢 ulracte 在 Weblate 上的贡献。
+- 更新依赖项版本, 更多信息请参见[此处](https://github.com/FriesI23/mhabit/commit/204922af8eaf0c025739623aad85a12f14cefce5)。
+
 ## 1.13.3+49
 
 - 更新西班牙语翻译，感谢 Andres Blasco Arnáiz 和 gallegonovato 在 Weblate 上的贡献。
