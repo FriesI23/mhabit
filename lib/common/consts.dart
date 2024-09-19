@@ -63,14 +63,16 @@ const appSupportedLocales = [
   // TODO: remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
   // TODO: remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'pl'),
+  // TODO: remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'pt', countryCode: 'BR'),
   Locale.fromSubtags(languageCode: 'ru'),
   // TODO: remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'tr'),
-  // TODO: remove kDebugMode below after translation
-  if (kDebugMode) Locale.fromSubtags(languageCode: 'uk'),
+  Locale.fromSubtags(languageCode: 'uk'),
   Locale.fromSubtags(languageCode: 'vi'),
-  Locale.fromSubtags(languageCode: 'zh'),
+  Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+  Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
 ];
 //#endregion
 

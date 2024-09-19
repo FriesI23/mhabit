@@ -2,37 +2,37 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
-/// The translations for Ukrainian (`uk`).
-class L10nUk extends L10n {
-  L10nUk([String locale = 'uk']) : super(locale);
+/// The translations for Polish (`pl`).
+class L10nPl extends L10n {
+  L10nPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get localeScriptName => 'Українська';
+  String get localeScriptName => 'język polski';
 
   @override
-  String get appName => 'Table Habit';
+  String get appName => '🚧(pl) - Table Habit';
 
   @override
-  String get habitEdit_saveButton_text => 'Зберегти';
+  String get habitEdit_saveButton_text => 'Save';
 
   @override
-  String get habitEdit_habitName_hintText => 'Назва звички...';
+  String get habitEdit_habitName_hintText => 'Habit Name ...';
 
   @override
-  String get habitEdit_colorPicker_title => 'Оберіть колір';
+  String get habitEdit_colorPicker_title => 'Pick color';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Тип звички';
+  String get habitEdit_habitTypeDialog_title => 'Habit type';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Позитивна';
+  String get habitEdit_habitType_positiveText => 'Positive';
 
   @override
-  String get habitEdit_habitType_negativeText => 'Негативна';
+  String get habitEdit_habitType_negativeText => 'Negative';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Щоденна мета, за замовчуванням $number';
+    return 'Daily goal, default $number';
   }
 
   @override
@@ -61,59 +61,59 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Одиниці вимірювання щоденної мети';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Бажана максимальна щоденна мета';
+  String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'введене значення має бути порожнім або ≥ $dailyGoal';
+    return 'invalid value, must be empty or ≥ $dailyGoal';
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Максимальне щоденне обмеження';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Оберіть частоту';
+  String get habitEdit_frequencySelector_title => 'Select frequency';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Щоденно';
+  String get habitEdit_habitFreq_daily => 'Daily';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'разів за тиждень';
+  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
 
   @override
   String get habitEdit_habitFreq_permonth => '';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'разів за місяць';
+  String get habitEdit_habitFreq_permonth_ex01 => 'times per month';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'разів за';
+  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'днів';
+  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
 
   @override
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Щоденно';
+  String get habitEdit_habitFreq_show_daily => 'Daily';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'Щонайменше $freq разів за тиждень',
-      one: 'За тиждень',
+      other: 'At least $freq times per week',
+      one: 'Per week',
     );
     return '$_temp0';
   }
@@ -123,8 +123,8 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'Щонайменше $freq разів за місяць',
-      one: 'За місяць',
+      other: 'At least $freq times per month',
+      one: 'Per month',
     );
     return '$_temp0';
   }

@@ -903,5 +903,86 @@
         "example": "1"
       }
     }
-  }
+  },
+  "appSetting_changeLanguage_followSystem_text": "Segui Sistema ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "Segui Sistema",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "Lingua",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "Seleziona Lingua",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_debugger_titleText": "Info di debug",
+  "@appSetting_debugger_titleText": {},
+  "batchCheckin_completed_snackbar_text": "Modificato {count, plural, =1{stato di un'abitudine} other{stato di {count} abitudini}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_logLevel_debug": "Debug",
+  "@debug_logLevel_debug": {},
+  "debug_logLevelDialog_title": "Cambia livello di log",
+  "@debug_logLevelDialog_title": {},
+  "debug_collectLogTile_title": "Raccogliendo i log",
+  "@debug_collectLogTile_title": {},
+  "debug_logLevel_error": "Errore",
+  "@debug_logLevel_error": {},
+  "debug_logLevel_fatal": "Fatale",
+  "@debug_logLevel_fatal": {},
+  "debug_logLevel_info": "Info",
+  "@debug_logLevel_info": {},
+  "debug_logLevelTile_title": "Livello di log",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevel_warn": "Avvertenza",
+  "@debug_logLevel_warn": {},
+  "debug_debuggerLogCard_clearButton_text": "Pulisci",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "Informazioni di debug",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerLogCard_saveButton_text": "Scarica",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "debug_downladDebugInfo_subject": "Scaricando le informazioni di debug",
+  "@debug_downladDebugInfo_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "Log di debug cancellati",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_missingDebugLogFile_snackbar": "Il log di debug non esiste",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "debug_downladDebugLogs_subject": "Scaricando i log di debug",
+  "@debug_downladDebugLogs_subject": {},
+  "debug_downladDebugZip_subject": "Scaricando {fileName}",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_debuggerLogCard_subtitle": "Include informazioni sul log di debug locale, è necessario attivare la raccolta dei log.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerLogCard_title": "Informazioni Log",
+  "@debug_debuggerLogCard_title": {},
+  "debug_collectLogTile_enable_subtitle": "Tocca per fermare la raccolta dei log.",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "debug_collectLogTile_disable_subtitle": "Tocca per iniziare la raccolta dei log.",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_debuggerInfo_notificationTitle": "Raccogliendo le informazioni dell'app...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "debug_debuggerInfoCard_subtitle": "Includi le lnformazioni di debug dell'app",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "debug_debuggerInfoCard_openButton_text": "Apri",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_debuggerInfoCard_saveButton_text": "Salva",
+  "@debug_debuggerInfoCard_saveButton_text": {}
 }

@@ -85,9 +85,22 @@
                 "url": "https://github.com/3Lord3"
             }
         ],
-        "it": [ 9 ],
+        "it": [
+            9,
+            {
+                "name": "glemco",
+                "email": "glemco@posteo.net"
+            }
+        ],
         "ru": [ 7 ],
+        "uk": [
+            {
+                "name": "Fqwe1",
+                "email": "Fqwe1@users.noreply.hosted.weblate.org"
+            }
+        ],
         "vi": [ 4 ],
-        "zh": [ 1 ]
+        "zh-hans": [ 1 ],
+        "zh-hant": [ 1 ]
     }
 }
