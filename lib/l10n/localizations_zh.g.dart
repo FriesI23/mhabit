@@ -7,7 +7,7 @@ class L10nZh extends L10n {
   L10nZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get localeScriptName => '中文';
+  String get localeScriptName => '简体中文';
 
   @override
   String get appName => '桌上习惯';
@@ -1167,17 +1167,6 @@ class L10nZh extends L10n {
   String get userAction_longTap => '长按';
 }
 
-/// The translations for Chinese, using the Han script (`zh_Hans`).
-class L10nZhHans extends L10nZh {
-  L10nZhHans(): super('zh_Hans');
-
-  @override
-  String get localeScriptName => '简体中文';
-
-  @override
-  String get appName => '桌上习惯';
-}
-
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class L10nZhHant extends L10nZh {
   L10nZhHant(): super('zh_Hant');
@@ -1192,7 +1181,7 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_saveButton_text => '儲存';
 
   @override
-  String get habitEdit_habitName_hintText => '習慣名稱...';
+  String get habitEdit_habitName_hintText => '習慣名稱…';
 
   @override
   String get habitEdit_colorPicker_title => '選擇顏色';
@@ -1201,84 +1190,84 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_habitTypeDialog_title => '習慣類型';
 
   @override
-  String get habitEdit_habitType_positiveText => '積極';
+  String get habitEdit_habitType_positiveText => '正面';
 
   @override
-  String get habitEdit_habitType_negativeText => '消極';
+  String get habitEdit_habitType_negativeText => '負面';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return '每日目標，預設為$number';
+    return '每日目標，預設 $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeHintText(num number) {
-    return '每日最低限度，預設為$number';
+    return '每日最低門檻，預設 $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText01(num number) {
-    return '每日目標須大於 $number';
+    return '每日目標必須 > $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText02(num number) {
-    return '每日目標須小於等於 $number';
+    return '每日目標必須 ≤ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
-    return '每日目標必須大於等於 $number';
+    return '每日目標必須 ≥ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
-    return '每日目標必須小於等於 $number';
+    return '每日目標必須 ≤ $number';
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => '單位';
+  String get habitEdit_habitDailyGoalUnit_hintText => '每日目標單位';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => '期望的每日最高目標';
+  String get habitEdit_habitDailyGoalExtra_hintText => '理想的每日最高目標';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return '無效值，必須為空或大於等於 $dailyGoal';
+    return '無效值，必須為空值或 ≥ $dailyGoal';
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => '每日最高限額';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => '每日上限';
 
   @override
-  String get habitEdit_frequencySelector_title => '頻率';
+  String get habitEdit_frequencySelector_title => '選擇頻率';
 
   @override
   String get habitEdit_habitFreq_daily => '每日';
 
   @override
-  String get habitEdit_habitFreq_perweek => '每週完成';
+  String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => '次';
+  String get habitEdit_habitFreq_perweek_ex01 => '次／週';
 
   @override
-  String get habitEdit_habitFreq_permonth => '每月完成';
+  String get habitEdit_habitFreq_permonth => '';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => '次';
+  String get habitEdit_habitFreq_permonth_ex01 => '次／月';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '次';
+  String get habitEdit_habitFreq_predayfreq => '';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => '天內完成';
+  String get habitEdit_habitFreq_predayfreq_ex01 => '次／';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => '每';
+  String get habitEdit_habitFreq_predayfreq_ex02 => '天';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '1';
+  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
   String get habitEdit_habitFreq_show_daily => '每日';
@@ -1288,7 +1277,7 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: '每週至少完成$freq次',
+      other: '每週至少 $freq 次',
       one: '每週',
     );
     return '$_temp0';
@@ -1299,7 +1288,7 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: '每月至少完成$freq次',
+      other: '每月至少 $freq 次',
       one: '每月',
     );
     return '$_temp0';
@@ -1310,28 +1299,28 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: '每$days天內至少完成$freq次',
-      one: '每$days天',
+      other: '每 $days 天至少 $freq 次',
+      one: '每 $days 天',
     );
     return '$_temp0';
   }
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays日';
+    return '$targetDays 天';
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => '選擇目標';
+  String get habitEdit_targetDays_dialogTitle => '選擇目標天數';
 
   @override
-  String get habitEdit_targetDays => '日';
+  String get habitEdit_targetDays => '天';
 
   @override
   String get habitEdit_reminder_hintText => '提醒';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => '每日（按週）';
+  String get habitEdit_reminder_freq_weekHelpText => '每週的任一天';
 
   @override
   String get habitEdit_reminder_freq_weekPrefixText => '每週';
@@ -1340,22 +1329,22 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_reminder_freq_weekSubfixText => '';
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => '每日（按月）';
+  String get habitEdit_reminder_freq_monthHelpText => '每月的任一天';
 
   @override
   String get habitEdit_reminder_freq_monthPrefixText => '每月';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => '日';
+  String get habitEdit_reminder_freq_monthSubfixText => '';
 
   @override
-  String get habitEdit_reminderQuest_hintText => '提一個問題，例如「今天完成作業了嗎？」';
+  String get habitEdit_reminderQuest_hintText => '問題，例如：你今天運動了嗎？';
 
   @override
-  String get habitEdit_reminder_dialogTitle => '提醒頻率';
+  String get habitEdit_reminder_dialogTitle => '選擇提醒類型';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => '當需要打卡時';
+  String get habitEdit_reminder_dialogType_whenNeeded => '需要打卡時';
 
   @override
   String get habitEdit_reminder_dialogType_daily => '每日';
@@ -1367,52 +1356,52 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_reminder_dialogType_month => '每月';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => '確定';
+  String get habitEdit_reminder_dialogConfirm => '確認';
 
   @override
   String get habitEdit_reminder_dialogCancel => '取消';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => '取消確認';
+  String get habitEdit_reminder_cancelDialogTitle => '確認';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => '確定取消該提醒？';
+  String get habitEdit_reminder_cancelDialogSubtitle => '確定要移除這個提醒嗎？';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => '確定';
+  String get habitEdit_reminder_cancelDialogConfirm => '確認';
 
   @override
   String get habitEdit_reminder_cancelDialogCancel => '取消';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => '一';
+  String get habitEdit_reminder_weekdayText_monday => '週一';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => '二';
+  String get habitEdit_reminder_weekdayText_tuesday => '週二';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => '三';
+  String get habitEdit_reminder_weekdayText_wednesday => '週三';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => '四';
+  String get habitEdit_reminder_weekdayText_thursday => '週四';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => '五';
+  String get habitEdit_reminder_weekdayText_friday => '週五';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => '六';
+  String get habitEdit_reminder_weekdayText_saturday => '週六';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => '日';
+  String get habitEdit_reminder_weekdayText_sunday => '週日';
 
   @override
-  String get habitEdit_desc_hintText => '備忘，支持 Markdown';
+  String get habitEdit_desc_hintText => '備註，支援 Markdown';
 
   @override
-  String get habitEdit_create_datetime_prefix => '創建: ';
+  String get habitEdit_create_datetime_prefix => '建立時間：';
 
   @override
-  String get habitEdit_modify_datetime_prefix => '修改: ';
+  String get habitEdit_modify_datetime_prefix => '修改時間：';
 
   @override
   String get habitDisplay_fab_text => '新增習慣';
@@ -1421,45 +1410,45 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_emptyImage_text_01 => '千里之行，始於足下';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => '歸檔選中的習慣？';
+  String get habitDisplay_archiveHabitsConfirmDialog_title => '封存選取的習慣？';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => '確定';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => '確認';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_cancel => '取消';
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
-    return '已歸檔$count個習慣';
+    return '已封存 $count 個習慣';
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => '取消選中習慣的歸檔？';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title => '解除封存選取的習慣？';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => '確定';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => '確認';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => '取消';
 
   @override
   String habitDisplay_unarchiveHabitsSuccSnackbarText(int count) {
-    return '已取消$count個習慣的歸檔';
+    return '已解除封存 $count 個習慣';
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => '刪除選擇的習慣？';
+  String get habitDisplay_deleteHabitsConfirmDialog_title => '刪除選取的習慣？';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => '確定';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => '確認';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_cancel => '取消';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
-    return '已刪除$count個習慣';
+    return '已刪除 $count 個習慣';
   }
 
   @override
@@ -1472,22 +1461,22 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_editPopMenu_delete => '刪除';
 
   @override
-  String get habitDisplay_editPopMenu_clone => '模板';
+  String get habitDisplay_editPopMenu_clone => '複製為範本';
 
   @override
   String get habitDisplay_editButton_tooltip => '編輯';
 
   @override
-  String get habitDisplay_archiveButton_tooltip => '歸檔';
+  String get habitDisplay_archiveButton_tooltip => '封存';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => '取消歸檔';
+  String get habitDisplay_unarchiveButton_tooltip => '解除封存';
 
   @override
   String get habitDisplay_settingButton_tooltip => '設定';
 
   @override
-  String get habitDisplay_statsMenu_statSubgroupText => '當前';
+  String get habitDisplay_statsMenu_statSubgroupText => '目前';
 
   @override
   String get habitDisplay_statsMenu_completedTileText => '已完成';
@@ -1496,79 +1485,79 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_statsMenu_inProgresTileText => '進行中';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => '已歸檔';
+  String get habitDisplay_statsMenu_archivedTileText => '已封存';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => '熱門習慣：近30天變化';
+  String get habitDisplay_statsMenu_popularitySubgroupText => '熱門習慣：近 30 天變化';
 
   @override
-  String get habitDisplay_mainMenu_lightTheme => '明亮主題';
+  String get habitDisplay_mainMenu_lightTheme => '淺色主題';
 
   @override
-  String get habitDisplay_mainMenu_darkTheme => '黑暗主題';
+  String get habitDisplay_mainMenu_darkTheme => '深色主題';
 
   @override
-  String get habitDisplay_mainMenu_followSystemTheme => '跟隨系統';
+  String get habitDisplay_mainMenu_followSystemTheme => '依照系統設定';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => '已歸檔';
+  String get habitDisplay_mainMenu_showArchivedTileText => '顯示已封存';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => '已完成';
+  String get habitDisplay_mainMenu_showCompletedTileText => '顯示已完成';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => '進行中';
+  String get habitDisplay_mainMenu_showActivedTileText => '顯示進行中';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => '設定';
 
   @override
-  String get habitDisplay_sort_reverseText => '反向排序';
+  String get habitDisplay_sort_reverseText => '反向';
 
   @override
-  String get habitDisplay_sortDirection_asc => '(正序)';
+  String get habitDisplay_sortDirection_asc => '（升冪）';
 
   @override
-  String get habitDisplay_sortDirection_Desc => '(反序)';
+  String get habitDisplay_sortDirection_Desc => '（降冪）';
 
   @override
-  String get habitDisplay_sortType_manual => '自訂';
+  String get habitDisplay_sortType_manual => '自訂順序';
 
   @override
-  String get habitDisplay_sortType_name => '名稱';
+  String get habitDisplay_sortType_name => '依名稱';
 
   @override
-  String get habitDisplay_sortType_colorType => '顏色';
+  String get habitDisplay_sortType_colorType => '依顏色';
 
   @override
-  String get habitDisplay_sortType_progress => '完成度';
+  String get habitDisplay_sortType_progress => '依完成率';
 
   @override
-  String get habitDisplay_sortType_startT => '開始日期';
+  String get habitDisplay_sortType_startT => '依開始日期';
 
   @override
-  String get habitDisplay_sortType_status => '狀態';
+  String get habitDisplay_sortType_status => '依狀態';
 
   @override
   String get habitDisplay_sortTypeDialog_title => '排序';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => '確定';
+  String get habitDisplay_sortTypeDialog_confirm => '確認';
 
   @override
   String get habitDisplay_sortTypeDialog_cancel => '取消';
 
   @override
-  String get habitDisplay_debug_debugSubgroup_title => '🛠️調試選項';
+  String get habitDisplay_debug_debugSubgroup_title => '🛠️ 除錯';
 
   @override
   String get habitDetail_editButton_tooltip => '編輯';
 
   @override
-  String get habitDetail_editPopMenu_unarchive => '取消歸檔';
+  String get habitDetail_editPopMenu_unarchive => '解除封存';
 
   @override
-  String get habitDetail_editPopMenu_archive => '歸檔';
+  String get habitDetail_editPopMenu_archive => '封存';
 
   @override
   String get habitDetail_editPopMenu_export => '匯出';
@@ -1577,34 +1566,40 @@ class L10nZhHant extends L10nZh {
   String get habitDetail_editPopMenu_delete => '刪除';
 
   @override
-  String get habitDetail_editPopMenu_clone => '模板';
+  String get habitDetail_editPopMenu_clone => '複製為範本';
 
   @override
-  String get habitDetail_confirmDialog_confirm => '確定';
+  String get habitDetail_confirmDialog_confirm => '確認';
 
   @override
   String get habitDetail_confirmDialog_cancel => '取消';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => '歸檔該習慣？';
+  String get habitDetail_archiveConfirmDialog_titleText => '封存習慣？';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => '取消歸檔該習慣？';
+  String get habitDetail_unarchiveConfirmDialog_titleText => '解除封存習慣？';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => '刪除該習慣？';
+  String get habitDetail_deleteConfirmDialog_titleText => '刪除習慣？';
 
   @override
-  String get habitDetail_summary_title => '總覽';
+  String get habitDetail_summary_title => '摘要';
 
   @override
   String habitDetail_summary_body(String score, int days) {
-    return '當前分數為 $score，距開始已經過 $days 天。';
+    return '目前評分為 $score，從開始至今已經 $days 天。';
   }
 
   @override
   String habitDetail_summary_preBody(int days) {
-    return '距開始還有 $days 天';
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '還有 $days 天開始。',
+      one: '明天開始。',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1636,8 +1631,8 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: '每日目標',
-      two: '每日限額',
+      other: '目標',
+      two: '門檻',
     );
     return '$_temp0';
   }
@@ -1655,62 +1650,61 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: '完成天數',
-      two: '達標天數',
+      other: '天數',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDetail_descTargetDays_unitText => '';
+  String get habitDetail_descTargetDays_unitText => '天';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => '記錄總數';
+  String get habitDetail_descRecordsNum_titleText => '記錄數';
 
   @override
-  String get habitDetail_scoreChart_title => '分數';
+  String get habitDetail_scoreChart_title => '評分';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => '日';
+  String get habitDetail_scoreChartCombine_dailyText => '每日';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => '周';
+  String get habitDetail_scoreChartCombine_weeklyText => '每週';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => '月';
+  String get habitDetail_scoreChartCombine_monthlyText => '每月';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => '年';
+  String get habitDetail_scoreChartCombine_yearlyText => '每年';
 
   @override
   String get habitDetail_freqChart_freqTitle => '頻率';
 
   @override
-  String get habitDetail_freqChart_historyTitle => '歷史';
+  String get habitDetail_freqChart_historyTitle => '歷史紀錄';
 
   @override
-  String get habitDetail_freqChart_combinedTitle => '頻率和歷史';
+  String get habitDetail_freqChart_combinedTitle => '頻率與歷史紀錄';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => '周';
+  String get habitDetail_freqChartCombine_weeklyText => '每週';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => '月';
+  String get habitDetail_freqChartCombine_monthlyText => '每月';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => '年';
+  String get habitDetail_freqChartCombine_yearlyText => '每年';
 
   @override
   String get habitDetail_freqChartNaviBar_nowText => '現在';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => '隱藏歷史記錄';
+  String get habitDetail_freqChart_expanded_hideTooltip => '隱藏歷史紀錄圖表';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => '顯示歷史記錄';
+  String get habitDetail_freqChart_expanded_showTooltip => '顯示歷史紀錄圖表';
 
   @override
-  String get habitDetail_descSubgroup_title => '備忘';
+  String get habitDetail_descSubgroup_title => '備註';
 
   @override
   String get habitDetail_otherSubgroup_title => '其他';
@@ -1728,7 +1722,7 @@ class L10nZhHant extends L10nZh {
   String get habitDetail_startDateTile_title => '開始日期';
 
   @override
-  String get habitDetail_createDateTile_title => '創建日期';
+  String get habitDetail_createDateTile_title => '建立日期';
 
   @override
   String get habitDetail_modifyDateTile_title => '修改日期';
@@ -1737,28 +1731,28 @@ class L10nZhHant extends L10nZh {
   String get habitDetail_editHeatmapCal_dateButtonText => '日期';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => '打卡值';
+  String get habitDetail_editHeatmapCal_valueButtonText => '數值';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => '返回今日';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText => '回到今天';
 
   @override
-  String get habitDetail_notFoundText => '讀取習慣失敗';
+  String get habitDetail_notFoundText => '載入習慣失敗';
 
   @override
   String get habitDetail_notFoundRetryText => '重試';
 
   @override
-  String get habitDetail_changeGoal_title => '更改目標';
+  String get habitDetail_changeGoal_title => '變更目標';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
-    return '當前: $goal';
+    return '目前：$goal';
   }
 
   @override
   String habitDetail_changeGoal_doneChipText(String goal) {
-    return '完成: $goal';
+    return '完成：$goal';
   }
 
   @override
@@ -1771,26 +1765,26 @@ class L10nZhHant extends L10nZh {
 
   @override
   String habitDetail_changeGoal_helpText(String goal) {
-    return '每日目標，默認值：$goal';
+    return '每日目標，預設值：$goal';
   }
 
   @override
   String get habitDetail_changeGoal_cancelText => '取消';
 
   @override
-  String get habitDetail_changeGoal_saveText => '保存';
+  String get habitDetail_changeGoal_saveText => '儲存';
 
   @override
   String get habitDetail_skipReason_title => '跳過原因';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => '在這裡隨便寫點什麼...';
+  String get habitDetail_skipReason_bodyHelpText => '在此輸入…';
 
   @override
   String get habitDetail_skipReason_cancelText => '取消';
 
   @override
-  String get habitDetail_skipReason_saveText => '保存';
+  String get habitDetail_skipReason_saveText => '儲存';
 
   @override
   String get appSetting_appbar_titleText => '設定';
@@ -1802,71 +1796,71 @@ class L10nZhHant extends L10nZh {
   String get appSetting_operationSubgroupText => '操作';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => '按頁拖動日曆';
+  String get appSetting_dragCalendarByPageTile_titleText => '以頁面為單位拖曳行事曆';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => '如果啟用開關，則主頁上的應用欄日曆將逐頁拖動。默認情況下，該開關處於禁用狀態。';
+  String get appSetting_dragCalendarByPageTile_subtitleText => '如果開啟此開關，首頁的應用程式列行事曆將以頁面為單位進行拖曳。預設為關閉。';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => '修改記錄狀態';
+  String get appSetting_changeRecordStatusOpTile_titleText => '變更記錄狀態';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改主頁面上每日記錄的狀態的點擊行為。';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改點選行為以變更主頁面上每日記錄的狀態。';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => '打開詳細記錄';
+  String get appSetting_openRecordStatusDialogOpTile_titleText => '開啟詳細記錄';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主頁面上打開每日記錄詳情彈窗的點擊行為。';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => '一週的第一天';
+  String get appSetting_firstDayOfWeek_titleText => '每週的第一天';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => '選擇';
+  String get appSetting_firstDayOfWeekDialog_titleText => '顯示每週的第一天';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => '（默認值）';
+  String get appSetting_firstDayOfWeekDialog_defaultText => '（預設）';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return '跟隨系統（$localeName）';
+    return '依照系統設定（$localeName）';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => '跟隨系統';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => '依照系統設定';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => '多語言';
+  String get appSetting_changeLanguageTile_titleText => '語言';
 
   @override
   String get appSetting_changeLanguageDialog_titleText => '選擇語言';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
-    return '日期顯示格式 ($formatTemplate)';
+    return '日期顯示格式（$formatTemplate）';
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => '跟隨系統設置';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => '依照系統設定';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => '配置的日期格式將應用於習慣詳情頁面的日期顯示。';
+  String get appSetting_dateDisplayFormat_subTitleText => '設定的日期格式將套用於習慣詳細頁面的日期顯示。';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => '習慣頁中啟用緊湊型UI';
+  String get appSetting_compactUISwitcher_titleText => '在習慣頁面啟用精簡 UI';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => '允許習慣檢查表格顯示更多內容，但部分用戶界面和文字可能會變小。';
+  String get appSetting_compactUISwitcher_subtitleText => '允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => '習慣打卡區域佔比調整';
+  String get appSetting_collapsed_calendar_bararea_titleText => '習慣打卡區域比例調整';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => '調整百分比以獲取更多/更少的習慣打卡區域。';
+  String get appSetting_collapsed_calendar_bararea_subtitleText => '調整百分比以在習慣打卡表格區域取得更多或更少空間。';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => '默認: 0';
+  String get appSetting_collapsed_calendar_bararea_defaultText => '預設';
 
   @override
   String get appSetting_reminderSubgroupText => '提醒';
@@ -1875,27 +1869,27 @@ class L10nZhHant extends L10nZh {
   String get appSetting_dailyReminder_titleText => '每日提醒';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => '備份和恢復';
+  String get appSetting_backupAndRestoreSubgroupText => '備份與還原';
 
   @override
   String get appSetting_export_titleText => '匯出';
 
   @override
-  String get appSetting_export_subtitleText => '將習慣匯出為 JSON 格式，該文件可以導入。';
+  String get appSetting_export_subtitleText => '將習慣匯出為 JSON 格式，此檔案可以再匯入。';
 
   @override
-  String get appSetting_import_titleText => '導入';
+  String get appSetting_import_titleText => '匯入';
 
   @override
-  String get appSetting_import_subtitleText => '從 JSON 文件導入習慣。';
+  String get appSetting_import_subtitleText => '從 JSON 檔案匯入習慣。';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
-    return '確認導入 $count 個習慣？';
+    return '確認匯入 $count 個習慣？';
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => '注意：導入不會刪除現有的習慣。';
+  String get appSetting_importDialog_confirmSubtitle => '注意：匯入不會刪除現有的習慣。';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => '確認';
@@ -1905,52 +1899,52 @@ class L10nZhHant extends L10nZh {
 
   @override
   String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
-    return '已導入 $completeCount/$totalCount';
+    return '已匯入 $completeCount/$totalCount';
   }
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return '完成導入 $count 個習慣';
+    return '完成匯入 $count 個';
   }
 
   @override
   String get appSetting_importDialog_complete_closeLabel => '關閉';
 
   @override
-  String get appSetting_resetConfig_titleText => '重置配置';
+  String get appSetting_resetConfig_titleText => '重設設定';
 
   @override
-  String get appSetting_resetConfig_subtitleText => '將所有配置重置為默認值。';
+  String get appSetting_resetConfig_subtitleText => '將所有設定重設為預設值。';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => '重置配置？';
+  String get appSetting_resetConfigDialog_titleText => '重設設定？';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => '將所有配置重置為默認值，必須重新啟動應用程序才能生效。';
+  String get appSetting_resetConfigDialog_subtitleText => '將所有設定重設為預設值，必須重新啟動應用程式才能套用。';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => '取消';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => '確定';
+  String get appSetting_resetConfigDialog_confirmText => '確認';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => '已重置應用設置';
+  String get appSetting_resetConfigSuccess_snackbarText => '已成功重設應用程式設定';
 
   @override
   String get appSetting_otherSubgroupText => '其他';
 
   @override
-  String get appSetting_developMode_titleText => '開發模式';
+  String get appSetting_developMode_titleText => '開發者模式';
 
   @override
-  String get appSetting_clearCache_titleText => '清理快取';
+  String get appSetting_clearCache_titleText => '清除快取';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => '清理快取';
+  String get appSetting_clearCacheDialog_titleText => '清除快取';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => '清除快取後，部分自定義值將會恢復默認。';
+  String get appSetting_clearCacheDialog_subtitleText => '清除快取後，部分自訂值將恢復為預設值。';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => '取消';
@@ -1959,16 +1953,16 @@ class L10nZhHant extends L10nZh {
   String get appSetting_clearCacheDialog_confirmText => '確認';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => '部分快取清理失敗';
+  String get appSetting_clearCache_snackBar_partSuccText => '部分快取清除失敗';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => '快取清理成功';
+  String get appSetting_clearCache_snackBar_succText => '快取清除成功';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => '快取清理失敗';
+  String get appSetting_clearCache_snackBar_failText => '快取清除失敗';
 
   @override
-  String get appSetting_debugger_titleText => '調試信息';
+  String get appSetting_debugger_titleText => '除錯資訊';
 
   @override
   String get appSetting_about_titleText => '關於';
@@ -1982,52 +1976,52 @@ class L10nZhHant extends L10nZh {
   }
 
   @override
-  String get appAbout_versionTile_changeLogPath => 'docs/CHANGELOG/zh.md';
+  String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
-  String get appAbout_sourceCodeTile_titleText => '原碼';
+  String get appAbout_sourceCodeTile_titleText => '原始碼';
 
   @override
-  String get appAbout_issueTrackerTile_titleText => '問題/討論';
+  String get appAbout_issueTrackerTile_titleText => '問題追蹤';
 
   @override
   String get appAbout_contactEmailTile_titleText => '聯絡我';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Hi, 很高興你能夠聯絡我。\n如果反饋BUG需要注明版本並闡述複現流程\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody => '您好，很高興您與我聯繫。\n如果您要回報錯誤，請提供應用程式版本和重現步驟。\n--------------------------------------';
 
   @override
-  String get appAbout_licenseTile_titleText => '開源許可';
+  String get appAbout_licenseTile_titleText => '授權';
 
   @override
-  String get appAbout_licenseTile_subtitleText => 'Apache許可 版本2.0';
+  String get appAbout_licenseTile_subtitleText => 'Apache 授權，版本 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => '第三方許可聲明';
+  String get appAbout_licenseThirdPartyTile_titleText => '第三方授權聲明';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_donateTile_titleText => '捐贈';
+  String get appAbout_donateTile_titleText => '贊助';
 
   @override
-  String get appAbout_donateTile_subTitleText => '我是一名個人開發者，如果你覺得這個應用好用，請幫我買一杯☕';
+  String get appAbout_donateTile_subTitleText => '我是一位獨立開發者。如果您喜歡這個應用程式，可以考慮贊助我一杯 ☕。';
 
   @override
   String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
-  String get donateWay_paypal => 'Paypal';
+  String get donateWay_paypal => 'PayPal';
 
   @override
-  String get donateWay_buyMeACoffee => '請我喝一杯咖啡';
+  String get donateWay_buyMeACoffee => '買杯咖啡';
 
   @override
   String get donateWay_alipay => '支付寶';
 
   @override
-  String get donateWay_wechatPay => '微信';
+  String get donateWay_wechatPay => '微信支付';
 
   @override
   String get donateWay_cryptoCurrency => '加密貨幣';
@@ -2036,27 +2030,27 @@ class L10nZhHant extends L10nZh {
   String get donateWay_cryptoCurrency_BTC => '比特幣';
 
   @override
-  String get donateWay_cryptoCurrency_ETH => '以太坊';
+  String get donateWay_cryptoCurrency_ETH => '以太幣';
 
   @override
   String get donateWay_cryptoCurrency_BNB => '幣安幣';
 
   @override
-  String get donateWay_cryptoCurrency_AVAX => 'AVAX';
+  String get donateWay_cryptoCurrency_AVAX => '雪崩幣';
 
   @override
   String get donateWay_cryptoCurrency_FTM => 'FTM';
 
   @override
-  String get donateWay_firstQRGroup => '支付寶與微信';
+  String get donateWay_firstQRGroup => '支付寶及微信支付';
 
   @override
   String appAbout_donateDialog_copiedCrypto_msg(String name) {
-    return '已複製$name地址';
+    return '已複製 $name 的地址';
   }
 
   @override
-  String get batchCheckin_appbar_title => '批量打卡';
+  String get batchCheckin_appbar_title => '批次打卡';
 
   @override
   String get batchCheckin_datePicker_prevButton_tooltip => '前一天';
@@ -2071,35 +2065,47 @@ class L10nZhHant extends L10nZh {
   String get batchCheckin_status_ok_text => '完成';
 
   @override
-  String get batchCheckin_status_double_text => '超量完成';
+  String get batchCheckin_status_double_text => '雙倍達成！';
 
   @override
   String get batchCheckin_status_zero_text => '未完成';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
-    return '已選擇$count個習慣';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '習慣',
+      one: '習慣',
+    );
+    return '已選擇 $count 個$_temp0';
   }
 
   @override
-  String get batchCheckin_save_button_text => '保存';
+  String get batchCheckin_save_button_text => '儲存';
 
   @override
-  String get batchCheckin_reset_button_text => '重置';
+  String get batchCheckin_reset_button_text => '重設';
 
   @override
   String batchCheckin_completed_snackbar_text(int count) {
-    return '已修改$count個習慣的狀態';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 個習慣的狀態',
+      one: '個習慣的狀態',
+    );
+    return '已修改 $_temp0';
   }
 
   @override
   String get batchCheckin_save_confirmDialog_title => '覆蓋現有記錄';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => '保存後將覆蓋現有記錄，之前記錄將丟失。';
+  String get batchCheckin_save_confirmDialog_body => '儲存後，現有記錄將被覆蓋，之前的記錄將會遺失。';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => '保存';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => '儲存';
 
   @override
   String get batchCheckin_save_confirmDialog_cancelButton_text => '取消';
@@ -2108,22 +2114,22 @@ class L10nZhHant extends L10nZh {
   String get batchCheckin_close_confirmDialog_title => '確認返回';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => '未保存的打卡狀態更改將不會生效。';
+  String get batchCheckin_close_confirmDialog_body => '打卡狀態的變更在儲存前不會被套用';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => '確認';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => '離開';
 
   @override
   String get batchCheckin_close_confirmDialog_cancelButton_text => '取消';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 你今天堅持了自己的習慣嗎？';
+  String get appReminder_dailyReminder_title => '🏝 你今天堅持習慣了嗎？';
 
   @override
-  String get appReminder_dailyReminder_body => '點擊進入應用並按時打卡。';
+  String get appReminder_dailyReminder_body => '點選進入應用程式並準時打卡。';
 
   @override
-  String get common_habitColorType_cc1 => '紫羅蘭';
+  String get common_habitColorType_cc1 => '深丁香紫';
 
   @override
   String get common_habitColorType_cc2 => '紅色';
@@ -2132,29 +2138,29 @@ class L10nZhHant extends L10nZh {
   String get common_habitColorType_cc3 => '紫色';
 
   @override
-  String get common_habitColorType_cc4 => '皇家藍';
+  String get common_habitColorType_cc4 => '寶藍色';
 
   @override
-  String get common_habitColorType_cc5 => '深青';
+  String get common_habitColorType_cc5 => '深青色';
 
   @override
   String get common_habitColorType_cc6 => '綠色';
 
   @override
-  String get common_habitColorType_cc7 => '琥珀';
+  String get common_habitColorType_cc7 => '琥珀色';
 
   @override
   String get common_habitColorType_cc8 => '橙色';
 
   @override
-  String get common_habitColorType_cc9 => '酸橙綠';
+  String get common_habitColorType_cc9 => '萊姆綠';
 
   @override
-  String get common_habitColorType_cc10 => '蘭花紫';
+  String get common_habitColorType_cc10 => '深蘭花紫';
 
   @override
   String common_habitColorType_default(int index) {
-    return '顏色-$index';
+    return '顏色 $index';
   }
 
   @override
@@ -2173,10 +2179,10 @@ class L10nZhHant extends L10nZh {
   String get common_customDateTimeFormatPicker_dmy_text => '日月年';
 
   @override
-  String get common_customDateTimeFormatPicker_SepTileText => '分隔符';
+  String get common_customDateTimeFormatPicker_SepTileText => '分隔符號';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDash_text => '短橫線';
+  String get common_customDateTimeFormatPicker_sepDash_text => '破折號';
 
   @override
   String get common_customDateTimeFormatPicker_sepSlash_text => '斜線';
@@ -2185,27 +2191,27 @@ class L10nZhHant extends L10nZh {
   String get common_customDateTimeFormatPicker_sepSpace_text => '空格';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDot_text => '點號';
+  String get common_customDateTimeFormatPicker_sepDot_text => '點';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => '無分隔符';
+  String get common_customDateTimeFormatPicker_empty_text => '無分隔符號';
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
-    return '$splitName: \"$splitChar\"';
+    return '$splitName：「$splitChar」';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => '使用12小時制';
+  String get common_customDateTimeFormatPicker_12Hour_text => '使用 12 小時制';
 
   @override
   String get common_customDateTimeFormatPicker_monthName_text => '使用完整名稱';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => '對頻率圖表生效';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text => '套用於頻率圖表';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => '對補卡日曆生效';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text => '套用於行事曆';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => '取消';
@@ -2224,7 +2230,7 @@ class L10nZhHant extends L10nZh {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return '下$dateString';
+    return '下週 $dateString';
   }
 
   @override
@@ -2235,14 +2241,15 @@ class L10nZhHant extends L10nZh {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number個習慣',
-      zero: '當前習慣',
+      other: '$number 個習慣',
+      one: '1 個習慣',
+      zero: '目前習慣',
     );
-    return '匯出$_temp0?';
+    return '匯出 $_temp0？';
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => '包含習慣記錄';
+  String get exportConfirmDialog_option_includeRecords => '包含記錄';
 
   @override
   String get exportConfirmDialog_cancel_buttonText => '取消';
@@ -2251,16 +2258,16 @@ class L10nZhHant extends L10nZh {
   String get exportConfirmDialog_confirm_buttonText => '匯出';
 
   @override
-  String get debug_logLevelTile_title => '日誌級別';
+  String get debug_logLevelTile_title => '日誌層級';
 
   @override
-  String get debug_logLevelDialog_title => '更改日誌級別';
+  String get debug_logLevelDialog_title => '變更日誌層級';
 
   @override
-  String get debug_logLevel_debug => '調試';
+  String get debug_logLevel_debug => '除錯';
 
   @override
-  String get debug_logLevel_info => '信息';
+  String get debug_logLevel_info => '資訊';
 
   @override
   String get debug_logLevel_warn => '警告';
@@ -2269,25 +2276,25 @@ class L10nZhHant extends L10nZh {
   String get debug_logLevel_error => '錯誤';
 
   @override
-  String get debug_logLevel_fatal => '致命';
+  String get debug_logLevel_fatal => '嚴重';
 
   @override
-  String get debug_collectLogTile_title => '正在收集日誌';
+  String get debug_collectLogTile_title => '收集日誌';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => '點擊停止日誌收集。';
+  String get debug_collectLogTile_enable_subtitle => '點選以停止收集日誌。';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => '點擊開始日誌收集。';
+  String get debug_collectLogTile_disable_subtitle => '點選以開始收集日誌。';
 
   @override
-  String get debug_downladDebugLogs_subject => '下載調試日誌';
+  String get debug_downladDebugLogs_subject => '下載除錯日誌';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => '已清除調試日誌。';
+  String get dbeug_clearDebugLogs_complete_snackbar => '已清除除錯日誌。';
 
   @override
-  String get debug_downladDebugInfo_subject => '下載調試信息';
+  String get debug_downladDebugInfo_subject => '下載除錯資訊';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
@@ -2295,13 +2302,13 @@ class L10nZhHant extends L10nZh {
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => '調試日誌不存在。';
+  String get debug_missingDebugLogFile_snackbar => '除錯日誌檔不存在。';
 
   @override
-  String get debug_debuggerLogCard_title => '日誌信息';
+  String get debug_debuggerLogCard_title => '日誌資訊';
 
   @override
-  String get debug_debuggerLogCard_subtitle => '包括本地調試日誌信息，需要打開日誌收集開關。';
+  String get debug_debuggerLogCard_subtitle => '包含本機除錯日誌資訊，需要開啟日誌收集開關。';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => '下載';
@@ -2310,34 +2317,34 @@ class L10nZhHant extends L10nZh {
   String get debug_debuggerLogCard_clearButton_text => '清除';
 
   @override
-  String get debug_debuggerInfoCard_title => '調試信息';
+  String get debug_debuggerInfoCard_title => '除錯資訊';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => '包括應用程序的調試信息。';
+  String get debug_debuggerInfoCard_subtitle => '包含應用程式的除錯資訊。';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => '打開';
+  String get debug_debuggerInfoCard_openButton_text => '開啟';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => '保存';
+  String get debug_debuggerInfoCard_saveButton_text => '儲存';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => '正在收集應用信息……';
+  String get debug_debuggerInfo_notificationTitle => '正在收集應用程式資訊…';
 
   @override
-  String get snackbar_undoText => '撤回';
+  String get snackbar_undoText => '復原';
 
   @override
-  String get snackbar_dismissText => '忽略';
+  String get snackbar_dismissText => '關閉';
 
   @override
   String get contributors_tile_title => '貢獻者';
 
   @override
-  String get userAction_tap => '點擊';
+  String get userAction_tap => '點選';
 
   @override
-  String get userAction_doubleTap => '雙擊';
+  String get userAction_doubleTap => '點選兩次';
 
   @override
   String get userAction_longTap => '長按';

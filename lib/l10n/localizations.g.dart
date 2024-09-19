@@ -117,7 +117,6 @@ abstract class L10n {
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
@@ -2201,8 +2200,7 @@ L10n lookupL10n(Locale locale) {
   switch (locale.languageCode) {
     case 'zh': {
   switch (locale.scriptCode) {
-    case 'Hans': return L10nZhHans();
-case 'Hant': return L10nZhHant();
+    case 'Hant': return L10nZhHant();
    }
   break;
    }
