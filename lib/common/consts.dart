@@ -69,8 +69,7 @@ const appSupportedLocales = [
   Locale.fromSubtags(languageCode: 'ru'),
   // TODO: remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'tr'),
-  // TODO: remove kDebugMode below after translation
-  if (kDebugMode) Locale.fromSubtags(languageCode: 'uk'),
+  Locale.fromSubtags(languageCode: 'uk'),
   Locale.fromSubtags(languageCode: 'vi'),
   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
