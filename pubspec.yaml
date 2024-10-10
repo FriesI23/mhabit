@@ -128,7 +128,7 @@ dev_dependencies:
 
   # Utilities
   package_rename: ^1.2.0
-  flutter_launcher_icons: ^0.14.1
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
