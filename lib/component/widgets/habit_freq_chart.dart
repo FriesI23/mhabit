@@ -309,7 +309,7 @@ class HabitFreqChart extends StatelessWidget {
               barTouchData: BarTouchData(
                 enabled: false,
                 touchTooltipData: BarTouchTooltipData(
-                  tooltipBgColor: Colors.transparent,
+                  getTooltipColor: (group) => Colors.transparent,
                   tooltipPadding: EdgeInsets.zero,
                   tooltipMargin: 2,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {

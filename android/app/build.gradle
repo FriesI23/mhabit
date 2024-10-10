@@ -7,6 +7,23 @@ plugins {
     id 'dev.flutter.flutter-gradle-plugin'
 }
 
+// Compare two version a.b.c <==> x.y.z
+int compareVersions(String v1, String v2) {
+    /* groovylint-disable-next-line DuplicateNumberLiteral */
+    def zero = 0
+    def parts1 = v1.split('\\.')
+    def parts2 = v2.split('\\.')
+    def length = Math.max(parts1.length, parts2.length)
+    for (int i = zero; i < length; i++) {
+        def part1 = i < parts1.length ? parts1[i].toInteger() : zero
+        def part2 = i < parts2.length ? parts2[i].toInteger() : zero
+        if (part1 != part2) {
+            return part1 <=> part2
+        }
+    }
+    return zero
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -34,6 +51,12 @@ if (customCompileSdkVersion == null) {
     customCompileSdkVersion = customCompileSdkVersion.toInteger()
 }
 
+def customNdkVersion = localProperties.getProperty('flutter.ndkVersion')
+if (customNdkVersion == null) {
+    customNdkVersion = '27.0.12077973'
+    customNdkVersion = compareVersions(customNdkVersion, flutter.ndkVersion) > 0 ? customNdkVersion : flutter.ndkVersion
+}
+
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
@@ -43,17 +66,17 @@ if (keystorePropertiesFile.exists()) {
 android {
     // compileSdkVersion flutter.compileSdkVersion
     compileSdkVersion customCompileSdkVersion
-    ndkVersion flutter.ndkVersion
+    ndkVersion customNdkVersion
 
     compileOptions {
         // support for the new language APIs
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -91,6 +114,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     namespace 'io.github.friesi23.mhabit'
 }
 
@@ -99,7 +126,7 @@ flutter {
 }
 
 dependencies {
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'androidx.window:window-java:1.0.0'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation 'androidx.window:window:1.2.0'
+    implementation 'androidx.window:window-java:1.2.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
 }
