@@ -17,6 +17,7 @@ Title: Pre-Released or Released: v1.2.3+xx
     - `fl_chart` to 0.69.0
     - `flutter_local_notifications` to 17.2.3
     - `flutter_markdown` to 0.7.3+2
-    - `flutter_launcher_icons` to 0.14.1
   - bump flutter package versions,
     run `git diff 62317cd 0ef4434 -- "pubspec.lock"` see full changelog
+- Keep `@mipmap/ic_notification` to prevent it from being removed by `shrinkResources`,
+  see https://stackoverflow.com/a/50703322.
