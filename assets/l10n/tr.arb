@@ -894,5 +894,77 @@
   "appAbout_issueTrackerTile_titleText": "Hata izleyici",
   "@appAbout_issueTrackerTile_titleText": {},
   "appAbout_contactEmailTile_titleText": "Bana ulaş",
-  "@appAbout_contactEmailTile_titleText": {}
+  "@appAbout_contactEmailTile_titleText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "Alışkanlık işaretleme alanı boyut ayarı",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Alışkanlık işaretleme tablo alanında daha fazla/az alan için yüzdeyi ayarlayın.",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "appSetting_clearCache_snackBar_partSuccText": "Kısmi önbellek temizlenemedi",
+  "@appSetting_clearCache_snackBar_partSuccText": {},
+  "appSetting_clearCache_snackBar_succText": "Önbellek başarıyla temizlendi",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "appSetting_clearCache_snackBar_failText": "Önbellek temizlenemedi",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "appSetting_debugger_titleText": "Hata Ayıklama Bilgisi",
+  "@appSetting_debugger_titleText": {},
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Alışkanlık} other{Alışkanlıklar}} seçildi",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "Sıklık Grafiğine Uygula",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "Takvime Uygula",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "exportConfirmDialog_title_exportMulti": "{number, plural, =0{mevcut alışkanlık} =1{1 alışkanlık} other{{number} alışkanlık}} dışa aktar?",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_collectLogTile_title": "Kayıtlar Toplanıyor",
+  "@debug_collectLogTile_title": {},
+  "debug_collectLogTile_enable_subtitle": "Kayıtları toplamayı durdurmak için dokunun.",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "debug_collectLogTile_disable_subtitle": "Kayıtları toplamayı başlatmak için dokunun.",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_downladDebugLogs_subject": "Hata ayıklama kayıtları indiriliyor",
+  "@debug_downladDebugLogs_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "Hata ayıklama kayıtları temizlendi.",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_downladDebugInfo_subject": "Hata ayıklama bilgisi indiriliyor",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_debuggerLogCard_title": "Günlük Bilgileri",
+  "@debug_debuggerLogCard_title": {},
+  "debug_debuggerLogCard_subtitle": "Yerel hata ayıklama günlüklerini içerir, günlük toplama özelliğinin açık olması gerekir.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerInfoCard_title": "Hata Ayıklama Bilgileri",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_subtitle": "Uygulamanın hata ayıklama bilgilerini içerir.",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "debug_debuggerInfo_notificationTitle": "Uygulama Bilgileri Toplanıyor...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "snackbar_undoText": "GERİ AL",
+  "@snackbar_undoText": {},
+  "snackbar_dismissText": "KAPAT",
+  "@snackbar_dismissText": {},
+  "contributors_tile_title": "Katkıda bulunanlar",
+  "@contributors_tile_title": {},
+  "userAction_tap": "Dokun",
+  "@userAction_tap": {},
+  "userAction_doubleTap": "Çift",
+  "@userAction_doubleTap": {},
+  "userAction_longTap": "Uzun",
+  "@userAction_longTap": {}
 }
