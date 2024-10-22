@@ -295,7 +295,7 @@ class HabitScoreChart extends StatelessWidget {
               (spotIndex) => _buildTouchedSpotData(context, barData, spotIndex))
           .toList(),
       touchTooltipData: LineTouchTooltipData(
-        tooltipBgColor: Colors.transparent,
+        getTooltipColor: (group) => Colors.transparent,
         tooltipPadding: EdgeInsets.zero,
         tooltipMargin: 10,
         showOnTopOfTheChartBoxArea: true,

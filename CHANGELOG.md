@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.13.6+52
+
+- Add Polish translation (need translate).
+- Add Tranditional Chinese translation, thank for PeterDaveHello's contribution on Github.
+- Add Ukrainian translation, thank for Fqwe1's contribution on Weblate.
+- Update Spanish translation, thank for gallegonovato's contribution on Weblate.
+- Update Italian translation, thank for glemco's contribution on Weblate.
+- Update Persian translation, thank for ulracte's contribution on Weblate.
+- Bump dependencies version, see [here](https://github.com/FriesI23/mhabit/commit/204922af8eaf0c025739623aad85a12f14cefce5) for more information.
+
 ## 1.13.3+49
 
 - Update Spain translation, thank for Andres Blasco Arnáiz and gallegonovato's contribution on weblate.
