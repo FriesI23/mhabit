@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.14.1+54
+
+- Add Turkey translation, Thanks for S. Aydın's contribution on weblate.
+- Bump Dependencies versions on Android.
+- Keep `@mipmap/ic_notification` to prevent it from being removed by `shrinkResources`,
+  see [https://stackoverflow.com/a/50703322](https://stackoverflow.com/a/50703322).
+
+full changes on this realese see: [release.md](https://github.com/FriesI23/mhabit/blob/v1.14.1%2B54/docs/release.md)
+
 ## 1.13.6+52
 
 - Add Polish translation (need translate).

@@ -2,10 +2,9 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Released
+# Released v1.14.1+54
 
-## v1.14.0+53
-
+- Add Turkey translation, Thanks for S. Aydın's contribution on weblate.
 - Bump Dependencies versions.
   - `gradle` to 8.9
   - `com.android.application` to 8.7.0
@@ -20,4 +19,4 @@ Title: Pre-Released or Released: v1.2.3+xx
   - bump flutter package versions,
     run `git diff 62317cd 0ef4434 -- "pubspec.lock"` see full changelog
 - Keep `@mipmap/ic_notification` to prevent it from being removed by `shrinkResources`,
-  see https://stackoverflow.com/a/50703322.
+  see [https://stackoverflow.com/a/50703322](https://stackoverflow.com/a/50703322).
