@@ -133,6 +133,7 @@ dev_dependencies:
   # Utilities
   package_rename: ^1.2.0
   flutter_launcher_icons: ^0.13.1
+  msix: ^3.16.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -207,3 +208,8 @@ flutter_gen:
     flutter_svg: true
     # json
     lottie: true
+
+msix_config:
+  display_name: Table Habit
+  msix_version: 1.14.1.0
+  logo_path: ./assets/logo/macos-1024x1024.png
