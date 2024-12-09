@@ -51,14 +51,16 @@ class ProfileBuilder extends SingleChildStatelessWidget {
         builder: (context, child) => FutureBuilder(
           future: _loadingHelper(context),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
+            if (snapshot.hasError ||
+                (snapshot.hasData && snapshot.data == false)) {
+              final error = FlutterError("profile build failed");
               if (errorBuilder != null) {
                 return errorBuilder!(FlutterErrorDetails(
-                    exception: snapshot.error!,
+                    exception: snapshot.error ?? error,
                     stack: snapshot.stackTrace,
                     library: "profile_builder"));
               } else {
-                throw FlutterError("profile build failed");
+                throw error;
               }
             } else if (snapshot.isDone) {
               return builder(context, child);

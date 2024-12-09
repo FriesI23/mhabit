@@ -78,14 +78,9 @@ class App extends StatelessWidget {
   }
 }
 
-class AppView extends StatefulWidget {
+class AppView extends StatelessWidget {
   const AppView({super.key});
 
-  @override
-  State<StatefulWidget> createState() => _AppView();
-}
-
-class _AppView extends State<AppView> {
   ThemeData _getLightThemeData(BuildContext context,
       {ColorScheme? dynamicColor, required Color mainColor}) {
     final ColorScheme appColorLight = ColorScheme.fromSeed(
