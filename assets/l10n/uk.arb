@@ -448,5 +448,543 @@
   "habitDisplay_mainMenu_showCompletedTileText": "Показати завершено",
   "@habitDisplay_mainMenu_showCompletedTileText": {},
   "habitDetail_descTargetDays_unitText": "д",
-  "@habitDetail_descTargetDays_unitText": {}
+  "@habitDetail_descTargetDays_unitText": {},
+  "appAbout_licenseThirdPartyTile_subtitleText": "тріпотіння",
+  "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_donateTile_subTitleText": "Я персональний розробник. Якщо вам подобається цей додаток, купіть мені ☕.",
+  "@appAbout_donateTile_subTitleText": {},
+  "debug_debuggerLogCard_subtitle": "Включає локальну інформацію журналу налагодження, потрібно ввімкнути перемикач збору журналів.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "appSetting_clearCacheDialog_confirmText": "підтвердити",
+  "@appSetting_clearCacheDialog_confirmText": {},
+  "appSetting_clearCache_snackBar_failText": "Не вдалося очистити кеш",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "debug_debuggerInfoCard_saveButton_text": "зберегти",
+  "@debug_debuggerInfoCard_saveButton_text": {},
+  "appSetting_import_subtitleText": "Імпортуйте звички з файлу json.",
+  "@appSetting_import_subtitleText": {},
+  "donateWay_cryptoCurrency_BNB": "BNB",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "habitDetail_notFoundText": "Завантажити звичку не вдалося",
+  "@habitDetail_notFoundText": {},
+  "habitDetail_changeGoal_doneChipText": "зроблено: {goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_skipReason_title": "Пропустити причину",
+  "@habitDetail_skipReason_title": {},
+  "appAbout_sourceCodeTile_titleText": "Вихідний код",
+  "@appAbout_sourceCodeTile_titleText": {},
+  "appAbout_contactEmailTile_emailBody": "Привіт, я радий, що ти звернувся до мене.\nЯкщо ви повідомляєте про помилку, будь ласка, вкажіть версію програми та опишіть кроки для її відтворення.\n-------------------------------------",
+  "@appAbout_contactEmailTile_emailBody": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "зберегти",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "скасувати",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "debug_logLevel_fatal": "Фатальний",
+  "@debug_logLevel_fatal": {},
+  "debug_downladDebugInfo_subject": "Завантаження інформації про налагодження",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_debuggerInfoCard_subtitle": "Включає інформацію про налагодження програми.",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "common_habitColorType_cc2": "Червоний",
+  "@common_habitColorType_cc2": {},
+  "habitDetail_skipReason_saveText": "зберегти",
+  "@habitDetail_skipReason_saveText": {},
+  "appSetting_dragCalendarByPageTile_titleText": "Перетягніть календар за сторінкою",
+  "@appSetting_dragCalendarByPageTile_titleText": {},
+  "appSetting_dragCalendarByPageTile_subtitleText": "Якщо перемикач увімкнено, календар на панелі додатків на домашній сторінці перетягуватиметься сторінка за сторінкою. За замовчуванням перемикач вимкнено.",
+  "@appSetting_dragCalendarByPageTile_subtitleText": {},
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.",
+  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+  "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
+  "@appSetting_collapsed_calendar_bararea_defaultText": {},
+  "appSetting_resetConfigDialog_subtitleText": "Скинути всі конфігурації до стандартних, потрібно перезапустити програму, щоб застосувати.",
+  "@appSetting_resetConfigDialog_subtitleText": {},
+  "appSetting_clearCache_titleText": "Очистити кеш",
+  "@appSetting_clearCache_titleText": {},
+  "appSetting_clearCacheDialog_titleText": "Очистити кеш",
+  "@appSetting_clearCacheDialog_titleText": {},
+  "appSetting_clearCache_snackBar_partSuccText": "Не вдалося частково очистити кеш",
+  "@appSetting_clearCache_snackBar_partSuccText": {},
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "Використовуйте системний формат",
+  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+  "debug_collectLogTile_enable_subtitle": "Торкніться, щоб припинити збір журналів.",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
+  "batchCheckin_completed_snackbar_text": "Змінено {count, plural, =1{статус звички} інше{статус {count} звичок}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_confirmDialog_body": "Існуючі записи буде перезаписано. Після збереження попередні записи буде втрачено.",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "habitDetail_freqChartCombine_yearlyText": "рік",
+  "@habitDetail_freqChartCombine_yearlyText": {},
+  "habitDetail_freqChartNaviBar_nowText": "Зараз",
+  "@habitDetail_freqChartNaviBar_nowText": {},
+  "habitDetail_freqChart_expanded_hideTooltip": "Приховати діаграму історії",
+  "@habitDetail_freqChart_expanded_hideTooltip": {},
+  "habitDetail_freqChart_expanded_showTooltip": "Показати діаграму історії",
+  "@habitDetail_freqChart_expanded_showTooltip": {},
+  "habitDetail_descSubgroup_title": "Пам'ятка",
+  "@habitDetail_descSubgroup_title": {},
+  "habitDetail_freqTile_title": "Повторіть",
+  "@habitDetail_freqTile_title": {},
+  "habitDetail_startDateTile_title": "Дата початку",
+  "@habitDetail_startDateTile_title": {},
+  "habitDetail_createDateTile_title": "Створено",
+  "@habitDetail_createDateTile_title": {},
+  "habitDetail_modifyDateTile_title": "Змінено",
+  "@habitDetail_modifyDateTile_title": {},
+  "habitDetail_editHeatmapCal_dateButtonText": "дата",
+  "@habitDetail_editHeatmapCal_dateButtonText": {},
+  "habitDetail_editHeatmapCal_valueButtonText": "значення",
+  "@habitDetail_editHeatmapCal_valueButtonText": {},
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "повернутися до сьогоднішнього дня",
+  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+  "habitDetail_notFoundRetryText": "Спробуйте знову",
+  "@habitDetail_notFoundRetryText": {},
+  "habitDetail_changeGoal_title": "Змінити ціль",
+  "@habitDetail_changeGoal_title": {},
+  "habitDetail_changeGoal_currentChipText": "поточний: {goal}",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_undoneChipText": "скасовано",
+  "@habitDetail_changeGoal_undoneChipText": {},
+  "habitDetail_changeGoal_extraChipText": "{goal}",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_helpText": "Щоденна мета, за замовчуванням: {goal}",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_cancelText": "скасувати",
+  "@habitDetail_changeGoal_cancelText": {},
+  "habitDetail_changeGoal_saveText": "зберегти",
+  "@habitDetail_changeGoal_saveText": {},
+  "habitDetail_skipReason_bodyHelpText": "Напиши тут щось...",
+  "@habitDetail_skipReason_bodyHelpText": {},
+  "habitDetail_skipReason_cancelText": "скасувати",
+  "@habitDetail_skipReason_cancelText": {},
+  "appSetting_appbar_titleText": "Налаштування",
+  "@appSetting_appbar_titleText": {},
+  "appSetting_displaySubgroupText": "Дисплей",
+  "@appSetting_displaySubgroupText": {},
+  "appSetting_operationSubgroupText": "Операція",
+  "@appSetting_operationSubgroupText": {},
+  "appSetting_changeRecordStatusOpTile_titleText": "Змінити статус запису",
+  "@appSetting_changeRecordStatusOpTile_titleText": {},
+  "appSetting_changeRecordStatusOpTile_subtitleText": "Змініть поведінку кліків, щоб змінити статус щоденних записів на головній сторінці.",
+  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+  "appSetting_openRecordStatusDialogOpTile_titleText": "Відкрийте докладний запис",
+  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+  "appSetting_firstDayOfWeekDialog_titleText": "Показати перший день тижня",
+  "@appSetting_firstDayOfWeekDialog_titleText": {},
+  "appSetting_firstDayOfWeekDialog_defaultText": " (За замовчуванням)",
+  "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "appSetting_changeLanguage_followSystem_text": "Слідкуйте за системою ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "Слідкуйте за системою",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "Мова",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "Виберіть мову",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_dateDisplayFormat_titleText": "Формат відображення дати ({formatTemplate})",
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "дотримуйтеся налаштувань системи",
+  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+  "appSetting_compactUISwitcher_titleText": "Увімкніть Compact UI на сторінці звичок",
+  "@appSetting_compactUISwitcher_titleText": {},
+  "appSetting_compactUISwitcher_subtitleText": "Дозволити таблицю перевірки звичок, щоб відображати більше вмісту, але деякі інтерфейси користувача та текст можуть виглядати меншими.",
+  "@appSetting_compactUISwitcher_subtitleText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "Звички перевіряють зону налаштування радіо",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appSetting_collapsed_calendar_bararea_subtitleText": "Відрегулюйте відсоток для збільшення/меншення місця в області таблиці перевірки звичок.",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "appSetting_reminderSubgroupText": "Нагадування",
+  "@appSetting_reminderSubgroupText": {},
+  "appSetting_dailyReminder_titleText": "Щоденне нагадування",
+  "@appSetting_dailyReminder_titleText": {},
+  "appSetting_backupAndRestoreSubgroupText": "Резервне копіювання та відновлення",
+  "@appSetting_backupAndRestoreSubgroupText": {},
+  "appSetting_export_titleText": "Експорт",
+  "@appSetting_export_titleText": {},
+  "appSetting_export_subtitleText": "Експортовані звички у форматі JSON. Цей файл можна імпортувати назад.",
+  "@appSetting_export_subtitleText": {},
+  "appSetting_import_titleText": "Імпорт",
+  "@appSetting_import_titleText": {},
+  "appSetting_importDialog_confirmTitle": "Підтвердити імпорт {count} звичок?",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirmSubtitle": "Примітка. Імпорт не видаляє наявні звички.",
+  "@appSetting_importDialog_confirmSubtitle": {},
+  "appSetting_importDialog_confirm_confirmText": "підтвердити",
+  "@appSetting_importDialog_confirm_confirmText": {},
+  "appSetting_importDialog_confirm_cancelText": "скасувати",
+  "@appSetting_importDialog_confirm_cancelText": {},
+  "appSetting_importDialog_importingTitle": "Імпортні {completeCount}/{totalCount}",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_completeTitle": "Повний імпорт {count}",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_complete_closeLabel": "закрити",
+  "@appSetting_importDialog_complete_closeLabel": {},
+  "appSetting_resetConfig_titleText": "Скинути конфігурації",
+  "@appSetting_resetConfig_titleText": {},
+  "appSetting_resetConfig_subtitleText": "Скинути всі конфігурації до стандартних.",
+  "@appSetting_resetConfig_subtitleText": {},
+  "appSetting_resetConfigDialog_titleText": "Скинути конфігурації?",
+  "@appSetting_resetConfigDialog_titleText": {},
+  "appSetting_resetConfigDialog_cancelText": "скасувати",
+  "@appSetting_resetConfigDialog_cancelText": {},
+  "appSetting_resetConfigDialog_confirmText": "підтвердити",
+  "@appSetting_resetConfigDialog_confirmText": {},
+  "appSetting_resetConfigSuccess_snackbarText": "скидання конфігурації програми успішне",
+  "@appSetting_resetConfigSuccess_snackbarText": {},
+  "appSetting_otherSubgroupText": "інші",
+  "@appSetting_otherSubgroupText": {},
+  "appSetting_developMode_titleText": "Режим розробки",
+  "@appSetting_developMode_titleText": {},
+  "appSetting_clearCacheDialog_subtitleText": "Після очищення кешу деякі настроювані значення буде відновлено до значень за замовчуванням.",
+  "@appSetting_clearCacheDialog_subtitleText": {},
+  "appSetting_clearCacheDialog_cancelText": "скасувати",
+  "@appSetting_clearCacheDialog_cancelText": {},
+  "appSetting_clearCache_snackBar_succText": "Кеш успішно очищено",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "appSetting_debugger_titleText": "Інформація про налагодження",
+  "@appSetting_debugger_titleText": {},
+  "appSetting_about_titleText": "про",
+  "@appSetting_about_titleText": {},
+  "appAbout_appbarTile_titleText": "про",
+  "@appAbout_appbarTile_titleText": {},
+  "appAbout_versionTile_titleText": "Версія: {appVersion}",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_issueTrackerTile_titleText": "Відстеження проблем",
+  "@appAbout_issueTrackerTile_titleText": {},
+  "appAbout_contactEmailTile_titleText": "Зв'яжіться зі мною",
+  "@appAbout_contactEmailTile_titleText": {},
+  "appAbout_licenseTile_titleText": "Ліцензія",
+  "@appAbout_licenseTile_titleText": {},
+  "appAbout_licenseTile_subtitleText": "Ліцензія Apache, версія 2.0",
+  "@appAbout_licenseTile_subtitleText": {},
+  "appAbout_licenseThirdPartyTile_titleText": "Заява про ліцензування третьої сторони",
+  "@appAbout_licenseThirdPartyTile_titleText": {},
+  "appAbout_donateTile_titleText": "Пожертвуйте",
+  "@appAbout_donateTile_titleText": {},
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "donateWay_paypal": "Paypal",
+  "@donateWay_paypal": {},
+  "donateWay_buyMeACoffee": "Купи мені кави",
+  "@donateWay_buyMeACoffee": {},
+  "donateWay_alipay": "Alipay",
+  "@donateWay_alipay": {},
+  "donateWay_wechatPay": "Wechat Pay",
+  "@donateWay_wechatPay": {},
+  "donateWay_cryptoCurrency": "Криптовалюти",
+  "@donateWay_cryptoCurrency": {},
+  "donateWay_cryptoCurrency_BTC": "BTC",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "donateWay_cryptoCurrency_ETH": "ETH",
+  "@donateWay_cryptoCurrency_ETH": {},
+  "donateWay_cryptoCurrency_AVAX": "AVAX",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "donateWay_cryptoCurrency_FTM": "FTM",
+  "@donateWay_cryptoCurrency_FTM": {},
+  "donateWay_firstQRGroup": "Alipay і Wechat Pay",
+  "@donateWay_firstQRGroup": {},
+  "batchCheckin_appbar_title": "Пакетна реєстрація",
+  "@batchCheckin_appbar_title": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "Попередній день",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "batchCheckin_status_skip_text": "Пропустити",
+  "@batchCheckin_status_skip_text": {},
+  "batchCheckin_status_ok_text": "Повний",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_status_double_text": "x2 удар!",
+  "@batchCheckin_status_double_text": {},
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} вибрано",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_button_text": "зберегти",
+  "@batchCheckin_save_button_text": {},
+  "batchCheckin_reset_button_text": "Скинути",
+  "@batchCheckin_reset_button_text": {},
+  "batchCheckin_save_confirmDialog_title": "Перезаписати існуючі записи",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "batchCheckin_close_confirmDialog_title": "Підтвердити повернення",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "batchCheckin_close_confirmDialog_body": "Зміни статусу реєстрації не будуть застосовані до збереження",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "вихід",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "скасувати",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "appReminder_dailyReminder_title": "🏝 Чи дотрималися ви сьогодні своїх звичок?",
+  "@appReminder_dailyReminder_title": {},
+  "appReminder_dailyReminder_body": "натисніть, щоб увійти в програму та зайти вчасно.",
+  "@appReminder_dailyReminder_body": {},
+  "common_habitColorType_cc1": "Глибокий бузок",
+  "@common_habitColorType_cc1": {},
+  "common_habitColorType_cc3": "Фіолетовий",
+  "@common_habitColorType_cc3": {},
+  "common_habitColorType_cc4": "Королівський синій",
+  "@common_habitColorType_cc4": {},
+  "common_habitColorType_cc5": "Темно-блакитний",
+  "@common_habitColorType_cc5": {},
+  "common_habitColorType_cc7": "Бурштин",
+  "@common_habitColorType_cc7": {},
+  "common_habitColorType_cc8": "Помаранчевий",
+  "@common_habitColorType_cc8": {},
+  "common_habitColorType_cc9": "Зелений лайм",
+  "@common_habitColorType_cc9": {},
+  "common_habitColorType_cc10": "Темна орхідея",
+  "@common_habitColorType_cc10": {},
+  "common_customDateTimeFormatPicker_fmtTileText": "Формат дати",
+  "@common_customDateTimeFormatPicker_fmtTileText": {},
+  "common_customDateTimeFormatPicker_ymd_text": "Рік Місяць День",
+  "@common_customDateTimeFormatPicker_ymd_text": {},
+  "common_customDateTimeFormatPicker_mdy_text": "Місяць День Рік",
+  "@common_customDateTimeFormatPicker_mdy_text": {},
+  "common_customDateTimeFormatPicker_dmy_text": "День Місяць Рік",
+  "@common_customDateTimeFormatPicker_dmy_text": {},
+  "common_customDateTimeFormatPicker_SepTileText": "Роздільник",
+  "@common_customDateTimeFormatPicker_SepTileText": {},
+  "common_customDateTimeFormatPicker_sepDash_text": "Тире",
+  "@common_customDateTimeFormatPicker_sepDash_text": {},
+  "common_customDateTimeFormatPicker_sepSlash_text": "Слеш",
+  "@common_customDateTimeFormatPicker_sepSlash_text": {},
+  "common_customDateTimeFormatPicker_sepDot_text": "Крапка",
+  "@common_customDateTimeFormatPicker_sepDot_text": {},
+  "common_customDateTimeFormatPicker_empty_text": "Без роздільника",
+  "@common_customDateTimeFormatPicker_empty_text": {},
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_12Hour_text": "Використовуйте 12-годинний формат",
+  "@common_customDateTimeFormatPicker_12Hour_text": {},
+  "common_customDateTimeFormatPicker_monthName_text": "Використовуйте повне ім'я",
+  "@common_customDateTimeFormatPicker_monthName_text": {},
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "Подайте заявку на Freq Chart",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "Подати заявку на Календар",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "скасувати",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "підтвердити",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "calendarPicker_clip_today": "Сьогодні",
+  "@calendarPicker_clip_today": {},
+  "calendarPicker_clip_tomorrow": "завтра",
+  "@calendarPicker_clip_tomorrow": {},
+  "calendarPicker_clip_after7Days": "Далі {date}",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportMulti": "Експортувати {число, множина, =0{поточна звичка} =1{1 звичка} інші{{кількість} звичок}}?",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_option_includeRecords": "включити записи",
+  "@exportConfirmDialog_option_includeRecords": {},
+  "exportConfirmDialog_cancel_buttonText": "скасувати",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "debug_logLevelTile_title": "Рівень реєстрації",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevelDialog_title": "Змінити рівень реєстрації",
+  "@debug_logLevelDialog_title": {},
+  "debug_logLevel_info": "Інформація",
+  "@debug_logLevel_info": {},
+  "debug_logLevel_warn": "УВАГА",
+  "@debug_logLevel_warn": {},
+  "debug_logLevel_error": "Помилка",
+  "@debug_logLevel_error": {},
+  "debug_collectLogTile_title": "Збір журналів",
+  "@debug_collectLogTile_title": {},
+  "debug_collectLogTile_disable_subtitle": "Торкніться, щоб почати збір журналів.",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_downladDebugLogs_subject": "Завантаження журналів налагодження",
+  "@debug_downladDebugLogs_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "Журнали налагодження очищено.",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_downladDebugZip_subject": "Завантаження {fileName}",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_missingDebugLogFile_snackbar": "Журнал налагодження не існує.",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "debug_debuggerLogCard_title": "Інформація про журнал",
+  "@debug_debuggerLogCard_title": {},
+  "debug_debuggerLogCard_saveButton_text": "Завантажити",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "debug_debuggerLogCard_clearButton_text": "ясно",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "Інформація про налагодження",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_openButton_text": "ВІДЧИНЕНО",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_debuggerInfo_notificationTitle": "Збір інформації про програму...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "snackbar_undoText": "UNDO",
+  "@snackbar_undoText": {},
+  "contributors_tile_title": "Дописувачі",
+  "@contributors_tile_title": {},
+  "userAction_tap": "Торкніться",
+  "@userAction_tap": {},
+  "userAction_doubleTap": "Двомісний",
+  "@userAction_doubleTap": {},
+  "userAction_longTap": "довгий",
+  "@userAction_longTap": {},
+  "common_habitColorType_cc6": "Зелений",
+  "@common_habitColorType_cc6": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "Наступного дня",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "common_habitColorType_default": "колір {index}",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportAll": "Експортувати всі звички?",
+  "@exportConfirmDialog_title_exportAll": {},
+  "appSetting_dateDisplayFormat_subTitleText": "Налаштований формат дати буде застосовано до відображення дати на сторінці з деталями про звичку.",
+  "@appSetting_dateDisplayFormat_subTitleText": {},
+  "snackbar_dismissText": "DISMISS",
+  "@snackbar_dismissText": {},
+  "appAbout_donateDialog_copiedCrypto_msg": "Скопійовано адресу {name}",
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "debug_logLevel_debug": "Налагодження",
+  "@debug_logLevel_debug": {},
+  "batchCheckin_status_zero_text": "Неповний",
+  "@batchCheckin_status_zero_text": {},
+  "exportConfirmDialog_confirm_buttonText": "експорт",
+  "@exportConfirmDialog_confirm_buttonText": {},
+  "common_customDateTimeFormatPicker_sepSpace_text": "космос",
+  "@common_customDateTimeFormatPicker_sepSpace_text": {},
+  "habitDetail_otherSubgroup_title": "інше",
+  "@habitDetail_otherSubgroup_title": {},
+  "habitDetail_habitType_title": "Тип",
+  "@habitDetail_habitType_title": {},
+  "habitDetail_reminderTile_title": "Нагадування",
+  "@habitDetail_reminderTile_title": {},
+  "appSetting_firstDayOfWeek_titleText": "Перший день тижня",
+  "@appSetting_firstDayOfWeek_titleText": {}
 }
