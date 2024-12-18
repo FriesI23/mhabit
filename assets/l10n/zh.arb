@@ -685,5 +685,9 @@
   "appSetting_changeLanguageTile_titleText": "多语言",
   "@appSetting_changeLanguageTile_titleText": {},
   "appSetting_changeLanguageDialog_titleText": "选择语言",
-  "@appSetting_changeLanguageDialog_titleText": {}
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "common_errorPage_title": "啊呀，崩溃了！",
+  "@common_errorPage_title": {},
+  "common_errorPage_copied": "已复制崩溃信息",
+  "@common_errorPage_copied": {}
 }

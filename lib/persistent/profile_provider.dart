@@ -32,10 +32,11 @@ class ProfileViewModel extends ChangeNotifier
   late final SharedPreferences _pref;
 
   final Iterable<ProfileHandlerBuilder> _handlerBuilders;
-  late final Map<Type, ProfileHelperHandler> _handlers;
+  final Map<Type, ProfileHelperHandler> _handlers = {};
 
   CancelableCompleter<bool?>? _completer;
   bool _mounted = true;
+  bool _loaded = false;
 
   ProfileViewModel(Iterable<ProfileHandlerBuilder> builders)
       : _handlerBuilders = builders;
@@ -44,9 +45,12 @@ class ProfileViewModel extends ChangeNotifier
       {required bool reinit, Duration timeout = const Duration(seconds: 5)}) {
     final completer = CancelableCompleter<bool>();
     (reinit
-            ? _pref.reload()
+            ? _loaded
+                ? _pref.reload()
+                : Future.value()
             : SharedPreferences.getInstance().then((inst) async {
                 _pref = inst;
+                _loaded = true;
                 if (kDebugMode && debugClearSharedPrefWhenStart) {
                   appLog.profile
                       .info("$runtimeType.init", ex: ["clear preferences"]);
@@ -58,17 +62,20 @@ class ProfileViewModel extends ChangeNotifier
         .then((_) {
       if (completer.isCanceled == true) return;
       final handlerKeyColl = <String, Type>{};
-      _handlers =
+      _handlers
+        ..clear()
+        ..addAll(
           Map.fromEntries(_handlerBuilders.map((e) => e.call(_pref)).where((e) {
-        if (handlerKeyColl.containsKey(e.key)) {
-          appLog.profile.error("$runtimeType.init",
-              ex: ["load handler failed", e, e.key, handlerKeyColl[e.key]]);
-          if (kDebugMode) throw FlutterError("load handler failed: $e");
-          return false;
-        }
-        handlerKeyColl[e.key] = e.runtimeType;
-        return true;
-      }).map((e) => MapEntry(e.runtimeType, e)));
+            if (handlerKeyColl.containsKey(e.key)) {
+              appLog.profile.error("$runtimeType.init",
+                  ex: ["load handler failed", e, e.key, handlerKeyColl[e.key]]);
+              if (kDebugMode) throw FlutterError("load handler failed: $e");
+              return false;
+            }
+            handlerKeyColl[e.key] = e.runtimeType;
+            return true;
+          }).map((e) => MapEntry(e.runtimeType, e))),
+        );
       completer.complete(true);
     }).onError((e, s) {
       if (!completer.isCompleted) {
@@ -109,7 +116,7 @@ class ProfileViewModel extends ChangeNotifier
   @override
   bool get mounted => _mounted;
 
-  bool get inited => _completer?.isCompleted ?? false;
+  bool get inited => _completer?.isCompleted == true && _loaded;
 
   T? getHandler<T extends ProfileHelperHandler>() => _handlers[T] as T?;
 

@@ -13,21 +13,15 @@
 // limitations under the License.
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/global.dart';
-import '../component/helper.dart';
-import '../component/widget.dart';
 import '../extension/context_extensions.dart';
-import '../extension/navigator_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../persistent/db_helper_builder.dart';
@@ -42,6 +36,7 @@ import '../provider/app_theme.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
 import 'for_app/_widget.dart';
+import 'page_app_error.dart' show PageAppError;
 import 'page_habits_display.dart' show PageHabitsDisplay;
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
@@ -69,71 +64,10 @@ class App extends StatelessWidget {
 
   const App({super.key});
 
-  Widget _buildErrorPage(BuildContext context, FlutterErrorDetails details) {
-    return BasicAppView.withDefault(
-      child: Builder(
-          builder: (context) => Scaffold(
-                floatingActionButton: FloatingActionButton(
-                  child: const Icon(Icons.copy),
-                  onPressed: () {
-                    final sb = StringBuffer();
-                    sb.writeln(details.exception.toString());
-                    sb.writeln('-' * 10);
-                    sb.writeln(details.stack.toString());
-                    Clipboard.setData(ClipboardData(text: sb.toString()))
-                        .then((value) {
-                      final snackBar = BuildWidgetHelper()
-                          .buildSnackBarWithDismiss(context,
-                              content: const Text('Copied'),
-                              duration: const Duration(seconds: 1));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    });
-                  },
-                ),
-                body: CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      title: Text("Unhandled Exception",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.error)),
-                      centerTitle: true,
-                      pinned: true,
-                    ),
-                    SliverPinnedHeader(
-                      child: ColoredBox(
-                          color: Theme.of(context).colorScheme.background,
-                          child: ListTile(
-                              title: Text(details.exception.toString()))),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Visibility.maintain(
-                        visible: switch (defaultTargetPlatform) {
-                          (TargetPlatform.windows ||
-                                TargetPlatform.macOS ||
-                                TargetPlatform.linux) =>
-                            false,
-                          (_) => true
-                        },
-                        child: PageBackButton(
-                          reason: PageBackReason.close,
-                          onPressed: () =>
-                              Navigator.maybeOf(context)?.popOrExit() ??
-                              SystemNavigator.pop(),
-                        ),
-                      ),
-                    ),
-                    const SliverToBoxAdapter(child: Divider()),
-                    SliverToBoxAdapter(
-                        child: ListTile(
-                      subtitle: Text(details.stack.toString()),
-                      isThreeLine: true,
-                    )),
-                    const SliverToBoxAdapter(child: SizedBox(height: 200)),
-                  ],
-                ),
-              )),
-    );
-  }
+  Widget _buildErrorPage(BuildContext context, FlutterErrorDetails details) =>
+      BasicAppView.withDefault(
+        child: PageAppError(details: details),
+      );
 
   @override
   Widget build(BuildContext context) {

@@ -47,10 +47,10 @@ class _DBHelper implements DBHelper {
     TargetPlatform.windows
   };
 
-  late Database _db;
+  Database? _db;
 
   @override
-  Database get db => _db;
+  Database get db => _db!;
 
   _DBHelper();
 
@@ -129,7 +129,7 @@ class _DBHelper implements DBHelper {
 
     Future initOld() async {
       appLog.db.info("local.$runtimeType.init", ex: ["re-init processing"]);
-      await db.close();
+      await _db?.close();
       await _deleteBD(dbPath);
       _db = await _openDB(dbPath);
       appLog.db.info("local.$runtimeType.init", ex: ["re-init done"]);
@@ -140,12 +140,14 @@ class _DBHelper implements DBHelper {
 
   @override
   void dispose() {
-    appLog.db.info("local.$runtimeType.dispose", ex: [db]);
-    final orginDB = db;
-    Future.delayed(const Duration(seconds: 1)).then((_) {
-      appLog.db.info("local.$runtimeType.dispose", ex: ["close db", orginDB]);
-      if (orginDB.isOpen) orginDB.close();
-    });
+    appLog.db.info("local.$runtimeType.dispose", ex: [_db]);
+    final orginDB = _db;
+    if (orginDB != null) {
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        appLog.db.info("local.$runtimeType.dispose", ex: ["close db", orginDB]);
+        if (orginDB.isOpen) orginDB.close();
+      });
+    }
   }
 
   @override
