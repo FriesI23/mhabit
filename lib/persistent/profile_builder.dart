@@ -35,11 +35,13 @@ class ProfileBuilder extends SingleChildStatelessWidget {
     this.handlers = const [],
   });
 
-  Future _loadingHelper(BuildContext context) async {
+  Future<bool> _loadingHelper(BuildContext context) async {
     appLog.db.info("$runtimeType._loadingHelper", ex: ["processing"]);
     final helper = context.read<ProfileViewModel>();
-    if (helper.mounted && !helper.inited) await helper.init();
-    appLog.db.info("$runtimeType._loadingHelper", ex: ["done", helper]);
+    var result = helper.inited;
+    if (helper.mounted && !helper.inited) result = await helper.init();
+    appLog.db.info("$runtimeType._loadingHelper", ex: ["done", result, helper]);
+    return result;
   }
 
   @override
@@ -51,19 +53,24 @@ class ProfileBuilder extends SingleChildStatelessWidget {
         builder: (context, child) => FutureBuilder(
           future: _loadingHelper(context),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
+            if (snapshot.hasError ||
+                (snapshot.hasData && snapshot.data == false)) {
+              final error =
+                  snapshot.error ?? FlutterError("profile build failed");
+              final stackTrace = snapshot.stackTrace ?? StackTrace.current;
               if (errorBuilder != null) {
                 return errorBuilder!(FlutterErrorDetails(
-                    exception: snapshot.error!,
-                    stack: snapshot.stackTrace,
+                    exception: error,
+                    stack: stackTrace,
                     library: "profile_builder"));
               } else {
-                throw FlutterError("profile build failed");
+                Error.throwWithStackTrace(error, stackTrace);
               }
             } else if (snapshot.isDone) {
               return builder(context, child);
             } else {
-              return loadingBuilder?.call(context, child) ?? const SizedBox();
+              return loadingBuilder?.call(context, child) ??
+                  const SizedBox.shrink();
             }
           },
         ),

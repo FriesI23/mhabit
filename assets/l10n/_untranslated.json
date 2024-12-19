@@ -6,6 +6,8 @@
     "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevelTile_title",
     "debug_logLevelDialog_title",
     "debug_logLevel_debug",
@@ -39,6 +41,8 @@
     "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevelTile_title",
     "debug_logLevelDialog_title",
     "debug_logLevel_debug",
@@ -70,12 +74,16 @@
     "habitEdit_habitFreq_permonth",
     "habitEdit_habitFreq_predayfreq",
     "habitEdit_reminder_freq_weekPrefixText",
-    "habitEdit_reminder_freq_monthPrefixText"
+    "habitEdit_reminder_freq_monthPrefixText",
+    "common_errorPage_title",
+    "common_errorPage_copied"
   ],
 
   "fa": [
     "appSetting_changeLanguage_followSystem_text",
     "batchCheckin_completed_snackbar_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevelTile_title",
     "debug_logLevelDialog_title",
     "debug_logLevel_debug",
@@ -106,6 +114,8 @@
     "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevelTile_title",
     "debug_logLevelDialog_title",
     "debug_logLevel_debug",
@@ -133,7 +143,9 @@
   ],
 
   "it": [
-    "habitEdit_habitFreq_predayfreq"
+    "habitEdit_habitFreq_predayfreq",
+    "common_errorPage_title",
+    "common_errorPage_copied"
   ],
 
   "nb": [
@@ -440,6 +452,8 @@
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
     "common_customDateTimeFormatPicker_confirmButton_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "calendarPicker_clip_today",
     "calendarPicker_clip_tomorrow",
     "calendarPicker_clip_after7Days",
@@ -784,6 +798,8 @@
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
     "common_customDateTimeFormatPicker_confirmButton_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "calendarPicker_clip_today",
     "calendarPicker_clip_tomorrow",
     "calendarPicker_clip_after7Days",
@@ -1128,6 +1144,8 @@
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
     "common_customDateTimeFormatPicker_confirmButton_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "calendarPicker_clip_today",
     "calendarPicker_clip_tomorrow",
     "calendarPicker_clip_after7Days",
@@ -1175,6 +1193,8 @@
     "appSetting_changeLanguageDialog_titleText",
     "appSetting_debugger_titleText",
     "batchCheckin_completed_snackbar_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevelTile_title",
     "debug_logLevelDialog_title",
     "debug_logLevel_debug",
@@ -1211,7 +1231,9 @@
     "habitEdit_reminder_freq_monthSubfixText",
     "habitEdit_create_datetime_prefix",
     "habitEdit_modify_datetime_prefix",
-    "appSetting_firstDayOfWeekDialog_defaultText"
+    "appSetting_firstDayOfWeekDialog_defaultText",
+    "common_errorPage_title",
+    "common_errorPage_copied"
   ],
 
   "uk": [
@@ -1497,6 +1519,8 @@
     "common_customDateTimeFormatPicker_applyHeapmap_text",
     "common_customDateTimeFormatPicker_cancelButton_text",
     "common_customDateTimeFormatPicker_confirmButton_text",
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "calendarPicker_clip_today",
     "calendarPicker_clip_tomorrow",
     "calendarPicker_clip_after7Days",
@@ -1538,6 +1562,13 @@
   ],
 
   "vi": [
+    "common_errorPage_title",
+    "common_errorPage_copied",
     "debug_logLevel_fatal"
+  ],
+
+  "zh_Hant": [
+    "common_errorPage_title",
+    "common_errorPage_copied"
   ]
 }

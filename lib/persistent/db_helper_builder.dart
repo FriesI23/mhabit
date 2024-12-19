@@ -32,9 +32,10 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
     this.errorBuilder,
   });
 
-  Future _loadingHelper(BuildContext context) async {
+  Future<bool> _loadingHelper(BuildContext context) {
     final helper = context.read<DBHelperViewModel>();
-    if (helper.mounted && !helper.inited) await helper.init();
+    if (helper.mounted && !helper.inited) return helper.init();
+    return Future.value(helper.inited);
   }
 
   @override
@@ -46,19 +47,24 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
         builder: (context, child) => FutureBuilder(
           future: _loadingHelper(context),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
+            if (snapshot.hasError ||
+                (snapshot.hasData && snapshot.data == false)) {
+              final error =
+                  snapshot.error ?? FlutterError("db helper build failed");
+              final stackTrace = snapshot.stackTrace ?? StackTrace.current;
               if (errorBuilder != null) {
                 return errorBuilder!(FlutterErrorDetails(
-                    exception: snapshot.error!,
-                    stack: snapshot.stackTrace,
+                    exception: error,
+                    stack: stackTrace,
                     library: "db_builder"));
               } else {
-                throw FlutterError("db helper build failed");
+                Error.throwWithStackTrace(error, stackTrace);
               }
             } else if (snapshot.isDone) {
               return builder(context, child);
             } else {
-              return loadingBuilder?.call(context, child) ?? const SizedBox();
+              return loadingBuilder?.call(context, child) ??
+                  const SizedBox.shrink();
             }
           },
         ),

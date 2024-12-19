@@ -31,42 +31,49 @@ class DBHelperViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {
   final DBHelper local;
 
-  CancelableCompleter? _completer;
+  CancelableCompleter<bool?>? _completer;
   bool _mounted = true;
 
   DBHelperViewModel() : local = DBHelper();
 
-  @override
-  Future init() async {
-    Future doInit() async {
-      await local.init();
-      _completer?.complete();
-    }
+  CancelableCompleter<bool?> doInit(
+      {required bool reinit, Duration timeout = const Duration(seconds: 5)}) {
+    final completer = CancelableCompleter<bool>();
+    local
+        .init(reinit: reinit)
+        .timeout(timeout)
+        .then((_) => completer.complete(true))
+        .onError((e, s) {
+      if (!completer.isCompleted) {
+        e != null ? completer.completeError(e, s) : completer.complete(false);
+      }
+      if (e != null) return Future.error(e, s);
+    });
+    return completer;
+  }
 
-    if (_completer == null) {
-      _completer = CancelableCompleter();
-      doInit();
+  @override
+  Future<bool> init() {
+    if (_completer != null) {
+      return _completer!.operation.value.then((value) => value ?? false);
     }
-    return _completer?.operation.value;
+    _completer = doInit(reinit: false);
+    return _completer?.operation.value.then((value) => value ?? false) ??
+        Future.value(false);
   }
 
   @override
   void dispose() {
     _mounted = false;
     if (inited) local.dispose();
-    if (_completer?.isCompleted != true) {
-      _completer?.operation.cancel();
-      _completer = null;
-    }
+    if (_completer?.isCompleted != true) _completer?.operation.cancel();
     super.dispose();
   }
 
-  Future reload() async {
-    if (_completer?.isCompleted != true) {
-      _completer?.operation.cancel();
-      _completer = null;
-    }
-    await local.init(reinit: true);
+  Future<void> reload() async {
+    if (_completer?.isCompleted != true) await _completer?.operation.cancel();
+    _completer = doInit(reinit: true);
+    await _completer?.operation.value;
     notifyListeners();
   }
 
