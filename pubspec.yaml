@@ -59,6 +59,10 @@ dependencies:
   flutter_timezone: ^1.0.4
   flutter_markdown: ^0.7.3+2
   url_launcher: ^6.1.10
+  # Compile error on linux with 3.2.0 (even upgrade to 3.2.1)
+  # Test env: glib-2.0 == 2.74.6 && gtk+-3.0 == 3.24.38
+  # see: https://github.com/flutter/flutter/issues/153083#issuecomment-2275606879
+  url_launcher_linux: <3.2.0
   package_info_plus: ^8.0.2
   copy_with_extension: ^5.0.0
   json_annotation: ^4.8.0
