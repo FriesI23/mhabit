@@ -59,10 +59,9 @@ You can customize each habit with the following options:
 | -------- | ----- | ------------------------------------------------ | ---------------------------------- |
 | android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
 | ios      | ✅    |                                                  |                                    |
-| macos    | ✅    |                                                  |                                    |
+| macos    | ✅    | [Github][github-myapp]                           |                                    |
 | windows  | 🟨    |                                                  | unimplemented features: `reminder` |
 | linux    | 🟨    |                                                  | limit features: `reminder`         |
-| ~~web~~  |       |                                                  |                                    |
 
 ## Todo
 
