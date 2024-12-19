@@ -55,11 +55,12 @@ class ProfileBuilder extends SingleChildStatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasError ||
                 (snapshot.hasData && snapshot.data == false)) {
-              final error = FlutterError("profile build failed");
+              final error =
+                  snapshot.error ?? FlutterError("profile build failed");
               if (errorBuilder != null) {
                 return errorBuilder!(FlutterErrorDetails(
-                    exception: snapshot.error ?? error,
-                    stack: snapshot.stackTrace,
+                    exception: error,
+                    stack: snapshot.stackTrace ?? StackTrace.current,
                     library: "profile_builder"));
               } else {
                 throw error;
@@ -67,7 +68,8 @@ class ProfileBuilder extends SingleChildStatelessWidget {
             } else if (snapshot.isDone) {
               return builder(context, child);
             } else {
-              return loadingBuilder?.call(context, child) ?? const SizedBox();
+              return loadingBuilder?.call(context, child) ??
+                  const SizedBox.shrink();
             }
           },
         ),
