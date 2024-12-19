@@ -35,11 +35,13 @@ class ProfileBuilder extends SingleChildStatelessWidget {
     this.handlers = const [],
   });
 
-  Future _loadingHelper(BuildContext context) async {
+  Future<bool> _loadingHelper(BuildContext context) async {
     appLog.db.info("$runtimeType._loadingHelper", ex: ["processing"]);
     final helper = context.read<ProfileViewModel>();
-    if (helper.mounted && !helper.inited) await helper.init();
-    appLog.db.info("$runtimeType._loadingHelper", ex: ["done", helper]);
+    var result = helper.inited;
+    if (helper.mounted && !helper.inited) result = await helper.init();
+    appLog.db.info("$runtimeType._loadingHelper", ex: ["done", result, helper]);
+    return result;
   }
 
   @override

@@ -35,7 +35,7 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
   Future<bool> _loadingHelper(BuildContext context) {
     final helper = context.read<DBHelperViewModel>();
     if (helper.mounted && !helper.inited) return helper.init();
-    return Future.value(true);
+    return Future.value(helper.inited);
   }
 
   @override
