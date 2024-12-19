@@ -51,13 +51,14 @@ class DBHelperBuilder extends SingleChildStatelessWidget {
                 (snapshot.hasData && snapshot.data == false)) {
               final error =
                   snapshot.error ?? FlutterError("db helper build failed");
+              final stackTrace = snapshot.stackTrace ?? StackTrace.current;
               if (errorBuilder != null) {
                 return errorBuilder!(FlutterErrorDetails(
                     exception: error,
-                    stack: snapshot.stackTrace ?? StackTrace.current,
+                    stack: stackTrace,
                     library: "db_builder"));
               } else {
-                throw error;
+                Error.throwWithStackTrace(error, stackTrace);
               }
             } else if (snapshot.isDone) {
               return builder(context, child);
