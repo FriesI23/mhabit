@@ -14,7 +14,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -28,11 +27,13 @@ import '../utils/debug_info.dart';
 class PageAppError extends StatelessWidget {
   final FlutterErrorDetails details;
   final int lastLogLines;
+  final bool showCloseBtn;
 
   const PageAppError({
     super.key,
     required this.details,
     this.lastLogLines = 200,
+    this.showCloseBtn = true,
   });
 
   void onPressFAB(BuildContext context) async {
@@ -99,14 +100,8 @@ class PageAppError extends StatelessWidget {
                   l10n?.common_errorPage_title ?? "Unhandled Exception",
                   style: TextStyle(color: Theme.of(context).colorScheme.error)),
             ),
-            leading: Visibility.maintain(
-              visible: switch (defaultTargetPlatform) {
-                (TargetPlatform.windows ||
-                      TargetPlatform.macOS ||
-                      TargetPlatform.linux) =>
-                  false,
-                (_) => true
-              },
+            leading: Visibility(
+              visible: showCloseBtn,
               child: PageBackButton(
                 reason: PageBackReason.close,
                 onPressed: () =>
