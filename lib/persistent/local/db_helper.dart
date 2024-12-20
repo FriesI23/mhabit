@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../assets/assets.dart';
@@ -24,6 +25,7 @@ import '../../common/consts.dart';
 import '../../common/global.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
+import '../../utils/app_path_provider.dart';
 import '../utils.dart';
 import 'handler/habit.dart';
 import 'handler/record.dart';
@@ -111,6 +113,25 @@ class _DBHelper implements DBHelper {
     }
   }
 
+  Future<void> migrateDatabaseToNewPath() async {
+    final dbDirPath = await AppPathProvider().getDatabaseDirPath();
+    final dbPath = path.join(dbDirPath, appDBName);
+    if (await File(dbPath).exists()) return;
+    for (var oldPd in AppPathProvider.olderProviders()) {
+      final oldDirPath = await oldPd.getDatabaseDirPath();
+      final dbFile = File(path.join(oldDirPath, appDBName));
+      if (await dbFile.exists()) {
+        final oldJoFile = File('${dbFile.path}-journal');
+        await Future.wait<File?>([
+          dbFile.copy(dbPath),
+          oldJoFile.exists().then(
+              (value) => value ? oldJoFile.copy('$dbPath-journal') : null),
+        ]);
+        break;
+      }
+    }
+  }
+
   @override
   Future init({bool reinit = false}) async {
     if (!reinit && useffiPlafroms.contains(defaultTargetPlatform)) {
@@ -118,7 +139,9 @@ class _DBHelper implements DBHelper {
       databaseFactory = databaseFactoryFfi;
     }
 
-    final String dbPath = join(await getDatabasesPath(), appDBName);
+    await migrateDatabaseToNewPath();
+    final String dbPath =
+        path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
 
     Future initNew() async {
       appLog.db.info("local.$runtimeType.init", ex: ["processing"]);

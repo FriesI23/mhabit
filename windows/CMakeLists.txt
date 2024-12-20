@@ -100,3 +100,7 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Add dlls depends on sqflite
+# https://github.com/tekartik/sqflite/issues/945#issuecomment-1515310817
+install(FILES "external/sqlite3.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)

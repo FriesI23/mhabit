@@ -21,7 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -51,6 +50,7 @@ import '../provider/habits_file_exporter.dart';
 import '../provider/habits_file_importer.dart';
 import '../provider/habits_record_scroll_behavior.dart';
 import '../reminders/notification_service.dart';
+import '../utils/app_path_provider.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
@@ -340,7 +340,8 @@ class _AppSettingView extends State<AppSettingView>
 
   void _onExportDBTilePressed(BuildContext context) async {
     if (!context.mounted) return;
-    final dbPath = path.join(await getDatabasesPath(), appDBName);
+    final dbPath =
+        path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
     if (!context.mounted) return;
     shareXFiles([XFile(dbPath)], context: context);
   }
@@ -357,7 +358,8 @@ class _AppSettingView extends State<AppSettingView>
         final filePath = await context
             .read<HabitFileExporterViewModel>()
             .exportAllHabitsData();
-        final dbPath = path.join(await getDatabasesPath(), appDBName);
+        final dbPath =
+            path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
         if (!context.mounted) return;
         final result = await shareXFiles(
             [if (filePath != null) XFile(filePath), XFile(dbPath)],

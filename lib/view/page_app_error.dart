@@ -22,7 +22,7 @@ import '../common/app_info.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/navigator_extensions.dart';
-import '../utils/debug_info.dart';
+import '../utils/app_path_provider.dart';
 
 class PageAppError extends StatelessWidget {
   final FlutterErrorDetails details;
@@ -62,7 +62,7 @@ class PageAppError extends StatelessWidget {
     writeDivider(flag: 1);
     sb.writeln("Last $lastLogLines logs");
     writeDivider();
-    final file = File(await debugLogFilePath);
+    final file = File(await AppPathProvider().getAppDebugLogFilePath());
     sb.writeAll(
         await file
             .exists()

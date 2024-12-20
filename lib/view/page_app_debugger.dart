@@ -29,6 +29,7 @@ import '../l10n/localizations.dart';
 import '../logging/level.dart';
 import '../logging/logger_manager.dart';
 import '../provider/app_debugger.dart';
+import '../utils/app_path_provider.dart';
 import '../utils/debug_info.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
@@ -81,7 +82,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   }
 
   void _onDownloadLogButtonPressed(BuildContext context) async {
-    final filePath = await debugLogFilePath;
+    final filePath = await AppPathProvider().getAppDebugLogFilePath();
     final fileExist = await File(filePath).exists();
     if (!context.mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
@@ -97,7 +98,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   }
 
   void _onClearLogButtongPressed(BuildContext context) async {
-    final filePath = await debugLogFilePath;
+    final filePath = await AppPathProvider().getAppDebugLogFilePath();
     final fileObj = File(filePath);
     final fileExist = await fileObj.exists();
     if (!context.mounted) return;
@@ -115,7 +116,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   }
 
   void _onOpenDebugButtonPressed(BuildContext context) async {
-    final filePath = await debugInfoFilePath;
+    final filePath = await AppPathProvider().getAppDebugInfoFilePath();
     final debugInfo = await AppInfo().generateAppDebugInfo();
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
     if (!mounted) return;
@@ -123,7 +124,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
   }
 
   void _onSaveDebugButtonPressed(BuildContext context) async {
-    final filePath = await debugInfoFilePath;
+    final filePath = await AppPathProvider().getAppDebugInfoFilePath();
     final debugInfo = await AppInfo().generateAppDebugInfo();
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
     if (!context.mounted) return;
