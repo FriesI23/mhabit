@@ -212,6 +212,5 @@ msix_config:
   display_name: Table Habit
   identity_name: Github.FriesI23.TableHabit
   enable_at_startup: false
-  msix_version: 1.14.1.0
   logo_path: ./assets/logo/macos-1024x1024.png
   capabilities: internetClient
