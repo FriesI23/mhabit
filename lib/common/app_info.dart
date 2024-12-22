@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../utils/app_path_provider.dart';
 import 'async.dart';
 
 class AppInfo implements AsyncInitialization {
@@ -96,6 +97,29 @@ final class _AppDebugInfoBuilder {
         _buildInfoByMap(buffer, value.data, intent: intent);
       });
 
+  Future<void> _buildPathInfo(StringBuffer buffer, {int intent = 0}) {
+    final pathProvider = AppPathProvider();
+    return Future.wait([
+      pathProvider
+          .getAppDebugInfoFilePath()
+          .onError((error, stackTrace) => error.toString())
+          .then((value) => MapEntry("Debug Info<File>", value)),
+      pathProvider
+          .getAppDebugLogFilePath()
+          .onError((error, stackTrace) => error.toString())
+          .then((value) => MapEntry("Debug Log<File>", value)),
+      pathProvider
+          .getDatabaseDirPath()
+          .onError((error, stackTrace) => error.toString())
+          .then((value) => MapEntry("Database<File>", value)),
+      pathProvider
+          .getExportHabitsDirPath()
+          .onError((error, stackTrace) => error.toString())
+          .then((value) => MapEntry("Export Habits<Directory>", value))
+    ]).then((value) =>
+        _buildInfoByMap(buffer, Map.fromEntries(value), intent: intent));
+  }
+
   Future<String> build() async {
     final StringBuffer buffer = StringBuffer();
     buffer.writeln();
@@ -112,6 +136,9 @@ final class _AppDebugInfoBuilder {
     buffer.writeln("    TargetPlatform: $defaultTargetPlatform");
     buffer.writeln("├─ Package Info Ended ────────────────────────────────");
     buffer.writeln("│");
+    buffer.writeln("├─ Path Info: ────────────────────────────────────────");
+    await _buildPathInfo(buffer, intent: 4);
+    buffer.writeln("├─ Path Info Ended ───────────────────────────────────");
     buffer.writeln("└────────────────── Debug Info: Ended ────────────────");
     return buffer.toString();
   }

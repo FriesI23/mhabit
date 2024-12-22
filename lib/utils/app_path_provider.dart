@@ -65,7 +65,7 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
       .then((value) => buildDebugInfoFilePath(value.path));
 
   @override
-  Future<String> getAppDebugLogFilePath() => getApplicationDocumentsDirectory()
+  Future<String> getAppDebugLogFilePath() => getApplicationSupportDirectory()
       .then((value) => buildDebugLogFilePath(value.path));
 
   @override
