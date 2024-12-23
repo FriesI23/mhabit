@@ -14,6 +14,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
@@ -116,17 +117,28 @@ class _DBHelper implements DBHelper {
   Future<void> migrateDatabaseToNewPath() async {
     final dbDirPath = await AppPathProvider().getDatabaseDirPath();
     final dbPath = path.join(dbDirPath, appDBName);
+    final rand = Random();
     if (await File(dbPath).exists()) return;
     for (var oldPd in AppPathProvider.olderProviders()) {
       final oldDirPath = await oldPd.getDatabaseDirPath();
-      final dbFile = File(path.join(oldDirPath, appDBName));
-      if (await dbFile.exists()) {
-        final oldJoFile = File('${dbFile.path}-journal');
+      final oldDbFile = File(path.join(oldDirPath, appDBName));
+      final magicNum = rand.nextInt(2 << 15 - 1);
+      appLog.db.info("migrate db to new path",
+          ex: [magicNum, oldDbFile.path, dbPath]);
+      if (await oldDbFile.exists()) {
+        final oldJoFile = File('${oldDbFile.path}-journal');
         await Future.wait<File?>([
-          dbFile.copy(dbPath),
+          oldDbFile.copy(dbPath),
           oldJoFile.exists().then(
               (value) => value ? oldJoFile.copy('$dbPath-journal') : null),
-        ]);
+        ])
+            .then((value) =>
+                appLog.db.info("migrate db to new path done", ex: [magicNum]))
+            .onError((error, stackTrace) => appLog.db.fatal(
+                "migrate db failed with error",
+                ex: [magicNum],
+                error: error,
+                stackTrace: stackTrace));
         break;
       }
     }
