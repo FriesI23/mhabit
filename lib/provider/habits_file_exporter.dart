@@ -17,13 +17,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../model/habit_export.dart';
 import '../persistent/db_helper_provider.dart';
+import '../utils/app_path_provider.dart';
 
 class HabitFileExporterViewModel extends ChangeNotifier
     with DBHelperLoadedMixin {
@@ -43,12 +43,11 @@ class HabitFileExporterViewModel extends ChangeNotifier
     return "${fileStringList.join("-")}.json";
   }
 
-  Future<String> _writeDataToTmpDir(String fileName, String data) async {
-    final tempDir = await getTemporaryDirectory();
-    final file = File(join(tempDir.path, fileName));
-    await file.writeAsString(data);
-    return file.path;
-  }
+  Future<String> _writeDataToTmpDir(String fileName, String data) =>
+      AppPathProvider()
+          .getExportHabitsDirPath()
+          .then((value) => File(path.join(value, fileName)))
+          .then((value) => (value..writeAsString(data)).path);
 
   Map<String, Object?> formatExportJsonData(
       {Iterable<HabitExportData>? habits}) {

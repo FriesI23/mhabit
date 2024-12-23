@@ -13,9 +13,11 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../assets/assets.dart';
@@ -24,6 +26,7 @@ import '../../common/consts.dart';
 import '../../common/global.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
+import '../../utils/app_path_provider.dart';
 import '../utils.dart';
 import 'handler/habit.dart';
 import 'handler/record.dart';
@@ -111,6 +114,36 @@ class _DBHelper implements DBHelper {
     }
   }
 
+  Future<void> migrateDatabaseToNewPath() async {
+    final dbDirPath = await AppPathProvider().getDatabaseDirPath();
+    final dbPath = path.join(dbDirPath, appDBName);
+    final rand = Random();
+    if (await File(dbPath).exists()) return;
+    for (var oldPd in AppPathProvider.olderProviders()) {
+      final oldDirPath = await oldPd.getDatabaseDirPath();
+      final oldDbFile = File(path.join(oldDirPath, appDBName));
+      final magicNum = rand.nextInt(2 << 15 - 1);
+      appLog.db.info("migrate db to new path",
+          ex: [magicNum, oldDbFile.path, dbPath]);
+      if (await oldDbFile.exists()) {
+        final oldJoFile = File('${oldDbFile.path}-journal');
+        await Future.wait<File?>([
+          oldDbFile.copy(dbPath),
+          oldJoFile.exists().then(
+              (value) => value ? oldJoFile.copy('$dbPath-journal') : null),
+        ])
+            .then((value) =>
+                appLog.db.info("migrate db to new path done", ex: [magicNum]))
+            .onError((error, stackTrace) => appLog.db.fatal(
+                "migrate db failed with error",
+                ex: [magicNum],
+                error: error,
+                stackTrace: stackTrace));
+        break;
+      }
+    }
+  }
+
   @override
   Future init({bool reinit = false}) async {
     if (!reinit && useffiPlafroms.contains(defaultTargetPlatform)) {
@@ -118,7 +151,9 @@ class _DBHelper implements DBHelper {
       databaseFactory = databaseFactoryFfi;
     }
 
-    final String dbPath = join(await getDatabasesPath(), appDBName);
+    await migrateDatabaseToNewPath();
+    final String dbPath =
+        path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
 
     Future initNew() async {
       appLog.db.info("local.$runtimeType.init", ex: ["processing"]);

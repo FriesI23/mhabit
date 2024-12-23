@@ -17,7 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../common/async.dart';
-import '../utils/debug_info.dart';
+import '../utils/app_path_provider.dart';
 import 'handler/console_output.dart';
 import 'handler/console_printer.dart';
 import 'handler/filter.dart';
@@ -134,7 +134,7 @@ class _AppLoggerManager implements AppLoggerMananger {
   Future init() async {
     AppLoggerMananger._normalLogger = AppLoggerMananger.buildNormalLogger();
     AppLoggerMananger._debuggingLogger = AppLoggerMananger.buildDebuggingLogger(
-        filePath: await debugLogFilePath);
+        filePath: await AppPathProvider().getAppDebugLogFilePath());
     await Future.wait([
       AppLoggerMananger._normalLogger?.init,
       AppLoggerMananger._debuggingLogger?.init,

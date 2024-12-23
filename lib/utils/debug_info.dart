@@ -16,28 +16,23 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
-
-Future<String> get debugLogFilePath async =>
-    buildDebugLogFilePath((await getApplicationDocumentsDirectory()).path);
+import 'app_path_provider.dart';
 
 String buildDebugLogFilePath(String dirPath) =>
     path.join(dirPath, debuggerLogFileName);
-
-Future<String> get debugInfoFilePath async =>
-    buildDebugInfoFilePath((await getTemporaryDirectory()).path);
 
 String buildDebugInfoFilePath(String dirPath) =>
     path.join(dirPath, debuggerInfoFileName);
 
 Future<String> generateZippedDebugInfo() async {
-  final debugLogFile = File(await debugLogFilePath);
-  final debugInfoFile = await File(await debugInfoFilePath).writeAsString(
-      await AppInfo().generateAppDebugInfo(),
-      mode: FileMode.writeOnly);
+  final pathProvider = AppPathProvider();
+  final debugLogFile = File(await pathProvider.getAppDebugLogFilePath());
+  final debugInfoFile = await File(await pathProvider.getAppDebugInfoFilePath())
+      .writeAsString(await AppInfo().generateAppDebugInfo(),
+          mode: FileMode.writeOnly);
   final encoder = ZipFileEncoder()
     ..create(path.join(path.dirname(debugInfoFile.path), debuggerZipFile));
   if (await debugLogFile.exists()) encoder.addFile(debugLogFile);

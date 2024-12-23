@@ -1,8 +1,7 @@
 name: mhabit
-description: |
-  This app helps you establish and track your own micro habit,
-  which includes a complete set of growth curves and charts to help you establish
-  habits more effectively.
+description: "This app helps you establish and track your own micro habit, \
+  which includes a complete set of growth curves and charts to help you establish \
+  habits more effectively."
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -133,6 +132,7 @@ dev_dependencies:
   # Utilities
   package_rename: ^1.2.0
   flutter_launcher_icons: ^0.13.1
+  msix: ^3.16.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -207,3 +207,10 @@ flutter_gen:
     flutter_svg: true
     # json
     lottie: true
+
+msix_config:
+  display_name: Table Habit
+  identity_name: Github.FriesI23.TableHabit
+  enable_at_startup: false
+  logo_path: ./assets/logo/macos-1024x1024.png
+  capabilities: internetClient
