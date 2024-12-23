@@ -111,7 +111,7 @@ final class _AppDebugInfoBuilder {
       pathProvider
           .getDatabaseDirPath()
           .onError((error, stackTrace) => error.toString())
-          .then((value) => MapEntry("Database<File>", value)),
+          .then((value) => MapEntry("Database<Directory>", value)),
       pathProvider
           .getExportHabitsDirPath()
           .onError((error, stackTrace) => error.toString())
