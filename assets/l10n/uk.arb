@@ -137,7 +137,7 @@
   "@habitDisplay_sortTypeDialog_confirm": {},
   "habitEdit_habitFreq_permonth": "i",
   "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Через кожні {days} днів} інший{Принаймні {freq} разів за кожні {days} днів}}",
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Через кожні {days} днів} other{Принаймні {freq} разів за кожні {days} днів}}",
   "@habitEdit_habitFreq_show_perdayfreq": {
     "placeholders": {
       "freq": {
@@ -395,7 +395,7 @@
   "@habitDisplay_sortDirection_Desc": {},
   "habitDetail_editPopMenu_archive": "Архів",
   "@habitDetail_editPopMenu_archive": {},
-  "habitEdit_habitDailyGoal_negativeHintText": "Мінімальний щоденний поріг, за умовчанням {число}",
+  "habitEdit_habitDailyGoal_negativeHintText": "Мінімальний щоденний поріг, за умовчанням {number}",
   "@habitEdit_habitDailyGoal_negativeHintText": {
     "description": "default habit daily goal for negative habit",
     "placeholders": {
@@ -405,7 +405,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_errorText01": "щоденна мета повинна > {число}",
+  "habitEdit_habitDailyGoal_errorText01": "щоденна мета повинна > {number}",
   "@habitEdit_habitDailyGoal_errorText01": {
     "description": "minimum number for habit daily goal",
     "placeholders": {
@@ -518,7 +518,7 @@
   "@debug_collectLogTile_enable_subtitle": {},
   "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
   "@appAbout_versionTile_changeLogPath": {},
-  "batchCheckin_completed_snackbar_text": "Змінено {count, plural, =1{статус звички} інше{статус {count} звичок}}",
+  "batchCheckin_completed_snackbar_text": "Змінено {count, plural, =1{статус звички} other{статус {count} звичок}}",
   "@batchCheckin_completed_snackbar_text": {
     "placeholders": {
       "count": {
@@ -878,7 +878,7 @@
       }
     }
   },
-  "exportConfirmDialog_title_exportMulti": "Експортувати {число, множина, =0{поточна звичка} =1{1 звичка} інші{{кількість} звичок}}?",
+  "exportConfirmDialog_title_exportMulti": "Експортувати {number, plural, =0{поточна звичка} =1{1 звичка} other{{number} звичок}}?",
   "@exportConfirmDialog_title_exportMulti": {
     "placeholders": {
       "number": {

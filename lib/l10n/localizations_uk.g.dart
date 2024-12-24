@@ -37,27 +37,27 @@ class L10nUk extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_negativeHintText(num number) {
-    return 'Minimum daily threshold, default $number';
+    return 'Мінімальний щоденний поріг, за умовчанням $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText01(num number) {
-    return 'daily goal must > $number';
+    return 'щоденна мета повинна > $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText02(num number) {
-    return 'daily goal must ≤ $number';
+    return 'щоденна мета повинна бути ≤ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
-    return 'daily goal must ≥ $number';
+    return 'щоденна ціль має бути ≥ $number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
-    return 'daily goal must ≤ $number';
+    return 'щоденна мета повинна бути ≤ $number';
   }
 
   @override
@@ -81,19 +81,19 @@ class L10nUk extends L10n {
   String get habitEdit_habitFreq_daily => 'Щоденно';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek => 'I';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'разів за тиждень';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
+  String get habitEdit_habitFreq_permonth => 'i';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'разів за місяць';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
+  String get habitEdit_habitFreq_predayfreq => 'І';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex01 => 'разів за';
@@ -134,296 +134,296 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times in every $days days',
-      one: 'In every $days days',
+      other: 'Принаймні $freq разів за кожні $days днів',
+      one: 'Через кожні $days днів',
     );
     return '$_temp0';
   }
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays days';
+    return '$targetDays днів';
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => 'Select Target Days';
+  String get habitEdit_targetDays_dialogTitle => 'Виберіть цільові дні';
 
   @override
-  String get habitEdit_targetDays => 'days';
+  String get habitEdit_targetDays => 'днів';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'Нагадування';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
+  String get habitEdit_reminder_freq_weekHelpText => 'Будь-який день тижня';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
+  String get habitEdit_reminder_freq_weekPrefixText => 'і';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
+  String get habitEdit_reminder_freq_weekSubfixText => ' кожного тижня';
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => 'Any day of month';
+  String get habitEdit_reminder_freq_monthHelpText => 'Будь-який день місяця';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
+  String get habitEdit_reminder_freq_monthPrefixText => 'I';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
+  String get habitEdit_reminder_freq_monthSubfixText => ' в кожному місяці';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Question, e.g. Did you exercise today?';
+  String get habitEdit_reminderQuest_hintText => 'Питання, напр. Ви займалися спортом сьогодні?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Choose reminder type';
+  String get habitEdit_reminder_dialogTitle => 'Виберіть тип нагадування';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'When need to check in';
+  String get habitEdit_reminder_dialogType_whenNeeded => 'Коли потрібно зареєструватися';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Daily';
+  String get habitEdit_reminder_dialogType_daily => 'Щодня';
 
   @override
-  String get habitEdit_reminder_dialogType_week => 'Per week';
+  String get habitEdit_reminder_dialogType_week => 'на тиждень';
 
   @override
-  String get habitEdit_reminder_dialogType_month => 'Per month';
+  String get habitEdit_reminder_dialogType_month => 'на місяць';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'confirm';
+  String get habitEdit_reminder_dialogConfirm => 'підтвердити';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'cancel';
+  String get habitEdit_reminder_dialogCancel => 'скасувати';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
+  String get habitEdit_reminder_cancelDialogTitle => 'Підтвердити';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Do you confirm to remove this reminder';
+  String get habitEdit_reminder_cancelDialogSubtitle => 'Ви підтверджуєте видалення цього нагадування';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
+  String get habitEdit_reminder_cancelDialogConfirm => 'підтвердити';
 
   @override
-  String get habitEdit_reminder_cancelDialogCancel => 'cancel';
+  String get habitEdit_reminder_cancelDialogCancel => 'скасувати';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => 'Mon';
+  String get habitEdit_reminder_weekdayText_monday => 'Пн';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => 'Tue';
+  String get habitEdit_reminder_weekdayText_tuesday => 'Вт';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
+  String get habitEdit_reminder_weekdayText_wednesday => 'ср';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Tur';
+  String get habitEdit_reminder_weekdayText_thursday => 'Чт';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => 'Fri';
+  String get habitEdit_reminder_weekdayText_friday => 'Пт';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => 'Sat';
+  String get habitEdit_reminder_weekdayText_saturday => 'Сб';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => 'Sun';
+  String get habitEdit_reminder_weekdayText_sunday => 'Нд';
 
   @override
-  String get habitEdit_desc_hintText => 'Memo, support Markdown';
+  String get habitEdit_desc_hintText => 'Memo, підтримка Markdown';
 
   @override
-  String get habitEdit_create_datetime_prefix => 'Created: ';
+  String get habitEdit_create_datetime_prefix => 'Створено: ';
 
   @override
-  String get habitEdit_modify_datetime_prefix => 'Modified: ';
+  String get habitEdit_modify_datetime_prefix => 'Змінено: ';
 
   @override
-  String get habitDisplay_fab_text => 'New Habit';
+  String get habitDisplay_fab_text => 'Нова звичка';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'A journey of a thousand miles begins with a single step';
+  String get habitDisplay_emptyImage_text_01 => 'Подорож у тисячу миль починається з одного кроку';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archive Selected Habits?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Архівувати вибрані звички?';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'підтвердити';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'скасувати';
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
-    return 'Archived $count habits';
+    return 'Заархівовано $count звичок';
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Unarchive Selected Habits?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Розархівувати вибрані звички?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'підтвердити';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'скасувати';
 
   @override
   String habitDisplay_unarchiveHabitsSuccSnackbarText(int count) {
-    return 'Unarchived $count habits';
+    return 'Розархівовано $count звичок';
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Delete Selected Habits?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Видалити вибрані звички?';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'підтвердити';
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'cancel';
+  String get habitDisplay_deleteHabitsConfirmDialog_cancel => 'скасувати';
 
   @override
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
-    return 'Deleted $count habits';
+    return 'Видалено $count звичок';
   }
 
   @override
-  String get habitDisplay_editPopMenu_selectAll => 'Select All';
+  String get habitDisplay_editPopMenu_selectAll => 'Виберіть усі';
 
   @override
-  String get habitDisplay_editPopMenu_export => 'Export';
+  String get habitDisplay_editPopMenu_export => 'Експорт';
 
   @override
-  String get habitDisplay_editPopMenu_delete => 'Delete';
+  String get habitDisplay_editPopMenu_delete => 'Видалити';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Template';
+  String get habitDisplay_editPopMenu_clone => 'Шаблон';
 
   @override
-  String get habitDisplay_editButton_tooltip => 'Edit';
+  String get habitDisplay_editButton_tooltip => 'Редагувати';
 
   @override
-  String get habitDisplay_archiveButton_tooltip => 'Archive';
+  String get habitDisplay_archiveButton_tooltip => 'Архів';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => 'Unarchive';
+  String get habitDisplay_unarchiveButton_tooltip => 'Розархівувати';
 
   @override
-  String get habitDisplay_settingButton_tooltip => 'Setting';
+  String get habitDisplay_settingButton_tooltip => 'Налаштування';
 
   @override
-  String get habitDisplay_statsMenu_statSubgroupText => 'Current';
+  String get habitDisplay_statsMenu_statSubgroupText => 'поточний';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Completed';
+  String get habitDisplay_statsMenu_completedTileText => 'Виконано';
 
   @override
-  String get habitDisplay_statsMenu_inProgresTileText => 'In Progress';
+  String get habitDisplay_statsMenu_inProgresTileText => 'В роботі';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Archived';
+  String get habitDisplay_statsMenu_archivedTileText => 'Архівовано';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Top Habits: Last 30 Days Changes';
+  String get habitDisplay_statsMenu_popularitySubgroupText => 'Головні звички: зміни за останні 30 днів';
 
   @override
-  String get habitDisplay_mainMenu_lightTheme => 'Light Theme';
+  String get habitDisplay_mainMenu_lightTheme => 'Світла тема';
 
   @override
-  String get habitDisplay_mainMenu_darkTheme => 'Dark Theme';
+  String get habitDisplay_mainMenu_darkTheme => 'Темна тема';
 
   @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Follow System';
+  String get habitDisplay_mainMenu_followSystemTheme => 'Слідкуйте за системою';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Show Archived';
+  String get habitDisplay_mainMenu_showArchivedTileText => 'Показати в архіві';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
+  String get habitDisplay_mainMenu_showCompletedTileText => 'Показати завершено';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
+  String get habitDisplay_mainMenu_showActivedTileText => 'Показати активовано';
 
   @override
-  String get habitDisplay_mainMenu_settingTileText => 'Settings';
+  String get habitDisplay_mainMenu_settingTileText => 'Налаштування';
 
   @override
-  String get habitDisplay_sort_reverseText => 'Reverse';
+  String get habitDisplay_sort_reverseText => 'Зворотний';
 
   @override
   String get habitDisplay_sortDirection_asc => '(Asc)';
 
   @override
-  String get habitDisplay_sortDirection_Desc => '(Desc)';
+  String get habitDisplay_sortDirection_Desc => '(опис)';
 
   @override
-  String get habitDisplay_sortType_manual => 'My order';
+  String get habitDisplay_sortType_manual => 'Моє замовлення';
 
   @override
-  String get habitDisplay_sortType_name => 'By Name';
+  String get habitDisplay_sortType_name => 'По імені';
 
   @override
-  String get habitDisplay_sortType_colorType => 'By Color';
+  String get habitDisplay_sortType_colorType => 'За кольором';
 
   @override
-  String get habitDisplay_sortType_progress => 'By Rate';
+  String get habitDisplay_sortType_progress => 'За курсом';
 
   @override
-  String get habitDisplay_sortType_startT => 'By Start Date';
+  String get habitDisplay_sortType_startT => 'За датою початку';
 
   @override
-  String get habitDisplay_sortType_status => 'By Status';
+  String get habitDisplay_sortType_status => 'За статусом';
 
   @override
-  String get habitDisplay_sortTypeDialog_title => 'Sort';
+  String get habitDisplay_sortTypeDialog_title => 'Сортувати';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'confirm';
+  String get habitDisplay_sortTypeDialog_confirm => 'підтвердити';
 
   @override
-  String get habitDisplay_sortTypeDialog_cancel => 'cancel';
+  String get habitDisplay_sortTypeDialog_cancel => 'скасувати';
 
   @override
-  String get habitDisplay_debug_debugSubgroup_title => '🛠️Debug';
+  String get habitDisplay_debug_debugSubgroup_title => '🛠️Налагодження';
 
   @override
-  String get habitDetail_editButton_tooltip => 'Edit';
+  String get habitDetail_editButton_tooltip => 'Редагувати';
 
   @override
-  String get habitDetail_editPopMenu_unarchive => 'Unarchive';
+  String get habitDetail_editPopMenu_unarchive => 'Розархівувати';
 
   @override
-  String get habitDetail_editPopMenu_archive => 'Archive';
+  String get habitDetail_editPopMenu_archive => 'Архів';
 
   @override
-  String get habitDetail_editPopMenu_export => 'Export';
+  String get habitDetail_editPopMenu_export => 'Експорт';
 
   @override
-  String get habitDetail_editPopMenu_delete => 'Delete';
+  String get habitDetail_editPopMenu_delete => 'Видалити';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'Шаблон';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'confirm';
+  String get habitDetail_confirmDialog_confirm => 'підтвердити';
 
   @override
-  String get habitDetail_confirmDialog_cancel => 'cancel';
+  String get habitDetail_confirmDialog_cancel => 'скасувати';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archive Habit?';
+  String get habitDetail_archiveConfirmDialog_titleText => 'Звичка архівувати?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Unarchive Habit?';
+  String get habitDetail_unarchiveConfirmDialog_titleText => 'Розархівувати звичку?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Delete Habit?';
+  String get habitDetail_deleteConfirmDialog_titleText => 'Видалити звичку?';
 
   @override
-  String get habitDetail_summary_title => 'Summary';
+  String get habitDetail_summary_title => 'Резюме';
 
   @override
   String habitDetail_summary_body(String score, int days) {
-    return 'Current grade is $score, and it has been $days days since the start.';
+    return 'Поточна оцінка – $score, а з початку минуло $days дн.';
   }
 
   @override
@@ -431,8 +431,8 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days days.',
-      one: 'Starting tomorrow.',
+      other: 'Початок через $days днів.',
+      one: 'Починаючи завтра.',
     );
     return '$_temp0';
   }
@@ -443,8 +443,8 @@ class L10nUk extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'SUBSTANDARD',
-      one: 'INCOMPLETE',
+      two: 'НЕСТАНДАРТ',
+      one: 'НЕПОВНА',
     );
     return '$_temp0';
   }
@@ -455,7 +455,7 @@ class L10nUk extends L10n {
       habitType,
       locale: localeName,
       other: '',
-      two: 'IMPECCABLE',
+      two: 'BECCABLE',
       one: 'OVERFULFIL',
     );
     return '$_temp0';
@@ -474,124 +474,124 @@ class L10nUk extends L10n {
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
-    return 'Unit: $unit';
+    return 'одиниця: $unit';
   }
 
   @override
-  String get habitDetail_descDailyGoal_unitEmptyText => 'null';
+  String get habitDetail_descDailyGoal_unitEmptyText => 'нульовий';
 
   @override
   String habitDetail_descTargetDays_titleText(int habitType) {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Days',
+      other: 'днів',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDetail_descTargetDays_unitText => 'd';
+  String get habitDetail_descTargetDays_unitText => 'д';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Records';
+  String get habitDetail_descRecordsNum_titleText => 'Записи';
 
   @override
-  String get habitDetail_scoreChart_title => 'Score';
+  String get habitDetail_scoreChart_title => 'Оцінка';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => 'Day';
+  String get habitDetail_scoreChartCombine_dailyText => 'День';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'Week';
+  String get habitDetail_scoreChartCombine_weeklyText => 'тиждень';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'Month';
+  String get habitDetail_scoreChartCombine_monthlyText => 'місяць';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'Year';
+  String get habitDetail_scoreChartCombine_yearlyText => 'рік';
 
   @override
-  String get habitDetail_freqChart_freqTitle => 'Frequency';
+  String get habitDetail_freqChart_freqTitle => 'Частота';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'History';
+  String get habitDetail_freqChart_historyTitle => 'історія';
 
   @override
-  String get habitDetail_freqChart_combinedTitle => 'Frequency & History';
+  String get habitDetail_freqChart_combinedTitle => 'Частота та історія';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'Week';
+  String get habitDetail_freqChartCombine_weeklyText => 'тиждень';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'Month';
+  String get habitDetail_freqChartCombine_monthlyText => 'місяць';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'Year';
+  String get habitDetail_freqChartCombine_yearlyText => 'рік';
 
   @override
-  String get habitDetail_freqChartNaviBar_nowText => 'Now';
+  String get habitDetail_freqChartNaviBar_nowText => 'Зараз';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Hide History Chart';
+  String get habitDetail_freqChart_expanded_hideTooltip => 'Приховати діаграму історії';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
+  String get habitDetail_freqChart_expanded_showTooltip => 'Показати діаграму історії';
 
   @override
-  String get habitDetail_descSubgroup_title => 'Memo';
+  String get habitDetail_descSubgroup_title => 'Пам\'ятка';
 
   @override
-  String get habitDetail_otherSubgroup_title => 'Other';
+  String get habitDetail_otherSubgroup_title => 'інше';
 
   @override
-  String get habitDetail_habitType_title => 'Type';
+  String get habitDetail_habitType_title => 'Тип';
 
   @override
-  String get habitDetail_reminderTile_title => 'Reminder';
+  String get habitDetail_reminderTile_title => 'Нагадування';
 
   @override
-  String get habitDetail_freqTile_title => 'Repeat';
+  String get habitDetail_freqTile_title => 'Повторіть';
 
   @override
-  String get habitDetail_startDateTile_title => 'Start Date';
+  String get habitDetail_startDateTile_title => 'Дата початку';
 
   @override
-  String get habitDetail_createDateTile_title => 'Created';
+  String get habitDetail_createDateTile_title => 'Створено';
 
   @override
-  String get habitDetail_modifyDateTile_title => 'Modified';
+  String get habitDetail_modifyDateTile_title => 'Змінено';
 
   @override
-  String get habitDetail_editHeatmapCal_dateButtonText => 'date';
+  String get habitDetail_editHeatmapCal_dateButtonText => 'дата';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => 'value';
+  String get habitDetail_editHeatmapCal_valueButtonText => 'значення';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'back to today';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'повернутися до сьогоднішнього дня';
 
   @override
-  String get habitDetail_notFoundText => 'Load habit failed';
+  String get habitDetail_notFoundText => 'Завантажити звичку не вдалося';
 
   @override
-  String get habitDetail_notFoundRetryText => 'Try again';
+  String get habitDetail_notFoundRetryText => 'Спробуйте знову';
 
   @override
-  String get habitDetail_changeGoal_title => 'Change goal';
+  String get habitDetail_changeGoal_title => 'Змінити ціль';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
-    return 'current: $goal';
+    return 'поточний: $goal';
   }
 
   @override
   String habitDetail_changeGoal_doneChipText(String goal) {
-    return 'done: $goal';
+    return 'зроблено: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_undoneChipText => 'undone';
+  String get habitDetail_changeGoal_undoneChipText => 'скасовано';
 
   @override
   String habitDetail_changeGoal_extraChipText(String goal) {
@@ -600,248 +600,248 @@ class L10nUk extends L10n {
 
   @override
   String habitDetail_changeGoal_helpText(String goal) {
-    return 'Daily goal, default: $goal';
+    return 'Щоденна мета, за замовчуванням: $goal';
   }
 
   @override
-  String get habitDetail_changeGoal_cancelText => 'cancel';
+  String get habitDetail_changeGoal_cancelText => 'скасувати';
 
   @override
-  String get habitDetail_changeGoal_saveText => 'save';
+  String get habitDetail_changeGoal_saveText => 'зберегти';
 
   @override
-  String get habitDetail_skipReason_title => 'Skip reason';
+  String get habitDetail_skipReason_title => 'Пропустити причину';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
+  String get habitDetail_skipReason_bodyHelpText => 'Напиши тут щось...';
 
   @override
-  String get habitDetail_skipReason_cancelText => 'cancel';
+  String get habitDetail_skipReason_cancelText => 'скасувати';
 
   @override
-  String get habitDetail_skipReason_saveText => 'save';
+  String get habitDetail_skipReason_saveText => 'зберегти';
 
   @override
-  String get appSetting_appbar_titleText => 'Settings';
+  String get appSetting_appbar_titleText => 'Налаштування';
 
   @override
-  String get appSetting_displaySubgroupText => 'Display';
+  String get appSetting_displaySubgroupText => 'Дисплей';
 
   @override
-  String get appSetting_operationSubgroupText => 'Operation';
+  String get appSetting_operationSubgroupText => 'Операція';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Drag calendar by page';
+  String get appSetting_dragCalendarByPageTile_titleText => 'Перетягніть календар за сторінкою';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'If the switch is enabled, the app bar calendar on the home page will be dragged page by page. By default, the switch is disabled.';
+  String get appSetting_dragCalendarByPageTile_subtitleText => 'Якщо перемикач увімкнено, календар на панелі додатків на домашній сторінці перетягуватиметься сторінка за сторінкою. За замовчуванням перемикач вимкнено.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Change Record Status';
+  String get appSetting_changeRecordStatusOpTile_titleText => 'Змінити статус запису';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modify the click behavior to change the status of daily records on main page.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Змініть поведінку кліків, щоб змінити статус щоденних записів на головній сторінці.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Open Detailed Record';
+  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Відкрийте докладний запис';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => 'First day of week';
+  String get appSetting_firstDayOfWeek_titleText => 'Перший день тижня';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Show first day of week';
+  String get appSetting_firstDayOfWeekDialog_titleText => 'Показати перший день тижня';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (За замовчуванням)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'Слідкуйте за системою ($localeName)';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Слідкуйте за системою';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Мова';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Виберіть мову';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
-    return 'Date display format ($formatTemplate)';
+    return 'Формат відображення дати ($formatTemplate)';
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'follow system setting';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'дотримуйтеся налаштувань системи';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Configured date format will be applied to the date display on habit detail page.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'Налаштований формат дати буде застосовано до відображення дати на сторінці з деталями про звичку.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Enable Compact UI on habits page';
+  String get appSetting_compactUISwitcher_titleText => 'Увімкніть Compact UI на сторінці звичок';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Allow habits check table to display more content, but some UI and text may appear smaller.';
+  String get appSetting_compactUISwitcher_subtitleText => 'Дозволити таблицю перевірки звичок, щоб відображати більше вмісту, але деякі інтерфейси користувача та текст можуть виглядати меншими.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Habits check area radio adjustment';
+  String get appSetting_collapsed_calendar_bararea_titleText => 'Звички перевіряють зону налаштування радіо';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Відрегулюйте відсоток для збільшення/меншення місця в області таблиці перевірки звичок.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+  String get appSetting_collapsed_calendar_bararea_defaultText => 'За замовчуванням';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Reminder';
+  String get appSetting_reminderSubgroupText => 'Нагадування';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'Daily reminder';
+  String get appSetting_dailyReminder_titleText => 'Щоденне нагадування';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Backup & restore';
+  String get appSetting_backupAndRestoreSubgroupText => 'Резервне копіювання та відновлення';
 
   @override
-  String get appSetting_export_titleText => 'Export';
+  String get appSetting_export_titleText => 'Експорт';
 
   @override
-  String get appSetting_export_subtitleText => 'Exported habits as JSON format, This file can be import back.';
+  String get appSetting_export_subtitleText => 'Експортовані звички у форматі JSON. Цей файл можна імпортувати назад.';
 
   @override
-  String get appSetting_import_titleText => 'Import';
+  String get appSetting_import_titleText => 'Імпорт';
 
   @override
-  String get appSetting_import_subtitleText => 'Import habits from json file.';
+  String get appSetting_import_subtitleText => 'Імпортуйте звички з файлу json.';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
-    return 'Confirm import $count habits?';
+    return 'Підтвердити імпорт $count звичок?';
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Note: Import doesn\'t delete existing habits.';
+  String get appSetting_importDialog_confirmSubtitle => 'Примітка. Імпорт не видаляє наявні звички.';
 
   @override
-  String get appSetting_importDialog_confirm_confirmText => 'confirm';
+  String get appSetting_importDialog_confirm_confirmText => 'підтвердити';
 
   @override
-  String get appSetting_importDialog_confirm_cancelText => 'cancel';
+  String get appSetting_importDialog_confirm_cancelText => 'скасувати';
 
   @override
   String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
-    return 'Imported $completeCount/$totalCount';
+    return 'Імпортні $completeCount/$totalCount';
   }
 
   @override
   String appSetting_importDialog_completeTitle(int count) {
-    return 'Complete import $count';
+    return 'Повний імпорт $count';
   }
 
   @override
-  String get appSetting_importDialog_complete_closeLabel => 'close';
+  String get appSetting_importDialog_complete_closeLabel => 'закрити';
 
   @override
-  String get appSetting_resetConfig_titleText => 'Reset configs';
+  String get appSetting_resetConfig_titleText => 'Скинути конфігурації';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Reset all configs to default.';
+  String get appSetting_resetConfig_subtitleText => 'Скинути всі конфігурації до стандартних.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Reset configs?';
+  String get appSetting_resetConfigDialog_titleText => 'Скинути конфігурації?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'Reset all configs to default, must restart application to apply.';
+  String get appSetting_resetConfigDialog_subtitleText => 'Скинути всі конфігурації до стандартних, потрібно перезапустити програму, щоб застосувати.';
 
   @override
-  String get appSetting_resetConfigDialog_cancelText => 'cancel';
+  String get appSetting_resetConfigDialog_cancelText => 'скасувати';
 
   @override
-  String get appSetting_resetConfigDialog_confirmText => 'confirm';
+  String get appSetting_resetConfigDialog_confirmText => 'підтвердити';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'reset app configs succeed';
+  String get appSetting_resetConfigSuccess_snackbarText => 'скидання конфігурації програми успішне';
 
   @override
-  String get appSetting_otherSubgroupText => 'Others';
+  String get appSetting_otherSubgroupText => 'інші';
 
   @override
-  String get appSetting_developMode_titleText => 'Develop Mode';
+  String get appSetting_developMode_titleText => 'Режим розробки';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'Очистити кеш';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'Очистити кеш';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'After clearing cache, some custom values will be restored to defaults.';
+  String get appSetting_clearCacheDialog_subtitleText => 'Після очищення кешу деякі настроювані значення буде відновлено до значень за замовчуванням.';
 
   @override
-  String get appSetting_clearCacheDialog_cancelText => 'cancel';
+  String get appSetting_clearCacheDialog_cancelText => 'скасувати';
 
   @override
-  String get appSetting_clearCacheDialog_confirmText => 'confirm';
+  String get appSetting_clearCacheDialog_confirmText => 'підтвердити';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Partial Cache cleared failed';
+  String get appSetting_clearCache_snackBar_partSuccText => 'Не вдалося частково очистити кеш';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Cache cleared successfully';
+  String get appSetting_clearCache_snackBar_succText => 'Кеш успішно очищено';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Cache cleared failed';
+  String get appSetting_clearCache_snackBar_failText => 'Не вдалося очистити кеш';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Інформація про налагодження';
 
   @override
-  String get appSetting_about_titleText => 'About';
+  String get appSetting_about_titleText => 'про';
 
   @override
-  String get appAbout_appbarTile_titleText => 'About';
+  String get appAbout_appbarTile_titleText => 'про';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
-    return 'Version: $appVersion';
+    return 'Версія: $appVersion';
   }
 
   @override
   String get appAbout_versionTile_changeLogPath => 'CHANGELOG.md';
 
   @override
-  String get appAbout_sourceCodeTile_titleText => 'Source code';
+  String get appAbout_sourceCodeTile_titleText => 'Вихідний код';
 
   @override
-  String get appAbout_issueTrackerTile_titleText => 'Issue tracker';
+  String get appAbout_issueTrackerTile_titleText => 'Відстеження проблем';
 
   @override
-  String get appAbout_contactEmailTile_titleText => 'Contact me';
+  String get appAbout_contactEmailTile_titleText => 'Зв\'яжіться зі мною';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody => 'Привіт, я радий, що ти звернувся до мене.\nЯкщо ви повідомляєте про помилку, будь ласка, вкажіть версію програми та опишіть кроки для її відтворення.\n-------------------------------------';
 
   @override
-  String get appAbout_licenseTile_titleText => 'License';
+  String get appAbout_licenseTile_titleText => 'Ліцензія';
 
   @override
-  String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
+  String get appAbout_licenseTile_subtitleText => 'Ліцензія Apache, версія 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Third Party Licensing Statement';
+  String get appAbout_licenseThirdPartyTile_titleText => 'Заява про ліцензування третьої сторони';
 
   @override
-  String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
+  String get appAbout_licenseThirdPartyTile_subtitleText => 'тріпотіння';
 
   @override
-  String get appAbout_donateTile_titleText => 'Donate';
+  String get appAbout_donateTile_titleText => 'Пожертвуйте';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'I\'m a personal developer. If you like this app, please buy me a ☕.';
+  String get appAbout_donateTile_subTitleText => 'Я персональний розробник. Якщо вам подобається цей додаток, купіть мені ☕.';
 
   @override
   String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
@@ -850,7 +850,7 @@ class L10nUk extends L10n {
   String get donateWay_paypal => 'Paypal';
 
   @override
-  String get donateWay_buyMeACoffee => 'Buy me a coffee';
+  String get donateWay_buyMeACoffee => 'Купи мені кави';
 
   @override
   String get donateWay_alipay => 'Alipay';
@@ -859,7 +859,7 @@ class L10nUk extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Crypto Currencies';
+  String get donateWay_cryptoCurrency => 'Криптовалюти';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -877,33 +877,33 @@ class L10nUk extends L10n {
   String get donateWay_cryptoCurrency_FTM => 'FTM';
 
   @override
-  String get donateWay_firstQRGroup => 'Alipay & Wechat Pay';
+  String get donateWay_firstQRGroup => 'Alipay і Wechat Pay';
 
   @override
   String appAbout_donateDialog_copiedCrypto_msg(String name) {
-    return 'Copied $name\'s Address';
+    return 'Скопійовано адресу $name';
   }
 
   @override
-  String get batchCheckin_appbar_title => 'Batch Check-in';
+  String get batchCheckin_appbar_title => 'Пакетна реєстрація';
 
   @override
-  String get batchCheckin_datePicker_prevButton_tooltip => 'Previous day';
+  String get batchCheckin_datePicker_prevButton_tooltip => 'Попередній день';
 
   @override
-  String get batchCheckin_datePicker_nextButton_tooltip => 'Next day';
+  String get batchCheckin_datePicker_nextButton_tooltip => 'Наступного дня';
 
   @override
-  String get batchCheckin_status_skip_text => 'Skip';
+  String get batchCheckin_status_skip_text => 'Пропустити';
 
   @override
-  String get batchCheckin_status_ok_text => 'Complete';
+  String get batchCheckin_status_ok_text => 'Повний';
 
   @override
-  String get batchCheckin_status_double_text => 'x2 Hit!';
+  String get batchCheckin_status_double_text => 'x2 удар!';
 
   @override
-  String get batchCheckin_status_zero_text => 'Incomplete';
+  String get batchCheckin_status_zero_text => 'Неповний';
 
   @override
   String batchCheckin_habits_groupTitle(int count) {
@@ -913,123 +913,123 @@ class L10nUk extends L10n {
       other: 'Habits',
       one: 'Habit',
     );
-    return '$count $_temp0 selected';
+    return '$count $_temp0 вибрано';
   }
 
   @override
-  String get batchCheckin_save_button_text => 'Save';
+  String get batchCheckin_save_button_text => 'зберегти';
 
   @override
-  String get batchCheckin_reset_button_text => 'Reset';
+  String get batchCheckin_reset_button_text => 'Скинути';
 
   @override
   String batchCheckin_completed_snackbar_text(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: 'статус $count звичок',
+      one: 'статус звички',
     );
-    return 'Modified $_temp0';
+    return 'Змінено $_temp0';
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Overwrite Existing Records';
+  String get batchCheckin_save_confirmDialog_title => 'Перезаписати існуючі записи';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Existing records will be overwritten After saving, previous records will be lost.';
+  String get batchCheckin_save_confirmDialog_body => 'Існуючі записи буде перезаписано. Після збереження попередні записи буде втрачено.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'save';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'зберегти';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'скасувати';
 
   @override
-  String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
+  String get batchCheckin_close_confirmDialog_title => 'Підтвердити повернення';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Check-in Status Changes won\'t be applied before saved';
+  String get batchCheckin_close_confirmDialog_body => 'Зміни статусу реєстрації не будуть застосовані до збереження';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'exit';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'вихід';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'cancel';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'скасувати';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Did you stick to your habits today?';
+  String get appReminder_dailyReminder_title => '🏝 Чи дотрималися ви сьогодні своїх звичок?';
 
   @override
-  String get appReminder_dailyReminder_body => 'click to enter app and punch in on time.';
+  String get appReminder_dailyReminder_body => 'натисніть, щоб увійти в програму та зайти вчасно.';
 
   @override
-  String get common_habitColorType_cc1 => 'Deep lilac';
+  String get common_habitColorType_cc1 => 'Глибокий бузок';
 
   @override
-  String get common_habitColorType_cc2 => 'Red';
+  String get common_habitColorType_cc2 => 'Червоний';
 
   @override
-  String get common_habitColorType_cc3 => 'Purple';
+  String get common_habitColorType_cc3 => 'Фіолетовий';
 
   @override
-  String get common_habitColorType_cc4 => 'Royal blue';
+  String get common_habitColorType_cc4 => 'Королівський синій';
 
   @override
-  String get common_habitColorType_cc5 => 'Dark cyan';
+  String get common_habitColorType_cc5 => 'Темно-блакитний';
 
   @override
-  String get common_habitColorType_cc6 => 'Green';
+  String get common_habitColorType_cc6 => 'Зелений';
 
   @override
-  String get common_habitColorType_cc7 => 'Amber';
+  String get common_habitColorType_cc7 => 'Бурштин';
 
   @override
-  String get common_habitColorType_cc8 => 'Orange';
+  String get common_habitColorType_cc8 => 'Помаранчевий';
 
   @override
-  String get common_habitColorType_cc9 => 'Lime green';
+  String get common_habitColorType_cc9 => 'Зелений лайм';
 
   @override
-  String get common_habitColorType_cc10 => 'Dark orchid';
+  String get common_habitColorType_cc10 => 'Темна орхідея';
 
   @override
   String common_habitColorType_default(int index) {
-    return 'Color $index';
+    return 'колір $index';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Use system format';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Використовуйте системний формат';
 
   @override
-  String get common_customDateTimeFormatPicker_fmtTileText => 'Date format';
+  String get common_customDateTimeFormatPicker_fmtTileText => 'Формат дати';
 
   @override
-  String get common_customDateTimeFormatPicker_ymd_text => 'Year Month Day';
+  String get common_customDateTimeFormatPicker_ymd_text => 'Рік Місяць День';
 
   @override
-  String get common_customDateTimeFormatPicker_mdy_text => 'Month Day Year';
+  String get common_customDateTimeFormatPicker_mdy_text => 'Місяць День Рік';
 
   @override
-  String get common_customDateTimeFormatPicker_dmy_text => 'Day Month Year';
+  String get common_customDateTimeFormatPicker_dmy_text => 'День Місяць Рік';
 
   @override
-  String get common_customDateTimeFormatPicker_SepTileText => 'Separator';
+  String get common_customDateTimeFormatPicker_SepTileText => 'Роздільник';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDash_text => 'Dash';
+  String get common_customDateTimeFormatPicker_sepDash_text => 'Тире';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSlash_text => 'Slash';
+  String get common_customDateTimeFormatPicker_sepSlash_text => 'Слеш';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSpace_text => 'Space';
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'космос';
 
   @override
-  String get common_customDateTimeFormatPicker_sepDot_text => 'Dot';
+  String get common_customDateTimeFormatPicker_sepDot_text => 'Крапка';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => 'No Separator';
+  String get common_customDateTimeFormatPicker_empty_text => 'Без роздільника';
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
@@ -1037,22 +1037,22 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => 'Use 12-hour format';
+  String get common_customDateTimeFormatPicker_12Hour_text => 'Використовуйте 12-годинний формат';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Use full name';
+  String get common_customDateTimeFormatPicker_monthName_text => 'Використовуйте повне ім\'я';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Apply for Freq Chart';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Подайте заявку на Freq Chart';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Apply for Calendar';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Подати заявку на Календар';
 
   @override
-  String get common_customDateTimeFormatPicker_cancelButton_text => 'cancel';
+  String get common_customDateTimeFormatPicker_cancelButton_text => 'скасувати';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'confirm';
+  String get common_customDateTimeFormatPicker_confirmButton_text => 'підтвердити';
 
   @override
   String get common_errorPage_title => 'Oops, Crashed!';
@@ -1061,116 +1061,116 @@ class L10nUk extends L10n {
   String get common_errorPage_copied => 'Copied crash information';
 
   @override
-  String get calendarPicker_clip_today => 'Today';
+  String get calendarPicker_clip_today => 'Сьогодні';
 
   @override
-  String get calendarPicker_clip_tomorrow => 'Tomorrow';
+  String get calendarPicker_clip_tomorrow => 'завтра';
 
   @override
   String calendarPicker_clip_after7Days(DateTime date) {
     final intl.DateFormat dateDateFormat = intl.DateFormat.E(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Next $dateString';
+    return 'Далі $dateString';
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Export all habits?';
+  String get exportConfirmDialog_title_exportAll => 'Експортувати всі звички?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number habits',
-      one: '1 habit',
-      zero: 'current habit',
+      other: '$number звичок',
+      one: '1 звичка',
+      zero: 'поточна звичка',
     );
-    return 'Export $_temp0?';
+    return 'Експортувати $_temp0?';
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => 'include records';
+  String get exportConfirmDialog_option_includeRecords => 'включити записи';
 
   @override
-  String get exportConfirmDialog_cancel_buttonText => 'cancel';
+  String get exportConfirmDialog_cancel_buttonText => 'скасувати';
 
   @override
-  String get exportConfirmDialog_confirm_buttonText => 'export';
+  String get exportConfirmDialog_confirm_buttonText => 'експорт';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title => 'Рівень реєстрації';
 
   @override
-  String get debug_logLevelDialog_title => 'Change Logging Level';
+  String get debug_logLevelDialog_title => 'Змінити рівень реєстрації';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'Налагодження';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'Інформація';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'УВАГА';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'Помилка';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'Фатальний';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'Збір журналів';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+  String get debug_collectLogTile_enable_subtitle => 'Торкніться, щоб припинити збір журналів.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+  String get debug_collectLogTile_disable_subtitle => 'Торкніться, щоб почати збір журналів.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+  String get debug_downladDebugLogs_subject => 'Завантаження журналів налагодження';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+  String get dbeug_clearDebugLogs_complete_snackbar => 'Журнали налагодження очищено.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+  String get debug_downladDebugInfo_subject => 'Завантаження інформації про налагодження';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'Завантаження $fileName';
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+  String get debug_missingDebugLogFile_snackbar => 'Журнал налагодження не існує.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'Інформація про журнал';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+  String get debug_debuggerLogCard_subtitle => 'Включає локальну інформацію журналу налагодження, потрібно ввімкнути перемикач збору журналів.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'Завантажити';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'ясно';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'Інформація про налагодження';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+  String get debug_debuggerInfoCard_subtitle => 'Включає інформацію про налагодження програми.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'ВІДЧИНЕНО';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'зберегти';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+  String get debug_debuggerInfo_notificationTitle => 'Збір інформації про програму...';
 
   @override
   String get snackbar_undoText => 'UNDO';
@@ -1179,14 +1179,14 @@ class L10nUk extends L10n {
   String get snackbar_dismissText => 'DISMISS';
 
   @override
-  String get contributors_tile_title => 'Contributors';
+  String get contributors_tile_title => 'Дописувачі';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Торкніться';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Двомісний';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'довгий';
 }
