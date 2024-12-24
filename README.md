@@ -57,11 +57,59 @@ You can customize each habit with the following options:
 
 | platform | build | publish                                          | desc.                              |
 | -------- | ----- | ------------------------------------------------ | ---------------------------------- |
-| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
-| ios      | ✅    |                                                  |                                    |
-| macos    | ✅    | [Github][github-myapp]                           |                                    |
-| windows  | 🟨    |                                                  | unimplemented features: `reminder` |
-| linux    | 🟨    |                                                  | limit features: `reminder`         |
+| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
+| ios      | ✅     |                                                  |                                    |
+| macos    | ✅     | [Github][github-myapp]                           |                                    |
+| windows  | 🟨     | [Github][github-myapp]                           | unimplemented features: `reminder` |
+| linux    | 🟨     |                                                  | limit features: `reminder`         |
+
+### Note: Windows MSIX Insaller
+
+On a first-time attempt to install this MSIX, following prompt may appear:
+
+> This app package’s publisher certificate could not be verified.
+> Contact your system administrator or the app developer to obtain
+> a new app package with verified certificates.
+> The root certificate and all immediate certificates of the signature
+> in the app package must be verified (0x800B010A)
+
+This is because the MSIX installation package provided in Github/Releases/Assets
+is a self-signed version, corresponding certificate must be trusted
+on each machine which attempt to install it.
+
+Install certificate by following the steps below:
+
+> See [**here**][msix-install-cert] for steps with screenshots.
+
+1. Right click msix installer package, select **Properties**
+2. Switch to **Digital Signatures** tab and click signer under **Embedded Signatures**
+3. Click **Details**, In new window click **View Certificate**
+4. In new window (Certificate), click **Install Certificate**
+5. In **Certificate Import Wizard** window:
+   1. Select **Local Machine** and click **Next**
+   2. Select **Place all certificates in the following store**
+   3. Click **Browse** and select **Trusted Root Certification Authorities**
+   4. Click **Finish**.
+6. Finally a dialog with "_The import was successful._" should be poped-up.
+
+Or execute commands below:
+
+```powershell
+# run at administrator
+$signature = Get-AuthenticodeSignature -FilePath "\path\to\your\mhabit.msix"
+$certificate = $signature.SignerCertificate
+Export-Certificate -Cert $certificate -FilePath ".\mhabit.crt"
+Import-Certificate -FilePath ".\mhabit.crt" -CertStoreLocation Cert:\LocalMachine\Root
+```
+
+After operations above, this MSIX package should now be able to install successfully.
+
+> Trusting self-signed certificate always carries some risks.
+> Skipping signature verification to install via command below is also allowed:
+>
+> ```powershell
+> Add-AppPackage -Path "\path\to\your\mhabit.msix" -AllowUnsigned
+> ```
 
 ## Todo
 
@@ -183,3 +231,4 @@ limitations under the License.
 [weblate-engage]: https://hosted.weblate.org/engage/mhabit/
 [sqflite-ffi-linux]: https://pub.dev/packages/sqflite_common_ffi#linux
 [flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
+[msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
