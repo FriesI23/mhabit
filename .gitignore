@@ -54,3 +54,10 @@ coverage/html/
 
 # coverage
 coverage/
+
+# key
+*.key
+*.jks
+*.keystore
+*.pfx
+*.p12
