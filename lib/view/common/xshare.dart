@@ -21,17 +21,20 @@ import 'package:share_plus/share_plus.dart';
 
 mixin XShare<T extends StatefulWidget> on State<T> {
   Future<ShareResult> shareXFiles(List<XFile> files,
-      {BuildContext? context, String? subject, String? text}) async {
+      {BuildContext? context,
+      String? subject,
+      String? text,
+      List<String>? fileNameOverrides}) async {
     if (Platform.isIOS) {
       final box = (context ?? this.context).findRenderObject() as RenderBox?;
-      return Share.shareXFiles(
-        files,
-        subject: subject,
-        text: text,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
+      return Share.shareXFiles(files,
+          subject: subject,
+          text: text,
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+          fileNameOverrides: fileNameOverrides);
     } else {
-      return Share.shareXFiles(files, subject: subject, text: text);
+      return Share.shareXFiles(files,
+          subject: subject, text: text, fileNameOverrides: fileNameOverrides);
     }
   }
 

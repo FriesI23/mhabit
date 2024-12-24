@@ -1950,6 +1950,18 @@ abstract class L10n {
   /// **'confirm'**
   String get common_customDateTimeFormatPicker_confirmButton_text;
 
+  /// No description provided for @common_errorPage_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops, Crashed!'**
+  String get common_errorPage_title;
+
+  /// No description provided for @common_errorPage_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied crash information'**
+  String get common_errorPage_copied;
+
   /// No description provided for @calendarPicker_clip_today.
   ///
   /// In en, this message translates to:

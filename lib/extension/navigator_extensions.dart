@@ -19,6 +19,6 @@ extension NavigatorExtension on NavigatorState {
   @optionalTypeArgs
   Future<void> popOrExit<T extends Object?>([T? result]) async {
     if (!canPop()) return SystemNavigator.pop();
-    return pop(result);
+    return pop<T>(result);
   }
 }

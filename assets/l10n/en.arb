@@ -686,6 +686,10 @@
   "common_customDateTimeFormatPicker_cancelButton_text": "cancel",
   "common_customDateTimeFormatPicker_confirmButton_text": "confirm",
 
+  "common_errorPage_title": "Oops, Crashed!",
+
+  "common_errorPage_copied": "Copied crash information",
+
   "calendarPicker_clip_today": "Today",
   "calendarPicker_clip_tomorrow": "Tomorrow",
   "@calendarPicker_clip_after7Days": {

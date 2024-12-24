@@ -109,3 +109,27 @@ jobs:
           artifacts: >
             build/macos/Build/Products/Release/mhabit.dmg
           token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-windows-msix:
+    name: "Build windows MSIX Installer"
+    needs:
+      - pre-build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - name: Exposed Certificate
+        shell: bash
+        run: echo "${{ secrets.APP_SIGN_KEY_PFX }}" | base64 --decode > windows/certificate/publish.pfx
+      - name: Build MSIX
+        run: .flutter\bin\dart run msix:create --architecture x64 --output-name mhabit_x64 --certificate-path windows\certificate\publish.pfx --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' --install-certificate false
+      - name: Released - Windows
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            build/windows/x64/runner/Release/mhabit_x64.msix
+          token: ${{ secrets.APP_RELEASE_TOKEN }}

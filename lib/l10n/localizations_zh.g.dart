@@ -1038,6 +1038,12 @@ class L10nZh extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => '确认';
 
   @override
+  String get common_errorPage_title => '啊呀，崩溃了！';
+
+  @override
+  String get common_errorPage_copied => '已复制崩溃信息';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override

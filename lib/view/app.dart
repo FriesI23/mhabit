@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nested/nested.dart';
@@ -36,6 +37,7 @@ import '../provider/app_theme.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
 import 'for_app/_widget.dart';
+import 'page_app_error.dart' show PageAppError;
 import 'page_habits_display.dart' show PageHabitsDisplay;
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
@@ -63,59 +65,56 @@ class App extends StatelessWidget {
 
   const App({super.key});
 
+  Widget _buildErrorPage(BuildContext context, FlutterErrorDetails details) =>
+      BasicAppView.withDefault(
+        themeMainColor: appDefaultThemeMainColor,
+        lightThemeBuilder: () => ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: appDefaultThemeMainColor,
+                brightness: Brightness.light),
+            useMaterial3: true,
+            extensions: [modifedLightCustomColors]),
+        darkThemeBuilder: () => ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: appDefaultThemeMainColor,
+                brightness: Brightness.dark),
+            useMaterial3: true,
+            extensions: [darkCustomColors]),
+        child: PageAppError(
+          details: details,
+          showCloseBtn: switch (defaultTargetPlatform) {
+            TargetPlatform.android => true,
+            _ => false
+          },
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     appLog.debugger.info("App Running Now", ex: [DateTime.now()]);
     return ProfileBuilder(
       handlers: _profileHandlers,
+      errorBuilder: (details) => _buildErrorPage(context, details),
       builder: (context, child) => DBHelperBuilder(
+        errorBuilder: (details) => _buildErrorPage(context, details),
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
-          builder: (context) => const AppProviders(child: AppView()),
+          builder: (context) => const AppProviders(
+            child: AppView(homePage: _AppPostInit(child: PageHabitsDisplay())),
+          ),
         ),
       ),
     );
   }
 }
 
-class AppView extends StatefulWidget {
-  const AppView({super.key});
+class AppView extends StatelessWidget {
+  final Widget homePage;
 
-  @override
-  State<StatefulWidget> createState() => _AppView();
-}
-
-class _AppView extends State<AppView> {
-  ThemeData _getLightThemeData(BuildContext context,
-      {ColorScheme? dynamicColor, required Color mainColor}) {
-    final ColorScheme appColorLight = ColorScheme.fromSeed(
-      seedColor: mainColor,
-      brightness: Brightness.light,
-    );
-    return ThemeData(
-      colorScheme: dynamicColor ?? appColorLight,
-      useMaterial3: true,
-      extensions: [modifedLightCustomColors],
-    );
-  }
-
-  ThemeData _getDartThemeData(BuildContext context,
-      {ColorScheme? dynamicColor, required Color mainColor}) {
-    final ColorScheme appColorDark = ColorScheme.fromSeed(
-      seedColor: mainColor,
-      brightness: Brightness.dark,
-    );
-    return ThemeData(
-      colorScheme: dynamicColor ?? appColorDark,
-      useMaterial3: true,
-      extensions: [darkCustomColors],
-    );
-  }
+  const AppView({super.key, required this.homePage});
 
   @override
   Widget build(BuildContext context) {
-    const homePage = _AppPostInit(child: PageHabitsDisplay());
-
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) =>
           Selector<AppLanguageViewModel, Locale?>(
@@ -129,31 +128,79 @@ class _AppView extends State<AppView> {
           builder: (context, appThemeArgs, child) {
             final themeMode = appThemeArgs.item1;
             final themeMainColor = appThemeArgs.item2;
-            return MaterialApp(
-              onGenerateTitle: (context) =>
-                  L10n.of(context)?.appName ?? appName,
-              scaffoldMessengerKey: snackbarKey,
-              theme: _getLightThemeData(context,
-                  dynamicColor: lightDynamic, mainColor: themeMainColor),
-              darkTheme: _getDartThemeData(context,
-                  dynamicColor: darkDynamic, mainColor: themeMainColor),
+            final appColorLight = ColorScheme.fromSeed(
+                seedColor: themeMainColor, brightness: Brightness.light);
+            final appColorDark = ColorScheme.fromSeed(
+                seedColor: themeMainColor, brightness: Brightness.dark);
+            return BasicAppView(
               themeMode: themeMode,
-              locale: language,
-              home: child,
-              localizationsDelegates: const [
-                L10n.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: appSupportedLocales,
-              debugShowCheckedModeBanner: false,
+              themeMainColor: themeMainColor,
+              language: language,
+              lightThemeBuilder: () => ThemeData(
+                  colorScheme: lightDynamic ?? appColorLight,
+                  useMaterial3: true,
+                  extensions: [modifedLightCustomColors]),
+              darkThemeBuilder: () => ThemeData(
+                  colorScheme: darkDynamic ?? appColorDark,
+                  useMaterial3: true,
+                  extensions: [darkCustomColors]),
+              child: child,
             );
           },
           child: child,
         ),
         child: homePage,
       ),
+    );
+  }
+}
+
+class BasicAppView extends StatelessWidget {
+  final ThemeMode themeMode;
+  final Color themeMainColor;
+  final Locale? language;
+  final Widget? child;
+  final ThemeData Function()? lightThemeBuilder;
+  final ThemeData Function()? darkThemeBuilder;
+
+  const BasicAppView({
+    super.key,
+    required this.themeMode,
+    required this.themeMainColor,
+    this.language,
+    this.lightThemeBuilder,
+    this.darkThemeBuilder,
+    this.child,
+  });
+
+  const BasicAppView.withDefault({
+    super.key,
+    this.themeMode = ThemeMode.system,
+    this.themeMainColor = appDefaultThemeMainColor,
+    this.language,
+    this.lightThemeBuilder,
+    this.darkThemeBuilder,
+    this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
+      scaffoldMessengerKey: snackbarKey,
+      theme: lightThemeBuilder?.call(),
+      darkTheme: darkThemeBuilder?.call(),
+      themeMode: themeMode,
+      locale: language,
+      home: child,
+      localizationsDelegates: const [
+        L10n.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: appSupportedLocales,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

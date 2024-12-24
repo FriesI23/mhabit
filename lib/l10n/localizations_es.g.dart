@@ -1055,6 +1055,12 @@ class L10nEs extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'confirmar';
 
   @override
+  String get common_errorPage_title => 'Oops, Crashed!';
+
+  @override
+  String get common_errorPage_copied => 'Copied crash information';
+
+  @override
   String get calendarPicker_clip_today => 'Hoy';
 
   @override

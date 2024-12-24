@@ -185,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  console:
+    dependency: transitive
+    description:
+      name: console
+      sha256: e04e7824384c5b39389acdd6dc7d33f3efe6b232f6f16d7626f194f6a01ad69a
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   convert:
     dependency: transitive
     description:
@@ -509,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  get_it:
+    dependency: transitive
+    description:
+      name: get_it
+      sha256: d85128a5dae4ea777324730dc65edd9c9f43155c109d5cc0a69cab74139fbac1
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.7.0"
   glob:
     dependency: transitive
     description:
@@ -742,6 +758,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  msix:
+    dependency: "direct dev"
+    description:
+      name: msix
+      sha256: c50d6bd1aafe0d071a3c1e5a5ccb056404502935cb0a549e3178c4aae16caf33
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.16.8"
   named_html_color:
     dependency: "direct main"
     description:
@@ -1300,13 +1324,13 @@ packages:
     source: hosted
     version: "6.3.1"
   url_launcher_linux:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: url_launcher_linux
-      sha256: e2b9622b4007f97f504cd64c0128309dfb978ae66adbe944125ed9e1750f06af
+      sha256: ab360eb661f8879369acac07b6bb3ff09d9471155357da8443fd5d3cf7363811
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.0"
+    version: "3.1.1"
   url_launcher_macos:
     dependency: transitive
     description:
