@@ -118,6 +118,8 @@ android {
         buildConfig = true
     }
 
+    // Unverifiable encrypted Blob
+    // https://github.com/FriesI23/mhabit/issues/205
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
