@@ -118,6 +118,11 @@ android {
         buildConfig = true
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     namespace 'io.github.friesi23.mhabit'
 }
 
