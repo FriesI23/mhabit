@@ -986,5 +986,9 @@
   "habitDetail_reminderTile_title": "Нагадування",
   "@habitDetail_reminderTile_title": {},
   "appSetting_firstDayOfWeek_titleText": "Перший день тижня",
-  "@appSetting_firstDayOfWeek_titleText": {}
+  "@appSetting_firstDayOfWeek_titleText": {},
+  "common_errorPage_copied": "Скопійовано інформацію про збій",
+  "@common_errorPage_copied": {},
+  "common_errorPage_title": "Ой, збій!",
+  "@common_errorPage_title": {}
 }
