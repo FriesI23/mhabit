@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.14.4+57
+
+- Strip `DependenciesInfo` block from android, resolve [#205](https://github.com/FriesI23/mhabit/issues/205).
+
+full changes on this realese see: [release.md](https://github.com/FriesI23/mhabit/blob/v1.14.4%2B57/docs/release.md)
+
 ## 1.14.3+56
 
 - Add Windows MSIX Installer.
