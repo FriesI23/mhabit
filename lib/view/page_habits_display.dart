@@ -692,7 +692,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
   }
 
-  bool onWillPop() {
+  Future<bool> onWillPop() async {
     if (!mounted) return true;
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return true;
@@ -701,7 +701,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       return false;
     }
     if (viewmodel.isCalendarExpanded) {
-      viewmodel.updateCalendarExpanedStatus(false);
+      await viewmodel.updateCalendarExpanedStatus(false);
       return false;
     }
 
@@ -1103,10 +1103,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     return ColorfulNavibar(
       child: PopScope(
         canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
+        onPopInvokedWithResult: (didPop, result) async {
           if (didPop) return;
-          if (mounted && onWillPop()) {
-            Navigator.of(this.context).popOrExit(result);
+          if (await onWillPop() && context.mounted) {
+            Navigator.of(context).popOrExit(result);
           }
         },
         child: Scaffold(

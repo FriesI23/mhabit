@@ -148,11 +148,12 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     vm.resetStatusForm();
   }
 
-  void _onClosePageButtonPressed({bool defaultConfirmResult = false}) async {
+  Future<void> _onClosePageButtonPressed<T>(
+      {bool defaultConfirmResult = false, T? result}) async {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
-    final bool result = vm.canSave
+    final bool savedResult = vm.canSave
         ? (await showConfirmDialog(
               context: context,
               titleBuilder: (context) => L10nBuilder(
@@ -178,9 +179,9 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         : true;
     if (!mounted) return;
 
-    if (result) {
-      dismissAllToolTips()
-          .then((_) => mounted ? Navigator.of(context).popOrExit() : false);
+    if (savedResult) {
+      dismissAllToolTips().then(
+          (_) => mounted ? Navigator.of(context).popOrExit(result) : false);
     }
   }
 
@@ -304,9 +305,10 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     final div = buildDivider(context);
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        _onClosePageButtonPressed(defaultConfirmResult: true);
+        await _onClosePageButtonPressed(
+            defaultConfirmResult: true, result: result);
       },
       child: PageFramework(
         appbar: _AppBar(
