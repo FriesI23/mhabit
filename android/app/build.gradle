@@ -46,7 +46,7 @@ def customCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVer
 if (customCompileSdkVersion == null) {
     // FIXME: url_launcher_android 6.3.0 bump compileSdk version to 34.
     // https://github.com/flutter/packages/blob/main/packages/url_launcher/url_launcher_android/CHANGELOG.md
-    customCompileSdkVersion = Math.max(34, flutter.compileSdkVersion)
+    customCompileSdkVersion = Math.max(35, flutter.compileSdkVersion)
 } else {
     customCompileSdkVersion = customCompileSdkVersion.toInteger()
 }

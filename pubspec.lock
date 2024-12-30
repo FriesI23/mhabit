@@ -505,10 +505,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_timezone
-      sha256: "06b35132c98fa188db3c4b654b7e1af7ccd01dfe12a004d58be423357605fb24"
+      sha256: "6e6a0a9d0dfc049b209e01e1dee3efd5ff2ddf2375e9de86589761b244eb5a5f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.8"
+    version: "4.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

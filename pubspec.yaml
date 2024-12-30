@@ -55,7 +55,7 @@ dependencies:
   device_info_plus: ^11.2.0
   flutter_local_notifications: ^17.2.3
   flutter_svg: ^2.0.4
-  flutter_timezone: ^1.0.4
+  flutter_timezone: ^4.0.0
   flutter_markdown: ^0.7.3+2
   url_launcher: ^6.1.10
   # Compile error on linux with 3.2.0 (even upgrade to 3.2.1)
