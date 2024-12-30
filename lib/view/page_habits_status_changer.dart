@@ -179,7 +179,8 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     if (!mounted) return;
 
     if (result) {
-      dismissAllToolTips().then((_) => Navigator.of(context).popOrExit());
+      dismissAllToolTips()
+          .then((_) => mounted ? Navigator.of(context).popOrExit() : false);
     }
   }
 
@@ -233,7 +234,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
           builder: (context, _, child) {
             final vm = context.read<HabitStatusChangerViewModel>();
             return ColoredBox(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               child: RecordStatusChangeTile(
                 initStatus: vm.selectStatus,
                 allowedStatus: vm.selectDateAllowedStatus,
@@ -264,7 +265,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       return Selector<HabitStatusChangerViewModel, bool>(
         selector: (context, vm) => vm.canSave,
         builder: (context, canSave, child) => ColoredBox(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           child: ConfirmButton(
             enbaleConfirm: canSave,
             onConfirmPressed: _onConfirmButtonpressed,
@@ -279,7 +280,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         selector: (context, vm) => vm.dataDelegate.habitCount,
         builder: (context, habitCount, child) {
           return ColoredBox(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: L10nBuilder(
               builder: (context, l10n) => GroupTitleListTile(
                 title: l10n != null
@@ -294,7 +295,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
 
     Widget buildDivider(BuildContext context) => Builder(
           builder: (context) => ColoredBox(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: const Divider(height: 1),
           ),
         );
@@ -303,7 +304,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
     final div = buildDivider(context);
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         _onClosePageButtonPressed(defaultConfirmResult: true);
       },

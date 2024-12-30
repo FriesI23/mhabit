@@ -692,7 +692,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
   }
 
-  Future<bool> onWillPop() async {
+  bool onWillPop() {
     if (!mounted) return true;
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return true;
@@ -1080,7 +1080,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                       : null,
                   style: HabitDisplayEmptyImageStyle(
                     fronBoardBackgroundColor: theme.colorScheme.surface,
-                    backBoardBackgroundColor: theme.colorScheme.surfaceVariant,
+                    backBoardBackgroundColor:
+                        theme.colorScheme.surfaceContainerHighest,
                     boardStrokeColor: theme.colorScheme.outlineVariant,
                     fronBoardTopColor: theme.colorScheme.primaryContainer,
                     fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
@@ -1102,11 +1103,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     return ColorfulNavibar(
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) async {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
-          final canPopNow = await onWillPop();
-          if (mounted && canPopNow) {
-            await Navigator.of(this.context).popOrExit();
+          if (mounted && onWillPop()) {
+            Navigator.of(this.context).popOrExit(result);
           }
         },
         child: Scaffold(

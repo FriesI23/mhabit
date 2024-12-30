@@ -294,7 +294,7 @@ class _HabitEditReplacementRecordCalendarDialog
     final segmentedButton = SegmentedButton<bool>(
       style: ButtonStyle(
         visualDensity: VisualDensity.compact,
-        iconColor: MaterialStatePropertyAll(valueColor),
+        iconColor: WidgetStatePropertyAll(valueColor),
       ),
       segments: [
         ButtonSegment<bool>(

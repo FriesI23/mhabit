@@ -2,6 +2,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Turkish (`tr`).
 class L10nTr extends L10n {
   L10nTr([String locale = 'tr']) : super(locale);

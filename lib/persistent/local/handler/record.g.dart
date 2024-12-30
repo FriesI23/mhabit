@@ -121,24 +121,16 @@ RecordDBCell _$RecordDBCellFromJson(Map<String, dynamic> json) => RecordDBCell(
       reason: json['reason'] as String?,
     );
 
-Map<String, dynamic> _$RecordDBCellToJson(RecordDBCell instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id_', instance.id);
-  writeNotNull('parent_id', instance.parentId);
-  writeNotNull('record_date', instance.recordDate);
-  writeNotNull('record_type', instance.recordType);
-  writeNotNull('record_value', instance.recordValue);
-  writeNotNull('create_t', instance.createT);
-  writeNotNull('modify_t', instance.modifyT);
-  writeNotNull('uuid', instance.uuid);
-  writeNotNull('parent_uuid', instance.parentUUID);
-  writeNotNull('reason', instance.reason);
-  return val;
-}
+Map<String, dynamic> _$RecordDBCellToJson(RecordDBCell instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id_': value,
+      if (instance.parentId case final value?) 'parent_id': value,
+      if (instance.recordDate case final value?) 'record_date': value,
+      if (instance.recordType case final value?) 'record_type': value,
+      if (instance.recordValue case final value?) 'record_value': value,
+      if (instance.createT case final value?) 'create_t': value,
+      if (instance.modifyT case final value?) 'modify_t': value,
+      if (instance.uuid case final value?) 'uuid': value,
+      if (instance.parentUUID case final value?) 'parent_uuid': value,
+      if (instance.reason case final value?) 'reason': value,
+    };

@@ -2,6 +2,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Ukrainian (`uk`).
 class L10nUk extends L10n {
   L10nUk([String locale = 'uk']) : super(locale);
