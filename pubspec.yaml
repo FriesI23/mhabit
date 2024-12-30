@@ -112,7 +112,7 @@ dev_dependencies:
   # rules and activating additional ones.
 
   # Testing
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   test: ^1.21.4
   test_cov_console: ^0.2.2
 
