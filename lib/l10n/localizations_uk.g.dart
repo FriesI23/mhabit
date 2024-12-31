@@ -1057,10 +1057,10 @@ class L10nUk extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'підтвердити';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Ой, збій!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'Скопійовано інформацію про збій';
 
   @override
   String get calendarPicker_clip_today => 'Сьогодні';
