@@ -78,7 +78,7 @@ class HabitScoreChart extends StatelessWidget {
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
             radius: 3,
-            color: theme.colorScheme.background,
+            color: theme.colorScheme.surface,
             strokeWidth: 2,
             strokeColor: mainColor,
           );
@@ -98,7 +98,7 @@ class HabitScoreChart extends StatelessWidget {
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
             radius: 4,
-            color: theme.colorScheme.background,
+            color: theme.colorScheme.surface,
             strokeWidth: 2,
             strokeColor: mainColor,
           );

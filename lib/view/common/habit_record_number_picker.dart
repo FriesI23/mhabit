@@ -273,8 +273,7 @@ class _HabitRecordCustomNumberPickerDialog
             ),
             Padding(
               padding: const EdgeInsets.only(top: 24, bottom: 12),
-              child: ButtonBar(
-                buttonPadding: EdgeInsets.zero,
+              child: OverflowBar(
                 children: [
                   TextButton(
                     onPressed: () {

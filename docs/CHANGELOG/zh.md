@@ -1,5 +1,11 @@
 # 更新日志
 
+## 1.14.4+57
+
+- 从安卓去除 `DependenciesInfo` 块, 解决 [#205](https://github.com/FriesI23/mhabit/issues/205).
+
+完整的更新内容详见：[release.md](https://github.com/FriesI23/mhabit/blob/v1.14.4%2B57/docs/release.md)
+
 ## 1.14.3+56
 
 - 添加 Windows MSIX 安装程序。

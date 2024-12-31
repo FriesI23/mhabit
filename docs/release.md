@@ -2,7 +2,11 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.14.3+56
+# Released: v1.14.4+57
+
+- Strip `DependenciesInfo` block from android, resolve [#205](https://github.com/FriesI23/mhabit/issues/205).
+
+Change logs below are from v1.14.3+56:
 
 - Add Windows MSIX Installer.
 - Add separate error page when app crashes during startup.

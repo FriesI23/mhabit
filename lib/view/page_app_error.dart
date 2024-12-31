@@ -76,6 +76,7 @@ class PageAppError extends StatelessWidget {
     writeDivider(flag: 2);
 
     Clipboard.setData(ClipboardData(text: sb.toString())).then((value) {
+      if (!context.mounted) return;
       final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
           content: L10nBuilder(
               builder: (context, l10n) =>
@@ -114,7 +115,7 @@ class PageAppError extends StatelessWidget {
           ),
           SliverPinnedHeader(
             child: ColoredBox(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 child: ListTile(title: Text(details.exception.toString()))),
           ),
           const SliverToBoxAdapter(child: Divider()),

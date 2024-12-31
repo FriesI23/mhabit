@@ -56,12 +56,11 @@ class CryptoDonateButton extends StatelessWidget {
   }
 
   ButtonStyle? getButtonStyle() {
-    ButtonStyle buildStyle(MaterialStatePropertyAll<Color> color) =>
-        ButtonStyle(
+    ButtonStyle buildStyle(WidgetStatePropertyAll<Color> color) => ButtonStyle(
           backgroundColor: color,
-          iconColor: const MaterialStatePropertyAll(Colors.white),
-          overlayColor: MaterialStateProperty.resolveWith<Color?>(
-            (states) => states.contains(MaterialState.pressed)
+          iconColor: const WidgetStatePropertyAll(Colors.white),
+          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+            (states) => states.contains(WidgetState.pressed)
                 ? color.value.darken(0.1)
                 : null,
           ),
@@ -69,15 +68,15 @@ class CryptoDonateButton extends StatelessWidget {
 
     switch (cryptoType) {
       case CryptoDonateButtonType.btc:
-        return buildStyle(const MaterialStatePropertyAll(colorBTC));
+        return buildStyle(const WidgetStatePropertyAll(colorBTC));
       case CryptoDonateButtonType.eth:
-        return buildStyle(const MaterialStatePropertyAll(colorETH));
+        return buildStyle(const WidgetStatePropertyAll(colorETH));
       case CryptoDonateButtonType.bnb:
-        return buildStyle(const MaterialStatePropertyAll(colorBNB));
+        return buildStyle(const WidgetStatePropertyAll(colorBNB));
       case CryptoDonateButtonType.avax:
-        return buildStyle(const MaterialStatePropertyAll(colorAVAX));
+        return buildStyle(const WidgetStatePropertyAll(colorAVAX));
       case CryptoDonateButtonType.ftm:
-        return buildStyle(const MaterialStatePropertyAll(colorFTM));
+        return buildStyle(const WidgetStatePropertyAll(colorFTM));
     }
   }
 

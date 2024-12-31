@@ -33,10 +33,13 @@ Future<String> generateZippedDebugInfo() async {
   final debugInfoFile = await File(await pathProvider.getAppDebugInfoFilePath())
       .writeAsString(await AppInfo().generateAppDebugInfo(),
           mode: FileMode.writeOnly);
-  final encoder = ZipFileEncoder()
-    ..create(path.join(path.dirname(debugInfoFile.path), debuggerZipFile));
-  if (await debugLogFile.exists()) encoder.addFile(debugLogFile);
-  encoder.addFile(debugInfoFile);
-  await encoder.close();
-  return encoder.zipPath;
+  final zipPath = path.join(path.dirname(debugInfoFile.path), debuggerZipFile);
+  final encoder = ZipFileEncoder()..create(zipPath);
+  await Future.wait([
+    debugLogFile
+        .exists()
+        .then((value) => value ? encoder.addFile(debugLogFile) : null),
+    encoder.addFile(debugInfoFile),
+  ]).then((_) => encoder.close());
+  return zipPath;
 }

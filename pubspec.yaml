@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.14.3+56
+version: 1.14.4+57
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -35,39 +35,35 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: ^0.18.1
+  intl: ^0.19.0
 
   # UI Components
   flutter_colorpicker: ^1.0.3
   great_list_view: ^0.2.3
   fl_chart: ^0.69.0
-  simple_heatmap_calendar: ^0.2.0
+  simple_heatmap_calendar: ^0.4.0
   flutter_donation_buttons: ^0.4.8
 
   # Extra Features
   dynamic_color: ^1.5.4
-  material_color_utilities: ^0.8.0
+  material_color_utilities: ^0.11.1
   linked_scroll_controller: ^0.2.0
   sliver_tools: ^0.2.9
   share_plus: ^10.0.0
   file_picker: ^8.0.5
   path_provider: ^2.0.14
-  device_info_plus: ^10.1.2
+  device_info_plus: ^11.2.0
   flutter_local_notifications: ^17.2.3
   flutter_svg: ^2.0.4
-  flutter_timezone: ^1.0.4
+  flutter_timezone: ^4.0.0
   flutter_markdown: ^0.7.3+2
   url_launcher: ^6.1.10
-  # Compile error on linux with 3.2.0 (even upgrade to 3.2.1)
-  # Test env: glib-2.0 == 2.74.6 && gtk+-3.0 == 3.24.38
-  # see: https://github.com/flutter/flutter/issues/153083#issuecomment-2275606879
-  url_launcher_linux: <3.2.0
   package_info_plus: ^8.0.2
   copy_with_extension: ^5.0.0
   json_annotation: ^4.8.0
   win2iana_tz_converter: ^0.1.3
   open_file_plus: ^3.4.1+1
-  archive: ^3.5.1
+  archive: ^4.0.2
 
   # Fonts and Icons
   named_html_color: ^0.0.3+1
@@ -112,7 +108,7 @@ dev_dependencies:
   # rules and activating additional ones.
 
   # Testing
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   test: ^1.21.4
   test_cov_console: ^0.2.2
 

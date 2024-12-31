@@ -2,6 +2,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Norwegian Bokmål (`nb`).
 class L10nNb extends L10n {
   L10nNb([String locale = 'nb']) : super(locale);
