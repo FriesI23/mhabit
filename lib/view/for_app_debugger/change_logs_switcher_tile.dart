@@ -36,9 +36,9 @@ class ChangeLogsSwitcherTile extends StatelessWidget {
               ? l10n.debug_collectLogTile_enable_subtitle
               : l10n.debug_collectLogTile_disable_subtitle)
           : null,
-      thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
+      thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
         (states) {
-          if (states.contains(MaterialState.selected)) {
+          if (states.contains(WidgetState.selected)) {
             return Icon(
               Icons.pause,
               color: theme.colorScheme.onError,

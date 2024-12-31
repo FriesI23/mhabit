@@ -227,22 +227,14 @@ RecordExportData _$RecordExportDataFromJson(Map<String, dynamic> json) =>
       modifyT: (json['modify_t'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('record_date', instance.recordDate);
-  writeNotNull('record_type', instance.recordType);
-  writeNotNull('record_value', instance.recordValue);
-  writeNotNull('create_t', instance.createT);
-  writeNotNull('modify_t', instance.modifyT);
-  return val;
-}
+Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
+    <String, dynamic>{
+      if (instance.recordDate case final value?) 'record_date': value,
+      if (instance.recordType case final value?) 'record_type': value,
+      if (instance.recordValue case final value?) 'record_value': value,
+      if (instance.createT case final value?) 'create_t': value,
+      if (instance.modifyT case final value?) 'modify_t': value,
+    };
 
 HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
     HabitExportData(
@@ -268,31 +260,23 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$HabitExportDataToJson(HabitExportData instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('create_t', instance.createT);
-  writeNotNull('modify_t', instance.modifyT);
-  writeNotNull('type', instance.type);
-  writeNotNull('status', instance.status);
-  writeNotNull('name', instance.name);
-  writeNotNull('desc', instance.desc);
-  writeNotNull('color', instance.color);
-  writeNotNull('daily_goal', instance.dailyGoal);
-  writeNotNull('daily_goal_unit', instance.dailyGoalUnit);
-  writeNotNull('daily_goal_extra', instance.dailyGoalExtra);
-  writeNotNull('freq_type', instance.freqType);
-  writeNotNull('freq_custom', instance.freqCustom);
-  writeNotNull('reminder', instance.reminder);
-  writeNotNull('reminder_quest', instance.reminderQuest);
-  writeNotNull('start_date', instance.startDate);
-  writeNotNull('target_days', instance.targetDays);
-  val['records'] = HabitExportData._recordsToJson(instance.records);
-  return val;
-}
+Map<String, dynamic> _$HabitExportDataToJson(HabitExportData instance) =>
+    <String, dynamic>{
+      if (instance.createT case final value?) 'create_t': value,
+      if (instance.modifyT case final value?) 'modify_t': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.status case final value?) 'status': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.desc case final value?) 'desc': value,
+      if (instance.color case final value?) 'color': value,
+      if (instance.dailyGoal case final value?) 'daily_goal': value,
+      if (instance.dailyGoalUnit case final value?) 'daily_goal_unit': value,
+      if (instance.dailyGoalExtra case final value?) 'daily_goal_extra': value,
+      if (instance.freqType case final value?) 'freq_type': value,
+      if (instance.freqCustom case final value?) 'freq_custom': value,
+      if (instance.reminder case final value?) 'reminder': value,
+      if (instance.reminderQuest case final value?) 'reminder_quest': value,
+      if (instance.startDate case final value?) 'start_date': value,
+      if (instance.targetDays case final value?) 'target_days': value,
+      'records': HabitExportData._recordsToJson(instance.records),
+    };

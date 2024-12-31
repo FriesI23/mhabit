@@ -30,8 +30,8 @@ class PageBackButton extends StatelessWidget {
     this.onPressed,
   });
 
-  void _onPressedCallback(BuildContext context) =>
-      dismissAllToolTips().then((_) => Navigator.maybePop(context));
+  void _onPressedCallback(BuildContext context) => dismissAllToolTips()
+      .then((_) => context.mounted ? Navigator.maybePop(context) : false);
 
   @override
   Widget build(BuildContext context) {

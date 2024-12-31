@@ -184,33 +184,25 @@ HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
       sortPosition: json['sort_position'] as num?,
     );
 
-Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id_', instance.id);
-  writeNotNull('type_', instance.type);
-  writeNotNull('create_t', instance.createT);
-  writeNotNull('modify_t', instance.modifyT);
-  writeNotNull('uuid', instance.uuid);
-  writeNotNull('status', instance.status);
-  writeNotNull('name', instance.name);
-  writeNotNull('desc', instance.desc);
-  writeNotNull('color', instance.color);
-  writeNotNull('daily_goal', instance.dailyGoal);
-  writeNotNull('daily_goal_unit', instance.dailyGoalUnit);
-  writeNotNull('daily_goal_extra', instance.dailyGoalExtra);
-  writeNotNull('freq_type', instance.freqType);
-  writeNotNull('freq_custom', instance.freqCustom);
-  writeNotNull('start_date', instance.startDate);
-  writeNotNull('target_days', instance.targetDays);
-  writeNotNull('remind_cutsom', instance.remindCustom);
-  writeNotNull('remind_question', instance.remindQuestion);
-  writeNotNull('sort_position', instance.sortPosition);
-  return val;
-}
+Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id_': value,
+      if (instance.type case final value?) 'type_': value,
+      if (instance.createT case final value?) 'create_t': value,
+      if (instance.modifyT case final value?) 'modify_t': value,
+      if (instance.uuid case final value?) 'uuid': value,
+      if (instance.status case final value?) 'status': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.desc case final value?) 'desc': value,
+      if (instance.color case final value?) 'color': value,
+      if (instance.dailyGoal case final value?) 'daily_goal': value,
+      if (instance.dailyGoalUnit case final value?) 'daily_goal_unit': value,
+      if (instance.dailyGoalExtra case final value?) 'daily_goal_extra': value,
+      if (instance.freqType case final value?) 'freq_type': value,
+      if (instance.freqCustom case final value?) 'freq_custom': value,
+      if (instance.startDate case final value?) 'start_date': value,
+      if (instance.targetDays case final value?) 'target_days': value,
+      if (instance.remindCustom case final value?) 'remind_cutsom': value,
+      if (instance.remindQuestion case final value?) 'remind_question': value,
+      if (instance.sortPosition case final value?) 'sort_position': value,
+    };

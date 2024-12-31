@@ -2,6 +2,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Vietnamese (`vi`).
 class L10nVi extends L10n {
   L10nVi([String locale = 'vi']) : super(locale);

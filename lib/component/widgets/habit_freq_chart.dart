@@ -281,7 +281,7 @@ class HabitFreqChart extends StatelessWidget {
         SizedBox(
           height: height - 30,
           child: BarChart(
-            swapAnimationDuration: Duration.zero,
+            duration: Duration.zero,
             BarChartData(
               alignment: BarChartAlignment.spaceAround,
               titlesData: FlTitlesData(

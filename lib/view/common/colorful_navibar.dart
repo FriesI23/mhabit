@@ -35,7 +35,7 @@ class ColorfulNavibar extends StatelessWidget {
     if (AppInfo().isAndroidAndAdaptToFullScreen()) {
       return Colors.transparent;
     }
-    return Theme.of(context).colorScheme.background;
+    return Theme.of(context).colorScheme.surface;
   }
 
   Brightness? _getSystemNavigationBarIconBrightness(BuildContext context) {

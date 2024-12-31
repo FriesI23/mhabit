@@ -44,6 +44,7 @@ final class LocalTimeZoneManager implements LocalTimeZone, AsyncInitialization {
       AndroidLocalTimeZone(),
       IOSLocalTimeZone(),
       MacOSLocalTimeZone(),
+      LinuxLocalTimeZone(),
     ]);
     await updateTimeZone();
   }
@@ -113,4 +114,11 @@ final class MacOSLocalTimeZone extends CurrentTimeZoneBasic {
 
   @override
   TargetPlatform get platform => TargetPlatform.macOS;
+}
+
+final class LinuxLocalTimeZone extends CurrentTimeZoneBasic {
+  const LinuxLocalTimeZone();
+
+  @override
+  TargetPlatform get platform => TargetPlatform.linux;
 }

@@ -2,6 +2,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'localizations.g.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Italian (`it`).
 class L10nIt extends L10n {
   L10nIt([String locale = 'it']) : super(locale);

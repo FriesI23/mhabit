@@ -21,6 +21,8 @@ import 'localizations_uk.g.dart';
 import 'localizations_vi.g.dart';
 import 'localizations_zh.g.dart';
 
+// ignore_for_file: type=lint
+
 /// Callers can lookup localized strings with an instance of L10n
 /// returned by `L10n.of(context)`.
 ///
