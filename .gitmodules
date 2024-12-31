@@ -1,4 +1,4 @@
 [submodule "flutter"]
 	path = .flutter
 	url = https://github.com/flutter/flutter.git
-	tag = 3.19.6
+	tag = 3.24.5
