@@ -4,6 +4,15 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.15.1+59
+
+- Migrate Package from `file_picker` to `file_selector`.
+- Unifying saveFile and shareXFiles across platforms.
+  - Use "saveFile": Windows / MacOS / Linux.
+  - Use "shareXFiles": Android / iOS(iPadOS).
+- Fix Habits Exporter in display page on iPadOS.
+- Fix Export functions on Linux.
+
 ## v1.15.0+58
 
 - Upgrade `flutter` version to 3.24.5.
