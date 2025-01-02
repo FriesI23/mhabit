@@ -528,8 +528,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void _onAppbarSelectAllActionPressed() =>
       context.read<HabitSummaryViewModel>().selectAllHabit();
 
-  void _onAppbarExportAllActionPressed() =>
-      _exportSelectedHabitsAndShared(context);
+  void _onAppbarExportAllActionPressed(BuildContext? context) =>
+      _exportSelectedHabitsAndShared(context ?? this.context);
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
@@ -862,7 +862,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                     callback: _onAppbarCloneActionPressed),
                 EditModeActionItemConfig.exportall(
                     text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
-                    callback: _onAppbarExportAllActionPressed),
+                    callback: () => _onAppbarExportAllActionPressed(context)),
                 EditModeActionItemConfig.delete(
                     text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
                     callback: _onAppbarDeleteActionPressed),
