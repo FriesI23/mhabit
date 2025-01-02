@@ -50,7 +50,7 @@ dependencies:
   linked_scroll_controller: ^0.2.0
   sliver_tools: ^0.2.9
   share_plus: ^10.0.0
-  file_picker: ^8.0.5
+  file_selector: ^1.0.3
   path_provider: ^2.0.14
   device_info_plus: ^11.2.0
   flutter_local_notifications: ^17.2.3

@@ -13,11 +13,9 @@
 // limitations under the License.
 
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -235,33 +233,27 @@ class _AppSettingView extends State<AppSettingView>
   }
 
   void _onImportAllTilePressed() async {
-    final FilePickerResult? result;
     if (!mounted) return;
-    try {
-      result = await FilePicker.platform.pickFiles();
-    } on PlatformException catch (e) {
+    final XFile? file =
+        await openFile().timeout(const Duration(seconds: 5)).catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't open file picker"],
           error: e,
           stackTrace: LoggerStackTrace.from(StackTrace.current));
-      //TODO: add feedback
-      return;
-    }
+      return null;
+    });
 
-    if (!mounted || result == null || result.files.single.path == null) return;
-    final file = File(result.files.single.path!);
-
-    String rawJsonData = '';
-    try {
-      rawJsonData = await file.readAsString();
-    } on Exception catch (e) {
-      //TODO: add feedback
+    if (!mounted || file == null) return;
+    final String rawJsonData = await file
+        .readAsString()
+        .timeout(const Duration(seconds: 5))
+        .catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't read file", file],
           error: e,
           stackTrace: LoggerStackTrace.from(StackTrace.current));
-      return;
-    }
+      return '';
+    });
 
     if (!mounted || rawJsonData.isEmpty) return;
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);

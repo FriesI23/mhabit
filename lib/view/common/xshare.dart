@@ -14,7 +14,7 @@
 
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
@@ -41,11 +41,10 @@ mixin XShare<T extends StatefulWidget> on State<T> {
   Future<bool> pickAndSaveToFile(String savedFile,
       {String? fileName, String? subject}) async {
     fileName ??= path.basename(savedFile);
-    final filePath = await FilePicker.platform
-        .saveFile(fileName: fileName, dialogTitle: subject);
-    if (filePath == null) return false;
-    final savedFileFp = File(savedFile);
-    if (!(await savedFileFp.exists())) return false;
-    return savedFileFp.copy(filePath).then((value) => value.exists());
+    final saveLocation = await getSaveLocation(suggestedName: fileName);
+    if (saveLocation == null) return false;
+    final savedFileFp = XFile(savedFile);
+    await savedFileFp.saveTo(saveLocation.path);
+    return await File(saveLocation.path).exists();
   }
 }
