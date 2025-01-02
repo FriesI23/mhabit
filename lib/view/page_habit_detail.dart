@@ -117,9 +117,7 @@ class HabitDetailView extends StatefulWidget {
 }
 
 class _HabitDetailView extends State<HabitDetailView>
-    with
-        HabitHeatmapColorChooseMixin<HabitDetailView>,
-        XShare<HabitDetailView> {
+    with HabitHeatmapColorChooseMixin<HabitDetailView>, XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -352,7 +350,8 @@ class _HabitDetailView extends State<HabitDetailView>
     );
     if (!context.mounted || filePath == null) return;
     //TODO: add snackbar result
-    shareXFiles([XFile(filePath)], text: "Export Habit", context: context);
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
+        context: context, text: 'Export Habit');
   }
 
   Widget _buildDebugInfo(BuildContext context) {

@@ -87,14 +87,8 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     if (!context.mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     final subject = L10n.of(context)?.debug_downladDebugLogs_subject;
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.windows:
-      case TargetPlatform.macOS:
-      case TargetPlatform.linux:
-        pickAndSaveToFile(filePath, subject: subject);
-      default:
-        shareXFiles([XFile(filePath)], context: context, subject: subject);
-    }
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
+        context: context, subject: subject);
   }
 
   void _onClearLogButtongPressed(BuildContext context) async {
@@ -129,7 +123,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
     if (!context.mounted) return;
     final subject = L10n.of(context)?.debug_downladDebugInfo_subject;
-    pickAndSaveToFile(filePath, subject: subject);
+    saveSingleFile(filePath, subject: subject);
   }
 
   void _onFABPressed(BuildContext context) async {
@@ -137,14 +131,8 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     if (!context.mounted) return;
     final subject =
         L10n.of(context)?.debug_downladDebugZip_subject(debuggerZipFile);
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.windows:
-      case TargetPlatform.macOS:
-      case TargetPlatform.linux:
-        pickAndSaveToFile(zipFilePath, subject: subject);
-      default:
-        shareXFiles([XFile(zipFilePath)], context: context, subject: subject);
-    }
+    trySaveFiles([XFile(zipFilePath)], defaultTargetPlatform,
+        context: context, subject: subject);
   }
 
   void _showDebugLogFileDismissSnackbar() {
