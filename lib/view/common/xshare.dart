@@ -14,23 +14,25 @@
 
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
-mixin XShare<T extends StatefulWidget> on State<T> {
+mixin XShare {
   Future<ShareResult> shareXFiles(List<XFile> files,
       {BuildContext? context,
       String? subject,
       String? text,
       List<String>? fileNameOverrides}) async {
     if (Platform.isIOS) {
-      final box = (context ?? this.context).findRenderObject() as RenderBox?;
+      final box = context?.findRenderObject() as RenderBox?;
       return Share.shareXFiles(files,
           subject: subject,
           text: text,
-          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+          sharePositionOrigin:
+              box != null ? box.localToGlobal(Offset.zero) & box.size : null,
           fileNameOverrides: fileNameOverrides);
     } else {
       return Share.shareXFiles(files,
@@ -38,7 +40,7 @@ mixin XShare<T extends StatefulWidget> on State<T> {
     }
   }
 
-  Future<bool> pickAndSaveToFile(String savedFile,
+  Future<bool> saveSingleFile(String savedFile,
       {String? fileName, String? subject}) async {
     fileName ??= path.basename(savedFile);
     final saveLocation = await getSaveLocation(suggestedName: fileName);
@@ -47,4 +49,31 @@ mixin XShare<T extends StatefulWidget> on State<T> {
     await savedFileFp.saveTo(saveLocation.path);
     return await File(saveLocation.path).exists();
   }
+
+  Future<bool> trySaveFiles(List<XFile> files, TargetPlatform platform,
+          {BuildContext? context,
+          String? subject,
+          String? text,
+          List<String>? fileNameOverrides}) =>
+      switch (platform) {
+        TargetPlatform.android || TargetPlatform.iOS => shareXFiles(files,
+                context: context,
+                subject: subject,
+                text: text,
+                fileNameOverrides: fileNameOverrides)
+            .then((value) => value.status == ShareResultStatus.success),
+        TargetPlatform.windows ||
+        TargetPlatform.macOS ||
+        TargetPlatform.linux =>
+          Future(() async {
+            for (final (i, e) in files.mapIndexed((i, e) => (i, e))) {
+              final r = await saveSingleFile(e.path,
+                  fileName: fileNameOverrides?[i], subject: subject);
+              if (!r) return r;
+            }
+            return true;
+          }),
+        _ => throw UnimplementedError(
+            "trySaveFiles isn't implement on current platform: $platform"),
+      };
 }

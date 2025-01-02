@@ -93,7 +93,7 @@ class HabitsDisplayView extends StatefulWidget {
 }
 
 class _HabitsDisplayView extends State<HabitsDisplayView>
-    with HabitsDisplayViewDebug, XShare<HabitsDisplayView> {
+    with HabitsDisplayViewDebug, XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -432,7 +432,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (!context.mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();
     //TODO: add snackbar result
-    shareXFiles([XFile(filePath)],
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
         text: "Export Select Habits", context: context);
   }
 
