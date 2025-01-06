@@ -259,6 +259,7 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
               height: textScaler.scale(30.0),
               width: textScaler.scale(48.0),
               child: TextField(
+                decoration: const InputDecoration(hintText: "", isDense: true),
                 textAlign: TextAlign.center,
                 controller: inputController,
                 keyboardType: const TextInputType.numberWithOptions(

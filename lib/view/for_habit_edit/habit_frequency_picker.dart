@@ -249,6 +249,7 @@ class _HabitFrequencyTextField extends StatelessWidget {
       height: textScaler.scale(_kDefaultHabitFreqTextFieldHeight),
       width: textScaler.scale(_kDefualtHabitFreqTextFieldWidth),
       child: TextField(
+        decoration: const InputDecoration(hintText: "", isDense: true),
         textAlign: TextAlign.center,
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(
