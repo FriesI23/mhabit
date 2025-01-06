@@ -4,6 +4,10 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.15.2+60
+
+- Fix TextFiled's text UI sinking on `Frequency` and `Target Days` picker.
+
 ## v1.15.1+59
 
 - Migrate Package from `file_picker` to `file_selector`.
