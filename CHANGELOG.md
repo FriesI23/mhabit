@@ -2,6 +2,19 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.15.3+61
+
+- Upgrade `flutter` version to 3.24.5.
+- Upgrade dependencies version.
+- Migrate from `file_picker` to `file_selector`.
+- Unifying saveFile and shareXFiles across platforms.
+  - Use "saveFile": Windows / MacOS / Linux.
+  - Use "shareXFiles": Android / iOS(iPadOS).
+- Optimize page return logic implementation.
+- Fix TextFiled's text UI sinking on `Frequency` and `Target Days` picker.
+- Fix Habits Exporter function in display page on iPadOS.
+- Fix serveral Export related functions on Linux.
+
 ## 1.14.4+57
 
 - Strip `DependenciesInfo` block from android, resolve [#205](https://github.com/FriesI23/mhabit/issues/205).

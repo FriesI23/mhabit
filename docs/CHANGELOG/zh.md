@@ -1,5 +1,18 @@
 # 更新日志
 
+## 1.15.3+61
+
+- 升级 `flutter` 版本到 3.24.5。
+- 升级依赖版本。
+- 将 `file_picker` 迁移到 `file_selector`。
+- 统一跨平台的 `saveFile` 和 `shareXFiles` 功能实现：
+  - Windows / MacOS / Linux 平台使用 `saveFile`。
+  - Android / iOS（含 iPadOS）平台使用 `shareXFiles`。
+- 优化页面返回逻辑实现。
+- 修复 `Frequency` 和 `Target Days` 选项中 `TextField` 文本下沉的问题。
+- 修复 iPadOS 中显示页面的习惯导出功能。
+- 修复 Linux 上多个与导出相关的功能。
+
 ## 1.14.4+57
 
 - 从安卓去除 `DependenciesInfo` 块, 解决 [#205](https://github.com/FriesI23/mhabit/issues/205).
