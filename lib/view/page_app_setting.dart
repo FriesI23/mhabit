@@ -13,14 +13,12 @@
 // limitations under the License.
 
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -108,8 +106,7 @@ class AppSettingView extends StatefulWidget {
   State<StatefulWidget> createState() => _AppSettingView();
 }
 
-class _AppSettingView extends State<AppSettingView>
-    with XShare<AppSettingView> {
+class _AppSettingView extends State<AppSettingView> with XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -231,37 +228,31 @@ class _AppSettingView extends State<AppSettingView>
         );
     if (!context.mounted || filePath == null) return;
     //TODO: add snackbar result
-    shareXFiles([XFile(filePath)], context: context);
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context);
   }
 
   void _onImportAllTilePressed() async {
-    final FilePickerResult? result;
     if (!mounted) return;
-    try {
-      result = await FilePicker.platform.pickFiles();
-    } on PlatformException catch (e) {
+    final XFile? file =
+        await openFile().timeout(const Duration(seconds: 5)).catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't open file picker"],
           error: e,
           stackTrace: LoggerStackTrace.from(StackTrace.current));
-      //TODO: add feedback
-      return;
-    }
+      return null;
+    });
 
-    if (!mounted || result == null || result.files.single.path == null) return;
-    final file = File(result.files.single.path!);
-
-    String rawJsonData = '';
-    try {
-      rawJsonData = await file.readAsString();
-    } on Exception catch (e) {
-      //TODO: add feedback
+    if (!mounted || file == null) return;
+    final String rawJsonData = await file
+        .readAsString()
+        .timeout(const Duration(seconds: 5))
+        .catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't read file", file],
           error: e,
           stackTrace: LoggerStackTrace.from(StackTrace.current));
-      return;
-    }
+      return '';
+    });
 
     if (!mounted || rawJsonData.isEmpty) return;
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);
@@ -343,7 +334,7 @@ class _AppSettingView extends State<AppSettingView>
     final dbPath =
         path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
     if (!context.mounted) return;
-    shareXFiles([XFile(dbPath)], context: context);
+    trySaveFiles([XFile(dbPath)], defaultTargetPlatform, context: context);
   }
 
   void _onClearDBTilePressed(BuildContext context) async {
@@ -361,10 +352,11 @@ class _AppSettingView extends State<AppSettingView>
         final dbPath =
             path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
         if (!context.mounted) return;
-        final result = await shareXFiles(
-            [if (filePath != null) XFile(filePath), XFile(dbPath)],
-            context: context);
-        if (result.status == ShareResultStatus.success) {
+        final result = await trySaveFiles([
+          if (filePath != null) XFile(filePath),
+          XFile(dbPath)
+        ], defaultTargetPlatform, context: context);
+        if (result) {
           break;
         } else {
           if (!context.mounted) return;

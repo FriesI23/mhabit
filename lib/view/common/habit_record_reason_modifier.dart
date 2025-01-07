@@ -103,6 +103,8 @@ class _HabitRecordReasonModifierDialog
             Padding(
               padding: const EdgeInsets.only(top: 24, bottom: 12),
               child: OverflowBar(
+                spacing: 8.0,
+                alignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () {

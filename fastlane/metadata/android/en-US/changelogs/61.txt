@@ -1,17 +1,5 @@
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
-
-# Released v1.15.3+61
-
 - Upgrade `flutter` version to 3.24.5.
-- Upgrade breaking dependencies version.
-- Upgrade `archive` to v4.
-- Upgrade `device_info_plus` to v11.
-- Upgrade `flutter_timezone` to v4.
-- Upgrade `flutter_lints` to v5.
-- Bump iOS/MacOS dependencies version.
-- Un-pinned `url_launcher_linux`.
+- Upgrade dependencies version.
 - Migrate from `file_picker` to `file_selector`.
 - Unifying saveFile and shareXFiles across platforms.
   - Use "saveFile": Windows / MacOS / Linux.

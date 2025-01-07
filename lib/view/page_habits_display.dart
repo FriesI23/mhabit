@@ -93,7 +93,7 @@ class HabitsDisplayView extends StatefulWidget {
 }
 
 class _HabitsDisplayView extends State<HabitsDisplayView>
-    with HabitsDisplayViewDebug, XShare<HabitsDisplayView> {
+    with HabitsDisplayViewDebug, XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -432,7 +432,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (!context.mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();
     //TODO: add snackbar result
-    shareXFiles([XFile(filePath)],
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
         text: "Export Select Habits", context: context);
   }
 
@@ -528,8 +528,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void _onAppbarSelectAllActionPressed() =>
       context.read<HabitSummaryViewModel>().selectAllHabit();
 
-  void _onAppbarExportAllActionPressed() =>
-      _exportSelectedHabitsAndShared(context);
+  void _onAppbarExportAllActionPressed(BuildContext? context) =>
+      _exportSelectedHabitsAndShared(context ?? this.context);
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
@@ -862,7 +862,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                     callback: _onAppbarCloneActionPressed),
                 EditModeActionItemConfig.exportall(
                     text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
-                    callback: _onAppbarExportAllActionPressed),
+                    callback: () => _onAppbarExportAllActionPressed(context)),
                 EditModeActionItemConfig.delete(
                     text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
                     callback: _onAppbarDeleteActionPressed),
