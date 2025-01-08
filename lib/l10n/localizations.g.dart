@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'localizations_ar.g.dart';
+import 'localizations_cs.g.dart';
 import 'localizations_de.g.dart';
 import 'localizations_en.g.dart';
 import 'localizations_es.g.dart';
@@ -105,6 +106,7 @@ abstract class L10n {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
+    Locale('cs'),
     Locale('de'),
     Locale('en'),
     Locale('es'),
@@ -2202,7 +2204,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'de', 'en', 'es', 'fa', 'fr', 'it', 'nb', 'pl', 'pt', 'ru', 'tr', 'uk', 'vi', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'cs', 'de', 'en', 'es', 'fa', 'fr', 'it', 'nb', 'pl', 'pt', 'ru', 'tr', 'uk', 'vi', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -2223,6 +2225,7 @@ L10n lookupL10n(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'ar': return L10nAr();
+    case 'cs': return L10nCs();
     case 'de': return L10nDe();
     case 'en': return L10nEn();
     case 'es': return L10nEs();
