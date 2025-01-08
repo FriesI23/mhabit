@@ -1,5 +1,994 @@
 {
-    "@@locale": "pl",
-    "localeScriptName": "język polski",
-    "appName": "🚧(pl) - Table Habit"
+  "@@locale": "pl",
+  "localeScriptName": "język polski",
+  "@localeScriptName": {},
+  "appName": "🚧(pl) - Table Habit",
+  "@appName": {},
+  "userAction_doubleTap": "",
+  "@userAction_doubleTap": {},
+  "userAction_tap": "",
+  "@userAction_tap": {},
+  "habitEdit_habitName_hintText": "",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_saveButton_text": "",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitType_negativeText": "",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitTypeDialog_title": "",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitDailyGoal_hintText": "",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitType_positiveText": "",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitDailyGoal_negativeErrorText02": "",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "maximum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitFreq_daily": "",
+  "@habitEdit_habitFreq_daily": {},
+  "habitEdit_habitDailyGoalExtra_hintText": "",
+  "@habitEdit_habitDailyGoalExtra_hintText": {},
+  "habitEdit_habitDailyGoalUnit_hintText": "",
+  "@habitEdit_habitDailyGoalUnit_hintText": {},
+  "habitEdit_habitFreq_predayfreq": "",
+  "@habitEdit_habitFreq_predayfreq": {},
+  "habitEdit_habitFreq_perweek": "",
+  "@habitEdit_habitFreq_perweek": {},
+  "habitEdit_habitFreq_permonth": "",
+  "@habitEdit_habitFreq_permonth": {},
+  "habitEdit_reminder_freq_weekSubfixText": "",
+  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_dialogType_whenNeeded": "",
+  "@habitEdit_reminder_dialogType_whenNeeded": {},
+  "habitEdit_reminder_dialogTitle": "",
+  "@habitEdit_reminder_dialogTitle": {},
+  "habitEdit_reminder_freq_monthPrefixText": "",
+  "@habitEdit_reminder_freq_monthPrefixText": {},
+  "habitEdit_reminder_freq_monthSubfixText": "",
+  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_cancelDialogTitle": "",
+  "@habitEdit_reminder_cancelDialogTitle": {},
+  "habitEdit_reminder_cancelDialogConfirm": "",
+  "@habitEdit_reminder_cancelDialogConfirm": {},
+  "habitEdit_reminder_dialogConfirm": "",
+  "@habitEdit_reminder_dialogConfirm": {},
+  "habitEdit_reminder_dialogType_month": "",
+  "@habitEdit_reminder_dialogType_month": {},
+  "habitEdit_reminder_cancelDialogSubtitle": "",
+  "@habitEdit_reminder_cancelDialogSubtitle": {},
+  "habitEdit_reminder_dialogType_week": "",
+  "@habitEdit_reminder_dialogType_week": {},
+  "habitEdit_reminder_weekdayText_tuesday": "",
+  "@habitEdit_reminder_weekdayText_tuesday": {},
+  "habitEdit_reminder_cancelDialogCancel": "",
+  "@habitEdit_reminder_cancelDialogCancel": {},
+  "habitEdit_reminder_weekdayText_wednesday": "",
+  "@habitEdit_reminder_weekdayText_wednesday": {},
+  "habitEdit_reminder_weekdayText_thursday": "",
+  "@habitEdit_reminder_weekdayText_thursday": {},
+  "habitEdit_reminder_weekdayText_saturday": "",
+  "@habitEdit_reminder_weekdayText_saturday": {},
+  "habitDisplay_emptyImage_text_01": "",
+  "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "",
+  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_archiveHabitsConfirmDialog_title": "",
+  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_editButton_tooltip": "",
+  "@habitDisplay_editButton_tooltip": {},
+  "habitDisplay_editPopMenu_clone": "",
+  "@habitDisplay_editPopMenu_clone": {},
+  "habitDisplay_editPopMenu_delete": "",
+  "@habitDisplay_editPopMenu_delete": {},
+  "habitDisplay_editPopMenu_export": "",
+  "@habitDisplay_editPopMenu_export": {},
+  "habitDisplay_editPopMenu_selectAll": "",
+  "@habitDisplay_editPopMenu_selectAll": {},
+  "habitDisplay_archiveButton_tooltip": "",
+  "@habitDisplay_archiveButton_tooltip": {},
+  "habitDisplay_statsMenu_completedTileText": "",
+  "@habitDisplay_statsMenu_completedTileText": {},
+  "habitDisplay_statsMenu_inProgresTileText": "",
+  "@habitDisplay_statsMenu_inProgresTileText": {},
+  "habitDisplay_mainMenu_lightTheme": "",
+  "@habitDisplay_mainMenu_lightTheme": {},
+  "habitDisplay_statsMenu_archivedTileText": "",
+  "@habitDisplay_statsMenu_archivedTileText": {},
+  "habitDisplay_statsMenu_popularitySubgroupText": "",
+  "@habitDisplay_statsMenu_popularitySubgroupText": {},
+  "habitDisplay_mainMenu_darkTheme": "",
+  "@habitDisplay_mainMenu_darkTheme": {},
+  "habitDisplay_sort_reverseText": "",
+  "@habitDisplay_sort_reverseText": {},
+  "habitDisplay_mainMenu_showActivedTileText": "",
+  "@habitDisplay_mainMenu_showActivedTileText": {},
+  "habitDisplay_mainMenu_followSystemTheme": "",
+  "@habitDisplay_mainMenu_followSystemTheme": {},
+  "habitDisplay_mainMenu_showArchivedTileText": "",
+  "@habitDisplay_mainMenu_showArchivedTileText": {},
+  "habitDisplay_mainMenu_showCompletedTileText": "",
+  "@habitDisplay_mainMenu_showCompletedTileText": {},
+  "habitDisplay_sortType_name": "",
+  "@habitDisplay_sortType_name": {},
+  "habitDisplay_sortType_colorType": "",
+  "@habitDisplay_sortType_colorType": {},
+  "habitDisplay_sortDirection_Desc": "",
+  "@habitDisplay_sortDirection_Desc": {},
+  "habitDisplay_sortType_manual": "",
+  "@habitDisplay_sortType_manual": {},
+  "habitDetail_editButton_tooltip": "",
+  "@habitDetail_editButton_tooltip": {},
+  "habitDisplay_sortTypeDialog_cancel": "",
+  "@habitDisplay_sortTypeDialog_cancel": {},
+  "habitDetail_editPopMenu_unarchive": "",
+  "@habitDetail_editPopMenu_unarchive": {},
+  "habitDisplay_sortTypeDialog_confirm": "",
+  "@habitDisplay_sortTypeDialog_confirm": {},
+  "habitDetail_editPopMenu_delete": "",
+  "@habitDetail_editPopMenu_delete": {},
+  "habitDetail_deleteConfirmDialog_titleText": "",
+  "@habitDetail_deleteConfirmDialog_titleText": {},
+  "habitDetail_archiveConfirmDialog_titleText": "",
+  "@habitDetail_archiveConfirmDialog_titleText": {},
+  "habitDetail_descDailyGoal_unitText": "",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descTargetDays_titleText": "",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_scoreChart_title": "",
+  "@habitDetail_scoreChart_title": {},
+  "habitDetail_descRecordsNum_titleText": "",
+  "@habitDetail_descRecordsNum_titleText": {},
+  "habitDetail_descTargetDays_unitText": "",
+  "@habitDetail_descTargetDays_unitText": {},
+  "habitDetail_freqChart_historyTitle": "",
+  "@habitDetail_freqChart_historyTitle": {},
+  "habitDetail_scoreChartCombine_weeklyText": "",
+  "@habitDetail_scoreChartCombine_weeklyText": {},
+  "habitDetail_freqChartNaviBar_nowText": "",
+  "@habitDetail_freqChartNaviBar_nowText": {},
+  "habitDetail_descSubgroup_title": "",
+  "@habitDetail_descSubgroup_title": {},
+  "habitDetail_reminderTile_title": "",
+  "@habitDetail_reminderTile_title": {},
+  "habitDetail_freqTile_title": "",
+  "@habitDetail_freqTile_title": {},
+  "habitDetail_modifyDateTile_title": "",
+  "@habitDetail_modifyDateTile_title": {},
+  "habitDetail_editHeatmapCal_dateButtonText": "",
+  "@habitDetail_editHeatmapCal_dateButtonText": {},
+  "habitDetail_editHeatmapCal_valueButtonText": "",
+  "@habitDetail_editHeatmapCal_valueButtonText": {},
+  "habitDetail_notFoundText": "",
+  "@habitDetail_notFoundText": {},
+  "habitDetail_changeGoal_doneChipText": "",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_cancelText": "",
+  "@habitDetail_changeGoal_cancelText": {},
+  "habitDetail_skipReason_bodyHelpText": "",
+  "@habitDetail_skipReason_bodyHelpText": {},
+  "appSetting_operationSubgroupText": "",
+  "@appSetting_operationSubgroupText": {},
+  "appSetting_changeLanguage_followSystem_noLocale_text": "",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_firstDayOfWeekDialog_defaultText": "",
+  "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "appSetting_firstDayOfWeekDialog_titleText": "",
+  "@appSetting_firstDayOfWeekDialog_titleText": {},
+  "appSetting_changeLanguageTile_titleText": "",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_compactUISwitcher_titleText": "",
+  "@appSetting_compactUISwitcher_titleText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appSetting_dailyReminder_titleText": "",
+  "@appSetting_dailyReminder_titleText": {},
+  "appSetting_export_titleText": "",
+  "@appSetting_export_titleText": {},
+  "appSetting_importDialog_importingTitle": "",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_import_titleText": "",
+  "@appSetting_import_titleText": {},
+  "appSetting_importDialog_complete_closeLabel": "",
+  "@appSetting_importDialog_complete_closeLabel": {},
+  "appSetting_importDialog_confirmTitle": "",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirm_cancelText": "",
+  "@appSetting_importDialog_confirm_cancelText": {},
+  "appSetting_resetConfigDialog_titleText": "",
+  "@appSetting_resetConfigDialog_titleText": {},
+  "appSetting_importDialog_confirm_confirmText": "",
+  "@appSetting_importDialog_confirm_confirmText": {},
+  "appSetting_resetConfigDialog_cancelText": "",
+  "@appSetting_resetConfigDialog_cancelText": {},
+  "appSetting_otherSubgroupText": "",
+  "@appSetting_otherSubgroupText": {},
+  "appSetting_resetConfigDialog_confirmText": "",
+  "@appSetting_resetConfigDialog_confirmText": {},
+  "appSetting_clearCache_titleText": "",
+  "@appSetting_clearCache_titleText": {},
+  "appSetting_clearCacheDialog_subtitleText": "",
+  "@appSetting_clearCacheDialog_subtitleText": {},
+  "appSetting_clearCacheDialog_cancelText": "",
+  "@appSetting_clearCacheDialog_cancelText": {},
+  "appSetting_clearCache_snackBar_partSuccText": "",
+  "@appSetting_clearCache_snackBar_partSuccText": {},
+  "appSetting_clearCacheDialog_confirmText": "",
+  "@appSetting_clearCacheDialog_confirmText": {},
+  "appAbout_contactEmailTile_titleText": "",
+  "@appAbout_contactEmailTile_titleText": {},
+  "appAbout_contactEmailTile_emailBody": "",
+  "@appAbout_contactEmailTile_emailBody": {},
+  "appAbout_licenseThirdPartyTile_subtitleText": "",
+  "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_licenseThirdPartyTile_titleText": "",
+  "@appAbout_licenseThirdPartyTile_titleText": {},
+  "appAbout_licenseTile_subtitleText": "",
+  "@appAbout_licenseTile_subtitleText": {},
+  "appAbout_donateTile_titleText": "",
+  "@appAbout_donateTile_titleText": {},
+  "appAbout_licenseTile_titleText": "",
+  "@appAbout_licenseTile_titleText": {},
+  "appAbout_donateTile_ways": "",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "batchCheckin_status_ok_text": "",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "batchCheckin_status_skip_text": "",
+  "@batchCheckin_status_skip_text": {},
+  "batchCheckin_status_double_text": "",
+  "@batchCheckin_status_double_text": {},
+  "batchCheckin_save_button_text": "",
+  "@batchCheckin_save_button_text": {},
+  "batchCheckin_reset_button_text": "",
+  "@batchCheckin_reset_button_text": {},
+  "batchCheckin_save_confirmDialog_body": "",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "appReminder_dailyReminder_title": "",
+  "@appReminder_dailyReminder_title": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "common_habitColorType_cc3": "",
+  "@common_habitColorType_cc3": {},
+  "common_habitColorType_cc5": "",
+  "@common_habitColorType_cc5": {},
+  "common_habitColorType_default": "",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_habitColorType_cc10": "",
+  "@common_habitColorType_cc10": {},
+  "common_customDateTimeFormatPicker_ymd_text": "",
+  "@common_customDateTimeFormatPicker_ymd_text": {},
+  "common_customDateTimeFormatPicker_sepDash_text": "",
+  "@common_customDateTimeFormatPicker_sepDash_text": {},
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "debug_logLevelDialog_title": "",
+  "@debug_logLevelDialog_title": {},
+  "debug_logLevel_debug": "",
+  "@debug_logLevel_debug": {},
+  "debug_debuggerInfoCard_title": "",
+  "@debug_debuggerInfoCard_title": {},
+  "contributors_tile_title": "",
+  "@contributors_tile_title": {},
+  "userAction_longTap": "",
+  "@userAction_longTap": {},
+  "habitDetail_otherSubgroup_title": "",
+  "@habitDetail_otherSubgroup_title": {},
+  "habitEdit_habitFreq_show_daily": "",
+  "@habitEdit_habitFreq_show_daily": {},
+  "habitEdit_reminder_weekdayText_monday": "",
+  "@habitEdit_reminder_weekdayText_monday": {},
+  "habitDisplay_sortDirection_asc": "",
+  "@habitDisplay_sortDirection_asc": {},
+  "appSetting_backupAndRestoreSubgroupText": "",
+  "@appSetting_backupAndRestoreSubgroupText": {},
+  "appSetting_importDialog_confirmSubtitle": "",
+  "@appSetting_importDialog_confirmSubtitle": {},
+  "donateWay_firstQRGroup": "",
+  "@donateWay_firstQRGroup": {},
+  "habitDetail_createDateTile_title": "",
+  "@habitDetail_createDateTile_title": {},
+  "habitDisplay_mainMenu_settingTileText": "",
+  "@habitDisplay_mainMenu_settingTileText": {},
+  "exportConfirmDialog_confirm_buttonText": "",
+  "@exportConfirmDialog_confirm_buttonText": {},
+  "debug_collectLogTile_enable_subtitle": "",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "batchCheckin_close_confirmDialog_body": "",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_title": "",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "common_customDateTimeFormatPicker_dmy_text": "",
+  "@common_customDateTimeFormatPicker_dmy_text": {},
+  "habitEdit_reminder_dialogCancel": "",
+  "@habitEdit_reminder_dialogCancel": {},
+  "habitEdit_targetDays": "",
+  "@habitEdit_targetDays": {},
+  "debug_debuggerLogCard_title": "",
+  "@debug_debuggerLogCard_title": {},
+  "habitDisplay_sortType_progress": "",
+  "@habitDisplay_sortType_progress": {},
+  "habitEdit_reminder_weekdayText_friday": "",
+  "@habitEdit_reminder_weekdayText_friday": {},
+  "habitDetail_confirmDialog_cancel": "",
+  "@habitDetail_confirmDialog_cancel": {},
+  "habitEdit_habitDailyGoal_errorText01": "",
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
+  "appSetting_importDialog_completeTitle": "",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_sortType_startT": "",
+  "@habitDisplay_sortType_startT": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "appSetting_clearCache_snackBar_failText": "",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "habitDisplay_deleteHabitsConfirmDialog_title": "",
+  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "",
+  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+  "appSetting_displaySubgroupText": "",
+  "@appSetting_displaySubgroupText": {},
+  "habitEdit_habitFreq_show_permonth": "",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_downladDebugZip_subject": "",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "habitDetail_freqChartCombine_weeklyText": "",
+  "@habitDetail_freqChartCombine_weeklyText": {},
+  "habitDetail_descDailyGoal_titleText": "",
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "common_habitColorType_cc9": "",
+  "@common_habitColorType_cc9": {},
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "",
+  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
+  "appSetting_compactUISwitcher_subtitleText": "",
+  "@appSetting_compactUISwitcher_subtitleText": {},
+  "appAbout_donateTile_subTitleText": "",
+  "@appAbout_donateTile_subTitleText": {},
+  "common_habitColorType_cc8": "",
+  "@common_habitColorType_cc8": {},
+  "habitEdit_reminder_freq_monthHelpText": "",
+  "@habitEdit_reminder_freq_monthHelpText": {},
+  "debug_collectLogTile_disable_subtitle": "",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "common_customDateTimeFormatPicker_sep_formatter": "",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "appSetting_appbar_titleText": "",
+  "@appSetting_appbar_titleText": {},
+  "batchCheckin_completed_snackbar_text": "",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportAll": "",
+  "@exportConfirmDialog_title_exportAll": {},
+  "habitDetail_summary_preBody": "",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appAbout_versionTile_changeLogPath": "",
+  "@appAbout_versionTile_changeLogPath": {},
+  "habitDetail_confirmDialog_confirm": "",
+  "@habitDetail_confirmDialog_confirm": {},
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "",
+  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+  "donateWay_cryptoCurrency_AVAX": "",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "appSetting_changeLanguage_followSystem_text": "",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitEmptyText": "",
+  "@habitDetail_descDailyGoal_unitEmptyText": {},
+  "habitDetail_freqChart_freqTitle": "",
+  "@habitDetail_freqChart_freqTitle": {},
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "",
+  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+  "habitDisplay_sortType_status": "",
+  "@habitDisplay_sortType_status": {},
+  "common_customDateTimeFormatPicker_fmtTileText": "",
+  "@common_customDateTimeFormatPicker_fmtTileText": {},
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
+  "habitDetail_heatmap_leftHelpText": "",
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_reminderQuest_hintText": "",
+  "@habitEdit_reminderQuest_hintText": {},
+  "snackbar_dismissText": "",
+  "@snackbar_dismissText": {},
+  "habitDetail_unarchiveConfirmDialog_titleText": "",
+  "@habitDetail_unarchiveConfirmDialog_titleText": {},
+  "appSetting_resetConfigDialog_subtitleText": "",
+  "@appSetting_resetConfigDialog_subtitleText": {},
+  "calendarPicker_clip_tomorrow": "",
+  "@calendarPicker_clip_tomorrow": {},
+  "habitDetail_notFoundRetryText": "",
+  "@habitDetail_notFoundRetryText": {},
+  "debug_missingDebugLogFile_snackbar": "",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "appSetting_changeLanguageDialog_titleText": "",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "debug_downladDebugInfo_subject": "",
+  "@debug_downladDebugInfo_subject": {},
+  "habitEdit_habitDailyGoalExtra_errorText": "",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "",
+  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+  "appSetting_openRecordStatusDialogOpTile_titleText": "",
+  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+  "debug_debuggerLogCard_saveButton_text": "",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "habitDisplay_fab_text": "",
+  "@habitDisplay_fab_text": {},
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_frequencySelector_title": "",
+  "@habitEdit_frequencySelector_title": {},
+  "appSetting_dateDisplayFormat_titleText": "",
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "habitEdit_colorPicker_title": "",
+  "@habitEdit_colorPicker_title": {},
+  "donateWay_paypal": "",
+  "@donateWay_paypal": {},
+  "common_customDateTimeFormatPicker_sepSpace_text": "",
+  "@common_customDateTimeFormatPicker_sepSpace_text": {},
+  "appAbout_donateDialog_copiedCrypto_msg": "",
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "habitDisplay_sortTypeDialog_title": "",
+  "@habitDisplay_sortTypeDialog_title": {},
+  "habitDetail_freqChart_combinedTitle": "",
+  "@habitDetail_freqChart_combinedTitle": {},
+  "habitEdit_reminder_freq_weekHelpText": "",
+  "@habitEdit_reminder_freq_weekHelpText": {},
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "",
+  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+  "common_errorPage_title": "",
+  "@common_errorPage_title": {},
+  "debug_logLevel_error": "",
+  "@debug_logLevel_error": {},
+  "common_habitColorType_cc2": "",
+  "@common_habitColorType_cc2": {},
+  "donateWay_wechatPay": "",
+  "@donateWay_wechatPay": {},
+  "donateWay_cryptoCurrency_ETH": "",
+  "@donateWay_cryptoCurrency_ETH": {},
+  "donateWay_alipay": "",
+  "@donateWay_alipay": {},
+  "batchCheckin_appbar_title": "",
+  "@batchCheckin_appbar_title": {},
+  "common_customDateTimeFormatPicker_mdy_text": "",
+  "@common_customDateTimeFormatPicker_mdy_text": {},
+  "debug_logLevelTile_title": "",
+  "@debug_logLevelTile_title": {},
+  "donateWay_cryptoCurrency": "",
+  "@donateWay_cryptoCurrency": {},
+  "appSetting_changeRecordStatusOpTile_subtitleText": "",
+  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+  "habitEdit_habitFreq_show_perdayfreq": "",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "calendarPicker_clip_today": "",
+  "@calendarPicker_clip_today": {},
+  "habitDetail_heatmap_rightHelpText": "",
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_changeGoal_extraChipText": "",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitEdit_targetDays_dialogTitle": "",
+  "@habitEdit_targetDays_dialogTitle": {},
+  "common_habitColorType_cc6": "",
+  "@common_habitColorType_cc6": {},
+  "common_errorPage_copied": "",
+  "@common_errorPage_copied": {},
+  "habitDisplay_unarchiveButton_tooltip": "",
+  "@habitDisplay_unarchiveButton_tooltip": {},
+  "calendarPicker_clip_after7Days": "",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "appSetting_dragCalendarByPageTile_titleText": "",
+  "@appSetting_dragCalendarByPageTile_titleText": {},
+  "habitDisplay_archiveHabitsSuccSnackbarText": "",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_editPopMenu_archive": "",
+  "@habitDetail_editPopMenu_archive": {},
+  "habitDisplay_settingButton_tooltip": "",
+  "@habitDisplay_settingButton_tooltip": {},
+  "debug_collectLogTile_title": "",
+  "@debug_collectLogTile_title": {},
+  "habitEdit_create_datetime_prefix": "",
+  "@habitEdit_create_datetime_prefix": {},
+  "habitEdit_reminder_hintText": "",
+  "@habitEdit_reminder_hintText": {},
+  "appSetting_clearCache_snackBar_succText": "",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "common_customDateTimeFormatPicker_SepTileText": "",
+  "@common_customDateTimeFormatPicker_SepTileText": {},
+  "habitDetail_freqChartCombine_yearlyText": "",
+  "@habitDetail_freqChartCombine_yearlyText": {},
+  "habitDisplay_debug_debugSubgroup_title": "",
+  "@habitDisplay_debug_debugSubgroup_title": {},
+  "donateWay_buyMeACoffee": "",
+  "@donateWay_buyMeACoffee": {},
+  "habitDetail_editPopMenu_export": "",
+  "@habitDetail_editPopMenu_export": {},
+  "appSetting_about_titleText": "",
+  "@appSetting_about_titleText": {},
+  "common_habitColorType_cc4": "",
+  "@common_habitColorType_cc4": {},
+  "appSetting_dateDisplayFormat_subTitleText": "",
+  "@appSetting_dateDisplayFormat_subTitleText": {},
+  "appSetting_debugger_titleText": "",
+  "@appSetting_debugger_titleText": {},
+  "habitDetail_freqChartCombine_monthlyText": "",
+  "@habitDetail_freqChartCombine_monthlyText": {},
+  "debug_debuggerInfo_notificationTitle": "",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "habitDetail_freqChart_expanded_showTooltip": "",
+  "@habitDetail_freqChart_expanded_showTooltip": {},
+  "appAbout_appbarTile_titleText": "",
+  "@appAbout_appbarTile_titleText": {},
+  "appSetting_dragCalendarByPageTile_subtitleText": "",
+  "@appSetting_dragCalendarByPageTile_subtitleText": {},
+  "debug_logLevel_fatal": "",
+  "@debug_logLevel_fatal": {},
+  "habitDetail_changeGoal_undoneChipText": "",
+  "@habitDetail_changeGoal_undoneChipText": {},
+  "habitEdit_habitFreq_perweek_ex01": "",
+  "@habitEdit_habitFreq_perweek_ex01": {},
+  "habitDetail_scoreChartCombine_dailyText": "",
+  "@habitDetail_scoreChartCombine_dailyText": {},
+  "habitEdit_habitDailyGoal_negativeHintText": "",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "batchCheckin_status_zero_text": "",
+  "@batchCheckin_status_zero_text": {},
+  "habitDetail_skipReason_saveText": "",
+  "@habitDetail_skipReason_saveText": {},
+  "appAbout_versionTile_titleText": "",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "exportConfirmDialog_option_includeRecords": "",
+  "@exportConfirmDialog_option_includeRecords": {},
+  "appAbout_sourceCodeTile_titleText": "",
+  "@appAbout_sourceCodeTile_titleText": {},
+  "habitEdit_modify_datetime_prefix": "",
+  "@habitEdit_modify_datetime_prefix": {},
+  "habitDetail_freqChart_expanded_hideTooltip": "",
+  "@habitDetail_freqChart_expanded_hideTooltip": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "donateWay_cryptoCurrency_FTM": "",
+  "@donateWay_cryptoCurrency_FTM": {},
+  "common_customDateTimeFormatPicker_sepDot_text": "",
+  "@common_customDateTimeFormatPicker_sepDot_text": {},
+  "appSetting_resetConfig_subtitleText": "",
+  "@appSetting_resetConfig_subtitleText": {},
+  "habitEdit_desc_hintText": "",
+  "@habitEdit_desc_hintText": {},
+  "debug_debuggerLogCard_subtitle": "",
+  "@debug_debuggerLogCard_subtitle": {},
+  "common_customDateTimeFormatPicker_sepSlash_text": "",
+  "@common_customDateTimeFormatPicker_sepSlash_text": {},
+  "appSetting_collapsed_calendar_bararea_defaultText": "",
+  "@appSetting_collapsed_calendar_bararea_defaultText": {},
+  "appReminder_dailyReminder_body": "",
+  "@appReminder_dailyReminder_body": {},
+  "appSetting_import_subtitleText": "",
+  "@appSetting_import_subtitleText": {},
+  "debug_debuggerInfoCard_subtitle": "",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "",
+  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
+  "habitDisplay_deleteHabitsSuccSnackbarText": "",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_logLevel_info": "",
+  "@debug_logLevel_info": {},
+  "appSetting_changeRecordStatusOpTile_titleText": "",
+  "@appSetting_changeRecordStatusOpTile_titleText": {},
+  "batchCheckin_save_confirmDialog_title": "",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "habitEdit_targetDays_title": "",
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_empty_text": "",
+  "@common_customDateTimeFormatPicker_empty_text": {},
+  "batchCheckin_habits_groupTitle": "",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_debuggerLogCard_clearButton_text": "",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "habitEdit_habitFreq_permonth_ex01": "",
+  "@habitEdit_habitFreq_permonth_ex01": {},
+  "appSetting_developMode_titleText": "",
+  "@appSetting_developMode_titleText": {},
+  "habitEdit_reminder_freq_weekPrefixText": "",
+  "@habitEdit_reminder_freq_weekPrefixText": {},
+  "habitEdit_reminder_dialogType_daily": "",
+  "@habitEdit_reminder_dialogType_daily": {},
+  "habitDetail_scoreChartCombine_yearlyText": "",
+  "@habitDetail_scoreChartCombine_yearlyText": {},
+  "habitDetail_skipReason_title": "",
+  "@habitDetail_skipReason_title": {},
+  "appSetting_collapsed_calendar_bararea_subtitleText": "",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "habitEdit_habitDailyGoal_errorText02": "",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitFreq_predayfreq_ex01": "",
+  "@habitEdit_habitFreq_predayfreq_ex01": {},
+  "common_customDateTimeFormatPicker_monthName_text": "",
+  "@common_customDateTimeFormatPicker_monthName_text": {},
+  "appSetting_reminderSubgroupText": "",
+  "@appSetting_reminderSubgroupText": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "habitDetail_changeGoal_helpText": "",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDisplay_statsMenu_statSubgroupText": "",
+  "@habitDisplay_statsMenu_statSubgroupText": {},
+  "habitDetail_habitType_title": "",
+  "@habitDetail_habitType_title": {},
+  "habitEdit_habitFreq_show_perweek": "",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appAbout_issueTrackerTile_titleText": "",
+  "@appAbout_issueTrackerTile_titleText": {},
+  "donateWay_cryptoCurrency_BTC": "",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "debug_debuggerInfoCard_saveButton_text": "",
+  "@debug_debuggerInfoCard_saveButton_text": {},
+  "habitEdit_habitDailyGoal_negativeErrorText01": "",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitDetail_startDateTile_title": "",
+  "@habitDetail_startDateTile_title": {},
+  "common_customDateTimeFormatPicker_12Hour_text": "",
+  "@common_customDateTimeFormatPicker_12Hour_text": {},
+  "appSetting_export_subtitleText": "",
+  "@appSetting_export_subtitleText": {},
+  "appSetting_clearCacheDialog_titleText": "",
+  "@appSetting_clearCacheDialog_titleText": {},
+  "habitDetail_scoreChartCombine_monthlyText": "",
+  "@habitDetail_scoreChartCombine_monthlyText": {},
+  "exportConfirmDialog_title_exportMulti": "",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_changeGoal_currentChipText": "",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "common_habitColorType_cc7": "",
+  "@common_habitColorType_cc7": {},
+  "snackbar_undoText": "",
+  "@snackbar_undoText": {},
+  "habitDetail_summary_body": "",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_predayfreq_ex02": "",
+  "@habitEdit_habitFreq_predayfreq_ex02": {},
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "",
+  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
+  "appSetting_resetConfigSuccess_snackbarText": "",
+  "@appSetting_resetConfigSuccess_snackbarText": {},
+  "habitEdit_reminder_weekdayText_sunday": "",
+  "@habitEdit_reminder_weekdayText_sunday": {},
+  "debug_debuggerInfoCard_openButton_text": "",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_downladDebugLogs_subject": "",
+  "@debug_downladDebugLogs_subject": {},
+  "habitDetail_editPopMenu_clone": "",
+  "@habitDetail_editPopMenu_clone": {},
+  "habitDetail_skipReason_cancelText": "",
+  "@habitDetail_skipReason_cancelText": {},
+  "common_habitColorType_cc1": "",
+  "@common_habitColorType_cc1": {},
+  "appSetting_firstDayOfWeek_titleText": "",
+  "@appSetting_firstDayOfWeek_titleText": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "habitDetail_summary_title": "",
+  "@habitDetail_summary_title": {},
+  "donateWay_cryptoCurrency_BNB": "",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
+  "debug_logLevel_warn": "",
+  "@debug_logLevel_warn": {},
+  "exportConfirmDialog_cancel_buttonText": "",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "habitDetail_changeGoal_saveText": "",
+  "@habitDetail_changeGoal_saveText": {},
+  "habitDetail_changeGoal_title": "",
+  "@habitDetail_changeGoal_title": {},
+  "appSetting_resetConfig_titleText": "",
+  "@appSetting_resetConfig_titleText": {}
 }

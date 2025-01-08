@@ -704,5 +704,11 @@
         "example": "1"
       }
     }
-  }
+  },
+  "common_errorPage_copied": "",
+  "@common_errorPage_copied": {},
+  "common_errorPage_title": "",
+  "@common_errorPage_title": {},
+  "debug_logLevel_fatal": "",
+  "@debug_logLevel_fatal": {}
 }
