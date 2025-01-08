@@ -55,6 +55,8 @@ const appSupportedLocales = [
   // en must be the first item in the list (default language)
   Locale.fromSubtags(languageCode: 'en'),
   Locale.fromSubtags(languageCode: 'ar'),
+  // TODO: remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'cs'),
   Locale.fromSubtags(languageCode: 'de'),
   Locale.fromSubtags(languageCode: 'es'),
   Locale.fromSubtags(languageCode: 'fa'),
