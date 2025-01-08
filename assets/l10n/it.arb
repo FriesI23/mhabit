@@ -984,11 +984,5 @@
   "debug_debuggerInfoCard_openButton_text": "Apri",
   "@debug_debuggerInfoCard_openButton_text": {},
   "debug_debuggerInfoCard_saveButton_text": "Salva",
-  "@debug_debuggerInfoCard_saveButton_text": {},
-  "common_errorPage_title": "",
-  "@common_errorPage_title": {},
-  "common_errorPage_copied": "",
-  "@common_errorPage_copied": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {}
+  "@debug_debuggerInfoCard_saveButton_text": {}
 }

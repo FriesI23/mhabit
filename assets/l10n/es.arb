@@ -976,19 +976,5 @@
   "batchCheckin_status_double_text": "¡Doble éxito!",
   "@batchCheckin_status_double_text": {},
   "common_habitColorType_cc10": "Morado oscuro",
-  "@common_habitColorType_cc10": {},
-  "habitEdit_habitFreq_permonth": "",
-  "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_perweek": "",
-  "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_reminder_freq_monthPrefixText": "",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "common_errorPage_copied": "",
-  "@common_errorPage_copied": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "common_errorPage_title": "",
-  "@common_errorPage_title": {}
+  "@common_habitColorType_cc10": {}
 }
