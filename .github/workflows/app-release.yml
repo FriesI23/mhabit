@@ -32,6 +32,7 @@ jobs:
     name: Pre Building
     needs:
       - analyzing
+      - checking
       - testing
       - testing-report
     runs-on: ubuntu-latest
