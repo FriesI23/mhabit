@@ -17,23 +17,78 @@
   "habitEdit_habitType_negativeText": "消极",
   "@habitEdit_habitType_negativeText": {},
   "habitEdit_habitDailyGoal_hintText": "每日目标, 默认为{number}",
-  "@habitEdit_habitDailyGoal_hintText": {},
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_habitDailyGoal_negativeHintText": "每日最低限度, 默认为{number}",
-  "@habitEdit_habitDailyGoal_negativeHintText": {},
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoal_errorText01": "每日目标须 > {number}",
-  "@habitEdit_habitDailyGoal_errorText01": {},
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoal_errorText02": "每日目标须 ≤ {number}",
-  "@habitEdit_habitDailyGoal_errorText02": {},
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoal_negativeErrorText01": "每日目标必须 ≥ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText01": {},
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoal_negativeErrorText02": "每日目标必须 ≤ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText02": {},
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "maximum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoalUnit_hintText": "单位",
   "@habitEdit_habitDailyGoalUnit_hintText": {},
   "habitEdit_habitDailyGoalExtra_hintText": "期望的每日最高目标",
   "@habitEdit_habitDailyGoalExtra_hintText": {},
   "habitEdit_habitDailyGoalExtra_errorText": "无效的值，必须为空或者 ≥ {dailyGoal}",
-  "@habitEdit_habitDailyGoalExtra_errorText": {},
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_habitDailyGoalExtra_negativeHintText": "每日最高限额",
   "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
   "habitEdit_frequencySelector_title": "频率",
@@ -55,25 +110,57 @@
   "habitEdit_habitFreq_predayfreq_ex02": "每",
   "@habitEdit_habitFreq_predayfreq_ex02": {},
   "habitEdit_habitFreq_predayfreq_reverse_flag": "1",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {},
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
   "habitEdit_habitFreq_show_daily": "每日",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{每周} other{每周至少完成{freq}次}}",
-  "@habitEdit_habitFreq_show_perweek": {},
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{每月} other{每月至少完成{freq}次}}",
-  "@habitEdit_habitFreq_show_permonth": {},
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{每{days}天} other{每{days}天内至少完成{freq}次}}",
-  "@habitEdit_habitFreq_show_perdayfreq": {},
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_targetDays_title": "{targetDays}日",
-  "@habitEdit_targetDays_title": {},
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitEdit_targetDays_dialogTitle": "选择目标",
   "@habitEdit_targetDays_dialogTitle": {},
   "habitEdit_targetDays": "日",
   "@habitEdit_targetDays": {},
   "habitEdit_reminder_hintText": "提醒",
   "@habitEdit_reminder_hintText": {},
-  "habitEdit_reminderQuest_hintText": "提一个问题, 比如\"今天完成作业了么?\"",
-  "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "每日(按周)",
   "@habitEdit_reminder_freq_weekHelpText": {},
   "habitEdit_reminder_freq_weekPrefixText": "每周",
@@ -86,6 +173,8 @@
   "@habitEdit_reminder_freq_monthPrefixText": {},
   "habitEdit_reminder_freq_monthSubfixText": "日",
   "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminderQuest_hintText": "提一个问题, 比如\"今天完成作业了么?\"",
+  "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "提醒频率",
   "@habitEdit_reminder_dialogTitle": {},
   "habitEdit_reminder_dialogType_whenNeeded": "当需要打卡时",
@@ -139,7 +228,14 @@
   "habitDisplay_archiveHabitsConfirmDialog_cancel": "取消",
   "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
   "habitDisplay_archiveHabitsSuccSnackbarText": "已归档{count}个习惯",
-  "@habitDisplay_archiveHabitsSuccSnackbarText": {},
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDisplay_unarchiveHabitsConfirmDialog_title": "取消选中习惯的归档?",
   "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
   "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "确定",
@@ -147,7 +243,14 @@
   "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "取消",
   "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
   "habitDisplay_unarchiveHabitsSuccSnackbarText": "已取消{count}个习惯的归档",
-  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {},
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDisplay_deleteHabitsConfirmDialog_title": "删除选择的习惯?",
   "@habitDisplay_deleteHabitsConfirmDialog_title": {},
   "habitDisplay_deleteHabitsConfirmDialog_confirm": "确定",
@@ -155,7 +258,14 @@
   "habitDisplay_deleteHabitsConfirmDialog_cancel": "取消",
   "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
   "habitDisplay_deleteHabitsSuccSnackbarText": "已删除{count}个习惯",
-  "@habitDisplay_deleteHabitsSuccSnackbarText": {},
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "全选",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "导出",
@@ -247,21 +357,74 @@
   "habitDetail_summary_title": "总览",
   "@habitDetail_summary_title": {},
   "habitDetail_summary_body": "当前分数为 {score}，距开始已经过 {days} 天。",
-  "@habitDetail_summary_body": {},
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_summary_preBody": "距离开始还有 {days} 天",
-  "@habitDetail_summary_preBody": {},
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{未完成} =2{未达标} other{}}",
-  "@habitDetail_heatmap_leftHelpText": {},
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{超额完成} =2{完美达标} other{}}",
-  "@habitDetail_heatmap_rightHelpText": {},
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{每日限额} other{每日目标}}",
-  "@habitDetail_descDailyGoal_titleText": {},
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_descDailyGoal_unitText": "单位：{unit}",
-  "@habitDetail_descDailyGoal_unitText": {},
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
   "habitDetail_descDailyGoal_unitEmptyText": "无",
   "@habitDetail_descDailyGoal_unitEmptyText": {},
   "habitDetail_descTargetDays_titleText": "{habitType, plural, =2{达标天数} other{完成天数}}",
-  "@habitDetail_descTargetDays_titleText": {},
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "habitDetail_descTargetDays_unitText": "",
   "@habitDetail_descTargetDays_unitText": {},
   "habitDetail_descRecordsNum_titleText": "记录总数",
@@ -323,15 +486,43 @@
   "habitDetail_changeGoal_title": "更改目标",
   "@habitDetail_changeGoal_title": {},
   "habitDetail_changeGoal_currentChipText": "当前: {goal}",
-  "@habitDetail_changeGoal_currentChipText": {},
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
   "habitDetail_changeGoal_doneChipText": "完成: {goal}",
-  "@habitDetail_changeGoal_doneChipText": {},
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
   "habitDetail_changeGoal_undoneChipText": "未完成",
   "@habitDetail_changeGoal_undoneChipText": {},
   "habitDetail_changeGoal_extraChipText": "{goal}",
-  "@habitDetail_changeGoal_extraChipText": {},
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
   "habitDetail_changeGoal_helpText": "每日目标，默认值：{goal}",
-  "@habitDetail_changeGoal_helpText": {},
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
   "habitDetail_changeGoal_cancelText": "取消",
   "@habitDetail_changeGoal_cancelText": {},
   "habitDetail_changeGoal_saveText": "保存",
@@ -368,8 +559,30 @@
   "@appSetting_firstDayOfWeekDialog_titleText": {},
   "appSetting_firstDayOfWeekDialog_defaultText": "（默认值）",
   "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "appSetting_changeLanguage_followSystem_text": "跟随系统（{localeName}）",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "跟随系统",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "多语言",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "选择语言",
+  "@appSetting_changeLanguageDialog_titleText": {},
   "appSetting_dateDisplayFormat_titleText": "日期显示格式 ({formatTemplate})",
-  "@appSetting_dateDisplayFormat_titleText": {},
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
   "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "跟随系统设置",
   "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
   "appSetting_dateDisplayFormat_subTitleText": "配置的日期格式将应用于习惯详情页面的日期显示。",
@@ -399,7 +612,14 @@
   "appSetting_import_subtitleText": "从 JSON 文件导入习惯。",
   "@appSetting_import_subtitleText": {},
   "appSetting_importDialog_confirmTitle": "确认导入 {count} 个习惯？",
-  "@appSetting_importDialog_confirmTitle": {},
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "appSetting_importDialog_confirmSubtitle": "注意：导入不会删除现有的习惯。",
   "@appSetting_importDialog_confirmSubtitle": {},
   "appSetting_importDialog_confirm_confirmText": "确认",
@@ -407,9 +627,27 @@
   "appSetting_importDialog_confirm_cancelText": "取消",
   "@appSetting_importDialog_confirm_cancelText": {},
   "appSetting_importDialog_importingTitle": "已导入 {completeCount}/{totalCount}",
-  "@appSetting_importDialog_importingTitle": {},
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "appSetting_importDialog_completeTitle": "完成导入 {count} 个习惯",
-  "@appSetting_importDialog_completeTitle": {},
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "appSetting_importDialog_complete_closeLabel": "关闭",
   "@appSetting_importDialog_complete_closeLabel": {},
   "appSetting_resetConfig_titleText": "重置配置",
@@ -446,12 +684,21 @@
   "@appSetting_clearCache_snackBar_succText": {},
   "appSetting_clearCache_snackBar_failText": "缓存清理失败",
   "@appSetting_clearCache_snackBar_failText": {},
+  "appSetting_debugger_titleText": "调试信息",
+  "@appSetting_debugger_titleText": {},
   "appSetting_about_titleText": "关于",
   "@appSetting_about_titleText": {},
   "appAbout_appbarTile_titleText": "关于",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "版本：{appVersion}",
-  "@appAbout_versionTile_titleText": {},
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
   "appAbout_versionTile_changeLogPath": "docs/CHANGELOG/zh.md",
   "@appAbout_versionTile_changeLogPath": {},
   "appAbout_sourceCodeTile_titleText": "源码",
@@ -475,7 +722,9 @@
   "appAbout_donateTile_subTitleText": "我是一名个人开发者，如果你觉得这个应用好用，请帮我买一杯☕",
   "@appAbout_donateTile_subTitleText": {},
   "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
-  "@appAbout_donateTile_ways": {},
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
   "donateWay_paypal": "Paypal",
   "@donateWay_paypal": {},
   "donateWay_buyMeACoffee": "请我喝一杯咖啡",
@@ -499,7 +748,66 @@
   "donateWay_firstQRGroup": "支付宝与微信",
   "@donateWay_firstQRGroup": {},
   "appAbout_donateDialog_copiedCrypto_msg": "已复制{name}地址",
-  "@appAbout_donateDialog_copiedCrypto_msg": {},
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "batchCheckin_appbar_title": "批量打卡",
+  "@batchCheckin_appbar_title": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "前一天",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "后一天",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "batchCheckin_status_skip_text": "跳过",
+  "@batchCheckin_status_skip_text": {},
+  "batchCheckin_status_ok_text": "完成",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_status_double_text": "超量完成",
+  "@batchCheckin_status_double_text": {},
+  "batchCheckin_status_zero_text": "未完成",
+  "@batchCheckin_status_zero_text": {},
+  "batchCheckin_habits_groupTitle": "已选择{count}个习惯",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_button_text": "保存",
+  "@batchCheckin_save_button_text": {},
+  "batchCheckin_reset_button_text": "重置",
+  "@batchCheckin_reset_button_text": {},
+  "batchCheckin_completed_snackbar_text": "已修改{count}个习惯的状态",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_confirmDialog_title": "覆盖现有记录",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "batchCheckin_save_confirmDialog_body": "保存后将覆盖现有记录，之前记录将丢失。",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "保存",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "取消",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "batchCheckin_close_confirmDialog_title": "确认返回",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "batchCheckin_close_confirmDialog_body": "未保存的打卡状态更改将不会生效。",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "确认",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "取消",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
   "appReminder_dailyReminder_title": "🏝 你今天坚持了自己的习惯吗？",
   "@appReminder_dailyReminder_title": {},
   "appReminder_dailyReminder_body": "点击进入应用并按时打卡。",
@@ -525,7 +833,15 @@
   "common_habitColorType_cc10": "兰花紫",
   "@common_habitColorType_cc10": {},
   "common_habitColorType_default": "颜色-{index}",
-  "@common_habitColorType_default": {},
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
   "common_customDateTimeFormatPicker_useSystemFormat_text": "使用系统格式",
   "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
   "common_customDateTimeFormatPicker_fmtTileText": "日期格式",
@@ -549,7 +865,19 @@
   "common_customDateTimeFormatPicker_empty_text": "无分隔符",
   "@common_customDateTimeFormatPicker_empty_text": {},
   "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
-  "@common_customDateTimeFormatPicker_sep_formatter": {},
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
   "common_customDateTimeFormatPicker_12Hour_text": "使用12小时制",
   "@common_customDateTimeFormatPicker_12Hour_text": {},
   "common_customDateTimeFormatPicker_monthName_text": "使用完整名称",
@@ -562,74 +890,40 @@
   "@common_customDateTimeFormatPicker_cancelButton_text": {},
   "common_customDateTimeFormatPicker_confirmButton_text": "确认",
   "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "common_errorPage_title": "啊呀，崩溃了！",
+  "@common_errorPage_title": {},
+  "common_errorPage_copied": "已复制崩溃信息",
+  "@common_errorPage_copied": {},
   "calendarPicker_clip_today": "今天",
   "@calendarPicker_clip_today": {},
   "calendarPicker_clip_tomorrow": "明天",
   "@calendarPicker_clip_tomorrow": {},
   "calendarPicker_clip_after7Days": "下{date}",
-  "@calendarPicker_clip_after7Days": {},
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
   "exportConfirmDialog_title_exportAll": "导出所有习惯？",
   "@exportConfirmDialog_title_exportAll": {},
   "exportConfirmDialog_title_exportMulti": "导出{number, plural, =0{当前习惯} other{{number}个习惯}}?",
-  "@exportConfirmDialog_title_exportMulti": {},
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "exportConfirmDialog_option_includeRecords": "包含习惯记录",
   "@exportConfirmDialog_option_includeRecords": {},
   "exportConfirmDialog_cancel_buttonText": "取消",
   "@exportConfirmDialog_cancel_buttonText": {},
   "exportConfirmDialog_confirm_buttonText": "导出",
   "@exportConfirmDialog_confirm_buttonText": {},
-  "snackbar_undoText": "撤回",
-  "@snackbar_undoText": {},
-  "snackbar_dismissText": "忽略",
-  "@snackbar_dismissText": {},
-  "contributors_tile_title": "贡献者",
-  "@contributors_tile_title": {},
-  "userAction_tap": "单击",
-  "@userAction_tap": {},
-  "userAction_doubleTap": "双击",
-  "@userAction_doubleTap": {},
-  "userAction_longTap": "长按",
-  "@userAction_longTap": {},
-  "batchCheckin_appbar_title": "批量打卡",
-  "@batchCheckin_appbar_title": {},
-  "batchCheckin_datePicker_prevButton_tooltip": "前一天",
-  "@batchCheckin_datePicker_prevButton_tooltip": {},
-  "batchCheckin_datePicker_nextButton_tooltip": "后一天",
-  "@batchCheckin_datePicker_nextButton_tooltip": {},
-  "batchCheckin_status_skip_text": "跳过",
-  "@batchCheckin_status_skip_text": {},
-  "batchCheckin_status_ok_text": "完成",
-  "@batchCheckin_status_ok_text": {},
-  "batchCheckin_status_double_text": "超量完成",
-  "@batchCheckin_status_double_text": {},
-  "batchCheckin_status_zero_text": "未完成",
-  "@batchCheckin_status_zero_text": {},
-  "batchCheckin_habits_groupTitle": "已选择{count}个习惯",
-  "@batchCheckin_habits_groupTitle": {},
-  "batchCheckin_save_button_text": "保存",
-  "@batchCheckin_save_button_text": {},
-  "batchCheckin_reset_button_text": "重置",
-  "@batchCheckin_reset_button_text": {},
-  "batchCheckin_completed_snackbar_text": "已修改{count}个习惯的状态",
-  "@batchCheckin_completed_snackbar_text": {},
-  "batchCheckin_save_confirmDialog_title": "覆盖现有记录",
-  "@batchCheckin_save_confirmDialog_title": {},
-  "batchCheckin_save_confirmDialog_body": "保存后将覆盖现有记录，之前记录将丢失。",
-  "@batchCheckin_save_confirmDialog_body": {},
-  "batchCheckin_save_confirmDialog_confirmButton_text": "保存",
-  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
-  "batchCheckin_save_confirmDialog_cancelButton_text": "取消",
-  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
-  "batchCheckin_close_confirmDialog_title": "确认返回",
-  "@batchCheckin_close_confirmDialog_title": {},
-  "batchCheckin_close_confirmDialog_body": "未保存的打卡状态更改将不会生效。",
-  "@batchCheckin_close_confirmDialog_body": {},
-  "batchCheckin_close_confirmDialog_confirmButton_text": "确认",
-  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
-  "batchCheckin_close_confirmDialog_cancelButton_text": "取消",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
-  "appSetting_debugger_titleText": "调试信息",
-  "@appSetting_debugger_titleText": {},
   "debug_logLevelTile_title": "日志级别",
   "@debug_logLevelTile_title": {},
   "debug_logLevelDialog_title": "更改日志级别",
@@ -657,37 +951,44 @@
   "debug_downladDebugInfo_subject": "下载调试信息",
   "@debug_downladDebugInfo_subject": {},
   "debug_downladDebugZip_subject": "下载 {fileName}",
-  "@debug_downladDebugZip_subject": {},
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
   "debug_missingDebugLogFile_snackbar": "调试日志不存在。",
   "@debug_missingDebugLogFile_snackbar": {},
   "debug_debuggerLogCard_title": "日志信息",
   "@debug_debuggerLogCard_title": {},
   "debug_debuggerLogCard_subtitle": "包括本地调试日志信息，需要打开日志收集开关。",
   "@debug_debuggerLogCard_subtitle": {},
-  "debug_debuggerInfoCard_title": "调试信息",
-  "@debug_debuggerInfoCard_title": {},
-  "debug_debuggerInfoCard_subtitle": "包括应用程序的调试信息。",
-  "@debug_debuggerInfoCard_subtitle": {},
   "debug_debuggerLogCard_saveButton_text": "下载",
   "@debug_debuggerLogCard_saveButton_text": {},
   "debug_debuggerLogCard_clearButton_text": "清除",
   "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "调试信息",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_subtitle": "包括应用程序的调试信息。",
+  "@debug_debuggerInfoCard_subtitle": {},
   "debug_debuggerInfoCard_openButton_text": "打开",
   "@debug_debuggerInfoCard_openButton_text": {},
   "debug_debuggerInfoCard_saveButton_text": "保存",
   "@debug_debuggerInfoCard_saveButton_text": {},
   "debug_debuggerInfo_notificationTitle": "正在收集应用信息……",
   "@debug_debuggerInfo_notificationTitle": {},
-  "appSetting_changeLanguage_followSystem_text": "跟随系统（{localeName}）",
-  "@appSetting_changeLanguage_followSystem_text": {},
-  "appSetting_changeLanguage_followSystem_noLocale_text": "跟随系统",
-  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
-  "appSetting_changeLanguageTile_titleText": "多语言",
-  "@appSetting_changeLanguageTile_titleText": {},
-  "appSetting_changeLanguageDialog_titleText": "选择语言",
-  "@appSetting_changeLanguageDialog_titleText": {},
-  "common_errorPage_title": "啊呀，崩溃了！",
-  "@common_errorPage_title": {},
-  "common_errorPage_copied": "已复制崩溃信息",
-  "@common_errorPage_copied": {}
+  "snackbar_undoText": "撤回",
+  "@snackbar_undoText": {},
+  "snackbar_dismissText": "忽略",
+  "@snackbar_dismissText": {},
+  "contributors_tile_title": "贡献者",
+  "@contributors_tile_title": {},
+  "userAction_tap": "单击",
+  "@userAction_tap": {},
+  "userAction_doubleTap": "双击",
+  "@userAction_doubleTap": {},
+  "userAction_longTap": "长按",
+  "@userAction_longTap": {}
 }
