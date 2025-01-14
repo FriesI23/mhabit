@@ -15,26 +15,26 @@ class L10nCs extends L10n {
   String get appName => '🚧(cz) - Table Habit';
 
   @override
-  String get habitEdit_saveButton_text => 'Save';
+  String get habitEdit_saveButton_text => 'Uložit';
 
   @override
-  String get habitEdit_habitName_hintText => 'Habit Name ...';
+  String get habitEdit_habitName_hintText => 'Název zvyku';
 
   @override
-  String get habitEdit_colorPicker_title => 'Pick color';
+  String get habitEdit_colorPicker_title => 'Zvolte barvu';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Habit type';
+  String get habitEdit_habitTypeDialog_title => 'Typ zvyku';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Positive';
+  String get habitEdit_habitType_positiveText => 'Pozitivní';
 
   @override
-  String get habitEdit_habitType_negativeText => 'Negative';
+  String get habitEdit_habitType_negativeText => 'Negativní';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Daily goal, default $number';
+    return 'Denní cíl, výchozí $number';
   }
 
   @override
@@ -66,7 +66,7 @@ class L10nCs extends L10n {
   String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
+  String get habitEdit_habitDailyGoalExtra_hintText => 'Očekávaný maximální denní cíl';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
@@ -74,19 +74,19 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximální denní limit';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Select frequency';
+  String get habitEdit_frequencySelector_title => 'Zvolte četnost';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Daily';
+  String get habitEdit_habitFreq_daily => 'Denní';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
+  String get habitEdit_habitFreq_perweek_ex01 => 'za týden';
 
   @override
   String get habitEdit_habitFreq_permonth => '';

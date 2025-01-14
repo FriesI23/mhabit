@@ -1,6 +1,6 @@
 {
   "@@locale": "pt",
-  "localeScriptName": "",
+  "localeScriptName": "Português Brasileiro",
   "@localeScriptName": {},
   "appName": "Table Habit",
   "@appName": {},
@@ -130,7 +130,7 @@
   "@debug_logLevel_error": {},
   "appReminder_dailyReminder_title": "🏝 Manteve os seus hábitos hoje?",
   "@appReminder_dailyReminder_title": {},
-  "habitEdit_habitDailyGoal_negativeHintText": "Mínimo limite diário, padrão {número}",
+  "habitEdit_habitDailyGoal_negativeHintText": "Mínimo limite diário, padrão {number}",
   "@habitEdit_habitDailyGoal_negativeHintText": {
     "description": "default habit daily goal for negative habit",
     "placeholders": {
@@ -287,7 +287,7 @@
   "@batchCheckin_datePicker_nextButton_tooltip": {},
   "batchCheckin_status_skip_text": "Saltar",
   "@batchCheckin_status_skip_text": {},
-  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Hábito} outro{Hábitos}} selecionado",
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Hábito} other{Hábitos}} selecionado",
   "@batchCheckin_habits_groupTitle": {
     "placeholders": {
       "count": {
@@ -339,7 +339,7 @@
   "@habitEdit_habitType_positiveText": {},
   "habitEdit_habitType_negativeText": "Negativo",
   "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Objetivo diário, padrão {número}",
+  "habitEdit_habitDailyGoal_hintText": "Objetivo diário, padrão {number}",
   "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -385,7 +385,7 @@
   "@habitEdit_habitFreq_permonth_ex01": {},
   "habitEdit_habitFreq_show_daily": "Diariamente",
   "@habitEdit_habitFreq_show_daily": {},
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Por semana} outro{Pelo menos {freq} vezes por semana}}",
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Por semana} other{Pelo menos {freq} vezes por semana}}",
   "@habitEdit_habitFreq_show_perweek": {
     "placeholders": {
       "freq": {
@@ -394,7 +394,7 @@
       }
     }
   },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Por mês} outro{Pelo menos{freq} vezes por mês}}",
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Por mês} other{Pelo menos{freq} vezes por mês}}",
   "@habitEdit_habitFreq_show_permonth": {
     "placeholders": {
       "freq": {
@@ -497,7 +497,7 @@
   "@habitDetail_editPopMenu_delete": {},
   "habitDetail_summary_title": "Sumário",
   "@habitDetail_summary_title": {},
-  "habitDetail_summary_preBody": "{dias, plural, =1{A começar amanhã.} outro{Começa em {dias} dias.}}",
+  "habitDetail_summary_preBody": "{days, plural, =1{A começar amanhã.} other{Começa em {days} dias.}}",
   "@habitDetail_summary_preBody": {
     "placeholders": {
       "days": {
@@ -506,7 +506,7 @@
       }
     }
   },
-  "habitDetail_descDailyGoal_unitText": "Unidade: {unidade}",
+  "habitDetail_descDailyGoal_unitText": "Unidade: {unit}",
   "@habitDetail_descDailyGoal_unitText": {
     "placeholders": {
       "unit": {
@@ -543,7 +543,7 @@
   "@habitDetail_notFoundRetryText": {},
   "habitDetail_notFoundText": "O carregamento do hábito falhou",
   "@habitDetail_notFoundText": {},
-  "habitDetail_changeGoal_doneChipText": "feito: {objetivo}",
+  "habitDetail_changeGoal_doneChipText": "feito: {goal}",
   "@habitDetail_changeGoal_doneChipText": {
     "placeholders": {
       "goal": {
@@ -552,7 +552,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_currentChipText": "Atual: {objetivo}",
+  "habitDetail_changeGoal_currentChipText": "Atual: {goal}",
   "@habitDetail_changeGoal_currentChipText": {
     "placeholders": {
       "goal": {
@@ -561,7 +561,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_extraChipText": "{objetivo}",
+  "habitDetail_changeGoal_extraChipText": "{goal}",
   "@habitDetail_changeGoal_extraChipText": {
     "placeholders": {
       "goal": {
@@ -570,7 +570,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_helpText": "Objetivo diário, padrão: {objetivo}",
+  "habitDetail_changeGoal_helpText": "Objetivo diário, padrão: {goal}",
   "@habitDetail_changeGoal_helpText": {
     "placeholders": {
       "goal": {
@@ -821,7 +821,7 @@
   "@batchCheckin_save_confirmDialog_body": {},
   "common_habitColorType_cc7": "Cor amber",
   "@common_habitColorType_cc7": {},
-  "exportConfirmDialog_title_exportMulti": "Exportar {número, plural, =0{hábit atual} =1{1 hábito} outro{{número} hábitos}}?",
+  "exportConfirmDialog_title_exportMulti": "Exportar {number, plural, =0{hábit atual} =1{1 hábito} other{{number} hábitos}}?",
   "@exportConfirmDialog_title_exportMulti": {
     "placeholders": {
       "number": {
