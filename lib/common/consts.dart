@@ -55,6 +55,8 @@ const appSupportedLocales = [
   // en must be the first item in the list (default language)
   Locale.fromSubtags(languageCode: 'en'),
   Locale.fromSubtags(languageCode: 'ar'),
+  // TODO: remove kDebugMode below after translation
+  if (kDebugMode) Locale.fromSubtags(languageCode: 'cs'),
   Locale.fromSubtags(languageCode: 'de'),
   Locale.fromSubtags(languageCode: 'es'),
   Locale.fromSubtags(languageCode: 'fa'),
@@ -64,8 +66,7 @@ const appSupportedLocales = [
   if (kDebugMode) Locale.fromSubtags(languageCode: 'nb', countryCode: 'NO'),
   // TODO: remove kDebugMode below after translation
   if (kDebugMode) Locale.fromSubtags(languageCode: 'pl'),
-  // TODO: remove kDebugMode below after translation
-  if (kDebugMode) Locale.fromSubtags(languageCode: 'pt', countryCode: 'BR'),
+  Locale.fromSubtags(languageCode: 'pt', countryCode: 'BR'),
   Locale.fromSubtags(languageCode: 'ru'),
   Locale.fromSubtags(languageCode: 'tr'),
   Locale.fromSubtags(languageCode: 'uk'),
