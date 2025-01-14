@@ -1,5 +1,7 @@
 {
-    "@@locale": "pl",
-    "localeScriptName": "język polski",
-    "appName": "🚧(pl) - Table Habit"
+  "@@locale": "pl",
+  "localeScriptName": "język polski",
+  "@localeScriptName": {},
+  "appName": "🚧(pl) - Table Habit",
+  "@appName": {}
 }

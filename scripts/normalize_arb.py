@@ -64,13 +64,14 @@ def _format_arb(
             continue
         output[key] = input[key]
         meta_key = f"@{key}"
-        if meta_key not in input:
+        meta_value = input.get(meta_key)
+        if not meta_value:
             template_meta_val = template.get(meta_key)
             output[meta_key] = template_meta_val or {}
         elif force_use_tempalte_metadata and meta_key in template:
             output[meta_key] = template[meta_key]
         else:
-            output[meta_key] = input[meta_key]
+            output[meta_key] = meta_value
     return output
 
 

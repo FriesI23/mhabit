@@ -6,26 +6,16 @@
   "@appName": {},
   "habitEdit_saveButton_text": "Uložit",
   "@habitEdit_saveButton_text": {},
-  "habitEdit_habitDailyGoalExtra_hintText": "Očekávaný maximální denní cíl",
-  "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitFreq_daily": "Denní",
-  "@habitEdit_habitFreq_daily": {},
   "habitEdit_habitName_hintText": "Název zvyku",
   "@habitEdit_habitName_hintText": {},
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximální denní limit",
-  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
   "habitEdit_colorPicker_title": "Zvolte barvu",
   "@habitEdit_colorPicker_title": {},
   "habitEdit_habitTypeDialog_title": "Typ zvyku",
   "@habitEdit_habitTypeDialog_title": {},
-  "habitEdit_habitFreq_perweek_ex01": "za týden",
-  "@habitEdit_habitFreq_perweek_ex01": {},
   "habitEdit_habitType_positiveText": "Pozitivní",
   "@habitEdit_habitType_positiveText": {},
   "habitEdit_habitType_negativeText": "Negativní",
   "@habitEdit_habitType_negativeText": {},
-  "habitEdit_frequencySelector_title": "Zvolte četnost",
-  "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitDailyGoal_hintText": "Denní cíl, výchozí {number}",
   "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
@@ -35,5 +25,15 @@
         "example": "1"
       }
     }
-  }
+  },
+  "habitEdit_habitDailyGoalExtra_hintText": "Očekávaný maximální denní cíl",
+  "@habitEdit_habitDailyGoalExtra_hintText": {},
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximální denní limit",
+  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+  "habitEdit_frequencySelector_title": "Zvolte četnost",
+  "@habitEdit_frequencySelector_title": {},
+  "habitEdit_habitFreq_daily": "Denní",
+  "@habitEdit_habitFreq_daily": {},
+  "habitEdit_habitFreq_perweek_ex01": "za týden",
+  "@habitEdit_habitFreq_perweek_ex01": {}
 }
