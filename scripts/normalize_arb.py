@@ -27,7 +27,7 @@ def format_arb(
     input_filepath: str,
     output_filepath: t.Optional[str] = None,
     template_filepath: t.Optional[str] = None,
-    force_use_tempalte_metadata: bool = False,
+    force_use_template_metadata: bool = False,
     indent: t.Optional[int] = None,
 ):
     with open(input_filepath, "r") as fp:
@@ -40,7 +40,7 @@ def format_arb(
         output = _format_arb(
             input=input,
             template=template,
-            force_use_tempalte_metadata=force_use_tempalte_metadata,
+            force_use_template_metadata=force_use_template_metadata,
         )
 
     if output_filepath:
@@ -53,7 +53,7 @@ def format_arb(
 def _format_arb(
     input: T_JSON,
     template: T_JSON,
-    force_use_tempalte_metadata: bool,
+    force_use_template_metadata: bool,
 ) -> T_JSON:
     output = OrderedDict()
     for key in template:
@@ -68,7 +68,7 @@ def _format_arb(
         if not meta_value:
             template_meta_val = template.get(meta_key)
             output[meta_key] = template_meta_val or {}
-        elif force_use_tempalte_metadata and meta_key in template:
+        elif force_use_template_metadata and meta_key in template:
             output[meta_key] = template[meta_key]
         else:
             output[meta_key] = meta_value
@@ -97,7 +97,7 @@ def main():
         input_filepath=input_filepath,
         output_filepath=output_filepath,
         template_filepath=template_filepath,
-        force_use_tempalte_metadata=force_template,
+        force_use_template_metadata=force_template,
         indent=indent,
     )
 
