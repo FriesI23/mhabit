@@ -54,8 +54,9 @@ import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_setting/_dialog.dart';
 import 'for_app_setting/_widget.dart';
-import 'page_app_about.dart' as app_about_view;
+import 'page_app_about.dart' as app_about;
 import 'page_app_debugger.dart' as app_debugger;
+import 'page_app_sync.dart' as app_sync;
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
@@ -648,8 +649,17 @@ class _AppSettingView extends State<AppSettingView> with XShare {
                   ? Text(l10n.appSetting_about_titleText)
                   : const Text("About"),
             ),
-            onTap: () => app_about_view.naviToAppAboutPage(context: context),
+            onTap: () => app_about.naviToAppAboutPage(context: context),
           ),
+        ];
+
+    Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
+          // TODO(Sync): L10n
+          GroupTitleListTile(title: Text("Sync")),
+          // TODO(Sync): L10n
+          ListTile(
+              title: const Text("Sync Option"),
+              onTap: () => app_sync.naviToAppSyncPage(context: context))
         ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
@@ -679,6 +689,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
         body: EnhancedSafeArea.edgeToEdgeSafe(
           child: ListView(
             children: [
+              ...buildSyncSubGroup(context),
               ...buildDisplaySubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),

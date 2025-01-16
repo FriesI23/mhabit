@@ -26,6 +26,7 @@ import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_language.dart';
 import '../../provider/app_reminder.dart';
+import '../../provider/app_sync.dart';
 import '../../provider/app_theme.dart';
 import '../../provider/global.dart';
 import '../../provider/habit_op_config.dart';
@@ -106,6 +107,11 @@ class AppProviders extends SingleChildStatelessWidget {
           ChangeNotifierProxyProvider<ProfileViewModel,
               AppCustomDateYmdHmsConfigViewModel>(
             create: (context) => AppCustomDateYmdHmsConfigViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
+          ),
+          ChangeNotifierProxyProvider<ProfileViewModel, AppSyncViewModel>(
+            create: (context) => AppSyncViewModel(),
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
