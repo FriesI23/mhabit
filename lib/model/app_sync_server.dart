@@ -75,6 +75,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
     }
   }
 
+  String get name;
   String get identity;
   DateTime get createTime;
   DateTime get modifyTime;
@@ -191,6 +192,10 @@ final class AppWebDavSyncServer implements AppSyncServer {
   @override
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks =>
       _syncMobileNetworks;
+
+  @override
+  @JsonKey()
+  String get name => path.toString();
 
   @override
   Map<String, dynamic> toJson() => _$AppWebDavSyncServerToJson(this);

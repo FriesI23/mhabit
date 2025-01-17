@@ -17,8 +17,10 @@ import 'package:provider/provider.dart';
 
 import '../component/widgets/page_back_button.dart';
 import '../logging/helper.dart';
+import '../model/app_sync_server.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
+import 'for_app_sync/_widget.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
@@ -75,6 +77,12 @@ final class _AppSyncView extends State<AppSyncView> {
             ),
           ),
           const Divider(),
+          Selector<AppSyncViewModel, AppSyncServer?>(
+            selector: (ctx, v) => v.serverConfig,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, serverConfig, child) =>
+                AppSyncSummaryTile(serverConfig: serverConfig),
+          ),
           if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
             const Divider(),
             const _DebugShowTile(),
