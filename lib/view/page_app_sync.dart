@@ -99,6 +99,7 @@ class _DebugShowTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Enabled: ${appSync.enabled}"),
+          Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),
         ],
       ),
     );
