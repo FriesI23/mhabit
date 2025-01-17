@@ -14,16 +14,19 @@
 
 import 'package:flutter/material.dart';
 
+import '../model/app_sync_server.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
 
 class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   AppSyncSwitchHandler? _switch;
+  AppSyncServerConfigHandler? _serverConfig;
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
+    _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
   }
 
   bool get enabled => _switch?.get() ?? false;
@@ -34,4 +37,6 @@ class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
       notifyListeners();
     }
   }
+
+  AppSyncServer? get serverConfig => _serverConfig?.get();
 }

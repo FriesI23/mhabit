@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
+import '../../../common/types.dart';
+import '../../../model/app_sync_server.dart';
 import '../converter.dart';
 import '../profile_helper.dart';
 
@@ -20,4 +24,41 @@ class AppSyncSwitchHandler extends ProfileHelperCovertToBoolHandler<bool> {
 
   @override
   String get key => 'enableSync';
+}
+
+class AppSyncServerConfigHandler
+    extends ProfileHelperCovertToJsonHandler<AppSyncServer?> {
+  const AppSyncServerConfigHandler(super.pref,
+      {super.codec = const AppSyncServerConfigCodec()});
+
+  @override
+  String get key => 'syncServer';
+}
+
+final class AppSyncServerConfigCodec extends Codec<AppSyncServer?, JsonMap> {
+  const AppSyncServerConfigCodec();
+
+  @override
+  Converter<JsonMap, AppSyncServer?> get decoder =>
+      const _AppSyncServerConfigDecoder();
+
+  @override
+  Converter<AppSyncServer, JsonMap> get encoder =>
+      const _AppSyncServerConfigEncoder();
+}
+
+final class _AppSyncServerConfigDecoder
+    extends Converter<JsonMap, AppSyncServer?> {
+  const _AppSyncServerConfigDecoder();
+
+  @override
+  AppSyncServer? convert(JsonMap input) => AppSyncServer.fromJson(input);
+}
+
+final class _AppSyncServerConfigEncoder
+    extends Converter<AppSyncServer, JsonMap> {
+  const _AppSyncServerConfigEncoder();
+
+  @override
+  JsonMap convert(AppSyncServer input) => input.toJson();
 }

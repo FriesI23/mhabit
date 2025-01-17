@@ -62,6 +62,7 @@ class App extends StatelessWidget {
     LoggingLevelProfileHandler.new,
     AppLanguageProfileHanlder.new,
     AppSyncSwitchHandler.new,
+    AppSyncServerConfigHandler.new,
   ];
 
   const App({super.key});
