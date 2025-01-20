@@ -77,11 +77,11 @@ final class _AppSyncView extends State<AppSyncView> {
             ),
           ),
           const Divider(),
-          Selector<AppSyncViewModel, AppSyncServer?>(
-            selector: (ctx, v) => v.serverConfig,
+          Selector<AppSyncViewModel, ({bool enabled, AppSyncServer? config})>(
+            selector: (ctx, v) => (enabled: v.enabled, config: v.serverConfig),
             shouldRebuild: (previous, next) => previous != next,
-            builder: (context, serverConfig, child) =>
-                AppSyncSummaryTile(serverConfig: serverConfig),
+            builder: (context, value, child) => AppSyncConfigSubgroup(
+                enabled: value.enabled, serverConfig: value.config),
           ),
           if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
             const Divider(),
