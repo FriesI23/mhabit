@@ -14,6 +14,7 @@
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 import '../common/enums.dart';
 import 'common.dart';
@@ -23,11 +24,18 @@ part 'app_sync_server.g.dart';
 @JsonEnum(valueField: "code")
 enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   unknown(code: 0),
-  webdav(code: 1);
+  webdav(code: 1, includePathField: true, includeUsernameField: true),
+  fake(code: 99);
 
   final int code;
+  final bool includePathField;
+  final bool includeUsernameField;
 
-  const AppSyncServerType({required this.code});
+  const AppSyncServerType({
+    required this.code,
+    this.includePathField = false,
+    this.includeUsernameField = false,
+  });
 
   @override
   int get dbCode => code;
@@ -70,6 +78,20 @@ abstract interface class AppSyncServer implements JsonAdaptor {
     switch (type) {
       case AppSyncServerType.webdav:
         return AppWebDavSyncServer.fromJson(json);
+      case AppSyncServerType.fake:
+        return AppFakeSyncServer.fromJson(json);
+      default:
+        return null;
+    }
+  }
+
+  static AppSyncServer? newServer(AppSyncServerType type) {
+    final identity = const Uuid().v4();
+    switch (type) {
+      case AppSyncServerType.webdav:
+        return AppWebDavSyncServer.newServer(identity: identity, path: '');
+      case AppSyncServerType.fake:
+        return AppFakeSyncServer.newServer(identity: identity, path: '');
       default:
         return null;
     }
@@ -87,6 +109,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   bool get verified;
   bool get configed;
 
+  AppSyncServerForm toForm();
   String toDebugString();
 }
 
@@ -196,6 +219,10 @@ final class AppWebDavSyncServer implements AppSyncServer {
   factory AppWebDavSyncServer.fromJson(Map<String, dynamic> json) =>
       _$AppWebDavSyncServerFromJson(json);
 
+  // TODO: implement
+  factory AppWebDavSyncServer.fromForm(AppSyncServerForm form) =>
+      throw UnimplementedError();
+
   @override
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks =>
       _syncMobileNetworks;
@@ -206,6 +233,17 @@ final class AppWebDavSyncServer implements AppSyncServer {
 
   @override
   Map<String, dynamic> toJson() => _$AppWebDavSyncServerToJson(this);
+
+  @override
+  AppSyncServerForm toForm() => AppSyncServerForm(
+        uuid: UuidValue.fromString(identity),
+        createTime: createTime,
+        modifyTime: modifyTime,
+        type: type,
+        path: path.toString(),
+        username: username,
+        password: password,
+      );
 
   @override
   String toDebugString() {
@@ -226,4 +264,145 @@ final class AppWebDavSyncServer implements AppSyncServer {
     connectTimeout: $connectTimeout
     )""";
   }
+}
+
+@JsonSerializable()
+@CopyWith(skipFields: true, copyWithNull: false, constructor: '_copyWith')
+final class AppFakeSyncServer implements AppSyncServer {
+  @override
+  final String identity;
+  @override
+  final String name;
+  @override
+  final DateTime createTime;
+  @override
+  final DateTime modifyTime;
+  @override
+  @JsonKey(
+      name: AppSyncServer.typeJsonKey,
+      includeToJson: true,
+      includeFromJson: false)
+  final AppSyncServerType type;
+  @override
+  final bool ignoreSSL;
+  @override
+  final bool syncInLowData;
+  @override
+  final DateTime? timeout;
+  @override
+  final bool verified;
+  @override
+  final bool configed;
+  @override
+  final List<AppSyncServerMobileNetwork> syncMobileNetworks;
+
+  const AppFakeSyncServer({
+    required this.identity,
+    required this.name,
+    required this.createTime,
+    required this.modifyTime,
+    required this.ignoreSSL,
+    required this.syncInLowData,
+    required this.timeout,
+    required this.verified,
+    required this.configed,
+    required this.syncMobileNetworks,
+  }) : type = AppSyncServerType.fake;
+
+  factory AppFakeSyncServer.newServer({
+    required String identity,
+    required String path,
+    String username = '',
+    String password = '',
+    List<AppSyncServerMobileNetwork>? syncMobileNetworks,
+    bool syncInLowData = true,
+    bool ignoreSSL = false,
+    DateTime? timeout,
+    DateTime? connectTimeout,
+    int? maxRetryCount,
+  }) {
+    final now = DateTime.now();
+    return AppFakeSyncServer(
+      identity: identity,
+      name: identity,
+      createTime: now,
+      modifyTime: now,
+      ignoreSSL: ignoreSSL,
+      syncInLowData: syncInLowData,
+      timeout: timeout,
+      verified: false,
+      configed: false,
+      syncMobileNetworks:
+          syncMobileNetworks ?? AppSyncServerMobileNetwork.allowed,
+    );
+  }
+
+  AppFakeSyncServer._copyWith({
+    required this.identity,
+    required this.name,
+    required this.createTime,
+    required this.modifyTime,
+    required this.ignoreSSL,
+    required this.syncInLowData,
+    this.timeout,
+    required this.verified,
+    required this.configed,
+    required List<AppSyncServerMobileNetwork> syncMobileNetworks,
+  })  : type = AppSyncServerType.fake,
+        syncMobileNetworks = [] {
+    this.syncMobileNetworks.addAll(syncMobileNetworks);
+  }
+
+  factory AppFakeSyncServer.fromJson(Map<String, dynamic> json) =>
+      _$AppFakeSyncServerFromJson(json);
+
+  // TODO: implement
+  factory AppFakeSyncServer.fromForm(AppSyncServerForm form) =>
+      throw UnimplementedError();
+
+  @override
+  String toDebugString() => 'AppFakeSyncServer(identity=$identity,'
+      'name=$name,createTime=$createTime,modifyTime=$modifyTime,'
+      'type=$type,ignoreSSL=$ignoreSSL,syncInLowData=$syncInLowData,'
+      'timeout=$timeout,verified=$verified,configed=$configed,'
+      'syncMobileNetworks=$syncMobileNetworks)';
+
+  @override
+  AppSyncServerForm toForm() => AppSyncServerForm(
+        uuid: UuidValue.fromString(identity),
+        createTime: createTime,
+        modifyTime: modifyTime,
+        type: type,
+      );
+
+  @override
+  Map<String, dynamic> toJson() => _$AppFakeSyncServerToJson(this);
+}
+
+@CopyWith(skipFields: true, copyWithNull: false)
+class AppSyncServerForm {
+  final UuidValue uuid;
+  final DateTime createTime;
+  final DateTime modifyTime;
+
+  AppSyncServerType type;
+
+  String? path;
+  String? username;
+  String? password;
+
+  AppSyncServerForm({
+    required this.uuid,
+    required this.type,
+    required this.createTime,
+    required this.modifyTime,
+    this.path,
+    this.username,
+    this.password,
+  });
+
+  @override
+  String toString() => 'AppSyncServerForm(uuid=$uuid,type=$type,'
+      'createTime=$createTime,modifyTime=$modifyTime,'
+      'path=$path,username=$username,password=$password)';
 }
