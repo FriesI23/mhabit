@@ -82,6 +82,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   AppSyncServerType get type;
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks;
   bool get syncInLowData;
+  bool get ignoreSSL;
   DateTime? get timeout;
   bool get verified;
   bool get configed;
@@ -104,6 +105,8 @@ final class AppWebDavSyncServer implements AppSyncServer {
       includeToJson: true,
       includeFromJson: false)
   final AppSyncServerType type;
+  @override
+  final bool ignoreSSL;
   @override
   final bool syncInLowData;
   @override
@@ -134,6 +137,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
     required this.verified,
     required this.configed,
     required List<AppSyncServerMobileNetwork> syncMobileNetworks,
+    required this.ignoreSSL,
     required this.syncInLowData,
   })  : type = AppSyncServerType.webdav,
         _syncMobileNetworks = syncMobileNetworks;
@@ -145,6 +149,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
     String password = '',
     Iterable<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool syncInLowData = true,
+    bool ignoreSSL = false,
     DateTime? timeout,
     DateTime? connectTimeout,
     int? maxRetryCount,
@@ -162,6 +167,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
         syncMobileNetworks:
             syncMobileNetworks?.toList() ?? AppSyncServerMobileNetwork.allowed,
         syncInLowData: syncInLowData,
+        ignoreSSL: ignoreSSL,
         timeout: timeout,
         maxRetryCount: maxRetryCount,
         connectTimeout: connectTimeout);
@@ -181,6 +187,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
     required this.configed,
     required Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
     required this.syncInLowData,
+    required this.ignoreSSL,
   })  : type = AppSyncServerType.webdav,
         _syncMobileNetworks = [] {
     _syncMobileNetworks.addAll(syncMobileNetworks);
