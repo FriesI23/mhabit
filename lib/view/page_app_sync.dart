@@ -21,6 +21,7 @@ import '../model/app_sync_server.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
 import 'for_app_sync/_widget.dart';
+import 'page_app_sync_server_editor.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
@@ -57,6 +58,13 @@ final class _AppSyncView extends State<AppSyncView> {
     super.dispose();
   }
 
+  void _onServerConfigPressed() {
+    final config = context.read<AppSyncViewModel>().serverConfig;
+    appLog.build
+        .debug(context, ex: ["onServerConfigPressed", config?.toDebugString()]);
+    naviToAppSyncServerEditorDialog(context: context, serverConfig: config);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +89,10 @@ final class _AppSyncView extends State<AppSyncView> {
             selector: (ctx, v) => (enabled: v.enabled, config: v.serverConfig),
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, value, child) => AppSyncConfigSubgroup(
-                enabled: value.enabled, serverConfig: value.config),
+              enabled: value.enabled,
+              serverConfig: value.config,
+              onConfigPressed: _onServerConfigPressed,
+            ),
           ),
           if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
             const Divider(),
