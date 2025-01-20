@@ -133,6 +133,192 @@ extension $AppWebDavSyncServerCopyWith on AppWebDavSyncServer {
       _$AppWebDavSyncServerCWProxyImpl(this);
 }
 
+abstract class _$AppFakeSyncServerCWProxy {
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// AppFakeSyncServer(...).copyWith(id: 12, name: "My name")
+  /// ````
+  AppFakeSyncServer call({
+    String? identity,
+    String? name,
+    DateTime? createTime,
+    DateTime? modifyTime,
+    bool? ignoreSSL,
+    bool? syncInLowData,
+    DateTime? timeout,
+    bool? verified,
+    bool? configed,
+    List<AppSyncServerMobileNetwork>? syncMobileNetworks,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppFakeSyncServer.copyWith(...)`.
+class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
+  const _$AppFakeSyncServerCWProxyImpl(this._value);
+
+  final AppFakeSyncServer _value;
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// AppFakeSyncServer(...).copyWith(id: 12, name: "My name")
+  /// ````
+  AppFakeSyncServer call({
+    Object? identity = const $CopyWithPlaceholder(),
+    Object? name = const $CopyWithPlaceholder(),
+    Object? createTime = const $CopyWithPlaceholder(),
+    Object? modifyTime = const $CopyWithPlaceholder(),
+    Object? ignoreSSL = const $CopyWithPlaceholder(),
+    Object? syncInLowData = const $CopyWithPlaceholder(),
+    Object? timeout = const $CopyWithPlaceholder(),
+    Object? verified = const $CopyWithPlaceholder(),
+    Object? configed = const $CopyWithPlaceholder(),
+    Object? syncMobileNetworks = const $CopyWithPlaceholder(),
+  }) {
+    return AppFakeSyncServer._copyWith(
+      identity: identity == const $CopyWithPlaceholder() || identity == null
+          ? _value.identity
+          // ignore: cast_nullable_to_non_nullable
+          : identity as String,
+      name: name == const $CopyWithPlaceholder() || name == null
+          ? _value.name
+          // ignore: cast_nullable_to_non_nullable
+          : name as String,
+      createTime:
+          createTime == const $CopyWithPlaceholder() || createTime == null
+              ? _value.createTime
+              // ignore: cast_nullable_to_non_nullable
+              : createTime as DateTime,
+      modifyTime:
+          modifyTime == const $CopyWithPlaceholder() || modifyTime == null
+              ? _value.modifyTime
+              // ignore: cast_nullable_to_non_nullable
+              : modifyTime as DateTime,
+      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder() || ignoreSSL == null
+          ? _value.ignoreSSL
+          // ignore: cast_nullable_to_non_nullable
+          : ignoreSSL as bool,
+      syncInLowData:
+          syncInLowData == const $CopyWithPlaceholder() || syncInLowData == null
+              ? _value.syncInLowData
+              // ignore: cast_nullable_to_non_nullable
+              : syncInLowData as bool,
+      timeout: timeout == const $CopyWithPlaceholder()
+          ? _value.timeout
+          // ignore: cast_nullable_to_non_nullable
+          : timeout as DateTime?,
+      verified: verified == const $CopyWithPlaceholder() || verified == null
+          ? _value.verified
+          // ignore: cast_nullable_to_non_nullable
+          : verified as bool,
+      configed: configed == const $CopyWithPlaceholder() || configed == null
+          ? _value.configed
+          // ignore: cast_nullable_to_non_nullable
+          : configed as bool,
+      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder() ||
+              syncMobileNetworks == null
+          ? _value.syncMobileNetworks
+          // ignore: cast_nullable_to_non_nullable
+          : syncMobileNetworks as List<AppSyncServerMobileNetwork>,
+    );
+  }
+}
+
+extension $AppFakeSyncServerCopyWith on AppFakeSyncServer {
+  /// Returns a callable class that can be used as follows: `instanceOfAppFakeSyncServer.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$AppFakeSyncServerCWProxy get copyWith =>
+      _$AppFakeSyncServerCWProxyImpl(this);
+}
+
+abstract class _$AppSyncServerFormCWProxy {
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// AppSyncServerForm(...).copyWith(id: 12, name: "My name")
+  /// ````
+  AppSyncServerForm call({
+    UuidValue? uuid,
+    AppSyncServerType? type,
+    DateTime? createTime,
+    DateTime? modifyTime,
+    String? path,
+    String? username,
+    String? password,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppSyncServerForm.copyWith(...)`.
+class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
+  const _$AppSyncServerFormCWProxyImpl(this._value);
+
+  final AppSyncServerForm _value;
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// AppSyncServerForm(...).copyWith(id: 12, name: "My name")
+  /// ````
+  AppSyncServerForm call({
+    Object? uuid = const $CopyWithPlaceholder(),
+    Object? type = const $CopyWithPlaceholder(),
+    Object? createTime = const $CopyWithPlaceholder(),
+    Object? modifyTime = const $CopyWithPlaceholder(),
+    Object? path = const $CopyWithPlaceholder(),
+    Object? username = const $CopyWithPlaceholder(),
+    Object? password = const $CopyWithPlaceholder(),
+  }) {
+    return AppSyncServerForm(
+      uuid: uuid == const $CopyWithPlaceholder() || uuid == null
+          ? _value.uuid
+          // ignore: cast_nullable_to_non_nullable
+          : uuid as UuidValue,
+      type: type == const $CopyWithPlaceholder() || type == null
+          ? _value.type
+          // ignore: cast_nullable_to_non_nullable
+          : type as AppSyncServerType,
+      createTime:
+          createTime == const $CopyWithPlaceholder() || createTime == null
+              ? _value.createTime
+              // ignore: cast_nullable_to_non_nullable
+              : createTime as DateTime,
+      modifyTime:
+          modifyTime == const $CopyWithPlaceholder() || modifyTime == null
+              ? _value.modifyTime
+              // ignore: cast_nullable_to_non_nullable
+              : modifyTime as DateTime,
+      path: path == const $CopyWithPlaceholder()
+          ? _value.path
+          // ignore: cast_nullable_to_non_nullable
+          : path as String?,
+      username: username == const $CopyWithPlaceholder()
+          ? _value.username
+          // ignore: cast_nullable_to_non_nullable
+          : username as String?,
+      password: password == const $CopyWithPlaceholder()
+          ? _value.password
+          // ignore: cast_nullable_to_non_nullable
+          : password as String?,
+    );
+  }
+}
+
+extension $AppSyncServerFormCopyWith on AppSyncServerForm {
+  /// Returns a callable class that can be used as follows: `instanceOfAppSyncServerForm.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$AppSyncServerFormCWProxy get copyWith =>
+      _$AppSyncServerFormCWProxyImpl(this);
+}
+
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
@@ -192,4 +378,40 @@ const _$AppSyncServerMobileNetworkEnumMap = {
 const _$AppSyncServerTypeEnumMap = {
   AppSyncServerType.unknown: 0,
   AppSyncServerType.webdav: 1,
+  AppSyncServerType.fake: 99,
 };
+
+AppFakeSyncServer _$AppFakeSyncServerFromJson(Map<String, dynamic> json) =>
+    AppFakeSyncServer(
+      identity: json['identity'] as String,
+      name: json['name'] as String,
+      createTime: DateTime.parse(json['createTime'] as String),
+      modifyTime: DateTime.parse(json['modifyTime'] as String),
+      ignoreSSL: json['ignoreSSL'] as bool,
+      syncInLowData: json['syncInLowData'] as bool,
+      timeout: json['timeout'] == null
+          ? null
+          : DateTime.parse(json['timeout'] as String),
+      verified: json['verified'] as bool,
+      configed: json['configed'] as bool,
+      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
+          .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
+          .toList(),
+    );
+
+Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
+    <String, dynamic>{
+      'identity': instance.identity,
+      'name': instance.name,
+      'createTime': instance.createTime.toIso8601String(),
+      'modifyTime': instance.modifyTime.toIso8601String(),
+      'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
+      'ignoreSSL': instance.ignoreSSL,
+      'syncInLowData': instance.syncInLowData,
+      'timeout': instance.timeout?.toIso8601String(),
+      'verified': instance.verified,
+      'configed': instance.configed,
+      'syncMobileNetworks': instance.syncMobileNetworks
+          .map((e) => _$AppSyncServerMobileNetworkEnumMap[e]!)
+          .toList(),
+    };

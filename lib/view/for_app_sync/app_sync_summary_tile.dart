@@ -19,10 +19,12 @@ import '../../model/app_sync_server.dart';
 
 class AppSyncSummaryTile extends StatelessWidget {
   final AppSyncServer? serverConfig;
+  final VoidCallback? onPressed;
 
   const AppSyncSummaryTile({
     super.key,
     required this.serverConfig,
+    this.onPressed,
   });
 
   IconData? getSubTitleLeading(BuildContext context) =>
@@ -51,6 +53,7 @@ class AppSyncSummaryTile extends StatelessWidget {
               Text("Current: ${serverConfig.name}"),
             ])
           : Text("Not Configured."),
+      onTap: onPressed,
     );
   }
 }
