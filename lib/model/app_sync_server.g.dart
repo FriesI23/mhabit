@@ -27,6 +27,7 @@ abstract class _$AppWebDavSyncServerCWProxy {
     bool? configed,
     Iterable<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool? syncInLowData,
+    bool? ignoreSSL,
   });
 }
 
@@ -58,6 +59,7 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
     Object? configed = const $CopyWithPlaceholder(),
     Object? syncMobileNetworks = const $CopyWithPlaceholder(),
     Object? syncInLowData = const $CopyWithPlaceholder(),
+    Object? ignoreSSL = const $CopyWithPlaceholder(),
   }) {
     return AppWebDavSyncServer._copyWith(
       identity: identity == const $CopyWithPlaceholder() || identity == null
@@ -116,6 +118,10 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
               ? _value.syncInLowData
               // ignore: cast_nullable_to_non_nullable
               : syncInLowData as bool,
+      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder() || ignoreSSL == null
+          ? _value.ignoreSSL
+          // ignore: cast_nullable_to_non_nullable
+          : ignoreSSL as bool,
     );
   }
 }
@@ -151,6 +157,7 @@ AppWebDavSyncServer _$AppWebDavSyncServerFromJson(Map<String, dynamic> json) =>
       syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
           .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
           .toList(),
+      ignoreSSL: json['ignoreSSL'] as bool,
       syncInLowData: json['syncInLowData'] as bool,
     );
 
@@ -161,6 +168,7 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
       'createTime': instance.createTime.toIso8601String(),
       'modifyTime': instance.modifyTime.toIso8601String(),
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
+      'ignoreSSL': instance.ignoreSSL,
       'syncInLowData': instance.syncInLowData,
       'timeout': instance.timeout?.toIso8601String(),
       'verified': instance.verified,
