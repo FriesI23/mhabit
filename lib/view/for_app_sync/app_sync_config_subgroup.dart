@@ -21,11 +21,13 @@ import '_widget.dart';
 class AppSyncConfigSubgroup extends StatelessWidget {
   final bool enabled;
   final AppSyncServer? serverConfig;
+  final VoidCallback? onConfigPressed;
 
   const AppSyncConfigSubgroup({
     super.key,
     required this.enabled,
     required this.serverConfig,
+    this.onConfigPressed,
   });
 
   @override
@@ -34,7 +36,8 @@ class AppSyncConfigSubgroup extends StatelessWidget {
       expand: enabled,
       child: Column(
         children: [
-          AppSyncSummaryTile(serverConfig: serverConfig),
+          AppSyncSummaryTile(
+              serverConfig: serverConfig, onPressed: onConfigPressed),
         ],
       ),
     );
