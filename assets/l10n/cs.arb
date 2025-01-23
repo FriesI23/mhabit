@@ -16,7 +16,7 @@
   "@habitEdit_habitType_positiveText": {},
   "habitEdit_habitType_negativeText": "Negativní",
   "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Denní cíl, výchozí {number}",
+  "habitEdit_habitDailyGoal_hintText": "Denní cíl, {number} je výchozí",
   "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -35,5 +35,23 @@
   "habitEdit_habitFreq_daily": "Denní",
   "@habitEdit_habitFreq_daily": {},
   "habitEdit_habitFreq_perweek_ex01": "za týden",
-  "@habitEdit_habitFreq_perweek_ex01": {}
+  "@habitEdit_habitFreq_perweek_ex01": {},
+  "habitEdit_habitFreq_show_daily": "Denní",
+  "@habitEdit_habitFreq_show_daily": {},
+  "habitEdit_reminder_hintText": "Připomenutí",
+  "@habitEdit_reminder_hintText": {},
+  "habitEdit_reminder_freq_monthHelpText": "Kterýkoli den v měsíci",
+  "@habitEdit_reminder_freq_monthHelpText": {},
+  "habitEdit_reminderQuest_hintText": "Otázka, např. Cvičil jsi dnes?",
+  "@habitEdit_reminderQuest_hintText": {},
+  "habitEdit_reminder_dialogTitle": "Zvolte typ připomenutí",
+  "@habitEdit_reminder_dialogTitle": {},
+  "habitEdit_reminder_dialogConfirm": "Potvrdit",
+  "@habitEdit_reminder_dialogConfirm": {},
+  "habitEdit_reminder_dialogCancel": "Zrušit",
+  "@habitEdit_reminder_dialogCancel": {},
+  "habitEdit_reminder_cancelDialogTitle": "Potvrdit",
+  "@habitEdit_reminder_cancelDialogTitle": {},
+  "habitEdit_reminder_cancelDialogConfirm": "Potvrdit",
+  "@habitEdit_reminder_cancelDialogConfirm": {}
 }
