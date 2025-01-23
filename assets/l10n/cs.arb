@@ -57,5 +57,7 @@
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "Potvrdit",
   "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
   "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "Potvrdit",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {}
+  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_sortTypeDialog_confirm": "Potvrdit",
+  "@habitDisplay_sortTypeDialog_confirm": {}
 }
