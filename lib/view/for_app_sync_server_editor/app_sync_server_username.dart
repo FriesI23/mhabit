@@ -18,10 +18,10 @@ import 'package:provider/provider.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
-class AppSyncServerPathTile extends StatelessWidget {
+class AppSyncServerUsernameTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
 
-  const AppSyncServerPathTile({
+  const AppSyncServerUsernameTile({
     super.key,
     this.contentPadding,
   });
@@ -32,7 +32,7 @@ class AppSyncServerPathTile extends StatelessWidget {
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     final controller =
         context.select<AppSyncServerFormViewModel, TextEditingController>(
-            (vm) => vm.pathInputController);
+            (vm) => vm.usernameInputController);
     return Visibility(
       visible: type.includePathField,
       child: ListTile(
@@ -40,10 +40,10 @@ class AppSyncServerPathTile extends StatelessWidget {
         title: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: 'Path',
-            hintText: 'Enter a valid WebDAV path here.',
+            labelText: 'Username',
+            hintText: 'Enter username here, leave empty if not required.',
           ),
-          keyboardType: TextInputType.url,
+          keyboardType: TextInputType.text,
         ),
       ),
     );
