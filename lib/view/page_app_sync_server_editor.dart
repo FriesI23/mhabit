@@ -88,6 +88,8 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
   Widget build(BuildContext context) {
     final canSave = true;
     return AnimatedSwitcher(
+      transitionBuilder: (child, animation) =>
+          FadeTransition(opacity: animation, child: child),
       duration: const Duration(milliseconds: 300),
       child: widget.showInFullscreenDialog
           ? _AppSyncServerEditorFsDialog(
