@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './app_sync_server_password.dart';
 export './app_sync_server_path.dart';
 export './app_sync_server_type.dart';
-export './app_sync_server_user.dart';
+export './app_sync_server_username.dart';
 export './page_providers.dart';
