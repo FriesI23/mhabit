@@ -55,5 +55,7 @@
   "habitEdit_reminder_cancelDialogConfirm": "Potvrdit",
   "@habitEdit_reminder_cancelDialogConfirm": {},
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "Potvrdit",
-  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {}
+  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "Potvrdit",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {}
 }
