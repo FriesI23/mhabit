@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../logging/helper.dart';
@@ -27,7 +30,9 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   final TextEditingController passwordInputController;
 
   bool _mounted = true;
+  bool _pwdLoaded = false;
   AppSyncServer? _crtServerConfig;
+  Completer<(String, String?)>? _pwdCompleter;
 
   late AppSyncServerForm _form;
 
@@ -53,6 +58,8 @@ class AppSyncServerFormViewModel extends ChangeNotifier
 
   @override
   bool get mounted => _mounted;
+
+  bool get pwdLoaded => _pwdLoaded;
 
   void refreshFormInputControllers() {
     appLog.load.debug("$runtimeType.refreshFormInputControllers", ex: [_form]);
@@ -86,6 +93,8 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     }
   }
 
+  String get identity => _form.uuid.uuid;
+
   AppSyncServerType get type => _form.type;
   set type(AppSyncServerType value) {
     if (type == value) return;
@@ -94,7 +103,44 @@ class AppSyncServerFormViewModel extends ChangeNotifier
         ? AppSyncServer.newServer(value)?.toForm() ?? getDefaultForm()
         : crtServerConfig!.toForm();
     refreshFormInputControllers();
+    _pwdCompleter = null;
+    _pwdLoaded = false;
     appLog.value.info('$runtimeType.type', beforeVal: oldForm, afterVal: _form);
     notifyListeners();
+  }
+
+  Future<(String, String?)> getPassword({
+    Duration timeout = const Duration(seconds: 1),
+    bool changeController = true,
+  }) {
+    final crtCompleter = _pwdCompleter;
+    if (crtCompleter != null) return crtCompleter.future;
+    final completer = _pwdCompleter = Completer<(String, String?)>();
+    final identity = this.identity;
+    const FlutterSecureStorage()
+        .read(key: identity)
+        .timeout(timeout)
+        .then((value) {
+          value = value ?? _form.password;
+          if (!changeController || identity != this.identity) return null;
+          if (value == null) return value;
+          if (passwordInputController.text.isEmpty ||
+              passwordInputController.text == _form.password) {
+            appLog.value.debug("passwordInputController.text",
+                beforeVal: passwordInputController.text, afterVal: value);
+            passwordInputController.text = value;
+            _pwdLoaded = true;
+          }
+          return value;
+        })
+        .then((value) => completer.isCompleted
+            ? null
+            : completer.complete((identity, value)))
+        .catchError((e, s) =>
+            completer.isCompleted ? null : completer.completeError(e, s))
+        .whenComplete(() {
+          if (completer == _pwdCompleter) _pwdCompleter = null;
+        });
+    return completer.future;
   }
 }
