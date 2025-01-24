@@ -251,6 +251,7 @@ abstract class _$AppSyncServerFormCWProxy {
     String? path,
     String? username,
     String? password,
+    bool? ignoreSSL,
   });
 }
 
@@ -276,6 +277,7 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
     Object? path = const $CopyWithPlaceholder(),
     Object? username = const $CopyWithPlaceholder(),
     Object? password = const $CopyWithPlaceholder(),
+    Object? ignoreSSL = const $CopyWithPlaceholder(),
   }) {
     return AppSyncServerForm(
       uuid: uuid == const $CopyWithPlaceholder() || uuid == null
@@ -308,6 +310,10 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
           ? _value.password
           // ignore: cast_nullable_to_non_nullable
           : password as String?,
+      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder()
+          ? _value.ignoreSSL
+          // ignore: cast_nullable_to_non_nullable
+          : ignoreSSL as bool?,
     );
   }
 }

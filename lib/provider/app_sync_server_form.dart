@@ -109,6 +109,16 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  bool? get ignoreSSL => _form.ignoreSSL;
+  set ignoreSSL(bool? value) {
+    if (value == ignoreSSL) return;
+    final oldValue = ignoreSSL;
+    _form.ignoreSSL = value;
+    appLog.value
+        .info('$runtimeType.ignoreSSL', beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
   Future<(String, String?)> getPassword({
     Duration timeout = const Duration(seconds: 1),
     bool changeController = true,
