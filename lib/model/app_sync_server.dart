@@ -25,12 +25,13 @@ part 'app_sync_server.g.dart';
 enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   unknown(code: 0),
   webdav(
-    code: 1,
-    includePathField: true,
-    includeUsernameField: true,
-    includePasswordField: true,
-    includeIgnoreSSLField: true,
-  ),
+      code: 1,
+      includePathField: true,
+      includeUsernameField: true,
+      includePasswordField: true,
+      includeIgnoreSSLField: true,
+      includeConnTimeoutField: true,
+      includeRetryCountFIeld: true),
   fake(code: 99);
 
   final int code;
@@ -38,14 +39,17 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   final bool includeUsernameField;
   final bool includePasswordField;
   final bool includeIgnoreSSLField;
+  final bool includeConnTimeoutField;
+  final bool includeRetryCountFIeld;
 
-  const AppSyncServerType({
-    required this.code,
-    this.includePathField = false,
-    this.includeUsernameField = false,
-    this.includePasswordField = false,
-    this.includeIgnoreSSLField = false,
-  });
+  const AppSyncServerType(
+      {required this.code,
+      this.includePathField = false,
+      this.includeUsernameField = false,
+      this.includePasswordField = false,
+      this.includeIgnoreSSLField = false,
+      this.includeConnTimeoutField = false,
+      this.includeRetryCountFIeld = false});
 
   @override
   int get dbCode => code;
@@ -115,7 +119,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks;
   bool get syncInLowData;
   bool get ignoreSSL;
-  DateTime? get timeout;
+  Duration? get timeout;
   bool get verified;
   bool get configed;
 
@@ -143,7 +147,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
   @override
   final bool syncInLowData;
   @override
-  final DateTime? timeout;
+  final Duration? timeout;
   @override
   final bool verified;
   @override
@@ -154,8 +158,8 @@ final class AppWebDavSyncServer implements AppSyncServer {
   final Uri path;
   final String username;
   final String password;
-  final int? maxRetryCount;
-  final DateTime? connectTimeout;
+  final int? connectRetryCount;
+  final Duration? connectTimeout;
 
   const AppWebDavSyncServer({
     required this.identity,
@@ -165,7 +169,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
     required this.username,
     required this.password,
     this.timeout,
-    this.maxRetryCount,
+    this.connectRetryCount,
     this.connectTimeout,
     required this.verified,
     required this.configed,
@@ -183,8 +187,8 @@ final class AppWebDavSyncServer implements AppSyncServer {
     Iterable<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool syncInLowData = true,
     bool ignoreSSL = false,
-    DateTime? timeout,
-    DateTime? connectTimeout,
+    Duration? timeout,
+    Duration? connectTimeout,
     int? maxRetryCount,
   }) {
     final now = DateTime.now();
@@ -202,7 +206,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
         syncInLowData: syncInLowData,
         ignoreSSL: ignoreSSL,
         timeout: timeout,
-        maxRetryCount: maxRetryCount,
+        connectRetryCount: maxRetryCount,
         connectTimeout: connectTimeout);
   }
 
@@ -214,7 +218,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
     required this.username,
     required this.password,
     this.timeout,
-    this.maxRetryCount,
+    this.connectRetryCount,
     this.connectTimeout,
     required this.verified,
     required this.configed,
@@ -246,33 +250,36 @@ final class AppWebDavSyncServer implements AppSyncServer {
 
   @override
   AppSyncServerForm toForm() => AppSyncServerForm(
-        uuid: UuidValue.fromString(identity),
-        createTime: createTime,
-        modifyTime: modifyTime,
-        type: type,
-        path: path.toString(),
-        username: username,
-        password: password,
-      );
+      uuid: UuidValue.fromString(identity),
+      createTime: createTime,
+      modifyTime: modifyTime,
+      type: type,
+      path: path.toString(),
+      username: username,
+      password: password,
+      ignoreSSL: ignoreSSL,
+      timeout: timeout,
+      connectTimeout: connectTimeout,
+      connectRetryCount: connectRetryCount);
 
   @override
   String toDebugString() {
     return """AppWebDavSyncServer(
-    identity: $identity,
-    createTime: $createTime,
-    modifyTime: $modifyTime,
-    type: $type,
-    syncInLowData: $syncInLowData,
-    timeout: $timeout,
-    verified: $verified,
-    configed: $configed,
-    syncMobileNetworks: $_syncMobileNetworks,
-    path: $path,
-    username: $username,
-    password: $password,
-    maxRetryCount: $maxRetryCount,
-    connectTimeout: $connectTimeout
-    )""";
+  identity: $identity,
+  createTime: $createTime,
+  modifyTime: $modifyTime,
+  type: $type,
+  syncInLowData: $syncInLowData,
+  timeout: $timeout,
+  verified: $verified,
+  configed: $configed,
+  syncMobileNetworks: $_syncMobileNetworks,
+  path: $path,
+  username: $username,
+  password: $password,
+  connectTimeout: $connectTimeout,
+  connectRetryCount: $connectRetryCount,
+)""";
   }
 }
 
@@ -298,7 +305,7 @@ final class AppFakeSyncServer implements AppSyncServer {
   @override
   final bool syncInLowData;
   @override
-  final DateTime? timeout;
+  final Duration? timeout;
   @override
   final bool verified;
   @override
@@ -327,8 +334,8 @@ final class AppFakeSyncServer implements AppSyncServer {
     List<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool syncInLowData = true,
     bool ignoreSSL = false,
-    DateTime? timeout,
-    DateTime? connectTimeout,
+    Duration? timeout,
+    Duration? connectTimeout,
     int? maxRetryCount,
   }) {
     final now = DateTime.now();
@@ -371,19 +378,33 @@ final class AppFakeSyncServer implements AppSyncServer {
       throw UnimplementedError();
 
   @override
-  String toDebugString() => 'AppFakeSyncServer(identity=$identity,'
-      'name=$name,createTime=$createTime,modifyTime=$modifyTime,'
-      'type=$type,ignoreSSL=$ignoreSSL,syncInLowData=$syncInLowData,'
-      'timeout=$timeout,verified=$verified,configed=$configed,'
-      'syncMobileNetworks=$syncMobileNetworks)';
+  String toDebugString() => """AppFakeSyncServer(
+  identity=$identity,
+  name=$name,
+  createTime=$createTime,
+  modifyTime=$modifyTime,
+  type=$type,
+  ignoreSSL=$ignoreSSL,
+  syncInLowData=$syncInLowData,
+  timeout=$timeout,
+  verified=$verified,
+  configed=$configed,
+  syncMobileNetworks=$syncMobileNetworks,
+)""";
 
   @override
   AppSyncServerForm toForm() => AppSyncServerForm(
-        uuid: UuidValue.fromString(identity),
-        createTime: createTime,
-        modifyTime: modifyTime,
-        type: type,
-      );
+      uuid: UuidValue.fromString(identity),
+      createTime: createTime,
+      modifyTime: modifyTime,
+      type: type,
+      path: null,
+      username: null,
+      password: null,
+      ignoreSSL: ignoreSSL,
+      timeout: timeout,
+      connectTimeout: null,
+      connectRetryCount: null);
 
   @override
   Map<String, dynamic> toJson() => _$AppFakeSyncServerToJson(this);
@@ -401,21 +422,29 @@ class AppSyncServerForm {
   String? username;
   String? password;
   bool? ignoreSSL;
+  Duration? timeout;
+  Duration? connectTimeout;
+  int? connectRetryCount;
 
   AppSyncServerForm({
     required this.uuid,
     required this.type,
     required this.createTime,
     required this.modifyTime,
-    this.path,
-    this.username,
-    this.password,
-    this.ignoreSSL,
+    required this.path,
+    required this.username,
+    required this.password,
+    required this.ignoreSSL,
+    required this.timeout,
+    required this.connectTimeout,
+    required this.connectRetryCount,
   });
 
-  @override
-  String toString() => 'AppSyncServerForm(uuid=$uuid,type=$type,'
-      'createTime=$createTime,modifyTime=$modifyTime,'
-      'path=$path,username=$username,password=$password,'
-      'ignoreSSL=$ignoreSSL)';
+  String toDebugString() => """AppSyncServerForm(
+  uuid=$uuid,type=$type,
+  createTime=$createTime,modifyTime=$modifyTime,
+  path=$path,username=$username,password=$password,
+  ignoreSSL=$ignoreSSL,timeout=$timeout,
+  connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount
+)""";
 }
