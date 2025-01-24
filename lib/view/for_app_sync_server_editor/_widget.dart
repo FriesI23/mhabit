@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './app_sync_server_ignoressl.dart';
 export './app_sync_server_password.dart';
 export './app_sync_server_path.dart';
 export './app_sync_server_type.dart';
