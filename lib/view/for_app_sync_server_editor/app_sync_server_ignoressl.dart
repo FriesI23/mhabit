@@ -18,10 +18,10 @@ import 'package:provider/provider.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
-class AppSyncServerIgnoreSSL extends StatelessWidget {
+class AppSyncServerIgnoreSSLTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
 
-  const AppSyncServerIgnoreSSL({super.key, this.contentPadding});
+  const AppSyncServerIgnoreSSLTile({super.key, this.contentPadding});
 
   @override
   Widget build(BuildContext context) {

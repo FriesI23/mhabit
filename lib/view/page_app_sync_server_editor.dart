@@ -139,7 +139,10 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
                 const AppSyncServerPathTile(),
                 const AppSyncServerUsernameTile(),
                 const AppSyncServerPasswordTile(),
-                const AppSyncServerIgnoreSSL(),
+                const AppSyncServerIgnoreSSLTile(),
+                const AppSyncServerTimeoutTile(),
+                const AppSyncServerConnTimeoutTile(),
+                const AppSyncServerConnRetryCountTile(),
                 const _DebuggerTile(),
               ],
             ),
@@ -149,6 +152,8 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
 }
 
 class _AppSyncServerEditorDialog extends StatelessWidget {
+  static const dialogMaxWidth = 1240.0;
+
   final AppSyncServer? serverConfig;
   final bool canSave;
   final VoidCallback? onSaveButtonPressed;
@@ -161,35 +166,46 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-        scrollable: true,
-        title: const Text("Modfiy Sync Server"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const AppSyncServerTypeMenu(width: -1),
-            const AppSyncServerPathTile(),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Expanded(child: AppSyncServerUsernameTile()),
-                const Expanded(child: AppSyncServerPasswordTile()),
-              ],
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: BoxConstraints.expand(width: dialogMaxWidth),
+        child: AlertDialog(
+          scrollable: true,
+          title: const Text("Modfiy Sync Server"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppSyncServerTypeMenu(width: -1),
+              const AppSyncServerPathTile(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Expanded(child: AppSyncServerUsernameTile()),
+                  const Expanded(child: AppSyncServerPasswordTile()),
+                ],
+              ),
+              const AppSyncServerIgnoreSSLTile(),
+              const AppSyncServerTimeoutTile(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Expanded(child: AppSyncServerConnTimeoutTile()),
+                  const Expanded(child: AppSyncServerConnRetryCountTile()),
+                ],
+              ),
+              const _DebuggerTile(),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: Text("cancel"),
             ),
-            const AppSyncServerIgnoreSSL(),
-            const _DebuggerTile(),
+            TextButton(
+              onPressed: canSave ? onSaveButtonPressed : null,
+              child: Text("save"),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: Navigator.of(context).pop,
-            child: Text("cancel"),
-          ),
-          TextButton(
-            onPressed: canSave ? onSaveButtonPressed : null,
-            child: Text("save"),
-          ),
-        ],
       );
 }
 
@@ -247,7 +263,10 @@ class _DebuggerTileState extends State<_DebuggerTile> {
               Text("Username: ${vm.usernameInputController.text}"),
               Text("Password: ${vm.passwordInputController.text}"),
               Text("IgnoreSSL: ${vm.ignoreSSL}"),
-              Text("Form: ${vm.formSnapshot}"),
+              Text("Timeout: ${vm.timeout?.inSeconds}"),
+              Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
+              Text("Conn RetryCount: ${vm.connectRetryCount}"),
+              Text("Form: ${vm.formSnapshot.toDebugString()}"),
             ],
           ),
           isThreeLine: true,

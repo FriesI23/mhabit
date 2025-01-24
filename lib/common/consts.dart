@@ -90,6 +90,9 @@ const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
+const defaultAppSyncTimeout = Duration(seconds: 60);
+const defaultAppSyncConnectTimeout = Duration(seconds: 10);
+const int? defaultAppSyncConnectRetryCount = null; // null for infinity
 //#endregion
 
 //#region habit-field
