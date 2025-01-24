@@ -54,7 +54,7 @@ class AppSyncServerPasswordTile extends StatelessWidget {
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     final vm = context.read<AppSyncServerFormViewModel>();
     return Visibility(
-      visible: type.includePathField,
+      visible: type.includePasswordField,
       child: FutureBuilder(
         future: vm.getPassword(),
         builder: (context, snapshot) => Stack(
