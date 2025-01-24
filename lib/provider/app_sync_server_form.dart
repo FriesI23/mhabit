@@ -119,6 +119,39 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  Duration? get timeout => _form.timeout;
+  set timeout(Duration? value) {
+    assert((value?.inSeconds ?? 0) >= 0);
+    if (value == timeout) return;
+    final oldValue = timeout;
+    _form.timeout = value;
+    appLog.value.info('$runtimeType.timeout',
+        beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    notifyListeners();
+  }
+
+  Duration? get connectTimeout => _form.connectTimeout;
+  set connectTimeout(Duration? value) {
+    assert((value?.inSeconds ?? 0) >= 0);
+    if (value == connectTimeout) return;
+    final oldValue = connectTimeout;
+    _form.connectTimeout = value;
+    appLog.value.info('$runtimeType.connectTimeout',
+        beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    notifyListeners();
+  }
+
+  int? get connectRetryCount => _form.connectRetryCount;
+  set connectRetryCount(int? value) {
+    assert((value ?? 0) >= 0);
+    if (value == connectRetryCount) return;
+    final oldValue = connectRetryCount;
+    _form.connectRetryCount = value;
+    appLog.value.info('$runtimeType.connectRetryCount',
+        beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
   Future<(String, String?)> getPassword({
     Duration timeout = const Duration(seconds: 1),
     bool changeController = true,
