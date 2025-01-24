@@ -24,17 +24,27 @@ part 'app_sync_server.g.dart';
 @JsonEnum(valueField: "code")
 enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   unknown(code: 0),
-  webdav(code: 1, includePathField: true, includeUsernameField: true),
+  webdav(
+    code: 1,
+    includePathField: true,
+    includeUsernameField: true,
+    includePasswordField: true,
+    includeIgnoreSSLField: true,
+  ),
   fake(code: 99);
 
   final int code;
   final bool includePathField;
   final bool includeUsernameField;
+  final bool includePasswordField;
+  final bool includeIgnoreSSLField;
 
   const AppSyncServerType({
     required this.code,
     this.includePathField = false,
     this.includeUsernameField = false,
+    this.includePasswordField = false,
+    this.includeIgnoreSSLField = false,
   });
 
   @override
@@ -390,6 +400,7 @@ class AppSyncServerForm {
   String? path;
   String? username;
   String? password;
+  bool? ignoreSSL;
 
   AppSyncServerForm({
     required this.uuid,
@@ -399,10 +410,12 @@ class AppSyncServerForm {
     this.path,
     this.username,
     this.password,
+    this.ignoreSSL,
   });
 
   @override
   String toString() => 'AppSyncServerForm(uuid=$uuid,type=$type,'
       'createTime=$createTime,modifyTime=$modifyTime,'
-      'path=$path,username=$username,password=$password)';
+      'path=$path,username=$username,password=$password,'
+      'ignoreSSL=$ignoreSSL)';
 }
