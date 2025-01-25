@@ -152,6 +152,28 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  Iterable<AppSyncServerMobileNetwork>? get syncMobileNetworks =>
+      _form.syncMobileNetworks;
+  set syncMobileNetworks(Iterable<AppSyncServerMobileNetwork>? value) {
+    final newValue = value?.toSet();
+    final oldValue = _form.syncMobileNetworks;
+    if (newValue == oldValue) return;
+    _form.syncMobileNetworks = newValue;
+    appLog.value.info('$runtimeType.syncMobileNetworks',
+        beforeVal: oldValue, afterVal: newValue);
+    notifyListeners();
+  }
+
+  bool? get syncInLowData => _form.syncInLowData;
+  set syncInLowData(bool? value) {
+    if (value == syncInLowData) return;
+    final oldValue = syncInLowData;
+    _form.syncInLowData = value;
+    appLog.value.info('$runtimeType.syncInLowData',
+        beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
   Future<(String, String?)> getPassword({
     Duration timeout = const Duration(seconds: 1),
     bool changeController = true,

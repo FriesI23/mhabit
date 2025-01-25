@@ -246,6 +246,7 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
         const AppSyncServerTimeoutTile(),
         const AppSyncServerConnTimeoutTile(),
         const AppSyncServerConnRetryCountTile(),
+        const AppSyncServerNetworkTypeTile(),
       ];
 
   List<Widget> _buildForLargeScreen() => [
@@ -258,6 +259,7 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
             const Expanded(child: AppSyncServerConnRetryCountTile()),
           ],
         ),
+        const AppSyncServerNetworkTypeTile(),
       ];
 
   @override
