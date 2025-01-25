@@ -14,10 +14,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/utils.dart';
+import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
 class AppSyncServerConnTimeoutTile extends StatefulWidget {
@@ -36,10 +38,12 @@ class _AppSyncServerConnTimeoutTile
     extends State<AppSyncServerConnTimeoutTile> {
   late TextEditingController controller;
   late AppSyncServerFormViewModel vm;
+  late AppSyncServerType crtType;
 
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
+    crtType = vm.type;
     controller = TextEditingController.fromValue(
         TextEditingValue(text: vm.connectTimeout?.inSeconds.toString() ?? ''));
     super.initState();
@@ -49,6 +53,15 @@ class _AppSyncServerConnTimeoutTile
   void dispose() {
     super.dispose();
     controller.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (crtType != vm.type) {
+      crtType = vm.type;
+      controller.clear();
+    }
   }
 
   void _onChange(String value) {
@@ -66,24 +79,31 @@ class _AppSyncServerConnTimeoutTile
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: widget.contentPadding,
-      title: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: 'Network Connection Timeout Seconds',
-          hintText: 'Default: ${defaultAppSyncConnectTimeout.inSeconds}s',
+    final type = context
+        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    return Visibility(
+      visible: type.includeConnTimeoutField,
+      child: ListTile(
+        contentPadding: widget.contentPadding,
+        title: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            icon: const Icon(MdiIcons.lanPending),
+            labelText: 'Network Connection Timeout Seconds',
+            hintText: 'Default: ${defaultAppSyncConnectTimeout.inSeconds}s',
+            suffixText: "s",
+          ),
+          keyboardType: const TextInputType.numberWithOptions(
+              signed: false, decimal: false),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(AppSyncServerConnTimeoutTile
+                .kAllowdMaxTimeoutSecond
+                .toString()
+                .length)
+          ],
+          onChanged: _onChange,
         ),
-        keyboardType: const TextInputType.numberWithOptions(
-            signed: false, decimal: false),
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(AppSyncServerConnTimeoutTile
-              .kAllowdMaxTimeoutSecond
-              .toString()
-              .length)
-        ],
-        onChanged: _onChange,
       ),
     );
   }
@@ -103,10 +123,12 @@ class _AppSyncServerConnRetryCountTile
     extends State<AppSyncServerConnRetryCountTile> {
   late TextEditingController controller;
   late AppSyncServerFormViewModel vm;
+  late AppSyncServerType crtType;
 
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
+    crtType = vm.type;
     controller = TextEditingController.fromValue(
         TextEditingValue(text: vm.connectRetryCount?.toString() ?? ''));
     super.initState();
@@ -116,6 +138,15 @@ class _AppSyncServerConnRetryCountTile
   void dispose() {
     super.dispose();
     controller.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (crtType != vm.type) {
+      crtType = vm.type;
+      controller.clear();
+    }
   }
 
   void _onChange(String value) {
@@ -131,20 +162,26 @@ class _AppSyncServerConnRetryCountTile
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: widget.contentPadding,
-      title: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: 'Network Connection Retry Count',
-          hintText: 'Default: Unlimited',
+    final type = context
+        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    return Visibility(
+      visible: type.includeConnRetryCountField,
+      child: ListTile(
+        contentPadding: widget.contentPadding,
+        title: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            icon: Icon(MdiIcons.timelineClockOutline),
+            labelText: 'Network Connection Retry Count',
+            hintText: 'Default: Unlimited',
+          ),
+          keyboardType: const TextInputType.numberWithOptions(
+              signed: false, decimal: false),
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: _onChange,
         ),
-        keyboardType: const TextInputType.numberWithOptions(
-            signed: false, decimal: false),
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-        ],
-        onChanged: _onChange,
       ),
     );
   }
