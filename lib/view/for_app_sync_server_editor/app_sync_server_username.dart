@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/app_sync_server.dart';
@@ -39,7 +40,8 @@ class AppSyncServerUsernameTile extends StatelessWidget {
         contentPadding: contentPadding,
         title: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
+            icon: Icon(MdiIcons.accountCircleOutline),
             labelText: 'Username',
             hintText: 'Enter username here, leave empty if not required.',
           ),
