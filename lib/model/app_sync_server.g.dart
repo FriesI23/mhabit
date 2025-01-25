@@ -148,7 +148,6 @@ abstract class _$AppFakeSyncServerCWProxy {
     Duration? timeout,
     bool? verified,
     bool? configed,
-    List<AppSyncServerMobileNetwork>? syncMobileNetworks,
   });
 }
 
@@ -174,7 +173,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? timeout = const $CopyWithPlaceholder(),
     Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
-    Object? syncMobileNetworks = const $CopyWithPlaceholder(),
   }) {
     return AppFakeSyncServer._copyWith(
       identity: identity == const $CopyWithPlaceholder() || identity == null
@@ -207,11 +205,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
           : configed as bool,
-      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder() ||
-              syncMobileNetworks == null
-          ? _value.syncMobileNetworks
-          // ignore: cast_nullable_to_non_nullable
-          : syncMobileNetworks as List<AppSyncServerMobileNetwork>,
     );
   }
 }
@@ -242,6 +235,8 @@ abstract class _$AppSyncServerFormCWProxy {
     Duration? timeout,
     Duration? connectTimeout,
     int? connectRetryCount,
+    Set<AppSyncServerMobileNetwork>? syncMobileNetworks,
+    bool? syncInLowData,
   });
 }
 
@@ -271,6 +266,8 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
     Object? timeout = const $CopyWithPlaceholder(),
     Object? connectTimeout = const $CopyWithPlaceholder(),
     Object? connectRetryCount = const $CopyWithPlaceholder(),
+    Object? syncMobileNetworks = const $CopyWithPlaceholder(),
+    Object? syncInLowData = const $CopyWithPlaceholder(),
   }) {
     return AppSyncServerForm(
       uuid: uuid == const $CopyWithPlaceholder() || uuid == null
@@ -319,6 +316,14 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
           ? _value.connectRetryCount
           // ignore: cast_nullable_to_non_nullable
           : connectRetryCount as int?,
+      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder()
+          ? _value.syncMobileNetworks
+          // ignore: cast_nullable_to_non_nullable
+          : syncMobileNetworks as Set<AppSyncServerMobileNetwork>?,
+      syncInLowData: syncInLowData == const $CopyWithPlaceholder()
+          ? _value.syncInLowData
+          // ignore: cast_nullable_to_non_nullable
+          : syncInLowData as bool?,
     );
   }
 }
