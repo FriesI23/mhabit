@@ -31,7 +31,7 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
       includePasswordField: true,
       includeIgnoreSSLField: true,
       includeConnTimeoutField: true,
-      includeRetryCountFIeld: true),
+      includeConnRetryCountField: true),
   fake(code: 99);
 
   final int code;
@@ -40,7 +40,7 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   final bool includePasswordField;
   final bool includeIgnoreSSLField;
   final bool includeConnTimeoutField;
-  final bool includeRetryCountFIeld;
+  final bool includeConnRetryCountField;
 
   const AppSyncServerType(
       {required this.code,
@@ -49,7 +49,7 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
       this.includePasswordField = false,
       this.includeIgnoreSSLField = false,
       this.includeConnTimeoutField = false,
-      this.includeRetryCountFIeld = false});
+      this.includeConnRetryCountField = false});
 
   @override
   int get dbCode => code;
@@ -116,9 +116,6 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   DateTime get createTime;
   DateTime get modifyTime;
   AppSyncServerType get type;
-  Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks;
-  bool get syncInLowData;
-  bool get ignoreSSL;
   Duration? get timeout;
   bool get verified;
   bool get configed;
@@ -143,10 +140,6 @@ final class AppWebDavSyncServer implements AppSyncServer {
       includeFromJson: false)
   final AppSyncServerType type;
   @override
-  final bool ignoreSSL;
-  @override
-  final bool syncInLowData;
-  @override
   final Duration? timeout;
   @override
   final bool verified;
@@ -158,6 +151,8 @@ final class AppWebDavSyncServer implements AppSyncServer {
   final Uri path;
   final String username;
   final String password;
+  final bool ignoreSSL;
+  final bool syncInLowData;
   final int? connectRetryCount;
   final Duration? connectTimeout;
 
@@ -237,7 +232,6 @@ final class AppWebDavSyncServer implements AppSyncServer {
   factory AppWebDavSyncServer.fromForm(AppSyncServerForm form) =>
       throw UnimplementedError();
 
-  @override
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks =>
       _syncMobileNetworks;
 
@@ -301,29 +295,20 @@ final class AppFakeSyncServer implements AppSyncServer {
       includeFromJson: false)
   final AppSyncServerType type;
   @override
-  final bool ignoreSSL;
-  @override
-  final bool syncInLowData;
-  @override
   final Duration? timeout;
   @override
   final bool verified;
   @override
   final bool configed;
-  @override
-  final List<AppSyncServerMobileNetwork> syncMobileNetworks;
 
   const AppFakeSyncServer({
     required this.identity,
     required this.name,
     required this.createTime,
     required this.modifyTime,
-    required this.ignoreSSL,
-    required this.syncInLowData,
     required this.timeout,
     required this.verified,
     required this.configed,
-    required this.syncMobileNetworks,
   }) : type = AppSyncServerType.fake;
 
   factory AppFakeSyncServer.newServer({
@@ -344,13 +329,9 @@ final class AppFakeSyncServer implements AppSyncServer {
       name: identity,
       createTime: now,
       modifyTime: now,
-      ignoreSSL: ignoreSSL,
-      syncInLowData: syncInLowData,
       timeout: timeout,
       verified: false,
       configed: false,
-      syncMobileNetworks:
-          syncMobileNetworks ?? AppSyncServerMobileNetwork.allowed,
     );
   }
 
@@ -359,16 +340,11 @@ final class AppFakeSyncServer implements AppSyncServer {
     required this.name,
     required this.createTime,
     required this.modifyTime,
-    required this.ignoreSSL,
-    required this.syncInLowData,
     this.timeout,
     required this.verified,
     required this.configed,
     required List<AppSyncServerMobileNetwork> syncMobileNetworks,
-  })  : type = AppSyncServerType.fake,
-        syncMobileNetworks = [] {
-    this.syncMobileNetworks.addAll(syncMobileNetworks);
-  }
+  }) : type = AppSyncServerType.fake;
 
   factory AppFakeSyncServer.fromJson(Map<String, dynamic> json) =>
       _$AppFakeSyncServerFromJson(json);
@@ -384,12 +360,9 @@ final class AppFakeSyncServer implements AppSyncServer {
   createTime=$createTime,
   modifyTime=$modifyTime,
   type=$type,
-  ignoreSSL=$ignoreSSL,
-  syncInLowData=$syncInLowData,
   timeout=$timeout,
   verified=$verified,
   configed=$configed,
-  syncMobileNetworks=$syncMobileNetworks,
 )""";
 
   @override
@@ -401,7 +374,7 @@ final class AppFakeSyncServer implements AppSyncServer {
       path: null,
       username: null,
       password: null,
-      ignoreSSL: ignoreSSL,
+      ignoreSSL: null,
       timeout: timeout,
       connectTimeout: null,
       connectRetryCount: null);
