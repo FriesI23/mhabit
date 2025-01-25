@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../component/widget.dart';
@@ -77,12 +78,23 @@ class AppSyncServerEditorView extends StatefulWidget {
 }
 
 class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
+  late bool showAdvanceConfig;
+
   _AppSyncServerEditerView();
+
+  @override
+  void initState() {
+    super.initState();
+    showAdvanceConfig = false;
+  }
 
   void _onSaveButtonPressed() {
     // TODO: implement _onSaveButtonPressed
     throw UnimplementedError();
   }
+
+  void _onAdvanceConfigExpansionChanged(bool value) =>
+      showAdvanceConfig = value;
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +109,16 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
               serverConfig: widget.serverConfig,
               onSaveButtonPressed: _onSaveButtonPressed,
               canSave: canSave,
+              showAdvanceConfig: showAdvanceConfig,
+              onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
             )
           : _AppSyncServerEditorDialog(
               key: const ValueKey("dialog"),
               serverConfig: widget.serverConfig,
               onSaveButtonPressed: _onSaveButtonPressed,
               canSave: canSave,
+              showAdvanceConfig: showAdvanceConfig,
+              onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
             ),
     );
   }
@@ -111,13 +127,17 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
 class _AppSyncServerEditorFsDialog extends StatelessWidget {
   final AppSyncServer? serverConfig;
   final bool canSave;
+  final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
+  final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorFsDialog({
     super.key,
     required this.serverConfig,
     required this.canSave,
+    required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
+    this.onAdvConfigExpansionChanged,
   });
 
   @override
@@ -139,10 +159,11 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
                 const AppSyncServerPathTile(),
                 const AppSyncServerUsernameTile(),
                 const AppSyncServerPasswordTile(),
-                const AppSyncServerIgnoreSSLTile(),
-                const AppSyncServerTimeoutTile(),
-                const AppSyncServerConnTimeoutTile(),
-                const AppSyncServerConnRetryCountTile(),
+                _AppSyncServerEditorAdvConfigGroup(
+                  type: UiLayoutType.s,
+                  expanded: showAdvanceConfig,
+                  onExpansionChanged: onAdvConfigExpansionChanged,
+                ),
                 const _DebuggerTile(),
               ],
             ),
@@ -156,13 +177,17 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
 
   final AppSyncServer? serverConfig;
   final bool canSave;
+  final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
+  final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorDialog({
     super.key,
     required this.serverConfig,
     required this.canSave,
+    required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
+    this.onAdvConfigExpansionChanged,
   });
 
   @override
@@ -183,14 +208,10 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
                   const Expanded(child: AppSyncServerPasswordTile()),
                 ],
               ),
-              const AppSyncServerIgnoreSSLTile(),
-              const AppSyncServerTimeoutTile(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Expanded(child: AppSyncServerConnTimeoutTile()),
-                  const Expanded(child: AppSyncServerConnRetryCountTile()),
-                ],
+              _AppSyncServerEditorAdvConfigGroup(
+                type: UiLayoutType.l,
+                expanded: showAdvanceConfig,
+                onExpansionChanged: onAdvConfigExpansionChanged,
               ),
               const _DebuggerTile(),
             ],
@@ -209,6 +230,53 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
       );
 }
 
+class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
+  final UiLayoutType type;
+  final bool? expanded;
+  final ValueChanged<bool>? onExpansionChanged;
+
+  const _AppSyncServerEditorAdvConfigGroup({
+    required this.type,
+    this.expanded,
+    this.onExpansionChanged,
+  });
+
+  List<Widget> _buildForSmallScreen() => [
+        const AppSyncServerIgnoreSSLTile(),
+        const AppSyncServerTimeoutTile(),
+        const AppSyncServerConnTimeoutTile(),
+        const AppSyncServerConnRetryCountTile(),
+      ];
+
+  List<Widget> _buildForLargeScreen() => [
+        const AppSyncServerIgnoreSSLTile(),
+        const AppSyncServerTimeoutTile(),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Expanded(child: AppSyncServerConnTimeoutTile()),
+            const Expanded(child: AppSyncServerConnRetryCountTile()),
+          ],
+        ),
+      ];
+
+  @override
+  Widget build(BuildContext context) => ExpansionTile(
+        title: const Text("Advance Configs"),
+        leading: Icon(MdiIcons.dotsHorizontal),
+        tilePadding: ExpansionTileTheme.of(context)
+            .tilePadding
+            ?.add(const EdgeInsets.symmetric(vertical: 4.0)),
+        shape: const Border(),
+        initiallyExpanded: expanded ?? false,
+        onExpansionChanged: onExpansionChanged,
+        children: switch (type) {
+          UiLayoutType.l => _buildForLargeScreen(),
+          _ => _buildForSmallScreen()
+        },
+      );
+}
+
 class _DebuggerTile extends StatefulWidget {
   const _DebuggerTile();
 
@@ -218,12 +286,14 @@ class _DebuggerTile extends StatefulWidget {
 
 class _DebuggerTileState extends State<_DebuggerTile> {
   late AppSyncServerFormViewModel formVM;
+  late bool hided;
 
   void _changeListener() => setState(() {});
 
   @override
   void initState() {
     super.initState();
+    hided = false;
     formVM = context.read<AppSyncServerFormViewModel>();
     formVM.pathInputController.addListener(_changeListener);
     formVM.usernameInputController.addListener(_changeListener);
@@ -247,31 +317,36 @@ class _DebuggerTileState extends State<_DebuggerTile> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<AppSyncServerFormViewModel>();
-    return Column(
-      children: [
-        const Divider(),
-        ListTile(
-          leading:
-              Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-          title: const Text("DEBUG"),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Mounted: ${vm.mounted}"),
-              Text("Type: ${vm.type}"),
-              Text("Path: ${vm.pathInputController.text}"),
-              Text("Username: ${vm.usernameInputController.text}"),
-              Text("Password: ${vm.passwordInputController.text}"),
-              Text("IgnoreSSL: ${vm.ignoreSSL}"),
-              Text("Timeout: ${vm.timeout?.inSeconds}"),
-              Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
-              Text("Conn RetryCount: ${vm.connectRetryCount}"),
-              Text("Form: ${vm.formSnapshot.toDebugString()}"),
-            ],
+    return Visibility(
+      visible: !hided,
+      child: Column(
+        children: [
+          const Divider(),
+          ListTile(
+            leading: IconButton(
+                onPressed: () => setState(() => hided = true),
+                icon: Icon(Icons.error,
+                    color: Theme.of(context).colorScheme.error)),
+            title: const Text("DEBUG"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Mounted: ${vm.mounted}"),
+                Text("Type: ${vm.type}"),
+                Text("Path: ${vm.pathInputController.text}"),
+                Text("Username: ${vm.usernameInputController.text}"),
+                Text("Password: ${vm.passwordInputController.text}"),
+                Text("IgnoreSSL: ${vm.ignoreSSL}"),
+                Text("Timeout: ${vm.timeout?.inSeconds}"),
+                Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
+                Text("Conn RetryCount: ${vm.connectRetryCount}"),
+                Text("Form: ${vm.formSnapshot.toDebugString()}"),
+              ],
+            ),
+            isThreeLine: true,
           ),
-          isThreeLine: true,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

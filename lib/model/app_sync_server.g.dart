@@ -145,8 +145,6 @@ abstract class _$AppFakeSyncServerCWProxy {
     String? name,
     DateTime? createTime,
     DateTime? modifyTime,
-    bool? ignoreSSL,
-    bool? syncInLowData,
     Duration? timeout,
     bool? verified,
     bool? configed,
@@ -173,8 +171,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? name = const $CopyWithPlaceholder(),
     Object? createTime = const $CopyWithPlaceholder(),
     Object? modifyTime = const $CopyWithPlaceholder(),
-    Object? ignoreSSL = const $CopyWithPlaceholder(),
-    Object? syncInLowData = const $CopyWithPlaceholder(),
     Object? timeout = const $CopyWithPlaceholder(),
     Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
@@ -199,15 +195,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
               ? _value.modifyTime
               // ignore: cast_nullable_to_non_nullable
               : modifyTime as DateTime,
-      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder() || ignoreSSL == null
-          ? _value.ignoreSSL
-          // ignore: cast_nullable_to_non_nullable
-          : ignoreSSL as bool,
-      syncInLowData:
-          syncInLowData == const $CopyWithPlaceholder() || syncInLowData == null
-              ? _value.syncInLowData
-              // ignore: cast_nullable_to_non_nullable
-              : syncInLowData as bool,
       timeout: timeout == const $CopyWithPlaceholder()
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
@@ -378,14 +365,14 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
       'createTime': instance.createTime.toIso8601String(),
       'modifyTime': instance.modifyTime.toIso8601String(),
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
-      'ignoreSSL': instance.ignoreSSL,
-      'syncInLowData': instance.syncInLowData,
       'timeout': instance.timeout?.inMicroseconds,
       'verified': instance.verified,
       'configed': instance.configed,
       'path': instance.path.toString(),
       'username': instance.username,
       'password': instance.password,
+      'ignoreSSL': instance.ignoreSSL,
+      'syncInLowData': instance.syncInLowData,
       'connectRetryCount': instance.connectRetryCount,
       'connectTimeout': instance.connectTimeout?.inMicroseconds,
       'syncMobileNetworks': instance.syncMobileNetworks
@@ -411,16 +398,11 @@ AppFakeSyncServer _$AppFakeSyncServerFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       createTime: DateTime.parse(json['createTime'] as String),
       modifyTime: DateTime.parse(json['modifyTime'] as String),
-      ignoreSSL: json['ignoreSSL'] as bool,
-      syncInLowData: json['syncInLowData'] as bool,
       timeout: json['timeout'] == null
           ? null
           : Duration(microseconds: (json['timeout'] as num).toInt()),
       verified: json['verified'] as bool,
       configed: json['configed'] as bool,
-      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
-          .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
-          .toList(),
     );
 
 Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
@@ -430,12 +412,7 @@ Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
       'createTime': instance.createTime.toIso8601String(),
       'modifyTime': instance.modifyTime.toIso8601String(),
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
-      'ignoreSSL': instance.ignoreSSL,
-      'syncInLowData': instance.syncInLowData,
       'timeout': instance.timeout?.inMicroseconds,
       'verified': instance.verified,
       'configed': instance.configed,
-      'syncMobileNetworks': instance.syncMobileNetworks
-          .map((e) => _$AppSyncServerMobileNetworkEnumMap[e]!)
-          .toList(),
     };

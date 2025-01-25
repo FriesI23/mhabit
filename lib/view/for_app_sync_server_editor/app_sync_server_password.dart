@@ -14,6 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../component/widget.dart';
@@ -150,7 +151,10 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
               : const Icon(Icons.visibility)),
       title: TextField(
         controller: widget.controller,
-        decoration: InputDecoration(labelText: 'Password'),
+        decoration: const InputDecoration(
+          icon: Icon(MdiIcons.formTextboxPassword),
+          labelText: 'Password',
+        ),
         obscureText: !showPassword,
         enableSuggestions: false,
         autocorrect: false,
