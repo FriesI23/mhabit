@@ -14,10 +14,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/utils.dart';
+import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
 class AppSyncServerTimeoutTile extends StatefulWidget {
@@ -34,13 +36,24 @@ class AppSyncServerTimeoutTile extends StatefulWidget {
 class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
   late TextEditingController controller;
   late AppSyncServerFormViewModel vm;
+  late AppSyncServerType crtType;
 
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
+    crtType = vm.type;
     controller = TextEditingController.fromValue(
         TextEditingValue(text: vm.timeout?.inSeconds.toString() ?? ''));
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (crtType != vm.type) {
+      crtType = vm.type;
+      controller.clear();
+    }
   }
 
   @override
@@ -64,13 +77,17 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
 
   @override
   Widget build(BuildContext context) {
+    context
+        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     return ListTile(
       contentPadding: widget.contentPadding,
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
+          icon: const Icon(MdiIcons.timerOutline),
           labelText: 'Sync Timeout Seconds',
           hintText: 'Default: ${defaultAppSyncTimeout.inSeconds}s',
+          suffixText: 's',
         ),
         keyboardType: const TextInputType.numberWithOptions(
             signed: false, decimal: false),
