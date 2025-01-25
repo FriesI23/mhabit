@@ -14,6 +14,7 @@
 
 export './app_sync_server_conn_timeout.dart';
 export './app_sync_server_ignoressl.dart';
+export './app_sync_server_network_type.dart';
 export './app_sync_server_password.dart';
 export './app_sync_server_path.dart';
 export './app_sync_server_timeout.dart';

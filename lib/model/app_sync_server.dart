@@ -31,7 +31,8 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
       includePasswordField: true,
       includeIgnoreSSLField: true,
       includeConnTimeoutField: true,
-      includeConnRetryCountField: true),
+      includeConnRetryCountField: true,
+      includeSyncNetworkField: true),
   fake(code: 99);
 
   final int code;
@@ -41,6 +42,7 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   final bool includeIgnoreSSLField;
   final bool includeConnTimeoutField;
   final bool includeConnRetryCountField;
+  final bool includeSyncNetworkField;
 
   const AppSyncServerType(
       {required this.code,
@@ -49,7 +51,8 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
       this.includePasswordField = false,
       this.includeIgnoreSSLField = false,
       this.includeConnTimeoutField = false,
-      this.includeConnRetryCountField = false});
+      this.includeConnRetryCountField = false,
+      this.includeSyncNetworkField = false});
 
   @override
   int get dbCode => code;
@@ -254,7 +257,9 @@ final class AppWebDavSyncServer implements AppSyncServer {
       ignoreSSL: ignoreSSL,
       timeout: timeout,
       connectTimeout: connectTimeout,
-      connectRetryCount: connectRetryCount);
+      connectRetryCount: connectRetryCount,
+      syncMobileNetworks: Set.of(syncMobileNetworks),
+      syncInLowData: syncInLowData);
 
   @override
   String toDebugString() {
@@ -316,12 +321,7 @@ final class AppFakeSyncServer implements AppSyncServer {
     required String path,
     String username = '',
     String password = '',
-    List<AppSyncServerMobileNetwork>? syncMobileNetworks,
-    bool syncInLowData = true,
-    bool ignoreSSL = false,
     Duration? timeout,
-    Duration? connectTimeout,
-    int? maxRetryCount,
   }) {
     final now = DateTime.now();
     return AppFakeSyncServer(
@@ -343,7 +343,6 @@ final class AppFakeSyncServer implements AppSyncServer {
     this.timeout,
     required this.verified,
     required this.configed,
-    required List<AppSyncServerMobileNetwork> syncMobileNetworks,
   }) : type = AppSyncServerType.fake;
 
   factory AppFakeSyncServer.fromJson(Map<String, dynamic> json) =>
@@ -377,7 +376,9 @@ final class AppFakeSyncServer implements AppSyncServer {
       ignoreSSL: null,
       timeout: timeout,
       connectTimeout: null,
-      connectRetryCount: null);
+      connectRetryCount: null,
+      syncMobileNetworks: null,
+      syncInLowData: null);
 
   @override
   Map<String, dynamic> toJson() => _$AppFakeSyncServerToJson(this);
@@ -398,6 +399,8 @@ class AppSyncServerForm {
   Duration? timeout;
   Duration? connectTimeout;
   int? connectRetryCount;
+  Set<AppSyncServerMobileNetwork>? syncMobileNetworks;
+  bool? syncInLowData;
 
   AppSyncServerForm({
     required this.uuid,
@@ -411,6 +414,8 @@ class AppSyncServerForm {
     required this.timeout,
     required this.connectTimeout,
     required this.connectRetryCount,
+    required this.syncMobileNetworks,
+    required this.syncInLowData,
   });
 
   String toDebugString() => """AppSyncServerForm(
@@ -418,6 +423,8 @@ class AppSyncServerForm {
   createTime=$createTime,modifyTime=$modifyTime,
   path=$path,username=$username,password=$password,
   ignoreSSL=$ignoreSSL,timeout=$timeout,
-  connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount
+  connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount,
+  syncMobileNetworks=$syncMobileNetworks,
+  syncInLowData=$syncInLowData
 )""";
 }
