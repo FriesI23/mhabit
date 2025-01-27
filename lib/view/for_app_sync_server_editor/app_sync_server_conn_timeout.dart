@@ -40,12 +40,14 @@ class _AppSyncServerConnTimeoutTile
   late AppSyncServerFormViewModel vm;
   late AppSyncServerType crtType;
 
+  String get crtText => vm.connectTimeout?.inSeconds.toString() ?? '';
+
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
     crtType = vm.type;
-    controller = TextEditingController.fromValue(
-        TextEditingValue(text: vm.connectTimeout?.inSeconds.toString() ?? ''));
+    controller =
+        TextEditingController.fromValue(TextEditingValue(text: crtText));
     super.initState();
   }
 
@@ -60,7 +62,7 @@ class _AppSyncServerConnTimeoutTile
     super.didChangeDependencies();
     if (crtType != vm.type) {
       crtType = vm.type;
-      controller.clear();
+      controller.text = crtText;
     }
   }
 
@@ -125,12 +127,14 @@ class _AppSyncServerConnRetryCountTile
   late AppSyncServerFormViewModel vm;
   late AppSyncServerType crtType;
 
+  String get crtText => vm.connectRetryCount?.toString() ?? '';
+
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
     crtType = vm.type;
-    controller = TextEditingController.fromValue(
-        TextEditingValue(text: vm.connectRetryCount?.toString() ?? ''));
+    controller =
+        TextEditingController.fromValue(TextEditingValue(text: crtText));
     super.initState();
   }
 
@@ -145,7 +149,7 @@ class _AppSyncServerConnRetryCountTile
     super.didChangeDependencies();
     if (crtType != vm.type) {
       crtType = vm.type;
-      controller.clear();
+      controller.text = crtText;
     }
   }
 
