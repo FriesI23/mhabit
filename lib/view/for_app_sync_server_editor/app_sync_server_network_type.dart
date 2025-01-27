@@ -52,6 +52,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
               : Colors.lightGreen,
           selected: syncMobileNetworks.contains(type),
           onSelected: onSelected,
+          tooltip: "Sync on Cellular Network",
         ),
       AppSyncServerMobileNetwork.wifi => FilterChip(
           label: Row(
@@ -66,6 +67,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
               : Colors.lightBlue,
           selected: syncMobileNetworks.contains(type),
           onSelected: onSelected,
+          tooltip: "Sync on Wifi",
         ),
       _ => null,
     };
@@ -89,6 +91,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
       onSelected: (newValue) {
         context.read<AppSyncServerFormViewModel>().syncInLowData = newValue;
       },
+      tooltip: "Sync in Low Data Mode",
     );
   }
 
