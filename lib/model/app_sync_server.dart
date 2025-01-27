@@ -33,7 +33,10 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
       includeConnTimeoutField: true,
       includeConnRetryCountField: true,
       includeSyncNetworkField: true),
-  fake(code: 99);
+  fake(
+    code: 99,
+    includePasswordField: true,
+  );
 
   final int code;
   final bool includePathField;
@@ -102,6 +105,18 @@ abstract interface class AppSyncServer implements JsonAdaptor {
     }
   }
 
+  static AppSyncServer? fromForm(AppSyncServerForm? form) {
+    if (form == null) return null;
+    switch (form.type) {
+      case AppSyncServerType.webdav:
+        return AppWebDavSyncServer.fromForm(form);
+      case AppSyncServerType.fake:
+        return AppFakeSyncServer.fromForm(form);
+      default:
+        return null;
+    }
+  }
+
   static AppSyncServer? newServer(AppSyncServerType type) {
     final identity = const Uuid().v4();
     switch (type) {
@@ -123,6 +138,9 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   bool get verified;
   bool get configed;
 
+  String? get password;
+
+  bool isSameConfig(AppSyncServer other, {bool withoutPassword = false});
   AppSyncServerForm toForm();
   String toDebugString();
 }
@@ -256,6 +274,16 @@ final class AppWebDavSyncServer implements AppSyncServer {
   String get name => path.toString();
 
   @override
+  bool isSameConfig(AppSyncServer other, {bool withoutPassword = false}) {
+    if (identical(this, other)) return true;
+    if (other is! AppWebDavSyncServer) return false;
+    return (identity == other.identity &&
+        path == other.path &&
+        username == other.username &&
+        (withoutPassword ? true : password == other.password));
+  }
+
+  @override
   Map<String, dynamic> toJson() => _$AppWebDavSyncServerToJson(this);
 
   @override
@@ -320,6 +348,8 @@ final class AppFakeSyncServer implements AppSyncServer {
   final bool verified;
   @override
   final bool configed;
+  @override
+  final String? password;
 
   const AppFakeSyncServer({
     required this.identity,
@@ -329,12 +359,12 @@ final class AppFakeSyncServer implements AppSyncServer {
     required this.timeout,
     required this.verified,
     required this.configed,
+    required this.password,
   }) : type = AppSyncServerType.fake;
 
   factory AppFakeSyncServer.newServer({
     required String identity,
     required String path,
-    String username = '',
     String password = '',
     Duration? timeout,
   }) {
@@ -347,6 +377,7 @@ final class AppFakeSyncServer implements AppSyncServer {
       timeout: timeout,
       verified: false,
       configed: false,
+      password: password,
     );
   }
 
@@ -355,6 +386,7 @@ final class AppFakeSyncServer implements AppSyncServer {
     required this.name,
     required this.createTime,
     required this.modifyTime,
+    this.password,
     this.timeout,
     required this.verified,
     required this.configed,
@@ -371,7 +403,8 @@ final class AppFakeSyncServer implements AppSyncServer {
           modifyTime: form.modifyTime,
           timeout: form.timeout,
           verified: form.verified,
-          configed: form.configed);
+          configed: form.configed,
+          password: form.password);
 
   @override
   String toDebugString() => """AppFakeSyncServer(
@@ -384,6 +417,13 @@ final class AppFakeSyncServer implements AppSyncServer {
   verified=$verified,
   configed=$configed,
 )""";
+
+  @override
+  bool isSameConfig(AppSyncServer other, {bool withoutPassword = true}) {
+    if (identical(this, other)) return true;
+    if (other is! AppFakeSyncServer) return false;
+    return identity == other.identity;
+  }
 
   @override
   AppSyncServerForm toForm() => AppSyncServerForm(
