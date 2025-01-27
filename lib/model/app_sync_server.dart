@@ -231,9 +231,22 @@ final class AppWebDavSyncServer implements AppSyncServer {
   factory AppWebDavSyncServer.fromJson(Map<String, dynamic> json) =>
       _$AppWebDavSyncServerFromJson(json);
 
-  // TODO: implement
   factory AppWebDavSyncServer.fromForm(AppSyncServerForm form) =>
-      throw UnimplementedError();
+      AppWebDavSyncServer(
+          identity: form.uuid.uuid,
+          createTime: form.createTime,
+          modifyTime: form.modifyTime,
+          path: Uri.parse(form.path!),
+          username: form.username!,
+          password: form.password!,
+          timeout: form.timeout,
+          connectTimeout: form.connectTimeout,
+          connectRetryCount: form.connectRetryCount,
+          verified: form.verified,
+          configed: form.configed,
+          syncMobileNetworks: form.syncMobileNetworks!.toList(),
+          ignoreSSL: form.ignoreSSL!,
+          syncInLowData: form.syncInLowData!);
 
   Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks =>
       _syncMobileNetworks;
@@ -259,7 +272,9 @@ final class AppWebDavSyncServer implements AppSyncServer {
       connectTimeout: connectTimeout,
       connectRetryCount: connectRetryCount,
       syncMobileNetworks: Set.of(syncMobileNetworks),
-      syncInLowData: syncInLowData);
+      syncInLowData: syncInLowData,
+      verified: verified,
+      configed: configed);
 
   @override
   String toDebugString() {
@@ -348,9 +363,15 @@ final class AppFakeSyncServer implements AppSyncServer {
   factory AppFakeSyncServer.fromJson(Map<String, dynamic> json) =>
       _$AppFakeSyncServerFromJson(json);
 
-  // TODO: implement
   factory AppFakeSyncServer.fromForm(AppSyncServerForm form) =>
-      throw UnimplementedError();
+      AppFakeSyncServer(
+          identity: form.uuid.uuid,
+          name: form.uuid.uuid,
+          createTime: form.createTime,
+          modifyTime: form.modifyTime,
+          timeout: form.timeout,
+          verified: form.verified,
+          configed: form.configed);
 
   @override
   String toDebugString() => """AppFakeSyncServer(
@@ -378,7 +399,9 @@ final class AppFakeSyncServer implements AppSyncServer {
       connectTimeout: null,
       connectRetryCount: null,
       syncMobileNetworks: null,
-      syncInLowData: null);
+      syncInLowData: null,
+      verified: verified,
+      configed: configed);
 
   @override
   Map<String, dynamic> toJson() => _$AppFakeSyncServerToJson(this);
@@ -391,6 +414,8 @@ class AppSyncServerForm {
   final DateTime modifyTime;
 
   AppSyncServerType type;
+  bool verified;
+  bool configed;
 
   String? path;
   String? username;
@@ -416,6 +441,8 @@ class AppSyncServerForm {
     required this.connectRetryCount,
     required this.syncMobileNetworks,
     required this.syncInLowData,
+    required this.verified,
+    required this.configed,
   });
 
   String toDebugString() => """AppSyncServerForm(
@@ -425,6 +452,7 @@ class AppSyncServerForm {
   ignoreSSL=$ignoreSSL,timeout=$timeout,
   connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount,
   syncMobileNetworks=$syncMobileNetworks,
-  syncInLowData=$syncInLowData
+  syncInLowData=$syncInLowData,
+  vertified=$verified,configed=$configed,
 )""";
 }
