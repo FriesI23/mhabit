@@ -58,11 +58,20 @@ final class _AppSyncView extends State<AppSyncView> {
     super.dispose();
   }
 
-  void _onServerConfigPressed() {
+  void _onServerConfigPressed() async {
     final config = context.read<AppSyncViewModel>().serverConfig;
     appLog.build
         .debug(context, ex: ["onServerConfigPressed", config?.toDebugString()]);
-    naviToAppSyncServerEditorDialog(context: context, serverConfig: config);
+    final form = await naviToAppSyncServerEditorDialog(
+        context: context, serverConfig: config);
+    if (!mounted) return;
+    appLog.build.debug(context,
+        ex: ["onServerConfigPressed", "Done", form?.toDebugString()]);
+    final result =
+        await context.read<AppSyncViewModel>().saveWithConfigForm(form);
+    if (!mounted) return;
+    appLog.build.info(context,
+        ex: ["onServerConfigPressed", "Saved[$result]", form?.toDebugString()]);
   }
 
   @override
