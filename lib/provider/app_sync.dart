@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../model/app_sync_server.dart';
 import '../persistent/profile/handler/app_sync.dart';
@@ -39,4 +40,66 @@ class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   }
 
   AppSyncServer? get serverConfig => _serverConfig?.get();
+
+  Future<String?> getPassword({String? identity}) {
+    identity = identity ?? serverConfig?.identity;
+    if (identity == null) return Future.value(null);
+    return const FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    ).read(key: "sync-pwd-$identity").catchError((e, s) {
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
+      return serverConfig?.password;
+    });
+  }
+
+  Future<bool> setPassword({String? identity, required String? value}) async {
+    identity = identity ?? serverConfig?.identity;
+    if (identity == null) return false;
+    try {
+      const FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        mOptions: MacOsOptions(),
+      ).write(key: "sync-pwd-$identity", value: value);
+    } catch (e, s) {
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> saveWithConfigForm(AppSyncServerForm? form,
+      {bool forceSave = false,
+      bool resetStatus = true,
+      bool removable = false}) async {
+    AppSyncServer? oldConfig;
+    AppSyncServer? newConfig;
+    AppSyncServer? protoConfig;
+    bool? result;
+
+    oldConfig = serverConfig;
+    protoConfig = newConfig = AppSyncServer.fromForm(form);
+    if (newConfig == null && !removable) return false;
+    final isSameServer = switch ((oldConfig, newConfig)) {
+      (null, null) => true,
+      (null, _) || (_, null) => false,
+      (_, _) => oldConfig!.isSameConfig(newConfig!, withoutPassword: true),
+    };
+    if (isSameServer && !forceSave) return false;
+    if (!isSameServer || resetStatus) {
+      newConfig = AppSyncServer.fromForm(
+          form?.copyWith(configed: false, verified: false, password: ''));
+    }
+    result = await _serverConfig?.set(newConfig);
+    if (result != true) return false;
+    if (protoConfig != null) {
+      result = await setPassword(
+          identity: protoConfig.identity, value: protoConfig.password);
+    }
+    if (result != true) {
+      return await _serverConfig?.set(AppSyncServer.fromForm(
+              form?.copyWith(configed: false, verified: false))) ??
+          false;
+    }
+    return true;
+  }
 }

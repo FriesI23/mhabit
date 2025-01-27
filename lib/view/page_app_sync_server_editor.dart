@@ -23,12 +23,12 @@ import 'common/_widget.dart';
 import 'common/app_ui_layout_builder.dart';
 import 'for_app_sync_server_editor/_widget.dart';
 
-Future<void> naviToAppSyncServerEditorDialog({
+Future<AppSyncServerForm?> naviToAppSyncServerEditorDialog({
   required BuildContext context,
   AppSyncServer? serverConfig,
   bool? naviWithFullscreenDialog,
 }) async {
-  return showDialog(
+  return showDialog<AppSyncServerForm>(
     context: context,
     builder: (context) => PageAppSyncServerEditor(
       serverConfig: serverConfig,
@@ -50,6 +50,7 @@ class PageAppSyncServerEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageProviders(
+      initServerConfig: serverConfig,
       child: AppUiLayoutBuilder(
         ignoreHeight: false,
         ignoreWidth: false,
@@ -89,8 +90,9 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
   }
 
   void _onSaveButtonPressed() {
-    // TODO: implement _onSaveButtonPressed
-    throw UnimplementedError();
+    // TODO(Sync): need confim dialog
+    final vm = context.read<AppSyncServerFormViewModel>();
+    Navigator.of(context).pop(vm.getFinalForm());
   }
 
   void _onAdvanceConfigExpansionChanged(bool value) =>
