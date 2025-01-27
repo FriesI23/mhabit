@@ -15,11 +15,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../logging/helper.dart';
 import '../model/app_sync_server.dart';
+import 'app_sync.dart';
 import 'commons.dart';
 
 class AppSyncServerFormViewModel extends ChangeNotifier
@@ -31,7 +31,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
 
   bool _mounted = true;
   bool _pwdLoaded = false;
-  AppSyncServer? _crtServerConfig;
+  AppSyncViewModel? _parent;
   Completer<(String, String?)>? _pwdCompleter;
 
   late AppSyncServerForm _form;
@@ -81,15 +81,20 @@ class AppSyncServerFormViewModel extends ChangeNotifier
       AppWebDavSyncServer.newServer(identity: const Uuid().v4(), path: '')
           .toForm();
 
-  AppSyncServer? get crtServerConfig => initServerConfig ?? _crtServerConfig;
+  AppSyncServer? get crtServerConfig =>
+      initServerConfig ?? _parent?.serverConfig;
 
   AppSyncServerForm get formSnapshot => _form.copyWith();
 
-  void updateCrtServerConfig(AppSyncServer? newConfig) {
-    if (newConfig != crtServerConfig) {
-      appLog.load.info("$runtimeType.updateCrtServerConfig", ex: [newConfig]);
-      _crtServerConfig = newConfig;
-      notifyListeners();
+  AppSyncServerForm getFinalForm() {
+    flushInputControllersToForm();
+    return _form.copyWith(modifyTime: DateTime.now());
+  }
+
+  void updateParentViewModel(AppSyncViewModel? parent) {
+    if (parent != _parent) {
+      appLog.load.info("$runtimeType.updateCrtServerConfig", ex: [parent]);
+      _parent = parent;
     }
   }
 
@@ -182,8 +187,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     if (crtCompleter != null) return crtCompleter.future;
     final completer = _pwdCompleter = Completer<(String, String?)>();
     final identity = this.identity;
-    const FlutterSecureStorage()
-        .read(key: identity)
+    (_parent?.getPassword(identity: identity) ?? Future.value(null))
         .timeout(timeout)
         .then((value) {
           value = value ?? _form.password;

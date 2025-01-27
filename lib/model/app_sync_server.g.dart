@@ -145,6 +145,7 @@ abstract class _$AppFakeSyncServerCWProxy {
     String? name,
     DateTime? createTime,
     DateTime? modifyTime,
+    String? password,
     Duration? timeout,
     bool? verified,
     bool? configed,
@@ -170,6 +171,7 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? name = const $CopyWithPlaceholder(),
     Object? createTime = const $CopyWithPlaceholder(),
     Object? modifyTime = const $CopyWithPlaceholder(),
+    Object? password = const $CopyWithPlaceholder(),
     Object? timeout = const $CopyWithPlaceholder(),
     Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
@@ -193,6 +195,10 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
               ? _value.modifyTime
               // ignore: cast_nullable_to_non_nullable
               : modifyTime as DateTime,
+      password: password == const $CopyWithPlaceholder()
+          ? _value.password
+          // ignore: cast_nullable_to_non_nullable
+          : password as String?,
       timeout: timeout == const $CopyWithPlaceholder()
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
@@ -237,6 +243,8 @@ abstract class _$AppSyncServerFormCWProxy {
     int? connectRetryCount,
     Set<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool? syncInLowData,
+    bool? verified,
+    bool? configed,
   });
 }
 
@@ -268,6 +276,8 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
     Object? connectRetryCount = const $CopyWithPlaceholder(),
     Object? syncMobileNetworks = const $CopyWithPlaceholder(),
     Object? syncInLowData = const $CopyWithPlaceholder(),
+    Object? verified = const $CopyWithPlaceholder(),
+    Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppSyncServerForm(
       uuid: uuid == const $CopyWithPlaceholder() || uuid == null
@@ -324,6 +334,14 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
           ? _value.syncInLowData
           // ignore: cast_nullable_to_non_nullable
           : syncInLowData as bool?,
+      verified: verified == const $CopyWithPlaceholder() || verified == null
+          ? _value.verified
+          // ignore: cast_nullable_to_non_nullable
+          : verified as bool,
+      configed: configed == const $CopyWithPlaceholder() || configed == null
+          ? _value.configed
+          // ignore: cast_nullable_to_non_nullable
+          : configed as bool,
     );
   }
 }
@@ -408,6 +426,7 @@ AppFakeSyncServer _$AppFakeSyncServerFromJson(Map<String, dynamic> json) =>
           : Duration(microseconds: (json['timeout'] as num).toInt()),
       verified: json['verified'] as bool,
       configed: json['configed'] as bool,
+      password: json['password'] as String?,
     );
 
 Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
@@ -420,4 +439,5 @@ Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
       'timeout': instance.timeout?.inMicroseconds,
       'verified': instance.verified,
       'configed': instance.configed,
+      'password': instance.password,
     };
