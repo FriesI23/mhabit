@@ -38,12 +38,14 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
   late AppSyncServerFormViewModel vm;
   late AppSyncServerType crtType;
 
+  String get crtText => vm.timeout?.inSeconds.toString() ?? '';
+
   @override
   void initState() {
     vm = context.read<AppSyncServerFormViewModel>();
     crtType = vm.type;
-    controller = TextEditingController.fromValue(
-        TextEditingValue(text: vm.timeout?.inSeconds.toString() ?? ''));
+    controller =
+        TextEditingController.fromValue(TextEditingValue(text: crtText));
     super.initState();
   }
 
@@ -52,7 +54,7 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
     super.didChangeDependencies();
     if (crtType != vm.type) {
       crtType = vm.type;
-      controller.clear();
+      controller.text = crtText;
     }
   }
 
@@ -79,6 +81,7 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
   Widget build(BuildContext context) {
     context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    debugPrint(controller.text);
     return ListTile(
       contentPadding: widget.contentPadding,
       title: TextField(

@@ -40,7 +40,7 @@ class PageProviders extends SingleChildStatelessWidget {
               AppSyncServerFormViewModel>(
             create: (context) => context.read<AppSyncServerFormViewModel>(),
             update: (context, value, previous) =>
-                previous!..updateCrtServerConfig(value.serverConfig),
+                previous!..updateParentViewModel(value),
           ),
         ],
         child: child,
