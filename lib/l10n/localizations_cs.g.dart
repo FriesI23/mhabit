@@ -12,7 +12,7 @@ class L10nCs extends L10n {
   String get localeScriptName => 'čeština';
 
   @override
-  String get appName => '🚧(cz) - Table Habit';
+  String get appName => 'Table Habit';
 
   @override
   String get habitEdit_saveButton_text => 'Uložit';
