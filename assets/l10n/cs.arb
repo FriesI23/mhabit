@@ -46,6 +46,8 @@
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "Zvolte typ připomenutí",
   "@habitEdit_reminder_dialogTitle": {},
+  "habitEdit_reminder_dialogType_daily": "Denní",
+  "@habitEdit_reminder_dialogType_daily": {},
   "habitEdit_reminder_dialogConfirm": "Potvrdit",
   "@habitEdit_reminder_dialogConfirm": {},
   "habitEdit_reminder_dialogCancel": "Zrušit",
@@ -64,8 +66,6 @@
   "@habitDetail_confirmDialog_confirm": {},
   "batchCheckin_save_button_text": "Uložit",
   "@batchCheckin_save_button_text": {},
-  "habitEdit_reminder_dialogType_daily": "Denní",
-  "@habitEdit_reminder_dialogType_daily": {},
   "debug_debuggerInfoCard_saveButton_text": "Uložit",
   "@debug_debuggerInfoCard_saveButton_text": {}
 }
