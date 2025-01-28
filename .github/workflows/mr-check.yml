@@ -14,6 +14,9 @@ jobs:
   analyzing:
     uses: ./.github/workflows/_analyze.yml
 
+  checking:
+    uses: ./.github/workflows/_check.yml
+
   testing:
     uses: ./.github/workflows/_test.yml
     with:

@@ -13,6 +13,9 @@ jobs:
   analyzing:
     uses: ./.github/workflows/_analyze.yml
 
+  checking:
+    uses: ./.github/workflows/_check.yml
+
   testing:
     uses: ./.github/workflows/_test.yml
 
@@ -29,6 +32,7 @@ jobs:
     name: Pre Building
     needs:
       - analyzing
+      - checking
       - testing
       - testing-report
     runs-on: ubuntu-latest

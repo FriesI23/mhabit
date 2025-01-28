@@ -1,0 +1,52 @@
+name: Check CI
+
+on:
+  workflow_call:
+
+env:
+  _FN_GIT_CHECK_CHANGE: ""
+
+jobs:
+  file-integrity:
+    name: Generated Files integrity checking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pre Steps
+        run: |
+          echo "_FN_GIT_CHECK_CHANGE<<EOF" >> $GITHUB_ENV
+          echo 'function git_check_changes() {
+            local script_path=$1
+            bash $script_path
+            if [ $? -ne 0 ]; then
+              echo "Script Failed with exit code $?."
+              exit 1
+            fi
+            CHANGES=$(git status --porcelain)
+            if [[ -n "$CHANGES" ]]; then
+              echo "Detected changes:"
+              echo "$CHANGES"
+              echo "------------------------"
+              echo "Details:"
+              git diff
+              exit 1
+            fi
+          }' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - run: |
+          ${{ env._FN_GIT_CHECK_CHANGE }}
+          declare -f git_check_changes
+          if [ $? -ne 0 ]; then
+            echo "Declare 'git_check_changes' Failed with exit code $?."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - name: Normalized ARB files checking
+        run: |
+          ${{ env._FN_GIT_CHECK_CHANGE }}
+          git_check_changes "${{ github.workspace }}/scripts/normalize_arb.sh"
+
+      - name: Generated Files checking
+        run: |
+          ${{ env._FN_GIT_CHECK_CHANGE }}
+          git_check_changes "${{ github.workspace }}/scripts/build_runner.sh"
