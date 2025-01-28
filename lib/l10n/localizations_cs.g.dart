@@ -18,7 +18,7 @@ class L10nCs extends L10n {
   String get habitEdit_saveButton_text => 'Uložit';
 
   @override
-  String get habitEdit_habitName_hintText => 'Název zvyku';
+  String get habitEdit_habitName_hintText => 'Název zvyku ...';
 
   @override
   String get habitEdit_colorPicker_title => 'Zvolte barvu';
@@ -34,7 +34,7 @@ class L10nCs extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Denní cíl, výchozí $number';
+    return 'Denní cíl, $number je výchozí';
   }
 
   @override
@@ -107,7 +107,7 @@ class L10nCs extends L10n {
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Daily';
+  String get habitEdit_habitFreq_show_daily => 'Denní';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
@@ -154,7 +154,7 @@ class L10nCs extends L10n {
   String get habitEdit_targetDays => 'days';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'Připomenutí';
 
   @override
   String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
@@ -166,7 +166,7 @@ class L10nCs extends L10n {
   String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => 'Any day of month';
+  String get habitEdit_reminder_freq_monthHelpText => 'Kterýkoli den v měsíci';
 
   @override
   String get habitEdit_reminder_freq_monthPrefixText => '';
@@ -175,16 +175,16 @@ class L10nCs extends L10n {
   String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Question, e.g. Did you exercise today?';
+  String get habitEdit_reminderQuest_hintText => 'Otázka, např. Cvičil jsi dnes?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Choose reminder type';
+  String get habitEdit_reminder_dialogTitle => 'Zvolte typ připomenutí';
 
   @override
   String get habitEdit_reminder_dialogType_whenNeeded => 'When need to check in';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Daily';
+  String get habitEdit_reminder_dialogType_daily => 'Denní';
 
   @override
   String get habitEdit_reminder_dialogType_week => 'Per week';
@@ -193,19 +193,19 @@ class L10nCs extends L10n {
   String get habitEdit_reminder_dialogType_month => 'Per month';
 
   @override
-  String get habitEdit_reminder_dialogConfirm => 'confirm';
+  String get habitEdit_reminder_dialogConfirm => 'Potvrdit';
 
   @override
-  String get habitEdit_reminder_dialogCancel => 'cancel';
+  String get habitEdit_reminder_dialogCancel => 'Zrušit';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
+  String get habitEdit_reminder_cancelDialogTitle => 'Potvrdit';
 
   @override
   String get habitEdit_reminder_cancelDialogSubtitle => 'Do you confirm to remove this reminder';
 
   @override
-  String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
+  String get habitEdit_reminder_cancelDialogConfirm => 'Potvrdit';
 
   @override
   String get habitEdit_reminder_cancelDialogCancel => 'cancel';
@@ -250,7 +250,7 @@ class L10nCs extends L10n {
   String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archive Selected Habits?';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'Potvrdit';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_cancel => 'cancel';
@@ -264,7 +264,7 @@ class L10nCs extends L10n {
   String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Unarchive Selected Habits?';
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'confirm';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'Potvrdit';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_cancel => 'cancel';
@@ -379,7 +379,7 @@ class L10nCs extends L10n {
   String get habitDisplay_sortTypeDialog_title => 'Sort';
 
   @override
-  String get habitDisplay_sortTypeDialog_confirm => 'confirm';
+  String get habitDisplay_sortTypeDialog_confirm => 'Potvrdit';
 
   @override
   String get habitDisplay_sortTypeDialog_cancel => 'cancel';
@@ -406,7 +406,7 @@ class L10nCs extends L10n {
   String get habitDetail_editPopMenu_clone => 'Template';
 
   @override
-  String get habitDetail_confirmDialog_confirm => 'confirm';
+  String get habitDetail_confirmDialog_confirm => 'Potvrdit';
 
   @override
   String get habitDetail_confirmDialog_cancel => 'cancel';
@@ -919,7 +919,7 @@ class L10nCs extends L10n {
   }
 
   @override
-  String get batchCheckin_save_button_text => 'Save';
+  String get batchCheckin_save_button_text => 'Uložit';
 
   @override
   String get batchCheckin_reset_button_text => 'Reset';
@@ -1169,7 +1169,7 @@ class L10nCs extends L10n {
   String get debug_debuggerInfoCard_openButton_text => 'Open';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'Uložit';
 
   @override
   String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
