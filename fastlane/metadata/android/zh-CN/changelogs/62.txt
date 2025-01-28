@@ -1,0 +1,3 @@
+- 本地化：添加捷克语翻译，感谢 Jirka Čapek 在 Weblate 上的贡献。
+- CI：标准化翻译 ARB 文件。
+- CI：添加代码检查的 GitHub Action。

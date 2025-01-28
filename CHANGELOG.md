@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.15.4+62
+
+- L10n: Add Czech translation, thank for Jirka Čapek's contribution on Weblate.
+- CI: Normalize translation ARB Files.
+- CI: Add Code checking Github Action.
+
 ## 1.15.3+61
 
 - Upgrade `flutter` version to 3.24.5.
