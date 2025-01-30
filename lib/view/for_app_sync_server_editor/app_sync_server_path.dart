@@ -34,18 +34,25 @@ class AppSyncServerPathTile extends StatelessWidget {
     final controller =
         context.select<AppSyncServerFormViewModel, TextEditingController>(
             (vm) => vm.pathInputController);
+    final canSave =
+        context.select<AppSyncServerFormViewModel, bool>((vm) => vm.canSave);
     return Visibility(
       visible: type.includePathField,
       child: ListTile(
         contentPadding: contentPadding,
         title: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            icon: Icon(MdiIcons.networkOutline),
+          decoration: InputDecoration(
+            icon: const Icon(MdiIcons.networkOutline),
             labelText: 'Path',
             hintText: 'Enter a valid WebDAV path here.',
+            errorText: (!canSave && controller.text.isEmpty)
+                ? "Path shouldn't be empty!"
+                : null,
           ),
           keyboardType: TextInputType.url,
+          onChanged: (_) =>
+              context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
         ),
       ),
     );
