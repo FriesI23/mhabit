@@ -48,10 +48,19 @@ class AppSyncSummaryTile extends StatelessWidget {
       trailing: trailingData != null ? Icon(trailingData) : null,
       title: Text("Sync Server"),
       subtitle: serverConfig != null
-          ? Wrap(children: [
-              if (subtileLeading != null) Icon(subtileLeading),
-              Text("Current: ${serverConfig.name}"),
-            ])
+          ? Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 4.0,
+              runSpacing: 6.0,
+              children: [
+                if (subtileLeading != null)
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(subtileLeading),
+                  ),
+                Text("Current: ${serverConfig.name}"),
+              ],
+            )
           : Text("Not Configured."),
       onTap: onPressed,
     );
