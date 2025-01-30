@@ -61,6 +61,13 @@ class AppSyncServerFormViewModel extends ChangeNotifier
 
   bool get pwdLoaded => _pwdLoaded;
 
+  bool get canSave => switch (type) {
+        AppSyncServerType.webdav => pathInputController.text.isNotEmpty,
+        _ => true,
+      };
+
+  void refreshCanSaveStatus() => notifyListeners();
+
   void refreshFormInputControllers() {
     appLog.load.debug("$runtimeType.refreshFormInputControllers", ex: [_form]);
     pathInputController.text = _form.path ?? '';

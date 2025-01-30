@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../common/consts.dart';
 import '../component/widget.dart';
 import '../model/app_sync_server.dart';
 import '../provider/app_sync_server_form.dart';
@@ -92,6 +93,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
   void _onSaveButtonPressed() {
     // TODO(Sync): need confim dialog
     final vm = context.read<AppSyncServerFormViewModel>();
+    assert(vm.canSave, "Can't save current config, got ${vm.formSnapshot}");
     Navigator.of(context).pop(vm.getFinalForm());
   }
 
@@ -100,7 +102,6 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
 
   @override
   Widget build(BuildContext context) {
-    final canSave = true;
     return AnimatedSwitcher(
       transitionBuilder: (child, animation) =>
           FadeTransition(opacity: animation, child: child),
@@ -110,7 +111,6 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
               key: const ValueKey("fullscreen"),
               serverConfig: widget.serverConfig,
               onSaveButtonPressed: _onSaveButtonPressed,
-              canSave: canSave,
               showAdvanceConfig: showAdvanceConfig,
               onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
             )
@@ -118,7 +118,6 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
               key: const ValueKey("dialog"),
               serverConfig: widget.serverConfig,
               onSaveButtonPressed: _onSaveButtonPressed,
-              canSave: canSave,
               showAdvanceConfig: showAdvanceConfig,
               onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
             ),
@@ -128,7 +127,6 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
 
 class _AppSyncServerEditorFsDialog extends StatelessWidget {
   final AppSyncServer? serverConfig;
-  final bool canSave;
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
@@ -136,7 +134,6 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
   const _AppSyncServerEditorFsDialog({
     super.key,
     required this.serverConfig,
-    required this.canSave,
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
     this.onAdvConfigExpansionChanged,
@@ -149,10 +146,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
             appBar: AppBar(
               leading: const PageBackButton(reason: PageBackReason.close),
               actions: [
-                TextButton(
-                  onPressed: canSave ? onSaveButtonPressed : null,
-                  child: Text("Save"),
-                ),
+                AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
               ],
             ),
             body: ListView(
@@ -178,7 +172,6 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   static const dialogMaxWidth = 1240.0;
 
   final AppSyncServer? serverConfig;
-  final bool canSave;
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
@@ -186,11 +179,31 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   const _AppSyncServerEditorDialog({
     super.key,
     required this.serverConfig,
-    required this.canSave,
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
+
+  Widget _buildUserTiles(BuildContext context) => Builder(
+        builder: (context) => MediaQuery.of(context).size.width >=
+                kHabitLargeScreenAdaptWidth * 1.5
+            ? const Row(
+                key: ValueKey("large"),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(child: AppSyncServerUsernameTile()),
+                  Expanded(child: AppSyncServerPasswordTile()),
+                ],
+              )
+            : const Column(
+                key: ValueKey("small"),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppSyncServerUsernameTile(),
+                  AppSyncServerPasswordTile(),
+                ],
+              ),
+      );
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(
@@ -203,13 +216,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
             children: [
               const AppSyncServerTypeMenu(width: -1),
               const AppSyncServerPathTile(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Expanded(child: AppSyncServerUsernameTile()),
-                  const Expanded(child: AppSyncServerPasswordTile()),
-                ],
-              ),
+              _buildUserTiles(context),
               _AppSyncServerEditorAdvConfigGroup(
                 type: UiLayoutType.l,
                 expanded: showAdvanceConfig,
@@ -223,10 +230,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
               onPressed: Navigator.of(context).pop,
               child: Text("cancel"),
             ),
-            TextButton(
-              onPressed: canSave ? onSaveButtonPressed : null,
-              child: Text("save"),
-            ),
+            AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
           ],
         ),
       );
