@@ -89,17 +89,24 @@ class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
       newConfig = AppSyncServer.fromForm(
           form?.copyWith(configed: false, verified: false, password: ''));
     }
-    result = await _serverConfig?.set(newConfig);
-    if (result != true) return false;
-    if (protoConfig != null) {
-      result = await setPassword(
-          identity: protoConfig.identity, value: protoConfig.password);
+
+    Future<bool> doSave() async {
+      result = await _serverConfig?.set(newConfig);
+      if (result != true) return false;
+      if (protoConfig != null) {
+        result = await setPassword(
+            identity: protoConfig.identity, value: protoConfig.password);
+      }
+      if (result != true) {
+        return await _serverConfig?.set(AppSyncServer.fromForm(
+                form?.copyWith(configed: false, verified: false))) ??
+            false;
+      }
+      return true;
     }
-    if (result != true) {
-      return await _serverConfig?.set(AppSyncServer.fromForm(
-              form?.copyWith(configed: false, verified: false))) ??
-          false;
-    }
-    return true;
+
+    final saveResult = await doSave();
+    notifyListeners();
+    return saveResult;
   }
 }
