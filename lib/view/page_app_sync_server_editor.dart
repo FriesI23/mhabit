@@ -20,6 +20,7 @@ import '../common/consts.dart';
 import '../component/widget.dart';
 import '../model/app_sync_server.dart';
 import '../provider/app_sync_server_form.dart';
+import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'common/app_ui_layout_builder.dart';
 import 'for_app_sync_server_editor/_widget.dart';
@@ -31,6 +32,7 @@ Future<AppSyncServerForm?> naviToAppSyncServerEditorDialog({
 }) async {
   return showDialog<AppSyncServerForm>(
     context: context,
+    barrierDismissible: false,
     builder: (context) => PageAppSyncServerEditor(
       serverConfig: serverConfig,
       showInFullscreenDialog: naviWithFullscreenDialog,
@@ -90,45 +92,97 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
     showAdvanceConfig = false;
   }
 
-  void _onSaveButtonPressed() {
-    // TODO(Sync): need confim dialog
+  void _onSaveButtonPressed() async {
+    final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
     assert(vm.canSave, "Can't save current config, got ${vm.formSnapshot}");
-    Navigator.of(context).pop(vm.getFinalForm());
+    final form = vm.getFinalForm();
+    if (vm.edited && vm.crtServerConfig != null) {
+      confirmed = await showConfirmDialog(
+            context: context,
+            title: const Text("Confirm Save Changes"),
+            subtitle: const Text(
+                "Saving will overwrite previous server configuration."),
+            cancelText: const Text("cancel"),
+            confirmText: const Text("confirm"),
+          ) ??
+          false;
+    } else {
+      confirmed = true;
+    }
+    if (!mounted || !confirmed) return;
+    Navigator.of(context).pop(form);
   }
+
+  bool shouldShowCancelConfirmDialog(AppSyncServerFormViewModel vm) =>
+      vm.edited;
+
+  Future<void> cancelConfirmProcess([AppSyncServerForm? result]) async {
+    final bool confirmed;
+    final vm = context.read<AppSyncServerFormViewModel>();
+    if (shouldShowCancelConfirmDialog(vm)) {
+      confirmed = await showConfirmDialog(
+            context: context,
+            title: const Text("Unsaved Changes"),
+            subtitle: const Text("Exiting will discard all unsaved changes."),
+            cancelText: const Text("cancel"),
+            confirmText: const Text("exit"),
+          ) ??
+          false;
+    } else {
+      confirmed = true;
+    }
+    if (!mounted || !confirmed) return;
+    Navigator.maybeOf(context)?.pop(result);
+  }
+
+  void _onCancelButtonPressed() => cancelConfirmProcess();
 
   void _onAdvanceConfigExpansionChanged(bool value) =>
       showAdvanceConfig = value;
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      transitionBuilder: (child, animation) =>
-          FadeTransition(opacity: animation, child: child),
-      duration: const Duration(milliseconds: 300),
-      child: widget.showInFullscreenDialog
-          ? _AppSyncServerEditorFsDialog(
-              key: const ValueKey("fullscreen"),
-              serverConfig: widget.serverConfig,
-              onSaveButtonPressed: _onSaveButtonPressed,
-              showAdvanceConfig: showAdvanceConfig,
-              onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
-            )
-          : _AppSyncServerEditorDialog(
-              key: const ValueKey("dialog"),
-              serverConfig: widget.serverConfig,
-              onSaveButtonPressed: _onSaveButtonPressed,
-              showAdvanceConfig: showAdvanceConfig,
-              onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
-            ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      Selector<AppSyncServerFormViewModel, bool>(
+        selector: (context, vm) => shouldShowCancelConfirmDialog(vm),
+        builder: (context, value, child) => PopScope<AppSyncServerForm>(
+          canPop: !value,
+          child: child!,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            await cancelConfirmProcess(result);
+          },
+        ),
+        child: AnimatedSwitcher(
+          transitionBuilder: (child, animation) =>
+              FadeTransition(opacity: animation, child: child),
+          duration: const Duration(milliseconds: 300),
+          child: widget.showInFullscreenDialog
+              ? _AppSyncServerEditorFsDialog(
+                  key: const ValueKey("fullscreen"),
+                  serverConfig: widget.serverConfig,
+                  onSaveButtonPressed: _onSaveButtonPressed,
+                  onCancelButtonPressed: _onCancelButtonPressed,
+                  showAdvanceConfig: showAdvanceConfig,
+                  onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
+                )
+              : _AppSyncServerEditorDialog(
+                  key: const ValueKey("dialog"),
+                  serverConfig: widget.serverConfig,
+                  onSaveButtonPressed: _onSaveButtonPressed,
+                  onCancelButtonPressed: _onCancelButtonPressed,
+                  showAdvanceConfig: showAdvanceConfig,
+                  onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
+                ),
+        ),
+      );
 }
 
 class _AppSyncServerEditorFsDialog extends StatelessWidget {
   final AppSyncServer? serverConfig;
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
+  final VoidCallback? onCancelButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorFsDialog({
@@ -136,6 +190,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
     required this.serverConfig,
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
+    required this.onCancelButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
 
@@ -144,7 +199,9 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
         child: ColorfulNavibar(
           child: Scaffold(
             appBar: AppBar(
-              leading: const PageBackButton(reason: PageBackReason.close),
+              leading: PageBackButton(
+                  reason: PageBackReason.close,
+                  onPressed: onCancelButtonPressed),
               actions: [
                 AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
               ],
@@ -174,6 +231,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   final AppSyncServer? serverConfig;
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
+  final VoidCallback? onCancelButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorDialog({
@@ -181,6 +239,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
     required this.serverConfig,
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
+    required this.onCancelButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
 
@@ -227,7 +286,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: Navigator.of(context).pop,
+              onPressed: onCancelButtonPressed,
               child: Text("cancel"),
             ),
             AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
