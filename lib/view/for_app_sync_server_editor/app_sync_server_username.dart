@@ -46,6 +46,8 @@ class AppSyncServerUsernameTile extends StatelessWidget {
             hintText: 'Enter username here, leave empty if not required.',
           ),
           keyboardType: TextInputType.text,
+          onChanged: (_) =>
+              context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
         ),
       ),
     );

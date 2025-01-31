@@ -161,6 +161,8 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
         keyboardType: TextInputType.visiblePassword,
         focusNode: _focusNode,
         enabled: widget.enabled,
+        onChanged: (_) =>
+            context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
       ),
     );
   }
