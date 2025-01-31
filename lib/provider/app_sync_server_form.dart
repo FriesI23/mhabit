@@ -31,6 +31,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
 
   bool _mounted = true;
   bool _pwdLoaded = false;
+  bool _edited = false;
   AppSyncViewModel? _parent;
   Completer<(String, String?)>? _pwdCompleter;
 
@@ -57,9 +58,17 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   }
 
   @override
+  void notifyListeners() {
+    _edited = true;
+    super.notifyListeners();
+  }
+
+  @override
   bool get mounted => _mounted;
 
   bool get pwdLoaded => _pwdLoaded;
+
+  bool get edited => _edited;
 
   bool get canSave => switch (type) {
         AppSyncServerType.webdav => pathInputController.text.isNotEmpty,
