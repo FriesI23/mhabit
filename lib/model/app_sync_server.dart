@@ -17,6 +17,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../common/enums.dart';
+import '../common/types.dart';
 import 'common.dart';
 
 part 'app_sync_server.g.dart';
@@ -92,8 +93,9 @@ enum AppSyncServerMobileNetwork
 abstract interface class AppSyncServer implements JsonAdaptor {
   static const typeJsonKey = 'type_';
 
-  static AppSyncServer? fromJson(Map<String, dynamic> json) {
-    final type = AppSyncServerType.getFromDBCode(json[typeJsonKey],
+  static AppSyncServer? fromJson(JsonMap json) {
+    final type = AppSyncServerType.getFromDBCode(
+        (json[typeJsonKey] as int?) ?? -1,
         withDefault: AppSyncServerType.unknown);
     switch (type) {
       case AppSyncServerType.webdav:

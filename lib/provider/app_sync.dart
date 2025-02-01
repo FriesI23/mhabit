@@ -18,10 +18,23 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../model/app_sync_server.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
+import 'commons.dart';
 
-class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
+class AppSyncViewModel
+    with ChangeNotifier, ProfileHandlerLoadedMixin
+    implements ProviderMounted {
+  bool _mounted = true;
   AppSyncSwitchHandler? _switch;
   AppSyncServerConfigHandler? _serverConfig;
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
+  }
+
+  @override
+  bool get mounted => _mounted;
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
@@ -71,13 +84,8 @@ class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
       {bool forceSave = false,
       bool resetStatus = true,
       bool removable = false}) async {
-    AppSyncServer? oldConfig;
-    AppSyncServer? newConfig;
-    AppSyncServer? protoConfig;
-    bool? result;
-
-    oldConfig = serverConfig;
-    protoConfig = newConfig = AppSyncServer.fromForm(form);
+    final oldConfig = serverConfig;
+    final newConfig = AppSyncServer.fromForm(form);
     if (newConfig == null && !removable) return false;
     final isSameServer = switch ((oldConfig, newConfig)) {
       (null, null) => true,
@@ -85,28 +93,40 @@ class AppSyncViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
       (_, _) => oldConfig!.isSameConfig(newConfig!, withoutPassword: true),
     };
     if (isSameServer && !forceSave) return false;
-    if (!isSameServer || resetStatus) {
-      newConfig = AppSyncServer.fromForm(
-          form?.copyWith(configed: false, verified: false, password: ''));
-    }
+
+    AppSyncServer? buildConfig({bool withPwd = false}) =>
+        (!isSameServer || resetStatus)
+            ? AppSyncServer.fromForm(form?.copyWith(
+                configed: false,
+                verified: false,
+                password: withPwd ? form.password : ''))
+            : newConfig;
 
     Future<bool> doSave() async {
-      result = await _serverConfig?.set(newConfig);
-      if (result != true) return false;
-      if (protoConfig != null) {
-        result = await setPassword(
-            identity: protoConfig.identity, value: protoConfig.password);
+      Future<bool>? setOrRemoveConfig(AppSyncServer? config) =>
+          config != null ? _serverConfig?.set(config) : _serverConfig?.remove();
+
+      // step1: set or remove new server config
+      if (await setOrRemoveConfig(buildConfig()) != true) return false;
+      // step2(optional): remove old password from sec-storage if necessary
+      if (oldConfig?.identity != newConfig?.identity && oldConfig != null) {
+        await setPassword(identity: oldConfig.identity, value: null);
       }
+      // step3: set new password to sec-storage
+      final result = newConfig != null
+          ? await setPassword(
+              identity: newConfig.identity, value: newConfig.password)
+          : true;
+      // step4(optional): set server config with password (backup process)
       if (result != true) {
-        return await _serverConfig?.set(AppSyncServer.fromForm(
-                form?.copyWith(configed: false, verified: false))) ??
-            false;
+        return await setOrRemoveConfig(buildConfig(withPwd: true)) ?? false;
       }
       return true;
     }
 
-    final saveResult = await doSave();
-    notifyListeners();
-    return saveResult;
+    return await doSave().then((value) {
+      if (mounted) notifyListeners();
+      return value;
+    });
   }
 }

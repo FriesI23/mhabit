@@ -62,16 +62,27 @@ final class _AppSyncView extends State<AppSyncView> {
     final config = context.read<AppSyncViewModel>().serverConfig;
     appLog.build
         .debug(context, ex: ["onServerConfigPressed", config?.toDebugString()]);
-    final form = await naviToAppSyncServerEditorDialog(
+    final result = await naviToAppSyncServerEditorDialog(
         context: context, serverConfig: config);
     if (!mounted) return;
-    appLog.build.debug(context,
-        ex: ["onServerConfigPressed", "Done", form?.toDebugString()]);
-    final result =
-        await context.read<AppSyncViewModel>().saveWithConfigForm(form);
-    if (!mounted) return;
-    appLog.build.info(context,
-        ex: ["onServerConfigPressed", "Saved[$result]", form?.toDebugString()]);
+    appLog.build.debug(context, ex: ["onServerConfigPressed", "Done", result]);
+    if (result == null) return;
+    switch (result.op) {
+      case AppSyncServerEditorResultOp.update:
+        final saveResult = await context
+            .read<AppSyncViewModel>()
+            .saveWithConfigForm(result.form);
+        if (!mounted) return;
+        appLog.build.info(context,
+            ex: ["onServerConfigPressed", "Saved[$saveResult]", result]);
+      case AppSyncServerEditorResultOp.delete:
+        final saveResult = await context
+            .read<AppSyncViewModel>()
+            .saveWithConfigForm(null, forceSave: true, removable: true);
+        if (!mounted) return;
+        appLog.build.info(context,
+            ex: ["onServerConfigPressed", "Deleted[$saveResult]", result]);
+    }
   }
 
   @override
