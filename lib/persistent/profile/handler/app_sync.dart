@@ -43,7 +43,7 @@ final class AppSyncServerConfigCodec extends Codec<AppSyncServer?, JsonMap> {
       const _AppSyncServerConfigDecoder();
 
   @override
-  Converter<AppSyncServer, JsonMap> get encoder =>
+  Converter<AppSyncServer?, JsonMap> get encoder =>
       const _AppSyncServerConfigEncoder();
 }
 
@@ -56,9 +56,9 @@ final class _AppSyncServerConfigDecoder
 }
 
 final class _AppSyncServerConfigEncoder
-    extends Converter<AppSyncServer, JsonMap> {
+    extends Converter<AppSyncServer?, JsonMap> {
   const _AppSyncServerConfigEncoder();
 
   @override
-  JsonMap convert(AppSyncServer input) => input.toJson();
+  JsonMap convert(AppSyncServer? input) => input?.toJson() ?? {};
 }

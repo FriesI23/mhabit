@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './app_sync_server_buttons.dart';
 export './app_sync_server_conn_timeout.dart';
+export './app_sync_server_delete_button.dart';
 export './app_sync_server_ignoressl.dart';
 export './app_sync_server_network_type.dart';
 export './app_sync_server_password.dart';
@@ -21,4 +23,3 @@ export './app_sync_server_timeout.dart';
 export './app_sync_server_type.dart';
 export './app_sync_server_username.dart';
 export './page_providers.dart';
-export 'app_sync_server_buttons.dart';
