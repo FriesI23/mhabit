@@ -19,18 +19,38 @@ import 'package:provider/provider.dart';
 import '../common/consts.dart';
 import '../component/widget.dart';
 import '../model/app_sync_server.dart';
+import '../provider/app_developer.dart';
 import '../provider/app_sync_server_form.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'common/app_ui_layout_builder.dart';
 import 'for_app_sync_server_editor/_widget.dart';
 
-Future<AppSyncServerForm?> naviToAppSyncServerEditorDialog({
+enum AppSyncServerEditorResultOp { update, delete }
+
+class AppSyncServerEditorResult {
+  final AppSyncServerEditorResultOp op;
+  final AppSyncServerForm? form;
+
+  const AppSyncServerEditorResult({required this.op, required this.form});
+
+  const AppSyncServerEditorResult.update(this.form)
+      : op = AppSyncServerEditorResultOp.update;
+
+  const AppSyncServerEditorResult.delete()
+      : op = AppSyncServerEditorResultOp.delete,
+        form = null;
+
+  @override
+  String toString() => "AppSyncServerEditorResult(op=$op,form=$form)";
+}
+
+Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   required BuildContext context,
   AppSyncServer? serverConfig,
   bool? naviWithFullscreenDialog,
 }) async {
-  return showDialog<AppSyncServerForm>(
+  return showDialog<AppSyncServerEditorResult>(
     context: context,
     barrierDismissible: false,
     builder: (context) => PageAppSyncServerEditor(
@@ -111,13 +131,14 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
       confirmed = true;
     }
     if (!mounted || !confirmed) return;
-    Navigator.of(context).pop(form);
+    Navigator.of(context)
+        .pop<AppSyncServerEditorResult>(AppSyncServerEditorResult.update(form));
   }
 
   bool shouldShowCancelConfirmDialog(AppSyncServerFormViewModel vm) =>
       vm.edited;
 
-  Future<void> cancelConfirmProcess([AppSyncServerForm? result]) async {
+  Future<void> cancelConfirmProcess([AppSyncServerEditorResult? result]) async {
     final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
     if (shouldShowCancelConfirmDialog(vm)) {
@@ -133,10 +154,25 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
       confirmed = true;
     }
     if (!mounted || !confirmed) return;
-    Navigator.maybeOf(context)?.pop(result);
+    Navigator.maybeOf(context)?.pop<AppSyncServerEditorResult>(result);
   }
 
   void _onCancelButtonPressed() => cancelConfirmProcess();
+
+  void _onDeleteButtonPressed() async {
+    final confirmed = await showConfirmDialog(
+      context: context,
+      title: const Text("Confirm Delete"),
+      subtitle: const Text(
+          "Deleting will stop running sync and remove current server config"),
+      cancelText: const Text("cancel"),
+      confirmTextBuilder: (context) => Text("delete",
+          style: TextStyle(color: Theme.of(context).colorScheme.error)),
+    );
+    if (!mounted || confirmed != true) return;
+    Navigator.of(context)
+        .pop<AppSyncServerEditorResult>(AppSyncServerEditorResult.delete());
+  }
 
   void _onAdvanceConfigExpansionChanged(bool value) =>
       showAdvanceConfig = value;
@@ -145,7 +181,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
   Widget build(BuildContext context) =>
       Selector<AppSyncServerFormViewModel, bool>(
         selector: (context, vm) => shouldShowCancelConfirmDialog(vm),
-        builder: (context, value, child) => PopScope<AppSyncServerForm>(
+        builder: (context, value, child) => PopScope<AppSyncServerEditorResult>(
           canPop: !value,
           child: child!,
           onPopInvokedWithResult: (didPop, result) async {
@@ -163,6 +199,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
                   serverConfig: widget.serverConfig,
                   onSaveButtonPressed: _onSaveButtonPressed,
                   onCancelButtonPressed: _onCancelButtonPressed,
+                  onDeleteButtonPressed: _onDeleteButtonPressed,
                   showAdvanceConfig: showAdvanceConfig,
                   onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
                 )
@@ -171,6 +208,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
                   serverConfig: widget.serverConfig,
                   onSaveButtonPressed: _onSaveButtonPressed,
                   onCancelButtonPressed: _onCancelButtonPressed,
+                  onDeleteButtonPressed: _onDeleteButtonPressed,
                   showAdvanceConfig: showAdvanceConfig,
                   onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
                 ),
@@ -183,6 +221,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
   final VoidCallback? onCancelButtonPressed;
+  final VoidCallback? onDeleteButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorFsDialog({
@@ -191,6 +230,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
     required this.onCancelButtonPressed,
+    required this.onDeleteButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
 
@@ -217,7 +257,10 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
                   expanded: showAdvanceConfig,
                   onExpansionChanged: onAdvConfigExpansionChanged,
                 ),
-                const _DebuggerTile(),
+                AppSyncServerDeleteButton.fullscreen(
+                    onPressed: onDeleteButtonPressed),
+                if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+                  const _DebuggerTile(),
               ],
             ),
           ),
@@ -232,6 +275,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
   final VoidCallback? onCancelButtonPressed;
+  final VoidCallback? onDeleteButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
   const _AppSyncServerEditorDialog({
@@ -240,6 +284,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
     required this.showAdvanceConfig,
     required this.onSaveButtonPressed,
     required this.onCancelButtonPressed,
+    required this.onDeleteButtonPressed,
     this.onAdvConfigExpansionChanged,
   });
 
@@ -281,10 +326,12 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
                 expanded: showAdvanceConfig,
                 onExpansionChanged: onAdvConfigExpansionChanged,
               ),
-              const _DebuggerTile(),
+              if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+                const _DebuggerTile(),
             ],
           ),
           actions: [
+            AppSyncServerDeleteButton.normal(onPressed: onDeleteButtonPressed),
             TextButton(
               onPressed: onCancelButtonPressed,
               child: Text("cancel"),
