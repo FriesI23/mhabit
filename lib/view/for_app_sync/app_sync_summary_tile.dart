@@ -14,36 +14,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../model/app_sync_server.dart';
+import '../../provider/app_sync.dart';
 
 class AppSyncSummaryTile extends StatelessWidget {
-  final AppSyncServer? serverConfig;
   final VoidCallback? onPressed;
 
   const AppSyncSummaryTile({
     super.key,
-    required this.serverConfig,
     this.onPressed,
   });
 
-  IconData? getSubTitleLeading(BuildContext context) =>
+  IconData? getSubTitleLeading(
+          BuildContext context, AppSyncServer? serverConfig) =>
       switch (serverConfig?.type) {
         AppSyncServerType.webdav => MdiIcons.cloudOutline,
         AppSyncServerType.unknown => null,
         _ => Icons.warning,
       };
 
-  IconData? getTrailing(BuildContext context) => switch (serverConfig?.type) {
+  IconData? getTrailing(BuildContext context, AppSyncServer? serverConfig) =>
+      switch (serverConfig?.type) {
         != null => Icons.edit,
         _ => Icons.add,
       };
 
   @override
   Widget build(BuildContext context) {
-    final serverConfig = this.serverConfig;
-    final trailingData = getTrailing(context);
-    final subtileLeading = getSubTitleLeading(context);
+    final serverConfig = context
+        .select<AppSyncViewModel, AppSyncServer?>((vm) => vm.serverConfig);
+    final trailingData = getTrailing(context, serverConfig);
+    final subtileLeading = getSubTitleLeading(context, serverConfig);
     return ListTile(
       trailing: trailingData != null ? Icon(trailingData) : null,
       title: Text("Sync Server"),

@@ -168,12 +168,13 @@ final class AppWebDavSyncServer implements AppSyncServer {
   final bool verified;
   @override
   final bool configed;
+  @override
+  final String password;
 
   final List<AppSyncServerMobileNetwork> _syncMobileNetworks;
 
   final Uri path;
   final String username;
-  final String password;
   final bool ignoreSSL;
   final bool syncInLowData;
   final int? connectRetryCount;
