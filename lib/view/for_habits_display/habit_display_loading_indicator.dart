@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../common/_widget.dart';
+
 class HabitDisplayLoadingIndicator extends StatelessWidget {
   final double opacity;
 
@@ -24,8 +26,8 @@ class HabitDisplayLoadingIndicator extends StatelessWidget {
     return SliverAnimatedOpacity(
       duration: const Duration(milliseconds: 200),
       opacity: opacity,
-      sliver: const SliverToBoxAdapter(
-        child: LinearProgressIndicator(),
+      sliver: SliverToBoxAdapter(
+        child: AppSyncLoadingIndicator(),
       ),
     );
   }

@@ -12,24 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
+
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:uuid/uuid.dart';
 
+import '../common/consts.dart';
+import '../logging/helper.dart';
+import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
+import '../model/app_sync_task.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
 import 'commons.dart';
 
+part 'app_sync.g.dart';
+
 class AppSyncViewModel
     with ChangeNotifier, ProfileHandlerLoadedMixin
     implements ProviderMounted {
+  late final DispatcherForAppSyncTask appSyncTask;
+
   bool _mounted = true;
   AppSyncSwitchHandler? _switch;
+  AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
+
+  AppSyncViewModel() {
+    appSyncTask = DispatcherForAppSyncTask(this);
+    appSyncTask.addListener(notifyListeners);
+  }
 
   @override
   void dispose() {
     _mounted = false;
+    appSyncTask.dispose();
     super.dispose();
   }
 
@@ -40,6 +59,7 @@ class AppSyncViewModel
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
+    _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
   }
 
@@ -48,7 +68,18 @@ class AppSyncViewModel
   Future<void> setSyncSwitch(bool value, {bool listen = true}) async {
     if (_switch?.get() != value) {
       await _switch?.set(value);
-      notifyListeners();
+      if (listen) notifyListeners();
+    }
+  }
+
+  AppSyncFetchInterval get fetchInterval =>
+      _interval?.get() ?? defaultAppSyncFetchInterval;
+
+  Future<void> setFetchInterval(AppSyncFetchInterval value,
+      {bool listen = true}) async {
+    if (_interval?.get() != value) {
+      await _interval?.set(value);
+      if (listen) notifyListeners();
     }
   }
 
@@ -128,5 +159,157 @@ class AppSyncViewModel
       if (mounted) notifyListeners();
       return value;
     });
+  }
+}
+
+@CopyWith(skipFields: false, copyWithNull: false)
+class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
+  final String id;
+  final T task;
+  final DateTime? startTime;
+  final DateTime? endedTime;
+  final R? result;
+
+  num? percentage;
+
+  AppSyncContainer({
+    required this.id,
+    required this.task,
+    this.startTime,
+    this.endedTime,
+    this.result,
+  });
+
+  AppSyncContainer.generate({required this.task})
+      : id = const Uuid().v4(),
+        startTime = DateTime.now(),
+        endedTime = null,
+        result = null;
+
+  @override
+  String toString() => "AppSyncContainer<$T>(id=$id, "
+      "task=$task, startT=$startTime, endedT=$endedTime, "
+      "reuslt=$result"
+      ")";
+}
+
+abstract class _ForAppSynDispatcher {
+  final AppSyncViewModel root;
+
+  const _ForAppSynDispatcher(this.root);
+}
+
+final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
+    with ChangeNotifier {
+  AppSyncContainer? _task;
+
+  DispatcherForAppSyncTask(super.root) : _task = null;
+
+  Future? get processing => task?.task.result;
+
+  AppSyncContainer? get task => _task;
+
+  AppSyncContainer<AppSyncTask<AppSyncTaskResult>, AppSyncTaskResult>?
+      get fakeTask => _task;
+
+  void changePercentage({required num? prt}) {
+    prt = prt?.clamp(0.0, 1.0);
+    if (_task?.percentage != prt) {
+      _task?.percentage = prt;
+      notifyListeners();
+    }
+  }
+
+  // TODO: need implement webdav
+  AppSyncTask buildNewTask(AppSyncServer config) => switch (config.type) {
+        AppSyncServerType.fake => BasicAppSyncTask(
+            config: config,
+            onExec: (task) async {
+              final rand = math.Random();
+              final id = rand.nextInt(10000) + 99999;
+              final debugPrefix = "[$id] fake syncing";
+              final loopCount = 10;
+              appLog.appsync.debug("$debugPrefix: Start, looping $loopCount");
+              await Future.delayed(const Duration(seconds: 1));
+              for (var i = 0; i < loopCount; i++) {
+                if (task.isCancalling) {
+                  await Future.delayed(const Duration(seconds: 1));
+                  appLog.appsync.debug("$debugPrefix: loop $i -> canceled");
+                  return const BasicAppSyncTaskResult.cancelled();
+                }
+                if (task == _task?.task) changePercentage(prt: i / loopCount);
+                final delayed = Duration(milliseconds: rand.nextInt(500) + 500);
+                appLog.appsync.debug("$debugPrefix: loop $i -> running, "
+                    "delayed for ${delayed.inMilliseconds}ms");
+                await Future.delayed(delayed);
+              }
+              if (task == _task?.task) changePercentage(prt: 1);
+              await Future.delayed(const Duration(milliseconds: 600));
+              if (task == _task?.task) changePercentage(prt: null);
+              await Future.delayed(const Duration(seconds: 1));
+              appLog.appsync.debug("$debugPrefix: Done");
+              return BasicAppSyncTaskResult.success();
+            }),
+        AppSyncServerType.webdav => throw UnimplementedError(),
+        _ => BasicAppSyncTask(
+            config: config,
+            onExec: (task) =>
+                Future.value(const BasicAppSyncTaskResult.error())),
+      };
+
+  void startSync() {
+    final config = root._serverConfig?.get();
+    if (config == null) return;
+
+    final AppSyncContainer newTask;
+    final crtTask = _task;
+
+    if (crtTask == null || crtTask.task.isDone) {
+      newTask = _task = AppSyncContainer.generate(task: buildNewTask(config));
+    } else if (crtTask.task.status == AppSyncTaskStatus.idle) {
+      newTask = _task = crtTask;
+    } else {
+      return;
+    }
+
+    newTask.task.run().whenComplete(() async {
+      final crtTask = _task;
+      if (crtTask == null ||
+          newTask.id != crtTask.id ||
+          crtTask.task.status != AppSyncTaskStatus.completed) {
+        return;
+      }
+      _task = crtTask.copyWith(
+        result: await crtTask.task.result,
+        endedTime: DateTime.now(),
+      );
+      appLog.value.info("$runtimeType.task",
+          beforeVal: crtTask, afterVal: _task, ex: ['completed']);
+      notifyListeners();
+    });
+
+    notifyListeners();
+  }
+
+  void cancelSync() {
+    final cancelTask = _task;
+    if (cancelTask == null || cancelTask.task.isCancalling) return;
+    cancelTask.task.cancel().whenComplete(() async {
+      final crtTask = _task;
+      if (crtTask == null ||
+          cancelTask.id != crtTask.id ||
+          crtTask.task.status != AppSyncTaskStatus.cancelled) {
+        return;
+      }
+      _task = crtTask.copyWith(
+        result: await crtTask.task.result,
+        endedTime: DateTime.now(),
+      );
+      appLog.value.info("$runtimeType.task",
+          beforeVal: crtTask, afterVal: _task, ex: ['cancelled']);
+      notifyListeners();
+    });
+
+    notifyListeners();
   }
 }
