@@ -25,3 +25,5 @@ export './habit_summary_list_tile.dart';
 export './loglevel_changer_tile.dart';
 export './not_found_image.dart';
 export './page_loading_indicator.dart';
+export './sync_loading_indicator.dart';
+export './sync_now_tile.dart';

@@ -14,7 +14,9 @@
 
 import 'dart:convert';
 
+import '../../../common/consts.dart';
 import '../../../common/types.dart';
+import '../../../model/app_sync_options.dart';
 import '../../../model/app_sync_server.dart';
 import '../converter.dart';
 import '../profile_helper.dart';
@@ -24,6 +26,45 @@ class AppSyncSwitchHandler extends ProfileHelperCovertToBoolHandler<bool> {
 
   @override
   String get key => 'enableSync';
+}
+
+class AppSyncFetchIntervalHandler
+    extends ProfileHelperCovertToIntHandler<AppSyncFetchInterval> {
+  AppSyncFetchIntervalHandler(super.pref)
+      : super(codec: const AppSyncFetchIntervalCodec());
+
+  @override
+  String get key => 'syncFetchInterval';
+}
+
+final class AppSyncFetchIntervalCodec extends Codec<AppSyncFetchInterval, int> {
+  const AppSyncFetchIntervalCodec();
+
+  @override
+  Converter<int, AppSyncFetchInterval> get decoder =>
+      const _AppSyncFetchIntervalDecoder();
+
+  @override
+  Converter<AppSyncFetchInterval, int> get encoder =>
+      const _AppSyncFetchIntervalEncoder();
+}
+
+final class _AppSyncFetchIntervalEncoder
+    extends Converter<AppSyncFetchInterval, int> {
+  const _AppSyncFetchIntervalEncoder();
+
+  @override
+  int convert(AppSyncFetchInterval input) => input.dbCode;
+}
+
+final class _AppSyncFetchIntervalDecoder
+    extends Converter<int, AppSyncFetchInterval> {
+  const _AppSyncFetchIntervalDecoder();
+
+  @override
+  AppSyncFetchInterval convert(int input) =>
+      AppSyncFetchInterval.getFromDBCode(input,
+          withDefault: defaultAppSyncFetchInterval)!;
 }
 
 class AppSyncServerConfigHandler
