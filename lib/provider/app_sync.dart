@@ -15,6 +15,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../common/consts.dart';
+import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
@@ -25,6 +27,7 @@ class AppSyncViewModel
     implements ProviderMounted {
   bool _mounted = true;
   AppSyncSwitchHandler? _switch;
+  AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
 
   @override
@@ -40,6 +43,7 @@ class AppSyncViewModel
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
+    _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
   }
 
@@ -48,7 +52,18 @@ class AppSyncViewModel
   Future<void> setSyncSwitch(bool value, {bool listen = true}) async {
     if (_switch?.get() != value) {
       await _switch?.set(value);
-      notifyListeners();
+      if (listen) notifyListeners();
+    }
+  }
+
+  AppSyncFetchInterval get fetchInterval =>
+      _interval?.get() ?? defaultAppSyncFetchInterval;
+
+  Future<void> setFetchInterval(AppSyncFetchInterval value,
+      {bool listen = true}) async {
+    if (_interval?.get() != value) {
+      await _interval?.set(value);
+      if (listen) notifyListeners();
     }
   }
 

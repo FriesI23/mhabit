@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './app_sync_fetch_interval.dart' show AppSyncFetchIntervalTile;
-export './app_sync_summary_tile.dart';
+export './app_sync_fetch_interval.dart'
+    show AppSyncFetchIntervalSwitchDialog, showAppSyncFetchIntervalSwitchDialog;

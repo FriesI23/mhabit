@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../model/app_reminder_config.dart';
+import '../model/app_sync_options.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../theme/color.dart';
@@ -85,6 +86,7 @@ const defaultAppReminder = AppReminderConfig.off;
 const defaultAppSyncTimeout = Duration(seconds: 60);
 const defaultAppSyncConnectTimeout = Duration(seconds: 10);
 const int? defaultAppSyncConnectRetryCount = null; // null for infinity
+const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
 //#endregion
 
 //#region habit-field

@@ -15,11 +15,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../component/widgets/page_back_button.dart';
+import '../component/widget.dart';
 import '../logging/helper.dart';
-import '../model/app_sync_server.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
+import 'for_app_sync/_dialog.dart';
 import 'for_app_sync/_widget.dart';
 import 'page_app_sync_server_editor.dart';
 
@@ -85,6 +85,17 @@ final class _AppSyncView extends State<AppSyncView> {
     }
   }
 
+  void _onServerFetchIntervalPressed() async {
+    final interval = context.read<AppSyncViewModel>().fetchInterval;
+    appLog.build.debug(context, ex: ["onServerFetchIntervalPressed", interval]);
+    final result = await showAppSyncFetchIntervalSwitchDialog(
+        context: context, select: interval);
+    if (!mounted || result == null) return;
+    context.read<AppSyncViewModel>().setFetchInterval(result);
+    appLog.build
+        .debug(context, ex: ["onServerFetchIntervalPressed", "Done", result]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,19 +116,44 @@ final class _AppSyncView extends State<AppSyncView> {
             ),
           ),
           const Divider(),
-          Selector<AppSyncViewModel, ({bool enabled, AppSyncServer? config})>(
-            selector: (ctx, v) => (enabled: v.enabled, config: v.serverConfig),
+          Selector<AppSyncViewModel, bool>(
+            selector: (ctx, v) => v.enabled,
             shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => AppSyncConfigSubgroup(
-              enabled: value.enabled,
-              serverConfig: value.config,
+            builder: (context, value, child) => _AppSyncConfigSubgroup(
+              enabled: value,
               onConfigPressed: _onServerConfigPressed,
+              onFetchIntervalPressed: _onServerFetchIntervalPressed,
             ),
           ),
           if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
             const Divider(),
             const _DebugShowTile(),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+class _AppSyncConfigSubgroup extends StatelessWidget {
+  final bool enabled;
+  final VoidCallback? onConfigPressed;
+  final VoidCallback? onFetchIntervalPressed;
+
+  const _AppSyncConfigSubgroup({
+    required this.enabled,
+    this.onConfigPressed,
+    this.onFetchIntervalPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpandedSection(
+      expand: enabled,
+      child: Column(
+        children: [
+          AppSyncSummaryTile(onPressed: onConfigPressed),
+          AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
         ],
       ),
     );
@@ -137,7 +173,9 @@ class _DebugShowTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("LastRefresh: ${DateTime.now()}"),
           Text("Enabled: ${appSync.enabled}"),
+          Text("FetchInterval: ${appSync.fetchInterval}"),
           Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),
         ],
       ),
