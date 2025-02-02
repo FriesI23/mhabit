@@ -63,6 +63,7 @@ class App extends StatelessWidget {
     AppLanguageProfileHanlder.new,
     AppSyncSwitchHandler.new,
     AppSyncServerConfigHandler.new,
+    AppSyncFetchIntervalHandler.new,
   ];
 
   const App({super.key});
