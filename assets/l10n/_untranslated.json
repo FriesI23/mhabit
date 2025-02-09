@@ -1259,10 +1259,5 @@
     "common_errorPage_title",
     "common_errorPage_copied",
     "debug_logLevel_fatal"
-  ],
-
-  "zh_Hant": [
-    "common_errorPage_title",
-    "common_errorPage_copied"
   ]
 }
