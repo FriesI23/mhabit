@@ -2228,6 +2228,12 @@ class L10nZhHant extends L10nZh {
   String get common_customDateTimeFormatPicker_confirmButton_text => '確認';
 
   @override
+  String get common_errorPage_title => '糟了，程式當機！';
+
+  @override
+  String get common_errorPage_copied => '已複製當機資訊';
+
+  @override
   String get calendarPicker_clip_today => '今天';
 
   @override
