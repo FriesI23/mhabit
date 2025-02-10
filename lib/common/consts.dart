@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../model/app_reminder_config.dart';
+import '../model/app_sync_options.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../theme/color.dart';
@@ -47,6 +48,7 @@ const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
 const int kHabitLargeScreenAdaptWidth = 600;
+const int kHabitLargeScreenAdaptHeight = 400;
 //#endregion
 
 //#region l10n
@@ -81,6 +83,10 @@ const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
+const defaultAppSyncTimeout = Duration(seconds: 60);
+const defaultAppSyncConnectTimeout = Duration(seconds: 10);
+const int? defaultAppSyncConnectRetryCount = null; // null for infinity
+const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
 //#endregion
 
 //#region habit-field
