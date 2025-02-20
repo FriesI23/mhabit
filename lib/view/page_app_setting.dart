@@ -659,7 +659,8 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           // TODO(Sync): L10n
           ListTile(
               title: const Text("Sync Option"),
-              onTap: () => app_sync.naviToAppSyncPage(context: context))
+              onTap: () => app_sync.naviToAppSyncPage(context: context)),
+          AppSyncNowTile(),
         ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
