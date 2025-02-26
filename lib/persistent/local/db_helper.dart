@@ -33,6 +33,17 @@ import 'handler/record.dart';
 import 'sql.dart';
 import 'table.dart';
 
+extension DBInitExtension on Database {
+  Batch batchLines(String data, [Batch? batch]) {
+    final lineBatch = batch ?? this.batch();
+    const LineSplitter()
+        .convert(data)
+        .where((s) => s.isNotEmpty)
+        .forEach(lineBatch.execute);
+    return lineBatch;
+  }
+}
+
 abstract interface class DBHelper implements AsyncInitialization {
   Database get db;
 
@@ -61,11 +72,14 @@ class _DBHelper implements DBHelper {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
     await db.execute(await getSqlFromFile(Assets.sql.mhRecords));
     final indexesBatch = db.batch();
-    const LineSplitter()
-        .convert(await getSqlFromFile(Assets.sql.indexes))
-        .forEach(indexesBatch.execute);
-    await indexesBatch.commit();
-    await db.execute(CustomSql.autoUpdateHabitssModifyTimeTrigger);
+    await Future.wait([
+      getSqlFromFile(Assets.sql.indexes),
+    ]).then((dataList) {
+      for (var data in dataList) {
+        db.batchLines(data, indexesBatch);
+      }
+    }).whenComplete(indexesBatch.commit);
+    await db.execute(CustomSql.autoUpdateHabitsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
   }
