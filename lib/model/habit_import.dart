@@ -39,7 +39,7 @@ class HabitImport {
         type: habitDBCell.type ?? defaultHabitType.dbCode);
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
-      await recordDBHelper.insertMultiRecords(
+      await recordDBHelper.insertOrUpdateMultiRecords(
         habitExportData.getRecordDBCells().map(
               (e) => e.copyWith(
                 parentId: dbid,
