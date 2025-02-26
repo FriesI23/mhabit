@@ -102,14 +102,14 @@ abstract mixin class DBHelperLoadedMixin {
 
 mixin DBOperationsMixin on DBHelperLoadedMixin {
   Future<RecordDBCell> saveHabitRecordToDB(
-      DBID parendId, HabitUUID parendUUID, HabitSummaryRecord record,
+      DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
       {bool isNew = false, String? withReason}) async {
     final int dbid;
     final RecordDBCell dbCell;
     if (isNew) {
       dbCell = RecordDBCell.build(
-        parentId: parendId,
-        parentUUID: parendUUID,
+        parentId: parentId,
+        parentUUID: parentUUID,
         uuid: record.uuid,
         recordDate: record.date.epochDay,
         recordType: record.status.dbCode,
@@ -120,6 +120,7 @@ mixin DBOperationsMixin on DBHelperLoadedMixin {
     } else {
       dbCell = RecordDBCell(
         uuid: record.uuid,
+        parentUUID: parentUUID,
         recordType: record.status.dbCode,
         recordValue: record.value,
         reason: withReason,

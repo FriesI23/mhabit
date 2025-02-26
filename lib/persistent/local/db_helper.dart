@@ -30,6 +30,7 @@ import '../../utils/app_path_provider.dart';
 import '../utils.dart';
 import 'handler/habit.dart';
 import 'handler/record.dart';
+import 'handler/sync.dart';
 import 'sql.dart';
 import 'table.dart';
 
@@ -71,9 +72,11 @@ class _DBHelper implements DBHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
     await db.execute(await getSqlFromFile(Assets.sql.mhRecords));
+    await db.execute(await getSqlFromFile(Assets.sql.mhSync));
     final indexesBatch = db.batch();
     await Future.wait([
       getSqlFromFile(Assets.sql.indexes),
+      getSqlFromFile(Assets.sql.mhSyncIndexes)
     ]).then((dataList) {
       for (var data in dataList) {
         db.batchLines(data, indexesBatch);
@@ -82,6 +85,7 @@ class _DBHelper implements DBHelper {
     await db.execute(CustomSql.autoUpdateHabitsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
+    await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -102,6 +106,17 @@ class _DBHelper implements DBHelper {
         await db.execute("ALTER TABLE ${TableName.habits} "
             "ADD COLUMN ${HabitDBCellKey.dailyGoalExtra} REAL");
       }
+    }
+    if (oldVersion < 4) {
+      await db.execute(await getSqlFromFile(Assets.sql.mhSync));
+      await db
+          .batchLines(await getSqlFromFile(Assets.sql.mhSyncIndexes))
+          .commit();
+      await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
+      await db
+          .execute(CustomSql.rmAutoAddSortPostionWhenAddNewHabitTrigger)
+          .then((_) => db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit));
+      await DatabaseToV4MigrateHelper(db).initSyncTable();
     }
   }
 
@@ -202,6 +217,38 @@ class _DBHelper implements DBHelper {
   @override
   String toString() {
     return "local.$runtimeType(db=$_db)";
+  }
+}
+
+class DatabaseToV4MigrateHelper {
+  final Database db;
+
+  const DatabaseToV4MigrateHelper(this.db);
+
+  Future<void> initSyncTable() async {
+    final batch = db.batch();
+    await Future.wait([
+      db
+          .query(TableName.habits, columns: [HabitDBCellKey.uuid])
+          .then((result) => result.map((e) => e[HabitDBCellKey.uuid] as String))
+          .then((uuidList) {
+            for (var uuid in uuidList) {
+              batch.insert(TableName.sync, {SyncDbCellKey.habitUUID: uuid},
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            }
+          }),
+      db
+          .query(TableName.records, columns: [RecordDBCellKey.uuid])
+          .then(
+              (result) => result.map((e) => e[RecordDBCellKey.uuid] as String))
+          .then((uuidList) {
+            for (var uuid in uuidList) {
+              batch.insert(TableName.sync, {SyncDbCellKey.recordUUID: uuid},
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            }
+          }),
+    ]);
+    await batch.commit(continueOnError: true, noResult: true);
   }
 }
 

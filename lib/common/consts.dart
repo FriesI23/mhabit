@@ -40,7 +40,9 @@ const String debuggerZipFile = "debug.zip";
 /// - add record reason column
 /// ## version 3
 /// - add daily goal extra column
-const int appDBVersion = 3;
+/// ## version 4
+/// - add sync table
+const int appDBVersion = 4;
 //#endregion
 
 //#region app-theme
