@@ -220,7 +220,6 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     }
   }
 
-  // TODO: need implement webdav
   AppSyncTask buildNewTask(AppSyncServer config) => switch (config.type) {
         AppSyncServerType.fake => BasicAppSyncTask(
             config: config,
@@ -250,7 +249,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
               appLog.appsync.debug("$debugPrefix: Done");
               return BasicAppSyncTaskResult.success();
             }),
-        AppSyncServerType.webdav => throw UnimplementedError(),
+        AppSyncServerType.webdav => WebDavAppSyncTask(config: config),
         _ => BasicAppSyncTask(
             config: config,
             onExec: (task) =>
