@@ -300,7 +300,7 @@ class HabitStatusChangerViewModel
               ? skipReason
               : null);
     }).toList();
-    await recordDBHelper.insertMultiRecords(records, updateIfExist: true);
+    await recordDBHelper.insertOrUpdateMultiRecords(records);
     if (!mounted) return 0;
 
     regToReloadData();
