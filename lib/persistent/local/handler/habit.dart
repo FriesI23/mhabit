@@ -125,8 +125,9 @@ class HabitDBHelper extends DBHelperHandler {
   String get table => TableName.habits;
 
   Future<int> insertNewHabit(HabitDBCell habit) {
-    return db.insert(table, habit.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.fail);
+    assert(habit.uuid != null);
+
+    return db.insert(table, habit.toJson());
   }
 
   Future<int> updateExistHabit(HabitDBCell habit,
@@ -140,23 +141,23 @@ class HabitDBHelper extends DBHelperHandler {
     }
 
     return db.update(table, dbMap,
-        where: "${HabitDBCellKey.uuid} = ?",
-        whereArgs: [habitUUID],
-        conflictAlgorithm: ConflictAlgorithm.fail);
+        where: "${HabitDBCellKey.uuid} = ?", whereArgs: [habitUUID]);
   }
 
   Future<void> updateSelectedHabitsSortPostion(
       List<HabitUUID> uuidList, List<num> posList) async {
     assert(uuidList.length == posList.length, true);
 
-    final batch = db.batch();
-    uuidList.forEachIndexed((index, uuid) {
-      batch.update(table, {HabitDBCellKey.sortPosition: posList[index]},
-          where: "${HabitDBCellKey.uuid} = ?",
-          whereArgs: [uuid],
-          conflictAlgorithm: ConflictAlgorithm.ignore);
+    db.transaction((db) async {
+      final batch = db.batch();
+      uuidList.forEachIndexed((index, uuid) {
+        batch.update(table, {HabitDBCellKey.sortPosition: posList[index]},
+            where: "${HabitDBCellKey.uuid} = ?",
+            whereArgs: [uuid],
+            conflictAlgorithm: ConflictAlgorithm.rollback);
+      });
+      await batch.commit();
     });
-    await batch.commit();
   }
 
   Future<int> updateSelectedHabitStatus(
@@ -164,8 +165,7 @@ class HabitDBHelper extends DBHelperHandler {
     return db.update(table, {HabitDBCellKey.status: newStatus.dbCode},
         where: "${HabitDBCellKey.uuid} "
             "IN (${uuidList.map((e) => '?').join(', ')})",
-        whereArgs: uuidList,
-        conflictAlgorithm: ConflictAlgorithm.rollback);
+        whereArgs: uuidList);
   }
 
   Future<HabitDBCell?> queryHabitByDBID(DBID dbid) {
