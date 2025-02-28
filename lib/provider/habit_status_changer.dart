@@ -283,7 +283,7 @@ class HabitStatusChangerViewModel
   Future<int> saveSelectStatus({bool listen = true}) async {
     if (!mounted || !canSave) return 0;
     final records = dataDelegate.habits
-        .where((e) => e.startDate.isBefore(_form.selectDate))
+        .where((e) => e.startDate <= _form.selectDate)
         .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
         .where((e) => e.item1 != null)
         .map((e) {

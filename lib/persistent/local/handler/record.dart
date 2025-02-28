@@ -101,34 +101,45 @@ class RecordDBHelper extends DBHelperHandler {
   String get habitTable => TableName.habits;
 
   Future<int> insertNewRecord(RecordDBCell record) {
-    return db.insert(table, record.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    assert(record.uuid != null);
+
+    return db.insert(table, record.toJson());
   }
 
   Future<void> insertMultiRecords(Iterable<RecordDBCell> records,
       {bool updateIfExist = false}) async {
-    final batch = db.batch();
-    for (var record in records) {
-      final recordJson = record.toJson();
-      batch.insert(table, recordJson,
-          conflictAlgorithm: ConflictAlgorithm.ignore);
-      if (updateIfExist) {
-        batch.update(table, recordJson,
-            where: '${RecordDBCellKey.uuid} = ?',
-            whereArgs: [record.uuid],
-            conflictAlgorithm: ConflictAlgorithm.ignore);
+    await db.transaction((db) async {
+      final tasks = <Future>[];
+      for (var record in records) {
+        tasks.add(
+          db
+              .query(table,
+                  where: "${RecordDBCellKey.uuid} = ?",
+                  whereArgs: [record.uuid],
+                  limit: 1)
+              .then((result) async {
+            if (result.isEmpty) {
+              await db.insert(table, record.toJson(),
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            } else {
+              await db.update(table, record.toJson(),
+                  where: '${RecordDBCellKey.uuid} = ?',
+                  whereArgs: [record.uuid],
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            }
+          }),
+        );
       }
-    }
-    await batch.commit(noResult: false, continueOnError: true);
+
+      await Future.wait(tasks);
+    });
   }
 
   Future<int> updateRecord(RecordDBCell record) {
     assert(record.uuid != null);
 
     return db.update(table, record.toJson(),
-        where: '${RecordDBCellKey.uuid} = ?',
-        whereArgs: [record.uuid],
-        conflictAlgorithm: ConflictAlgorithm.rollback);
+        where: '${RecordDBCellKey.uuid} = ?', whereArgs: [record.uuid]);
   }
 
   static const _loadRecordDataColumns = [
