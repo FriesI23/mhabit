@@ -283,20 +283,19 @@ class HabitFormViewModel extends ChangeNotifier
         createT: now,
         modifyT: now);
 
-    HabitDBCell? result;
-    final Function(HabitDBCell? cell)? queryCb =
-        returnResult ? (cell) => result = cell : null;
-
-    final dbid = await habitDBHelper.insertNewHabit(dbCell, queryCb: queryCb);
+    final dbid = await habitDBHelper.insertNewHabit(dbCell);
+    final result =
+        returnResult ? await habitDBHelper.queryHabitByDBID(dbid) : null;
     appLog.db.info("new habit saved", ex: [dbid, result]);
     return result;
   }
 
   Future<HabitDBCell?> _saveExistHabit({bool returnResult = false}) async {
     final freq = frequency.toJson();
+    final habitUUID = _form.editParams!.uuid;
     final dbCell = HabitDBCell(
       type: habitType.dbCode,
-      uuid: _form.editParams!.uuid,
+      uuid: habitUUID,
       name: name,
       desc: desc,
       color: colorType.dbCode,
@@ -311,17 +310,15 @@ class HabitFormViewModel extends ChangeNotifier
       remindQuestion: reminder != null ? reminderQuest : null,
     );
 
-    HabitDBCell? result;
-    final Function(HabitDBCell? cell)? queryCb =
-        returnResult ? (cell) => result = cell : null;
-
-    final count = await habitDBHelper.updateExistHabit(dbCell,
-        includeNullKeys: const [
-          HabitDBCellKey.remindCustom,
-          HabitDBCellKey.remindQuestion,
-          HabitDBCellKey.dailyGoalExtra,
-        ],
-        queryCb: queryCb);
+    final count =
+        await habitDBHelper.updateExistHabit(dbCell, includeNullKeys: const [
+      HabitDBCellKey.remindCustom,
+      HabitDBCellKey.remindQuestion,
+      HabitDBCellKey.dailyGoalExtra,
+    ]);
+    final result = (count > 0 && returnResult)
+        ? await habitDBHelper.queryHabitByUUID(habitUUID)
+        : null;
     appLog.db.info("exist habit saved", ex: [count, result]);
     return result;
   }

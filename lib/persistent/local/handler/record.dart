@@ -59,7 +59,7 @@ class RecordDBCell with DBCell {
   @JsonKey(name: RecordDBCellKey.parentUUID)
   final HabitUUID? parentUUID;
   @JsonKey(name: RecordDBCellKey.reason)
-  final HabitUUID? reason;
+  final String? reason;
 
   RecordDBCell(
       {this.id,
@@ -105,17 +105,21 @@ class RecordDBHelper extends DBHelperHandler {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<Iterable<int>> insertMultiRecords(Iterable<RecordDBCell> records,
+  Future<void> insertMultiRecords(Iterable<RecordDBCell> records,
       {bool updateIfExist = false}) async {
-    final bath = db.batch();
+    final batch = db.batch();
     for (var record in records) {
-      bath.insert(table, record.toJson(),
-          conflictAlgorithm: updateIfExist
-              ? ConflictAlgorithm.replace
-              : ConflictAlgorithm.ignore);
+      final recordJson = record.toJson();
+      batch.insert(table, recordJson,
+          conflictAlgorithm: ConflictAlgorithm.ignore);
+      if (updateIfExist) {
+        batch.update(table, recordJson,
+            where: '${RecordDBCellKey.uuid} = ?',
+            whereArgs: [record.uuid],
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
     }
-    final result = await bath.commit(noResult: false);
-    return result.map((e) => e as int);
+    await batch.commit(noResult: false, continueOnError: true);
   }
 
   Future<int> updateRecord(RecordDBCell record) {
