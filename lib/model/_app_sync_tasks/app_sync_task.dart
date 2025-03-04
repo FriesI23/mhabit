@@ -14,6 +14,7 @@
 
 import 'dart:async';
 
+import '../../common/async.dart';
 import '../app_sync_server.dart';
 
 abstract interface class AppSyncTaskResult {
@@ -30,7 +31,8 @@ abstract interface class AppSyncTaskResult {
 
 enum AppSyncTaskStatus { idle, running, cancelling, cancelled, completed }
 
-abstract interface class AppSyncTask<T extends AppSyncTaskResult> {
+abstract interface class AppSyncTask<T extends AppSyncTaskResult>
+    implements AsyncTask<T> {
   AppSyncServer get config;
 
   AppSyncTaskStatus get status;
@@ -43,20 +45,16 @@ abstract interface class AppSyncTask<T extends AppSyncTaskResult> {
 
   bool get isDone;
 
-  Future<T> run();
-
   Future<void> cancel();
 }
 
 abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
     implements AppSyncTask<T> {
   AppSyncTaskStatus _status = AppSyncTaskStatus.idle;
-  late final Completer<T> _completer;
+  final Completer<T> _completer;
   final Duration timeout;
 
-  AppSyncTaskFramework({required this.timeout}) {
-    _completer = Completer();
-  }
+  AppSyncTaskFramework({required this.timeout}) : _completer = Completer();
 
   @override
   AppSyncTaskStatus get status => _status;
@@ -81,7 +79,7 @@ abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
 
   Future<T> exec();
 
-  Future<T> error([Object? e, StackTrace? s]);
+  Future<T> error(Object e, StackTrace s);
 
   @override
   Future<T> run() {
@@ -95,6 +93,9 @@ abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
       _status = _status == AppSyncTaskStatus.cancelling && result.isCancelled
           ? AppSyncTaskStatus.cancelled
           : AppSyncTaskStatus.completed;
+    }).catchError((e, s) {
+      if (!_completer.isCompleted) _completer.completeError(e, s);
+      Error.throwWithStackTrace(e, s);
     });
 
     return result;

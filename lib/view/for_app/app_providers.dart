@@ -110,10 +110,12 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider<ProfileViewModel, AppSyncViewModel>(
+          ChangeNotifierProxyProvider2<ProfileViewModel, DBHelperViewModel,
+              AppSyncViewModel>(
             create: (context) => AppSyncViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
+            update: (context, profile, helper, previous) => previous!
+              ..updateProfile(profile)
+              ..updateDBHelper(helper),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel,
               HabitRecordOpConfigViewModel>(
