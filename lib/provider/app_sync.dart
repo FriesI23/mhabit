@@ -24,6 +24,7 @@ import '../logging/helper.dart';
 import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
+import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
 import 'commons.dart';
@@ -31,7 +32,7 @@ import 'commons.dart';
 part 'app_sync.g.dart';
 
 class AppSyncViewModel
-    with ChangeNotifier, ProfileHandlerLoadedMixin
+    with ChangeNotifier, ProfileHandlerLoadedMixin, DBHelperLoadedMixin
     implements ProviderMounted {
   late final DispatcherForAppSyncTask appSyncTask;
 
@@ -220,8 +221,14 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     }
   }
 
-  AppSyncTask buildNewTask(AppSyncServer config) => switch (config.type) {
-        AppSyncServerType.fake => BasicAppSyncTask(
+  Future<AppSyncTask> buildNewTask(AppSyncServer config) async {
+    AppSyncTask buildDefaultTask() => BasicAppSyncTask(
+        config: config,
+        onExec: (task) => Future.value(const BasicAppSyncTaskResult.error()));
+
+    switch (config.type) {
+      case AppSyncServerType.fake:
+        return BasicAppSyncTask(
             config: config,
             onExec: (task) async {
               final rand = math.Random();
@@ -248,24 +255,39 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
               await Future.delayed(const Duration(seconds: 1));
               appLog.appsync.debug("$debugPrefix: Done");
               return BasicAppSyncTaskResult.success();
-            }),
-        AppSyncServerType.webdav => WebDavAppSyncTask(config: config),
-        _ => BasicAppSyncTask(
-            config: config,
-            onExec: (task) =>
-                Future.value(const BasicAppSyncTaskResult.error())),
-      };
+            });
 
-  void startSync() {
+      case AppSyncServerType.webdav:
+        switch (config) {
+          case AppWebDavSyncServer():
+            final password = await root.getPassword(identity: config.identity);
+            return WebDavAppSyncTask(
+                config: config.copyWith(password: password),
+                syncDBHelper: root.syncDBHelper);
+          default:
+            return buildDefaultTask();
+        }
+
+      default:
+        return buildDefaultTask();
+    }
+  }
+
+  void startSync() async {
     final config = root._serverConfig?.get();
     if (config == null) return;
+
+    final tmpNewTask = (_task == null || _task!.task.isDone)
+        ? AppSyncContainer.generate(task: await buildNewTask(config))
+        : null;
 
     final AppSyncContainer newTask;
     final crtTask = _task;
 
-    if (crtTask == null || crtTask.task.isDone) {
-      newTask = _task = AppSyncContainer.generate(task: buildNewTask(config));
-    } else if (crtTask.task.status == AppSyncTaskStatus.idle) {
+    if ((crtTask == null || crtTask.task.isDone) && tmpNewTask != null) {
+      newTask = _task = tmpNewTask;
+    } else if (crtTask != null &&
+        crtTask.task.status == AppSyncTaskStatus.idle) {
       newTask = _task = crtTask;
     } else {
       return;

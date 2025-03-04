@@ -87,4 +87,25 @@ class SyncDBHelper extends DBHelperHandler {
 
   @override
   String get table => TableName.sync;
+
+  static const _loadAllHabitsSyncInfoColumns = [
+    SyncDbCellKey.id,
+    SyncDbCellKey.habitUUID,
+    SyncDbCellKey.recordUUID,
+    SyncDbCellKey.lastConfigUUID,
+    SyncDbCellKey.lastMark,
+    SyncDbCellKey.dirty,
+  ];
+
+  Future<Iterable<SyncDBCell>> loadAllHabitsSyncInfo(
+      {List<String> columns = _loadAllHabitsSyncInfoColumns}) async {
+    final result = await db.query(
+      table,
+      distinct: true,
+      columns: columns,
+      where: "${SyncDbCellKey.habitUUID} IS NOT NULL "
+          "AND ${SyncDbCellKey.recordUUID} IS NULL",
+    );
+    return result.map(SyncDBCell.fromJson);
+  }
 }
