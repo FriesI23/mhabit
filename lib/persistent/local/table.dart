@@ -15,4 +15,5 @@
 class TableName {
   static const records = 'mh_records';
   static const habits = 'mh_habits';
+  static const sync = 'mh_sync';
 }

@@ -12,7 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:sqflite/sqflite.dart';
+
+import 'handler/sync.dart';
 import 'table.dart';
+
+String buildConflictAlgorithm(ConflictAlgorithm conflictAlgorithm) =>
+    switch (conflictAlgorithm) {
+      ConflictAlgorithm.rollback => "OR ROLLBACK",
+      ConflictAlgorithm.abort => "OR ABORT",
+      ConflictAlgorithm.fail => "OR FAIL",
+      ConflictAlgorithm.ignore => "OR IGNORE",
+      ConflictAlgorithm.replace => "OR REPLACE",
+    };
 
 class CustomSql {
   static const String autoUpdateRecordsModifyTimeTrigger = """
@@ -43,4 +55,69 @@ BEGIN
   WHERE uuid = NEW.uuid;
 END
 """;
+
+  static const String autoUpdateSyncModifyTimeTrigger = """
+CREATE TRIGGER auto_update_mh_sync_modify_t
+AFTER UPDATE ON ${TableName.sync}
+BEGIN
+  UPDATE ${TableName.sync}
+  SET modify_t = (cast(strftime('%s','now') as int))
+  WHERE id_ = NEW.id_;
+END
+""";
+
+  /// required arguments: [recordUUID]
+  static String increaseRecordSyncDirtySql(
+      {ConflictAlgorithm? conflictAlgorithm}) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(" SET ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.recordUUID} = ?");
+
+    return sql.toString();
+  }
+
+  /// required arguments: [habitUUID]
+  static String increaseHabitSyncDirtySql(
+      {ConflictAlgorithm? conflictAlgorithm}) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(" SET ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.habitUUID} = ?");
+
+    return sql.toString();
+  }
+
+  /// required arguments: [habitUUIDList]
+  static String increaseMultiHabitsSyncDirtySql(
+      {required int count, ConflictAlgorithm? conflictAlgorithm}) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(" SET ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.habitUUID}")
+      ..write(" IN (${List.generate(count, (index) => '?').join(', ')})");
+
+    return sql.toString();
+  }
 }

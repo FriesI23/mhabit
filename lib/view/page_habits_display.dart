@@ -44,6 +44,7 @@ import "../model/habit_summary.dart";
 import '../persistent/local/handler/habit.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_developer.dart';
+import '../provider/app_sync.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_detail.dart';
 import '../provider/habit_op_config.dart';
@@ -126,6 +127,23 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     super.dispose();
+  }
+
+  Future<void> _loadHabitData() async {
+    if (!mounted) return;
+    final minBarShowTimeFuture = Future.delayed(_kHabitListFutureLoadDuration);
+    if (context.read<AppSyncViewModel>().mounted) {
+      await context.read<AppSyncViewModel>().appSyncTask.processing;
+    }
+    if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
+    await Future.wait([
+      context.read<HabitSummaryViewModel>().loadData(inFutureBuilder: true),
+      minBarShowTimeFuture,
+    ]);
+    if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
+    if (context.read<HabitSummaryViewModel>().consumeClearSnackBarFlag()) {
+      ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
+    }
   }
 
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
@@ -447,6 +465,16 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
     DateChangeProvider.of(context).dateTime = HabitDate.now();
+    final syncvm = context.read<AppSyncViewModel>();
+    if (syncvm.mounted) {
+      try {
+        syncvm.appSyncTask.startSync();
+      } catch (e, s) {
+        appLog.appsync.fatal("start sync failed",
+            ex: [syncvm.appSyncTask.task], error: e, stackTrace: s);
+        if (kDebugMode) Error.throwWithStackTrace(e, s);
+      }
+    }
     context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
@@ -972,22 +1000,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
-          Future<void> loadData() async {
-            final loadedFuture = context
-                .read<HabitSummaryViewModel>()
-                .loadData(inFutureBuilder: true);
-            await Future.delayed(_kHabitListFutureLoadDuration);
-            await loadedFuture;
-            if (context.mounted &&
-                context
-                    .read<HabitSummaryViewModel>()
-                    .consumeClearSnackBarFlag()) {
-              ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
-            }
-          }
-
           return FutureBuilder(
-            future: loadData(),
+            future: _loadHabitData(),
             builder: (context, snapshot) {
               // final viewmodel = context.read<HabitSummaryViewModel>();
               // appLog.load.debug("$widget.buildHabits", ex: [
@@ -999,7 +1013,6 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
               //   appLog.load.debug("$widget.buildHabits",
               //       ex: ["Loaded", viewmodel.debugGetDataString()]);
               // }
-
               return SliverStack(
                 children: [
                   buildHabitsContent(context),
