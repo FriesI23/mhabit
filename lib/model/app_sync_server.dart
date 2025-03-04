@@ -149,7 +149,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
 
 @JsonSerializable()
 @CopyWith(skipFields: true, copyWithNull: false, constructor: '_copyWith')
-final class AppWebDavSyncServer implements AppSyncServer {
+class AppWebDavSyncServer implements AppSyncServer {
   @override
   final String identity;
   @override
@@ -283,6 +283,12 @@ final class AppWebDavSyncServer implements AppSyncServer {
     return (identity == other.identity &&
         path == other.path &&
         username == other.username &&
+        ignoreSSL == other.ignoreSSL &&
+        timeout == other.timeout &&
+        connectRetryCount == other.connectRetryCount &&
+        connectTimeout == other.connectTimeout &&
+        syncMobileNetworks.toSet() == other.syncMobileNetworks.toSet() &&
+        syncInLowData == other.syncInLowData &&
         (withoutPassword ? true : password == other.password));
   }
 
@@ -330,7 +336,7 @@ final class AppWebDavSyncServer implements AppSyncServer {
 
 @JsonSerializable()
 @CopyWith(skipFields: true, copyWithNull: false, constructor: '_copyWith')
-final class AppFakeSyncServer implements AppSyncServer {
+class AppFakeSyncServer implements AppSyncServer {
   @override
   final String identity;
   @override
