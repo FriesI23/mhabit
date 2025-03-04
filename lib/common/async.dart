@@ -15,3 +15,7 @@
 abstract interface class AsyncInitialization {
   Future init();
 }
+
+abstract interface class AsyncTask<T> {
+  Future<T> run();
+}

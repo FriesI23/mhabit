@@ -26,6 +26,7 @@ import '../provider/commons.dart';
 import 'local/db_helper.dart';
 import 'local/handler/habit.dart';
 import 'local/handler/record.dart';
+import 'local/handler/sync.dart';
 
 class DBHelperViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {
@@ -92,11 +93,13 @@ class DBHelperViewModel extends ChangeNotifier
 abstract mixin class DBHelperLoadedMixin {
   late HabitDBHelper habitDBHelper;
   late RecordDBHelper recordDBHelper;
+  late SyncDBHelper syncDBHelper;
 
   void updateDBHelper(DBHelperViewModel newHelper) {
     appLog.load.info("$runtimeType.updateDBHelper", ex: [newHelper]);
     habitDBHelper = HabitDBHelper(newHelper.local);
     recordDBHelper = RecordDBHelper(newHelper.local);
+    syncDBHelper = SyncDBHelper(newHelper.local);
   }
 }
 
