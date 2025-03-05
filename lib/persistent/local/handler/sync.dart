@@ -108,4 +108,32 @@ class SyncDBHelper extends DBHelperHandler {
     );
     return result.map(SyncDBCell.fromJson);
   }
+
+  static const _loadHabitRecordsSyncInfoColumns = [
+    SyncDbCellKey.id,
+    SyncDbCellKey.habitUUID,
+    SyncDbCellKey.recordUUID,
+    SyncDbCellKey.lastConfigUUID,
+    SyncDbCellKey.lastMark,
+    SyncDbCellKey.dirty,
+  ];
+
+  Future<Iterable<SyncDBCell>> loadHabitRecordsSyncInfo(
+      {required HabitUUID uuid,
+      List<String> columns = _loadHabitRecordsSyncInfoColumns}) async {
+    const tNameSync = TableName.sync;
+    const tNameRrds = TableName.records;
+    final selectIter =
+        _loadHabitRecordsSyncInfoColumns.map((e) => "$tNameSync.$e");
+    final result = await db.rawQuery(
+        "SELECT DISTINCT ${selectIter.join(', ')} "
+        "FROM $tNameSync "
+        "JOIN $tNameRrds ON $tNameSync.${SyncDbCellKey.recordUUID} "
+        "= $tNameRrds.${RecordDBCellKey.uuid} "
+        "WHERE $tNameRrds.${RecordDBCellKey.parentId} == ? "
+        "AND $tNameSync.${SyncDbCellKey.habitUUID} IS NULL "
+        "AND $tNameSync.${SyncDbCellKey.recordUUID} IS NOT NULL",
+        [uuid]);
+    return result.map(SyncDBCell.fromJson);
+  }
 }

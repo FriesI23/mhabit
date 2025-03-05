@@ -84,6 +84,7 @@ dependencies:
   timezone: ^0.9.1
   nested: ^1.0.0
   async: ^2.11.0
+  pool: ^1.5.1
 
   # Data Persistence
   shared_preferences: ^2.0.15
