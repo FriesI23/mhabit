@@ -34,7 +34,7 @@ void testWebdavAppSyncTaskMainBody() =>
     group("test WebdavAppSyncTaskMainBody", () {
       late AsyncTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
       late AsyncTask<List<SyncDBCell>> queryHabitsFromDbTask;
-      late WebDavSyncCellInfoMerger syncInfoMerger;
+      late WebDavSyncHabitInfoMerger syncInfoMerger;
       late WebDavAppSyncTaskExecutor task;
 
       test("test normal progress", () async {
@@ -60,27 +60,40 @@ void testWebdavAppSyncTaskMainBody() =>
         when(queryHabitsFromDbTask.run())
             .thenAnswer((inv) async => localResult);
 
-        final mergeResult = <WebDavAppSyncCellInfo>[
-          WebDavAppSyncCellInfo(
+        final mergeResult = <WebDavAppSyncHabitInfo>[
+          WebDavAppSyncHabitInfo(
               uuid: 'xx1', status: WebDavAppSyncInfoStatus.both),
-          WebDavAppSyncCellInfo(
+          WebDavAppSyncHabitInfo(
               uuid: 'xx2', status: WebDavAppSyncInfoStatus.server),
         ];
         syncInfoMerger = MockConverter();
         when(syncInfoMerger.convert((local: localResult, server: serverResult)))
             .thenReturn(mergeResult);
 
+        final singleHabitTasks = <AsyncTask<WebDavAppSyncTaskResult>>[];
         task = WebDavAppSyncTaskExecutor(
-            config: config,
-            fetchHabitsFromServerTask: fetchHabitsFromServerTask,
-            queryHabitsFromDbTask: queryHabitsFromDbTask,
-            syncInfoMerger: syncInfoMerger);
+          config: config,
+          fetchHabitsFromServerTask: fetchHabitsFromServerTask,
+          queryHabitsFromDbTask: queryHabitsFromDbTask,
+          syncInfoMerger: syncInfoMerger,
+          singleHabitSyncTaskBuilder: (crtTask, cell) {
+            final task = MockAsyncTask<WebDavAppSyncTaskResult>();
+            singleHabitTasks.add(task);
+            when(task.run())
+                .thenAnswer((_) async => WebDavAppSyncTaskResult.success());
+            return task;
+          },
+        );
         final result = await task.run();
+
         expect(result.isSuccessed, isTrue);
         verify(fetchHabitsFromServerTask.run()).called(1);
         verify(queryHabitsFromDbTask.run()).called(1);
         verify(syncInfoMerger
             .convert((local: localResult, server: serverResult))).called(1);
+        for (var task in singleHabitTasks) {
+          verify(task.run()).called(1);
+        }
       });
     });
 

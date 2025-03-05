@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart';
 
@@ -25,4 +27,14 @@ extension WebDavResourceExtention on WebDavStdResource {
           .first as WebDavStdResourceProp<ResourceTypes>;
 
   bool get isCollection => resourcetype.value?.isCollection ?? false;
+
+  void tryToRaiseError({bool raiseError = true, bool raiseStatus = true}) {
+    if (raiseError) {
+      final error = this.error;
+      if (error != null) throw error;
+    }
+    if (raiseStatus && status > 300) {
+      throw HttpException("Http request failed, status=$status", uri: path);
+    }
+  }
 }
