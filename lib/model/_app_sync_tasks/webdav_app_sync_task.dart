@@ -14,14 +14,17 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:pool/pool.dart';
 import 'package:simple_webdav_client/client.dart';
 
 import '../../common/async.dart';
 import '../../persistent/local/handler/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
+import 'webdav_app_sync_models.dart';
 import 'webdav_app_sync_subtasks.dart';
 
 enum WebDavAppSyncTaskResultStatus { success, cancelled, timeout, error }
@@ -72,6 +75,10 @@ class WebDavAppSyncTaskResult implements AppSyncTaskResult {
   @override
   bool get withError =>
       status == WebDavAppSyncTaskResultStatus.error || error.error != null;
+
+  @override
+  String toString() =>
+      "WebDavAppSyncTaskResult(status=$status, " "error=${error.error})";
 }
 
 class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
@@ -115,7 +122,11 @@ class WebDavAppSyncTaskExecutor
 
   final AsyncTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
   final AsyncTask<List<SyncDBCell>> queryHabitsFromDbTask;
-  final WebDavSyncCellInfoMerger syncInfoMerger;
+  final WebDavSyncHabitInfoMerger syncInfoMerger;
+
+  final AsyncTask<WebDavAppSyncTaskResult> Function(
+          WebDavAppSyncTaskExecutor crtTask, WebDavAppSyncHabitInfo cell)
+      singleHabitSyncTaskBuilder;
 
   late final WeakReference<WebDavStdClient>? _client;
 
@@ -125,6 +136,7 @@ class WebDavAppSyncTaskExecutor
     required this.fetchHabitsFromServerTask,
     required this.queryHabitsFromDbTask,
     required this.syncInfoMerger,
+    required this.singleHabitSyncTaskBuilder,
     WebDavStdClient? client,
   }) {
     _client = client != null ? WeakReference(client) : null;
@@ -141,10 +153,18 @@ class WebDavAppSyncTaskExecutor
       }
       final client = WebDavStdClient.withClient(httpClient);
       if (config.username.isNotEmpty) {
-        client.addCredentials(config.path, '',
-            HttpClientBasicCredentials(config.username, config.password));
-        client.addCredentials(config.path, '',
-            HttpClientDigestCredentials(config.username, config.password));
+        int count = 0;
+        client.setAuthenticate((url, scheme, realm) async {
+          if (count++ >= 3) return false;
+          if (scheme == "Digest") {
+            client.addCredentials(config.path, realm ?? '',
+                HttpClientDigestCredentials(config.username, config.password));
+          } else {
+            client.addCredentials(config.path, realm ?? '',
+                HttpClientBasicCredentials(config.username, config.password));
+          }
+          return true;
+        });
       }
       return client;
     }
@@ -152,14 +172,47 @@ class WebDavAppSyncTaskExecutor
     final client = buildWebDavClient();
     final habitsPath = config.path.replace(pathSegments: [
       ...config.path.pathSegments.where((e) => e.isNotEmpty),
-      'habits'
+      'habits',
+      ''
     ]);
+    // TODO: indev
     return WebDavAppSyncTaskExecutor(
       config: config,
       fetchHabitsFromServerTask:
-          FetchHabitsFromServerTask(path: habitsPath, client: client),
+          FetchMemberMetaFromServerTask.habits(habitsPath, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
-      syncInfoMerger: const WebDavSyncCellInfoMergerImpl(),
+      syncInfoMerger: const SyncHabitsInfoMergerImpl(),
+      singleHabitSyncTaskBuilder: (crtTask, cell) => SingleHabitSyncTask(
+        parent: crtTask,
+        config: config,
+        cell: cell,
+        serverToLocalTask: (parent, config, cell) =>
+            SingleHabitSyncTask.downloadTask(
+          parent: parent,
+          fetchRecordsFromServerTask: FetchHabitRecordsMetaFromServerTask.build(
+              parent: parent,
+              path: config.path.replace(pathSegments: [
+                ...config.path.pathSegments.where((e) => e.isNotEmpty),
+                'records',
+                'habit-${cell.uuid}',
+                ''
+              ]),
+              client: client),
+          queryRecordsFromDbTask: QueryHabitRecordsFromDBTask(
+              uuid: cell.uuid, helper: syncDBHelper),
+          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(cell.uuid),
+          fetchHabitDataTask:
+              FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
+                  path: cell.serverPath!, client: client),
+          fetchRecordDataTaskBuilder: (cell) =>
+              FetchDataFromServerTask.fetchRecordDataFromServerBuilder(
+                  path: cell.serverPath!, client: client),
+          writeToDbTaskBuilder: (cell) =>
+              WriteToDBTask(data: cell, helper: syncDBHelper),
+        ),
+        localToServerTask: (parent, config, cell) async =>
+            WebDavAppSyncTaskResult.success(),
+      ),
       client: client,
     );
   }
@@ -169,13 +222,14 @@ class WebDavAppSyncTaskExecutor
       Error.throwWithStackTrace(e, s);
 
   @override
-  Future<AppSyncTaskResult> run() => super.run().whenComplete(() {
-        final client = _client?.target;
-        if (client != null && !client.closed) _client?.target?.close();
-      });
+  Future<AppSyncTaskResult> exec() {
+    return doExec().whenComplete(() {
+      final client = _client?.target;
+      if (client != null && !client.closed) _client?.target?.close();
+    });
+  }
 
-  @override
-  Future<AppSyncTaskResult> exec() async {
+  Future<AppSyncTaskResult> doExec() async {
     final serverHabitsFuture = fetchHabitsFromServerTask.run();
     final localHabitsFuture = queryHabitsFromDbTask.run();
     final serverHabits = await serverHabitsFuture;
@@ -184,8 +238,21 @@ class WebDavAppSyncTaskExecutor
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
     final mergedResult =
         syncInfoMerger.convert((local: localHabits, server: serverHabits));
+    final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
+    final pool = Pool(math.max(mergedResult.length, 5));
+    await Future.wait(mergedResult.map(
+      (cell) => pool
+          .withResource(() async {
+            if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+            return singleHabitSyncTaskBuilder(this, cell).run();
+          })
+          .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
+          .then((result) => resultMap.putIfAbsent(cell, () => result)),
+    ));
     // TODO: indev
-    debugPrint("Count: ${mergedResult.length}, Result: $mergedResult");
+    debugPrint("$runtimeType: exec.doExec");
+    resultMap.forEach(
+        (k, v) => debugPrint("$k \n--> $v || ${v?.error.trace}\n---------"));
     return WebDavAppSyncTaskResult.success();
   }
 }
