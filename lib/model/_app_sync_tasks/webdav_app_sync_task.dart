@@ -80,13 +80,13 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
 
   final SyncDBHelper syncDBHelper;
 
-  late final WebDavAppSyncTaskMainBody _task;
+  late final WebDavAppSyncTaskExecutor _task;
 
   WebDavAppSyncTask(
       {required this.config,
       required this.syncDBHelper,
       super.timeout = Duration.zero}) {
-    _task = WebDavAppSyncTaskMainBody.build(
+    _task = WebDavAppSyncTaskExecutor.build(
         config: config, syncDBHelper: syncDBHelper);
   }
 
@@ -99,9 +99,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
           });
 
   @override
-  Future<AppSyncTaskResult> exec() {
-    return _task.run();
-  }
+  Future<AppSyncTaskResult> exec() => _task.run();
 
   @override
   Future<void> cancel() {
@@ -110,25 +108,29 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
   }
 }
 
-class WebDavAppSyncTaskMainBody
+class WebDavAppSyncTaskExecutor
     extends AppSyncTaskFramework<AppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
+
   final AsyncTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
   final AsyncTask<List<SyncDBCell>> queryHabitsFromDbTask;
+  final WebDavSyncCellInfoMerger syncInfoMerger;
+
   late final WeakReference<WebDavStdClient>? _client;
 
-  WebDavAppSyncTaskMainBody({
+  WebDavAppSyncTaskExecutor({
     required this.config,
     super.timeout = Duration.zero,
     required this.fetchHabitsFromServerTask,
     required this.queryHabitsFromDbTask,
+    required this.syncInfoMerger,
     WebDavStdClient? client,
   }) {
     _client = client != null ? WeakReference(client) : null;
   }
 
-  factory WebDavAppSyncTaskMainBody.build({
+  factory WebDavAppSyncTaskExecutor.build({
     required AppWebDavSyncServer config,
     required SyncDBHelper syncDBHelper,
   }) {
@@ -152,11 +154,12 @@ class WebDavAppSyncTaskMainBody
       ...config.path.pathSegments.where((e) => e.isNotEmpty),
       'habits'
     ]);
-    return WebDavAppSyncTaskMainBody(
+    return WebDavAppSyncTaskExecutor(
       config: config,
       fetchHabitsFromServerTask:
           FetchHabitsFromServerTask(path: habitsPath, client: client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
+      syncInfoMerger: const WebDavSyncCellInfoMergerImpl(),
       client: client,
     );
   }
@@ -179,8 +182,10 @@ class WebDavAppSyncTaskMainBody
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
     final localHabits = await localHabitsFuture;
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
-    debugPrint(serverHabits.toString());
-    debugPrint(localHabits.toString());
+    final mergedResult =
+        syncInfoMerger.convert((local: localHabits, server: serverHabits));
+    // TODO: indev
+    debugPrint("Count: ${mergedResult.length}, Result: $mergedResult");
     return WebDavAppSyncTaskResult.success();
   }
 }

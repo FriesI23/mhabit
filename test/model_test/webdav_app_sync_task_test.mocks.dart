@@ -3,12 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
+import 'dart:convert' as _i2;
 
-import 'package:mhabit/common/async.dart' as _i5;
-import 'package:mhabit/model/app_sync_server.dart' as _i2;
+import 'package:mhabit/common/async.dart' as _i6;
+import 'package:mhabit/model/app_sync_server.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,8 +24,9 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
-  _FakeDateTime_0(
+class _FakeConverter_0<S1, T1> extends _i1.SmartFake
+    implements _i2.Converter<S1, T1> {
+  _FakeConverter_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -33,8 +35,8 @@ class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
         );
 }
 
-class _FakeUri_1 extends _i1.SmartFake implements Uri {
-  _FakeUri_1(
+class _FakeSink_1<T1> extends _i1.SmartFake implements Sink<T1> {
+  _FakeSink_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -43,9 +45,8 @@ class _FakeUri_1 extends _i1.SmartFake implements Uri {
         );
 }
 
-class _FakeAppSyncServerForm_2 extends _i1.SmartFake
-    implements _i2.AppSyncServerForm {
-  _FakeAppSyncServerForm_2(
+class _FakeDateTime_2 extends _i1.SmartFake implements DateTime {
+  _FakeDateTime_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -54,21 +55,121 @@ class _FakeAppSyncServerForm_2 extends _i1.SmartFake
         );
 }
 
-class _FakeFuture_3<T1> extends _i1.SmartFake implements _i3.Future<T1> {
-  _FakeFuture_3(
+class _FakeUri_3 extends _i1.SmartFake implements Uri {
+  _FakeUri_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
           parent,
           parentInvocation,
         );
+}
+
+class _FakeAppSyncServerForm_4 extends _i1.SmartFake
+    implements _i3.AppSyncServerForm {
+  _FakeAppSyncServerForm_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFuture_5<T1> extends _i1.SmartFake implements _i4.Future<T1> {
+  _FakeFuture_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+/// A class which mocks [Converter].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConverter<S, T> extends _i1.Mock implements _i2.Converter<S, T> {
+  MockConverter() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  T convert(S? input) => (super.noSuchMethod(
+        Invocation.method(
+          #convert,
+          [input],
+        ),
+        returnValue: _i5.dummyValue<T>(
+          this,
+          Invocation.method(
+            #convert,
+            [input],
+          ),
+        ),
+      ) as T);
+
+  @override
+  _i2.Converter<S, TT> fuse<TT>(_i2.Converter<T, TT>? other) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fuse,
+          [other],
+        ),
+        returnValue: _FakeConverter_0<S, TT>(
+          this,
+          Invocation.method(
+            #fuse,
+            [other],
+          ),
+        ),
+      ) as _i2.Converter<S, TT>);
+
+  @override
+  Sink<S> startChunkedConversion(Sink<T>? sink) => (super.noSuchMethod(
+        Invocation.method(
+          #startChunkedConversion,
+          [sink],
+        ),
+        returnValue: _FakeSink_1<S>(
+          this,
+          Invocation.method(
+            #startChunkedConversion,
+            [sink],
+          ),
+        ),
+      ) as Sink<S>);
+
+  @override
+  _i4.Stream<T> bind(_i4.Stream<S>? stream) => (super.noSuchMethod(
+        Invocation.method(
+          #bind,
+          [stream],
+        ),
+        returnValue: _i4.Stream<T>.empty(),
+      ) as _i4.Stream<T>);
+
+  @override
+  _i2.Converter<RS, RT> cast<RS, RT>() => (super.noSuchMethod(
+        Invocation.method(
+          #cast,
+          [],
+        ),
+        returnValue: _FakeConverter_0<RS, RT>(
+          this,
+          Invocation.method(
+            #cast,
+            [],
+          ),
+        ),
+      ) as _i2.Converter<RS, RT>);
 }
 
 /// A class which mocks [AppWebDavSyncServer].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAppWebDavSyncServer extends _i1.Mock
-    implements _i2.AppWebDavSyncServer {
+    implements _i3.AppWebDavSyncServer {
   MockAppWebDavSyncServer() {
     _i1.throwOnMissingStub(this);
   }
@@ -76,7 +177,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get identity => (super.noSuchMethod(
         Invocation.getter(#identity),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#identity),
         ),
@@ -85,7 +186,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   DateTime get createTime => (super.noSuchMethod(
         Invocation.getter(#createTime),
-        returnValue: _FakeDateTime_0(
+        returnValue: _FakeDateTime_2(
           this,
           Invocation.getter(#createTime),
         ),
@@ -94,17 +195,17 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   DateTime get modifyTime => (super.noSuchMethod(
         Invocation.getter(#modifyTime),
-        returnValue: _FakeDateTime_0(
+        returnValue: _FakeDateTime_2(
           this,
           Invocation.getter(#modifyTime),
         ),
       ) as DateTime);
 
   @override
-  _i2.AppSyncServerType get type => (super.noSuchMethod(
+  _i3.AppSyncServerType get type => (super.noSuchMethod(
         Invocation.getter(#type),
-        returnValue: _i2.AppSyncServerType.unknown,
-      ) as _i2.AppSyncServerType);
+        returnValue: _i3.AppSyncServerType.unknown,
+      ) as _i3.AppSyncServerType);
 
   @override
   bool get verified => (super.noSuchMethod(
@@ -121,7 +222,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get password => (super.noSuchMethod(
         Invocation.getter(#password),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#password),
         ),
@@ -130,7 +231,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   Uri get path => (super.noSuchMethod(
         Invocation.getter(#path),
-        returnValue: _FakeUri_1(
+        returnValue: _FakeUri_3(
           this,
           Invocation.getter(#path),
         ),
@@ -139,7 +240,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get username => (super.noSuchMethod(
         Invocation.getter(#username),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#username),
         ),
@@ -158,16 +259,16 @@ class MockAppWebDavSyncServer extends _i1.Mock
       ) as bool);
 
   @override
-  Iterable<_i2.AppSyncServerMobileNetwork> get syncMobileNetworks =>
+  Iterable<_i3.AppSyncServerMobileNetwork> get syncMobileNetworks =>
       (super.noSuchMethod(
         Invocation.getter(#syncMobileNetworks),
-        returnValue: <_i2.AppSyncServerMobileNetwork>[],
-      ) as Iterable<_i2.AppSyncServerMobileNetwork>);
+        returnValue: <_i3.AppSyncServerMobileNetwork>[],
+      ) as Iterable<_i3.AppSyncServerMobileNetwork>);
 
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -175,7 +276,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
 
   @override
   bool isSameConfig(
-    _i2.AppSyncServer? other, {
+    _i3.AppSyncServer? other, {
     bool? withoutPassword = false,
   }) =>
       (super.noSuchMethod(
@@ -197,19 +298,19 @@ class MockAppWebDavSyncServer extends _i1.Mock
       ) as Map<String, dynamic>);
 
   @override
-  _i2.AppSyncServerForm toForm() => (super.noSuchMethod(
+  _i3.AppSyncServerForm toForm() => (super.noSuchMethod(
         Invocation.method(
           #toForm,
           [],
         ),
-        returnValue: _FakeAppSyncServerForm_2(
+        returnValue: _FakeAppSyncServerForm_4(
           this,
           Invocation.method(
             #toForm,
             [],
           ),
         ),
-      ) as _i2.AppSyncServerForm);
+      ) as _i3.AppSyncServerForm);
 
   @override
   String toDebugString() => (super.noSuchMethod(
@@ -217,7 +318,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
           #toDebugString,
           [],
         ),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #toDebugString,
@@ -230,7 +331,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
 /// A class which mocks [AppSyncServer].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
+class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
   MockAppSyncServer() {
     _i1.throwOnMissingStub(this);
   }
@@ -238,7 +339,7 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -247,7 +348,7 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
   @override
   String get identity => (super.noSuchMethod(
         Invocation.getter(#identity),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#identity),
         ),
@@ -256,7 +357,7 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
   @override
   DateTime get createTime => (super.noSuchMethod(
         Invocation.getter(#createTime),
-        returnValue: _FakeDateTime_0(
+        returnValue: _FakeDateTime_2(
           this,
           Invocation.getter(#createTime),
         ),
@@ -265,17 +366,17 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
   @override
   DateTime get modifyTime => (super.noSuchMethod(
         Invocation.getter(#modifyTime),
-        returnValue: _FakeDateTime_0(
+        returnValue: _FakeDateTime_2(
           this,
           Invocation.getter(#modifyTime),
         ),
       ) as DateTime);
 
   @override
-  _i2.AppSyncServerType get type => (super.noSuchMethod(
+  _i3.AppSyncServerType get type => (super.noSuchMethod(
         Invocation.getter(#type),
-        returnValue: _i2.AppSyncServerType.unknown,
-      ) as _i2.AppSyncServerType);
+        returnValue: _i3.AppSyncServerType.unknown,
+      ) as _i3.AppSyncServerType);
 
   @override
   bool get verified => (super.noSuchMethod(
@@ -291,7 +392,7 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
 
   @override
   bool isSameConfig(
-    _i2.AppSyncServer? other, {
+    _i3.AppSyncServer? other, {
     bool? withoutPassword = false,
   }) =>
       (super.noSuchMethod(
@@ -304,19 +405,19 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
       ) as bool);
 
   @override
-  _i2.AppSyncServerForm toForm() => (super.noSuchMethod(
+  _i3.AppSyncServerForm toForm() => (super.noSuchMethod(
         Invocation.method(
           #toForm,
           [],
         ),
-        returnValue: _FakeAppSyncServerForm_2(
+        returnValue: _FakeAppSyncServerForm_4(
           this,
           Invocation.method(
             #toForm,
             [],
           ),
         ),
-      ) as _i2.AppSyncServerForm);
+      ) as _i3.AppSyncServerForm);
 
   @override
   String toDebugString() => (super.noSuchMethod(
@@ -324,7 +425,7 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
           #toDebugString,
           [],
         ),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #toDebugString,
@@ -346,33 +447,33 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
 /// A class which mocks [AsyncTask].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAsyncTask<T> extends _i1.Mock implements _i5.AsyncTask<T> {
+class MockAsyncTask<T> extends _i1.Mock implements _i6.AsyncTask<T> {
   MockAsyncTask() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<T> run() => (super.noSuchMethod(
+  _i4.Future<T> run() => (super.noSuchMethod(
         Invocation.method(
           #run,
           [],
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #run,
                   [],
                 ),
               ),
-              (T v) => _i3.Future<T>.value(v),
+              (T v) => _i4.Future<T>.value(v),
             ) ??
-            _FakeFuture_3<T>(
+            _FakeFuture_5<T>(
               this,
               Invocation.method(
                 #run,
                 [],
               ),
             ),
-      ) as _i3.Future<T>);
+      ) as _i4.Future<T>);
 }

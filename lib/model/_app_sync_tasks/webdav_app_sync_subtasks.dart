@@ -12,16 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:simple_webdav_client/client.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart';
 
 import '../../common/async.dart';
+import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
 import '../../persistent/local/handler/sync.dart';
 
-final reAppSyncHabitFileName = RegExp(r'^habit-[^/]+\.json$');
+typedef WebDavSyncCellInfoMerger = Converter<
+    ({Iterable<SyncDBCell> local, Iterable<WebDavResourceContainer> server}),
+    List<WebDavAppSyncCellInfo>>;
+
+final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
+
+enum WebDavAppSyncInfoStatus { server, local, both }
+
+class WebDavAppSyncCellInfo {
+  final HabitUUID uuid;
+  String? eTagFromServer;
+  String? eTagFromLocal;
+
+  WebDavAppSyncInfoStatus _status;
+
+  WebDavAppSyncCellInfo(
+      {required this.uuid, required WebDavAppSyncInfoStatus status})
+      : _status = status;
+
+  WebDavAppSyncInfoStatus get status => _status;
+
+  set status(WebDavAppSyncInfoStatus newStatus) {
+    if (_status != newStatus) _status = WebDavAppSyncInfoStatus.both;
+  }
+
+  @override
+  String toString() => "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
+      "sEtag=$eTagFromServer, cEtag=$eTagFromLocal"
+      ")";
+}
 
 class WebDavResourceContainer {
   final Uri path;
@@ -39,6 +71,12 @@ class WebDavResourceContainer {
       path: resource.path,
       etag: resource.getetag.value,
     );
+  }
+
+  HabitUUID? get habitUUID {
+    final filename = path.pathSegments.lastOrNull;
+    if (filename == null || filename.isEmpty) return null;
+    return reAppSyncHabitFileName.firstMatch(filename)?.group(1);
   }
 
   @override
@@ -88,4 +126,39 @@ class QueryHabitsFromDBTask implements AsyncTask<List<SyncDBCell>> {
   @override
   Future<List<SyncDBCell>> run() =>
       helper.loadAllHabitsSyncInfo().then((result) => result.toList());
+}
+
+final class WebDavSyncCellInfoMergerImpl extends WebDavSyncCellInfoMerger {
+  const WebDavSyncCellInfoMergerImpl();
+
+  @override
+  List<WebDavAppSyncCellInfo> convert(
+      ({
+        Iterable<SyncDBCell> local,
+        Iterable<WebDavResourceContainer> server
+      }) input) {
+    final coll = <HabitUUID, WebDavAppSyncCellInfo>{};
+    for (var data in input.local) {
+      final uuid = data.habitUUID;
+      if (uuid == null) continue;
+      coll.putIfAbsent(
+        uuid,
+        () => WebDavAppSyncCellInfo(
+            uuid: uuid, status: WebDavAppSyncInfoStatus.local),
+      )
+        ..eTagFromLocal = data.lastMark
+        ..status = WebDavAppSyncInfoStatus.local;
+    }
+    for (var data in input.server) {
+      final uuid = data.habitUUID;
+      if (uuid == null) continue;
+      coll.putIfAbsent(
+          uuid,
+          () => WebDavAppSyncCellInfo(
+              uuid: uuid, status: WebDavAppSyncInfoStatus.server))
+        ..eTagFromServer = data.etag
+        ..status = WebDavAppSyncInfoStatus.server;
+    }
+    return coll.values.toList();
+  }
 }
