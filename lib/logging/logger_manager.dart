@@ -54,6 +54,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
   AppTextLogger get json;
   AppWidgetLogger get l10n;
   AppTextLogger get cache;
+  AppTextLogger get appsync;
 
   Future<bool> changeLogger(l.Logger newLogger);
   bool changeLoggerByType(AppLoggerHandlerType t);
@@ -238,6 +239,9 @@ class _AppLoggerManager implements AppLoggerMananger {
 
   @override
   AppTextLogger get cache => _tryGetAppTextLogger(LoggerType.cache);
+
+  @override
+  AppTextLogger get appsync => _tryGetAppTextLogger(LoggerType.appsync);
 
   @override
   Future<bool> changeLogger(l.Logger newLogger) async {
