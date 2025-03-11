@@ -21,6 +21,7 @@ import 'package:pool/pool.dart';
 import 'package:simple_webdav_client/client.dart';
 
 import '../../common/async.dart';
+import '../../common/types.dart';
 import '../../persistent/local/handler/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
@@ -170,16 +171,12 @@ class WebDavAppSyncTaskExecutor
     }
 
     final client = buildWebDavClient();
-    final habitsPath = config.path.replace(pathSegments: [
-      ...config.path.pathSegments.where((e) => e.isNotEmpty),
-      'habits',
-      ''
-    ]);
+
     // TODO: indev
     return WebDavAppSyncTaskExecutor(
       config: config,
-      fetchHabitsFromServerTask:
-          FetchMemberMetaFromServerTask.habits(habitsPath, client),
+      fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
+          WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
       syncInfoMerger: const SyncHabitsInfoMergerImpl(),
       singleHabitSyncTaskBuilder: (crtTask, cell) => SingleHabitSyncTask(
@@ -191,12 +188,9 @@ class WebDavAppSyncTaskExecutor
           parent: parent,
           fetchRecordsFromServerTask: FetchHabitRecordsMetaFromServerTask.build(
               parent: parent,
-              path: config.path.replace(pathSegments: [
-                ...config.path.pathSegments.where((e) => e.isNotEmpty),
-                'records',
-                'habit-${cell.uuid}',
-                ''
-              ]),
+              path: WebDavAppSyncPathBuilder(config.path)
+                  .habit(cell.uuid)
+                  .recordRootDir,
               client: client),
           queryRecordsFromDbTask: QueryHabitRecordsFromDBTask(
               uuid: cell.uuid, helper: syncDBHelper),
@@ -214,8 +208,17 @@ class WebDavAppSyncTaskExecutor
           writeToDbTaskBuilder: (cell) =>
               WriteToDBTask(data: cell, helper: syncDBHelper),
         ),
-        localToServerTask: (parent, config, cell) async =>
-            WebDavAppSyncTaskResult.success(),
+        localToServerTask: (parent, config, cell) =>
+            SingleHabitSyncTask.uploadTask(
+          parent: parent,
+          loadFromDBTask: LoadFromDBTask(helper: syncDBHelper, uuid: cell.uuid),
+          preprocessDirTaskBuilder: (data) =>
+              PreprocessHabitWebDavCollectionTask.build(
+                  parent: parent,
+                  path: config.path,
+                  data: data,
+                  client: client),
+        ),
       ),
       client: client,
     );
@@ -259,4 +262,85 @@ class WebDavAppSyncTaskExecutor
         (k, v) => debugPrint("$k \n--> $v || ${v?.error.trace}\n---------"));
     return WebDavAppSyncTaskResult.success();
   }
+}
+
+class WebDavAppSyncPathBuilder {
+  final Uri root;
+
+  final Uri habitsDir;
+  final Uri recordsDir;
+
+  static Uri _buildPath(Uri root, String subDir) {
+    return root.replace(pathSegments: [
+      ...root.pathSegments.where((e) => e.isNotEmpty),
+      subDir,
+      ''
+    ]);
+  }
+
+  WebDavAppSyncPathBuilder(this.root)
+      : habitsDir = _buildPath(root, 'habits'),
+        recordsDir = _buildPath(root, 'records');
+
+  WebDavAppSyncHabitPathBuilder habit(HabitUUID uuid) =>
+      WebDavAppSyncHabitPathBuilder(uuid, habitsDir, recordsDir);
+}
+
+class WebDavAppSyncHabitPathBuilder {
+  final HabitUUID uuid;
+  final Uri habitsDir;
+  final Uri recordsDir;
+
+  final Uri habitFile;
+  final Uri recordRootDir;
+
+  static Uri _buildHabitFile(Uri base, HabitUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'habit-$uuid.json'
+    ]);
+  }
+
+  static Uri _buildHabitRecordDir(Uri base, HabitUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'habit-$uuid',
+      ''
+    ]);
+  }
+
+  static Uri _buildRecordSubDir(Uri base, int year) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      year.toString(),
+      ''
+    ]);
+  }
+
+  WebDavAppSyncHabitPathBuilder(this.uuid, this.habitsDir, this.recordsDir)
+      : habitFile = _buildHabitFile(habitsDir, uuid),
+        recordRootDir = _buildHabitRecordDir(recordsDir, uuid);
+
+  Uri recordSubDir(int year) => _buildRecordSubDir(recordRootDir, year);
+
+  WebDavAppSyncRecordPathBuilder record(
+          HabitRecordUUID uuid, DateTime recordDate) =>
+      WebDavAppSyncRecordPathBuilder(uuid, recordSubDir(recordDate.year));
+}
+
+class WebDavAppSyncRecordPathBuilder {
+  final HabitRecordUUID uuid;
+  final Uri recordSubDir;
+
+  final Uri recordFile;
+
+  static Uri _buildRecordFile(Uri base, HabitRecordUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'record-$uuid.json'
+    ]);
+  }
+
+  WebDavAppSyncRecordPathBuilder(this.uuid, this.recordSubDir)
+      : recordFile = _buildRecordFile(recordSubDir, uuid);
 }

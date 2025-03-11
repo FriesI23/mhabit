@@ -329,4 +329,43 @@ class SyncDBHelper extends DBHelperHandler {
     await batch.commit(noResult: true);
     return;
   }
+
+  Future<WebDavSyncHabitData?> loadDirtyHabitDataFromBb(HabitUUID uuid,
+      {bool withRecords = true}) {
+    const tNameSync = TableName.sync;
+    const tNameHabits = TableName.habits;
+    const tNameRecords = TableName.records;
+
+    return db.transaction((db) async {
+      final habit = await db.rawQuery(
+          "SELECT DISTINCT $tNameHabits.* "
+          "FROM $tNameHabits "
+          "JOIN $tNameSync ON $tNameHabits.${HabitDBCellKey.uuid} "
+          "= $tNameSync.${SyncDbCellKey.habitUUID} "
+          "WHERE $tNameHabits.${HabitDBCellKey.uuid} = ? "
+          "AND $tNameSync.${SyncDbCellKey.dirty} > 0",
+          [uuid]).then((results) {
+        final result = results.firstOrNull;
+        return result != null
+            ? WebDavSyncHabitData.fromHabitDBCell(HabitDBCell.fromJson(result))
+            : null;
+      });
+      if (!withRecords || habit == null) return habit;
+
+      final records = await db.rawQuery(
+          "SELECT DISTINCT $tNameRecords.* "
+          "FROM $tNameRecords "
+          "JOIN $tNameSync ON $tNameRecords.${RecordDBCellKey.uuid} "
+          "= $tNameSync.${SyncDbCellKey.recordUUID} "
+          "WHERE $tNameRecords.${RecordDBCellKey.parentUUID} = ? "
+          "AND $tNameSync.${SyncDbCellKey.dirty} > 0",
+          [uuid]).then(
+        (results) => results
+            .map((result) => WebDavSyncRecordData.fromRecordDBCell(
+                RecordDBCell.fromJson(result)))
+            .toList(),
+      );
+      return habit.copyWith(records: records);
+    });
+  }
 }
