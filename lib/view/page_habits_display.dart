@@ -468,13 +468,14 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final syncvm = context.read<AppSyncViewModel>();
     if (syncvm.mounted) {
       try {
-        syncvm.appSyncTask.startSync();
+        await syncvm.appSyncTask.startSync();
       } catch (e, s) {
         appLog.appsync.fatal("start sync failed",
             ex: [syncvm.appSyncTask.task], error: e, stackTrace: s);
         if (kDebugMode) Error.throwWithStackTrace(e, s);
       }
     }
+    if (!mounted) return;
     context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
