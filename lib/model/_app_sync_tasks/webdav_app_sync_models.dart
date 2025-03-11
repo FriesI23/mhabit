@@ -200,7 +200,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.etag,
   });
 
-  WebDavSyncRecordData.fromHabitDBCell(RecordDBCell cell)
+  WebDavSyncRecordData.fromRecordDBCell(RecordDBCell cell, {this.etag})
       : recordDate = cell.recordDate,
         recordType = cell.recordType,
         recordValue = cell.recordValue,
@@ -208,8 +208,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
         modifyT = cell.modifyT,
         uuid = cell.uuid,
         parentUUID = cell.parentUUID,
-        reason = cell.reason,
-        etag = null;
+        reason = cell.reason;
 
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
     assert(json.remove(WebDavSyncRecordKey.convertType) == _convertType);
@@ -348,7 +347,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   });
 
   WebDavSyncHabitData.fromHabitDBCell(HabitDBCell cell,
-      {this.records = const []})
+      {this.etag, this.records = const []})
       : uuid = cell.uuid,
         createT = cell.createT,
         modifyT = cell.modifyT,
@@ -366,8 +365,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
         reminderQuest = cell.remindQuestion,
         startDate = cell.startDate,
         targetDays = cell.targetDays,
-        sortPostion = cell.sortPosition,
-        etag = null;
+        sortPostion = cell.sortPosition;
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
     assert(json.remove(WebDavSyncHabitKey.convertType) == _convertType);
