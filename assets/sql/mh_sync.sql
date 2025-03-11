@@ -7,5 +7,8 @@ CREATE TABLE IF NOT EXISTS mh_sync (
     dirty INTEGER NOT NULL DEFAULT 1,
     last_config_uuid TEXT,
     last_session_uuid TEXT,
-    last_mark TEXT
+    last_mark TEXT,
+    CHECK (
+        (habit_uuid IS NOT NULL) + (record_uuid IS NOT NULL) <= 1
+    )
 );

@@ -40,10 +40,11 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
     vm.appSyncTask.cancelSync();
   }
 
-  void _onStartButtonPressed() {
+  void _onStartButtonPressed() async {
     final vm = context.read<AppSyncViewModel>();
     if (!vm.mounted) return;
-    vm.appSyncTask.startSync();
+    await vm.appSyncTask.startSync();
+    if (!mounted) return;
     final summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null || !summary.mounted) return;
     summary.rockreloadDBToggleSwich();
