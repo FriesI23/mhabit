@@ -238,9 +238,8 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
         fetchRecordsFromServerTask,
     required AsyncTask<List<SyncDBCell>> queryRecordsFromDbTask,
     required WebDavSyncRecordInfoMerger syncInfoMerger,
-    required AsyncTask<({WebDavSyncHabitData? data, String? etag})>
-        fetchHabitDataTask,
-    required AsyncTask<({WebDavSyncRecordData? data, String? etag})> Function(
+    required AsyncTask<WebDavSyncHabitData> fetchHabitDataTask,
+    required AsyncTask<WebDavSyncRecordData> Function(
             WebDavAppSyncRecordInfo cell)
         fetchRecordDataTaskBuilder,
     required AsyncTask<WebDavAppSyncTaskResult> Function(
@@ -267,7 +266,7 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask", ex: ["started"]);
     final fetchHabitDataFuture = fetchHabitDataTask.run();
     final pool = Pool(fetchRecordDataConcurrency);
-    final syncRecordDataTupleList = await fetchHabitRecordsMeta().then(
+    final syncRecordDataList = await fetchHabitRecordsMeta().then(
       (mergedResult) => Future.wait(mergedResult
           .where((e) => e.isNeedDownload)
           .map(fetchRecordDataTaskBuilder)
@@ -277,21 +276,24 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
       })),
     );
     if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
-    final syncHabitDataTuple = await fetchHabitDataFuture;
+    final syncHabitData = await fetchHabitDataFuture;
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask",
-        ex: ["fetch data", syncHabitDataTuple, syncRecordDataTupleList]);
-    if (parent.isCancalling || syncRecordDataTupleList.any((e) => e == null)) {
+        ex: ["fetch data", syncHabitData, syncRecordDataList]);
+    if (parent.isCancalling || syncRecordDataList.any((e) => e == null)) {
       return const WebDavAppSyncTaskResult.cancelled();
     }
 
-    final syncHabitData = syncHabitDataTuple.data?.copyWith(
-      records:
-          syncRecordDataTupleList.map((e) => e?.data).whereNotNull().toList(),
+    final preparedData =
+        (syncHabitData.uuid != null ? syncHabitData : null)?.copyWith(
+      records: syncRecordDataList
+          .whereNotNull()
+          .where((e) => e.uuid != null)
+          .toList(),
     )?..validate();
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask",
-        ex: ["prepare write to db", syncHabitData]);
-    if (syncHabitData == null) return const WebDavAppSyncTaskResult.success();
-    return writeToDbTaskBuilder(syncHabitData).run();
+        ex: ["prepare write to db", preparedData]);
+    if (preparedData == null) return const WebDavAppSyncTaskResult.success();
+    return writeToDbTaskBuilder(preparedData).run();
   }
 }
 
@@ -441,45 +443,33 @@ class FetchDataFromServerTask<T> implements AsyncTask<T> {
     );
   }
 
-  static FetchDataFromServerTask<({JsonMap data, String? etag})>
-      fetchJsonDataFromServerBuilder(
-              {required Uri path, required WebDavStdClient client}) =>
-          FetchDataFromServerTask(
-              path: path,
-              client: client,
-              responseHandler: (response) => _responseHandler(response, path));
-
-  static FetchDataFromServerTask<({WebDavSyncHabitData? data, String? etag})>
+  static FetchDataFromServerTask<WebDavSyncHabitData>
       fetchHabitDataFromServerBuilder(
-              {required Uri path, required WebDavStdClient client}) =>
+              {required Uri path,
+              required WebDavStdClient client,
+              String? etag}) =>
           FetchDataFromServerTask(
             path: path,
             client: client,
             responseHandler: (response) =>
                 _responseHandler(response, path).then(
-              (value) => (
-                data: value.data.isEmpty
-                    ? null
-                    : WebDavSyncHabitData.fromJson(value.data),
-                etag: value.etag
-              ),
+              (value) => WebDavSyncHabitData.fromJson(value.data)
+                  .copyWith(etag: etag ?? value.etag),
             ),
           );
 
-  static FetchDataFromServerTask<({WebDavSyncRecordData? data, String? etag})>
+  static FetchDataFromServerTask<WebDavSyncRecordData>
       fetchRecordDataFromServerBuilder(
-              {required Uri path, required WebDavStdClient client}) =>
+              {required Uri path,
+              required WebDavStdClient client,
+              String? etag}) =>
           FetchDataFromServerTask(
             path: path,
             client: client,
             responseHandler: (response) =>
                 _responseHandler(response, path).then(
-              (value) => (
-                data: value.data.isEmpty
-                    ? null
-                    : WebDavSyncRecordData.fromJson(value.data),
-                etag: value.etag
-              ),
+              (value) => WebDavSyncRecordData.fromJson(value.data)
+                  .copyWith(etag: etag ?? value.etag),
             ),
           );
 
