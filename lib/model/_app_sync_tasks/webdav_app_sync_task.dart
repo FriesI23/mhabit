@@ -203,10 +203,14 @@ class WebDavAppSyncTaskExecutor
           syncInfoMerger: SyncHabitRecordsInfoMergerImpl(cell.uuid),
           fetchHabitDataTask:
               FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
-                  path: cell.serverPath!, client: client),
+                  path: cell.serverPath!,
+                  client: client,
+                  etag: cell.eTagFromServer),
           fetchRecordDataTaskBuilder: (cell) =>
               FetchDataFromServerTask.fetchRecordDataFromServerBuilder(
-                  path: cell.serverPath!, client: client),
+                  path: cell.serverPath!,
+                  client: client,
+                  etag: cell.eTagFromServer),
           writeToDbTaskBuilder: (cell) =>
               WriteToDBTask(data: cell, helper: syncDBHelper),
         ),
