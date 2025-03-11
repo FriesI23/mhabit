@@ -273,7 +273,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     }
   }
 
-  void startSync() async {
+  Future<void> startSync() async {
     final config = root._serverConfig?.get();
     if (config == null) return;
 

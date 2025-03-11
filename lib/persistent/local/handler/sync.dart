@@ -135,7 +135,6 @@ class SyncDBHelper extends DBHelperHandler {
         "JOIN $tNameRrds ON $tNameSync.${SyncDbCellKey.recordUUID} "
         "= $tNameRrds.${RecordDBCellKey.uuid} "
         "WHERE $tNameRrds.${RecordDBCellKey.parentId} == ? "
-        "AND $tNameSync.${SyncDbCellKey.habitUUID} IS NULL "
         "AND $tNameSync.${SyncDbCellKey.recordUUID} IS NOT NULL",
         [uuid]);
     return result.map(SyncDBCell.fromJson);
@@ -163,8 +162,7 @@ class SyncDBHelper extends DBHelperHandler {
                     "WHERE ${HabitDBCellKey.uuid} = "
                     "$tNameSync.${SyncDbCellKey.habitUUID}) AS $dbidKeyAlias"
               ],
-              where: "${SyncDbCellKey.habitUUID} = ? "
-                  "AND ${SyncDbCellKey.recordUUID} IS NULL",
+              where: "${SyncDbCellKey.habitUUID} = ?",
               whereArgs: [habitUUID],
               limit: 1)
           .then((results) => results.firstOrNull);
@@ -263,8 +261,7 @@ class SyncDBHelper extends DBHelperHandler {
           table,
           distinct: true,
           columns: [SyncDbCellKey.recordUUID, SyncDbCellKey.lastMark],
-          where: "${SyncDbCellKey.habitUUID} IS NULL "
-              "AND ${SyncDbCellKey.recordUUID} "
+          where: "${SyncDbCellKey.recordUUID} "
               "IN (${filteredRecordList.map((e) => '?').join(', ')})",
           whereArgs:
               filteredRecordList.map((e) => e.uuid).toList(growable: false),
