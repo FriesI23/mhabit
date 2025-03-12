@@ -28,6 +28,7 @@ class RecordExportDataKey {
   static const String recordValue = 'record_value';
   static const String createT = 'create_t';
   static const String modifyT = 'modify_t';
+  static const String reason = 'reason';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
@@ -43,20 +44,24 @@ class RecordExportData implements JsonAdaptor {
   final int? createT;
   @JsonKey(name: RecordExportDataKey.modifyT)
   final int? modifyT;
+  @JsonKey(name: RecordExportDataKey.reason)
+  final String? reason;
 
   const RecordExportData(
       {this.recordDate,
       this.recordType,
       this.recordValue,
       this.createT,
-      this.modifyT});
+      this.modifyT,
+      this.reason});
 
   RecordExportData.fromHabitDBCell(RecordDBCell cell)
       : recordDate = cell.recordDate,
         recordType = cell.recordType,
         recordValue = cell.recordValue,
         createT = cell.createT,
-        modifyT = cell.modifyT;
+        modifyT = cell.modifyT,
+        reason = cell.reason;
 
   factory RecordExportData.fromJson(dynamic json) =>
       _$RecordExportDataFromJson(json);
@@ -67,6 +72,7 @@ class RecordExportData implements JsonAdaptor {
         recordValue: recordValue,
         createT: createT,
         modifyT: modifyT,
+        reason: reason,
       );
 
   @override
