@@ -19,6 +19,7 @@ abstract class _$RecordExportDataCWProxy {
     num? recordValue,
     int? createT,
     int? modifyT,
+    String? reason,
   });
 }
 
@@ -42,6 +43,7 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
     Object? recordValue = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),
+    Object? reason = const $CopyWithPlaceholder(),
   }) {
     return RecordExportData(
       recordDate: recordDate == const $CopyWithPlaceholder()
@@ -64,6 +66,10 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
           ? _value.modifyT
           // ignore: cast_nullable_to_non_nullable
           : modifyT as int?,
+      reason: reason == const $CopyWithPlaceholder()
+          ? _value.reason
+          // ignore: cast_nullable_to_non_nullable
+          : reason as String?,
     );
   }
 }
@@ -225,6 +231,7 @@ RecordExportData _$RecordExportDataFromJson(Map<String, dynamic> json) =>
       recordValue: json['record_value'] as num?,
       createT: (json['create_t'] as num?)?.toInt(),
       modifyT: (json['modify_t'] as num?)?.toInt(),
+      reason: json['reason'] as String?,
     );
 
 Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
@@ -234,6 +241,7 @@ Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
       if (instance.recordValue case final value?) 'record_value': value,
       if (instance.createT case final value?) 'create_t': value,
       if (instance.modifyT case final value?) 'modify_t': value,
+      if (instance.reason case final value?) 'reason': value,
     };
 
 HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
