@@ -1,7 +1,13 @@
 {
   "@@locale": "pl",
-  "localeScriptName": "język polski",
+  "localeScriptName": "Polski",
   "@localeScriptName": {},
-  "appName": "🚧(pl) - Table Habit",
-  "@appName": {}
+  "appName": "Table Habit",
+  "@appName": {},
+  "habitEdit_saveButton_text": "Zapisz",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitName_hintText": "Nazwa Nawyku ...",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "Wybierz kolor",
+  "@habitEdit_colorPicker_title": {}
 }

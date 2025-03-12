@@ -9,19 +9,19 @@ class L10nPl extends L10n {
   L10nPl([String locale = 'pl']) : super(locale);
 
   @override
-  String get localeScriptName => 'język polski';
+  String get localeScriptName => 'Polski';
 
   @override
-  String get appName => '🚧(pl) - Table Habit';
+  String get appName => 'Table Habit';
 
   @override
-  String get habitEdit_saveButton_text => 'Save';
+  String get habitEdit_saveButton_text => 'Zapisz';
 
   @override
-  String get habitEdit_habitName_hintText => 'Habit Name ...';
+  String get habitEdit_habitName_hintText => 'Nazwa Nawyku ...';
 
   @override
-  String get habitEdit_colorPicker_title => 'Pick color';
+  String get habitEdit_colorPicker_title => 'Wybierz kolor';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Habit type';

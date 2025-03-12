@@ -813,9 +813,6 @@
   ],
 
   "pl": [
-    "habitEdit_saveButton_text",
-    "habitEdit_habitName_hintText",
-    "habitEdit_colorPicker_title",
     "habitEdit_habitTypeDialog_title",
     "habitEdit_habitType_positiveText",
     "habitEdit_habitType_negativeText",
@@ -1238,21 +1235,6 @@
     "debug_debuggerInfoCard_openButton_text",
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle"
-  ],
-
-  "tr": [
-    "habitEdit_habitFreq_perweek",
-    "habitEdit_habitFreq_permonth",
-    "habitEdit_habitFreq_predayfreq",
-    "habitEdit_reminder_freq_weekPrefixText",
-    "habitEdit_reminder_freq_weekSubfixText",
-    "habitEdit_reminder_freq_monthPrefixText",
-    "habitEdit_reminder_freq_monthSubfixText",
-    "habitEdit_create_datetime_prefix",
-    "habitEdit_modify_datetime_prefix",
-    "appSetting_firstDayOfWeekDialog_defaultText",
-    "common_errorPage_title",
-    "common_errorPage_copied"
   ],
 
   "vi": [

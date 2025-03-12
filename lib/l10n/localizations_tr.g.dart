@@ -9,7 +9,7 @@ class L10nTr extends L10n {
   L10nTr([String locale = 'tr']) : super(locale);
 
   @override
-  String get localeScriptName => 'Türkçe';
+  String get localeScriptName => 'İngilizce';
 
   @override
   String get appName => 'Table Habit';
@@ -83,19 +83,19 @@ class L10nTr extends L10n {
   String get habitEdit_habitFreq_daily => 'Günlük';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek => '-';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'kez haftada';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
+  String get habitEdit_habitFreq_permonth => '-';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'kez ayda';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
+  String get habitEdit_habitFreq_predayfreq => '-';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex01 => 'gün';
@@ -160,19 +160,19 @@ class L10nTr extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Haftanın her günü';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
+  String get habitEdit_reminder_freq_weekPrefixText => '-';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
+  String get habitEdit_reminder_freq_weekSubfixText => ' her hafta';
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Ayın her günü';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
+  String get habitEdit_reminder_freq_monthPrefixText => '-';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
+  String get habitEdit_reminder_freq_monthSubfixText => ' her ay';
 
   @override
   String get habitEdit_reminderQuest_hintText => 'Soru, örn. Bugün egzersiz yaptın mı?';
@@ -235,10 +235,10 @@ class L10nTr extends L10n {
   String get habitEdit_desc_hintText => 'Not, Markdown desteklenir';
 
   @override
-  String get habitEdit_create_datetime_prefix => 'Created: ';
+  String get habitEdit_create_datetime_prefix => 'Oluşturuldu: ';
 
   @override
-  String get habitEdit_modify_datetime_prefix => 'Modified: ';
+  String get habitEdit_modify_datetime_prefix => 'Düzenlendi: ';
 
   @override
   String get habitDisplay_fab_text => 'Yeni Alışkanlık';
@@ -657,7 +657,7 @@ class L10nTr extends L10n {
   String get appSetting_firstDayOfWeekDialog_titleText => 'Haftanın ilk gününü göster';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Varsayılan)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
@@ -1057,10 +1057,10 @@ class L10nTr extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'onayla';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Tüh, çöktü!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'Çökme bilgileri kopyalandı';
 
   @override
   String get calendarPicker_clip_today => 'Bugün';
