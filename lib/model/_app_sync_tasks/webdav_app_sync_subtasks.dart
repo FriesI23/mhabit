@@ -321,13 +321,23 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
     required AsyncTask<WebDavAppSyncTaskResult> Function(
             WebDavSyncHabitData data)
         preprocessDirTaskBuilder,
+    required AsyncTask<
+                ({
+                  String? habitEtag,
+                  Map<HabitRecordUUID, String?> recordEtagMap
+                })>
+            Function(WebDavSyncHabitData data)
+        uploadHabitToServerTaskBuilder,
   }) async {
     final habit = await loadFromDBTask.run();
     if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
     if (habit == null) return const WebDavAppSyncTaskResult.success();
+
     final preprocessResult = await preprocessDirTaskBuilder(habit).run();
     if (!preprocessResult.isSuccessed) return preprocessResult;
     if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+
+    await uploadHabitToServerTaskBuilder(habit).run();
 
     // TODO: indev
     return const WebDavAppSyncTaskResult.success();
@@ -590,7 +600,8 @@ class PreprocessHabitWebDavCollectionTask
             FetchMetaFromServerTask.habitRecordsRootDir(path, client),
         recordDirTaskBuilder: (path) =>
             FetchMetaFromServerTask.recordDir(path, client),
-        createDirBuilder: (path) => MkDirOnServer(path: path, client: client),
+        createDirBuilder: (path) =>
+            MkDirOnServerTask(path: path, client: client),
       );
 
   @override
@@ -658,11 +669,11 @@ class PreprocessHabitWebDavCollectionTask
   }
 }
 
-class MkDirOnServer implements AsyncTask<void> {
+class MkDirOnServerTask implements AsyncTask<void> {
   final Uri path;
   final WebDavStdClient client;
 
-  const MkDirOnServer({required this.path, required this.client});
+  const MkDirOnServerTask({required this.path, required this.client});
 
   @override
   Future<void> run() => client
@@ -682,4 +693,129 @@ class MkDirOnServer implements AsyncTask<void> {
         if (resource.status == HttpStatus.methodNotAllowed) return;
         resource.tryToRaiseError();
       });
+}
+
+class UploadDataToServerTask implements AsyncTask<String?> {
+  final Uri path;
+  final String data;
+  final String? etag;
+  final WebDavStdClient client;
+
+  const UploadDataToServerTask(
+      {required this.path,
+      required this.data,
+      this.etag,
+      required this.client});
+
+  @override
+  Future<String?> run() => client
+          .dispatch(path)
+          .create(
+              data: data,
+              condition: etag != null
+                  ? IfOr.notag([
+                      IfAnd.notag([IfCondition.etag(etag!)])
+                    ])
+                  : null)
+          .then((request) => request.close())
+          .then((response) async {
+        appLog.appsync.debug("UploadDataToServer.run", ex: [
+          response.path,
+          response.response.statusCode,
+          response.body,
+        ]);
+
+        await response
+            .parse()
+            .then((resources) => resources?.firstOrNull?.tryToRaiseError());
+        return response.response.headers[HttpHeaders.etagHeader]?.firstOrNull;
+      });
+}
+
+class UploadHabitToServerTask
+    implements
+        AsyncTask<
+            ({
+              String? habitEtag,
+              Map<HabitRecordUUID, String?> recordEtagMap
+            })> {
+  final AppSyncTask parent;
+  final Uri root;
+  final WebDavSyncHabitData data;
+  final bool withRecords;
+  final int recordConcurrency;
+  final SyncDBHelper helper;
+  final AsyncTask<String?> Function(Uri path, String data, [String? etag])
+      uploadTaskBuilder;
+
+  UploadHabitToServerTask(
+      {required this.parent,
+      required this.root,
+      required this.data,
+      required this.helper,
+      this.withRecords = true,
+      this.recordConcurrency = 10,
+      required this.uploadTaskBuilder})
+      : assert(data.uuid != null),
+        assert(data.records.every((e) => e.uuid != null));
+
+  @override
+  Future<({String? habitEtag, Map<HabitRecordUUID, String?> recordEtagMap})>
+      run() async {
+    const emptyResult = (
+      habitEtag: null as String?,
+      recordEtagMap: <HabitRecordUUID, String?>{}
+    );
+
+    final habitUUID = data.uuid;
+    if (habitUUID == null) return emptyResult;
+
+    final rootPathBuilder = WebDavAppSyncPathBuilder(root);
+    final habitPathBuilder = rootPathBuilder.habit(habitUUID);
+    final habitFilePath = habitPathBuilder.habitFile;
+
+    final Map<HabitRecordUUID, String?> recordSyncEtagMap;
+    if (withRecords && data.records.isNotEmpty) {
+      final pool = Pool(recordConcurrency);
+      recordSyncEtagMap = await Future.wait(data.records
+          .where((e) =>
+              e.uuid != null && e.parentUUID != null && e.recordDate != null)
+          .map((record) {
+        final recordUUID = record.uuid!;
+        final recordData = record.recordDate!;
+        final task = uploadTaskBuilder(
+            habitPathBuilder
+                .record(recordUUID, HabitDate.fromEpochDay(recordData))
+                .recordFile,
+            json.encode(record.toJson()),
+            record.etag);
+        return pool.withResource(() async {
+          if (parent.isCancalling) return null;
+          final etag = await task.run();
+          await helper.clearRecordDirtyMark(recordUUID, etag);
+          return MapEntry(recordUUID, etag);
+        });
+      })).then((results) => Map.fromEntries(results.whereNotNull()));
+      appLog.appsync.debug("UploadHabitToServerTask.run",
+          ex: ['records uploaded', habitUUID, recordSyncEtagMap]);
+    } else {
+      recordSyncEtagMap = emptyResult.recordEtagMap;
+    }
+
+    if (parent.isCancalling) {
+      return (habitEtag: null as String?, recordEtagMap: recordSyncEtagMap);
+    }
+
+    final habitSyncEtag = await uploadTaskBuilder(
+            habitFilePath, json.encode(data.toJson()), data.etag)
+        .run()
+        .then((etag) async {
+      await helper.clearHabitDirtyMark(habitUUID, etag);
+      return etag;
+    });
+    appLog.appsync.debug("UploadHabitToServerTask.run",
+        ex: ['habit uploaded', habitUUID, habitSyncEtag, data, habitFilePath]);
+
+    return (habitEtag: habitSyncEtag, recordEtagMap: recordSyncEtagMap);
+  }
 }

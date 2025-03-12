@@ -368,4 +368,22 @@ class SyncDBHelper extends DBHelperHandler {
       return habit.copyWith(records: records);
     });
   }
+
+  Future<int> clearRecordDirtyMark(HabitRecordUUID uuid, [String? etag]) {
+    return db.update(
+      table,
+      {SyncDbCellKey.dirty: 0, if (etag != null) SyncDbCellKey.lastMark: etag},
+      where: "${SyncDbCellKey.recordUUID} = ?",
+      whereArgs: [uuid],
+    );
+  }
+
+  Future<int> clearHabitDirtyMark(HabitUUID uuid, [String? etag]) {
+    return db.update(
+      table,
+      {SyncDbCellKey.dirty: 0, if (etag != null) SyncDbCellKey.lastMark: etag},
+      where: "${SyncDbCellKey.habitUUID} = ?",
+      whereArgs: [uuid],
+    );
+  }
 }

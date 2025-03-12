@@ -211,7 +211,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
         reason = cell.reason;
 
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
-    assert(json.remove(WebDavSyncRecordKey.convertType) == _convertType);
+    assert(json[WebDavSyncRecordKey.convertType] == _convertType);
     return _$WebDavSyncRecordDataFromJson(json);
   }
 
@@ -368,7 +368,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
         sortPostion = cell.sortPosition;
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
-    assert(json.remove(WebDavSyncHabitKey.convertType) == _convertType);
+    assert(json[WebDavSyncHabitKey.convertType] == _convertType);
     return _$WebDavSyncHabitDataFromJson(json);
   }
 
