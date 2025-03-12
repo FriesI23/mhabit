@@ -287,10 +287,12 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
       (mergedResult) => Future.wait(mergedResult
           .where((e) => e.isNeedDownload)
           .map(fetchRecordDataTaskBuilder)
-          .map((e) async {
-        if (parent.isCancalling) return null;
-        return pool.withResource(() => e.run());
-      })),
+          .map(
+            (e) => pool.withResource(() async {
+              if (parent.isCancalling) return null;
+              return e.run();
+            }),
+          )),
     );
     if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
     final syncHabitData = await fetchHabitDataFuture;
@@ -373,10 +375,14 @@ class FetchHabitRecordsMetaFromServerTask
     final recordTasks =
         dirResult.map((data) => recordsMetaTaskBuilder(data.path));
     final pool = Pool(concurrency);
-    return Future.wait(recordTasks.map((e) async {
-      if (parent.isCancalling) return const <WebDavResourceContainer>[];
-      return pool.withResource(e.run);
-    })).then((results) => results.expand((e) => e).toList());
+    return Future.wait(
+      recordTasks.map(
+        (e) => pool.withResource(() async {
+          if (parent.isCancalling) return const <WebDavResourceContainer>[];
+          return e.run();
+        }),
+      ),
+    ).then((results) => results.expand((e) => e).toList());
   }
 }
 
@@ -636,13 +642,18 @@ class PreprocessHabitWebDavCollectionTask
         localSubDirPaths, serverSubDirPaths ?? const []);
 
     await createRecordRootDirFuture;
+    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+
     final pool = Pool(createConcurrency);
     await Future.wait(
-      needCreatedPaths
-          .map((path) => pool.withResource(() => createDirBuilder(path).run())),
+      needCreatedPaths.map(
+        (path) => pool.withResource(() async {
+          if (parent.isCancalling) return;
+          await createDirBuilder(path).run();
+        }),
+      ),
     );
 
-    // TODO: indev
     return WebDavAppSyncTaskResult.success();
   }
 }
@@ -659,8 +670,7 @@ class MkDirOnServer implements AsyncTask<void> {
           .createDir()
           .then((request) => request.close())
           .then((response) async {
-        appLog.appsync.debug("FetchMetaFromServerTask.run", ex: [
-          'mkdir',
+        appLog.appsync.debug("MkDirOnServer.run", ex: [
           response.path,
           response.response.statusCode,
           response.body,
