@@ -218,6 +218,14 @@ class WebDavAppSyncTaskExecutor
                   path: config.path,
                   data: data,
                   client: client),
+          uploadHabitToServerTaskBuilder: (data) => UploadHabitToServerTask(
+            parent: parent,
+            root: config.path,
+            data: data,
+            helper: syncDBHelper,
+            uploadTaskBuilder: (path, data, [etag]) => UploadDataToServerTask(
+                path: path, data: data, etag: etag, client: client),
+          ),
         ),
       ),
       client: client,
