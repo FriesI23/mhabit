@@ -16,11 +16,11 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:pool/pool.dart';
 import 'package:simple_webdav_client/client.dart';
 
 import '../../common/types.dart';
+import '../../logging/helper.dart';
 import '../../persistent/local/handler/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
@@ -115,13 +115,36 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
           });
 
   @override
-  Future<WebDavAppSyncTaskResult> exec() => _task.run();
+  Future<WebDavAppSyncTaskResult> exec() {
+    final future = _task.run();
+    appLog.appsynctask.info(this, ex: ['started', config, _task]);
+    return future.then((result) {
+      if (result.isSuccessed || result.isCancelled) {
+        appLog.appsynctask.info(this, ex: ['completed', result, config, _task]);
+      } else if (result.withError) {
+        appLog.appsynctask.info(this,
+            ex: ['comeplte with error', result, config, _task],
+            error: result.error.error,
+            stackTrace: result.error.trace);
+      } else {
+        appLog.appsynctask.info(this,
+            ex: ['comeplted', result, config, _task],
+            error: result.error.error,
+            stackTrace: result.error.trace);
+      }
+      return result;
+    });
+  }
 
   @override
   Future<void> cancel() {
     _task.cancel();
     return super.cancel();
   }
+
+  @override
+  String toString() =>
+      "WebDavAppSyncTask(sessionId=$sessionId, config=$config)";
 }
 
 class WebDavAppSyncTaskExecutor
@@ -183,7 +206,6 @@ class WebDavAppSyncTaskExecutor
 
     final client = buildWebDavClient();
 
-    // TODO: indev
     return WebDavAppSyncTaskExecutor(
       sessionId: sessionId,
       config: config,
@@ -239,8 +261,11 @@ class WebDavAppSyncTaskExecutor
   }
 
   @override
-  Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) =>
-      Error.throwWithStackTrace(e, s);
+  Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
+    appLog.appsynctask
+        .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    Error.throwWithStackTrace(e, s);
+  }
 
   @override
   Future<WebDavAppSyncTaskResult> exec() {
@@ -253,12 +278,22 @@ class WebDavAppSyncTaskExecutor
   Future<WebDavAppSyncTaskResult> doExec() async {
     final serverHabitsFuture = fetchHabitsFromServerTask.run(this);
     final localHabitsFuture = queryHabitsFromDbTask.run(this);
+
     final serverHabits = await serverHabitsFuture;
+    appLog.appsynctask.debug(this,
+        ex: ['fetch habits form server completed', serverHabits.length]);
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
+
     final localHabits = await localHabitsFuture;
+    appLog.appsynctask.debug(this,
+        ex: ['fetch babits form local completed', localHabits.length]);
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
+
     final mergedResult =
         syncInfoMerger.convert((local: localHabits, server: serverHabits));
+    appLog.appsynctask
+        .debug(this, ex: ["merge habits completed", mergedResult.length]);
+
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
     final pool = Pool(math.max(mergedResult.length, 5));
     await Future.wait(mergedResult.map(
@@ -270,10 +305,11 @@ class WebDavAppSyncTaskExecutor
           .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
           .then((result) => resultMap.putIfAbsent(cell, () => result)),
     ));
-    // TODO: indev
-    debugPrint("$runtimeType: exec.doExec");
-    resultMap.forEach(
-        (k, v) => debugPrint("$k \n--> $v || ${v?.error.trace}\n---------"));
+    appLog.appsynctask.debug(this, ex: ["habits sync completed", resultMap]);
+
+    // TODO: indev (multi result)
+    resultMap.forEach((k, v) =>
+        appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------"));
     return WebDavAppSyncTaskResult.success();
   }
 }

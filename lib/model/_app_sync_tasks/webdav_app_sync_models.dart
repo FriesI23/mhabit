@@ -432,5 +432,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   }
 
   @override
-  String toString() => "WebDavSyncHabitData${toJson()..['etag'] = etag}";
+  String toString() => "WebDavSyncHabitData${toJson()
+    ..['etag'] = etag
+    ..['records'] = '...(length=${records.length})'}";
 }
