@@ -22,7 +22,6 @@ import 'package:simple_webdav_client/client.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart' hide IterableExtension;
 
-import '../../common/async.dart';
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
@@ -33,13 +32,21 @@ import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';
 import 'webdav_app_sync_task.dart';
 
-typedef WebDavSyncHabitInfoMerger = Converter<
-    ({Iterable<SyncDBCell> local, Iterable<WebDavResourceContainer> server}),
-    List<WebDavAppSyncHabitInfo>>;
+typedef WebDavSyncInfoMergerInput = ({
+  Iterable<SyncDBCell> local,
+  Iterable<WebDavResourceContainer> server
+});
 
-typedef WebDavSyncRecordInfoMerger = Converter<
-    ({Iterable<SyncDBCell> local, Iterable<WebDavResourceContainer> server}),
-    List<WebDavAppSyncRecordInfo>>;
+typedef WebDavSyncHabitInfoMerger
+    = Converter<WebDavSyncInfoMergerInput, List<WebDavAppSyncHabitInfo>>;
+
+typedef WebDavSyncRecordInfoMerger
+    = Converter<WebDavSyncInfoMergerInput, List<WebDavAppSyncRecordInfo>>;
+
+typedef HabitEtagResult = ({
+  String? habitEtag,
+  Map<HabitRecordUUID, String?> recordEtagMap
+});
 
 final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
 final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
@@ -49,7 +56,7 @@ final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
 enum WebDavAppSyncInfoStatus { server, local, both }
 
 class FetchMetaFromServerTask
-    implements AsyncTask<List<WebDavResourceContainer>> {
+    implements AppSyncSubTask<List<WebDavResourceContainer>> {
   final Uri path;
   final WebDavStdClient client;
   final Depth depth;
@@ -132,7 +139,7 @@ class FetchMetaFromServerTask
       );
 
   @override
-  Future<List<WebDavResourceContainer>> run() => client
+  Future<List<WebDavResourceContainer>> run(AppSyncContext context) => client
       .dispatch(path)
       .findProps(props: [
         PropfindRequestProp.dav(WebDavElementNames.getetag),
@@ -160,13 +167,13 @@ class FetchMetaFromServerTask
       });
 }
 
-class QueryHabitsFromDBTask implements AsyncTask<List<SyncDBCell>> {
+class QueryHabitsFromDBTask implements AppSyncSubTask<List<SyncDBCell>> {
   final SyncDBHelper helper;
 
   const QueryHabitsFromDBTask({required this.helper});
 
   @override
-  Future<List<SyncDBCell>> run() =>
+  Future<List<SyncDBCell>> run(AppSyncContext context) =>
       helper.loadAllHabitsSyncInfo().then((result) => result.toList());
 }
 
@@ -207,21 +214,19 @@ final class SyncHabitsInfoMergerImpl extends WebDavSyncHabitInfoMerger {
   }
 }
 
-class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
-  final AppSyncTask parent;
+class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   final AppWebDavSyncServer config;
   final WebDavAppSyncHabitInfo cell;
   final Future<WebDavAppSyncTaskResult> Function(
-      AppSyncTask parent,
+      AppSyncContext context,
       AppWebDavSyncServer config,
       WebDavAppSyncHabitInfo cell) serverToLocalTask;
   final Future<WebDavAppSyncTaskResult> Function(
-      AppSyncTask parent,
+      AppSyncContext context,
       AppWebDavSyncServer config,
       WebDavAppSyncHabitInfo cell) localToServerTask;
 
   SingleHabitSyncTask({
-    required this.parent,
     required this.config,
     required this.cell,
     required this.serverToLocalTask,
@@ -233,33 +238,33 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
   bool get isNeedUpload => cell.isNeedUpload;
 
   @override
-  Future<WebDavAppSyncTaskResult> run() async {
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) async {
     if (isNeedDownload) {
       appLog.appsync.debug("SingleHabitSyncTask.run",
-          ex: ['need download', parent, config, cell]);
-      final result = await serverToLocalTask(parent, config, cell);
+          ex: ['need download', context, config, cell]);
+      final result = await serverToLocalTask(context, config, cell);
       if (!result.isSuccessed) return result;
     }
     if (isNeedUpload) {
       appLog.appsync.debug("SingleHabitSyncTask.run",
-          ex: ['need upload', parent, config, cell]);
-      final result = await localToServerTask(parent, config, cell);
+          ex: ['need upload', context, config, cell]);
+      final result = await localToServerTask(context, config, cell);
       if (!result.isSuccessed) return result;
     }
     return const WebDavAppSyncTaskResult.success();
   }
 
   static Future<WebDavAppSyncTaskResult> downloadTask({
-    required AppSyncTask parent,
-    required AsyncTask<List<WebDavResourceContainer>>
+    required AppSyncContext context,
+    required AppSyncSubTask<List<WebDavResourceContainer>>
         fetchRecordsFromServerTask,
-    required AsyncTask<List<SyncDBCell>> queryRecordsFromDbTask,
+    required AppSyncSubTask<List<SyncDBCell>> queryRecordsFromDbTask,
     required WebDavSyncRecordInfoMerger syncInfoMerger,
-    required AsyncTask<WebDavSyncHabitData> fetchHabitDataTask,
-    required AsyncTask<WebDavSyncRecordData> Function(
+    required AppSyncSubTask<WebDavSyncHabitData> fetchHabitDataTask,
+    required AppSyncSubTask<WebDavSyncRecordData> Function(
             WebDavAppSyncRecordInfo cell)
         fetchRecordDataTaskBuilder,
-    required AsyncTask<WebDavAppSyncTaskResult> Function(
+    required AppSyncSubTask<WebDavAppSyncTaskResult> Function(
             WebDavSyncHabitData cell)
         writeToDbTaskBuilder,
     int fetchRecordDataConcurrency = 10,
@@ -267,12 +272,12 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
     assert(fetchRecordDataConcurrency > 0);
 
     Future<List<WebDavAppSyncRecordInfo>> fetchHabitRecordsMeta() async {
-      final serverRecordsFuture = fetchRecordsFromServerTask.run();
-      final localRecordsFuture = queryRecordsFromDbTask.run();
+      final serverRecordsFuture = fetchRecordsFromServerTask.run(context);
+      final localRecordsFuture = queryRecordsFromDbTask.run(context);
       final serverRecords = await serverRecordsFuture;
-      if (parent.isCancalling) return [];
+      if (context.isCancalling) return [];
       final localRecords = await localRecordsFuture;
-      if (parent.isCancalling) return [];
+      if (context.isCancalling) return [];
       final results =
           syncInfoMerger.convert((local: localRecords, server: serverRecords));
       appLog.appsync.debug("SingleHabitSyncTask.downloadTask",
@@ -281,7 +286,7 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
     }
 
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask", ex: ["started"]);
-    final fetchHabitDataFuture = fetchHabitDataTask.run();
+    final fetchHabitDataFuture = fetchHabitDataTask.run(context);
     final pool = Pool(fetchRecordDataConcurrency);
     final syncRecordDataList = await fetchHabitRecordsMeta().then(
       (mergedResult) => Future.wait(mergedResult
@@ -289,16 +294,16 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
           .map(fetchRecordDataTaskBuilder)
           .map(
             (e) => pool.withResource(() async {
-              if (parent.isCancalling) return null;
-              return e.run();
+              if (context.isCancalling) return null;
+              return e.run(context);
             }),
           )),
     );
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
     final syncHabitData = await fetchHabitDataFuture;
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask",
         ex: ["fetch data", syncHabitData, syncRecordDataList]);
-    if (parent.isCancalling || syncRecordDataList.any((e) => e == null)) {
+    if (context.isCancalling || syncRecordDataList.any((e) => e == null)) {
       return const WebDavAppSyncTaskResult.cancelled();
     }
 
@@ -312,32 +317,27 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
     appLog.appsync.debug("SingleHabitSyncTask.downloadTask",
         ex: ["prepare write to db", preparedData]);
     if (preparedData == null) return const WebDavAppSyncTaskResult.success();
-    return writeToDbTaskBuilder(preparedData).run();
+    return writeToDbTaskBuilder(preparedData).run(context);
   }
 
   static Future<WebDavAppSyncTaskResult> uploadTask({
-    required AppSyncTask parent,
-    required AsyncTask<WebDavSyncHabitData?> loadFromDBTask,
-    required AsyncTask<WebDavAppSyncTaskResult> Function(
+    required AppSyncContext context,
+    required AppSyncSubTask<WebDavSyncHabitData?> loadFromDBTask,
+    required AppSyncSubTask<WebDavAppSyncTaskResult> Function(
             WebDavSyncHabitData data)
         preprocessDirTaskBuilder,
-    required AsyncTask<
-                ({
-                  String? habitEtag,
-                  Map<HabitRecordUUID, String?> recordEtagMap
-                })>
-            Function(WebDavSyncHabitData data)
+    required AppSyncSubTask<HabitEtagResult> Function(WebDavSyncHabitData data)
         uploadHabitToServerTaskBuilder,
   }) async {
-    final habit = await loadFromDBTask.run();
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    final habit = await loadFromDBTask.run(context);
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
     if (habit == null) return const WebDavAppSyncTaskResult.success();
 
-    final preprocessResult = await preprocessDirTaskBuilder(habit).run();
+    final preprocessResult = await preprocessDirTaskBuilder(habit).run(context);
     if (!preprocessResult.isSuccessed) return preprocessResult;
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    await uploadHabitToServerTaskBuilder(habit).run();
+    await uploadHabitToServerTaskBuilder(habit).run(context);
 
     // TODO: indev
     return const WebDavAppSyncTaskResult.success();
@@ -345,31 +345,27 @@ class SingleHabitSyncTask implements AsyncTask<WebDavAppSyncTaskResult> {
 }
 
 class FetchHabitRecordsMetaFromServerTask
-    implements AsyncTask<List<WebDavResourceContainer>> {
-  final AppSyncTask parent;
+    implements AppSyncSubTask<List<WebDavResourceContainer>> {
   final Uri path;
   final int concurrency;
-  final AsyncTask<List<WebDavResourceContainer>> Function(Uri path)
+  final AppSyncSubTask<List<WebDavResourceContainer>> Function(Uri path)
       recordDirTaskBuilder;
-  final AsyncTask<List<WebDavResourceContainer>> Function(Uri path)
+  final AppSyncSubTask<List<WebDavResourceContainer>> Function(Uri path)
       recordsMetaTaskBuilder;
 
   FetchHabitRecordsMetaFromServerTask({
     required this.concurrency,
-    required this.parent,
     required this.path,
     required this.recordDirTaskBuilder,
     required this.recordsMetaTaskBuilder,
   }) : assert(concurrency > 0);
 
   factory FetchHabitRecordsMetaFromServerTask.build({
-    required AppSyncTask parent,
     required Uri path,
     required WebDavStdClient client,
     int concurrency = 10,
   }) =>
       FetchHabitRecordsMetaFromServerTask(
-          parent: parent,
           path: path,
           concurrency: concurrency,
           recordDirTaskBuilder: (path) =>
@@ -378,32 +374,32 @@ class FetchHabitRecordsMetaFromServerTask
               FetchMetaFromServerTask.records(path, client));
 
   @override
-  Future<List<WebDavResourceContainer>> run() async {
+  Future<List<WebDavResourceContainer>> run(AppSyncContext context) async {
     final dirTask = recordDirTaskBuilder(path);
-    final dirResult = await dirTask.run();
-    if (parent.isCancalling) return [];
+    final dirResult = await dirTask.run(context);
+    if (context.isCancalling) return [];
     final recordTasks =
         dirResult.map((data) => recordsMetaTaskBuilder(data.path));
     final pool = Pool(concurrency);
     return Future.wait(
       recordTasks.map(
         (e) => pool.withResource(() async {
-          if (parent.isCancalling) return const <WebDavResourceContainer>[];
-          return e.run();
+          if (context.isCancalling) return const <WebDavResourceContainer>[];
+          return e.run(context);
         }),
       ),
     ).then((results) => results.expand((e) => e).toList());
   }
 }
 
-class QueryHabitRecordsFromDBTask implements AsyncTask<List<SyncDBCell>> {
+class QueryHabitRecordsFromDBTask implements AppSyncSubTask<List<SyncDBCell>> {
   final HabitUUID uuid;
   final SyncDBHelper helper;
 
   const QueryHabitRecordsFromDBTask({required this.uuid, required this.helper});
 
   @override
-  Future<List<SyncDBCell>> run() => helper
+  Future<List<SyncDBCell>> run(AppSyncContext context) => helper
       .loadHabitRecordsSyncInfo(uuid: uuid)
       .then((result) => result.toList());
 }
@@ -414,11 +410,7 @@ final class SyncHabitRecordsInfoMergerImpl extends WebDavSyncRecordInfoMerger {
   const SyncHabitRecordsInfoMergerImpl(this.uuid);
 
   @override
-  List<WebDavAppSyncRecordInfo> convert(
-      ({
-        Iterable<SyncDBCell> local,
-        Iterable<WebDavResourceContainer> server
-      }) input) {
+  List<WebDavAppSyncRecordInfo> convert(WebDavSyncInfoMergerInput input) {
     final coll = <HabitUUID, WebDavAppSyncRecordInfo>{};
     for (var data in input.local) {
       final uuid = data.recordUUID;
@@ -451,7 +443,7 @@ final class SyncHabitRecordsInfoMergerImpl extends WebDavSyncRecordInfoMerger {
   }
 }
 
-class FetchDataFromServerTask<T> implements AsyncTask<T> {
+class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
   final Uri path;
   final String? etag;
   final WebDavStdClient client;
@@ -525,7 +517,8 @@ class FetchDataFromServerTask<T> implements AsyncTask<T> {
           );
 
   @override
-  Future<T> run() => client.dispatch(path).get().then((request) {
+  Future<T> run(AppSyncContext context) =>
+      client.dispatch(path).get().then((request) {
         final etag = this.etag;
         if (etag != null) {
           request.request.headers.add(HttpHeaders.ifMatchHeader, etag);
@@ -534,49 +527,48 @@ class FetchDataFromServerTask<T> implements AsyncTask<T> {
       }).then(responseHandler);
 }
 
-class WriteToDBTask implements AsyncTask<WebDavAppSyncTaskResult> {
+class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   final SyncDBHelper helper;
   final WebDavSyncHabitData data;
 
   WriteToDBTask({required this.helper, required this.data});
 
   @override
-  Future<WebDavAppSyncTaskResult> run() =>
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) =>
       helper.syncHabitDataToDb(data).then((result) => result
           ? WebDavAppSyncTaskResult.success()
           : WebDavAppSyncTaskResult.error());
 }
 
-class LoadFromDBTask implements AsyncTask<WebDavSyncHabitData?> {
+class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
   final SyncDBHelper helper;
   final HabitUUID uuid;
 
   LoadFromDBTask({required this.helper, required this.uuid});
 
   @override
-  Future<WebDavSyncHabitData?> run() => helper.loadDirtyHabitDataFromBb(uuid);
+  Future<WebDavSyncHabitData?> run(AppSyncContext context) =>
+      helper.loadDirtyHabitDataFromBb(uuid);
 }
 
 class PreprocessHabitWebDavCollectionTask
-    implements AsyncTask<WebDavAppSyncTaskResult> {
-  final AppSyncTask parent;
+    implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   final Uri path;
   final WebDavSyncHabitData data;
   final int createConcurrency;
-  final AsyncTask<List<WebDavResourceContainer>> Function(Uri path)
+  final AppSyncSubTask<List<WebDavResourceContainer>> Function(Uri path)
       recordsRootDirTaskBuilder;
-  final AsyncTask<List<WebDavResourceContainer>> Function(Uri path)
+  final AppSyncSubTask<List<WebDavResourceContainer>> Function(Uri path)
       recordDirTaskBuilder;
   final Iterable<Uri> Function(Iterable<Uri> local, Iterable<Uri> server)
       filterToCreateRecordSubDirs;
-  final AsyncTask Function(Uri path) createDirBuilder;
+  final AppSyncSubTask Function(Uri path) createDirBuilder;
 
   static Iterable<Uri> _defaultFilterToCreateRecordSubDirs(
           Iterable<Uri> local, Iterable<Uri> server) =>
       Set.of(local).difference(Set.of(server));
 
   PreprocessHabitWebDavCollectionTask({
-    required this.parent,
     required this.path,
     required this.data,
     required this.recordsRootDirTaskBuilder,
@@ -587,13 +579,11 @@ class PreprocessHabitWebDavCollectionTask
   });
 
   factory PreprocessHabitWebDavCollectionTask.build({
-    required AppSyncTask parent,
     required Uri path,
     required WebDavSyncHabitData data,
     required WebDavStdClient client,
   }) =>
       PreprocessHabitWebDavCollectionTask(
-        parent: parent,
         path: path,
         data: data,
         recordsRootDirTaskBuilder: (path) =>
@@ -605,7 +595,7 @@ class PreprocessHabitWebDavCollectionTask
       );
 
   @override
-  Future<WebDavAppSyncTaskResult> run() async {
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) async {
     assert(data.uuid != null);
 
     final habitUUID = data.uuid;
@@ -616,24 +606,25 @@ class PreprocessHabitWebDavCollectionTask
     final recordRootDir = habitPathBuilder.recordRootDir;
 
     final serverRecordRootResource =
-        await recordsRootDirTaskBuilder(rootPathBuilder.recordsDir).run().then(
-            (results) =>
+        await recordsRootDirTaskBuilder(rootPathBuilder.recordsDir)
+            .run(context)
+            .then((results) =>
                 results.firstWhereOrNull((e) => e.path == recordRootDir));
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final Future? createRecordRootDirFuture;
     if (serverRecordRootResource == null) {
-      createRecordRootDirFuture = createDirBuilder(recordRootDir).run();
+      createRecordRootDirFuture = createDirBuilder(recordRootDir).run(context);
     } else {
       createRecordRootDirFuture = null;
     }
 
     final serverSubDirPaths = (createRecordRootDirFuture == null)
         ? await recordDirTaskBuilder(recordRootDir)
-            .run()
+            .run(context)
             .then((results) => results.map((e) => e.path))
         : null;
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     Iterable<Uri> fetchHabitRecordsSubDirs() {
       final years = <int>{};
@@ -653,14 +644,14 @@ class PreprocessHabitWebDavCollectionTask
         localSubDirPaths, serverSubDirPaths ?? const []);
 
     await createRecordRootDirFuture;
-    if (parent.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final pool = Pool(createConcurrency);
     await Future.wait(
       needCreatedPaths.map(
         (path) => pool.withResource(() async {
-          if (parent.isCancalling) return;
-          await createDirBuilder(path).run();
+          if (context.isCancalling) return;
+          await createDirBuilder(path).run(context);
         }),
       ),
     );
@@ -669,14 +660,14 @@ class PreprocessHabitWebDavCollectionTask
   }
 }
 
-class MkDirOnServerTask implements AsyncTask<void> {
+class MkDirOnServerTask implements AppSyncSubTask<void> {
   final Uri path;
   final WebDavStdClient client;
 
   const MkDirOnServerTask({required this.path, required this.client});
 
   @override
-  Future<void> run() => client
+  Future<void> run(AppSyncContext context) => client
           .dispatch(path)
           .createDir()
           .then((request) => request.close())
@@ -695,7 +686,7 @@ class MkDirOnServerTask implements AsyncTask<void> {
       });
 }
 
-class UploadDataToServerTask implements AsyncTask<String?> {
+class UploadDataToServerTask implements AppSyncSubTask<String?> {
   final Uri path;
   final String data;
   final String? etag;
@@ -708,7 +699,7 @@ class UploadDataToServerTask implements AsyncTask<String?> {
       required this.client});
 
   @override
-  Future<String?> run() => client
+  Future<String?> run(AppSyncContext context) => client
           .dispatch(path)
           .create(
               data: data,
@@ -732,36 +723,28 @@ class UploadDataToServerTask implements AsyncTask<String?> {
       });
 }
 
-class UploadHabitToServerTask
-    implements
-        AsyncTask<
-            ({
-              String? habitEtag,
-              Map<HabitRecordUUID, String?> recordEtagMap
-            })> {
-  final AppSyncTask parent;
+class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
   final Uri root;
   final WebDavSyncHabitData data;
   final bool withRecords;
   final int recordConcurrency;
   final SyncDBHelper helper;
-  final AsyncTask<String?> Function(Uri path, String data, [String? etag])
+  final AppSyncSubTask<String?> Function(Uri path, String data, [String? etag])
       uploadTaskBuilder;
 
-  UploadHabitToServerTask(
-      {required this.parent,
-      required this.root,
-      required this.data,
-      required this.helper,
-      this.withRecords = true,
-      this.recordConcurrency = 10,
-      required this.uploadTaskBuilder})
-      : assert(data.uuid != null),
+  UploadHabitToServerTask({
+    required this.root,
+    required this.data,
+    required this.helper,
+    this.withRecords = true,
+    this.recordConcurrency = 10,
+    required this.uploadTaskBuilder,
+  })  : assert(data.uuid != null),
         assert(data.records.every((e) => e.uuid != null));
 
   @override
   Future<({String? habitEtag, Map<HabitRecordUUID, String?> recordEtagMap})>
-      run() async {
+      run(AppSyncContext context) async {
     const emptyResult = (
       habitEtag: null as String?,
       recordEtagMap: <HabitRecordUUID, String?>{}
@@ -790,8 +773,8 @@ class UploadHabitToServerTask
             json.encode(record.toJson()),
             record.etag);
         return pool.withResource(() async {
-          if (parent.isCancalling) return null;
-          final etag = await task.run();
+          if (context.isCancalling) return null;
+          final etag = await task.run(context);
           await helper.clearRecordDirtyMark(recordUUID, etag);
           return MapEntry(recordUUID, etag);
         });
@@ -802,13 +785,13 @@ class UploadHabitToServerTask
       recordSyncEtagMap = emptyResult.recordEtagMap;
     }
 
-    if (parent.isCancalling) {
+    if (context.isCancalling) {
       return (habitEtag: null as String?, recordEtagMap: recordSyncEtagMap);
     }
 
     final habitSyncEtag = await uploadTaskBuilder(
             habitFilePath, json.encode(data.toJson()), data.etag)
-        .run()
+        .run(context)
         .then((etag) async {
       await helper.clearHabitDirtyMark(habitUUID, etag);
       return etag;
