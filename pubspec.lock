@@ -1169,7 +1169,7 @@ packages:
     source: hosted
     version: "0.2.12"
   source_gen:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: source_gen
       sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"

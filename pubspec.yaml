@@ -124,6 +124,7 @@ dev_dependencies:
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.4.0
   json_serializable: ^6.6.1
+  source_gen: ^1.5.0
 
   # Utilities
   package_rename: ^1.2.0

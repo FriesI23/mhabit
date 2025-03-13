@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Copy source code from flutter: flutter/lib/src/material/date_picker.dart
+// Copy source code from flutter(3.7.4): flutter/lib/src/material/date_picker.dart
 // Flutter license place at LICENSE_THIRDPARTY.md
 
 import 'package:flutter/material.dart';

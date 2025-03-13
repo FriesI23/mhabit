@@ -15,7 +15,9 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../l10n/localizations.dart';
 import '../model/app_reminder_config.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
@@ -71,6 +73,13 @@ const appSupportedLocales = [
   Locale.fromSubtags(languageCode: 'vi'),
   Locale.fromSubtags(languageCode: 'zh'),
   Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+];
+
+const appLocalizationsDelegates = <LocalizationsDelegate>[
+  L10n.delegate,
+  GlobalMaterialLocalizations.delegate,
+  GlobalWidgetsLocalizations.delegate,
+  GlobalCupertinoLocalizations.delegate,
 ];
 //#endregion
 

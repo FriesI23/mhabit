@@ -15,7 +15,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
@@ -193,12 +192,7 @@ class BasicAppView extends StatelessWidget {
       themeMode: themeMode,
       locale: language,
       home: child,
-      localizationsDelegates: const [
-        L10n.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
     );
