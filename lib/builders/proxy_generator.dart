@@ -41,8 +41,9 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 
     final namedParams = method.parameters
         .where((param) => param.isNamed)
-        .map((param) =>
-            '${param.isRequired ? "required " : ""}${param.type.getDisplayString()} ${param.name}${param.hasDefaultValue ? " = ${param.defaultValueCode}" : ""}')
+        .map((param) => '${param.isRequired ? "required " : ""}'
+            '${param.type.getDisplayString()} ${param.name}'
+            '${param.hasDefaultValue ? " = ${param.defaultValueCode}" : ""}')
         .toList();
 
     final requiredPostionStr = requiredPostionParams.isNotEmpty
@@ -130,16 +131,19 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
       if (accessor.isGetter) {
         buffer.writeln('  @override');
         tryToGenDeprecatedFlag(accessor, intent: 2);
-        buffer.writeln(
-            '  ${accessor.returnType.getDisplayString()} get ${accessor.name} => _base.${accessor.name};');
+        buffer.writeln('  '
+            '${accessor.returnType.getDisplayString()} '
+            'get ${accessor.name} '
+            '=> _base.${accessor.name};');
         buffer.writeln('');
         skipBuildFields.add(accessor.name);
       }
       if (accessor.isSetter) {
         buffer.writeln('  @override');
         tryToGenDeprecatedFlag(accessor, intent: 2);
-        buffer.writeln(
-            '  set ${accessor.name.replaceFirst('=', '')}(${accessor.parameters.first.type.getDisplayString()} value) '
+        buffer.writeln('  '
+            'set ${accessor.name.replaceFirst('=', '')}'
+            '(${accessor.parameters.first.type.getDisplayString()} value) '
             '=> _base.${accessor.name} = value;');
         buffer.writeln('');
         skipBuildFields.add(accessor.name);
@@ -150,14 +154,18 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
       if (field.isStatic || skipBuildFields.contains(field.name)) continue;
       buffer.writeln('  @override');
       tryToGenDeprecatedFlag(field, intent: 2);
-      buffer.writeln(
-          '  ${field.type.getDisplayString()} get ${field.name} => _base.${field.name};');
+      buffer.writeln('  '
+          '${field.type.getDisplayString()} '
+          'get ${field.name} '
+          '=> _base.${field.name};');
       buffer.writeln('');
       if (!field.isFinal) {
         buffer.writeln('  @override');
         tryToGenDeprecatedFlag(field, intent: 2);
-        buffer.writeln(
-            '  set ${field.name}(${field.type.getDisplayString()} value) => _base.${field.name} = value;');
+        buffer.writeln('  '
+            'set ${field.name}'
+            '(${field.type.getDisplayString()} value) '
+            '=> _base.${field.name} = value;');
         buffer.writeln('');
       }
     }
