@@ -13,11 +13,14 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../component/widget.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_form.dart';
+import '../../model/material_localizations.dart';
+import '../../provider/app_first_day.dart';
 import '../../theme/color.dart';
 
 Future<DateTime?> showHabitDatePickerDialog({
@@ -31,42 +34,47 @@ Future<DateTime?> showHabitDatePickerDialog({
   );
 }
 
-class HabitDatePickerDialog extends StatefulWidget {
+class HabitDatePickerDialog extends StatelessWidget {
   final DateTime date;
   final HabitColorType colorType;
 
   const HabitDatePickerDialog(this.date, this.colorType, {super.key});
 
   @override
-  State<StatefulWidget> createState() => _HabitDatePickerDialogView();
-}
-
-class _HabitDatePickerDialogView extends State<HabitDatePickerDialog> {
-  @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final CustomColors? colorData = themeData.extension<CustomColors>();
     final DateTime now = DateTime.now();
+    final firstday =
+        context.select<AppFirstDayViewModel, int>((vm) => vm.firstDay);
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(
-          primary: colorData?.getColor(widget.colorType),
-          onPrimary: colorData?.getOnColor(widget.colorType),
-          secondaryContainer: colorData?.getColorContainer(widget.colorType),
-          onSecondaryContainer:
-              colorData?.getColorOnContainer(widget.colorType),
-          outline: colorData?.getColor(widget.colorType),
+          primary: colorData?.getColor(colorType),
+          onPrimary: colorData?.getOnColor(colorType),
+          secondaryContainer: colorData?.getColorContainer(colorType),
+          onSecondaryContainer: colorData?.getColorOnContainer(colorType),
+          outline: colorData?.getColor(colorType),
         ),
       ),
-      child: HabitDatetimePickerDialog(
-        currentDateTime: now,
-        currentDate: now,
-        initialDate: widget.date,
-        firstDate:
-            DateTime.fromMillisecondsSinceEpoch(minHabitMillisecondsSinceEpoch),
-        lastDate:
-            DateTime.fromMillisecondsSinceEpoch(maxHabitMillisecondsSinceEpoch),
-        initialEntryMode: DatePickerEntryMode.calendarOnly,
+      child: Localizations.override(
+        context: context,
+        delegates: appLocalizationsDelegates
+            .map((e) => e is LocalizationsDelegate<MaterialLocalizations>
+                ? MaterialLocalizatiosProxy.delegateProxyOf(e,
+                    overrides: {'firstDayOfWeekIndex': firstday % 7})
+                : e)
+            .toList(),
+        child: HabitDatetimePickerDialog(
+          currentDateTime: now,
+          currentDate: now,
+          initialDate: date,
+          firstDate: DateTime.fromMillisecondsSinceEpoch(
+              minHabitMillisecondsSinceEpoch),
+          lastDate: DateTime.fromMillisecondsSinceEpoch(
+              maxHabitMillisecondsSinceEpoch),
+          initialEntryMode: DatePickerEntryMode.calendarOnly,
+        ),
       ),
     );
   }

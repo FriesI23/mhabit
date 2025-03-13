@@ -1,0 +1,19 @@
+targets:
+  $default:
+    builders:
+      mhabit|proxy_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/**/*.dart
+      source_gen|combining_builder:
+        enabled: true
+
+builders:
+  proxy_generator:
+    import: "package:mhabit/builders/proxy_generator.dart"
+    builder_factories: ["proxyGenerator"]
+    build_extensions: { ".dart": ["proxy_generator.g.part"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
