@@ -14,7 +14,6 @@
 
 import 'dart:async';
 
-import '../../common/async.dart';
 import '../app_sync_server.dart';
 
 abstract interface class AppSyncTaskResult {
@@ -31,21 +30,31 @@ abstract interface class AppSyncTaskResult {
 
 enum AppSyncTaskStatus { idle, running, cancelling, cancelled, completed }
 
-abstract interface class AppSyncTask<T extends AppSyncTaskResult>
-    implements AsyncTask<T> {
+abstract interface class AppSyncContext {
+  String get sessionId;
+
   AppSyncServer get config;
 
   AppSyncTaskStatus get status;
-
-  Future<T> get result;
 
   bool get isProcessing;
 
   bool get isCancalling;
 
   bool get isDone;
+}
+
+abstract interface class AppSyncTask<T extends AppSyncTaskResult>
+    implements AppSyncContext {
+  Future<T> get result;
+
+  Future<T> run();
 
   Future<void> cancel();
+}
+
+abstract interface class AppSyncSubTask<T> {
+  Future<T> run(AppSyncContext context);
 }
 
 abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
