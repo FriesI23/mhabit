@@ -4,6 +4,14 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.15.6+64
+
+- Fix: Skip reason also applied during expor (#227).
+- Fix: Ensure firstday config applied to calendar picker (#222, #228).
+- Add: Code Generator/Annotation for proxy-designed class (#228).
+- Update Turkish l10n translation, thank for Bora Atıcı's contribution on Weblate.
+- Update Polski l10n translation, thank for Bartek Skrzypek's contribution on Weblate.
+
 ## v1.15.5+63
 
 - Fix several issues from db operations:
