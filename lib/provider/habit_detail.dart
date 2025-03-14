@@ -171,7 +171,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final crtLoading = _loading;
     if (crtLoading != null && !crtLoading.isCanceled) {
       appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
-      return _loading!.operation.valueOrCancellation();
+      return crtLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
