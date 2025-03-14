@@ -311,6 +311,15 @@ class HabitSummaryViewModel extends ChangeNotifier
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
       _resortData();
+
+      // init reminders
+      final futureList = <Future>[];
+      _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
+      await Future.wait(futureList);
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
+      if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
       // complete
       loading.complete();
       // reload
@@ -318,12 +327,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
         notifyListeners();
       }
-      // init reminders
-      final futureList = <Future>[];
-      _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
-      await Future.wait(futureList);
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-
       appLog.load.debug("$runtimeType.load",
           ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
     }
