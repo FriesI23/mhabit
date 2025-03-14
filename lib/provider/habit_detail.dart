@@ -148,59 +148,88 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   void _cancelLoading() {
-    if (_loading?.isCompleted != true) {
-      appLog.load.info("$runtimeType._cancelLoading", ex: [_loading]);
-      _loading?.operation.cancel();
+    final loading = _loading;
+    if (loading == null) return;
+
+    void onCancelled() {
+      _loading = null;
+      appLog.load.info("$runtimeType._cancelLoading",
+          ex: ['cancelled', loading.hashCode]);
     }
-    _loading = null;
+
+    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
+    if (loading.isCompleted || loading.isCanceled) {
+      onCancelled();
+    } else {
+      loading.operation.cancel();
+      onCancelled();
+    }
   }
 
   Future<void> loadData(HabitUUID uuid,
       {bool listen = true, bool inFutureBuilder = false}) async {
-    if (_loading != null) {
+    final crtLoading = _loading;
+    if (crtLoading != null && !crtLoading.isCanceled) {
       appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
-      return _loading!.operation.value;
+      return _loading!.operation.valueOrCancellation();
     }
+
+    final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
           ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
-      _loading?.completeError(
-          FlutterError(errmsg.join(" ")), StackTrace.current);
+      if (!loading.isCompleted) {
+        loading.completeError(
+            FlutterError(errmsg.join(" ")), StackTrace.current);
+      }
+    }
+
+    void loadingCancelled() {
+      appLog.load
+          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
     }
 
     Future<void> loadingData() async {
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", listen, inFutureBuilder]);
       if (!mounted) {
-        loadingFailed(["viewmodel disposed"]);
-        return;
+        return loadingFailed(["viewmodel disposed", loading.hashCode]);
       }
+      if (loading.isCanceled) return loadingCancelled();
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+
       // init habit
       final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
       final recordLoadTask = recordDBHelper.loadRecords(uuid);
       final cell = await dataLoadTask;
       final records = await recordLoadTask;
-      if (cell == null) return loadingFailed(["data load failed", uuid]);
-      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
+      if (cell == null) {
+        return loadingFailed(["data load failed", loading.hashCode, uuid]);
+      }
+      if (!mounted) {
+        return loadingFailed(["viewmodel disposed", loading.hashCode, uuid]);
+      }
+      if (loading.isCanceled) return loadingCancelled();
       final data = HabitDetailData.fromDBQueryCell(cell);
       data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;
       _calcHabitInfo();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", listen, inFutureBuilder, data]);
+
+      if (loading.isCompleted) return;
+
       // complete
-      _loading?.complete();
+      loading.complete();
       // reload
       if (listen) {
         if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
         notifyListeners();
       }
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loaded", loading.hashCode, listen, inFutureBuilder, data]);
     }
 
-    _loading = CancelableCompleter<void>();
     loadingData();
-    return _loading?.operation.value;
+    return loading.operation.valueOrCancellation();
   }
 
   void _calcHabitInfo() {

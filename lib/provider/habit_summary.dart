@@ -250,60 +250,92 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _cancelLoading() {
-    if (_loading?.isCompleted != true) {
-      appLog.load.info("$runtimeType._cancelLoading", ex: [_loading]);
-      _loading?.operation.cancel();
+    final loading = _loading;
+    if (loading == null) return;
+
+    void onCancelled() {
+      _loading = null;
+      appLog.load.info("$runtimeType._cancelLoading",
+          ex: ['cancelled', loading.hashCode]);
     }
-    _loading = null;
+
+    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
+    if (loading.isCompleted || loading.isCanceled) {
+      onCancelled();
+    } else {
+      loading.operation.cancel();
+      onCancelled();
+    }
   }
 
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    if (_loading != null) {
-      appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
-      return _loading?.operation.value;
+    final crtLoading = _loading;
+    if (crtLoading != null && !crtLoading.isCanceled) {
+      appLog.load.warn("$runtimeType.loadData",
+          ex: ["data already loaded", crtLoading.isCompleted]);
+      return crtLoading.operation.valueOrCancellation();
     }
+
+    final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
-          ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
-      _loading?.completeError(
-          FlutterError(errmsg.join(" ")), StackTrace.current);
+          ex: errmsg..add(loading.hashCode),
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      if (!loading.isCompleted) {
+        loading.completeError(
+            FlutterError(errmsg.join(" ")), StackTrace.current);
+      }
+    }
+
+    void loadingCancelled() {
+      appLog.load
+          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
     }
 
     Future<void> loadingData() async {
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", _loading.hashCode, listen, inFutureBuilder]);
       if (!mounted) {
-        loadingFailed(["viewmodel disposed"]);
-        return;
+        return loadingFailed(["viewmodel disposed", loading.hashCode]);
       }
+      if (loading.isCanceled) return loadingCancelled();
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+
       // init habits
       final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
       final recordLoadTask = recordDBHelper.loadAllRecords();
-      _data.initDataFromDBQueuryResult(
-          await habitLoadTask, await recordLoadTask);
-      if (!mounted) return loadingFailed(["viewmodel disposed"]);
+      final habitLoaded = await habitLoadTask;
+      final recordLoaded = await recordLoadTask;
+      if (!mounted) {
+        return loadingFailed(["viewmodel disposed", loading.hashCode]);
+      }
+      if (loading.isCanceled) return loadingCancelled();
+      _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
       _resortData();
+
+      if (loading.isCompleted) return;
+
       // complete
-      _loading?.complete();
-      // init reminders
-      final futureList = <Future>[];
-      _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
-      await Future.wait(futureList);
-      if (!mounted) return loadingFailed(["viewmodel disposed"]);
+      loading.complete();
       // reload
       if (listen) {
         if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
         notifyListeners();
       }
+      // init reminders
+      final futureList = <Future>[];
+      _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
+      await Future.wait(futureList);
+      if (!mounted) {
+        return loadingFailed(["viewmodel disposed", loading.hashCode]);
+      }
       appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", _loading.hashCode, listen, inFutureBuilder]);
+          ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
     }
 
-    _loading = CancelableCompleter<void>();
     loadingData();
-    return _loading?.operation.value;
+    return loading.operation.valueOrCancellation();
   }
 
   HabitSummaryData? getHabit(HabitUUID habitUUID) {
