@@ -22,6 +22,7 @@ abstract class _$WebDavSyncRecordDataCWProxy {
     String? uuid,
     String? parentUUID,
     String? reason,
+    String? sessionId,
     String? etag,
     int? dirty,
   });
@@ -51,6 +52,7 @@ class _$WebDavSyncRecordDataCWProxyImpl
     Object? uuid = const $CopyWithPlaceholder(),
     Object? parentUUID = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
+    Object? sessionId = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
   }) {
@@ -87,6 +89,10 @@ class _$WebDavSyncRecordDataCWProxyImpl
           ? _value.reason
           // ignore: cast_nullable_to_non_nullable
           : reason as String?,
+      sessionId: sessionId == const $CopyWithPlaceholder()
+          ? _value.sessionId
+          // ignore: cast_nullable_to_non_nullable
+          : sessionId as String?,
       etag: etag == const $CopyWithPlaceholder()
           ? _value.etag
           // ignore: cast_nullable_to_non_nullable
@@ -132,6 +138,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     int? startDate,
     int? targetDays,
     num? sortPostion,
+    String? sessionId,
     List<WebDavSyncRecordData>? records,
     String? etag,
     int? dirty,
@@ -171,6 +178,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? startDate = const $CopyWithPlaceholder(),
     Object? targetDays = const $CopyWithPlaceholder(),
     Object? sortPostion = const $CopyWithPlaceholder(),
+    Object? sessionId = const $CopyWithPlaceholder(),
     Object? records = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
@@ -248,6 +256,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.sortPostion
           // ignore: cast_nullable_to_non_nullable
           : sortPostion as num?,
+      sessionId: sessionId == const $CopyWithPlaceholder()
+          ? _value.sessionId
+          // ignore: cast_nullable_to_non_nullable
+          : sessionId as String?,
       records: records == const $CopyWithPlaceholder() || records == null
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
@@ -286,6 +298,7 @@ WebDavSyncRecordData _$WebDavSyncRecordDataFromJson(
       uuid: json['uuid'] as String?,
       parentUUID: json['parent_uuid'] as String?,
       reason: json['reason'] as String?,
+      sessionId: json['sessionId'] as String?,
     );
 
 Map<String, dynamic> _$WebDavSyncRecordDataToJson(
@@ -299,6 +312,7 @@ Map<String, dynamic> _$WebDavSyncRecordDataToJson(
       'uuid': instance.uuid,
       'parent_uuid': instance.parentUUID,
       'reason': instance.reason,
+      'sessionId': instance.sessionId,
     };
 
 WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
@@ -321,6 +335,7 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
       sortPostion: json['sort_position'] as num?,
+      sessionId: json['sessionId'] as String?,
     );
 
 Map<String, dynamic> _$WebDavSyncHabitDataToJson(
@@ -344,4 +359,5 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
       'start_date': instance.startDate,
       'target_days': instance.targetDays,
       'sort_position': instance.sortPostion,
+      'sessionId': instance.sessionId,
     };
