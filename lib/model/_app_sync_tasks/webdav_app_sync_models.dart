@@ -41,15 +41,19 @@ abstract interface class WebDavAppSyncCellInfo {
 }
 
 abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
+  final String configUUID;
   Uri? serverPath;
   String? eTagFromServer;
   String? eTagFromLocal;
+  String? lastConfgUUID;
 
   bool _includeDirtyMark;
   WebDavAppSyncInfoStatus _status;
 
   _WebDavAppSyncCellInfo(
-      {required bool isDirty, required WebDavAppSyncInfoStatus status})
+      {required this.configUUID,
+      required bool isDirty,
+      required WebDavAppSyncInfoStatus status})
       : _includeDirtyMark = isDirty,
         _status = status;
 
@@ -72,13 +76,16 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
 
   @override
   bool get isNeedUpload =>
-      status == WebDavAppSyncInfoStatus.local || includeDirtyMark;
+      status == WebDavAppSyncInfoStatus.local ||
+      includeDirtyMark ||
+      configUUID != lastConfgUUID;
 }
 
 class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
   final HabitUUID uuid;
 
   WebDavAppSyncHabitInfo({
+    required super.configUUID,
     required this.uuid,
     required super.status,
     super.isDirty = false,
@@ -86,7 +93,9 @@ class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
 
   @override
   String toString() => "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
-      "sEtag=$eTagFromServer, cEtag=$eTagFromLocal, spath=$serverPath"
+      "sEtag=<$eTagFromServer>, cEtag=<$eTagFromLocal>, "
+      "configId=$configUUID, lastConfigId=$lastConfgUUID, "
+      "spath=$serverPath"
       ")";
 }
 
@@ -95,6 +104,7 @@ class WebDavAppSyncRecordInfo extends _WebDavAppSyncCellInfo {
   final HabitRecordUUID uuid;
 
   WebDavAppSyncRecordInfo({
+    required super.configUUID,
     required this.parentUUID,
     required this.uuid,
     required super.status,
@@ -104,7 +114,9 @@ class WebDavAppSyncRecordInfo extends _WebDavAppSyncCellInfo {
   @override
   String toString() =>
       "WebDavAppSyncRecordInfo(uuid=$uuid, puuid=$parentUUID status=$status, "
-      "sEtag=$eTagFromServer, cEtag=$eTagFromLocal, spath=$serverPath"
+      "sEtag=<$eTagFromServer>, cEtag=<$eTagFromLocal>, "
+      "configId=$configUUID, lastConfigId=$lastConfgUUID, "
+      "spath=$serverPath"
       ")";
 }
 
@@ -187,6 +199,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
   final String? reason;
 
   final String? etag;
+  final int? dirty;
 
   const WebDavSyncRecordData({
     this.recordDate,
@@ -198,9 +211,11 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.parentUUID,
     this.reason,
     this.etag,
+    this.dirty,
   });
 
-  WebDavSyncRecordData.fromRecordDBCell(RecordDBCell cell, {this.etag})
+  WebDavSyncRecordData.fromRecordDBCell(RecordDBCell cell,
+      {this.etag, this.dirty})
       : recordDate = cell.recordDate,
         recordType = cell.recordType,
         recordValue = cell.recordValue,
@@ -232,7 +247,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
 
   SyncDBCell genSyncDBCell({String? configId, String? sessionId}) => SyncDBCell(
       recordUUID: uuid,
-      dirty: 0,
+      dirty: dirty ?? 0,
       lastMark: etag,
       lastConfigUUID: configId,
       lastSesionUUID: sessionId);
@@ -249,7 +264,9 @@ class WebDavSyncRecordData implements JsonAdaptor {
   }
 
   @override
-  String toString() => "WebDavSyncRecordData${toJson()..['etag'] = etag}";
+  String toString() => "WebDavSyncRecordData${toJson()
+    ..['etag'] = etag
+    ..['dirty'] = dirty}";
 }
 
 class WebDavSyncHabitKey {
@@ -322,6 +339,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
 
   final List<WebDavSyncRecordData> records;
   final String? etag;
+  final int? dirty;
 
   const WebDavSyncHabitData({
     this.uuid,
@@ -344,10 +362,11 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.sortPostion,
     this.records = const [],
     this.etag,
+    this.dirty,
   });
 
   WebDavSyncHabitData.fromHabitDBCell(HabitDBCell cell,
-      {this.etag, this.records = const []})
+      {this.etag, this.dirty, this.records = const []})
       : uuid = cell.uuid,
         createT = cell.createT,
         modifyT = cell.modifyT,
@@ -399,7 +418,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
 
   SyncDBCell genSyncDBCell({String? configId, String? sessionId}) => SyncDBCell(
       habitUUID: uuid,
-      dirty: 0,
+      dirty: dirty ?? 0,
       lastMark: etag,
       lastConfigUUID: configId,
       lastSesionUUID: sessionId);
@@ -434,5 +453,6 @@ class WebDavSyncHabitData implements JsonAdaptor {
   @override
   String toString() => "WebDavSyncHabitData${toJson()
     ..['etag'] = etag
+    ..['dirty'] = dirty
     ..['records'] = '...(length=${records.length})'}";
 }
