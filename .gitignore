@@ -61,3 +61,6 @@ coverage/
 *.keystore
 *.pfx
 *.p12
+
+# webdav server docker
+test/webdav_server/bytemark_webdav/dav
