@@ -103,13 +103,10 @@ class SyncDBHelper extends DBHelperHandler {
 
   Future<Iterable<SyncDBCell>> loadAllHabitsSyncInfo(
       {List<String> columns = _loadAllHabitsSyncInfoColumns}) async {
-    final result = await db.query(
-      table,
-      distinct: true,
-      columns: columns,
-      where: "${SyncDbCellKey.habitUUID} IS NOT NULL "
-          "AND ${SyncDbCellKey.recordUUID} IS NULL",
-    );
+    final result = await db.query(table,
+        distinct: true,
+        columns: columns,
+        where: "${SyncDbCellKey.habitUUID} IS NOT NULL");
     return result.map(SyncDBCell.fromJson);
   }
 
