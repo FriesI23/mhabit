@@ -184,7 +184,9 @@ class QueryHabitsFromDBTask implements AppSyncSubTask<List<SyncDBCell>> {
 }
 
 final class SyncHabitsInfoMergerImpl extends WebDavSyncHabitInfoMerger {
-  const SyncHabitsInfoMergerImpl();
+  final AppSyncContext context;
+
+  const SyncHabitsInfoMergerImpl(this.context);
 
   @override
   List<WebDavAppSyncHabitInfo> convert(
@@ -199,10 +201,13 @@ final class SyncHabitsInfoMergerImpl extends WebDavSyncHabitInfoMerger {
       final cell = coll.putIfAbsent(
         uuid,
         () => WebDavAppSyncHabitInfo(
-            uuid: uuid, status: WebDavAppSyncInfoStatus.local),
+            configUUID: context.config.identity,
+            uuid: uuid,
+            status: WebDavAppSyncInfoStatus.local),
       )
         ..eTagFromLocal = data.lastMark
-        ..status = WebDavAppSyncInfoStatus.local;
+        ..status = WebDavAppSyncInfoStatus.local
+        ..lastConfgUUID = data.lastConfigUUID;
       if ((data.dirty ?? 0) != 0) cell.makeDirty();
     }
     for (var data in input.server) {
@@ -211,7 +216,9 @@ final class SyncHabitsInfoMergerImpl extends WebDavSyncHabitInfoMerger {
       coll.putIfAbsent(
           uuid,
           () => WebDavAppSyncHabitInfo(
-              uuid: uuid, status: WebDavAppSyncInfoStatus.server))
+              configUUID: context.config.identity,
+              uuid: uuid,
+              status: WebDavAppSyncInfoStatus.server))
         ..eTagFromServer = data.etag
         ..status = WebDavAppSyncInfoStatus.server
         ..serverPath = data.path;
@@ -431,9 +438,10 @@ class QueryHabitRecordsFromDBTask implements AppSyncSubTask<List<SyncDBCell>> {
 }
 
 final class SyncHabitRecordsInfoMergerImpl extends WebDavSyncRecordInfoMerger {
+  final AppSyncContext context;
   final HabitUUID uuid;
 
-  const SyncHabitRecordsInfoMergerImpl(this.uuid);
+  const SyncHabitRecordsInfoMergerImpl(this.context, this.uuid);
 
   @override
   List<WebDavAppSyncRecordInfo> convert(WebDavSyncInfoMergerInput input) {
@@ -444,12 +452,14 @@ final class SyncHabitRecordsInfoMergerImpl extends WebDavSyncRecordInfoMerger {
       final cell = coll.putIfAbsent(
         uuid,
         () => WebDavAppSyncRecordInfo(
+            configUUID: context.config.identity,
             parentUUID: this.uuid,
             uuid: uuid,
             status: WebDavAppSyncInfoStatus.local),
       )
         ..eTagFromLocal = data.lastMark
-        ..status = WebDavAppSyncInfoStatus.local;
+        ..status = WebDavAppSyncInfoStatus.local
+        ..lastConfgUUID = data.lastConfigUUID;
       if ((data.dirty ?? 0) != 0) cell.makeDirty();
     }
     for (var data in input.server) {
@@ -458,6 +468,7 @@ final class SyncHabitRecordsInfoMergerImpl extends WebDavSyncRecordInfoMerger {
       coll.putIfAbsent(
           uuid,
           () => WebDavAppSyncRecordInfo(
+              configUUID: context.config.identity,
               parentUUID: this.uuid,
               uuid: uuid,
               status: WebDavAppSyncInfoStatus.server))
@@ -568,8 +579,10 @@ class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   WriteToDBTask({required this.helper, required this.data});
 
   @override
-  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) =>
-      helper.syncHabitDataToDb(data).then((result) => result
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) => helper
+      .syncHabitDataToDb(data,
+          configId: context.config.identity, sessionId: context.sessionId)
+      .then((result) => result
           ? WebDavAppSyncTaskResult.success()
           : WebDavAppSyncTaskResult.error());
 }
@@ -582,7 +595,7 @@ class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
 
   @override
   Future<WebDavSyncHabitData?> run(AppSyncContext context) =>
-      helper.loadDirtyHabitDataFromBb(uuid);
+      helper.loadDirtyHabitDataFromBb(uuid, configId: context.config.identity);
 }
 
 class PreprocessHabitWebDavCollectionTask
@@ -837,9 +850,9 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
               e.uuid != null && e.parentUUID != null && e.recordDate != null)
           .map((record) {
         final recordUUID = record.uuid!;
-        final recordData = record.recordDate!;
+        final recordDate = record.recordDate!;
         final recordFilePath = habitPathBuilder
-            .record(recordUUID, HabitDate.fromEpochDay(recordData))
+            .record(recordUUID, HabitDate.fromEpochDay(recordDate))
             .recordFile;
         final task = uploadTaskBuilder(
             recordFilePath, json.encode(record.toJson()), record.etag);
@@ -851,9 +864,12 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
             etag,
             recordUUID,
             recordFilePath,
-            recordData
+            record
           ]);
-          await helper.clearRecordDirtyMark(recordUUID, etag);
+          await helper.clearRecordDirtyMark(recordUUID, record.dirty!,
+              etag: etag,
+              configId: context.config.identity,
+              sessionId: context.sessionId);
           return MapEntry(recordUUID, etag);
         });
       })).then((results) => Map.fromEntries(results.whereNotNull()));
@@ -875,7 +891,10 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
             habitFilePath, json.encode(data.toJson()), data.etag)
         .run(context)
         .then((etag) async {
-      await helper.clearHabitDirtyMark(habitUUID, etag);
+      await helper.clearHabitDirtyMark(habitUUID, data.dirty!,
+          etag: etag,
+          configId: context.config.identity,
+          sessionId: context.sessionId);
       return etag;
     });
     appLog.appsynctask.debug(context,

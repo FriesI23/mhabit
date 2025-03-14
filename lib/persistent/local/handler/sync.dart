@@ -226,7 +226,7 @@ class SyncDBHelper extends DBHelperHandler {
         table,
         data
             .genSyncDBCell(configId: configId, sessionId: sessionId)
-            .copyWith(id: null, habitUUID: null, recordUUID: null)
+            .copyWith(id: null, habitUUID: null, recordUUID: null, dirty: null)
             .toJson(),
         where: "${SyncDbCellKey.habitUUID} = ?",
         whereArgs: [habitUUID]);
@@ -318,7 +318,8 @@ class SyncDBHelper extends DBHelperHandler {
             table,
             record
                 .genSyncDBCell(configId: configId, sessionId: sessionId)
-                .copyWith(id: null, habitUUID: null, recordUUID: null)
+                .copyWith(
+                    id: null, habitUUID: null, recordUUID: null, dirty: null)
                 .toJson(),
             where: "${SyncDbCellKey.recordUUID} = ?",
             whereArgs: [record.uuid],
@@ -331,59 +332,103 @@ class SyncDBHelper extends DBHelperHandler {
   }
 
   Future<WebDavSyncHabitData?> loadDirtyHabitDataFromBb(HabitUUID uuid,
-      {bool withRecords = true}) {
+      {bool withRecords = true, required String? configId}) {
     const tNameSync = TableName.sync;
     const tNameHabits = TableName.habits;
     const tNameRecords = TableName.records;
+    const dirtyKey = '$tNameSync\_${SyncDbCellKey.dirty}';
+    const ph = "_NULL";
 
     return db.transaction((db) async {
       final habit = await db.rawQuery(
-          "SELECT DISTINCT $tNameHabits.* "
+          "SELECT DISTINCT $tNameHabits.*, "
+          "$tNameSync.${SyncDbCellKey.dirty} AS $dirtyKey "
           "FROM $tNameHabits "
           "JOIN $tNameSync ON $tNameHabits.${HabitDBCellKey.uuid} "
           "= $tNameSync.${SyncDbCellKey.habitUUID} "
           "WHERE $tNameHabits.${HabitDBCellKey.uuid} = ? "
-          "AND $tNameSync.${SyncDbCellKey.dirty} > 0",
-          [uuid]).then((results) {
+          "AND ("
+          "$tNameSync.${SyncDbCellKey.dirty} > 0 "
+          "OR COALESCE($tNameSync.${SyncDbCellKey.lastConfigUUID}, '$ph') "
+          "!= ? "
+          ")",
+          [uuid, configId ?? ph]).then((results) {
         final result = results.firstOrNull;
         return result != null
-            ? WebDavSyncHabitData.fromHabitDBCell(HabitDBCell.fromJson(result))
+            ? WebDavSyncHabitData.fromHabitDBCell(HabitDBCell.fromJson(result),
+                dirty: result[dirtyKey] as int?)
             : null;
       });
       if (!withRecords || habit == null) return habit;
 
       final records = await db.rawQuery(
-          "SELECT DISTINCT $tNameRecords.* "
+          "SELECT DISTINCT $tNameRecords.*, "
+          "$tNameSync.${SyncDbCellKey.dirty} AS $dirtyKey "
           "FROM $tNameRecords "
           "JOIN $tNameSync ON $tNameRecords.${RecordDBCellKey.uuid} "
           "= $tNameSync.${SyncDbCellKey.recordUUID} "
           "WHERE $tNameRecords.${RecordDBCellKey.parentUUID} = ? "
-          "AND $tNameSync.${SyncDbCellKey.dirty} > 0",
-          [uuid]).then(
+          "AND ("
+          "$tNameSync.${SyncDbCellKey.dirty} > 0 "
+          "OR COALESCE($tNameSync.${SyncDbCellKey.lastConfigUUID}, '$ph') "
+          "!= ? "
+          ")",
+          [uuid, configId ?? ph]).then(
         (results) => results
             .map((result) => WebDavSyncRecordData.fromRecordDBCell(
-                RecordDBCell.fromJson(result)))
+                RecordDBCell.fromJson(result),
+                dirty: result[dirtyKey] as int?))
             .toList(),
       );
       return habit.copyWith(records: records);
     });
   }
 
-  Future<int> clearRecordDirtyMark(HabitRecordUUID uuid, [String? etag]) {
-    return db.update(
-      table,
-      {SyncDbCellKey.dirty: 0, if (etag != null) SyncDbCellKey.lastMark: etag},
-      where: "${SyncDbCellKey.recordUUID} = ?",
-      whereArgs: [uuid],
+  Future<int> clearRecordDirtyMark(HabitRecordUUID uuid, int crtDirty,
+      {String? etag, String? configId, String? sessionId}) {
+    return db.rawUpdate(
+      "UPDATE $table "
+      "SET ${SyncDbCellKey.dirty} = "
+      "CASE "
+      "WHEN ${SyncDbCellKey.dirty} = ? THEN 0 "
+      "ELSE MAX(1, ${SyncDbCellKey.dirty} - ?) "
+      "END"
+      "${etag != null ? ', ${SyncDbCellKey.lastMark} = ?' : ''}"
+      "${configId != null ? ', ${SyncDbCellKey.lastConfigUUID} = ?' : ''}"
+      "${sessionId != null ? ', ${SyncDbCellKey.lastSesionUUID} = ?' : ''}"
+      " WHERE ${SyncDbCellKey.recordUUID} = ?",
+      [
+        crtDirty,
+        crtDirty,
+        if (etag != null) etag,
+        if (configId != null) configId,
+        if (sessionId != null) sessionId,
+        uuid
+      ],
     );
   }
 
-  Future<int> clearHabitDirtyMark(HabitUUID uuid, [String? etag]) {
-    return db.update(
-      table,
-      {SyncDbCellKey.dirty: 0, if (etag != null) SyncDbCellKey.lastMark: etag},
-      where: "${SyncDbCellKey.habitUUID} = ?",
-      whereArgs: [uuid],
+  Future<int> clearHabitDirtyMark(HabitUUID uuid, int crtDirty,
+      {String? etag, String? configId, String? sessionId}) {
+    return db.rawUpdate(
+      "UPDATE $table "
+      "SET ${SyncDbCellKey.dirty} = "
+      "CASE "
+      "WHEN ${SyncDbCellKey.dirty} = ? THEN 0 "
+      "ELSE MAX(1, ${SyncDbCellKey.dirty} - ?) "
+      "END"
+      "${etag != null ? ', ${SyncDbCellKey.lastMark} = ?' : ''}"
+      "${configId != null ? ', ${SyncDbCellKey.lastConfigUUID} = ?' : ''}"
+      "${sessionId != null ? ', ${SyncDbCellKey.lastSesionUUID} = ?' : ''}"
+      " WHERE ${SyncDbCellKey.habitUUID} = ?",
+      [
+        crtDirty,
+        crtDirty,
+        if (etag != null) etag,
+        if (configId != null) configId,
+        if (sessionId != null) sessionId,
+        uuid
+      ],
     );
   }
 }

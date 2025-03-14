@@ -23,6 +23,7 @@ abstract class _$WebDavSyncRecordDataCWProxy {
     String? parentUUID,
     String? reason,
     String? etag,
+    int? dirty,
   });
 }
 
@@ -51,6 +52,7 @@ class _$WebDavSyncRecordDataCWProxyImpl
     Object? parentUUID = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
+    Object? dirty = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncRecordData(
       recordDate: recordDate == const $CopyWithPlaceholder()
@@ -89,6 +91,10 @@ class _$WebDavSyncRecordDataCWProxyImpl
           ? _value.etag
           // ignore: cast_nullable_to_non_nullable
           : etag as String?,
+      dirty: dirty == const $CopyWithPlaceholder()
+          ? _value.dirty
+          // ignore: cast_nullable_to_non_nullable
+          : dirty as int?,
     );
   }
 }
@@ -128,6 +134,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     num? sortPostion,
     List<WebDavSyncRecordData>? records,
     String? etag,
+    int? dirty,
   });
 }
 
@@ -166,6 +173,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? sortPostion = const $CopyWithPlaceholder(),
     Object? records = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
+    Object? dirty = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncHabitData(
       uuid: uuid == const $CopyWithPlaceholder()
@@ -248,6 +256,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.etag
           // ignore: cast_nullable_to_non_nullable
           : etag as String?,
+      dirty: dirty == const $CopyWithPlaceholder()
+          ? _value.dirty
+          // ignore: cast_nullable_to_non_nullable
+          : dirty as int?,
     );
   }
 }

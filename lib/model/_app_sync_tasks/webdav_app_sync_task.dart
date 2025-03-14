@@ -156,7 +156,8 @@ class WebDavAppSyncTaskExecutor
 
   final AppSyncSubTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
   final AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
-  final WebDavSyncHabitInfoMerger syncInfoMerger;
+  final WebDavSyncHabitInfoMerger Function(AppSyncContext context)
+      syncInfoMergerBuilder;
 
   final AppSyncSubTask<WebDavAppSyncTaskResult> Function(
       WebDavAppSyncHabitInfo cell) singleHabitSyncTaskBuilder;
@@ -169,7 +170,7 @@ class WebDavAppSyncTaskExecutor
     super.timeout = Duration.zero,
     required this.fetchHabitsFromServerTask,
     required this.queryHabitsFromDbTask,
-    required this.syncInfoMerger,
+    required this.syncInfoMergerBuilder,
     required this.singleHabitSyncTaskBuilder,
     WebDavStdClient? client,
   }) {
@@ -212,13 +213,13 @@ class WebDavAppSyncTaskExecutor
       fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
           WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
-      syncInfoMerger: const SyncHabitsInfoMergerImpl(),
+      syncInfoMergerBuilder: SyncHabitsInfoMergerImpl.new,
       singleHabitSyncTaskBuilder: (cell) => SingleHabitSyncTask(
         config: config,
         cell: cell,
-        serverToLocalTask: (parent, config, cell) =>
+        serverToLocalTask: (context, config, cell) =>
             SingleHabitSyncTask.downloadTask(
-          context: parent,
+          context: context,
           fetchRecordsFromServerTask: FetchHabitRecordsMetaFromServerTask.build(
               path: WebDavAppSyncPathBuilder(config.path)
                   .habit(cell.uuid)
@@ -226,7 +227,7 @@ class WebDavAppSyncTaskExecutor
               client: client),
           queryRecordsFromDbTask: QueryHabitRecordsFromDBTask(
               uuid: cell.uuid, helper: syncDBHelper),
-          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(cell.uuid),
+          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(context, cell.uuid),
           fetchHabitDataTask:
               FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
                   path: cell.serverPath!,
@@ -240,9 +241,9 @@ class WebDavAppSyncTaskExecutor
           writeToDbTaskBuilder: (cell) =>
               WriteToDBTask(data: cell, helper: syncDBHelper),
         ),
-        localToServerTask: (parent, config, cell) =>
+        localToServerTask: (context, config, cell) =>
             SingleHabitSyncTask.uploadTask(
-          context: parent,
+          context: context,
           loadFromDBTask: LoadFromDBTask(helper: syncDBHelper, uuid: cell.uuid),
           preprocessDirTaskBuilder: (data) =>
               PreprocessHabitWebDavCollectionTask.build(
@@ -289,8 +290,8 @@ class WebDavAppSyncTaskExecutor
         ex: ['fetch babits form local completed', localHabits.length]);
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
 
-    final mergedResult =
-        syncInfoMerger.convert((local: localHabits, server: serverHabits));
+    final mergedResult = syncInfoMergerBuilder(this)
+        .convert((local: localHabits, server: serverHabits));
     appLog.appsynctask
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 

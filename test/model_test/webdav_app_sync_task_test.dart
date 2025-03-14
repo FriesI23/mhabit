@@ -56,7 +56,7 @@ void testWebdavAppSyncTaskMainBody() =>
           config: config,
           fetchHabitsFromServerTask: fetchHabitsFromServerTask,
           queryHabitsFromDbTask: queryHabitsFromDbTask,
-          syncInfoMerger: syncInfoMerger,
+          syncInfoMergerBuilder: (context) => syncInfoMerger,
           singleHabitSyncTaskBuilder: (cell) {
             final task = MockAppSyncSubTaskWithResult();
             when(task.run(any))
@@ -86,9 +86,13 @@ void testWebdavAppSyncTaskMainBody() =>
 
         final mergeResult = <WebDavAppSyncHabitInfo>[
           WebDavAppSyncHabitInfo(
-              uuid: 'xx1', status: WebDavAppSyncInfoStatus.both),
+              configUUID: 'yy1',
+              uuid: 'xx1',
+              status: WebDavAppSyncInfoStatus.both),
           WebDavAppSyncHabitInfo(
-              uuid: 'xx2', status: WebDavAppSyncInfoStatus.server),
+              configUUID: 'yy1',
+              uuid: 'xx2',
+              status: WebDavAppSyncInfoStatus.server),
         ];
         when(syncInfoMerger.convert((local: localResult, server: serverResult)))
             .thenReturn(mergeResult);
