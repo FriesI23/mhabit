@@ -103,7 +103,7 @@ class HabitStatusChangerViewModel
     if (loading == null) return;
 
     void onCancelled() {
-      _loading = null;
+      if (_loading == loading) _loading = null;
       appLog.load.info("$runtimeType._cancelLoading",
           ex: ['cancelled', loading.hashCode]);
     }
