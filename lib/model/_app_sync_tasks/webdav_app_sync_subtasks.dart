@@ -342,6 +342,7 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     )?..validate();
     appLog.appsynctask
         .debug(context, ex: ["prepare write to db", preparedData]);
+    // TOOD: indev (make some warning?)
     if (preparedData == null) return const WebDavAppSyncTaskResult.success();
     return writeToDbTaskBuilder(preparedData).run(context);
   }
@@ -595,7 +596,8 @@ class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
 
   @override
   Future<WebDavSyncHabitData?> run(AppSyncContext context) =>
-      helper.loadDirtyHabitDataFromBb(uuid, configId: context.config.identity);
+      helper.loadDirtyHabitDataFromBb(uuid,
+          configId: context.config.identity, sessionId: context.sessionId);
 }
 
 class PreprocessHabitWebDavCollectionTask

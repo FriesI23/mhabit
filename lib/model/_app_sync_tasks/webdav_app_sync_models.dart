@@ -170,6 +170,7 @@ class WebDavSyncRecordKey {
   static const String uuid = 'uuid';
   static const String parentUUID = 'parent_uuid';
   static const String reason = 'reason';
+  static const String sessionId = 'sessionId';
   static const String convertType = '_convert_type';
 }
 
@@ -197,6 +198,8 @@ class WebDavSyncRecordData implements JsonAdaptor {
   final HabitUUID? parentUUID;
   @JsonKey(name: WebDavSyncRecordKey.reason)
   final String? reason;
+  @JsonKey(name: WebDavSyncRecordKey.sessionId)
+  final String? sessionId;
 
   final String? etag;
   final int? dirty;
@@ -210,12 +213,13 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.uuid,
     this.parentUUID,
     this.reason,
+    this.sessionId,
     this.etag,
     this.dirty,
   });
 
   WebDavSyncRecordData.fromRecordDBCell(RecordDBCell cell,
-      {this.etag, this.dirty})
+      {this.etag, this.dirty, this.sessionId})
       : recordDate = cell.recordDate,
         recordType = cell.recordType,
         recordValue = cell.recordValue,
@@ -226,7 +230,9 @@ class WebDavSyncRecordData implements JsonAdaptor {
         reason = cell.reason;
 
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
-    assert(json[WebDavSyncRecordKey.convertType] == _convertType);
+    assert(json.isNotEmpty
+        ? json[WebDavSyncHabitKey.convertType] == _convertType
+        : true);
     return _$WebDavSyncRecordDataFromJson(json);
   }
 
@@ -245,7 +251,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
   JsonMap toJson() => _$WebDavSyncRecordDataToJson(this)
     ..[WebDavSyncRecordKey.convertType] = _convertType;
 
-  SyncDBCell genSyncDBCell({String? configId, String? sessionId}) => SyncDBCell(
+  SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
       recordUUID: uuid,
       dirty: dirty ?? 0,
       lastMark: etag,
@@ -288,6 +294,7 @@ class WebDavSyncHabitKey {
   static const String startDate = 'start_date';
   static const String targetDays = 'target_days';
   static const String sortPosition = 'sort_position';
+  static const String sessionId = 'sessionId';
   static const String records = 'records';
   static const String convertType = '_convert_type';
 }
@@ -336,6 +343,8 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? targetDays;
   @JsonKey(name: WebDavSyncHabitKey.sortPosition)
   final HabitSortPostion? sortPostion;
+  @JsonKey(name: WebDavSyncHabitKey.sessionId)
+  final String? sessionId;
 
   final List<WebDavSyncRecordData> records;
   final String? etag;
@@ -360,13 +369,14 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.startDate,
     this.targetDays,
     this.sortPostion,
+    this.sessionId,
     this.records = const [],
     this.etag,
     this.dirty,
   });
 
   WebDavSyncHabitData.fromHabitDBCell(HabitDBCell cell,
-      {this.etag, this.dirty, this.records = const []})
+      {this.etag, this.dirty, this.sessionId, this.records = const []})
       : uuid = cell.uuid,
         createT = cell.createT,
         modifyT = cell.modifyT,
@@ -387,7 +397,9 @@ class WebDavSyncHabitData implements JsonAdaptor {
         sortPostion = cell.sortPosition;
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
-    assert(json[WebDavSyncHabitKey.convertType] == _convertType);
+    assert(json.isNotEmpty
+        ? json[WebDavSyncHabitKey.convertType] == _convertType
+        : true);
     return _$WebDavSyncHabitDataFromJson(json);
   }
 
@@ -416,7 +428,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   JsonMap toJson() => _$WebDavSyncHabitDataToJson(this)
     ..[WebDavSyncHabitKey.convertType] = _convertType;
 
-  SyncDBCell genSyncDBCell({String? configId, String? sessionId}) => SyncDBCell(
+  SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
       habitUUID: uuid,
       dirty: dirty ?? 0,
       lastMark: etag,
