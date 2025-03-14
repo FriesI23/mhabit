@@ -4,6 +4,10 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.15.7+65
+
+- Fix: `loadData` complete twice when page initializes (#230)
+
 ## v1.15.6+64
 
 - Fix: Skip reason also applied during expor (#227).
