@@ -15,7 +15,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 import '../logging/helper.dart';
 import '../model/app_sync_server.dart';
@@ -94,8 +93,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   }
 
   AppSyncServerForm getDefaultForm() =>
-      AppWebDavSyncServer.newServer(identity: const Uuid().v4(), path: '')
-          .toForm();
+      AppSyncServer.newServer(AppSyncServerType.webdav)!.toForm();
 
   AppSyncServer? get crtServerConfig =>
       initServerConfig ?? _parent?.serverConfig;
