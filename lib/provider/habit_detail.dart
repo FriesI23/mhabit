@@ -170,7 +170,8 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = true, bool inFutureBuilder = false}) async {
     final crtLoading = _loading;
     if (crtLoading != null && !crtLoading.isCanceled) {
-      appLog.load.warn("$runtimeType.load", ex: ["data already loaded", uuid]);
+      appLog.load.warn("$runtimeType.load",
+          ex: ["data already loaded", uuid, crtLoading.isCompleted]);
       return crtLoading.operation.valueOrCancellation();
     }
 
@@ -178,7 +179,8 @@ class HabitDetailViewModel extends ChangeNotifier
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
-          ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
+          ex: [...errmsg, loading.hashCode],
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
       if (!loading.isCompleted) {
         loading.completeError(
             FlutterError(errmsg.join(" ")), StackTrace.current);
@@ -191,9 +193,7 @@ class HabitDetailViewModel extends ChangeNotifier
     }
 
     Future<void> loadingData() async {
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
           ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
@@ -203,20 +203,15 @@ class HabitDetailViewModel extends ChangeNotifier
       final recordLoadTask = recordDBHelper.loadRecords(uuid);
       final cell = await dataLoadTask;
       final records = await recordLoadTask;
-      if (cell == null) {
-        return loadingFailed(["data load failed", loading.hashCode, uuid]);
-      }
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode, uuid]);
-      }
+      if (cell == null) return loadingFailed(["data load failed", uuid]);
+      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
       if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
       final data = HabitDetailData.fromDBQueryCell(cell);
       data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;
       _calcHabitInfo();
-
-      if (loading.isCompleted) return;
-
       // complete
       loading.complete();
       // reload

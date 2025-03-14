@@ -280,7 +280,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
-          ex: errmsg..add(loading.hashCode),
+          ex: [...errmsg, loading.hashCode],
           stackTrace: LoggerStackTrace.from(StackTrace.current));
       if (!loading.isCompleted) {
         loading.completeError(
@@ -294,9 +294,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
 
     Future<void> loadingData() async {
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
           ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
@@ -306,16 +304,13 @@ class HabitSummaryViewModel extends ChangeNotifier
       final recordLoadTask = recordDBHelper.loadAllRecords();
       final habitLoaded = await habitLoadTask;
       final recordLoaded = await recordLoadTask;
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) => _calcHabitAutoComplateRecords(habit));
       _resortData();
-
-      if (loading.isCompleted) return;
-
       // complete
       loading.complete();
       // reload
@@ -327,9 +322,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       final futureList = <Future>[];
       _data.forEach((_, habit) => futureList.add(_regrHabitReminder(habit)));
       await Future.wait(futureList);
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
+
       appLog.load.debug("$runtimeType.load",
           ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
     }

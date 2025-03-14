@@ -129,7 +129,7 @@ class HabitStatusChangerViewModel
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
-          ex: errmsg..add(loading.hashCode),
+          ex: [...errmsg, loading.hashCode],
           stackTrace: LoggerStackTrace.from(StackTrace.current));
       if (!loading.isCompleted) {
         loading.completeError(
@@ -143,9 +143,7 @@ class HabitStatusChangerViewModel
     }
 
     Future<void> loadingData() async {
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
           ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
@@ -155,19 +153,17 @@ class HabitStatusChangerViewModel
           uuidFilter: _selectedUUIDList);
       final recordLoadTask =
           recordDBHelper.loadAllRecords(uuidFilter: _selectedUUIDList);
-      _data.initDataFromDBQueuryResult(
-          await habitLoadTask, await recordLoadTask);
-      if (!mounted) {
-        return loadingFailed(["viewmodel disposed", loading.hashCode]);
-      }
+      final habitLoaded = await habitLoadTask;
+      final recordLoaded = await recordLoadTask;
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
+      _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
       _reDispached();
       _updateForm(_form, withDefaultChangerStatus: true);
-
-      if (loading.isCompleted) return;
-
       // complete
       loading.complete();
       // reload
