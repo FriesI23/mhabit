@@ -16,12 +16,11 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:pool/pool.dart';
 import 'package:simple_webdav_client/client.dart';
 
-import '../../common/async.dart';
 import '../../common/types.dart';
+import '../../logging/helper.dart';
 import '../../persistent/local/handler/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
@@ -82,24 +81,33 @@ class WebDavAppSyncTaskResult implements AppSyncTaskResult {
       "WebDavAppSyncTaskResult(status=$status, " "error=${error.error})";
 }
 
-class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
+class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
 
-  final SyncDBHelper syncDBHelper;
-
   late final WebDavAppSyncTaskExecutor _task;
+  late final String _sessionId;
 
   WebDavAppSyncTask(
       {required this.config,
-      required this.syncDBHelper,
+      required SyncDBHelper syncDBHelper,
       super.timeout = Duration.zero}) {
+    _sessionId = genSessionId();
     _task = WebDavAppSyncTaskExecutor.build(
-        config: config, syncDBHelper: syncDBHelper);
+        sessionId: _sessionId, config: config, syncDBHelper: syncDBHelper);
+  }
+
+  static String genSessionId() {
+    final random = math.Random();
+    return List.generate(
+        8, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
   }
 
   @override
-  Future<AppSyncTaskResult> error([Object? e, StackTrace? s]) =>
+  String get sessionId => _sessionId;
+
+  @override
+  Future<WebDavAppSyncTaskResult> error([Object? e, StackTrace? s]) =>
       Future.sync(() => switch (e) {
             TimeoutException() =>
               WebDavAppSyncTaskResult.timeout(error: e, trace: s),
@@ -107,36 +115,62 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
           });
 
   @override
-  Future<AppSyncTaskResult> exec() => _task.run();
+  Future<WebDavAppSyncTaskResult> exec() {
+    final future = _task.run();
+    appLog.appsynctask.info(this, ex: ['started', config, _task]);
+    return future.then((result) {
+      if (result.isSuccessed || result.isCancelled) {
+        appLog.appsynctask.info(this, ex: ['completed', result, config, _task]);
+      } else if (result.withError) {
+        appLog.appsynctask.info(this,
+            ex: ['comeplte with error', result, config, _task],
+            error: result.error.error,
+            stackTrace: result.error.trace);
+      } else {
+        appLog.appsynctask.info(this,
+            ex: ['comeplted', result, config, _task],
+            error: result.error.error,
+            stackTrace: result.error.trace);
+      }
+      return result;
+    });
+  }
 
   @override
   Future<void> cancel() {
     _task.cancel();
     return super.cancel();
   }
+
+  @override
+  String toString() =>
+      "WebDavAppSyncTask(sessionId=$sessionId, config=$config)";
 }
 
 class WebDavAppSyncTaskExecutor
-    extends AppSyncTaskFramework<AppSyncTaskResult> {
+    extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
+  @override
+  final String sessionId;
 
-  final AsyncTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
-  final AsyncTask<List<SyncDBCell>> queryHabitsFromDbTask;
-  final WebDavSyncHabitInfoMerger syncInfoMerger;
+  final AppSyncSubTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
+  final AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
+  final WebDavSyncHabitInfoMerger Function(AppSyncContext context)
+      syncInfoMergerBuilder;
 
-  final AsyncTask<WebDavAppSyncTaskResult> Function(
-          WebDavAppSyncTaskExecutor crtTask, WebDavAppSyncHabitInfo cell)
-      singleHabitSyncTaskBuilder;
+  final AppSyncSubTask<WebDavAppSyncTaskResult> Function(
+      WebDavAppSyncHabitInfo cell) singleHabitSyncTaskBuilder;
 
   late final WeakReference<WebDavStdClient>? _client;
 
   WebDavAppSyncTaskExecutor({
     required this.config,
+    required this.sessionId,
     super.timeout = Duration.zero,
     required this.fetchHabitsFromServerTask,
     required this.queryHabitsFromDbTask,
-    required this.syncInfoMerger,
+    required this.syncInfoMergerBuilder,
     required this.singleHabitSyncTaskBuilder,
     WebDavStdClient? client,
   }) {
@@ -144,6 +178,7 @@ class WebDavAppSyncTaskExecutor
   }
 
   factory WebDavAppSyncTaskExecutor.build({
+    required String sessionId,
     required AppWebDavSyncServer config,
     required SyncDBHelper syncDBHelper,
   }) {
@@ -172,29 +207,27 @@ class WebDavAppSyncTaskExecutor
 
     final client = buildWebDavClient();
 
-    // TODO: indev
     return WebDavAppSyncTaskExecutor(
+      sessionId: sessionId,
       config: config,
       fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
           WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
-      syncInfoMerger: const SyncHabitsInfoMergerImpl(),
-      singleHabitSyncTaskBuilder: (crtTask, cell) => SingleHabitSyncTask(
-        parent: crtTask,
+      syncInfoMergerBuilder: SyncHabitsInfoMergerImpl.new,
+      singleHabitSyncTaskBuilder: (cell) => SingleHabitSyncTask(
         config: config,
         cell: cell,
-        serverToLocalTask: (parent, config, cell) =>
+        serverToLocalTask: (context, config, cell) =>
             SingleHabitSyncTask.downloadTask(
-          parent: parent,
+          context: context,
           fetchRecordsFromServerTask: FetchHabitRecordsMetaFromServerTask.build(
-              parent: parent,
               path: WebDavAppSyncPathBuilder(config.path)
                   .habit(cell.uuid)
                   .recordRootDir,
               client: client),
           queryRecordsFromDbTask: QueryHabitRecordsFromDBTask(
               uuid: cell.uuid, helper: syncDBHelper),
-          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(cell.uuid),
+          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(context, cell.uuid),
           fetchHabitDataTask:
               FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
                   path: cell.serverPath!,
@@ -208,18 +241,14 @@ class WebDavAppSyncTaskExecutor
           writeToDbTaskBuilder: (cell) =>
               WriteToDBTask(data: cell, helper: syncDBHelper),
         ),
-        localToServerTask: (parent, config, cell) =>
+        localToServerTask: (context, config, cell) =>
             SingleHabitSyncTask.uploadTask(
-          parent: parent,
+          context: context,
           loadFromDBTask: LoadFromDBTask(helper: syncDBHelper, uuid: cell.uuid),
           preprocessDirTaskBuilder: (data) =>
               PreprocessHabitWebDavCollectionTask.build(
-                  parent: parent,
-                  path: config.path,
-                  data: data,
-                  client: client),
+                  path: config.path, data: data, client: client),
           uploadHabitToServerTaskBuilder: (data) => UploadHabitToServerTask(
-            parent: parent,
             root: config.path,
             data: data,
             helper: syncDBHelper,
@@ -233,41 +262,55 @@ class WebDavAppSyncTaskExecutor
   }
 
   @override
-  Future<AppSyncTaskResult> error(Object e, StackTrace s) =>
-      Error.throwWithStackTrace(e, s);
+  Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
+    appLog.appsynctask
+        .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    Error.throwWithStackTrace(e, s);
+  }
 
   @override
-  Future<AppSyncTaskResult> exec() {
+  Future<WebDavAppSyncTaskResult> exec() {
     return doExec().whenComplete(() {
       final client = _client?.target;
       if (client != null && !client.closed) _client?.target?.close();
     });
   }
 
-  Future<AppSyncTaskResult> doExec() async {
-    final serverHabitsFuture = fetchHabitsFromServerTask.run();
-    final localHabitsFuture = queryHabitsFromDbTask.run();
+  Future<WebDavAppSyncTaskResult> doExec() async {
+    final serverHabitsFuture = fetchHabitsFromServerTask.run(this);
+    final localHabitsFuture = queryHabitsFromDbTask.run(this);
+
     final serverHabits = await serverHabitsFuture;
+    appLog.appsynctask.debug(this,
+        ex: ['fetch habits form server completed', serverHabits.length]);
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
+
     final localHabits = await localHabitsFuture;
+    appLog.appsynctask.debug(this,
+        ex: ['fetch babits form local completed', localHabits.length]);
     if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
-    final mergedResult =
-        syncInfoMerger.convert((local: localHabits, server: serverHabits));
+
+    final mergedResult = syncInfoMergerBuilder(this)
+        .convert((local: localHabits, server: serverHabits));
+    appLog.appsynctask
+        .debug(this, ex: ["merge habits completed", mergedResult.length]);
+
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
     final pool = Pool(math.max(mergedResult.length, 5));
     await Future.wait(mergedResult.map(
       (cell) => pool
           .withResource(() async {
             if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
-            return singleHabitSyncTaskBuilder(this, cell).run();
+            return singleHabitSyncTaskBuilder(cell).run(this);
           })
           .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
           .then((result) => resultMap.putIfAbsent(cell, () => result)),
     ));
-    // TODO: indev
-    debugPrint("$runtimeType: exec.doExec");
-    resultMap.forEach(
-        (k, v) => debugPrint("$k \n--> $v || ${v?.error.trace}\n---------"));
+    appLog.appsynctask.debug(this, ex: ["habits sync completed", resultMap]);
+
+    // TODO: indev (multi result)
+    resultMap.forEach((k, v) =>
+        appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------"));
     return WebDavAppSyncTaskResult.success();
   }
 }

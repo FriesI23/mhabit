@@ -42,8 +42,9 @@ class AppWidgetLoggerMessage implements AppLoggerMessage {
       result.add(name!);
     }
     if (extraInfo != null) {
-      result
-          .addAll(extraInfo!.where((e) => e != null).map((e) => e.toString()));
+      result.addAll(extraInfo!
+          .where((e) => e != null)
+          .map((e) => (e is Function ? e.call() : e).toString()));
     }
     return result;
   }

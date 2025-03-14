@@ -228,32 +228,34 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
 
     switch (config.type) {
       case AppSyncServerType.fake:
+        final rand = math.Random();
+        final sessionId = (rand.nextInt(10000) + 99999).toString();
         return BasicAppSyncTask(
+            sessionId: sessionId,
             config: config,
             onExec: (task) async {
-              final rand = math.Random();
-              final id = rand.nextInt(10000) + 99999;
-              final debugPrefix = "[$id] fake syncing";
               final loopCount = 10;
-              appLog.appsync.debug("$debugPrefix: Start, looping $loopCount");
+              appLog.appsynctask.debug(task, ex: ["Start, looping $loopCount"]);
               await Future.delayed(const Duration(seconds: 1));
               for (var i = 0; i < loopCount; i++) {
                 if (task.isCancalling) {
                   await Future.delayed(const Duration(seconds: 1));
-                  appLog.appsync.debug("$debugPrefix: loop $i -> canceled");
+                  appLog.appsynctask.debug(task, ex: ["loop $i -> canceled"]);
                   return const BasicAppSyncTaskResult.cancelled();
                 }
                 if (task == _task?.task) changePercentage(prt: i / loopCount);
                 final delayed = Duration(milliseconds: rand.nextInt(500) + 500);
-                appLog.appsync.debug("$debugPrefix: loop $i -> running, "
-                    "delayed for ${delayed.inMilliseconds}ms");
+                appLog.appsynctask.debug(task, ex: [
+                  "loop $i -> running,",
+                  "delayed for ${delayed.inMilliseconds}ms"
+                ]);
                 await Future.delayed(delayed);
               }
               if (task == _task?.task) changePercentage(prt: 1);
               await Future.delayed(const Duration(milliseconds: 600));
               if (task == _task?.task) changePercentage(prt: null);
               await Future.delayed(const Duration(seconds: 1));
-              appLog.appsync.debug("$debugPrefix: Done");
+              appLog.appsynctask.debug(task, ex: ['Done']);
               return BasicAppSyncTaskResult.success();
             });
 

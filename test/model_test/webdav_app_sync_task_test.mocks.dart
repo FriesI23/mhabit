@@ -6,10 +6,11 @@
 import 'dart:async' as _i4;
 import 'dart:convert' as _i2;
 
-import 'package:mhabit/common/async.dart' as _i6;
+import 'package:mhabit/model/_app_sync_tasks/app_sync_task.dart' as _i7;
+import 'package:mhabit/model/_app_sync_tasks/webdav_app_sync_task.dart' as _i5;
 import 'package:mhabit/model/app_sync_server.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -76,8 +77,29 @@ class _FakeAppSyncServerForm_4 extends _i1.SmartFake
         );
 }
 
-class _FakeFuture_5<T1> extends _i1.SmartFake implements _i4.Future<T1> {
-  _FakeFuture_5(
+class _FakeAppSyncServer_5 extends _i1.SmartFake implements _i3.AppSyncServer {
+  _FakeAppSyncServer_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFuture_6<T1> extends _i1.SmartFake implements _i4.Future<T1> {
+  _FakeFuture_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWebDavAppSyncTaskResult_7 extends _i1.SmartFake
+    implements _i5.WebDavAppSyncTaskResult {
+  _FakeWebDavAppSyncTaskResult_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -100,7 +122,7 @@ class MockConverter<S, T> extends _i1.Mock implements _i2.Converter<S, T> {
           #convert,
           [input],
         ),
-        returnValue: _i5.dummyValue<T>(
+        returnValue: _i6.dummyValue<T>(
           this,
           Invocation.method(
             #convert,
@@ -177,7 +199,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get identity => (super.noSuchMethod(
         Invocation.getter(#identity),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#identity),
         ),
@@ -222,7 +244,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get password => (super.noSuchMethod(
         Invocation.getter(#password),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#password),
         ),
@@ -240,7 +262,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get username => (super.noSuchMethod(
         Invocation.getter(#username),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#username),
         ),
@@ -268,7 +290,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -318,7 +340,7 @@ class MockAppWebDavSyncServer extends _i1.Mock
           #toDebugString,
           [],
         ),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.method(
             #toDebugString,
@@ -339,7 +361,7 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
   @override
   String get name => (super.noSuchMethod(
         Invocation.getter(#name),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#name),
         ),
@@ -348,7 +370,7 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
   @override
   String get identity => (super.noSuchMethod(
         Invocation.getter(#identity),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#identity),
         ),
@@ -425,7 +447,7 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
           #toDebugString,
           [],
         ),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.method(
             #toDebugString,
@@ -444,36 +466,119 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
       ) as Map<String, dynamic>);
 }
 
-/// A class which mocks [AsyncTask].
+/// A class which mocks [AppSyncContext].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAsyncTask<T> extends _i1.Mock implements _i6.AsyncTask<T> {
-  MockAsyncTask() {
+class MockAppSyncContext extends _i1.Mock implements _i7.AppSyncContext {
+  MockAppSyncContext() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<T> run() => (super.noSuchMethod(
+  String get sessionId => (super.noSuchMethod(
+        Invocation.getter(#sessionId),
+        returnValue: _i6.dummyValue<String>(
+          this,
+          Invocation.getter(#sessionId),
+        ),
+      ) as String);
+
+  @override
+  _i3.AppSyncServer get config => (super.noSuchMethod(
+        Invocation.getter(#config),
+        returnValue: _FakeAppSyncServer_5(
+          this,
+          Invocation.getter(#config),
+        ),
+      ) as _i3.AppSyncServer);
+
+  @override
+  _i7.AppSyncTaskStatus get status => (super.noSuchMethod(
+        Invocation.getter(#status),
+        returnValue: _i7.AppSyncTaskStatus.idle,
+      ) as _i7.AppSyncTaskStatus);
+
+  @override
+  bool get isProcessing => (super.noSuchMethod(
+        Invocation.getter(#isProcessing),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get isCancalling => (super.noSuchMethod(
+        Invocation.getter(#isCancalling),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get isDone => (super.noSuchMethod(
+        Invocation.getter(#isDone),
+        returnValue: false,
+      ) as bool);
+}
+
+/// A class which mocks [AppSyncSubTask].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAppSyncSubTask<T> extends _i1.Mock implements _i7.AppSyncSubTask<T> {
+  MockAppSyncSubTask() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Future<T> run(_i7.AppSyncContext? context) => (super.noSuchMethod(
         Invocation.method(
           #run,
-          [],
+          [context],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #run,
-                  [],
+                  [context],
                 ),
               ),
               (T v) => _i4.Future<T>.value(v),
             ) ??
-            _FakeFuture_5<T>(
+            _FakeFuture_6<T>(
               this,
               Invocation.method(
                 #run,
-                [],
+                [context],
               ),
             ),
       ) as _i4.Future<T>);
+}
+
+/// A class which mocks [AppSyncSubTask].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAppSyncSubTaskWithResult extends _i1.Mock
+    implements _i7.AppSyncSubTask<_i5.WebDavAppSyncTaskResult> {
+  @override
+  _i4.Future<_i5.WebDavAppSyncTaskResult> run(_i7.AppSyncContext? context) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #run,
+          [context],
+        ),
+        returnValue: _i4.Future<_i5.WebDavAppSyncTaskResult>.value(
+            _FakeWebDavAppSyncTaskResult_7(
+          this,
+          Invocation.method(
+            #run,
+            [context],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i5.WebDavAppSyncTaskResult>.value(
+                _FakeWebDavAppSyncTaskResult_7(
+          this,
+          Invocation.method(
+            #run,
+            [context],
+          ),
+        )),
+      ) as _i4.Future<_i5.WebDavAppSyncTaskResult>);
 }
