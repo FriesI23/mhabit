@@ -70,6 +70,8 @@ class BasicAppSyncTaskResult implements AppSyncTaskResult {
 class BasicAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
   @override
   final AppSyncServer config;
+  @override
+  final String sessionId;
 
   Future<AppSyncTaskResult> Function(AppSyncTask<AppSyncTaskResult> task)?
       onExec;
@@ -77,6 +79,7 @@ class BasicAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
   BasicAppSyncTask(
       {required this.config,
       required this.onExec,
+      this.sessionId = 'fake-session-id',
       super.timeout = Duration.zero});
 
   @override

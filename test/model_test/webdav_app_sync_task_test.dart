@@ -15,7 +15,6 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/common/async.dart';
 import 'package:mhabit/model/app_sync_server.dart';
 import 'package:mhabit/model/app_sync_task.dart';
 import 'package:mhabit/persistent/local/handler/sync.dart';
@@ -26,19 +25,46 @@ import 'package:mockito/mockito.dart';
   Converter,
   AppWebDavSyncServer,
   AppSyncServer,
-  AsyncTask,
+  AppSyncContext,
+  AppSyncSubTask,
+])
+@GenerateNiceMocks([
+  MockSpec<AppSyncSubTask<WebDavAppSyncTaskResult>>(
+      as: #MockAppSyncSubTaskWithResult),
 ])
 import 'webdav_app_sync_task_test.mocks.dart';
 
 void testWebdavAppSyncTaskMainBody() =>
     group("test WebdavAppSyncTaskMainBody", () {
-      late AsyncTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
-      late AsyncTask<List<SyncDBCell>> queryHabitsFromDbTask;
+      late AppSyncSubTask<List<WebDavResourceContainer>>
+          fetchHabitsFromServerTask;
+      late AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
       late WebDavSyncHabitInfoMerger syncInfoMerger;
       late WebDavAppSyncTaskExecutor task;
 
       test("test normal progress", () async {
         final config = MockAppWebDavSyncServer();
+
+        fetchHabitsFromServerTask = MockAppSyncSubTask();
+        queryHabitsFromDbTask = MockAppSyncSubTask();
+        syncInfoMerger = MockConverter();
+
+        final singleHabitTasks = <AppSyncSubTask<WebDavAppSyncTaskResult>>[];
+
+        task = WebDavAppSyncTaskExecutor(
+          sessionId: '123',
+          config: config,
+          fetchHabitsFromServerTask: fetchHabitsFromServerTask,
+          queryHabitsFromDbTask: queryHabitsFromDbTask,
+          syncInfoMergerBuilder: (context) => syncInfoMerger,
+          singleHabitSyncTaskBuilder: (cell) {
+            final task = MockAppSyncSubTaskWithResult();
+            when(task.run(any))
+                .thenAnswer((_) async => WebDavAppSyncTaskResult.success());
+            singleHabitTasks.add(task);
+            return task;
+          },
+        );
 
         final serverResult = [
           WebDavResourceContainer(
@@ -48,51 +74,38 @@ void testWebdavAppSyncTaskMainBody() =>
           WebDavResourceContainer(
               path: Uri.parse("/a/habit-x3.json"), etag: 'xxx3'),
         ];
-        fetchHabitsFromServerTask = MockAsyncTask();
-        when(fetchHabitsFromServerTask.run())
+        when(fetchHabitsFromServerTask.run(task))
             .thenAnswer((inv) async => serverResult);
 
         final localResult = <SyncDBCell>[
           SyncDBCell(habitUUID: 'z1'),
           SyncDBCell(habitUUID: 'z2', lastMark: 'zzz2'),
         ];
-        queryHabitsFromDbTask = MockAsyncTask();
-        when(queryHabitsFromDbTask.run())
+        when(queryHabitsFromDbTask.run(task))
             .thenAnswer((inv) async => localResult);
 
         final mergeResult = <WebDavAppSyncHabitInfo>[
           WebDavAppSyncHabitInfo(
-              uuid: 'xx1', status: WebDavAppSyncInfoStatus.both),
+              configUUID: 'yy1',
+              uuid: 'xx1',
+              status: WebDavAppSyncInfoStatus.both),
           WebDavAppSyncHabitInfo(
-              uuid: 'xx2', status: WebDavAppSyncInfoStatus.server),
+              configUUID: 'yy1',
+              uuid: 'xx2',
+              status: WebDavAppSyncInfoStatus.server),
         ];
-        syncInfoMerger = MockConverter();
         when(syncInfoMerger.convert((local: localResult, server: serverResult)))
             .thenReturn(mergeResult);
 
-        final singleHabitTasks = <AsyncTask<WebDavAppSyncTaskResult>>[];
-        task = WebDavAppSyncTaskExecutor(
-          config: config,
-          fetchHabitsFromServerTask: fetchHabitsFromServerTask,
-          queryHabitsFromDbTask: queryHabitsFromDbTask,
-          syncInfoMerger: syncInfoMerger,
-          singleHabitSyncTaskBuilder: (crtTask, cell) {
-            final task = MockAsyncTask<WebDavAppSyncTaskResult>();
-            singleHabitTasks.add(task);
-            when(task.run())
-                .thenAnswer((_) async => WebDavAppSyncTaskResult.success());
-            return task;
-          },
-        );
         final result = await task.run();
 
         expect(result.isSuccessed, isTrue);
-        verify(fetchHabitsFromServerTask.run()).called(1);
-        verify(queryHabitsFromDbTask.run()).called(1);
+        verify(fetchHabitsFromServerTask.run(task)).called(1);
+        verify(queryHabitsFromDbTask.run(task)).called(1);
         verify(syncInfoMerger
             .convert((local: localResult, server: serverResult))).called(1);
-        for (var task in singleHabitTasks) {
-          verify(task.run()).called(1);
+        for (var singleHabitTask in singleHabitTasks) {
+          verify(singleHabitTask.run(task)).called(1);
         }
       });
     });

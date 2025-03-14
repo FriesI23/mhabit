@@ -60,4 +60,7 @@ enum LoggerType {
 
   /// App sync process
   appsync,
+
+  /// App sync process - for task
+  appsynctask,
 }
