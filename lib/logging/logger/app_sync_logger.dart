@@ -47,7 +47,7 @@ class _AppSyncTaskLogger implements AppSyncTaskLogger {
   const _AppSyncTaskLogger(this.mananger, this.type, this.parentLogger);
 
   String buildMsg(AppSyncContext task) =>
-      "[${task.sessionId}]{status: ${task.status}, task: ${task.runtimeType}}";
+      "[${task.sessionId}][${task.runtimeType}][${task.status.name}]";
 
   @override
   void debug(AppSyncContext task,
