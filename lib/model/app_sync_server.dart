@@ -120,7 +120,7 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   }
 
   static AppSyncServer? newServer(AppSyncServerType type) {
-    final identity = const Uuid().v4();
+    final identity = genNewIdentity();
     switch (type) {
       case AppSyncServerType.webdav:
         return AppWebDavSyncServer.newServer(identity: identity, path: '');
@@ -130,6 +130,8 @@ abstract interface class AppSyncServer implements JsonAdaptor {
         return null;
     }
   }
+
+  static String genNewIdentity() => const Uuid().v4();
 
   String get name;
   String get identity;
@@ -142,7 +144,14 @@ abstract interface class AppSyncServer implements JsonAdaptor {
 
   String? get password;
 
+  /// Checks if the server configuration is identical to [other].
+  /// Ignores password if [withoutPassword] is `true`.
   bool isSameConfig(AppSyncServer other, {bool withoutPassword = false});
+
+  /// Checks if this and [other] represent the same server.
+  /// Always `true` if `isSameConfig` returns `true`.
+  bool isSameServer(AppSyncServer other, {bool withoutPassword = false});
+
   AppSyncServerForm toForm();
   String toDebugString();
 }
@@ -293,6 +302,13 @@ class AppWebDavSyncServer implements AppSyncServer {
   }
 
   @override
+  bool isSameServer(AppSyncServer other, {bool withoutPassword = false}) {
+    if (isSameConfig(other, withoutPassword: withoutPassword)) return true;
+    if (other is! AppWebDavSyncServer) return false;
+    return (identity == other.identity && path == other.path);
+  }
+
+  @override
   Map<String, dynamic> toJson() => _$AppWebDavSyncServerToJson(this);
 
   @override
@@ -433,6 +449,10 @@ class AppFakeSyncServer implements AppSyncServer {
     if (other is! AppFakeSyncServer) return false;
     return identity == other.identity;
   }
+
+  @override
+  bool isSameServer(AppSyncServer other, {bool withoutPassword = false}) =>
+      isSameConfig(other, withoutPassword: withoutPassword);
 
   @override
   AppSyncServerForm toForm() => AppSyncServerForm(
