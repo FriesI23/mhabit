@@ -117,37 +117,46 @@ class AppSyncViewModel
       bool resetStatus = true,
       bool removable = false}) async {
     final oldConfig = serverConfig;
-    final newConfig = AppSyncServer.fromForm(form);
-    if (newConfig == null && !removable) return false;
-    final isSameServer = switch ((oldConfig, newConfig)) {
-      (null, null) => true,
-      (null, _) || (_, null) => false,
-      (_, _) => oldConfig!.isSameConfig(newConfig!, withoutPassword: true),
+    final tmpNewConfig = AppSyncServer.fromForm(form);
+    if (tmpNewConfig == null && !removable) return false;
+    final (isSameConfig, isSameServer) = switch ((oldConfig, tmpNewConfig)) {
+      (null, null) => (true, true),
+      (null, _) || (_, null) => (true, true),
+      (_, _) => (
+          oldConfig!.isSameConfig(tmpNewConfig!, withoutPassword: true),
+          oldConfig.isSameServer(tmpNewConfig, withoutPassword: true)
+        ),
     };
-    if (isSameServer && !forceSave) return false;
+    if (isSameConfig && !forceSave) return false;
 
     AppSyncServer? buildConfig({bool withPwd = false}) =>
-        (!isSameServer || resetStatus)
+        (!isSameConfig || resetStatus)
             ? AppSyncServer.fromForm(form?.copyWith(
+                uuid: isSameServer
+                    ? form.uuid
+                    : UuidValue.raw(AppSyncServer.genNewIdentity()),
                 configed: false,
                 verified: false,
                 password: withPwd ? form.password : ''))
-            : newConfig;
+            : tmpNewConfig;
 
     Future<bool> doSave() async {
       Future<bool>? setOrRemoveConfig(AppSyncServer? config) =>
           config != null ? _serverConfig?.set(config) : _serverConfig?.remove();
 
       // step1: set or remove new server config
-      if (await setOrRemoveConfig(buildConfig()) != true) return false;
+      final deidentifiedNewConfig = buildConfig();
+      if (await setOrRemoveConfig(deidentifiedNewConfig) != true) return false;
       // step2(optional): remove old password from sec-storage if necessary
-      if (oldConfig?.identity != newConfig?.identity && oldConfig != null) {
+      if (oldConfig?.identity != deidentifiedNewConfig?.identity &&
+          oldConfig != null) {
         await setPassword(identity: oldConfig.identity, value: null);
       }
       // step3: set new password to sec-storage
-      final result = newConfig != null
+      final result = (tmpNewConfig != null && deidentifiedNewConfig != null)
           ? await setPassword(
-              identity: newConfig.identity, value: newConfig.password)
+              identity: deidentifiedNewConfig.identity,
+              value: tmpNewConfig.password)
           : true;
       // step4(optional): set server config with password (backup process)
       if (result != true) {

@@ -103,13 +103,10 @@ class SyncDBHelper extends DBHelperHandler {
 
   Future<Iterable<SyncDBCell>> loadAllHabitsSyncInfo(
       {List<String> columns = _loadAllHabitsSyncInfoColumns}) async {
-    final result = await db.query(
-      table,
-      distinct: true,
-      columns: columns,
-      where: "${SyncDbCellKey.habitUUID} IS NOT NULL "
-          "AND ${SyncDbCellKey.recordUUID} IS NULL",
-    );
+    final result = await db.query(table,
+        distinct: true,
+        columns: columns,
+        where: "${SyncDbCellKey.habitUUID} IS NOT NULL");
     return result.map(SyncDBCell.fromJson);
   }
 
@@ -157,6 +154,7 @@ class SyncDBHelper extends DBHelperHandler {
           .query(tNameSync,
               distinct: true,
               columns: const [
+                SyncDbCellKey.lastSesionUUID,
                 SyncDbCellKey.lastMark,
                 "(SELECT ${HabitDBCellKey.id} FROM $tNameHabits "
                     "WHERE ${HabitDBCellKey.uuid} = "
@@ -172,14 +170,20 @@ class SyncDBHelper extends DBHelperHandler {
       }
       final etag = habitSyncInfo[SyncDbCellKey.lastMark] as String?;
       if ((etag ?? '').isNotEmpty && etag == data.etag) {
+        appLog.db.debug("[$sessionId] syncHabitDataToDb",
+            ex: ["same etag", etag, data.etag, data, configId]);
         return true;
       }
+      final lastSessionId =
+          habitSyncInfo[SyncDbCellKey.lastSesionUUID] as String?;
       final dbid = habitSyncInfo[dbidKeyAlias]! as int;
       return updateHabitDataToDbTransaction(db, data, dbid,
-          configId: configId, sessionId: sessionId);
+          configId: configId,
+          sessionId: sessionId,
+          lastSessionId: lastSessionId);
     }, exclusive: true).whenComplete(() {
-      appLog.db.info("syncHabitDataToDb",
-          ex: ["complete", data, configId, sessionId]);
+      appLog.db.info("[$sessionId] syncHabitDataToDb",
+          ex: ["complete", data, configId]);
     });
   }
 
@@ -191,47 +195,68 @@ class SyncDBHelper extends DBHelperHandler {
     final habitUUID = data.uuid;
     if (habitUUID == null) return false;
 
-    appLog.db.debug("insertNewHabitDataToDbTransaction",
-        ex: ["started", data, configId, sessionId]);
+    appLog.db.debug("[$sessionId] insertNewHabitDataToDbTransaction",
+        ex: ["started", data, configId]);
     final DBID dbid =
         await db.insert(TableName.habits, data.toHabitDBCell().toJson());
-    await db.insert(table,
-        data.genSyncDBCell(configId: configId, sessionId: sessionId).toJson(),
+    await db.insert(
+        table,
+        data
+            .genSyncDBCell(configId: configId)
+            .copyWith(lastSesionUUID: sessionId)
+            .toJson(),
         conflictAlgorithm: ConflictAlgorithm.rollback);
     await batchInsertOrUpdateHabitRecordsToDbTransaction(
         db, data.records, dbid, habitUUID,
         configId: configId, sessionId: sessionId);
-    appLog.db.debug("insertNewHabitDataToDbTransaction",
-        ex: ["complete", data, dbid, configId, sessionId]);
+    appLog.db.debug("[$sessionId] insertNewHabitDataToDbTransaction",
+        ex: ["complete", data, dbid, configId]);
     return true;
   }
 
   Future<bool> updateHabitDataToDbTransaction(
       Transaction db, WebDavSyncHabitData data, DBID dbid,
-      {String? configId, String? sessionId}) async {
+      {String? configId, String? sessionId, String? lastSessionId}) async {
     assert(data.uuid != null);
 
     final habitUUID = data.uuid;
     if (habitUUID == null) return false;
 
-    appLog.db.debug("updateHabitDataToDbTransaction",
-        ex: ["started", data, dbid, configId, sessionId]);
+    appLog.db.debug("[$sessionId] updateHabitDataToDbTransaction",
+        ex: ["started", data, dbid, configId, lastSessionId]);
     await batchInsertOrUpdateHabitRecordsToDbTransaction(
         db, data.records, dbid, habitUUID,
-        configId: configId, sessionId: sessionId);
-    await db.update(TableName.habits,
-        data.toHabitDBCell().copyWith(id: null, uuid: null).toJson(),
-        where: "${HabitDBCellKey.uuid} = ?", whereArgs: [habitUUID]);
+        configId: configId, sessionId: sessionId, lastSessionId: lastSessionId);
+
+    if (lastSessionId == data.sessionId) {
+      appLog.db.warn("[$sessionId] updateHabitDataToDbTransaction", ex: [
+        "same sessionId, update skipped",
+        lastSessionId,
+        data.sessionId,
+        data,
+        dbid,
+        configId
+      ]);
+    } else {
+      await db.update(TableName.habits,
+          data.toHabitDBCell().copyWith(id: null, uuid: null).toJson(),
+          where: "${HabitDBCellKey.uuid} = ?", whereArgs: [habitUUID]);
+    }
     await db.update(
         table,
         data
-            .genSyncDBCell(configId: configId, sessionId: sessionId)
-            .copyWith(id: null, habitUUID: null, recordUUID: null, dirty: null)
+            .genSyncDBCell(configId: configId)
+            .copyWith(
+                id: null,
+                habitUUID: null,
+                recordUUID: null,
+                dirty: null,
+                lastSesionUUID: sessionId)
             .toJson(),
         where: "${SyncDbCellKey.habitUUID} = ?",
         whereArgs: [habitUUID]);
-    appLog.db.debug("updateHabitDataToDbTransaction",
-        ex: ["complete", data, dbid, configId, sessionId]);
+    appLog.db.debug("[$sessionId] updateHabitDataToDbTransaction",
+        ex: ["complete", data, dbid, configId, lastSessionId]);
     return true;
   }
 
@@ -241,26 +266,33 @@ class SyncDBHelper extends DBHelperHandler {
       DBID parentId,
       HabitUUID parentUUID,
       {String? configId,
-      String? sessionId}) async {
+      String? sessionId,
+      String? lastSessionId}) async {
     final filteredRecordList = records
         .where((e) => e.uuid != null && e.parentUUID == parentUUID)
         .toList();
-    appLog.db.debug("batchInsertOrUpdateHabitRecordsToDbTransaction", ex: [
-      "started",
-      records,
-      filteredRecordList,
-      parentId,
-      parentUUID,
-      configId,
-      sessionId
-    ]);
+    appLog.db.debug(
+        "[$sessionId] batchInsertOrUpdateHabitRecordsToDbTransaction",
+        ex: [
+          "started",
+          records,
+          filteredRecordList,
+          parentId,
+          parentUUID,
+          configId,
+          lastSessionId
+        ]);
     if (filteredRecordList.isEmpty) return;
 
     final localSyncRecordsInfoMap = await db
         .query(
           table,
           distinct: true,
-          columns: [SyncDbCellKey.recordUUID, SyncDbCellKey.lastMark],
+          columns: const [
+            SyncDbCellKey.recordUUID,
+            SyncDbCellKey.lastMark,
+            SyncDbCellKey.lastSesionUUID
+          ],
           where: "${SyncDbCellKey.recordUUID} "
               "IN (${filteredRecordList.map((e) => '?').join(', ')})",
           whereArgs:
@@ -291,6 +323,18 @@ class SyncDBHelper extends DBHelperHandler {
             conflictAlgorithm: ConflictAlgorithm.rollback);
       } else if (localSyncRecordsInfoMap[record.uuid]?.lastMark !=
           record.etag) {
+        if (lastSessionId == record.sessionId) {
+          appLog.db.warn(
+              "[$sessionId] batchInsertOrUpdateHabitRecordsToDbTransaction",
+              ex: [
+                "same sessionId, update skipped",
+                lastSessionId,
+                record.sessionId,
+                record,
+                configId
+              ]);
+          continue;
+        }
         batch.update(
             TableName.records,
             record
@@ -309,7 +353,8 @@ class SyncDBHelper extends DBHelperHandler {
         batch.insert(
             table,
             record
-                .genSyncDBCell(configId: configId, sessionId: sessionId)
+                .genSyncDBCell(configId: configId)
+                .copyWith(lastSesionUUID: sessionId)
                 .toJson(),
             conflictAlgorithm: ConflictAlgorithm.rollback);
       } else if (localSyncRecordsInfoMap[record.uuid]?.lastMark !=
@@ -317,9 +362,13 @@ class SyncDBHelper extends DBHelperHandler {
         batch.update(
             table,
             record
-                .genSyncDBCell(configId: configId, sessionId: sessionId)
+                .genSyncDBCell(configId: configId)
                 .copyWith(
-                    id: null, habitUUID: null, recordUUID: null, dirty: null)
+                    id: null,
+                    habitUUID: null,
+                    recordUUID: null,
+                    dirty: null,
+                    lastSesionUUID: sessionId)
                 .toJson(),
             where: "${SyncDbCellKey.recordUUID} = ?",
             whereArgs: [record.uuid],
@@ -332,11 +381,13 @@ class SyncDBHelper extends DBHelperHandler {
   }
 
   Future<WebDavSyncHabitData?> loadDirtyHabitDataFromBb(HabitUUID uuid,
-      {bool withRecords = true, required String? configId}) {
+      {bool withRecords = true,
+      required String? configId,
+      required String? sessionId}) {
     const tNameSync = TableName.sync;
     const tNameHabits = TableName.habits;
     const tNameRecords = TableName.records;
-    const dirtyKey = '$tNameSync\_${SyncDbCellKey.dirty}';
+    const dirtyKey = '${tNameSync}_${SyncDbCellKey.dirty}';
     const ph = "_NULL";
 
     return db.transaction((db) async {
@@ -356,7 +407,7 @@ class SyncDBHelper extends DBHelperHandler {
         final result = results.firstOrNull;
         return result != null
             ? WebDavSyncHabitData.fromHabitDBCell(HabitDBCell.fromJson(result),
-                dirty: result[dirtyKey] as int?)
+                dirty: result[dirtyKey] as int?, sessionId: sessionId)
             : null;
       });
       if (!withRecords || habit == null) return habit;
@@ -377,7 +428,8 @@ class SyncDBHelper extends DBHelperHandler {
         (results) => results
             .map((result) => WebDavSyncRecordData.fromRecordDBCell(
                 RecordDBCell.fromJson(result),
-                dirty: result[dirtyKey] as int?))
+                dirty: result[dirtyKey] as int?,
+                sessionId: sessionId))
             .toList(),
       );
       return habit.copyWith(records: records);
@@ -393,14 +445,14 @@ class SyncDBHelper extends DBHelperHandler {
       "WHEN ${SyncDbCellKey.dirty} = ? THEN 0 "
       "ELSE MAX(1, ${SyncDbCellKey.dirty} - ?) "
       "END"
-      "${etag != null ? ', ${SyncDbCellKey.lastMark} = ?' : ''}"
+      ", ${SyncDbCellKey.lastMark} = ?"
       "${configId != null ? ', ${SyncDbCellKey.lastConfigUUID} = ?' : ''}"
       "${sessionId != null ? ', ${SyncDbCellKey.lastSesionUUID} = ?' : ''}"
       " WHERE ${SyncDbCellKey.recordUUID} = ?",
       [
         crtDirty,
         crtDirty,
-        if (etag != null) etag,
+        etag,
         if (configId != null) configId,
         if (sessionId != null) sessionId,
         uuid
@@ -417,14 +469,14 @@ class SyncDBHelper extends DBHelperHandler {
       "WHEN ${SyncDbCellKey.dirty} = ? THEN 0 "
       "ELSE MAX(1, ${SyncDbCellKey.dirty} - ?) "
       "END"
-      "${etag != null ? ', ${SyncDbCellKey.lastMark} = ?' : ''}"
+      ", ${SyncDbCellKey.lastMark} = ?"
       "${configId != null ? ', ${SyncDbCellKey.lastConfigUUID} = ?' : ''}"
       "${sessionId != null ? ', ${SyncDbCellKey.lastSesionUUID} = ?' : ''}"
       " WHERE ${SyncDbCellKey.habitUUID} = ?",
       [
         crtDirty,
         crtDirty,
-        if (etag != null) etag,
+        etag,
         if (configId != null) configId,
         if (sessionId != null) sessionId,
         uuid
