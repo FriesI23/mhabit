@@ -468,3 +468,84 @@ class WebDavSyncHabitData implements JsonAdaptor {
     ..['dirty'] = dirty
     ..['records'] = '...(length=${records.length})'}";
 }
+
+class WebDavAppSyncPathBuilder {
+  final Uri root;
+
+  final Uri habitsDir;
+  final Uri recordsDir;
+
+  static Uri _buildPath(Uri root, String subDir) {
+    return root.replace(pathSegments: [
+      ...root.pathSegments.where((e) => e.isNotEmpty),
+      subDir,
+      ''
+    ]);
+  }
+
+  WebDavAppSyncPathBuilder(this.root)
+      : habitsDir = _buildPath(root, 'habits'),
+        recordsDir = _buildPath(root, 'records');
+
+  WebDavAppSyncHabitPathBuilder habit(HabitUUID uuid) =>
+      WebDavAppSyncHabitPathBuilder(uuid, habitsDir, recordsDir);
+}
+
+class WebDavAppSyncHabitPathBuilder {
+  final HabitUUID uuid;
+  final Uri habitsDir;
+  final Uri recordsDir;
+
+  final Uri habitFile;
+  final Uri recordRootDir;
+
+  static Uri _buildHabitFile(Uri base, HabitUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'habit-$uuid.json'
+    ]);
+  }
+
+  static Uri _buildHabitRecordDir(Uri base, HabitUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'habit-$uuid',
+      ''
+    ]);
+  }
+
+  static Uri _buildRecordSubDir(Uri base, int year) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      year.toString(),
+      ''
+    ]);
+  }
+
+  WebDavAppSyncHabitPathBuilder(this.uuid, this.habitsDir, this.recordsDir)
+      : habitFile = _buildHabitFile(habitsDir, uuid),
+        recordRootDir = _buildHabitRecordDir(recordsDir, uuid);
+
+  Uri recordSubDir(int year) => _buildRecordSubDir(recordRootDir, year);
+
+  WebDavAppSyncRecordPathBuilder record(
+          HabitRecordUUID uuid, DateTime recordDate) =>
+      WebDavAppSyncRecordPathBuilder(uuid, recordSubDir(recordDate.year));
+}
+
+class WebDavAppSyncRecordPathBuilder {
+  final HabitRecordUUID uuid;
+  final Uri recordSubDir;
+
+  final Uri recordFile;
+
+  static Uri _buildRecordFile(Uri base, HabitRecordUUID uuid) {
+    return base.replace(pathSegments: [
+      ...base.pathSegments.where((e) => e.isNotEmpty),
+      'record-$uuid.json'
+    ]);
+  }
+
+  WebDavAppSyncRecordPathBuilder(this.uuid, this.recordSubDir)
+      : recordFile = _buildRecordFile(recordSubDir, uuid);
+}
