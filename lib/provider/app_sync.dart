@@ -121,14 +121,14 @@ class AppSyncViewModel
     if (tmpNewConfig == null && !removable) return false;
     final (isSameConfig, isSameServer) = switch ((oldConfig, tmpNewConfig)) {
       (null, null) => (true, true),
-      (null, _) || (_, null) => (true, true),
+      (null, _) || (_, null) => (false, false),
       (_, _) => (
           oldConfig!.isSameConfig(tmpNewConfig!, withoutPassword: true),
           oldConfig.isSameServer(tmpNewConfig, withoutPassword: true)
         ),
     };
+    debugPrint("111 $isSameConfig $oldConfig $tmpNewConfig");
     if (isSameConfig && !forceSave) return false;
-
     AppSyncServer? buildConfig({bool withPwd = false}) =>
         (!isSameConfig || resetStatus)
             ? AppSyncServer.fromForm(form?.copyWith(

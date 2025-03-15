@@ -118,6 +118,20 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
       ) as bool);
 
   @override
+  bool isSameServer(
+    _i2.AppSyncServer? other, {
+    bool? withoutPassword = false,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isSameServer,
+          [other],
+          {#withoutPassword: withoutPassword},
+        ),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i2.AppSyncServerForm toForm() => (super.noSuchMethod(
         Invocation.method(
           #toForm,

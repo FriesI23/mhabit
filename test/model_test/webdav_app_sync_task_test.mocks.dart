@@ -311,6 +311,20 @@ class MockAppWebDavSyncServer extends _i1.Mock
       ) as bool);
 
   @override
+  bool isSameServer(
+    _i3.AppSyncServer? other, {
+    bool? withoutPassword = false,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isSameServer,
+          [other],
+          {#withoutPassword: withoutPassword},
+        ),
+        returnValue: false,
+      ) as bool);
+
+  @override
   Map<String, dynamic> toJson() => (super.noSuchMethod(
         Invocation.method(
           #toJson,
@@ -420,6 +434,20 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
       (super.noSuchMethod(
         Invocation.method(
           #isSameConfig,
+          [other],
+          {#withoutPassword: withoutPassword},
+        ),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool isSameServer(
+    _i3.AppSyncServer? other, {
+    bool? withoutPassword = false,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isSameServer,
           [other],
           {#withoutPassword: withoutPassword},
         ),

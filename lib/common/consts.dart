@@ -141,6 +141,8 @@ const loadedHabitStatus = <HabitStatus>[
   HabitStatus.archived,
 ];
 
+const sortPositionConflictIncreaseStep = 0.000001;
+const sortPositionConflictDecimalPlaces = 6;
 //#endregion
 
 //#region common
