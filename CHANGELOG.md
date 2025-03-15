@@ -2,6 +2,22 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.15.8+66
+
+- Update Traditional Chinese l10n translation, thank for Peter Dave Hello's contribution on Github.
+- Update Turkish l10n translation, thank for Bora Atıcı's contribution on Weblate.
+- Update Polish l10n translation, thank for Bartek Skrzypek's contribution on Weblate.
+- Add Code Generator/Annotation for `Proxy` design pattern classes (#228).
+- Ensure `firstday` config is applied to the calendar picker (#222, #228).
+- Skip reason is also applied during export (#227).
+- Fix several issues in database operations:
+  - Typo in variable name of custom SQL.
+  - Use the correct field type for `Record.reason`.
+  - Use "update" instead of "replace" when inserting multiple records.
+  - Use transactions when inserting multiple records.
+- Fix issue where today's status couldn't be modified on the multi-habits changer page.
+- Fix `loadData` being completed multiple times when the page initializes (#230).
+
 ## 1.15.4+62
 
 - L10n: Add Czech translation, thank for Jirka Čapek's contribution on Weblate.
