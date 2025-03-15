@@ -25,6 +25,7 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
+import '../extension/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
 import '../model/habit_date.dart';
@@ -556,25 +557,28 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> _writeChangedSortPositionToDB() async {
-    final posList = <num>[];
-    for (var e in lastSortedDataCache) {
-      if (e is HabitSummaryDataSortCache && e.data != null) {
-        posList.add(e.data!.sortPostion);
-      }
-    }
-    posList.sort();
+    final filteredlastSortedDataCache = lastSortedDataCache
+        .whereType<HabitSummaryDataSortCache>()
+        .where((e) => e.data != null)
+        .toList();
+
+    final posList = filteredlastSortedDataCache
+        .map((e) => e.data!.sortPostion)
+        .makeUniqueAndIncreasing(
+          sortPositionConflictIncreaseStep,
+          isSorted: false,
+          decimalPlaces: sortPositionConflictDecimalPlaces,
+        );
 
     final changedUUIDList = <HabitUUID>[];
     final changedPosList = <num>[];
-    var currentIndex = 0;
-    for (var e in lastSortedDataCache) {
-      if (e is HabitSummaryDataSortCache && e.data != null) {
-        final currentPos = posList[currentIndex++];
-        if (e.data!.sortPostion != currentPos) {
-          e.data!.sortPostion = currentPos;
-          changedUUIDList.add(e.uuid);
-          changedPosList.add(currentPos);
-        }
+    for (var i = 0; i < filteredlastSortedDataCache.length; i++) {
+      final data = filteredlastSortedDataCache[i];
+      final pos = posList[i];
+      if (data.data!.sortPostion != pos) {
+        data.data!.sortPostion = pos;
+        changedUUIDList.add(data.uuid);
+        changedPosList.add(pos);
       }
     }
 
