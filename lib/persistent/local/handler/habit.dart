@@ -179,8 +179,8 @@ class HabitDBHelper extends DBHelperHandler {
               count: uuidList.length,
               conflictAlgorithm: ConflictAlgorithm.rollback),
           uuidList);
-      await batch.commit(exclusive: true);
-    });
+      await batch.commit();
+    }, exclusive: true);
   }
 
   Future<int> updateSelectedHabitStatus(
