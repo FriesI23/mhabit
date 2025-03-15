@@ -36,7 +36,9 @@ class AppTextLoggerMessage implements AppLoggerMessage {
   Iterable<String?> toLogPrinterMessage() => [
         if (message != null) message,
         if (extraInfo != null)
-          ...extraInfo!.where((e) => e != null).map((e) => e.toString()),
+          ...extraInfo!
+              .where((e) => e != null)
+              .map((e) => (e is Function ? e.call() : e).toString()),
       ];
 }
 

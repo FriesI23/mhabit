@@ -57,4 +57,10 @@ enum LoggerType {
 
   /// App cache
   cache,
+
+  /// App sync process
+  appsync,
+
+  /// App sync process - for task
+  appsynctask,
 }
