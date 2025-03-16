@@ -927,7 +927,8 @@ class CheckRootDirTask implements AppSyncSubTask<WebDavConfigTaskChecklist> {
               !results.any((e) => e.path == expectedHabitsPath),
           needCreateRecordsDir:
               !results.any((e) => e.path == expectedRecordsPath),
-          needCreateReadme: !results.any((e) => e.path == expectedReadmePath));
+          needCreateWarningFile:
+              !results.any((e) => e.path == expectedReadmePath));
     });
   }
 }
