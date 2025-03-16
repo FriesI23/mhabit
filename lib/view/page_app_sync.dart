@@ -78,7 +78,7 @@ final class _AppSyncView extends State<AppSyncView> {
       case AppSyncServerEditorResultOp.delete:
         final saveResult = await context
             .read<AppSyncViewModel>()
-            .saveWithConfigForm(null, forceSave: true, removable: true);
+            .saveWithConfigForm(null, removable: true);
         if (!mounted) return;
         appLog.build.info(context,
             ex: ["onServerConfigPressed", "Deleted[$saveResult]", result]);

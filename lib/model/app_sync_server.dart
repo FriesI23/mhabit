@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -296,7 +297,8 @@ class AppWebDavSyncServer implements AppSyncServer {
         timeout == other.timeout &&
         connectRetryCount == other.connectRetryCount &&
         connectTimeout == other.connectTimeout &&
-        syncMobileNetworks.toSet() == other.syncMobileNetworks.toSet() &&
+        setEquals(
+            syncMobileNetworks.toSet(), other.syncMobileNetworks.toSet()) &&
         syncInLowData == other.syncInLowData &&
         (withoutPassword ? true : password == other.password));
   }
@@ -331,6 +333,9 @@ class AppWebDavSyncServer implements AppSyncServer {
 
   @override
   String toDebugString() {
+    final password = kDebugMode
+        ? this.password
+        : List.generate(this.password.length, (_) => "*").join();
     return """AppWebDavSyncServer(
   identity: $identity,
   createTime: $createTime,
@@ -348,6 +353,13 @@ class AppWebDavSyncServer implements AppSyncServer {
   connectRetryCount: $connectRetryCount,
 )""";
   }
+
+  @override
+  String toString() => 'AppWebDavSyncServer[$identity](path=$path,'
+      'username=$username,'
+      'password=${List.generate(password.length, (_) => "*").join()},'
+      'v|c=$verified|$configed'
+      ')';
 }
 
 @JsonSerializable()
@@ -474,6 +486,11 @@ class AppFakeSyncServer implements AppSyncServer {
 
   @override
   Map<String, dynamic> toJson() => _$AppFakeSyncServerToJson(this);
+
+  @override
+  String toString() => 'AppFakeSyncServer[$identity]('
+      'v|c=$verified|$configed'
+      ')';
 }
 
 @CopyWith(skipFields: true, copyWithNull: false)
@@ -514,7 +531,11 @@ class AppSyncServerForm {
     required this.configed,
   });
 
-  String toDebugString() => """AppSyncServerForm(
+  String toDebugString() {
+    final password = kDebugMode
+        ? this.password
+        : List.generate(this.password?.length ?? 0, (_) => "*").join();
+    return """AppSyncServerForm(
   uuid=$uuid,type=$type,
   createTime=$createTime,modifyTime=$modifyTime,
   path=$path,username=$username,password=$password,
@@ -523,5 +544,13 @@ class AppSyncServerForm {
   syncMobileNetworks=$syncMobileNetworks,
   syncInLowData=$syncInLowData,
   vertified=$verified,configed=$configed,
-)""";
+  )""";
+  }
+
+  @override
+  String toString() => 'AppSyncServerForm[$uuid](path=$path,'
+      'username=$username,'
+      'password=${List.generate(password?.length ?? 0, (_) => "*").join()},'
+      'v|c=$verified|$configed'
+      ')';
 }
