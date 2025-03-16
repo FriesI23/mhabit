@@ -18,7 +18,11 @@ import 'dart:math' as math;
 
 import 'package:pool/pool.dart';
 import 'package:simple_webdav_client/client.dart';
+import 'package:simple_webdav_client/utils.dart';
 
+import '../../common/consts.dart';
+import '../../common/exceptions.dart';
+import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
 import '../../persistent/local/handler/sync.dart';
 import '../app_sync_server.dart';
@@ -84,15 +88,20 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
 
-  late final WebDavAppSyncTaskExecutor _task;
+  late final AppSyncTask<WebDavAppSyncTaskResult> _configTask;
+  late final AppSyncTask<WebDavAppSyncTaskResult> _syncTask;
   late final String _sessionId;
+
+  AppSyncTask<WebDavAppSyncTaskResult>? _crtTask;
 
   WebDavAppSyncTask(
       {required this.config,
       required SyncDBHelper syncDBHelper,
       super.timeout = Duration.zero}) {
     _sessionId = genSessionId();
-    _task = WebDavAppSyncTaskExecutor.build(
+    _configTask =
+        WebDavAppSyncConfigTask.build(sessionId: _sessionId, config: config);
+    _syncTask = WebDavAppSyncTaskExecutor.build(
         sessionId: _sessionId, config: config, syncDBHelper: syncDBHelper);
   }
 
@@ -100,6 +109,29 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     final random = math.Random();
     return List.generate(
         8, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  static WebDavStdClient buildWebDavClient(AppWebDavSyncServer config) {
+    final httpClient = HttpClient();
+    if (config.ignoreSSL) {
+      httpClient.badCertificateCallback = (cert, host, port) => true;
+    }
+    final client = WebDavStdClient.withClient(httpClient);
+    if (config.username.isNotEmpty) {
+      int count = 0;
+      client.setAuthenticate((url, scheme, realm) async {
+        if (count++ >= 3) return false;
+        if (scheme == "Digest") {
+          client.addCredentials(config.path, realm ?? '',
+              HttpClientDigestCredentials(config.username, config.password));
+        } else {
+          client.addCredentials(config.path, realm ?? '',
+              HttpClientBasicCredentials(config.username, config.password));
+        }
+        return true;
+      });
+    }
+    return client;
   }
 
   @override
@@ -113,21 +145,41 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
             _ => WebDavAppSyncTaskResult.error(error: e, trace: s),
           });
 
+  List<
+      ({
+        AppSyncTask<WebDavAppSyncTaskResult> task,
+      })> buildTaskConfigs() => [
+        (task: _configTask),
+        (task: _syncTask),
+      ];
+
   @override
-  Future<WebDavAppSyncTaskResult> exec() {
-    final future = _task.run();
-    appLog.appsynctask.info(this, ex: ['started', config, _task]);
+  Future<WebDavAppSyncTaskResult> exec() async {
+    final taskConfigs = buildTaskConfigs();
+    var result = const WebDavAppSyncTaskResult.success();
+    for (var taskConfig in taskConfigs) {
+      _crtTask = taskConfig.task;
+      result = await doExecTask(taskConfig.task);
+      if (!result.isSuccessed) return result;
+    }
+    return result;
+  }
+
+  Future<WebDavAppSyncTaskResult> doExecTask(
+      AppSyncTask<WebDavAppSyncTaskResult> task) {
+    final future = task.run();
+    appLog.appsynctask.info(this, ex: ['started', config, task]);
     return future.then((result) {
       if (result.isSuccessed || result.isCancelled) {
-        appLog.appsynctask.info(this, ex: ['completed', result, config, _task]);
+        appLog.appsynctask.info(this, ex: ['completed', result, config, task]);
       } else if (result.withError) {
         appLog.appsynctask.info(this,
-            ex: ['comeplte with error', result, config, _task],
+            ex: ['comeplte with error', result, config, task],
             error: result.error.error,
             stackTrace: result.error.trace);
       } else {
         appLog.appsynctask.info(this,
-            ex: ['comeplted', result, config, _task],
+            ex: ['comeplted', result, config, task],
             error: result.error.error,
             stackTrace: result.error.trace);
       }
@@ -137,7 +189,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
 
   @override
   Future<void> cancel() {
-    _task.cancel();
+    _crtTask?.cancel();
     return super.cancel();
   }
 
@@ -180,35 +232,15 @@ class WebDavAppSyncTaskExecutor
     required String sessionId,
     required AppWebDavSyncServer config,
     required SyncDBHelper syncDBHelper,
+    WebDavStdClient? overwriteClient,
   }) {
-    WebDavStdClient buildWebDavClient() {
-      final httpClient = HttpClient();
-      if (config.ignoreSSL) {
-        httpClient.badCertificateCallback = (cert, host, port) => true;
-      }
-      final client = WebDavStdClient.withClient(httpClient);
-      if (config.username.isNotEmpty) {
-        int count = 0;
-        client.setAuthenticate((url, scheme, realm) async {
-          if (count++ >= 3) return false;
-          if (scheme == "Digest") {
-            client.addCredentials(config.path, realm ?? '',
-                HttpClientDigestCredentials(config.username, config.password));
-          } else {
-            client.addCredentials(config.path, realm ?? '',
-                HttpClientBasicCredentials(config.username, config.password));
-          }
-          return true;
-        });
-      }
-      return client;
-    }
-
-    final client = buildWebDavClient();
+    final client =
+        overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
 
     return WebDavAppSyncTaskExecutor(
       sessionId: sessionId,
       config: config,
+      client: overwriteClient == null ? client : null,
       fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
           WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
@@ -256,7 +288,6 @@ class WebDavAppSyncTaskExecutor
           ),
         ),
       ),
-      client: client,
     );
   }
 
@@ -311,5 +342,113 @@ class WebDavAppSyncTaskExecutor
     resultMap.forEach((k, v) =>
         appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------"));
     return WebDavAppSyncTaskResult.success();
+  }
+}
+
+class WebDavAppSyncConfigTask
+    extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
+  static const warningFileData = """⚠ WARNING ⚠
+
+This directory is managed by an automatic WebDAV sync process of $appName.
+Do NOT manually modify, delete, or add files/folders in this directory
+unless you know exactly what you are doing.
+
+Unexpected changes may lead to data loss or sync conflicts.
+
+Proceed with caution!
+""";
+
+  @override
+  final AppWebDavSyncServer config;
+  @override
+  final String sessionId;
+
+  final AppSyncSubTask<WebDavConfigTaskChecklist> checkRootDirTask;
+  final AppSyncSubTask createRootDir;
+  final AppSyncSubTask createHabitsDir;
+  final AppSyncSubTask createRecordsDir;
+  final AppSyncSubTask createWarningFile;
+
+  late final WeakReference<WebDavStdClient>? _client;
+
+  WebDavAppSyncConfigTask({
+    required this.config,
+    required this.sessionId,
+    super.timeout = Duration.zero,
+    required this.checkRootDirTask,
+    required this.createRootDir,
+    required this.createHabitsDir,
+    required this.createRecordsDir,
+    required this.createWarningFile,
+    WebDavStdClient? client,
+  }) {
+    _client = client != null ? WeakReference(client) : null;
+  }
+
+  factory WebDavAppSyncConfigTask.build({
+    required String sessionId,
+    required AppWebDavSyncServer config,
+    WebDavStdClient? overwriteClient,
+  }) {
+    final client =
+        overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
+
+    final rootPathBuilder = WebDavAppSyncPathBuilder(config.path);
+    final rootDir = rootPathBuilder.root;
+    final habitsDir = rootPathBuilder.habitsDir;
+    final recordsDir = rootPathBuilder.recordsDir;
+    final warningFile = rootPathBuilder.warningFile;
+
+    return WebDavAppSyncConfigTask(
+        sessionId: sessionId,
+        config: config,
+        client: overwriteClient == null ? client : null,
+        checkRootDirTask: CheckRootDirTask(
+            expectedHabitsPath: habitsDir,
+            expectedRecordsPath: recordsDir,
+            expectedReadmePath: warningFile,
+            fetchRootDirTask: FetchMetaFromServerTask(
+              path: rootDir,
+              client: client,
+              depth: Depth.members,
+              filter: (resource) =>
+                  (resource..tryToRaiseError()).path.path != rootDir.path,
+            )),
+        createRootDir: MkDirOnServerTask(path: rootDir, client: client),
+        createHabitsDir: MkDirOnServerTask(path: habitsDir, client: client),
+        createRecordsDir: MkDirOnServerTask(path: recordsDir, client: client),
+        createWarningFile: UploadDataToServerTask(
+            path: warningFile, data: warningFileData, client: client));
+  }
+
+  @override
+  Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
+    appLog.appsynctask
+        .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    Error.throwWithStackTrace(e, s);
+  }
+
+  @override
+  Future<WebDavAppSyncTaskResult> exec() {
+    return doExec().whenComplete(() {
+      final client = _client?.target;
+      if (client != null && !client.closed) _client?.target?.close();
+    });
+  }
+
+  Future<WebDavAppSyncTaskResult> doExec() async {
+    final checkResult = await checkRootDirTask
+        .run(this)
+        .onError<HttpStatusException>((e, s) async {
+      if (e.status != HttpStatus.notFound) Error.throwWithStackTrace(e, s);
+      return createRootDir.run(this).then((_) => checkRootDirTask.run(this));
+    });
+    if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+    await Future.wait([
+      if (checkResult.needCreateHabitsDir) createHabitsDir.run(this),
+      if (checkResult.needCreateRecordsDir) createRecordsDir.run(this),
+      if (checkResult.needCreateWarningFile) createWarningFile.run(this)
+    ]);
+    return const WebDavAppSyncTaskResult.success();
   }
 }

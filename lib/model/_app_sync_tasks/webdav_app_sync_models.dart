@@ -161,6 +161,50 @@ class WebDavResourceContainer {
   String toString() => 'WebDavResourceContainer(path=$path, etag=<$etag>)';
 }
 
+abstract interface class WebDavConfigTaskChecklist {
+  bool get needCreateHabitsDir;
+  bool get needCreateRecordsDir;
+  bool get needCreateWarningFile;
+  bool get isEmptyDir;
+
+  factory WebDavConfigTaskChecklist.dirChecker(
+          {required bool needCreateHabitsDir,
+          required bool needCreateRecordsDir,
+          required bool needCreateReadme}) =>
+      WebDavConfigTaskChecklistDirImpl(
+          needCreateHabitsDir: needCreateHabitsDir,
+          needCreateRecordsDir: needCreateRecordsDir,
+          needCreateWarningFile: needCreateReadme);
+}
+
+final class WebDavConfigTaskChecklistDirImpl
+    implements WebDavConfigTaskChecklist {
+  @override
+  final bool needCreateHabitsDir;
+
+  @override
+  final bool needCreateRecordsDir;
+
+  @override
+  final bool needCreateWarningFile;
+
+  const WebDavConfigTaskChecklistDirImpl(
+      {required this.needCreateHabitsDir,
+      required this.needCreateRecordsDir,
+      required this.needCreateWarningFile});
+
+  @override
+  bool get isEmptyDir =>
+      !(needCreateHabitsDir || needCreateRecordsDir || needCreateWarningFile);
+
+  @override
+  String toString() => 'WebDavConfigTaskChecklistDirImpl('
+      'needCreateHabitsDir=$needCreateHabitsDir, '
+      'needCreateRecordsDir=$needCreateRecordsDir, '
+      'needCreateReadme=$needCreateWarningFile'
+      ')';
+}
+
 class WebDavSyncRecordKey {
   static const String recordDate = 'record_date';
   static const String recordType = 'record_type';
@@ -474,18 +518,22 @@ class WebDavAppSyncPathBuilder {
 
   final Uri habitsDir;
   final Uri recordsDir;
+  final Uri warningFile;
 
-  static Uri _buildPath(Uri root, String subDir) {
+  static Uri _buildPath(Uri root, String path, {bool isDir = false}) {
     return root.replace(pathSegments: [
       ...root.pathSegments.where((e) => e.isNotEmpty),
-      subDir,
-      ''
+      path,
+      if (isDir) ''
     ]);
   }
 
-  WebDavAppSyncPathBuilder(this.root)
-      : habitsDir = _buildPath(root, 'habits'),
-        recordsDir = _buildPath(root, 'records');
+  WebDavAppSyncPathBuilder(Uri root)
+      : root = _buildPath(root, '', isDir: true),
+        habitsDir = _buildPath(root, 'habits', isDir: true),
+        recordsDir = _buildPath(root, 'records', isDir: true),
+        warningFile = _buildPath(root, '!!!_WARNING_DO_NOT_MODIFY_BY_HAND_!!!',
+            isDir: false);
 
   WebDavAppSyncHabitPathBuilder habit(HabitUUID uuid) =>
       WebDavAppSyncHabitPathBuilder(uuid, habitsDir, recordsDir);

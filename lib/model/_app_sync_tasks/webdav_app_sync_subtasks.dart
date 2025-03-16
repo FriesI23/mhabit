@@ -792,7 +792,8 @@ class UploadDataToServerTask implements AppSyncSubTask<String?> {
                       IfAnd.notag([IfCondition.etag(etag!)])
                     ])
                   : null)
-          .then((request) => request.close())
+          .then((request) =>
+              (request..request.headers.contentType = ContentType.text).close())
           .then((response) async {
         appLog.appsynctask.debug(context, ex: [
           "uplaod file",
@@ -903,5 +904,30 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
         ex: ['habit uploaded', habitUUID, habitSyncEtag, habitFilePath, data]);
 
     return (habitEtag: habitSyncEtag, recordEtagMap: recordSyncEtagMap);
+  }
+}
+
+class CheckRootDirTask implements AppSyncSubTask<WebDavConfigTaskChecklist> {
+  final Uri expectedHabitsPath;
+  final Uri expectedRecordsPath;
+  final Uri expectedReadmePath;
+  final AppSyncSubTask<List<WebDavResourceContainer>> fetchRootDirTask;
+
+  const CheckRootDirTask(
+      {required this.expectedHabitsPath,
+      required this.expectedRecordsPath,
+      required this.expectedReadmePath,
+      required this.fetchRootDirTask});
+
+  @override
+  Future<WebDavConfigTaskChecklist> run(AppSyncContext context) {
+    return fetchRootDirTask.run(context).then((results) {
+      return WebDavConfigTaskChecklist.dirChecker(
+          needCreateHabitsDir:
+              !results.any((e) => e.path == expectedHabitsPath),
+          needCreateRecordsDir:
+              !results.any((e) => e.path == expectedRecordsPath),
+          needCreateReadme: !results.any((e) => e.path == expectedReadmePath));
+    });
   }
 }
