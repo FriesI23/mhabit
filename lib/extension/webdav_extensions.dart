@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:io';
-
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart';
+
+import '../common/exceptions.dart';
 
 extension WebDavResourceExtention on WebDavStdResource {
   WebDavStdResourceProp<String> get getetag =>
@@ -34,7 +34,8 @@ extension WebDavResourceExtention on WebDavStdResource {
       if (error != null) throw error;
     }
     if (raiseStatus && status > 300) {
-      throw HttpException("Http request failed, status=$status", uri: path);
+      throw HttpStatusException("Http request failed, status=$status", status,
+          uri: path);
     }
   }
 }

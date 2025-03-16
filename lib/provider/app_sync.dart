@@ -16,10 +16,12 @@ import 'dart:math' as math;
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../common/consts.dart';
+import '../common/global.dart';
 import '../logging/helper.dart';
 import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
@@ -27,6 +29,7 @@ import '../model/app_sync_task.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
+import '../view/common/app_sync_confirm_dialog.dart';
 import 'commons.dart';
 
 part 'app_sync.g.dart';
@@ -113,9 +116,7 @@ class AppSyncViewModel
   }
 
   Future<bool> saveWithConfigForm(AppSyncServerForm? form,
-      {bool forceSave = false,
-      bool resetStatus = true,
-      bool removable = false}) async {
+      {bool resetStatus = true, bool removable = false}) async {
     final oldConfig = serverConfig;
     final tmpNewConfig = AppSyncServer.fromForm(form);
     if (tmpNewConfig == null && !removable) return false;
@@ -127,8 +128,16 @@ class AppSyncViewModel
           oldConfig.isSameServer(tmpNewConfig, withoutPassword: true)
         ),
     };
-    debugPrint("111 $isSameConfig $oldConfig $tmpNewConfig");
-    if (isSameConfig && !forceSave) return false;
+    appLog.appsync.info("saveWithConfigForm",
+        ex: [resetStatus, removable, oldConfig, tmpNewConfig]);
+    appLog.appsync.debug("saveWithConfigForm.verbose", ex: [
+      isSameConfig,
+      isSameServer,
+      form?.toDebugString,
+      oldConfig?.toDebugString,
+      tmpNewConfig?.toDebugString
+    ]);
+
     AppSyncServer? buildConfig({bool withPwd = false}) =>
         (!isSameConfig || resetStatus)
             ? AppSyncServer.fromForm(form?.copyWith(
@@ -273,8 +282,27 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
           case AppWebDavSyncServer():
             final password = await root.getPassword(identity: config.identity);
             return WebDavAppSyncTask(
-                config: config.copyWith(password: password),
-                syncDBHelper: root.syncDBHelper);
+              config: config.copyWith(password: password),
+              syncDBHelper: root.syncDBHelper,
+              onConfigTaskComplete: (result) {
+                if (!result.isSuccessed || config.configed) return;
+                final crtConfig = root._serverConfig?.get();
+                if (crtConfig == null) return;
+                if (config.isSameConfig(crtConfig)) {
+                  root._serverConfig?.set(config.copyWith(configed: true));
+                }
+              },
+              onNeedConfirmCallback: (checklist) {
+                final context = navigatorKey.currentState?.context;
+                if (context == null) return true;
+                return showDialog<bool>(
+                  context: context,
+                  builder: (context) => checklist.isEmptyDir
+                      ? const AppSyncWebDavNewServerConfirmDialog()
+                      : const AppSyncWebDavOldServerConfirmDialog(),
+                ).then((value) => value ?? false);
+              },
+            );
           default:
             return buildDefaultTask();
         }
