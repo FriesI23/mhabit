@@ -139,7 +139,10 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     if (config.username.isNotEmpty) {
       int count = 0;
       client.setAuthenticate((url, scheme, realm) async {
-        if (count++ >= 3) return false;
+        if (count++ >= 3) {
+          count = 0;
+          return false;
+        }
         if (scheme == "Digest") {
           client.addCredentials(config.path, realm ?? '',
               HttpClientDigestCredentials(config.username, config.password));
