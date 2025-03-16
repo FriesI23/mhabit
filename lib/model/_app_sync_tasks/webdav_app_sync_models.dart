@@ -70,15 +70,19 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
   void makeDirty() => _includeDirtyMark = true;
 
   @override
-  bool get isNeedDownload =>
-      status == WebDavAppSyncInfoStatus.server ||
-      eTagFromLocal != eTagFromServer;
+  bool get isNeedDownload => switch (status) {
+        WebDavAppSyncInfoStatus.server => true,
+        WebDavAppSyncInfoStatus.local => false,
+        WebDavAppSyncInfoStatus.both => eTagFromLocal != eTagFromServer,
+      };
 
   @override
-  bool get isNeedUpload =>
-      status == WebDavAppSyncInfoStatus.local ||
-      includeDirtyMark ||
-      configUUID != lastConfgUUID;
+  bool get isNeedUpload => switch (status) {
+        WebDavAppSyncInfoStatus.server => false,
+        WebDavAppSyncInfoStatus.local => true,
+        WebDavAppSyncInfoStatus.both =>
+          includeDirtyMark || configUUID != lastConfgUUID,
+      };
 }
 
 class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
@@ -170,11 +174,21 @@ abstract interface class WebDavConfigTaskChecklist {
   factory WebDavConfigTaskChecklist.dirChecker(
           {required bool needCreateHabitsDir,
           required bool needCreateRecordsDir,
-          required bool needCreateReadme}) =>
-      WebDavConfigTaskChecklistDirImpl(
-          needCreateHabitsDir: needCreateHabitsDir,
-          needCreateRecordsDir: needCreateRecordsDir,
-          needCreateWarningFile: needCreateReadme);
+          required bool needCreateWarningFile}) =>
+      switch ((
+        needCreateHabitsDir,
+        needCreateRecordsDir,
+        needCreateWarningFile
+      )) {
+        (true, true, true) => const WebDavConfigTaskChecklistDirImpl(
+            needCreateHabitsDir: true,
+            needCreateRecordsDir: true,
+            needCreateWarningFile: true),
+        (_, _, _) => WebDavConfigTaskChecklistDirImpl(
+            needCreateHabitsDir: needCreateHabitsDir,
+            needCreateRecordsDir: needCreateRecordsDir,
+            needCreateWarningFile: needCreateWarningFile)
+      };
 }
 
 final class WebDavConfigTaskChecklistDirImpl
@@ -195,7 +209,7 @@ final class WebDavConfigTaskChecklistDirImpl
 
   @override
   bool get isEmptyDir =>
-      !(needCreateHabitsDir || needCreateRecordsDir || needCreateWarningFile);
+      needCreateHabitsDir && needCreateRecordsDir && needCreateWarningFile;
 
   @override
   String toString() => 'WebDavConfigTaskChecklistDirImpl('

@@ -26,5 +26,7 @@ bool debugClearSharedPrefWhenStart = false;
 LogLevel kAppLogLevel = getDefaultLogLevel();
 //#endregion
 
-final GlobalKey<ScaffoldMessengerState> snackbarKey =
-    GlobalKey<ScaffoldMessengerState>();
+//#region ui global key
+final snackbarKey = GlobalKey<ScaffoldMessengerState>();
+final navigatorKey = GlobalKey<NavigatorState>();
+//#endregion

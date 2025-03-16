@@ -190,6 +190,7 @@ class BasicAppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
+      navigatorKey: navigatorKey,
       scaffoldMessengerKey: snackbarKey,
       theme: lightThemeBuilder?.call(),
       darkTheme: darkThemeBuilder?.call(),
