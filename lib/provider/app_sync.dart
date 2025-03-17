@@ -14,7 +14,9 @@
 
 import 'dart:math' as math;
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:data_saver/data_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -116,22 +118,19 @@ class AppSyncViewModel
   }
 
   Future<bool> saveWithConfigForm(AppSyncServerForm? form,
-      {bool resetStatus = true, bool removable = false}) async {
+      {bool resetStatus = false, bool removable = false}) async {
     final oldConfig = serverConfig;
     final tmpNewConfig = AppSyncServer.fromForm(form);
     if (tmpNewConfig == null && !removable) return false;
-    final (isSameConfig, isSameServer) = switch ((oldConfig, tmpNewConfig)) {
-      (null, null) => (true, true),
-      (null, _) || (_, null) => (false, false),
-      (_, _) => (
-          oldConfig!.isSameConfig(tmpNewConfig!, withoutPassword: true),
-          oldConfig.isSameServer(tmpNewConfig, withoutPassword: true)
-        ),
+
+    final isSameServer = switch ((oldConfig, tmpNewConfig)) {
+      (null, null) => true,
+      (null, _) || (_, null) => false,
+      (_, _) => oldConfig!.isSameServer(tmpNewConfig!, withoutPassword: true)
     };
     appLog.appsync.info("saveWithConfigForm",
         ex: [resetStatus, removable, oldConfig, tmpNewConfig]);
     appLog.appsync.debug("saveWithConfigForm.verbose", ex: [
-      isSameConfig,
       isSameServer,
       form?.toDebugString,
       oldConfig?.toDebugString,
@@ -139,7 +138,7 @@ class AppSyncViewModel
     ]);
 
     AppSyncServer? buildConfig({bool withPwd = false}) =>
-        (!isSameConfig || resetStatus)
+        (!isSameServer || resetStatus)
             ? AppSyncServer.fromForm(form?.copyWith(
                 uuid: isSameServer
                     ? form.uuid
@@ -179,6 +178,16 @@ class AppSyncViewModel
       return value;
     });
   }
+
+  Future<void> startSync() => appSyncTask.shouldSync().then((result) {
+        if (!result) {
+          final config = _serverConfig?.get();
+          appLog.appsync.info("$runtimeType.startSync",
+              ex: ["cant't sync now", config?.toDebugString]);
+          return null;
+        }
+        return appSyncTask.startSync();
+      });
 }
 
 @CopyWith(skipFields: false, copyWithNull: false)
@@ -311,6 +320,42 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         return buildDefaultTask();
     }
   }
+
+  Future<bool> shouldSync() async {
+    final config = root._serverConfig?.get();
+    if (config == null) return false;
+    switch (config.type) {
+      case AppSyncServerType.unknown:
+        return false;
+      case AppSyncServerType.fake:
+        return kDebugMode;
+      case AppSyncServerType.webdav:
+        switch (config) {
+          case AppWebDavSyncServer():
+            return shouldSyncInWebDav(config);
+          default:
+            throw UnimplementedError(
+                "<${config.runtimeType}> isn't support yet, got $config");
+        }
+    }
+  }
+
+  Future<bool> shouldSyncInWebDav(AppWebDavSyncServer config) =>
+      Future.wait<bool>([
+        if (!config.syncInLowData)
+          const DataSaver()
+              .checkMode()
+              .then((mode) => mode == DataSaverMode.disabled),
+        Connectivity().checkConnectivity().then((results) => results
+            .map((e) => switch (e) {
+                  ConnectivityResult.wifi => config.syncMobileNetworks
+                      .contains(AppSyncServerMobileNetwork.wifi),
+                  ConnectivityResult.mobile => config.syncMobileNetworks
+                      .contains(AppSyncServerMobileNetwork.mobile),
+                  _ => true,
+                })
+            .any((e) => e)),
+      ]).then((results) => results.every((e) => e));
 
   Future<void> startSync() async {
     final config = root._serverConfig?.get();
