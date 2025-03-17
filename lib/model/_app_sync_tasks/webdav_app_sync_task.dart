@@ -108,12 +108,11 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   WebDavAppSyncTask({
     required this.config,
     required SyncDBHelper syncDBHelper,
-    super.timeout = Duration.zero,
     Duration? configConfirmTimeout = const Duration(seconds: 60),
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
         onNeedConfirmCallback,
     this.onConfigTaskComplete,
-  }) {
+  }) : super(timeout: config.timeout ?? Duration.zero) {
     _sessionId = genSessionId();
     _configTask = WebDavAppSyncConfigTask.build(
         sessionId: _sessionId,
@@ -161,11 +160,14 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
 
   @override
   Future<WebDavAppSyncTaskResult> error([Object? e, StackTrace? s]) =>
-      Future.sync(() => switch (e) {
-            TimeoutException() =>
-              WebDavAppSyncTaskResult.timeout(error: e, trace: s),
-            _ => WebDavAppSyncTaskResult.error(error: e, trace: s),
-          });
+      Future.sync(() {
+        _crtTask?.cancel();
+        return switch (e) {
+          TimeoutException() =>
+            WebDavAppSyncTaskResult.timeout(error: e, trace: s),
+          _ => WebDavAppSyncTaskResult.error(error: e, trace: s),
+        };
+      });
 
   List<
       ({
@@ -181,9 +183,11 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   Future<WebDavAppSyncTaskResult> exec() async {
     final taskConfigs = buildTaskConfigs();
     var result = const WebDavAppSyncTaskResult.success();
+    if (isDone) return this.result;
     for (var taskConfig in taskConfigs) {
       _crtTask = taskConfig.task;
       result = await doExecTask(taskConfig.task);
+      if (isDone) return this.result;
       taskConfig.onComplete?.call(result);
       if (!result.isSuccessed) return result;
     }
@@ -193,18 +197,18 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   Future<WebDavAppSyncTaskResult> doExecTask(
       AppSyncTask<WebDavAppSyncTaskResult> task) {
     final future = task.run();
-    appLog.appsynctask.info(this, ex: ['started', config, task]);
+    appLog.appsynctask.info(task, ex: ['started', config]);
     return future.then((result) {
       if (result.isSuccessed || result.isCancelled) {
-        appLog.appsynctask.info(this, ex: ['completed', result, config, task]);
+        appLog.appsynctask.info(task, ex: ['completed', result, config]);
       } else if (result.withError) {
-        appLog.appsynctask.info(this,
-            ex: ['comeplte with error', result, config, task],
+        appLog.appsynctask.info(task,
+            ex: ['comeplte with error', result, config],
             error: result.error.error,
             stackTrace: result.error.trace);
       } else {
-        appLog.appsynctask.info(this,
-            ex: ['comeplted', result, config, task],
+        appLog.appsynctask.info(task,
+            ex: ['comeplted', result, config],
             error: result.error.error,
             stackTrace: result.error.trace);
       }
@@ -322,6 +326,7 @@ class WebDavAppSyncTaskExecutor
   Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
     appLog.appsynctask
         .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    cancel();
     Error.throwWithStackTrace(e, s);
   }
 
@@ -465,6 +470,7 @@ Proceed with caution!
   Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
     appLog.appsynctask
         .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    cancel();
     Error.throwWithStackTrace(e, s);
   }
 
