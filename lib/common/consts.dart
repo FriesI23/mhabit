@@ -93,8 +93,8 @@ const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
-const defaultAppSyncTimeout = Duration(seconds: 60);
-const defaultAppSyncConnectTimeout = Duration(seconds: 10);
+const defaultAppSyncTimeout = Duration(seconds: 180);
+const defaultAppSyncConnectTimeout = Duration(seconds: 5);
 const int? defaultAppSyncConnectRetryCount = null; // null for infinity
 const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
 //#endregion

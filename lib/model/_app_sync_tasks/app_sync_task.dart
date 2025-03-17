@@ -88,7 +88,7 @@ abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
 
   Future<T> exec();
 
-  Future<T> error(Object e, StackTrace s);
+  FutureOr<T> error(Object e, StackTrace s);
 
   @override
   Future<T> run() {
@@ -98,13 +98,14 @@ abstract class AppSyncTaskFramework<T extends AppSyncTaskResult>
     (timeout != Duration.zero ? exec().timeout(timeout) : exec())
         .onError(error)
         .then((result) {
-      if (!_completer.isCompleted) _completer.complete(result);
+      if (_completer.isCompleted) return;
+      _completer.complete(result);
       _status = _status == AppSyncTaskStatus.cancelling && result.isCancelled
           ? AppSyncTaskStatus.cancelled
           : AppSyncTaskStatus.completed;
     }).catchError((e, s) {
-      if (!_completer.isCompleted) _completer.completeError(e, s);
-      Error.throwWithStackTrace(e, s);
+      if (_completer.isCompleted) return;
+      _completer.completeError(e, s);
     });
 
     return result;

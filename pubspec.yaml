@@ -65,6 +65,7 @@ dependencies:
   open_file_plus: ^3.4.1+1
   archive: ^4.0.2
   simple_webdav_client: ^0.2.0
+  retry: ^3.1.2
 
   # Fonts and Icons
   named_html_color: ^0.0.3+1
