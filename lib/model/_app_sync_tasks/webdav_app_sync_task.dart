@@ -134,6 +134,9 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     if (config.ignoreSSL) {
       httpClient.badCertificateCallback = (cert, host, port) => true;
     }
+    if (config.connectTimeout != Duration.zero) {
+      httpClient.connectionTimeout = config.connectTimeout;
+    }
     final client = WebDavStdClient.withClient(httpClient);
     if (config.username.isNotEmpty) {
       int count = 0;
