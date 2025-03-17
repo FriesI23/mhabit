@@ -59,7 +59,7 @@ class RecordDBCell with DBCell {
   @JsonKey(name: RecordDBCellKey.parentUUID)
   final HabitUUID? parentUUID;
   @JsonKey(name: RecordDBCellKey.reason)
-  final HabitUUID? reason;
+  final String? reason;
 
   RecordDBCell(
       {this.id,
@@ -101,30 +101,45 @@ class RecordDBHelper extends DBHelperHandler {
   String get habitTable => TableName.habits;
 
   Future<int> insertNewRecord(RecordDBCell record) {
-    return db.insert(table, record.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    assert(record.uuid != null);
+
+    return db.insert(table, record.toJson());
   }
 
-  Future<Iterable<int>> insertMultiRecords(Iterable<RecordDBCell> records,
+  Future<void> insertMultiRecords(Iterable<RecordDBCell> records,
       {bool updateIfExist = false}) async {
-    final bath = db.batch();
-    for (var record in records) {
-      bath.insert(table, record.toJson(),
-          conflictAlgorithm: updateIfExist
-              ? ConflictAlgorithm.replace
-              : ConflictAlgorithm.ignore);
-    }
-    final result = await bath.commit(noResult: false);
-    return result.map((e) => e as int);
+    await db.transaction((db) async {
+      final tasks = <Future>[];
+      for (var record in records) {
+        tasks.add(
+          db
+              .query(table,
+                  where: "${RecordDBCellKey.uuid} = ?",
+                  whereArgs: [record.uuid],
+                  limit: 1)
+              .then((result) async {
+            if (result.isEmpty) {
+              await db.insert(table, record.toJson(),
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            } else {
+              await db.update(table, record.toJson(),
+                  where: '${RecordDBCellKey.uuid} = ?',
+                  whereArgs: [record.uuid],
+                  conflictAlgorithm: ConflictAlgorithm.ignore);
+            }
+          }),
+        );
+      }
+
+      await Future.wait(tasks);
+    });
   }
 
   Future<int> updateRecord(RecordDBCell record) {
     assert(record.uuid != null);
 
     return db.update(table, record.toJson(),
-        where: '${RecordDBCellKey.uuid} = ?',
-        whereArgs: [record.uuid],
-        conflictAlgorithm: ConflictAlgorithm.rollback);
+        where: '${RecordDBCellKey.uuid} = ?', whereArgs: [record.uuid]);
   }
 
   static const _loadRecordDataColumns = [

@@ -24,7 +24,7 @@ BEGIN
   WHERE uuid = NEW.uuid;
 END""";
 
-  static const String autoUpdateHabitssModifyTimeTrigger = """
+  static const String autoUpdateHabitsModifyTimeTrigger = """
 CREATE TRIGGER auto_update_mh_habits_modify_t
 AFTER UPDATE ON ${TableName.habits}
 BEGIN

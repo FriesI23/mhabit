@@ -1,9 +1,3 @@
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
-
-# Released v1.15.8+66
-
 - Update Traditional Chinese l10n translation, thank for Peter Dave Hello's contribution on Github.
 - Update Turkish l10n translation, thank for Bora Atıcı's contribution on Weblate.
 - Update Polish l10n translation, thank for Bartek Skrzypek's contribution on Weblate.

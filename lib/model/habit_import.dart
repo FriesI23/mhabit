@@ -39,7 +39,7 @@ class HabitImport {
         type: habitDBCell.type ?? defaultHabitType.dbCode);
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
-      final results = await recordDBHelper.insertMultiRecords(
+      await recordDBHelper.insertMultiRecords(
         habitExportData.getRecordDBCells().map(
               (e) => e.copyWith(
                 parentId: dbid,
@@ -49,7 +49,7 @@ class HabitImport {
             ),
       );
       appLog.import.info("$runtimeType._importHabitData",
-          ex: ["with records", dbid, habitDBCell, results]);
+          ex: ["with records", dbid, habitDBCell]);
     } else {
       appLog.import.info("$runtimeType._importHabitData",
           ex: ["without records", dbid, habitDBCell]);

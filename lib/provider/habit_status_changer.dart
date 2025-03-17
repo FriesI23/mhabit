@@ -99,56 +99,84 @@ class HabitStatusChangerViewModel
 
   //#region loading data
   void _cancelLoading() {
-    if (_loading?.isCompleted != true) {
-      appLog.load.info("$runtimeType._cancelLoading", ex: [_loading]);
-      _loading?.operation.cancel();
+    final loading = _loading;
+    if (loading == null) return;
+
+    void onCancelled() {
+      if (_loading == loading) _loading = null;
+      appLog.load.info("$runtimeType._cancelLoading",
+          ex: ['cancelled', loading.hashCode]);
     }
-    _loading = null;
+
+    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
+    if (loading.isCompleted || loading.isCanceled) {
+      onCancelled();
+    } else {
+      loading.operation.cancel();
+      onCancelled();
+    }
   }
 
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    if (_loading != null) {
-      appLog.load.warn("$runtimeType.loadData", ex: ["data already loaded"]);
-      return _loading?.operation.value;
+    final crtLoading = _loading;
+    if (crtLoading != null && !crtLoading.isCanceled) {
+      appLog.load.warn("$runtimeType.loadData",
+          ex: ["data already loaded", crtLoading.isCompleted]);
+      return crtLoading.operation.valueOrCancellation();
     }
+
+    final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
       appLog.load.error("$runtimeType.load",
-          ex: errmsg, stackTrace: LoggerStackTrace.from(StackTrace.current));
-      _loading?.completeError(
-          FlutterError(errmsg.join(" ")), StackTrace.current);
+          ex: [...errmsg, loading.hashCode],
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      if (!loading.isCompleted) {
+        loading.completeError(
+            FlutterError(errmsg.join(" ")), StackTrace.current);
+      }
+    }
+
+    void loadingCancelled() {
+      appLog.load
+          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
     }
 
     Future<void> loadingData() async {
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
+      if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", _loading.hashCode, listen]);
-      if (!mounted) return loadingFailed(["viewmodel disposed"]);
+          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+
       // init habits
       final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
           uuidFilter: _selectedUUIDList);
       final recordLoadTask =
           recordDBHelper.loadAllRecords(uuidFilter: _selectedUUIDList);
-      _data.initDataFromDBQueuryResult(
-          await habitLoadTask, await recordLoadTask);
-      if (!mounted) return loadingFailed(["viewmodel disposed"]);
+      final habitLoaded = await habitLoadTask;
+      final recordLoaded = await recordLoadTask;
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
+      if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
+      _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
       _reDispached();
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
-      _loading?.complete();
+      loading.complete();
       // reload
       if (listen) {
         if (inFutureBuilder) _dataDelate = HabitsDataDelagate(this);
         notifyListeners();
       }
       appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", _loading.hashCode, listen]);
+          ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
     }
 
-    _loading = CancelableCompleter<void>();
     loadingData();
-    return _loading?.operation.value;
+    return loading.operation.valueOrCancellation();
   }
   //#endregion
 
@@ -283,7 +311,7 @@ class HabitStatusChangerViewModel
   Future<int> saveSelectStatus({bool listen = true}) async {
     if (!mounted || !canSave) return 0;
     final records = dataDelegate.habits
-        .where((e) => e.startDate.isBefore(_form.selectDate))
+        .where((e) => e.startDate <= _form.selectDate)
         .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
         .where((e) => e.item1 != null)
         .map((e) {
