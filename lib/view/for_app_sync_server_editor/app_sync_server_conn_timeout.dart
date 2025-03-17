@@ -23,7 +23,7 @@ import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
 class AppSyncServerConnTimeoutTile extends StatefulWidget {
-  static const kAllowdMaxTimeoutSecond = 600;
+  static const kAllowdMaxTimeoutSecond = 1800;
 
   final EdgeInsetsGeometry? contentPadding;
 

@@ -66,17 +66,20 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
   Future<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     final targetClass = annotation.read('targetClass').typeValue;
+    final useAnnotatedName = annotation.read('useAnnotatedName').boolValue;
 
     if (targetClass is! InterfaceType) {
       throw Exception('The target class should be a valid class.');
     }
 
-    final baseClassName = targetClass.getDisplayString();
+    final targetClassName = targetClass.getDisplayString();
+    final baseClassName =
+        useAnnotatedName ? element.name : targetClass.getDisplayString();
 
     final buffer = StringBuffer();
-    buffer
-        .writeln('class _\$${baseClassName}Proxy implements $baseClassName {');
-    buffer.writeln('  final $baseClassName _base;');
+    buffer.writeln(
+        'class _\$${baseClassName}Proxy implements $targetClassName {');
+    buffer.writeln('  final $targetClassName _base;');
     buffer.writeln('');
     buffer.writeln('  _\$${baseClassName}Proxy(this._base);');
     buffer.writeln('');
@@ -139,14 +142,15 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
         skipBuildFields.add(accessor.name);
       }
       if (accessor.isSetter) {
+        final accessorName = accessor.name.replaceFirst('=', '');
         buffer.writeln('  @override');
         tryToGenDeprecatedFlag(accessor, intent: 2);
         buffer.writeln('  '
-            'set ${accessor.name.replaceFirst('=', '')}'
+            'set $accessorName'
             '(${accessor.parameters.first.type.getDisplayString()} value) '
-            '=> _base.${accessor.name} = value;');
+            '=> _base.$accessorName = value;');
         buffer.writeln('');
-        skipBuildFields.add(accessor.name);
+        skipBuildFields.add(accessorName);
       }
     }
 

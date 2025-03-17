@@ -361,3 +361,132 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
       'sort_position': instance.sortPostion,
       'sessionId': instance.sessionId,
     };
+
+// **************************************************************************
+// ProxyGenerator
+// **************************************************************************
+
+class _$HttpClientFroWebDavProxy implements HttpClient {
+  final HttpClient _base;
+
+  _$HttpClientFroWebDavProxy(this._base);
+
+  @override
+  Future<HttpClientRequest> open(
+          String method, String host, int port, String path) =>
+      _base.open(method, host, port, path);
+
+  @override
+  Future<HttpClientRequest> openUrl(String method, Uri url) =>
+      _base.openUrl(method, url);
+
+  @override
+  Future<HttpClientRequest> get(String host, int port, String path) =>
+      _base.get(host, port, path);
+
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) => _base.getUrl(url);
+
+  @override
+  Future<HttpClientRequest> post(String host, int port, String path) =>
+      _base.post(host, port, path);
+
+  @override
+  Future<HttpClientRequest> postUrl(Uri url) => _base.postUrl(url);
+
+  @override
+  Future<HttpClientRequest> put(String host, int port, String path) =>
+      _base.put(host, port, path);
+
+  @override
+  Future<HttpClientRequest> putUrl(Uri url) => _base.putUrl(url);
+
+  @override
+  Future<HttpClientRequest> delete(String host, int port, String path) =>
+      _base.delete(host, port, path);
+
+  @override
+  Future<HttpClientRequest> deleteUrl(Uri url) => _base.deleteUrl(url);
+
+  @override
+  Future<HttpClientRequest> patch(String host, int port, String path) =>
+      _base.patch(host, port, path);
+
+  @override
+  Future<HttpClientRequest> patchUrl(Uri url) => _base.patchUrl(url);
+
+  @override
+  Future<HttpClientRequest> head(String host, int port, String path) =>
+      _base.head(host, port, path);
+
+  @override
+  Future<HttpClientRequest> headUrl(Uri url) => _base.headUrl(url);
+
+  @override
+  void addCredentials(
+          Uri url, String realm, HttpClientCredentials credentials) =>
+      _base.addCredentials(url, realm, credentials);
+
+  @override
+  void addProxyCredentials(String host, int port, String realm,
+          HttpClientCredentials credentials) =>
+      _base.addProxyCredentials(host, port, realm, credentials);
+
+  @override
+  void close({bool force = false}) => _base.close(force: force);
+
+  @override
+  Duration get idleTimeout => _base.idleTimeout;
+
+  @override
+  set idleTimeout(Duration value) => _base.idleTimeout = value;
+
+  @override
+  Duration? get connectionTimeout => _base.connectionTimeout;
+
+  @override
+  set connectionTimeout(Duration? value) => _base.connectionTimeout = value;
+
+  @override
+  int? get maxConnectionsPerHost => _base.maxConnectionsPerHost;
+
+  @override
+  set maxConnectionsPerHost(int? value) => _base.maxConnectionsPerHost = value;
+
+  @override
+  bool get autoUncompress => _base.autoUncompress;
+
+  @override
+  set autoUncompress(bool value) => _base.autoUncompress = value;
+
+  @override
+  String? get userAgent => _base.userAgent;
+
+  @override
+  set userAgent(String? value) => _base.userAgent = value;
+
+  @override
+  set authenticate(Future<bool> Function(Uri, String, String?)? value) =>
+      _base.authenticate = value;
+
+  @override
+  set connectionFactory(
+          Future<ConnectionTask<Socket>> Function(Uri, String?, int?)? value) =>
+      _base.connectionFactory = value;
+
+  @override
+  set findProxy(String Function(Uri)? value) => _base.findProxy = value;
+
+  @override
+  set authenticateProxy(
+          Future<bool> Function(String, int, String, String?)? value) =>
+      _base.authenticateProxy = value;
+
+  @override
+  set badCertificateCallback(
+          bool Function(X509Certificate, String, int)? value) =>
+      _base.badCertificateCallback = value;
+
+  @override
+  set keyLog(dynamic Function(String)? value) => _base.keyLog = value;
+}
