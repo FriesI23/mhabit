@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/error.dart';
 
+import '../../annotation/proxy_annotation.dart';
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
+import '../../logging/helper.dart';
 import '../../persistent/local/handler/habit.dart';
 import '../../persistent/local/handler/record.dart';
 import '../../persistent/local/handler/sync.dart';
@@ -610,4 +614,36 @@ class WebDavAppSyncRecordPathBuilder {
 
   WebDavAppSyncRecordPathBuilder(this.uuid, this.recordSubDir)
       : recordFile = _buildRecordFile(recordSubDir, uuid);
+}
+
+@Proxy(HttpClient, useAnnotatedName: true)
+class HttpClientFroWebDav extends _$HttpClientFroWebDavProxy {
+  final RetryOptions? connectRetryOptions;
+
+  HttpClientFroWebDav({this.connectRetryOptions}) : super(HttpClient());
+
+  HttpClientFroWebDav.fromClient(super.base, {this.connectRetryOptions});
+
+  @override
+  Future<HttpClientRequest> openUrl(String method, Uri url) {
+    final connectRetryOptions = this.connectRetryOptions;
+    if (connectRetryOptions == null) return super.openUrl(method, url);
+
+    final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
+    var crtRetryCount = 0;
+    return connectRetryOptions.retry(
+      () => super.openUrl(method, url),
+      retryIf: (e) => e is SocketException || e is TimeoutException,
+      onRetry: (e) {
+        crtRetryCount += 1;
+        if (crtRetryCount >= warningRetryCount) {
+          appLog.network.warn("HttpClientFroWebDav",
+              ex: ["retry", crtRetryCount, method, url]);
+        } else {
+          appLog.network.info("HttpClientFroWebDav",
+              ex: ["retry", crtRetryCount, method, url]);
+        }
+      },
+    );
+  }
 }

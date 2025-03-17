@@ -17,6 +17,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:pool/pool.dart';
+import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/client.dart';
 import 'package:simple_webdav_client/utils.dart';
 
@@ -130,7 +131,14 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   }
 
   static WebDavStdClient buildWebDavClient(AppWebDavSyncServer config) {
-    final httpClient = HttpClient();
+    final connectRetryCount = config.connectRetryCount;
+    final httpClient = HttpClientFroWebDav(
+        connectRetryOptions: connectRetryCount != null
+            ? RetryOptions(
+                maxAttempts: connectRetryCount,
+                maxDelay:
+                    (config.connectTimeout ?? defaultAppSyncConnectTimeout) * 3)
+            : null);
     if (config.ignoreSSL) {
       httpClient.badCertificateCallback = (cert, host, port) => true;
     }
@@ -162,15 +170,13 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   String get sessionId => _sessionId;
 
   @override
-  Future<WebDavAppSyncTaskResult> error([Object? e, StackTrace? s]) =>
-      Future.sync(() {
-        _crtTask?.cancel();
-        return switch (e) {
-          TimeoutException() =>
-            WebDavAppSyncTaskResult.timeout(error: e, trace: s),
-          _ => WebDavAppSyncTaskResult.error(error: e, trace: s),
-        };
-      });
+  FutureOr<WebDavAppSyncTaskResult> error([Object? e, StackTrace? s]) {
+    _crtTask?.cancel();
+    return switch (e) {
+      TimeoutException() => WebDavAppSyncTaskResult.timeout(error: e, trace: s),
+      _ => WebDavAppSyncTaskResult.error(error: e, trace: s),
+    };
+  }
 
   List<
       ({
