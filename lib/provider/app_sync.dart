@@ -118,22 +118,19 @@ class AppSyncViewModel
   }
 
   Future<bool> saveWithConfigForm(AppSyncServerForm? form,
-      {bool resetStatus = true, bool removable = false}) async {
+      {bool resetStatus = false, bool removable = false}) async {
     final oldConfig = serverConfig;
     final tmpNewConfig = AppSyncServer.fromForm(form);
     if (tmpNewConfig == null && !removable) return false;
-    final (isSameConfig, isSameServer) = switch ((oldConfig, tmpNewConfig)) {
-      (null, null) => (true, true),
-      (null, _) || (_, null) => (false, false),
-      (_, _) => (
-          oldConfig!.isSameConfig(tmpNewConfig!, withoutPassword: true),
-          oldConfig.isSameServer(tmpNewConfig, withoutPassword: true)
-        ),
+
+    final isSameServer = switch ((oldConfig, tmpNewConfig)) {
+      (null, null) => true,
+      (null, _) || (_, null) => false,
+      (_, _) => oldConfig!.isSameServer(tmpNewConfig!, withoutPassword: true)
     };
     appLog.appsync.info("saveWithConfigForm",
         ex: [resetStatus, removable, oldConfig, tmpNewConfig]);
     appLog.appsync.debug("saveWithConfigForm.verbose", ex: [
-      isSameConfig,
       isSameServer,
       form?.toDebugString,
       oldConfig?.toDebugString,
@@ -141,7 +138,7 @@ class AppSyncViewModel
     ]);
 
     AppSyncServer? buildConfig({bool withPwd = false}) =>
-        (!isSameConfig || resetStatus)
+        (!isSameServer || resetStatus)
             ? AppSyncServer.fromForm(form?.copyWith(
                 uuid: isSameServer
                     ? form.uuid
