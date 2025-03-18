@@ -16,6 +16,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:pool/pool.dart';
 import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/client.dart';
@@ -303,19 +304,19 @@ class WebDavAppSyncTaskExecutor
     final serverHabits = await serverHabitsFuture;
     appLog.appsynctask.debug(this,
         ex: ['fetch habits form server completed', serverHabits.length]);
-    if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
+    if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final localHabits = await localHabitsFuture;
     appLog.appsynctask.debug(this,
         ex: ['fetch babits form local completed', localHabits.length]);
-    if (isCancalling) return WebDavAppSyncTaskResult.cancelled();
+    if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final mergedResult = syncInfoMergerBuilder(this)
         .convert((local: localHabits, server: serverHabits));
     appLog.appsynctask
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 
-    final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
+    final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult>{};
     final pool = Pool(mergedResult.length.clamp(1, 5),
         timeout: config.timeout ?? defaultAppSyncTimeout);
     progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
@@ -325,21 +326,23 @@ class WebDavAppSyncTaskExecutor
           .withResource(() async {
             if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
             return singleHabitSyncTaskBuilder(cell).run(this);
-            // .then((result) =>
-            //    Future.delayed(Duration(milliseconds: 100), () => result))
           })
           .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
           .then((result) => resultMap.putIfAbsent(cell, () => result))
           .whenComplete(() => progressController?.onHabitComplete(cell.uuid)),
     )).whenComplete(() => progressController?.clearHabitProgress());
-    appLog.appsynctask.debug(this, ex: ["habits sync completed", resultMap]);
+    appLog.appsynctask.debug(this, ex: [
+      "habits sync completed",
+      () => resultMap.entries.map((e) => "${e.key}: ${e.value}").join('\n')
+    ]);
 
-    // TODO: indev (multi result)
-    resultMap.forEach((k, v) {
-      if (v?.isSuccessed == true) return;
-      appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------");
-    });
-    return WebDavAppSyncTaskResult.success();
+    if (kDebugMode) {
+      resultMap.forEach((k, v) {
+        if (v.isSuccessed == true) return;
+        appLog.debugger.debug("$k \n--> $v || ${v.error.trace}\n---------");
+      });
+    }
+    return WebDavAppSyncTaskResult.multi(results: resultMap);
   }
 }
 
@@ -469,7 +472,10 @@ Proceed with caution!
         : confirmedFuture);
 
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
-    if (!confirmed) return const WebDavAppSyncTaskResult.failed();
+    if (!confirmed) {
+      return const WebDavAppSyncTaskResult.failed(
+          reason: WebDavAppSyncTaskResultSubStatus.userAction);
+    }
 
     if (needCreatRoot) await createRootDir.run(this);
     await Future.wait([

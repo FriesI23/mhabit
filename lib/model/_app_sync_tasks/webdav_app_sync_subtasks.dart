@@ -338,8 +338,10 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     )?..validate();
     appLog.appsynctask
         .debug(context, ex: ["prepare write to db", preparedData]);
-    // TOOD: indev (make some warning?)
-    if (preparedData == null) return const WebDavAppSyncTaskResult.success();
+    if (preparedData == null) {
+      return const WebDavAppSyncTaskResult.success(
+          reason: WebDavAppSyncTaskResultSubStatus.empty);
+    }
     return writeToDbTaskBuilder(preparedData).run(context);
   }
 
@@ -577,12 +579,18 @@ class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   WriteToDBTask({required this.helper, required this.data});
 
   @override
-  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) => helper
-      .syncHabitDataToDb(data,
-          configId: context.config.identity, sessionId: context.sessionId)
-      .then((result) => result
-          ? WebDavAppSyncTaskResult.success()
-          : WebDavAppSyncTaskResult.error());
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) async {
+    if (data.uuid == null) {
+      return const WebDavAppSyncTaskResult.failed(
+          reason: WebDavAppSyncTaskResultSubStatus.missingHabitUuid);
+    }
+    return helper
+        .syncHabitDataToDb(data,
+            configId: context.config.identity, sessionId: context.sessionId)
+        .then((result) => result
+            ? const WebDavAppSyncTaskResult.success()
+            : const WebDavAppSyncTaskResult.failed());
+  }
 }
 
 class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
@@ -645,7 +653,10 @@ class PreprocessHabitWebDavCollectionTask
     assert(data.uuid != null);
 
     final habitUUID = data.uuid;
-    if (habitUUID == null) return const WebDavAppSyncTaskResult.error();
+    if (habitUUID == null) {
+      return const WebDavAppSyncTaskResult.failed(
+          reason: WebDavAppSyncTaskResultSubStatus.missingHabitUuid);
+    }
 
     final rootPathBuilder = WebDavAppSyncPathBuilder(path);
     final habitPathBuilder = rootPathBuilder.habit(habitUUID);
