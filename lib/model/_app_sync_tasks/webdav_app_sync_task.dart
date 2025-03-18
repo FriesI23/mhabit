@@ -378,7 +378,7 @@ class WebDavAppSyncTaskExecutor
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
-    final pool = Pool(math.min(mergedResult.length, 5),
+    final pool = Pool(mergedResult.length.clamp(1, 5),
         timeout: config.timeout ?? defaultAppSyncTimeout);
     progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
         override: true);
