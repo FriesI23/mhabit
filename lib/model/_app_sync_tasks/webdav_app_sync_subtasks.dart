@@ -48,13 +48,6 @@ typedef HabitEtagResult = ({
   Map<HabitRecordUUID, String?> recordEtagMap
 });
 
-final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
-final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
-final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
-final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
-
-enum WebDavAppSyncInfoStatus { server, local, both }
-
 class FetchMetaFromServerTask
     implements AppSyncSubTask<List<WebDavResourceContainer>> {
   final Uri path;

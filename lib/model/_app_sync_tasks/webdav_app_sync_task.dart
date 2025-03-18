@@ -132,7 +132,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
 
   static WebDavStdClient buildWebDavClient(AppWebDavSyncServer config) {
     final connectRetryCount = config.connectRetryCount;
-    final httpClient = HttpClientFroWebDav(
+    final httpClient = HttpClientForWebDav(
         connectRetryOptions: connectRetryCount != null
             ? RetryOptions(
                 maxAttempts: connectRetryCount,

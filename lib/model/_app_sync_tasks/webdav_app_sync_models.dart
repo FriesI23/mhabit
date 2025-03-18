@@ -33,9 +33,15 @@ import '../common.dart';
 import '../habit_form.dart';
 import '../habit_freq.dart';
 import '../habit_reminder.dart';
-import 'webdav_app_sync_subtasks.dart';
 
 part 'webdav_app_sync_models.g.dart';
+
+final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
+final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
+final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
+final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
+
+enum WebDavAppSyncInfoStatus { server, local, both }
 
 abstract interface class WebDavAppSyncCellInfo {
   WebDavAppSyncInfoStatus get status;
@@ -617,12 +623,12 @@ class WebDavAppSyncRecordPathBuilder {
 }
 
 @Proxy(HttpClient, useAnnotatedName: true)
-class HttpClientFroWebDav extends _$HttpClientFroWebDavProxy {
+class HttpClientForWebDav extends _$HttpClientFroWebDavProxy {
   final RetryOptions? connectRetryOptions;
 
-  HttpClientFroWebDav({this.connectRetryOptions}) : super(HttpClient());
+  HttpClientForWebDav({this.connectRetryOptions}) : super(HttpClient());
 
-  HttpClientFroWebDav.fromClient(super.base, {this.connectRetryOptions});
+  HttpClientForWebDav.fromClient(super.base, {this.connectRetryOptions});
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) {
@@ -637,10 +643,10 @@ class HttpClientFroWebDav extends _$HttpClientFroWebDavProxy {
       onRetry: (e) {
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
-          appLog.network.warn("HttpClientFroWebDav",
+          appLog.network.warn("HttpClientForWebDav",
               ex: ["retry", crtRetryCount, method, url]);
         } else {
-          appLog.network.info("HttpClientFroWebDav",
+          appLog.network.info("HttpClientForWebDav",
               ex: ["retry", crtRetryCount, method, url]);
         }
       },
