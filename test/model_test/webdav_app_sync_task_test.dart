@@ -44,6 +44,7 @@ void testWebdavAppSyncTaskMainBody() =>
 
       test("test normal progress", () async {
         final config = MockAppWebDavSyncServer();
+        when(config.timeout).thenReturn(null);
 
         fetchHabitsFromServerTask = MockAppSyncSubTask();
         queryHabitsFromDbTask = MockAppSyncSubTask();
@@ -100,6 +101,7 @@ void testWebdavAppSyncTaskMainBody() =>
         final result = await task.run();
 
         expect(result.isSuccessed, isTrue);
+        verify(config.timeout).called(1);
         verify(fetchHabitsFromServerTask.run(task)).called(1);
         verify(queryHabitsFromDbTask.run(task)).called(1);
         verify(syncInfoMerger
