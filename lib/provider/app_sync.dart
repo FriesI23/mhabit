@@ -290,10 +290,19 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         switch (config) {
           case AppWebDavSyncServer():
             final password = await root.getPassword(identity: config.identity);
+            final sessionId = WebDavAppSyncTask.genSessionId();
             return WebDavAppSyncTask(
+              sessionId: sessionId,
               config: config.copyWith(password: password),
               syncDBHelper: root.syncDBHelper,
+              progressController: WebDavProgressController(
+                onPercentageChanged: (percentage) {
+                  if (_task?.task.sessionId != sessionId) return;
+                  changePercentage(prt: percentage);
+                },
+              ),
               onConfigTaskComplete: (result) {
+                if (_task?.task.sessionId != sessionId) return;
                 if (!result.isSuccessed || config.configed) return;
                 final crtConfig = root._serverConfig?.get();
                 if (crtConfig == null) return;
@@ -302,6 +311,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                 }
               },
               onNeedConfirmCallback: (checklist) {
+                if (_task?.task.sessionId != sessionId) return false;
                 final context = navigatorKey.currentState?.context;
                 if (context == null) return true;
                 return showDialog<bool>(
