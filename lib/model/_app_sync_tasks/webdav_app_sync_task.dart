@@ -30,69 +30,7 @@ import '../app_sync_server.dart';
 import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';
 import 'webdav_app_sync_subtasks.dart';
-
-enum WebDavAppSyncTaskResultStatus {
-  success,
-  cancelled,
-  timeout,
-  error,
-  failed
-}
-
-class WebDavAppSyncTaskResult implements AppSyncTaskResult {
-  final WebDavAppSyncTaskResultStatus status;
-
-  @override
-  final ({Object? error, StackTrace? trace}) error;
-
-  const WebDavAppSyncTaskResult._(
-      {required this.status, Object? error, StackTrace? trace})
-      : error = (error: error, trace: trace);
-
-  const WebDavAppSyncTaskResult.success()
-      : this._(status: WebDavAppSyncTaskResultStatus.success);
-
-  const WebDavAppSyncTaskResult.failed()
-      : this._(status: WebDavAppSyncTaskResultStatus.failed);
-
-  const WebDavAppSyncTaskResult.cancelled({Object? error, StackTrace? trace})
-      : this._(
-          status: WebDavAppSyncTaskResultStatus.cancelled,
-          error: error,
-          trace: trace,
-        );
-
-  const WebDavAppSyncTaskResult.timeout({Object? error, StackTrace? trace})
-      : this._(
-          status: WebDavAppSyncTaskResultStatus.timeout,
-          error: error,
-          trace: trace,
-        );
-
-  const WebDavAppSyncTaskResult.error({Object? error, StackTrace? trace})
-      : this._(
-          status: WebDavAppSyncTaskResultStatus.error,
-          error: error,
-          trace: trace,
-        );
-
-  @override
-  bool get isCancelled => status == WebDavAppSyncTaskResultStatus.cancelled;
-
-  @override
-  bool get isSuccessed => status == WebDavAppSyncTaskResultStatus.success;
-
-  @override
-  bool get isTimeout => status == WebDavAppSyncTaskResultStatus.timeout;
-
-  @override
-  bool get withError =>
-      status == WebDavAppSyncTaskResultStatus.error || error.error != null;
-
-  @override
-  String toString() =>
-      "WebDavAppSyncTaskResult(status=$status, " "error=${error.error})";
-}
+import 'webdav_app_sync_task_status.dart';
 
 class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
