@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../common/types.dart';
+
 mixin DirtyMarkMixin {
   UniqueKey _dirtyMark = UniqueKey();
 
@@ -25,8 +27,7 @@ mixin DirtyMarkMixin {
 }
 
 abstract class JsonAdaptor {
-  factory JsonAdaptor.fromJson(Map<String, dynamic> json) =>
-      throw UnimplementedError();
+  factory JsonAdaptor.fromJson(JsonMap json) => throw UnimplementedError();
 
-  Map<String, dynamic> toJson();
+  JsonMap toJson();
 }

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 class DuplicatedDateError implements Exception {
   final dynamic message;
 
@@ -56,5 +58,28 @@ class NotificationIdOutOfDefinedRange implements Exception {
   @override
   String toString() {
     return "Notification<$type> id out of range, got $crt";
+  }
+}
+
+class HttpStatusException implements HttpException {
+  @override
+  final String message;
+  @override
+  final Uri? uri;
+  final int status;
+
+  const HttpStatusException(this.message, this.status, {this.uri});
+
+  @override
+  String toString() {
+    final b = StringBuffer()
+      ..write('HttpStatusException: ')
+      ..write(message)
+      ..write(', status = $status');
+    final uri = this.uri;
+    if (uri != null) {
+      b.write(', uri = $uri');
+    }
+    return b.toString();
   }
 }

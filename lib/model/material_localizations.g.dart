@@ -96,6 +96,12 @@ class _$MaterialLocalizationsProxy implements MaterialLocalizations {
       _base.remainingTextFieldCharacterCount(remaining);
 
   @override
+  String toString() => _base.toString();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => _base.noSuchMethod(invocation);
+
+  @override
   String get openAppDrawerTooltip => _base.openAppDrawerTooltip;
 
   @override

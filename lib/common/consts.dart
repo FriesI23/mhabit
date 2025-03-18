@@ -19,6 +19,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../l10n/localizations.dart';
 import '../model/app_reminder_config.dart';
+import '../model/app_sync_options.dart';
 import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../theme/color.dart';
@@ -39,7 +40,9 @@ const String debuggerZipFile = "debug.zip";
 /// - add record reason column
 /// ## version 3
 /// - add daily goal extra column
-const int appDBVersion = 3;
+/// ## version 4
+/// - add sync table
+const int appDBVersion = 4;
 //#endregion
 
 //#region app-theme
@@ -49,6 +52,7 @@ const int appCalendarBarMaxOccupyPrt = 70;
 const int appCalendarBarMinOccupyPrt = 20;
 const int appCalendarBarDefualtOccupyPrt = 50;
 const int kHabitLargeScreenAdaptWidth = 600;
+const int kHabitLargeScreenAdaptHeight = 400;
 //#endregion
 
 //#region l10n
@@ -89,6 +93,10 @@ const defaultSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
+const defaultAppSyncTimeout = Duration(seconds: 180);
+const defaultAppSyncConnectTimeout = Duration(seconds: 5);
+const int? defaultAppSyncConnectRetryCount = null; // null for infinity
+const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
 //#endregion
 
 //#region habit-field
@@ -133,6 +141,8 @@ const loadedHabitStatus = <HabitStatus>[
   HabitStatus.archived,
 ];
 
+const sortPositionConflictIncreaseStep = 0.000001;
+const sortPositionConflictDecimalPlaces = 6;
 //#endregion
 
 //#region common
