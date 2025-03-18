@@ -624,7 +624,7 @@ class WebDavAppSyncRecordPathBuilder {
 }
 
 @Proxy(HttpClient, useAnnotatedName: true)
-class HttpClientForWebDav extends _$HttpClientFroWebDavProxy {
+class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
   final RetryOptions? connectRetryOptions;
 
   HttpClientForWebDav({this.connectRetryOptions}) : super(HttpClient());
@@ -634,21 +634,57 @@ class HttpClientForWebDav extends _$HttpClientFroWebDavProxy {
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) {
     final connectRetryOptions = this.connectRetryOptions;
-    if (connectRetryOptions == null) return super.openUrl(method, url);
+    if (connectRetryOptions == null) {
+      return super.openUrl(method, url).then((request) =>
+          HttpClientRequestWebDav(request,
+              connectRetryOptions: connectRetryOptions));
+    }
 
     final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
     var crtRetryCount = 0;
     return connectRetryOptions.retry(
-      () => super.openUrl(method, url),
+      () => super.openUrl(method, url).then((request) =>
+          HttpClientRequestWebDav(request,
+              connectRetryOptions: connectRetryOptions)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
       onRetry: (e) {
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
-          appLog.network.warn("HttpClientForWebDav",
+          appLog.network.warn("HttpClientForWebDav.openUrl",
               ex: ["retry", crtRetryCount, method, url], error: e);
         } else {
-          appLog.network.info("HttpClientForWebDav",
+          appLog.network.info("HttpClientForWebDav.openUrl",
               ex: ["retry", crtRetryCount, method, url, e]);
+        }
+      },
+    );
+  }
+}
+
+@Proxy(HttpClientRequest, useAnnotatedName: true)
+class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
+  final RetryOptions? connectRetryOptions;
+
+  HttpClientRequestWebDav(super.base, {this.connectRetryOptions});
+
+  @override
+  Future<HttpClientResponse> close() {
+    final connectRetryOptions = this.connectRetryOptions;
+    if (connectRetryOptions == null) return super.close();
+
+    final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
+    var crtRetryCount = 0;
+    return connectRetryOptions.retry(
+      () => super.close(),
+      retryIf: (e) => e is SocketException || e is TimeoutException,
+      onRetry: (e) {
+        crtRetryCount += 1;
+        if (crtRetryCount >= warningRetryCount) {
+          appLog.network.warn("HttpClientRequestWebDav.close",
+              ex: ["retry", crtRetryCount, method, uri, headers], error: e);
+        } else {
+          appLog.network.info("HttpClientRequestWebDav.close",
+              ex: ["retry", crtRetryCount, method, uri, headers, e]);
         }
       },
     );

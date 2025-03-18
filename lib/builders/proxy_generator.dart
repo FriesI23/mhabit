@@ -36,7 +36,8 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 
     final optionalPostionParams = method.parameters
         .where((param) => param.isOptionalPositional)
-        .map((param) => '${param.type.getDisplayString()} ${param.name}')
+        .map((param) => '${param.type.getDisplayString()} ${param.name}'
+            '${param.hasDefaultValue ? " = ${param.defaultValueCode}" : ""}')
         .toList();
 
     final namedParams = method.parameters
@@ -98,8 +99,17 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
       }
     }
 
-    for (var method in targetClass.element.methods) {
-      if (method.isStatic) continue;
+    final generatedMethods = <String>{};
+    for (var method in [
+      targetClass.element.methods,
+      targetClass.allSupertypes.map((t) => t.methods).expand((e) => e)
+    ].expand((e) => e)) {
+      if (!method.isPublic ||
+          method.isStatic ||
+          method.isOperator ||
+          generatedMethods.contains(method.name)) continue;
+
+      generatedMethods.add(method.name);
 
       String generateMethodCall() {
         final methodName = method.name;

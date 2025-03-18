@@ -366,10 +366,10 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
 // ProxyGenerator
 // **************************************************************************
 
-class _$HttpClientFroWebDavProxy implements HttpClient {
+class _$HttpClientForWebDavProxy implements HttpClient {
   final HttpClient _base;
 
-  _$HttpClientFroWebDavProxy(this._base);
+  _$HttpClientForWebDavProxy(this._base);
 
   @override
   Future<HttpClientRequest> open(
@@ -436,6 +436,12 @@ class _$HttpClientFroWebDavProxy implements HttpClient {
   void close({bool force = false}) => _base.close(force: force);
 
   @override
+  String toString() => _base.toString();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => _base.noSuchMethod(invocation);
+
+  @override
   Duration get idleTimeout => _base.idleTimeout;
 
   @override
@@ -489,4 +495,98 @@ class _$HttpClientFroWebDavProxy implements HttpClient {
 
   @override
   set keyLog(dynamic Function(String)? value) => _base.keyLog = value;
+}
+
+class _$HttpClientRequestWebDavProxy implements HttpClientRequest {
+  final HttpClientRequest _base;
+
+  _$HttpClientRequestWebDavProxy(this._base);
+
+  @override
+  Future<HttpClientResponse> close() => _base.close();
+
+  @override
+  void abort([Object? exception, StackTrace? stackTrace]) =>
+      _base.abort(exception, stackTrace);
+
+  @override
+  String toString() => _base.toString();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => _base.noSuchMethod(invocation);
+
+  @override
+  void add(List<int> data) => _base.add(data);
+
+  @override
+  void write(Object? object) => _base.write(object);
+
+  @override
+  void writeAll(Iterable<dynamic> objects, [String separator = ""]) =>
+      _base.writeAll(objects, separator);
+
+  @override
+  void writeln([Object? object = ""]) => _base.writeln(object);
+
+  @override
+  void writeCharCode(int charCode) => _base.writeCharCode(charCode);
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) =>
+      _base.addError(error, stackTrace);
+
+  @override
+  Future<dynamic> addStream(Stream<List<int>> stream) =>
+      _base.addStream(stream);
+
+  @override
+  Future<dynamic> flush() => _base.flush();
+
+  @override
+  bool get persistentConnection => _base.persistentConnection;
+
+  @override
+  set persistentConnection(bool value) => _base.persistentConnection = value;
+
+  @override
+  bool get followRedirects => _base.followRedirects;
+
+  @override
+  set followRedirects(bool value) => _base.followRedirects = value;
+
+  @override
+  int get maxRedirects => _base.maxRedirects;
+
+  @override
+  set maxRedirects(int value) => _base.maxRedirects = value;
+
+  @override
+  int get contentLength => _base.contentLength;
+
+  @override
+  set contentLength(int value) => _base.contentLength = value;
+
+  @override
+  bool get bufferOutput => _base.bufferOutput;
+
+  @override
+  set bufferOutput(bool value) => _base.bufferOutput = value;
+
+  @override
+  String get method => _base.method;
+
+  @override
+  Uri get uri => _base.uri;
+
+  @override
+  HttpHeaders get headers => _base.headers;
+
+  @override
+  List<Cookie> get cookies => _base.cookies;
+
+  @override
+  Future<HttpClientResponse> get done => _base.done;
+
+  @override
+  HttpConnectionInfo? get connectionInfo => _base.connectionInfo;
 }

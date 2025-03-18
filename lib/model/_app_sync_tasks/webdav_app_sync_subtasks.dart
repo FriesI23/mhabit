@@ -15,6 +15,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:pool/pool.dart';
@@ -304,7 +305,7 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     }
 
     final fetchHabitDataFuture = fetchHabitDataTask.run(context);
-    final pool = Pool(fetchRecordDataConcurrency,
+    final pool = Pool(math.max(1, fetchRecordDataConcurrency),
         timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final syncRecordDataList = await fetchHabitRecordsMeta().then(
       (mergedResult) => Future.wait(mergedResult
@@ -409,7 +410,7 @@ class FetchHabitRecordsMetaFromServerTask
     appLog.appsynctask.debug(context,
         ex: ["ready to fetch records props", dirResult, path, concurrency]);
 
-    final pool = Pool(concurrency,
+    final pool = Pool(math.max(1, concurrency),
         timeout: context.config.timeout ?? defaultAppSyncTimeout);
     return Future.wait(
       recordTasks.map(
@@ -714,7 +715,7 @@ class PreprocessHabitWebDavCollectionTask
         ex: ["created habit's record root dir", recordRootDir, habitUUID]);
     if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final pool = Pool(createConcurrency,
+    final pool = Pool(math.max(1, createConcurrency),
         timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final results = await Future.wait(
       needCreatedPaths.map(
@@ -844,7 +845,7 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
 
     final Map<HabitRecordUUID, String?> recordSyncEtagMap;
     if (withRecords && data.records.isNotEmpty) {
-      final pool = Pool(recordConcurrency,
+      final pool = Pool(math.max(1, recordConcurrency),
           timeout: context.config.timeout ?? defaultAppSyncTimeout);
       recordSyncEtagMap = await Future.wait(data.records
           .where((e) =>
