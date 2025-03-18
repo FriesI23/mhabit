@@ -33,9 +33,16 @@ import '../common.dart';
 import '../habit_form.dart';
 import '../habit_freq.dart';
 import '../habit_reminder.dart';
-import 'webdav_app_sync_subtasks.dart';
+import '../progress_percent.dart';
 
 part 'webdav_app_sync_models.g.dart';
+
+final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
+final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
+final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
+final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
+
+enum WebDavAppSyncInfoStatus { server, local, both }
 
 abstract interface class WebDavAppSyncCellInfo {
   WebDavAppSyncInfoStatus get status;
@@ -617,33 +624,119 @@ class WebDavAppSyncRecordPathBuilder {
 }
 
 @Proxy(HttpClient, useAnnotatedName: true)
-class HttpClientFroWebDav extends _$HttpClientFroWebDavProxy {
+class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
   final RetryOptions? connectRetryOptions;
 
-  HttpClientFroWebDav({this.connectRetryOptions}) : super(HttpClient());
+  HttpClientForWebDav({this.connectRetryOptions}) : super(HttpClient());
 
-  HttpClientFroWebDav.fromClient(super.base, {this.connectRetryOptions});
+  HttpClientForWebDav.fromClient(super.base, {this.connectRetryOptions});
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) {
     final connectRetryOptions = this.connectRetryOptions;
-    if (connectRetryOptions == null) return super.openUrl(method, url);
+    if (connectRetryOptions == null) {
+      return super.openUrl(method, url).then((request) =>
+          HttpClientRequestWebDav(request,
+              connectRetryOptions: connectRetryOptions));
+    }
 
     final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
     var crtRetryCount = 0;
     return connectRetryOptions.retry(
-      () => super.openUrl(method, url),
+      () => super.openUrl(method, url).then((request) =>
+          HttpClientRequestWebDav(request,
+              connectRetryOptions: connectRetryOptions)),
       retryIf: (e) => e is SocketException || e is TimeoutException,
       onRetry: (e) {
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
-          appLog.network.warn("HttpClientFroWebDav",
-              ex: ["retry", crtRetryCount, method, url]);
+          appLog.network.warn("HttpClientForWebDav.openUrl",
+              ex: ["retry", crtRetryCount, method, url], error: e);
         } else {
-          appLog.network.info("HttpClientFroWebDav",
-              ex: ["retry", crtRetryCount, method, url]);
+          appLog.network.info("HttpClientForWebDav.openUrl",
+              ex: ["retry", crtRetryCount, method, url, e]);
         }
       },
     );
+  }
+}
+
+@Proxy(HttpClientRequest, useAnnotatedName: true)
+class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
+  final RetryOptions? connectRetryOptions;
+
+  HttpClientRequestWebDav(super.base, {this.connectRetryOptions});
+
+  @override
+  Future<HttpClientResponse> close() {
+    final connectRetryOptions = this.connectRetryOptions;
+    if (connectRetryOptions == null) return super.close();
+
+    final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
+    var crtRetryCount = 0;
+    return connectRetryOptions.retry(
+      () => super.close(),
+      retryIf: (e) => e is SocketException || e is TimeoutException,
+      onRetry: (e) {
+        crtRetryCount += 1;
+        if (crtRetryCount >= warningRetryCount) {
+          appLog.network.warn("HttpClientRequestWebDav.close",
+              ex: ["retry", crtRetryCount, method, uri, headers], error: e);
+        } else {
+          appLog.network.info("HttpClientRequestWebDav.close",
+              ex: ["retry", crtRetryCount, method, uri, headers, e]);
+        }
+      },
+    );
+  }
+}
+
+abstract interface class WebDavProgressController {
+  void onHabitComplete(HabitUUID uuid);
+  bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false});
+  void clearHabitProgress();
+
+  factory WebDavProgressController({
+    void Function(num? percentage)? onPercentageChanged,
+  }) =>
+      WebDavProgressControllerImpl(onPercentageChanged: onPercentageChanged);
+}
+
+final class WebDavProgressControllerImpl implements WebDavProgressController {
+  final habitProgressMap = <HabitUUID, ProgressPercentChanger>{};
+  ProgressPercent? habitProgress;
+
+  final void Function(num? percentage)? onPercentageChanged;
+
+  WebDavProgressControllerImpl({this.onPercentageChanged});
+
+  num? get percentage => habitProgress?.percentage;
+
+  @override
+  void onHabitComplete(HabitUUID uuid) {
+    final habitProgress = this.habitProgress;
+    if (habitProgress == null) return;
+    habitProgressMap[uuid]?.toComplete();
+    onPercentageChanged?.call(percentage);
+  }
+
+  @override
+  bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false}) {
+    if (habitProgress != null && !override) return false;
+    final entries =
+        habits.map((e) => MapEntry(e, ProgressPercentChanger())).toList();
+    habitProgressMap
+      ..clear()
+      ..addEntries(entries);
+    habitProgress = ProgressPercent.merge(entries.map((e) => e.value));
+    onPercentageChanged?.call(percentage);
+    return true;
+  }
+
+  @override
+  void clearHabitProgress() {
+    habitProgressMap.clear();
+    habitProgress = null;
+    onPercentageChanged?.call(percentage);
   }
 }

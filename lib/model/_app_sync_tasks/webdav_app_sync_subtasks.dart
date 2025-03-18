@@ -15,6 +15,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:pool/pool.dart';
@@ -22,6 +23,7 @@ import 'package:simple_webdav_client/client.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart' hide IterableExtension;
 
+import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
@@ -30,7 +32,7 @@ import '../app_sync_server.dart';
 import '../habit_date.dart';
 import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';
-import 'webdav_app_sync_task.dart';
+import 'webdav_app_sync_task_status.dart';
 
 typedef WebDavSyncInfoMergerInput = ({
   Iterable<SyncDBCell> local,
@@ -47,13 +49,6 @@ typedef HabitEtagResult = ({
   String? habitEtag,
   Map<HabitRecordUUID, String?> recordEtagMap
 });
-
-final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
-final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
-final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
-final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
-
-enum WebDavAppSyncInfoStatus { server, local, both }
 
 class FetchMetaFromServerTask
     implements AppSyncSubTask<List<WebDavResourceContainer>> {
@@ -310,7 +305,8 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     }
 
     final fetchHabitDataFuture = fetchHabitDataTask.run(context);
-    final pool = Pool(fetchRecordDataConcurrency);
+    final pool = Pool(math.max(1, fetchRecordDataConcurrency),
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final syncRecordDataList = await fetchHabitRecordsMeta().then(
       (mergedResult) => Future.wait(mergedResult
           .where((e) => e.isNeedDownload)
@@ -342,8 +338,10 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     )?..validate();
     appLog.appsynctask
         .debug(context, ex: ["prepare write to db", preparedData]);
-    // TOOD: indev (make some warning?)
-    if (preparedData == null) return const WebDavAppSyncTaskResult.success();
+    if (preparedData == null) {
+      return const WebDavAppSyncTaskResult.success(
+          reason: WebDavAppSyncTaskResultSubStatus.empty);
+    }
     return writeToDbTaskBuilder(preparedData).run(context);
   }
 
@@ -414,7 +412,8 @@ class FetchHabitRecordsMetaFromServerTask
     appLog.appsynctask.debug(context,
         ex: ["ready to fetch records props", dirResult, path, concurrency]);
 
-    final pool = Pool(concurrency);
+    final pool = Pool(math.max(1, concurrency),
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     return Future.wait(
       recordTasks.map(
         (e) => pool.withResource(() async {
@@ -580,12 +579,18 @@ class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   WriteToDBTask({required this.helper, required this.data});
 
   @override
-  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) => helper
-      .syncHabitDataToDb(data,
-          configId: context.config.identity, sessionId: context.sessionId)
-      .then((result) => result
-          ? WebDavAppSyncTaskResult.success()
-          : WebDavAppSyncTaskResult.error());
+  Future<WebDavAppSyncTaskResult> run(AppSyncContext context) async {
+    if (data.uuid == null) {
+      return const WebDavAppSyncTaskResult.failed(
+          reason: WebDavAppSyncTaskResultSubStatus.missingHabitUuid);
+    }
+    return helper
+        .syncHabitDataToDb(data,
+            configId: context.config.identity, sessionId: context.sessionId)
+        .then((result) => result
+            ? const WebDavAppSyncTaskResult.success()
+            : const WebDavAppSyncTaskResult.failed());
+  }
 }
 
 class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
@@ -648,7 +653,10 @@ class PreprocessHabitWebDavCollectionTask
     assert(data.uuid != null);
 
     final habitUUID = data.uuid;
-    if (habitUUID == null) return const WebDavAppSyncTaskResult.error();
+    if (habitUUID == null) {
+      return const WebDavAppSyncTaskResult.failed(
+          reason: WebDavAppSyncTaskResultSubStatus.missingHabitUuid);
+    }
 
     final rootPathBuilder = WebDavAppSyncPathBuilder(path);
     final habitPathBuilder = rootPathBuilder.habit(habitUUID);
@@ -718,7 +726,8 @@ class PreprocessHabitWebDavCollectionTask
         ex: ["created habit's record root dir", recordRootDir, habitUUID]);
     if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final pool = Pool(createConcurrency);
+    final pool = Pool(math.max(1, createConcurrency),
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final results = await Future.wait(
       needCreatedPaths.map(
         (path) => pool.withResource(() async {
@@ -847,7 +856,8 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
 
     final Map<HabitRecordUUID, String?> recordSyncEtagMap;
     if (withRecords && data.records.isNotEmpty) {
-      final pool = Pool(recordConcurrency);
+      final pool = Pool(math.max(1, recordConcurrency),
+          timeout: context.config.timeout ?? defaultAppSyncTimeout);
       recordSyncEtagMap = await Future.wait(data.records
           .where((e) =>
               e.uuid != null && e.parentUUID != null && e.recordDate != null)
