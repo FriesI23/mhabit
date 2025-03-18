@@ -98,6 +98,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
 
+  final WebDavProgressController? progressController;
   final void Function(WebDavAppSyncTaskResult result)? onConfigTaskComplete;
 
   late final AppSyncTask<WebDavAppSyncTaskResult> _configTask;
@@ -107,21 +108,26 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   AppSyncTask<WebDavAppSyncTaskResult>? _crtTask;
 
   WebDavAppSyncTask({
+    String? sessionId,
     required this.config,
     required SyncDBHelper syncDBHelper,
     Duration? configConfirmTimeout = const Duration(seconds: 60),
+    this.progressController,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
         onNeedConfirmCallback,
     this.onConfigTaskComplete,
-  }) : super(timeout: config.timeout ?? Duration.zero) {
-    _sessionId = genSessionId();
+  }) : super(timeout: config.timeout ?? defaultAppSyncTimeout) {
+    _sessionId = sessionId ?? genSessionId();
     _configTask = WebDavAppSyncConfigTask.build(
         sessionId: _sessionId,
         config: config,
         confirmTimeout: configConfirmTimeout,
         onNeedConfirmCallback: onNeedConfirmCallback);
     _syncTask = WebDavAppSyncTaskExecutor.build(
-        sessionId: _sessionId, config: config, syncDBHelper: syncDBHelper);
+        sessionId: _sessionId,
+        config: config,
+        syncDBHelper: syncDBHelper,
+        progressController: progressController);
   }
 
   static String genSessionId() {
@@ -131,7 +137,8 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   }
 
   static WebDavStdClient buildWebDavClient(AppWebDavSyncServer config) {
-    final connectRetryCount = config.connectRetryCount;
+    final connectRetryCount =
+        config.connectRetryCount ?? defaultAppSyncConnectRetryCount;
     final httpClient = HttpClientForWebDav(
         connectRetryOptions: connectRetryCount != null
             ? RetryOptions(
@@ -243,6 +250,7 @@ class WebDavAppSyncTaskExecutor
   @override
   final String sessionId;
 
+  final WebDavProgressController? progressController;
   final AppSyncSubTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
   final AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
   final WebDavSyncHabitInfoMerger Function(AppSyncContext context)
@@ -257,6 +265,7 @@ class WebDavAppSyncTaskExecutor
     required this.config,
     required this.sessionId,
     super.timeout = Duration.zero,
+    this.progressController,
     required this.fetchHabitsFromServerTask,
     required this.queryHabitsFromDbTask,
     required this.syncInfoMergerBuilder,
@@ -272,6 +281,7 @@ class WebDavAppSyncTaskExecutor
     required SyncDBHelper syncDBHelper,
     WebDavStdClient? overwriteClient,
     Duration? timeout,
+    WebDavProgressController? progressController,
   }) {
     final client =
         overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
@@ -281,6 +291,7 @@ class WebDavAppSyncTaskExecutor
       config: config,
       client: overwriteClient == null ? client : null,
       timeout: timeout ?? Duration.zero,
+      progressController: progressController,
       fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
           WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
@@ -367,21 +378,29 @@ class WebDavAppSyncTaskExecutor
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult?>{};
-    final pool = Pool(math.max(mergedResult.length, 5));
+    final pool = Pool(math.min(mergedResult.length, 5),
+        timeout: config.timeout ?? defaultAppSyncTimeout);
+    progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
+        override: true);
     await Future.wait(mergedResult.map(
       (cell) => pool
           .withResource(() async {
             if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
             return singleHabitSyncTaskBuilder(cell).run(this);
+            // .then((result) =>
+            //    Future.delayed(Duration(milliseconds: 100), () => result))
           })
           .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
-          .then((result) => resultMap.putIfAbsent(cell, () => result)),
-    ));
+          .then((result) => resultMap.putIfAbsent(cell, () => result))
+          .whenComplete(() => progressController?.onHabitComplete(cell.uuid)),
+    )).whenComplete(() => progressController?.clearHabitProgress());
     appLog.appsynctask.debug(this, ex: ["habits sync completed", resultMap]);
 
     // TODO: indev (multi result)
-    resultMap.forEach((k, v) =>
-        appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------"));
+    resultMap.forEach((k, v) {
+      if (v?.isSuccessed == true) return;
+      appLog.debugger.debug("$k \n--> $v || ${v?.error.trace}\n---------");
+    });
     return WebDavAppSyncTaskResult.success();
   }
 }
