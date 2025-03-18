@@ -22,6 +22,7 @@ import 'package:simple_webdav_client/client.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/utils.dart' hide IterableExtension;
 
+import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
@@ -303,7 +304,8 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     }
 
     final fetchHabitDataFuture = fetchHabitDataTask.run(context);
-    final pool = Pool(fetchRecordDataConcurrency);
+    final pool = Pool(fetchRecordDataConcurrency,
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final syncRecordDataList = await fetchHabitRecordsMeta().then(
       (mergedResult) => Future.wait(mergedResult
           .where((e) => e.isNeedDownload)
@@ -407,7 +409,8 @@ class FetchHabitRecordsMetaFromServerTask
     appLog.appsynctask.debug(context,
         ex: ["ready to fetch records props", dirResult, path, concurrency]);
 
-    final pool = Pool(concurrency);
+    final pool = Pool(concurrency,
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     return Future.wait(
       recordTasks.map(
         (e) => pool.withResource(() async {
@@ -711,7 +714,8 @@ class PreprocessHabitWebDavCollectionTask
         ex: ["created habit's record root dir", recordRootDir, habitUUID]);
     if (context.isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final pool = Pool(createConcurrency);
+    final pool = Pool(createConcurrency,
+        timeout: context.config.timeout ?? defaultAppSyncTimeout);
     final results = await Future.wait(
       needCreatedPaths.map(
         (path) => pool.withResource(() async {
@@ -840,7 +844,8 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
 
     final Map<HabitRecordUUID, String?> recordSyncEtagMap;
     if (withRecords && data.records.isNotEmpty) {
-      final pool = Pool(recordConcurrency);
+      final pool = Pool(recordConcurrency,
+          timeout: context.config.timeout ?? defaultAppSyncTimeout);
       recordSyncEtagMap = await Future.wait(data.records
           .where((e) =>
               e.uuid != null && e.parentUUID != null && e.recordDate != null)

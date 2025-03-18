@@ -33,6 +33,7 @@ import '../common.dart';
 import '../habit_form.dart';
 import '../habit_freq.dart';
 import '../habit_reminder.dart';
+import '../progress_percent.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
@@ -644,12 +645,62 @@ class HttpClientForWebDav extends _$HttpClientFroWebDavProxy {
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
           appLog.network.warn("HttpClientForWebDav",
-              ex: ["retry", crtRetryCount, method, url]);
+              ex: ["retry", crtRetryCount, method, url], error: e);
         } else {
           appLog.network.info("HttpClientForWebDav",
-              ex: ["retry", crtRetryCount, method, url]);
+              ex: ["retry", crtRetryCount, method, url, e]);
         }
       },
     );
+  }
+}
+
+abstract interface class WebDavProgressController {
+  void onHabitComplete(HabitUUID uuid);
+  bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false});
+  void clearHabitProgress();
+
+  factory WebDavProgressController({
+    void Function(num? percentage)? onPercentageChanged,
+  }) =>
+      WebDavProgressControllerImpl(onPercentageChanged: onPercentageChanged);
+}
+
+final class WebDavProgressControllerImpl implements WebDavProgressController {
+  final habitProgressMap = <HabitUUID, ProgressPercentChanger>{};
+  ProgressPercent? habitProgress;
+
+  final void Function(num? percentage)? onPercentageChanged;
+
+  WebDavProgressControllerImpl({this.onPercentageChanged});
+
+  num? get percentage => habitProgress?.percentage;
+
+  @override
+  void onHabitComplete(HabitUUID uuid) {
+    final habitProgress = this.habitProgress;
+    if (habitProgress == null) return;
+    habitProgressMap[uuid]?.toComplete();
+    onPercentageChanged?.call(percentage);
+  }
+
+  @override
+  bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false}) {
+    if (habitProgress != null && !override) return false;
+    final entries =
+        habits.map((e) => MapEntry(e, ProgressPercentChanger())).toList();
+    habitProgressMap
+      ..clear()
+      ..addEntries(entries);
+    habitProgress = ProgressPercent.merge(entries.map((e) => e.value));
+    onPercentageChanged?.call(percentage);
+    return true;
+  }
+
+  @override
+  void clearHabitProgress() {
+    habitProgressMap.clear();
+    habitProgress = null;
+    onPercentageChanged?.call(percentage);
   }
 }
