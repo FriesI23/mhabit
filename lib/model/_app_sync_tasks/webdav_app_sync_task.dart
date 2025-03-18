@@ -225,7 +225,7 @@ class WebDavAppSyncTaskExecutor
     final client =
         overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
 
-    return WebDavAppSyncTaskExecutor(
+    final task = WebDavAppSyncTaskExecutor(
       sessionId: sessionId,
       config: config,
       client: overwriteClient == null ? client : null,
@@ -279,6 +279,10 @@ class WebDavAppSyncTaskExecutor
         ),
       ),
     );
+
+    final httpClient = client.client;
+    if (httpClient is HttpClientForWebDav) httpClient.context = task;
+    return task;
   }
 
   @override
@@ -410,7 +414,7 @@ Proceed with caution!
     final recordsDir = rootPathBuilder.recordsDir;
     final warningFile = rootPathBuilder.warningFile;
 
-    return WebDavAppSyncConfigTask(
+    final task = WebDavAppSyncConfigTask(
         sessionId: sessionId,
         config: config,
         client: overwriteClient == null ? client : null,
@@ -433,6 +437,10 @@ Proceed with caution!
         createRecordsDir: MkDirOnServerTask(path: recordsDir, client: client),
         createWarningFile: UploadDataToServerTask(
             path: warningFile, data: warningFileData, client: client));
+
+    final httpClient = client.client;
+    if (httpClient is HttpClientForWebDav) httpClient.context = task;
+    return task;
   }
 
   @override
