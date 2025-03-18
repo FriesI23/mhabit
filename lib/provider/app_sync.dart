@@ -332,6 +332,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
   }
 
   Future<bool> shouldSync() async {
+    if (!root.enabled) return false;
     final config = root._serverConfig?.get();
     if (config == null) return false;
     switch (config.type) {

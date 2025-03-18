@@ -34,6 +34,7 @@ import '../habit_form.dart';
 import '../habit_freq.dart';
 import '../habit_reminder.dart';
 import '../progress_percent.dart';
+import 'app_sync_task.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
@@ -627,27 +628,40 @@ class WebDavAppSyncRecordPathBuilder {
 class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
   final RetryOptions? connectRetryOptions;
 
+  WeakReference<AppSyncTask>? _context;
+
   HttpClientForWebDav({this.connectRetryOptions}) : super(HttpClient());
 
   HttpClientForWebDav.fromClient(super.base, {this.connectRetryOptions});
+
+  AppSyncTask? get context => _context?.target;
+
+  set context(AppSyncTask? newContext) =>
+      _context = (newContext != null ? WeakReference(newContext) : null);
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) {
     final connectRetryOptions = this.connectRetryOptions;
     if (connectRetryOptions == null) {
       return super.openUrl(method, url).then((request) =>
-          HttpClientRequestWebDav(request,
+          HttpClientRequestWebDav(request, context,
               connectRetryOptions: connectRetryOptions));
     }
 
     final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
     var crtRetryCount = 0;
+    var needRetry = true;
     return connectRetryOptions.retry(
       () => super.openUrl(method, url).then((request) =>
-          HttpClientRequestWebDav(request,
+          HttpClientRequestWebDav(request, context,
               connectRetryOptions: connectRetryOptions)),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
+      retryIf: (e) =>
+          needRetry && (e is SocketException || e is TimeoutException),
       onRetry: (e) {
+        if (context?.isCancalling == true) {
+          needRetry = false;
+          return;
+        }
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
           appLog.network.warn("HttpClientForWebDav.openUrl",
@@ -665,7 +679,17 @@ class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
 class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
   final RetryOptions? connectRetryOptions;
 
-  HttpClientRequestWebDav(super.base, {this.connectRetryOptions});
+  WeakReference<AppSyncTask>? _context;
+
+  HttpClientRequestWebDav(super.base, AppSyncTask? context,
+      {this.connectRetryOptions}) {
+    this.context = context;
+  }
+
+  AppSyncTask? get context => _context?.target;
+
+  set context(AppSyncTask? newContext) =>
+      _context = (newContext != null ? WeakReference(newContext) : null);
 
   @override
   Future<HttpClientResponse> close() {
@@ -674,10 +698,16 @@ class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
 
     final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
     var crtRetryCount = 0;
+    var needRetry = true;
     return connectRetryOptions.retry(
       () => super.close(),
-      retryIf: (e) => e is SocketException || e is TimeoutException,
+      retryIf: (e) =>
+          needRetry && (e is SocketException || e is TimeoutException),
       onRetry: (e) {
+        if (context?.isCancalling == true) {
+          needRetry = false;
+          return;
+        }
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
           appLog.network.warn("HttpClientRequestWebDav.close",
