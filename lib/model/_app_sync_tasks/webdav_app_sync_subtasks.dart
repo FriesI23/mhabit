@@ -32,7 +32,7 @@ import '../app_sync_server.dart';
 import '../habit_date.dart';
 import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';
-import 'webdav_app_sync_task.dart';
+import 'webdav_app_sync_task_status.dart';
 
 typedef WebDavSyncInfoMergerInput = ({
   Iterable<SyncDBCell> local,

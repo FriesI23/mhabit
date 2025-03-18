@@ -17,3 +17,4 @@ export '_app_sync_tasks/basic_app_sync_task.dart';
 export '_app_sync_tasks/webdav_app_sync_models.dart';
 export '_app_sync_tasks/webdav_app_sync_subtasks.dart';
 export '_app_sync_tasks/webdav_app_sync_task.dart';
+export '_app_sync_tasks/webdav_app_sync_task_status.dart';
