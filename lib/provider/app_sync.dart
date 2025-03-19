@@ -237,9 +237,6 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
 
   AppSyncContainer? get task => _task;
 
-  AppSyncContainer<AppSyncTask<AppSyncTaskResult>, AppSyncTaskResult>?
-      get fakeTask => _task;
-
   void changePercentage({required num? prt}) {
     prt = prt?.clamp(0.0, 1.0);
     if (_task?.percentage != prt) {
