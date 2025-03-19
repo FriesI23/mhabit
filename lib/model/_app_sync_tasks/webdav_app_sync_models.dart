@@ -15,10 +15,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:retry/retry.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/error.dart';
 
@@ -35,6 +38,7 @@ import '../habit_freq.dart';
 import '../habit_reminder.dart';
 import '../progress_percent.dart';
 import 'app_sync_task.dart';
+import 'webdav_app_sync_task_status.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
@@ -722,6 +726,10 @@ class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
 }
 
 abstract interface class WebDavProgressController {
+  Stream<WebDavProgressStatusMessage> get replayMessageStream;
+
+  void addMessage(WebDavProgressStatusMessage message, {bool complete = false});
+
   void onHabitComplete(HabitUUID uuid);
   bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false});
   void clearHabitProgress();
@@ -734,13 +742,36 @@ abstract interface class WebDavProgressController {
 
 final class WebDavProgressControllerImpl implements WebDavProgressController {
   final habitProgressMap = <HabitUUID, ProgressPercentChanger>{};
+  final ReplaySubject<WebDavProgressStatusMessage> replayMessageSubject;
+
   ProgressPercent? habitProgress;
 
   final void Function(num? percentage)? onPercentageChanged;
 
-  WebDavProgressControllerImpl({this.onPercentageChanged});
+  WebDavProgressControllerImpl({
+    this.onPercentageChanged,
+    ReplaySubject<WebDavProgressStatusMessage>? replayMessageSubject,
+  }) : replayMessageSubject = replayMessageSubject ?? ReplaySubject();
+
+  @override
+  Stream<WebDavProgressStatusMessage> get replayMessageStream =>
+      replayMessageSubject.stream;
 
   num? get percentage => habitProgress?.percentage;
+
+  @override
+  void addMessage(WebDavProgressStatusMessage message,
+      {bool complete = false}) {
+    try {
+      if (replayMessageSubject.isClosed) return;
+      replayMessageSubject.add(message);
+      if (complete) replayMessageSubject.close();
+    } on Exception catch (e, s) {
+      appLog.appsync.warn("got error when add message",
+          ex: [message, complete], error: e, stackTrace: s);
+      if (kDebugMode) rethrow;
+    }
+  }
 
   @override
   void onHabitComplete(HabitUUID uuid) {
@@ -769,4 +800,125 @@ final class WebDavProgressControllerImpl implements WebDavProgressController {
     habitProgress = null;
     onPercentageChanged?.call(percentage);
   }
+}
+
+final class WebDavProgressStatusMessageBuilder {
+  final int level;
+  final String sessionId;
+  final WebDavProgressStatusMessageType type;
+
+  const WebDavProgressStatusMessageBuilder(
+      this.level, this.sessionId, this.type);
+
+  const WebDavProgressStatusMessageBuilder.main(this.level, this.sessionId)
+      : type = WebDavProgressStatusMessageType.main;
+
+  WebDavProgressStatusMessageBuilder toNextLevel(String sessionId,
+          {int step = 1, WebDavProgressStatusMessageType? type}) =>
+      WebDavProgressStatusMessageBuilder(
+          level + math.max(step, 1), sessionId, type ?? this.type);
+
+  WebDavProgressStatusMessage<T> build<T>(
+          {String? id,
+          T? data,
+          required WebDavProgressStatusMessageStatus status}) =>
+      MinimalWebDavProgressStatusMessage<T>(
+          id: id,
+          level: level,
+          sessionId: sessionId,
+          type: type,
+          status: status,
+          data: data);
+
+  WebDavProgressStatusMessage<T> init<T>({String? id, T? data}) => build<T>(
+      id: id, status: WebDavProgressStatusMessageStatus.init, data: data);
+
+  WebDavProgressStatusMessage<T> start<T>({String? id, T? data}) => build<T>(
+      id: id, status: WebDavProgressStatusMessageStatus.start, data: data);
+
+  WebDavProgressStatusMessage<WebDavAppSyncTaskResult> completeFromResult(
+          WebDavAppSyncTaskResult result,
+          {String? id}) =>
+      build(
+          id: id,
+          status: WebDavProgressStatusMessageStatus.fromResult(result),
+          data: result);
+}
+
+enum WebDavProgressStatusMessageStatus {
+  init,
+  start,
+  cancelled,
+  completed,
+  failed,
+  error;
+
+  static WebDavProgressStatusMessageStatus fromResult(
+      AppSyncTaskResult result) {
+    final WebDavProgressStatusMessageStatus status;
+    if (result.isSuccessed) {
+      status = WebDavProgressStatusMessageStatus.completed;
+    } else if (result.isCancelled) {
+      status = WebDavProgressStatusMessageStatus.cancelled;
+    } else if (result.withError) {
+      status = WebDavProgressStatusMessageStatus.error;
+    } else {
+      status = WebDavProgressStatusMessageStatus.failed;
+    }
+    return status;
+  }
+}
+
+enum WebDavProgressStatusMessageType {
+  unknown,
+  main,
+  executor,
+  config,
+  habitCount,
+}
+
+abstract interface class WebDavProgressStatusMessage<T> {
+  String get id;
+  int get level;
+  String get sessionId;
+  WebDavProgressStatusMessageType get type;
+  WebDavProgressStatusMessageStatus get status;
+  T? get data;
+
+  static WebDavProgressStatusMessageBuilder builderOf(
+          String sessionId, WebDavProgressStatusMessageType type,
+          {int level = 1}) =>
+      WebDavProgressStatusMessageBuilder(level, sessionId, type);
+
+  static WebDavProgressStatusMessageBuilder mainBuilderOf(String sessionId) =>
+      WebDavProgressStatusMessageBuilder.main(1, sessionId);
+}
+
+class MinimalWebDavProgressStatusMessage<T>
+    implements WebDavProgressStatusMessage<T> {
+  @override
+  final int level;
+  @override
+  final String sessionId;
+  @override
+  final WebDavProgressStatusMessageType type;
+  @override
+  final WebDavProgressStatusMessageStatus status;
+  @override
+  final T? data;
+
+  final String? _id;
+
+  const MinimalWebDavProgressStatusMessage(
+      {String? id,
+      required this.level,
+      required this.sessionId,
+      required this.type,
+      required this.status,
+      this.data})
+      : _id = id;
+
+  @override
+  String get id =>
+      _id != null && _id!.isNotEmpty ? "${type.name}-$_id" : type.name;
 }

@@ -38,8 +38,10 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   final AppWebDavSyncServer config;
 
   final WebDavProgressController? progressController;
+  final bool handleProgressControllerState;
   final void Function(WebDavAppSyncTaskResult result)? onConfigTaskComplete;
 
+  late final WebDavProgressStatusMessageBuilder _progressMessageBuilder;
   late final AppSyncTask<WebDavAppSyncTaskResult> _configTask;
   late final AppSyncTask<WebDavAppSyncTaskResult> _syncTask;
   late final String _sessionId;
@@ -52,6 +54,8 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     required SyncDBHelper syncDBHelper,
     Duration? configConfirmTimeout = const Duration(seconds: 60),
     this.progressController,
+    this.handleProgressControllerState = true,
+    WebDavProgressStatusMessageBuilder? progressMessageBuilder,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
         onNeedConfirmCallback,
     this.onConfigTaskComplete,
@@ -61,12 +65,15 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
         sessionId: _sessionId,
         config: config,
         confirmTimeout: configConfirmTimeout,
+        progressController: progressController,
         onNeedConfirmCallback: onNeedConfirmCallback);
     _syncTask = WebDavAppSyncTaskExecutor.build(
         sessionId: _sessionId,
         config: config,
         syncDBHelper: syncDBHelper,
         progressController: progressController);
+    _progressMessageBuilder = progressMessageBuilder ??
+        WebDavProgressStatusMessage.mainBuilderOf(_sessionId);
   }
 
   static String genSessionId() {
@@ -115,6 +122,9 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   String get sessionId => _sessionId;
 
+  WebDavProgressStatusMessageBuilder get progressMessageBuilder =>
+      _progressMessageBuilder;
+
   @override
   FutureOr<WebDavAppSyncTaskResult> error([Object? e, StackTrace? s]) {
     _crtTask?.cancel();
@@ -133,6 +143,17 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
           (task: _configTask, onComplete: onConfigTaskComplete),
         (task: _syncTask, onComplete: null),
       ];
+
+  @override
+  Future<WebDavAppSyncTaskResult> run() {
+    progressController?.addMessage(_progressMessageBuilder.start());
+    return super.run().then((result) {
+      progressController?.addMessage(
+          _progressMessageBuilder.completeFromResult(result),
+          complete: handleProgressControllerState);
+      return result;
+    });
+  }
 
   @override
   Future<WebDavAppSyncTaskResult> exec() async {
@@ -198,6 +219,7 @@ class WebDavAppSyncTaskExecutor
   final AppSyncSubTask<WebDavAppSyncTaskResult> Function(
       WebDavAppSyncHabitInfo cell) singleHabitSyncTaskBuilder;
 
+  late final WebDavProgressStatusMessageBuilder _progressMessageBuilder;
   late final WeakReference<WebDavStdClient>? _client;
 
   WebDavAppSyncTaskExecutor({
@@ -211,6 +233,8 @@ class WebDavAppSyncTaskExecutor
     required this.singleHabitSyncTaskBuilder,
     WebDavStdClient? client,
   }) {
+    _progressMessageBuilder = WebDavProgressStatusMessage.builderOf(
+        sessionId, WebDavProgressStatusMessageType.executor);
     _client = client != null ? WeakReference(client) : null;
   }
 
@@ -290,7 +314,19 @@ class WebDavAppSyncTaskExecutor
     appLog.appsynctask
         .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
     cancel();
+    _progressMessageBuilder
+        .completeFromResult(WebDavAppSyncTaskResult.error(error: e, trace: s));
     Error.throwWithStackTrace(e, s);
+  }
+
+  @override
+  Future<WebDavAppSyncTaskResult> run() {
+    progressController?.addMessage(_progressMessageBuilder.start());
+    return super.run().then((result) {
+      progressController
+          ?.addMessage(_progressMessageBuilder.completeFromResult(result));
+      return result;
+    });
   }
 
   @override
@@ -320,6 +356,11 @@ class WebDavAppSyncTaskExecutor
     appLog.appsynctask
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 
+    final habitMessageBuilder = _progressMessageBuilder.toNextLevel(sessionId,
+        type: WebDavProgressStatusMessageType.habitCount);
+    progressController
+        ?.addMessage(habitMessageBuilder.init(data: mergedResult.length));
+
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult>{};
     final pool = Pool(mergedResult.length.clamp(1, 5),
         timeout: config.timeout ?? defaultAppSyncTimeout);
@@ -332,7 +373,11 @@ class WebDavAppSyncTaskExecutor
             return singleHabitSyncTaskBuilder(cell).run(this);
           })
           .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
-          .then((result) => resultMap.putIfAbsent(cell, () => result))
+          .then((result) {
+            progressController
+                ?.addMessage(habitMessageBuilder.completeFromResult(result));
+            return resultMap.putIfAbsent(cell, () => result);
+          })
           .whenComplete(() => progressController?.onHabitComplete(cell.uuid)),
     )).whenComplete(() => progressController?.clearHabitProgress());
     appLog.appsynctask.debug(this, ex: [
@@ -374,10 +419,12 @@ Proceed with caution!
   final AppSyncSubTask createHabitsDir;
   final AppSyncSubTask createRecordsDir;
   final AppSyncSubTask createWarningFile;
+  final WebDavProgressController? progressController;
 
   final FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
       onNeedConfirmCallback;
 
+  late final WebDavProgressStatusMessageBuilder _progressMessageBuilder;
   late final WeakReference<WebDavStdClient>? _client;
 
   WebDavAppSyncConfigTask({
@@ -385,6 +432,7 @@ Proceed with caution!
     required this.sessionId,
     super.timeout = Duration.zero,
     this.confirmTimeout = Duration.zero,
+    this.progressController,
     required this.checkRootDirTask,
     required this.createRootDir,
     required this.createHabitsDir,
@@ -393,6 +441,8 @@ Proceed with caution!
     this.onNeedConfirmCallback,
     WebDavStdClient? client,
   }) {
+    _progressMessageBuilder = WebDavProgressStatusMessage.builderOf(
+        sessionId, WebDavProgressStatusMessageType.config);
     _client = client != null ? WeakReference(client) : null;
   }
 
@@ -402,6 +452,7 @@ Proceed with caution!
     WebDavStdClient? overwriteClient,
     Duration? timeout,
     Duration? confirmTimeout,
+    WebDavProgressController? progressController,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
         onNeedConfirmCallback,
   }) {
@@ -419,6 +470,7 @@ Proceed with caution!
         config: config,
         client: overwriteClient == null ? client : null,
         timeout: timeout ?? Duration.zero,
+        progressController: progressController,
         confirmTimeout: timeout ?? Duration.zero,
         onNeedConfirmCallback: onNeedConfirmCallback,
         checkRootDirTask: CheckRootDirTask(
@@ -449,6 +501,16 @@ Proceed with caution!
         .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
     cancel();
     Error.throwWithStackTrace(e, s);
+  }
+
+  @override
+  Future<WebDavAppSyncTaskResult> run() {
+    progressController?.addMessage(_progressMessageBuilder.start());
+    return super.run().then((result) {
+      progressController
+          ?.addMessage(_progressMessageBuilder.completeFromResult(result));
+      return result;
+    });
   }
 
   @override

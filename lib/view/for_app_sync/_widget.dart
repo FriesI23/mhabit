@@ -14,3 +14,4 @@
 
 export './app_sync_fetch_interval.dart' show AppSyncFetchIntervalTile;
 export './app_sync_summary_tile.dart';
+export 'app_sync_message_list.dart';
