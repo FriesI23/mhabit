@@ -95,7 +95,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
                   writeImmediately: l.Level.values
                       .where((e) => e.value >= l.Level.warning.value)
                       .toList(),
-                  maxFileSizeKB: 0,
+                  maxFileSizeKB: -1,
                 ),
                 const AppLoggerConsoleReleaseOutput(),
               ]),
@@ -110,7 +110,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
                   writeImmediately: l.Level.values
                       .where((e) => e.value >= l.Level.warning.value)
                       .toList(),
-                  maxFileSizeKB: 0,
+                  maxFileSizeKB: -1,
                 ),
                 const AppLoggerConsoleOutput(),
               ]),

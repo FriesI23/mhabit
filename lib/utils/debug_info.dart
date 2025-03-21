@@ -19,6 +19,7 @@ import 'package:path/path.dart' as path;
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
+import '../common/utils.dart';
 import 'app_path_provider.dart';
 
 String buildDebugLogFilePath(String dirPath) =>
@@ -26,6 +27,13 @@ String buildDebugLogFilePath(String dirPath) =>
 
 String buildDebugInfoFilePath(String dirPath) =>
     path.join(dirPath, debuggerInfoFileName);
+
+String buildSyncFailedLogFilePath(String dirPath, [String? sessionId]) =>
+    path.join(
+        dirPath,
+        sanitizeFileName(
+            "$appSyncFailedLogFilePrefix${sessionId != null ? '-$sessionId' : ''}"
+            "$appSyncFailedLogFileSuffix"));
 
 Future<String> generateZippedDebugInfo() async {
   final pathProvider = AppPathProvider();
