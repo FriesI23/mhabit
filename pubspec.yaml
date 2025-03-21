@@ -88,6 +88,7 @@ dependencies:
   nested: ^1.0.0
   async: ^2.11.0
   pool: ^1.5.1
+  rxdart: ^0.28.0
 
   # Data Persistence
   shared_preferences: ^2.0.15

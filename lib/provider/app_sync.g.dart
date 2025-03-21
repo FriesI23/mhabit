@@ -18,6 +18,18 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
 
   AppSyncContainer<T, R> result(R? result);
 
+  AppSyncContainer<T, R> loggerReplay(ReplaySubject<LogEvent>? loggerReplay);
+
+  AppSyncContainer<T, R> filePath(String? filePath);
+
+  AppSyncContainer<T, R> percentage(num? percentage);
+
+  AppSyncContainer<T, R> loggerStreamer(
+      ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer);
+
+  AppSyncContainer<T, R> logEventCallback(
+      void Function(LogEvent) logEventCallback);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppSyncContainer<T,R>(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -30,6 +42,11 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
     DateTime? startTime,
     DateTime? endedTime,
     R? result,
+    ReplaySubject<LogEvent>? loggerReplay,
+    String? filePath,
+    num? percentage,
+    ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer,
+    void Function(LogEvent)? logEventCallback,
   });
 }
 
@@ -58,6 +75,27 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
   AppSyncContainer<T, R> result(R? result) => this(result: result);
 
   @override
+  AppSyncContainer<T, R> loggerReplay(ReplaySubject<LogEvent>? loggerReplay) =>
+      this(loggerReplay: loggerReplay);
+
+  @override
+  AppSyncContainer<T, R> filePath(String? filePath) => this(filePath: filePath);
+
+  @override
+  AppSyncContainer<T, R> percentage(num? percentage) =>
+      this(percentage: percentage);
+
+  @override
+  AppSyncContainer<T, R> loggerStreamer(
+          ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer) =>
+      this(loggerStreamer: loggerStreamer);
+
+  @override
+  AppSyncContainer<T, R> logEventCallback(
+          void Function(LogEvent) logEventCallback) =>
+      this(logEventCallback: logEventCallback);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppSyncContainer<T,R>(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -71,8 +109,13 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
     Object? startTime = const $CopyWithPlaceholder(),
     Object? endedTime = const $CopyWithPlaceholder(),
     Object? result = const $CopyWithPlaceholder(),
+    Object? loggerReplay = const $CopyWithPlaceholder(),
+    Object? filePath = const $CopyWithPlaceholder(),
+    Object? percentage = const $CopyWithPlaceholder(),
+    Object? loggerStreamer = const $CopyWithPlaceholder(),
+    Object? logEventCallback = const $CopyWithPlaceholder(),
   }) {
-    return AppSyncContainer<T, R>(
+    return AppSyncContainer<T, R>._copyWith(
       id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
@@ -93,6 +136,27 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
           ? _value.result
           // ignore: cast_nullable_to_non_nullable
           : result as R?,
+      loggerReplay: loggerReplay == const $CopyWithPlaceholder()
+          ? _value.loggerReplay
+          // ignore: cast_nullable_to_non_nullable
+          : loggerReplay as ReplaySubject<LogEvent>?,
+      filePath: filePath == const $CopyWithPlaceholder()
+          ? _value.filePath
+          // ignore: cast_nullable_to_non_nullable
+          : filePath as String?,
+      percentage: percentage == const $CopyWithPlaceholder()
+          ? _value.percentage
+          // ignore: cast_nullable_to_non_nullable
+          : percentage as num?,
+      loggerStreamer: loggerStreamer == const $CopyWithPlaceholder()
+          ? _value.loggerStreamer
+          // ignore: cast_nullable_to_non_nullable
+          : loggerStreamer as ReplayAppLoggerStreamer<AppLoggerMessage>?,
+      logEventCallback: logEventCallback == const $CopyWithPlaceholder() ||
+              logEventCallback == null
+          ? _value.logEventCallback
+          // ignore: cast_nullable_to_non_nullable
+          : logEventCallback as void Function(LogEvent),
     );
   }
 }

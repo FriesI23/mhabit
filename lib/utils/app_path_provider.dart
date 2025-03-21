@@ -23,6 +23,8 @@ abstract interface class AppPathProvider {
 
   Future<String> getAppDebugInfoFilePath();
 
+  Future<String> getSyncFailedLogFilePath([String? sessionId]);
+
   Future<String> getExportHabitsDirPath();
 
   Future<String> getDatabaseDirPath();
@@ -38,7 +40,28 @@ abstract interface class AppPathProvider {
       ];
 }
 
-final class _AppPathProviderImpl implements AppPathProvider {
+class _PreviousAppPathProviderStub implements AppPathProvider {
+  const _PreviousAppPathProviderStub();
+
+  @override
+  Future<String> getAppDebugInfoFilePath() => throw UnimplementedError();
+
+  @override
+  Future<String> getAppDebugLogFilePath() async => throw UnimplementedError();
+
+  @override
+  Future<String> getDatabaseDirPath() => throw UnimplementedError();
+
+  @override
+  Future<String> getExportHabitsDirPath() => throw UnimplementedError();
+
+  @override
+  Future<String> getSyncFailedLogFilePath([String? sessionId]) =>
+      throw UnimplementedError();
+}
+
+final class _AppPathProviderImpl extends _PreviousAppPathProviderStub
+    implements AppPathProvider {
   const _AppPathProviderImpl();
 
   @override
@@ -77,4 +100,9 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
   @override
   Future<String> getExportHabitsDirPath() =>
       getApplicationCacheDirectory().then((value) => value.path);
+
+  @override
+  Future<String> getSyncFailedLogFilePath([String? sessionId]) =>
+      getApplicationCacheDirectory()
+          .then((value) => buildSyncFailedLogFilePath(value.path, sessionId));
 }
