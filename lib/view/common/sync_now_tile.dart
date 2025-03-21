@@ -52,6 +52,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = context.select<AppSyncViewModel, bool>((vm) => vm.enabled);
+
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
           selector: (context, vm) => vm.appSyncTask.task?.task.isProcessing,
@@ -133,7 +135,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
                 ),
               _ => IconButton(
                   key: ValueKey(2),
-                  onPressed: _onStartButtonPressed,
+                  onPressed: enabled ? _onStartButtonPressed : null,
                   icon: const Icon(MdiIcons.syncIcon),
                 ),
             },
@@ -153,6 +155,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
     return ListTile(
+      enabled: enabled,
       contentPadding: kListTileContentPadding,
       isThreeLine: true,
       title: buildTitle(context),
