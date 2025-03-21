@@ -230,3 +230,38 @@ Future<bool> dismissAllToolTips() async {
       : Duration.zero);
   return result;
 }
+
+final _invalidChars = RegExp(r'[<>:"/\\|?*\x00-\x1F]');
+String sanitizeFileName(String name,
+    {RegExp? invalidChars, String replacement = "_", int limit = 255}) {
+  invalidChars = invalidChars ?? _invalidChars;
+  const reservedNames = {
+    "CON",
+    "PRN",
+    "AUX",
+    "NUL",
+    "COM1",
+    "COM2",
+    "COM3",
+    "COM4",
+    "COM5",
+    "COM6",
+    "COM7",
+    "COM8",
+    "COM9",
+    "LPT1",
+    "LPT2",
+    "LPT3",
+    "LPT4",
+    "LPT5",
+    "LPT6",
+    "LPT7",
+    "LPT8",
+    "LPT9"
+  };
+
+  String safeName = name.replaceAll(invalidChars, replacement).trim();
+  safeName = safeName.replaceAll(RegExp(r'[. ]+$'), "");
+  if (reservedNames.contains(safeName.toUpperCase())) safeName = "_$safeName";
+  return safeName.length > limit ? safeName.substring(0, limit) : safeName;
+}

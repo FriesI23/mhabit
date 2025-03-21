@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -20,17 +21,23 @@ import 'package:data_saver/data_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart' as l;
+import 'package:logger/logger.dart' show LogEvent;
+import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
+import '../logging/logger_message.dart' show AppLoggerMessage;
+import '../logging/logger_utils.dart';
 import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handler/app_sync.dart';
 import '../persistent/profile_provider.dart';
+import '../utils/app_path_provider.dart';
 import '../view/common/app_sync_confirm_dialog.dart';
 import 'commons.dart';
 
@@ -190,34 +197,92 @@ class AppSyncViewModel
       });
 }
 
-@CopyWith(skipFields: false, copyWithNull: false)
+@CopyWith(skipFields: false, copyWithNull: false, constructor: "_copyWith")
 class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   final String id;
   final T task;
   final DateTime? startTime;
   final DateTime? endedTime;
   final R? result;
+  final ReplaySubject<l.LogEvent>? loggerReplay;
+  final String? filePath;
+
+  late final void Function(LogEvent) logEventCallback;
 
   num? percentage;
+  ReplayAppLoggerStreamer? loggerStreamer;
 
-  AppSyncContainer({
-    required this.id,
-    required this.task,
-    this.startTime,
-    this.endedTime,
-    this.result,
-  });
+  AppSyncContainer(
+      {required this.id,
+      required this.task,
+      this.startTime,
+      this.endedTime,
+      this.result,
+      this.loggerReplay,
+      this.filePath,
+      void Function(l.LogEvent)? logEventCallback}) {
+    final loggerReplay = this.loggerReplay;
+    this.logEventCallback =
+        logEventCallback ?? (event) => loggerReplay?.add(event);
+  }
 
-  AppSyncContainer.generate({required this.task})
+  AppSyncContainer._copyWith(
+      {required this.id,
+      required this.task,
+      this.startTime,
+      this.endedTime,
+      this.result,
+      this.loggerReplay,
+      this.filePath,
+      this.percentage,
+      this.loggerStreamer,
+      required this.logEventCallback});
+
+  AppSyncContainer.generate({required this.task, required String this.filePath})
       : id = const Uuid().v4(),
         startTime = DateTime.now(),
+        loggerReplay = ReplaySubject<l.LogEvent>(),
         endedTime = null,
-        result = null;
+        result = null {
+    final loggerReplay = this.loggerReplay!;
+    logEventCallback = loggerReplay.add;
+  }
+
+  void startRecordSyncLog() {
+    final loggerReplay = this.loggerReplay;
+    if (loggerReplay == null || loggerReplay.isClosed) return;
+    l.Logger.addLogListener(logEventCallback);
+  }
+
+  void stopRecordSyncLog() {
+    final loggerReplay = this.loggerReplay;
+    if (loggerReplay == null || loggerReplay.isClosed) return;
+    l.Logger.removeLogListener(logEventCallback);
+    loggerReplay.close();
+  }
+
+  void recordSyncFailureLog() {
+    final loggerReplay = this.loggerReplay;
+    final filePath = this.filePath;
+    if (loggerReplay != null &&
+        filePath != null &&
+        loggerStreamer == null &&
+        result?.isSuccessed != true) {
+      final sr = loggerStreamer = ReplayAppLoggerStreamer.buildAppSyncFailed(
+          replaySubject: loggerReplay,
+          filePath: filePath,
+          sessionId: task.sessionId);
+      sr.init().then((_) {
+        if (!sr.isComplete) sr.run();
+      });
+    }
+  }
 
   @override
   String toString() => "AppSyncContainer<$T>(id=$id, "
       "task=$task, startT=$startTime, endedT=$endedTime, "
-      "reuslt=$result"
+      "reuslt=$result, loggerReplay=$loggerReplay, "
+      "logEventCallback=${logEventCallback.hashCode}"
       ")";
 }
 
@@ -370,7 +435,10 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     if (config == null) return;
 
     final tmpNewTask = (_task == null || _task!.task.isDone)
-        ? AppSyncContainer.generate(task: await buildNewTask(config))
+        ? await buildNewTask(config).then((task) => AppPathProvider()
+            .getSyncFailedLogFilePath(task.sessionId)
+            .then((filePath) =>
+                AppSyncContainer.generate(task: task, filePath: filePath)))
         : null;
 
     final AppSyncContainer newTask;
@@ -378,13 +446,15 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
 
     if ((crtTask == null || crtTask.task.isDone) && tmpNewTask != null) {
       newTask = _task = tmpNewTask;
+      crtTask?.stopRecordSyncLog();
     } else if (crtTask != null &&
         crtTask.task.status == AppSyncTaskStatus.idle) {
-      newTask = _task = crtTask;
+      newTask = crtTask;
     } else {
       return;
     }
 
+    newTask.startRecordSyncLog();
     newTask.task.run().whenComplete(() async {
       final crtTask = _task;
       if (crtTask == null ||
@@ -392,13 +462,16 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
           crtTask.task.status != AppSyncTaskStatus.completed) {
         return;
       }
-      _task = crtTask.copyWith(
+      final finalTask = _task = crtTask.copyWith(
         result: await crtTask.task.result,
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: _task, ex: ['completed']);
+          beforeVal: crtTask, afterVal: finalTask, ex: ['completed']);
       notifyListeners();
+      finalTask
+        ..recordSyncFailureLog()
+        ..stopRecordSyncLog();
     });
 
     notifyListeners();
@@ -414,13 +487,16 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
           crtTask.task.status != AppSyncTaskStatus.cancelled) {
         return;
       }
-      _task = crtTask.copyWith(
+      final finalTask = _task = crtTask.copyWith(
         result: await crtTask.task.result,
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: _task, ex: ['cancelled']);
+          beforeVal: crtTask, afterVal: finalTask, ex: ['cancelled']);
       notifyListeners();
+      finalTask
+        ..recordSyncFailureLog()
+        ..stopRecordSyncLog();
     });
 
     notifyListeners();
