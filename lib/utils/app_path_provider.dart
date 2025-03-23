@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../common/consts.dart';
 import 'debug_info.dart';
 
 abstract interface class AppPathProvider {
   Future<String> getAppDebugLogFilePath();
 
   Future<String> getAppDebugInfoFilePath();
+
+  Future<Directory> getSyncFailLogDir();
 
   Future<String> getSyncFailedLogFilePath([String? sessionId]);
 
@@ -56,6 +61,9 @@ class _PreviousAppPathProviderStub implements AppPathProvider {
   Future<String> getExportHabitsDirPath() => throw UnimplementedError();
 
   @override
+  Future<Directory> getSyncFailLogDir() => throw UnimplementedError();
+
+  @override
   Future<String> getSyncFailedLogFilePath([String? sessionId]) =>
       throw UnimplementedError();
 }
@@ -81,6 +89,8 @@ final class _AppPathProviderImpl extends _PreviousAppPathProviderStub
 }
 
 final class _AppPathProviderV2Impl implements AppPathProvider {
+  static final createdPaths = <String>{};
+
   const _AppPathProviderV2Impl();
 
   @override
@@ -102,7 +112,22 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
       getApplicationCacheDirectory().then((value) => value.path);
 
   @override
+  Future<Directory> getSyncFailLogDir() =>
+      getApplicationCacheDirectory().then((value) async {
+        final dir =
+            Directory.fromUri(value.uri.resolve(appSyncFailedLogDirSubPath));
+        final path = dir.absolute.path;
+        if (createdPaths.contains(path)) return dir;
+        if (await dir.exists()) {
+          createdPaths.add(path);
+          return dir;
+        } else {
+          return await dir.create(recursive: true);
+        }
+      });
+
+  @override
   Future<String> getSyncFailedLogFilePath([String? sessionId]) =>
-      getApplicationCacheDirectory()
+      getSyncFailLogDir()
           .then((value) => buildSyncFailedLogFilePath(value.path, sessionId));
 }
