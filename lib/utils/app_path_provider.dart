@@ -19,9 +19,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../common/consts.dart';
+import 'app_sync.dart';
 import 'debug_info.dart';
 
 abstract interface class AppPathProvider {
+  Future<Directory> getTempDir();
+
   Future<String> getAppDebugLogFilePath();
 
   Future<String> getAppDebugInfoFilePath();
@@ -47,6 +50,9 @@ abstract interface class AppPathProvider {
 
 class _PreviousAppPathProviderStub implements AppPathProvider {
   const _PreviousAppPathProviderStub();
+
+  @override
+  Future<Directory> getTempDir() => throw UnimplementedError();
 
   @override
   Future<String> getAppDebugInfoFilePath() => throw UnimplementedError();
@@ -92,6 +98,9 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
   static final createdPaths = <String>{};
 
   const _AppPathProviderV2Impl();
+
+  @override
+  Future<Directory> getTempDir() => getTemporaryDirectory();
 
   @override
   Future<String> getAppDebugInfoFilePath() => getApplicationCacheDirectory()

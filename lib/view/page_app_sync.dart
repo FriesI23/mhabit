@@ -14,11 +14,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
+import '../utils/app_path_provider.dart';
 import 'for_app_sync/_dialog.dart';
 import 'for_app_sync/_widget.dart';
 import 'page_app_sync_server_editor.dart';
@@ -99,36 +101,50 @@ final class _AppSyncView extends State<AppSyncView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const PageBackButton(reason: PageBackReason.back),
-        title: const Text("Sync"),
-      ),
-      body: ListView(
-        children: [
-          Selector<AppSyncViewModel, bool>(
-            selector: (ctx, v) => v.enabled,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => SwitchListTile.adaptive(
-              title: const Text("Enable"),
-              value: value,
-              onChanged: (value) =>
-                  context.read<AppSyncViewModel>().setSyncSwitch(value),
-            ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: const PageBackButton(reason: PageBackReason.back),
+            title: const Text("Sync"),
+            pinned: true,
           ),
-          const Divider(),
+          SliverPinnedHeader(
+              child: Selector<AppSyncViewModel, bool>(
+            selector: (ctx, v) => v.enabled,
+            shouldRebuild: (previous, next) => previous != next,
+            builder: (context, value, child) => ColoredBox(
+              color: Theme.of(context).colorScheme.surface,
+              child: SwitchListTile.adaptive(
+                title: const Text("Enable"),
+                value: value,
+                onChanged: (value) =>
+                    context.read<AppSyncViewModel>().setSyncSwitch(value),
+              ),
+            ),
+          )),
           Selector<AppSyncViewModel, bool>(
             selector: (ctx, v) => v.enabled,
             shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => _AppSyncConfigSubgroup(
+            builder: (context, value, child) => SliverToBoxAdapter(
+                child: _AppSyncConfigSubgroup(
               enabled: value,
               onConfigPressed: _onServerConfigPressed,
               onFetchIntervalPressed: _onServerFetchIntervalPressed,
-            ),
+            )),
           ),
-          if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
+          SliverList.list(children: [
             const Divider(),
-            const _DebugShowTile(),
-          ],
+            FutureBuilder(
+              future: AppPathProvider().getSyncFailLogDir(),
+              builder: (context, snapshot) =>
+                  AppSyncFailLogsTile(path: snapshot.data?.path),
+            ),
+          ]),
+          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+            SliverList.list(children: [
+              const Divider(),
+              const _DebugShowTile(),
+            ]),
         ],
       ),
     );
@@ -152,6 +168,7 @@ class _AppSyncConfigSubgroup extends StatelessWidget {
       expand: enabled,
       child: Column(
         children: [
+          const Divider(),
           AppSyncSummaryTile(onPressed: onConfigPressed),
           AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
         ],
