@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,29 +17,28 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:path/path.dart' as path;
 
-import '../common/app_info.dart';
 import '../common/consts.dart';
+import '../common/utils.dart';
 import 'app_path_provider.dart';
 
-String buildDebugLogFilePath(String dirPath) =>
-    path.join(dirPath, debuggerLogFileName);
+String buildSyncFailedLogFilePath(String dirPath, [String? sessionId]) =>
+    path.join(
+      dirPath,
+      sanitizeFileName(
+          "$appSyncFailedLogFilePrefix${sessionId != null ? '-$sessionId' : ''}"
+          "$appSyncFailedLogFileSuffix"),
+    );
 
-String buildDebugInfoFilePath(String dirPath) =>
-    path.join(dirPath, debuggerInfoFileName);
-
-Future<String> generateZippedDebugInfo() async {
+Future<String> generateZippedSyncFailedLogs() async {
   final pathProvider = AppPathProvider();
-  final debugLogFile = File(await pathProvider.getAppDebugLogFilePath());
-  final debugInfoFile = await File(await pathProvider.getAppDebugInfoFilePath())
-      .writeAsString(await AppInfo().generateAppDebugInfo(),
-          mode: FileMode.writeOnly);
-  final zipPath = path.join(path.dirname(debugInfoFile.path), debuggerZipFile);
+  final syncFailedDir = await pathProvider.getSyncFailLogDir();
+  final tempDir = await pathProvider.getTempDir();
+  final zipPath = path.join(tempDir.path, appSyncFailedZipFile);
   final encoder = ZipFileEncoder()..create(zipPath);
-  await Future.wait([
-    debugLogFile
-        .exists()
-        .then((value) => value ? encoder.addFile(debugLogFile) : null),
-    encoder.addFile(debugInfoFile),
-  ]).then((_) => encoder.close());
+  await encoder
+      .addDirectory(syncFailedDir,
+          filter: (entity, progress) =>
+              entity is File ? ZipFileOperation.include : ZipFileOperation.skip)
+      .then((_) => encoder.close());
   return zipPath;
 }

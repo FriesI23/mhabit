@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
 import '../extension/datetime_extensions.dart';
+import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';
 import 'consts.dart';
@@ -264,4 +266,32 @@ String sanitizeFileName(String name,
   safeName = safeName.replaceAll(RegExp(r'[. ]+$'), "");
   if (reservedNames.contains(safeName.toUpperCase())) safeName = "_$safeName";
   return safeName.length > limit ? safeName.substring(0, limit) : safeName;
+}
+
+Future<List<String>> cleanExpiredFiles(
+    Directory directory, Duration maxAge) async {
+  if (!await directory.exists()) return const [];
+
+  final results = <String>[];
+  final now = DateTime.now();
+  await for (var entity in directory.list()) {
+    if (entity is File) {
+      final lastModified = await entity.lastModified();
+      if (now.difference(lastModified) > maxAge) {
+        try {
+          await entity.delete();
+          results.add(entity.path);
+          appLog.debugger.debug("cleanExpiredFiles",
+              ex: ["Deleted", entity.path, maxAge, directory]);
+        } catch (e, s) {
+          appLog.debugger.error("cleanExpiredFiles",
+              ex: ["Delete Failed", entity.path, maxAge, directory],
+              error: e,
+              stackTrace: s);
+          if (kDebugMode) Error.throwWithStackTrace(e, s);
+        }
+      }
+    }
+  }
+  return results;
 }

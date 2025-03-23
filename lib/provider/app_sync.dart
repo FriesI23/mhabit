@@ -28,6 +28,7 @@ import 'package:uuid/uuid.dart';
 
 import '../common/consts.dart';
 import '../common/global.dart';
+import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../logging/logger_message.dart' show AppLoggerMessage;
 import '../logging/logger_utils.dart';
@@ -53,6 +54,8 @@ class AppSyncViewModel
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
 
+  bool _clearLogsOnStartup = false;
+
   AppSyncViewModel() {
     appSyncTask = DispatcherForAppSyncTask(this);
     appSyncTask.addListener(notifyListeners);
@@ -74,6 +77,16 @@ class AppSyncViewModel
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
+    if (!_clearLogsOnStartup) _clearLogsOnStartup = true;
+    cleanExpiredSyncFailedLogs().then((results) {
+      if (results.isNotEmpty) {
+        appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
+      }
+    }).catchError((e, s) {
+      appLog.appsync.warn("clear logs on startup failed",
+          ex: [hashCode], error: e, stackTrace: s);
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
+    });
   }
 
   bool get enabled => _switch?.get() ?? false;
@@ -195,6 +208,10 @@ class AppSyncViewModel
         }
         return appSyncTask.startSync();
       });
+
+  Future<List<String>> cleanExpiredSyncFailedLogs() => AppPathProvider()
+      .getSyncFailLogDir()
+      .then((dir) => cleanExpiredFiles(dir, const Duration(days: 30)));
 }
 
 @CopyWith(skipFields: false, copyWithNull: false, constructor: "_copyWith")
