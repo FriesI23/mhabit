@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -170,7 +171,8 @@ class _AppSyncConfigSubgroup extends StatelessWidget {
         children: [
           const Divider(),
           AppSyncSummaryTile(onPressed: onConfigPressed),
-          AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
+          if (kDebugMode)
+            AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
         ],
       ),
     );
