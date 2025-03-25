@@ -653,13 +653,16 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           ),
         ];
 
-    Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
-          GroupTitleListTile(title: Text("Sync")),
-          AppSyncNowTile(),
-          ListTile(
-              title: const Text("Sync Option"),
-              onTap: () => app_sync.naviToAppSyncPage(context: context)),
-        ];
+    Iterable<Widget> buildSyncSubGroup(BuildContext context) {
+      return <Widget>[
+        GroupTitleListTile(title: Text("Sync")),
+        AppSyncNowTile(),
+        AppSettingSyncFailedTile(),
+        ListTile(
+            title: const Text("Sync Option"),
+            onTap: () => app_sync.naviToAppSyncPage(context: context)),
+      ];
+    }
 
     Widget buildDevelopSubGroup(BuildContext context) =>
         Selector<AppDeveloperViewModel, Tuple2<bool, bool>>(

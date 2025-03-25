@@ -87,19 +87,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
               case AppSyncTaskStatus.idle:
               case AppSyncTaskStatus.completed:
                 if (lastSyncTask.result?.isSuccessed != true) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Last Sync (Error): $lastEndedTimeStr"),
-                      if (kDebugMode) ...[
-                        const Divider(),
-                        Text('[DEBUG]'),
-                        Text("Reslt: ${lastSyncTask.result}"),
-                        Text("Error: ${lastSyncTask.result?.error.error}"),
-                        Text("Trace: ${lastSyncTask.result?.error.trace}"),
-                      ],
-                    ],
-                  );
+                  return Text("Last Sync (Error): $lastEndedTimeStr");
                 }
                 return Text("Last Sync: $lastEndedTimeStr");
               case AppSyncTaskStatus.running:
