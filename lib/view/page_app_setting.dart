@@ -655,10 +655,11 @@ class _AppSettingView extends State<AppSettingView> with XShare {
 
     Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
           GroupTitleListTile(title: Text("Sync")),
+          AppSyncNowTile(),
+          AppSettingSyncFailedTile(),
           ListTile(
               title: const Text("Sync Option"),
               onTap: () => app_sync.naviToAppSyncPage(context: context)),
-          AppSyncNowTile(),
         ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>

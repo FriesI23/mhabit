@@ -31,6 +31,10 @@ const String aboutInfoFilePath = "configs/about_info.json";
 const String debuggerLogFileName = "app_debug.log";
 const String debuggerInfoFileName = "debug.txt";
 const String debuggerZipFile = "debug.zip";
+const String appSyncFailedLogDirSubPath = 'app_sync_failed_logs';
+const String appSyncFailedLogFilePrefix = "app_sync_failed";
+const String appSyncFailedLogFileSuffix = ".txt";
+const String appSyncFailedZipFile = "app_sync_failed.zip";
 
 /// # Sqlite versions
 ///
@@ -96,7 +100,7 @@ const defaultAppReminder = AppReminderConfig.off;
 const defaultAppSyncTimeout = Duration(seconds: 180);
 const defaultAppSyncConnectTimeout = Duration(seconds: 5);
 const int? defaultAppSyncConnectRetryCount = null; // null for infinity
-const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
+const defaultAppSyncFetchInterval = AppSyncFetchInterval.manual;
 //#endregion
 
 //#region habit-field

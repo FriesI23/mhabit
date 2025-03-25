@@ -72,7 +72,9 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
     colors: false,
   );
 
-  const AppLoggerConsoleReleasePrinter();
+  final bool addTime;
+
+  const AppLoggerConsoleReleasePrinter({this.addTime = kReleaseMode});
 
   @override
   Future<void> destroy() async {}
@@ -84,10 +86,10 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
   List<String> log(l.LogEvent event) {
     final T? message = event.message;
 
-    String getMsg({bool addTime = kReleaseMode}) => [
+    String getMsg({bool? addTime}) => [
           "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]"
               " [${prefixMap[event.level]}]",
-          if (addTime) _errorPrinter.getTime(event.time),
+          if (addTime ?? this.addTime) _errorPrinter.getTime(event.time),
           if (message != null)
             message.toLogPrinterMessage().whereNotNull().join(" | "),
         ].join(" - ");
