@@ -85,6 +85,7 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
   Future<void> run() async {
     if (_subscription != null) return _completer.future;
 
+    _count -= 1;
     _subscription = _replaySubject
         .startWith(l.LogEvent(l.Level.info, startMessage))
         .listen(onData, onDone: onDone, onError: (e, s) {
@@ -124,11 +125,10 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
   void onData(l.LogEvent event) async {
     if (_completer.isCompleted) return;
 
+    handleData(event);
+
     _count += 1;
     if (_replaySubject.isClosed) onDone();
-    if (_completer.isCompleted) return;
-
-    handleData(event);
   }
 
   void handleData(l.LogEvent event) {

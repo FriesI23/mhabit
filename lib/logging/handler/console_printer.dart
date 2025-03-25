@@ -94,7 +94,7 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
             message.toLogPrinterMessage().whereNotNull().join(" | "),
         ].join(" - ");
 
-    if (event.level.value >= l.Level.error.value) {
+    if (event.level.value >= l.Level.error.value || event.error != null) {
       return _errorPrinter.log(event.copyWith(message: getMsg(addTime: true)));
     }
 
