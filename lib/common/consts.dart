@@ -100,7 +100,7 @@ const defaultAppReminder = AppReminderConfig.off;
 const defaultAppSyncTimeout = Duration(seconds: 180);
 const defaultAppSyncConnectTimeout = Duration(seconds: 5);
 const int? defaultAppSyncConnectRetryCount = null; // null for infinity
-const defaultAppSyncFetchInterval = AppSyncFetchInterval.minute5;
+const defaultAppSyncFetchInterval = AppSyncFetchInterval.manual;
 //#endregion
 
 //#region habit-field
