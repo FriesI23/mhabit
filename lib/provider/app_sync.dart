@@ -297,8 +297,8 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
 
   @override
   String toString() => "AppSyncContainer<$T>(id=$id, "
-      "task=$task, startT=$startTime, endedT=$endedTime, "
-      "reuslt=$result, loggerReplay=$loggerReplay, "
+      "task=<${task.sessionId}>$task, startT=$startTime, endedT=$endedTime, "
+      "reuslt=$result, loggerReplay=$loggerReplay, filePath=$filePath, "
       "logEventCallback=${logEventCallback.hashCode}"
       ")";
 }
@@ -484,7 +484,11 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: finalTask, ex: ['completed']);
+          beforeVal: crtTask,
+          afterVal: finalTask,
+          ex: ['completed'],
+          error: finalTask.result?.error.error,
+          stackTrace: finalTask.result?.error.trace);
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()
@@ -509,7 +513,11 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: finalTask, ex: ['cancelled']);
+          beforeVal: crtTask,
+          afterVal: finalTask,
+          ex: ['cancelled'],
+          error: finalTask.result?.error.error,
+          stackTrace: finalTask.result?.error.trace);
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()
