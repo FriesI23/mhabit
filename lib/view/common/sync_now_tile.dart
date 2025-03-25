@@ -52,6 +52,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = context.select<AppSyncViewModel, bool>((vm) => vm.enabled);
+
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
           selector: (context, vm) => vm.appSyncTask.task?.task.isProcessing,
@@ -85,19 +87,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
               case AppSyncTaskStatus.idle:
               case AppSyncTaskStatus.completed:
                 if (lastSyncTask.result?.isSuccessed != true) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Last Sync (Error): $lastEndedTimeStr"),
-                      if (kDebugMode) ...[
-                        const Divider(),
-                        Text('[DEBUG]'),
-                        Text("Reslt: ${lastSyncTask.result}"),
-                        Text("Error: ${lastSyncTask.result?.error.error}"),
-                        Text("Trace: ${lastSyncTask.result?.error.trace}"),
-                      ],
-                    ],
-                  );
+                  return Text("Last Sync (Error): $lastEndedTimeStr");
                 }
                 return Text("Last Sync: $lastEndedTimeStr");
               case AppSyncTaskStatus.running:
@@ -133,7 +123,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
                 ),
               _ => IconButton(
                   key: ValueKey(2),
-                  onPressed: _onStartButtonPressed,
+                  onPressed: enabled ? _onStartButtonPressed : null,
                   icon: const Icon(MdiIcons.syncIcon),
                 ),
             },
@@ -153,6 +143,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
     return ListTile(
+      enabled: enabled,
       contentPadding: kListTileContentPadding,
       isThreeLine: true,
       title: buildTitle(context),

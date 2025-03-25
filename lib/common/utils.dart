@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
 import '../extension/datetime_extensions.dart';
+import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';
 import 'consts.dart';
@@ -229,4 +231,67 @@ Future<bool> dismissAllToolTips() async {
       ? const Duration(milliseconds: 150) * timeDilation
       : Duration.zero);
   return result;
+}
+
+final _invalidChars = RegExp(r'[<>:"/\\|?*\x00-\x1F]');
+String sanitizeFileName(String name,
+    {RegExp? invalidChars, String replacement = "_", int limit = 255}) {
+  invalidChars = invalidChars ?? _invalidChars;
+  const reservedNames = {
+    "CON",
+    "PRN",
+    "AUX",
+    "NUL",
+    "COM1",
+    "COM2",
+    "COM3",
+    "COM4",
+    "COM5",
+    "COM6",
+    "COM7",
+    "COM8",
+    "COM9",
+    "LPT1",
+    "LPT2",
+    "LPT3",
+    "LPT4",
+    "LPT5",
+    "LPT6",
+    "LPT7",
+    "LPT8",
+    "LPT9"
+  };
+
+  String safeName = name.replaceAll(invalidChars, replacement).trim();
+  safeName = safeName.replaceAll(RegExp(r'[. ]+$'), "");
+  if (reservedNames.contains(safeName.toUpperCase())) safeName = "_$safeName";
+  return safeName.length > limit ? safeName.substring(0, limit) : safeName;
+}
+
+Future<List<String>> cleanExpiredFiles(
+    Directory directory, Duration maxAge) async {
+  if (!await directory.exists()) return const [];
+
+  final results = <String>[];
+  final now = DateTime.now();
+  await for (var entity in directory.list()) {
+    if (entity is File) {
+      final lastModified = await entity.lastModified();
+      if (now.difference(lastModified) > maxAge) {
+        try {
+          await entity.delete();
+          results.add(entity.path);
+          appLog.debugger.debug("cleanExpiredFiles",
+              ex: ["Deleted", entity.path, maxAge, directory]);
+        } catch (e, s) {
+          appLog.debugger.error("cleanExpiredFiles",
+              ex: ["Delete Failed", entity.path, maxAge, directory],
+              error: e,
+              stackTrace: s);
+          if (kDebugMode) Error.throwWithStackTrace(e, s);
+        }
+      }
+    }
+  }
+  return results;
 }
