@@ -29,13 +29,13 @@ extension WebDavResourceExtention on WebDavStdResource {
   bool get isCollection => resourcetype.value?.isCollection ?? false;
 
   void tryToRaiseError({bool raiseError = true, bool raiseStatus = true}) {
-    if (raiseError) {
-      final error = this.error;
-      if (error != null) throw error;
-    }
     if (raiseStatus && status > 300) {
       throw HttpStatusException("Http request failed, status=$status", status,
           uri: path);
+    }
+    if (raiseError) {
+      final error = this.error;
+      if (error != null) throw error;
     }
   }
 }
