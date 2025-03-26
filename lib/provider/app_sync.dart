@@ -382,9 +382,14 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
           case AppWebDavSyncServer():
             final password = await root.getPassword(identity: config.identity);
             final sessionId = WebDavAppSyncTask.genSessionId();
+            final isFirstSync = !config.configed;
             return WebDavAppSyncTask(
               sessionId: sessionId,
-              config: config.copyWith(password: password),
+              config: config.copyWith(
+                  password: password,
+                  timeout: isFirstSync
+                      ? (config.timeout ?? defaultAppSyncTimeout) * 10
+                      : config.timeout),
               syncDBHelper: root.syncDBHelper,
               progressController: WebDavProgressController(
                 onPercentageChanged: (percentage) {

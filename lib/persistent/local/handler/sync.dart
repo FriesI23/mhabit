@@ -229,7 +229,7 @@ class SyncDBHelper extends DBHelperHandler {
         configId: configId, sessionId: sessionId, lastSessionId: lastSessionId);
 
     if (lastSessionId == data.sessionId) {
-      appLog.db.warn("[$sessionId] updateHabitDataToDbTransaction", ex: [
+      appLog.db.debug("[$sessionId] updateHabitDataToDbTransaction", ex: [
         "same sessionId, update skipped",
         lastSessionId,
         data.sessionId,
@@ -324,7 +324,7 @@ class SyncDBHelper extends DBHelperHandler {
       } else if (localSyncRecordsInfoMap[record.uuid]?.lastMark !=
           record.etag) {
         if (lastSessionId == record.sessionId) {
-          appLog.db.warn(
+          appLog.db.debug(
               "[$sessionId] batchInsertOrUpdateHabitRecordsToDbTransaction",
               ex: [
                 "same sessionId, update skipped",

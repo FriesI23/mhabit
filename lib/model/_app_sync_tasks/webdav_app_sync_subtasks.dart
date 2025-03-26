@@ -554,7 +554,7 @@ class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
         }
         return request.close();
       }).then((response) {
-        appLog.appsynctask.info(context, ex: [
+        appLog.appsynctask.debug(context, ex: [
           'get data',
           response.path,
           response.response.statusCode,
@@ -834,10 +834,11 @@ class UploadHabitToServerTask implements AppSyncSubTask<HabitEtagResult> {
     required this.data,
     required this.helper,
     this.withRecords = true,
-    this.recordConcurrency = 10,
+    int? recordConcurrency,
     required this.uploadTaskBuilder,
   })  : assert(data.uuid != null),
-        assert(data.records.every((e) => e.uuid != null));
+        assert(data.records.every((e) => e.uuid != null)),
+        recordConcurrency = recordConcurrency ?? 10;
 
   @override
   Future<({String? habitEtag, Map<HabitRecordUUID, String?> recordEtagMap})>

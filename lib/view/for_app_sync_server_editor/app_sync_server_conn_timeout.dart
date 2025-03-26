@@ -177,7 +177,8 @@ class _AppSyncServerConnRetryCountTile
           decoration: const InputDecoration(
             icon: Icon(MdiIcons.timelineClockOutline),
             labelText: 'Network Connection Retry Count',
-            hintText: 'Default: Unlimited',
+            hintText:
+                'Default: ${defaultAppSyncConnectRetryCount ?? "Unlimited"}',
           ),
           keyboardType: const TextInputType.numberWithOptions(
               signed: false, decimal: false),
