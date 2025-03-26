@@ -142,7 +142,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
         return true;
       },
       builder: (context, value, child) => ExpandedSection(
-        expand: value?.isSuccessed == false,
+        expand: value != null && !value.isSuccessed && !value.isCancelled,
         child: ExpansionTile(
           controller: controller,
           initiallyExpanded: isExpanded,
