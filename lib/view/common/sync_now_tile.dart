@@ -51,7 +51,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = context.select<AppSyncViewModel, bool>((vm) => vm.enabled);
+    final enabled = context.select<AppSyncViewModel, bool>(
+        (vm) => vm.enabled && vm.serverConfig != null);
 
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
