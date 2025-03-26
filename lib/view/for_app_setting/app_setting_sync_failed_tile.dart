@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:collection/collection.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,24 +98,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
 
     List<Widget> buildWebDavErrorInfos(
             BuildContext context, WebDavAppSyncTaskResult result) =>
-        [
-          Padding(
-            padding: kListTileContentPadding,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Status: ${result.status}"),
-                Text("Reason: ${result.reason}"),
-                if (result.withError) ...[
-                  Text("Error: ${result.error.error}"),
-                  if (result.error.trace != null)
-                    Text(result.error.trace.toString()),
-                ]
-              ],
-            ),
-          ),
-        ];
+        [_WebDavFailedDetailTile(result: result)];
 
     List<Widget> buildBasicErrorInfos(
             BuildContext context, AppSyncTaskResult result) =>
@@ -148,7 +132,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
           initiallyExpanded: isExpanded,
           onExpansionChanged: (value) {},
           expandedAlignment: Alignment.centerLeft,
-          title: Text("Check failure logs."),
+          title: Text("Check failure logs"),
           trailing: IconButton(
               onPressed: _onExportButtonPressed,
               icon: const Icon(MdiIcons.fileExportOutline)),
@@ -160,5 +144,118 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
         ),
       ),
     );
+  }
+}
+
+class _WebDavFailedDetailTile extends StatelessWidget {
+  final WebDavAppSyncTaskResult result;
+
+  const _WebDavFailedDetailTile({required this.result});
+
+  Widget _buildErrSubtitle(BuildContext context,
+          [Object? error, StackTrace? trace]) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("$error"),
+          if (trace != null) ...[
+            const Divider(),
+            Text("$trace"),
+          ]
+        ],
+      );
+
+  Widget _buildFailedTile(
+      BuildContext context, WebDavAppSyncTaskResult result) {
+    Widget buildTitle(BuildContext context) {
+      final reason = result.reason;
+      if (reason == null) return Text("Failed with no specific reason.");
+      return Text("Failed with ${reason.getReasonString()}");
+    }
+
+    return ListTile(
+      dense: true,
+      isThreeLine: result.error.error != null,
+      title: buildTitle(context),
+      subtitle: result.error.error != null
+          ? _buildErrSubtitle(context, result.error.error, result.error.trace)
+          : null,
+    );
+  }
+
+  Widget _buildMultiStatus(BuildContext context) {
+    final result = this.result;
+    if (result is! WebDavAppSyncTaskMultiResult) {
+      if (kDebugMode) throw UnimplementedError();
+      return const SizedBox();
+    }
+
+    final counter = <({
+      WebDavAppSyncTaskResultStatus status,
+      WebDavAppSyncTaskResultSubStatus? reason,
+      bool withError,
+    }),
+        int>{};
+
+    final errors = <({
+      WebDavAppSyncTaskResultStatus status,
+      WebDavAppSyncTaskResultSubStatus? reason
+    }),
+        List<({Object? error, StackTrace? trace})>>{};
+    for (var entry in result.habitResults.entries) {
+      final key = (
+        status: entry.value.status,
+        reason: entry.value.reason,
+        withError: entry.value.withError,
+      );
+      counter[key] = (counter[key] ?? 0) + 1;
+      if (key.withError) {
+        errors.putIfAbsent(
+            (status: entry.value.status, reason: entry.value.reason),
+            () => []).add(entry.value.error);
+      }
+    }
+
+    final filteredHabits =
+        result.habitResults.entries.where((e) => !e.value.isSuccessed).toList();
+    if (filteredHabits.isEmpty) return const SizedBox();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: counter.entries
+          .map((e) {
+            final errorIter =
+                errors[(status: e.key.status, reason: e.key.reason)]
+                    ?.mapIndexed(
+              (i, e) => Padding(
+                  padding: kListTileContentPadding,
+                  child: Text("[$i] ${e.error}")),
+            );
+            return ExpansionTile(
+              dense: true,
+              showTrailingIcon: errorIter != null,
+              enabled: errorIter != null,
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              expandedAlignment: Alignment.centerLeft,
+              title: Text("${e.key.status.getStatusTextString(e.key.reason)}: "
+                  "${e.value}"),
+              children: errorIter?.toList() ?? const [],
+            );
+          })
+          .whereNotNull()
+          .toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    switch (result.status) {
+      case WebDavAppSyncTaskResultStatus.success ||
+            WebDavAppSyncTaskResultStatus.cancelled:
+        return const SizedBox();
+      case WebDavAppSyncTaskResultStatus.failed:
+        return _buildFailedTile(context, result);
+      case WebDavAppSyncTaskResultStatus.multi:
+        return _buildMultiStatus(context);
+    }
   }
 }
