@@ -36,7 +36,7 @@ import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
 import '../persistent/db_helper_provider.dart';
-import '../persistent/profile/handler/app_sync.dart';
+import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 import '../utils/app_path_provider.dart';
 import '../view/common/app_sync_confirm_dialog.dart';
@@ -53,6 +53,7 @@ class AppSyncViewModel
   AppSyncSwitchHandler? _switch;
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
+  AppSyncExperimentalFeature? _expSwitch;
 
   bool _clearLogsOnStartup = false;
 
@@ -77,6 +78,7 @@ class AppSyncViewModel
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
+    _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
     if (!_clearLogsOnStartup) _clearLogsOnStartup = true;
     cleanExpiredSyncFailedLogs().then((results) {
       if (results.isNotEmpty) {
@@ -110,6 +112,16 @@ class AppSyncViewModel
   }
 
   AppSyncServer? get serverConfig => _serverConfig?.get();
+
+  bool get expFeatureEnabled =>
+      _expSwitch == null ? true : _expSwitch?.get() ?? false;
+
+  Future<void> setExpFeatureSwitch(bool value, {bool listen = true}) async {
+    if (_expSwitch?.get() != value) {
+      await _expSwitch?.set(value);
+      if (listen) notifyListeners();
+    }
+  }
 
   Future<String?> getPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;

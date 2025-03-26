@@ -41,6 +41,7 @@ import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
 import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
+import '../provider/app_sync.dart';
 import '../provider/app_theme.dart';
 import '../provider/habit_op_config.dart';
 import '../provider/habit_summary.dart';
@@ -57,6 +58,7 @@ import 'for_app_setting/_widget.dart';
 import 'page_app_about.dart' as app_about;
 import 'page_app_debugger.dart' as app_debugger;
 import 'page_app_sync.dart' as app_sync;
+import 'page_expermental_features.dart' as exp_feature;
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
@@ -614,6 +616,10 @@ class _AppSettingView extends State<AppSettingView> with XShare {
                   : const Text("Others"),
             ),
           ),
+          ListTile(
+            title: const Text("Experimental Features"),
+            onTap: () => exp_feature.naviToExpFeaturesPage(context: context),
+          ),
           Selector<AppDeveloperViewModel, bool>(
             selector: (context, vm) => vm.isInDevelopMode,
             shouldRebuild: (previous, next) => previous != next,
@@ -689,7 +695,11 @@ class _AppSettingView extends State<AppSettingView> with XShare {
         body: EnhancedSafeArea.edgeToEdgeSafe(
           child: ListView(
             children: [
-              ...buildSyncSubGroup(context),
+              ...buildSyncSubGroup(context).map((e) =>
+                  Selector<AppSyncViewModel, bool>(
+                      selector: (context, vm) => vm.expFeatureEnabled,
+                      builder: (context, value, child) =>
+                          Visibility(visible: value, child: e))),
               ...buildDisplaySubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
