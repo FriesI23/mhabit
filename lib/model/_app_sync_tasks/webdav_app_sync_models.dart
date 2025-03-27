@@ -94,9 +94,8 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
   bool get isNeedUpload => switch (status) {
         WebDavAppSyncInfoStatus.server => false,
         WebDavAppSyncInfoStatus.local => true,
-        WebDavAppSyncInfoStatus.both => includeDirtyMark ||
-            configUUID != lastConfgUUID ||
-            eTagFromLocal == null,
+        WebDavAppSyncInfoStatus.both =>
+          includeDirtyMark || configUUID != lastConfgUUID,
       };
 }
 
