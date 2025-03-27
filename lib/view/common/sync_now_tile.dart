@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -52,7 +51,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = context.select<AppSyncViewModel, bool>((vm) => vm.enabled);
+    final enabled = context.select<AppSyncViewModel, bool>(
+        (vm) => vm.enabled && vm.serverConfig != null);
 
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
@@ -145,7 +145,6 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
     return ListTile(
       enabled: enabled,
       contentPadding: kListTileContentPadding,
-      isThreeLine: true,
       title: buildTitle(context),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -20,6 +20,7 @@ import '../../../model/app_sync_options.dart';
 import '../../../model/app_sync_server.dart';
 import '../converter.dart';
 import '../profile_helper.dart';
+import 'app_experimental_feature.dart';
 
 class AppSyncSwitchHandler extends ProfileHelperCovertToBoolHandler<bool> {
   const AppSyncSwitchHandler(super.pref) : super(codec: const SameTypeCodec());
@@ -102,4 +103,11 @@ final class _AppSyncServerConfigEncoder
 
   @override
   JsonMap convert(AppSyncServer? input) => input?.toJson() ?? {};
+}
+
+class AppSyncExperimentalFeature extends AppExperimentalFeatureBool<bool> {
+  AppSyncExperimentalFeature(super.pref) : super(codec: const SameTypeCodec());
+
+  @override
+  String get expKey => "sync";
 }
