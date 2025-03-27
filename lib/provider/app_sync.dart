@@ -36,7 +36,7 @@ import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
 import '../persistent/db_helper_provider.dart';
-import '../persistent/profile/handler/app_sync.dart';
+import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 import '../utils/app_path_provider.dart';
 import '../view/common/app_sync_confirm_dialog.dart';
@@ -53,6 +53,7 @@ class AppSyncViewModel
   AppSyncSwitchHandler? _switch;
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
+  AppSyncExperimentalFeature? _expSwitch;
 
   bool _clearLogsOnStartup = false;
 
@@ -77,6 +78,7 @@ class AppSyncViewModel
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
+    _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
     if (!_clearLogsOnStartup) _clearLogsOnStartup = true;
     cleanExpiredSyncFailedLogs().then((results) {
       if (results.isNotEmpty) {
@@ -110,6 +112,16 @@ class AppSyncViewModel
   }
 
   AppSyncServer? get serverConfig => _serverConfig?.get();
+
+  bool get expFeatureEnabled =>
+      _expSwitch == null ? true : _expSwitch?.get() ?? false;
+
+  Future<void> setExpFeatureSwitch(bool value, {bool listen = true}) async {
+    if (_expSwitch?.get() != value) {
+      await _expSwitch?.set(value);
+      if (listen) notifyListeners();
+    }
+  }
 
   Future<String?> getPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
@@ -297,8 +309,8 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
 
   @override
   String toString() => "AppSyncContainer<$T>(id=$id, "
-      "task=$task, startT=$startTime, endedT=$endedTime, "
-      "reuslt=$result, loggerReplay=$loggerReplay, "
+      "task=<${task.sessionId}>$task, startT=$startTime, endedT=$endedTime, "
+      "reuslt=$result, loggerReplay=$loggerReplay, filePath=$filePath, "
       "logEventCallback=${logEventCallback.hashCode}"
       ")";
 }
@@ -370,9 +382,14 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
           case AppWebDavSyncServer():
             final password = await root.getPassword(identity: config.identity);
             final sessionId = WebDavAppSyncTask.genSessionId();
+            final isFirstSync = !config.configed;
             return WebDavAppSyncTask(
               sessionId: sessionId,
-              config: config.copyWith(password: password),
+              config: config.copyWith(
+                  password: password,
+                  timeout: isFirstSync
+                      ? (config.timeout ?? defaultAppSyncTimeout) * 10
+                      : config.timeout),
               syncDBHelper: root.syncDBHelper,
               progressController: WebDavProgressController(
                 onPercentageChanged: (percentage) {
@@ -484,7 +501,11 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: finalTask, ex: ['completed']);
+          beforeVal: crtTask,
+          afterVal: finalTask,
+          ex: ['completed'],
+          error: finalTask.result?.error.error,
+          stackTrace: finalTask.result?.error.trace);
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()
@@ -509,7 +530,11 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
         endedTime: DateTime.now(),
       );
       appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask, afterVal: finalTask, ex: ['cancelled']);
+          beforeVal: crtTask,
+          afterVal: finalTask,
+          ex: ['cancelled'],
+          error: finalTask.result?.error.error,
+          stackTrace: finalTask.result?.error.trace);
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()

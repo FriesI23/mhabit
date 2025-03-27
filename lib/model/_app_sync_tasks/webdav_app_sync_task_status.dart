@@ -12,17 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../../l10n/localizations.dart';
 import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';
 
-enum WebDavAppSyncTaskResultStatus { success, cancelled, failed, multi }
+enum WebDavAppSyncTaskResultStatus {
+  success,
+  cancelled,
+  failed,
+  multi;
+
+  String getStatusTextString(
+      [WebDavAppSyncTaskResultSubStatus? reason, L10n? l10n]) {
+    return switch ((this, reason)) {
+      (success, null) => "Completed",
+      (success, _) => "Completed with ${reason!.getReasonString()}",
+      (cancelled, null) => "Cancelled",
+      (cancelled, _) => "Cancelled with ${reason!.getReasonString()}",
+      (failed, null) => "Failed",
+      (failed, _) => "Failed with ${reason!.getReasonString()}",
+      (multi, null) => "Multiple statuses",
+      (multi, _) => "Multiple statuses with ${reason!.getReasonString()}",
+    };
+  }
+}
 
 enum WebDavAppSyncTaskResultSubStatus {
   timeout,
   error,
   userAction,
   missingHabitUuid,
-  empty,
+  empty;
+
+  String getReasonString([L10n? l10n]) {
+    return switch (this) {
+      WebDavAppSyncTaskResultSubStatus.timeout => "timeout",
+      WebDavAppSyncTaskResultSubStatus.error => "error",
+      WebDavAppSyncTaskResultSubStatus.userAction => "user action",
+      WebDavAppSyncTaskResultSubStatus.missingHabitUuid => "missing habit UUID",
+      WebDavAppSyncTaskResultSubStatus.empty => "empty data",
+    };
+  }
 }
 
 class WebDavAppSyncTaskResult implements AppSyncTaskResult {
@@ -118,7 +148,8 @@ class WebDavAppSyncTaskMultiResult extends WebDavAppSyncTaskResult {
 
   @override
   bool get isCancelled {
-    final result = habitResults.values.every((e) => e.isCancelled);
+    final result =
+        !habitResults.values.any((e) => !(e.isCancelled || e.isSuccessed));
     return result ? result : super.isCancelled;
   }
 
