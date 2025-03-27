@@ -14,4 +14,5 @@
 
 export './epoch_date_time_converter.dart';
 export './epoch_habit_date_converter.dart';
+export './normalizing_list_converter.dart';
 export './time_of_day_converter.dart';

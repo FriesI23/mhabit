@@ -23,6 +23,7 @@ import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/error.dart';
 
+import '../../annotation/_json_annotation.dart';
 import '../../annotation/proxy_annotation.dart';
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
@@ -385,13 +386,15 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final String? etag;
   final int? dirty;
 
-  static List<JsonMap> _recordsToJson(
+  static List<List> _recordsToJson(
           Map<HabitRecordUUID, WebDavSyncRecordData> records) =>
-      records.values.map((e) => e.toJson()).toList();
+      const NormalizingListConverter()
+          .toJson(records.values.map((e) => e.toJson()));
 
   static Map<HabitRecordUUID, WebDavSyncRecordData> _recordsFromJson(
           List json) =>
-      Map.fromEntries(json
+      Map.fromEntries(const NormalizingListConverter()
+          .fromJson(json.map((e) => e as List).toList())
           .map((e) => WebDavSyncRecordData.fromJson(Map.of(e)))
           .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
           .whereNotNull());
