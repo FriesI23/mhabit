@@ -192,7 +192,8 @@ class WebDavAppSyncTaskExecutor
   final String sessionId;
 
   final WebDavProgressController? progressController;
-  final AppSyncSubTask<List<WebDavResourceContainer>> fetchHabitsFromServerTask;
+  final AppSyncSubTask<List<WebDavResourceContainer>>
+      fetchHabitsMetaFromServerTask;
   final AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
   final WebDavSyncHabitInfoMerger Function(AppSyncContext context)
       syncInfoMergerBuilder;
@@ -207,7 +208,7 @@ class WebDavAppSyncTaskExecutor
     required this.sessionId,
     super.timeout = Duration.zero,
     this.progressController,
-    required this.fetchHabitsFromServerTask,
+    required this.fetchHabitsMetaFromServerTask,
     required this.queryHabitsFromDbTask,
     required this.syncInfoMergerBuilder,
     required this.singleHabitSyncTaskBuilder,
@@ -234,7 +235,7 @@ class WebDavAppSyncTaskExecutor
       client: overwriteClient == null ? client : null,
       timeout: timeout ?? Duration.zero,
       progressController: progressController,
-      fetchHabitsFromServerTask: FetchMetaFromServerTask.habits(
+      fetchHabitsMetaFromServerTask: FetchMetaFromServerTask.habits(
           WebDavAppSyncPathBuilder(config.path).habitsDir, client),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
       syncInfoMergerBuilder: SyncHabitsInfoMergerImpl.new,
@@ -244,21 +245,8 @@ class WebDavAppSyncTaskExecutor
         serverToLocalTask: (context, config, cell) =>
             SingleHabitSyncTask.downloadTask(
           context: context,
-          fetchRecordsFromServerTask: FetchHabitRecordsMetaFromServerTask.build(
-              path: WebDavAppSyncPathBuilder(config.path)
-                  .habit(cell.uuid)
-                  .recordRootDir,
-              client: client),
-          queryRecordsFromDbTask: QueryHabitRecordsFromDBTask(
-              uuid: cell.uuid, helper: syncDBHelper),
-          syncInfoMerger: SyncHabitRecordsInfoMergerImpl(context, cell.uuid),
           fetchHabitDataTask:
               FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
-                  path: cell.serverPath!,
-                  client: client,
-                  etag: cell.eTagFromServer),
-          fetchRecordDataTaskBuilder: (cell) =>
-              FetchDataFromServerTask.fetchRecordDataFromServerBuilder(
                   path: cell.serverPath!,
                   client: client,
                   etag: cell.eTagFromServer),
@@ -269,16 +257,17 @@ class WebDavAppSyncTaskExecutor
             SingleHabitSyncTask.uploadTask(
           context: context,
           loadFromDBTask: LoadFromDBTask(helper: syncDBHelper, uuid: cell.uuid),
-          preprocessDirTaskBuilder: (data) =>
-              PreprocessHabitWebDavCollectionTask.build(
-                  path: config.path, data: data, client: client),
           uploadHabitToServerTaskBuilder: (data) => UploadHabitToServerTask(
             root: config.path,
             data: data,
             helper: syncDBHelper,
             recordConcurrency: recordUploadConcurrency,
             uploadTaskBuilder: (path, data, [etag]) => UploadDataToServerTask(
-                path: path, data: data, etag: etag, client: client),
+                path: path,
+                data: data,
+                etag: etag,
+                contentType: ContentType.json,
+                client: client),
           ),
         ),
       ),
@@ -306,10 +295,10 @@ class WebDavAppSyncTaskExecutor
   }
 
   Future<WebDavAppSyncTaskResult> doExec() async {
-    final serverHabitsFuture = fetchHabitsFromServerTask.run(this);
+    final serverHabitsMetaFuture = fetchHabitsMetaFromServerTask.run(this);
     final localHabitsFuture = queryHabitsFromDbTask.run(this);
 
-    final serverHabits = await serverHabitsFuture;
+    final serverHabits = await serverHabitsMetaFuture;
     appLog.appsynctask.debug(this,
         ex: ['fetch habits form server completed', serverHabits.length]);
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
@@ -324,11 +313,12 @@ class WebDavAppSyncTaskExecutor
     appLog.appsynctask
         .debug(this, ex: ["merge habits completed", mergedResult.length]);
 
+    progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
+        override: true);
+
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult>{};
     final pool = Pool(mergedResult.length.clamp(1, 5),
         timeout: config.timeout ?? defaultAppSyncTimeout);
-    progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
-        override: true);
     await Future.wait(mergedResult.map(
       (cell) => pool
           .withResource(() async {
@@ -376,7 +366,6 @@ Proceed with caution!
   final AppSyncSubTask<WebDavConfigTaskChecklist> checkRootDirTask;
   final AppSyncSubTask createRootDir;
   final AppSyncSubTask createHabitsDir;
-  final AppSyncSubTask createRecordsDir;
   final AppSyncSubTask createWarningFile;
 
   final FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
@@ -392,7 +381,6 @@ Proceed with caution!
     required this.checkRootDirTask,
     required this.createRootDir,
     required this.createHabitsDir,
-    required this.createRecordsDir,
     required this.createWarningFile,
     this.onNeedConfirmCallback,
     WebDavStdClient? client,
@@ -415,7 +403,6 @@ Proceed with caution!
     final rootPathBuilder = WebDavAppSyncPathBuilder(config.path);
     final rootDir = rootPathBuilder.root;
     final habitsDir = rootPathBuilder.habitsDir;
-    final recordsDir = rootPathBuilder.recordsDir;
     final warningFile = rootPathBuilder.warningFile;
 
     final task = WebDavAppSyncConfigTask(
@@ -427,7 +414,6 @@ Proceed with caution!
         onNeedConfirmCallback: onNeedConfirmCallback,
         checkRootDirTask: CheckRootDirTask(
             expectedHabitsPath: habitsDir,
-            expectedRecordsPath: recordsDir,
             expectedReadmePath: warningFile,
             fetchRootDirTask: FetchMetaFromServerTask(
               path: rootDir,
@@ -438,9 +424,11 @@ Proceed with caution!
             )),
         createRootDir: MkDirOnServerTask(path: rootDir, client: client),
         createHabitsDir: MkDirOnServerTask(path: habitsDir, client: client),
-        createRecordsDir: MkDirOnServerTask(path: recordsDir, client: client),
         createWarningFile: UploadDataToServerTask(
-            path: warningFile, data: warningFileData, client: client));
+            path: warningFile,
+            data: warningFileData,
+            contentType: ContentType.text,
+            client: client));
 
     final httpClient = client.client;
     if (httpClient is HttpClientForWebDav) httpClient.context = task;
@@ -471,9 +459,7 @@ Proceed with caution!
       if (e.status != HttpStatus.notFound) Error.throwWithStackTrace(e, s);
       needCreatRoot = true;
       return WebDavConfigTaskChecklist.dirChecker(
-          needCreateHabitsDir: true,
-          needCreateRecordsDir: true,
-          needCreateWarningFile: true);
+          needCreateHabitsDir: true, needCreateWarningFile: true);
     });
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
@@ -492,7 +478,6 @@ Proceed with caution!
     if (needCreatRoot) await createRootDir.run(this);
     await Future.wait([
       if (checkResult.needCreateHabitsDir) createHabitsDir.run(this),
-      if (checkResult.needCreateRecordsDir) createRecordsDir.run(this),
       if (checkResult.needCreateWarningFile) createWarningFile.run(this)
     ]);
     return const WebDavAppSyncTaskResult.success();

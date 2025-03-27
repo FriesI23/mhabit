@@ -23,7 +23,6 @@ abstract class _$WebDavSyncRecordDataCWProxy {
     String? parentUUID,
     String? reason,
     String? sessionId,
-    String? etag,
     int? dirty,
   });
 }
@@ -53,7 +52,6 @@ class _$WebDavSyncRecordDataCWProxyImpl
     Object? parentUUID = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
-    Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncRecordData(
@@ -93,10 +91,6 @@ class _$WebDavSyncRecordDataCWProxyImpl
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
           : sessionId as String?,
-      etag: etag == const $CopyWithPlaceholder()
-          ? _value.etag
-          // ignore: cast_nullable_to_non_nullable
-          : etag as String?,
       dirty: dirty == const $CopyWithPlaceholder()
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
@@ -139,7 +133,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     int? targetDays,
     num? sortPostion,
     String? sessionId,
-    List<WebDavSyncRecordData>? records,
+    Map<String, WebDavSyncRecordData>? records,
     String? etag,
     int? dirty,
   });
@@ -263,7 +257,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
       records: records == const $CopyWithPlaceholder() || records == null
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
-          : records as List<WebDavSyncRecordData>,
+          : records as Map<String, WebDavSyncRecordData>,
       etag: etag == const $CopyWithPlaceholder()
           ? _value.etag
           // ignore: cast_nullable_to_non_nullable
@@ -336,6 +330,9 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       targetDays: (json['target_days'] as num?)?.toInt(),
       sortPostion: json['sort_position'] as num?,
       sessionId: json['sessionId'] as String?,
+      records: json['records'] == null
+          ? const {}
+          : WebDavSyncHabitData._recordsFromJson(json['records'] as List),
     );
 
 Map<String, dynamic> _$WebDavSyncHabitDataToJson(
@@ -360,6 +357,7 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
       'target_days': instance.targetDays,
       'sort_position': instance.sortPostion,
       'sessionId': instance.sessionId,
+      'records': WebDavSyncHabitData._recordsToJson(instance.records),
     };
 
 // **************************************************************************

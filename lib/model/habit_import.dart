@@ -33,6 +33,7 @@ class HabitImport {
 
   Future<void> _importHabitData(HabitExportData habitExportData,
       {bool withRecords = true}) async {
+    final habitUUID = genHabitUUID();
     var habitDBCell = habitExportData.toHabitDBCell();
     habitDBCell = habitDBCell.copyWith(
         uuid: genHabitUUID(),
@@ -44,7 +45,7 @@ class HabitImport {
               (e) => e.copyWith(
                 parentId: dbid,
                 parentUUID: habitDBCell.uuid,
-                uuid: genRecordUUID(),
+                uuid: genRecordUUID(habitUUID, e.recordDate),
               ),
             ),
       );
