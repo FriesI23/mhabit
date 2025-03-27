@@ -55,7 +55,7 @@ void testWebdavAppSyncTaskMainBody() =>
         task = WebDavAppSyncTaskExecutor(
           sessionId: '123',
           config: config,
-          fetchHabitsFromServerTask: fetchHabitsFromServerTask,
+          fetchHabitsMetaFromServerTask: fetchHabitsFromServerTask,
           queryHabitsFromDbTask: queryHabitsFromDbTask,
           syncInfoMergerBuilder: (context) => syncInfoMerger,
           singleHabitSyncTaskBuilder: (cell) {

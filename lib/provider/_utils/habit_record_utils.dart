@@ -23,36 +23,34 @@ import '../../model/habit_form.dart';
 import '../../model/habit_summary.dart';
 
 class ChangeRecordStatusHelper {
-  final HabitSummaryData? data;
+  final HabitSummaryData data;
   final HabitRecordDate date;
 
   const ChangeRecordStatusHelper({
     required this.date,
-    this.data,
+    required this.data,
   });
 
   Tuple3<HabitSummaryRecord, HabitSummaryRecord, bool>? getNewRecordOnTap() {
-    if (data == null) return null;
-
     final HabitSummaryRecord orgRecord;
     final HabitSummaryRecord record;
     final bool isNew;
 
-    if (data!.containsRecordDate(date)) {
-      orgRecord = data!.getRecordByDate(date)!;
+    if (data.containsRecordDate(date)) {
+      orgRecord = data.getRecordByDate(date)!;
       isNew = false;
     } else {
-      orgRecord = HabitSummaryRecord.generate(date);
+      orgRecord = HabitSummaryRecord.generate(date, parentUUID: data.uuid);
       isNew = true;
     }
 
     // status changed: unknown -> (done(ok), done(zero), skip)
     // status changed(with valued): unknown -> (done(value), skip)
     final habitRecordForm = HabitDailyRecordForm.getImp(
-      type: data!.type,
+      type: data.type,
       value: orgRecord.value,
-      targetValue: data!.dailyGoal,
-      extraTargetValue: data!.dailyGoalExtra,
+      targetValue: data.dailyGoal,
+      extraTargetValue: data.dailyGoalExtra,
     );
     final completeStatus = habitRecordForm.complateStatus;
     final valued = habitRecordForm.isValued;
@@ -61,7 +59,7 @@ class ChangeRecordStatusHelper {
       case HabitRecordStatus.skip:
         record = orgRecord.copyWith(
             status: HabitRecordStatus.done,
-            value: valued ? orgRecord.value : data!.habitOkValue);
+            value: valued ? orgRecord.value : data.habitOkValue);
         break;
       case HabitRecordStatus.done:
         if (valued) {
@@ -82,17 +80,15 @@ class ChangeRecordStatusHelper {
 
   Tuple3<HabitSummaryRecord, HabitSummaryRecord, bool>? getNewRecordOnLongTap(
       HabitDailyGoal newValue) {
-    if (data == null) return null;
-
     final HabitSummaryRecord orgRecord;
     final HabitSummaryRecord record;
     final bool isNew;
 
-    if (data!.containsRecordDate(date)) {
-      orgRecord = data!.getRecordByDate(date)!;
+    if (data.containsRecordDate(date)) {
+      orgRecord = data.getRecordByDate(date)!;
       isNew = false;
     } else {
-      orgRecord = HabitSummaryRecord.generate(date);
+      orgRecord = HabitSummaryRecord.generate(date, parentUUID: data.uuid);
       isNew = true;
     }
 

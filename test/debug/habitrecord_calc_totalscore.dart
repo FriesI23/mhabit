@@ -50,6 +50,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
       crtDate,
       status: HabitRecordStatus.done,
       value: rng.nextInt(20),
+      parentUUID: data.uuid,
     ));
   }
 
