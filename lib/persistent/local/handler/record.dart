@@ -119,7 +119,7 @@ class RecordDBHelper extends DBHelperHandler {
         txn.insert(syncTable, SyncDBCell.genFromRecord(record).toJson(),
             conflictAlgorithm: ConflictAlgorithm.rollback),
         txn.rawUpdate(
-            CustomSql.increaseHabitSyncDirtySql(
+            CustomSql.increaseHabitSyncTotalDirtySql(
                 conflictAlgorithm: ConflictAlgorithm.rollback),
             [record.parentUUID]),
       ]);
@@ -164,7 +164,7 @@ class RecordDBHelper extends DBHelperHandler {
                 conflictAlgorithm: ConflictAlgorithm.rollback),
             [record.uuid]),
         txn.rawUpdate(
-            CustomSql.increaseHabitSyncDirtySql(
+            CustomSql.increaseHabitSyncTotalDirtySql(
                 conflictAlgorithm: ConflictAlgorithm.rollback),
             [record.parentUUID]),
       ]);
