@@ -176,7 +176,6 @@ class AppSyncViewModel
                     ? form.uuid
                     : UuidValue.raw(AppSyncServer.genNewIdentity()),
                 configed: false,
-                verified: false,
                 password: withPwd ? form.password : ''))
             : tmpNewConfig;
 
