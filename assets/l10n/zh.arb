@@ -688,6 +688,33 @@
   "@appSetting_debugger_titleText": {},
   "appSetting_about_titleText": "关于",
   "@appSetting_about_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "实验性功能",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_titleText": "习惯云同步",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "启用后，应用的同步选项将出现在设置中",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_titleText": "实验性功能（{syncName}）已禁用，但该功能仍在运行。",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "习惯云同步",
+        "description": "实验性功能的名称。"
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "要完全禁用，请长按访问“{menuName}”并将其关闭。",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "同步选项"
+      }
+    }
+  },
   "appAbout_appbarTile_titleText": "关于",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "版本：{appVersion}",

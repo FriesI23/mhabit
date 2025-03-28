@@ -617,7 +617,11 @@ class _AppSettingView extends State<AppSettingView> with XShare {
             ),
           ),
           ListTile(
-            title: const Text("Experimental Features"),
+            title: L10nBuilder(
+              builder: (context, l10n) => Text(
+                  l10n?.appSetting_experimentalFeatureTile_titleText ??
+                      "Experimental Features"),
+            ),
             onTap: () => exp_feature.naviToExpFeaturesPage(context: context),
           ),
           Selector<AppDeveloperViewModel, bool>(

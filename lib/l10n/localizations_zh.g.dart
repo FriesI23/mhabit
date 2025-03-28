@@ -800,6 +800,28 @@ class L10nZh extends L10n {
   String get appSetting_about_titleText => '关于';
 
   @override
+  String get appSetting_experimentalFeatureTile_titleText => '实验性功能';
+
+  @override
+  String get experimentalFeatures_warnginBanner_title => '一个或多个实验性功能已启用，请谨慎使用。';
+
+  @override
+  String get experimentalFeatures_habitSyncTile_titleText => '习惯云同步';
+
+  @override
+  String get experimentalFeatures_habitSyncTile_subtitleText => '启用后，应用的同步选项将出现在设置中';
+
+  @override
+  String experimentalFeatures_warnTile_titleText(String syncName) {
+    return '实验性功能（$syncName）已禁用，但该功能仍在运行。';
+  }
+
+  @override
+  String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
+    return '要完全禁用，请长按访问“$menuName”并将其关闭。';
+  }
+
+  @override
   String get appAbout_appbarTile_titleText => '关于';
 
   @override

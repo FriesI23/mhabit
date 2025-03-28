@@ -805,6 +805,28 @@ class L10nNb extends L10n {
   String get appSetting_about_titleText => 'About';
 
   @override
+  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+
+  @override
+  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+
+  @override
+  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+
+  @override
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+
+  @override
+  String experimentalFeatures_warnTile_titleText(String syncName) {
+    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+  }
+
+  @override
+  String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
+    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+  }
+
+  @override
   String get appAbout_appbarTile_titleText => 'About';
 
   @override

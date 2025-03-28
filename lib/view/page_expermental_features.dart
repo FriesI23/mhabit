@@ -90,8 +90,8 @@ final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
             child: MaterialBanner(
                 forceActionsBelow: true,
                 leading: const Icon(Icons.warning_amber_outlined),
-                content: Text("One or more experimental features are enabled. "
-                    "Use with caution."),
+                content: Text(l10n?.experimentalFeatures_warnginBanner_title ??
+                    "Experimental features are enabled."),
                 actions: [
                   TextButton(
                       onPressed: () =>
@@ -103,9 +103,13 @@ final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
             Selector<AppSyncViewModel, bool>(
               selector: (context, vm) => vm.expFeatureEnabled,
               builder: (context, value, child) => SwitchListTile(
-                  title: Text("Habit Network Sync"),
-                  subtitle: Text("Once enabled, "
-                      "the app sync entry will be shown in settings."),
+                  title: Text(
+                      l10n?.experimentalFeatures_habitSyncTile_titleText ??
+                          "Habit Sync"),
+                  subtitle: l10n != null
+                      ? Text(
+                          l10n.experimentalFeatures_habitSyncTile_subtitleText)
+                      : null,
                   value: value,
                   onChanged: (value) {
                     syncvm?.setExpFeatureSwitch(value);
@@ -120,14 +124,16 @@ final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
                   expand: value,
                   child: ListTile(
                     leading: const Icon(Icons.warning_amber_outlined),
-                    title: const Text(
-                      "Experimental feature (Habit Network Sync) is disabled, "
-                      "but the function is still running.",
-                    ),
-                    subtitle: const Text(
-                      "To completely disable, "
-                      "long press to access 'Sync Option' and turn it off.",
-                    ),
+                    title: Text(l10n?.experimentalFeatures_warnTile_titleText(
+                            l10n.experimentalFeatures_habitSyncTile_titleText) ??
+                        "Experimental feature (Habit Network Sync) is off, "
+                            "but function still running."),
+                    // TODO: l10n
+                    subtitle: l10n != null
+                        ? Text(
+                            l10n.experimentalFeatures_warnTile_forHabitSyncText(
+                                "Sync Option"))
+                        : null,
                     onLongPress: () =>
                         app_sync.naviToAppSyncPage(context: context),
                   )),
