@@ -20,3 +20,4 @@ export './app_setting_display_op_tile.dart'
     show AppSettingDisplayRecordOperationTile;
 export './app_setting_first_day.dart' show AppSettingFirstDayTile;
 export './app_setting_reminder_tile.dart' show AppSettingReminderTile;
+export 'app_setting_sync_failed_tile.dart';

@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export './handler/app_experimental_feature.dart';
+export './handler/app_language.dart';
 export './handler/app_reminder.dart';
+export './handler/app_sync.dart';
 export './handler/app_theme_main_color.dart';
 export './handler/app_theme_type.dart';
 export './handler/collect_logs_switcher.dart';

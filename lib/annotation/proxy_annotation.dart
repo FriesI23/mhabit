@@ -14,6 +14,7 @@
 
 class Proxy {
   final Type targetClass;
+  final bool useAnnotatedName;
 
-  const Proxy(this.targetClass);
+  const Proxy(this.targetClass, {this.useAnnotatedName = false});
 }

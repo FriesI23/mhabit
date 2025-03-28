@@ -21,6 +21,7 @@ import 'package:mhabit/model/habit_form.dart';
 import 'package:mhabit/model/habit_score.dart';
 import 'package:mhabit/model/habit_summary.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../stub/habit_score.dart';
 import '../utils.dart';
@@ -428,6 +429,8 @@ class HabitScoreCalculatorTestCase extends TestCase {
                   i,
                   status: HabitRecordStatus.done,
                   value: 10.0,
+                  parentUUID: null,
+                  uuid: const Uuid().v4(),
                 ),
                 false);
           }
@@ -482,6 +485,8 @@ class HabitScoreCalculatorTestCase extends TestCase {
                   element,
                   status: HabitRecordStatus.done,
                   value: valueList[index],
+                  parentUUID: null,
+                  uuid: const Uuid().v4(),
                 ),
                 false);
           });
@@ -536,6 +541,8 @@ class HabitScoreCalculatorTestCase extends TestCase {
                   element,
                   status: HabitRecordStatus.done,
                   value: valueList[index],
+                  parentUUID: null,
+                  uuid: const Uuid().v4(),
                 ),
                 true);
           });
@@ -640,8 +647,13 @@ class HabitScoreCalculatorTestCase extends TestCase {
               isAutoComplated: (date) => false,
               getHabitRecord: (date) => null);
 
-          final record = HabitSummaryRecord.generate(HabitDate.now(),
-              status: mockStatus, value: mockValue);
+          final record = HabitSummaryRecord.generate(
+            HabitDate.now(),
+            status: mockStatus,
+            value: mockValue,
+            parentUUID: null,
+            uuid: const Uuid().v4(),
+          );
           final num result = calculator.calcIncreaseDaysBetweenRecordDate(
               record: record, isAutoCompleted: true);
           expect(result, equals(mockValue));
@@ -691,8 +703,13 @@ class HabitScoreCalculatorTestCase extends TestCase {
               isAutoComplated: (date) => false,
               getHabitRecord: (date) => null);
 
-          final record = HabitSummaryRecord.generate(HabitDate.now(),
-              status: mockStatus, value: mockValue);
+          final record = HabitSummaryRecord.generate(
+            HabitDate.now(),
+            status: mockStatus,
+            value: mockValue,
+            parentUUID: null,
+            uuid: const Uuid().v4(),
+          );
           final num result = calculator.calcDecreasePrtBetweenRecordDate(
               record: record, isAutoCompleted: true);
           expect(result, equals(mockValue));
@@ -772,6 +789,8 @@ class ArchivedHabitScoreCalculatorTestCase extends TestCase {
                   i,
                   status: HabitRecordStatus.done,
                   value: 10.0,
+                  parentUUID: null,
+                  uuid: const Uuid().v4(),
                 ),
                 false);
           }

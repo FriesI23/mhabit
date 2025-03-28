@@ -21,6 +21,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quiver/core.dart';
 
+import '../annotation/_json_annotation.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
@@ -64,11 +65,15 @@ class HabitSummaryRecord {
         status = HabitRecordStatus.getFromDBCode(cell.recordType!)!,
         value = cell.recordValue!;
 
-  HabitSummaryRecord.generate(this.date,
-      {this.status = HabitRecordStatus.unknown,
-      this.value = 0.0,
-      HabitUUID? uuid})
-      : uuid = uuid ?? genRecordUUID();
+  HabitSummaryRecord.generate(
+    this.date, {
+    this.status = HabitRecordStatus.unknown,
+    this.value = 0.0,
+    required HabitUUID? parentUUID,
+    HabitRecordUUID? uuid,
+  }) : uuid = uuid ??
+            genRecordUUID(
+                parentUUID!, const EpochHabitDateConverter().toJson(date));
 
   @override
   String toString() {

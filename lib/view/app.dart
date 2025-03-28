@@ -25,7 +25,6 @@ import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../persistent/db_helper_builder.dart';
-import '../persistent/profile/handler/app_language.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
 import '../persistent/profile_provider.dart';
@@ -44,7 +43,7 @@ import 'page_habits_display.dart' show PageHabitsDisplay;
 /// initialized within MaterialApp. Some feature that depend on these inherited
 /// widgets can be initialized in [_AppPostInit].
 class App extends StatelessWidget {
-  static final _profileHandlers = <ProfileHandlerBuilder>[
+  static const _profileHandlers = <ProfileHandlerBuilder>[
     AppReminderProfileHandler.new,
     AppThemeTypeProfileHandler.new,
     AppThemeMainColorProfileHandler.new,
@@ -60,6 +59,10 @@ class App extends StatelessWidget {
     CollectLogswitcherProfileHandler.new,
     LoggingLevelProfileHandler.new,
     AppLanguageProfileHanlder.new,
+    AppSyncSwitchHandler.new,
+    AppSyncServerConfigHandler.new,
+    AppSyncFetchIntervalHandler.new,
+    AppSyncExperimentalFeature.new,
   ];
 
   const App({super.key});
@@ -186,6 +189,7 @@ class BasicAppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
+      navigatorKey: navigatorKey,
       scaffoldMessengerKey: snackbarKey,
       theme: lightThemeBuilder?.call(),
       darkTheme: darkThemeBuilder?.call(),
