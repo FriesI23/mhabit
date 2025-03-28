@@ -392,11 +392,12 @@ final class HabitStatusChangerForm {
     switch (selectStatus) {
       case RecordStatusChangerStatus.skip:
         return HabitSummaryRecord.generate(selectDate,
-            status: HabitRecordStatus.skip, uuid: uuid);
+            parentUUID: data.uuid, status: HabitRecordStatus.skip, uuid: uuid);
       case RecordStatusChangerStatus.ok:
         return HabitSummaryRecord.generate(selectDate,
             status: HabitRecordStatus.done,
             value: data.habitOkValue,
+            parentUUID: data.uuid,
             uuid: uuid);
       case RecordStatusChangerStatus.dual:
         switch (data.type) {
@@ -406,18 +407,23 @@ final class HabitStatusChangerForm {
                 value: data.dailyGoalExtra != null
                     ? math.max(data.dailyGoalExtra!, data.habitOkValue * 2)
                     : data.habitOkValue * 2,
+                parentUUID: data.uuid,
                 uuid: uuid);
           case HabitType.negative:
             return HabitSummaryRecord.generate(selectDate,
                 status: HabitRecordStatus.done,
                 value: data.dailyGoal,
+                parentUUID: data.uuid,
                 uuid: uuid);
           case HabitType.unknown:
             return null;
         }
       case RecordStatusChangerStatus.zero:
         return HabitSummaryRecord.generate(selectDate,
-            status: HabitRecordStatus.done, value: 0, uuid: uuid);
+            status: HabitRecordStatus.done,
+            value: 0,
+            parentUUID: data.uuid,
+            uuid: uuid);
       case null:
         return null;
     }

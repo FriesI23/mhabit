@@ -10,6 +10,9 @@ services:
       USERNAME: admin
       PASSWORD: 123456
     volumes:
-      - ./dav:/var/lib/dav
+      - bytemark_webdav_dav:/var/lib/dav
     ports:
       - "80:80"
+
+volumes:
+  bytemark_webdav_dav:
