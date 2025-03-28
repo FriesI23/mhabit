@@ -688,6 +688,33 @@
   "@appSetting_debugger_titleText": {},
   "appSetting_about_titleText": "About",
   "@appSetting_about_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "Experimental Features",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_titleText": "Habit Cloud Sync",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "Once enabled, the app's sync option will appear in settings",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_titleText": "Experimental feature ({syncName}) is disabled, but the function is still running.",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "To completely disable, long press to access '{menuName}' and turn it off.",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
   "appAbout_appbarTile_titleText": "About",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Version: {appVersion}",

@@ -1498,6 +1498,42 @@ abstract class L10n {
   /// **'About'**
   String get appSetting_about_titleText;
 
+  /// No description provided for @appSetting_experimentalFeatureTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental Features'**
+  String get appSetting_experimentalFeatureTile_titleText;
+
+  /// No description provided for @experimentalFeatures_warnginBanner_title.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more experimental features are enabled, Use with caution.'**
+  String get experimentalFeatures_warnginBanner_title;
+
+  /// No description provided for @experimentalFeatures_habitSyncTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Cloud Sync'**
+  String get experimentalFeatures_habitSyncTile_titleText;
+
+  /// No description provided for @experimentalFeatures_habitSyncTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Once enabled, the app\'s sync option will appear in settings'**
+  String get experimentalFeatures_habitSyncTile_subtitleText;
+
+  /// No description provided for @experimentalFeatures_warnTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental feature ({syncName}) is disabled, but the function is still running.'**
+  String experimentalFeatures_warnTile_titleText(String syncName);
+
+  /// No description provided for @experimentalFeatures_warnTile_forHabitSyncText.
+  ///
+  /// In en, this message translates to:
+  /// **'To completely disable, long press to access \'{menuName}\' and turn it off.'**
+  String experimentalFeatures_warnTile_forHabitSyncText(String menuName);
+
   /// No description provided for @appAbout_appbarTile_titleText.
   ///
   /// In en, this message translates to:
