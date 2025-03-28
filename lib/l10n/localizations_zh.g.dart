@@ -866,6 +866,64 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get appSync_failedTile_titleText => '检查失败日志';
+
+  @override
+  String appSync_failedTile_errorText(String info) {
+    return '【错误】: $info';
+  }
+
+  @override
+  String appSync_failedTile_webdavMulti_counterText(String reason, int count) {
+    return '$reason，数量：$count';
+  }
+
+  @override
+  String appSync_webdav_resultStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'success': '已完成',
+        'cancelled': '已取消',
+        'failed': '失败',
+        'multi': '多状态',
+        'other': '未知状态',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appSync_webdav_resultStatus_withReason(String status, String reason) {
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'success': '已完成: $reason',
+        'cancelled': '已取消: $reason',
+        'failed': '失败: $reason',
+        'multi': '多状态: $reason',
+        'other': '未知状态: $reason',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appSync_webdav_resultReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(
+      reason,
+      {
+        'error': '发生错误',
+        'userAction': '需要用户操作',
+        'missingHabitUuid': '缺失习惯UUID',
+        'empty': '空数据',
+        'other': '未知原因',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get experimentalFeatures_warnginBanner_title => '一个或多个实验性功能已启用，请谨慎使用。';
 
   @override

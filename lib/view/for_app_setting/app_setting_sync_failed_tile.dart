@@ -109,7 +109,11 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Error: ${result.error.error}"),
+                L10nBuilder(
+                    builder: (context, l10n) => Text(
+                        l10n?.appSync_failedTile_errorText(
+                                result.error.error.toString()) ??
+                            "Error: ${result.error.error}")),
                 if (result.error.trace != null)
                   Text(result.error.trace.toString()),
               ],
@@ -132,7 +136,9 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
           initiallyExpanded: isExpanded,
           onExpansionChanged: (value) {},
           expandedAlignment: Alignment.centerLeft,
-          title: Text("Check failure logs"),
+          title: L10nBuilder(
+              builder: (context, l10n) => Text(
+                  l10n?.appSync_failedTile_titleText ?? "Check failure logs")),
           trailing: IconButton(
               onPressed: _onExportButtonPressed,
               icon: const Icon(MdiIcons.fileExportOutline)),
@@ -157,7 +163,10 @@ class _WebDavFailedDetailTile extends StatelessWidget {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("$error"),
+          L10nBuilder(
+              builder: (context, l10n) => Text(
+                  l10n?.appSync_failedTile_errorText(error.toString()) ??
+                      "$error")),
           if (trace != null) ...[
             const Divider(),
             Text("$trace"),
@@ -167,11 +176,10 @@ class _WebDavFailedDetailTile extends StatelessWidget {
 
   Widget _buildFailedTile(
       BuildContext context, WebDavAppSyncTaskResult result) {
-    Widget buildTitle(BuildContext context) {
-      final reason = result.reason;
-      if (reason == null) return Text("Failed with no specific reason.");
-      return Text("Failed with ${reason.getReasonString()}");
-    }
+    Widget buildTitle(BuildContext context) => L10nBuilder(
+          builder: (context, l10n) => Text(WebDavAppSyncTaskResultStatus.failed
+              .getStatusTextString(result.reason, l10n)),
+        );
 
     return ListTile(
       dense: true,
@@ -236,8 +244,14 @@ class _WebDavFailedDetailTile extends StatelessWidget {
               enabled: errorIter != null,
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               expandedAlignment: Alignment.centerLeft,
-              title: Text("${e.key.status.getStatusTextString(e.key.reason)}: "
-                  "${e.value}"),
+              title: L10nBuilder(
+                  builder: (context, l10n) => Text(l10n
+                          ?.appSync_failedTile_webdavMulti_counterText(
+                              e.key.status
+                                  .getStatusTextString(e.key.reason, l10n),
+                              e.value) ??
+                      "${e.key.status.getStatusTextString(e.key.reason, l10n)}: "
+                          "${e.value}")),
               children: errorIter?.toList() ?? const [],
             );
           })
