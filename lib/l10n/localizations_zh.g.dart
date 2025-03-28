@@ -803,6 +803,69 @@ class L10nZh extends L10n {
   String get appSetting_experimentalFeatureTile_titleText => '实验性功能';
 
   @override
+  String get appSetting_synSubgroupText => '同步';
+
+  @override
+  String get appSetting_syncOption_titleText => '同步选项';
+
+  @override
+  String get appSync_nowTile_titleText => '立即同步';
+
+  @override
+  String get appSync_nowTile_titleText_syncing => '正在同步';
+
+  @override
+  String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
+    final intl.DateFormat ymdDateFormat = intl.DateFormat.yMd(localeName);
+    final String ymdString = ymdDateFormat.format(ymd);
+    final intl.DateFormat jmsDateFormat = intl.DateFormat.jms(localeName);
+    final String jmsString = jmsDateFormat.format(jms);
+
+    return '$ymdString $jmsString';
+  }
+
+  @override
+  String get appSync_nowTile_text_noDate => '上次同步：未知';
+
+  @override
+  String appSync_nowTile_text(String dateStr) {
+    return '上次同步：$dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_errorText_noDate => '上次同步（错误）：未知';
+
+  @override
+  String appSync_nowTile_errorText(String dateStr) {
+    return '上次同步（错误）：$dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_syncingText => '同步中……';
+
+  @override
+  String appSync_nowTile_syncingText_withPrt(num prt) {
+    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
+      locale: localeName,
+      decimalDigits: 2
+    );
+    final String prtString = prtNumberFormat.format(prt);
+
+    return '同步中：$prtString';
+  }
+
+  @override
+  String get appSync_nowTile_cancellingText => '取消中……';
+
+  @override
+  String get appSync_nowTile_cancelText_noDate => '上次同步（已取消）：未知';
+
+  @override
+  String appSync_nowTile_cancelText(String dateStr) {
+    return '上次同步（已取消）：$dateStr';
+  }
+
+  @override
   String get experimentalFeatures_warnginBanner_title => '一个或多个实验性功能已启用，请谨慎使用。';
 
   @override

@@ -808,6 +808,69 @@ class L10nAr extends L10n {
   String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
 
   @override
+  String get appSetting_synSubgroupText => 'Sync';
+
+  @override
+  String get appSetting_syncOption_titleText => 'Sync Options';
+
+  @override
+  String get appSync_nowTile_titleText => 'Sync Now';
+
+  @override
+  String get appSync_nowTile_titleText_syncing => 'Syncing';
+
+  @override
+  String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
+    final intl.DateFormat ymdDateFormat = intl.DateFormat.yMd(localeName);
+    final String ymdString = ymdDateFormat.format(ymd);
+    final intl.DateFormat jmsDateFormat = intl.DateFormat.jms(localeName);
+    final String jmsString = jmsDateFormat.format(jms);
+
+    return '$ymdString $jmsString';
+  }
+
+  @override
+  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+
+  @override
+  String appSync_nowTile_text(String dateStr) {
+    return 'Last Sync: $dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+
+  @override
+  String appSync_nowTile_errorText(String dateStr) {
+    return 'Last Sync (Error): $dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_syncingText => 'Syncing...';
+
+  @override
+  String appSync_nowTile_syncingText_withPrt(num prt) {
+    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
+      locale: localeName,
+      decimalDigits: 2
+    );
+    final String prtString = prtNumberFormat.format(prt);
+
+    return 'Syncing: $prtString';
+  }
+
+  @override
+  String get appSync_nowTile_cancellingText => 'Canceling...';
+
+  @override
+  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+
+  @override
+  String appSync_nowTile_cancelText(String dateStr) {
+    return 'Last Sync (Cancelled): $dateStr';
+  }
+
+  @override
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
 
   @override
