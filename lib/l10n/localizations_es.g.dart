@@ -871,6 +871,64 @@ class L10nEs extends L10n {
   }
 
   @override
+  String get appSync_failedTile_titleText => 'Check Failure Logs';
+
+  @override
+  String appSync_failedTile_errorText(String info) {
+    return '[Error]: $info';
+  }
+
+  @override
+  String appSync_failedTile_webdavMulti_counterText(String reason, int count) {
+    return '$reason: $count';
+  }
+
+  @override
+  String appSync_webdav_resultStatus(String status) {
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'success': 'Completed',
+        'cancelled': 'Canceled',
+        'failed': 'Failed',
+        'multi': 'Multiple statuses',
+        'other': 'Unknown status',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appSync_webdav_resultStatus_withReason(String status, String reason) {
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'success': 'Completed due to $reason',
+        'cancelled': 'Canceled due to $reason',
+        'failed': 'Failed due to $reason',
+        'multi': 'Multiple statuses due to $reason',
+        'other': 'Unknown status',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appSync_webdav_resultReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(
+      reason,
+      {
+        'error': 'Error',
+        'userAction': 'User action required',
+        'missingHabitUuid': 'Missing habit UUID',
+        'empty': 'Empty data',
+        'other': 'Unknown reason',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
 
   @override

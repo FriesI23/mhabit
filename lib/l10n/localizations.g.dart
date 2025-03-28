@@ -1588,6 +1588,42 @@ abstract class L10n {
   /// **'Last Sync (Cancelled): {dateStr}'**
   String appSync_nowTile_cancelText(String dateStr);
 
+  /// No description provided for @appSync_failedTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Failure Logs'**
+  String get appSync_failedTile_titleText;
+
+  /// No description provided for @appSync_failedTile_errorText.
+  ///
+  /// In en, this message translates to:
+  /// **'[Error]: {info}'**
+  String appSync_failedTile_errorText(String info);
+
+  /// No description provided for @appSync_failedTile_webdavMulti_counterText.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason}: {count}'**
+  String appSync_failedTile_webdavMulti_counterText(String reason, int count);
+
+  /// No description provided for @appSync_webdav_resultStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'{status, select, success {Completed} cancelled {Canceled} failed {Failed} multi {Multiple statuses} other {Unknown status}}'**
+  String appSync_webdav_resultStatus(String status);
+
+  /// No description provided for @appSync_webdav_resultStatus_withReason.
+  ///
+  /// In en, this message translates to:
+  /// **'{status, select, success {Completed due to {reason}} cancelled {Canceled due to {reason}} failed {Failed due to {reason}} multi {Multiple statuses due to {reason}} other {Unknown status}}'**
+  String appSync_webdav_resultStatus_withReason(String status, String reason);
+
+  /// No description provided for @appSync_webdav_resultReason.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}'**
+  String appSync_webdav_resultReason(String reason);
+
   /// No description provided for @experimentalFeatures_warnginBanner_title.
   ///
   /// In en, this message translates to:

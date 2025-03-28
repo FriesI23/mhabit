@@ -761,6 +761,59 @@
       }
     }
   },
+  "appSync_failedTile_titleText": "检查失败日志",
+  "@appSync_failedTile_titleText": {},
+  "appSync_failedTile_errorText": "【错误】: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "错误信息。"
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}，数量：{count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {已完成} cancelled {已取消} failed {失败} multi {多状态} other {未知状态}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "状态类型，详见：[WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {已完成: {reason}} cancelled {已取消: {reason}} failed {失败: {reason}} multi {多状态: {reason}} other {未知状态: {reason}}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "状态类型，详见：[WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "状态原因"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {发生错误} userAction {需要用户操作} missingHabitUuid {缺失习惯UUID} empty {空数据} other {未知原因}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "WebDAV AppSync任务结果的原因，详见：[WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
   "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "习惯云同步",

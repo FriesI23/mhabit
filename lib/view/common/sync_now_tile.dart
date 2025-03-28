@@ -86,13 +86,14 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
                         .add_jms()
                         .format(lastEndedTime))
                 : null;
-            if (lastSyncTask == null) {
-              return Text(l10n != null
-                  ? (lastEndedTimeStr != null
-                      ? l10n.appSync_nowTile_text(lastEndedTimeStr)
-                      : l10n.appSync_nowTile_text_noDate)
-                  : "Last Sync: $lastEndedTimeStr");
-            }
+
+            Widget buildLastSyncText() => Text(l10n != null
+                ? (lastEndedTimeStr != null
+                    ? l10n.appSync_nowTile_text(lastEndedTimeStr)
+                    : l10n.appSync_nowTile_text_noDate)
+                : "Last Sync: $lastEndedTimeStr");
+
+            if (lastSyncTask == null) return buildLastSyncText();
             switch (lastSyncTask.task.status) {
               case AppSyncTaskStatus.idle:
               case AppSyncTaskStatus.completed:
@@ -103,7 +104,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
                           : l10n.appSync_nowTile_errorText_noDate)
                       : "Last Sync (Error): $lastEndedTimeStr");
                 }
-                return Text("Last Sync: $lastEndedTimeStr");
+                return buildLastSyncText();
               case AppSyncTaskStatus.running:
                 return Selector<AppSyncViewModel, num?>(
                   selector: (context, vm) => vm.appSyncTask.task?.percentage,
