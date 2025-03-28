@@ -28,6 +28,7 @@ import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';
 import 'consts.dart';
+import 'types.dart';
 
 ThemeMode transToMaterialThemeType(AppThemeType themeType) {
   switch (themeType) {
@@ -142,9 +143,9 @@ String genHabitUUID() {
   return uuid.v4();
 }
 
-String genRecordUUID() {
+String genRecordUUID(HabitUUID habitUUID, int? epochDay) {
   const uuid = Uuid();
-  return uuid.v4();
+  return uuid.v5(habitUUID, epochDay?.toString());
 }
 
 int standardizeFirstDay(int firstDay) {
