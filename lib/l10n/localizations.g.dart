@@ -1504,6 +1504,90 @@ abstract class L10n {
   /// **'Experimental Features'**
   String get appSetting_experimentalFeatureTile_titleText;
 
+  /// No description provided for @appSetting_synSubgroupText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get appSetting_synSubgroupText;
+
+  /// No description provided for @appSetting_syncOption_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Options'**
+  String get appSetting_syncOption_titleText;
+
+  /// No description provided for @appSync_nowTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get appSync_nowTile_titleText;
+
+  /// No description provided for @appSync_nowTile_titleText_syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get appSync_nowTile_titleText_syncing;
+
+  /// No description provided for @appSync_nowTile_dateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{ymd} {jms}'**
+  String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms);
+
+  /// No description provided for @appSync_nowTile_text_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync: N/A'**
+  String get appSync_nowTile_text_noDate;
+
+  /// No description provided for @appSync_nowTile_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync: {dateStr}'**
+  String appSync_nowTile_text(String dateStr);
+
+  /// No description provided for @appSync_nowTile_errorText_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Error): N/A'**
+  String get appSync_nowTile_errorText_noDate;
+
+  /// No description provided for @appSync_nowTile_errorText.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Error): {dateStr}'**
+  String appSync_nowTile_errorText(String dateStr);
+
+  /// No description provided for @appSync_nowTile_syncingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get appSync_nowTile_syncingText;
+
+  /// No description provided for @appSync_nowTile_syncingText_withPrt.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing: {prt}'**
+  String appSync_nowTile_syncingText_withPrt(num prt);
+
+  /// No description provided for @appSync_nowTile_cancellingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceling...'**
+  String get appSync_nowTile_cancellingText;
+
+  /// No description provided for @appSync_nowTile_cancelText_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Cancelled): N/A'**
+  String get appSync_nowTile_cancelText_noDate;
+
+  /// No description provided for @appSync_nowTile_cancelText.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Cancelled): {dateStr}'**
+  String appSync_nowTile_cancelText(String dateStr);
+
   /// No description provided for @experimentalFeatures_warnginBanner_title.
   ///
   /// In en, this message translates to:

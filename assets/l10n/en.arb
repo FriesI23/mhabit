@@ -690,6 +690,77 @@
   "@appSetting_about_titleText": {},
   "appSetting_experimentalFeatureTile_titleText": "Experimental Features",
   "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "Sync",
+  "@appSetting_synSubgroupText": {},
+  "appSetting_syncOption_titleText": "Sync Options",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "Sync Now",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "Syncing",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "Last Sync: N/A",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "Last Sync: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "Last Sync (Error): N/A",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_errorText": "Last Sync (Error): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "Syncing...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "Syncing: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "Canceling...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "Last Sync (Cancelled): N/A",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "Last Sync (Cancelled): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
   "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "Habit Cloud Sync",

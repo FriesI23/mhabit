@@ -128,11 +128,10 @@ final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
                             l10n.experimentalFeatures_habitSyncTile_titleText) ??
                         "Experimental feature (Habit Network Sync) is off, "
                             "but function still running."),
-                    // TODO: l10n
                     subtitle: l10n != null
                         ? Text(
                             l10n.experimentalFeatures_warnTile_forHabitSyncText(
-                                "Sync Option"))
+                                l10n.appSetting_syncOption_titleText))
                         : null,
                     onLongPress: () =>
                         app_sync.naviToAppSyncPage(context: context),

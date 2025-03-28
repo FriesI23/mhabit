@@ -690,6 +690,77 @@
   "@appSetting_about_titleText": {},
   "appSetting_experimentalFeatureTile_titleText": "实验性功能",
   "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "同步",
+  "@appSetting_synSubgroupText": {},
+  "appSetting_syncOption_titleText": "同步选项",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "立即同步",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "正在同步",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "上次同步：未知",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "上次同步：{dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "上次同步（错误）：未知",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_errorText": "上次同步（错误）：{dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "同步中……",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "同步中：{prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "当前同步进度百分比（0-100）。",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "取消中……",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "上次同步（已取消）：未知",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "上次同步（已取消）：{dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
   "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "习惯云同步",
