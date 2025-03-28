@@ -20,9 +20,11 @@ abstract class _$SyncDBCellCWProxy {
     String? habitUUID,
     String? recordUUID,
     int? dirty,
+    int? dirtyTotal,
     String? lastConfigUUID,
     String? lastSesionUUID,
     String? lastMark,
+    String? lastMark2,
   });
 }
 
@@ -47,9 +49,11 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
     Object? habitUUID = const $CopyWithPlaceholder(),
     Object? recordUUID = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
+    Object? dirtyTotal = const $CopyWithPlaceholder(),
     Object? lastConfigUUID = const $CopyWithPlaceholder(),
     Object? lastSesionUUID = const $CopyWithPlaceholder(),
     Object? lastMark = const $CopyWithPlaceholder(),
+    Object? lastMark2 = const $CopyWithPlaceholder(),
   }) {
     return SyncDBCell(
       id: id == const $CopyWithPlaceholder()
@@ -76,6 +80,10 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
           : dirty as int?,
+      dirtyTotal: dirtyTotal == const $CopyWithPlaceholder()
+          ? _value.dirtyTotal
+          // ignore: cast_nullable_to_non_nullable
+          : dirtyTotal as int?,
       lastConfigUUID: lastConfigUUID == const $CopyWithPlaceholder()
           ? _value.lastConfigUUID
           // ignore: cast_nullable_to_non_nullable
@@ -88,6 +96,10 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
           ? _value.lastMark
           // ignore: cast_nullable_to_non_nullable
           : lastMark as String?,
+      lastMark2: lastMark2 == const $CopyWithPlaceholder()
+          ? _value.lastMark2
+          // ignore: cast_nullable_to_non_nullable
+          : lastMark2 as String?,
     );
   }
 }
@@ -109,9 +121,11 @@ SyncDBCell _$SyncDBCellFromJson(Map<String, dynamic> json) => SyncDBCell(
       habitUUID: json['habit_uuid'] as String?,
       recordUUID: json['record_uuid'] as String?,
       dirty: (json['dirty'] as num?)?.toInt(),
+      dirtyTotal: (json['dirty_total'] as num?)?.toInt(),
       lastConfigUUID: json['last_config_uuid'] as String?,
       lastSesionUUID: json['last_session_uuid'] as String?,
       lastMark: json['last_mark'] as String?,
+      lastMark2: json['last_mark_2'] as String?,
     );
 
 Map<String, dynamic> _$SyncDBCellToJson(SyncDBCell instance) =>
@@ -122,7 +136,9 @@ Map<String, dynamic> _$SyncDBCellToJson(SyncDBCell instance) =>
       if (instance.habitUUID case final value?) 'habit_uuid': value,
       if (instance.recordUUID case final value?) 'record_uuid': value,
       if (instance.dirty case final value?) 'dirty': value,
+      if (instance.dirtyTotal case final value?) 'dirty_total': value,
       if (instance.lastConfigUUID case final value?) 'last_config_uuid': value,
       if (instance.lastSesionUUID case final value?) 'last_session_uuid': value,
       if (instance.lastMark case final value?) 'last_mark': value,
+      if (instance.lastMark2 case final value?) 'last_mark_2': value,
     };

@@ -384,6 +384,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
 
   final String? etag;
   final int? dirty;
+  final int? dirtyTotal;
 
   static List<List> _recordsToJson(
           Map<HabitRecordUUID, WebDavSyncRecordData> records) =>
@@ -421,10 +422,15 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.records = const {},
     this.etag,
     this.dirty,
+    this.dirtyTotal,
   });
 
   WebDavSyncHabitData.fromHabitDBCell(HabitDBCell cell,
-      {this.etag, this.dirty, this.sessionId, this.records = const {}})
+      {this.etag,
+      this.dirty,
+      this.dirtyTotal,
+      this.sessionId,
+      this.records = const {}})
       : uuid = cell.uuid,
         createT = cell.createT,
         modifyT = cell.modifyT,
@@ -479,7 +485,9 @@ class WebDavSyncHabitData implements JsonAdaptor {
   SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
       habitUUID: uuid,
       dirty: dirty ?? 0,
-      lastMark: etag,
+      dirtyTotal: dirtyTotal ?? 0,
+      lastMark: sessionId,
+      lastMark2: etag,
       lastConfigUUID: configId,
       lastSesionUUID: sessionId);
 
@@ -514,6 +522,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   String toString() => "WebDavSyncHabitData${toJson()
     ..['etag'] = etag
     ..['dirty'] = dirty
+    ..['dirtyTotal'] = dirtyTotal
     ..['records'] = '...(length=${records.length})'}";
 }
 
