@@ -42,7 +42,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
   void _onStartButtonPressed() async {
     final vm = context.read<AppSyncViewModel>();
     if (!vm.mounted) return;
-    await vm.startSync();
+    await vm.startSync(initWait: const Duration(seconds: 1));
     if (!mounted) return;
     final summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null || !summary.mounted) return;

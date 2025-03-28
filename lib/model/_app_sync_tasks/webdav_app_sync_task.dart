@@ -37,6 +37,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
   final AppWebDavSyncServer config;
 
+  final Duration? initWait;
   final WebDavProgressController? progressController;
   final void Function(WebDavAppSyncTaskResult result)? onConfigTaskComplete;
 
@@ -50,6 +51,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     String? sessionId,
     required this.config,
     required SyncDBHelper syncDBHelper,
+    this.initWait,
     Duration? configConfirmTimeout = const Duration(seconds: 60),
     int? recordUploadConcurrency,
     this.progressController,
@@ -138,6 +140,14 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
 
   @override
   Future<WebDavAppSyncTaskResult> exec() async {
+    final initWait = this.initWait;
+    if (initWait != null) {
+      await Future.delayed(initWait);
+      if (isCancalling) {
+        return const WebDavAppSyncTaskResult.cancelled(
+            reason: WebDavAppSyncTaskResultSubStatus.userAction);
+      }
+    }
     final taskConfigs = buildTaskConfigs();
     var result = const WebDavAppSyncTaskResult.success();
     if (isDone) return this.result;
