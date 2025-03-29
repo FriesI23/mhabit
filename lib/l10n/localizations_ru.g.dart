@@ -945,14 +945,12 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
-
-  @override
-  String appSync_summaryTile_subtitle(String name) {
+  String appSync_syncServerType_text(String name) {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
         'webdav': 'WebDAV',
+        'fake': 'Fake (Only For Debugger)',
         'other': 'Unknown ($name)',
       },
     );
@@ -960,10 +958,144 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_subtitle_notConfigured => 'Not Configured';
+  String appSync_networkType_text(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'mobile': 'Mobile',
+        'wifi': 'Wifi',
+        'other': 'Unknown',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_title => 'Sync Server';
+
+  @override
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
 
   @override
   String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+
+  @override
+  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+
+  @override
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+
+  @override
+  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+
+  @override
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+
+  @override
+  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+
+  @override
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+
+  @override
+  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+
+  @override
+  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+
+  @override
+  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+
+  @override
+  String get appSync_serverEditor_pathTile_titleText => 'Path';
+
+  @override
+  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+
+  @override
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+
+  @override
+  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+
+  @override
+  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+
+  @override
+  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+
+  @override
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+
+  @override
+  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+
+  @override
+  String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds$unit',
+      zero: 'Infinite',
+    );
+    return 'Default: $_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_timeoutTile_unitText => 's';
+
+  @override
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+
+  @override
+  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds$unit',
+      zero: 'Infinite',
+    );
+    return 'Default: $_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_connTimeoutTile_unitText => 's';
+
+  @override
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+
+  @override
+  String appSync_serverEditor_connRetryCountTile_hintText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      zero: 'Retry disabled',
+    );
+    return 'Default: $_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+
+  @override
+  String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'mobile': 'Sync on Cellular Network',
+        'wifi': 'Sync on Wifi',
+        'other': 'Unknown',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+
+  @override
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
 
   @override
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
@@ -1356,6 +1488,23 @@ class L10nRu extends L10n {
 
   @override
   String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+
+  @override
+  String confirmDialog_confirm_text(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'save': 'Save',
+        'exit': 'Exit',
+        'delete': 'Delete',
+        'other': 'Confirm',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmDialog_cancel_text => 'Cancel';
 
   @override
   String get snackbar_undoText => 'UNDO';

@@ -940,14 +940,12 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_title => '同步服务器';
-
-  @override
-  String appSync_summaryTile_subtitle(String name) {
+  String appSync_syncServerType_text(String name) {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
         'webdav': 'WebDAV',
+        'fake': 'Fake（仅用于调试）',
         'other': '未知（$name）',
       },
     );
@@ -955,10 +953,144 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_subtitle_notConfigured => '未配置';
+  String appSync_networkType_text(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'mobile': '蜂窝网络',
+        'wifi': 'WiFi',
+        'other': '未知',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_title => '同步服务器';
+
+  @override
+  String get appSync_summaryTile_subtitle_text_notConfigured => '未配置';
 
   @override
   String get appSync_exportAllLogsTile_exportSubjectText => '所有近期同步失败日志';
+
+  @override
+  String get appSync_serverEditor_saveDialog_titleText => '确认保存更改';
+
+  @override
+  String get appSync_serverEditor_saveDialog_subtitleText => '保存后将覆盖之前的服务器配置。';
+
+  @override
+  String get appSync_serverEditor_exitDialog_titleText => '未保存的更改';
+
+  @override
+  String get appSync_serverEditor_exitDialog_subtitleText => '退出将丢弃所有未保存更改。';
+
+  @override
+  String get appSync_serverEditor_deleteDialog_titleText => '确认删除';
+
+  @override
+  String get appSync_serverEditor_deleteDialog_subtitleText => '删除后将移除当前服务器配置。';
+
+  @override
+  String get appSync_serverEditor_titleText_add => '新增同步服务器';
+
+  @override
+  String get appSync_serverEditor_titleText_modify => '修改同步服务器';
+
+  @override
+  String get appSync_serverEditor_advance_titleText => '高级设置';
+
+  @override
+  String get appSync_serverEditor_pathTile_titleText => '路径';
+
+  @override
+  String get appSync_serverEditor_pathTile_hintText => '请输入有效的 WebDAV 路径。';
+
+  @override
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => '路径不能为空！';
+
+  @override
+  String get appSync_serverEditor_usernameTile_titleText => '用户名';
+
+  @override
+  String get appSync_serverEditor_usernameTile_hintText => '请输入用户名，不需要可留空。';
+
+  @override
+  String get appSync_serverEditor_passwordTile_titleText => '密码';
+
+  @override
+  String get appSync_serverEditor_ignoreSSLTile_titleText => '忽略 SSL 证书';
+
+  @override
+  String get appSync_serverEditor_timeoutTile_titleText => '同步超时时间（秒）';
+
+  @override
+  String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds$unit',
+      zero: '不限制',
+    );
+    return '默认值：$_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_timeoutTile_unitText => '秒';
+
+  @override
+  String get appSync_serverEditor_connTimeoutTile_titleText => '网络连接超时时间（秒）';
+
+  @override
+  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds$unit',
+      zero: '不限制',
+    );
+    return '默认值：$_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_connTimeoutTile_unitText => '秒';
+
+  @override
+  String get appSync_serverEditor_connRetryCountTile_titleText => '网络连接重试次数';
+
+  @override
+  String appSync_serverEditor_connRetryCountTile_hintText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count',
+      zero: '不进行重试',
+    );
+    return '默认值：$_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_netTypeTile_titleText => '网络同步方式';
+
+  @override
+  String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'mobile': '在蜂窝网络上同步',
+        'wifi': '在 WiFi 上同步',
+        'other': '未知',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_serverEditor_netTypeTile_lowDataText => '低数据模式';
+
+  @override
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => '在低数据模式下同步';
 
   @override
   String get experimentalFeatures_warnginBanner_title => '一个或多个实验性功能已启用，请谨慎使用。';
@@ -1338,6 +1470,23 @@ class L10nZh extends L10n {
 
   @override
   String get debug_debuggerInfo_notificationTitle => '正在收集应用信息……';
+
+  @override
+  String confirmDialog_confirm_text(String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      type,
+      {
+        'save': '保存',
+        'exit': '退出',
+        'delete': '删除',
+        'other': '确认',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmDialog_cancel_text => '取消';
 
   @override
   String get snackbar_undoText => '撤回';

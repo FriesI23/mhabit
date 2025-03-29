@@ -59,7 +59,7 @@ class AppSyncSummaryTile extends StatelessWidget {
                 Row(children: [
                   Icon(subtileLeading),
                   const SizedBox(width: 4),
-                  Text(l10n?.appSync_summaryTile_subtitle(
+                  Text(l10n?.appSync_syncServerType_text(
                           serverConfig.type.name) ??
                       serverConfig.type.name)
                 ]),
@@ -67,7 +67,7 @@ class AppSyncSummaryTile extends StatelessWidget {
                 Text(serverConfig.name)
               ],
             )
-          : Text(l10n?.appSync_summaryTile_subtitle_notConfigured ??
+          : Text(l10n?.appSync_summaryTile_subtitle_text_notConfigured ??
               "Not Configured."),
       onTap: onPressed,
     );

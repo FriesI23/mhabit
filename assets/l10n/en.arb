@@ -825,10 +825,8 @@
       }
     }
   },
-  "appSync_summaryTile_title": "Sync Server",
-  "@appSync_summaryTile_title": {},
-  "appSync_summaryTile_subtitle": "Current: {name, select, webdav {WebDAV} other {Unknown ({name})}}",
-  "@appSync_summaryTile_subtitle": {
+  "appSync_syncServerType_text": "Current: {name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
+  "@appSync_syncServerType_text": {
     "placeholders": {
       "name": {
         "type": "String",
@@ -837,10 +835,113 @@
       }
     }
   },
-  "appSync_summaryTile_subtitle_notConfigured": "Not Configured",
-  "@appSync_summaryTile_subtitle_notConfigured": {},
+  "appSync_networkType_text": "{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_summaryTile_title": "Sync Server",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "Not Configured",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
   "appSync_exportAllLogsTile_exportSubjectText": "All recent failed sync logs",
   "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "appSync_serverEditor_saveDialog_titleText": "Confirm Save Changes",
+  "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "Saving will overwrite previous server configuration.",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "Unsaved Changes",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "Exiting will discard all unsaved changes.",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "Confirm Delete",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "Deleting will remove current server config.",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "New Sync Server",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "Modify Sync Server",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_advance_titleText": "Advanced Configs",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "Path",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "Enter a valid WebDAV path here.",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "Path shouldn't be empty!",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_usernameTile_titleText": "Username",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "Enter username here, leave empty if not required.",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_serverEditor_passwordTile_titleText": "Password",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "Ignore SSL Certificate",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "Sync Timeout Seconds",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_unitText": "s",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "Network Connection Timeout Seconds",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "s",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "Network Connection Retry Count",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_connRetryCountTile_hintText": "Default: {count, plural, =0 {Retry disabled} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_titleText": "Network Sync Mode",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Sync on Cellular Network} wifi {Sync on Wifi} other {Unknown}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Sync in Low Data Mode",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "Habit Cloud Sync",
@@ -1159,6 +1260,18 @@
   "@debug_debuggerInfoCard_saveButton_text": {},
   "debug_debuggerInfo_notificationTitle": "Collecting App's Info...",
   "@debug_debuggerInfo_notificationTitle": {},
+  "confirmDialog_confirm_text": "{type, select, save {Save} exit {Exit} delete {Delete} other {Confirm}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "confirmDialog_cancel_text": "Cancel",
+  "@confirmDialog_cancel_text": {},
   "snackbar_undoText": "UNDO",
   "@snackbar_undoText": {},
   "snackbar_dismissText": "DISMISS",

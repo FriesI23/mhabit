@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -34,16 +35,18 @@ class AppSyncServerUsernameTile extends StatelessWidget {
     final controller =
         context.select<AppSyncServerFormViewModel, TextEditingController>(
             (vm) => vm.usernameInputController);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includePathField,
       child: ListTile(
         contentPadding: contentPadding,
         title: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            icon: Icon(MdiIcons.accountCircleOutline),
-            labelText: 'Username',
-            hintText: 'Enter username here, leave empty if not required.',
+          decoration: InputDecoration(
+            icon: const Icon(MdiIcons.accountCircleOutline),
+            labelText:
+                l10n?.appSync_serverEditor_usernameTile_titleText ?? 'Username',
+            hintText: l10n?.appSync_serverEditor_usernameTile_hintText,
           ),
           keyboardType: TextInputType.text,
           onChanged: (_) =>
