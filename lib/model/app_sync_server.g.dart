@@ -23,7 +23,6 @@ abstract class _$AppWebDavSyncServerCWProxy {
     Duration? timeout,
     int? connectRetryCount,
     Duration? connectTimeout,
-    bool? verified,
     bool? configed,
     Iterable<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool? syncInLowData,
@@ -55,7 +54,6 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
     Object? timeout = const $CopyWithPlaceholder(),
     Object? connectRetryCount = const $CopyWithPlaceholder(),
     Object? connectTimeout = const $CopyWithPlaceholder(),
-    Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
     Object? syncMobileNetworks = const $CopyWithPlaceholder(),
     Object? syncInLowData = const $CopyWithPlaceholder(),
@@ -100,10 +98,6 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
           ? _value.connectTimeout
           // ignore: cast_nullable_to_non_nullable
           : connectTimeout as Duration?,
-      verified: verified == const $CopyWithPlaceholder() || verified == null
-          ? _value.verified
-          // ignore: cast_nullable_to_non_nullable
-          : verified as bool,
       configed: configed == const $CopyWithPlaceholder() || configed == null
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
@@ -147,7 +141,6 @@ abstract class _$AppFakeSyncServerCWProxy {
     DateTime? modifyTime,
     String? password,
     Duration? timeout,
-    bool? verified,
     bool? configed,
   });
 }
@@ -173,7 +166,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? modifyTime = const $CopyWithPlaceholder(),
     Object? password = const $CopyWithPlaceholder(),
     Object? timeout = const $CopyWithPlaceholder(),
-    Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppFakeSyncServer._copyWith(
@@ -203,10 +195,6 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
           : timeout as Duration?,
-      verified: verified == const $CopyWithPlaceholder() || verified == null
-          ? _value.verified
-          // ignore: cast_nullable_to_non_nullable
-          : verified as bool,
       configed: configed == const $CopyWithPlaceholder() || configed == null
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
@@ -243,7 +231,6 @@ abstract class _$AppSyncServerFormCWProxy {
     int? connectRetryCount,
     Set<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool? syncInLowData,
-    bool? verified,
     bool? configed,
   });
 }
@@ -276,7 +263,6 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
     Object? connectRetryCount = const $CopyWithPlaceholder(),
     Object? syncMobileNetworks = const $CopyWithPlaceholder(),
     Object? syncInLowData = const $CopyWithPlaceholder(),
-    Object? verified = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppSyncServerForm(
@@ -334,10 +320,6 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
           ? _value.syncInLowData
           // ignore: cast_nullable_to_non_nullable
           : syncInLowData as bool?,
-      verified: verified == const $CopyWithPlaceholder() || verified == null
-          ? _value.verified
-          // ignore: cast_nullable_to_non_nullable
-          : verified as bool,
       configed: configed == const $CopyWithPlaceholder() || configed == null
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
@@ -372,7 +354,6 @@ AppWebDavSyncServer _$AppWebDavSyncServerFromJson(Map<String, dynamic> json) =>
       connectTimeout: json['connectTimeout'] == null
           ? null
           : Duration(microseconds: (json['connectTimeout'] as num).toInt()),
-      verified: json['verified'] as bool,
       configed: json['configed'] as bool,
       syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
           .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
@@ -389,7 +370,6 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
       'modifyTime': instance.modifyTime.toIso8601String(),
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
       'timeout': instance.timeout?.inMicroseconds,
-      'verified': instance.verified,
       'configed': instance.configed,
       'password': instance.password,
       'path': instance.path.toString(),
@@ -424,7 +404,6 @@ AppFakeSyncServer _$AppFakeSyncServerFromJson(Map<String, dynamic> json) =>
       timeout: json['timeout'] == null
           ? null
           : Duration(microseconds: (json['timeout'] as num).toInt()),
-      verified: json['verified'] as bool,
       configed: json['configed'] as bool,
       password: json['password'] as String?,
     );
@@ -437,7 +416,6 @@ Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
       'modifyTime': instance.modifyTime.toIso8601String(),
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
       'timeout': instance.timeout?.inMicroseconds,
-      'verified': instance.verified,
       'configed': instance.configed,
       'password': instance.password,
     };

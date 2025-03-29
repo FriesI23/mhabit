@@ -92,12 +92,6 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
       ) as _i2.AppSyncServerType);
 
   @override
-  bool get verified => (super.noSuchMethod(
-        Invocation.getter(#verified),
-        returnValue: false,
-      ) as bool);
-
-  @override
   bool get configed => (super.noSuchMethod(
         Invocation.getter(#configed),
         returnValue: false,

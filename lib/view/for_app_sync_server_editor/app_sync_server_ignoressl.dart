@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -30,12 +31,14 @@ class AppSyncServerIgnoreSSLTile extends StatelessWidget {
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     final ignoreSSL =
         context.select<AppSyncServerFormViewModel, bool?>((vm) => vm.ignoreSSL);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includeIgnoreSSLField,
       child: CheckboxListTile.adaptive(
         secondary: const Icon(MdiIcons.lockOffOutline),
         contentPadding: contentPadding,
-        title: const Text("Ignore SSL Certificate"),
+        title: Text(l10n?.appSync_serverEditor_ignoreSSLTile_titleText ??
+            "Ignore SSL Certificate"),
         value: ignoreSSL ?? false,
         onChanged: (value) =>
             context.read<AppSyncServerFormViewModel>().ignoreSSL = value,

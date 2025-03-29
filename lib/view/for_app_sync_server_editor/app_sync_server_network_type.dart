@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -34,6 +35,11 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
       if (result) vm.syncMobileNetworks = syncMobileNetworks;
     }
 
+    final l10n = L10n.of(context);
+    final title = l10n?.appSync_networkType_text(type.name);
+    final tooltips =
+        l10n?.appSync_serverEditor_netTypeTile_typeTooltip(type.name);
+
     final syncMobileNetworks = context
         .select<AppSyncServerFormViewModel, List<AppSyncServerMobileNetwork>>(
             (vm) => vm.syncMobileNetworks?.toList() ?? const []);
@@ -43,8 +49,8 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
           label: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(MdiIcons.signal, size: 20.0),
-              Text('Mobile'),
+              const Icon(MdiIcons.signal, size: 20.0),
+              Text(title ?? 'Mobile'),
             ],
           ),
           selectedColor: theme.brightness == Brightness.dark
@@ -52,14 +58,14 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
               : Colors.lightGreen,
           selected: syncMobileNetworks.contains(type),
           onSelected: onSelected,
-          tooltip: "Sync on Cellular Network",
+          tooltip: tooltips,
         ),
       AppSyncServerMobileNetwork.wifi => FilterChip(
           label: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(MdiIcons.signalVariant, size: 20.0),
-              Text("Wifi"),
+              const Icon(MdiIcons.signalVariant, size: 20.0),
+              Text(title ?? "Wifi"),
             ],
           ),
           selectedColor: theme.brightness == Brightness.dark
@@ -67,7 +73,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
               : Colors.lightBlue,
           selected: syncMobileNetworks.contains(type),
           onSelected: onSelected,
-          tooltip: "Sync on Wifi",
+          tooltip: tooltips,
         ),
       _ => null,
     };
@@ -77,12 +83,13 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
     final syncInLowData = context
         .select<AppSyncServerFormViewModel, bool?>((vm) => vm.syncInLowData);
     final theme = Theme.of(context);
+    final l10n = L10n.of(context);
     return FilterChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(MdiIcons.swapHorizontal, size: 20.0),
-          Text("LowData"),
+          Text(l10n?.appSync_serverEditor_netTypeTile_lowDataText ?? "LowData"),
         ],
       ),
       selectedColor:
@@ -91,7 +98,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
       onSelected: (newValue) {
         context.read<AppSyncServerFormViewModel>().syncInLowData = newValue;
       },
-      tooltip: "Sync in Low Data Mode",
+      tooltip: l10n?.appSync_serverEditor_netTypeTile_lowDataTooltip,
     );
   }
 
@@ -115,12 +122,14 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
 
     final type = context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includeSyncNetworkField,
       child: ListTile(
         isThreeLine: true,
         leading: Icon(MdiIcons.accessPointNetwork),
-        title: Text("Synchronous Networking"),
+        title: Text(l10n?.appSync_serverEditor_netTypeTile_titleText ??
+            "Synchronous Networking"),
         subtitle: buildNetworksSubtitle(context),
       ),
     );

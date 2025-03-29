@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../l10n/localizations.dart';
 import '../../utils/app_sync.dart';
 import '../common/_mixin.dart';
 
@@ -96,21 +97,23 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
   void _onTilePressed() async {
     final zipFilePath = await generateZippedSyncFailedLogs();
     if (!mounted) return;
-    // TODO: add subject (l10n)
-    trySaveFiles([XFile(zipFilePath)], defaultTargetPlatform, context: context);
+    trySaveFiles([XFile(zipFilePath)], defaultTargetPlatform,
+        subject: L10n.of(context)?.appSync_exportAllLogsTile_exportSubjectText,
+        context: context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: ListTile(
-        title: Text("Export Failed Sync Logs"),
-        subtitle: switch (isEmpty) {
-          false => Text("Tap to export."),
-          null => Text("loading..."),
-          true => Text("No log founded."),
-        },
+        title: Text(l10n?.appSync_exportAllLogsTile_titleText ??
+            "Export Failed Sync Logs"),
+        subtitle: l10n != null
+            ? Text(
+                l10n.appSync_exportAllLogsTile_subtitleText(isEmpty.toString()))
+            : null,
         onTap: _onTilePressed,
         enabled: enabled,
       ),

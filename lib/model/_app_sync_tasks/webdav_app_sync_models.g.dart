@@ -136,6 +136,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     Map<String, WebDavSyncRecordData>? records,
     String? etag,
     int? dirty,
+    int? dirtyTotal,
   });
 }
 
@@ -176,6 +177,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? records = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
+    Object? dirtyTotal = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncHabitData(
       uuid: uuid == const $CopyWithPlaceholder()
@@ -266,6 +268,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
           : dirty as int?,
+      dirtyTotal: dirtyTotal == const $CopyWithPlaceholder()
+          ? _value.dirtyTotal
+          // ignore: cast_nullable_to_non_nullable
+          : dirtyTotal as int?,
     );
   }
 }

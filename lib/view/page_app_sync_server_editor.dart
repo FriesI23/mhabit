@@ -18,8 +18,10 @@ import 'package:provider/provider.dart';
 
 import '../common/consts.dart';
 import '../component/widget.dart';
+import '../l10n/localizations.dart';
 import '../model/app_sync_server.dart';
 import '../provider/app_developer.dart';
+import '../provider/app_sync.dart';
 import '../provider/app_sync_server_form.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
@@ -118,13 +120,15 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
     assert(vm.canSave, "Can't save current config, got ${vm.formSnapshot}");
     final form = vm.getFinalForm();
     if (vm.edited && vm.crtServerConfig != null) {
-      confirmed = await showConfirmDialog(
+      confirmed = await showNormalizedConfirmDialog(
             context: context,
-            title: const Text("Confirm Save Changes"),
-            subtitle: const Text(
-                "Saving will overwrite previous server configuration."),
-            cancelText: const Text("cancel"),
-            confirmText: const Text("confirm"),
+            title: L10nBuilder(
+                builder: (context, l10n) => Text(
+                    l10n?.appSync_serverEditor_saveDialog_titleText ??
+                        "Confirm Save Changes")),
+            subtitle: L10nBuilder(
+                builder: (context, l10n) => Text(
+                    l10n?.appSync_serverEditor_saveDialog_subtitleText ?? "")),
           ) ??
           false;
     } else {
@@ -142,12 +146,16 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
     final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
     if (shouldShowCancelConfirmDialog(vm)) {
-      confirmed = await showConfirmDialog(
+      confirmed = await showNormalizedConfirmDialog(
             context: context,
-            title: const Text("Unsaved Changes"),
-            subtitle: const Text("Exiting will discard all unsaved changes."),
-            cancelText: const Text("cancel"),
-            confirmText: const Text("exit"),
+            type: NormalizeConfirmDialogType.exit,
+            title: L10nBuilder(
+                builder: (context, l10n) => Text(
+                    l10n?.appSync_serverEditor_exitDialog_titleText ??
+                        "Unsaved Changes")),
+            subtitle: L10nBuilder(
+                builder: (context, l10n) => Text(
+                    l10n?.appSync_serverEditor_exitDialog_subtitleText ?? "")),
           ) ??
           false;
     } else {
@@ -162,12 +170,22 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
   void _onDeleteButtonPressed() async {
     final confirmed = await showConfirmDialog(
       context: context,
-      title: const Text("Confirm Delete"),
-      subtitle: const Text(
-          "Deleting will stop running sync and remove current server config"),
-      cancelText: const Text("cancel"),
-      confirmTextBuilder: (context) => Text("delete",
-          style: TextStyle(color: Theme.of(context).colorScheme.error)),
+      title: L10nBuilder(
+          builder: (context, l10n) => Text(
+              l10n?.appSync_serverEditor_deleteDialog_titleText ??
+                  "Confirm Delete")),
+      subtitle: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.appSync_serverEditor_deleteDialog_subtitleText ?? "")),
+      cancelText: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.confirmDialog_cancel_text ?? "Cancel")),
+      confirmTextBuilder: (context) => L10nBuilder(
+          builder: (context, l10n) => Text(
+              l10n?.confirmDialog_confirm_text(
+                      NormalizeConfirmDialogType.delete.name) ??
+                  "Delete",
+              style: TextStyle(color: Theme.of(context).colorScheme.error))),
     );
     if (!mounted || confirmed != true) return;
     Navigator.of(context)
@@ -314,7 +332,17 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
         constraints: BoxConstraints.expand(width: dialogMaxWidth),
         child: AlertDialog(
           scrollable: true,
-          title: const Text("Modfiy Sync Server"),
+          title: Selector<AppSyncViewModel, bool>(
+            selector: (context, vm) => vm.serverConfig != null,
+            builder: (context, value, child) {
+              final l10n = L10n.of(context);
+              return Text(l10n != null
+                  ? (value
+                      ? l10n.appSync_serverEditor_titleText_modify
+                      : l10n.appSync_serverEditor_titleText_add)
+                  : "Sync Server");
+            },
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -376,7 +404,9 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ExpansionTile(
-        title: const Text("Advance Configs"),
+        title: L10nBuilder(
+            builder: (context, l10n) => Text(
+                l10n?.appSync_serverEditor_advance_titleText ?? "Advanced")),
         leading: Icon(MdiIcons.dotsHorizontal),
         tilePadding: ExpansionTileTheme.of(context)
             .tilePadding

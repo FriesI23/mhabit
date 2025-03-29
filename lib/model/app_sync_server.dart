@@ -140,7 +140,6 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   DateTime get modifyTime;
   AppSyncServerType get type;
   Duration? get timeout;
-  bool get verified;
   bool get configed;
 
   String? get password;
@@ -175,8 +174,6 @@ class AppWebDavSyncServer implements AppSyncServer {
   @override
   final Duration? timeout;
   @override
-  final bool verified;
-  @override
   final bool configed;
   @override
   final String password;
@@ -200,7 +197,6 @@ class AppWebDavSyncServer implements AppSyncServer {
     this.timeout,
     this.connectRetryCount,
     this.connectTimeout,
-    required this.verified,
     required this.configed,
     required List<AppSyncServerMobileNetwork> syncMobileNetworks,
     required this.ignoreSSL,
@@ -228,7 +224,6 @@ class AppWebDavSyncServer implements AppSyncServer {
         path: Uri.parse(path),
         username: username,
         password: password,
-        verified: false,
         configed: false,
         syncMobileNetworks:
             syncMobileNetworks?.toList() ?? AppSyncServerMobileNetwork.allowed,
@@ -249,7 +244,6 @@ class AppWebDavSyncServer implements AppSyncServer {
     this.timeout,
     this.connectRetryCount,
     this.connectTimeout,
-    required this.verified,
     required this.configed,
     required Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
     required this.syncInLowData,
@@ -273,7 +267,6 @@ class AppWebDavSyncServer implements AppSyncServer {
           timeout: form.timeout,
           connectTimeout: form.connectTimeout,
           connectRetryCount: form.connectRetryCount,
-          verified: form.verified,
           configed: form.configed,
           syncMobileNetworks: form.syncMobileNetworks!.toList(),
           ignoreSSL: form.ignoreSSL!,
@@ -328,7 +321,6 @@ class AppWebDavSyncServer implements AppSyncServer {
       connectRetryCount: connectRetryCount,
       syncMobileNetworks: Set.of(syncMobileNetworks),
       syncInLowData: syncInLowData,
-      verified: verified,
       configed: configed);
 
   @override
@@ -343,7 +335,6 @@ class AppWebDavSyncServer implements AppSyncServer {
   type: $type,
   syncInLowData: $syncInLowData,
   timeout: $timeout,
-  verified: $verified,
   configed: $configed,
   syncMobileNetworks: $_syncMobileNetworks,
   path: $path,
@@ -358,7 +349,7 @@ class AppWebDavSyncServer implements AppSyncServer {
   String toString() => 'AppWebDavSyncServer[$identity](path=$path,'
       'username=$username,'
       'password=${List.generate(password.length, (_) => "*").join()},'
-      'v|c=$verified|$configed'
+      'c=$configed'
       ')';
 }
 
@@ -382,8 +373,6 @@ class AppFakeSyncServer implements AppSyncServer {
   @override
   final Duration? timeout;
   @override
-  final bool verified;
-  @override
   final bool configed;
   @override
   final String? password;
@@ -394,7 +383,6 @@ class AppFakeSyncServer implements AppSyncServer {
     required this.createTime,
     required this.modifyTime,
     required this.timeout,
-    required this.verified,
     required this.configed,
     required this.password,
   }) : type = AppSyncServerType.fake;
@@ -412,7 +400,6 @@ class AppFakeSyncServer implements AppSyncServer {
       createTime: now,
       modifyTime: now,
       timeout: timeout,
-      verified: false,
       configed: false,
       password: password,
     );
@@ -425,7 +412,6 @@ class AppFakeSyncServer implements AppSyncServer {
     required this.modifyTime,
     this.password,
     this.timeout,
-    required this.verified,
     required this.configed,
   }) : type = AppSyncServerType.fake;
 
@@ -439,7 +425,6 @@ class AppFakeSyncServer implements AppSyncServer {
           createTime: form.createTime,
           modifyTime: form.modifyTime,
           timeout: form.timeout,
-          verified: form.verified,
           configed: form.configed,
           password: form.password);
 
@@ -451,7 +436,6 @@ class AppFakeSyncServer implements AppSyncServer {
   modifyTime=$modifyTime,
   type=$type,
   timeout=$timeout,
-  verified=$verified,
   configed=$configed,
 )""";
 
@@ -481,7 +465,6 @@ class AppFakeSyncServer implements AppSyncServer {
       connectRetryCount: null,
       syncMobileNetworks: null,
       syncInLowData: null,
-      verified: verified,
       configed: configed);
 
   @override
@@ -489,7 +472,7 @@ class AppFakeSyncServer implements AppSyncServer {
 
   @override
   String toString() => 'AppFakeSyncServer[$identity]('
-      'v|c=$verified|$configed'
+      'c=$configed'
       ')';
 }
 
@@ -500,7 +483,6 @@ class AppSyncServerForm {
   final DateTime modifyTime;
 
   AppSyncServerType type;
-  bool verified;
   bool configed;
 
   String? path;
@@ -527,7 +509,6 @@ class AppSyncServerForm {
     required this.connectRetryCount,
     required this.syncMobileNetworks,
     required this.syncInLowData,
-    required this.verified,
     required this.configed,
   });
 
@@ -543,7 +524,7 @@ class AppSyncServerForm {
   connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount,
   syncMobileNetworks=$syncMobileNetworks,
   syncInLowData=$syncInLowData,
-  vertified=$verified,configed=$configed,
+  configed=$configed,
   )""";
   }
 
@@ -551,6 +532,6 @@ class AppSyncServerForm {
   String toString() => 'AppSyncServerForm[$uuid](path=$path,'
       'username=$username,'
       'password=${List.generate(password?.length ?? 0, (_) => "*").join()},'
-      'v|c=$verified|$configed'
+      'c=$configed'
       ')';
 }
