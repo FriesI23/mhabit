@@ -31,6 +31,7 @@ class AppSyncServerTypeMenu extends StatelessWidget {
   });
 
   String getName(AppSyncServerType type, [L10n? l10n]) {
+    if (l10n != null) return l10n.appSync_syncServerType_text(type.name);
     switch (type) {
       case AppSyncServerType.webdav:
         return 'WebDAV';

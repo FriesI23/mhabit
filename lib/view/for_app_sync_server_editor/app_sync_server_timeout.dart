@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/utils.dart';
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -82,15 +83,19 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
     context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     debugPrint(controller.text);
+    final l10n = L10n.of(context);
     return ListTile(
       contentPadding: widget.contentPadding,
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
           icon: const Icon(MdiIcons.timerOutline),
-          labelText: 'Sync Timeout Seconds',
-          hintText: 'Default: ${defaultAppSyncTimeout.inSeconds}s',
-          suffixText: 's',
+          labelText: l10n?.appSync_serverEditor_timeoutTile_titleText ??
+              'Sync Timeout Seconds',
+          hintText: l10n?.appSync_serverEditor_timeoutTile_hintText(
+              defaultAppSyncTimeout.inSeconds,
+              l10n.appSync_serverEditor_timeoutTile_unitText),
+          suffixText: l10n?.appSync_serverEditor_timeoutTile_unitText,
         ),
         keyboardType: const TextInputType.numberWithOptions(
             signed: false, decimal: false),
