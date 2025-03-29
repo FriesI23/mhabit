@@ -106,7 +106,9 @@ final class _AppSyncView extends State<AppSyncView> {
         slivers: [
           SliverAppBar(
             leading: const PageBackButton(reason: PageBackReason.back),
-            title: const Text("Sync"),
+            title: L10nBuilder(
+                builder: (context, l10n) =>
+                    Text(l10n?.appSetting_syncOption_titleText ?? "Sync")),
             pinned: true,
           ),
           SliverPinnedHeader(
@@ -116,7 +118,9 @@ final class _AppSyncView extends State<AppSyncView> {
             builder: (context, value, child) => ColoredBox(
               color: Theme.of(context).colorScheme.surface,
               child: SwitchListTile.adaptive(
-                title: const Text("Enable"),
+                title: L10nBuilder(
+                    builder: (context, l10n) =>
+                        Text(l10n?.common_enable_text ?? "Enable")),
                 value: value,
                 onChanged: (value) =>
                     context.read<AppSyncViewModel>().setSyncSwitch(value),

@@ -814,6 +814,33 @@
       }
     }
   },
+  "appSync_exportAllLogsTile_titleText": "Export Failed Sync Logs",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_summaryTile_title": "Sync Server",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle": "Current: {name, select, webdav {WebDAV} other {Unknown ({name})}}",
+  "@appSync_summaryTile_subtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      }
+    }
+  },
+  "appSync_summaryTile_subtitle_notConfigured": "Not Configured",
+  "@appSync_summaryTile_subtitle_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "All recent failed sync logs",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
   "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "Habit Cloud Sync",
@@ -1045,6 +1072,8 @@
   "@common_errorPage_title": {},
   "common_errorPage_copied": "Copied crash information",
   "@common_errorPage_copied": {},
+  "common_enable_text": "Enabled",
+  "@common_enable_text": {},
   "calendarPicker_clip_today": "Today",
   "@calendarPicker_clip_today": {},
   "calendarPicker_clip_tomorrow": "Tomorrow",

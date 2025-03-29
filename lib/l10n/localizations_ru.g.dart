@@ -929,6 +929,43 @@ class L10nRu extends L10n {
   }
 
   @override
+  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+
+  @override
+  String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': 'No log founded',
+        'false': 'Tap to export',
+        'other': 'loading...',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_title => 'Sync Server';
+
+  @override
+  String appSync_summaryTile_subtitle(String name) {
+    String _temp0 = intl.Intl.selectLogic(
+      name,
+      {
+        'webdav': 'WebDAV',
+        'other': 'Unknown ($name)',
+      },
+    );
+    return 'Current: $_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_subtitle_notConfigured => 'Not Configured';
+
+  @override
+  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+
+  @override
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
 
   @override
@@ -1204,6 +1241,9 @@ class L10nRu extends L10n {
 
   @override
   String get common_errorPage_copied => 'Copied crash information';
+
+  @override
+  String get common_enable_text => 'Enabled';
 
   @override
   String get calendarPicker_clip_today => 'Сегодня';
