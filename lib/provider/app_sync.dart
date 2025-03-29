@@ -79,16 +79,18 @@ class AppSyncViewModel
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
     _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
-    if (!_clearLogsOnStartup) _clearLogsOnStartup = true;
-    cleanExpiredSyncFailedLogs().then((results) {
-      if (results.isNotEmpty) {
-        appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
-      }
-    }).catchError((e, s) {
-      appLog.appsync.warn("clear logs on startup failed",
-          ex: [hashCode], error: e, stackTrace: s);
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-    });
+    if (!_clearLogsOnStartup) {
+      _clearLogsOnStartup = true;
+      cleanExpiredSyncFailedLogs().then((results) {
+        if (results.isNotEmpty) {
+          appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
+        }
+      }).catchError((e, s) {
+        appLog.appsync.warn("clear logs on startup failed",
+            ex: [hashCode], error: e, stackTrace: s);
+        if (kDebugMode) Error.throwWithStackTrace(e, s);
+      });
+    }
   }
 
   bool get enabled => _switch?.get() ?? false;

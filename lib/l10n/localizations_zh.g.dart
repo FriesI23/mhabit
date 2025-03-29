@@ -924,6 +924,43 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get appSync_exportAllLogsTile_titleText => '导出同步失败日志';
+
+  @override
+  String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
+    String _temp0 = intl.Intl.selectLogic(
+      isEmpty,
+      {
+        'true': '未找到日志',
+        'false': '点击导出',
+        'other': '加载中……',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_title => '同步服务器';
+
+  @override
+  String appSync_summaryTile_subtitle(String name) {
+    String _temp0 = intl.Intl.selectLogic(
+      name,
+      {
+        'webdav': 'WebDAV',
+        'other': '未知（$name）',
+      },
+    );
+    return '当前：$_temp0';
+  }
+
+  @override
+  String get appSync_summaryTile_subtitle_notConfigured => '未配置';
+
+  @override
+  String get appSync_exportAllLogsTile_exportSubjectText => '所有近期同步失败日志';
+
+  @override
   String get experimentalFeatures_warnginBanner_title => '一个或多个实验性功能已启用，请谨慎使用。';
 
   @override
@@ -1187,6 +1224,9 @@ class L10nZh extends L10n {
 
   @override
   String get common_errorPage_copied => '已复制崩溃信息';
+
+  @override
+  String get common_enable_text => '启用';
 
   @override
   String get calendarPicker_clip_today => '今天';

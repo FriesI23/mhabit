@@ -1624,6 +1624,42 @@ abstract class L10n {
   /// **'{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}'**
   String appSync_webdav_resultReason(String reason);
 
+  /// No description provided for @appSync_exportAllLogsTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Failed Sync Logs'**
+  String get appSync_exportAllLogsTile_titleText;
+
+  /// No description provided for @appSync_exportAllLogsTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}'**
+  String appSync_exportAllLogsTile_subtitleText(String isEmpty);
+
+  /// No description provided for @appSync_summaryTile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Server'**
+  String get appSync_summaryTile_title;
+
+  /// No description provided for @appSync_summaryTile_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {name, select, webdav {WebDAV} other {Unknown ({name})}}'**
+  String appSync_summaryTile_subtitle(String name);
+
+  /// No description provided for @appSync_summaryTile_subtitle_notConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Configured'**
+  String get appSync_summaryTile_subtitle_notConfigured;
+
+  /// No description provided for @appSync_exportAllLogsTile_exportSubjectText.
+  ///
+  /// In en, this message translates to:
+  /// **'All recent failed sync logs'**
+  String get appSync_exportAllLogsTile_exportSubjectText;
+
   /// No description provided for @experimentalFeatures_warnginBanner_title.
   ///
   /// In en, this message translates to:
@@ -2121,6 +2157,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Copied crash information'**
   String get common_errorPage_copied;
+
+  /// No description provided for @common_enable_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get common_enable_text;
 
   /// No description provided for @calendarPicker_clip_today.
   ///

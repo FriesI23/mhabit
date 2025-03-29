@@ -814,6 +814,33 @@
       }
     }
   },
+  "appSync_exportAllLogsTile_titleText": "导出同步失败日志",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {未找到日志} false {点击导出} other {加载中……}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_summaryTile_title": "同步服务器",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle": "当前：{name, select, webdav {WebDAV} other {未知（{name}）}}",
+  "@appSync_summaryTile_subtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "服务器名称，取决于具体的服务器类型。",
+        "example": "http://example.com/path/to/webdav/"
+      }
+    }
+  },
+  "appSync_summaryTile_subtitle_notConfigured": "未配置",
+  "@appSync_summaryTile_subtitle_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "所有近期同步失败日志",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
   "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
   "@experimentalFeatures_warnginBanner_title": {},
   "experimentalFeatures_habitSyncTile_titleText": "习惯云同步",
@@ -1045,6 +1072,8 @@
   "@common_errorPage_title": {},
   "common_errorPage_copied": "已复制崩溃信息",
   "@common_errorPage_copied": {},
+  "common_enable_text": "启用",
+  "@common_enable_text": {},
   "calendarPicker_clip_today": "今天",
   "@calendarPicker_clip_today": {},
   "calendarPicker_clip_tomorrow": "明天",
