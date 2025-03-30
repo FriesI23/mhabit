@@ -24,16 +24,21 @@ enum WebDavAppSyncTaskResultStatus {
 
   String getStatusTextString(
       [WebDavAppSyncTaskResultSubStatus? reason, L10n? l10n]) {
-    return switch ((this, reason)) {
-      (success, null) => "Completed",
-      (success, _) => "Completed with ${reason!.getReasonString()}",
-      (cancelled, null) => "Cancelled",
-      (cancelled, _) => "Cancelled with ${reason!.getReasonString()}",
-      (failed, null) => "Failed",
-      (failed, _) => "Failed with ${reason!.getReasonString()}",
-      (multi, null) => "Multiple statuses",
-      (multi, _) => "Multiple statuses with ${reason!.getReasonString()}",
+    if (l10n != null) {
+      return reason == null
+          ? l10n.appSync_webdav_resultStatus(name)
+          : l10n.appSync_webdav_resultStatus_withReason(
+              name, reason.getReasonString(l10n));
+    }
+    final baseText = switch (this) {
+      success => "Completed",
+      cancelled => "Cancelled",
+      failed => "Failed",
+      multi => "Multiple statuses"
     };
+    return reason == null
+        ? baseText
+        : "$baseText with ${reason.getReasonString()}";
   }
 }
 
@@ -45,6 +50,9 @@ enum WebDavAppSyncTaskResultSubStatus {
   empty;
 
   String getReasonString([L10n? l10n]) {
+    if (l10n != null) {
+      return l10n.appSync_webdav_resultReason(name);
+    }
     return switch (this) {
       WebDavAppSyncTaskResultSubStatus.timeout => "timeout",
       WebDavAppSyncTaskResultSubStatus.error => "error",

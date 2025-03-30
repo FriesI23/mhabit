@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../component/widget.dart';
 import '../../extension/async_extensions.dart';
+import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
@@ -142,6 +143,7 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
       contentPadding: widget.contentPadding,
       trailing: IconButton(
@@ -151,9 +153,10 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
               : const Icon(Icons.visibility)),
       title: TextField(
         controller: widget.controller,
-        decoration: const InputDecoration(
-          icon: Icon(MdiIcons.formTextboxPassword),
-          labelText: 'Password',
+        decoration: InputDecoration(
+          icon: const Icon(MdiIcons.formTextboxPassword),
+          labelText:
+              l10n?.appSync_serverEditor_passwordTile_titleText ?? 'Password',
         ),
         obscureText: !showPassword,
         enableSuggestions: false,

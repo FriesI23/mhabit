@@ -42,7 +42,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
   void _onStartButtonPressed() async {
     final vm = context.read<AppSyncViewModel>();
     if (!vm.mounted) return;
-    await vm.startSync();
+    await vm.startSync(initWait: const Duration(seconds: 1));
     if (!mounted) return;
     final summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null || !summary.mounted) return;
@@ -58,8 +58,12 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         Selector<AppSyncViewModel, bool?>(
           selector: (context, vm) => vm.appSyncTask.task?.task.isProcessing,
           shouldRebuild: (previous, next) => previous != next,
-          builder: (context, value, child) =>
-              value == true ? Text("Syncing") : Text("Sync Now"),
+          builder: (context, value, child) {
+            final l10n = L10n.of(context);
+            return value == true
+                ? Text(l10n?.appSync_nowTile_titleText_syncing ?? "Syncing")
+                : Text(l10n?.appSync_nowTile_titleText ?? "Sync Now");
+          },
         );
 
     Widget buildSubtitle(BuildContext context) =>
@@ -76,31 +80,49 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
             final lastEndedTime = lastSyncTask?.endedTime;
             final lastEndedTimeStr = lastEndedTime != null
-                ? DateFormat.yMd(l10n?.localeName)
-                    .add_jms()
-                    .format(lastEndedTime)
-                : "N/A";
-            if (lastSyncTask == null) {
-              return Text("Last Sync: $lastEndedTimeStr");
-            }
+                ? (l10n?.appSync_nowTile_dateFormat(
+                        lastEndedTime, lastEndedTime) ??
+                    DateFormat.yMd(l10n?.localeName)
+                        .add_jms()
+                        .format(lastEndedTime))
+                : null;
+
+            Widget buildLastSyncText() => Text(l10n != null
+                ? (lastEndedTimeStr != null
+                    ? l10n.appSync_nowTile_text(lastEndedTimeStr)
+                    : l10n.appSync_nowTile_text_noDate)
+                : "Last Sync: $lastEndedTimeStr");
+
+            if (lastSyncTask == null) return buildLastSyncText();
             switch (lastSyncTask.task.status) {
               case AppSyncTaskStatus.idle:
               case AppSyncTaskStatus.completed:
                 if (lastSyncTask.result?.isSuccessed != true) {
-                  return Text("Last Sync (Error): $lastEndedTimeStr");
+                  return Text(l10n != null
+                      ? (lastEndedTimeStr != null
+                          ? l10n.appSync_nowTile_errorText(lastEndedTimeStr)
+                          : l10n.appSync_nowTile_errorText_noDate)
+                      : "Last Sync (Error): $lastEndedTimeStr");
                 }
-                return Text("Last Sync: $lastEndedTimeStr");
+                return buildLastSyncText();
               case AppSyncTaskStatus.running:
                 return Selector<AppSyncViewModel, num?>(
                   selector: (context, vm) => vm.appSyncTask.task?.percentage,
                   builder: (context, value, child) => value != null
-                      ? Text("Syncing: ${(value * 100).toStringAsFixed(2)}%")
-                      : Text("Syncing..."),
+                      ? Text(l10n != null
+                          ? l10n.appSync_nowTile_syncingText_withPrt(value)
+                          : "Syncing: ${(value * 100).toStringAsFixed(2)}%")
+                      : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing..."),
                 );
               case AppSyncTaskStatus.cancelling:
-                return Text("Canceling...");
+                return Text(
+                    l10n?.appSync_nowTile_cancellingText ?? "Canceling...");
               case AppSyncTaskStatus.cancelled:
-                return Text("Last Sync (Cancelled): $lastEndedTimeStr");
+                return Text(l10n != null
+                    ? (lastEndedTimeStr != null
+                        ? l10n.appSync_nowTile_cancelText(lastEndedTimeStr)
+                        : l10n.appSync_nowTile_cancelText_noDate)
+                    : "Last Sync (Cancelled): $lastEndedTimeStr");
             }
           },
         );

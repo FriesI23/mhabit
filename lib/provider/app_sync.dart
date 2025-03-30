@@ -79,16 +79,18 @@ class AppSyncViewModel
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
     _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
-    if (!_clearLogsOnStartup) _clearLogsOnStartup = true;
-    cleanExpiredSyncFailedLogs().then((results) {
-      if (results.isNotEmpty) {
-        appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
-      }
-    }).catchError((e, s) {
-      appLog.appsync.warn("clear logs on startup failed",
-          ex: [hashCode], error: e, stackTrace: s);
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-    });
+    if (!_clearLogsOnStartup) {
+      _clearLogsOnStartup = true;
+      cleanExpiredSyncFailedLogs().then((results) {
+        if (results.isNotEmpty) {
+          appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
+        }
+      }).catchError((e, s) {
+        appLog.appsync.warn("clear logs on startup failed",
+            ex: [hashCode], error: e, stackTrace: s);
+        if (kDebugMode) Error.throwWithStackTrace(e, s);
+      });
+    }
   }
 
   bool get enabled => _switch?.get() ?? false;
@@ -176,7 +178,6 @@ class AppSyncViewModel
                     ? form.uuid
                     : UuidValue.raw(AppSyncServer.genNewIdentity()),
                 configed: false,
-                verified: false,
                 password: withPwd ? form.password : ''))
             : tmpNewConfig;
 
@@ -211,14 +212,15 @@ class AppSyncViewModel
     });
   }
 
-  Future<void> startSync() => appSyncTask.shouldSync().then((result) {
+  Future<void> startSync({Duration? initWait}) =>
+      appSyncTask.shouldSync().then((result) {
         if (!result) {
           final config = _serverConfig?.get();
           appLog.appsync.info("$runtimeType.startSync",
               ex: ["cant't sync now", config?.toDebugString]);
           return null;
         }
-        return appSyncTask.startSync();
+        return appSyncTask.startSync(initWait: initWait);
       });
 
   Future<List<String>> cleanExpiredSyncFailedLogs() => AppPathProvider()
@@ -339,7 +341,8 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     }
   }
 
-  Future<AppSyncTask> buildNewTask(AppSyncServer config) async {
+  Future<AppSyncTask> buildNewTask(AppSyncServer config,
+      [Duration? initWait]) async {
     AppSyncTask buildDefaultTask() => BasicAppSyncTask(
         config: config,
         onExec: (task) => Future.value(const BasicAppSyncTaskResult.error()));
@@ -391,6 +394,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                       ? (config.timeout ?? defaultAppSyncTimeout) * 10
                       : config.timeout),
               syncDBHelper: root.syncDBHelper,
+              initWait: initWait,
               progressController: WebDavProgressController(
                 onPercentageChanged: (percentage) {
                   if (_task?.task.sessionId != sessionId) return;
@@ -464,12 +468,12 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
             .any((e) => e)),
       ]).then((results) => results.every((e) => e));
 
-  Future<void> startSync() async {
+  Future<void> startSync({Duration? initWait}) async {
     final config = root._serverConfig?.get();
     if (config == null) return;
 
     final tmpNewTask = (_task == null || _task!.task.isDone)
-        ? await buildNewTask(config).then((task) => AppPathProvider()
+        ? await buildNewTask(config, initWait).then((task) => AppPathProvider()
             .getSyncFailedLogFilePath(task.sessionId)
             .then((filePath) =>
                 AppSyncContainer.generate(task: task, filePath: filePath)))

@@ -15,25 +15,30 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../../l10n/localizations.dart';
+
 class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
   const AppSyncWebDavNewServerConfirmDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return AlertDialog(
       icon: const Icon(MdiIcons.folderMultiplePlusOutline),
-      title: const Text("New Location"),
-      content:
-          const Text("Syncing will create necessary directories and upload "
-              "your local habits to the server. Do you want to proceed?"),
+      title: Text(l10n?.appSync_webdav_newServerConfirmDialog_titleText ??
+          "New Location"),
+      content: l10n != null
+          ? Text(l10n.appSync_webdav_newServerConfirmDialog_subtitleText)
+          : null,
       actions: [
         TextButton(
           onPressed: () => Navigator.maybePop(context, false),
-          child: Text("cancel"),
+          child: Text(l10n?.confirmDialog_cancel_text ?? "cancel"),
         ),
         FilledButton.tonal(
           onPressed: () => Navigator.pop(context, true),
-          child: Text("Sync Now!"),
+          child: Text(l10n?.appSync_webdav_newServerConfirmDialog_confirmText ??
+              "continue"),
         )
       ],
     );
@@ -46,24 +51,26 @@ class AppSyncWebDavOldServerConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = L10n.of(context);
     return AlertDialog(
       icon: const Icon(MdiIcons.folderAlertOutline),
-      title: const Text("Confirm Sync"),
-      content:
-          const Text("Configured directory isn't empty, continuing this sync "
-              "will merge the server's habits with your local data. "
-              "Do you want to continue?"),
+      title: Text(l10n?.appSync_webdav_oldServerConfirmDialog_titleText ??
+          "Confirm Sync"),
+      content: l10n != null
+          ? Text(l10n.appSync_webdav_oldServerConfirmDialog_subtitleText)
+          : null,
       actions: [
         TextButton(
           onPressed: () => Navigator.maybePop(context, false),
-          child: Text("cancel"),
+          child: Text(l10n?.confirmDialog_cancel_text ?? "cancel"),
         ),
         FilledButton(
           style: FilledButton.styleFrom(
               backgroundColor: theme.colorScheme.error,
               foregroundColor: theme.colorScheme.errorContainer),
           onPressed: () => Navigator.pop(context, true),
-          child: Text("cotinue"),
+          child: Text(l10n?.appSync_webdav_oldServerConfirmDialog_confirmText ??
+              "continue"),
         )
       ],
     );

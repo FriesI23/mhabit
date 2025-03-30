@@ -1498,6 +1498,408 @@ abstract class L10n {
   /// **'About'**
   String get appSetting_about_titleText;
 
+  /// No description provided for @appSetting_experimentalFeatureTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental Features'**
+  String get appSetting_experimentalFeatureTile_titleText;
+
+  /// No description provided for @appSetting_synSubgroupText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get appSetting_synSubgroupText;
+
+  /// No description provided for @appSetting_syncOption_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Options'**
+  String get appSetting_syncOption_titleText;
+
+  /// No description provided for @appSync_nowTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get appSync_nowTile_titleText;
+
+  /// No description provided for @appSync_nowTile_titleText_syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get appSync_nowTile_titleText_syncing;
+
+  /// No description provided for @appSync_nowTile_dateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{ymd} {jms}'**
+  String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms);
+
+  /// No description provided for @appSync_nowTile_text_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync: N/A'**
+  String get appSync_nowTile_text_noDate;
+
+  /// No description provided for @appSync_nowTile_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync: {dateStr}'**
+  String appSync_nowTile_text(String dateStr);
+
+  /// No description provided for @appSync_nowTile_errorText_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Error): N/A'**
+  String get appSync_nowTile_errorText_noDate;
+
+  /// No description provided for @appSync_nowTile_errorText.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Error): {dateStr}'**
+  String appSync_nowTile_errorText(String dateStr);
+
+  /// No description provided for @appSync_nowTile_syncingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get appSync_nowTile_syncingText;
+
+  /// No description provided for @appSync_nowTile_syncingText_withPrt.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing: {prt}'**
+  String appSync_nowTile_syncingText_withPrt(num prt);
+
+  /// No description provided for @appSync_nowTile_cancellingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceling...'**
+  String get appSync_nowTile_cancellingText;
+
+  /// No description provided for @appSync_nowTile_cancelText_noDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Cancelled): N/A'**
+  String get appSync_nowTile_cancelText_noDate;
+
+  /// No description provided for @appSync_nowTile_cancelText.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync (Cancelled): {dateStr}'**
+  String appSync_nowTile_cancelText(String dateStr);
+
+  /// No description provided for @appSync_failedTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Failure Logs'**
+  String get appSync_failedTile_titleText;
+
+  /// No description provided for @appSync_failedTile_errorText.
+  ///
+  /// In en, this message translates to:
+  /// **'[Error]: {info}'**
+  String appSync_failedTile_errorText(String info);
+
+  /// No description provided for @appSync_failedTile_webdavMulti_counterText.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason}: {count}'**
+  String appSync_failedTile_webdavMulti_counterText(String reason, int count);
+
+  /// No description provided for @appSync_webdav_resultStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'{status, select, success {Completed} cancelled {Canceled} failed {Failed} multi {Multiple statuses} other {Unknown status}}'**
+  String appSync_webdav_resultStatus(String status);
+
+  /// No description provided for @appSync_webdav_resultStatus_withReason.
+  ///
+  /// In en, this message translates to:
+  /// **'{status, select, success {Completed due to {reason}} cancelled {Canceled due to {reason}} failed {Failed due to {reason}} multi {Multiple statuses due to {reason}} other {Unknown status}}'**
+  String appSync_webdav_resultStatus_withReason(String status, String reason);
+
+  /// No description provided for @appSync_webdav_resultReason.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}'**
+  String appSync_webdav_resultReason(String reason);
+
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'New Location'**
+  String get appSync_webdav_newServerConfirmDialog_titleText;
+
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing will create necessary directories and upload local habits to the server. Continue?'**
+  String get appSync_webdav_newServerConfirmDialog_subtitleText;
+
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_confirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now!'**
+  String get appSync_webdav_newServerConfirmDialog_confirmText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Sync'**
+  String get appSync_webdav_oldServerConfirmDialog_titleText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory isn\'t empty. Syncing will merge server and local habits. Continue?'**
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_confirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Merge'**
+  String get appSync_webdav_oldServerConfirmDialog_confirmText;
+
+  /// No description provided for @appSync_exportAllLogsTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Failed Sync Logs'**
+  String get appSync_exportAllLogsTile_titleText;
+
+  /// No description provided for @appSync_exportAllLogsTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}'**
+  String appSync_exportAllLogsTile_subtitleText(String isEmpty);
+
+  /// No description provided for @appSync_syncServerType_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}'**
+  String appSync_syncServerType_text(String name);
+
+  /// No description provided for @appSync_networkType_text.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}'**
+  String appSync_networkType_text(String type);
+
+  /// No description provided for @appSync_summaryTile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Server'**
+  String get appSync_summaryTile_title;
+
+  /// No description provided for @appSync_summaryTile_subtitle_text_notConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Configured'**
+  String get appSync_summaryTile_subtitle_text_notConfigured;
+
+  /// No description provided for @appSync_exportAllLogsTile_exportSubjectText.
+  ///
+  /// In en, this message translates to:
+  /// **'All recent failed sync logs'**
+  String get appSync_exportAllLogsTile_exportSubjectText;
+
+  /// No description provided for @appSync_serverEditor_saveDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Save Changes'**
+  String get appSync_serverEditor_saveDialog_titleText;
+
+  /// No description provided for @appSync_serverEditor_saveDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving will overwrite previous server configuration.'**
+  String get appSync_serverEditor_saveDialog_subtitleText;
+
+  /// No description provided for @appSync_serverEditor_exitDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved Changes'**
+  String get appSync_serverEditor_exitDialog_titleText;
+
+  /// No description provided for @appSync_serverEditor_exitDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Exiting will discard all unsaved changes.'**
+  String get appSync_serverEditor_exitDialog_subtitleText;
+
+  /// No description provided for @appSync_serverEditor_deleteDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get appSync_serverEditor_deleteDialog_titleText;
+
+  /// No description provided for @appSync_serverEditor_deleteDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting will remove current server config.'**
+  String get appSync_serverEditor_deleteDialog_subtitleText;
+
+  /// No description provided for @appSync_serverEditor_titleText_add.
+  ///
+  /// In en, this message translates to:
+  /// **'New Sync Server'**
+  String get appSync_serverEditor_titleText_add;
+
+  /// No description provided for @appSync_serverEditor_titleText_modify.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify Sync Server'**
+  String get appSync_serverEditor_titleText_modify;
+
+  /// No description provided for @appSync_serverEditor_advance_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Configs'**
+  String get appSync_serverEditor_advance_titleText;
+
+  /// No description provided for @appSync_serverEditor_pathTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get appSync_serverEditor_pathTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_pathTile_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid WebDAV path here.'**
+  String get appSync_serverEditor_pathTile_hintText;
+
+  /// No description provided for @appSync_serverEditor_pathTile_errorText_emptyPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Path shouldn\'t be empty!'**
+  String get appSync_serverEditor_pathTile_errorText_emptyPath;
+
+  /// No description provided for @appSync_serverEditor_usernameTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get appSync_serverEditor_usernameTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_usernameTile_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter username here, leave empty if not required.'**
+  String get appSync_serverEditor_usernameTile_hintText;
+
+  /// No description provided for @appSync_serverEditor_passwordTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get appSync_serverEditor_passwordTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_ignoreSSLTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore SSL Certificate'**
+  String get appSync_serverEditor_ignoreSSLTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_timeoutTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Timeout Seconds'**
+  String get appSync_serverEditor_timeoutTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_timeoutTile_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}'**
+  String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit);
+
+  /// No description provided for @appSync_serverEditor_timeoutTile_unitText.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get appSync_serverEditor_timeoutTile_unitText;
+
+  /// No description provided for @appSync_serverEditor_connTimeoutTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Connection Timeout Seconds'**
+  String get appSync_serverEditor_connTimeoutTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_connTimeoutTile_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}'**
+  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit);
+
+  /// No description provided for @appSync_serverEditor_connTimeoutTile_unitText.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get appSync_serverEditor_connTimeoutTile_unitText;
+
+  /// No description provided for @appSync_serverEditor_connRetryCountTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Connection Retry Count'**
+  String get appSync_serverEditor_connRetryCountTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_connRetryCountTile_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: {count, plural, =0 {Retry disabled} other {{count}}}'**
+  String appSync_serverEditor_connRetryCountTile_hintText(int count);
+
+  /// No description provided for @appSync_serverEditor_netTypeTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Sync Mode'**
+  String get appSync_serverEditor_netTypeTile_titleText;
+
+  /// No description provided for @appSync_serverEditor_netTypeTile_typeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, mobile {Sync on Cellular Network} wifi {Sync on Wifi} other {Unknown}}'**
+  String appSync_serverEditor_netTypeTile_typeTooltip(String type);
+
+  /// No description provided for @appSync_serverEditor_netTypeTile_lowDataText.
+  ///
+  /// In en, this message translates to:
+  /// **'LowData'**
+  String get appSync_serverEditor_netTypeTile_lowDataText;
+
+  /// No description provided for @appSync_serverEditor_netTypeTile_lowDataTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync in Low Data Mode'**
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip;
+
+  /// No description provided for @experimentalFeatures_warnginBanner_title.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more experimental features are enabled, Use with caution.'**
+  String get experimentalFeatures_warnginBanner_title;
+
+  /// No description provided for @experimentalFeatures_habitSyncTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Cloud Sync'**
+  String get experimentalFeatures_habitSyncTile_titleText;
+
+  /// No description provided for @experimentalFeatures_habitSyncTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Once enabled, the app\'s sync option will appear in settings'**
+  String get experimentalFeatures_habitSyncTile_subtitleText;
+
+  /// No description provided for @experimentalFeatures_warnTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental feature ({syncName}) is disabled, but the function is still running.'**
+  String experimentalFeatures_warnTile_titleText(String syncName);
+
+  /// No description provided for @experimentalFeatures_warnTile_forHabitSyncText.
+  ///
+  /// In en, this message translates to:
+  /// **'To completely disable, long press to access \'{menuName}\' and turn it off.'**
+  String experimentalFeatures_warnTile_forHabitSyncText(String menuName);
+
   /// No description provided for @appAbout_appbarTile_titleText.
   ///
   /// In en, this message translates to:
@@ -1966,6 +2368,12 @@ abstract class L10n {
   /// **'Copied crash information'**
   String get common_errorPage_copied;
 
+  /// No description provided for @common_enable_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get common_enable_text;
+
   /// No description provided for @calendarPicker_clip_today.
   ///
   /// In en, this message translates to:
@@ -2157,6 +2565,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Collecting App\'s Info...'**
   String get debug_debuggerInfo_notificationTitle;
+
+  /// No description provided for @confirmDialog_confirm_text.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, save {Save} exit {Exit} delete {Delete} other {Confirm}}'**
+  String confirmDialog_confirm_text(String type);
+
+  /// No description provided for @confirmDialog_cancel_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get confirmDialog_cancel_text;
 
   /// No description provided for @snackbar_undoText.
   ///

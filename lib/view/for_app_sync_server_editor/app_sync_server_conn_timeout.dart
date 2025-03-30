@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../common/utils.dart';
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -83,6 +84,7 @@ class _AppSyncServerConnTimeoutTile
   Widget build(BuildContext context) {
     final type = context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includeConnTimeoutField,
       child: ListTile(
@@ -91,9 +93,12 @@ class _AppSyncServerConnTimeoutTile
           controller: controller,
           decoration: InputDecoration(
             icon: const Icon(MdiIcons.lanPending),
-            labelText: 'Network Connection Timeout Seconds',
-            hintText: 'Default: ${defaultAppSyncConnectTimeout.inSeconds}s',
-            suffixText: "s",
+            labelText: l10n?.appSync_serverEditor_connTimeoutTile_titleText ??
+                'Network Connection Timeout Seconds',
+            hintText: l10n?.appSync_serverEditor_connTimeoutTile_hintText(
+                defaultAppSyncConnectTimeout.inSeconds,
+                l10n.appSync_serverEditor_connTimeoutTile_unitText),
+            suffixText: l10n?.appSync_serverEditor_connTimeoutTile_unitText,
           ),
           keyboardType: const TextInputType.numberWithOptions(
               signed: false, decimal: false),
@@ -168,17 +173,20 @@ class _AppSyncServerConnRetryCountTile
   Widget build(BuildContext context) {
     final type = context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includeConnRetryCountField,
       child: ListTile(
         contentPadding: widget.contentPadding,
         title: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            icon: Icon(MdiIcons.timelineClockOutline),
-            labelText: 'Network Connection Retry Count',
-            hintText:
-                'Default: ${defaultAppSyncConnectRetryCount ?? "Unlimited"}',
+          decoration: InputDecoration(
+            icon: const Icon(MdiIcons.timelineClockOutline),
+            labelText:
+                l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
+                    'Network Connection Retry Count',
+            hintText: l10n?.appSync_serverEditor_connRetryCountTile_hintText(
+                defaultAppSyncConnectRetryCount ?? 0),
           ),
           keyboardType: const TextInputType.numberWithOptions(
               signed: false, decimal: false),

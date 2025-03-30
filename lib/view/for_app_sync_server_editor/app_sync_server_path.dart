@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
 import '../../provider/app_sync_server_form.dart';
 
@@ -36,6 +37,7 @@ class AppSyncServerPathTile extends StatelessWidget {
             (vm) => vm.pathInputController);
     final canSave =
         context.select<AppSyncServerFormViewModel, bool>((vm) => vm.canSave);
+    final l10n = L10n.of(context);
     return Visibility(
       visible: type.includePathField,
       child: ListTile(
@@ -44,10 +46,11 @@ class AppSyncServerPathTile extends StatelessWidget {
           controller: controller,
           decoration: InputDecoration(
             icon: const Icon(MdiIcons.networkOutline),
-            labelText: 'Path',
-            hintText: 'Enter a valid WebDAV path here.',
+            labelText: l10n?.appSync_serverEditor_pathTile_titleText ?? 'Path',
+            hintText: l10n?.appSync_serverEditor_pathTile_hintText,
             errorText: (!canSave && controller.text.isEmpty)
-                ? "Path shouldn't be empty!"
+                ? l10n?.appSync_serverEditor_pathTile_errorText_emptyPath ??
+                    "Path shouldn't be empty!"
                 : null,
           ),
           keyboardType: TextInputType.url,

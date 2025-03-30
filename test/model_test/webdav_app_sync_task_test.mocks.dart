@@ -231,12 +231,6 @@ class MockAppWebDavSyncServer extends _i1.Mock
       ) as _i3.AppSyncServerType);
 
   @override
-  bool get verified => (super.noSuchMethod(
-        Invocation.getter(#verified),
-        returnValue: false,
-      ) as bool);
-
-  @override
   bool get configed => (super.noSuchMethod(
         Invocation.getter(#configed),
         returnValue: false,
@@ -414,12 +408,6 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
         Invocation.getter(#type),
         returnValue: _i3.AppSyncServerType.unknown,
       ) as _i3.AppSyncServerType);
-
-  @override
-  bool get verified => (super.noSuchMethod(
-        Invocation.getter(#verified),
-        returnValue: false,
-      ) as bool);
 
   @override
   bool get configed => (super.noSuchMethod(

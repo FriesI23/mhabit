@@ -144,10 +144,10 @@ final class SyncHabitsInfoMergerImpl extends WebDavSyncHabitInfoMerger {
             uuid: uuid,
             status: WebDavAppSyncInfoStatus.local),
       )
-        ..eTagFromLocal = data.lastMark
+        ..eTagFromLocal = data.lastMark2
         ..status = WebDavAppSyncInfoStatus.local
         ..lastConfgUUID = data.lastConfigUUID;
-      if ((data.dirty ?? 0) != 0) cell.makeDirty();
+      if ((data.dirtyTotal ?? 0) != 0) cell.makeDirty();
     }
     for (var data in input.server) {
       final uuid = data.habitUUID;
