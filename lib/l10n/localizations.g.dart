@@ -1624,6 +1624,42 @@ abstract class L10n {
   /// **'{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}'**
   String appSync_webdav_resultReason(String reason);
 
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'New Location'**
+  String get appSync_webdav_newServerConfirmDialog_titleText;
+
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing will create necessary directories and upload local habits to the server. Continue?'**
+  String get appSync_webdav_newServerConfirmDialog_subtitleText;
+
+  /// No description provided for @appSync_webdav_newServerConfirmDialog_confirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now!'**
+  String get appSync_webdav_newServerConfirmDialog_confirmText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Sync'**
+  String get appSync_webdav_oldServerConfirmDialog_titleText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory isn\'t empty. Syncing will merge server and local habits. Continue?'**
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText;
+
+  /// No description provided for @appSync_webdav_oldServerConfirmDialog_confirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Merge'**
+  String get appSync_webdav_oldServerConfirmDialog_confirmText;
+
   /// No description provided for @appSync_exportAllLogsTile_titleText.
   ///
   /// In en, this message translates to:

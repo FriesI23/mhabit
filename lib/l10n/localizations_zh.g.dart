@@ -924,6 +924,24 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get appSync_webdav_newServerConfirmDialog_titleText => '新位置';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => '同步将创建必要目录，并上传本地习惯数据到服务器。确定要继续吗？';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_confirmText => '立即同步！';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_titleText => '确认同步';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => '配置路径的目录不为空，继续同步将会合并服务器上的习惯数据与本地数据。确定要继续吗？';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => '确认合并';
+
+  @override
   String get appSync_exportAllLogsTile_titleText => '导出同步失败日志';
 
   @override
