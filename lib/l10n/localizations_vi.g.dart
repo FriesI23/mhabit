@@ -929,6 +929,24 @@ class L10nVi extends L10n {
   }
 
   @override
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+
+  @override
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+
+  @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
 
   @override
