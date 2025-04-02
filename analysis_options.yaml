@@ -79,6 +79,12 @@ linter:
     # Start the name of the method with to/_to or as/_as if applicable.
     # see: https://dart.dev/tools/linter-rules/use_to_and_as_if_applicable
     use_to_and_as_if_applicable: true
+    # Re-add const lint
+    # discuss here: https://github.com/dart-lang/core/issues/833
+    # see: https://dart.dev/tools/linter-rules/prefer_const_constructors
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
