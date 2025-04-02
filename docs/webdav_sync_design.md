@@ -248,7 +248,7 @@ flowchart TD
     UpdateOrInsertRecords --> done
 ```
 
-### Load Habit/Records From DB:
+### Load Habit/Records From DB Task:
 
 ```mermaid
 flowchart TD
@@ -335,10 +335,6 @@ flowchart LR
 
 ```
 
-<!-- refs -->
-
-[file.webdav_app_sync_models.dart]: ../lib/model/_app_sync_tasks/webdav_app_sync_models.dart
-
 ## Sequence Design
 
 ### Single Habit: Server to Local Task
@@ -422,3 +418,7 @@ sequenceDiagram
     end
     Database--)-User: Transaction Result
 ```
+
+<!-- refs -->
+
+[file.webdav_app_sync_models.dart]: ../lib/model/_app_sync_tasks/webdav_app_sync_models.dart

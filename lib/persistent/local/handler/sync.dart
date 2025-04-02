@@ -42,6 +42,8 @@ class SyncDbCellKey {
   static const lastMark2 = 'last_mark_2';
 }
 
+/// More model design refs:
+/// [Local](docs/webdav_sync_design.md#local)
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
 @CopyWith(skipFields: true)
 class SyncDBCell with DBCell {

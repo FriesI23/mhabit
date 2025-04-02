@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: prefer_const_constructors
+
 import 'package:mhabit/extension/iterable_extensions.dart';
 import 'package:test/test.dart';
 

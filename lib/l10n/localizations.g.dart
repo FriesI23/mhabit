@@ -1675,8 +1675,8 @@ abstract class L10n {
   /// No description provided for @appSync_syncServerType_text.
   ///
   /// In en, this message translates to:
-  /// **'Current: {name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}'**
-  String appSync_syncServerType_text(String name);
+  /// **'{isCurrent, select, true {Current: } other {}}{name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}'**
+  String appSync_syncServerType_text(String name, String isCurrent);
 
   /// No description provided for @appSync_networkType_text.
   ///

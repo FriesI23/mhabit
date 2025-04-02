@@ -80,7 +80,7 @@ class FetchMetaFromServerTask
   @override
   Future<List<WebDavResourceContainer>> run(AppSyncContext context) => client
       .dispatch(path)
-      .findProps(props: [
+      .findProps(props: const [
         PropfindRequestProp.dav(WebDavElementNames.getetag),
         PropfindRequestProp.dav(WebDavElementNames.resourcetype),
       ], depth: depth)
@@ -210,6 +210,8 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     return const WebDavAppSyncTaskResult.success();
   }
 
+  /// More process design refs:
+  /// [Single Habit: Server to Local Task](docs/webdav_sync_design.md#single-habit-server-to-local-task)
   static Future<WebDavAppSyncTaskResult> downloadTask({
     required AppSyncContext context,
     required AppSyncSubTask<WebDavSyncHabitData> fetchHabitDataTask,
@@ -235,6 +237,8 @@ class SingleHabitSyncTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
     return writeToDbTaskBuilder(preparedData).run(context);
   }
 
+  /// More process design refs:
+  /// [Single Habit: Local to Server Task](docs/webdav_sync_design.md#single-habit-local-to-server-task)
   static Future<WebDavAppSyncTaskResult> uploadTask({
     required AppSyncContext context,
     required AppSyncSubTask<WebDavSyncHabitData?> loadFromDBTask,
@@ -331,6 +335,8 @@ class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
       });
 }
 
+/// More process design refs:
+/// [Write Habit/Records to DB Task](docs/webdav_sync_design.md#write-habitrecords-to-db-task)
 class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   final SyncDBHelper helper;
   final WebDavSyncHabitData data;
@@ -352,6 +358,8 @@ class WriteToDBTask implements AppSyncSubTask<WebDavAppSyncTaskResult> {
   }
 }
 
+/// More process design refs:
+/// [Load Habit/Records From DB Task](docs/webdav_sync_design.md#load-habitrecords-from-db-task)
 class LoadFromDBTask implements AppSyncSubTask<WebDavSyncHabitData?> {
   final SyncDBHelper helper;
   final HabitUUID uuid;
@@ -448,7 +456,6 @@ class UploadDataToServerTask implements AppSyncSubTask<String?> {
 class UploadHabitToServerTask implements AppSyncSubTask<String?> {
   final Uri root;
   final WebDavSyncHabitData data;
-  final int recordConcurrency;
   final SyncDBHelper helper;
   final AppSyncSubTask<String?> Function(Uri path, String data, [String? etag])
       uploadTaskBuilder;
@@ -457,11 +464,9 @@ class UploadHabitToServerTask implements AppSyncSubTask<String?> {
     required this.root,
     required this.data,
     required this.helper,
-    int? recordConcurrency,
     required this.uploadTaskBuilder,
   })  : assert(data.uuid != null),
-        assert(data.records.values.every((e) => e.uuid != null)),
-        recordConcurrency = recordConcurrency ?? 10;
+        assert(data.records.values.every((e) => e.uuid != null));
 
   @override
   Future<String?> run(AppSyncContext context) async {

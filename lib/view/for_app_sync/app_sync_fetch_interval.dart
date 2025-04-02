@@ -40,11 +40,11 @@ class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             switch (interval) {
-              AppSyncFetchInterval.manual => Text("Manual"),
-              AppSyncFetchInterval.minute5 => Text("5 Minutes"),
-              AppSyncFetchInterval.minute15 => Text("15 Minutes"),
-              AppSyncFetchInterval.minute30 => Text("30 Minutes"),
-              AppSyncFetchInterval.hour1 => Text("1 Hour"),
+              AppSyncFetchInterval.manual => const Text("Manual"),
+              AppSyncFetchInterval.minute5 => const Text("5 Minutes"),
+              AppSyncFetchInterval.minute15 => const Text("15 Minutes"),
+              AppSyncFetchInterval.minute30 => const Text("30 Minutes"),
+              AppSyncFetchInterval.hour1 => const Text("1 Hour"),
             },
             if (select == interval) const Icon(Icons.check),
           ],
@@ -74,11 +74,11 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
               context.select<AppSyncViewModel, AppSyncFetchInterval>(
                   (vm) => vm.fetchInterval);
           return switch (interval) {
-            AppSyncFetchInterval.manual => Text("Manual"),
-            AppSyncFetchInterval.minute5 => Text("5 Minutes"),
-            AppSyncFetchInterval.minute15 => Text("15 Minutes"),
-            AppSyncFetchInterval.minute30 => Text("30 Minutes"),
-            AppSyncFetchInterval.hour1 => Text("1 Hour"),
+            AppSyncFetchInterval.manual => const Text("Manual"),
+            AppSyncFetchInterval.minute5 => const Text("5 Minutes"),
+            AppSyncFetchInterval.minute15 => const Text("15 Minutes"),
+            AppSyncFetchInterval.minute30 => const Text("30 Minutes"),
+            AppSyncFetchInterval.hour1 => const Text("1 Hour"),
           };
         },
       );

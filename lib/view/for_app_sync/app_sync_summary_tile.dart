@@ -60,10 +60,10 @@ class AppSyncSummaryTile extends StatelessWidget {
                   Icon(subtileLeading),
                   const SizedBox(width: 4),
                   Text(l10n?.appSync_syncServerType_text(
-                          serverConfig.type.name) ??
+                          serverConfig.type.name, '') ??
                       serverConfig.type.name)
                 ]),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(serverConfig.name)
               ],
             )

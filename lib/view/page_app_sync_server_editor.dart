@@ -25,7 +25,6 @@ import '../provider/app_sync.dart';
 import '../provider/app_sync_server_form.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
-import 'common/app_ui_layout_builder.dart';
 import 'for_app_sync_server_editor/_widget.dart';
 
 enum AppSyncServerEditorResultOp { update, delete }
@@ -188,8 +187,8 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
               style: TextStyle(color: Theme.of(context).colorScheme.error))),
     );
     if (!mounted || confirmed != true) return;
-    Navigator.of(context)
-        .pop<AppSyncServerEditorResult>(AppSyncServerEditorResult.delete());
+    Navigator.of(context).pop<AppSyncServerEditorResult>(
+        const AppSyncServerEditorResult.delete());
   }
 
   void _onAdvanceConfigExpansionChanged(bool value) =>
@@ -329,7 +328,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints.expand(width: dialogMaxWidth),
+        constraints: const BoxConstraints.expand(width: dialogMaxWidth),
         child: AlertDialog(
           scrollable: true,
           title: Selector<AppSyncViewModel, bool>(
@@ -362,7 +361,9 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
             AppSyncServerDeleteButton.normal(onPressed: onDeleteButtonPressed),
             TextButton(
               onPressed: onCancelButtonPressed,
-              child: Text("cancel"),
+              child: L10nBuilder(
+                  builder: (context, l10n) =>
+                      Text(l10n?.confirmDialog_cancel_text ?? "cancel")),
             ),
             AppSyncServerSaveButton(onPressed: onSaveButtonPressed),
           ],
@@ -381,25 +382,25 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
     this.onExpansionChanged,
   });
 
-  List<Widget> _buildForSmallScreen() => [
-        const AppSyncServerIgnoreSSLTile(),
-        const AppSyncServerTimeoutTile(),
-        const AppSyncServerConnTimeoutTile(),
-        const AppSyncServerConnRetryCountTile(),
-        const AppSyncServerNetworkTypeTile(),
+  List<Widget> _buildForSmallScreen() => const [
+        AppSyncServerIgnoreSSLTile(),
+        AppSyncServerTimeoutTile(),
+        AppSyncServerConnTimeoutTile(),
+        AppSyncServerConnRetryCountTile(),
+        AppSyncServerNetworkTypeTile(),
       ];
 
-  List<Widget> _buildForLargeScreen() => [
-        const AppSyncServerIgnoreSSLTile(),
-        const AppSyncServerTimeoutTile(),
+  List<Widget> _buildForLargeScreen() => const [
+        AppSyncServerIgnoreSSLTile(),
+        AppSyncServerTimeoutTile(),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Expanded(child: AppSyncServerConnTimeoutTile()),
-            const Expanded(child: AppSyncServerConnRetryCountTile()),
+            Expanded(child: AppSyncServerConnTimeoutTile()),
+            Expanded(child: AppSyncServerConnRetryCountTile()),
           ],
         ),
-        const AppSyncServerNetworkTypeTile(),
+        AppSyncServerNetworkTypeTile(),
       ];
 
   @override
@@ -407,7 +408,7 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
         title: L10nBuilder(
             builder: (context, l10n) => Text(
                 l10n?.appSync_serverEditor_advance_titleText ?? "Advanced")),
-        leading: Icon(MdiIcons.dotsHorizontal),
+        leading: const Icon(MdiIcons.dotsHorizontal),
         tilePadding: ExpansionTileTheme.of(context)
             .tilePadding
             ?.add(const EdgeInsets.symmetric(vertical: 4.0)),

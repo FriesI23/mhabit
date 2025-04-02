@@ -36,8 +36,7 @@ class HabitImport {
     final habitUUID = genHabitUUID();
     var habitDBCell = habitExportData.toHabitDBCell();
     habitDBCell = habitDBCell.copyWith(
-        uuid: genHabitUUID(),
-        type: habitDBCell.type ?? defaultHabitType.dbCode);
+        uuid: habitUUID, type: habitDBCell.type ?? defaultHabitType.dbCode);
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
       await recordDBHelper.insertOrUpdateMultiRecords(

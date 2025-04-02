@@ -88,7 +88,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(MdiIcons.swapHorizontal, size: 20.0),
+          const Icon(MdiIcons.swapHorizontal, size: 20.0),
           Text(l10n?.appSync_serverEditor_netTypeTile_lowDataText ?? "LowData"),
         ],
       ),
@@ -127,7 +127,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
       visible: type.includeSyncNetworkField,
       child: ListTile(
         isThreeLine: true,
-        leading: Icon(MdiIcons.accessPointNetwork),
+        leading: const Icon(MdiIcons.accessPointNetwork),
         title: Text(l10n?.appSync_serverEditor_netTypeTile_titleText ??
             "Synchronous Networking"),
         subtitle: buildNetworksSubtitle(context),

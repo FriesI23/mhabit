@@ -837,13 +837,18 @@
       }
     }
   },
-  "appSync_syncServerType_text": "Current: {name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
+  "appSync_syncServerType_text": "{isCurrent, select, true {Current: } other {}}{name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
   "@appSync_syncServerType_text": {
     "placeholders": {
       "name": {
         "type": "String",
         "description": "Server name, depend on specific server type.",
         "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
       }
     }
   },

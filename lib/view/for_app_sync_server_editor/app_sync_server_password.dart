@@ -33,11 +33,11 @@ class AppSyncServerPasswordTile extends StatelessWidget {
       if (kDebugMode) {
         throw Error.throwWithStackTrace(snapshot.error!, snapshot.stackTrace!);
       }
-      return AppSyncServerPasswordField(enabled: false, loading: false);
+      return const AppSyncServerPasswordField(enabled: false, loading: false);
     }
     if (snapshot.isDone) {
       if (snapshot.data?.$1 != identity) {
-        return AppSyncServerPasswordField(loading: false, enabled: false);
+        return const AppSyncServerPasswordField(loading: false, enabled: false);
       }
       return Selector<AppSyncServerFormViewModel, TextEditingController>(
           selector: (context, vm) => vm.passwordInputController,

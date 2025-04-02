@@ -40,9 +40,16 @@ import 'app_sync_task.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
+/// Matches a habit JSON file name, e.g. 'habit-xxx-yyy-zzz.json'
 final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
+
+/// Matches a habit record directory name, e.g. 'habit-xxx-yyy-zzz'
 final reAppSyncHabitRecordRootDirName = RegExp(r'^habit-([^/]+)$');
+
+/// Matches a year-based directory name (4 digits), e.g. '2025'
 final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
+
+/// Matches a record JSON file name, e.g. 'record-xxx-yyy-zzz.json'
 final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
 
 enum WebDavAppSyncInfoStatus { server, local, both }
@@ -209,6 +216,8 @@ class WebDavSyncRecordKey {
   static const String convertType = '_convert_type';
 }
 
+/// More model design refs:
+/// [Server/Record](docs/webdav_sync_design.md#server)
 @JsonSerializable(
     fieldRename: FieldRename.snake,
     includeIfNull: true,
@@ -330,6 +339,8 @@ class WebDavSyncHabitKey {
   static const String convertType = '_convert_type';
 }
 
+/// More model design refs:
+/// [Server/Habit](docs/webdav_sync_design.md#server)
 @JsonSerializable(
     fieldRename: FieldRename.snake,
     includeIfNull: true,

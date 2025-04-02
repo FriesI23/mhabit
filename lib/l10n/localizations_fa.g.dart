@@ -963,8 +963,15 @@ class L10nFa extends L10n {
   }
 
   @override
-  String appSync_syncServerType_text(String name) {
+  String appSync_syncServerType_text(String name, String isCurrent) {
     String _temp0 = intl.Intl.selectLogic(
+      isCurrent,
+      {
+        'true': 'Current: ',
+        'other': '',
+      },
+    );
+    String _temp1 = intl.Intl.selectLogic(
       name,
       {
         'webdav': 'WebDAV',
@@ -972,7 +979,7 @@ class L10nFa extends L10n {
         'other': 'Unknown ($name)',
       },
     );
-    return 'Current: $_temp0';
+    return '$_temp0$_temp1';
   }
 
   @override

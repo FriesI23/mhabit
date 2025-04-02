@@ -15,7 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../provider/app_sync.dart';
+import '../common/_dialog.dart';
 
 enum AppSyncServerDeleteButtonStyle { normal, fullsreen }
 
@@ -62,12 +64,17 @@ class AppSyncServerDeleteButton extends StatelessWidget {
     return OutlinedButtonThemeData(style: buttonStyle);
   }
 
+  Widget _buildDeleteText(BuildContext context) =>
+      Text(L10n.of(context)?.confirmDialog_confirm_text(
+              NormalizeConfirmDialogType.delete.name) ??
+          'delete');
+
   Widget _buildNormlButton(BuildContext context, bool canDelete) =>
       TextButtonTheme(
         data: buildTextButtonTheme(context),
         child: TextButton(
           onPressed: canDelete ? onPressed : null,
-          child: const Text('delete'),
+          child: _buildDeleteText(context),
         ),
       );
 
@@ -77,7 +84,7 @@ class AppSyncServerDeleteButton extends StatelessWidget {
           data: buildOutlineButtonTheme(context),
           child: OutlinedButton.icon(
             onPressed: canDelete ? onPressed : null,
-            label: const Text('delete'),
+            label: _buildDeleteText(context),
             icon: const Icon(Icons.delete_outline),
           ),
         ),

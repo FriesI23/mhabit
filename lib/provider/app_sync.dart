@@ -355,7 +355,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
             sessionId: sessionId,
             config: config,
             onExec: (task) async {
-              final loopCount = 10;
+              const loopCount = 10;
               appLog.appsynctask.debug(task, ex: ["Start, looping $loopCount"]);
               await Future.delayed(const Duration(seconds: 1));
               for (var i = 0; i < loopCount; i++) {
@@ -377,7 +377,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
               if (task == _task?.task) changePercentage(prt: null);
               await Future.delayed(const Duration(seconds: 1));
               appLog.appsynctask.debug(task, ex: ['Done']);
-              return BasicAppSyncTaskResult.success();
+              return const BasicAppSyncTaskResult.success();
             });
 
       case AppSyncServerType.webdav:

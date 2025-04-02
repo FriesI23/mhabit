@@ -26,7 +26,7 @@ class HabitDisplayLoadingIndicator extends StatelessWidget {
     return SliverAnimatedOpacity(
       duration: const Duration(milliseconds: 200),
       opacity: opacity,
-      sliver: SliverToBoxAdapter(
+      sliver: const SliverToBoxAdapter(
         child: AppSyncLoadingIndicator(),
       ),
     );

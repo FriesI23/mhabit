@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 
 import 'package:mhabit/model/app_sync_server.dart';

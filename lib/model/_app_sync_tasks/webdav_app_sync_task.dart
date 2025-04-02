@@ -53,7 +53,6 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     required SyncDBHelper syncDBHelper,
     this.initWait,
     Duration? configConfirmTimeout = const Duration(seconds: 60),
-    int? recordUploadConcurrency,
     this.progressController,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
         onNeedConfirmCallback,
@@ -69,7 +68,6 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
         sessionId: _sessionId,
         config: config,
         syncDBHelper: syncDBHelper,
-        recordUploadConcurrency: recordUploadConcurrency,
         progressController: progressController);
   }
 
@@ -194,6 +192,7 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
       "WebDavAppSyncTask(sessionId=$sessionId, config=$config)";
 }
 
+/// More process design refs: [Main Task](docs/webdav_sync_design.md#main-task)
 class WebDavAppSyncTaskExecutor
     extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   @override
@@ -231,7 +230,6 @@ class WebDavAppSyncTaskExecutor
     required String sessionId,
     required AppWebDavSyncServer config,
     required SyncDBHelper syncDBHelper,
-    int? recordUploadConcurrency,
     WebDavStdClient? overwriteClient,
     Duration? timeout,
     WebDavProgressController? progressController,
@@ -271,7 +269,6 @@ class WebDavAppSyncTaskExecutor
             root: config.path,
             data: data,
             helper: syncDBHelper,
-            recordConcurrency: recordUploadConcurrency,
             uploadTaskBuilder: (path, data, [etag]) => UploadDataToServerTask(
                 path: path,
                 data: data,

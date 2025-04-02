@@ -137,14 +137,14 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
               AppSyncTaskStatus.running ||
               AppSyncTaskStatus.cancelling =>
                 IconButton(
-                  key: ValueKey(1),
+                  key: const ValueKey(1),
                   onPressed: value == AppSyncTaskStatus.running
                       ? _onCancelButtonPressed
                       : null,
                   icon: const Icon(MdiIcons.close),
                 ),
               _ => IconButton(
-                  key: ValueKey(2),
+                  key: const ValueKey(2),
                   onPressed: enabled ? _onStartButtonPressed : null,
                   icon: const Icon(MdiIcons.syncIcon),
                 ),
@@ -160,7 +160,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
           builder: (context, value, child) => AnimatedOpacity(
             opacity: value ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
-            child: AppSyncLoadingIndicator(),
+            child: const AppSyncLoadingIndicator(),
           ),
         );
 

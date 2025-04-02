@@ -30,8 +30,10 @@ class AppSyncServerTypeMenu extends StatelessWidget {
     this.contentPadding,
   });
 
-  String getName(AppSyncServerType type, [L10n? l10n]) {
-    if (l10n != null) return l10n.appSync_syncServerType_text(type.name);
+  String getName(AppSyncServerType type, {bool isCurrent = false, L10n? l10n}) {
+    if (l10n != null) {
+      return l10n.appSync_syncServerType_text(type.name, isCurrent.toString());
+    }
     switch (type) {
       case AppSyncServerType.webdav:
         return 'WebDAV';
@@ -57,7 +59,9 @@ class AppSyncServerTypeMenu extends StatelessWidget {
             .where((e) =>
                 e != AppSyncServerType.fake ||
                 (kDebugMode || vm.type == AppSyncServerType.fake))
-            .map((e) => DropdownMenuEntry(value: e, label: getName(e, l10n)))
+            .map((e) => DropdownMenuEntry(
+                value: e,
+                label: getName(e, l10n: l10n, isCurrent: e == vm.type)))
             .toList(),
         onSelected: (value) =>
             context.read<AppSyncServerFormViewModel>().type = value!,

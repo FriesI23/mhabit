@@ -15,7 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../l10n/localizations.dart';
 import '../../provider/app_sync_server_form.dart';
+import '../common/_dialog.dart';
 
 class AppSyncServerSaveButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -32,7 +34,9 @@ class AppSyncServerSaveButton extends StatelessWidget {
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => TextButton(
           onPressed: value ? onPressed : null,
-          child: Text("save"),
+          child: Text(L10n.of(context)?.confirmDialog_confirm_text(
+                  NormalizeConfirmDialogType.save.name) ??
+              "save"),
         ),
       );
 }

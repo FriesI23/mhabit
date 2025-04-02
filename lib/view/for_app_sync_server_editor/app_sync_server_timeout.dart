@@ -53,6 +53,7 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    vm = context.read<AppSyncServerFormViewModel>();
     if (crtType != vm.type) {
       crtType = vm.type;
       controller.text = crtText;

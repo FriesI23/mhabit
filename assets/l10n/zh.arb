@@ -837,13 +837,18 @@
       }
     }
   },
-  "appSync_syncServerType_text": "当前：{name, select, webdav {WebDAV} fake {Fake（仅用于调试）} other {未知（{name}）}}",
+  "appSync_syncServerType_text": "{isCurrent, select, true {当前：} other {}}{name, select, webdav {WebDAV} fake {Fake（仅用于调试）} other {未知（{name}）}}",
   "@appSync_syncServerType_text": {
     "placeholders": {
       "name": {
         "type": "String",
         "description": "服务器名称，取决于具体的服务器类型。",
         "example": "http://example.com/path/to/webdav/"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
       }
     }
   },
