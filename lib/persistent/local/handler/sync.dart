@@ -84,11 +84,15 @@ class SyncDBCell with DBCell {
     this.lastMark2,
   });
 
-  SyncDBCell.genFromRecord(RecordDBCell cell)
-      : this(recordUUID: cell.uuid, dirty: 1);
+  factory SyncDBCell.genFromRecord(RecordDBCell cell) {
+    assert(cell.uuid != null);
+    return SyncDBCell(recordUUID: cell.uuid, dirty: 1);
+  }
 
-  SyncDBCell.genFromHabit(HabitDBCell cell)
-      : this(habitUUID: cell.uuid, dirty: 1, dirtyTotal: 1);
+  factory SyncDBCell.genFromHabit(HabitDBCell cell) {
+    assert(cell.uuid != null);
+    return SyncDBCell(habitUUID: cell.uuid, dirty: 1, dirtyTotal: 1);
+  }
 
   factory SyncDBCell.fromJson(JsonMap cell) => _$SyncDBCellFromJson(cell);
 

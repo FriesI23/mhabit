@@ -24,6 +24,8 @@ import '../../assets/assets.dart';
 import '../../common/async.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../common/types.dart';
+import '../../common/utils.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../utils/app_path_provider.dart';
@@ -116,7 +118,9 @@ class _DBHelper implements DBHelper {
       await db
           .execute(CustomSql.rmAutoAddSortPostionWhenAddNewHabitTrigger)
           .then((_) => db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit));
-      await DatabaseToV4MigrateHelper(db).initSyncTable();
+      final mh = DatabaseToV4MigrateHelper(db);
+      await mh.reCalcHabitRecordUUIDs();
+      await mh.initSyncTable();
     }
   }
 
@@ -225,30 +229,57 @@ class DatabaseToV4MigrateHelper {
 
   const DatabaseToV4MigrateHelper(this.db);
 
+  /// Add sync entries for all habits and records into sync table
+  /// to ensure data enters the synchronization.
   Future<void> initSyncTable() async {
     final batch = db.batch();
-    await Future.wait([
-      db
-          .query(TableName.habits, columns: [HabitDBCellKey.uuid])
-          .then((result) => result.map((e) => e[HabitDBCellKey.uuid] as String))
-          .then((uuidList) {
-            for (var uuid in uuidList) {
-              batch.insert(TableName.sync, {SyncDbCellKey.habitUUID: uuid},
-                  conflictAlgorithm: ConflictAlgorithm.ignore);
-            }
-          }),
-      db
-          .query(TableName.records, columns: [RecordDBCellKey.uuid])
-          .then(
-              (result) => result.map((e) => e[RecordDBCellKey.uuid] as String))
-          .then((uuidList) {
-            for (var uuid in uuidList) {
-              batch.insert(TableName.sync, {SyncDbCellKey.recordUUID: uuid},
-                  conflictAlgorithm: ConflictAlgorithm.ignore);
-            }
-          }),
-    ]);
+    final habitDirtyMap = <HabitUUID, int>{};
+    await db.query(TableName.records, columns: const [
+      RecordDBCellKey.uuid,
+      RecordDBCellKey.parentUUID
+    ]).then((result) {
+      for (var cell in result.map(RecordDBCell.fromJson)) {
+        batch.insert(TableName.sync, SyncDBCell.genFromRecord(cell).toJson(),
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+        final habitUUID = cell.parentUUID!;
+        habitDirtyMap[habitUUID] = (habitDirtyMap[habitUUID] ?? 1) + 1;
+      }
+    });
+    await db.query(TableName.habits, columns: const [HabitDBCellKey.uuid]).then(
+        (result) {
+      for (var cell in result.map(HabitDBCell.fromJson)) {
+        batch.insert(
+            TableName.sync,
+            SyncDBCell.genFromHabit(cell)
+                .copyWith(dirtyTotal: habitDirtyMap[cell.uuid] ?? 1)
+                .toJson(),
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+    });
     await batch.commit(continueOnError: true, noResult: true);
+  }
+
+  /// Due to change in [genRecordUUID] method,
+  /// all [HabitRecordUUID] need to be recalculated.
+  Future<void> reCalcHabitRecordUUIDs() async {
+    final batch = db.batch();
+    await db.query(TableName.records, columns: const [
+      RecordDBCellKey.uuid,
+      RecordDBCellKey.parentUUID,
+      RecordDBCellKey.recordDate
+    ]).then((results) {
+      for (var result in results) {
+        final uuid = result[RecordDBCellKey.uuid] as String;
+        final habitUUID = result[RecordDBCellKey.parentUUID] as String;
+        final recordDate = result[RecordDBCellKey.recordDate] as int?;
+        final newRecorUUID = genRecordUUID(habitUUID, recordDate);
+        batch.update(TableName.records, {RecordDBCellKey.uuid: newRecorUUID},
+            where: "${RecordDBCellKey.uuid} = ?", whereArgs: [uuid]);
+        appLog.db.info("reCalcHabitRecordUUIDs.changeRecordUUID",
+            ex: [habitUUID, recordDate, uuid, newRecorUUID]);
+      }
+    });
+    await batch.commit(continueOnError: false, noResult: true);
   }
 }
 
