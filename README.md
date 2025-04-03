@@ -36,6 +36,7 @@ Moreover, this app completely open source.
 - Easily export and import habits using a human-readable format (JSON).
 - Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adaptation for landscape and large screen devices.
+- _[Experimental] Support network sync with WebDAV._
 - No ADs in this app.
 
 You can customize each habit with the following options:
