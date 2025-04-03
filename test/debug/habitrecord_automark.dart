@@ -60,6 +60,7 @@ void cusomFreqPerformanceTest(
         crtDate,
         status: HabitRecordStatus.done,
         value: rng.nextInt(20),
+        parentUUID: data.uuid,
       ));
     }
   }
@@ -108,6 +109,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
       crtDate,
       status: HabitRecordStatus.done,
       value: rng.nextInt(20),
+      parentUUID: data.uuid,
     ));
   }
 
@@ -149,56 +151,67 @@ void functionTest() {
     HabitStartDate(2022, 1, 4),
     status: HabitRecordStatus.done,
     value: 10.0,
+    parentUUID: data.uuid,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 5),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 6),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 8),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 16),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 17),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 18),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2022, 1, 22),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
 
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2023, 1, 1),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2024, 1, 1),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
   data.addRecord(HabitSummaryRecord.generate(
     HabitStartDate(2025, 1, 1),
     status: HabitRecordStatus.done,
+    parentUUID: data.uuid,
     value: 10.0,
   ));
 

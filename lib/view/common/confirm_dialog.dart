@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/localizations.dart';
+
 Future<bool?> showConfirmDialog({
   required BuildContext context,
   Widget? title,
@@ -33,6 +35,32 @@ Future<bool?> showConfirmDialog({
       cancelText: cancelTextBuilder?.call(context) ?? cancelText,
       confirmText: confirmTextBuilder?.call(context) ?? confirmText,
     ),
+  );
+}
+
+enum NormalizeConfirmDialogType { confirm, save, exit, delete }
+
+Future<bool?> showNormalizedConfirmDialog({
+  required BuildContext context,
+  Widget? title,
+  Widget? subtitle,
+  Widget Function(BuildContext context, [L10n? l10n])? titleBuilder,
+  Widget Function(BuildContext context, [L10n? l10n])? subtitleBuilder,
+  NormalizeConfirmDialogType type = NormalizeConfirmDialogType.confirm,
+}) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      final l10n = L10n.of(context);
+      return ConfirmDialog(
+        title: titleBuilder?.call(context, l10n) ?? title,
+        subtitle: subtitleBuilder?.call(context, l10n) ?? subtitle,
+        confirmText: l10n != null
+            ? Text(l10n.confirmDialog_confirm_text(type.name))
+            : null,
+        cancelText: l10n != null ? Text(l10n.confirmDialog_cancel_text) : null,
+      );
+    },
   );
 }
 

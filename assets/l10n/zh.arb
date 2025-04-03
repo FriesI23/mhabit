@@ -688,6 +688,302 @@
   "@appSetting_debugger_titleText": {},
   "appSetting_about_titleText": "关于",
   "@appSetting_about_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "实验性功能",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "同步",
+  "@appSetting_synSubgroupText": {},
+  "appSetting_syncOption_titleText": "同步选项",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "立即同步",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "正在同步",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "上次同步：未知",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "上次同步：{dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "上次同步（错误）：未知",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_errorText": "上次同步（错误）：{dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "同步中……",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "同步中：{prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "当前同步进度百分比（0-100）。",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "取消中……",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "上次同步（已取消）：未知",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "上次同步（已取消）：{dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "上次同步日期。"
+      }
+    }
+  },
+  "appSync_failedTile_titleText": "检查失败日志",
+  "@appSync_failedTile_titleText": {},
+  "appSync_failedTile_errorText": "【错误】: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "错误信息。"
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}，数量：{count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {已完成} cancelled {已取消} failed {失败} multi {多状态} other {未知状态}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "状态类型，详见：[WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {已完成: {reason}} cancelled {已取消: {reason}} failed {失败: {reason}} multi {多状态: {reason}} other {未知状态: {reason}}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "状态类型，详见：[WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "状态原因"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {发生错误} userAction {需要用户操作} missingHabitUuid {缺失习惯UUID} empty {空数据} other {未知原因}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "WebDAV AppSync任务结果的原因，详见：[WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "新位置",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "同步将创建必要目录，并上传本地习惯数据到服务器。确定要继续吗？",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "立即同步！",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_webdav_oldServerConfirmDialog_titleText": "确认同步",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "配置路径的目录不为空，继续同步将会合并服务器上的习惯数据与本地数据。确定要继续吗？",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_oldServerConfirmDialog_confirmText": "确认合并",
+  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "导出同步失败日志",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {未找到日志} false {点击导出} other {加载中……}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {当前：} other {}}{name, select, webdav {WebDAV} fake {Fake（仅用于调试）} other {未知（{name}）}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "服务器名称，取决于具体的服务器类型。",
+        "example": "http://example.com/path/to/webdav/"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_networkType_text": "{type, select, mobile {蜂窝网络} wifi {WiFi} other {未知}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_summaryTile_title": "同步服务器",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "未配置",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "所有近期同步失败日志",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "appSync_serverEditor_saveDialog_titleText": "确认保存更改",
+  "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "保存后将覆盖之前的服务器配置。",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "未保存的更改",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "退出将丢弃所有未保存更改。",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "确认删除",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "删除后将移除当前服务器配置。",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "新增同步服务器",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "修改同步服务器",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_advance_titleText": "高级设置",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "路径",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "请输入有效的 WebDAV 路径。",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "路径不能为空！",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_usernameTile_titleText": "用户名",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "请输入用户名，不需要可留空。",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_serverEditor_passwordTile_titleText": "密码",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "忽略 SSL 证书",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "同步超时时间（秒）",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "默认值：{seconds, plural, =0 {不限制} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "秒"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_unitText": "秒",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "网络连接超时时间（秒）",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "默认值：{seconds, plural, =0 {不限制} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "秒"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "秒",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "网络连接重试次数",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_connRetryCountTile_hintText": "默认值：{count, plural, =0 {不进行重试} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_titleText": "网络同步方式",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {在蜂窝网络上同步} wifi {在 WiFi 上同步} other {未知}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "低数据模式",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "在低数据模式下同步",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_titleText": "习惯云同步",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "启用后，应用的同步选项将出现在设置中",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_titleText": "实验性功能（{syncName}）已禁用，但该功能仍在运行。",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "习惯云同步",
+        "description": "实验性功能的名称。"
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "要完全禁用，请长按访问“{menuName}”并将其关闭。",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "同步选项"
+      }
+    }
+  },
   "appAbout_appbarTile_titleText": "关于",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "版本：{appVersion}",
@@ -894,6 +1190,8 @@
   "@common_errorPage_title": {},
   "common_errorPage_copied": "已复制崩溃信息",
   "@common_errorPage_copied": {},
+  "common_enable_text": "启用",
+  "@common_enable_text": {},
   "calendarPicker_clip_today": "今天",
   "@calendarPicker_clip_today": {},
   "calendarPicker_clip_tomorrow": "明天",
@@ -979,6 +1277,18 @@
   "@debug_debuggerInfoCard_saveButton_text": {},
   "debug_debuggerInfo_notificationTitle": "正在收集应用信息……",
   "@debug_debuggerInfo_notificationTitle": {},
+  "confirmDialog_confirm_text": "{type, select, save {保存} exit {退出} delete {删除} other {确认}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "确认"
+      }
+    }
+  },
+  "confirmDialog_cancel_text": "取消",
+  "@confirmDialog_cancel_text": {},
   "snackbar_undoText": "撤回",
   "@snackbar_undoText": {},
   "snackbar_dismissText": "忽略",

@@ -89,8 +89,15 @@ class $AssetsSqlGen {
   /// File path: assets/sql/mh_records.sql
   String get mhRecords => 'assets/sql/mh_records.sql';
 
+  /// File path: assets/sql/mh_sync.sql
+  String get mhSync => 'assets/sql/mh_sync.sql';
+
+  /// File path: assets/sql/mh_sync_indexes.sql
+  String get mhSyncIndexes => 'assets/sql/mh_sync_indexes.sql';
+
   /// List of all assets
-  List<String> get values => [indexes, mhHabits, mhRecords];
+  List<String> get values =>
+      [indexes, mhHabits, mhRecords, mhSync, mhSyncIndexes];
 }
 
 class $DocsCHANGELOGGen {

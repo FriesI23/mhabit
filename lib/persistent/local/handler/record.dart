@@ -19,8 +19,10 @@ import 'package:sqflite/sqflite.dart';
 import '../../../common/types.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
+import '../sql.dart';
 import '../table.dart';
 import 'habit.dart';
+import 'sync.dart';
 
 part 'record.g.dart';
 
@@ -100,15 +102,33 @@ class RecordDBHelper extends DBHelperHandler {
 
   String get habitTable => TableName.habits;
 
+  String get syncTable => TableName.sync;
+
   Future<int> insertNewRecord(RecordDBCell record) {
     assert(record.uuid != null);
 
-    return db.insert(table, record.toJson());
+    return db.transaction((db) => _insertNewRecordTransaction(record, db));
   }
 
-  Future<void> insertMultiRecords(Iterable<RecordDBCell> records,
-      {bool updateIfExist = false}) async {
-    await db.transaction((db) async {
+  Future<int> _insertNewRecordTransaction(
+      RecordDBCell record, Transaction txn) async {
+    final result = await txn.insert(table, record.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    if (result > 0) {
+      await Future.wait([
+        txn.insert(syncTable, SyncDBCell.genFromRecord(record).toJson(),
+            conflictAlgorithm: ConflictAlgorithm.rollback),
+        txn.rawUpdate(
+            CustomSql.increaseHabitSyncTotalDirtySql(
+                conflictAlgorithm: ConflictAlgorithm.rollback),
+            [record.parentUUID]),
+      ]);
+    }
+    return result;
+  }
+
+  Future<void> insertOrUpdateMultiRecords(Iterable<RecordDBCell> records) {
+    return db.transaction((db) async {
       final tasks = <Future>[];
       for (var record in records) {
         tasks.add(
@@ -117,17 +137,9 @@ class RecordDBHelper extends DBHelperHandler {
                   where: "${RecordDBCellKey.uuid} = ?",
                   whereArgs: [record.uuid],
                   limit: 1)
-              .then((result) async {
-            if (result.isEmpty) {
-              await db.insert(table, record.toJson(),
-                  conflictAlgorithm: ConflictAlgorithm.ignore);
-            } else {
-              await db.update(table, record.toJson(),
-                  where: '${RecordDBCellKey.uuid} = ?',
-                  whereArgs: [record.uuid],
-                  conflictAlgorithm: ConflictAlgorithm.ignore);
-            }
-          }),
+              .then((result) => result.isEmpty
+                  ? _insertNewRecordTransaction(record, db)
+                  : _updateRecordTransaction(record, db)),
         );
       }
 
@@ -138,8 +150,26 @@ class RecordDBHelper extends DBHelperHandler {
   Future<int> updateRecord(RecordDBCell record) {
     assert(record.uuid != null);
 
-    return db.update(table, record.toJson(),
+    return db.transaction((db) => _updateRecordTransaction(record, db));
+  }
+
+  Future<int> _updateRecordTransaction(
+      RecordDBCell record, Transaction txn) async {
+    final result = await txn.update(table, record.toJson(),
         where: '${RecordDBCellKey.uuid} = ?', whereArgs: [record.uuid]);
+    if (result > 0) {
+      await Future.wait([
+        txn.rawUpdate(
+            CustomSql.increaseRecordSyncDirtySql(
+                conflictAlgorithm: ConflictAlgorithm.rollback),
+            [record.uuid]),
+        txn.rawUpdate(
+            CustomSql.increaseHabitSyncTotalDirtySql(
+                conflictAlgorithm: ConflictAlgorithm.rollback),
+            [record.parentUUID]),
+      ]);
+    }
+    return result;
   }
 
   static const _loadRecordDataColumns = [

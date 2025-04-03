@@ -24,12 +24,15 @@ import '../../assets/assets.dart';
 import '../../common/async.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
+import '../../common/types.dart';
+import '../../common/utils.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../utils/app_path_provider.dart';
 import '../utils.dart';
 import 'handler/habit.dart';
 import 'handler/record.dart';
+import 'handler/sync.dart';
 import 'sql.dart';
 import 'table.dart';
 
@@ -71,9 +74,11 @@ class _DBHelper implements DBHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
     await db.execute(await getSqlFromFile(Assets.sql.mhRecords));
+    await db.execute(await getSqlFromFile(Assets.sql.mhSync));
     final indexesBatch = db.batch();
     await Future.wait([
       getSqlFromFile(Assets.sql.indexes),
+      getSqlFromFile(Assets.sql.mhSyncIndexes)
     ]).then((dataList) {
       for (var data in dataList) {
         db.batchLines(data, indexesBatch);
@@ -82,6 +87,7 @@ class _DBHelper implements DBHelper {
     await db.execute(CustomSql.autoUpdateHabitsModifyTimeTrigger);
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
+    await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -102,6 +108,19 @@ class _DBHelper implements DBHelper {
         await db.execute("ALTER TABLE ${TableName.habits} "
             "ADD COLUMN ${HabitDBCellKey.dailyGoalExtra} REAL");
       }
+    }
+    if (oldVersion < 4) {
+      await db.execute(await getSqlFromFile(Assets.sql.mhSync));
+      await db
+          .batchLines(await getSqlFromFile(Assets.sql.mhSyncIndexes))
+          .commit();
+      await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
+      await db
+          .execute(CustomSql.rmAutoAddSortPostionWhenAddNewHabitTrigger)
+          .then((_) => db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit));
+      final mh = DatabaseToV4MigrateHelper(db);
+      await mh.reCalcHabitRecordUUIDs();
+      await mh.initSyncTable();
     }
   }
 
@@ -202,6 +221,65 @@ class _DBHelper implements DBHelper {
   @override
   String toString() {
     return "local.$runtimeType(db=$_db)";
+  }
+}
+
+class DatabaseToV4MigrateHelper {
+  final Database db;
+
+  const DatabaseToV4MigrateHelper(this.db);
+
+  /// Add sync entries for all habits and records into sync table
+  /// to ensure data enters the synchronization.
+  Future<void> initSyncTable() async {
+    final batch = db.batch();
+    final habitDirtyMap = <HabitUUID, int>{};
+    await db.query(TableName.records, columns: const [
+      RecordDBCellKey.uuid,
+      RecordDBCellKey.parentUUID
+    ]).then((result) {
+      for (var cell in result.map(RecordDBCell.fromJson)) {
+        batch.insert(TableName.sync, SyncDBCell.genFromRecord(cell).toJson(),
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+        final habitUUID = cell.parentUUID!;
+        habitDirtyMap[habitUUID] = (habitDirtyMap[habitUUID] ?? 1) + 1;
+      }
+    });
+    await db.query(TableName.habits, columns: const [HabitDBCellKey.uuid]).then(
+        (result) {
+      for (var cell in result.map(HabitDBCell.fromJson)) {
+        batch.insert(
+            TableName.sync,
+            SyncDBCell.genFromHabit(cell)
+                .copyWith(dirtyTotal: habitDirtyMap[cell.uuid] ?? 1)
+                .toJson(),
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+    });
+    await batch.commit(continueOnError: true, noResult: true);
+  }
+
+  /// Due to change in [genRecordUUID] method,
+  /// all [HabitRecordUUID] need to be recalculated.
+  Future<void> reCalcHabitRecordUUIDs() async {
+    final batch = db.batch();
+    await db.query(TableName.records, columns: const [
+      RecordDBCellKey.uuid,
+      RecordDBCellKey.parentUUID,
+      RecordDBCellKey.recordDate
+    ]).then((results) {
+      for (var result in results) {
+        final uuid = result[RecordDBCellKey.uuid] as String;
+        final habitUUID = result[RecordDBCellKey.parentUUID] as String;
+        final recordDate = result[RecordDBCellKey.recordDate] as int?;
+        final newRecorUUID = genRecordUUID(habitUUID, recordDate);
+        batch.update(TableName.records, {RecordDBCellKey.uuid: newRecorUUID},
+            where: "${RecordDBCellKey.uuid} = ?", whereArgs: [uuid]);
+        appLog.db.info("reCalcHabitRecordUUIDs.changeRecordUUID",
+            ex: [habitUUID, recordDate, uuid, newRecorUUID]);
+      }
+    });
+    await batch.commit(continueOnError: false, noResult: true);
   }
 }
 
