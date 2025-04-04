@@ -21,6 +21,7 @@ import '../utils/app_path_provider.dart';
 import 'handler/console_output.dart';
 import 'handler/console_printer.dart';
 import 'handler/filter.dart';
+import 'logger/app_sync_logger.dart';
 import 'logger/text_logger.dart';
 import 'logger/value_change_logger.dart';
 import 'logger/widget_logger.dart';
@@ -54,6 +55,8 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
   AppTextLogger get json;
   AppWidgetLogger get l10n;
   AppTextLogger get cache;
+  AppTextLogger get appsync;
+  AppSyncTaskLogger get appsynctask;
 
   Future<bool> changeLogger(l.Logger newLogger);
   bool changeLoggerByType(AppLoggerHandlerType t);
@@ -92,7 +95,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
                   writeImmediately: l.Level.values
                       .where((e) => e.value >= l.Level.warning.value)
                       .toList(),
-                  maxFileSizeKB: 0,
+                  maxFileSizeKB: -1,
                 ),
                 const AppLoggerConsoleReleaseOutput(),
               ]),
@@ -107,7 +110,7 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
                   writeImmediately: l.Level.values
                       .where((e) => e.value >= l.Level.warning.value)
                       .toList(),
-                  maxFileSizeKB: 0,
+                  maxFileSizeKB: -1,
                 ),
                 const AppLoggerConsoleOutput(),
               ]),
@@ -238,6 +241,14 @@ class _AppLoggerManager implements AppLoggerMananger {
 
   @override
   AppTextLogger get cache => _tryGetAppTextLogger(LoggerType.cache);
+
+  @override
+  AppTextLogger get appsync => _tryGetAppTextLogger(LoggerType.appsync);
+
+  @override
+  AppSyncTaskLogger get appsynctask => _tryGetAppLogger(LoggerType.appsynctask,
+      // Use same [LoggerType] as [appsync] when show log.
+      buildNewLogger: (t) => AppSyncTaskLogger(this, LoggerType.appsync));
 
   @override
   Future<bool> changeLogger(l.Logger newLogger) async {

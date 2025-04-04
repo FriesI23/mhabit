@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export "./app_ui_layout_builder.dart";
 export './appbar_combined_action.dart'
     show AppBarActions, AppbarActionItemConfig, AppbarActionShowStatus;
 export './colorful_navibar.dart' show ColorfulNavibar;
@@ -25,3 +26,5 @@ export './habit_summary_list_tile.dart';
 export './loglevel_changer_tile.dart';
 export './not_found_image.dart';
 export './page_loading_indicator.dart';
+export './sync_loading_indicator.dart';
+export './sync_now_tile.dart';

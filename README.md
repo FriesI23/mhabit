@@ -36,6 +36,7 @@ Moreover, this app completely open source.
 - Easily export and import habits using a human-readable format (JSON).
 - Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adaptation for landscape and large screen devices.
+- _[Experimental] Support network sync with WebDAV._
 - No ADs in this app.
 
 You can customize each habit with the following options:
@@ -57,11 +58,11 @@ You can customize each habit with the following options:
 
 | platform | build | publish                                          | desc.                              |
 | -------- | ----- | ------------------------------------------------ | ---------------------------------- |
-| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
-| ios      | ✅     |                                                  |                                    |
-| macos    | ✅     | [Github][github-myapp]                           |                                    |
-| windows  | 🟨     | [Github][github-myapp]                           | unimplemented features: `reminder` |
-| linux    | 🟨     |                                                  | limit features: `reminder`         |
+| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
+| ios      | ✅    |                                                  |                                    |
+| macos    | ✅    | [Github][github-myapp]                           |                                    |
+| windows  | 🟨    | [Github][github-myapp]                           | unimplemented features: `reminder` |
+| linux    | 🟨    |                                                  | limit features: `reminder`         |
 
 ### Note: Windows MSIX Insaller
 
@@ -113,11 +114,10 @@ After operations above, this MSIX package should now be able to install successf
 
 ## Todo
 
-| status  | progress               | desc.                                                        |
-| ------- | ---------------------- | ------------------------------------------------------------ |
-| PLANNED | Sync with Webdav       | Expected sync solution is similar to Joplin's WebDAV method. |
-| -       | Publish to Google Play |                                                              |
-| -       | Complete Documentation | [`README.md`](README.md)                                     |
+| status | progress               | desc.                    |
+| ------ | ---------------------- | ------------------------ |
+| -      | Publish to Google Play |                          |
+| -      | Complete Documentation | [`README.md`](README.md) |
 
 ## Build from source
 
@@ -136,7 +136,13 @@ Building for Linux requires:
 sudo apt-get -y install libsqlite3-0 libsqlite3-dev
 ```
 
-2. If an error occurs during the build process, please follow these
+2. Ensure that all dependencies required by [`flutter_secure_storage`][fss-linux] are satisfied:
+
+```shell
+sudo apt-get install libsecret-1-dev libjsoncpp-dev
+```
+
+3. If an error occurs during the build process, please follow these
    [steps][flutter-linux] strictly.
 
 ## Contributing
@@ -232,3 +238,4 @@ limitations under the License.
 [sqflite-ffi-linux]: https://pub.dev/packages/sqflite_common_ffi#linux
 [flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
 [msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
+[fss-linux]: https://pub.dev/packages/flutter_secure_storage#configure-linux-version

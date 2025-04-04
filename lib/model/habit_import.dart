@@ -33,18 +33,18 @@ class HabitImport {
 
   Future<void> _importHabitData(HabitExportData habitExportData,
       {bool withRecords = true}) async {
+    final habitUUID = genHabitUUID();
     var habitDBCell = habitExportData.toHabitDBCell();
     habitDBCell = habitDBCell.copyWith(
-        uuid: genHabitUUID(),
-        type: habitDBCell.type ?? defaultHabitType.dbCode);
+        uuid: habitUUID, type: habitDBCell.type ?? defaultHabitType.dbCode);
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
-      await recordDBHelper.insertMultiRecords(
+      await recordDBHelper.insertOrUpdateMultiRecords(
         habitExportData.getRecordDBCells().map(
               (e) => e.copyWith(
                 parentId: dbid,
                 parentUUID: habitDBCell.uuid,
-                uuid: genRecordUUID(),
+                uuid: genRecordUUID(habitUUID, e.recordDate),
               ),
             ),
       );
