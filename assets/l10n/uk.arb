@@ -990,5 +990,315 @@
   "userAction_doubleTap": "Двомісний",
   "@userAction_doubleTap": {},
   "userAction_longTap": "довгий",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSetting_syncOption_titleText": "Параметри синхронізації",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "Синхронізувати зараз",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "Синхронізація",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_text_noDate": "Остання синхронізація: Н/Д",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "Остання синхронізація: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "Остання синхронізація (помилка): Н/Д",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_syncingText": "Синхронізація...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_cancellingText": "Скасування...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "Остання синхронізація (скасована): Н/Д",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {Completed due to {reason}} cancelled {Canceled due to {reason}} failed {Failed due to {reason}} multi {Multiple statuses due to {reason}} other {Unknown status}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "Нова локація",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "Синхронізувати зараз!",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_webdav_oldServerConfirmDialog_titleText": "Підтвердити синхронізацію",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "Каталог не порожній. Синхронізація об’єднає серверні та локальні звички. Продовжити?",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_oldServerConfirmDialog_confirmText": "Підтвердити об’єднання",
+  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_networkType_text": "{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_summaryTile_title": "Сервер синхронізації",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "Не налаштовано",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_serverEditor_saveDialog_titleText": "Підтвердьте збереження змін",
+  "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "Незбережені зміни",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "Підтвердьте видалення",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_titleText_modify": "Змінити сервер синхронізації",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_pathTile_titleText": "Шлях",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "Введіть тут дійсний шлях WebDAV.",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "Шлях не повинен бути порожнім!",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_passwordTile_titleText": "Пароль",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "Ігнорувати сертифікат SSL",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_unitText": "с",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_titleText": "Режим мережевої синхронізації",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Sync on Cellular Network} wifi {Sync on Wifi} other {Unknown}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронізація в режимі низького рівня даних",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_habitSyncTile_titleText": "Синхронізація з хмарою звичок",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "Після ввімкнення опція синхронізації програми з’явиться в налаштуваннях",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_forHabitSyncText": "Щоб повністю вимкнути, утримуйте, щоб отримати доступ до '{menuName}' і вимкніть його.",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
+  "appSync_failedTile_errorText": "[Error]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_titleText": "Секунди тайм-ауту синхронізації",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_syncServerType_text": "{isCurrent, select, true {Current: } other {}}{name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_serverEditor_usernameTile_titleText": "Ім'я користувача",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_serverEditor_connRetryCountTile_titleText": "Кількість спроб підключення до мережі",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_nowTile_errorText": "Остання синхронізація (помилка): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {Completed} cancelled {Canceled} failed {Failed} multi {Multiple statuses} other {Unknown status}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_titleText": "Тайм-аут підключення до мережі, секунди",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_syncingText_withPrt": "Синхронізація: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_exportAllLogsTile_titleText": "Експорт журналів невдалої синхронізації",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "Усі останні журнали невдалої синхронізації",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "Синхронізація створить необхідні каталоги та завантажить локальні звички на сервер. Продовжити?",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "Новий сервер синхронізації",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_advance_titleText": "Розширені конфігурації",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "Введіть тут ім’я користувача, залиште порожнім, якщо не потрібно.",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "confirmDialog_cancel_text": "Скасувати",
+  "@confirmDialog_cancel_text": {},
+  "appSync_failedTile_titleText": "Перевірте журнали помилок",
+  "@appSync_failedTile_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "Вихід призведе до скасування всіх незбережених змін.",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "common_enable_text": "Увімкнено",
+  "@common_enable_text": {},
+  "experimentalFeatures_warnginBanner_title": "Увімкнено одну або кілька експериментальних функцій. Використовуйте з обережністю.",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "Збереження перезапише попередню конфігурацію сервера.",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "Видалення призведе до видалення поточної конфігурації сервера.",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_connRetryCountTile_hintText": "За замовчуванням: {count, plural, =0 {Retry disabled} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "с",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "experimentalFeatures_warnTile_titleText": "Експериментальна функція ({syncName}) вимкнена, але функція все ще працює.",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
+      }
+    }
+  },
+  "appSetting_experimentalFeatureTile_titleText": "Експериментальні особливості",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSync_nowTile_cancelText": "Остання синхронізація (скасована): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "confirmDialog_confirm_text": "{type, select, save {Save} exit {Exit} delete {Delete} other {Confirm}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "appSetting_synSubgroupText": "Синхронізувати",
+  "@appSetting_synSubgroupText": {}
 }
