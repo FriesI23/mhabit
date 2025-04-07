@@ -250,10 +250,8 @@ class AppSyncViewModel
     } else if (_autoSyncTimer?.interval != interval) {
       void onPeriodicSyncTriggered(Timer timer) async {
         final config = _serverConfig?.get();
-        if (kDebugMode) {
-          appLog.appsync.debug("[${timer.tick}] [${timer.hashCode}] Auto sync",
-              ex: [timer.isActive, interval, () => config?.toDebugString()]);
-        }
+        appLog.appsync.debug("[${timer.tick}] [${timer.hashCode}] Auto sync",
+            ex: [timer.isActive, interval, () => config?.toDebugString()]);
         if (!enabled || !(await appSyncTask.shouldSync())) return;
         await appSyncTask.startSync();
         _autoSyncTickNotifier.value += 1;
