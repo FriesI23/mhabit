@@ -243,10 +243,10 @@ class AppSyncViewModel
   void regrPeriodicSync({bool fireNow = false}) {
     final interval = _interval?.get();
     if (interval == null || interval.t == null) {
-      _autoSyncTimer?.cancel();
+      final oldTimer = _autoSyncTimer?..cancel();
       _autoSyncTimer = null;
       appLog.appsync.info("regrPeriodicSync",
-          ex: ["disabled", interval, _autoSyncTimer?.interval]);
+          ex: ["disabled", fireNow, interval, oldTimer?.interval]);
     } else if (_autoSyncTimer?.interval != interval) {
       void onPeriodicSyncTriggered(Timer timer) async {
         final config = _serverConfig?.get();
@@ -259,11 +259,11 @@ class AppSyncViewModel
         _autoSyncTickNotifier.value += 1;
       }
 
-      _autoSyncTimer?.cancel();
-      appLog.appsync.info("regrPeriodicSync",
-          ex: ["update", interval, _autoSyncTimer?.interval]);
+      final oldTimer = _autoSyncTimer?..cancel();
       final timer = _autoSyncTimer =
           AppSyncPeriodicTimer(interval, onPeriodicSyncTriggered);
+      appLog.appsync.info("regrPeriodicSync",
+          ex: ["update", fireNow, interval, oldTimer?.interval]);
       if (fireNow) onPeriodicSyncTriggered(timer);
     }
   }

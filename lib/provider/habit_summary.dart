@@ -502,10 +502,15 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   //#region: auto sync
   void updateFromAppSync(AppSyncViewModel appSync) {
-    _onAutoSyncTick = appSync.onAutoSyncTick..addListener(onAutoSyncTick);
+    if (appSync.onAutoSyncTick != _onAutoSyncTick) {
+      appLog.habit.info("updateFromAppSync",
+          ex: ["regr listener", onAutoSyncTick.hashCode]);
+      _onAutoSyncTick = appSync.onAutoSyncTick..addListener(onAutoSyncTick);
+    }
   }
 
   void onAutoSyncTick() {
+    appLog.habit.debug("onAutoSyncTick", ex: [reloadDBToggleSwich]);
     rockreloadDBToggleSwich(clearSnackBar: false);
   }
   //#endregion
