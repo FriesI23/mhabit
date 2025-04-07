@@ -35,6 +35,7 @@ import '../logging/logger_utils.dart';
 import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
+import '../model/app_sync_timer.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
@@ -49,22 +50,28 @@ class AppSyncViewModel
     implements ProviderMounted {
   late final DispatcherForAppSyncTask appSyncTask;
 
+  late final ValueNotifier<num> _autoSyncTickNotifier;
+
   bool _mounted = true;
   AppSyncSwitchHandler? _switch;
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
   AppSyncExperimentalFeature? _expSwitch;
 
+  AppSyncPeriodicTimer? _autoSyncTimer;
   bool _clearLogsOnStartup = false;
 
   AppSyncViewModel() {
     appSyncTask = DispatcherForAppSyncTask(this);
     appSyncTask.addListener(notifyListeners);
+    _autoSyncTickNotifier = ValueNotifier(0);
   }
 
   @override
   void dispose() {
+    if (!mounted) return;
     _mounted = false;
+    _autoSyncTickNotifier.dispose();
     appSyncTask.dispose();
     super.dispose();
   }
@@ -79,6 +86,9 @@ class AppSyncViewModel
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
     _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
+    // start auto sync
+    regrPeriodicSync(fireNow: true);
+    // clear failed sync logs
     if (!_clearLogsOnStartup) {
       _clearLogsOnStartup = true;
       cleanExpiredSyncFailedLogs().then((results) {
@@ -109,6 +119,7 @@ class AppSyncViewModel
       {bool listen = true}) async {
     if (_interval?.get() != value) {
       await _interval?.set(value);
+      regrPeriodicSync();
       if (listen) notifyListeners();
     }
   }
@@ -226,6 +237,36 @@ class AppSyncViewModel
   Future<List<String>> cleanExpiredSyncFailedLogs() => AppPathProvider()
       .getSyncFailLogDir()
       .then((dir) => cleanExpiredFiles(dir, const Duration(days: 30)));
+
+  ValueListenable<num> get onAutoSyncTick => _autoSyncTickNotifier;
+
+  void regrPeriodicSync({bool fireNow = false}) {
+    final interval = _interval?.get();
+    if (interval == null || interval.t == null) {
+      _autoSyncTimer?.cancel();
+      _autoSyncTimer = null;
+      appLog.appsync.info("regrPeriodicSync",
+          ex: ["disabled", interval, _autoSyncTimer?.interval]);
+    } else if (_autoSyncTimer?.interval != interval) {
+      void onPeriodicSyncTriggered(Timer timer) async {
+        final config = _serverConfig?.get();
+        if (kDebugMode) {
+          appLog.appsync.debug("[${timer.tick}] [${timer.hashCode}] Auto sync",
+              ex: [timer.isActive, interval, () => config?.toDebugString()]);
+        }
+        if (!enabled || !(await appSyncTask.shouldSync())) return;
+        await appSyncTask.startSync();
+        _autoSyncTickNotifier.value += 1;
+      }
+
+      _autoSyncTimer?.cancel();
+      appLog.appsync.info("regrPeriodicSync",
+          ex: ["update", interval, _autoSyncTimer?.interval]);
+      final timer = _autoSyncTimer =
+          AppSyncPeriodicTimer(interval, onPeriodicSyncTriggered);
+      if (fireNow) onPeriodicSyncTriggered(timer);
+    }
+  }
 }
 
 @CopyWith(skipFields: false, copyWithNull: false, constructor: "_copyWith")
@@ -432,18 +473,25 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
   }
 
   Future<bool> shouldSync() async {
-    if (!root.enabled) return false;
+    bool basicCheck([AppSyncServer? config]) {
+      if (!root.enabled) return false;
+      config = config ?? root._serverConfig?.get();
+      if (config == null) return false;
+      return true;
+    }
+
     final config = root._serverConfig?.get();
-    if (config == null) return false;
-    switch (config.type) {
-      case AppSyncServerType.unknown:
+    if (!(basicCheck(config))) return false;
+    switch (config?.type) {
+      case AppSyncServerType.unknown || null:
         return false;
       case AppSyncServerType.fake:
         return kDebugMode;
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            return shouldSyncInWebDav(config);
+            return shouldSyncInWebDav(config)
+                .then((result) => result && basicCheck());
           default:
             throw UnimplementedError(
                 "<${config.runtimeType}> isn't support yet, got $config");

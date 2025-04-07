@@ -37,6 +37,7 @@ import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
 import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
+import 'app_sync.dart';
 import 'commons.dart';
 import 'utils.dart';
 
@@ -76,6 +77,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
+  // sync from appsync
+  ValueListenable<num>? _onAutoSyncTick;
   // data
 
   HabitSummaryViewModel({
@@ -198,6 +201,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
+    _onAutoSyncTick?.removeListener(onAutoSyncTick);
     _dispatcher.discard();
     disposeVerticalScrollController();
     _cancelLoading();
@@ -494,6 +498,16 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   Iterable<HabitSummaryData?> getSelectedHabitsData() =>
       _selectorData._selectUUIDColl.map(getHabit);
+  //#endregion
+
+  //#region: auto sync
+  void updateFromAppSync(AppSyncViewModel appSync) {
+    _onAutoSyncTick = appSync.onAutoSyncTick..addListener(onAutoSyncTick);
+  }
+
+  void onAutoSyncTick() {
+    rockreloadDBToggleSwich(clearSnackBar: false);
+  }
   //#endregion
 
   //#region actions
