@@ -87,7 +87,7 @@ class AppSyncViewModel
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
     _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
     // start auto sync
-    regrPeriodicSync(fireNow: true);
+    regrPeriodicSync(fireDelay: const Duration(seconds: 5));
     // clear failed sync logs
     if (!_clearLogsOnStartup) {
       _clearLogsOnStartup = true;
@@ -240,13 +240,13 @@ class AppSyncViewModel
 
   ValueListenable<num> get onAutoSyncTick => _autoSyncTickNotifier;
 
-  void regrPeriodicSync({bool fireNow = false}) {
+  void regrPeriodicSync({Duration? fireDelay}) {
     final interval = _interval?.get();
     if (interval == null || interval.t == null) {
       final oldTimer = _autoSyncTimer?..cancel();
       _autoSyncTimer = null;
       appLog.appsync.info("regrPeriodicSync",
-          ex: ["disabled", fireNow, interval, oldTimer?.interval]);
+          ex: ["disabled", fireDelay, interval, oldTimer?.interval]);
     } else if (_autoSyncTimer?.interval != interval) {
       void onPeriodicSyncTriggered(Timer timer) async {
         final config = _serverConfig?.get();
@@ -261,8 +261,10 @@ class AppSyncViewModel
       final timer = _autoSyncTimer =
           AppSyncPeriodicTimer(interval, onPeriodicSyncTriggered);
       appLog.appsync.info("regrPeriodicSync",
-          ex: ["update", fireNow, interval, oldTimer?.interval]);
-      if (fireNow) onPeriodicSyncTriggered(timer);
+          ex: ["update", fireDelay, interval, oldTimer?.interval]);
+      if (fireDelay != null) {
+        Future.delayed(fireDelay, () => onPeriodicSyncTriggered(timer));
+      }
     }
   }
 }
