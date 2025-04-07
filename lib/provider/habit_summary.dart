@@ -503,9 +503,10 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: auto sync
   void updateFromAppSync(AppSyncViewModel appSync) {
     if (appSync.onAutoSyncTick != _onAutoSyncTick) {
-      appLog.habit.info("updateFromAppSync",
-          ex: ["regr listener", onAutoSyncTick.hashCode]);
+      final oldTicker = _onAutoSyncTick?..removeListener(onAutoSyncTick);
       _onAutoSyncTick = appSync.onAutoSyncTick..addListener(onAutoSyncTick);
+      appLog.habit.info("updateFromAppSync",
+          ex: ["regr listener", _onAutoSyncTick.hashCode, oldTicker?.hashCode]);
     }
   }
 
