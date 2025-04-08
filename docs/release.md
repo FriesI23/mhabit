@@ -4,6 +4,12 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.16.1+68
+
+- Add Auto Sync Feature
+- Update Russian l10n translation, thank for Bora Yurt Page's contribution on Weblate.
+- Update Ukrainian l10n translation, thank for Bora Максим Горпиніч's contribution on Weblate.
+
 ## v1.16.0+67
 
 - Add WebDav Network Sync
