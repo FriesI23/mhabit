@@ -805,19 +805,19 @@ class L10nUk extends L10n {
   String get appSetting_about_titleText => 'про';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'Експериментальні особливості';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Синхронізувати';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Параметри синхронізації';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Синхронізувати зараз';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Синхронізація';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -830,23 +830,23 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Остання синхронізація: Н/Д';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Остання синхронізація: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'Остання синхронізація (помилка): Н/Д';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Остання синхронізація (помилка): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Синхронізація...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -856,22 +856,22 @@ class L10nUk extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Синхронізація: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Скасування...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'Остання синхронізація (скасована): Н/Д';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Остання синхронізація (скасована): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Перевірте журнали помилок';
 
   @override
   String appSync_failedTile_errorText(String info) {
@@ -929,25 +929,25 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Нова локація';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Синхронізація створить необхідні каталоги та завантажить локальні звички на сервер. Продовжити?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Синхронізувати зараз!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Підтвердити синхронізацію';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Каталог не порожній. Синхронізація об’єднає серверні та локальні звички. Продовжити?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Підтвердити об’єднання';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'Експорт журналів невдалої синхронізації';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
@@ -996,64 +996,64 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Сервер синхронізації';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Не налаштовано';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'Усі останні журнали невдалої синхронізації';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'Підтвердьте збереження змін';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Збереження перезапише попередню конфігурацію сервера.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Незбережені зміни';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Вихід призведе до скасування всіх незбережених змін.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Підтвердьте видалення';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Видалення призведе до видалення поточної конфігурації сервера.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Новий сервер синхронізації';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Змінити сервер синхронізації';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Розширені конфігурації';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Шлях';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'Введіть тут дійсний шлях WebDAV.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Шлях не повинен бути порожнім!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Ім\'я користувача';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'Введіть тут ім’я користувача, залиште порожнім, якщо не потрібно.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Пароль';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ігнорувати сертифікат SSL';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'Секунди тайм-ауту синхронізації';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1063,14 +1063,14 @@ class L10nUk extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'За замовчуванням: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_timeoutTile_unitText => 's';
+  String get appSync_serverEditor_timeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Тайм-аут підключення до мережі, секунди';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1080,14 +1080,14 @@ class L10nUk extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'За замовчуванням: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_unitText => 's';
+  String get appSync_serverEditor_connTimeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'Кількість спроб підключення до мережі';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1097,11 +1097,11 @@ class L10nUk extends L10n {
       other: '$count',
       zero: 'Retry disabled',
     );
-    return 'Default: $_temp0';
+    return 'За замовчуванням: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText => 'Режим мережевої синхронізації';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
@@ -1120,25 +1120,25 @@ class L10nUk extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Синхронізація в режимі низького рівня даних';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title => 'Увімкнено одну або кілька експериментальних функцій. Використовуйте з обережністю.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText => 'Синхронізація з хмарою звичок';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'Після ввімкнення опція синхронізації програми з’явиться в налаштуваннях';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Експериментальна функція ($syncName) вимкнена, але функція все ще працює.';
   }
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'Щоб повністю вимкнути, утримуйте, щоб отримати доступ до \'$menuName\' і вимкніть його.';
   }
 
   @override
@@ -1400,7 +1400,7 @@ class L10nUk extends L10n {
   String get common_errorPage_copied => 'Скопійовано інформацію про збій';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Увімкнено';
 
   @override
   String get calendarPicker_clip_today => 'Сьогодні';
@@ -1529,7 +1529,7 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Скасувати';
 
   @override
   String get snackbar_undoText => 'UNDO';

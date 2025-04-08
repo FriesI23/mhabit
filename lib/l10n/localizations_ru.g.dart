@@ -661,17 +661,17 @@ class L10nRu extends L10n {
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'Как в системе ($localeName)';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Как в системе';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Язык';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Выбор языка';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -799,25 +799,25 @@ class L10nRu extends L10n {
   String get appSetting_clearCache_snackBar_failText => 'Не удалось очистить кэш';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'Отладочная информация';
 
   @override
   String get appSetting_about_titleText => 'О приложении';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'Экспериментальные возможности';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Синхронизировать';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Настройки синхронизации';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Синхронизировать сейчас';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Синхронизация';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -830,23 +830,23 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Последняя синхронизация: не было';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Последняя синхронизация: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'Последняя синхронизация (ошибка): не было';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Последняя синхронизация (ошибка): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Синхронизация...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -856,18 +856,18 @@ class L10nRu extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Синхронизирую: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Отменяется...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'Последняя синхронизация (отменена): не было';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Последняя синхронизация (отменена): $dateStr';
   }
 
   @override
@@ -935,16 +935,16 @@ class L10nRu extends L10n {
   String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Синхронизировать сейчас!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Подтвердите синхронизацию';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Папка не пустая. Синхронизация объединит локальные привычки с теми что со сервера. Продолжить?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Подтверждение слияния';
 
   @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
@@ -996,64 +996,64 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Сервер синхронизации';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Не настроено';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'Все последние ошибки синхронизации';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'Подтвердить сохранение изменений';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Сохранение перетрёт предыдущие настройки сервера';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Несохранённые изменения';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Выход отбросит все несохранённые изменения.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Подтвердить удаление';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Удаление удаляет текущую конфигурацию сервера.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Новый сервер синхронизации';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Изменить сервер синхронизации';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Расширенные настройки';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Путь';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'Введите правильный путь WebDAV.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Путь не должен быть пустым!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Имя пользователя';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'Введите имя пользователя, если оно не требуется, оставьте его пустым.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Пароль';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Игнорировать проблемы с TLS сертификатом';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'Время ожидания синхронизации';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1067,7 +1067,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_timeoutTile_unitText => 's';
+  String get appSync_serverEditor_timeoutTile_unitText => 'с';
 
   @override
   String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
@@ -1084,7 +1084,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_unitText => 's';
+  String get appSync_serverEditor_connTimeoutTile_unitText => 'с';
 
   @override
   String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
@@ -1101,7 +1101,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText => 'Режим сетевой синхронизации';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
@@ -1120,7 +1120,7 @@ class L10nRu extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Синхронизация в режиме низких данных';
 
   @override
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
@@ -1394,13 +1394,13 @@ class L10nRu extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'подтвердить';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Упс, засбоило!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'Скопирована информация о сбое';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Включено';
 
   @override
   String get calendarPicker_clip_today => 'Сегодня';
@@ -1441,95 +1441,95 @@ class L10nRu extends L10n {
   String get exportConfirmDialog_confirm_buttonText => 'export';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title => 'Уровень журнала';
 
   @override
-  String get debug_logLevelDialog_title => 'Change Logging Level';
+  String get debug_logLevelDialog_title => 'Изменить уровень записи журнала';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'Отладка';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'Инфо';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'Предупреждение';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'Ошибка';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'Критический';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'Сбор журналов';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+  String get debug_collectLogTile_enable_subtitle => 'Нажмите, чтобы остановить сбор журнала.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+  String get debug_collectLogTile_disable_subtitle => 'Нажмите для начала сбора журнала.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+  String get debug_downladDebugLogs_subject => 'Скачать отладочные журналы';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+  String get dbeug_clearDebugLogs_complete_snackbar => 'Журнал отладки очищен.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+  String get debug_downladDebugInfo_subject => 'Скачивается отладочная информация';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'Скачивается $fileName';
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+  String get debug_missingDebugLogFile_snackbar => 'Журнал отладки не существует.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'Отладочная информация';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+  String get debug_debuggerLogCard_subtitle => 'Включая информацию о локальном отладочном журнале, необходимо открыть переключатель сбора журнала.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'Скачать';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'Очистить';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'Отладочная информация';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+  String get debug_debuggerInfoCard_subtitle => 'Включает информацию об отладке приложения.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'Открыть';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'Сохранить';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+  String get debug_debuggerInfo_notificationTitle => 'Сбор информации приложения...';
 
   @override
   String confirmDialog_confirm_text(String type) {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'save': 'Save',
-        'exit': 'Exit',
-        'delete': 'Delete',
-        'other': 'Confirm',
+        'save': 'Сохранить',
+        'exit': 'Выйти',
+        'delete': 'Убрать',
+        'other': 'Подтвердить',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Отмена';
 
   @override
   String get snackbar_undoText => 'UNDO';
