@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import '../common/enums.dart';
+import '../l10n/localizations.dart';
 
 enum AppSyncFetchInterval implements EnumWithDBCode {
   manual(null),
@@ -27,6 +28,17 @@ enum AppSyncFetchInterval implements EnumWithDBCode {
 
   @override
   int get dbCode => t?.inSeconds ?? -1;
+
+  String getShowText([L10n? l10n]) {
+    if (l10n != null) return l10n.appSync_syncInterval_text(name);
+    return switch (this) {
+      AppSyncFetchInterval.manual => "Manual",
+      AppSyncFetchInterval.minute5 => "5 Minutes",
+      AppSyncFetchInterval.minute15 => "15 Minutes",
+      AppSyncFetchInterval.minute30 => "30 Minutes",
+      AppSyncFetchInterval.hour1 => "1 Hour",
+    };
+  }
 
   static AppSyncFetchInterval? getFromDBCode(int dbCode,
       {AppSyncFetchInterval? withDefault = AppSyncFetchInterval.manual}) {

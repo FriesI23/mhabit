@@ -996,6 +996,25 @@ class L10nAr extends L10n {
   }
 
   @override
+  String appSync_syncInterval_text(String name) {
+    String _temp0 = intl.Intl.selectLogic(
+      name,
+      {
+        'manual': 'Manual',
+        'minute5': '5 Minutes',
+        'minute15': '15 Minutes',
+        'minute30': '30 Minutes',
+        'hour1': '1 Hour',
+        'other': 'Unknown',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+
+  @override
   String get appSync_summaryTile_title => 'Sync Server';
 
   @override

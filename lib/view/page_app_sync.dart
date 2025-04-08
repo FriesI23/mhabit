@@ -175,8 +175,7 @@ class _AppSyncConfigSubgroup extends StatelessWidget {
         children: [
           const Divider(),
           AppSyncSummaryTile(onPressed: onConfigPressed),
-          if (kDebugMode)
-            AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
+          AppSyncFetchIntervalTile(onPressed: onFetchIntervalPressed),
         ],
       ),
     );
