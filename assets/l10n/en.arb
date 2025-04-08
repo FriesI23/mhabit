@@ -861,6 +861,19 @@
       }
     }
   },
+  "appSync_syncInterval_text": "{name, select, manual {Manual} minute5 {5 Minutes} minute15 {15 Minutes} minute30 {30 Minutes} hour1 {1 Hour} other {Unknown}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "Fetch Interval",
+  "@appSync_syncIntervalTile_title": {},
   "appSync_summaryTile_title": "Sync Server",
   "@appSync_summaryTile_title": {},
   "appSync_summaryTile_subtitle_text_notConfigured": "Not Configured",

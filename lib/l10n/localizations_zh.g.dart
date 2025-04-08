@@ -991,6 +991,25 @@ class L10nZh extends L10n {
   }
 
   @override
+  String appSync_syncInterval_text(String name) {
+    String _temp0 = intl.Intl.selectLogic(
+      name,
+      {
+        'manual': '手动',
+        'minute5': '每 5 分钟',
+        'minute15': '每 15 分钟',
+        'minute30': '每 30 分钟',
+        'hour1': '每小时',
+        'other': '未知',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_syncIntervalTile_title => '抓取间隔';
+
+  @override
   String get appSync_summaryTile_title => '同步服务器';
 
   @override

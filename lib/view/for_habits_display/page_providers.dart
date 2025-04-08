@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
 import '../../provider/app_first_day.dart';
+import '../../provider/app_sync.dart';
 import '../../provider/habit_summary.dart';
 import '../../provider/habits_file_importer.dart';
 import '../../provider/habits_filter.dart';
@@ -41,6 +42,18 @@ class PageProviders extends SingleChildStatelessWidget {
           create: (context) => context.read<HabitSummaryViewModel>(),
           update: (context, value, previous) =>
               previous!..updateDBHelper(value),
+        ),
+        ChangeNotifierProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) {
+            previous!.updateFromAppSync(value);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (value.appSyncTask.processing != null) {
+                previous.onAutoSyncTick();
+              }
+            });
+            return previous;
+          },
         ),
         ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
             HabitSummaryViewModel>(
