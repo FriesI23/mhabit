@@ -266,6 +266,15 @@
       }
     }
   },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "已删除习惯：“{name}”",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "习惯名称。"
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "全选",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "导出",

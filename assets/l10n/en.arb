@@ -266,6 +266,15 @@
       }
     }
   },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Deleted habit: \"{name}\"",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "Select All",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Export",
