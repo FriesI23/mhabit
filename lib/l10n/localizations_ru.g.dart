@@ -289,6 +289,11 @@ class L10nRu extends L10n {
   }
 
   @override
+  String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
+    return 'Deleted habit: \"$name\"';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => 'Выбрать всё';
 
   @override

@@ -289,6 +289,11 @@ class L10nZh extends L10n {
   }
 
   @override
+  String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
+    return '已删除习惯：“$name”';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => '全选';
 
   @override

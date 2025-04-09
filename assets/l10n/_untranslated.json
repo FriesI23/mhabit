@@ -1,5 +1,6 @@
 {
   "ar": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -159,6 +160,7 @@
     "habitDisplay_deleteHabitsConfirmDialog_confirm",
     "habitDisplay_deleteHabitsConfirmDialog_cancel",
     "habitDisplay_deleteHabitsSuccSnackbarText",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -497,6 +499,7 @@
   ],
 
   "de": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -609,6 +612,7 @@
     "habitEdit_habitFreq_predayfreq",
     "habitEdit_reminder_freq_weekPrefixText",
     "habitEdit_reminder_freq_monthPrefixText",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -686,6 +690,7 @@
   ],
 
   "fa": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
@@ -786,6 +791,7 @@
   ],
 
   "fr": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -894,6 +900,7 @@
 
   "it": [
     "habitEdit_habitFreq_predayfreq",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -1047,6 +1054,7 @@
     "habitDisplay_deleteHabitsConfirmDialog_confirm",
     "habitDisplay_deleteHabitsConfirmDialog_cancel",
     "habitDisplay_deleteHabitsSuccSnackbarText",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -1462,6 +1470,7 @@
     "habitDisplay_deleteHabitsConfirmDialog_confirm",
     "habitDisplay_deleteHabitsConfirmDialog_cancel",
     "habitDisplay_deleteHabitsSuccSnackbarText",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -1813,6 +1822,7 @@
     "habitEdit_reminder_freq_monthPrefixText",
     "habitEdit_desc_hintText",
     "habitDisplay_emptyImage_text_01",
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDetail_heatmap_leftHelpText",
     "habitDetail_heatmap_rightHelpText",
     "habitDetail_descDailyGoal_titleText",
@@ -1923,6 +1933,7 @@
   ],
 
   "ru": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSync_failedTile_titleText",
     "appSync_failedTile_errorText",
     "appSync_failedTile_webdavMulti_counterText",
@@ -1953,6 +1964,7 @@
   ],
 
   "tr": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -2028,11 +2040,13 @@
   ],
 
   "uk": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSync_syncInterval_text",
     "appSync_syncIntervalTile_title"
   ],
 
   "vi": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -2111,6 +2125,7 @@
   ],
 
   "zh_Hant": [
+    "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
