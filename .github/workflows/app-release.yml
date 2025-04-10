@@ -5,6 +5,7 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
       - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
+      - 'action-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
 
 env:
   PROPERTIES_PATH: "./android/key.properties"
@@ -92,10 +93,69 @@ jobs:
       - pre-build
     runs-on: macos-latest
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^16
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
+      - name: Import Certificate
+        env:
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        run: |
+          # refs: https://docs.github.com/en/actions/use-cases-and-examples/deploying/installing-an-apple-certificate-on-macos-runners-for-xcode-development
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          # import certificate from secrets
+          echo "${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}" | base64 --decode > $CERTIFICATE_PATH
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH \
+            -k $KEYCHAIN_PATH \
+            -P "${{ secrets.APPLE_DEV_CERT_PASSWORD }}" \
+            -A -t cert -f pkcs12
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+      - name: Extract App Store Connect API Key
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          APPLE_API_AUTHKEY_P8_BASE64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+        run: |
+          mkdir ./private_keys
+          echo -n "$APPLE_API_AUTHKEY_P8_BASE64" | base64 --decode --output ./private_keys/AuthKey_$APPLE_API_KEY_ID.p8
       - name: Build APP
-        run: flutter build macos --release
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          flutter build macos --release --config-only
+          xcodebuild CODE_SIGNING_ALLOWED=NO \
+            -workspace macos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath build/macos/Runner.xcarchive \
+            archive
+          ls -al build/macos/Runner.xcarchive/Products/Applications
+      - name: Signed APP
+        env:
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          envsubst \
+            < ./installers/macos_exporter/GithubExportOptions.plist \
+            > ./installers/macos_exporter/GithubExportOptions.resolved.plist
+          cat ./installers/macos_exporter/GithubExportOptions.resolved.plist
+          plutil -lint ./installers/macos_exporter/GithubExportOptions.resolved.plist
+          xcodebuild -exportArchive -archivePath ./build/macos/Runner.xcarchive \
+            -exportPath ./build/macos/Build/Products/Release \
+            -exportOptionsPlist ./installers/macos_exporter/GithubExportOptions.resolved.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID $APPLE_API_ISSUER_ID \
+            -authenticationKeyID $APPLE_API_KEY_ID \
+            -authenticationKeyPath `pwd`/private_keys/AuthKey_$APPLE_API_KEY_ID.p8
       - uses: actions/setup-node@v4
         with:
           node-version: 20
