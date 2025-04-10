@@ -492,8 +492,11 @@ class HabitSummaryViewModel extends ChangeNotifier
   void clearAllSelectHabits() => _selectorData.clearAll();
 
   void selectAllHabit({bool listen = true}) {
-    _data.forEach((k, _) => selectHabit(k, listen: false));
-    if (listen) notifyListeners();
+    final results = _sortableCache.lastSortedDataCache
+        .whereType<HabitSummaryDataSortCache>()
+        .map((e) => selectHabit(e.uuid, listen: false))
+        .toList();
+    if (results.isNotEmpty && listen) notifyListeners();
   }
 
   Iterable<HabitSummaryData?> getSelectedHabitsData() =>
