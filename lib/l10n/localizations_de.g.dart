@@ -289,6 +289,11 @@ class L10nDe extends L10n {
   }
 
   @override
+  String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
+    return 'Deleted habit: \"$name\"';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => 'Alle Auswählen';
 
   @override
@@ -994,6 +999,25 @@ class L10nDe extends L10n {
     );
     return '$_temp0';
   }
+
+  @override
+  String appSync_syncInterval_text(String name) {
+    String _temp0 = intl.Intl.selectLogic(
+      name,
+      {
+        'manual': 'Manual',
+        'minute5': '5 Minutes',
+        'minute15': '15 Minutes',
+        'minute30': '30 Minutes',
+        'hour1': '1 Hour',
+        'other': 'Unknown',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get appSync_syncIntervalTile_title => 'Fetch Interval';
 
   @override
   String get appSync_summaryTile_title => 'Sync Server';

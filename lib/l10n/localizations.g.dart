@@ -592,6 +592,12 @@ abstract class L10n {
   /// **'Deleted {count} habits'**
   String habitDisplay_deleteHabitsSuccSnackbarText(int count);
 
+  /// No description provided for @habitDisplay_deleteSingleHabitSuccSnackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted habit: \"{name}\"'**
+  String habitDisplay_deleteSingleHabitSuccSnackbarText(String name);
+
   /// No description provided for @habitDisplay_editPopMenu_selectAll.
   ///
   /// In en, this message translates to:
@@ -1683,6 +1689,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}'**
   String appSync_networkType_text(String type);
+
+  /// Localized display text for app sync interval
+  ///
+  /// In en, this message translates to:
+  /// **'{name, select, manual {Manual} minute5 {5 Minutes} minute15 {15 Minutes} minute30 {30 Minutes} hour1 {1 Hour} other {Unknown}}'**
+  String appSync_syncInterval_text(String name);
+
+  /// No description provided for @appSync_syncIntervalTile_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch Interval'**
+  String get appSync_syncIntervalTile_title;
 
   /// No description provided for @appSync_summaryTile_title.
   ///

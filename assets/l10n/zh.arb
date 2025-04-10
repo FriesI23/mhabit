@@ -266,6 +266,15 @@
       }
     }
   },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "已删除习惯：“{name}”",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "习惯名称。"
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "全选",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "导出",
@@ -861,6 +870,19 @@
       }
     }
   },
+  "appSync_syncInterval_text": "{name, select, manual {手动} minute5 {每 5 分钟} minute15 {每 15 分钟} minute30 {每 30 分钟} hour1 {每小时} other {未知}}",
+  "@appSync_syncInterval_text": {
+    "description": "展示同步间隔的本地文本",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "抓取间隔",
+  "@appSync_syncIntervalTile_title": {},
   "appSync_summaryTile_title": "同步服务器",
   "@appSync_summaryTile_title": {},
   "appSync_summaryTile_subtitle_text_notConfigured": "未配置",

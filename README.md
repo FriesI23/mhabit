@@ -16,6 +16,7 @@ habits more effectively.
 Moreover, this app completely open source.
 
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
+[![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 [![Get it on F-Droid][github-button]][github-myapp]
 
 ## Screenshots
@@ -206,6 +207,8 @@ limitations under the License.
 [export-and-import-tb]: docs/README/images/export-and-import-tb.gif
 [fdroid-button]: docs/README/images/fdroid-get-it-on.png
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
+[lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
+[lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml

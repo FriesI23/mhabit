@@ -39,13 +39,7 @@ class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            switch (interval) {
-              AppSyncFetchInterval.manual => const Text("Manual"),
-              AppSyncFetchInterval.minute5 => const Text("5 Minutes"),
-              AppSyncFetchInterval.minute15 => const Text("15 Minutes"),
-              AppSyncFetchInterval.minute30 => const Text("30 Minutes"),
-              AppSyncFetchInterval.hour1 => const Text("1 Hour"),
-            },
+            Text(interval.getShowText(l10n)),
             if (select == interval) const Icon(Icons.check),
           ],
         ),
@@ -55,7 +49,7 @@ class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     return SimpleDialog(
-      title: const Text("Fetch Interval"),
+      title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
       children: AppSyncFetchInterval.values
           .map((e) => _buildOption(context, e, l10n))
           .toList(),
@@ -68,26 +62,18 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
 
   const AppSyncFetchIntervalTile({super.key, this.onPressed});
 
-  Widget buildSubtitle() => Builder(
-        builder: (context) {
-          final interval =
-              context.select<AppSyncViewModel, AppSyncFetchInterval>(
-                  (vm) => vm.fetchInterval);
-          return switch (interval) {
-            AppSyncFetchInterval.manual => const Text("Manual"),
-            AppSyncFetchInterval.minute5 => const Text("5 Minutes"),
-            AppSyncFetchInterval.minute15 => const Text("15 Minutes"),
-            AppSyncFetchInterval.minute30 => const Text("30 Minutes"),
-            AppSyncFetchInterval.hour1 => const Text("1 Hour"),
-          };
-        },
+  Widget buildSubtitle([L10n? l10n]) =>
+      Selector<AppSyncViewModel, AppSyncFetchInterval>(
+        selector: (context, vm) => vm.fetchInterval,
+        builder: (context, value, child) => Text(value.getShowText(l10n)),
       );
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
-      title: const Text("Fetch Interval"),
-      subtitle: buildSubtitle(),
+      title: Text(l10n?.appSync_syncIntervalTile_title ?? "Fetch Interval"),
+      subtitle: buildSubtitle(l10n),
       onTap: onPressed,
     );
   }
