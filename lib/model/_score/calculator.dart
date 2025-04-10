@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
+
 import '../../common/types.dart';
 import '../habit_date.dart';
 import '../habit_form.dart';
@@ -47,14 +49,14 @@ class HabitScoreCalculator {
 
   num calcEachScoreBetweenRecordDate(
       HabitDate crtDate, HabitDate lastDate, num lastScore) {
-    final duringDays = crtDate.epochDay - lastDate.epochDay;
+    final duringDays = math.max(0, crtDate.epochDay - lastDate.epochDay);
     return _habitScore.getNewScore(
         lastScore, duringDays * _habitScore.calcDecreasedPrt());
   }
 
   num calcScoreAfterLastRecordToEnd(
       HabitDate crtDate, HabitDate endDate, num lastScore) {
-    final lastDuringDays = endDate.epochDay - crtDate.epochDay + 1;
+    final lastDuringDays = math.max(0, endDate.epochDay - crtDate.epochDay + 1);
     return _habitScore.getNewScore(
         lastScore, lastDuringDays * _habitScore.calcDecreasedPrt());
   }

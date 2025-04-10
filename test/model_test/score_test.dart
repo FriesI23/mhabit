@@ -586,6 +586,41 @@ class HabitScoreCalculatorTestCase extends TestCase {
           expect(result, equals(35.0));
         });
 
+        test('calcEachScoreBetweenRecordDate (crtDate <= lastDate)', () {
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
+              habitScore: HabitScore.getImp(
+                  type: HabitType.normal, targetDays: 20, dailyGoal: 1),
+              startDate: HabitDate(2023, 1, 1),
+              iterable: [],
+              isAutoComplated: (date) => false,
+              getHabitRecord: (date) => null);
+
+          for (var c in [
+            (HabitDate(2023, 1, 1), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 2), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 3), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 4), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 5)),
+          ]) {
+            final score = Random().nextDouble() * 100;
+            final result =
+                calculator.calcEachScoreBetweenRecordDate(c.$1, c.$2, score);
+            expect(result, equals(score), reason: "failed $c");
+          }
+
+          for (var c in [
+            (HabitDate(2023, 1, 6), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 7), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 8), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 9), HabitDate(2023, 1, 5)),
+          ]) {
+            final score = Random().nextDouble() * 100;
+            final result =
+                calculator.calcEachScoreBetweenRecordDate(c.$1, c.$2, score);
+            expect(result, lessThanOrEqualTo(score), reason: "failed $c");
+          }
+        });
+
         test('calcScoreAfterLastRecordToEnd', () {
           final HabitScoreCalculator calculator = HabitScoreCalculator(
               habitScore: HabitScore.getImp(
@@ -602,6 +637,40 @@ class HabitScoreCalculatorTestCase extends TestCase {
           result = calculator.calcScoreAfterLastRecordToEnd(
               HabitDate(2023, 1, 10), HabitDate(2023, 1, 14), 70.0);
           expect(result, equals(20.0));
+        });
+
+        test('calcScoreAfterLastRecordToEnd (endDate < crtDate)', () {
+          final HabitScoreCalculator calculator = HabitScoreCalculator(
+              habitScore: HabitScore.getImp(
+                  type: HabitType.normal, targetDays: 10, dailyGoal: 1),
+              startDate: HabitDate(2023, 1, 1),
+              iterable: [],
+              isAutoComplated: (date) => false,
+              getHabitRecord: (date) => null);
+
+          for (var c in [
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 1)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 2)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 3)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 4)),
+          ]) {
+            final score = Random().nextDouble() * 100;
+            final result =
+                calculator.calcScoreAfterLastRecordToEnd(c.$1, c.$2, score);
+            expect(result, equals(score), reason: "failed $c");
+          }
+
+          for (var c in [
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 5)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 6)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 7)),
+            (HabitDate(2023, 1, 5), HabitDate(2023, 1, 8)),
+          ]) {
+            final score = Random().nextDouble() * 100;
+            final result =
+                calculator.calcScoreAfterLastRecordToEnd(c.$1, c.$2, score);
+            expect(result, lessThanOrEqualTo(score), reason: "failed $c");
+          }
         });
 
         test('calcIncreaseDaysBetweenRecordDate, no record', () {
