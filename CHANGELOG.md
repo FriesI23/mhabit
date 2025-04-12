@@ -2,6 +2,39 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.16.3+70
+
+**✨ New Features**
+
+- Add WebDav Network Sync Feature (Experimental).
+- Add Auto Sync Feature.
+- Add Experimental Features Switcher.
+
+> **WARNING**: WebDav Network Sync modifies database fields.
+> Please use the **"Export"** to backup current habits first.
+>
+> **WARNING**: This feature is experimental and may contain disruptive bugs.
+> Please use it with caution.
+
+1. Go to `Settings -> Experimental Features` and enable `"Habit Cloud Sync"` to display the feature entry.
+2. Go to `Settings -> Sync Options` to enable and config new server.
+3. Press `Sync Now` or pull down at main page to sync with server. Sync Progress displayed in Settings.
+
+If you encounter bugs, please describe current network environment and export corresponding (or all) sync failure logs.
+
+**🐛 Bug Fixes**
+
+- Show correct snackbar message after habit deletion. (#247)
+- Fix score bug for habits starting before today. (#248)
+- **"Select All"** only select visible habits. (#249)
+- (Android) Explicitly declare network permission.
+- (Android) Remove unnecessary `READ_EXTERNAL_STORAGE` permission.
+
+**🌐 Localization**
+
+- Update Russian l10n translation, thank for Bora Yurt Page's contribution on Weblate.
+- Update Ukrainian l10n translation, thank for Bora Максим Горпиніч's contribution on Weblate.
+
 ## 1.15.8+66
 
 - Update Traditional Chinese l10n translation, thank for Peter Dave Hello's contribution on Github.

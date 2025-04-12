@@ -1,13 +1,7 @@
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
+**✨ New Features**
 
-# Release: v1.16.3+70
-
-## ✨ New Features
-
+- Add WebDav Network Sync Feature (Experimental).
 - Add Auto Sync Feature.
-- Add WebDav Network Sync.
 - Add Experimental Features Switcher.
 
 > **WARNING**: WebDav Network Sync modifies database fields.
@@ -22,22 +16,15 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 If you encounter bugs, please describe current network environment and export corresponding (or all) sync failure logs.
 
-## 🐛 Bug Fixes
+**🐛 Bug Fixes**
 
 - Show correct snackbar message after habit deletion. (#247)
 - Fix score bug for habits starting before today. (#248)
 - **"Select All"** only select visible habits. (#249)
+- (Android) Explicitly declare network permission.
+- (Android) Remove unnecessary `READ_EXTERNAL_STORAGE` permission.
 
-### 🤖 Bug Fixes: Android
-
-- Explicitly declare network permission.
-- Remove unnecessary `READ_EXTERNAL_STORAGE` permission.
-
-## 🌐 Localization
+**🌐 Localization**
 
 - Update Russian l10n translation, thank for Bora Yurt Page's contribution on Weblate.
 - Update Ukrainian l10n translation, thank for Bora Максим Горпиніч's contribution on Weblate.
-
-## 📝 Documentation
-
-- Add `LzzyOnDroid` badge to **README.md**.
