@@ -2039,12 +2039,6 @@
     "confirmDialog_cancel_text"
   ],
 
-  "uk": [
-    "habitDisplay_deleteSingleHabitSuccSnackbarText",
-    "appSync_syncInterval_text",
-    "appSync_syncIntervalTile_title"
-  ],
-
   "vi": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
