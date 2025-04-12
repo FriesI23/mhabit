@@ -976,5 +976,77 @@
   "userAction_doubleTap": "Doble",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Longitud",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSetting_syncOption_titleText": "Opciones de sincronización",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_syncingText": "Sincronizando...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_text": "Última sincronización: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "Última sincronización (Error): N/A",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_serverEditor_advance_titleText": "Configuración avanzada",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSetting_synSubgroupText": "Sincronizar",
+  "@appSetting_synSubgroupText": {},
+  "appSync_nowTile_titleText_syncing": "Sincronizando",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_cancellingText": "Cancelando...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_errorText": "Última sincronización (Error): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_cancelText": "Última sincronización (Cancelada): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_syncingText_withPrt": "Sincronizando: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_serverEditor_usernameTile_titleText": "Usuario",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "Introduzca una ruta válida de WebDAV.",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "¡La ruta no puede estar vacía!",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_passwordTile_titleText": "Contraseña",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "Ruta",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "Características experimentales",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_titleText": "Confirmar sincronización",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_nowTile_text_noDate": "Última sincronización: N/A",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "Ignorar certificado SSL",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {}
 }
