@@ -1,5 +1,9 @@
 /* groovylint-disable CompileStatic, DuplicateStringLiteral, NoDef, VariableTypeRequired */
 
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -114,6 +118,21 @@ android {
         }
     }
 
+    // For Flutter multi-platform compatibility, only use one flavor dimension.
+    flavorDimensions += 'default'
+
+    productFlavors {
+        f_generic {
+            dimension 'default'
+        }
+
+        f_dev {
+            dimension 'default'
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-dev'
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -126,6 +145,40 @@ android {
     }
 
     namespace 'io.github.friesi23.mhabit'
+}
+
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def abi = output.getFilter(com.android.build.api.variant.FilterConfiguration.FilterType.ABI.name())
+            def flavorName = variant.flavorName
+            def buildType = variant.buildType.name
+            if (flavorName != 'f_generic') {
+                return
+            }
+            def fileName = abi != null
+                ? "app-${abi}-${buildType}.apk"
+                : "app-${buildType}.apk"
+
+            //output.outputFileName = fileName
+
+            // This task ensures compatibility when no flavor is specified.
+            variant.assembleProvider.get().doLast {
+                def src = output.outputFile
+                def destDir = file("${project.buildDir}/outputs/flutter-apk")
+                def destFile = destDir.toPath().resolve(fileName)
+                if (!Files.exists(destDir.toPath())) {
+                    Files.createDirectories(destDir.toPath())
+                }
+                println("Copying $src to $destFile")
+                Files.copy(src.toPath(), destFile, StandardCopyOption.REPLACE_EXISTING)
+
+                def sha1 = MessageDigest.getInstance('SHA-1').digest(src.bytes).encodeHex().toString()
+                def sha1File = destDir.toPath().resolve("${fileName}.sha1")
+                sha1File.toFile().text = "$sha1"
+            }
+        }
+    }
 }
 
 flutter {

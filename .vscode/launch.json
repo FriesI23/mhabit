@@ -5,10 +5,44 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "mhabit dev debug",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "f_dev"
+            ]
+        },
+        {
+            "name": "mhabit dev",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "f_dev"
+            ]
+        },
+        {
+            "name": "mhabit debug",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "f_generic"
+            ]
+        },
+        {
             "name": "mhabit",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "debug"
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "f_generic"
+            ]
         }
     ]
 }

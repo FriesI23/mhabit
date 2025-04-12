@@ -65,13 +65,23 @@ jobs:
           echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
           echo "${{ secrets.APP_SIGN_KEY_JKS }}" | base64 --decode > android/app/key.jks
       - name: Build APPBUNDLE
-        run: flutter build appbundle --release
+        run: |
+          flutter build appbundle --release --flavor f_generic
+          mkdir -p build/app/outputs/bundle/release
+          cp build/app/outputs/bundle/f_genericRelease/app-f_generic-release.aab \
+            build/app/outputs/bundle/release/app-release.aab
+          md5sum build/app/outputs/bundle/release/app-release.aab
       - name: Build FAT-APK
         run: |
           flutter build apk --release
           md5sum build/app/outputs/flutter-apk/app-release.apk
+
       - name: Build APK
-        run: flutter build apk --split-per-abi
+        run: |
+          flutter build apk --split-per-abi
+          md5sum build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+          md5sum build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          md5sum build/app/outputs/flutter-apk/app-x86_64-release.apk
       - name: Released - Android
         uses: ncipollo/release-action@v1
         with:
