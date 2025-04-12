@@ -290,7 +290,7 @@ class L10nUk extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Вилучена звичка: \"$name\"';
   }
 
   @override
@@ -1017,7 +1017,7 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Інтервал отримання';
 
   @override
   String get appSync_summaryTile_title => 'Сервер синхронізації';
