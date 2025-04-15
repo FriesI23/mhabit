@@ -9,7 +9,7 @@ class L10nEs extends L10n {
   L10nEs([String locale = 'es']) : super(locale);
 
   @override
-  String get localeScriptName => 'Inglés';
+  String get localeScriptName => 'Español';
 
   @override
   String get appName => 'Table Habit';
