@@ -129,7 +129,7 @@ multiple versions on your local machine, or simply use this submodule to build i
 2. open an android or ios emulator
 3. run `flutter run --debug`
 
-### Building for iOS
+### Building for iOS / macOS
 
 iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead command above.
 
