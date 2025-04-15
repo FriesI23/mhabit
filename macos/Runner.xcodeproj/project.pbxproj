@@ -108,7 +108,6 @@
 		D91BB4D52DAE351C00E91D6C /* dev-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "dev-InfoPlist.strings"; path = "zh-Hans.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D72DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "en.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D82DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "zh-Hans.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
-		D91BB4DA2DAE356400E91D6C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainMenu.strings"; sourceTree = "<group>"; };
 		E55241C1009C86550E0FFAF3 /* Pods-Runner.debug-f_generic.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-f_generic.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-f_generic.xcconfig"; sourceTree = "<group>"; };
 		E5F6967CFBBF82459E9BCAA2 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -513,7 +512,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				33CC10F52044A3C60003C045 /* Base */,
-				D91BB4DA2DAE356400E91D6C /* zh-Hans */,
 			);
 			name = MainMenu.xib;
 			path = Runner;
