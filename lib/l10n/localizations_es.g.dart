@@ -810,19 +810,19 @@ class L10nEs extends L10n {
   String get appSetting_about_titleText => 'Acerca de';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'Características experimentales';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Sincronizar';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Opciones de sincronización';
 
   @override
   String get appSync_nowTile_titleText => 'Sync Now';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Sincronizando';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -835,23 +835,23 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Última sincronización: N/A';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Última sincronización: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'Última sincronización (Error): N/A';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Última sincronización (Error): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Sincronizando...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -861,18 +861,18 @@ class L10nEs extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Sincronizando: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Cancelando...';
 
   @override
   String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Última sincronización (Cancelada): $dateStr';
   }
 
   @override
@@ -943,7 +943,7 @@ class L10nEs extends L10n {
   String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirmar sincronización';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
@@ -1053,28 +1053,28 @@ class L10nEs extends L10n {
   String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Configuración avanzada';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Ruta';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'Introduzca una ruta válida de WebDAV.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => '¡La ruta no puede estar vacía!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Usuario';
 
   @override
   String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Contraseña';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignorar certificado SSL';
 
   @override
   String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
