@@ -53,13 +53,14 @@ defaultConfig {
 </locale-config>
 ```
 
-## iOS
+## iOS / macOS
 
 1. Add Localization from `Project -> Runner -> Info`
 2. Select `<flavorName>-InfoPlist.strings` and press `Finish`
 3. select `<flavorName>-InfoPlist.strings` in left panel, expand tree and select `<flavorName>-InfoPlist.strings (XXXXX)`
 4. rename `CFBundleDisplayName` value to translatted string.
 
-```strings
+```swift
 CFBundleDisplayName = "Table Habit";
+CFBundleName = "Table Habit"; // Only for macOS
 ```
