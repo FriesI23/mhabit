@@ -129,7 +129,13 @@ multiple versions on your local machine, or simply use this submodule to build i
 2. open an android or ios emulator
 3. run `flutter run --debug`
 
-Building for Linux requires:
+### Building for iOS
+
+iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead command above.
+
+### Building for Linux
+
+**requires:**
 
 1. installing the following packages for the [SQFlite database][sqflite-ffi-linux]:
 
