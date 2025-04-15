@@ -140,11 +140,10 @@ jobs:
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          flutter build macos --release --config-only
+          flutter build macos --release --config-only --flavor f_generic
           xcodebuild CODE_SIGNING_ALLOWED=NO \
             -workspace macos/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
+            -scheme f_generic \
             -archivePath build/macos/Runner.xcarchive \
             archive
           ls -al build/macos/Runner.xcarchive/Products/Applications
