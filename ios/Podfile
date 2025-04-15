@@ -8,6 +8,14 @@ project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
   'Release' => :release,
+  # Flavor: dev
+  'Debug-f_dev' => :debug,
+  'Profile-f_dev' => :release,
+  'Release-f_dev' => :release,
+  # Flavor: generic
+  'Debug-f_generic' => :debug,
+  'Profile-f_generic' => :release,
+  'Release-f_generic' => :release,
 }
 
 def flutter_root
