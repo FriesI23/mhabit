@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mhabit dev debug",
+            "name": "mhabit (f_dev)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -15,7 +15,17 @@
             ]
         },
         {
-            "name": "mhabit dev",
+            "name": "mhabit profile (f_dev)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "f_dev"
+            ]
+        },
+        {
+            "name": "mhabit release (f_dev)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
@@ -25,10 +35,30 @@
             ]
         },
         {
-            "name": "mhabit debug",
+            "name": "mhabit (f_generic)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "f_generic"
+            ]
+        },
+        {
+            "name": "mhabit profile (f_generic)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "f_generic"
+            ]
+        },
+        {
+            "name": "mhabit release (f_generic)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
             "args": [
                 "--flavor",
                 "f_generic"
@@ -38,11 +68,19 @@
             "name": "mhabit",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release",
-            "args": [
-                "--flavor",
-                "f_generic"
-            ]
+            "flutterMode": "debug"
+        },
+        {
+            "name": "mhabit profile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "mhabit release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
         }
     ]
 }
