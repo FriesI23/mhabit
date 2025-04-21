@@ -65,6 +65,36 @@
             ]
         },
         {
+            "name": "mhabit (f_store)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "f_store"
+            ]
+        },
+        {
+            "name": "mhabit profile (f_store)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "f_store"
+            ]
+        },
+        {
+            "name": "mhabit release (f_store)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "f_store"
+            ]
+        },
+        {
             "name": "mhabit",
             "request": "launch",
             "type": "dart",
