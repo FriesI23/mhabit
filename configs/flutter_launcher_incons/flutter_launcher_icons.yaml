@@ -7,6 +7,8 @@ flutter_launcher_icons:
   # iOS
   ios: true
   image_path_ios: "assets/logo/icon-1024x1024.png"
+  image_path_ios_dark_transparent: "assets/logo/icon-ios-dark-1024x1024.png"
+  image_path_ios_tinted_grayscale: "assets/logo/icon-ios-grey-1024x1024.png"
   remove_alpha_ios: true
   # MacOS
   macos:
