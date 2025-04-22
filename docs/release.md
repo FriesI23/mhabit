@@ -4,6 +4,21 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Release:
 
+## v1.16.5+72
+
+## 🍎 iOS
+
+- **Add Flavor:**
+  - `f_store`: For App Store release builds
+
+- **Generate Logo Variants:**
+  - More Info See: [Apple Human Interface Guidelines for App Icons](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS)
+  - Dark
+  - Tinted
+
+- **CI:**
+  - Add iOS Release CI (For unsigned IPA)
+
 ## v1.16.4+71
 
 ## ✨ New Features
