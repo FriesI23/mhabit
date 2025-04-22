@@ -231,7 +231,7 @@ jobs:
         shell: bash
         run: echo "${{ secrets.APP_SIGN_KEY_PFX }}" | base64 --decode > windows/certificate/publish.pfx
       - name: Build MSIX
-        run: .flutter\bin\dart run msix:create --architecture x64 --output-name mhabit_x64 --certificate-path windows\certificate\publish.pfx --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' --install-certificate false
+        run: .flutter\bin\dart run msix:create --architecture x64 --output-name mhabit_x64 --certificate-path windows\certificate\publish.pfx --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' --signtool-options "/td SHA256" --install-certificate false
       - name: Released - Windows
         uses: ncipollo/release-action@v1
         with:
