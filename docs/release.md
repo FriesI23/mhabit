@@ -4,6 +4,16 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Release:
 
+## v1.16.6+73
+
+## ✨ New Features
+
+- Add iOS and Android Launch Screen Image.
+
+## 🪟 Windows
+
+- Fix Windows MSIX Builder (#261)
+
 ## v1.16.5+72
 
 ## 🍎 iOS
