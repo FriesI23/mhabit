@@ -21,3 +21,7 @@ dart run flutter_native_splash:create \
 # dart run flutter_native_splash:create \
 #     --flavor f_dev \
 #     --path "$SCRIPT_DIR/../configs/flutter_native_splash/flutter_native_splash-f_dev.yaml"
+
+find "$SCRIPT_DIR/../ios/Runner" \
+    \( -name "Info.plist" -o -name "*-Info.plist" \) \
+    -exec plutil -convert xml1 {} \;

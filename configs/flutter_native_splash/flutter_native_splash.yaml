@@ -17,4 +17,6 @@ flutter_native_splash:
   web: false
   fullscreen: true
   info_plist_files:
+    - ios/Runner/Info.plist
     - ios/Runner/dev-Info.plist
+    - ios/Runner/generic-Info.plist
