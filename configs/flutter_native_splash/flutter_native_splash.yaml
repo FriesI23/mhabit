@@ -8,7 +8,7 @@ flutter_native_splash:
     color: "#458EF7"
     color_dark: "#1E4C8F"
     image: assets/logo/foreground-noshadow-1024x1024.png
-    branding: assets/images/transparent-512x512.png
+    branding: assets/others/transparent-512x512.png
 
   ios: true
   image_ios: assets/logo/macos-1024x1024.png
