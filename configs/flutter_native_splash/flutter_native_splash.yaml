@@ -1,0 +1,20 @@
+flutter_native_splash:
+  color: "#FFFAFA"
+  color_dark: "#000505"
+
+  android: true
+  image_android: assets/logo/macos-1024x1024.png
+  android_12:
+    color: "#458EF7"
+    color_dark: "#1E4C8F"
+    image: assets/logo/foreground-noshadow-1024x1024.png
+    branding: assets/images/transparent-512x512.png
+
+  ios: true
+  image_ios: assets/logo/macos-1024x1024.png
+  image_dark_ios: assets/logo/icon-ios-dark-1024x1024.png
+
+  web: false
+  fullscreen: true
+  info_plist_files:
+    - ios/Runner/dev-Info.plist
