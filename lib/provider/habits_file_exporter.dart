@@ -46,8 +46,8 @@ class HabitFileExporterViewModel extends ChangeNotifier
   Future<String> _writeDataToTmpDir(String fileName, String data) =>
       AppPathProvider()
           .getExportHabitsDirPath()
-          .then((value) => File(path.join(value, fileName)))
-          .then((value) => (value..writeAsString(data)).path);
+          .then((value) => File(path.join(value, fileName)).writeAsString(data))
+          .then((value) => value.path);
 
   Map<String, Object?> formatExportJsonData(
       {Iterable<HabitExportData>? habits}) {
