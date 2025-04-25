@@ -236,8 +236,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
 
   void _onImportAllTilePressed() async {
     if (!mounted) return;
-    final XFile? file =
-        await openFile().timeout(const Duration(seconds: 5)).catchError((e, s) {
+    final XFile? file = await openFile().catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't open file picker"],
           error: e,
@@ -246,9 +245,14 @@ class _AppSettingView extends State<AppSettingView> with XShare {
     });
 
     if (!mounted || file == null) return;
+    // Avoid using [readAsString] to reduce compatibility issues
+    // across different platforms.
+    //
+    // Android: file.readAsString can’t correctly handle UTF-8.
     final String rawJsonData = await file
-        .readAsString()
-        .timeout(const Duration(seconds: 5))
+        .readAsBytes()
+        .then((bytes) => utf8.decode(bytes))
+        .timeout(const Duration(seconds: 10))
         .catchError((e, s) {
       appLog.load.error("$widget._onImportAllTilePressed",
           ex: ["Can't read file", file],
