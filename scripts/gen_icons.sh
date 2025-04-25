@@ -18,13 +18,13 @@ flutter pub run icon_font_generator \
 --from=assets/icons/sort_icons \
 --class-name=HabitSortIcons \
 --out-font=assets/fonts/sort_icons.ttf \
---out-flutter=lib/theme/_icons/sort_icons.g.dart &
+--out-flutter=lib/theme/_icons/sort_icons.g.dart
 
 flutter pub run icon_font_generator \
 --from=assets/icons/calendar_icons \
 --class-name=HabitCalIcons \
 --out-font=assets/fonts/cal_icons.ttf \
---out-flutter=lib/theme/_icons/cal_icons.g.dart &
+--out-flutter=lib/theme/_icons/cal_icons.g.dart
 
 flutter pub run icon_font_generator \
 --from=assets/icons/progress_icons \

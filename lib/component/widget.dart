@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart' show EdgeInsets, EdgeInsetsDirectional;
 
 export './widgets/animated_linear_progress.dart';
+export './widgets/beta_badge.dart';
 export './widgets/chip_list.dart';
 export './widgets/color_display_chip.dart';
 export './widgets/data_arrow_container.dart';
