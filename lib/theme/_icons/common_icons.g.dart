@@ -15,5 +15,6 @@ class _CommonIconsData extends IconData {
 class CommonIcons {
   const CommonIcons._();
 
-  static const IconData la_donate = _CommonIconsData(0xf101);
+  static const IconData beta = _CommonIconsData(0xf101);
+  static const IconData la_donate = _CommonIconsData(0xf102);
 }
