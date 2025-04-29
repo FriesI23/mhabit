@@ -1,5 +1,50 @@
 # 更新日志
 
+## 1.16.7+74
+
+**✨ 新功能**
+
+- 添加 iOS 和 Android 启动屏幕图片。
+- 默认启用应用同步功能（#264）。
+
+**🐛 Bug 修复**
+
+- 选择备份文件后导入未开始的问题（#257）。
+- 西里尔字母和表情符号编码错误的问题（#254）。
+
+**🍎 iOS**
+
+- **添加构建 Flavor：**
+  - `f_dev`：用于 iOS 开发构建。
+  - `f_generic`：用于 iOS 发布构建。
+  - `f_store`：用于 iOS App Store 发布构建。
+- **生成 Logo 变体：**
+  - 深色版
+  - 淡色版
+  - [更多信息](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS)
+- **CI：**
+  - 添加 iOS 发布 CI（生成未签名 IPA 文件）。
+
+**🍏 macOS**
+
+- **添加构建 Flavor：**
+  - `f_dev`：用于 macOS 开发构建。
+  - `f_generic`：用于 macOS 发布构建。
+
+**🪟 Windows**
+
+- 修复 Windows MSIX 打包问题（#261）。
+
+**🌐 本地化**
+
+- 更新西班牙语本地化翻译，感谢 Patricio Carrau 在 Weblate 上的贡献。
+
+**📝 文档**
+
+- 更新 **README.md** 中 iOS / macOS 的构建说明。
+- 更新 **README.md** 中 iOS Testflight 的说明。
+- 更新 **add_new_locale_support.md**。
+
 ## 1.16.3+70
 
 **✨ 新功能**

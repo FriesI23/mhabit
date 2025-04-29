@@ -2,50 +2,47 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Release:
-
-## v1.16.6+73
+# Release: v1.16.7+74
 
 ## ✨ New Features
 
 - Add iOS and Android Launch Screen Image.
+- Enable app sync by default (#264)
+
+## 🐛 Bug Fixes
+
+- Import does not start after selecting the backup file (#257)
+- Incorrect encoding of Cyrillic characters and emojis (#254)
+
+## 🍎 iOS
+
+- **Add Flavors:**
+  - `f_dev`: For iOS development builds
+  - `f_generic`: For iOS release builds
+  - `f_store`: For iOS App Store release builds
+- **Generate Logo Variants:**
+  - Dark
+  - Tinted
+  - [More Info](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS)
+- **CI:**
+  - Add iOS Release CI (for unsigned IPA)
+
+## 🍏 macOS
+
+- **Add Flavors:**
+  - `f_dev`: For macOS development builds
+  - `f_generic`: For macOS release builds
 
 ## 🪟 Windows
 
 - Fix Windows MSIX Builder (#261)
 
-## v1.16.5+72
-
-## 🍎 iOS
-
-- **Add Flavor:**
-  - `f_store`: For App Store release builds
-
-- **Generate Logo Variants:**
-  - More Info See: [Apple Human Interface Guidelines for App Icons](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS)
-  - Dark
-  - Tinted
-
-- **CI:**
-  - Add iOS Release CI (For unsigned IPA)
-
-## v1.16.4+71
-
-## ✨ New Features
-
-- **Add iOS Flavors:**
-  - `f_dev`: For development builds
-  - `f_generic`: For release builds
-
-- **Add macOS Flavors:**
-  - `f_dev`: For development builds
-  - `f_generic`: For release builds
-
 ## 🌐 Localization
 
-- Update Spanish l10n translation, thank for Patricio Carrau's contribution on Weblate.
+- Update Spanish l10n translation, thanks to Patricio Carrau's contribution on Weblate.
 
 ## 📝 Documentation
 
 - Update build notices for iOS / macOS in **README.md**.
+- Update Testflight for iOS in **README.md**.
 - Update **add_new_locale_support.md**.

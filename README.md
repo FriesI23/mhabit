@@ -19,6 +19,10 @@ Moreover, this app completely open source.
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 [![Get it on F-Droid][github-button]][github-myapp]
 
+**iOS**
+
+[![Get it on F-Droid][testflight-button]][ios-testflight-release]
+
 ## Screenshots
 
 [![Create new habit][create-new-habit-tb]][create-new-habit]
@@ -57,13 +61,19 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                          | desc.                              |
-| -------- | ----- | ------------------------------------------------ | ---------------------------------- |
-| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp] |                                    |
-| ios      | ✅    |                                                  |                                    |
-| macos    | ✅    | [Github][github-myapp]                           |                                    |
-| windows  | 🟨    | [Github][github-myapp]                           | unimplemented features: `reminder` |
-| linux    | 🟨    |                                                  | limit features: `reminder`         |
+| platform | build | publish                                                                                                       | desc.                              |
+| -------- | ----- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp]                                                              |                                    |
+| ios      | ✅    | [Github][github-myapp] / [TestFlight(Pre)][ios-testflight-pre-release] / [TestFlight][ios-testflight-release] |                                    |
+| macos    | ✅    | [Github][github-myapp]                                                                                        |                                    |
+| windows  | 🟨    | [Github][github-myapp]                                                                                        | unimplemented features: `reminder` |
+| linux    | 🟨    |                                                                                                               | limit features: `reminder`         |
+
+### Note: Installation iOS (Sideloading)
+
+1. Install [**AltStore**][altstore] / [**SideStore**][sidestore] follow official instructions.
+2. Download `mhabit-unsigned.ipa` on your iOS device directly from the [latest releases][github-myapp].
+3. Install this IPA file.
 
 ### Note: Windows MSIX Insaller
 
@@ -115,10 +125,11 @@ After operations above, this MSIX package should now be able to install successf
 
 ## Todo
 
-| status | progress               | desc.                    |
-| ------ | ---------------------- | ------------------------ |
-| -      | Publish to Google Play |                          |
-| -      | Complete Documentation | [`README.md`](README.md) |
+| status      | progress                   | desc. |
+| ----------- | -------------------------- | ----- |
+| -           | Publish to Google Play     |       |
+| In Progress | Publish to iOS App Store   |       |
+| -           | Publish to macOS App Store |       |
 
 ## Build from source
 
@@ -215,6 +226,7 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
+[testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml
@@ -248,3 +260,7 @@ limitations under the License.
 [flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
 [msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
 [fss-linux]: https://pub.dev/packages/flutter_secure_storage#configure-linux-version
+[ios-testflight-pre-release]: https://testflight.apple.com/join/aJ5PWqaR
+[ios-testflight-release]: https://testflight.apple.com/join/uNmD23cS
+[altstore]: https://altstore.io/
+[sidestore]: https://sidestore.io/
