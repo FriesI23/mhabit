@@ -57,6 +57,17 @@ class AppInfo implements AsyncInitialization {
 
     if (isAndroidAndAdaptToFullScreen()) {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    } else if (Platform.isIOS) {
+      /// Refs from: https://github.com/jonbhanson/flutter_native_splash/blob/v2.4.4/README.md?plain=1#L169
+      ///
+      /// > Unlike Android, iOS will not automatically show the notification bar when the app loads.
+      /// >   To show the notification bar, add the following code to your Flutter app:
+      /// >   WidgetsFlutterBinding.ensureInitialized();
+      /// >   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
+      ///
+      /// NOTE: Please note this change when `flutter_native_splash` version changes.
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
     }
   }
 
