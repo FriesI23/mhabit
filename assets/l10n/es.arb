@@ -1048,5 +1048,33 @@
   "userAction_doubleTap": "Doble",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Longitud",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSync_webdav_newServerConfirmDialog_titleText": "Ubicación nueva",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Hábito eliminado: \"{name}\"",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
+  "appSync_nowTile_cancelText_noDate": "Última sincronización (Cancelada): N/A",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_titleText": "Sincronizar ahora",
+  "@appSync_nowTile_titleText": {},
+  "appSync_failedTile_errorText": "[Error]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_confirmText": "Sincronizar ahora!",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_serverEditor_saveDialog_titleText": "Confirmar cambios",
+  "@appSync_serverEditor_saveDialog_titleText": {}
 }
