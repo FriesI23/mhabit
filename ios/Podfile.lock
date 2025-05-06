@@ -95,7 +95,7 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_native_splash: f71420956eb811e6d310720fee915f1d42852e7a
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  flutter_timezone: ffb07bdad3c6276af8dada0f11978d8a1f8a20bb
+  flutter_timezone: ac3da59ac941ff1c98a2e1f0293420e020120282
   open_file_plus: 05737718530c14cf02868e3b7754d7fe4df76d8b
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
