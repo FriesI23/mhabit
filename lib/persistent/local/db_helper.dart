@@ -232,6 +232,8 @@ class DatabaseToV4MigrateHelper {
   /// Add sync entries for all habits and records into sync table
   /// to ensure data enters the synchronization.
   Future<void> initSyncTable() async {
+    final stopwatch = Stopwatch()..start();
+    appLog.db.warn("DatabaseToV4MigrateHelper.initSyncTable");
     final batch = db.batch();
     final habitDirtyMap = <HabitUUID, int>{};
     await db.query(TableName.records, columns: const [
@@ -257,29 +259,56 @@ class DatabaseToV4MigrateHelper {
       }
     });
     await batch.commit(continueOnError: true, noResult: true);
+    appLog.db.warn("DatabaseToV4MigrateHelper.initSyncTable",
+        ex: ['Done', (stopwatch..stop()).elapsed]);
   }
 
   /// Due to change in [genRecordUUID] method,
   /// all [HabitRecordUUID] need to be recalculated.
   Future<void> reCalcHabitRecordUUIDs() async {
+    final stopwatch = Stopwatch()..start();
+    appLog.db.warn("DatabaseToV4MigrateHelper.reCalcHabitRecordUUIDs");
+    var updateCount = 0;
+    var deleteCount = 0;
     final batch = db.batch();
     await db.query(TableName.records, columns: const [
       RecordDBCellKey.uuid,
       RecordDBCellKey.parentUUID,
       RecordDBCellKey.recordDate
     ]).then((results) {
-      for (var result in results) {
+      final uuidMap = Map<HabitRecordUUID, HabitRecordUUID>.fromEntries(
+          results.map((result) {
         final uuid = result[RecordDBCellKey.uuid] as String;
         final habitUUID = result[RecordDBCellKey.parentUUID] as String;
         final recordDate = result[RecordDBCellKey.recordDate] as int?;
         final newRecorUUID = genRecordUUID(habitUUID, recordDate);
-        batch.update(TableName.records, {RecordDBCellKey.uuid: newRecorUUID},
+        appLog.db.info("reCalcHabitRecordUUIDs.preChangeRecordUUID",
+            ex: [habitUUID, recordDate, uuid, newRecorUUID]);
+        return MapEntry(uuid, newRecorUUID);
+      }));
+      final opList = processDuplicatedMap(uuidMap);
+      for (var pair in opList.updateList) {
+        final uuid = pair.key;
+        final newUuid = pair.value;
+        batch.update(TableName.records, {RecordDBCellKey.uuid: newUuid},
             where: "${RecordDBCellKey.uuid} = ?", whereArgs: [uuid]);
         appLog.db.info("reCalcHabitRecordUUIDs.changeRecordUUID",
-            ex: [habitUUID, recordDate, uuid, newRecorUUID]);
+            ex: ['update', uuid, newUuid]);
+        updateCount += 1;
+      }
+      for (var pair in opList.deleteList) {
+        final uuid = pair.key;
+        final newUuid = pair.value;
+        batch.delete(TableName.records,
+            where: "${RecordDBCellKey.uuid} = ?", whereArgs: [uuid]);
+        appLog.db.info("reCalcHabitRecordUUIDs.changeRecordUUID",
+            ex: ['delete', uuid, '~', newUuid]);
+        deleteCount += 1;
       }
     });
     await batch.commit(continueOnError: false, noResult: true);
+    appLog.db.warn("DatabaseToV4MigrateHelper.reCalcHabitRecordUUIDs",
+        ex: ['Done', updateCount, deleteCount, (stopwatch..stop()).elapsed]);
   }
 }
 

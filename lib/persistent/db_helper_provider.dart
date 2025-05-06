@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../common/async.dart';
@@ -38,7 +39,10 @@ class DBHelperViewModel extends ChangeNotifier
   DBHelperViewModel() : local = DBHelper();
 
   CancelableCompleter<bool?> doInit(
-      {required bool reinit, Duration timeout = const Duration(seconds: 5)}) {
+      {required bool reinit,
+      Duration timeout = kDebugMode
+          ? const Duration(seconds: 600)
+          : const Duration(seconds: 60)}) {
     final completer = CancelableCompleter<bool>();
     local
         .init(reinit: reinit)
