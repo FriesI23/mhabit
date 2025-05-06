@@ -290,7 +290,7 @@ class L10nEs extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Hábito eliminado: \"$name\"';
   }
 
   @override
@@ -819,7 +819,7 @@ class L10nEs extends L10n {
   String get appSetting_syncOption_titleText => 'Opciones de sincronización';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Sincronizar ahora';
 
   @override
   String get appSync_nowTile_titleText_syncing => 'Sincronizando';
@@ -868,7 +868,7 @@ class L10nEs extends L10n {
   String get appSync_nowTile_cancellingText => 'Cancelando...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'Última sincronización (Cancelada): N/A';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
@@ -934,13 +934,13 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Ubicación nueva';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sincronizar ahora!';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirmar sincronización';
@@ -1029,7 +1029,7 @@ class L10nEs extends L10n {
   String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'Confirmar cambios';
 
   @override
   String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
