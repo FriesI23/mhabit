@@ -21,3 +21,47 @@ Future<String> getSqlFromFile(String filepath) async {
   final data = raw.buffer.asUint8List(raw.offsetInBytes, raw.lengthInBytes);
   return utf8.decode(data);
 }
+
+({
+  List<MapEntry<String, String>> updateList,
+  List<MapEntry<String, String>> deleteList
+}) processDuplicatedMap(Map<String, String> uuidMap) {
+  final seenValues = <String>{};
+  final deleteList = <MapEntry<String, String>>[];
+  final tempList = <MapEntry<String, String>>[];
+  final allKeys = uuidMap.keys.toSet();
+
+  for (var entry in uuidMap.entries) {
+    final value = entry.value;
+
+    if (seenValues.contains(value)) {
+      deleteList.add(entry);
+    } else {
+      seenValues.add(value);
+      tempList.add(entry);
+    }
+  }
+
+  final reorderedList = <MapEntry<String, String>>[];
+  final keyToEntry = Map.fromEntries(tempList.map((e) => MapEntry(e.key, e)));
+
+  final processedKeys = <String>{};
+  for (var entry in tempList) {
+    final key = entry.key;
+    final value = entry.value;
+
+    if (allKeys.contains(value) && !processedKeys.contains(value)) {
+      final priorEntry = keyToEntry[value];
+      if (priorEntry != null) {
+        reorderedList.add(priorEntry);
+        processedKeys.add(value);
+      }
+    }
+
+    if (!processedKeys.contains(key)) {
+      reorderedList.add(entry);
+      processedKeys.add(key);
+    }
+  }
+  return (updateList: reorderedList, deleteList: deleteList);
+}
