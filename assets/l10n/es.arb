@@ -256,6 +256,15 @@
       }
     }
   },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Hábito eliminado: \"{name}\"",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "Seleccionar todo",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Exportar",
@@ -684,6 +693,8 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "Opciones de sincronización",
   "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "Sincronizar ahora",
+  "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "Sincronizando",
   "@appSync_nowTile_titleText_syncing": {},
   "appSync_nowTile_text_noDate": "Última sincronización: N/A",
@@ -725,6 +736,8 @@
   },
   "appSync_nowTile_cancellingText": "Cancelando...",
   "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "Última sincronización (Cancelada): N/A",
+  "@appSync_nowTile_cancelText_noDate": {},
   "appSync_nowTile_cancelText": "Última sincronización (Cancelada): {dateStr}",
   "@appSync_nowTile_cancelText": {
     "placeholders": {
@@ -734,8 +747,23 @@
       }
     }
   },
+  "appSync_failedTile_errorText": "[Error]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "Ubicación nueva",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "Sincronizar ahora!",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
   "appSync_webdav_oldServerConfirmDialog_titleText": "Confirmar sincronización",
   "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_titleText": "Confirmar cambios",
+  "@appSync_serverEditor_saveDialog_titleText": {},
   "appSync_serverEditor_advance_titleText": "Configuración avanzada",
   "@appSync_serverEditor_advance_titleText": {},
   "appSync_serverEditor_pathTile_titleText": "Ruta",
@@ -1048,33 +1076,5 @@
   "userAction_doubleTap": "Doble",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Longitud",
-  "@userAction_longTap": {},
-  "appSync_webdav_newServerConfirmDialog_titleText": "Ubicación nueva",
-  "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Hábito eliminado: \"{name}\"",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Habit name."
-      }
-    }
-  },
-  "appSync_nowTile_cancelText_noDate": "Última sincronización (Cancelada): N/A",
-  "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_titleText": "Sincronizar ahora",
-  "@appSync_nowTile_titleText": {},
-  "appSync_failedTile_errorText": "[Error]: {info}",
-  "@appSync_failedTile_errorText": {
-    "placeholders": {
-      "info": {
-        "type": "String",
-        "description": "Error information."
-      }
-    }
-  },
-  "appSync_webdav_newServerConfirmDialog_confirmText": "Sincronizar ahora!",
-  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
-  "appSync_serverEditor_saveDialog_titleText": "Confirmar cambios",
-  "@appSync_serverEditor_saveDialog_titleText": {}
+  "@userAction_longTap": {}
 }
