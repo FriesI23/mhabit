@@ -2,6 +2,21 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.16.9+77
+
+**🐛 Bug Fixes**
+
+- Show notification bar once app is loaded on iOS
+- Process duplicate uuid when re-calc habit record uuid (#269)
+
+**🌐 Localization**
+
+- Update Spanish l10n translation, thanks to Patricio Carrau's contribution on Weblate.
+
+**🧹 Others**
+
+- chore: bump dependencies (#267)
+
 ## 1.16.7+74
 
 **✨ New Features**

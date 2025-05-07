@@ -1,21 +1,7 @@
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
-
-# Release: v1.16.9+77
-
-<!-- **✨ New Features** -->
-
 **🐛 Bug Fixes**
 
 - Show notification bar once app is loaded on iOS
 - Process duplicate uuid when re-calc habit record uuid (#269)
-
-<!-- **🍎 iOS** -->
-
-<!-- **🍏 macOS** -->
-
-<!-- **🪟 Windows** -->
 
 **🌐 Localization**
 
@@ -24,5 +10,3 @@ Title: Pre-Released or Released: v1.2.3+xx
 **🧹 Others**
 
 - chore: bump dependencies (#267)
-
-<!-- **📝 Documentation** -->
