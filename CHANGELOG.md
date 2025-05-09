@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.16.10+78
+
+**🍎 iOS**
+
+- Add support for iOS app-language preference.
+
+**📝 Documentation**
+
+- Add Privacy Policy file.
+
 ## 1.16.9+77
 
 **🐛 Bug Fixes**

@@ -1,0 +1,7 @@
+**🍎 iOS**
+
+- Add support for iOS app-language preference.
+
+**📝 Documentation**
+
+- Add Privacy Policy file.
