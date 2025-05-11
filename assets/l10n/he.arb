@@ -1,0 +1,9 @@
+{
+  "@@locale": "he",
+  "localeScriptName": "עִברִית",
+  "@localeScriptName": {
+    "description": "I'm not sure if this is the correct local name for Hebrew, please verify."
+  },
+  "appName": "🚧(he) - Table Habit",
+  "@appName": {}
+}

@@ -99,7 +99,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         resourceConfigurations += [
-            'en', 'ar', 'cs', 'de', 'es', 'fa', 'fr', 'it', 'nb-rNO', 'pl', 'pt-rBR',
+            'en', 'ar', 'cs', 'de', 'es', 'fa', 'fr', 'he', 'it', 'nb-rNO', 'pl', 'pt-rBR',
             'ru', 'tr', 'uk', 'vi', 'zh', 'zh-rTW']
     }
 
