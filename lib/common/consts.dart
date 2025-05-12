@@ -153,6 +153,10 @@ const sortPositionConflictDecimalPlaces = 6;
 //#region common
 const minTimeOfDayInt = 0;
 const maxTimeOfDayInt = 1440;
+
+const appFlavorDev = 'f_dev';
+const appFlavorGeneric = 'f_generic';
+const appFlaborStore = 'f_store';
 //#endregion
 
 //#region components
@@ -177,4 +181,8 @@ const kRecordUnknownStatusIcon = Icons.question_mark_outlined;
 const kRecordSkipStatusIcon = Icons.remove_outlined;
 const kRecordDoneStatusIcon = Icons.check_outlined;
 const kRecordZeroStatusIcon = Icons.close_sharp;
+//#endregion
+
+//#region other
+const chinaICPFillingNumber = "浙ICP备2024100574号-2A";
 //#endregion

@@ -17,6 +17,7 @@ import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
@@ -701,6 +702,17 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           ),
         );
 
+    Widget buildChinaIPC(BuildContext context) => Builder(
+          builder: (context) {
+            final locale = Localizations.localeOf(context);
+            final isInMainlandChina =
+                locale.languageCode == 'zh' && locale.scriptCode == null;
+            return appFlavor == appFlaborStore && isInMainlandChina
+                ? const _ChinaICPFillingNumberTile()
+                : const SizedBox();
+          },
+        );
+
     return ColorfulNavibar(
       child: Scaffold(
         appBar: AppBar(
@@ -725,9 +737,28 @@ class _AppSettingView extends State<AppSettingView> with XShare {
               ...buildBackupAndRestoreSubGroup(context),
               ...buildOthersSubGroup(context),
               buildDevelopSubGroup(context),
-              const FixedPagePlaceHolder(),
+              buildChinaIPC(context),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChinaICPFillingNumberTile extends StatelessWidget {
+  const _ChinaICPFillingNumberTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: kListTileContentPadding.copyWith(bottom: 5.0, top: 20.0),
+      child: Center(
+        child: Text(
+          chinaICPFillingNumber,
+          style: theme.textTheme.labelSmall
+              ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.5)),
         ),
       ),
     );
