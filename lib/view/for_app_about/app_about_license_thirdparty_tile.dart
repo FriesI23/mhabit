@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 
 import '../../common/utils.dart';
 import '../../component/widget.dart';
@@ -41,13 +41,12 @@ class _AppAboutThirdPartyLicenseTileState
           content: Scrollbar(
             child: SingleChildScrollView(
               primary: true,
-              child: MarkdownBody(
+              child: ThematicMarkdownBlock(
                 data: licenseText,
-                shrinkWrap: false,
-                onTapLink: (text, href, title) =>
-                    href != null ? launchExternalUrl(Uri.parse(href)) : null,
-                listItemCrossAxisAlignment:
-                    MarkdownListItemCrossAxisAlignment.start,
+                configBuilder: (config) => config.copy(configs: [
+                  LinkConfig(
+                      onTap: (href) => launchExternalUrl(Uri.parse(href))),
+                ]),
               ),
             ),
           ),

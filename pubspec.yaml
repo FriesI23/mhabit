@@ -56,8 +56,7 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   flutter_svg: ^2.0.4
   flutter_timezone: ^4.0.0
-  # TODO: Migrate to markdown_widget
-  flutter_markdown: ^0.7.3+2
+  markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
   package_info_plus: ^8.0.2
   copy_with_extension: ^5.0.0
