@@ -1060,8 +1060,8 @@ class _HabitDescTileList extends StatelessWidget {
           constraints: BoxConstraints(
               minHeight: descMinHeight, minWidth: double.infinity),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ThematicMarkdownBody(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ColorfulMarkdownBlock(
               data: viewmodel.habitDesc,
               colorType: viewmodel.habitColorType,
               textScaler: textScaler,

@@ -14,7 +14,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../component/widget.dart';
 import '../../l10n/localizations.dart';
@@ -39,11 +38,7 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
             child: SingleChildScrollView(
               primary: true,
               scrollDirection: Axis.vertical,
-              child: MarkdownBody(
-                data: "```text\n$licenseText\n```",
-                listItemCrossAxisAlignment:
-                    MarkdownListItemCrossAxisAlignment.start,
-              ),
+              child: ThematicMarkdownBlock(data: "```text\n$licenseText\n```"),
             ),
           ),
         ),

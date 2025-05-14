@@ -13,64 +13,88 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 
 import '../../common/utils.dart';
 import '../../model/habit_form.dart';
 import '../widget.dart';
 
-class ThematicMarkdownBody extends StatelessWidget {
+class ColorfulMarkdownBlock extends StatelessWidget {
   final String data;
   final HabitColorType? colorType;
   final TextScaler? textScaler;
-  final MarkdownImageBuilder? imageBuilder;
-  final MarkdownTapLinkCallback? onTapLink;
 
-  const ThematicMarkdownBody({
+  const ColorfulMarkdownBlock({
     super.key,
     required this.data,
     this.colorType,
     this.textScaler,
-    this.imageBuilder,
-    this.onTapLink,
   });
 
-  MarkdownStyleSheet _getStyleSheet(BuildContext context) {
+  MarkdownConfig _getConfig(BuildContext context) {
     final themeData = Theme.of(context);
-    return MarkdownStyleSheet.fromTheme(themeData).copyWith(
-      textScaler: textScaler ?? MediaQuery.textScalerOf(context),
-      a: TextStyle(color: themeData.colorScheme.primary),
-      blockquote: themeData.textTheme.bodyMedium!
-          .copyWith(color: themeData.colorScheme.primary),
-      blockquoteDecoration: BoxDecoration(
-        color: themeData.colorScheme.onPrimary,
-        borderRadius: BorderRadius.circular(2.0),
+    final isDark = themeData.brightness == Brightness.dark;
+    final config =
+        isDark ? MarkdownConfig.darkConfig : MarkdownConfig.defaultConfig;
+
+    return config.copy(configs: [
+      isDark ? PreConfig.darkConfig : const PreConfig(),
+      BlockquoteConfig(
+        sideColor: themeData.colorScheme.primary.withOpacity(0.5),
+        textColor: themeData.colorScheme.onSurface.withOpacity(0.8),
       ),
-      checkbox: themeData.textTheme.bodyMedium!.copyWith(
-        color: themeData.colorScheme.primary,
+      LinkConfig(
+        style: TextStyle(
+            color: themeData.colorScheme.primary,
+            decoration: TextDecoration.underline),
+        onTap: (href) => launchExternalUrl(Uri.parse(href)),
       ),
-    );
+      // ImgConfig(
+      //   builder: (url, attributes) => const SizedBox(),
+      // ),
+      CheckBoxConfig(
+        builder: (checked) => IconTheme(
+            data: themeData.iconTheme
+                .copyWith(color: themeData.colorScheme.primary),
+            child: MCheckBox(checked: checked)),
+      ),
+    ]);
   }
 
-  Widget _defaultImageBuilder(Uri uri, String? title, String? alt) =>
-      const SizedBox();
+  @override
+  Widget build(BuildContext context) => ThemeWithCustomColors(
+        colorType: colorType,
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+          child: Builder(
+            // Use Builder to apply colorful theme
+            builder: (context) => MarkdownBlock(
+              data: data,
+              config: _getConfig(context),
+            ),
+          ),
+        ),
+      );
+}
 
-  void _defaultTapLinkCallback(String text, String? href, String title) =>
-      href != null ? launchExternalUrl(Uri.parse(href)) : null;
+class ThematicMarkdownBlock extends StatelessWidget {
+  final String data;
+  final MarkdownConfig Function(MarkdownConfig config)? configBuilder;
+
+  const ThematicMarkdownBlock({
+    super.key,
+    required this.data,
+    this.configBuilder,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ThemeWithCustomColors(
-      colorType: colorType,
-      child: Builder(builder: (context) {
-        return MarkdownBody(
-          data: data,
-          styleSheet: _getStyleSheet(context),
-          shrinkWrap: true,
-          imageBuilder: imageBuilder ?? _defaultImageBuilder,
-          onTapLink: onTapLink ?? _defaultTapLinkCallback,
-        );
-      }),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final config =
+        isDark ? MarkdownConfig.darkConfig : MarkdownConfig.defaultConfig;
+    return MarkdownBlock(
+      data: data,
+      config: configBuilder?.call(config) ?? config,
     );
   }
 }

@@ -14,7 +14,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../common/app_info.dart';
 import '../../component/widget.dart';
@@ -51,11 +50,7 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
             child: SingleChildScrollView(
               primary: true,
               scrollDirection: Axis.vertical,
-              child: MarkdownBody(
-                data: text,
-                listItemCrossAxisAlignment:
-                    MarkdownListItemCrossAxisAlignment.start,
-              ),
+              child: ThematicMarkdownBlock(data: text),
             ),
           ),
         ),
