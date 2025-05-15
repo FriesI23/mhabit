@@ -1984,6 +1984,18 @@ abstract class L10n {
   /// **'flutter'**
   String get appAbout_licenseThirdPartyTile_subtitleText;
 
+  /// No description provided for @appAbout_privacyTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get appAbout_privacyTile_titleText;
+
+  /// No description provided for @appAbout_privacyTile_subTitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Access the privacy policy in this app'**
+  String get appAbout_privacyTile_subTitleText;
+
   /// No description provided for @appAbout_donateTile_titleText.
   ///
   /// In en, this message translates to:

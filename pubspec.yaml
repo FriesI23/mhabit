@@ -162,6 +162,7 @@ flutter:
     - LICENSE_THIRDPARTY.md
     - CHANGELOG.md
     - docs/CHANGELOG/
+    - PRIVACY.md
     - configs/about_info.json
     - configs/contributors.json
     - assets/sql/

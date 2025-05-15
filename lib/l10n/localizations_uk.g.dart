@@ -1201,6 +1201,12 @@ class L10nUk extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'тріпотіння';
 
   @override
+  String get appAbout_privacyTile_titleText => 'Privacy';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+
+  @override
   String get appAbout_donateTile_titleText => 'Пожертвуйте';
 
   @override
