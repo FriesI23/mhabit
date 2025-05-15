@@ -1201,6 +1201,12 @@ class L10nCs extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
+  String get appAbout_privacyTile_titleText => 'Privacy';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+
+  @override
   String get appAbout_donateTile_titleText => 'Donate';
 
   @override

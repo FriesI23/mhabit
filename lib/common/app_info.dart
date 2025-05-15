@@ -21,6 +21,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_path_provider.dart';
 import 'async.dart';
+import 'consts.dart';
 
 class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();
@@ -74,6 +75,8 @@ class AppInfo implements AsyncInitialization {
   bool isAndroidAndAdaptToFullScreen() {
     return Platform.isAndroid && _androidBuildVersion!.sdkInt >= 29;
   }
+
+  bool shouldHideDonate() => appFlavor == appFlaborStore && Platform.isIOS;
 
   Future<String> generateAppDebugInfo() => _AppDebugInfoBuilder().build();
 }

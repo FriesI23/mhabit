@@ -1196,6 +1196,12 @@ class L10nZh extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
+  String get appAbout_privacyTile_titleText => '隐私';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => '查看该应用中相关隐私政策';
+
+  @override
   String get appAbout_donateTile_titleText => '捐赠';
 
   @override
