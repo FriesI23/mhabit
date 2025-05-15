@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../assets/assets.dart';
+import '../common/app_info.dart';
 import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../model/contributor.dart';
@@ -128,7 +129,8 @@ class _AppAboutView extends State<AppAboutView> {
           const AppAboutContactEmailTile(),
           const AppAboutLicenseTile(),
           const AppAboutThirdPartyLicenseTile(),
-          AppAboutDonateTile(onPressed: _onDonateTilePressed),
+          if (!AppInfo().shouldHideDonate())
+            AppAboutDonateTile(onPressed: _onDonateTilePressed),
           buildAppAboutContributorTile(context),
         ],
       ),
