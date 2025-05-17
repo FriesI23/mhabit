@@ -67,7 +67,7 @@ class AppProviders extends SingleChildStatelessWidget {
           Provider<Global>(
             create: (context) => Global(),
           ),
-          ChangeNotifierProvider<NotificationChannelData>(
+          Provider<NotificationChannelData>(
             create: (context) => NotificationChannelData(),
           ),
           ChangeNotifierProxyProvider2<ProfileViewModel,

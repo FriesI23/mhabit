@@ -17,27 +17,30 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/app_info.dart';
+import '../l10n/localizations.dart';
+import '../logging/helper.dart';
+import 'notification_service.dart';
 
 @JsonEnum(valueField: "id")
 enum NotificationChannelId {
   debug(
     id: 1,
-    channelName: "Debug channel",
+    channelName: "_Dev",
     category: "debug",
   ),
   habitReminder(
     id: 2,
-    channelName: "Habit reminder channel",
+    channelName: "Habit Reminder Channel",
     category: "habit_reminder",
   ),
   appReminder(
     id: 3,
-    channelName: "Prompt",
+    channelName: "Prompt Channel",
     category: "app_reminder",
   ),
   appDebugger(
     id: 4,
-    channelName: "Debugger",
+    channelName: "Debugger Channel",
     category: "app_debugger",
   );
 
@@ -65,111 +68,112 @@ abstract class NotificationChannelDataABC<T> {
 
 class NotificationAndroidChannelData
     implements NotificationChannelDataABC<AndroidNotificationDetails> {
-  final AndroidNotificationDetails? _debug;
-  final AndroidNotificationDetails? _habitReminder;
-  final AndroidNotificationDetails? _appReminder;
-  final AndroidNotificationDetails? _appDebugger;
+  @override
+  final AndroidNotificationDetails debug;
+  @override
+  final AndroidNotificationDetails habitReminder;
+  @override
+  final AndroidNotificationDetails appReminder;
+  @override
+  final AndroidNotificationDetails appDebugger;
 
-  const NotificationAndroidChannelData({
+  final L10n? l10n;
+
+  NotificationAndroidChannelData({
+    this.l10n,
     AndroidNotificationDetails? debug,
     AndroidNotificationDetails? habitReminder,
     AndroidNotificationDetails? appReminder,
     AndroidNotificationDetails? appDebugger,
-  })  : _debug = debug,
-        _habitReminder = habitReminder,
-        _appReminder = appReminder,
-        _appDebugger = appDebugger;
+  })  : debug = debug ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.debug.name),
+              NotificationChannelId.debug.channelName,
+              importance: Importance.min,
+              priority: Priority.low,
+            ),
+        habitReminder = habitReminder ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.habitReminder.name),
+              l10n?.channelName_habitReminder ??
+                  NotificationChannelId.habitReminder.channelName,
+              importance: Importance.high,
+              priority: Priority.defaultPriority,
+            ),
+        appReminder = appReminder ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.appReminder.name),
+              l10n?.channelName_appReminder ??
+                  NotificationChannelId.appReminder.channelName,
+              importance: Importance.high,
+              priority: Priority.high,
+            ),
+        appDebugger = appDebugger ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.appDebugger.name),
+              l10n?.channelName_appDebugger ??
+                  NotificationChannelId.appDebugger.channelName,
+              importance: Importance.max,
+              priority: Priority.max,
+              playSound: false,
+              autoCancel: false,
+              showWhen: false,
+              silent: true,
+              color: Colors.red,
+              colorized: true,
+            );
+
+  Iterable<AndroidNotificationDetails> get channels => [
+        // debug,
+        habitReminder,
+        appReminder,
+        appDebugger,
+      ];
 
   @override
-  AndroidNotificationDetails get debug =>
-      _debug ??
-      AndroidNotificationDetails(
-        _getChannelId(NotificationChannelId.debug.name),
-        NotificationChannelId.debug.channelName,
-        importance: Importance.min,
-        priority: Priority.low,
-      );
-
-  @override
-  AndroidNotificationDetails get habitReminder =>
-      _habitReminder ??
-      AndroidNotificationDetails(
-        _getChannelId(NotificationChannelId.habitReminder.name),
-        NotificationChannelId.habitReminder.channelName,
-        importance: Importance.high,
-        priority: Priority.defaultPriority,
-      );
-
-  @override
-  AndroidNotificationDetails get appReminder =>
-      _appReminder ??
-      AndroidNotificationDetails(
-        _getChannelId(NotificationChannelId.appReminder.name),
-        NotificationChannelId.appReminder.channelName,
-        importance: Importance.high,
-        priority: Priority.high,
-      );
-
-  @override
-  AndroidNotificationDetails get appDebugger =>
-      _appDebugger ??
-      AndroidNotificationDetails(
-        _getChannelId(NotificationChannelId.appDebugger.name),
-        NotificationChannelId.appDebugger.channelName,
-        importance: Importance.max,
-        priority: Priority.max,
-        playSound: false,
-        autoCancel: false,
-        showWhen: false,
-        silent: true,
-        color: Colors.red,
-        colorized: true,
-      );
+  String toString() => "NotificationAndroidChannelData("
+      "debug: $debug, "
+      "habitReminder: $habitReminder, "
+      "appReminder: $appReminder, "
+      "appDebugger: $appDebugger, "
+      "l10n: $l10n"
+      ")";
 }
 
 class NotificationIosChannelData
     implements NotificationChannelDataABC<DarwinNotificationDetails> {
-  final DarwinNotificationDetails? _debug;
-  final DarwinNotificationDetails? _habitReminder;
-  final DarwinNotificationDetails? _appReminder;
-  final DarwinNotificationDetails? _appDebugger;
+  @override
+  final DarwinNotificationDetails debug;
+  @override
+  final DarwinNotificationDetails habitReminder;
+  @override
+  final DarwinNotificationDetails appReminder;
+  @override
+  final DarwinNotificationDetails appDebugger;
 
-  const NotificationIosChannelData({
+  NotificationIosChannelData({
     DarwinNotificationDetails? debug,
     DarwinNotificationDetails? habitReminder,
     DarwinNotificationDetails? appReminder,
     DarwinNotificationDetails? appDebugger,
-  })  : _debug = debug,
-        _habitReminder = habitReminder,
-        _appReminder = appReminder,
-        _appDebugger = appDebugger;
-
-  @override
-  DarwinNotificationDetails get appReminder =>
-      _appReminder ??
-      DarwinNotificationDetails(
-        categoryIdentifier: NotificationChannelId.appReminder.category,
-      );
-
-  @override
-  DarwinNotificationDetails get debug =>
-      _debug ??
-      DarwinNotificationDetails(
-          categoryIdentifier: NotificationChannelId.debug.category);
-
-  @override
-  DarwinNotificationDetails get habitReminder =>
-      _habitReminder ??
-      DarwinNotificationDetails(
-          categoryIdentifier: NotificationChannelId.habitReminder.category);
-
-  @override
-  DarwinNotificationDetails get appDebugger =>
-      _appDebugger ??
-      DarwinNotificationDetails(
-          presentSound: false,
-          categoryIdentifier: NotificationChannelId.appDebugger.category,
-          interruptionLevel: InterruptionLevel.passive);
+  })  : debug = debug ??
+            DarwinNotificationDetails(
+              categoryIdentifier: NotificationChannelId.debug.category,
+            ),
+        habitReminder = habitReminder ??
+            DarwinNotificationDetails(
+              categoryIdentifier: NotificationChannelId.habitReminder.category,
+            ),
+        appReminder = appReminder ??
+            DarwinNotificationDetails(
+              categoryIdentifier: NotificationChannelId.appReminder.category,
+            ),
+        appDebugger = appDebugger ??
+            DarwinNotificationDetails(
+              presentSound: false,
+              categoryIdentifier: NotificationChannelId.appDebugger.category,
+              interruptionLevel: InterruptionLevel.passive,
+            );
 }
 
 class NotificationLinuxChannelData
@@ -206,9 +210,9 @@ class NotificationLinuxChannelData
       _appDebugger ?? const LinuxNotificationDetails();
 }
 
-class NotificationChannelData extends ChangeNotifier
+class NotificationChannelData
     implements NotificationChannelDataABC<NotificationDetails> {
-  final NotificationAndroidChannelData _androidChannel;
+  NotificationAndroidChannelData _androidChannel;
   final NotificationIosChannelData _iosChannel;
   final NotificationLinuxChannelData _linuxChannel;
 
@@ -216,10 +220,24 @@ class NotificationChannelData extends ChangeNotifier
     NotificationAndroidChannelData? androidChannel,
     NotificationIosChannelData? iosChannel,
     NotificationLinuxChannelData? linuxChannel,
-  })  : _androidChannel =
-            androidChannel ?? const NotificationAndroidChannelData(),
-        _iosChannel = iosChannel ?? const NotificationIosChannelData(),
+  })  : _androidChannel = androidChannel ?? NotificationAndroidChannelData(),
+        _iosChannel = iosChannel ?? NotificationIosChannelData(),
         _linuxChannel = linuxChannel ?? const NotificationLinuxChannelData();
+
+  void onL10nUpdate(L10n? l10n) async {
+    appLog.notify.info("NotificationChannelData.onL10nUpdate",
+        ex: [_androidChannel.l10n, l10n]);
+    if (_androidChannel.l10n == l10n) return;
+
+    final oldAndroidChannelData = _androidChannel;
+    _androidChannel = NotificationAndroidChannelData(l10n: l10n);
+
+    await NotificationService().createAllChannels(_androidChannel);
+    appLog.value.info("NotificationChannelData.onL10nUpdate",
+        beforeVal: oldAndroidChannelData,
+        afterVal: _androidChannel,
+        ex: ["Done: Android", l10n]);
+  }
 
   @override
   NotificationDetails get debug => NotificationDetails(

@@ -1578,4 +1578,13 @@ class L10nEs extends L10n {
 
   @override
   String get userAction_longTap => 'Longitud';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }
