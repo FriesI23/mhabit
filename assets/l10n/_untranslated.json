@@ -106,7 +106,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "cs": [
@@ -499,7 +502,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "de": [
@@ -609,7 +615,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "es": [
@@ -667,7 +676,10 @@
     "common_errorPage_copied",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "fa": [
@@ -770,7 +782,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "fr": [
@@ -880,7 +895,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "it": [
@@ -961,7 +979,10 @@
     "common_errorPage_copied",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "nb": [
@@ -1382,7 +1403,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "pl": [
@@ -1800,7 +1824,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "pt": [
@@ -1922,7 +1949,10 @@
     "debug_collectLogTile_disable_subtitle",
     "debug_debuggerLogCard_title",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "ru": [
@@ -1955,7 +1985,10 @@
     "experimentalFeatures_warnTile_forHabitSyncText",
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
-    "batchCheckin_completed_snackbar_text"
+    "batchCheckin_completed_snackbar_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "tr": [
@@ -2033,12 +2066,18 @@
     "appAbout_privacyTile_subTitleText",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "uk": [
     "appAbout_privacyTile_titleText",
-    "appAbout_privacyTile_subTitleText"
+    "appAbout_privacyTile_subTitleText",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "vi": [
@@ -2119,7 +2158,10 @@
     "common_enable_text",
     "debug_logLevel_fatal",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "zh_Hant": [
@@ -2197,6 +2239,9 @@
     "appAbout_privacyTile_subTitleText",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ]
 }

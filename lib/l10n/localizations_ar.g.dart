@@ -1572,4 +1572,13 @@ class L10nAr extends L10n {
 
   @override
   String get userAction_longTap => 'ضغطة طويلة';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }

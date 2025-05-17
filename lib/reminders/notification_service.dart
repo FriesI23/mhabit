@@ -21,6 +21,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../common/async.dart';
 import '../common/types.dart';
+import '../extension/notification_extensions.dart';
 import '../logging/helper.dart';
 import '../model/habit_date.dart';
 import '../model/habit_reminder.dart';
@@ -74,11 +75,13 @@ abstract interface class NotificationService implements AsyncInitialization {
 
   Future<bool> cancelAllHabitReminders({Duration? timeout});
 
+  Future<void> createAllChannels(NotificationAndroidChannelData data);
+
   factory NotificationService() {
     if (_instance != null) return _instance!;
     if (Platform.isWindows) return _instance = const FakeNotificationService();
-    if (Platform.isLinux) return _instance = const LinuxNotificationService();
-    return _instance = const NotificationServiceImpl();
+    if (Platform.isLinux) return _instance = LinuxNotificationService();
+    return _instance = NotificationServiceImpl();
   }
 }
 
@@ -86,7 +89,7 @@ final class NotificationServiceImpl implements NotificationService {
   static const androidIconPath = "@mipmap/ic_notification";
   static const defaultTimeout = Duration(seconds: 2);
 
-  const NotificationServiceImpl();
+  NotificationServiceImpl();
 
   FlutterLocalNotificationsPlugin get plugin =>
       FlutterLocalNotificationsPlugin();
@@ -359,10 +362,19 @@ final class NotificationServiceImpl implements NotificationService {
     await Future.wait(futureList);
     return true;
   }
+
+  @override
+  Future<void> createAllChannels(NotificationAndroidChannelData data) async {
+    final androidPlugin = plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+    await Future.wait(
+        data.channels.map(androidPlugin.createNotificationChannelByDetail));
+  }
 }
 
 final class LinuxNotificationService extends NotificationServiceImpl {
-  const LinuxNotificationService();
+  LinuxNotificationService();
 
   //TODO: Lame implementation; plugin doesn't support scheduling on Linux,
   //      need to find some solutions.
@@ -454,4 +466,8 @@ final class FakeNotificationService implements NotificationService {
           required NotificationDetails details,
           Duration? timeout}) =>
       Future.value(false);
+
+  @override
+  Future<void> createAllChannels(NotificationAndroidChannelData data) =>
+      Future.value(null);
 }

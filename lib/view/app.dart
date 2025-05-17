@@ -32,6 +32,7 @@ import '../provider/app_debugger.dart';
 import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
 import '../provider/app_theme.dart';
+import '../reminders/notification_channel.dart';
 import '../theme/color.dart';
 import 'common/_widget.dart';
 import 'for_app/_widget.dart';
@@ -199,6 +200,10 @@ class BasicAppView extends StatelessWidget {
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        context.read<NotificationChannelData>().onL10nUpdate(L10n.of(context));
+        return child ?? const SizedBox();
+      },
     );
   }
 }

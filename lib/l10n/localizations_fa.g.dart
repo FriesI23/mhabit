@@ -1572,4 +1572,13 @@ class L10nFa extends L10n {
 
   @override
   String get userAction_longTap => 'طولانی';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }

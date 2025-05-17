@@ -1578,4 +1578,13 @@ class L10nPl extends L10n {
 
   @override
   String get userAction_longTap => 'Long';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }
