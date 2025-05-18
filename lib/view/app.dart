@@ -200,10 +200,6 @@ class BasicAppView extends StatelessWidget {
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) {
-        context.read<NotificationChannelData>().onL10nUpdate(L10n.of(context));
-        return child ?? const SizedBox();
-      },
     );
   }
 }
@@ -224,6 +220,14 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
     inited = false;
   }
 
+  @override
+  void didChangeDependencies() {
+    context
+        .maybeRead<NotificationChannelData>()
+        ?.onL10nUpdate(L10n.of(context));
+    super.didChangeDependencies();
+  }
+
   void onPostInitHandled(BuildContext context) {
     final l10n = L10n.of(context);
     appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
@@ -231,6 +235,9 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
         .maybeRead<AppDebuggerViewModel>()
         ?.processDebuggingNotification(l10n);
     context.maybeRead<AppReminderViewModel>()?.processAppReminder(l10n);
+    context
+        .maybeRead<NotificationChannelData>()
+        ?.onL10nUpdate(L10n.of(context));
     inited = true;
   }
 
