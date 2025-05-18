@@ -53,7 +53,7 @@ dependencies:
   file_selector: ^1.0.3
   path_provider: ^2.0.14
   device_info_plus: ^11.2.0
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^19.2.0
   flutter_svg: ^2.0.4
   flutter_timezone: ^4.0.0
   markdown_widget: ^2.3.2+8
@@ -84,7 +84,7 @@ dependencies:
   uuid: ^4.1.0
   collection: ^1.17.0
   crypto: ^3.0.2
-  timezone: ^0.9.1
+  timezone: ^0.10.1
   nested: ^1.0.0
   async: ^2.11.0
   pool: ^1.5.1

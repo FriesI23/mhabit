@@ -258,8 +258,6 @@ final class NotificationServiceImpl implements NotificationService {
         subtitle,
         tz.TZDateTime.from(scheduledDate, tz.local),
         details,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexact,
         matchDateTimeComponents: DateTimeComponents.time,
       );
@@ -318,8 +316,6 @@ final class NotificationServiceImpl implements NotificationService {
         data.body,
         tz.TZDateTime.from(scheduledDate, tz.local),
         details,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexact,
         payload: data.toPayload(),
       );
