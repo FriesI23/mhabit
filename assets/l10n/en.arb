@@ -1326,5 +1326,11 @@
   "userAction_doubleTap": "Double",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Long",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "channelName_habitReminder": "Habit Reminder",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "Prompt",
+  "@channelName_appReminder": {},
+  "channelName_appDebugger": "Debugger",
+  "@channelName_appDebugger": {}
 }

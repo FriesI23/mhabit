@@ -1326,5 +1326,11 @@
   "userAction_doubleTap": "双击",
   "@userAction_doubleTap": {},
   "userAction_longTap": "长按",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "channelName_habitReminder": "习惯提醒",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "提示",
+  "@channelName_appReminder": {},
+  "channelName_appDebugger": "调试",
+  "@channelName_appDebugger": {}
 }

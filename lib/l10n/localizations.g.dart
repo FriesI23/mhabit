@@ -2643,6 +2643,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Long'**
   String get userAction_longTap;
+
+  /// No description provided for @channelName_habitReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Reminder'**
+  String get channelName_habitReminder;
+
+  /// No description provided for @channelName_appReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt'**
+  String get channelName_appReminder;
+
+  /// No description provided for @channelName_appDebugger.
+  ///
+  /// In en, this message translates to:
+  /// **'Debugger'**
+  String get channelName_appDebugger;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

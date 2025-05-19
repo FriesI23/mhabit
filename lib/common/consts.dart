@@ -25,6 +25,7 @@ import '../model/habit_form.dart';
 import '../theme/color.dart';
 import 'enums.dart';
 
+const String appID = "599df5df-7b99-46a1-9ff3-426831ec7c15";
 const String appName = "mhabit";
 const String appDBName = "mhabit.db";
 const String aboutInfoFilePath = "configs/about_info.json";
