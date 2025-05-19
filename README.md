@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD029 -->
+
 # Table Habit
 
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
@@ -64,13 +66,15 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                                                    | desc.                              |
-| -------- | ----- | -------------------------------------------------------------------------- | ---------------------------------- |
-| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                           |                                    |
-| ios      | ✅     | [Github][github-myapp] / ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                                    |
-| macos    | ✅     | [Github][github-myapp]                                                     |                                    |
-| windows  | 🟨     | [Github][github-myapp]                                                     | unimplemented features: `reminder` |
-| linux    | 🟨     |                                                                            | limit features: `reminder`         |
+| platform | build | publish                                                                    | desc.                      |
+| -------- | ----- | -------------------------------------------------------------------------- | -------------------------- |
+| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                           |                            |
+| ios      | ✅     | [Github][github-myapp] / ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                            |
+| macos    | ✅     | [Github][github-myapp]                                                     |                            |
+| windows  | 🟨     | [Github][github-myapp](1)                                                  | limit features: `reminder` |
+| linux    | 🟨     |                                                                            | limit features: `reminder` |
+
+> 1. Windows version is still in beta, some features may be limited or unstable.
 
 ### Note: Installation iOS (Sideloading)
 
@@ -229,6 +233,8 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
+<!-- markdownlint-disable MD053 -->
+<!-- TODO: enable testflight after ios pubnlic test is ready -->
 [testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
