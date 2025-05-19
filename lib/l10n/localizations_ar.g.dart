@@ -1201,6 +1201,12 @@ class L10nAr extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'فلتر';
 
   @override
+  String get appAbout_privacyTile_titleText => 'Privacy';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+
+  @override
   String get appAbout_donateTile_titleText => 'تبرع';
 
   @override
@@ -1566,4 +1572,13 @@ class L10nAr extends L10n {
 
   @override
   String get userAction_longTap => 'ضغطة طويلة';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }

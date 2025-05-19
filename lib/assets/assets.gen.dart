@@ -116,6 +116,7 @@ class Assets {
   static const String changelog = 'CHANGELOG.md';
   static const String license = 'LICENSE';
   static const String licenseThirdparty = 'LICENSE_THIRDPARTY.md';
+  static const String privacy = 'PRIVACY.md';
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogoGen logo = $AssetsLogoGen();
   static const $AssetsSqlGen sql = $AssetsSqlGen();
@@ -123,7 +124,8 @@ class Assets {
   static const $DocsGen docs = $DocsGen();
 
   /// List of all assets
-  static List<String> get values => [changelog, license, licenseThirdparty];
+  static List<String> get values =>
+      [changelog, license, licenseThirdparty, privacy];
 }
 
 class AssetGenImage {

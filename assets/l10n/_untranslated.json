@@ -75,6 +75,8 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
     "common_errorPage_title",
     "common_errorPage_copied",
@@ -104,7 +106,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "cs": [
@@ -390,6 +395,8 @@
     "appAbout_licenseTile_subtitleText",
     "appAbout_licenseThirdPartyTile_titleText",
     "appAbout_licenseThirdPartyTile_subtitleText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "appAbout_donateTile_titleText",
     "appAbout_donateTile_subTitleText",
     "appAbout_donateTile_ways",
@@ -495,7 +502,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "de": [
@@ -574,6 +584,8 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
     "common_errorPage_title",
     "common_errorPage_copied",
@@ -603,7 +615,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "es": [
@@ -655,11 +670,16 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "fa": [
@@ -734,6 +754,8 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
     "common_errorPage_title",
     "common_errorPage_copied",
@@ -760,7 +782,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "fr": [
@@ -839,6 +864,8 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
     "common_errorPage_title",
     "common_errorPage_copied",
@@ -868,7 +895,10 @@
     "debug_debuggerInfoCard_saveButton_text",
     "debug_debuggerInfo_notificationTitle",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "he": [
@@ -1362,11 +1392,16 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "nb": [
@@ -1678,6 +1713,8 @@
     "appAbout_licenseTile_subtitleText",
     "appAbout_licenseThirdPartyTile_titleText",
     "appAbout_licenseThirdPartyTile_subtitleText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "appAbout_donateTile_titleText",
     "appAbout_donateTile_subTitleText",
     "appAbout_donateTile_ways",
@@ -1785,7 +1822,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "pl": [
@@ -2094,6 +2134,8 @@
     "appAbout_licenseTile_subtitleText",
     "appAbout_licenseThirdPartyTile_titleText",
     "appAbout_licenseThirdPartyTile_subtitleText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "appAbout_donateTile_titleText",
     "appAbout_donateTile_subTitleText",
     "appAbout_donateTile_ways",
@@ -2201,7 +2243,10 @@
     "contributors_tile_title",
     "userAction_tap",
     "userAction_doubleTap",
-    "userAction_longTap"
+    "userAction_longTap",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "pt": [
@@ -2298,6 +2343,8 @@
     "appAbout_issueTrackerTile_titleText",
     "appAbout_licenseTile_subtitleText",
     "appAbout_licenseThirdPartyTile_titleText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "appAbout_donateTile_subTitleText",
     "donateWay_buyMeACoffee",
     "appAbout_donateDialog_copiedCrypto_msg",
@@ -2321,7 +2368,10 @@
     "debug_collectLogTile_disable_subtitle",
     "debug_debuggerLogCard_title",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "ru": [
@@ -2352,7 +2402,12 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
-    "batchCheckin_completed_snackbar_text"
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
+    "batchCheckin_completed_snackbar_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "tr": [
@@ -2426,9 +2481,22 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
+  ],
+
+  "uk": [
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "vi": [
@@ -2502,12 +2570,17 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "common_errorPage_title",
     "common_errorPage_copied",
     "common_enable_text",
     "debug_logLevel_fatal",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ],
 
   "zh_Hant": [
@@ -2581,8 +2654,13 @@
     "experimentalFeatures_habitSyncTile_subtitleText",
     "experimentalFeatures_warnTile_titleText",
     "experimentalFeatures_warnTile_forHabitSyncText",
+    "appAbout_privacyTile_titleText",
+    "appAbout_privacyTile_subTitleText",
     "common_enable_text",
     "confirmDialog_confirm_text",
-    "confirmDialog_cancel_text"
+    "confirmDialog_cancel_text",
+    "channelName_habitReminder",
+    "channelName_appReminder",
+    "channelName_appDebugger"
   ]
 }

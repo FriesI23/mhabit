@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../assets/assets.dart';
+import '../common/app_info.dart';
 import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../model/contributor.dart';
@@ -121,14 +122,18 @@ class _AppAboutView extends State<AppAboutView> {
           AppAboutVersionTile(
             isMonoLogo: true,
             logoPath: Assets.logo.iconMomo.path,
-            changeLogPath: "CHANGELOG.md",
+            changeLogPath: Assets.changelog,
           ),
           const AppAboutSourceCodeTile(),
           const AppAboutIssueTrackerTile(),
           const AppAboutContactEmailTile(),
           const AppAboutLicenseTile(),
           const AppAboutThirdPartyLicenseTile(),
-          AppAboutDonateTile(onPressed: _onDonateTilePressed),
+          const AppAboutPrivacyTile(
+            privacyPath: Assets.privacy,
+          ),
+          if (!AppInfo().shouldHideDonate())
+            AppAboutDonateTile(onPressed: _onDonateTilePressed),
           buildAppAboutContributorTile(context),
         ],
       ),

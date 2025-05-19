@@ -1201,6 +1201,12 @@ class L10nRu extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
+  String get appAbout_privacyTile_titleText => 'Privacy';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+
+  @override
   String get appAbout_donateTile_titleText => 'Пожертвовать';
 
   @override
@@ -1572,4 +1578,13 @@ class L10nRu extends L10n {
 
   @override
   String get userAction_longTap => 'Long';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }

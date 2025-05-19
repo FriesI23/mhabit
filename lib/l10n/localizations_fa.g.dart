@@ -1201,6 +1201,12 @@ class L10nFa extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'فلاتر';
 
   @override
+  String get appAbout_privacyTile_titleText => 'Privacy';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+
+  @override
   String get appAbout_donateTile_titleText => 'حمایت مالی';
 
   @override
@@ -1566,4 +1572,13 @@ class L10nFa extends L10n {
 
   @override
   String get userAction_longTap => 'طولانی';
+
+  @override
+  String get channelName_habitReminder => 'Habit Reminder';
+
+  @override
+  String get channelName_appReminder => 'Prompt';
+
+  @override
+  String get channelName_appDebugger => 'Debugger';
 }

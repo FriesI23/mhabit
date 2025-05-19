@@ -1196,6 +1196,12 @@ class L10nZh extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
+  String get appAbout_privacyTile_titleText => '隐私';
+
+  @override
+  String get appAbout_privacyTile_subTitleText => '查看该应用中相关隐私政策';
+
+  @override
   String get appAbout_donateTile_titleText => '捐赠';
 
   @override
@@ -1554,6 +1560,15 @@ class L10nZh extends L10n {
 
   @override
   String get userAction_longTap => '长按';
+
+  @override
+  String get channelName_habitReminder => '习惯提醒';
+
+  @override
+  String get channelName_appReminder => '提示';
+
+  @override
+  String get channelName_appDebugger => '调试';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

@@ -1986,6 +1986,18 @@ abstract class L10n {
   /// **'flutter'**
   String get appAbout_licenseThirdPartyTile_subtitleText;
 
+  /// No description provided for @appAbout_privacyTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get appAbout_privacyTile_titleText;
+
+  /// No description provided for @appAbout_privacyTile_subTitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Access the privacy policy in this app'**
+  String get appAbout_privacyTile_subTitleText;
+
   /// No description provided for @appAbout_donateTile_titleText.
   ///
   /// In en, this message translates to:
@@ -2633,6 +2645,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Long'**
   String get userAction_longTap;
+
+  /// No description provided for @channelName_habitReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Reminder'**
+  String get channelName_habitReminder;
+
+  /// No description provided for @channelName_appReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt'**
+  String get channelName_appReminder;
+
+  /// No description provided for @channelName_appDebugger.
+  ///
+  /// In en, this message translates to:
+  /// **'Debugger'**
+  String get channelName_appDebugger;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

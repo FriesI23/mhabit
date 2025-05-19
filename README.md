@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD029 -->
+
 # Table Habit
 
 [![Build and Release][github-relaese-badge-svg]][github-relaese-badge]
@@ -6,12 +8,13 @@
 [![Latest Version][app-pre-verison-bage-svg]][github-release-page]
 [![License][license-badge]][app-license]
 [![Flutter][flutter-badge]][deps-flutter-version]
+![WebDAV Supported](https://img.shields.io/badge/WebDAV-supported-brightgreen)
 
 [![Trello][app-trello-badge]][app-trello-board]
 
 "Table Habit" is an app that helps you establish and track your own micro habit.
-Its includes a complete set of growth curves and charts to help you establish
-habits more effectively.
+It includes a complete set of growth curves and charts to help you build habits more effectively,
+and keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
 
 Moreover, this app completely open source.
 
@@ -19,9 +22,11 @@ Moreover, this app completely open source.
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 [![Get it on F-Droid][github-button]][github-myapp]
 
-**iOS**
+**iOS (Pre Release)**:
 
-[![Get it on F-Droid][testflight-button]][ios-testflight-release]
+> Public beta will be available once app is distributed via the App Store.
+
+<!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
 
 ## Screenshots
 
@@ -61,13 +66,15 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                                                                                       | desc.                              |
-| -------- | ----- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| android  | ✅    | [Github][github-myapp] / [F-Droid][fdroid-myapp]                                                              |                                    |
-| ios      | ✅    | [Github][github-myapp] / [TestFlight(Pre)][ios-testflight-pre-release] / [TestFlight][ios-testflight-release] |                                    |
-| macos    | ✅    | [Github][github-myapp]                                                                                        |                                    |
-| windows  | 🟨    | [Github][github-myapp]                                                                                        | unimplemented features: `reminder` |
-| linux    | 🟨    |                                                                                                               | limit features: `reminder`         |
+| platform | build | publish                                                                    | desc.                      |
+| -------- | ----- | -------------------------------------------------------------------------- | -------------------------- |
+| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                           |                            |
+| ios      | ✅     | [Github][github-myapp] / ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                            |
+| macos    | ✅     | [Github][github-myapp]                                                     |                            |
+| windows  | 🟨     | [Github][github-myapp](1)                                                  | limit features: `reminder` |
+| linux    | 🟨     |                                                                            | limit features: `reminder` |
+
+> 1. Windows version is still in beta, some features may be limited or unstable.
 
 ### Note: Installation iOS (Sideloading)
 
@@ -226,6 +233,8 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
+<!-- markdownlint-disable MD053 -->
+<!-- TODO: enable testflight after ios pubnlic test is ready -->
 [testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
@@ -261,6 +270,5 @@ limitations under the License.
 [msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
 [fss-linux]: https://pub.dev/packages/flutter_secure_storage#configure-linux-version
 [ios-testflight-pre-release]: https://testflight.apple.com/join/aJ5PWqaR
-[ios-testflight-release]: https://testflight.apple.com/join/uNmD23cS
 [altstore]: https://altstore.io/
 [sidestore]: https://sidestore.io/

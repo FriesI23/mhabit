@@ -16,7 +16,6 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import '../common/async.dart';
 import '../common/consts.dart';
