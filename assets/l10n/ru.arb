@@ -266,6 +266,15 @@
       }
     }
   },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Удалена привычка: «{name}»",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "Выбрать всё",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Экспорт",
@@ -761,6 +770,54 @@
       }
     }
   },
+  "appSync_failedTile_titleText": "Проверить журналы ошибок",
+  "@appSync_failedTile_titleText": {},
+  "appSync_failedTile_errorText": "[Error]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {Выполнено} cancelled {Отменено} failed {Ошибка} multi {Несколько состояний} other {Неизвестное состояние}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {Выполнено по причине {reason}} cancelled {Отменено по причине {reason}} failed {Провалено по причине {reason}} multi {Несколько состояний по причине {reason}} other {Неизвестное состояние}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "Новое местоположение",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "Синхронизация создаст необходимые папки и загрузит локальные привычки на сервер. Продолжать?",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
   "appSync_webdav_newServerConfirmDialog_confirmText": "Синхронизировать сейчас!",
   "@appSync_webdav_newServerConfirmDialog_confirmText": {},
   "appSync_webdav_oldServerConfirmDialog_titleText": "Подтвердите синхронизацию",
@@ -769,6 +826,28 @@
   "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
   "appSync_webdav_oldServerConfirmDialog_confirmText": "Подтверждение слияния",
   "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "Экспорт журналов неудачной синхронизации",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Нет журналов} false {Нажмите для экспорта} other {загрузка...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_networkType_text": "{type, select, mobile {Мобильный} wifi {Wifi} other {Неизвестно}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "Интервал получения",
+  "@appSync_syncIntervalTile_title": {},
   "appSync_summaryTile_title": "Сервер синхронизации",
   "@appSync_summaryTile_title": {},
   "appSync_summaryTile_subtitle_text_notConfigured": "Не настроено",
@@ -809,14 +888,53 @@
   "@appSync_serverEditor_ignoreSSLTile_titleText": {},
   "appSync_serverEditor_timeoutTile_titleText": "Время ожидания синхронизации",
   "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "По умолчанию: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
   "appSync_serverEditor_timeoutTile_unitText": "с",
   "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "Тайм-аут сетевого соединения, в секундах",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "По умолчанию: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
   "appSync_serverEditor_connTimeoutTile_unitText": "с",
   "@appSync_serverEditor_connTimeoutTile_unitText": {},
   "appSync_serverEditor_netTypeTile_titleText": "Режим сетевой синхронизации",
   "@appSync_serverEditor_netTypeTile_titleText": {},
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронизация в режиме низких данных",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_habitSyncTile_titleText": "Синхронизация привычек с облаком",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_warnTile_forHabitSyncText": "Чтобы полностью отключить долго нажмите, чтобы получить доступ к '{menuName}' и выключите его.",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
   "appAbout_appbarTile_titleText": "О приложении",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Версия: {appVersion}",
@@ -912,6 +1030,15 @@
   "@batchCheckin_save_button_text": {},
   "batchCheckin_reset_button_text": "Сбросить",
   "@batchCheckin_reset_button_text": {},
+  "batchCheckin_completed_snackbar_text": "Изменено {count, plural, =1{состояние привычки} other{состояние {count} привычек}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "batchCheckin_save_confirmDialog_title": "Overwrite Existing Records",
   "@batchCheckin_save_confirmDialog_title": {},
   "batchCheckin_save_confirmDialog_body": "Existing records will be overwritten After saving, previous records will be lost.",
@@ -1124,132 +1251,5 @@
   "userAction_doubleTap": "Double",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Long",
-  "@userAction_longTap": {},
-  "appSync_failedTile_titleText": "Проверить журналы ошибок",
-  "@appSync_failedTile_titleText": {},
-  "appSync_failedTile_errorText": "[Error]: {info}",
-  "@appSync_failedTile_errorText": {
-    "placeholders": {
-      "info": {
-        "type": "String",
-        "description": "Error information."
-      }
-    }
-  },
-  "appSync_exportAllLogsTile_titleText": "Экспорт журналов неудачной синхронизации",
-  "@appSync_exportAllLogsTile_titleText": {},
-  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Нет журналов} false {Нажмите для экспорта} other {загрузка...}}",
-  "@appSync_exportAllLogsTile_subtitleText": {
-    "placeholders": {
-      "isEmpty": {
-        "type": "String",
-        "description": "<bool>.toString()"
-      }
-    }
-  },
-  "appSync_networkType_text": "{type, select, mobile {Мобильный} wifi {Wifi} other {Неизвестно}}",
-  "@appSync_networkType_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_serverEditor_timeoutTile_hintText": "По умолчанию: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_timeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "batchCheckin_completed_snackbar_text": "Изменено {count, plural, =1{состояние привычки} other{состояние {count} привычек}}",
-  "@batchCheckin_completed_snackbar_text": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
-  "@appSync_failedTile_webdavMulti_counterText": {
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "experimentalFeatures_warnTile_forHabitSyncText": "Чтобы полностью отключить долго нажмите, чтобы получить доступ к '{menuName}' и выключите его.",
-  "@experimentalFeatures_warnTile_forHabitSyncText": {
-    "placeholders": {
-      "menuName": {
-        "type": "String",
-        "example": "Sync Option"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus": "{status, select, success {Выполнено} cancelled {Отменено} failed {Ошибка} multi {Несколько состояний} other {Неизвестное состояние}}",
-  "@appSync_webdav_resultStatus": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus_withReason": "{status, select, success {Выполнено по причине {reason}} cancelled {Отменено по причине {reason}} failed {Провалено по причине {reason}} multi {Несколько состояний по причине {reason}} other {Неизвестное состояние}}",
-  "@appSync_webdav_resultStatus_withReason": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      },
-      "reason": {
-        "type": "String",
-        "description": "The reason for the status"
-      }
-    }
-  },
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Удалена привычка: «{name}»",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Habit name."
-      }
-    }
-  },
-  "appSync_webdav_newServerConfirmDialog_titleText": "Новое местоположение",
-  "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "appSync_webdav_newServerConfirmDialog_subtitleText": "Синхронизация создаст необходимые папки и загрузит локальные привычки на сервер. Продолжать?",
-  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
-  "appSync_syncIntervalTile_title": "Интервал получения",
-  "@appSync_syncIntervalTile_title": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "Тайм-аут сетевого соединения, в секундах",
-  "@appSync_serverEditor_connTimeoutTile_titleText": {},
-  "appSync_serverEditor_connTimeoutTile_hintText": "По умолчанию: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_connTimeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "experimentalFeatures_habitSyncTile_titleText": "Синхронизация привычек с облаком",
-  "@experimentalFeatures_habitSyncTile_titleText": {}
+  "@userAction_longTap": {}
 }

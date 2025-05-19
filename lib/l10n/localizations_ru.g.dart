@@ -290,7 +290,7 @@ class L10nRu extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Удалена привычка: «$name»';
   }
 
   @override
@@ -876,7 +876,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Проверить журналы ошибок';
 
   @override
   String appSync_failedTile_errorText(String info) {
@@ -893,11 +893,11 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed',
-        'cancelled': 'Canceled',
-        'failed': 'Failed',
-        'multi': 'Multiple statuses',
-        'other': 'Unknown status',
+        'success': 'Выполнено',
+        'cancelled': 'Отменено',
+        'failed': 'Ошибка',
+        'multi': 'Несколько состояний',
+        'other': 'Неизвестное состояние',
       },
     );
     return '$_temp0';
@@ -908,11 +908,11 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed due to $reason',
-        'cancelled': 'Canceled due to $reason',
-        'failed': 'Failed due to $reason',
-        'multi': 'Multiple statuses due to $reason',
-        'other': 'Unknown status',
+        'success': 'Выполнено по причине $reason',
+        'cancelled': 'Отменено по причине $reason',
+        'failed': 'Провалено по причине $reason',
+        'multi': 'Несколько состояний по причине $reason',
+        'other': 'Неизвестное состояние',
       },
     );
     return '$_temp0';
@@ -934,10 +934,10 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Новое местоположение';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Синхронизация создаст необходимые папки и загрузит локальные привычки на сервер. Продолжать?';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => 'Синхронизировать сейчас!';
@@ -952,16 +952,16 @@ class L10nRu extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Подтверждение слияния';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'Экспорт журналов неудачной синхронизации';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
-        'true': 'No log founded',
-        'false': 'Tap to export',
-        'other': 'loading...',
+        'true': 'Нет журналов',
+        'false': 'Нажмите для экспорта',
+        'other': 'загрузка...',
       },
     );
     return '$_temp0';
@@ -992,9 +992,9 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Mobile',
+        'mobile': 'Мобильный',
         'wifi': 'Wifi',
-        'other': 'Unknown',
+        'other': 'Неизвестно',
       },
     );
     return '$_temp0';
@@ -1017,7 +1017,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Интервал получения';
 
   @override
   String get appSync_summaryTile_title => 'Сервер синхронизации';
@@ -1087,14 +1087,14 @@ class L10nRu extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'По умолчанию: $_temp0';
   }
 
   @override
   String get appSync_serverEditor_timeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Тайм-аут сетевого соединения, в секундах';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1104,7 +1104,7 @@ class L10nRu extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'По умолчанию: $_temp0';
   }
 
   @override
@@ -1150,7 +1150,7 @@ class L10nRu extends L10n {
   String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText => 'Синхронизация привычек с облаком';
 
   @override
   String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
@@ -1162,7 +1162,7 @@ class L10nRu extends L10n {
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'Чтобы полностью отключить долго нажмите, чтобы получить доступ к \'$menuName\' и выключите его.';
   }
 
   @override
@@ -1296,10 +1296,10 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: 'состояние $count привычек',
+      one: 'состояние привычки',
     );
-    return 'Modified $_temp0';
+    return 'Изменено $_temp0';
   }
 
   @override
