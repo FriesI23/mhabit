@@ -2,18 +2,18 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Release: v1.16.10+78
+# Pre-Release:
 
-<!-- **✨ New Features** -->
+## v1.16.11+80
 
-**🐛 Bug Fixes**
+**✨ New Features**
 
-- \<v1.16.9+77\>: Show notification bar once app is loaded on iOS.
-- \<v1.16.9+77\>: Process duplicate uuid when re-calc habit record uuid. (#269)
+- Hide "Donate Tile" in iOS App Store's flavor.
+- Add privacy declaration in app.
 
-**🍎 iOS**
+<!-- **🐛 Bug Fixes** -->
 
-- Add support for iOS app-language preference.
+<!-- **🍎 iOS** -->
 
 <!-- **🍏 macOS** -->
 
@@ -21,12 +21,19 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 **🌐 Localization**
 
-- \<v1.16.9+77\> Update Spanish l10n translation, thanks to Patricio Carrau's contribution on Weblate.
+- Add hebrew languange support (need translate) from elid's request on Weblate.
+- Update Russian l10n translation, thank for Bora Yurt Page's contribution on Weblate.
 
 **🧹 Others**
 
-- \<v1.16.9+77\> chore: bump dependencies. (#267)
+- Add China IPC in Application (l10n:zh-cn only).
+- Migrate from `flutter_markdown` to `markdown_widget`, see [#162966](https://github.com/flutter/flutter/issues/162966) get more informations. (#272)
+
+- Refactor notification-related code (#275):
+  - Add localization for Android notification channel.
+  - Upgrade `flutter_local_notifications` to v19.
+  - Add Windows support for notifications (with limitations).
 
 **📝 Documentation**
 
-- Add Privacy Policy file.
+- Update README file.
