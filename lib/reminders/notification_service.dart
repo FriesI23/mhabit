@@ -79,7 +79,7 @@ abstract interface class NotificationService implements AsyncInitialization {
 
   factory NotificationService() {
     if (_instance != null) return _instance!;
-    if (Platform.isWindows) return _instance = const FakeNotificationService();
+    if (Platform.isWindows) return _instance = WindowsNotificationService();
     if (Platform.isLinux) return _instance = LinuxNotificationService();
     return _instance = NotificationServiceImpl();
   }
@@ -139,12 +139,24 @@ final class NotificationServiceImpl implements NotificationService {
     const linuxSettings =
         LinuxInitializationSettings(defaultActionName: "Open notification");
 
+    // Windows setting
+    // Configs Share the same value as specified in `pubspec.yaml#msix_config`:
+    // - `appName`: `msix_config#display_name`
+    // - `appUserModelId`: `msix_config#identity_name`
+    // - `guid`: `msix_config#toast_activator#clsid`
+    const windowsSettins = WindowsInitializationSettings(
+      appName: "Table Habit",
+      appUserModelId: "Github.FriesI23.TableHabit",
+      guid: "03eef6f9-f653-5273-a0d6-111e2a8945b9",
+    );
+
     // combine settings
     final initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
       linux: linuxSettings,
+      windows: windowsSettins,
     );
 
     await plugin.initialize(
@@ -249,8 +261,12 @@ final class NotificationServiceImpl implements NotificationService {
       Duration? timeout = defaultTimeout}) async {
     try {
       final now = DateTime.now();
-      final scheduledDate = DateTime(
+      final baseDate = DateTime(
           now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+      final isNearToday = now.isAfter(baseDate) ||
+          now.difference(baseDate).inSeconds.abs() <= 5;
+      final scheduledDate =
+          isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
 
       final future = plugin.zonedSchedule(
         appReminderNotifyId,
@@ -372,8 +388,11 @@ final class NotificationServiceImpl implements NotificationService {
 final class LinuxNotificationService extends NotificationServiceImpl {
   LinuxNotificationService();
 
-  //TODO: Lame implementation; plugin doesn't support scheduling on Linux,
-  //      need to find some solutions.
+  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  ///
+  /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
+  ///
+  /// last checked plugin-version: flutter_local_notifications==19.2.0
   @override
   Future<bool> regrAppReminderInDaily(
           {required String title,
@@ -383,8 +402,55 @@ final class LinuxNotificationService extends NotificationServiceImpl {
           Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
       Future.value(false);
 
-  //TODO: Lame implementation; plugin doesn't support scheduling on Linux,
-  //      need to find some solutions.
+  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  ///
+  /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
+  ///
+  /// last checked plugin-version: flutter_local_notifications==19.2.0
+  @override
+  Future<bool> regrHabitReminder<T>(
+          {required DBID id,
+          required HabitUUID uuid,
+          required String name,
+          String? quest,
+          required HabitReminder reminder,
+          required HabitDate? lastUntrackDate,
+          required NotificationDetails details,
+          DateTime? crtDate,
+          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
+      Future.value(false);
+}
+
+final class WindowsNotificationService extends NotificationServiceImpl {
+  WindowsNotificationService();
+
+  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
+  ///
+  /// - Unsupported option arg [matchDateTimeComponents] on
+  ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
+  /// - [id] on [FlutterLocalNotificationsPlugin.zonedSchedule] be implemented
+  ///   as a tag in Windows FFI, which causes messages with same [id] can be
+  ///   registered multiple times.
+  ///
+  /// last checked plugin-version: flutter_local_notifications==19.2.0
+  @override
+  Future<bool> regrAppReminderInDaily(
+          {required String title,
+          required String subtitle,
+          required TimeOfDay timeOfDay,
+          required NotificationDetails details,
+          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
+      Future.value(false);
+
+  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
+  ///
+  /// - Unsupported option arg [matchDateTimeComponents] on
+  ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
+  /// - [id] on [FlutterLocalNotificationsPlugin.zonedSchedule] be implemented
+  ///   as a tag in Windows FFI, which causes messages with same [id] can be
+  ///   registered multiple times.
+  ///
+  /// last checked plugin-version: flutter_local_notifications==19.2.0
   @override
   Future<bool> regrHabitReminder<T>(
           {required DBID id,

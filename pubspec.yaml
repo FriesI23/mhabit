@@ -224,3 +224,6 @@ msix_config:
   enable_at_startup: false
   logo_path: ./assets/logo/macos-1024x1024.png
   capabilities: internetClient
+  toast_activator:
+    clsid: 03eef6f9-f653-5273-a0d6-111e2a8945b9
+    display_name: Table Habit
