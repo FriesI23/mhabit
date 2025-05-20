@@ -468,7 +468,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final syncvm = context.read<AppSyncViewModel>();
     if (syncvm.mounted) {
       try {
-        await syncvm.startSync(initWait: const Duration(seconds: 2));
+        await syncvm.startSync(initWait: const Duration(milliseconds: 1500));
       } catch (e, s) {
         appLog.appsync.fatal("start sync failed",
             ex: [syncvm.appSyncTask.task], error: e, stackTrace: s);
