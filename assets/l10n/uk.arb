@@ -1322,5 +1322,15 @@
   "userAction_doubleTap": "Двомісний",
   "@userAction_doubleTap": {},
   "userAction_longTap": "довгий",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appAbout_privacyTile_titleText": "Конфіденційність",
+  "@appAbout_privacyTile_titleText": {},
+  "appAbout_privacyTile_subTitleText": "Ознайомтеся з політикою конфіденційності в цьому додатку",
+  "@appAbout_privacyTile_subTitleText": {},
+  "channelName_appReminder": "Підказка",
+  "@channelName_appReminder": {},
+  "channelName_habitReminder": "Нагадування про звички",
+  "@channelName_habitReminder": {},
+  "channelName_appDebugger": "Налагоджувач",
+  "@channelName_appDebugger": {}
 }
