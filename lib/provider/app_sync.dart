@@ -87,7 +87,7 @@ class AppSyncViewModel
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
     _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
     // start auto sync
-    regrPeriodicSync(fireDelay: const Duration(seconds: 5));
+    regrPeriodicSync(fireDelay: const Duration(seconds: 2));
     // clear failed sync logs
     if (!_clearLogsOnStartup) {
       _clearLogsOnStartup = true;
