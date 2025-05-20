@@ -55,4 +55,9 @@ class CascadingAsyncDebouncer {
     _timer = null;
     _pendingDelay = null;
   }
+
+  @override
+  String toString() => "CascadingAsyncDebouncer("
+      "timer=Timer(${_timer?.isActive},${_timer?.tick}), "
+      "pending=$_pendingDelay, executing=$_isExecuting)";
 }
