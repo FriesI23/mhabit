@@ -1,8 +1,24 @@
+<!-- markdownlint-disable MD036 -->
 <!--
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Release:
+# Pre-Release
+
+## v.16.12+81
+
+**✨ New Features**
+
+- Enhance WebDAV sync: trigger in some scenarios when auto-sync is enabled (#278)
+  - Reduce delay duration before auto-sync after launch
+  - Add async debouncer utility
+  - Re-sync after switching app to background for some time
+  - Re-sync after habit status changes
+  - Re-sync after record changes
+
+**🌐 Localization**
+
+- Update Ukrainian l10n translation, thank for Bora Максим Горпиніч's contribution on Weblate.
 
 ## v1.16.11+80
 
