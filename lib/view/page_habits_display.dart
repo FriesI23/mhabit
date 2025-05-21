@@ -31,6 +31,7 @@ import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
+import '../extension/context_extensions.dart';
 import '../extension/navigator_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
@@ -146,6 +147,17 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
   }
 
+  void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
+    if (!mounted) return;
+    // try sync once
+    if (shouldSyncOnce) {
+      final sync = context.maybeRead<AppSyncViewModel>();
+      if (sync != null && sync.mounted) {
+        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
+      }
+    }
+  }
+
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
     HabitSummaryViewModel viewmodel;
     if (!mounted) return;
@@ -155,6 +167,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (!mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     viewmodel.rockReloadUIToggleSwitch();
+
+    _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitArchiveConfirmDialog(BuildContext context) async {
@@ -188,6 +202,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final recordList = await viewmodel.archivedSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
+    _onHabitStatusChangeConfirmed();
+
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
@@ -198,6 +214,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 l10n.habitDisplay_archiveHabitsSuccSnackbarText(archivedCount))
             : const Text('Archived habits'),
       ),
+      showDuration: kAppUndoDialogShowDuration,
       onPressed: () => _revertHabitsStatus(recordList),
     );
     ScaffoldMessenger.of(context)
@@ -236,6 +253,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final recordList = await viewmodel.unarchivedSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
+    _onHabitStatusChangeConfirmed();
+
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
@@ -246,6 +265,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                 .habitDisplay_unarchiveHabitsSuccSnackbarText(archivedCount))
             : const Text('Unarchived habits'),
       ),
+      showDuration: kAppUndoDialogShowDuration,
       onPressed: () => _revertHabitsStatus(recordList),
     );
     ScaffoldMessenger.of(context)
@@ -284,6 +304,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     final recordList = await viewmodel.deleteSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
+    _onHabitStatusChangeConfirmed();
+
     final deletedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
     final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
@@ -293,6 +315,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             ? Text(l10n.habitDisplay_deleteHabitsSuccSnackbarText(deletedCount))
             : const Text('Delete habits'),
       ),
+      showDuration: kAppUndoDialogShowDuration,
       onPressed: () => _revertHabitsStatus(recordList),
     );
     ScaffoldMessenger.of(context)
@@ -663,8 +686,14 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
-      viewmodel.onHabitReorderComplate(index, dropIndex);
+      final task = viewmodel.onHabitReorderComplate(index, dropIndex);
       viewmodel.exitEditMode(listen: false);
+      task.whenComplete(() {
+        if (!mounted) return;
+        final appSync = context.maybeRead<AppSyncViewModel>();
+        if (appSync == null || !appSync.mounted) return;
+        appSync.delayedStartTaskOnce();
+      });
     } else if (!viewmodel.isInEditMode) {
       viewmodel.exitEditMode(listen: false);
     }
@@ -711,6 +740,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                           habitName) ??
                       'Deleted: $habitName'),
             ),
+            showDuration: kAppUndoDialogShowDuration,
             onPressed: () => _revertHabitsStatus(result.recordList ?? []),
           );
           ScaffoldMessenger.of(context)

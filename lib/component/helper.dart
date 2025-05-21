@@ -30,15 +30,15 @@ class BuildWidgetHelper {
     BuildContext context, {
     required Widget content,
     String? label,
+    Duration? showDuration,
     required VoidCallback onPressed,
   }) {
-    return SnackBar(
-      content: content,
-      action: SnackBarAction(
-        label: label ?? L10n.of(context)?.snackbar_undoText ?? 'undo',
-        onPressed: onPressed,
-      ),
+    final action = SnackBarAction(
+      label: label ?? L10n.of(context)?.snackbar_undoText ?? 'undo',
+      onPressed: onPressed,
     );
+    if (showDuration == null) return SnackBar(content: content, action: action);
+    return SnackBar(content: content, duration: showDuration, action: action);
   }
 
   SnackBar buildSnackBarWithDismiss(

@@ -50,6 +50,8 @@ class HabitSummaryViewModel extends ChangeNotifier
         DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
+  static final _fakeValueListenable = ValueNotifier(0);
+
   // scroll controller
   final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   // dispatcher
@@ -78,7 +80,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   // sync from setting
   int _firstday = defaultFirstDay;
   // sync from appsync
-  ValueListenable<num>? _onAutoSyncTick;
+  late WeakReference<ValueListenable<num>> _onAutoSyncTick;
   // data
 
   HabitSummaryViewModel({
@@ -88,6 +90,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     initVerticalScrollController(notifyListeners, verticalScrollController);
     forHabitDetail = DispatcherForHabitDetail(this);
     forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
+    _onAutoSyncTick = WeakReference(_fakeValueListenable);
   }
 
   LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
@@ -201,7 +204,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _onAutoSyncTick?.removeListener(onAutoSyncTick);
+    _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
     _dispatcher.discard();
     disposeVerticalScrollController();
     _cancelLoading();
@@ -505,11 +508,15 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   //#region: auto sync
   void updateFromAppSync(AppSyncViewModel appSync) {
-    if (appSync.onAutoSyncTick != _onAutoSyncTick) {
-      final oldTicker = _onAutoSyncTick?..removeListener(onAutoSyncTick);
-      _onAutoSyncTick = appSync.onAutoSyncTick..addListener(onAutoSyncTick);
-      appLog.habit.info("updateFromAppSync",
-          ex: ["regr listener", _onAutoSyncTick.hashCode, oldTicker?.hashCode]);
+    if (appSync.onAutoSyncTick != _onAutoSyncTick.target) {
+      final oldTicker = _onAutoSyncTick.target?..removeListener(onAutoSyncTick);
+      _onAutoSyncTick =
+          WeakReference(appSync.onAutoSyncTick..addListener(onAutoSyncTick));
+      appLog.habit.info("updateFromAppSync", ex: [
+        "regr listener",
+        _onAutoSyncTick.target.hashCode,
+        oldTicker?.hashCode
+      ]);
     }
   }
 
@@ -626,9 +633,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     return record;
   }
 
-  void onHabitReorderComplate(int index, int dropIndex) async {
+  Future<void> onHabitReorderComplate(int index, int dropIndex) {
     lastSortedDataCache.insert(dropIndex, lastSortedDataCache.removeAt(index));
-    await _writeChangedSortPositionToDB();
+    return _writeChangedSortPositionToDB();
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(

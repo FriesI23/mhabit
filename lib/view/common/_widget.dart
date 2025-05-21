@@ -28,3 +28,5 @@ export './not_found_image.dart';
 export './page_loading_indicator.dart';
 export './sync_loading_indicator.dart';
 export './sync_now_tile.dart';
+
+const kAppUndoDialogShowDuration = Duration(seconds: 4);

@@ -49,6 +49,7 @@ part 'app_sync.g.dart';
 const kAppSyncDelayDuration1 = Duration(seconds: 1);
 const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
+const kAppSyncOnceDelay = Duration(seconds: 5);
 
 class AppSyncViewModel
     with ChangeNotifier, ProfileHandlerLoadedMixin, DBHelperLoadedMixin
@@ -76,6 +77,7 @@ class AppSyncViewModel
     appSyncTask.addListener(notifyListeners);
     _autoSyncTickNotifier = ValueNotifier(0);
     _delayedSyncTrigger = CascadingAsyncDebouncer(action: () async {
+      if (!mounted) return;
       appLog.appsync.debug("AppSyncViewModel.onSyncTriggerred",
           ex: [_delayedSyncTrigger]);
       await startSync();
@@ -117,6 +119,8 @@ class AppSyncViewModel
     _mounted = false;
     _autoSyncTickNotifier.dispose();
     _lifecycleListener.dispose();
+    _delayedSyncTrigger.cancel();
+    _autoSyncTimer?.cancel();
     appSyncTask.dispose();
     super.dispose();
   }
@@ -294,10 +298,12 @@ class AppSyncViewModel
           ex: ["disabled", fireDelay, interval, oldTimer?.interval]);
     } else if (_autoSyncTimer?.interval != interval) {
       void onPeriodicSyncTriggered(Timer timer) async {
+        if (!mounted) return;
         final config = _serverConfig?.get();
         appLog.appsync.debug("[${timer.tick}] [${timer.hashCode}] Auto sync",
             ex: [timer.isActive, interval, () => config?.toDebugString()]);
         if (!enabled || !(await appSyncTask.shouldSync())) return;
+        if (!mounted) return;
         await appSyncTask.startSync();
         _autoSyncTickNotifier.value += 1;
       }
@@ -313,7 +319,7 @@ class AppSyncViewModel
     }
   }
 
-  void delayedStartTaskOnce({Duration delay = const Duration(seconds: 10)}) {
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {
     appLog.appsync.debug("AppSyncViewModel.delayedStartTaskOnce",
         ex: [delay, _delayedSyncTrigger]);
     _delayedSyncTrigger.exec(delay: delay);
