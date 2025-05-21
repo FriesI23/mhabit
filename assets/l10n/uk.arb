@@ -1035,6 +1035,10 @@
   "@appAbout_licenseThirdPartyTile_titleText": {},
   "appAbout_licenseThirdPartyTile_subtitleText": "тріпотіння",
   "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_privacyTile_titleText": "Конфіденційність",
+  "@appAbout_privacyTile_titleText": {},
+  "appAbout_privacyTile_subTitleText": "Ознайомтеся з політикою конфіденційності в цьому додатку",
+  "@appAbout_privacyTile_subTitleText": {},
   "appAbout_donateTile_titleText": "Пожертвуйте",
   "@appAbout_donateTile_titleText": {},
   "appAbout_donateTile_subTitleText": "Я персональний розробник. Якщо вам подобається цей додаток, купіть мені ☕.",
@@ -1322,5 +1326,11 @@
   "userAction_doubleTap": "Двомісний",
   "@userAction_doubleTap": {},
   "userAction_longTap": "довгий",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "channelName_habitReminder": "Нагадування про звички",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "Підказка",
+  "@channelName_appReminder": {},
+  "channelName_appDebugger": "Налагоджувач",
+  "@channelName_appDebugger": {}
 }
