@@ -21,6 +21,7 @@ import '../common/consts.dart';
 import '../common/rules.dart';
 import '../common/types.dart';
 import '../component/widget.dart';
+import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_goal.dart';
@@ -32,6 +33,7 @@ import '../persistent/local/handler/habit.dart';
 import '../provider/app_caches.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
+import '../provider/app_sync.dart';
 import '../provider/habit_form.dart';
 import '../reminders/notification_channel.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
@@ -235,29 +237,39 @@ class _HabitEditView extends State<HabitEditView> {
     if (!formvm.canSaveHabit()) return;
     final HabitDBCell? result = await formvm.saveHabit();
     if (!mounted) return;
-    // add reminder
-    final details = context.read<NotificationChannelData>().habitReminder;
-    if (result != null) {
-      final habit = await formvm.loadSingleHabitSummaryFromDB(result.uuid!,
-          firstDay: context.read<AppFirstDayViewModel>().firstDay);
-      if (habit != null && habit.reminder != null) {
-        NotificationService().regrHabitReminder(
-          id: notifyid.getHabitReminderId(habit.id),
-          uuid: habit.uuid,
-          name: habit.name,
-          reminder: habit.reminder!,
-          quest: habit.reminderQuest,
-          lastUntrackDate: habit.getFirstUnTrackedDate(),
-          details: details,
-        );
-      } else if (result.id != null) {
-        NotificationService().cancelHabitReminder(
-          id: notifyid.getHabitReminderId(result.id!),
-        );
-      }
+    // add or remove reminder
+    final uuid = result?.uuid;
+    final dbid = result?.id;
+    if (uuid != null) {
+      final details = context.read<NotificationChannelData>().habitReminder;
+      formvm
+          .loadSingleHabitSummaryFromDB(uuid,
+              firstDay: context.read<AppFirstDayViewModel>().firstDay)
+          .then((habit) {
+        if (habit != null && habit.reminder != null) {
+          NotificationService().regrHabitReminder(
+            id: notifyid.getHabitReminderId(habit.id),
+            uuid: habit.uuid,
+            name: habit.name,
+            reminder: habit.reminder!,
+            quest: habit.reminderQuest,
+            lastUntrackDate: habit.getFirstUnTrackedDate(),
+            details: details,
+          );
+        } else if (dbid != null) {
+          NotificationService().cancelHabitReminder(
+            id: notifyid.getHabitReminderId(dbid),
+          );
+        }
+      });
     }
-    if (!mounted) return;
+    // pop result
     Navigator.of(context).pop(result);
+    // try sync once
+    if (mounted && result != null) {
+      final appSync = context.maybeRead<AppSyncViewModel>();
+      if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
+    }
   }
 
   Widget _buildDebugInfo(BuildContext context) {

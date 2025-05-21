@@ -31,6 +31,7 @@ import '../model/habit_summary.dart';
 import '../provider/app_compact_ui_switcher.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
+import '../provider/app_sync.dart';
 import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
@@ -129,10 +130,16 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
 
     final changedCount = await vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
-    context
-        .maybeRead<HabitSummaryViewModel>()
-        ?.forHabitsStatusChanger
-        .onHabitDataChanged();
+
+    final appSync = context.maybeRead<AppSyncViewModel>();
+    if (appSync != null && appSync.mounted) {
+      appSync.delayedStartTaskOnce();
+    }
+    final summary = context.maybeRead<HabitSummaryViewModel>();
+    if (summary != null && summary.mounted) {
+      summary.forHabitsStatusChanger.onHabitDataChanged();
+    }
+
     final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
         content: L10nBuilder(
             builder: (context, l10n) => Text(
