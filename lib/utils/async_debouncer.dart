@@ -14,8 +14,25 @@
 
 import 'dart:async';
 
+/// Debounces asynchronous actions with support for async execution.
+///
+/// If [exec] is called while an asynchronous [action] is still running,
+/// a subsequent call is scheduled using the greater of the existing and
+/// newly requested delays.
+///
+/// Usage:
+/// ```dart
+/// final debouncer = CascadingAsyncDebouncer(action: ()  {
+///   doAction();
+/// });
+///
+/// debouncer.exec(delay: Duration(seconds: 1));
+/// ```
+///
+/// If [exec] is called during execution, it queues the next execution with
+/// the larger of the currently pending or newly requested delay.
 class CascadingAsyncDebouncer {
-  final Future<void> Function() action;
+  final FutureOr<void> Function() action;
 
   Timer? _timer;
   Duration? _pendingDelay;
@@ -37,7 +54,7 @@ class CascadingAsyncDebouncer {
     _timer?.cancel();
     _timer = Timer(delay, () {
       _isExecuting = true;
-      action().whenComplete(() {
+      Future.sync(action).whenComplete(() {
         _isExecuting = false;
         final nextDelay = _pendingDelay;
         _pendingDelay = null;
