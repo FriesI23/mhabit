@@ -20,12 +20,14 @@ import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../component/widget.dart';
+import '../../extension/context_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
 import '../../model/habit_form.dart';
 import '../../provider/app_custom_date_format.dart';
+import '../../provider/app_sync.dart';
 import '../../provider/habit_detail.dart';
 import '../../theme/color.dart';
 import '../common/_dialog.dart';
@@ -81,11 +83,23 @@ class _HabitEditReplacementRecordCalendarDialog
     _heatmapScrollController = ScrollController();
   }
 
-  void onHeatmapCellPressed(DateTime date, num? value) async {
+  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+    if (!mounted) return;
+    // try sync once
+    if (shouldSyncOnce) {
+      final sync = context.maybeRead<AppSyncViewModel>();
+      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    }
+  }
+
+  void onHeatmapCellPressed(DateTime date, num? value) {
     if (!mounted) return;
     final viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted) return;
-    await viewmodel.changeRecordStatus(HabitDate.dateTime(date));
+    viewmodel.changeRecordStatus(HabitDate.dateTime(date)).then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
   }
 
   void onHeatmapCellLongPressed(DateTime date, num? value) async {
@@ -135,7 +149,10 @@ class _HabitEditReplacementRecordCalendarDialog
     if (result == null || result == initReason || !context.mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
     if (!viewmodel.mounted) return;
-    viewmodel.changeRecordReason(date, result);
+    viewmodel.changeRecordReason(date, result).then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
@@ -176,7 +193,10 @@ class _HabitEditReplacementRecordCalendarDialog
     if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {
       return;
     }
-    viewmodel.changeRecordValue(date, result);
+    viewmodel.changeRecordValue(date, result).then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
   }
 
   @override

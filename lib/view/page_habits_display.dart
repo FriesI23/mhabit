@@ -158,6 +158,15 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
   }
 
+  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+    if (!mounted) return;
+    // try sync once
+    if (shouldSyncOnce) {
+      final sync = context.maybeRead<AppSyncViewModel>();
+      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    }
+  }
+
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
     HabitSummaryViewModel viewmodel;
     if (!mounted) return;
@@ -402,7 +411,11 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (result == null || result == initReason || !context.mounted) return;
     context
         .read<HabitSummaryViewModel>()
-        .changeRecordReason(parentUUID, date, result);
+        .changeRecordReason(parentUUID, date, result)
+        .then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
@@ -445,7 +458,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     if (result == null || result == orgNum || !context.mounted) return;
     viewmodel = context.read<HabitSummaryViewModel>();
     if (!viewmodel.mounted) return;
-    viewmodel.changeRecordValue(parentUUID, date, result);
+    viewmodel.changeRecordValue(parentUUID, date, result).then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
   }
 
   void _exportSelectedHabitsAndShared(BuildContext context) async {
@@ -612,8 +628,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       HabitRecordStatus crt,
     ) async {
       if (!mounted) return;
-
-      context.read<HabitSummaryViewModel>().changeRecordStatus(puuid, date);
+      context
+          .read<HabitSummaryViewModel>()
+          .changeRecordStatus(puuid, date)
+          .then((record) {
+        if (!mounted || record == null) return;
+        _onRecordChangeConfirmed();
+      });
     }
 
     void handleOpenRecordStatusDialog(
