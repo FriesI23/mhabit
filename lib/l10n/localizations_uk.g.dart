@@ -1201,10 +1201,10 @@ class L10nUk extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'тріпотіння';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Конфіденційність';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'Ознайомтеся з політикою конфіденційності в цьому додатку';
 
   @override
   String get appAbout_donateTile_titleText => 'Пожертвуйте';
@@ -1580,11 +1580,11 @@ class L10nUk extends L10n {
   String get userAction_longTap => 'довгий';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Нагадування про звички';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Підказка';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Налагоджувач';
 }

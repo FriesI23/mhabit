@@ -2478,14 +2478,6 @@
     "channelName_appDebugger"
   ],
 
-  "uk": [
-    "appAbout_privacyTile_titleText",
-    "appAbout_privacyTile_subTitleText",
-    "channelName_habitReminder",
-    "channelName_appReminder",
-    "channelName_appDebugger"
-  ],
-
   "vi": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
