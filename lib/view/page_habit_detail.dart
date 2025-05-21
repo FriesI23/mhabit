@@ -39,6 +39,7 @@ import '../persistent/local/handler/habit.dart';
 import '../provider/app_custom_date_format.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_first_day.dart';
+import '../provider/app_sync.dart';
 import '../provider/habit_detail.dart';
 import '../provider/habit_detail_freqchart.dart';
 import '../provider/habit_detail_scorechart.dart';
@@ -224,6 +225,17 @@ class _HabitDetailView extends State<HabitDetailView>
     );
   }
 
+  void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
+    if (!mounted) return;
+    // try sync once
+    if (shouldSyncOnce) {
+      final sync = context.maybeRead<AppSyncViewModel>();
+      if (sync != null && sync.mounted) {
+        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
+      }
+    }
+  }
+
   void _openHabitArchiveConfirmDialog() async {
     HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
@@ -243,16 +255,17 @@ class _HabitDetailView extends State<HabitDetailView>
     summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToArchiveHabit();
-      return;
+    } else {
+      // use summary method in default
+      await summary.forHabitDetail
+          .onConfirmToArchiveHabit(viewmodel.habitUUID!);
+      if (!mounted) return;
+      viewmodel = context.read<HabitDetailViewModel>();
+      if (!viewmodel.mounted) return;
+      viewmodel.rockreloadDBToggleSwich();
     }
 
-    // use summary method in default
-    await summary.forHabitDetail.onConfirmToArchiveHabit(viewmodel.habitUUID!);
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.rockreloadDBToggleSwich();
+    _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitUnarchiveConfirmDialog() async {
@@ -274,17 +287,17 @@ class _HabitDetailView extends State<HabitDetailView>
     summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToUnarchiveHabit();
-      return;
+    } else {
+      // use summary method in default
+      await summary.forHabitDetail
+          .onConfirmToUnarchiveHabit(viewmodel.habitUUID!);
+      if (!mounted) return;
+      viewmodel = context.read<HabitDetailViewModel>();
+      if (!viewmodel.mounted) return;
+      viewmodel.rockreloadDBToggleSwich();
     }
 
-    // use summary method in default
-    await summary.forHabitDetail
-        .onConfirmToUnarchiveHabit(viewmodel.habitUUID!);
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.rockreloadDBToggleSwich();
+    _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitDeleteConfirmDialog() async {
@@ -331,6 +344,8 @@ class _HabitDetailView extends State<HabitDetailView>
         );
       }
     }
+
+    _onHabitStatusChangeConfirmed();
   }
 
   void _exportHabitAndShared(BuildContext context) async {
