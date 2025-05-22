@@ -905,5 +905,432 @@
   "userAction_doubleTap": "ضغطتين متتابعة",
   "@userAction_doubleTap": {},
   "userAction_longTap": "ضغطة طويلة",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSync_nowTile_errorText_noDate": "آخر مزامنة (خطأ): لا يوجد",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_cancelText_noDate": "آخر مزامنة (ملغاة): لا يوجد",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "آخر مزامنة (ملغاة): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {مكتمل} cancelled {ملغى} failed {فشل} multi {حالات متعددة} other {حالة غير معروفة}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "الدليل ليس فارغاً. ستدمج المزامنة العادات الموجودة على الخادم والعادات المحلية. هل تريد المتابعة؟",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "لم يتم التكوين",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_summaryTile_title": "خادم المزامنة",
+  "@appSync_summaryTile_title": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "جميع سجلات المزامنة الفاشلة الأخيرة",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "experimentalFeatures_habitSyncTile_titleText": "مزامنة العادات السحابية",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "common_enable_text": "ممكّن",
+  "@common_enable_text": {},
+  "debug_debuggerInfoCard_subtitle": "يتضمن معلومات تصحيح أخطاء التطبيق.",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "appSetting_debugger_titleText": "معلومات تصحيح الأخطاء",
+  "@appSetting_debugger_titleText": {},
+  "debug_downladDebugInfo_subject": "جاري تنزيل معلومات تصحيح الأخطاء",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_missingDebugLogFile_snackbar": "ملف سجل تصحيح الأخطاء غير موجود.",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "batchCheckin_completed_snackbar_text": "تم تعديل {count, plural, =1{حالة العادة} other{حالة {count} عادات}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "debug_debuggerLogCard_subtitle": "يتضمن معلومات سجل تصحيح الأخطاء المحلي، تحتاج إلى تشغيل مفتاح جمع السجلات.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerLogCard_saveButton_text": "تنزيل",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "appAbout_privacyTile_titleText": "الخصوصية",
+  "@appAbout_privacyTile_titleText": {},
+  "common_errorPage_title": "عذراً، حدث خطأ!",
+  "@common_errorPage_title": {},
+  "debug_debuggerInfo_notificationTitle": "جاري جمع معلومات التطبيق...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "confirmDialog_confirm_text": "{type, select, save {حفظ} exit {خروج} delete {حذف} other {تأكيد}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "confirmDialog_cancel_text": "إلغاء",
+  "@confirmDialog_cancel_text": {},
+  "channelName_habitReminder": "تذكير العادة",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "تلميح",
+  "@channelName_appReminder": {},
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "تم حذف العادة: \"{name}\"",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
+  "appSetting_syncOption_titleText": "خيارات المزامنة",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "مزامنة الآن",
+  "@appSync_nowTile_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "سيؤدي الخروج إلى تجاهل جميع التغييرات غير المحفوظة.",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "أدخل اسم المستخدم هنا، اتركه فارغاً إذا لم يكن مطلوباً.",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_serverEditor_netTypeTile_titleText": "وضع مزامنة الشبكة",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {مزامنة عبر شبكة الجوال} wifi {مزامنة عبر الواي فاي} other {غير معروف}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "debug_logLevelTile_title": "مستوى التسجيل",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevel_debug": "تصحيح",
+  "@debug_logLevel_debug": {},
+  "debug_logLevel_info": "معلومات",
+  "@debug_logLevel_info": {},
+  "debug_logLevel_warn": "تحذير",
+  "@debug_logLevel_warn": {},
+  "debug_logLevel_error": "خطأ",
+  "@debug_logLevel_error": {},
+  "debug_logLevel_fatal": "فادح",
+  "@debug_logLevel_fatal": {},
+  "debug_collectLogTile_title": "جمع السجلات",
+  "@debug_collectLogTile_title": {},
+  "appSetting_changeLanguage_followSystem_text": "اتباع إعدادات النظام ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "اتباع إعدادات النظام",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "اللغة",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "اختر اللغة",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "الميزات التجريبية",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "المزامنة",
+  "@appSetting_synSubgroupText": {},
+  "appSync_nowTile_titleText_syncing": "جاري المزامنة",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "آخر مزامنة: لا يوجد",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "آخر مزامنة: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText": "آخر مزامنة (خطأ): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "جاري المزامنة...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "جاري المزامنة: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "جاري الإلغاء...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_failedTile_titleText": "تحقق من سجلات الفشل",
+  "@appSync_failedTile_titleText": {},
+  "appSync_failedTile_errorText": "[خطأ]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {اكتمل بسبب {reason}} cancelled {ألغي بسبب {reason}} failed {فشل بسبب {reason}} multi {حالات متعددة بسبب {reason}} other {حالة غير معروفة}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {خطأ} userAction {يتطلب إجراء من المستخدم} missingHabitUuid {معرف العادة مفقود} empty {بيانات فارغة} other {سبب غير معروف}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "موقع جديد",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "ستقوم المزامنة بإنشاء الدلائل الضرورية وتحميل العادات المحلية إلى الخادم. هل تريد المتابعة؟",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "مزامنة الآن!",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_webdav_oldServerConfirmDialog_titleText": "تأكيد المزامنة",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_confirmText": "تأكيد الدمج",
+  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "تصدير سجلات المزامنة الفاشلة",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {لم يتم العثور على سجلات} false {انقر للتصدير} other {جاري التحميل...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {الحالي: } other {}}{name, select, webdav {WebDAV} fake {وهمي (للتصحيح فقط)} other {غير معروف ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_networkType_text": "{type, select, mobile {شبكة الجوال} wifi {واي فاي} other {غير معروف}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_syncInterval_text": "{name, select, manual {يدوي} minute5 {5 دقائق} minute15 {15 دقيقة} minute30 {30 دقيقة} hour1 {1 ساعة} other {غير معروف}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "فاصل الجلب",
+  "@appSync_syncIntervalTile_title": {},
+  "appSync_serverEditor_saveDialog_titleText": "تأكيد حفظ التغييرات",
+  "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "سيؤدي الحفظ إلى الكتابة فوق تكوين الخادم السابق.",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "تغييرات غير محفوظة",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "تأكيد الحذف",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "سيؤدي الحذف إلى إزالة تكوين الخادم الحالي.",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "خادم مزامنة جديد",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "تعديل خادم المزامنة",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_advance_titleText": "إعدادات متقدمة",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "المسار",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "أدخل مسار WebDAV صالح هنا.",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "المسار لا يجب أن يكون فارغاً!",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_usernameTile_titleText": "اسم المستخدم",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_passwordTile_titleText": "كلمة المرور",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "تجاهل شهادة SSL",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "مهلة المزامنة بالثواني",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "افتراضي: {seconds, plural, =0 {لا نهائي} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_unitText": "ثانية",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "مهلة اتصال الشبكة بالثواني",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "افتراضي: {seconds, plural, =0 {لا نهائي} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "ثانية",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "عدد مرات إعادة محاولة اتصال الشبكة",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_connRetryCountTile_hintText": "افتراضي: {count, plural, =0 {إعادة المحاولة معطلة} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "بيانات منخفضة",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "مزامنة في وضع البيانات المنخفضة",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_warnginBanner_title": "تم تمكين ميزة تجريبية واحدة أو أكثر، استخدم بحذر.",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "بمجرد التمكين، سيظهر خيار المزامنة في إعدادات التطبيق",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_titleText": "الميزة التجريبية ({syncName}) معطلة، ولكن الوظيفة لا تزال تعمل.",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "لتعطيلها بالكامل، اضغط طويلاً للوصول إلى '{menuName}' وإيقاف تشغيلها.",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
+  "appAbout_privacyTile_subTitleText": "الوصول إلى سياسة الخصوصية في هذا التطبيق",
+  "@appAbout_privacyTile_subTitleText": {},
+  "common_errorPage_copied": "تم نسخ معلومات الخطأ",
+  "@common_errorPage_copied": {},
+  "debug_logLevelDialog_title": "تغيير مستوى التسجيل",
+  "@debug_logLevelDialog_title": {},
+  "debug_collectLogTile_enable_subtitle": "انقر لإيقاف جمع السجلات.",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "debug_collectLogTile_disable_subtitle": "انقر لبدء جمع السجلات.",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_downladDebugLogs_subject": "جاري تنزيل سجلات تصحيح الأخطاء",
+  "@debug_downladDebugLogs_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "تم مسح سجلات تصحيح الأخطاء.",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_downladDebugZip_subject": "جاري تنزيل {fileName}",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_debuggerLogCard_title": "معلومات التسجيل",
+  "@debug_debuggerLogCard_title": {},
+  "debug_debuggerLogCard_clearButton_text": "مسح",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "معلومات تصحيح الأخطاء",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_openButton_text": "فتح",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_debuggerInfoCard_saveButton_text": "حفظ",
+  "@debug_debuggerInfoCard_saveButton_text": {},
+  "channelName_appDebugger": "مصصح الأخطاء",
+  "@channelName_appDebugger": {}
 }
