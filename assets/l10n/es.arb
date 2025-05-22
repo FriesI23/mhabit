@@ -1076,5 +1076,50 @@
   "userAction_doubleTap": "Doble",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Longitud",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSync_failedTile_titleText": "Compruebe los registros de fallos",
+  "@appSync_failedTile_titleText": {},
+  "appSync_webdav_resultStatus": "{status, select, success {Completado} cancelled {Cancelado} failed {Fallido} multi {Múltiples estados} other {Estado desconocido}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "habitEdit_habitFreq_permonth": " ",
+  "@habitEdit_habitFreq_permonth": {},
+  "habitEdit_habitFreq_predayfreq": " ",
+  "@habitEdit_habitFreq_predayfreq": {},
+  "habitEdit_reminder_freq_weekPrefixText": " ",
+  "@habitEdit_reminder_freq_weekPrefixText": {},
+  "habitEdit_habitFreq_perweek": " ",
+  "@habitEdit_habitFreq_perweek": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habitEdit_reminder_freq_monthPrefixText": " ",
+  "@habitEdit_reminder_freq_monthPrefixText": {}
 }
