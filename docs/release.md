@@ -5,6 +5,18 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Release
 
+## 1.16.13+82
+
+**🌐 Localization**
+
+- Update Spanish l10n translation, thanks to Óscar Fernández Díaz's contribution on Weblate.
+- Update Arabic l10n translation, thanks to abdelbasset jabrane's contribution on Weblate.
+- Update Contributor File.
+
+**🧹 Others**
+
+- [Android] Set `AppDebugger` notification message to `ongoing`.
+
 ## v.16.12+81
 
 **✨ New Features**
@@ -28,12 +40,6 @@ Title: Pre-Released or Released: v1.2.3+xx
 - Add privacy declaration in app.
 
 <!-- **🐛 Bug Fixes** -->
-
-<!-- **🍎 iOS** -->
-
-<!-- **🍏 macOS** -->
-
-<!-- **🪟 Windows** -->
 
 **🌐 Localization**
 

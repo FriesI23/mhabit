@@ -118,6 +118,7 @@ class NotificationAndroidChannelData
               playSound: false,
               autoCancel: false,
               showWhen: false,
+              ongoing: true,
               silent: true,
               color: Colors.red,
               colorized: true,
