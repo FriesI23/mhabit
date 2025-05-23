@@ -125,8 +125,8 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'على الأقل $freq مرات في الشهر',
-      one: 'Per month',
+      other: 'على الأقل $freq مرات شهر',
+      one: 'شهريًا',
     );
     return '$_temp0';
   }
