@@ -58,6 +58,9 @@
         "ar": [
             {
                 "name": "aalmalki3"
+            },
+            {
+                "name": "abdelbasset jabrane"
             }
         ],
         "cs": [
@@ -69,8 +72,7 @@
         "de": [ 3 ],
         "fa": [ 5,
             {
-                "name": "ulracte",
-                "email": "ulracte@users.noreply.hosted.weblate.org"
+                "name": "ulracte"
             }
         ],
         "fr": [ 2 ],
@@ -86,7 +88,11 @@
             {
                 "name": "Patricio Carrau",
                 "email": "uckycb@proton.me"
+            },
+            {
+                "name": "Óscar Fernández Díaz"
             }
+
         ],
         "en": [
             1,
@@ -127,8 +133,7 @@
         ],
         "uk": [
             {
-                "name": "Fqwe1",
-                "email": "Fqwe1@users.noreply.hosted.weblate.org"
+                "name": "Fqwe1"
             },
             {
                 "name": "Максим Горпиніч",

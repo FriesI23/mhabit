@@ -83,19 +83,19 @@ class L10nEs extends L10n {
   String get habitEdit_habitFreq_daily => 'Diariamente';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek => ' ';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'Veces por semana';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
+  String get habitEdit_habitFreq_permonth => ' ';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'veces al mes';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
+  String get habitEdit_habitFreq_predayfreq => ' ';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex01 => 'veces en';
@@ -160,7 +160,7 @@ class L10nEs extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Cualquier día de la semana';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
+  String get habitEdit_reminder_freq_weekPrefixText => ' ';
 
   @override
   String get habitEdit_reminder_freq_weekSubfixText => ' cada semana';
@@ -169,7 +169,7 @@ class L10nEs extends L10n {
   String get habitEdit_reminder_freq_monthHelpText => 'Cualquier día del mes';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
+  String get habitEdit_reminder_freq_monthPrefixText => ' ';
 
   @override
   String get habitEdit_reminder_freq_monthSubfixText => ' cada mes';
@@ -876,7 +876,7 @@ class L10nEs extends L10n {
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Compruebe los registros de fallos';
 
   @override
   String appSync_failedTile_errorText(String info) {
@@ -893,11 +893,11 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed',
-        'cancelled': 'Canceled',
-        'failed': 'Failed',
-        'multi': 'Multiple statuses',
-        'other': 'Unknown status',
+        'success': 'Completado',
+        'cancelled': 'Cancelado',
+        'failed': 'Fallido',
+        'multi': 'Múltiples estados',
+        'other': 'Estado desconocido',
       },
     );
     return '$_temp0';
