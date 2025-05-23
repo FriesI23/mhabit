@@ -83,19 +83,19 @@ class L10nAr extends L10n {
   String get habitEdit_habitFreq_daily => 'يومياً';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek => 'في الأسبوع';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'مرة في الأسبوع';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
+  String get habitEdit_habitFreq_permonth => 'في الشهر';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'مرة في الشهر';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
+  String get habitEdit_habitFreq_predayfreq => 'في كل عدد من الأيام';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex01 => 'مرات في';
@@ -125,8 +125,8 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'على الأقل $freq مرات في الشهر',
-      one: 'Per month',
+      other: 'على الأقل $freq مرات شهر',
+      one: 'شهريًا',
     );
     return '$_temp0';
   }
@@ -290,7 +290,7 @@ class L10nAr extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'تم حذف العادة: \"$name\"';
   }
 
   @override
@@ -666,17 +666,17 @@ class L10nAr extends L10n {
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'اتباع النظام ($localeName)';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'اتباع النظام';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'اللغة';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'اختر اللغة';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -804,25 +804,25 @@ class L10nAr extends L10n {
   String get appSetting_clearCache_snackBar_failText => 'فشل حذف التخزين المؤقت';
 
   @override
-  String get appSetting_debugger_titleText => 'Debug Info';
+  String get appSetting_debugger_titleText => 'معلومات التصحيح';
 
   @override
   String get appSetting_about_titleText => 'عن';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'الميزات التجريبية';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'المزامنة';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'خيارات المزامنة';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'مزامنة الآن';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'جاري المزامنة';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -835,23 +835,23 @@ class L10nAr extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'آخر مزامنة: غير متوفر';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'آخر مزامنة: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'آخر مزامنة (خطأ): غير متوفر';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'آخر مزامنة (خطأ): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'جاري المزامنة...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -861,26 +861,26 @@ class L10nAr extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'جاري المزامنة: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'جاري الإلغاء...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'آخر مزامنة (ملغاة): غير متوفر';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'آخر مزامنة (ملغاة): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'تحقق من سجلات الفشل';
 
   @override
   String appSync_failedTile_errorText(String info) {
-    return '[Error]: $info';
+    return '[خطأ]: $info';
   }
 
   @override
@@ -893,11 +893,11 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed',
-        'cancelled': 'Canceled',
-        'failed': 'Failed',
-        'multi': 'Multiple statuses',
-        'other': 'Unknown status',
+        'success': 'مكتمل',
+        'cancelled': 'ملغى',
+        'failed': 'فشل',
+        'multi': 'حالات متعددة',
+        'other': 'حالة غير معروفة',
       },
     );
     return '$_temp0';
@@ -908,11 +908,11 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed due to $reason',
-        'cancelled': 'Canceled due to $reason',
-        'failed': 'Failed due to $reason',
-        'multi': 'Multiple statuses due to $reason',
-        'other': 'Unknown status',
+        'success': 'مكتمل بسبب $reason',
+        'cancelled': 'ملغى بسبب $reason',
+        'failed': 'فشل بسبب $reason',
+        'multi': 'حالات متعددة بسبب $reason',
+        'other': 'حالة غير معروفة',
       },
     );
     return '$_temp0';
@@ -923,45 +923,45 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       reason,
       {
-        'error': 'Error',
-        'userAction': 'User action required',
-        'missingHabitUuid': 'Missing habit UUID',
-        'empty': 'Empty data',
-        'other': 'Unknown reason',
+        'error': 'خطأ',
+        'userAction': 'يتطلب إجراء من المستخدم',
+        'missingHabitUuid': 'معرف العادة مفقود',
+        'empty': 'بيانات فارغة',
+        'other': 'سبب غير معروف',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'موقع جديد';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'ستقوم المزامنة بإنشاء الدلائل الضرورية وتحميل العادات المحلية إلى الخادم. هل تريد المتابعة؟';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'مزامنة الآن!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'تأكيد المزامنة';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'الدليل ليس فارغًا. ستدمج المزامنة العادات الموجودة على الخادم والعادات المحلية. هل تريد المتابعة؟';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'تأكيد الدمج';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'تصدير سجلات المزامنة الفاشلة';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
-        'true': 'No log founded',
-        'false': 'Tap to export',
-        'other': 'loading...',
+        'true': 'لم يتم العثور على سجلات',
+        'false': 'انقر للتصدير',
+        'other': 'جاري التحميل...',
       },
     );
     return '$_temp0';
@@ -972,7 +972,7 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       isCurrent,
       {
-        'true': 'Current: ',
+        'true': 'الحالي: ',
         'other': '',
       },
     );
@@ -980,8 +980,8 @@ class L10nAr extends L10n {
       name,
       {
         'webdav': 'WebDAV',
-        'fake': 'Fake (Only For Debugger)',
-        'other': 'Unknown ($name)',
+        'fake': 'وهمي (للتصحيح فقط)',
+        'other': 'غير معروف ($name)',
       },
     );
     return '$_temp0$_temp1';
@@ -992,9 +992,9 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Mobile',
-        'wifi': 'Wifi',
-        'other': 'Unknown',
+        'mobile': 'شبكة الجوال',
+        'wifi': 'واي فاي',
+        'other': 'غير معروف',
       },
     );
     return '$_temp0';
@@ -1005,79 +1005,79 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
-        'manual': 'Manual',
-        'minute5': '5 Minutes',
-        'minute15': '15 Minutes',
-        'minute30': '30 Minutes',
-        'hour1': '1 Hour',
-        'other': 'Unknown',
+        'manual': 'يدوي',
+        'minute5': '5 دقائق',
+        'minute15': '15 دقيقة',
+        'minute30': '30 دقيقة',
+        'hour1': '1 ساعة',
+        'other': 'غير معروف',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'فاصل الجلب';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'خادم المزامنة';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'غير مُعد';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'جميع سجلات المزامنة الفاشلة الأخيرة';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'تأكيد حفظ التغييرات';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'سيؤدي الحفظ إلى الكتابة فوق تكوين الخادم السابق.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'تغييرات غير محفوظة';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'سيؤدي الخروج إلى تجاهل جميع التغييرات غير المحفوظة.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'تأكيد الحذف';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'سيؤدي الحذف إلى إزالة تكوين الخادم الحالي.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'خادم مزامنة جديد';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'تعديل خادم المزامنة';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'إعدادات متقدمة';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'المسار';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'أدخل مسار WebDAV صالح هنا.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'المسار لا يجب أن يكون فارغًا!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'اسم المستخدم';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'أدخل اسم المستخدم هنا، اتركه فارغًا إذا لم يكن مطلوبًا.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'كلمة المرور';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'تجاهل شهادة SSL';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'مهلة المزامنة بالثواني';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1085,16 +1085,16 @@ class L10nAr extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'غير محدود',
     );
-    return 'Default: $_temp0';
+    return 'الافتراضي: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_timeoutTile_unitText => 's';
+  String get appSync_serverEditor_timeoutTile_unitText => 'ثانية';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'مهلة اتصال الشبكة بالثواني';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1102,16 +1102,16 @@ class L10nAr extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'غير محدود',
     );
-    return 'Default: $_temp0';
+    return 'الافتراضي: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_unitText => 's';
+  String get appSync_serverEditor_connTimeoutTile_unitText => 'ثانية';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'عدد مرات إعادة محاولة اتصال الشبكة';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1119,50 +1119,50 @@ class L10nAr extends L10n {
       count,
       locale: localeName,
       other: '$count',
-      zero: 'Retry disabled',
+      zero: 'إعادة المحاولة معطلة',
     );
-    return 'Default: $_temp0';
+    return 'الافتراضي: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText => 'وضع مزامنة الشبكة';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Sync on Cellular Network',
-        'wifi': 'Sync on Wifi',
-        'other': 'Unknown',
+        'mobile': 'مزامنة عبر شبكة الجوال',
+        'wifi': 'مزامنة عبر واي فاي',
+        'other': 'غير معروف',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'بيانات منخفضة';
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'المزامنة في وضع البيانات المنخفضة';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title => 'تم تفعيل ميزة تجريبية واحدة أو أكثر، استخدم بحذر.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText => 'مزامنة العادات السحابية';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'بمجرد التفعيل، سيظهر خيار المزامنة في إعدادات التطبيق';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'الميزة التجريبية ($syncName) معطلة، لكن الوظيفة لا تزال تعمل.';
   }
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'للتعطيل الكامل، اضغط مطولًا للوصول إلى \'$menuName\' وإيقاف تشغيلها.';
   }
 
   @override
@@ -1170,7 +1170,7 @@ class L10nAr extends L10n {
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
-    return 'النسخة: $appVersion';
+    return 'الإصدار: $appVersion';
   }
 
   @override
@@ -1201,10 +1201,10 @@ class L10nAr extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'فلتر';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'الخصوصية';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'الوصول إلى سياسة الخصوصية في هذا التطبيق';
 
   @override
   String get appAbout_donateTile_titleText => 'تبرع';
@@ -1290,10 +1290,10 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'status of $count habits',
-      one: 'habit\'s status',
+      other: 'حالة $count عادات',
+      one: 'حالة العادة',
     );
-    return 'Modified $_temp0';
+    return 'تم تعديل $_temp0';
   }
 
   @override
@@ -1418,13 +1418,13 @@ class L10nAr extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'تأكيد';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'عذرًا، حدث خطأ!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'تم نسخ معلومات الخطأ';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'مُفعل';
 
   @override
   String get calendarPicker_clip_today => 'اليوم';
@@ -1465,95 +1465,95 @@ class L10nAr extends L10n {
   String get exportConfirmDialog_confirm_buttonText => 'تصدير';
 
   @override
-  String get debug_logLevelTile_title => 'Logging Level';
+  String get debug_logLevelTile_title => 'مستوى التسجيل';
 
   @override
-  String get debug_logLevelDialog_title => 'Change Logging Level';
+  String get debug_logLevelDialog_title => 'تغيير مستوى التسجيل';
 
   @override
-  String get debug_logLevel_debug => 'Debug';
+  String get debug_logLevel_debug => 'تصحيح';
 
   @override
-  String get debug_logLevel_info => 'Info';
+  String get debug_logLevel_info => 'معلومات';
 
   @override
-  String get debug_logLevel_warn => 'Warning';
+  String get debug_logLevel_warn => 'تحذير';
 
   @override
-  String get debug_logLevel_error => 'Error';
+  String get debug_logLevel_error => 'خطأ';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'فادح';
 
   @override
-  String get debug_collectLogTile_title => 'Collecting Logs';
+  String get debug_collectLogTile_title => 'جمع السجلات';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+  String get debug_collectLogTile_enable_subtitle => 'انقر لإيقاف جمع السجلات.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+  String get debug_collectLogTile_disable_subtitle => 'انقر لبدء جمع السجلات.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
+  String get debug_downladDebugLogs_subject => 'جاري تنزيل سجلات التصحيح';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+  String get dbeug_clearDebugLogs_complete_snackbar => 'تم مسح سجلات التصحيح.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+  String get debug_downladDebugInfo_subject => 'جاري تنزيل معلومات التصحيح';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
-    return 'Downloading $fileName';
+    return 'جاري تنزيل $fileName';
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Debug log doesn\'t exist.';
+  String get debug_missingDebugLogFile_snackbar => 'ملف سجل التصحيح غير موجود.';
 
   @override
-  String get debug_debuggerLogCard_title => 'Logging Information';
+  String get debug_debuggerLogCard_title => 'معلومات التسجيل';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+  String get debug_debuggerLogCard_subtitle => 'يتضمن معلومات سجل التصحيح المحلي، يحتاج إلى تفعيل مفتاح جمع السجلات.';
 
   @override
-  String get debug_debuggerLogCard_saveButton_text => 'Download';
+  String get debug_debuggerLogCard_saveButton_text => 'تنزيل';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'Clear';
+  String get debug_debuggerLogCard_clearButton_text => 'مسح';
 
   @override
-  String get debug_debuggerInfoCard_title => 'Debugging Information';
+  String get debug_debuggerInfoCard_title => 'معلومات التصحيح';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+  String get debug_debuggerInfoCard_subtitle => 'يتضمن معلومات تصحيح التطبيق.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'Open';
+  String get debug_debuggerInfoCard_openButton_text => 'فتح';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'Save';
+  String get debug_debuggerInfoCard_saveButton_text => 'حفظ';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+  String get debug_debuggerInfo_notificationTitle => 'جاري جمع معلومات التطبيق...';
 
   @override
   String confirmDialog_confirm_text(String type) {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'save': 'Save',
-        'exit': 'Exit',
-        'delete': 'Delete',
-        'other': 'Confirm',
+        'save': 'حفظ',
+        'exit': 'خروج',
+        'delete': 'حذف',
+        'other': 'تأكيد',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'إلغاء';
 
   @override
   String get snackbar_undoText => 'تراجع';
@@ -1574,11 +1574,11 @@ class L10nAr extends L10n {
   String get userAction_longTap => 'ضغطة طويلة';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'تذكير العادة';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'تلميح';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'مصحح الأخطاء';
 }
