@@ -6,17 +6,17 @@
   "@appName": {},
   "habitEdit_saveButton_text": "حفظ",
   "@habitEdit_saveButton_text": {},
-  "habitEdit_habitName_hintText": "اسم العادة ...",
+  "habitEdit_habitName_hintText": "اسم العادة...",
   "@habitEdit_habitName_hintText": {},
-  "habitEdit_colorPicker_title": "اختر لوناً",
+  "habitEdit_colorPicker_title": "اختر لونًا",
   "@habitEdit_colorPicker_title": {},
   "habitEdit_habitTypeDialog_title": "نوع العادة",
   "@habitEdit_habitTypeDialog_title": {},
-  "habitEdit_habitType_positiveText": "إيجابي",
+  "habitEdit_habitType_positiveText": "إيجابية",
   "@habitEdit_habitType_positiveText": {},
-  "habitEdit_habitType_negativeText": "سلبي",
+  "habitEdit_habitType_negativeText": "سلبية",
   "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "هدف العادة اليومي، فرضاً {number}",
+  "habitEdit_habitDailyGoal_hintText": "الهدف اليومي، الافتراضي {number}",
   "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -26,7 +26,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_negativeHintText": "حد العادة السيئة، فرضاً {number}",
+  "habitEdit_habitDailyGoal_negativeHintText": "الحد الأدنى اليومي للعادة السلبية، الافتراضي {number}",
   "@habitEdit_habitDailyGoal_negativeHintText": {
     "description": "حد العادة السيئة الافتراضي يومياً",
     "placeholders": {
@@ -36,7 +36,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_errorText01": "الهدف اليومي يجب أن يكون > {number}",
+  "habitEdit_habitDailyGoal_errorText01": "يجب أن يكون الهدف اليومي > {number}",
   "@habitEdit_habitDailyGoal_errorText01": {
     "description": "الهدف الأدنى للعادة يومياً",
     "placeholders": {
@@ -46,7 +46,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_errorText02": "الهدف اليومي يجب أن يكون ≤ {number}",
+  "habitEdit_habitDailyGoal_errorText02": "يجب أن يكون الهدف اليومي ≤ {number}",
   "@habitEdit_habitDailyGoal_errorText02": {
     "description": "الهدف الأعلى للعادة يومياً",
     "placeholders": {
@@ -56,7 +56,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_negativeErrorText01": "الهدف اليومي يجب أن يكون ≥ {number}",
+  "habitEdit_habitDailyGoal_negativeErrorText01": "يجب أن يكون الهدف اليومي ≥ {number}",
   "@habitEdit_habitDailyGoal_negativeErrorText01": {
     "description": "الهدف الأدنى للعادة السلبية يومياً",
     "placeholders": {
@@ -66,7 +66,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_negativeErrorText02": "الهدف اليومي يجب أن يكون ≤ {number}",
+  "habitEdit_habitDailyGoal_negativeErrorText02": "يجب أن يكون الهدف اليومي ≤ {number}",
   "@habitEdit_habitDailyGoal_negativeErrorText02": {
     "description": "الهدف الأعلى للعادة السلبية يومياً",
     "placeholders": {
@@ -76,11 +76,11 @@
       }
     }
   },
-  "habitEdit_habitDailyGoalUnit_hintText": "الهدف اليومي",
+  "habitEdit_habitDailyGoalUnit_hintText": "وحدة الهدف اليومي",
   "@habitEdit_habitDailyGoalUnit_hintText": {},
-  "habitEdit_habitDailyGoalExtra_hintText": "الهدف اليومي الأعلى",
+  "habitEdit_habitDailyGoalExtra_hintText": "الهدف اليومي الأقصى المرغوب",
   "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitDailyGoalExtra_errorText": "القيمة غير صحيحة، أتركه فارغاً أو ≥ {dailyGoal}",
+  "habitEdit_habitDailyGoalExtra_errorText": "قيمة غير صالحة. يجب أن تكون فارغة أو ≥ {dailyGoal}",
   "@habitEdit_habitDailyGoalExtra_errorText": {
     "placeholders": {
       "dailyGoal": {
@@ -89,23 +89,23 @@
       }
     }
   },
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "الحد اليومي الأعلى",
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "الحد الأقصى اليومي",
   "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
-  "habitEdit_frequencySelector_title": "اختر مدى التكرار",
+  "habitEdit_frequencySelector_title": "اختر التكرار",
   "@habitEdit_frequencySelector_title": {},
-  "habitEdit_habitFreq_daily": "يومياً",
+  "habitEdit_habitFreq_daily": "يوميًا",
   "@habitEdit_habitFreq_daily": {},
   "habitEdit_habitFreq_perweek": "في الأسبوع",
   "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_habitFreq_perweek_ex01": "مرة في الأسبوع",
+  "habitEdit_habitFreq_perweek_ex01": "مرات أسبوعيًا",
   "@habitEdit_habitFreq_perweek_ex01": {},
   "habitEdit_habitFreq_permonth": "في الشهر",
   "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_permonth_ex01": "مرة في الشهر",
+  "habitEdit_habitFreq_permonth_ex01": "مرات شهريًا",
   "@habitEdit_habitFreq_permonth_ex01": {},
   "habitEdit_habitFreq_predayfreq": "في كل عدد من الأيام",
   "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "مرات في",
+  "habitEdit_habitFreq_predayfreq_ex01": "مرات كل",
   "@habitEdit_habitFreq_predayfreq_ex01": {},
   "habitEdit_habitFreq_predayfreq_ex02": "أيام",
   "@habitEdit_habitFreq_predayfreq_ex02": {},
@@ -113,9 +113,9 @@
   "@habitEdit_habitFreq_predayfreq_reverse_flag": {
     "description": "إذا تم اختيار 1، سيتم عكس ميزة قائمة العرض"
   },
-  "habitEdit_habitFreq_show_daily": "يومياً",
+  "habitEdit_habitFreq_show_daily": "يوميًا",
   "@habitEdit_habitFreq_show_daily": {},
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{على الأقل {freq} مرات في الأسبوع}}",
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{أسبوعيًا} other{على الأقل {freq} مرات أسبوعيًا}}",
   "@habitEdit_habitFreq_show_perweek": {
     "placeholders": {
       "freq": {
@@ -124,7 +124,7 @@
       }
     }
   },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Per month} other{على الأقل {freq} مرات في الشهر}}",
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{شهريًا} other{على الأقل {freq} مرات شهريًا}}",
   "@habitEdit_habitFreq_show_permonth": {
     "placeholders": {
       "freq": {
@@ -133,7 +133,7 @@
       }
     }
   },
-  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{في كل {days} days} other{على الأقل {freq} مرات في كل {days} أيام}}",
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{كل {days} أيام} other{على الأقل {freq} مرات كل {days} أيام}}",
   "@habitEdit_habitFreq_show_perdayfreq": {
     "placeholders": {
       "freq": {
@@ -146,7 +146,7 @@
       }
     }
   },
-  "habitEdit_targetDays_title": "{targetDays} يوماً",
+  "habitEdit_targetDays_title": "{targetDays} يومًا",
   "@habitEdit_targetDays_title": {
     "placeholders": {
       "targetDays": {
@@ -155,35 +155,35 @@
       }
     }
   },
-  "habitEdit_targetDays_dialogTitle": "اختر الأيام",
+  "habitEdit_targetDays_dialogTitle": "اختر الأيام المستهدفة",
   "@habitEdit_targetDays_dialogTitle": {},
   "habitEdit_targetDays": "أيام",
   "@habitEdit_targetDays": {},
   "habitEdit_reminder_hintText": "تذكير",
   "@habitEdit_reminder_hintText": {},
-  "habitEdit_reminder_freq_weekHelpText": "أي يوم في الأسبوع",
+  "habitEdit_reminder_freq_weekHelpText": "أي يوم من أيام الأسبوع",
   "@habitEdit_reminder_freq_weekHelpText": {},
   "habitEdit_reminder_freq_weekPrefixText": "",
   "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " في كل أسبوع",
+  "habitEdit_reminder_freq_weekSubfixText": " من كل أسبوع",
   "@habitEdit_reminder_freq_weekSubfixText": {},
-  "habitEdit_reminder_freq_monthHelpText": "أي يوم في الشهر",
+  "habitEdit_reminder_freq_monthHelpText": "أي يوم من أيام الشهر",
   "@habitEdit_reminder_freq_monthHelpText": {},
   "habitEdit_reminder_freq_monthPrefixText": "",
   "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " في كل شهر",
+  "habitEdit_reminder_freq_monthSubfixText": " من كل شهر",
   "@habitEdit_reminder_freq_monthSubfixText": {},
-  "habitEdit_reminderQuest_hintText": "سؤال، مثلاً: هل تمرنت اليوم؟",
+  "habitEdit_reminderQuest_hintText": "سؤال، مثال: هل مارست الرياضة اليوم؟",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "اختر نوع التذكير",
   "@habitEdit_reminder_dialogTitle": {},
-  "habitEdit_reminder_dialogType_whenNeeded": "قبل أن أبدأ",
+  "habitEdit_reminder_dialogType_whenNeeded": "عندما يحين وقت المتابعة",
   "@habitEdit_reminder_dialogType_whenNeeded": {},
-  "habitEdit_reminder_dialogType_daily": "يومياً",
+  "habitEdit_reminder_dialogType_daily": "يوميًا",
   "@habitEdit_reminder_dialogType_daily": {},
-  "habitEdit_reminder_dialogType_week": "أسبوعياً",
+  "habitEdit_reminder_dialogType_week": "أسبوعيًا",
   "@habitEdit_reminder_dialogType_week": {},
-  "habitEdit_reminder_dialogType_month": "شهرياً",
+  "habitEdit_reminder_dialogType_month": "شهريًا",
   "@habitEdit_reminder_dialogType_month": {},
   "habitEdit_reminder_dialogConfirm": "تأكيد",
   "@habitEdit_reminder_dialogConfirm": {},
@@ -191,35 +191,35 @@
   "@habitEdit_reminder_dialogCancel": {},
   "habitEdit_reminder_cancelDialogTitle": "تأكيد",
   "@habitEdit_reminder_cancelDialogTitle": {},
-  "habitEdit_reminder_cancelDialogSubtitle": "هل تؤكد على حذف هذا التذكير",
+  "habitEdit_reminder_cancelDialogSubtitle": "هل تؤكد إزالة هذا التذكير؟",
   "@habitEdit_reminder_cancelDialogSubtitle": {},
   "habitEdit_reminder_cancelDialogConfirm": "تأكيد",
   "@habitEdit_reminder_cancelDialogConfirm": {},
   "habitEdit_reminder_cancelDialogCancel": "إلغاء",
   "@habitEdit_reminder_cancelDialogCancel": {},
-  "habitEdit_reminder_weekdayText_monday": "إثنين",
+  "habitEdit_reminder_weekdayText_monday": "الاثنين",
   "@habitEdit_reminder_weekdayText_monday": {},
-  "habitEdit_reminder_weekdayText_tuesday": "ثلاثاء",
+  "habitEdit_reminder_weekdayText_tuesday": "الثلاثاء",
   "@habitEdit_reminder_weekdayText_tuesday": {},
-  "habitEdit_reminder_weekdayText_wednesday": "أربعاء",
+  "habitEdit_reminder_weekdayText_wednesday": "الأربعاء",
   "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_thursday": "خميس",
+  "habitEdit_reminder_weekdayText_thursday": "الخميس",
   "@habitEdit_reminder_weekdayText_thursday": {},
-  "habitEdit_reminder_weekdayText_friday": "جمعة",
+  "habitEdit_reminder_weekdayText_friday": "الجمعة",
   "@habitEdit_reminder_weekdayText_friday": {},
-  "habitEdit_reminder_weekdayText_saturday": "سبت",
+  "habitEdit_reminder_weekdayText_saturday": "السبت",
   "@habitEdit_reminder_weekdayText_saturday": {},
-  "habitEdit_reminder_weekdayText_sunday": "أحد",
+  "habitEdit_reminder_weekdayText_sunday": "الأحد",
   "@habitEdit_reminder_weekdayText_sunday": {},
-  "habitEdit_desc_hintText": "ملاحظات وتفاصيل محفزة",
+  "habitEdit_desc_hintText": "ملاحظات (تدعم Markdown)",
   "@habitEdit_desc_hintText": {},
-  "habitEdit_create_datetime_prefix": "تم إنشائها: ",
+  "habitEdit_create_datetime_prefix": "تاريخ الإنشاء: ",
   "@habitEdit_create_datetime_prefix": {},
-  "habitEdit_modify_datetime_prefix": "معدلة: ",
+  "habitEdit_modify_datetime_prefix": "تاريخ التعديل: ",
   "@habitEdit_modify_datetime_prefix": {},
   "habitDisplay_fab_text": "عادة جديدة",
   "@habitDisplay_fab_text": {},
-  "habitDisplay_emptyImage_text_01": "رحلة الأف ميل تبدأ بخطوة",
+  "habitDisplay_emptyImage_text_01": "رحلة الألف ميل تبدأ بخطوة واحدة",
   "@habitDisplay_emptyImage_text_01": {},
   "habitDisplay_archiveHabitsConfirmDialog_title": "أرشفة العادات المحددة؟",
   "@habitDisplay_archiveHabitsConfirmDialog_title": {},
@@ -227,7 +227,7 @@
   "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
   "habitDisplay_archiveHabitsConfirmDialog_cancel": "إلغاء",
   "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_archiveHabitsSuccSnackbarText": "المؤرشفة {count} العادات",
+  "habitDisplay_archiveHabitsSuccSnackbarText": "تمت أرشفة {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}",
   "@habitDisplay_archiveHabitsSuccSnackbarText": {
     "placeholders": {
       "count": {
@@ -236,13 +236,13 @@
       }
     }
   },
-  "habitDisplay_unarchiveHabitsConfirmDialog_title": "عدم أرشفة العادات المحددة؟",
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "إلغاء أرشفة العادات المحددة؟",
   "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
   "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "تأكيد",
   "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
   "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "إلغاء",
   "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_unarchiveHabitsSuccSnackbarText": "غير المؤرشفة {count} العادات",
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "تم إلغاء أرشفة {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}",
   "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
     "placeholders": {
       "count": {
@@ -257,7 +257,7 @@
   "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
   "habitDisplay_deleteHabitsConfirmDialog_cancel": "إلغاء",
   "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
-  "habitDisplay_deleteHabitsSuccSnackbarText": "محذوفة {count} العادات",
+  "habitDisplay_deleteHabitsSuccSnackbarText": "تم حذف {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}",
   "@habitDisplay_deleteHabitsSuccSnackbarText": {
     "placeholders": {
       "count": {
@@ -266,16 +266,7 @@
       }
     }
   },
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "تم حذف العادة: \"{name}\"",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Habit name."
-      }
-    }
-  },
-  "habitDisplay_editPopMenu_selectAll": "اختيار الكل",
+  "habitDisplay_editPopMenu_selectAll": "تحديد الكل",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "تصدير",
   "@habitDisplay_editPopMenu_export": {},
@@ -287,63 +278,63 @@
   "@habitDisplay_editButton_tooltip": {},
   "habitDisplay_archiveButton_tooltip": "أرشفة",
   "@habitDisplay_archiveButton_tooltip": {},
-  "habitDisplay_unarchiveButton_tooltip": "عدم أرشفة",
+  "habitDisplay_unarchiveButton_tooltip": "إلغاء الأرشفة",
   "@habitDisplay_unarchiveButton_tooltip": {},
   "habitDisplay_settingButton_tooltip": "الإعدادات",
   "@habitDisplay_settingButton_tooltip": {},
-  "habitDisplay_statsMenu_statSubgroupText": "حالية",
+  "habitDisplay_statsMenu_statSubgroupText": "الإحصائيات الحالية",
   "@habitDisplay_statsMenu_statSubgroupText": {},
   "habitDisplay_statsMenu_completedTileText": "مكتملة",
   "@habitDisplay_statsMenu_completedTileText": {},
-  "habitDisplay_statsMenu_inProgresTileText": "تحت التنفيذ",
+  "habitDisplay_statsMenu_inProgresTileText": "قيد التقدم",
   "@habitDisplay_statsMenu_inProgresTileText": {},
   "habitDisplay_statsMenu_archivedTileText": "مؤرشفة",
   "@habitDisplay_statsMenu_archivedTileText": {},
-  "habitDisplay_statsMenu_popularitySubgroupText": "العادات الأبرز: تغييرات آخر 30 يوم",
+  "habitDisplay_statsMenu_popularitySubgroupText": "أكثر العادات شيوعًا: تغييرات آخر 30 يومًا",
   "@habitDisplay_statsMenu_popularitySubgroupText": {},
-  "habitDisplay_mainMenu_lightTheme": "عرض خفيف",
+  "habitDisplay_mainMenu_lightTheme": "المظهر الفاتح",
   "@habitDisplay_mainMenu_lightTheme": {},
-  "habitDisplay_mainMenu_darkTheme": "عرض داكن",
+  "habitDisplay_mainMenu_darkTheme": "المظهر الداكن",
   "@habitDisplay_mainMenu_darkTheme": {},
-  "habitDisplay_mainMenu_followSystemTheme": "مطابقة نظام الجهاز",
+  "habitDisplay_mainMenu_followSystemTheme": "اتباع مظهر النظام",
   "@habitDisplay_mainMenu_followSystemTheme": {},
-  "habitDisplay_mainMenu_showArchivedTileText": "أظهر المؤرشفة",
+  "habitDisplay_mainMenu_showArchivedTileText": "إظهار المؤرشفة",
   "@habitDisplay_mainMenu_showArchivedTileText": {},
-  "habitDisplay_mainMenu_showCompletedTileText": "أظهر المكتملة",
+  "habitDisplay_mainMenu_showCompletedTileText": "إظهار المكتملة",
   "@habitDisplay_mainMenu_showCompletedTileText": {},
-  "habitDisplay_mainMenu_showActivedTileText": "أظهر النشطة",
+  "habitDisplay_mainMenu_showActivedTileText": "إظهار النشطة",
   "@habitDisplay_mainMenu_showActivedTileText": {},
   "habitDisplay_mainMenu_settingTileText": "الإعدادات",
   "@habitDisplay_mainMenu_settingTileText": {},
-  "habitDisplay_sort_reverseText": "عكس",
+  "habitDisplay_sort_reverseText": "عكس الترتيب",
   "@habitDisplay_sort_reverseText": {},
   "habitDisplay_sortDirection_asc": "(تصاعدي)",
   "@habitDisplay_sortDirection_asc": {},
   "habitDisplay_sortDirection_Desc": "(تنازلي)",
   "@habitDisplay_sortDirection_Desc": {},
-  "habitDisplay_sortType_manual": "ترتيبي",
+  "habitDisplay_sortType_manual": "ترتيبي الخاص",
   "@habitDisplay_sortType_manual": {},
-  "habitDisplay_sortType_name": "بالاسم",
+  "habitDisplay_sortType_name": "حسب الاسم",
   "@habitDisplay_sortType_name": {},
-  "habitDisplay_sortType_colorType": "باللون",
+  "habitDisplay_sortType_colorType": "حسب اللون",
   "@habitDisplay_sortType_colorType": {},
-  "habitDisplay_sortType_progress": "بالتقييم",
+  "habitDisplay_sortType_progress": "حسب التقدم",
   "@habitDisplay_sortType_progress": {},
-  "habitDisplay_sortType_startT": "بتاريخ البداية",
+  "habitDisplay_sortType_startT": "حسب تاريخ البدء",
   "@habitDisplay_sortType_startT": {},
-  "habitDisplay_sortType_status": "بالحالة",
+  "habitDisplay_sortType_status": "حسب الحالة",
   "@habitDisplay_sortType_status": {},
-  "habitDisplay_sortTypeDialog_title": "فرز",
+  "habitDisplay_sortTypeDialog_title": "فرز حسب",
   "@habitDisplay_sortTypeDialog_title": {},
   "habitDisplay_sortTypeDialog_confirm": "تأكيد",
   "@habitDisplay_sortTypeDialog_confirm": {},
   "habitDisplay_sortTypeDialog_cancel": "إلغاء",
   "@habitDisplay_sortTypeDialog_cancel": {},
-  "habitDisplay_debug_debugSubgroup_title": "🛠️فحص",
+  "habitDisplay_debug_debugSubgroup_title": "🛠️ تصحيح الأخطاء",
   "@habitDisplay_debug_debugSubgroup_title": {},
   "habitDetail_editButton_tooltip": "تحرير",
   "@habitDetail_editButton_tooltip": {},
-  "habitDetail_editPopMenu_unarchive": "عدم أرشفة",
+  "habitDetail_editPopMenu_unarchive": "إلغاء الأرشفة",
   "@habitDetail_editPopMenu_unarchive": {},
   "habitDetail_editPopMenu_archive": "أرشفة",
   "@habitDetail_editPopMenu_archive": {},
@@ -351,21 +342,21 @@
   "@habitDetail_editPopMenu_export": {},
   "habitDetail_editPopMenu_delete": "حذف",
   "@habitDetail_editPopMenu_delete": {},
-  "habitDetail_editPopMenu_clone": "قالب",
+  "habitDetail_editPopMenu_clone": "استخدام كقالب",
   "@habitDetail_editPopMenu_clone": {},
   "habitDetail_confirmDialog_confirm": "تأكيد",
   "@habitDetail_confirmDialog_confirm": {},
   "habitDetail_confirmDialog_cancel": "إلغاء",
   "@habitDetail_confirmDialog_cancel": {},
-  "habitDetail_archiveConfirmDialog_titleText": "أرشفة العادات؟",
+  "habitDetail_archiveConfirmDialog_titleText": "أرشفة العادة؟",
   "@habitDetail_archiveConfirmDialog_titleText": {},
-  "habitDetail_unarchiveConfirmDialog_titleText": "عدم أرشفة العادات",
+  "habitDetail_unarchiveConfirmDialog_titleText": "إلغاء أرشفة العادة؟",
   "@habitDetail_unarchiveConfirmDialog_titleText": {},
-  "habitDetail_deleteConfirmDialog_titleText": "حذف العادات؟",
+  "habitDetail_deleteConfirmDialog_titleText": "حذف العادة؟",
   "@habitDetail_deleteConfirmDialog_titleText": {},
-  "habitDetail_summary_title": "ملخص",
+  "habitDetail_summary_title": "الملخص",
   "@habitDetail_summary_title": {},
-  "habitDetail_summary_body": "درجتك الحالية {score}، وقد مضى {days} أيام منذ البدء.",
+  "habitDetail_summary_body": "تقييمك الحالي هو {score}، وقد مضى {days} يومًا على البدء.",
   "@habitDetail_summary_body": {
     "placeholders": {
       "score": {
@@ -378,7 +369,7 @@
       }
     }
   },
-  "habitDetail_summary_preBody": "{days, plural, =1{Starting tomorrow.} other{Start in {days} أيام.}}",
+  "habitDetail_summary_preBody": "{days, plural, =1{يبدأ غدًا.} other{يبدأ خلال {days} أيام.}}",
   "@habitDetail_summary_preBody": {
     "placeholders": {
       "days": {
@@ -387,7 +378,7 @@
       }
     }
   },
-  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{INCOMPLETE} =2{SUBSTANDARD} other{}}",
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{غير مكتمل} =2{دون المستوى المطلوب} other{}}",
   "@habitDetail_heatmap_leftHelpText": {
     "placeholders": {
       "habitType": {
@@ -396,7 +387,7 @@
       }
     }
   },
-  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{IMPECCABLE} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{تجاوز الهدف} =2{أداء مثالي} other{}}",
   "@habitDetail_heatmap_rightHelpText": {
     "placeholders": {
       "habitType": {
@@ -405,7 +396,7 @@
       }
     }
   },
-  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Goal}}",
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{الحد الأدنى} other{الهدف}}",
   "@habitDetail_descDailyGoal_titleText": {
     "placeholders": {
       "habitType": {
@@ -423,9 +414,9 @@
       }
     }
   },
-  "habitDetail_descDailyGoal_unitEmptyText": "خالي",
+  "habitDetail_descDailyGoal_unitEmptyText": "لا يوجد",
   "@habitDetail_descDailyGoal_unitEmptyText": {},
-  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Days}}",
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{الأيام}}",
   "@habitDetail_descTargetDays_titleText": {
     "placeholders": {
       "habitType": {
@@ -434,67 +425,67 @@
       }
     }
   },
-  "habitDetail_descTargetDays_unitText": "ي",
+  "habitDetail_descTargetDays_unitText": "أيام",
   "@habitDetail_descTargetDays_unitText": {},
-  "habitDetail_descRecordsNum_titleText": "سجلات",
+  "habitDetail_descRecordsNum_titleText": "السجلات",
   "@habitDetail_descRecordsNum_titleText": {},
-  "habitDetail_scoreChart_title": "درجة",
+  "habitDetail_scoreChart_title": "التقييم",
   "@habitDetail_scoreChart_title": {},
-  "habitDetail_scoreChartCombine_dailyText": "يوم",
+  "habitDetail_scoreChartCombine_dailyText": "يومي",
   "@habitDetail_scoreChartCombine_dailyText": {},
-  "habitDetail_scoreChartCombine_weeklyText": "أسبوع",
+  "habitDetail_scoreChartCombine_weeklyText": "أسبوعي",
   "@habitDetail_scoreChartCombine_weeklyText": {},
-  "habitDetail_scoreChartCombine_monthlyText": "شهر",
+  "habitDetail_scoreChartCombine_monthlyText": "شهري",
   "@habitDetail_scoreChartCombine_monthlyText": {},
-  "habitDetail_scoreChartCombine_yearlyText": "سنة",
+  "habitDetail_scoreChartCombine_yearlyText": "سنوي",
   "@habitDetail_scoreChartCombine_yearlyText": {},
-  "habitDetail_freqChart_freqTitle": "تكرار",
+  "habitDetail_freqChart_freqTitle": "التكرار",
   "@habitDetail_freqChart_freqTitle": {},
-  "habitDetail_freqChart_historyTitle": "تاريخ",
+  "habitDetail_freqChart_historyTitle": "السجل",
   "@habitDetail_freqChart_historyTitle": {},
-  "habitDetail_freqChart_combinedTitle": "التكرار والتاريخ",
+  "habitDetail_freqChart_combinedTitle": "التكرار والسجل",
   "@habitDetail_freqChart_combinedTitle": {},
-  "habitDetail_freqChartCombine_weeklyText": "أسبوع",
+  "habitDetail_freqChartCombine_weeklyText": "أسبوعي",
   "@habitDetail_freqChartCombine_weeklyText": {},
-  "habitDetail_freqChartCombine_monthlyText": "شهر",
+  "habitDetail_freqChartCombine_monthlyText": "شهري",
   "@habitDetail_freqChartCombine_monthlyText": {},
-  "habitDetail_freqChartCombine_yearlyText": "سنة",
+  "habitDetail_freqChartCombine_yearlyText": "سنوي",
   "@habitDetail_freqChartCombine_yearlyText": {},
   "habitDetail_freqChartNaviBar_nowText": "الآن",
   "@habitDetail_freqChartNaviBar_nowText": {},
-  "habitDetail_freqChart_expanded_hideTooltip": "أخف جدول التاريخ",
+  "habitDetail_freqChart_expanded_hideTooltip": "إخفاء مخطط السجل",
   "@habitDetail_freqChart_expanded_hideTooltip": {},
-  "habitDetail_freqChart_expanded_showTooltip": "اعرض جدول التاريخ",
+  "habitDetail_freqChart_expanded_showTooltip": "إظهار مخطط السجل",
   "@habitDetail_freqChart_expanded_showTooltip": {},
-  "habitDetail_descSubgroup_title": "ملاحظة",
+  "habitDetail_descSubgroup_title": "الملاحظات",
   "@habitDetail_descSubgroup_title": {},
   "habitDetail_otherSubgroup_title": "أخرى",
   "@habitDetail_otherSubgroup_title": {},
-  "habitDetail_habitType_title": "نوع",
+  "habitDetail_habitType_title": "النوع",
   "@habitDetail_habitType_title": {},
-  "habitDetail_reminderTile_title": "تذكير",
+  "habitDetail_reminderTile_title": "التذكير",
   "@habitDetail_reminderTile_title": {},
-  "habitDetail_freqTile_title": "تكرار",
+  "habitDetail_freqTile_title": "التكرار",
   "@habitDetail_freqTile_title": {},
-  "habitDetail_startDateTile_title": "تاريخ البداية",
+  "habitDetail_startDateTile_title": "تاريخ البدء",
   "@habitDetail_startDateTile_title": {},
-  "habitDetail_createDateTile_title": "أنشئت",
+  "habitDetail_createDateTile_title": "تاريخ الإنشاء",
   "@habitDetail_createDateTile_title": {},
-  "habitDetail_modifyDateTile_title": "عدلت",
+  "habitDetail_modifyDateTile_title": "تاريخ التعديل",
   "@habitDetail_modifyDateTile_title": {},
-  "habitDetail_editHeatmapCal_dateButtonText": "تاريخ",
+  "habitDetail_editHeatmapCal_dateButtonText": "التاريخ",
   "@habitDetail_editHeatmapCal_dateButtonText": {},
-  "habitDetail_editHeatmapCal_valueButtonText": "قيمة",
+  "habitDetail_editHeatmapCal_valueButtonText": "القيمة",
   "@habitDetail_editHeatmapCal_valueButtonText": {},
   "habitDetail_editHeatmapCal_backToToday_tooltipText": "العودة إلى اليوم",
   "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
-  "habitDetail_notFoundText": "فشل تحميل العادات",
+  "habitDetail_notFoundText": "فشل تحميل العادة",
   "@habitDetail_notFoundText": {},
-  "habitDetail_notFoundRetryText": "حاول مرة أخرى",
+  "habitDetail_notFoundRetryText": "إعادة المحاولة",
   "@habitDetail_notFoundRetryText": {},
   "habitDetail_changeGoal_title": "تغيير الهدف",
   "@habitDetail_changeGoal_title": {},
-  "habitDetail_changeGoal_currentChipText": "حالياً: {goal}",
+  "habitDetail_changeGoal_currentChipText": "الحالي: {goal}",
   "@habitDetail_changeGoal_currentChipText": {
     "placeholders": {
       "goal": {
@@ -503,7 +494,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_doneChipText": "اكتمل: {goal}",
+  "habitDetail_changeGoal_doneChipText": "مُنجز: {goal}",
   "@habitDetail_changeGoal_doneChipText": {
     "placeholders": {
       "goal": {
@@ -512,7 +503,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_undoneChipText": "لم يكتمل",
+  "habitDetail_changeGoal_undoneChipText": "غير مُنجز",
   "@habitDetail_changeGoal_undoneChipText": {},
   "habitDetail_changeGoal_extraChipText": "{goal}",
   "@habitDetail_changeGoal_extraChipText": {
@@ -523,7 +514,7 @@
       }
     }
   },
-  "habitDetail_changeGoal_helpText": "الهدف اليومي، فرضاً: {goal}",
+  "habitDetail_changeGoal_helpText": "الهدف اليومي، الافتراضي: {goal}",
   "@habitDetail_changeGoal_helpText": {
     "placeholders": {
       "goal": {
@@ -536,9 +527,9 @@
   "@habitDetail_changeGoal_cancelText": {},
   "habitDetail_changeGoal_saveText": "حفظ",
   "@habitDetail_changeGoal_saveText": {},
-  "habitDetail_skipReason_title": "تخطي السبب",
+  "habitDetail_skipReason_title": "سبب التخطي",
   "@habitDetail_skipReason_title": {},
-  "habitDetail_skipReason_bodyHelpText": "أكتب شيئاً هنا...",
+  "habitDetail_skipReason_bodyHelpText": "اكتب شيئًا هنا...",
   "@habitDetail_skipReason_bodyHelpText": {},
   "habitDetail_skipReason_cancelText": "إلغاء",
   "@habitDetail_skipReason_cancelText": {},
@@ -546,44 +537,29 @@
   "@habitDetail_skipReason_saveText": {},
   "appSetting_appbar_titleText": "الإعدادات",
   "@appSetting_appbar_titleText": {},
-  "appSetting_displaySubgroupText": "عرض",
+  "appSetting_displaySubgroupText": "العرض",
   "@appSetting_displaySubgroupText": {},
-  "appSetting_operationSubgroupText": "العمليات",
+  "appSetting_operationSubgroupText": "التشغيل",
   "@appSetting_operationSubgroupText": {},
-  "appSetting_dragCalendarByPageTile_titleText": "استعرض التقويم كصفحة",
+  "appSetting_dragCalendarByPageTile_titleText": "سحب التقويم صفحة بصفحة",
   "@appSetting_dragCalendarByPageTile_titleText": {},
-  "appSetting_dragCalendarByPageTile_subtitleText": "إذا تم تفعيل الخاصية، فسيكون استعراض قائمة التقويم بسحبها صفحة صفحة. الوضع الافتراضي أنها غير مفعلة.",
+  "appSetting_dragCalendarByPageTile_subtitleText": "إذا تم تمكين هذا الخيار، سيتم سحب تقويم شريط التطبيق في الصفحة الرئيسية صفحة بصفحة. بشكل افتراضي، هذا الخيار معطل.",
   "@appSetting_dragCalendarByPageTile_subtitleText": {},
-  "appSetting_changeRecordStatusOpTile_titleText": "غير حالة السجلات",
+  "appSetting_changeRecordStatusOpTile_titleText": "تغيير حالة السجل",
   "@appSetting_changeRecordStatusOpTile_titleText": {},
-  "appSetting_changeRecordStatusOpTile_subtitleText": "تعديل أسلوب الضغط لتغيير حالة التقرير في الصفحة الرئيسية.",
+  "appSetting_changeRecordStatusOpTile_subtitleText": "تعديل سلوك النقر لتغيير حالة السجلات اليومية في الصفحة الرئيسية.",
   "@appSetting_changeRecordStatusOpTile_subtitleText": {},
-  "appSetting_openRecordStatusDialogOpTile_titleText": "استعرض السجل التفصيلي",
+  "appSetting_openRecordStatusDialogOpTile_titleText": "فتح السجل التفصيلي",
   "@appSetting_openRecordStatusDialogOpTile_titleText": {},
-  "appSetting_openRecordStatusDialogOpTile_subtitleText": "تعديل أسلوب الضغط لعرض التقرير اليومي التفصيلي في الصفحة الرئيسية.",
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "تعديل سلوك النقر لفتح النافذة المنبثقة التفصيلية للسجلات اليومية في الصفحة الرئيسية.",
   "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
   "appSetting_firstDayOfWeek_titleText": "أول يوم في الأسبوع",
   "@appSetting_firstDayOfWeek_titleText": {},
-  "appSetting_firstDayOfWeekDialog_titleText": "أظهر أول يوم في الأسبوع",
+  "appSetting_firstDayOfWeekDialog_titleText": "عرض أول يوم في الأسبوع كـ",
   "@appSetting_firstDayOfWeekDialog_titleText": {},
-  "appSetting_firstDayOfWeekDialog_defaultText": " (افتراضي)",
+  "appSetting_firstDayOfWeekDialog_defaultText": " (الافتراضي)",
   "@appSetting_firstDayOfWeekDialog_defaultText": {},
-  "appSetting_changeLanguage_followSystem_text": "اتباع النظام ({localeName})",
-  "@appSetting_changeLanguage_followSystem_text": {
-    "placeholders": {
-      "localeName": {
-        "type": "String",
-        "example": "English"
-      }
-    }
-  },
-  "appSetting_changeLanguage_followSystem_noLocale_text": "اتباع النظام",
-  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
-  "appSetting_changeLanguageTile_titleText": "اللغة",
-  "@appSetting_changeLanguageTile_titleText": {},
-  "appSetting_changeLanguageDialog_titleText": "اختر اللغة",
-  "@appSetting_changeLanguageDialog_titleText": {},
-  "appSetting_dateDisplayFormat_titleText": "طريقة عرض التاريخ ({formatTemplate})",
+  "appSetting_dateDisplayFormat_titleText": "تنسيق عرض التاريخ ({formatTemplate})",
   "@appSetting_dateDisplayFormat_titleText": {
     "placeholders": {
       "formatTemplate": {
@@ -592,35 +568,35 @@
       }
     }
   },
-  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "مطابقة إعدادات الجهاز",
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "اتباع إعدادات النظام",
   "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
-  "appSetting_dateDisplayFormat_subTitleText": "سيتم تطبيق تنسيق التاريخ في صفحة العادة التفصيلية",
+  "appSetting_dateDisplayFormat_subTitleText": "سيتم تطبيق تنسيق التاريخ المختار على عرض التاريخ في صفحة تفاصيل العادة.",
   "@appSetting_dateDisplayFormat_subTitleText": {},
-  "appSetting_compactUISwitcher_titleText": "تفعيل العرض المبسط في صفحة العادات",
+  "appSetting_compactUISwitcher_titleText": "تفعيل الواجهة المدمجة لصفحة العادات",
   "@appSetting_compactUISwitcher_titleText": {},
-  "appSetting_compactUISwitcher_subtitleText": "السماح بعرض مزيد من المحتوى في جدول التأكيد، ولكن ستظهر بعض النصوص بحجم أصغر.",
+  "appSetting_compactUISwitcher_subtitleText": "السماح لجدول متابعة العادات بعرض المزيد من المحتوى، ولكن قد تظهر بعض عناصر الواجهة والنصوص أصغر حجمًا.",
   "@appSetting_compactUISwitcher_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_titleText": "تعديل زر تنفيذ العادة",
+  "appSetting_collapsed_calendar_bararea_titleText": "تعديل نسبة منطقة متابعة العادات",
   "@appSetting_collapsed_calendar_bararea_titleText": {},
-  "appSetting_collapsed_calendar_bararea_subtitleText": "عدل النسبة لمساحة أكبر/أصغر في جدول التأكيد",
+  "appSetting_collapsed_calendar_bararea_subtitleText": "عدّل النسبة المئوية لتخصيص مساحة أكبر/أصغر في منطقة جدول متابعة العادات.",
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "افتراضي",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "تذكير",
+  "appSetting_reminderSubgroupText": "التذكيرات",
   "@appSetting_reminderSubgroupText": {},
   "appSetting_dailyReminder_titleText": "التذكير اليومي",
   "@appSetting_dailyReminder_titleText": {},
-  "appSetting_backupAndRestoreSubgroupText": "الحفظ والاستعادة",
+  "appSetting_backupAndRestoreSubgroupText": "النسخ الاحتياطي والاستعادة",
   "@appSetting_backupAndRestoreSubgroupText": {},
-  "appSetting_export_titleText": "تصدير",
+  "appSetting_export_titleText": "تصدير البيانات",
   "@appSetting_export_titleText": {},
-  "appSetting_export_subtitleText": "تصدير العادات كملف JSON، بالإمكان استيراد هذا الملف مرة أخرى.",
+  "appSetting_export_subtitleText": "تصدير العادات بصيغة JSON. يمكن استيراد هذا الملف لاحقًا.",
   "@appSetting_export_subtitleText": {},
-  "appSetting_import_titleText": "استيراد",
+  "appSetting_import_titleText": "استيراد البيانات",
   "@appSetting_import_titleText": {},
-  "appSetting_import_subtitleText": "استيراد العادات من ملف JSON",
+  "appSetting_import_subtitleText": "استيراد العادات من ملف JSON.",
   "@appSetting_import_subtitleText": {},
-  "appSetting_importDialog_confirmTitle": "تأكيد استيراد {count} العادات؟",
+  "appSetting_importDialog_confirmTitle": "تأكيد استيراد {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}؟",
   "@appSetting_importDialog_confirmTitle": {
     "placeholders": {
       "count": {
@@ -629,13 +605,13 @@
       }
     }
   },
-  "appSetting_importDialog_confirmSubtitle": "ملاحظة: الاستيراد لا يحذف العادات الموجودة.",
+  "appSetting_importDialog_confirmSubtitle": "ملاحظة: الاستيراد لا يحذف العادات الحالية.",
   "@appSetting_importDialog_confirmSubtitle": {},
   "appSetting_importDialog_confirm_confirmText": "تأكيد",
   "@appSetting_importDialog_confirm_confirmText": {},
   "appSetting_importDialog_confirm_cancelText": "إلغاء",
   "@appSetting_importDialog_confirm_cancelText": {},
-  "appSetting_importDialog_importingTitle": "تم الاستيراد {completeCount}/{totalCount}",
+  "appSetting_importDialog_importingTitle": "جاري الاستيراد {completeCount}/{totalCount}",
   "@appSetting_importDialog_importingTitle": {
     "placeholders": {
       "completeCount": {
@@ -648,7 +624,7 @@
       }
     }
   },
-  "appSetting_importDialog_completeTitle": "اكتمل استيراد {count}",
+  "appSetting_importDialog_completeTitle": "اكتمل استيراد {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}",
   "@appSetting_importDialog_completeTitle": {
     "placeholders": {
       "count": {
@@ -659,55 +635,424 @@
   },
   "appSetting_importDialog_complete_closeLabel": "إغلاق",
   "@appSetting_importDialog_complete_closeLabel": {},
-  "appSetting_resetConfig_titleText": "استعادة الاعدادات",
+  "appSetting_resetConfig_titleText": "إعادة تعيين الإعدادات",
   "@appSetting_resetConfig_titleText": {},
-  "appSetting_resetConfig_subtitleText": "استعادة كافة الإعدادات الافتراضية.",
+  "appSetting_resetConfig_subtitleText": "إعادة جميع الإعدادات إلى الوضع الافتراضي.",
   "@appSetting_resetConfig_subtitleText": {},
-  "appSetting_resetConfigDialog_titleText": "استعادة الاعدادات؟",
+  "appSetting_resetConfigDialog_titleText": "إعادة تعيين الإعدادات؟",
   "@appSetting_resetConfigDialog_titleText": {},
-  "appSetting_resetConfigDialog_subtitleText": "استعادة كامل الاعدادات الافتراضية، يلزم إعادة تشغيل التطبيق.",
+  "appSetting_resetConfigDialog_subtitleText": "سيتم إعادة جميع الإعدادات إلى الوضع الافتراضي. يتطلب إعادة تشغيل التطبيق لتطبيق التغييرات.",
   "@appSetting_resetConfigDialog_subtitleText": {},
   "appSetting_resetConfigDialog_cancelText": "إلغاء",
   "@appSetting_resetConfigDialog_cancelText": {},
   "appSetting_resetConfigDialog_confirmText": "تأكيد",
   "@appSetting_resetConfigDialog_confirmText": {},
-  "appSetting_resetConfigSuccess_snackbarText": "تمت استعادة إعدادات التطبيق",
+  "appSetting_resetConfigSuccess_snackbarText": "تمت إعادة تعيين إعدادات التطبيق بنجاح",
   "@appSetting_resetConfigSuccess_snackbarText": {},
-  "appSetting_otherSubgroupText": "أخرى",
+  "appSetting_otherSubgroupText": "خيارات أخرى",
   "@appSetting_otherSubgroupText": {},
-  "appSetting_developMode_titleText": "وضع التطوير",
+  "appSetting_developMode_titleText": "وضع المطور",
   "@appSetting_developMode_titleText": {},
-  "appSetting_clearCache_titleText": "حذف التخزين المؤقت",
+  "appSetting_clearCache_titleText": "مسح ذاكرة التخزين المؤقت",
   "@appSetting_clearCache_titleText": {},
-  "appSetting_clearCacheDialog_titleText": "حذف التخزين المؤقت",
+  "appSetting_clearCacheDialog_titleText": "مسح ذاكرة التخزين المؤقت؟",
   "@appSetting_clearCacheDialog_titleText": {},
-  "appSetting_clearCacheDialog_subtitleText": "بعد حذف التخزين المؤقت، بعض القيم المعدلة ستعود للقيم الافتراضية.",
+  "appSetting_clearCacheDialog_subtitleText": "بعد مسح ذاكرة التخزين المؤقت، ستُعاد بعض القيم المخصصة إلى الوضع الافتراضي.",
   "@appSetting_clearCacheDialog_subtitleText": {},
   "appSetting_clearCacheDialog_cancelText": "إلغاء",
   "@appSetting_clearCacheDialog_cancelText": {},
   "appSetting_clearCacheDialog_confirmText": "تأكيد",
   "@appSetting_clearCacheDialog_confirmText": {},
-  "appSetting_clearCache_snackBar_partSuccText": "فشل حذف التخزين المؤقت جزئياً",
+  "appSetting_clearCache_snackBar_partSuccText": "فشل جزئي في مسح ذاكرة التخزين المؤقت",
   "@appSetting_clearCache_snackBar_partSuccText": {},
-  "appSetting_clearCache_snackBar_succText": "تم حذف التخزين المؤقت",
+  "appSetting_clearCache_snackBar_succText": "تم مسح ذاكرة التخزين المؤقت بنجاح",
   "@appSetting_clearCache_snackBar_succText": {},
-  "appSetting_clearCache_snackBar_failText": "فشل حذف التخزين المؤقت",
+  "appSetting_clearCache_snackBar_failText": "فشل مسح ذاكرة التخزين المؤقت",
   "@appSetting_clearCache_snackBar_failText": {},
-  "appSetting_debugger_titleText": "معلومات التصحيح",
-  "@appSetting_debugger_titleText": {},
-  "appSetting_about_titleText": "عن",
+  "appSetting_about_titleText": "حول التطبيق",
   "@appSetting_about_titleText": {},
-  "appSetting_experimentalFeatureTile_titleText": "الميزات التجريبية",
-  "@appSetting_experimentalFeatureTile_titleText": {},
-  "appSetting_synSubgroupText": "المزامنة",
-  "@appSetting_synSubgroupText": {},
+  "appAbout_appbarTile_titleText": "حول التطبيق",
+  "@appAbout_appbarTile_titleText": {},
+  "appAbout_versionTile_titleText": "الإصدار: {appVersion}",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
+  "appAbout_sourceCodeTile_titleText": "الكود المصدري",
+  "@appAbout_sourceCodeTile_titleText": {},
+  "appAbout_issueTrackerTile_titleText": "متتبع المشكلات",
+  "@appAbout_issueTrackerTile_titleText": {},
+  "appAbout_contactEmailTile_titleText": "تواصل معي",
+  "@appAbout_contactEmailTile_titleText": {},
+  "appAbout_contactEmailTile_emailBody": "مرحباً، يسعدني تواصلك معي.\nإذا كنت تبلغ عن خطأ، يرجى ذكر إصدار التطبيق ووصف خطوات إعادة إنتاج المشكلة.\n--------------------------------------",
+  "@appAbout_contactEmailTile_emailBody": {},
+  "appAbout_licenseTile_titleText": "الترخيص",
+  "@appAbout_licenseTile_titleText": {},
+  "appAbout_licenseTile_subtitleText": "ترخيص Apache، الإصدار 2.0",
+  "@appAbout_licenseTile_subtitleText": {},
+  "appAbout_licenseThirdPartyTile_titleText": "تراخيص الطرف الثالث",
+  "@appAbout_licenseThirdPartyTile_titleText": {},
+  "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
+  "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_donateTile_titleText": "ادعمنا",
+  "@appAbout_donateTile_titleText": {},
+  "appAbout_donateTile_subTitleText": "أنا مطور مستقل. إذا أعجبك هذا التطبيق، يمكنك دعمي بشراء فنجان قهوة ☕.",
+  "@appAbout_donateTile_subTitleText": {},
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "@appAbout_donateTile_ways": {
+    "description": "للتبرع إبدأ بعلامة `@` وافصل بينها بعلامة `,`, الطرق المتاحة: بي بال، باي مي كوفي، علي بي، ويشات بي."
+  },
+  "donateWay_paypal": "PayPal",
+  "@donateWay_paypal": {},
+  "donateWay_buyMeACoffee": "اشترِ لي فنجان قهوة",
+  "@donateWay_buyMeACoffee": {},
+  "donateWay_alipay": "Alipay",
+  "@donateWay_alipay": {},
+  "donateWay_wechatPay": "WeChat Pay",
+  "@donateWay_wechatPay": {},
+  "donateWay_cryptoCurrency": "العملات الرقمية",
+  "@donateWay_cryptoCurrency": {},
+  "donateWay_cryptoCurrency_BTC": "بيتكوين (BTC)",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "donateWay_cryptoCurrency_ETH": "إيثريوم (ETH)",
+  "@donateWay_cryptoCurrency_ETH": {},
+  "donateWay_cryptoCurrency_BNB": "عملة بينانس (BNB)",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "donateWay_cryptoCurrency_AVAX": "أفالانش (AVAX)",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "donateWay_cryptoCurrency_FTM": "فانتوم (FTM)",
+  "@donateWay_cryptoCurrency_FTM": {},
+  "donateWay_firstQRGroup": "Alipay و WeChat Pay",
+  "@donateWay_firstQRGroup": {},
+  "appAbout_donateDialog_copiedCrypto_msg": "تم نسخ عنوان {name}",
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "batchCheckin_appbar_title": "تسجيل جماعي",
+  "@batchCheckin_appbar_title": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "اليوم السابق",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "اليوم التالي",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "batchCheckin_status_skip_text": "تخطّي",
+  "@batchCheckin_status_skip_text": {},
+  "batchCheckin_status_ok_text": "إكمال",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_status_double_text": "إنجاز مضاعف!",
+  "@batchCheckin_status_double_text": {},
+  "batchCheckin_status_zero_text": "عدم إكمال",
+  "@batchCheckin_status_zero_text": {},
+  "batchCheckin_habits_groupTitle": "تم تحديد {count, plural, =1{عادة واحدة} few{{count} عادات} many{{count} عادة} other{{count} عادة}}",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_button_text": "حفظ",
+  "@batchCheckin_save_button_text": {},
+  "batchCheckin_reset_button_text": "إعادة تعيين",
+  "@batchCheckin_reset_button_text": {},
+  "batchCheckin_save_confirmDialog_title": "الكتابة فوق السجلات الحالية؟",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "batchCheckin_save_confirmDialog_body": "سيتم الكتابة فوق السجلات الحالية بعد الحفظ، وسيتم فقدان السجلات السابقة.",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "حفظ",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "إلغاء",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "batchCheckin_close_confirmDialog_title": "تأكيد العودة؟",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "batchCheckin_close_confirmDialog_body": "لن يتم تطبيق تغييرات حالة المتابعة قبل الحفظ.",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "خروج",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "إلغاء",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "appReminder_dailyReminder_title": "🏝️ هل التزمت بعاداتك اليوم؟",
+  "@appReminder_dailyReminder_title": {},
+  "appReminder_dailyReminder_body": "انقر للدخول إلى التطبيق ومتابعة تقدمك.",
+  "@appReminder_dailyReminder_body": {},
+  "common_habitColorType_cc1": "ليلكي داكن",
+  "@common_habitColorType_cc1": {},
+  "common_habitColorType_cc2": "أحمر",
+  "@common_habitColorType_cc2": {},
+  "common_habitColorType_cc3": "بنفسجي",
+  "@common_habitColorType_cc3": {},
+  "common_habitColorType_cc4": "أزرق ملكي",
+  "@common_habitColorType_cc4": {},
+  "common_habitColorType_cc5": "سماوي داكن",
+  "@common_habitColorType_cc5": {},
+  "common_habitColorType_cc6": "أخضر",
+  "@common_habitColorType_cc6": {},
+  "common_habitColorType_cc7": "كهرماني",
+  "@common_habitColorType_cc7": {},
+  "common_habitColorType_cc8": "برتقالي",
+  "@common_habitColorType_cc8": {},
+  "common_habitColorType_cc9": "أخضر ليموني",
+  "@common_habitColorType_cc9": {},
+  "common_habitColorType_cc10": "أوركيد داكن",
+  "@common_habitColorType_cc10": {},
+  "common_habitColorType_default": "اللون {index}",
+  "@common_habitColorType_default": {
+    "description": "لون غير محدد",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "استخدام تنسيق النظام",
+  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+  "common_customDateTimeFormatPicker_fmtTileText": "تنسيق التاريخ",
+  "@common_customDateTimeFormatPicker_fmtTileText": {},
+  "common_customDateTimeFormatPicker_ymd_text": "سنة-شهر-يوم",
+  "@common_customDateTimeFormatPicker_ymd_text": {},
+  "common_customDateTimeFormatPicker_mdy_text": "شهر-يوم-سنة",
+  "@common_customDateTimeFormatPicker_mdy_text": {},
+  "common_customDateTimeFormatPicker_dmy_text": "يوم-شهر-سنة",
+  "@common_customDateTimeFormatPicker_dmy_text": {},
+  "common_customDateTimeFormatPicker_SepTileText": "الفاصل",
+  "@common_customDateTimeFormatPicker_SepTileText": {},
+  "common_customDateTimeFormatPicker_sepDash_text": "شرطة (-)",
+  "@common_customDateTimeFormatPicker_sepDash_text": {},
+  "common_customDateTimeFormatPicker_sepSlash_text": "شرطة مائلة (/)",
+  "@common_customDateTimeFormatPicker_sepSlash_text": {},
+  "common_customDateTimeFormatPicker_sepSpace_text": "مسافة",
+  "@common_customDateTimeFormatPicker_sepSpace_text": {},
+  "common_customDateTimeFormatPicker_sepDot_text": "نقطة (.)",
+  "@common_customDateTimeFormatPicker_sepDot_text": {},
+  "common_customDateTimeFormatPicker_empty_text": "بلا فاصل",
+  "@common_customDateTimeFormatPicker_empty_text": {},
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_12Hour_text": "استخدام تنسيق 12 ساعة",
+  "@common_customDateTimeFormatPicker_12Hour_text": {},
+  "common_customDateTimeFormatPicker_monthName_text": "استخدام اسم الشهر كاملاً",
+  "@common_customDateTimeFormatPicker_monthName_text": {},
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "تطبيق على مخطط التكرار",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "تطبيق على خريطة المتابعة الحرارية",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "إلغاء",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "تأكيد",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "common_errorPage_title": "عذرًا، حدث خطأ!",
+  "@common_errorPage_title": {},
+  "common_errorPage_copied": "تم نسخ معلومات الخطأ",
+  "@common_errorPage_copied": {},
+  "common_enable_text": "مُفعل",
+  "@common_enable_text": {},
+  "calendarPicker_clip_today": "اليوم",
+  "@calendarPicker_clip_today": {},
+  "calendarPicker_clip_tomorrow": "غدًا",
+  "@calendarPicker_clip_tomorrow": {},
+  "calendarPicker_clip_after7Days": "{date} القادم",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportAll": "تصدير جميع العادات؟",
+  "@exportConfirmDialog_title_exportAll": {},
+  "exportConfirmDialog_title_exportMulti": "تصدير {number, plural, =0{العادة الحالية} =1{عادة واحدة} few{{number} عادات} many{{number} عادة} other{{number} عادات}}؟",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_option_includeRecords": "تضمين السجلات",
+  "@exportConfirmDialog_option_includeRecords": {},
+  "exportConfirmDialog_cancel_buttonText": "إلغاء",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "exportConfirmDialog_confirm_buttonText": "تصدير",
+  "@exportConfirmDialog_confirm_buttonText": {},
+  "snackbar_undoText": "تراجع",
+  "@snackbar_undoText": {},
+  "snackbar_dismissText": "تجاهل",
+  "@snackbar_dismissText": {},
+  "contributors_tile_title": "المساهمون",
+  "@contributors_tile_title": {},
+  "userAction_tap": "نقرة",
+  "@userAction_tap": {},
+  "userAction_doubleTap": "نقرة مزدوجة",
+  "@userAction_doubleTap": {},
+  "userAction_longTap": "نقرة طويلة",
+  "@userAction_longTap": {},
+  "appSync_nowTile_errorText_noDate": "آخر مزامنة (خطأ): لا يوجد",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_cancelText_noDate": "آخر مزامنة (ملغاة): لا يوجد",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "آخر مزامنة (ملغاة): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {مكتمل} cancelled {ملغى} failed {فشل} multi {حالات متعددة} other {حالة غير معروفة}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "المجلد ليس فارغًا. ستقوم المزامنة بدمج العادات الموجودة على الخادم مع العادات المحلية. هل ترغب في المتابعة؟",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "غير مُهيأ",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_summaryTile_title": "خادم المزامنة",
+  "@appSync_summaryTile_title": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "جميع سجلات المزامنة الفاشلة الأخيرة",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "experimentalFeatures_habitSyncTile_titleText": "مزامنة العادات سحابيًا",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "common_enable_text": "مُمكَّن",
+  "@common_enable_text": {},
+  "debug_debuggerInfoCard_subtitle": "تتضمن معلومات تصحيح أخطاء التطبيق.",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "appSetting_debugger_titleText": "معلومات تصحيح الأخطاء",
+  "@appSetting_debugger_titleText": {},
+  "debug_downladDebugInfo_subject": "جاري تنزيل معلومات تصحيح الأخطاء",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_missingDebugLogFile_snackbar": "ملف سجل تصحيح الأخطاء غير موجود.",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "batchCheckin_completed_snackbar_text": "تم تعديل {count, plural, =1{حالة عادة واحدة} few{حالة {count} عادات} many{حالة {count} عادة} other{حالة {count} عادة}}",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_debuggerLogCard_subtitle": "تتضمن معلومات سجل تصحيح الأخطاء المحلي. يتطلب تفعيل خيار جمع السجلات.",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerLogCard_saveButton_text": "تنزيل",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "appAbout_privacyTile_titleText": "سياسة الخصوصية",
+  "@appAbout_privacyTile_titleText": {},
+  "common_errorPage_title": "عفوًا، حدث خطأ ما!",
+  "@common_errorPage_title": {},
+  "debug_debuggerInfo_notificationTitle": "جاري جمع معلومات التطبيق...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "confirmDialog_confirm_text": "{type, select, save {حفظ} exit {خروج} delete {حذف} other {تأكيد}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "confirmDialog_cancel_text": "إلغاء",
+  "@confirmDialog_cancel_text": {},
+  "channelName_habitReminder": "تذكير العادات",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "تنبيهات التطبيق",
+  "@channelName_appReminder": {},
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "تم حذف العادة: \"{name}\"",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
   "appSetting_syncOption_titleText": "خيارات المزامنة",
   "@appSetting_syncOption_titleText": {},
   "appSync_nowTile_titleText": "مزامنة الآن",
   "@appSync_nowTile_titleText": {},
-  "appSync_nowTile_titleText_syncing": "جاري المزامنة",
+  "appSync_serverEditor_exitDialog_subtitleText": "سيؤدي الخروج إلى تجاهل جميع التغييرات غير المحفوظة.",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "أدخل اسم المستخدم هنا. اتركه فارغًا إذا لم يكن مطلوبًا.",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_serverEditor_netTypeTile_titleText": "وضع مزامنة الشبكة",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {المزامنة عبر بيانات الجوال} wifi {المزامنة عبر Wi-Fi} other {غير معروف}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "debug_logLevelTile_title": "مستوى تسجيل الأخطاء",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevel_debug": "تصحيح (Debug)",
+  "@debug_logLevel_debug": {},
+  "debug_logLevel_info": "معلومات (Info)",
+  "@debug_logLevel_info": {},
+  "debug_logLevel_warn": "تحذير (Warning)",
+  "@debug_logLevel_warn": {},
+  "debug_logLevel_error": "خطأ (Error)",
+  "@debug_logLevel_error": {},
+  "debug_logLevel_fatal": "خطأ فادح (Fatal)",
+  "@debug_logLevel_fatal": {},
+  "debug_collectLogTile_title": "جمع السجلات",
+  "@debug_collectLogTile_title": {},
+  "appSetting_changeLanguage_followSystem_text": "اتباع لغة النظام ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "اتباع لغة النظام",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "اللغة",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "اختر اللغة",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "الميزات التجريبية",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "المزامنة",
+  "@appSetting_synSubgroupText": {},
+  "appSync_nowTile_titleText_syncing": "جاري المزامنة...",
   "@appSync_nowTile_titleText_syncing": {},
-  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "appSync_nowTile_dateFormat": "{dmy} {jms}",
   "@appSync_nowTile_dateFormat": {
     "placeholders": {
       "ymd": {
@@ -720,7 +1065,7 @@
       }
     }
   },
-  "appSync_nowTile_text_noDate": "آخر مزامنة: غير متوفر",
+  "appSync_nowTile_text_noDate": "آخر مزامنة: لا يوجد",
   "@appSync_nowTile_text_noDate": {},
   "appSync_nowTile_text": "آخر مزامنة: {dateStr}",
   "@appSync_nowTile_text": {
@@ -731,8 +1076,6 @@
       }
     }
   },
-  "appSync_nowTile_errorText_noDate": "آخر مزامنة (خطأ): غير متوفر",
-  "@appSync_nowTile_errorText_noDate": {},
   "appSync_nowTile_errorText": "آخر مزامنة (خطأ): {dateStr}",
   "@appSync_nowTile_errorText": {
     "placeholders": {
@@ -759,18 +1102,7 @@
   },
   "appSync_nowTile_cancellingText": "جاري الإلغاء...",
   "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "آخر مزامنة (ملغاة): غير متوفر",
-  "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_cancelText": "آخر مزامنة (ملغاة): {dateStr}",
-  "@appSync_nowTile_cancelText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_failedTile_titleText": "تحقق من سجلات الفشل",
+  "appSync_failedTile_titleText": "التحقق من سجلات الفشل",
   "@appSync_failedTile_titleText": {},
   "appSync_failedTile_errorText": "[خطأ]: {info}",
   "@appSync_failedTile_errorText": {
@@ -792,16 +1124,7 @@
       }
     }
   },
-  "appSync_webdav_resultStatus": "{status, select, success {مكتمل} cancelled {ملغى} failed {فشل} multi {حالات متعددة} other {حالة غير معروفة}}",
-  "@appSync_webdav_resultStatus": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus_withReason": "{status, select, success {مكتمل بسبب {reason}} cancelled {ملغى بسبب {reason}} failed {فشل بسبب {reason}} multi {حالات متعددة بسبب {reason}} other {حالة غير معروفة}}",
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {اكتمل بسبب {reason}} cancelled {أُلغي بسبب {reason}} failed {فشل بسبب {reason}} multi {حالات متعددة بسبب {reason}} other {حالة غير معروفة}}",
   "@appSync_webdav_resultStatus_withReason": {
     "placeholders": {
       "status": {
@@ -814,7 +1137,7 @@
       }
     }
   },
-  "appSync_webdav_resultReason": "{reason, select, error {خطأ} userAction {يتطلب إجراء من المستخدم} missingHabitUuid {معرف العادة مفقود} empty {بيانات فارغة} other {سبب غير معروف}}",
+  "appSync_webdav_resultReason": "{reason, select, error {خطأ} userAction {يتطلب إجراءً من المستخدم} missingHabitUuid {معرّف العادة مفقود} empty {بيانات فارغة} other {سبب غير معروف}}",
   "@appSync_webdav_resultReason": {
     "placeholders": {
       "reason": {
@@ -825,14 +1148,12 @@
   },
   "appSync_webdav_newServerConfirmDialog_titleText": "موقع جديد",
   "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "appSync_webdav_newServerConfirmDialog_subtitleText": "ستقوم المزامنة بإنشاء الدلائل الضرورية وتحميل العادات المحلية إلى الخادم. هل تريد المتابعة؟",
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "ستقوم المزامنة بإنشاء المجلدات اللازمة ورفع العادات المحلية إلى الخادم. هل ترغب في المتابعة؟",
   "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
   "appSync_webdav_newServerConfirmDialog_confirmText": "مزامنة الآن!",
   "@appSync_webdav_newServerConfirmDialog_confirmText": {},
   "appSync_webdav_oldServerConfirmDialog_titleText": "تأكيد المزامنة",
   "@appSync_webdav_oldServerConfirmDialog_titleText": {},
-  "appSync_webdav_oldServerConfirmDialog_subtitleText": "الدليل ليس فارغًا. ستدمج المزامنة العادات الموجودة على الخادم والعادات المحلية. هل تريد المتابعة؟",
-  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
   "appSync_webdav_oldServerConfirmDialog_confirmText": "تأكيد الدمج",
   "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
   "appSync_exportAllLogsTile_titleText": "تصدير سجلات المزامنة الفاشلة",
@@ -846,7 +1167,7 @@
       }
     }
   },
-  "appSync_syncServerType_text": "{isCurrent, select, true {الحالي: } other {}}{name, select, webdav {WebDAV} fake {وهمي (للتصحيح فقط)} other {غير معروف ({name})}}",
+  "appSync_syncServerType_text": "{isCurrent, select, true {الحالي: } other {}}{name, select, webdav {WebDAV} fake {تجريبي (لأغراض التصحيح فقط)} other {غير معروف ({name})}}",
   "@appSync_syncServerType_text": {
     "placeholders": {
       "name": {
@@ -861,7 +1182,7 @@
       }
     }
   },
-  "appSync_networkType_text": "{type, select, mobile {شبكة الجوال} wifi {واي فاي} other {غير معروف}}",
+  "appSync_networkType_text": "{type, select, mobile {بيانات الجوال} wifi {Wi-Fi} other {غير معروف}}",
   "@appSync_networkType_text": {
     "placeholders": {
       "type": {
@@ -870,7 +1191,7 @@
       }
     }
   },
-  "appSync_syncInterval_text": "{name, select, manual {يدوي} minute5 {5 دقائق} minute15 {15 دقيقة} minute30 {30 دقيقة} hour1 {1 ساعة} other {غير معروف}}",
+  "appSync_syncInterval_text": "{name, select, manual {يدوي} minute5 {كل 5 دقائق} minute15 {كل 15 دقيقة} minute30 {كل 30 دقيقة} hour1 {كل ساعة} other {غير معروف}}",
   "@appSync_syncInterval_text": {
     "description": "Localized display text for app sync interval",
     "placeholders": {
@@ -881,25 +1202,17 @@
       }
     }
   },
-  "appSync_syncIntervalTile_title": "فاصل الجلب",
+  "appSync_syncIntervalTile_title": "الفاصل الزمني للمزامنة",
   "@appSync_syncIntervalTile_title": {},
-  "appSync_summaryTile_title": "خادم المزامنة",
-  "@appSync_summaryTile_title": {},
-  "appSync_summaryTile_subtitle_text_notConfigured": "غير مُعد",
-  "@appSync_summaryTile_subtitle_text_notConfigured": {},
-  "appSync_exportAllLogsTile_exportSubjectText": "جميع سجلات المزامنة الفاشلة الأخيرة",
-  "@appSync_exportAllLogsTile_exportSubjectText": {},
-  "appSync_serverEditor_saveDialog_titleText": "تأكيد حفظ التغييرات",
+  "appSync_serverEditor_saveDialog_titleText": "تأكيد حفظ التغييرات؟",
   "@appSync_serverEditor_saveDialog_titleText": {},
-  "appSync_serverEditor_saveDialog_subtitleText": "سيؤدي الحفظ إلى الكتابة فوق تكوين الخادم السابق.",
+  "appSync_serverEditor_saveDialog_subtitleText": "سيؤدي الحفظ إلى الكتابة فوق إعدادات الخادم السابقة.",
   "@appSync_serverEditor_saveDialog_subtitleText": {},
   "appSync_serverEditor_exitDialog_titleText": "تغييرات غير محفوظة",
   "@appSync_serverEditor_exitDialog_titleText": {},
-  "appSync_serverEditor_exitDialog_subtitleText": "سيؤدي الخروج إلى تجاهل جميع التغييرات غير المحفوظة.",
-  "@appSync_serverEditor_exitDialog_subtitleText": {},
-  "appSync_serverEditor_deleteDialog_titleText": "تأكيد الحذف",
+  "appSync_serverEditor_deleteDialog_titleText": "تأكيد الحذف؟",
   "@appSync_serverEditor_deleteDialog_titleText": {},
-  "appSync_serverEditor_deleteDialog_subtitleText": "سيؤدي الحذف إلى إزالة تكوين الخادم الحالي.",
+  "appSync_serverEditor_deleteDialog_subtitleText": "سيؤدي الحذف إلى إزالة إعدادات الخادم الحالية.",
   "@appSync_serverEditor_deleteDialog_subtitleText": {},
   "appSync_serverEditor_titleText_add": "خادم مزامنة جديد",
   "@appSync_serverEditor_titleText_add": {},
@@ -909,21 +1222,19 @@
   "@appSync_serverEditor_advance_titleText": {},
   "appSync_serverEditor_pathTile_titleText": "المسار",
   "@appSync_serverEditor_pathTile_titleText": {},
-  "appSync_serverEditor_pathTile_hintText": "أدخل مسار WebDAV صالح هنا.",
+  "appSync_serverEditor_pathTile_hintText": "أدخل مسار WebDAV صالحًا هنا.",
   "@appSync_serverEditor_pathTile_hintText": {},
-  "appSync_serverEditor_pathTile_errorText_emptyPath": "المسار لا يجب أن يكون فارغًا!",
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "يجب ألا يكون المسار فارغًا!",
   "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
   "appSync_serverEditor_usernameTile_titleText": "اسم المستخدم",
   "@appSync_serverEditor_usernameTile_titleText": {},
-  "appSync_serverEditor_usernameTile_hintText": "أدخل اسم المستخدم هنا، اتركه فارغًا إذا لم يكن مطلوبًا.",
-  "@appSync_serverEditor_usernameTile_hintText": {},
   "appSync_serverEditor_passwordTile_titleText": "كلمة المرور",
   "@appSync_serverEditor_passwordTile_titleText": {},
   "appSync_serverEditor_ignoreSSLTile_titleText": "تجاهل شهادة SSL",
   "@appSync_serverEditor_ignoreSSLTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_titleText": "مهلة المزامنة بالثواني",
+  "appSync_serverEditor_timeoutTile_titleText": "مهلة المزامنة (بالثواني)",
   "@appSync_serverEditor_timeoutTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_hintText": "الافتراضي: {seconds, plural, =0 {غير محدود} other {{seconds}{unit}}}",
+  "appSync_serverEditor_timeoutTile_hintText": "الافتراضي: {seconds, plural, =0 {غير محدد} other {{seconds} {unit}}}",
   "@appSync_serverEditor_timeoutTile_hintText": {
     "placeholders": {
       "seconds": {
@@ -938,9 +1249,9 @@
   },
   "appSync_serverEditor_timeoutTile_unitText": "ثانية",
   "@appSync_serverEditor_timeoutTile_unitText": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "مهلة اتصال الشبكة بالثواني",
+  "appSync_serverEditor_connTimeoutTile_titleText": "مهلة اتصال الشبكة (بالثواني)",
   "@appSync_serverEditor_connTimeoutTile_titleText": {},
-  "appSync_serverEditor_connTimeoutTile_hintText": "الافتراضي: {seconds, plural, =0 {غير محدود} other {{seconds}{unit}}}",
+  "appSync_serverEditor_connTimeoutTile_hintText": "الافتراضي: {seconds, plural, =0 {غير محدد} other {{seconds} {unit}}}",
   "@appSync_serverEditor_connTimeoutTile_hintText": {
     "placeholders": {
       "seconds": {
@@ -966,28 +1277,15 @@
       }
     }
   },
-  "appSync_serverEditor_netTypeTile_titleText": "وضع مزامنة الشبكة",
-  "@appSync_serverEditor_netTypeTile_titleText": {},
-  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {مزامنة عبر شبكة الجوال} wifi {مزامنة عبر واي فاي} other {غير معروف}}",
-  "@appSync_serverEditor_netTypeTile_typeTooltip": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataText": "بيانات منخفضة",
+  "appSync_serverEditor_netTypeTile_lowDataText": "توفير البيانات",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
-  "appSync_serverEditor_netTypeTile_lowDataTooltip": "المزامنة في وضع البيانات المنخفضة",
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "المزامنة في وضع توفير البيانات",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
-  "experimentalFeatures_warnginBanner_title": "تم تفعيل ميزة تجريبية واحدة أو أكثر، استخدم بحذر.",
+  "experimentalFeatures_warnginBanner_title": "تم تفعيل ميزة تجريبية واحدة أو أكثر. استخدمها بحذر.",
   "@experimentalFeatures_warnginBanner_title": {},
-  "experimentalFeatures_habitSyncTile_titleText": "مزامنة العادات السحابية",
-  "@experimentalFeatures_habitSyncTile_titleText": {},
-  "experimentalFeatures_habitSyncTile_subtitleText": "بمجرد التفعيل، سيظهر خيار المزامنة في إعدادات التطبيق",
+  "experimentalFeatures_habitSyncTile_subtitleText": "بمجرد التفعيل، سيظهر خيار المزامنة في إعدادات التطبيق.",
   "@experimentalFeatures_habitSyncTile_subtitleText": {},
-  "experimentalFeatures_warnTile_titleText": "الميزة التجريبية ({syncName}) معطلة، لكن الوظيفة لا تزال تعمل.",
+  "experimentalFeatures_warnTile_titleText": "الميزة التجريبية ({syncName}) معطلة، لكن وظيفتها لا تزال قيد التشغيل.",
   "@experimentalFeatures_warnTile_titleText": {
     "placeholders": {
       "syncName": {
@@ -997,7 +1295,7 @@
       }
     }
   },
-  "experimentalFeatures_warnTile_forHabitSyncText": "للتعطيل الكامل، اضغط مطولًا للوصول إلى '{menuName}' وإيقاف تشغيلها.",
+  "experimentalFeatures_warnTile_forHabitSyncText": "لتعطيلها بالكامل، اضغط مطولاً للوصول إلى '{menuName}' وقم بإيقاف تشغيلها.",
   "@experimentalFeatures_warnTile_forHabitSyncText": {
     "placeholders": {
       "menuName": {
@@ -1006,274 +1304,20 @@
       }
     }
   },
-  "appAbout_appbarTile_titleText": "عن",
-  "@appAbout_appbarTile_titleText": {},
-  "appAbout_versionTile_titleText": "الإصدار: {appVersion}",
-  "@appAbout_versionTile_titleText": {
-    "placeholders": {
-      "appVersion": {
-        "type": "String",
-        "example": "1.0.0"
-      }
-    }
-  },
-  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_versionTile_changeLogPath": {},
-  "appAbout_sourceCodeTile_titleText": "الكود المصدري",
-  "@appAbout_sourceCodeTile_titleText": {},
-  "appAbout_issueTrackerTile_titleText": "تتبع الخلل",
-  "@appAbout_issueTrackerTile_titleText": {},
-  "appAbout_contactEmailTile_titleText": "تواصل معي",
-  "@appAbout_contactEmailTile_titleText": {},
-  "appAbout_contactEmailTile_emailBody": "أهلاً، أنا سعيد بتواصلك.\nإذا كنت تود الإبلاغ عن مشكلة، أرجو منك تحديد النسخة وخطوات إظهار المشكلة.\n--------------------------------------",
-  "@appAbout_contactEmailTile_emailBody": {},
-  "appAbout_licenseTile_titleText": "الترخيص",
-  "@appAbout_licenseTile_titleText": {},
-  "appAbout_licenseTile_subtitleText": "تصريح أباتشي، النسخة 2.0",
-  "@appAbout_licenseTile_subtitleText": {},
-  "appAbout_licenseThirdPartyTile_titleText": "نص التصريح لطرف ثالث",
-  "@appAbout_licenseThirdPartyTile_titleText": {},
-  "appAbout_licenseThirdPartyTile_subtitleText": "فلتر",
-  "@appAbout_licenseThirdPartyTile_subtitleText": {},
-  "appAbout_privacyTile_titleText": "الخصوصية",
-  "@appAbout_privacyTile_titleText": {},
-  "appAbout_privacyTile_subTitleText": "الوصول إلى سياسة الخصوصية في هذا التطبيق",
+  "appAbout_privacyTile_subTitleText": "الاطلاع على سياسة الخصوصية لهذا التطبيق",
   "@appAbout_privacyTile_subTitleText": {},
-  "appAbout_donateTile_titleText": "تبرع",
-  "@appAbout_donateTile_titleText": {},
-  "appAbout_donateTile_subTitleText": "☕ أنا مبرمج شخصي، إذا أعجبك التطبيق، أرجوك أن تشتري لي قهوة",
-  "@appAbout_donateTile_subTitleText": {},
-  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
-  "@appAbout_donateTile_ways": {
-    "description": "للتبرع إبدأ بعلامة `@` وافصل بينها بعلامة `,`, الطرق المتاحة: بي بال، باي مي كوفي، علي بي، ويشات بي."
-  },
-  "donateWay_paypal": "باي بال",
-  "@donateWay_paypal": {},
-  "donateWay_buyMeACoffee": "باي مي كوفي",
-  "@donateWay_buyMeACoffee": {},
-  "donateWay_alipay": "علي بي",
-  "@donateWay_alipay": {},
-  "donateWay_wechatPay": "ويشات بي",
-  "@donateWay_wechatPay": {},
-  "donateWay_cryptoCurrency": "العملات الرقمية",
-  "@donateWay_cryptoCurrency": {},
-  "donateWay_cryptoCurrency_BTC": "بيتكوين",
-  "@donateWay_cryptoCurrency_BTC": {},
-  "donateWay_cryptoCurrency_ETH": "إيثريوم",
-  "@donateWay_cryptoCurrency_ETH": {},
-  "donateWay_cryptoCurrency_BNB": "بي إن بي",
-  "@donateWay_cryptoCurrency_BNB": {},
-  "donateWay_cryptoCurrency_AVAX": "أفاكس",
-  "@donateWay_cryptoCurrency_AVAX": {},
-  "donateWay_cryptoCurrency_FTM": "إف تي إم",
-  "@donateWay_cryptoCurrency_FTM": {},
-  "donateWay_firstQRGroup": "مدفوعات ويشات وعلي بي",
-  "@donateWay_firstQRGroup": {},
-  "appAbout_donateDialog_copiedCrypto_msg": "نسخ {name}'s عنوان",
-  "@appAbout_donateDialog_copiedCrypto_msg": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "BTC"
-      }
-    }
-  },
-  "batchCheckin_appbar_title": "التحقق بالدُفعة",
-  "@batchCheckin_appbar_title": {},
-  "batchCheckin_datePicker_prevButton_tooltip": "اليوم السابق",
-  "@batchCheckin_datePicker_prevButton_tooltip": {},
-  "batchCheckin_datePicker_nextButton_tooltip": "اليوم التالي",
-  "@batchCheckin_datePicker_nextButton_tooltip": {},
-  "batchCheckin_status_skip_text": "تخطى",
-  "@batchCheckin_status_skip_text": {},
-  "batchCheckin_status_ok_text": "اكتمل",
-  "@batchCheckin_status_ok_text": {},
-  "batchCheckin_status_double_text": "اكتمال مضاعف",
-  "@batchCheckin_status_double_text": {},
-  "batchCheckin_status_zero_text": "غير مكتمل",
-  "@batchCheckin_status_zero_text": {},
-  "batchCheckin_habits_groupTitle": "تم اختيار {count} عادات",
-  "@batchCheckin_habits_groupTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_button_text": "حفظ",
-  "@batchCheckin_save_button_text": {},
-  "batchCheckin_reset_button_text": "إعادة تعيين",
-  "@batchCheckin_reset_button_text": {},
-  "batchCheckin_completed_snackbar_text": "تم تعديل {count, plural, =1{حالة العادة} other{حالة {count} عادات}}",
-  "@batchCheckin_completed_snackbar_text": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_confirmDialog_title": "تجاوز السجلات الحالية",
-  "@batchCheckin_save_confirmDialog_title": {},
-  "batchCheckin_save_confirmDialog_body": "ستتم كتابة السجلات الحالية بعد الحفظ، وستفقد السجلات السابقة.",
-  "@batchCheckin_save_confirmDialog_body": {},
-  "batchCheckin_save_confirmDialog_confirmButton_text": "حفظ",
-  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
-  "batchCheckin_save_confirmDialog_cancelButton_text": "إلغاء",
-  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
-  "batchCheckin_close_confirmDialog_title": "تأكيد العودة",
-  "@batchCheckin_close_confirmDialog_title": {},
-  "batchCheckin_close_confirmDialog_body": "لن يتم تطبيق تغييرات حالة التحقق إلا بعد الحفظ.",
-  "@batchCheckin_close_confirmDialog_body": {},
-  "batchCheckin_close_confirmDialog_confirmButton_text": "خروج",
-  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
-  "batchCheckin_close_confirmDialog_cancelButton_text": "إلغاء",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
-  "appReminder_dailyReminder_title": "🏝 هل التزمت بعاداتك اليوم؟",
-  "@appReminder_dailyReminder_title": {},
-  "appReminder_dailyReminder_body": "اضغط للدخول إلى التطبيق والبدء.",
-  "@appReminder_dailyReminder_body": {},
-  "common_habitColorType_cc1": "ليلكي",
-  "@common_habitColorType_cc1": {},
-  "common_habitColorType_cc2": "أحمر",
-  "@common_habitColorType_cc2": {},
-  "common_habitColorType_cc3": "بنفسجي",
-  "@common_habitColorType_cc3": {},
-  "common_habitColorType_cc4": "أزرق ملكي",
-  "@common_habitColorType_cc4": {},
-  "common_habitColorType_cc5": "لازوردي داكن",
-  "@common_habitColorType_cc5": {},
-  "common_habitColorType_cc6": "أخضر",
-  "@common_habitColorType_cc6": {},
-  "common_habitColorType_cc7": "عنبري",
-  "@common_habitColorType_cc7": {},
-  "common_habitColorType_cc8": "برتقالي",
-  "@common_habitColorType_cc8": {},
-  "common_habitColorType_cc9": "أخضر ليموني",
-  "@common_habitColorType_cc9": {},
-  "common_habitColorType_cc10": "أوركيد داكن",
-  "@common_habitColorType_cc10": {},
-  "common_habitColorType_default": "لون {index}",
-  "@common_habitColorType_default": {
-    "description": "لون غير محدد",
-    "placeholders": {
-      "index": {
-        "type": "int",
-        "example": "0"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_useSystemFormat_text": "استخدم تنسيق الجهاز",
-  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
-  "common_customDateTimeFormatPicker_fmtTileText": "تنسيق التاريخ",
-  "@common_customDateTimeFormatPicker_fmtTileText": {},
-  "common_customDateTimeFormatPicker_ymd_text": "سنة شهر يوم",
-  "@common_customDateTimeFormatPicker_ymd_text": {},
-  "common_customDateTimeFormatPicker_mdy_text": "شهر يوم سنة",
-  "@common_customDateTimeFormatPicker_mdy_text": {},
-  "common_customDateTimeFormatPicker_dmy_text": "يوم شهر سنة",
-  "@common_customDateTimeFormatPicker_dmy_text": {},
-  "common_customDateTimeFormatPicker_SepTileText": "فاصل",
-  "@common_customDateTimeFormatPicker_SepTileText": {},
-  "common_customDateTimeFormatPicker_sepDash_text": "خط",
-  "@common_customDateTimeFormatPicker_sepDash_text": {},
-  "common_customDateTimeFormatPicker_sepSlash_text": "خط مائل",
-  "@common_customDateTimeFormatPicker_sepSlash_text": {},
-  "common_customDateTimeFormatPicker_sepSpace_text": "مسافة",
-  "@common_customDateTimeFormatPicker_sepSpace_text": {},
-  "common_customDateTimeFormatPicker_sepDot_text": "نقطة",
-  "@common_customDateTimeFormatPicker_sepDot_text": {},
-  "common_customDateTimeFormatPicker_empty_text": "بدون فاصل",
-  "@common_customDateTimeFormatPicker_empty_text": {},
-  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
-  "@common_customDateTimeFormatPicker_sep_formatter": {
-    "description": "split char",
-    "placeholders": {
-      "splitName": {
-        "type": "String",
-        "example": "Dash"
-      },
-      "splitChar": {
-        "type": "String",
-        "example": "/"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_12Hour_text": "تنسيق 12 ساعة",
-  "@common_customDateTimeFormatPicker_12Hour_text": {},
-  "common_customDateTimeFormatPicker_monthName_text": "استخدم الاسم الكامل",
-  "@common_customDateTimeFormatPicker_monthName_text": {},
-  "common_customDateTimeFormatPicker_applyFreqChart_text": "تطبيق على جدول التكرار",
-  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
-  "common_customDateTimeFormatPicker_applyHeapmap_text": "تطبيق على التقويم",
-  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
-  "common_customDateTimeFormatPicker_cancelButton_text": "إلغاء",
-  "@common_customDateTimeFormatPicker_cancelButton_text": {},
-  "common_customDateTimeFormatPicker_confirmButton_text": "تأكيد",
-  "@common_customDateTimeFormatPicker_confirmButton_text": {},
-  "common_errorPage_title": "عذرًا، حدث خطأ!",
-  "@common_errorPage_title": {},
   "common_errorPage_copied": "تم نسخ معلومات الخطأ",
   "@common_errorPage_copied": {},
-  "common_enable_text": "مُفعل",
-  "@common_enable_text": {},
-  "calendarPicker_clip_today": "اليوم",
-  "@calendarPicker_clip_today": {},
-  "calendarPicker_clip_tomorrow": "غداً",
-  "@calendarPicker_clip_tomorrow": {},
-  "calendarPicker_clip_after7Days": "التالي {date}",
-  "@calendarPicker_clip_after7Days": {
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "E"
-      }
-    }
-  },
-  "exportConfirmDialog_title_exportAll": "تصدير كل العادات",
-  "@exportConfirmDialog_title_exportAll": {},
-  "exportConfirmDialog_title_exportMulti": "تصدير {number, plural, =0{current habit} =1{1 habit} other{{number} عادات}}?",
-  "@exportConfirmDialog_title_exportMulti": {
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "exportConfirmDialog_option_includeRecords": "تضمين السجلات",
-  "@exportConfirmDialog_option_includeRecords": {},
-  "exportConfirmDialog_cancel_buttonText": "إلغاء",
-  "@exportConfirmDialog_cancel_buttonText": {},
-  "exportConfirmDialog_confirm_buttonText": "تصدير",
-  "@exportConfirmDialog_confirm_buttonText": {},
-  "debug_logLevelTile_title": "مستوى التسجيل",
-  "@debug_logLevelTile_title": {},
-  "debug_logLevelDialog_title": "تغيير مستوى التسجيل",
+  "debug_logLevelDialog_title": "تغيير مستوى تسجيل الأخطاء",
   "@debug_logLevelDialog_title": {},
-  "debug_logLevel_debug": "تصحيح",
-  "@debug_logLevel_debug": {},
-  "debug_logLevel_info": "معلومات",
-  "@debug_logLevel_info": {},
-  "debug_logLevel_warn": "تحذير",
-  "@debug_logLevel_warn": {},
-  "debug_logLevel_error": "خطأ",
-  "@debug_logLevel_error": {},
-  "debug_logLevel_fatal": "فادح",
-  "@debug_logLevel_fatal": {},
-  "debug_collectLogTile_title": "جمع السجلات",
-  "@debug_collectLogTile_title": {},
   "debug_collectLogTile_enable_subtitle": "انقر لإيقاف جمع السجلات.",
   "@debug_collectLogTile_enable_subtitle": {},
   "debug_collectLogTile_disable_subtitle": "انقر لبدء جمع السجلات.",
   "@debug_collectLogTile_disable_subtitle": {},
-  "debug_downladDebugLogs_subject": "جاري تنزيل سجلات التصحيح",
+  "debug_downladDebugLogs_subject": "جاري تنزيل سجلات تصحيح الأخطاء",
   "@debug_downladDebugLogs_subject": {},
-  "dbeug_clearDebugLogs_complete_snackbar": "تم مسح سجلات التصحيح.",
+  "dbeug_clearDebugLogs_complete_snackbar": "تم مسح سجلات تصحيح الأخطاء.",
   "@dbeug_clearDebugLogs_complete_snackbar": {},
-  "debug_downladDebugInfo_subject": "جاري تنزيل معلومات التصحيح",
-  "@debug_downladDebugInfo_subject": {},
   "debug_downladDebugZip_subject": "جاري تنزيل {fileName}",
   "@debug_downladDebugZip_subject": {
     "placeholders": {
@@ -1283,54 +1327,16 @@
       }
     }
   },
-  "debug_missingDebugLogFile_snackbar": "ملف سجل التصحيح غير موجود.",
-  "@debug_missingDebugLogFile_snackbar": {},
   "debug_debuggerLogCard_title": "معلومات التسجيل",
   "@debug_debuggerLogCard_title": {},
-  "debug_debuggerLogCard_subtitle": "يتضمن معلومات سجل التصحيح المحلي، يحتاج إلى تفعيل مفتاح جمع السجلات.",
-  "@debug_debuggerLogCard_subtitle": {},
-  "debug_debuggerLogCard_saveButton_text": "تنزيل",
-  "@debug_debuggerLogCard_saveButton_text": {},
   "debug_debuggerLogCard_clearButton_text": "مسح",
   "@debug_debuggerLogCard_clearButton_text": {},
-  "debug_debuggerInfoCard_title": "معلومات التصحيح",
+  "debug_debuggerInfoCard_title": "معلومات تصحيح الأخطاء",
   "@debug_debuggerInfoCard_title": {},
-  "debug_debuggerInfoCard_subtitle": "يتضمن معلومات تصحيح التطبيق.",
-  "@debug_debuggerInfoCard_subtitle": {},
   "debug_debuggerInfoCard_openButton_text": "فتح",
   "@debug_debuggerInfoCard_openButton_text": {},
   "debug_debuggerInfoCard_saveButton_text": "حفظ",
   "@debug_debuggerInfoCard_saveButton_text": {},
-  "debug_debuggerInfo_notificationTitle": "جاري جمع معلومات التطبيق...",
-  "@debug_debuggerInfo_notificationTitle": {},
-  "confirmDialog_confirm_text": "{type, select, save {حفظ} exit {خروج} delete {حذف} other {تأكيد}}",
-  "@confirmDialog_confirm_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<NormalizeConfirmDialogType>.name",
-        "example": "confirm"
-      }
-    }
-  },
-  "confirmDialog_cancel_text": "إلغاء",
-  "@confirmDialog_cancel_text": {},
-  "snackbar_undoText": "تراجع",
-  "@snackbar_undoText": {},
-  "snackbar_dismissText": "إلغاء",
-  "@snackbar_dismissText": {},
-  "contributors_tile_title": "المساهمون",
-  "@contributors_tile_title": {},
-  "userAction_tap": "ضغطة",
-  "@userAction_tap": {},
-  "userAction_doubleTap": "ضغطتين متتابعة",
-  "@userAction_doubleTap": {},
-  "userAction_longTap": "ضغطة طويلة",
-  "@userAction_longTap": {},
-  "channelName_habitReminder": "تذكير العادة",
-  "@channelName_habitReminder": {},
-  "channelName_appReminder": "تلميح",
-  "@channelName_appReminder": {},
-  "channelName_appDebugger": "مصحح الأخطاء",
+  "channelName_appDebugger": "مصحح أخطاء التطبيق",
   "@channelName_appDebugger": {}
 }
