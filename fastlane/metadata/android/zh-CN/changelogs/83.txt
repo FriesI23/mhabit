@@ -1,0 +1,34 @@
+**✨ 新功能**
+
+- 增强 WebDAV 同步功能：当启用自动同步时，在某些场景下触发同步（#278）：
+  - 减少启动后自动同步的延迟时间；
+  - 添加异步防抖工具代码；
+  - 应用切换到后台一段时间后再次切回前台时重新同步；
+  - 习惯状态变化后重新同步；
+  - 习惯记录变更后重新同步；
+- 在应用中添加隐私声明。
+- **[iOS]** 在 App Store 构建中隐藏“捐赠”选项。
+
+**🌐 本地化**
+
+- 更新阿拉伯语翻译，感谢 abdelbasset jabrane 在 Weblate 上的贡献。
+- 更新俄语翻译，感谢 Bora Yurt Page 在 Weblate 上的贡献。
+- 更新西班牙语翻译，感谢 Óscar Fernández Díaz 在 Weblate 上的贡献。
+- 更新乌克兰语翻译，感谢 Максим Горпиніч 在 Weblate 上的贡献。
+- 更新乌克兰语翻译，感谢 Preck757 在 GitHub 上的贡献。（#281）
+- 更新贡献者文件。
+- 添加希伯来语支持（待翻译），来自 elid 在 Weblate 上的请求。
+
+**🧹 其他**
+
+- 从 `flutter_markdown` 迁移到 `markdown_widget`，从 [#162966](https://github.com/flutter/flutter/issues/162966) 获取更多信息。（#272）
+- 重构通知相关代码（#275）：
+  - 为 Android 通知 Channel 添加本地化支持。
+  - 升级 `flutter_local_notifications` 到 v19。
+  - 添加对 Windows 通知的支持（功能受限）。
+- **[Android]** 设置 `AppDebugger` 通知为持续显示（ongoing）。
+- **[iOS]** 在应用中添加中国地区 IPC（仅限 zh-cn 本地化）。
+
+**📝 文档**
+
+- 更新 README 文件。
