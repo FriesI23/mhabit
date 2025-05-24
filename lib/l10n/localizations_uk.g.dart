@@ -807,7 +807,7 @@ class L10nUk extends L10n {
   String get appSetting_debugger_titleText => 'Інформація про налагодження';
 
   @override
-  String get appSetting_about_titleText => 'про';
+  String get appSetting_about_titleText => 'Про';
 
   @override
   String get appSetting_experimentalFeatureTile_titleText => 'Експериментальні особливості';
@@ -1166,7 +1166,7 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get appAbout_appbarTile_titleText => 'про';
+  String get appAbout_appbarTile_titleText => 'Про';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
@@ -1198,7 +1198,7 @@ class L10nUk extends L10n {
   String get appAbout_licenseThirdPartyTile_titleText => 'Заява про ліцензування третьої сторони';
 
   @override
-  String get appAbout_licenseThirdPartyTile_subtitleText => 'тріпотіння';
+  String get appAbout_licenseThirdPartyTile_subtitleText => 'Flutter';
 
   @override
   String get appAbout_privacyTile_titleText => 'Конфіденційність';
