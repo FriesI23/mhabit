@@ -95,15 +95,15 @@
   "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitFreq_daily": "Ежедневно",
   "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek": "",
+  "habitEdit_habitFreq_perweek": "Каждую неделю",
   "@habitEdit_habitFreq_perweek": {},
   "habitEdit_habitFreq_perweek_ex01": "раз в неделю",
   "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth": "",
+  "habitEdit_habitFreq_permonth": "Каждый месяц",
   "@habitEdit_habitFreq_permonth": {},
   "habitEdit_habitFreq_permonth_ex01": "раз в месяц",
   "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq": "",
+  "habitEdit_habitFreq_predayfreq": "Каждый день",
   "@habitEdit_habitFreq_predayfreq": {},
   "habitEdit_habitFreq_predayfreq_ex01": "раз в",
   "@habitEdit_habitFreq_predayfreq_ex01": {},
@@ -163,13 +163,13 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "Любой день недели",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "",
+  "habitEdit_reminder_freq_weekPrefixText": "Каждую неделю",
   "@habitEdit_reminder_freq_weekPrefixText": {},
   "habitEdit_reminder_freq_weekSubfixText": " в любую неделю",
   "@habitEdit_reminder_freq_weekSubfixText": {},
   "habitEdit_reminder_freq_monthHelpText": "Любой день месяца",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "",
+  "habitEdit_reminder_freq_monthPrefixText": "Каждый месяц",
   "@habitEdit_reminder_freq_monthPrefixText": {},
   "habitEdit_reminder_freq_monthSubfixText": " в любой месяц",
   "@habitEdit_reminder_freq_monthSubfixText": {},
@@ -1251,5 +1251,86 @@
   "userAction_doubleTap": "Double",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Long",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "experimentalFeatures_warnTile_titleText": "Экспериментальная возможность ({syncName}) отключена, но она все ещё работает.",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
+      }
+    }
+  },
+  "experimentalFeatures_warnginBanner_title": "Включено одну или несколько экспериментальных возможностей. Используйте с осторожностью.",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "appSync_syncInterval_text": "{name, select, manual {Вручную} minute5 {5 минут} minute15 {15 минут} minute30 {30 минут} hour1 {1 Hour} other {Неизвестно}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {Ошибка} userAction {Требуется действие} missingHabitUuid {Отсутствует UUID привычки} empty {Пустые данные} other {Неизвестная причина}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {Текущая: } other {}}{name, select, webdav {WebDAV} fake {Фальшивая (Только для отладки)} other {Неизвестная ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_serverEditor_connRetryCountTile_hintText": "По умолчанию: {count, plural, =0 {Повторы отключены} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Синхронизация по мобильному интернету} wifi {Синхронизация по Wifi} other {Неизвестно}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "experimentalFeatures_habitSyncTile_subtitleText": "После включения, опция синхронизации приложения появится в настройках",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "appAbout_privacyTile_titleText": "Конфиденциальность",
+  "@appAbout_privacyTile_titleText": {},
+  "appAbout_privacyTile_subTitleText": "Ознакомьтесь с политикой конфиденциальности в этом приложении",
+  "@appAbout_privacyTile_subTitleText": {},
+  "channelName_habitReminder": "Напоминание о привычках",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "Подсказка",
+  "@channelName_appReminder": {},
+  "channelName_appDebugger": "Отладчик",
+  "@channelName_appDebugger": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "Количество повторных попыток подключения к сети",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_lowDataText": "Низкое потребление данных",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {}
 }
