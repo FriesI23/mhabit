@@ -695,7 +695,7 @@
   "@appSetting_clearCache_snackBar_failText": {},
   "appSetting_debugger_titleText": "Інформація про налагодження",
   "@appSetting_debugger_titleText": {},
-  "appSetting_about_titleText": "про",
+  "appSetting_about_titleText": "Про",
   "@appSetting_about_titleText": {},
   "appSetting_experimentalFeatureTile_titleText": "Експериментальні особливості",
   "@appSetting_experimentalFeatureTile_titleText": {},
@@ -1006,7 +1006,7 @@
       }
     }
   },
-  "appAbout_appbarTile_titleText": "про",
+  "appAbout_appbarTile_titleText": "Про",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Версія: {appVersion}",
   "@appAbout_versionTile_titleText": {
@@ -1033,7 +1033,7 @@
   "@appAbout_licenseTile_subtitleText": {},
   "appAbout_licenseThirdPartyTile_titleText": "Заява про ліцензування третьої сторони",
   "@appAbout_licenseThirdPartyTile_titleText": {},
-  "appAbout_licenseThirdPartyTile_subtitleText": "тріпотіння",
+  "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
   "@appAbout_licenseThirdPartyTile_subtitleText": {},
   "appAbout_privacyTile_titleText": "Конфіденційність",
   "@appAbout_privacyTile_titleText": {},
