@@ -990,5 +990,144 @@
   "userAction_doubleTap": "Çift",
   "@userAction_doubleTap": {},
   "userAction_longTap": "Uzun",
-  "@userAction_longTap": {}
+  "@userAction_longTap": {},
+  "appSync_webdav_resultStatus": "{status, select, success {Tamamlandı} cancelled {İptal edildi} failed {Başarısız} multi {Birden fazla durum} other {Bilinmeyen durum}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {Hata} userAction {Kullanıcı müdahalesi gerekli} missingHabitUuid {Alışkanlık UUID'si eksik} empty {Boş veri} other {Bilinmeyen neden}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "Son Senkronizasyon (Hata): Yok",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_cancelText": "Son Senkronizasyon (İptal edildi): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_failedTile_titleText": "Hata Kayıtlarını Kontrol Et",
+  "@appSync_failedTile_titleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "Silmeyi Onayla",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_passwordTile_titleText": "Parola",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Alışkanlık silindi: “{name}”",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
+  "appSetting_experimentalFeatureTile_titleText": "Deneysel Özellikler",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "Senkronizasyon",
+  "@appSetting_synSubgroupText": {},
+  "appSetting_syncOption_titleText": "Senkronizasyon Ayarları",
+  "@appSetting_syncOption_titleText": {},
+  "appSync_nowTile_titleText": "Şimdi Senkronize Et",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "Senkronize ediliyor",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "Son Senkronizasyon: Yok",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "Son Senkronizasyon: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText": "Son Senkronizasyon (Hata): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "Senkronize ediliyor...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "Senkronize ediliyor: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "İptal ediliyor...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "Son Senkronizasyon (İptal edildi): Yok",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_failedTile_errorText": "[Hata]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {{reason} nedeniyle tamamlandı} cancelled {{reason} nedeniyle iptal edildi} failed {{reason} nedeniyle başarısız oldu} multi {{reason} nedeniyle birden fazla durum oluştu} other {Bilinmeyen durum}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  }
 }
