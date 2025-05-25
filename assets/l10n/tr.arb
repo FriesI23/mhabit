@@ -1009,9 +1009,9 @@
       }
     }
   },
-  "appSync_nowTile_errorText_noDate": "Son Senkronizasyon (Hata): Yok",
+  "appSync_nowTile_errorText_noDate": "Son eşleme (Hata): Yok",
   "@appSync_nowTile_errorText_noDate": {},
-  "appSync_nowTile_cancelText": "Son Senkronizasyon (İptal edildi): {dateStr}",
+  "appSync_nowTile_cancelText": "Son eşleme (İptal edildi): {dateStr}",
   "@appSync_nowTile_cancelText": {
     "placeholders": {
       "dateStr": {
@@ -1037,13 +1037,13 @@
   },
   "appSetting_experimentalFeatureTile_titleText": "Deneysel Özellikler",
   "@appSetting_experimentalFeatureTile_titleText": {},
-  "appSetting_synSubgroupText": "Senkronizasyon",
+  "appSetting_synSubgroupText": "Eşleme",
   "@appSetting_synSubgroupText": {},
-  "appSetting_syncOption_titleText": "Senkronizasyon Ayarları",
+  "appSetting_syncOption_titleText": "Eşleme Ayarları",
   "@appSetting_syncOption_titleText": {},
-  "appSync_nowTile_titleText": "Şimdi Senkronize Et",
+  "appSync_nowTile_titleText": "Şimdi Eşle",
   "@appSync_nowTile_titleText": {},
-  "appSync_nowTile_titleText_syncing": "Senkronize ediliyor",
+  "appSync_nowTile_titleText_syncing": "Eşleniyor",
   "@appSync_nowTile_titleText_syncing": {},
   "appSync_nowTile_dateFormat": "{ymd} {jms}",
   "@appSync_nowTile_dateFormat": {
@@ -1058,9 +1058,9 @@
       }
     }
   },
-  "appSync_nowTile_text_noDate": "Son Senkronizasyon: Yok",
+  "appSync_nowTile_text_noDate": "Son eşleme: Yok",
   "@appSync_nowTile_text_noDate": {},
-  "appSync_nowTile_text": "Son Senkronizasyon: {dateStr}",
+  "appSync_nowTile_text": "Son eşleme: {dateStr}",
   "@appSync_nowTile_text": {
     "placeholders": {
       "dateStr": {
@@ -1069,7 +1069,7 @@
       }
     }
   },
-  "appSync_nowTile_errorText": "Son Senkronizasyon (Hata): {dateStr}",
+  "appSync_nowTile_errorText": "Son eşleme (Hata): {dateStr}",
   "@appSync_nowTile_errorText": {
     "placeholders": {
       "dateStr": {
@@ -1078,9 +1078,9 @@
       }
     }
   },
-  "appSync_nowTile_syncingText": "Senkronize ediliyor...",
+  "appSync_nowTile_syncingText": "Eşleniyor...",
   "@appSync_nowTile_syncingText": {},
-  "appSync_nowTile_syncingText_withPrt": "Senkronize ediliyor: {prt}",
+  "appSync_nowTile_syncingText_withPrt": "Eşleniyor: {prt}",
   "@appSync_nowTile_syncingText_withPrt": {
     "placeholders": {
       "prt": {
@@ -1095,7 +1095,7 @@
   },
   "appSync_nowTile_cancellingText": "İptal ediliyor...",
   "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "Son Senkronizasyon (İptal edildi): Yok",
+  "appSync_nowTile_cancelText_noDate": "Son eşleme (İptal edildi): Yok",
   "@appSync_nowTile_cancelText_noDate": {},
   "appSync_failedTile_errorText": "[Hata]: {info}",
   "@appSync_failedTile_errorText": {
@@ -1127,6 +1127,111 @@
       "reason": {
         "type": "String",
         "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "confirmDialog_confirm_text": "{type, select, save {Kaydet} exit {Çıkış delete {Sil} other {Onayla}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "Tamamen devre dışı bırakmak için '{menuName}' a erişmek ve kapatmak için uzun basın.",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
+  "appSync_serverEditor_ignoreSSLTile_titleText": "SSL sertifikasını yok say",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_connRetryCountTile_hintText": "Varsayılan: {count, plural, =0 {Retry disabled} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_titleText": "Ağ eşleme kipi",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Hücresel ağda eşleme} wifi {WiFi'de eşleme} other {Bilinmiyor}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "Düşük Veri",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "common_enable_text": "Etkinleştirildi",
+  "@common_enable_text": {},
+  "appAbout_privacyTile_titleText": "Gizlilik",
+  "@appAbout_privacyTile_titleText": {},
+  "appAbout_privacyTile_subTitleText": "Uygulamadaki gizlilik politikasına erişin",
+  "@appAbout_privacyTile_subTitleText": {},
+  "confirmDialog_cancel_text": "İptal",
+  "@confirmDialog_cancel_text": {},
+  "channelName_habitReminder": "Alışkanlık hatırlatıcısı",
+  "@channelName_habitReminder": {},
+  "channelName_appDebugger": "Hata ayıklayıcı",
+  "@channelName_appDebugger": {},
+  "appSync_serverEditor_timeoutTile_unitText": "sn",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "sn",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "Ağ bağlantısı yeniden deneme sayısı",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Düşük veri kipinde eşle",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_warnginBanner_title": "Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_titleText": "Alışkanlık bulut eşlemesi",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_warnTile_titleText": "Deneysel özellik ({syncName}) devre dışı bırakılır, ancak işlev hala çalışıyor.",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
       }
     }
   }
