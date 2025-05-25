@@ -1234,5 +1234,97 @@
         "description": "Experimental Feature's name."
       }
     }
-  }
+  },
+  "appSync_webdav_oldServerConfirmDialog_titleText": "Senkronizasyonu Onayla",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "Klasör boş değil. Senkronizasyon, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_oldServerConfirmDialog_confirmText": "Birleştirmeyi Onayla",
+  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_networkType_text": "{type, select, mobile {Mobil} wifi {Wifi} other {Bilinmeyen}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_saveDialog_subtitleText": "Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "Kaydedilmemiş Değişiklikler",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "Yeni Senkronizasyon Sunucusu",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "Senkronizasyon Sunucusunu Değiştir",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_advance_titleText": "Gelişmiş Yapılandırmalar",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "Yol",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "Buraya geçerli bir WebDAV yolu girin.",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "Yol boş olmamalı!",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_usernameTile_titleText": "Kullanıcı adı",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "Buraya kullanıcı adını girin, gerekli değilse boş bırakın.",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_webdav_newServerConfirmDialog_titleText": "Yeni Konum",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "Senkronizasyon gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "Senkronize Et!",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "Hatalı Senkronizasyon Kayıtlarını Dışa Aktar",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Kayıt bulunamadı} false {Dışa aktarmak için dokunun} other {yükleniyor...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {Mevcut: } other {}}{name, select, webdav {WebDAV} fake {Test (Sadece Geliştirici İçin)} other {Bilinmeyen ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_syncInterval_text": "{name, select, manual {Manuel} minute5 {5 Dakika} minute15 {15 Dakika} minute30 {30 Dakika} hour1 {1 Saat} other {Bilinmeyen}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "Senkronizasyon Sıklığı",
+  "@appSync_syncIntervalTile_title": {},
+  "appSync_summaryTile_title": "Senkronizasyon Sunucusu",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "Yapılandırılmadı",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "Tüm son başarısız senkronizasyon kayıtları",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "appSync_serverEditor_saveDialog_titleText": "Değişiklikleri Kaydetmeyi Onayla",
+  "@appSync_serverEditor_saveDialog_titleText": {}
 }
