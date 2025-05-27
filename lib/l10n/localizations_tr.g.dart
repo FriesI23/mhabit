@@ -9,7 +9,7 @@ class L10nTr extends L10n {
   L10nTr([String locale = 'tr']) : super(locale);
 
   @override
-  String get localeScriptName => 'İngilizce';
+  String get localeScriptName => 'Türkçe';
 
   @override
   String get appName => 'Table Habit';
@@ -290,7 +290,7 @@ class L10nTr extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Alışkanlık silindi: “$name”';
   }
 
   @override
@@ -810,19 +810,19 @@ class L10nTr extends L10n {
   String get appSetting_about_titleText => 'Hakkında';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'Deneysel Özellikler';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Eşleme';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Eşleme Ayarları';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Şimdi Eşle';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Eşleniyor';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -835,23 +835,23 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Son eşleme: Yok';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Son eşleme: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'Son eşleme (Hata): Yok';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Son eşleme (Hata): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Eşleniyor...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -861,26 +861,26 @@ class L10nTr extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Eşleniyor: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'İptal ediliyor...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'Son eşleme (İptal edildi): Yok';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Son eşleme (İptal edildi): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Hata Kayıtlarını Kontrol Et';
 
   @override
   String appSync_failedTile_errorText(String info) {
-    return '[Error]: $info';
+    return '[Hata]: $info';
   }
 
   @override
@@ -893,11 +893,11 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed',
-        'cancelled': 'Canceled',
-        'failed': 'Failed',
-        'multi': 'Multiple statuses',
-        'other': 'Unknown status',
+        'success': 'Tamamlandı',
+        'cancelled': 'İptal edildi',
+        'failed': 'Başarısız',
+        'multi': 'Birden fazla durum',
+        'other': 'Bilinmeyen durum',
       },
     );
     return '$_temp0';
@@ -908,11 +908,11 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed due to $reason',
-        'cancelled': 'Canceled due to $reason',
-        'failed': 'Failed due to $reason',
-        'multi': 'Multiple statuses due to $reason',
-        'other': 'Unknown status',
+        'success': '$reason nedeniyle tamamlandı',
+        'cancelled': '$reason nedeniyle iptal edildi',
+        'failed': '$reason nedeniyle başarısız oldu',
+        'multi': '$reason nedeniyle birden fazla durum oluştu',
+        'other': 'Bilinmeyen durum',
       },
     );
     return '$_temp0';
@@ -923,45 +923,45 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       reason,
       {
-        'error': 'Error',
-        'userAction': 'User action required',
-        'missingHabitUuid': 'Missing habit UUID',
-        'empty': 'Empty data',
-        'other': 'Unknown reason',
+        'error': 'Hata',
+        'userAction': 'Kullanıcı müdahalesi gerekli',
+        'missingHabitUuid': 'Alışkanlık UUID\'si eksik',
+        'empty': 'Boş veri',
+        'other': 'Bilinmeyen neden',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Yeni Konum';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Eşleme gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Şimdi Eşle!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Eşlemeyi Onayla';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Klasör boş değil. Eşleme, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Birleştirmeyi Onayla';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'Hatalı Eşleme Kayıtlarını Dışa Aktar';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
-        'true': 'No log founded',
-        'false': 'Tap to export',
-        'other': 'loading...',
+        'true': 'Kayıt bulunamadı',
+        'false': 'Dışa aktarmak için dokunun',
+        'other': 'yükleniyor...',
       },
     );
     return '$_temp0';
@@ -972,7 +972,7 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       isCurrent,
       {
-        'true': 'Current: ',
+        'true': 'Mevcut: ',
         'other': '',
       },
     );
@@ -980,8 +980,8 @@ class L10nTr extends L10n {
       name,
       {
         'webdav': 'WebDAV',
-        'fake': 'Fake (Only For Debugger)',
-        'other': 'Unknown ($name)',
+        'fake': 'Test (Sadece Geliştirici İçin)',
+        'other': 'Bilinmeyen ($name)',
       },
     );
     return '$_temp0$_temp1';
@@ -992,9 +992,9 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Mobile',
+        'mobile': 'Mobil',
         'wifi': 'Wifi',
-        'other': 'Unknown',
+        'other': 'Bilinmeyen',
       },
     );
     return '$_temp0';
@@ -1005,76 +1005,76 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
-        'manual': 'Manual',
-        'minute5': '5 Minutes',
-        'minute15': '15 Minutes',
-        'minute30': '30 Minutes',
-        'hour1': '1 Hour',
-        'other': 'Unknown',
+        'manual': 'Manuel',
+        'minute5': '5 Dakika',
+        'minute15': '15 Dakika',
+        'minute30': '30 Dakika',
+        'hour1': '1 Saat',
+        'other': 'Bilinmeyen',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Senkronizasyon Sıklığı';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Eşleme Sunucusu';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Yapılandırılmadı';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'Tüm son başarısız eşleme kayıtları';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'Değişiklikleri Kaydetmeyi Onayla';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Kaydedilmemiş Değişiklikler';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Silmeyi Onayla';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Yeni Eşleme Sunucusu';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Eşleme Sunucusunu Değiştir';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Gelişmiş Yapılandırmalar';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Yol';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'Buraya geçerli bir WebDAV yolu girin.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Yol boş olmamalı!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Kullanıcı adı';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'Buraya kullanıcı adını girin, gerekli değilse boş bırakın.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Parola';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'SSL sertifikasını yok say';
 
   @override
   String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
@@ -1087,11 +1087,11 @@ class L10nTr extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'Varsayılan: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_timeoutTile_unitText => 's';
+  String get appSync_serverEditor_timeoutTile_unitText => 'sn';
 
   @override
   String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
@@ -1104,14 +1104,14 @@ class L10nTr extends L10n {
       other: '$seconds$unit',
       zero: 'Infinite',
     );
-    return 'Default: $_temp0';
+    return 'Varsayılan: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_unitText => 's';
+  String get appSync_serverEditor_connTimeoutTile_unitText => 'sn';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'Ağ bağlantısı yeniden deneme sayısı';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1121,48 +1121,48 @@ class L10nTr extends L10n {
       other: '$count',
       zero: 'Retry disabled',
     );
-    return 'Default: $_temp0';
+    return 'Varsayılan: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText => 'Ağ eşleme kipi';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Sync on Cellular Network',
-        'wifi': 'Sync on Wifi',
-        'other': 'Unknown',
+        'mobile': 'Hücresel ağda eşleme',
+        'wifi': 'WiFi\'de eşleme',
+        'other': 'Bilinmiyor',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'Düşük Veri';
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Düşük veri kipinde eşle';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title => 'Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText => 'Alışkanlık bulut eşlemesi';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Deneysel özellik ($syncName) devre dışı bırakılır, ancak işlev hala çalışıyor.';
   }
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'Tamamen devre dışı bırakmak için \'$menuName\' a erişmek ve kapatmak için uzun basın.';
   }
 
   @override
@@ -1201,10 +1201,10 @@ class L10nTr extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Gizlilik';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'Uygulamadaki gizlilik politikasına erişin';
 
   @override
   String get appAbout_donateTile_titleText => 'Bağış yap';
@@ -1430,7 +1430,7 @@ class L10nTr extends L10n {
   String get common_errorPage_copied => 'Çökme bilgileri kopyalandı';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Etkinleştirildi';
 
   @override
   String get calendarPicker_clip_today => 'Bugün';
@@ -1549,17 +1549,17 @@ class L10nTr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'save': 'Save',
-        'exit': 'Exit',
-        'delete': 'Delete',
-        'other': 'Confirm',
+        'save': 'Kaydet',
+        'exit': 'Çıkış',
+        'delete': 'Sil',
+        'other': 'Onayla',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'İptal';
 
   @override
   String get snackbar_undoText => 'GERİ AL';
@@ -1580,11 +1580,11 @@ class L10nTr extends L10n {
   String get userAction_longTap => 'Uzun';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Alışkanlık hatırlatıcısı';
 
   @override
   String get channelName_appReminder => 'Prompt';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Hata ayıklayıcı';
 }

@@ -1,7 +1,9 @@
 {
   "@@locale": "pl",
   "localeScriptName": "Polski",
-  "@localeScriptName": {},
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
   "appName": "Table Habit",
   "@appName": {},
   "habitEdit_saveButton_text": "Zapisz",

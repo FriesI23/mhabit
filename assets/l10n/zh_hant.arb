@@ -1,7 +1,9 @@
 {
   "@@locale": "zh_Hant",
   "localeScriptName": "繁體中文",
-  "@localeScriptName": {},
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
   "appName": "桌上習慣",
   "@appName": {},
   "habitEdit_saveButton_text": "儲存",

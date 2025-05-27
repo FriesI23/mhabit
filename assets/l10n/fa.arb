@@ -1,7 +1,9 @@
 {
   "@@locale": "fa",
   "localeScriptName": "پارسی",
-  "@localeScriptName": {},
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
   "appName": "زیگ عادت‌ها",
   "@appName": {},
   "habitEdit_saveButton_text": "ذخیره",
