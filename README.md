@@ -194,6 +194,8 @@ When contribute code to this project, please try to follow
 [![ETH][eth-badge]][eth-addr]
 [![BTC][btc-badge]][btc-addr]
 
+> See **[here][page-donors]** for full list of donors.
+
 ## Translation
 
 Feel free to join and help with the translation for `Table Habit`,
@@ -241,8 +243,8 @@ limitations under the License.
 [get-it-on-sidestore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore.png
 [altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
 [sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
-<!-- markdownlint-disable MD053 -->
 <!-- TODO: enable testflight after ios pubnlic test is ready -->
+<!-- markdownlint-disable-next-line MD053 -->
 [testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
@@ -280,3 +282,4 @@ limitations under the License.
 [ios-testflight-pre-release]: https://testflight.apple.com/join/aJ5PWqaR
 [altstore]: https://altstore.io/
 [sidestore]: https://sidestore.io/
+[page-donors]: https://github.com/FriesI23/mhabit/wiki/Donors
