@@ -126,7 +126,7 @@ abstract class L10n {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
-  /// No description provided for @localeScriptName.
+  /// The human-readable name of the language used for the locale.
   ///
   /// In en, this message translates to:
   /// **'English'**

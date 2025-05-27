@@ -83,19 +83,19 @@ class L10nRu extends L10n {
   String get habitEdit_habitFreq_daily => 'Ежедневно';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek => 'Каждую неделю';
 
   @override
   String get habitEdit_habitFreq_perweek_ex01 => 'раз в неделю';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
+  String get habitEdit_habitFreq_permonth => 'Каждый месяц';
 
   @override
   String get habitEdit_habitFreq_permonth_ex01 => 'раз в месяц';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
+  String get habitEdit_habitFreq_predayfreq => 'Каждый день';
 
   @override
   String get habitEdit_habitFreq_predayfreq_ex01 => 'раз в';
@@ -160,7 +160,7 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Любой день недели';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
+  String get habitEdit_reminder_freq_weekPrefixText => 'Каждую неделю';
 
   @override
   String get habitEdit_reminder_freq_weekSubfixText => ' в любую неделю';
@@ -169,7 +169,7 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_monthHelpText => 'Любой день месяца';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
+  String get habitEdit_reminder_freq_monthPrefixText => 'Каждый месяц';
 
   @override
   String get habitEdit_reminder_freq_monthSubfixText => ' в любой месяц';
@@ -923,11 +923,11 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       reason,
       {
-        'error': 'Error',
-        'userAction': 'User action required',
-        'missingHabitUuid': 'Missing habit UUID',
-        'empty': 'Empty data',
-        'other': 'Unknown reason',
+        'error': 'Ошибка',
+        'userAction': 'Требуется действие',
+        'missingHabitUuid': 'Отсутствует UUID привычки',
+        'empty': 'Пустые данные',
+        'other': 'Неизвестная причина',
       },
     );
     return '$_temp0';
@@ -972,7 +972,7 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       isCurrent,
       {
-        'true': 'Current: ',
+        'true': 'Текущая: ',
         'other': '',
       },
     );
@@ -980,8 +980,8 @@ class L10nRu extends L10n {
       name,
       {
         'webdav': 'WebDAV',
-        'fake': 'Fake (Only For Debugger)',
-        'other': 'Unknown ($name)',
+        'fake': 'Фальшивая (Только для отладки)',
+        'other': 'Неизвестная ($name)',
       },
     );
     return '$_temp0$_temp1';
@@ -1005,12 +1005,12 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
-        'manual': 'Manual',
-        'minute5': '5 Minutes',
-        'minute15': '15 Minutes',
-        'minute30': '30 Minutes',
+        'manual': 'Вручную',
+        'minute5': '5 минут',
+        'minute15': '15 минут',
+        'minute30': '30 минут',
         'hour1': '1 Hour',
-        'other': 'Unknown',
+        'other': 'Неизвестно',
       },
     );
     return '$_temp0';
@@ -1111,7 +1111,7 @@ class L10nRu extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'Количество повторных попыток подключения к сети';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1119,9 +1119,9 @@ class L10nRu extends L10n {
       count,
       locale: localeName,
       other: '$count',
-      zero: 'Retry disabled',
+      zero: 'Повторы отключены',
     );
-    return 'Default: $_temp0';
+    return 'По умолчанию: $_temp0';
   }
 
   @override
@@ -1132,32 +1132,32 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Sync on Cellular Network',
-        'wifi': 'Sync on Wifi',
-        'other': 'Unknown',
+        'mobile': 'Синхронизация по мобильному интернету',
+        'wifi': 'Синхронизация по Wifi',
+        'other': 'Неизвестно',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'Низкое потребление данных';
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Синхронизация в режиме низких данных';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title => 'Включено одну или несколько экспериментальных возможностей. Используйте с осторожностью.';
 
   @override
   String get experimentalFeatures_habitSyncTile_titleText => 'Синхронизация привычек с облаком';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'После включения, опция синхронизации приложения появится в настройках';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Экспериментальная возможность ($syncName) отключена, но она все ещё работает.';
   }
 
   @override
@@ -1201,10 +1201,10 @@ class L10nRu extends L10n {
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Конфиденциальность';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'Ознакомьтесь с политикой конфиденциальности в этом приложении';
 
   @override
   String get appAbout_donateTile_titleText => 'Пожертвовать';
@@ -1580,11 +1580,11 @@ class L10nRu extends L10n {
   String get userAction_longTap => 'Long';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Напоминание о привычках';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Подсказка';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Отладчик';
 }

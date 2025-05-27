@@ -1,7 +1,9 @@
 {
   "@@locale": "nb",
   "localeScriptName": "Norsk Bokmål",
-  "@localeScriptName": {},
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
   "appName": "🚧(nb_NO) - Table Habit",
   "@appName": {}
 }
