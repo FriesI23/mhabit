@@ -22,9 +22,13 @@ Moreover, this app completely open source.
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 [![Get it on F-Droid][github-button]][github-myapp]
 
-**iOS (Pre Release)**:
+**iOS**:
 
-> Public beta will be available once app is distributed via the App Store.
+[![Get it on AltStore][get-it-on-altstore]][altstore-source]
+[![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
+
+> Public beta will be available through `TestFlight` once app is distributed
+> via the App Store.
 
 <!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
 
@@ -233,6 +237,10 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
+[get-it-on-altstore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore.png
+[get-it-on-sidestore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore.png
+[altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
+[sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
 <!-- markdownlint-disable MD053 -->
 <!-- TODO: enable testflight after ios pubnlic test is ready -->
 [testflight-button]: docs/README/images/testflight-get-it-on.png
