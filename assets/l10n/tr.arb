@@ -1328,5 +1328,11 @@
   "channelName_habitReminder": "Alışkanlık hatırlatıcısı",
   "@channelName_habitReminder": {},
   "channelName_appDebugger": "Hata ayıklayıcı",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "appSync_serverEditor_timeoutTile_titleText": "Senkronizasyon Zaman Aşımı (Saniye)",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "channelName_appReminder": "Hatırlatma",
+  "@channelName_appReminder": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "Ağ Bağlantısı Zaman Aşımı (Saniye)",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {}
 }
