@@ -923,6 +923,8 @@
   "@appSync_serverEditor_passwordTile_titleText": {},
   "appSync_serverEditor_ignoreSSLTile_titleText": "SSL sertifikasını yok say",
   "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "Senkronizasyon Zaman Aşımı (Saniye)",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
   "appSync_serverEditor_timeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
   "@appSync_serverEditor_timeoutTile_hintText": {
     "placeholders": {
@@ -938,6 +940,8 @@
   },
   "appSync_serverEditor_timeoutTile_unitText": "sn",
   "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "Ağ Bağlantısı Zaman Aşımı (Saniye)",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
   "appSync_serverEditor_connTimeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
   "@appSync_serverEditor_connTimeoutTile_hintText": {
     "placeholders": {
@@ -1327,12 +1331,8 @@
   "@userAction_longTap": {},
   "channelName_habitReminder": "Alışkanlık hatırlatıcısı",
   "@channelName_habitReminder": {},
-  "channelName_appDebugger": "Hata ayıklayıcı",
-  "@channelName_appDebugger": {},
-  "appSync_serverEditor_timeoutTile_titleText": "Senkronizasyon Zaman Aşımı (Saniye)",
-  "@appSync_serverEditor_timeoutTile_titleText": {},
   "channelName_appReminder": "Hatırlatma",
   "@channelName_appReminder": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "Ağ Bağlantısı Zaman Aşımı (Saniye)",
-  "@appSync_serverEditor_connTimeoutTile_titleText": {}
+  "channelName_appDebugger": "Hata ayıklayıcı",
+  "@channelName_appDebugger": {}
 }
