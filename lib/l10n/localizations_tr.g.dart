@@ -1077,7 +1077,7 @@ class L10nTr extends L10n {
   String get appSync_serverEditor_ignoreSSLTile_titleText => 'SSL sertifikasını yok say';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'Senkronizasyon Zaman Aşımı (Saniye)';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1094,7 +1094,7 @@ class L10nTr extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 'sn';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Ağ Bağlantısı Zaman Aşımı (Saniye)';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1583,7 +1583,7 @@ class L10nTr extends L10n {
   String get channelName_habitReminder => 'Alışkanlık hatırlatıcısı';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Hatırlatma';
 
   @override
   String get channelName_appDebugger => 'Hata ayıklayıcı';

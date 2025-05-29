@@ -2257,12 +2257,6 @@
     "channelName_appDebugger"
   ],
 
-  "tr": [
-    "appSync_serverEditor_timeoutTile_titleText",
-    "appSync_serverEditor_connTimeoutTile_titleText",
-    "channelName_appReminder"
-  ],
-
   "vi": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
