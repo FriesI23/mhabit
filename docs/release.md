@@ -3,39 +3,18 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Release: 1.16.14+83
+# Pre-Release
 
-**✨ New Features**
+## 1.16.15+84
 
-- Enhance WebDAV sync: trigger in some scenarios when auto-sync is enabled (#278)
-  - Reduce delay duration before auto-sync after launch
-  - Add async debouncer utility
-  - Re-sync after switching app to background for some time
-  - Re-sync after habit status changes
-  - Re-sync after record changes
-- Add privacy declaration in app.
-- **[iOS]** Hide "Donate Tile" in iOS App Store's flavor.
+<!-- **✨ New Features** -->
 
 **🌐 Localization**
 
-- Update Arabic l10n translation, thanks to abdelbasset jabrane's contribution on Weblate.
-- Update Russian l10n translation, thank for Bora Yurt Page's contribution on Weblate.
-- Update Spanish l10n translation, thanks to Óscar Fernández Díaz's contribution on Weblate.
-- Update Ukrainian l10n translation, thank for Bora Максим Горпиніч's contribution on Weblate.
-- Update Ukrainian l10n translation, thank for Preck757's contribution on Github. (#281)
-- Update Contributor File.
-- Add hebrew languange support (need translate) from elid's request on Weblate.
+- Update Russian l10n translation, thanks to Yurt Page's contribution on Weblate.
+- Update Turkish l10n translation, thanks to Bora Atıcı and Soykan Aydın for their contributions on Weblate.
+- Update Ukrainian l10n translation, thank for Preck757's contribution on Github.
 
-**🧹 Others**
+<!-- **🧹 Others** -->
 
-- Migrate from `flutter_markdown` to `markdown_widget`, see [#162966](https://github.com/flutter/flutter/issues/162966) get more informations. (#272)
-- Refactor notification-related code (#275):
-  - Add localization for Android notification channel.
-  - Upgrade `flutter_local_notifications` to v19.
-  - Add Windows support for notifications (with limitations).
-- **[Android]** Set `AppDebugger` notification message to `ongoing`.
-- **[iOS]** Add China IPC in Application (l10n:zh-cn only).
-
-**📝 Documentation**
-
-- Update README file.
+<!-- **📝 Documentation** -->

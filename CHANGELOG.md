@@ -1,6 +1,15 @@
+<!-- markdownlint-disable MD036 -->
 # Change log
 
 [中文](./docs/CHANGELOG/zh.md)
+
+## 1.16.15+84-pre
+
+**🌐 Localization**
+
+- Update Russian l10n translation, thanks to Yurt Page's contribution on Weblate.
+- Update Turkish l10n translation, thanks to Bora Atıcı and Soykan Aydın for their contributions on Weblate.
+- Update Ukrainian l10n translation, thank for Preck757's contribution on Github.
 
 ## 1.16.14+83
 
