@@ -690,7 +690,7 @@ class L10nUk extends L10n {
   String get appSetting_dateDisplayFormat_subTitleText => 'Налаштований формат дати буде застосовано до відображення дати на сторінці з деталями про звичку.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Увімкніть Compact UI на сторінці звичок';
+  String get appSetting_compactUISwitcher_titleText => 'Увімкніть компактний інтерфейс на сторінці звичок';
 
   @override
   String get appSetting_compactUISwitcher_subtitleText => 'Дозволити таблицю перевірки звичок, щоб відображати більше вмісту, але деякі інтерфейси користувача та текст можуть виглядати меншими.';
@@ -774,7 +774,7 @@ class L10nUk extends L10n {
   String get appSetting_resetConfigSuccess_snackbarText => 'скидання конфігурації програми успішне';
 
   @override
-  String get appSetting_otherSubgroupText => 'інші';
+  String get appSetting_otherSubgroupText => 'Інші';
 
   @override
   String get appSetting_developMode_titleText => 'Режим розробки';
@@ -1527,7 +1527,7 @@ class L10nUk extends L10n {
   String get debug_debuggerLogCard_saveButton_text => 'Завантажити';
 
   @override
-  String get debug_debuggerLogCard_clearButton_text => 'ясно';
+  String get debug_debuggerLogCard_clearButton_text => 'Очистити';
 
   @override
   String get debug_debuggerInfoCard_title => 'Інформація про налагодження';
@@ -1536,7 +1536,7 @@ class L10nUk extends L10n {
   String get debug_debuggerInfoCard_subtitle => 'Включає інформацію про налагодження програми.';
 
   @override
-  String get debug_debuggerInfoCard_openButton_text => 'ВІДЧИНЕНО';
+  String get debug_debuggerInfoCard_openButton_text => 'Відкрити';
 
   @override
   String get debug_debuggerInfoCard_saveButton_text => 'зберегти';
@@ -1565,7 +1565,7 @@ class L10nUk extends L10n {
   String get snackbar_undoText => 'UNDO';
 
   @override
-  String get snackbar_dismissText => 'DISMISS';
+  String get snackbar_dismissText => 'ВІДХИЛИТИ';
 
   @override
   String get contributors_tile_title => 'Дописувачі';
