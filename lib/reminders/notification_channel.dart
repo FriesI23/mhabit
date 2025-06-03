@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    hide
+        AndroidNotificationDetails,
+        DarwinNotificationDetails,
+        LinuxNotificationDetails,
+        WindowsNotificationDetails;
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/app_info.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
+import 'notification_details.dart';
 import 'notification_service.dart';
 
 @JsonEnum(valueField: "id")
