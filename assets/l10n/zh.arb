@@ -1334,5 +1334,9 @@
   "channelName_appReminder": "提示",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "调试",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "同步进程",
+  "@channelName_appSyncing": {},
+  "channelName_appSyncFailed": "同步失败",
+  "@channelName_appSyncFailed": {}
 }

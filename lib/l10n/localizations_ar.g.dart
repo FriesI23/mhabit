@@ -1581,4 +1581,10 @@ class L10nAr extends L10n {
 
   @override
   String get channelName_appDebugger => 'مصحح الأخطاء';
+
+  @override
+  String get channelName_appSyncing => 'Sync Process';
+
+  @override
+  String get channelName_appSyncFailed => 'Sync Failed';
 }

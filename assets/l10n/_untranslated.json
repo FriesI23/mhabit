@@ -1,4 +1,9 @@
 {
+  "ar": [
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
+  ],
+
   "cs": [
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoal_errorText01",
@@ -392,7 +397,9 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "de": [
@@ -505,7 +512,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "es": [
@@ -557,7 +566,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "fa": [
@@ -663,7 +674,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "fr": [
@@ -776,7 +789,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "he": [
@@ -1200,7 +1215,9 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "it": [
@@ -1284,7 +1301,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "nb": [
@@ -1708,7 +1727,9 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "pl": [
@@ -2129,7 +2150,9 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "pt": [
@@ -2254,7 +2277,24 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
+  ],
+
+  "ru": [
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
+  ],
+
+  "tr": [
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
+  ],
+
+  "uk": [
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "vi": [
@@ -2338,7 +2378,9 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ],
 
   "zh_Hant": [
@@ -2419,6 +2461,8 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelName_appSyncFailed"
   ]
 }

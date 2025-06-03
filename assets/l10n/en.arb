@@ -1334,5 +1334,9 @@
   "channelName_appReminder": "Prompt",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Debugger",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "Sync Process",
+  "@channelName_appSyncing": {},
+  "channelName_appSyncFailed": "Sync Failed",
+  "@channelName_appSyncFailed": {}
 }

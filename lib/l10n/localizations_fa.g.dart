@@ -1581,4 +1581,10 @@ class L10nFa extends L10n {
 
   @override
   String get channelName_appDebugger => 'Debugger';
+
+  @override
+  String get channelName_appSyncing => 'Sync Process';
+
+  @override
+  String get channelName_appSyncFailed => 'Sync Failed';
 }

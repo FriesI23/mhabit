@@ -2663,6 +2663,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Debugger'**
   String get channelName_appDebugger;
+
+  /// No description provided for @channelName_appSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Process'**
+  String get channelName_appSyncing;
+
+  /// No description provided for @channelName_appSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Failed'**
+  String get channelName_appSyncFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

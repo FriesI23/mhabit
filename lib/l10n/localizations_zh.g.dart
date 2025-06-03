@@ -1569,6 +1569,12 @@ class L10nZh extends L10n {
 
   @override
   String get channelName_appDebugger => '调试';
+
+  @override
+  String get channelName_appSyncing => '同步进程';
+
+  @override
+  String get channelName_appSyncFailed => '同步失败';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

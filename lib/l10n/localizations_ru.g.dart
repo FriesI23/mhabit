@@ -1587,4 +1587,10 @@ class L10nRu extends L10n {
 
   @override
   String get channelName_appDebugger => 'Отладчик';
+
+  @override
+  String get channelName_appSyncing => 'Sync Process';
+
+  @override
+  String get channelName_appSyncFailed => 'Sync Failed';
 }
