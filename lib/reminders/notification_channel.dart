@@ -32,32 +32,32 @@ enum NotificationChannelId {
   debug(
     id: 1,
     channelName: "_Dev",
-    category: "debug",
+    identity: "debug",
   ),
   habitReminder(
     id: 2,
     channelName: "Habit Reminder Channel",
-    category: "habit_reminder",
+    identity: "habit_reminder",
   ),
   appReminder(
     id: 3,
     channelName: "Prompt Channel",
-    category: "app_reminder",
+    identity: "app_reminder",
   ),
   appDebugger(
     id: 4,
     channelName: "Debugger Channel",
-    category: "app_debugger",
+    identity: "app_debugger",
   );
 
   final int id;
   final String channelName;
-  final String category;
+  final String identity;
 
   const NotificationChannelId({
     required this.id,
     required this.channelName,
-    required this.category,
+    required this.identity,
   });
 }
 
@@ -165,20 +165,20 @@ class NotificationIosChannelData
     DarwinNotificationDetails? appDebugger,
   })  : debug = debug ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.debug.category,
+              threadIdentifier: NotificationChannelId.debug.identity,
             ),
         habitReminder = habitReminder ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.habitReminder.category,
+              threadIdentifier: NotificationChannelId.habitReminder.identity,
             ),
         appReminder = appReminder ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.appReminder.category,
+              threadIdentifier: NotificationChannelId.appReminder.identity,
             ),
         appDebugger = appDebugger ??
             DarwinNotificationDetails(
               presentSound: false,
-              categoryIdentifier: NotificationChannelId.appDebugger.category,
+              threadIdentifier: NotificationChannelId.appDebugger.identity,
               interruptionLevel: InterruptionLevel.passive,
             );
 }

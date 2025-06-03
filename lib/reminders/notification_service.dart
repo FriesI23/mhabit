@@ -108,32 +108,7 @@ final class NotificationServiceImpl implements NotificationService {
     const androidSettings = AndroidInitializationSettings(androidIconPath);
 
     // iOS & macOS setting
-    final darwinSettings = DarwinInitializationSettings(
-      notificationCategories: [
-        DarwinNotificationCategory(
-          NotificationChannelId.debug.category,
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.habitReminder.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-          },
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.appReminder.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.allowAnnouncement,
-          },
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.appDebugger.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-            DarwinNotificationCategoryOption.hiddenPreviewShowSubtitle,
-          },
-        ),
-      ],
-    );
+    const darwinSettings = DarwinInitializationSettings();
 
     // linux setting
     const linuxSettings =
@@ -151,7 +126,7 @@ final class NotificationServiceImpl implements NotificationService {
     );
 
     // combine settings
-    final initializationSettings = InitializationSettings(
+    const initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
