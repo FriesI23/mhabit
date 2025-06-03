@@ -41,6 +41,7 @@ const _$NotificationDataTypeEnumMap = {
   NotificationDataType.habitReminder: 2,
   NotificationDataType.appReminder: 3,
   NotificationDataType.appDebugger: 4,
+  NotificationDataType.appSyncing: 5,
 };
 
 const _$NotificationChannelIdEnumMap = {

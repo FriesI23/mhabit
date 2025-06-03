@@ -39,6 +39,7 @@ import '../model/app_sync_timer.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
+import '../reminders/providers/noti_app_sync_provider.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/async_debouncer.dart';
 import '../view/common/app_sync_confirm_dialog.dart';
@@ -52,7 +53,11 @@ const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
 
 class AppSyncViewModel
-    with ChangeNotifier, ProfileHandlerLoadedMixin, DBHelperLoadedMixin
+    with
+        ChangeNotifier,
+        ProfileHandlerLoadedMixin,
+        DBHelperLoadedMixin,
+        NotificationChannelDataMixin
     implements ProviderMounted {
   late final DispatcherForAppSyncTask appSyncTask;
 
@@ -339,6 +344,7 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   final ReplaySubject<l.LogEvent>? loggerReplay;
   final String? filePath;
 
+  final NotiAppSyncProvider? notification;
   late final void Function(LogEvent) logEventCallback;
 
   num? percentage;
@@ -352,6 +358,7 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
       this.result,
       this.loggerReplay,
       this.filePath,
+      this.notification,
       void Function(l.LogEvent)? logEventCallback}) {
     final loggerReplay = this.loggerReplay;
     this.logEventCallback =
@@ -368,9 +375,11 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
       this.filePath,
       this.percentage,
       this.loggerStreamer,
+      this.notification,
       required this.logEventCallback});
 
-  AppSyncContainer.generate({required this.task, required String this.filePath})
+  AppSyncContainer.generate(
+      {required this.task, required String this.filePath, this.notification})
       : id = const Uuid().v4(),
         startTime = DateTime.now(),
         loggerReplay = ReplaySubject<l.LogEvent>(),
@@ -428,7 +437,21 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     with ChangeNotifier {
   AppSyncContainer? _task;
 
-  DispatcherForAppSyncTask(super.root) : _task = null;
+  DispatcherForAppSyncTask(super.root) : _task = null {
+    addListener(() {
+      final task = _task;
+      if (task != null) {
+        switch (task.task.status) {
+          case AppSyncTaskStatus.running:
+            _task?.notification?.syncing(percentage: task.percentage);
+          case AppSyncTaskStatus.cancelling:
+            _task?.notification?.syncing(percentage: null);
+          default:
+            break;
+        }
+      }
+    });
+  }
 
   Future? get processing => task?.task.result;
 
@@ -581,10 +604,16 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     if (config == null) return;
 
     final tmpNewTask = (_task == null || _task!.task.isDone)
-        ? await buildNewTask(config, initWait).then((task) => AppPathProvider()
-            .getSyncFailedLogFilePath(task.sessionId)
-            .then((filePath) =>
-                AppSyncContainer.generate(task: task, filePath: filePath)))
+        ? await buildNewTask(config, initWait).then(
+            (task) => AppPathProvider()
+                .getSyncFailedLogFilePath(task.sessionId)
+                .then((filePath) => AppSyncContainer.generate(
+                      task: task,
+                      filePath: filePath,
+                      notification:
+                          NotiAppSyncProvider.generate(data: root.channelData),
+                    )),
+          )
         : null;
 
     final AppSyncContainer newTask;
@@ -600,6 +629,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       return;
     }
 
+    newTask.notification?.readyToSync();
     newTask.startRecordSyncLog();
     newTask.task.run().whenComplete(() async {
       final crtTask = _task;
@@ -622,6 +652,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       finalTask
         ..recordSyncFailureLog()
         ..stopRecordSyncLog();
+      finalTask.notification?.syncComplete(result: finalTask.result);
     });
 
     notifyListeners();
@@ -651,6 +682,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       finalTask
         ..recordSyncFailureLog()
         ..stopRecordSyncLog();
+      finalTask.notification?.syncComplete(result: finalTask.result);
     });
 
     notifyListeners();

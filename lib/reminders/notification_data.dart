@@ -25,7 +25,8 @@ enum NotificationDataType {
   debug(id: 1),
   habitReminder(id: 2),
   appReminder(id: 3),
-  appDebugger(id: 4);
+  appDebugger(id: 4),
+  appSyncing(id: 5);
 
   final int id;
 
@@ -63,7 +64,7 @@ class NotificationData<T> {
     return jsonEncode(_$NotificationDataToJson(this, _encodeChildFromPayload));
   }
 
-  String? _encodeChildFromPayload(T value) => null;
+  String? _encodeChildFromPayload(T value) => value?.toString();
 
   @override
   String toString() {
