@@ -323,7 +323,7 @@
   "@habitDisplay_sortDirection_asc": {},
   "habitDisplay_sortDirection_Desc": "(опис)",
   "@habitDisplay_sortDirection_Desc": {},
-  "habitDisplay_sortType_manual": "Моє замовлення",
+  "habitDisplay_sortType_manual": "Свій порядок",
   "@habitDisplay_sortType_manual": {},
   "habitDisplay_sortType_name": "По імені",
   "@habitDisplay_sortType_name": {},
@@ -398,7 +398,7 @@
       }
     }
   },
-  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{OVERFULFIL} =2{BECCABLE} other{}}",
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{ПЕРЕВИКОНАНО} =2{BECCABLE} other{}}",
   "@habitDetail_heatmap_rightHelpText": {
     "placeholders": {
       "habitType": {
@@ -407,7 +407,7 @@
       }
     }
   },
-  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Goal}}",
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Ціль}}",
   "@habitDetail_descDailyGoal_titleText": {
     "placeholders": {
       "habitType": {
@@ -427,7 +427,7 @@
   },
   "habitDetail_descDailyGoal_unitEmptyText": "нульовий",
   "@habitDetail_descDailyGoal_unitEmptyText": {},
-  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{днів}}",
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Днів}}",
   "@habitDetail_descTargetDays_titleText": {
     "placeholders": {
       "habitType": {
@@ -444,23 +444,23 @@
   "@habitDetail_scoreChart_title": {},
   "habitDetail_scoreChartCombine_dailyText": "День",
   "@habitDetail_scoreChartCombine_dailyText": {},
-  "habitDetail_scoreChartCombine_weeklyText": "тиждень",
+  "habitDetail_scoreChartCombine_weeklyText": "Тиждень",
   "@habitDetail_scoreChartCombine_weeklyText": {},
-  "habitDetail_scoreChartCombine_monthlyText": "місяць",
+  "habitDetail_scoreChartCombine_monthlyText": "Місяць",
   "@habitDetail_scoreChartCombine_monthlyText": {},
-  "habitDetail_scoreChartCombine_yearlyText": "рік",
+  "habitDetail_scoreChartCombine_yearlyText": "Рік",
   "@habitDetail_scoreChartCombine_yearlyText": {},
   "habitDetail_freqChart_freqTitle": "Частота",
   "@habitDetail_freqChart_freqTitle": {},
-  "habitDetail_freqChart_historyTitle": "історія",
+  "habitDetail_freqChart_historyTitle": "Історія",
   "@habitDetail_freqChart_historyTitle": {},
   "habitDetail_freqChart_combinedTitle": "Частота та історія",
   "@habitDetail_freqChart_combinedTitle": {},
-  "habitDetail_freqChartCombine_weeklyText": "тиждень",
+  "habitDetail_freqChartCombine_weeklyText": "Тиждень",
   "@habitDetail_freqChartCombine_weeklyText": {},
-  "habitDetail_freqChartCombine_monthlyText": "місяць",
+  "habitDetail_freqChartCombine_monthlyText": "Місяць",
   "@habitDetail_freqChartCombine_monthlyText": {},
-  "habitDetail_freqChartCombine_yearlyText": "рік",
+  "habitDetail_freqChartCombine_yearlyText": "Рік",
   "@habitDetail_freqChartCombine_yearlyText": {},
   "habitDetail_freqChartNaviBar_nowText": "Зараз",
   "@habitDetail_freqChartNaviBar_nowText": {},
@@ -470,7 +470,7 @@
   "@habitDetail_freqChart_expanded_showTooltip": {},
   "habitDetail_descSubgroup_title": "Пам'ятка",
   "@habitDetail_descSubgroup_title": {},
-  "habitDetail_otherSubgroup_title": "інше",
+  "habitDetail_otherSubgroup_title": "Інше",
   "@habitDetail_otherSubgroup_title": {},
   "habitDetail_habitType_title": "Тип",
   "@habitDetail_habitType_title": {},
