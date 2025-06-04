@@ -981,6 +981,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "低数据模式",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "准备同步中...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {已同步（{type}）} failed {同步失败（{type}）} other {正在同步（{type}）}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "服务器类型，见 'appSync_syncServerType_text' 字段",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "在低数据模式下同步",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",

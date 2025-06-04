@@ -1144,6 +1144,22 @@ class L10nCs extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
 
   @override
+  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+
+  @override
+  String appSync_noti_syncing_title(String synced, String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      synced,
+      {
+        'synced': 'Synced ($type)',
+        'failed': 'Sync Failed ($type)',
+        'other': 'Syncing ($type)',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
 
   @override

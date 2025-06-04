@@ -26,7 +26,7 @@ enum NotificationDataType {
   habitReminder(id: 2),
   appReminder(id: 3),
   appDebugger(id: 4),
-  appSyncing(id: 5);
+  appSync(id: 5);
 
   final int id;
 

@@ -29,6 +29,7 @@ import 'package:uuid/uuid.dart';
 import '../common/consts.dart';
 import '../common/global.dart';
 import '../common/utils.dart';
+import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../logging/logger_message.dart' show AppLoggerMessage;
 import '../logging/logger_utils.dart';
@@ -66,6 +67,8 @@ class AppSyncViewModel
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
 
   late AppLifecycleListener _lifecycleListener;
+
+  WeakReference<L10n>? _l10n;
 
   bool _mounted = true;
   AppSyncSwitchHandler? _switch;
@@ -155,6 +158,10 @@ class AppSyncViewModel
         if (kDebugMode) Error.throwWithStackTrace(e, s);
       });
     }
+  }
+
+  void onL10nUpdate(L10n? l10n) {
+    _l10n = l10n != null ? WeakReference(l10n) : null;
   }
 
   bool get enabled => _switch?.get() ?? false;
@@ -610,8 +617,10 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                 .then((filePath) => AppSyncContainer.generate(
                       task: task,
                       filePath: filePath,
-                      notification:
-                          NotiAppSyncProvider.generate(data: root.channelData),
+                      notification: NotiAppSyncProvider.generate(
+                          data: root.channelData,
+                          l10n: root._l10n?.target,
+                          type: config.type),
                     )),
           )
         : null;

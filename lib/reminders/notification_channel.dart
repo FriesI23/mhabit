@@ -18,6 +18,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
         AndroidNotificationDetails,
         DarwinNotificationDetails,
         LinuxNotificationDetails,
+        NotificationDetails,
         WindowsNotificationDetails;
 import 'package:json_annotation/json_annotation.dart';
 
@@ -114,7 +115,7 @@ class NotificationAndroidChannelData
               _getChannelId(NotificationChannelId.debug.name),
               NotificationChannelId.debug.channelName,
               importance: Importance.min,
-              priority: Priority.low,
+              priority: Priority.min,
             ),
         habitReminder = habitReminder ??
             AndroidNotificationDetails(
@@ -122,7 +123,7 @@ class NotificationAndroidChannelData
               l10n?.channelName_habitReminder ??
                   NotificationChannelId.habitReminder.channelName,
               importance: Importance.high,
-              priority: Priority.defaultPriority,
+              priority: Priority.high,
             ),
         appReminder = appReminder ??
             AndroidNotificationDetails(
@@ -152,16 +153,16 @@ class NotificationAndroidChannelData
               _getChannelId(NotificationChannelId.appSyncing.name),
               l10n?.channelName_appSyncing ??
                   NotificationChannelId.appSyncing.channelName,
-              importance: Importance.high,
-              priority: Priority.high,
+              importance: Importance.low,
+              priority: Priority.low,
             ),
         appSyncFailed = appSyncFailed ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appSyncFailed.name),
               l10n?.channelName_appSyncFailed ??
                   NotificationChannelId.appSyncFailed.channelName,
-              importance: Importance.high,
-              priority: Priority.high,
+              importance: Importance.defaultImportance,
+              priority: Priority.defaultPriority,
             );
 
   Iterable<AndroidNotificationDetails> get channels => [

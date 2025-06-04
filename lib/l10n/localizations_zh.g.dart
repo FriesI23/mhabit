@@ -1139,6 +1139,22 @@ class L10nZh extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => '低数据模式';
 
   @override
+  String get appSync_noti_readyToSync_body => '准备同步中...';
+
+  @override
+  String appSync_noti_syncing_title(String synced, String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      synced,
+      {
+        'synced': '已同步（$type）',
+        'failed': '同步失败（$type）',
+        'other': '正在同步（$type）',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => '在低数据模式下同步';
 
   @override

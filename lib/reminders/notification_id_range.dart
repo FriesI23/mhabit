@@ -81,16 +81,16 @@ int getRandomDebugId() {
 int getSyncId(int id) {
   if (!isValidSyncId(id)) {
     throw NotificationIdOutOfDefinedRange(id,
-        type: NotificationDataType.appSyncing);
+        type: NotificationDataType.appSync);
   }
   return id;
 }
 
-int getRandomSyncId() {
+int getRandomSyncId([int? seed]) {
   final evenStart =
       minSyncNotifyId.isEven ? minSyncNotifyId : minSyncNotifyId + 1;
   final evenEnd =
       maxSyncNotifyId.isEven ? maxSyncNotifyId : maxSyncNotifyId - 1;
   final count = ((evenEnd - evenStart) ~/ 2) + 1;
-  return evenStart + Random().nextInt(count) * 2;
+  return evenStart + Random(seed).nextInt(count) * 2;
 }

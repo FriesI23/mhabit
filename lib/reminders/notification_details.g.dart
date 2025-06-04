@@ -6,6 +6,75 @@ part of 'notification_details.dart';
 // CopyWithGenerator
 // **************************************************************************
 
+abstract class _$NotificationDetailsCWProxy {
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// NotificationDetails(...).copyWith(id: 12, name: "My name")
+  /// ````
+  NotificationDetails call({
+    AndroidNotificationDetails? android,
+    DarwinNotificationDetails? iOS,
+    DarwinNotificationDetails? macOS,
+    LinuxNotificationDetails? linux,
+    WindowsNotificationDetails? windows,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfNotificationDetails.copyWith(...)`.
+class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
+  const _$NotificationDetailsCWProxyImpl(this._value);
+
+  final NotificationDetails _value;
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// NotificationDetails(...).copyWith(id: 12, name: "My name")
+  /// ````
+  NotificationDetails call({
+    Object? android = const $CopyWithPlaceholder(),
+    Object? iOS = const $CopyWithPlaceholder(),
+    Object? macOS = const $CopyWithPlaceholder(),
+    Object? linux = const $CopyWithPlaceholder(),
+    Object? windows = const $CopyWithPlaceholder(),
+  }) {
+    return NotificationDetails(
+      android: android == const $CopyWithPlaceholder()
+          ? _value.android
+          // ignore: cast_nullable_to_non_nullable
+          : android as AndroidNotificationDetails?,
+      iOS: iOS == const $CopyWithPlaceholder()
+          ? _value.iOS
+          // ignore: cast_nullable_to_non_nullable
+          : iOS as DarwinNotificationDetails?,
+      macOS: macOS == const $CopyWithPlaceholder()
+          ? _value.macOS
+          // ignore: cast_nullable_to_non_nullable
+          : macOS as DarwinNotificationDetails?,
+      linux: linux == const $CopyWithPlaceholder()
+          ? _value.linux
+          // ignore: cast_nullable_to_non_nullable
+          : linux as LinuxNotificationDetails?,
+      windows: windows == const $CopyWithPlaceholder()
+          ? _value.windows
+          // ignore: cast_nullable_to_non_nullable
+          : windows as WindowsNotificationDetails?,
+    );
+  }
+}
+
+extension $NotificationDetailsCopyWith on NotificationDetails {
+  /// Returns a callable class that can be used as follows: `instanceOfNotificationDetails.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$NotificationDetailsCWProxy get copyWith =>
+      _$NotificationDetailsCWProxyImpl(this);
+}
+
 abstract class _$AndroidNotificationDetailsCWProxy {
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
   ///

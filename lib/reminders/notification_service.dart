@@ -44,6 +44,7 @@ abstract interface class NotificationService implements AsyncInitialization {
       {required int id,
       required String title,
       String? body,
+      String? extra,
       required NotificationDataType type,
       required NotificationChannelId channelId,
       required NotificationDetails details,
@@ -183,16 +184,18 @@ final class NotificationServiceImpl implements NotificationService {
       {required int id,
       required String title,
       String? body,
+      String? extra,
       required NotificationDataType type,
       required NotificationChannelId channelId,
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
-    final data = NotificationData(
+    final data = NotificationData<String>(
       id: id,
       title: title,
       body: body,
       type: type,
       channelId: channelId,
+      child: extra,
     );
 
     try {
@@ -461,6 +464,7 @@ final class FakeNotificationService implements NotificationService {
           {required int id,
           required String title,
           String? body,
+          String? extra,
           required NotificationDataType type,
           required NotificationChannelId channelId,
           required NotificationDetails details,

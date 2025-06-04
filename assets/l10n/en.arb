@@ -981,6 +981,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "Preparing to sync...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Synced ({type})} failed {Sync Failed ({type})} other {Syncing ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Sync in Low Data Mode",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",

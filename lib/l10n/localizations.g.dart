@@ -1884,6 +1884,18 @@ abstract class L10n {
   /// **'LowData'**
   String get appSync_serverEditor_netTypeTile_lowDataText;
 
+  /// No description provided for @appSync_noti_readyToSync_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing to sync...'**
+  String get appSync_noti_readyToSync_body;
+
+  /// No description provided for @appSync_noti_syncing_title.
+  ///
+  /// In en, this message translates to:
+  /// **'{synced, select, synced {Synced ({type})} failed {Sync Failed ({type})} other {Syncing ({type})}}'**
+  String appSync_noti_syncing_title(String synced, String type);
+
   /// No description provided for @appSync_serverEditor_netTypeTile_lowDataTooltip.
   ///
   /// In en, this message translates to:

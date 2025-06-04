@@ -22,6 +22,28 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 part 'notification_details.g.dart';
 
 @CopyWith(skipFields: true)
+final class NotificationDetails implements fln.NotificationDetails {
+  @override
+  final AndroidNotificationDetails? android;
+  @override
+  final DarwinNotificationDetails? iOS;
+  @override
+  final DarwinNotificationDetails? macOS;
+  @override
+  final LinuxNotificationDetails? linux;
+  @override
+  final WindowsNotificationDetails? windows;
+
+  const NotificationDetails({
+    this.android,
+    this.iOS,
+    this.macOS,
+    this.linux,
+    this.windows,
+  });
+}
+
+@CopyWith(skipFields: true)
 final class AndroidNotificationDetails extends fln.AndroidNotificationDetails {
   const AndroidNotificationDetails(
     super.channelId,
