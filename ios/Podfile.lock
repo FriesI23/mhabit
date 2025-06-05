@@ -1,4 +1,6 @@
 PODS:
+  - app_settings (5.1.1):
+    - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
   - data_saver (0.0.1):
@@ -35,6 +37,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - data_saver (from `.symlinks/plugins/data_saver/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -53,6 +56,8 @@ DEPENDENCIES:
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   data_saver:
@@ -87,6 +92,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  app_settings: 58017cd26b604ae98c3e65acbdd8ba173703cc82
   connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
   data_saver: 0b3cfca0c7de4f380634f0a393b10bb3a37d6d34
   device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
