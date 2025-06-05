@@ -814,6 +814,12 @@ class L10nZh extends L10n {
   String get appSetting_syncOption_titleText => '同步选项';
 
   @override
+  String get appSetting_notify_titleTile => '通知';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => '点击打开系统通知设置';
+
+  @override
   String get appSync_nowTile_titleText => '立即同步';
 
   @override

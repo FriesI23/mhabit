@@ -819,6 +819,12 @@ class L10nRu extends L10n {
   String get appSetting_syncOption_titleText => 'Настройки синхронизации';
 
   @override
+  String get appSetting_notify_titleTile => 'Notifications';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
+
+  @override
   String get appSync_nowTile_titleText => 'Синхронизировать сейчас';
 
   @override

@@ -70,6 +70,17 @@ enum NotificationChannelId {
     required this.channelName,
     required this.identity,
   });
+
+  String getL10nChannelName([L10n? l10n]) => l10n != null
+      ? switch (this) {
+          NotificationChannelId.debug => channelName,
+          NotificationChannelId.habitReminder => l10n.channelName_habitReminder,
+          NotificationChannelId.appReminder => l10n.channelName_appReminder,
+          NotificationChannelId.appDebugger => l10n.channelName_appDebugger,
+          NotificationChannelId.appSyncing => l10n.channelName_appSyncing,
+          NotificationChannelId.appSyncFailed => l10n.channelName_appSyncFailed,
+        }
+      : channelName;
 }
 
 String _getChannelId(String channelId) {
@@ -113,31 +124,28 @@ class NotificationAndroidChannelData
   })  : debug = debug ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.debug.name),
-              NotificationChannelId.debug.channelName,
+              NotificationChannelId.debug.getL10nChannelName(l10n),
               importance: Importance.min,
               priority: Priority.min,
             ),
         habitReminder = habitReminder ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.habitReminder.name),
-              l10n?.channelName_habitReminder ??
-                  NotificationChannelId.habitReminder.channelName,
+              NotificationChannelId.habitReminder.getL10nChannelName(l10n),
               importance: Importance.high,
               priority: Priority.high,
             ),
         appReminder = appReminder ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appReminder.name),
-              l10n?.channelName_appReminder ??
-                  NotificationChannelId.appReminder.channelName,
+              NotificationChannelId.appReminder.getL10nChannelName(l10n),
               importance: Importance.high,
               priority: Priority.high,
             ),
         appDebugger = appDebugger ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appDebugger.name),
-              l10n?.channelName_appDebugger ??
-                  NotificationChannelId.appDebugger.channelName,
+              NotificationChannelId.appDebugger.getL10nChannelName(l10n),
               importance: Importance.max,
               priority: Priority.max,
               playSound: false,
@@ -151,16 +159,14 @@ class NotificationAndroidChannelData
         appSyncing = appSyncing ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appSyncing.name),
-              l10n?.channelName_appSyncing ??
-                  NotificationChannelId.appSyncing.channelName,
+              NotificationChannelId.appSyncing.getL10nChannelName(l10n),
               importance: Importance.low,
               priority: Priority.low,
             ),
         appSyncFailed = appSyncFailed ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appSyncFailed.name),
-              l10n?.channelName_appSyncFailed ??
-                  NotificationChannelId.appSyncFailed.channelName,
+              NotificationChannelId.appSyncFailed.getL10nChannelName(l10n),
               importance: Importance.defaultImportance,
               priority: Priority.defaultPriority,
             );

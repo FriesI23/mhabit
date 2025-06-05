@@ -819,6 +819,12 @@ class L10nPt extends L10n {
   String get appSetting_syncOption_titleText => 'Sync Options';
 
   @override
+  String get appSetting_notify_titleTile => 'Notifications';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
+
+  @override
   String get appSync_nowTile_titleText => 'Sync Now';
 
   @override

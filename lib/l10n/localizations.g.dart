@@ -1524,6 +1524,18 @@ abstract class L10n {
   /// **'Sync Options'**
   String get appSetting_syncOption_titleText;
 
+  /// No description provided for @appSetting_notify_titleTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get appSetting_notify_titleTile;
+
+  /// No description provided for @appSetting_notify_subtitleTile_android.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open systemg notification settings'**
+  String get appSetting_notify_subtitleTile_android;
+
   /// No description provided for @appSync_nowTile_titleText.
   ///
   /// In en, this message translates to:

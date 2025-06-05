@@ -819,6 +819,12 @@ class L10nEs extends L10n {
   String get appSetting_syncOption_titleText => 'Opciones de sincronización';
 
   @override
+  String get appSetting_notify_titleTile => 'Notifications';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
+
+  @override
   String get appSync_nowTile_titleText => 'Sincronizar ahora';
 
   @override
