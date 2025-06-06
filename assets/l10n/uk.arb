@@ -609,7 +609,9 @@
   "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
   "appSetting_reminderSubgroupText": "Нагадування",
-  "@appSetting_reminderSubgroupText": {},
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "Щоденне нагадування",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "Резервне копіювання та відновлення",

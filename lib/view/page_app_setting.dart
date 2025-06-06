@@ -567,6 +567,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
               ),
             ),
           ),
+          const AppSettingNotifyTile(),
         ];
 
     Iterable<Widget> buildBackupAndRestoreSubGroup(BuildContext context) => [

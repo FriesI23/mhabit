@@ -27,6 +27,8 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
   AppSyncContainer<T, R> loggerStreamer(
       ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer);
 
+  AppSyncContainer<T, R> notification(NotiAppSyncProvider? notification);
+
   AppSyncContainer<T, R> logEventCallback(
       void Function(LogEvent) logEventCallback);
 
@@ -46,6 +48,7 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
     String? filePath,
     num? percentage,
     ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer,
+    NotiAppSyncProvider? notification,
     void Function(LogEvent)? logEventCallback,
   });
 }
@@ -91,6 +94,10 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
       this(loggerStreamer: loggerStreamer);
 
   @override
+  AppSyncContainer<T, R> notification(NotiAppSyncProvider? notification) =>
+      this(notification: notification);
+
+  @override
   AppSyncContainer<T, R> logEventCallback(
           void Function(LogEvent) logEventCallback) =>
       this(logEventCallback: logEventCallback);
@@ -113,6 +120,7 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
     Object? filePath = const $CopyWithPlaceholder(),
     Object? percentage = const $CopyWithPlaceholder(),
     Object? loggerStreamer = const $CopyWithPlaceholder(),
+    Object? notification = const $CopyWithPlaceholder(),
     Object? logEventCallback = const $CopyWithPlaceholder(),
   }) {
     return AppSyncContainer<T, R>._copyWith(
@@ -152,6 +160,10 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
           ? _value.loggerStreamer
           // ignore: cast_nullable_to_non_nullable
           : loggerStreamer as ReplayAppLoggerStreamer<AppLoggerMessage>?,
+      notification: notification == const $CopyWithPlaceholder()
+          ? _value.notification
+          // ignore: cast_nullable_to_non_nullable
+          : notification as NotiAppSyncProvider?,
       logEventCallback: logEventCallback == const $CopyWithPlaceholder() ||
               logEventCallback == null
           ? _value.logEventCallback

@@ -1311,7 +1311,7 @@ abstract class L10n {
   /// No description provided for @appSetting_reminderSubgroupText.
   ///
   /// In en, this message translates to:
-  /// **'Reminder'**
+  /// **'Reminder & Notification'**
   String get appSetting_reminderSubgroupText;
 
   /// No description provided for @appSetting_dailyReminder_titleText.
@@ -1523,6 +1523,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Sync Options'**
   String get appSetting_syncOption_titleText;
+
+  /// No description provided for @appSetting_notify_titleTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get appSetting_notify_titleTile;
+
+  /// No description provided for @appSetting_notify_subtitleTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage notification preferences'**
+  String get appSetting_notify_subtitleTile;
+
+  /// No description provided for @appSetting_notify_subtitleTile_android.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open systemg notification settings'**
+  String get appSetting_notify_subtitleTile_android;
 
   /// No description provided for @appSync_nowTile_titleText.
   ///
@@ -1883,6 +1901,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'LowData'**
   String get appSync_serverEditor_netTypeTile_lowDataText;
+
+  /// No description provided for @appSync_noti_readyToSync_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing to sync...'**
+  String get appSync_noti_readyToSync_body;
+
+  /// No description provided for @appSync_noti_syncing_title.
+  ///
+  /// In en, this message translates to:
+  /// **'{synced, select, synced {Synced ({type})} failed {Sync Failed ({type})} other {Syncing ({type})}}'**
+  String appSync_noti_syncing_title(String synced, String type);
 
   /// No description provided for @appSync_serverEditor_netTypeTile_lowDataTooltip.
   ///
@@ -2663,6 +2693,30 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Debugger'**
   String get channelName_appDebugger;
+
+  /// No description provided for @channelName_appSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Process'**
+  String get channelName_appSyncing;
+
+  /// No description provided for @channelDesc_appSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Used to show sync progress and non-failure results'**
+  String get channelDesc_appSyncing;
+
+  /// No description provided for @channelName_appSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Failed'**
+  String get channelName_appSyncFailed;
+
+  /// No description provided for @channelDesc_appSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used to alert when sync fails'**
+  String get channelDesc_appSyncFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

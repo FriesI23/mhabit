@@ -151,20 +151,21 @@ class WebDavAppSyncTaskMultiResult extends WebDavAppSyncTaskResult {
   @override
   bool get isSuccessed {
     final result = habitResults.values.every((e) => e.isSuccessed);
-    return result ? result : super.isSuccessed;
+    return result || super.isSuccessed;
   }
 
   @override
   bool get isCancelled {
     final result =
-        !habitResults.values.any((e) => !(e.isCancelled || e.isSuccessed));
-    return result ? result : super.isCancelled;
+        habitResults.values.every((e) => e.isCancelled || e.isSuccessed) &&
+            habitResults.values.any((e) => e.isCancelled);
+    return result || super.isCancelled;
   }
 
   @override
   bool get isTimeout {
     final result = habitResults.values.every((e) => e.isTimeout);
-    return result ? result : super.isTimeout;
+    return result || super.isTimeout;
   }
 
   @override

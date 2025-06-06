@@ -23,6 +23,7 @@ import '../common/async.dart';
 import '../common/types.dart';
 import '../extension/notification_extensions.dart';
 import '../logging/helper.dart';
+import '../model/app_notify_config.dart';
 import '../model/habit_date.dart';
 import '../model/habit_reminder.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
@@ -34,6 +35,8 @@ import 'notification_tap_handler.dart';
 abstract interface class NotificationService implements AsyncInitialization {
   static NotificationService? _instance;
 
+  void onAppNotiConfigUpdate(AppNotifyConfig? config);
+
   Future<bool?> requestPermissions();
 
   Future<List<ActiveNotification>> getActiveNotifications();
@@ -44,6 +47,7 @@ abstract interface class NotificationService implements AsyncInitialization {
       {required int id,
       required String title,
       String? body,
+      String? extra,
       required NotificationDataType type,
       required NotificationChannelId channelId,
       required NotificationDetails details,
@@ -89,7 +93,13 @@ final class NotificationServiceImpl implements NotificationService {
   static const androidIconPath = "@mipmap/ic_notification";
   static const defaultTimeout = Duration(seconds: 2);
 
+  AppNotifyConfig? _appNotifyConfig;
+
   NotificationServiceImpl();
+
+  @override
+  void onAppNotiConfigUpdate(AppNotifyConfig? config) =>
+      _appNotifyConfig = config;
 
   FlutterLocalNotificationsPlugin get plugin =>
       FlutterLocalNotificationsPlugin();
@@ -108,32 +118,7 @@ final class NotificationServiceImpl implements NotificationService {
     const androidSettings = AndroidInitializationSettings(androidIconPath);
 
     // iOS & macOS setting
-    final darwinSettings = DarwinInitializationSettings(
-      notificationCategories: [
-        DarwinNotificationCategory(
-          NotificationChannelId.debug.category,
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.habitReminder.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-          },
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.appReminder.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.allowAnnouncement,
-          },
-        ),
-        DarwinNotificationCategory(
-          NotificationChannelId.appDebugger.category,
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-            DarwinNotificationCategoryOption.hiddenPreviewShowSubtitle,
-          },
-        ),
-      ],
-    );
+    const darwinSettings = DarwinInitializationSettings();
 
     // linux setting
     const linuxSettings =
@@ -151,7 +136,7 @@ final class NotificationServiceImpl implements NotificationService {
     );
 
     // combine settings
-    final initializationSettings = InitializationSettings(
+    const initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
@@ -208,16 +193,20 @@ final class NotificationServiceImpl implements NotificationService {
       {required int id,
       required String title,
       String? body,
+      String? extra,
       required NotificationDataType type,
       required NotificationChannelId channelId,
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
-    final data = NotificationData(
+    if (_appNotifyConfig?.isChannelEnabled(channelId) == false) return true;
+
+    final data = NotificationData<String>(
       id: id,
       title: title,
       body: body,
       type: type,
       channelId: channelId,
+      child: extra,
     );
 
     try {
@@ -486,6 +475,7 @@ final class FakeNotificationService implements NotificationService {
           {required int id,
           required String title,
           String? body,
+          String? extra,
           required NotificationDataType type,
           required NotificationChannelId channelId,
           required NotificationDetails details,
@@ -532,4 +522,7 @@ final class FakeNotificationService implements NotificationService {
   @override
   Future<void> createAllChannels(NotificationAndroidChannelData data) =>
       Future.value(null);
+
+  @override
+  void onAppNotiConfigUpdate(AppNotifyConfig? config) {}
 }

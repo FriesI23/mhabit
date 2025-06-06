@@ -25,6 +25,7 @@ import '../../provider/app_debugger.dart';
 import '../../provider/app_developer.dart';
 import '../../provider/app_first_day.dart';
 import '../../provider/app_language.dart';
+import '../../provider/app_notify_config.dart';
 import '../../provider/app_reminder.dart';
 import '../../provider/app_sync.dart';
 import '../../provider/app_theme.dart';
@@ -110,12 +111,21 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),
-          ChangeNotifierProxyProvider2<ProfileViewModel, DBHelperViewModel,
-              AppSyncViewModel>(
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              AppNotifyConfigViewModel>(
+            // Config needs to be synced with Notification Service.
+            lazy: false,
+            create: (context) => AppNotifyConfigViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
+          ),
+          ChangeNotifierProxyProvider3<ProfileViewModel, DBHelperViewModel,
+              NotificationChannelData, AppSyncViewModel>(
             create: (context) => AppSyncViewModel(),
-            update: (context, profile, helper, previous) => previous!
+            update: (context, profile, helper, channel, previous) => previous!
               ..updateProfile(profile)
-              ..updateDBHelper(helper),
+              ..updateDBHelper(helper)
+              ..setNotificationChannelData(channel),
           ),
           ChangeNotifierProxyProvider<ProfileViewModel,
               HabitRecordOpConfigViewModel>(

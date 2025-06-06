@@ -25,12 +25,14 @@ import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../persistent/db_helper_builder.dart';
+import '../persistent/profile/handler/app_notify_config.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_builder.dart';
 import '../persistent/profile_provider.dart';
 import '../provider/app_debugger.dart';
 import '../provider/app_language.dart';
 import '../provider/app_reminder.dart';
+import '../provider/app_sync.dart';
 import '../provider/app_theme.dart';
 import '../reminders/notification_channel.dart';
 import '../theme/color.dart';
@@ -64,6 +66,7 @@ class App extends StatelessWidget {
     AppSyncServerConfigHandler.new,
     AppSyncFetchIntervalHandler.new,
     AppSyncExperimentalFeature.new,
+    AppNotifyConfigProfileHandler.new,
   ];
 
   const App({super.key});
@@ -220,11 +223,14 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
     inited = false;
   }
 
+  void _onL10nUpdate([L10n? l10n]) {
+    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    context.maybeRead<AppSyncViewModel>()?.onL10nUpdate(l10n);
+  }
+
   @override
   void didChangeDependencies() {
-    context
-        .maybeRead<NotificationChannelData>()
-        ?.onL10nUpdate(L10n.of(context));
+    _onL10nUpdate(L10n.of(context));
     super.didChangeDependencies();
   }
 
@@ -235,9 +241,7 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
         .maybeRead<AppDebuggerViewModel>()
         ?.processDebuggingNotification(l10n);
     context.maybeRead<AppReminderViewModel>()?.processAppReminder(l10n);
-    context
-        .maybeRead<NotificationChannelData>()
-        ?.onL10nUpdate(L10n.of(context));
+    _onL10nUpdate(L10n.of(context));
     inited = true;
   }
 
