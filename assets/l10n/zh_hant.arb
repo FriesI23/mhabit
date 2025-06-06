@@ -600,7 +600,9 @@
   "appSetting_collapsed_calendar_bararea_defaultText": "預設",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
   "appSetting_reminderSubgroupText": "提醒",
-  "@appSetting_reminderSubgroupText": {},
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "每日提醒",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "備份與還原",

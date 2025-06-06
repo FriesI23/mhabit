@@ -609,7 +609,9 @@
   "appSetting_collapsed_calendar_bararea_defaultText": "Varsayılan",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
   "appSetting_reminderSubgroupText": "Hatırlatıcı",
-  "@appSetting_reminderSubgroupText": {},
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "Günlük hatırlatıcı",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "Yedekleme & geri yükleme",

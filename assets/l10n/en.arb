@@ -608,8 +608,10 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "Default",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Reminder",
-  "@appSetting_reminderSubgroupText": {},
+  "appSetting_reminderSubgroupText": "Reminder & Notification",
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "Daily reminder",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "Backup & restore",
@@ -707,6 +709,8 @@
   "@appSetting_syncOption_titleText": {},
   "appSetting_notify_titleTile": "Notifications",
   "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Manage notification preferences",
+  "@appSetting_notify_subtitleTile": {},
   "appSetting_notify_subtitleTile_android": "Tap to open systemg notification settings",
   "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Sync Now",
@@ -1358,6 +1362,10 @@
   "@channelName_appDebugger": {},
   "channelName_appSyncing": "Sync Process",
   "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "Used to show sync progress and non-failure results",
+  "@channelDesc_appSyncing": {},
   "channelName_appSyncFailed": "Sync Failed",
-  "@channelName_appSyncFailed": {}
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "Used to alert when sync fails",
+  "@channelDesc_appSyncFailed": {}
 }

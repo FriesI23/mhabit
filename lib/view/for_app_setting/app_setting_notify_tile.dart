@@ -18,6 +18,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/localizations.dart';
+import '../page_app_notify_config.dart' as app_notify_config;
 
 class AppSettingNotifyTile extends StatelessWidget {
   const AppSettingNotifyTile({super.key});
@@ -25,7 +26,7 @@ class AppSettingNotifyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) return const _AndroidAppSettingNotifyTile();
-    throw UnsupportedError("indev");
+    return const _AppSettingNotifyTile();
   }
 }
 
@@ -43,6 +44,20 @@ class _AndroidAppSettingNotifyTile extends StatelessWidget {
       onTap: () {
         AppSettings.openAppSettings(type: AppSettingsType.notification);
       },
+    );
+  }
+}
+
+class _AppSettingNotifyTile extends StatelessWidget {
+  const _AppSettingNotifyTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    return ListTile(
+      title: Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
+      subtitle: l10n != null ? Text(l10n.appSetting_notify_subtitleTile) : null,
+      onTap: () => app_notify_config.naviToNotifyConfigPage(context: context),
     );
   }
 }

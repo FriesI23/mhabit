@@ -81,6 +81,12 @@ enum NotificationChannelId {
           NotificationChannelId.appSyncFailed => l10n.channelName_appSyncFailed,
         }
       : channelName;
+
+  String? getL10nChannelDesc([L10n? l10n]) => switch (this) {
+        NotificationChannelId.appSyncing => l10n?.channelDesc_appSyncing,
+        NotificationChannelId.appSyncFailed => l10n?.channelDesc_appSyncFailed,
+        _ => null,
+      };
 }
 
 String _getChannelId(String channelId) {
@@ -160,6 +166,8 @@ class NotificationAndroidChannelData
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appSyncing.name),
               NotificationChannelId.appSyncing.getL10nChannelName(l10n),
+              channelDescription:
+                  NotificationChannelId.appSyncing.getL10nChannelDesc(l10n),
               importance: Importance.low,
               priority: Priority.low,
             ),
@@ -167,6 +175,8 @@ class NotificationAndroidChannelData
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appSyncFailed.name),
               NotificationChannelId.appSyncFailed.getL10nChannelName(l10n),
+              channelDescription:
+                  NotificationChannelId.appSyncFailed.getL10nChannelDesc(l10n),
               importance: Importance.defaultImportance,
               priority: Priority.defaultPriority,
             );

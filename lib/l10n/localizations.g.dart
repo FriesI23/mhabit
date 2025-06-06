@@ -1311,7 +1311,7 @@ abstract class L10n {
   /// No description provided for @appSetting_reminderSubgroupText.
   ///
   /// In en, this message translates to:
-  /// **'Reminder'**
+  /// **'Reminder & Notification'**
   String get appSetting_reminderSubgroupText;
 
   /// No description provided for @appSetting_dailyReminder_titleText.
@@ -1529,6 +1529,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Notifications'**
   String get appSetting_notify_titleTile;
+
+  /// No description provided for @appSetting_notify_subtitleTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage notification preferences'**
+  String get appSetting_notify_subtitleTile;
 
   /// No description provided for @appSetting_notify_subtitleTile_android.
   ///
@@ -2694,11 +2700,23 @@ abstract class L10n {
   /// **'Sync Process'**
   String get channelName_appSyncing;
 
+  /// No description provided for @channelDesc_appSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Used to show sync progress and non-failure results'**
+  String get channelDesc_appSyncing;
+
   /// No description provided for @channelName_appSyncFailed.
   ///
   /// In en, this message translates to:
   /// **'Sync Failed'**
   String get channelName_appSyncFailed;
+
+  /// No description provided for @channelDesc_appSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used to alert when sync fails'**
+  String get channelDesc_appSyncFailed;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

@@ -822,6 +822,9 @@ class L10nFa extends L10n {
   String get appSetting_notify_titleTile => 'Notifications';
 
   @override
+  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+
+  @override
   String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
 
   @override
@@ -1608,5 +1611,11 @@ class L10nFa extends L10n {
   String get channelName_appSyncing => 'Sync Process';
 
   @override
+  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+
+  @override
   String get channelName_appSyncFailed => 'Sync Failed';
+
+  @override
+  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
 }

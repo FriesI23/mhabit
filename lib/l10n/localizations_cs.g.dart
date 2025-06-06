@@ -705,7 +705,7 @@ class L10nCs extends L10n {
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Reminder';
+  String get appSetting_reminderSubgroupText => 'Reminder & Notification';
 
   @override
   String get appSetting_dailyReminder_titleText => 'Daily reminder';
@@ -820,6 +820,9 @@ class L10nCs extends L10n {
 
   @override
   String get appSetting_notify_titleTile => 'Notifications';
+
+  @override
+  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
 
   @override
   String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
@@ -1614,5 +1617,11 @@ class L10nCs extends L10n {
   String get channelName_appSyncing => 'Sync Process';
 
   @override
+  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+
+  @override
   String get channelName_appSyncFailed => 'Sync Failed';
+
+  @override
+  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
 }

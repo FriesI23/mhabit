@@ -405,14 +405,18 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       if (percentage == null) {
         return data.appSyncing;
       } else {
+        final subtitle = _Helper.buildSyncingBody(percentage, _l10n);
         return data.appSyncing.copyWith(
-            iOS: data.appSyncing.iOS?.copyWith(
-                subtitle: _Helper.buildSyncingBody(percentage, _l10n)));
+            iOS: data.appSyncing.iOS?.copyWith(subtitle: subtitle),
+            macOS: data.appSyncing.macOS?.copyWith(subtitle: subtitle));
       }
     }
 
     final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
-    final body = _Helper.buildSyncingBody(null, _l10n);
+    final body = switch (defaultTargetPlatform) {
+      TargetPlatform.iOS => _Helper.buildSyncingBody(null, _l10n),
+      _ => _Helper.buildSyncingBody(percentage, _l10n)
+    };
     return showAppSyncing(title: title, body: body, details: buildDetails());
   }
 
@@ -426,14 +430,17 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       final body = _Helper.buildSyncResultBody(result, _l10n);
       final details = data.appSyncing.copyWith(
           iOS: data.appSyncing.iOS
+              ?.copyWith(interruptionLevel: InterruptionLevel.active),
+          macOS: data.appSyncing.macOS
               ?.copyWith(interruptionLevel: InterruptionLevel.active));
       task = showAppSyncing(title: title, body: body, details: details);
     } else if (!result.isSuccessed) {
       final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
       final error = result.error.error?.toString();
+      final subtitle = _Helper.buildSyncResultBody(result, _l10n);
       final details = data.appSyncFailed.copyWith(
-          iOS: data.appSyncFailed.iOS
-              ?.copyWith(subtitle: _Helper.buildSyncResultBody(result, _l10n)));
+          iOS: data.appSyncFailed.iOS?.copyWith(subtitle: subtitle),
+          macOS: data.appSyncFailed.macOS?.copyWith(subtitle: subtitle));
       final body = error != null
           ? _l10n?.appSync_failedTile_errorText(error) ?? error
           : null;

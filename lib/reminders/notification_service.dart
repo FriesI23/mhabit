@@ -23,6 +23,7 @@ import '../common/async.dart';
 import '../common/types.dart';
 import '../extension/notification_extensions.dart';
 import '../logging/helper.dart';
+import '../model/app_notify_config.dart';
 import '../model/habit_date.dart';
 import '../model/habit_reminder.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
@@ -33,6 +34,8 @@ import 'notification_tap_handler.dart';
 
 abstract interface class NotificationService implements AsyncInitialization {
   static NotificationService? _instance;
+
+  void onAppNotiConfigUpdate(AppNotifyConfig? config);
 
   Future<bool?> requestPermissions();
 
@@ -90,7 +93,13 @@ final class NotificationServiceImpl implements NotificationService {
   static const androidIconPath = "@mipmap/ic_notification";
   static const defaultTimeout = Duration(seconds: 2);
 
+  AppNotifyConfig? _appNotifyConfig;
+
   NotificationServiceImpl();
+
+  @override
+  void onAppNotiConfigUpdate(AppNotifyConfig? config) =>
+      _appNotifyConfig = config;
 
   FlutterLocalNotificationsPlugin get plugin =>
       FlutterLocalNotificationsPlugin();
@@ -189,6 +198,8 @@ final class NotificationServiceImpl implements NotificationService {
       required NotificationChannelId channelId,
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
+    if (_appNotifyConfig?.isChannelEnabled(channelId) == false) return true;
+
     final data = NotificationData<String>(
       id: id,
       title: title,
@@ -511,4 +522,7 @@ final class FakeNotificationService implements NotificationService {
   @override
   Future<void> createAllChannels(NotificationAndroidChannelData data) =>
       Future.value(null);
+
+  @override
+  void onAppNotiConfigUpdate(AppNotifyConfig? config) {}
 }

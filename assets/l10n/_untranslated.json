@@ -1,11 +1,14 @@
 {
   "ar": [
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_noti_readyToSync_body",
     "appSync_noti_syncing_title",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "cs": [
@@ -215,6 +218,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -407,7 +411,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "de": [
@@ -421,6 +427,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -526,11 +533,14 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "es": [
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_webdav_resultStatus_withReason",
     "appSync_webdav_resultReason",
@@ -584,7 +594,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "fa": [
@@ -594,6 +606,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -696,7 +709,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "fr": [
@@ -710,6 +725,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -815,7 +831,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "he": [
@@ -1051,6 +1069,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -1245,7 +1264,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "it": [
@@ -1255,6 +1276,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -1335,7 +1357,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "nb": [
@@ -1571,6 +1595,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -1765,7 +1790,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "pl": [
@@ -1998,6 +2025,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -2192,7 +2220,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "pt": [
@@ -2220,6 +2250,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -2323,34 +2354,45 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "ru": [
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_noti_readyToSync_body",
     "appSync_noti_syncing_title",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "tr": [
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_noti_readyToSync_body",
     "appSync_noti_syncing_title",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "uk": [
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_noti_readyToSync_body",
     "appSync_noti_syncing_title",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "vi": [
@@ -2359,6 +2401,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -2440,7 +2483,9 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "zh_Hant": [
@@ -2449,6 +2494,7 @@
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
     "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
@@ -2527,6 +2573,8 @@
     "channelName_appReminder",
     "channelName_appDebugger",
     "channelName_appSyncing",
-    "channelName_appSyncFailed"
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ]
 }
