@@ -35,6 +35,8 @@ import 'notification_tap_handler.dart';
 abstract interface class NotificationService implements AsyncInitialization {
   static NotificationService? _instance;
 
+  FlutterLocalNotificationsPlugin get plugin;
+
   void onAppNotiConfigUpdate(AppNotifyConfig? config);
 
   Future<bool?> requestPermissions();
@@ -101,6 +103,7 @@ final class NotificationServiceImpl implements NotificationService {
   void onAppNotiConfigUpdate(AppNotifyConfig? config) =>
       _appNotifyConfig = config;
 
+  @override
   FlutterLocalNotificationsPlugin get plugin =>
       FlutterLocalNotificationsPlugin();
 
@@ -456,6 +459,10 @@ final class WindowsNotificationService extends NotificationServiceImpl {
 
 final class FakeNotificationService implements NotificationService {
   const FakeNotificationService();
+
+  @override
+  FlutterLocalNotificationsPlugin get plugin =>
+      throw UnsupportedError("Plugin unsupport in fake service");
 
   @override
   Future init() => Future.value();

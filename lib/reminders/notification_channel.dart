@@ -170,6 +170,7 @@ class NotificationAndroidChannelData
                   NotificationChannelId.appSyncing.getL10nChannelDesc(l10n),
               importance: Importance.low,
               priority: Priority.low,
+              playSound: false,
             ),
         appSyncFailed = appSyncFailed ??
             AndroidNotificationDetails(
@@ -248,7 +249,6 @@ class NotificationIosChannelData
             ),
         appSyncFailed = appSyncFailed ??
             DarwinNotificationDetails(
-              presentSound: false,
               threadIdentifier: NotificationChannelId.appSyncFailed.identity,
             );
 }
@@ -298,7 +298,7 @@ class NotificationWindowsChannelData
   @override
   final WindowsNotificationDetails appSyncFailed;
 
-  const NotificationWindowsChannelData({
+  NotificationWindowsChannelData({
     WindowsNotificationDetails? debug,
     WindowsNotificationDetails? habitReminder,
     WindowsNotificationDetails? appReminder,
@@ -308,8 +308,12 @@ class NotificationWindowsChannelData
   })  : debug = debug ?? const WindowsNotificationDetails(),
         habitReminder = habitReminder ?? const WindowsNotificationDetails(),
         appReminder = appReminder ?? const WindowsNotificationDetails(),
-        appDebugger = appDebugger ?? const WindowsNotificationDetails(),
-        appSyncing = appSyncing ?? const WindowsNotificationDetails(),
+        appDebugger = appDebugger ??
+            WindowsNotificationDetails(
+                audio: WindowsNotificationAudio.silent()),
+        appSyncing = appSyncing ??
+            WindowsNotificationDetails(
+                audio: WindowsNotificationAudio.silent()),
         appSyncFailed = appSyncFailed ?? const WindowsNotificationDetails();
 }
 
@@ -328,8 +332,7 @@ class NotificationChannelData
   })  : _androidChannel = androidChannel ?? NotificationAndroidChannelData(),
         _iosChannel = iosChannel ?? NotificationIosChannelData(),
         _linuxChannel = linuxChannel ?? const NotificationLinuxChannelData(),
-        _windowsChannel =
-            windowsChannel ?? const NotificationWindowsChannelData();
+        _windowsChannel = windowsChannel ?? NotificationWindowsChannelData();
 
   void onL10nUpdate(L10n? l10n) async {
     appLog.notify.info("NotificationChannelData.onL10nUpdate",

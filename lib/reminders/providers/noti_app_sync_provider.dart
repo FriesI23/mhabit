@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     hide NotificationDetails;
@@ -76,6 +78,8 @@ abstract interface class NotiAppSyncProvider {
         TargetPlatform.macOS =>
           DrawinNotiAppSyncProvider.generate(
               type: type, data: data, delayed: delayed, l10n: l10n),
+        TargetPlatform.windows => WindowsNotiAppSyncProvider.generate(
+            type: type, data: data, l10n: l10n),
         _ => FakeNotiAppSyncProvider.generate()
       };
 }
@@ -444,6 +448,114 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       final body = error != null
           ? _l10n?.appSync_failedTile_errorText(error) ?? error
           : null;
+      task = showAppSyncFailed(title: title, body: body, details: details);
+    } else {
+      task = Future.value(true);
+    }
+    return Stream.fromFutures([cancelTask, task]).every((e) => e);
+  }
+}
+
+final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
+  final L10n? _l10n;
+
+  WindowsProgressBar? _syncingProgressBar;
+
+  WindowsNotiAppSyncProvider({
+    required super.syncId,
+    required super.syncedId,
+    required super.type,
+    required super.data,
+    required super.service,
+    L10n? l10n,
+  }) : _l10n = l10n;
+
+  factory WindowsNotiAppSyncProvider.generate({
+    int? syncId,
+    int? syncedId,
+    required AppSyncServerType type,
+    required NotificationChannelData data,
+    NotificationService? service,
+    L10n? l10n,
+  }) =>
+      WindowsNotiAppSyncProvider(
+          syncId: _Helper.buildSyncId(syncId),
+          syncedId: _Helper.buildSyncedId(syncedId, type),
+          type: type,
+          data: data,
+          service: service ?? NotificationService(),
+          l10n: l10n);
+
+  String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
+      _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
+
+  @override
+  Future<bool> readyToSync() {
+    final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
+    final body = _Helper.buildReadyToSyncBody(_l10n);
+    return showAppSyncing(title: title, body: body);
+  }
+
+  @override
+  Future<bool> syncing({num? percentage}) {
+    final crtBar = _syncingProgressBar;
+    if (crtBar != null) {
+      crtBar.value = percentage?.toDouble();
+      service.plugin
+          .resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
+          ?.updateProgressBar(notificationId: syncId, progressBar: crtBar);
+      return Future.value(true);
+    }
+    final syncingProgressId = "$syncId-syncing";
+    final newBar = _syncingProgressBar = WindowsProgressBar(
+        id: syncingProgressId,
+        status: _Helper.buildSyncingBody(null, _l10n),
+        value: percentage?.toDouble());
+    final details = data.appSyncing.copyWith(
+        windows: data.appSyncing.windows?.copyWith(progressBars: [newBar]));
+    final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
+    return showAppSyncing(title: title, details: details);
+  }
+
+  @override
+  Future<bool> syncComplete({AppSyncTaskResult? result}) {
+    if (result == null) return Future.value(true);
+    final bar = _syncingProgressBar;
+    final cancelTask = service.cancel(id: syncId).whenComplete(() {
+      if (identical(_syncingProgressBar, bar)) _syncingProgressBar = null;
+    });
+    final body = _Helper.buildSyncResultBody(result, _l10n);
+    final Future<bool> task;
+    if (result.isCancelled) {
+      final title = _buildTitle(AppSyncNotiTitleEnum.synced, _l10n);
+      task = showAppSyncing(title: title, body: body, details: data.appSyncing);
+    } else if (!result.isSuccessed) {
+      final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
+      final error = result.error.error?.toString();
+      final trace = result.error.trace?.toString();
+      final List<WindowsRow>? rows;
+      if (trace != null) {
+        final lines = const LineSplitter().convert(trace);
+        final displayLines = lines.length > 5
+            ? [...lines.take(3), '...', ...lines.skip(lines.length - 2)]
+            : lines;
+        rows = [
+          WindowsRow([
+            WindowsColumn(displayLines
+                .map((e) => WindowsNotificationText(text: e))
+                .toList())
+          ])
+        ];
+      } else {
+        rows = null;
+      }
+      final details = data.appSyncFailed.copyWith(
+          windows: data.appSyncFailed.windows?.copyWith(
+              subtitle: error != null
+                  ? _l10n?.appSync_failedTile_errorText(error) ?? error
+                  : null,
+              rows: rows));
       task = showAppSyncFailed(title: title, body: body, details: details);
     } else {
       task = Future.value(true);
