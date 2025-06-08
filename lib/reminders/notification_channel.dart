@@ -278,8 +278,14 @@ class NotificationLinuxChannelData
   })  : debug = debug ?? const LinuxNotificationDetails(),
         habitReminder = habitReminder ?? const LinuxNotificationDetails(),
         appReminder = appReminder ?? const LinuxNotificationDetails(),
-        appDebugger = appDebugger ?? const LinuxNotificationDetails(),
-        appSyncing = appSyncing ?? const LinuxNotificationDetails(),
+        appDebugger = appDebugger ??
+            const LinuxNotificationDetails(
+                urgency: LinuxNotificationUrgency.low,
+                suppressSound: true,
+                resident: true),
+        appSyncing = appSyncing ??
+            const LinuxNotificationDetails(
+                urgency: LinuxNotificationUrgency.low, suppressSound: true),
         appSyncFailed = appSyncFailed ?? const LinuxNotificationDetails();
 }
 

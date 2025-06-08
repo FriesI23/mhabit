@@ -60,6 +60,21 @@ abstract interface class NotiAppSyncProvider {
             service: service!,
             delayed: delayed,
             l10n: l10n),
+        TargetPlatform.windows => WindowsNotiAppSyncProvider(
+            syncId: syncId!,
+            syncedId: syncFailedId!,
+            type: type!,
+            data: data!,
+            service: service!,
+            l10n: l10n),
+        TargetPlatform.linux => LinuxNotiAppSyncProvider(
+            syncId: syncId!,
+            syncedId: syncFailedId!,
+            type: type!,
+            data: data!,
+            service: service!,
+            delayed: delayed,
+            l10n: l10n),
         _ => syncId != null
             ? FakeNotiAppSyncProvider(syncId: syncId)
             : const FakeNotiAppSyncProvider()
@@ -80,6 +95,8 @@ abstract interface class NotiAppSyncProvider {
               type: type, data: data, delayed: delayed, l10n: l10n),
         TargetPlatform.windows => WindowsNotiAppSyncProvider.generate(
             type: type, data: data, l10n: l10n),
+        TargetPlatform.linux => LinuxNotiAppSyncProvider.generate(
+            type: type, data: data, delayed: delayed, l10n: l10n),
         _ => FakeNotiAppSyncProvider.generate()
       };
 }
@@ -557,6 +574,116 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
                   : null,
               rows: rows));
       task = showAppSyncFailed(title: title, body: body, details: details);
+    } else {
+      task = Future.value(true);
+    }
+    return Stream.fromFutures([cancelTask, task]).every((e) => e);
+  }
+}
+
+final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
+  final Duration? delayed;
+
+  final L10n? _l10n;
+  late final String _syncTrKey;
+  late final _NotiThrottle? _throttle;
+
+  LinuxNotiAppSyncProvider({
+    required super.syncId,
+    required super.syncedId,
+    required super.type,
+    required super.data,
+    required super.service,
+    this.delayed,
+    L10n? l10n,
+  }) : _l10n = l10n {
+    _syncTrKey = "id.$syncId.${type.code}";
+    _throttle = delayed != null ? _NotiThrottle() : null;
+  }
+
+  factory LinuxNotiAppSyncProvider.generate({
+    int? syncId,
+    int? syncFailedId,
+    required AppSyncServerType type,
+    required NotificationChannelData data,
+    NotificationService? service,
+    Duration? delayed,
+    L10n? l10n,
+  }) =>
+      LinuxNotiAppSyncProvider(
+          syncId: _Helper.buildSyncId(syncId),
+          syncedId: _Helper.buildSyncedId(syncFailedId, type),
+          type: type,
+          data: data,
+          service: service ?? NotificationService(),
+          l10n: l10n,
+          delayed: delayed);
+
+  String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
+      _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
+
+  @override
+  Future<bool> readyToSync() {
+    if (_throttle?.isThrottled(_syncTrKey) == true) return Future.value(false);
+    _throttle?.regr(_syncTrKey, delay: delayed ?? Duration.zero);
+    final details = data.appSyncing.copyWith(
+        linux: data.appSyncing.linux
+            ?.copyWith(category: LinuxNotificationCategory.network));
+    final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
+    final body = _Helper.buildReadyToSyncBody(_l10n);
+    return showAppSyncing(title: title, body: body, details: details);
+  }
+
+  @override
+  Future<bool> syncing({num? percentage}) {
+    if (_throttle?.isThrottled(_syncTrKey) == true) return Future.value(false);
+    _throttle?.regr(_syncTrKey, delay: delayed ?? Duration.zero);
+    final details = data.appSyncing.copyWith(
+        linux: data.appSyncing.linux?.copyWith(
+            category: LinuxNotificationCategory.transfer, transient: true));
+    final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
+    final body = _Helper.buildSyncingBody(percentage, _l10n);
+    return showAppSyncing(title: title, body: body, details: details);
+  }
+
+  @override
+  Future<bool> syncComplete({AppSyncTaskResult? result}) async {
+    if (result == null) return Future.value(true);
+    final cancelTask = service.cancel(id: syncId);
+    final Future<bool> task;
+    if (result.isCancelled) {
+      await cancelTask;
+      final title = _buildTitle(AppSyncNotiTitleEnum.synced, _l10n);
+      final body = _Helper.buildSyncResultBody(result, _l10n);
+      final details = data.appSyncing.copyWith(
+          linux: data.appSyncing.linux?.copyWith(
+              category: LinuxNotificationCategory.transferComplete,
+              urgency: LinuxNotificationUrgency.normal));
+      task = showAppSyncing(title: title, body: body, details: details);
+    } else if (!result.isSuccessed) {
+      final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
+      final error = result.error.error?.toString();
+      final details = data.appSyncFailed.copyWith(
+          linux: data.appSyncFailed.linux
+              ?.copyWith(category: LinuxNotificationCategory.transferError));
+      final body = StringBuffer();
+      body.writeln(_Helper.buildSyncResultBody(result, _l10n));
+      body.writeln(error != null
+          ? _l10n?.appSync_failedTile_errorText(error) ?? error
+          : null);
+      final trace = result.error.trace?.toString();
+      if (trace != null) {
+        final lines = const LineSplitter().convert(trace);
+        final displayLines = lines.length > 5
+            ? [...lines.take(3), '...', ...lines.skip(lines.length - 2)]
+            : lines;
+        body.writeln("─────────────────");
+        for (var line in displayLines) {
+          body.writeln(line);
+        }
+      }
+      task = showAppSyncFailed(
+          title: title, body: body.toString(), details: details);
     } else {
       task = Future.value(true);
     }
