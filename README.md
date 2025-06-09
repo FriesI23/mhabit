@@ -169,24 +169,43 @@ multiple versions on your local machine, or simply use this submodule to build i
 
 iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead command above.
 
-### Building for Linux
+### Building for Linux Desktop
 
 **requires:**
 
 1. installing the following packages for the [SQFlite database][sqflite-ffi-linux]:
 
-```shell
-sudo apt-get -y install libsqlite3-0 libsqlite3-dev
-```
+   ```shell
+   sudo apt-get -y install libsqlite3-0 libsqlite3-dev
+   ```
 
 2. Ensure that all dependencies required by [`flutter_secure_storage`][fss-linux] are satisfied:
 
-```shell
-sudo apt-get install libsecret-1-dev libjsoncpp-dev
-```
+   ```shell
+   sudo apt-get install libsecret-1-dev libjsoncpp-dev
+   ```
 
-3. If an error occurs during the build process, please follow these
+3. Please follow these
    [steps][flutter-linux] strictly.
+
+4. Once you've got the following result with the command `flutter doctor` you are good to go:
+   ```shell
+   Doctor summary (to see all details, run flutter doctor -v):
+   [✓] Flutter (Channel stable, X.X.X, on Your Linux Platform)
+   (...)
+   [✓] Linux toolchain - develop for Linux desktop
+   (...)
+   ```
+
+5. In project folder, run `flutter pub get`
+
+6. Then run `flutter build linux --release`, once finished you should see:
+   ```shell
+   Building Linux application...
+   ✓ Built build/linux/x64/release/bundle/mhabit
+   ```
+
+7. Enjoy by running the ouput binary `build/linux/x64/release/bundle/mhabit`
 
 ## Configuring WebDAV Synchronization (Beta)
 
