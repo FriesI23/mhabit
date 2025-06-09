@@ -1,0 +1,11 @@
+**✨ 新功能**
+
+- 添加网络同步通知（#287）
+  - 为 Android / iOS / macOS / Windows / Linux 添加网络同步通知
+  - 为非 Android 平台添加应用内通知配置
+
+**🌐 本地化**
+
+- 更新俄语翻译，感谢 Yurt Page 在 Weblate 上的贡献。
+- 更新土耳其语翻译，感谢 Bora Atıcı 和 Soykan Aydın 在 Weblate 上的贡献。
+- 更新乌克兰语翻译，感谢 PavloPogonets 在 Github 上的贡献。
