@@ -3,6 +3,19 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.16.16+85-pre
+
+**✨ New Features**
+
+- Add app network sync notification support (#287)
+  - add network sync notification for Android / iOS / macOS / Windows / Linux
+  - add in-app notification config for non-android
+
+**🌐 Localization**
+
+- Update Turkish l10n translation, thank for Bora Atıcı's contribution on Weblate.
+- Update Ukrainian l10n translation, thank for PavloPogonets's contribution on Github.
+
 ## 1.16.15+84-pre
 
 **🌐 Localization**
