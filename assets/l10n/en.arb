@@ -608,8 +608,10 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "Default",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Reminder",
-  "@appSetting_reminderSubgroupText": {},
+  "appSetting_reminderSubgroupText": "Reminder & Notification",
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "Daily reminder",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "Backup & restore",
@@ -705,6 +707,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "Sync Options",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "Notifications",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Manage notification preferences",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "Tap to open systemg notification settings",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Sync Now",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "Syncing",
@@ -981,6 +989,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "Preparing to sync...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Synced ({type})} failed {Sync Failed ({type})} other {Syncing ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Sync in Low Data Mode",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "One or more experimental features are enabled, Use with caution.",
@@ -1334,5 +1359,13 @@
   "channelName_appReminder": "Prompt",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Debugger",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "Sync Process",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "Used to show sync progress and non-failure results",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "Sync Failed",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "Used to alert when sync fails",
+  "@channelDesc_appSyncFailed": {}
 }

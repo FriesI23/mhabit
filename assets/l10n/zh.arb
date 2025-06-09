@@ -608,8 +608,10 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "默认: 0",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "提醒",
-  "@appSetting_reminderSubgroupText": {},
+  "appSetting_reminderSubgroupText": "提醒与通知",
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "每日提醒",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "备份和恢复",
@@ -705,6 +707,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "同步选项",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "通知",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "管理通知偏好",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "点击打开系统通知设置",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "立即同步",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "正在同步",
@@ -981,6 +989,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "低数据模式",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "准备同步中...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {已同步（{type}）} failed {同步失败（{type}）} other {正在同步（{type}）}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "服务器类型，见 'appSync_syncServerType_text' 字段",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "在低数据模式下同步",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "一个或多个实验性功能已启用，请谨慎使用。",
@@ -1334,5 +1359,13 @@
   "channelName_appReminder": "提示",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "调试",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "同步进程",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "用于显示同步进度和非失败结果",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "同步失败",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "用于在同步失败时提醒",
+  "@channelDesc_appSyncFailed": {}
 }

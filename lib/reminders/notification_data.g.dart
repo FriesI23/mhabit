@@ -41,6 +41,7 @@ const _$NotificationDataTypeEnumMap = {
   NotificationDataType.habitReminder: 2,
   NotificationDataType.appReminder: 3,
   NotificationDataType.appDebugger: 4,
+  NotificationDataType.appSync: 5,
 };
 
 const _$NotificationChannelIdEnumMap = {
@@ -48,6 +49,8 @@ const _$NotificationChannelIdEnumMap = {
   NotificationChannelId.habitReminder: 2,
   NotificationChannelId.appReminder: 3,
   NotificationChannelId.appDebugger: 4,
+  NotificationChannelId.appSyncing: 5,
+  NotificationChannelId.appSyncFailed: 6,
 };
 
 T? _$nullableGenericFromJson<T>(

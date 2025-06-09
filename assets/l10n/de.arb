@@ -585,7 +585,9 @@
   "appSetting_collapsed_calendar_bararea_defaultText": "Standard",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
   "appSetting_reminderSubgroupText": "Erinnerung",
-  "@appSetting_reminderSubgroupText": {},
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
   "appSetting_dailyReminder_titleText": "Tägliche Erinnerung",
   "@appSetting_dailyReminder_titleText": {},
   "appSetting_backupAndRestoreSubgroupText": "Sichern & Wiederherstellen",

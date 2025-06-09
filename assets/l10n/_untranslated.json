@@ -1,4 +1,16 @@
 {
+  "ar": [
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
+  ],
+
   "cs": [
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoal_errorText01",
@@ -205,6 +217,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -265,6 +280,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -392,7 +409,11 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "de": [
@@ -405,6 +426,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -465,6 +489,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -505,10 +531,17 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "es": [
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_webdav_resultStatus_withReason",
     "appSync_webdav_resultReason",
     "appSync_webdav_newServerConfirmDialog_subtitleText",
@@ -542,6 +575,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -557,7 +592,11 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "fa": [
@@ -566,6 +605,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -626,6 +668,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -663,7 +707,11 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "fr": [
@@ -676,6 +724,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -736,6 +787,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -776,7 +829,11 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "he": [
@@ -1011,6 +1068,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -1071,6 +1131,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -1200,7 +1262,11 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "it": [
@@ -1209,6 +1275,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -1269,6 +1338,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -1284,7 +1355,11 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "nb": [
@@ -1519,6 +1594,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -1579,6 +1657,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -1708,7 +1788,11 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "pl": [
@@ -1940,6 +2024,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -2000,6 +2087,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -2129,7 +2218,11 @@
     "userAction_longTap",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "pt": [
@@ -2156,6 +2249,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -2216,6 +2312,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -2254,7 +2352,47 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
+  ],
+
+  "ru": [
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
+  ],
+
+  "tr": [
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
+  ],
+
+  "uk": [
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "vi": [
@@ -2262,6 +2400,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -2322,6 +2463,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -2338,7 +2481,11 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ],
 
   "zh_Hant": [
@@ -2346,6 +2493,9 @@
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
+    "appSetting_notify_titleTile",
+    "appSetting_notify_subtitleTile",
+    "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
@@ -2406,6 +2556,8 @@
     "appSync_serverEditor_netTypeTile_titleText",
     "appSync_serverEditor_netTypeTile_typeTooltip",
     "appSync_serverEditor_netTypeTile_lowDataText",
+    "appSync_noti_readyToSync_body",
+    "appSync_noti_syncing_title",
     "appSync_serverEditor_netTypeTile_lowDataTooltip",
     "experimentalFeatures_warnginBanner_title",
     "experimentalFeatures_habitSyncTile_titleText",
@@ -2419,6 +2571,10 @@
     "confirmDialog_cancel_text",
     "channelName_habitReminder",
     "channelName_appReminder",
-    "channelName_appDebugger"
+    "channelName_appDebugger",
+    "channelName_appSyncing",
+    "channelDesc_appSyncing",
+    "channelName_appSyncFailed",
+    "channelDesc_appSyncFailed"
   ]
 }

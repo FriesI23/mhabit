@@ -700,7 +700,7 @@ class L10nZh extends L10n {
   String get appSetting_collapsed_calendar_bararea_defaultText => '默认: 0';
 
   @override
-  String get appSetting_reminderSubgroupText => '提醒';
+  String get appSetting_reminderSubgroupText => '提醒与通知';
 
   @override
   String get appSetting_dailyReminder_titleText => '每日提醒';
@@ -812,6 +812,15 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_syncOption_titleText => '同步选项';
+
+  @override
+  String get appSetting_notify_titleTile => '通知';
+
+  @override
+  String get appSetting_notify_subtitleTile => '管理通知偏好';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => '点击打开系统通知设置';
 
   @override
   String get appSync_nowTile_titleText => '立即同步';
@@ -1137,6 +1146,22 @@ class L10nZh extends L10n {
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataText => '低数据模式';
+
+  @override
+  String get appSync_noti_readyToSync_body => '准备同步中...';
+
+  @override
+  String appSync_noti_syncing_title(String synced, String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      synced,
+      {
+        'synced': '已同步（$type）',
+        'failed': '同步失败（$type）',
+        'other': '正在同步（$type）',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => '在低数据模式下同步';
@@ -1569,6 +1594,18 @@ class L10nZh extends L10n {
 
   @override
   String get channelName_appDebugger => '调试';
+
+  @override
+  String get channelName_appSyncing => '同步进程';
+
+  @override
+  String get channelDesc_appSyncing => '用于显示同步进度和非失败结果';
+
+  @override
+  String get channelName_appSyncFailed => '同步失败';
+
+  @override
+  String get channelDesc_appSyncFailed => '用于在同步失败时提醒';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

@@ -819,6 +819,15 @@ class L10nUk extends L10n {
   String get appSetting_syncOption_titleText => 'Параметри синхронізації';
 
   @override
+  String get appSetting_notify_titleTile => 'Notifications';
+
+  @override
+  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
+
+  @override
   String get appSync_nowTile_titleText => 'Синхронізувати зараз';
 
   @override
@@ -1142,6 +1151,22 @@ class L10nUk extends L10n {
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+
+  @override
+  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+
+  @override
+  String appSync_noti_syncing_title(String synced, String type) {
+    String _temp0 = intl.Intl.selectLogic(
+      synced,
+      {
+        'synced': 'Synced ($type)',
+        'failed': 'Sync Failed ($type)',
+        'other': 'Syncing ($type)',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Синхронізація в режимі низького рівня даних';
@@ -1587,4 +1612,16 @@ class L10nUk extends L10n {
 
   @override
   String get channelName_appDebugger => 'Налагоджувач';
+
+  @override
+  String get channelName_appSyncing => 'Sync Process';
+
+  @override
+  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+
+  @override
+  String get channelName_appSyncFailed => 'Sync Failed';
+
+  @override
+  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
 }

@@ -13,12 +13,19 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    hide
+        AndroidNotificationDetails,
+        DarwinNotificationDetails,
+        LinuxNotificationDetails,
+        NotificationDetails,
+        WindowsNotificationDetails;
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/app_info.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
+import 'notification_details.dart';
 import 'notification_service.dart';
 
 @JsonEnum(valueField: "id")
@@ -26,33 +33,60 @@ enum NotificationChannelId {
   debug(
     id: 1,
     channelName: "_Dev",
-    category: "debug",
+    identity: "debug",
   ),
   habitReminder(
     id: 2,
     channelName: "Habit Reminder Channel",
-    category: "habit_reminder",
+    identity: "habit_reminder",
   ),
   appReminder(
     id: 3,
     channelName: "Prompt Channel",
-    category: "app_reminder",
+    identity: "app_reminder",
   ),
   appDebugger(
     id: 4,
     channelName: "Debugger Channel",
-    category: "app_debugger",
+    identity: "app_debugger",
+  ),
+  appSyncing(
+    id: 5,
+    channelName: "App Syncing Channel",
+    identity: "app_syncing",
+  ),
+  appSyncFailed(
+    id: 6,
+    channelName: "App Sync Failed",
+    identity: "app_sync_failed",
   );
 
   final int id;
   final String channelName;
-  final String category;
+  final String identity;
 
   const NotificationChannelId({
     required this.id,
     required this.channelName,
-    required this.category,
+    required this.identity,
   });
+
+  String getL10nChannelName([L10n? l10n]) => l10n != null
+      ? switch (this) {
+          NotificationChannelId.debug => channelName,
+          NotificationChannelId.habitReminder => l10n.channelName_habitReminder,
+          NotificationChannelId.appReminder => l10n.channelName_appReminder,
+          NotificationChannelId.appDebugger => l10n.channelName_appDebugger,
+          NotificationChannelId.appSyncing => l10n.channelName_appSyncing,
+          NotificationChannelId.appSyncFailed => l10n.channelName_appSyncFailed,
+        }
+      : channelName;
+
+  String? getL10nChannelDesc([L10n? l10n]) => switch (this) {
+        NotificationChannelId.appSyncing => l10n?.channelDesc_appSyncing,
+        NotificationChannelId.appSyncFailed => l10n?.channelDesc_appSyncFailed,
+        _ => null,
+      };
 }
 
 String _getChannelId(String channelId) {
@@ -64,6 +98,8 @@ abstract class NotificationChannelDataABC<T> {
   T get habitReminder;
   T get appReminder;
   T get appDebugger;
+  T get appSyncing;
+  T get appSyncFailed;
 }
 
 class NotificationAndroidChannelData
@@ -76,6 +112,10 @@ class NotificationAndroidChannelData
   final AndroidNotificationDetails appReminder;
   @override
   final AndroidNotificationDetails appDebugger;
+  @override
+  final AndroidNotificationDetails appSyncing;
+  @override
+  final AndroidNotificationDetails appSyncFailed;
 
   final L10n? l10n;
 
@@ -85,34 +125,33 @@ class NotificationAndroidChannelData
     AndroidNotificationDetails? habitReminder,
     AndroidNotificationDetails? appReminder,
     AndroidNotificationDetails? appDebugger,
+    AndroidNotificationDetails? appSyncing,
+    AndroidNotificationDetails? appSyncFailed,
   })  : debug = debug ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.debug.name),
-              NotificationChannelId.debug.channelName,
+              NotificationChannelId.debug.getL10nChannelName(l10n),
               importance: Importance.min,
-              priority: Priority.low,
+              priority: Priority.min,
             ),
         habitReminder = habitReminder ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.habitReminder.name),
-              l10n?.channelName_habitReminder ??
-                  NotificationChannelId.habitReminder.channelName,
+              NotificationChannelId.habitReminder.getL10nChannelName(l10n),
               importance: Importance.high,
-              priority: Priority.defaultPriority,
+              priority: Priority.high,
             ),
         appReminder = appReminder ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appReminder.name),
-              l10n?.channelName_appReminder ??
-                  NotificationChannelId.appReminder.channelName,
+              NotificationChannelId.appReminder.getL10nChannelName(l10n),
               importance: Importance.high,
               priority: Priority.high,
             ),
         appDebugger = appDebugger ??
             AndroidNotificationDetails(
               _getChannelId(NotificationChannelId.appDebugger.name),
-              l10n?.channelName_appDebugger ??
-                  NotificationChannelId.appDebugger.channelName,
+              NotificationChannelId.appDebugger.getL10nChannelName(l10n),
               importance: Importance.max,
               priority: Priority.max,
               playSound: false,
@@ -122,6 +161,25 @@ class NotificationAndroidChannelData
               silent: true,
               color: Colors.red,
               colorized: true,
+            ),
+        appSyncing = appSyncing ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.appSyncing.name),
+              NotificationChannelId.appSyncing.getL10nChannelName(l10n),
+              channelDescription:
+                  NotificationChannelId.appSyncing.getL10nChannelDesc(l10n),
+              importance: Importance.low,
+              priority: Priority.low,
+              playSound: false,
+            ),
+        appSyncFailed = appSyncFailed ??
+            AndroidNotificationDetails(
+              _getChannelId(NotificationChannelId.appSyncFailed.name),
+              NotificationChannelId.appSyncFailed.getL10nChannelName(l10n),
+              channelDescription:
+                  NotificationChannelId.appSyncFailed.getL10nChannelDesc(l10n),
+              importance: Importance.defaultImportance,
+              priority: Priority.defaultPriority,
             );
 
   Iterable<AndroidNotificationDetails> get channels => [
@@ -129,6 +187,8 @@ class NotificationAndroidChannelData
         habitReminder,
         appReminder,
         appDebugger,
+        appSyncing,
+        appSyncFailed,
       ];
 
   @override
@@ -151,64 +211,116 @@ class NotificationIosChannelData
   final DarwinNotificationDetails appReminder;
   @override
   final DarwinNotificationDetails appDebugger;
+  @override
+  final DarwinNotificationDetails appSyncing;
+  @override
+  final DarwinNotificationDetails appSyncFailed;
 
   NotificationIosChannelData({
     DarwinNotificationDetails? debug,
     DarwinNotificationDetails? habitReminder,
     DarwinNotificationDetails? appReminder,
     DarwinNotificationDetails? appDebugger,
+    DarwinNotificationDetails? appSyncing,
+    DarwinNotificationDetails? appSyncFailed,
   })  : debug = debug ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.debug.category,
+              threadIdentifier: NotificationChannelId.debug.identity,
             ),
         habitReminder = habitReminder ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.habitReminder.category,
+              threadIdentifier: NotificationChannelId.habitReminder.identity,
             ),
         appReminder = appReminder ??
             DarwinNotificationDetails(
-              categoryIdentifier: NotificationChannelId.appReminder.category,
+              threadIdentifier: NotificationChannelId.appReminder.identity,
             ),
         appDebugger = appDebugger ??
             DarwinNotificationDetails(
               presentSound: false,
-              categoryIdentifier: NotificationChannelId.appDebugger.category,
+              threadIdentifier: NotificationChannelId.appDebugger.identity,
               interruptionLevel: InterruptionLevel.passive,
+            ),
+        appSyncing = appSyncing ??
+            DarwinNotificationDetails(
+              presentSound: false,
+              threadIdentifier: NotificationChannelId.appSyncing.identity,
+              interruptionLevel: InterruptionLevel.passive,
+            ),
+        appSyncFailed = appSyncFailed ??
+            DarwinNotificationDetails(
+              threadIdentifier: NotificationChannelId.appSyncFailed.identity,
             );
 }
 
 class NotificationLinuxChannelData
     implements NotificationChannelDataABC<LinuxNotificationDetails> {
-  final LinuxNotificationDetails? _debug;
-  final LinuxNotificationDetails? _habitReminder;
-  final LinuxNotificationDetails? _appReminder;
-  final LinuxNotificationDetails? _appDebugger;
+  @override
+  final LinuxNotificationDetails debug;
+  @override
+  final LinuxNotificationDetails habitReminder;
+  @override
+  final LinuxNotificationDetails appReminder;
+  @override
+  final LinuxNotificationDetails appDebugger;
+  @override
+  final LinuxNotificationDetails appSyncing;
+  @override
+  final LinuxNotificationDetails appSyncFailed;
 
   const NotificationLinuxChannelData({
     LinuxNotificationDetails? debug,
     LinuxNotificationDetails? habitReminder,
     LinuxNotificationDetails? appReminder,
     LinuxNotificationDetails? appDebugger,
-  })  : _debug = debug,
-        _habitReminder = habitReminder,
-        _appReminder = appReminder,
-        _appDebugger = appDebugger;
+    LinuxNotificationDetails? appSyncing,
+    LinuxNotificationDetails? appSyncFailed,
+  })  : debug = debug ?? const LinuxNotificationDetails(),
+        habitReminder = habitReminder ?? const LinuxNotificationDetails(),
+        appReminder = appReminder ?? const LinuxNotificationDetails(),
+        appDebugger = appDebugger ??
+            const LinuxNotificationDetails(
+                urgency: LinuxNotificationUrgency.low,
+                suppressSound: true,
+                resident: true),
+        appSyncing = appSyncing ??
+            const LinuxNotificationDetails(
+                urgency: LinuxNotificationUrgency.low, suppressSound: true),
+        appSyncFailed = appSyncFailed ?? const LinuxNotificationDetails();
+}
 
+class NotificationWindowsChannelData
+    implements NotificationChannelDataABC<WindowsNotificationDetails> {
   @override
-  LinuxNotificationDetails get debug =>
-      _debug ?? const LinuxNotificationDetails();
+  final WindowsNotificationDetails debug;
+  @override
+  final WindowsNotificationDetails habitReminder;
+  @override
+  final WindowsNotificationDetails appReminder;
+  @override
+  final WindowsNotificationDetails appDebugger;
+  @override
+  final WindowsNotificationDetails appSyncing;
+  @override
+  final WindowsNotificationDetails appSyncFailed;
 
-  @override
-  LinuxNotificationDetails get habitReminder =>
-      _habitReminder ?? const LinuxNotificationDetails();
-
-  @override
-  LinuxNotificationDetails get appReminder =>
-      _appReminder ?? const LinuxNotificationDetails();
-
-  @override
-  LinuxNotificationDetails get appDebugger =>
-      _appDebugger ?? const LinuxNotificationDetails();
+  NotificationWindowsChannelData({
+    WindowsNotificationDetails? debug,
+    WindowsNotificationDetails? habitReminder,
+    WindowsNotificationDetails? appReminder,
+    WindowsNotificationDetails? appDebugger,
+    WindowsNotificationDetails? appSyncing,
+    WindowsNotificationDetails? appSyncFailed,
+  })  : debug = debug ?? const WindowsNotificationDetails(),
+        habitReminder = habitReminder ?? const WindowsNotificationDetails(),
+        appReminder = appReminder ?? const WindowsNotificationDetails(),
+        appDebugger = appDebugger ??
+            WindowsNotificationDetails(
+                audio: WindowsNotificationAudio.silent()),
+        appSyncing = appSyncing ??
+            WindowsNotificationDetails(
+                audio: WindowsNotificationAudio.silent()),
+        appSyncFailed = appSyncFailed ?? const WindowsNotificationDetails();
 }
 
 class NotificationChannelData
@@ -216,14 +328,17 @@ class NotificationChannelData
   NotificationAndroidChannelData _androidChannel;
   final NotificationIosChannelData _iosChannel;
   final NotificationLinuxChannelData _linuxChannel;
+  final NotificationWindowsChannelData _windowsChannel;
 
   NotificationChannelData({
     NotificationAndroidChannelData? androidChannel,
     NotificationIosChannelData? iosChannel,
     NotificationLinuxChannelData? linuxChannel,
+    NotificationWindowsChannelData? windowsChannel,
   })  : _androidChannel = androidChannel ?? NotificationAndroidChannelData(),
         _iosChannel = iosChannel ?? NotificationIosChannelData(),
-        _linuxChannel = linuxChannel ?? const NotificationLinuxChannelData();
+        _linuxChannel = linuxChannel ?? const NotificationLinuxChannelData(),
+        _windowsChannel = windowsChannel ?? NotificationWindowsChannelData();
 
   void onL10nUpdate(L10n? l10n) async {
     appLog.notify.info("NotificationChannelData.onL10nUpdate",
@@ -246,6 +361,7 @@ class NotificationChannelData
         iOS: _iosChannel.debug,
         linux: _linuxChannel.debug,
         macOS: _iosChannel.debug,
+        windows: _windowsChannel.debug,
       );
 
   @override
@@ -253,7 +369,8 @@ class NotificationChannelData
         android: _androidChannel.habitReminder,
         iOS: _iosChannel.habitReminder,
         linux: _linuxChannel.habitReminder,
-        macOS: _iosChannel.debug,
+        macOS: _iosChannel.habitReminder,
+        windows: _windowsChannel.habitReminder,
       );
 
   @override
@@ -262,13 +379,33 @@ class NotificationChannelData
         iOS: _iosChannel.appReminder,
         linux: _linuxChannel.appReminder,
         macOS: _iosChannel.appReminder,
+        windows: _windowsChannel.appReminder,
       );
 
   @override
   NotificationDetails get appDebugger => NotificationDetails(
         android: _androidChannel.appDebugger,
         iOS: _iosChannel.appDebugger,
-        linux: _linuxChannel.appReminder,
+        linux: _linuxChannel.appDebugger,
         macOS: _iosChannel.appDebugger,
+        windows: _windowsChannel.appDebugger,
+      );
+
+  @override
+  NotificationDetails get appSyncing => NotificationDetails(
+        android: _androidChannel.appSyncing,
+        iOS: _iosChannel.appSyncing,
+        linux: _linuxChannel.appSyncing,
+        macOS: _iosChannel.appSyncing,
+        windows: _windowsChannel.appSyncing,
+      );
+
+  @override
+  NotificationDetails get appSyncFailed => NotificationDetails(
+        android: _androidChannel.appSyncFailed,
+        iOS: _iosChannel.appSyncFailed,
+        linux: _linuxChannel.appSyncFailed,
+        macOS: _iosChannel.appSyncFailed,
+        windows: _windowsChannel.appSyncFailed,
       );
 }
