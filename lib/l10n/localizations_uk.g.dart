@@ -363,7 +363,7 @@ class L10nUk extends L10n {
   String get habitDisplay_sortDirection_Desc => '(опис)';
 
   @override
-  String get habitDisplay_sortType_manual => 'Моє замовлення';
+  String get habitDisplay_sortType_manual => 'Свій порядок';
 
   @override
   String get habitDisplay_sortType_name => 'По імені';
@@ -463,7 +463,7 @@ class L10nUk extends L10n {
       locale: localeName,
       other: '',
       two: 'BECCABLE',
-      one: 'OVERFULFIL',
+      one: 'ПЕРЕВИКОНАНО',
     );
     return '$_temp0';
   }
@@ -473,7 +473,7 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'Goal',
+      other: 'Ціль',
       two: 'Threshold',
     );
     return '$_temp0';
@@ -492,7 +492,7 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       habitType,
       locale: localeName,
-      other: 'днів',
+      other: 'Днів',
     );
     return '$_temp0';
   }
@@ -510,31 +510,31 @@ class L10nUk extends L10n {
   String get habitDetail_scoreChartCombine_dailyText => 'День';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'тиждень';
+  String get habitDetail_scoreChartCombine_weeklyText => 'Тиждень';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'місяць';
+  String get habitDetail_scoreChartCombine_monthlyText => 'Місяць';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'рік';
+  String get habitDetail_scoreChartCombine_yearlyText => 'Рік';
 
   @override
   String get habitDetail_freqChart_freqTitle => 'Частота';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'історія';
+  String get habitDetail_freqChart_historyTitle => 'Історія';
 
   @override
   String get habitDetail_freqChart_combinedTitle => 'Частота та історія';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'тиждень';
+  String get habitDetail_freqChartCombine_weeklyText => 'Тиждень';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'місяць';
+  String get habitDetail_freqChartCombine_monthlyText => 'Місяць';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'рік';
+  String get habitDetail_freqChartCombine_yearlyText => 'Рік';
 
   @override
   String get habitDetail_freqChartNaviBar_nowText => 'Зараз';
@@ -549,7 +549,7 @@ class L10nUk extends L10n {
   String get habitDetail_descSubgroup_title => 'Пам\'ятка';
 
   @override
-  String get habitDetail_otherSubgroup_title => 'інше';
+  String get habitDetail_otherSubgroup_title => 'Інше';
 
   @override
   String get habitDetail_habitType_title => 'Тип';
