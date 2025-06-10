@@ -608,7 +608,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Нагадування",
+  "appSetting_reminderSubgroupText": "Нагадування та сповіщення",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -1336,5 +1336,36 @@
   "channelName_appReminder": "Підказка",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Налагоджувач",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "appSetting_notify_subtitleTile_android": "Натисніть, щоб відкрити налаштування системних сповіщень",
+  "@appSetting_notify_subtitleTile_android": {},
+  "channelName_appSyncing": "Процес синхронізації",
+  "@channelName_appSyncing": {},
+  "channelName_appSyncFailed": "Помилка синхронізації",
+  "@channelName_appSyncFailed": {},
+  "appSync_noti_readyToSync_body": "Підготовка до синхронізації...",
+  "@appSync_noti_readyToSync_body": {},
+  "channelDesc_appSyncing": "Використовується для відображення прогресу синхронізації та результатів без помилок",
+  "@channelDesc_appSyncing": {},
+  "appSetting_notify_titleTile": "Сповіщення",
+  "@appSetting_notify_titleTile": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Синхронізовано ({type})} failed {Помилка синхронізації ({type})} other {Синхронізація ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
+  "channelDesc_appSyncFailed": "Використовується для сповіщення про невдачу синхронізації",
+  "@channelDesc_appSyncFailed": {},
+  "appSetting_notify_subtitleTile": "Керування налаштуваннями сповіщень",
+  "@appSetting_notify_subtitleTile": {}
 }
