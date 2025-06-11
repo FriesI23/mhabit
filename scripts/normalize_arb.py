@@ -46,6 +46,7 @@ def format_arb(
     if output_filepath:
         with open(output_filepath, "w") as fp:
             json.dump(output, fp=fp, indent=indent, ensure_ascii=False)
+            fp.write("\n")
     else:
         print(json.dumps(output, indent=indent, ensure_ascii=False))
 
