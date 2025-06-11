@@ -711,7 +711,7 @@
   "@appSetting_notify_titleTile": {},
   "appSetting_notify_subtitleTile": "Manage notification preferences",
   "@appSetting_notify_subtitleTile": {},
-  "appSetting_notify_subtitleTile_android": "Tap to open systemg notification settings",
+  "appSetting_notify_subtitleTile_android": "Tap to open system notification settings",
   "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Sync Now",
   "@appSync_nowTile_titleText": {},

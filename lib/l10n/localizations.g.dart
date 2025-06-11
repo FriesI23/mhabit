@@ -1539,7 +1539,7 @@ abstract class L10n {
   /// No description provided for @appSetting_notify_subtitleTile_android.
   ///
   /// In en, this message translates to:
-  /// **'Tap to open systemg notification settings'**
+  /// **'Tap to open system notification settings'**
   String get appSetting_notify_subtitleTile_android;
 
   /// No description provided for @appSync_nowTile_titleText.
