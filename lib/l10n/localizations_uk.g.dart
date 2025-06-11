@@ -705,7 +705,7 @@ class L10nUk extends L10n {
   String get appSetting_collapsed_calendar_bararea_defaultText => 'За замовчуванням';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Нагадування';
+  String get appSetting_reminderSubgroupText => 'Нагадування та сповіщення';
 
   @override
   String get appSetting_dailyReminder_titleText => 'Щоденне нагадування';
@@ -819,13 +819,13 @@ class L10nUk extends L10n {
   String get appSetting_syncOption_titleText => 'Параметри синхронізації';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Сповіщення';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+  String get appSetting_notify_subtitleTile => 'Керування налаштуваннями сповіщень';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
+  String get appSetting_notify_subtitleTile_android => 'Натисніть, щоб відкрити налаштування системних сповіщень';
 
   @override
   String get appSync_nowTile_titleText => 'Синхронізувати зараз';
@@ -1153,16 +1153,16 @@ class L10nUk extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
 
   @override
-  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+  String get appSync_noti_readyToSync_body => 'Підготовка до синхронізації...';
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
     String _temp0 = intl.Intl.selectLogic(
       synced,
       {
-        'synced': 'Synced ($type)',
-        'failed': 'Sync Failed ($type)',
-        'other': 'Syncing ($type)',
+        'synced': 'Синхронізовано ($type)',
+        'failed': 'Помилка синхронізації ($type)',
+        'other': 'Синхронізація ($type)',
       },
     );
     return '$_temp0';
@@ -1614,14 +1614,14 @@ class L10nUk extends L10n {
   String get channelName_appDebugger => 'Налагоджувач';
 
   @override
-  String get channelName_appSyncing => 'Sync Process';
+  String get channelName_appSyncing => 'Процес синхронізації';
 
   @override
-  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+  String get channelDesc_appSyncing => 'Використовується для відображення прогресу синхронізації та результатів без помилок';
 
   @override
-  String get channelName_appSyncFailed => 'Sync Failed';
+  String get channelName_appSyncFailed => 'Помилка синхронізації';
 
   @override
-  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
+  String get channelDesc_appSyncFailed => 'Використовується для сповіщення про невдачу синхронізації';
 }
