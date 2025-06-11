@@ -825,7 +825,7 @@ class L10nDe extends L10n {
   String get appSetting_notify_subtitleTile => 'Manage notification preferences';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open systemg notification settings';
+  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
 
   @override
   String get appSync_nowTile_titleText => 'Sync Now';

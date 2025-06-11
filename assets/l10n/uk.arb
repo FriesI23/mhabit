@@ -608,7 +608,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Нагадування",
+  "appSetting_reminderSubgroupText": "Нагадування та сповіщення",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -707,6 +707,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "Параметри синхронізації",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "Сповіщення",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Керування налаштуваннями сповіщень",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "Натисніть, щоб відкрити налаштування системних сповіщень",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Синхронізувати зараз",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "Синхронізація",
@@ -983,6 +989,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "Підготовка до синхронізації...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Синхронізовано ({type})} failed {Помилка синхронізації ({type})} other {Синхронізація ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронізація в режимі низького рівня даних",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "Увімкнено одну або кілька експериментальних функцій. Використовуйте з обережністю.",
@@ -1336,5 +1359,13 @@
   "channelName_appReminder": "Підказка",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Налагоджувач",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "Процес синхронізації",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "Використовується для відображення прогресу синхронізації та результатів без помилок",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "Помилка синхронізації",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "Використовується для сповіщення про невдачу синхронізації",
+  "@channelDesc_appSyncFailed": {}
 }
