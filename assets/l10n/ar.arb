@@ -608,7 +608,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "افتراضي",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "تذكير",
+  "appSetting_reminderSubgroupText": "تذكير وإشعار",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -1336,5 +1336,21 @@
   "channelName_appReminder": "تلميح",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "مصحح الأخطاء",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "appSetting_notify_titleTile": "الإشعارات",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "إدارة تفضيلات الإشعارات",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "اضغط لفتح إعدادات إشعارات النظام",
+  "@appSetting_notify_subtitleTile_android": {},
+  "channelName_appSyncing": "عملية المزامنة",
+  "@channelName_appSyncing": {},
+  "channelName_appSyncFailed": "فشلة المزامنة",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
+  "@channelDesc_appSyncFailed": {},
+  "appSync_noti_readyToSync_body": "التحضير للمزامنة...",
+  "@appSync_noti_readyToSync_body": {},
+  "channelDesc_appSyncing": "يستخدم لإظهار تقدم المزامنة والنتائج غير الفاشلة",
+  "@channelDesc_appSyncing": {}
 }
