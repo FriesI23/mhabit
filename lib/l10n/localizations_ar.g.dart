@@ -705,7 +705,7 @@ class L10nAr extends L10n {
   String get appSetting_collapsed_calendar_bararea_defaultText => 'افتراضي';
 
   @override
-  String get appSetting_reminderSubgroupText => 'تذكير';
+  String get appSetting_reminderSubgroupText => 'تذكير وإشعار';
 
   @override
   String get appSetting_dailyReminder_titleText => 'التذكير اليومي';
@@ -819,13 +819,13 @@ class L10nAr extends L10n {
   String get appSetting_syncOption_titleText => 'خيارات المزامنة';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'الإشعارات';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+  String get appSetting_notify_subtitleTile => 'إدارة تفضيلات الإشعارات';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
+  String get appSetting_notify_subtitleTile_android => 'اضغط لفتح إعدادات إشعارات النظام';
 
   @override
   String get appSync_nowTile_titleText => 'مزامنة الآن';
@@ -1153,7 +1153,7 @@ class L10nAr extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataText => 'بيانات منخفضة';
 
   @override
-  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+  String get appSync_noti_readyToSync_body => 'التحضير للمزامنة...';
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
@@ -1608,14 +1608,14 @@ class L10nAr extends L10n {
   String get channelName_appDebugger => 'مصحح الأخطاء';
 
   @override
-  String get channelName_appSyncing => 'Sync Process';
+  String get channelName_appSyncing => 'عملية المزامنة';
 
   @override
-  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+  String get channelDesc_appSyncing => 'يستخدم لإظهار تقدم المزامنة والنتائج غير الفاشلة';
 
   @override
-  String get channelName_appSyncFailed => 'Sync Failed';
+  String get channelName_appSyncFailed => 'فشلة المزامنة';
 
   @override
-  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
+  String get channelDesc_appSyncFailed => 'يُستخدم للتنبيه عند فشل المزامنة';
 }

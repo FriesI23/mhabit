@@ -608,7 +608,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "افتراضي",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "تذكير",
+  "appSetting_reminderSubgroupText": "تذكير وإشعار",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -707,6 +707,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "خيارات المزامنة",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "الإشعارات",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "إدارة تفضيلات الإشعارات",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "اضغط لفتح إعدادات إشعارات النظام",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "مزامنة الآن",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "جاري المزامنة",
@@ -983,6 +989,8 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "بيانات منخفضة",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "التحضير للمزامنة...",
+  "@appSync_noti_readyToSync_body": {},
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "المزامنة في وضع البيانات المنخفضة",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "تم تفعيل ميزة تجريبية واحدة أو أكثر، استخدم بحذر.",
@@ -1336,5 +1344,13 @@
   "channelName_appReminder": "تلميح",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "مصحح الأخطاء",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "عملية المزامنة",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "يستخدم لإظهار تقدم المزامنة والنتائج غير الفاشلة",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "فشلة المزامنة",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
+  "@channelDesc_appSyncFailed": {}
 }
