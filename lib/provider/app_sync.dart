@@ -597,6 +597,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
               .then((mode) => mode == DataSaverMode.disabled),
         Connectivity().checkConnectivity().then((results) => results
             .map((e) => switch (e) {
+                  ConnectivityResult.none => false,
                   ConnectivityResult.wifi => config.syncMobileNetworks
                       .contains(AppSyncServerMobileNetwork.wifi),
                   ConnectivityResult.mobile => config.syncMobileNetworks
