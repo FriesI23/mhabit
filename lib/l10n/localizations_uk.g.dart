@@ -318,7 +318,7 @@ class L10nUk extends L10n {
   String get habitDisplay_settingButton_tooltip => 'Налаштування';
 
   @override
-  String get habitDisplay_statsMenu_statSubgroupText => 'поточний';
+  String get habitDisplay_statsMenu_statSubgroupText => 'Поточний';
 
   @override
   String get habitDisplay_statsMenu_completedTileText => 'Виконано';
@@ -1587,7 +1587,7 @@ class L10nUk extends L10n {
   String get confirmDialog_cancel_text => 'Скасувати';
 
   @override
-  String get snackbar_undoText => 'UNDO';
+  String get snackbar_undoText => 'СКАСУВАТИ';
 
   @override
   String get snackbar_dismissText => 'ВІДХИЛИТИ';
