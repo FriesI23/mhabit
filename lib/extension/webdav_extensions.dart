@@ -18,9 +18,9 @@ import 'package:simple_webdav_client/utils.dart';
 import '../common/exceptions.dart';
 
 extension WebDavResourceExtention on WebDavStdResource {
-  WebDavStdResourceProp<String> get getetag =>
-      find(WebDavElementNames.getetag, namespace: kDavNamespaceUrlStr).first
-          as WebDavStdResourceProp<String>;
+  WebDavStdResourceProp<String>? get getetag =>
+      find(WebDavElementNames.getetag, namespace: kDavNamespaceUrlStr)
+          .firstOrNull as WebDavStdResourceProp<String>?;
 
   WebDavStdResourceProp<ResourceTypes> get resourcetype =>
       find(WebDavElementNames.resourcetype, namespace: kDavNamespaceUrlStr)
