@@ -3,20 +3,25 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Release: 1.16.17+86
+# Pre-Release
 
-**✨ New Features**
+## 1.16.18+87
 
-- Add app network sync notification support (#287)
-  - add network sync notification for Android / iOS / macOS / Windows / Linux
-  - add in-app notification config for non-android
+<!-- **✨ New Features** -->
 
 **🌐 Localization**
 
-- Update Russian l10n translation, thanks to Yurt Page's contribution on Weblate.
-- Update Turkish l10n translation, thanks to Bora Atıcı and Soykan Aydın for their contributions on Weblate.
-- Update Ukrainian l10n translation, thank for PavloPogonets's contribution on Github.
+- Fix type in English l10n, thank for PavloPogonets's contribution on Github.
+- Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
+- Updated Ukrainian translation, thank to PavloPogonets's contribution on Github.
 
-<!-- **🧹 Others** -->
+**🧹 Others**
 
-<!-- **📝 Documentation** -->
+- Handled missing getetag property on some WebDAV servers (#298)
+- Fix synchronization issues in airplane mode [#295]
+- Ensure ARB files endwith newline
+
+**📝 Documentation**
+
+- Add documentation example for WebDAV synchronization (#292)

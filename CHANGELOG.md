@@ -3,6 +3,25 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.16.18+87-pre
+
+**🌐 Localization**
+
+- Fix type in English l10n, thank for PavloPogonets's contribution on Github.
+- Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
+- Updated Ukrainian translation, thank to PavloPogonets's contribution on Github.
+
+**🧹 Others**
+
+- Handled missing getetag property on some WebDAV servers (#298)
+- Fix synchronization issues in airplane mode [#295]
+- Ensure ARB files endwith newline
+
+**📝 Documentation**
+
+- Add documentation example for WebDAV synchronization (#292)
+
 ## 1.16.17+86
 
 **✨ New Features**
