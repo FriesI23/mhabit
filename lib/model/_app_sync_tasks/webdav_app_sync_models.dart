@@ -136,16 +136,21 @@ class WebDavResourceContainer {
   factory WebDavResourceContainer.fromResource(WebDavStdResource resource,
       {Uri? overridePath}) {
     assert(resource.error == null);
-    final getetag = resource.getetag;
-    if (getetag.error != null) throw getetag.error!;
-    if (getetag.status != HttpStatus.ok) {
-      throw WebDavStdResError(
-          "Resouce ${resource.path}'s dav:getetag status error, "
-          "prop=${getetag.toDebugString()}");
+
+    void checkProp(WebDavResourceProp prop) {
+      if (prop.error != null) throw prop.error!;
+      if (prop.status != HttpStatus.ok) {
+        throw WebDavStdResError("Resouce ${resource.path}'s "
+            "${prop.namespace}:${prop.name} status error, "
+            "prop=${prop.toDebugString()}");
+      }
     }
+
+    final getetag = resource.getetag;
+    if (getetag != null) checkProp(getetag);
     return WebDavResourceContainer(
       path: overridePath ?? resource.path,
-      etag: resource.getetag.value,
+      etag: resource.getetag?.value,
     );
   }
 
