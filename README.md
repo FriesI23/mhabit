@@ -174,6 +174,45 @@ sudo apt-get install libsecret-1-dev libjsoncpp-dev
 3. If an error occurs during the build process, please follow these
    [steps][flutter-linux] strictly.
 
+## Configuring WebDAV Synchronization (Beta)
+
+You will need a compatible server for it, e.g. Nextcloud, Koofr, etc. You will find some configuration examples below.
+
+### Nextcloud Configuration
+
+1. Create a dedicated app password in your Nextcloud:
+   - Go to Profile → Settings → Security → bottom of the page
+   - Enter an app name (e.g., "mhabit" or "test") and confirm your password
+   ![Create new app][nextcloud-test-app]
+   - Save the generated password
+   ![Retrieve app credentials][nextcloud-test-app-credentials]
+
+2. Configure mhabit with your Nextcloud server:
+   - Go to Settings → Sync Options → Sync Server → Current: WebDAV
+   - Enter your server URL (format: `https://example.com/remote.php/dav/files/[nextcloud user]`)
+   ![Server configuration][nextcloud-test-app-server-config]
+
+3. Perform initial sync:
+   - Now return back to Settings
+   - Click the refresh button next to `Sync Now`
+   - Successful connection will display sync status
+   ![First synchronization][nextcloud-test-app-first-sync]
+
+4. Enjoy automatic sync:
+   - Additional syncs will occur without other modals
+   - Verify sync status by checking the last sync timestamp
+   ![Success synchronizations][nextcloud-test-app-sync-success]
+
+### Koofr Configuration
+
+Follow the ["How do I connect a service to Koofr through WebDAV?"][koofr-webdav]
+guide to create an application password and complete the connection settings in the app.
+
+> A1: Don’t use the root directory directly. Instead, create your own folder inside Koofr,
+> e.g. `https://app.koofr.net/dav/Koofr/your-folder-name/`
+>
+> A2: If you see 429 error, please refer to [Error 429][koofr-err429].
+
 ## Contributing
 
 I am an independent developer and do not have professional expertise in writing
@@ -283,3 +322,10 @@ limitations under the License.
 [altstore]: https://altstore.io/
 [sidestore]: https://sidestore.io/
 [page-donors]: https://github.com/FriesI23/mhabit/wiki/Donors
+[nextcloud-test-app]: docs/README/images/nextcloud-test-app.png
+[nextcloud-test-app-credentials]: docs/README/images/nextcloud-test-app-credentials.png
+[nextcloud-test-app-server-config]: docs/README/images/nextcloud-test-app-server-config.png
+[nextcloud-test-app-first-sync]: docs/README/images/nextcloud-test-app-first-sync.png
+[nextcloud-test-app-sync-success]: docs/README/images/nextcloud-test-app-sync-success.png
+[koofr-webdav]: https://app.koofr.net/help/webdav#a-idhow-do-i-connect-a-service-to-koofr-through-webdava-how-do-i-connect-a-service-to-koofr-through-webdav
+[koofr-err429]: https://app.koofr.net/help/webdav#a-iderror-429a-error-429
