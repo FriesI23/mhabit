@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD029 -->
+<!-- markdownlint-disable MD029, MD033 -->
 
 # Table Habit
 
@@ -18,9 +18,12 @@ and keeps your data in sync across devices (currently via WebDAV, with more opti
 
 Moreover, this app completely open source.
 
+[![Get it on F-Droid][github-button]][github-myapp]
+
+**Android**:
+
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
-[![Get it on F-Droid][github-button]][github-myapp]
 
 **iOS**:
 
@@ -70,21 +73,32 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                                                    | desc.                      |
-| -------- | ----- | -------------------------------------------------------------------------- | -------------------------- |
-| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                           |                            |
-| ios      | ✅     | [Github][github-myapp] / ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                            |
-| macos    | ✅     | [Github][github-myapp]                                                     |                            |
-| windows  | 🟨     | [Github][github-myapp](1)                                                  | limit features: `reminder` |
-| linux    | 🟨     |                                                                            | limit features: `reminder` |
+| platform | build | publish                                                                                                                                                                                                       | desc.                      |
+| -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                                                                                                                                                              |                            |
+| ios      | ✅     | [Github][github-myapp] /<br/> SideLoad( [AltStore][altstore-source] / [SideStore][sidestore-source] / [Custom](#note-ios-installation-sideloading) ) /<br/> ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                            |
+| macos    | ✅     | [Github][github-myapp] / [HomeBrew](#note-macos-installation-homebrew-cask)                                                                                                                                   |                            |
+| windows  | ✅     | [Github][github-myapp](1)                                                                                                                                                                                     | limit features: `reminder` |
+| linux    | 🟨     |                                                                                                                                                                                                               | limit features: `reminder` |
 
 > 1. Windows version is still in beta, some features may be limited or unstable.
 
-### Note: Installation iOS (Sideloading)
+### Note: iOS Installation (Sideloading)
 
 1. Install [**AltStore**][altstore] / [**SideStore**][sidestore] follow official instructions.
 2. Download `mhabit-unsigned.ipa` on your iOS device directly from the [latest releases][github-myapp].
 3. Install this IPA file.
+
+### Note: macOS Installation (HomeBrew Cask)
+
+1. Add Third-Party Repo by running `brew tap FriesI23/brew-repo`.
+2. Install by running:
+
+```shell
+brew install table-habit
+# for pre-release version, use:
+brew install table-habit@beta
+```
 
 ### Note: Windows MSIX Insaller
 
