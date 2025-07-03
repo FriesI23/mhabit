@@ -701,7 +701,7 @@
   "@appSetting_debugger_titleText": {},
   "appSetting_about_titleText": "Про",
   "@appSetting_about_titleText": {},
-  "appSetting_experimentalFeatureTile_titleText": "Експериментальні особливості",
+  "appSetting_experimentalFeatureTile_titleText": "Експериментальні функції",
   "@appSetting_experimentalFeatureTile_titleText": {},
   "appSetting_synSubgroupText": "Синхронізувати",
   "@appSetting_synSubgroupText": {},
@@ -880,7 +880,7 @@
       }
     }
   },
-  "appSync_syncInterval_text": "{name, select, manual {Manual} minute5 {5 Minutes} minute15 {15 Minutes} minute30 {30 Minutes} hour1 {1 Hour} other {Unknown}}",
+  "appSync_syncInterval_text": "{name, select, manual {Вручну} minute5 {5 Хвилин} minute15 {15 Хвилин} minute30 {30 Хвилин} hour1 {1 Час} other {Unknown}}",
   "@appSync_syncInterval_text": {
     "description": "Localized display text for app sync interval",
     "placeholders": {
