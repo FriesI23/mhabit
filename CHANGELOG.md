@@ -1,7 +1,16 @@
-<!-- markdownlint-disable MD036 -->
 # Change log
 
 [中文](./docs/CHANGELOG/zh.md)
+
+## 1.16.19+88-pre
+
+**🌐 Localization**
+
+- Updated Ukrainian translation, thank to PavloPogonets's contribution on Github.
+
+**📝 Documentation**
+
+- Update README.md.
 
 ## 1.16.18+87-pre
 

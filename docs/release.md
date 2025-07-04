@@ -5,6 +5,16 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Release
 
+## 1.16.19+88
+
+**🌐 Localization**
+
+- Updated Ukrainian translation, thank to PavloPogonets's contribution on Github.
+
+**📝 Documentation**
+
+- Update README.md
+
 ## 1.16.18+87
 
 <!-- **✨ New Features** -->
