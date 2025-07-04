@@ -1,12 +1,3 @@
-<!-- markdownlint-disable MD036 -->
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
-
-# Release: 1.16.20+89
-
-<!-- **✨ New Features** -->
-
 **🌐 Localization**
 
 - Fix type in English l10n, thank for PavloPogonets's contribution on Github.
