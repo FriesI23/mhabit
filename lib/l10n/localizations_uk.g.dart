@@ -810,7 +810,7 @@ class L10nUk extends L10n {
   String get appSetting_about_titleText => 'Про';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Експериментальні особливості';
+  String get appSetting_experimentalFeatureTile_titleText => 'Експериментальні функції';
 
   @override
   String get appSetting_synSubgroupText => 'Синхронізувати';
@@ -1014,11 +1014,11 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       name,
       {
-        'manual': 'Manual',
-        'minute5': '5 Minutes',
-        'minute15': '15 Minutes',
-        'minute30': '30 Minutes',
-        'hour1': '1 Hour',
+        'manual': 'Вручну',
+        'minute5': '5 Хвилин',
+        'minute15': '15 Хвилин',
+        'minute30': '30 Хвилин',
+        'hour1': '1 Час',
         'other': 'Unknown',
       },
     );
