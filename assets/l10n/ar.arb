@@ -1352,5 +1352,20 @@
   "channelName_appSyncFailed": "فشلة المزامنة",
   "@channelName_appSyncFailed": {},
   "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
-  "@channelDesc_appSyncFailed": {}
+  "@channelDesc_appSyncFailed": {},
+  "appSync_noti_syncing_title": "{مزامنة، حدد، مزامنة {مزامنة ({type})} فشل {فشلت المزامنة ({type})} أخرى {مزامنة ({type})}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  }
 }
