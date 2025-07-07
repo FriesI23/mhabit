@@ -1160,9 +1160,9 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       synced,
       {
-        'synced': 'Synced ($type)',
-        'failed': 'Sync Failed ($type)',
-        'other': 'Syncing ($type)',
+        'synced': 'مزامنة ($type)',
+        'failed': 'فشلت المزامنة ($type)',
+        'other': 'مزامنة ($type)',
       },
     );
     return '$_temp0';

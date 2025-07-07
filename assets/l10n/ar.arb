@@ -991,6 +991,21 @@
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
   "appSync_noti_readyToSync_body": "التحضير للمزامنة...",
   "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {مزامنة ({type})} failed {فشلت المزامنة ({type})} other {مزامنة ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "المزامنة في وضع البيانات المنخفضة",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "تم تفعيل ميزة تجريبية واحدة أو أكثر، استخدم بحذر.",
@@ -1352,20 +1367,5 @@
   "channelName_appSyncFailed": "فشلة المزامنة",
   "@channelName_appSyncFailed": {},
   "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
-  "@channelDesc_appSyncFailed": {},
-  "appSync_noti_syncing_title": "{مزامنة، حدد، مزامنة {مزامنة ({type})} فشل {فشلت المزامنة ({type})} أخرى {مزامنة ({type})}",
-  "@appSync_noti_syncing_title": {
-    "placeholders": {
-      "synced": {
-        "type": "String",
-        "description": "<AppSyncNotiTitleEnum>.name",
-        "example": "synced"
-      },
-      "type": {
-        "type": "String",
-        "description": "Server type, see 'appSync_syncServerType_text' field",
-        "example": "WebDAV"
-      }
-    }
-  }
+  "@channelDesc_appSyncFailed": {}
 }
