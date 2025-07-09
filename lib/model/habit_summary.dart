@@ -229,6 +229,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   bool get isActived => status == HabitStatus.activated;
 
+  bool get isDeleted => status == HabitStatus.deleted;
+
   bool get isInProgress => isActived && !isComplated;
 
   HabitDailyGoal get habitOkValue {

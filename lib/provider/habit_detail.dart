@@ -115,6 +115,8 @@ class HabitDetailViewModel extends ChangeNotifier
   bool get isHabitArchived =>
       _habitDetailData != null ? _habitDetailData!.data.isArchived : false;
 
+  bool get isHabitDeleted => _habitDetailData?.data.isDeleted ?? false;
+
   HabitUUID? get habitUUID => _habitDetailData?.data.uuid;
 
   UniqueKey getInsideVersion() {

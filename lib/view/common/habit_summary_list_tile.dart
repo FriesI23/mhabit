@@ -123,6 +123,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
         strokeWidth: getTextScaler(context).scale(6.0),
         isComplated: data.isComplated,
         isArchived: data.isArchived,
+        isDeleted: data.isDeleted,
       ),
     );
   }
@@ -234,6 +235,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
               color: themeColor?.titleColor ?? defaultThemeColor.titleColor,
               textStyle: textTheme.bodyLarge!.copyWith(
                 color: themeColor?.titleColor ?? defaultThemeColor.titleColor,
+                decoration: data.isDeleted ? TextDecoration.lineThrough : null,
               ),
             ),
           ],

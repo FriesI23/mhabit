@@ -485,6 +485,7 @@ class _HabitDetailView extends State<HabitDetailView>
               colorType: viewmodel.habitColorType,
               isHabitCompleted: viewmodel.isHabitCompleted,
               isHabitArchived: viewmodel.isHabitArchived,
+              isHabitDeleted: viewmodel.isHabitDeleted,
               title: l10n != null
                   ? Text(l10n.habitDetail_summary_title)
                   : const Text("Summary"),
