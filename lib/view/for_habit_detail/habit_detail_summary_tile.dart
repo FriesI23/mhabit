@@ -25,6 +25,7 @@ class HabitDetailSummaryTile extends StatelessWidget {
   final HabitColorType? colorType;
   final bool isHabitCompleted;
   final bool isHabitArchived;
+  final bool isHabitDeleted;
   final Widget? title;
   final Widget? subtitle;
 
@@ -33,10 +34,11 @@ class HabitDetailSummaryTile extends StatelessWidget {
     required this.habitProgress,
     this.colorType,
     required this.isHabitCompleted,
-    required this.isHabitArchived,
+    this.isHabitArchived = false,
+    this.isHabitDeleted = false,
     this.title,
     this.subtitle,
-  });
+  }) : assert(!(isHabitArchived && isHabitDeleted));
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class HabitDetailSummaryTile extends StatelessWidget {
           strokeWidth: 6,
           isComplated: isHabitCompleted,
           isArchived: isHabitArchived,
+          isDeleted: isHabitDeleted,
           showComplatedIcon: false,
         ),
       ),

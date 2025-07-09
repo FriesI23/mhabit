@@ -16,6 +16,7 @@ import 'dart:math' as math;
 
 import 'package:animated_check/animated_check.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HabitProgressIndicator extends StatefulWidget {
   final double value;
@@ -27,6 +28,8 @@ class HabitProgressIndicator extends StatefulWidget {
   final bool showComplatedIcon;
   final bool isArchived;
   final bool showArchivedIcon;
+  final bool isDeleted;
+  final bool showDeletedIcon;
 
   const HabitProgressIndicator(
       {super.key,
@@ -38,7 +41,10 @@ class HabitProgressIndicator extends StatefulWidget {
       this.isComplated = false,
       this.showComplatedIcon = true,
       this.isArchived = false,
-      this.showArchivedIcon = true});
+      this.showArchivedIcon = true,
+      this.isDeleted = false,
+      this.showDeletedIcon = true})
+      : assert(!(isArchived && isDeleted));
 
   @override
   State<StatefulWidget> createState() => _HabitProgressIndicator();
@@ -116,7 +122,20 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
       padding: EdgeInsets.all(size / 5),
       child: FittedBox(
         child: Icon(
-          Icons.inventory_2_outlined,
+          MdiIcons.archiveOutline,
+          size: size,
+          color: widget.color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteFlag(BuildContext context, double size) {
+    return Container(
+      padding: EdgeInsets.all(size / 5),
+      child: FittedBox(
+        child: Icon(
+          MdiIcons.deleteVariant,
           size: size,
           color: widget.color,
         ),
@@ -137,6 +156,18 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
             widget.showArchivedIcon) return 1.0;
 
         if (!widget.isComplated && widget.showArchivedIcon) return 1.0;
+
+        return 0.0;
+      }
+
+      double getAnimatedDeleteOpcaticy() {
+        if (!widget.isDeleted) return 0.0;
+
+        if (widget.isComplated &&
+            !widget.showComplatedIcon &&
+            widget.showDeletedIcon) return 1.0;
+
+        if (!widget.isComplated && widget.showComplatedIcon) return 1.0;
 
         return 0.0;
       }
@@ -163,6 +194,12 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
           duration: widget.duration,
           curve: Curves.easeInOutCirc,
           child: _buildArchiveFlag(context, constraints.maxHeight),
+        ),
+        AnimatedOpacity(
+          opacity: getAnimatedDeleteOpcaticy(),
+          duration: widget.duration,
+          curve: Curves.easeInOutCirc,
+          child: _buildDeleteFlag(context, constraints.maxHeight),
         ),
       ]);
     }

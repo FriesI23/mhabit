@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -677,7 +678,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       recordMap[record.orgStatus]!.add(record.habitUUID);
     }
 
-    appLog.habit.debug("$runtimeType.revertHabitsStatus do", ex: [recordList]);
+    appLog.habit.debug("$runtimeType.revertHabitsStatus do",
+        ex: [recordList, recordMap]);
     for (var r in recordMap.entries) {
       await _changeHabitsStatus(r.value, r.key);
     }
@@ -686,12 +688,12 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<List<HabitStatusChangedRecord>?> archivedSelectedHabits() async {
-    final realNeedArchivedUUID = <HabitUUID>[];
-    for (var habitUUID in _selectorData.selectedColl) {
-      if (getHabit(habitUUID)?.status != HabitStatus.archived) {
-        realNeedArchivedUUID.add(habitUUID);
-      }
-    }
+    final realNeedArchivedUUID = _selectorData.selectedColl
+        .map(getHabit)
+        .whereNotNull()
+        .where((e) => e.status != HabitStatus.archived)
+        .map((e) => e.uuid)
+        .toList();
 
     if (realNeedArchivedUUID.isEmpty) {
       appLog.value.warn("$runtimeType.archivedSelectedHabits",
@@ -705,14 +707,10 @@ class HabitSummaryViewModel extends ChangeNotifier
         await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
 
     if (!_sortableCache.filter.allowArchivedHabits) {
-      final filteredSortCache = List.of(
-        lastSortedDataCache.where(
-          (element) => element is HabitSummaryDataSortCache &&
-                  realNeedArchivedUUID.contains(element.uuid)
-              ? false
-              : true,
-        ),
-      );
+      final filteredSortCache = lastSortedDataCache
+          .where((element) => !(element is HabitSummaryDataSortCache &&
+              realNeedArchivedUUID.contains(element.uuid)))
+          .toList();
       _sortableCache =
           _sortableCache.copyWith(lastSortedDataCache: filteredSortCache);
       _saveAndDispatch(_sortableCache);
@@ -723,12 +721,12 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<List<HabitStatusChangedRecord>?> unarchivedSelectedHabits() async {
-    final realNeedUnarchivedUUID = <HabitUUID>[];
-    for (var habitUUID in _selectorData.selectedColl) {
-      if (getHabit(habitUUID)?.status == HabitStatus.archived) {
-        realNeedUnarchivedUUID.add(habitUUID);
-      }
-    }
+    final realNeedUnarchivedUUID = _selectorData.selectedColl
+        .map(getHabit)
+        .whereNotNull()
+        .where((e) => e.status == HabitStatus.archived)
+        .map((e) => e.uuid)
+        .toList();
 
     if (realNeedUnarchivedUUID.isEmpty) {
       appLog.value.warn("$runtimeType.unarchivedSelectedHabits",
@@ -750,8 +748,23 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<List<HabitStatusChangedRecord>?> deleteSelectedHabits() async {
-    final result = await _changeHabitsStatus(
-        _selectorData.selectedColl.toList(), HabitStatus.deleted);
+    final realNeedDeletedUUID = _selectorData.selectedColl
+        .map(getHabit)
+        .whereNotNull()
+        .where((e) => e.status != HabitStatus.deleted)
+        .map((e) => e.uuid)
+        .toList();
+
+    if (realNeedDeletedUUID.isEmpty) {
+      appLog.value.warn("$runtimeType.deleteSelectedHabits",
+          beforeVal: _selectorData,
+          afterVal: realNeedDeletedUUID,
+          ex: ["real need deleted habit uuid not found"]);
+      return null;
+    }
+
+    final result =
+        await _changeHabitsStatus(realNeedDeletedUUID, HabitStatus.deleted);
 
     resortData(listen: false);
 

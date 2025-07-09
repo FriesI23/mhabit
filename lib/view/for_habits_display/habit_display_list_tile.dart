@@ -89,7 +89,7 @@ class HabitDisplayListTile extends StatelessWidget {
           )
         : null;
 
-    if (data.isArchived) {
+    if (data.isArchived || data.isDeleted) {
       extensions = buildArchivedHabitThemeExtensions();
     }
 
