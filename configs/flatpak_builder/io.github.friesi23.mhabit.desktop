@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Table Habit
+Comment=Micro habit tracker for personal growth
+Exec=mhabit
+Icon=io.github.friesi23.mhabit
+Terminal=false
+Type=Application
+Categories=Utility;Productivity;
+StartupNotify=true
