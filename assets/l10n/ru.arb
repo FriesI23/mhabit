@@ -608,7 +608,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "По умолчанию",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Напоминание",
+  "appSetting_reminderSubgroupText": "Напоминание и оповещение",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -1336,5 +1336,36 @@
   "channelName_appReminder": "Подсказка",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Отладчик",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "appSetting_notify_titleTile": "Оповещения",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Настройка оповещения",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "Нажмите, чтобы открыть настройки системных оповещений",
+  "@appSetting_notify_subtitleTile_android": {},
+  "appSync_noti_readyToSync_body": "Подготовка к синхронизации...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Синхронизировано ({type})} failed {Ошибка синхронизации ({type})} other {Синхронизация ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
+  "channelName_appSyncing": "Процесс синхронизации",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "Используется для отображения прогресса синхронизации и успешных результатов",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "Синхронизация не удалась",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "Используется для оповещения когда сихнронизация не удалась",
+  "@channelDesc_appSyncFailed": {}
 }
