@@ -3,6 +3,8 @@
 ---
 app-id: io.github.friesi23.mhabit
 runtime: org.freedesktop.Sdk
+# Make sure to keep this version in sync with corresponding release CI
+# e.g. .github/workflows/app-release.yaml#jobs.build-linux-flatpak
 runtime-version: "23.08"
 sdk: org.freedesktop.Sdk
 command: mhabit
