@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop">
+  <id>io.github.friesi23.mhabit</id>
+  <name>Table Habit</name>
+  <summary>Micro habit tracker for personal growth</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <developer_name>Fries_I23</developer_name>
+  <launchable type="desktop-id">io.github.friesi23.mhabit.desktop</launchable>
+  <provides>
+    <binary>mhabit</binary>
+  </provides>
+  <description>
+    <p>"Table Habit" is an app that helps you establish and track your own micro habit.
+      It includes a complete set of growth curves and charts to help you build habits more
+      effectively,
+      and keeps your data in sync across devices (currently via WebDAV, with more options coming
+      soon).</p>
+    <p>Moreover, this app is completely open source and comes with these features:</p>
+    <ul>
+      <li>A scoring system to help develop your own micro habits.</li>
+      <li>Support both positive and negative habit.</li>
+      <li>An easy-to-use interface for habit check in.</li>
+      <li>Different colors used to distinguish between various habits.</li>
+      <li>Easily export and import habits using a human-readable format (JSON).</li>
+      <li>Adapt to Material3 and Dynamic Color for Android 12 and later versions.</li>
+      <li>Adaptation for landscape and large screen devices.</li>
+      <li>[Experimental] Support network sync with WebDAV.</li>
+      <li>No ADs in this app.</li>
+    </ul>
+  </description>
+  <url type="vcs-browser">https://github.com/FriesI23/mhabit</url>
+  <url type="bugtracker">https://github.com/FriesI23/mhabit/issues</url>
+  <url type="homepage">https://github.com/FriesI23/mhabit</url>
+  <url type="donation">https://github.com/FriesI23/mhabit?tab=readme-ov-file#donate</url>
+  <url type="translate">https://hosted.weblate.org/engage/mhabit/</url>
+  <url type="contribute">https://github.com/FriesI23/mhabit?tab=readme-ov-file#contributing</url>
+  <!-- Auto generate by: https://hughsie.github.io/oars/generate.html -->
+  <content_rating type="oars-1.1"/>
+  <!-- https://specifications.freedesktop.org/menu-spec/latest/category-registry.html -->
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <releases>
+    <release version="1.16.20+89" date="2025-07-14">
+      <url type="details">https://github.com/FriesI23/mhabit/blob/main/CHANGELOG.md</url>
+    </release>
+  </releases>
+</component>

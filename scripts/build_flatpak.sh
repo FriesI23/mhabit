@@ -25,6 +25,7 @@ check_command() {
     fi
 }
 
+check_command flutter
 check_command flatpak
 check_command flatpak-builder
 

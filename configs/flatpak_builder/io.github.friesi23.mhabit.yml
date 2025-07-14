@@ -60,6 +60,7 @@ modules:
     build-commands:
       - install -D $BUNDLE_PATH/mhabit /app/bin/mhabit
       - install -Dm644 assets/logo/macos.svg /app/share/icons/hicolor/scalable/apps/io.github.friesi23.mhabit.svg
+      - install -Dm644 configs/flatpak_builder/io.github.friesi23.mhabit.metainfo.xml -t /app/share/metainfo
       - install -Dm644 configs/flatpak_builder/io.github.friesi23.mhabit.desktop -t /app/share/applications
       - cp -r $BUNDLE_PATH/lib /app/bin/lib
       - cp -r $BUNDLE_PATH/data /app/bin/data
