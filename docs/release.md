@@ -1,26 +1,22 @@
-<!-- markdownlint-disable MD036 -->
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
+# Pre-Released
 
-# Release: 1.16.20+89
+## 1.16.21+90
 
-<!-- **✨ New Features** -->
+**✨ New Features**
+
+- Show UI feedback on habit deletion (#303)
 
 **🌐 Localization**
 
-- Fix type in English l10n, thank for PavloPogonets's contribution on Github.
 - Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
-- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
+- Update Russian translation, thanks to Yurt Page's contribution on Weblate.
 - Updated Ukrainian translation, thank to PavloPogonets's contribution on Github.
 
 **🧹 Others**
 
-- Handled missing getetag property on some WebDAV servers (#298)
-- Fix synchronization issues in airplane mode (#295)
-- Ensure ARB files endwith newline
+- Add Flatpak support (#304)
+- Bump dependencies (#306)
 
 **📝 Documentation**
 
-- Add documentation example for WebDAV synchronization (#292)
-- Update README.md
+- Enhance Linux build instructions (#291)
