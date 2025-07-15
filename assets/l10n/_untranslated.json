@@ -2347,18 +2347,6 @@
     "channelDesc_appSyncFailed"
   ],
 
-  "ru": [
-    "appSetting_notify_titleTile",
-    "appSetting_notify_subtitleTile",
-    "appSetting_notify_subtitleTile_android",
-    "appSync_noti_readyToSync_body",
-    "appSync_noti_syncing_title",
-    "channelName_appSyncing",
-    "channelDesc_appSyncing",
-    "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
-  ],
-
   "tr": [
     "appSetting_notify_titleTile",
     "appSetting_notify_subtitleTile",

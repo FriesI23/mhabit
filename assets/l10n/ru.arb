@@ -707,6 +707,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "Настройки синхронизации",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "Оповещения",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Настройка оповещения",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "Нажмите, чтобы открыть настройки системных оповещений",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Синхронизировать сейчас",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "Синхронизация",
@@ -983,6 +989,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "Низкое потребление данных",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "Подготовка к синхронизации...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Синхронизировано ({type})} failed {Ошибка синхронизации ({type})} other {Синхронизация ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронизация в режиме низких данных",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "Включено одну или несколько экспериментальных возможностей. Используйте с осторожностью.",
@@ -1337,29 +1360,6 @@
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Отладчик",
   "@channelName_appDebugger": {},
-  "appSetting_notify_titleTile": "Оповещения",
-  "@appSetting_notify_titleTile": {},
-  "appSetting_notify_subtitleTile": "Настройка оповещения",
-  "@appSetting_notify_subtitleTile": {},
-  "appSetting_notify_subtitleTile_android": "Нажмите, чтобы открыть настройки системных оповещений",
-  "@appSetting_notify_subtitleTile_android": {},
-  "appSync_noti_readyToSync_body": "Подготовка к синхронизации...",
-  "@appSync_noti_readyToSync_body": {},
-  "appSync_noti_syncing_title": "{synced, select, synced {Синхронизировано ({type})} failed {Ошибка синхронизации ({type})} other {Синхронизация ({type})}}",
-  "@appSync_noti_syncing_title": {
-    "placeholders": {
-      "synced": {
-        "type": "String",
-        "description": "<AppSyncNotiTitleEnum>.name",
-        "example": "synced"
-      },
-      "type": {
-        "type": "String",
-        "description": "Server type, see 'appSync_syncServerType_text' field",
-        "example": "WebDAV"
-      }
-    }
-  },
   "channelName_appSyncing": "Процесс синхронизации",
   "@channelName_appSyncing": {},
   "channelDesc_appSyncing": "Используется для отображения прогресса синхронизации и успешных результатов",
