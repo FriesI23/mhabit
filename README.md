@@ -1,4 +1,5 @@
-<!-- markdownlint-disable MD029, MD033 -->
+<!-- markdownlint-disable no-inline-html -->
+<!-- markdownlint-disable link-image-reference-definitions -->
 
 # Table Habit
 
@@ -73,15 +74,16 @@ You can customize each habit with the following options:
 
 ## Supported platforms
 
-| platform | build | publish                                                                                                                                                                                                       | desc.                      |
-| -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| android  | ✅     | [Github][github-myapp] / [F-Droid][fdroid-myapp]                                                                                                                                                              |                            |
-| ios      | ✅     | [Github][github-myapp] /<br/> SideLoad( [AltStore][altstore-source] / [SideStore][sidestore-source] / [Custom](#note-ios-installation-sideloading) ) /<br/> ~~[TestFlight(Pre)][ios-testflight-pre-release]~~ |                            |
-| macos    | ✅     | [Github][github-myapp] / [HomeBrew](#note-macos-installation-homebrew-cask)                                                                                                                                   |                            |
-| windows  | ✅     | [Github][github-myapp](1)                                                                                                                                                                                     | limit features: `reminder` |
-| linux    | 🟨     |                                                                                                                                                                                                               | limit features: `reminder` |
+| platform | build | publish                                                                                                                                                                                                                                                                   | desc.                      |
+| -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| android  | ✅    | <ul><li>[Github - apk][github-myapp]</li><li>[F-Droid][fdroid-myapp]</li></ul>                                                                                                                                                                                            |                            |
+| ios      | ✅    | <ul><li>[Github - ipa][github-myapp]</li><li>[AltStore - custom source][altstore-source]</li><li>[SideStore - custom source][sidestore-source]</li><li>[SideLoad](#note-ios-installation-sideloading)</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~</li></ul> |                            |
+| macos    | ✅    | <ul><li>[Github - dmg][github-myapp]</li><li>[HomeBrew - custom tap](#note-macos-installation-homebrew-cask)</li></ul>                                                                                                                                                    |                            |
+| windows  | ✅    | <ul><li>[Github - msix][github-myapp][（1）](supported-platforms-1)</li></ul>                                                                                                                                                                                             | limit features: `reminder` |
+| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp][（1）](supported-platforms-1)</li></ul>                                                                                                                                                                                          | limit features: `reminder` |
 
-> 1. Windows version is still in beta, some features may be limited or unstable.
+> <a name="supported-platforms-1"></a> 1. Windows & Linux versions are still in beta,
+> some features may be limited or unstable.
 
 ### Note: iOS Installation (Sideloading)
 
@@ -116,7 +118,8 @@ on each machine which attempt to install it.
 
 Install certificate by following the steps below:
 
-> See [**here**][msix-install-cert] for steps with screenshots.
+> See [**"Installing a test certificate directly from an MSIX package"**][msix-install-cert]
+> for steps with screenshots.
 
 1. Right click msix installer package, select **Properties**
 2. Switch to **Digital Signatures** tab and click signer under **Embedded Signatures**
@@ -150,20 +153,21 @@ After operations above, this MSIX package should now be able to install successf
 
 ## Todo
 
-| status      | progress                   | desc. |
-| ----------- | -------------------------- | ----- |
-| -           | Publish to Google Play     |       |
-| In Progress | Publish to iOS App Store   |       |
-| -           | Publish to macOS App Store |       |
+| status      | progress                   | desc.                 |
+| ----------- | -------------------------- | --------------------- |
+| In Progress | Publish to Flathub         |                       |
+| -           | Publish to Google Play     |                       |
+| In Progress | Publish to iOS App Store   | Waiting for Review 😔 |
+| -           | Publish to macOS App Store |                       |
 
 ## Build from source
 
 Make sure your flutter version same as `.flutter`, You can use `fvm`` to keep
 multiple versions on your local machine, or simply use this submodule to build it!
 
-1. in project folder, run `flutter pub get`
-2. open an android or ios emulator
-3. run `flutter run --debug`
+1. In the project folder, run `flutter pub get`
+2. Launch an emulator or connect a device for Android, iOS, Windows, macOS, or Linux
+3. Run `flutter run --debug` (optional: `--profile` or `--release`)
 
 ### Building for iOS / macOS
 
@@ -173,22 +177,20 @@ iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead 
 
 **requires:**
 
-1. installing the following packages for the [SQFlite database][sqflite-ffi-linux]:
+1. installing the following packages for [SQFlite database][sqflite-ffi-linux]
+   and [`flutter_secure_storage`][fss-linux]:
 
    ```shell
-   sudo apt-get -y install libsqlite3-0 libsqlite3-dev
+   sudo apt-get -y install \
+      libsqlite3-0 libsqlite3-dev \
+      libsecret-1-dev libjsoncpp-dev
    ```
 
-2. Ensure that all dependencies required by [`flutter_secure_storage`][fss-linux] are satisfied:
+2. Please follow this [official guide][flutter-linux] to initialize your
+   Flutter development environment.
 
-   ```shell
-   sudo apt-get install libsecret-1-dev libjsoncpp-dev
-   ```
+3. Once you've got the following result with the command `flutter doctor` you are good to go:
 
-3. Please follow these
-   [steps][flutter-linux] strictly.
-
-4. Once you've got the following result with the command `flutter doctor` you are good to go:
    ```shell
    Doctor summary (to see all details, run flutter doctor -v):
    [✓] Flutter (Channel stable, X.X.X, on Your Linux Platform)
@@ -197,15 +199,16 @@ iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead 
    (...)
    ```
 
-5. In project folder, run `flutter pub get`
+4. In project folder, run `flutter pub get`
 
-6. Then run `flutter build linux --release`, once finished you should see:
+5. Then run `flutter build linux --release`, once finished you should see:
+
    ```shell
    Building Linux application...
    ✓ Built build/linux/x64/release/bundle/mhabit
    ```
 
-7. Enjoy by running the ouput binary `build/linux/x64/release/bundle/mhabit`
+6. Enjoy by running the ouput binary `build/linux/x64/release/bundle/mhabit`
 
 ## Configuring WebDAV Synchronization (Beta)
 
@@ -214,27 +217,30 @@ You will need a compatible server for it, e.g. Nextcloud, Koofr, etc. You will f
 ### Nextcloud Configuration
 
 1. Create a dedicated app password in your Nextcloud:
+
    - Go to Profile → Settings → Security → bottom of the page
    - Enter an app name (e.g., "mhabit" or "test") and confirm your password
-   ![Create new app][nextcloud-test-app]
+     ![Create new app][nextcloud-test-app]
    - Save the generated password
-   ![Retrieve app credentials][nextcloud-test-app-credentials]
+     ![Retrieve app credentials][nextcloud-test-app-credentials]
 
 2. Configure mhabit with your Nextcloud server:
+
    - Go to Settings → Sync Options → Sync Server → Current: WebDAV
    - Enter your server URL (format: `https://example.com/remote.php/dav/files/[nextcloud user]`)
-   ![Server configuration][nextcloud-test-app-server-config]
+     ![Server configuration][nextcloud-test-app-server-config]
 
 3. Perform initial sync:
+
    - Now return back to Settings
    - Click the refresh button next to `Sync Now`
    - Successful connection will display sync status
-   ![First synchronization][nextcloud-test-app-first-sync]
+     ![First synchronization][nextcloud-test-app-first-sync]
 
 4. Enjoy automatic sync:
    - Additional syncs will occur without other modals
    - Verify sync status by checking the last sync timestamp
-   ![Success synchronizations][nextcloud-test-app-sync-success]
+     ![Success synchronizations][nextcloud-test-app-sync-success]
 
 ### Koofr Configuration
 
@@ -266,7 +272,7 @@ When contribute code to this project, please try to follow
 [![ETH][eth-badge]][eth-addr]
 [![BTC][btc-badge]][btc-addr]
 
-> See **[here][page-donors]** for full list of donors.
+> Visit [**Donors**][page-donors] page for full list.
 
 ## Translation
 
@@ -315,8 +321,6 @@ limitations under the License.
 [get-it-on-sidestore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore.png
 [altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
 [sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
-<!-- TODO: enable testflight after ios pubnlic test is ready -->
-<!-- markdownlint-disable-next-line MD053 -->
 [testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
@@ -331,9 +335,6 @@ limitations under the License.
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
-
-<!-- [l10n-stat-pic]: docs/README/images/l10n-stat.svg -->
-
 [l10n-doc]: docs/add_new_locale_support.md
 [buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 [alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
