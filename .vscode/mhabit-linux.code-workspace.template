@@ -1,0 +1,53 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "dart.flutterSdkPath": "../.flutter",
+        "dart.flutterSdkPaths": [
+            ".flutter"
+        ],
+        "dart.analysisExcludedFolders": [
+            ".fvm",
+            ".flutter"
+        ],
+        "xml.format.spaceBeforeEmptyCloseTag": false,
+        "[xml]":{
+            "files.trimFinalNewlines": false
+        }
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "mhabit",
+                "request": "launch",
+                "type": "dart",
+                "flutterMode": "debug",
+                "env": {
+                    "DISPLAY": ":10.0"
+                }
+            },
+            {
+                "name": "mhabit profile",
+                "request": "launch",
+                "type": "dart",
+                "flutterMode": "profile",
+                "env": {
+                    "DISPLAY": ":10.0"
+                }
+            },
+            {
+                "name": "mhabit release",
+                "request": "launch",
+                "type": "dart",
+                "flutterMode": "release",
+                "env": {
+                    "DISPLAY": ":10.0"
+                }
+            }
+        ]
+    }
+}
