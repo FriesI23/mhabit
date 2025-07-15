@@ -1596,13 +1596,13 @@ class L10nUk extends L10n {
   String get contributors_tile_title => 'Дописувачі';
 
   @override
-  String get userAction_tap => 'Торкніться';
+  String get userAction_tap => 'Тапніть';
 
   @override
-  String get userAction_doubleTap => 'Двомісний';
+  String get userAction_doubleTap => 'Двічі';
 
   @override
-  String get userAction_longTap => 'довгий';
+  String get userAction_longTap => 'Довгий';
 
   @override
   String get channelName_habitReminder => 'Нагадування про звички';
