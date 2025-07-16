@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 # Copyright 2025 Fries_I23
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,37 +14,81 @@
 # limitations under the License.
 
 check_command() {
-    local cmd="$1"
-    if ! command -v "$cmd" &>/dev/null; then
-        echo "Error: '$cmd' command not found." >&2
-        exit 1
-    fi
+  local cmd="$1"
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "Error: '$cmd' command not found." >&2
+    exit 1
+  fi
 }
 
 check_command xmlstarlet
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 META_PATH="$HERE/../configs/flatpak_builder/io.github.friesi23.mhabit.metainfo.xml"
+RELEASE_META_PATH="$HERE/../flatpak/io.github.friesi23.mhabit.metainfo.xml"
 
 TIMESTAMP=$(date +"%Y-%m-%d")
-VERSION=$(grep -E '^version:' pubspec.yaml | head -n1 | cut -d':' -f2- | xargs)
-DETAILS_URL="https://github.com/FriesI23/mhabit/blob/main/CHANGELOG.md"
+VERSION=$(awk -F': ' '/^version:/ {gsub(/\r/, "", $2); print $2; exit}' pubspec.yaml)
+if [[ "$VERSION" =~ ^(.*)\-pre$ ]]; then
+  DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/pre-v${BASH_REMATCH[1]}"
+else
+  DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/v$VERSION"
+fi
 echo "version: $VERSION"
 echo "date: $TIMESTAMP"
+echo "details: $DETAILS_URL"
 echo "meta-path: $META_PATH"
+echo "release-meta-path: $RELEASE_META_PATH"
+echo "---"
 
-echo "updating new version in metainfo.xml..."
-xmlstarlet ed -L \
-    -d "/component/releases" \
-    -s "/component" -t elem -n releases -v "" \
-    -s "/component/releases" -t elem -n release -v "" \
-    -i "/component/releases/release" -t attr -n version -v "$VERSION" \
-    -i "/component/releases/release" -t attr -n date -v "$TIMESTAMP" \
-    -s "/component/releases/release" -t elem -n url -v "$DETAILS_URL" \
-    -i "/component/releases/release/url" -t attr -n type -v "details" \
-    "$META_PATH"
+check_metainfo() {
+  local meta_path="$1"
+  if [[ "$(uname)" == "Linux" && -x "$(command -v appstreamcli)" ]]; then
+    echo "checking metainfo at: $meta_path..."
+    if ! appstreamcli validate --pedantic --format yaml "$meta_path"; then
+      exit 1
+    fi
+  fi
+}
 
-if [[ "$(uname)" == "Linux" && -x "$(command -v appstreamcli)" ]]; then
-    echo "checking metainfo.xml..."
-    appstreamcli validate --pedantic --format yaml $META_PATH
+echo "updating new version in $META_PATH..."
+EXIST=$(xmlstarlet sel -t -v "count(/component/releases/release[@version='$VERSION'])" "$META_PATH")
+if [ "$EXIST" -ne 0 ]; then
+  echo "version $VERSION already exists, skipping add."
+else
+  RELEASES_EXIST=$(xmlstarlet sel -t -v "count(/component/releases)" "$META_PATH")
+  if [ "$RELEASES_EXIST" -eq 0 ]; then
+    xmlstarlet ed -L \
+      -d "/component/releases" \
+      -s "/component" -t elem -n releases -v "" \
+      -s "/component/releases" -t elem -n release -v "" \
+      -i "/component/releases/release" -t attr -n version -v "$VERSION" \
+      -i "/component/releases/release" -t attr -n date -v "$TIMESTAMP" \
+      -s "/component/releases/release" -t elem -n url -v "$DETAILS_URL" \
+      -i "/component/releases/release/url" -t attr -n type -v "details" \
+      "$META_PATH"
+  else
+    xmlstarlet ed -L \
+      -i "/component/releases/release[1]" -t elem -n release_tmp -v "" \
+      -i "/component/releases/release_tmp" -t attr -n version -v "$VERSION" \
+      -i "/component/releases/release_tmp" -t attr -n date -v "$TIMESTAMP" \
+      -s "/component/releases/release_tmp" -t elem -n url -v "$DETAILS_URL" \
+      -i "/component/releases/release_tmp/url" -t attr -n type -v "details" \
+      -r "/component/releases/release_tmp" -v release \
+      "$META_PATH"
+  fi
 fi
+
+check_metainfo $META_PATH
+
+echo "processing $RELEASE_META_PATH..."
+PRE_SUFFIX_XPATH="substring(@version, string-length(@version) - 3) = '-pre'"
+NEW_CONTENT=$(xmlstarlet ed -d "/component/releases/release[$PRE_SUFFIX_XPATH]" "$META_PATH")
+OLD_CONTENT=$(cat "$RELEASE_META_PATH")
+if [ "$NEW_CONTENT" != "$OLD_CONTENT" ]; then
+  echo "$NEW_CONTENT" >"$RELEASE_META_PATH"
+else
+  echo "no changes after removal, skipping update."
+fi
+
+check_metainfo $RELEASE_META_PATH
