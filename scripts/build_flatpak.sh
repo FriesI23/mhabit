@@ -37,5 +37,8 @@ flutter build linux --release
 
 mkdir -p "$HERE/../build/linux/flatpak_builder"
 cd "$HERE/../build/linux/flatpak_builder"
-flatpak-builder --force-clean build-dir "$HERE/../configs/flatpak_builder/io.github.friesi23.mhabit.yml" --repo=repo-dir
-flatpak build-bundle repo-dir mhabit.flatpak io.github.friesi23.mhabit
+flatpak-builder --force-clean build-dir \
+    --repo=repo-dir \
+    --default-branch=main \
+    "$HERE/../configs/flatpak_builder/io.github.friesi23.mhabit.yml"
+flatpak build-bundle repo-dir mhabit.flatpak io.github.friesi23.mhabit main
