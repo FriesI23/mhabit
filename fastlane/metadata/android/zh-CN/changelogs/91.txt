@@ -1,0 +1,19 @@
+**✨ 新功能**
+
+- 删除习惯时显示 UI 反馈（#303）
+
+**🌐 本地化**
+
+- 更新阿拉伯语翻译，感谢 abdelbasset jabrane 在 Weblate 上的贡献。
+- 更新俄语翻译，感谢 Yurt Page 在 Weblate 上的贡献。
+- 更新乌克兰语翻译，感谢 PavloPogonets 在 GitHub 上的贡献。
+
+**🧹 其他**
+
+- 增加 Flatpak 支持（#304）
+- 更新依赖项（#306）
+- 为提交到 Flathub 做准备（#307）
+
+**📝 文档**
+
+- 加强了 Linux 的构建说明

@@ -1,5 +1,3 @@
-# Released: v1.16.22+91
-
 **✨ New Features**
 
 - Show UI feedback on habit deletion (#303)

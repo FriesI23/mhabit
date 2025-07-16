@@ -41,5 +41,9 @@
   <categories>
     <category>Utility</category>
   </categories>
-  <releases/>
+  <releases>
+    <release version="1.16.22+91" date="2025-07-16">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.16.22+91</url>
+    </release>
+  </releases>
 </component>
