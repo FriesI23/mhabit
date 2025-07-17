@@ -20,6 +20,7 @@ and keeps your data in sync across devices (currently via WebDAV, with more opti
 Moreover, this app completely open source.
 
 [![Get it on F-Droid][github-button]][github-myapp]
+[![Get it on Falthub][get-it-on-flathub]][flathub-source]
 
 **Android**:
 
@@ -79,8 +80,8 @@ You can customize each habit with the following options:
 | android  | ✅    | <ul><li>[Github - apk][github-myapp]</li><li>[F-Droid][fdroid-myapp]</li></ul>                                                                                                                                                                                            |                            |
 | ios      | ✅    | <ul><li>[Github - ipa][github-myapp]</li><li>[AltStore - custom source][altstore-source]</li><li>[SideStore - custom source][sidestore-source]</li><li>[SideLoad](#note-ios-installation-sideloading)</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~</li></ul> |                            |
 | macos    | ✅    | <ul><li>[Github - dmg][github-myapp]</li><li>[HomeBrew - custom tap](#note-macos-installation-homebrew-cask)</li></ul>                                                                                                                                                    |                            |
-| windows  | ✅    | <ul><li>[Github - msix][github-myapp][（1）](supported-platforms-1)</li></ul>                                                                                                                                                                                             | limit features: `reminder` |
-| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp][（1）](supported-platforms-1)</li></ul>                                                                                                                                                                                          | limit features: `reminder` |
+| windows  | ✅    | <ul><li>[Github - msix][github-myapp] [(1)](supported-platforms-1)</li></ul>                                                                                                                                                                                             | limit features: `reminder` |
+| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp] [(1)](supported-platforms-1)</li><li>[FLathub][flathub-source]</li></ul>                                                                                                                                                        | limit features: `reminder` |
 
 > <a name="supported-platforms-1"></a> 1. Windows & Linux versions are still in beta,
 > some features may be limited or unstable.
@@ -324,6 +325,8 @@ limitations under the License.
 [testflight-button]: docs/README/images/testflight-get-it-on.png
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
+[get-it-on-flathub]: docs/README/images/flathub-get-it-on.png
+[flathub-source]: https://flathub.org/apps/io.github.friesi23.mhabit
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
