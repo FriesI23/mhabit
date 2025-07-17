@@ -13,6 +13,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#!/bin/bash
+
+PREFIX=""
+
+read_cmdopts() {
+
+  while getopts ":p:" opt; do
+    case $opt in
+    p)
+      PREFIX="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+    esac
+  done
+}
+
 check_command() {
   local cmd="$1"
   if ! command -v "$cmd" &>/dev/null; then
@@ -21,6 +44,7 @@ check_command() {
   fi
 }
 
+read_cmdopts "$@"
 check_command xmlstarlet
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -30,11 +54,13 @@ RELEASE_META_PATH="$HERE/../flatpak/io.github.friesi23.mhabit.metainfo.xml"
 TIMESTAMP=$(date +"%Y-%m-%d")
 VERSION=$(awk -F': ' '/^version:/ {gsub(/\r/, "", $2); print $2; exit}' pubspec.yaml)
 if [[ "$VERSION" =~ ^(.*)\-pre$ ]]; then
-  DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/pre-v${BASH_REMATCH[1]}"
+  VERSION_TAG="${PREFIX}pre-v${BASH_REMATCH[1]}"
 else
-  DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/v$VERSION"
+  VERSION_TAG="${PREFIX}v$VERSION"
 fi
+DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/$VERSION_TAG"
 echo "version: $VERSION"
+echo "tag: $VERSION_TAG"
 echo "date: $TIMESTAMP"
 echo "details: $DETAILS_URL"
 echo "meta-path: $META_PATH"
