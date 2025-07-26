@@ -80,8 +80,8 @@ You can customize each habit with the following options:
 | android  | ✅    | <ul><li>[Github - apk][github-myapp]</li><li>[F-Droid][fdroid-myapp]</li></ul>                                                                                                                                                                                            |                            |
 | ios      | ✅    | <ul><li>[Github - ipa][github-myapp]</li><li>[AltStore - custom source][altstore-source]</li><li>[SideStore - custom source][sidestore-source]</li><li>[SideLoad](#note-ios-installation-sideloading)</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~</li></ul> |                            |
 | macos    | ✅    | <ul><li>[Github - dmg][github-myapp]</li><li>[HomeBrew - custom tap](#note-macos-installation-homebrew-cask)</li></ul>                                                                                                                                                    |                            |
-| windows  | ✅    | <ul><li>[Github - msix][github-myapp] [(1)](supported-platforms-1)</li></ul>                                                                                                                                                                                             | limit features: `reminder` |
-| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp] [(1)](supported-platforms-1)</li><li>[FLathub][flathub-source]</li></ul>                                                                                                                                                        | limit features: `reminder` |
+| windows  | ✅    | <ul><li>[Github - msix][github-myapp] [(1)](supported-platforms-1)</li></ul>                                                                                                                                                                                              | limit features: `reminder` |
+| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp] [(1)](supported-platforms-1)</li><li>[FLathub][flathub-source]</li></ul>                                                                                                                                                         | limit features: `reminder` |
 
 > <a name="supported-platforms-1"></a> 1. Windows & Linux versions are still in beta,
 > some features may be limited or unstable.
@@ -101,6 +101,23 @@ You can customize each habit with the following options:
 brew install table-habit
 # for pre-release version, use:
 brew install table-habit@beta
+```
+
+### Note: Windows Installation (Scoop)
+
+1. Add Third-Party Bucket by runngin `scoop bucket add friesi23-bucket https://github.com/FriesI23/scoop-bucket`
+2. Install by running:
+
+```pwsh
+# Note: Administrator privileges are required during first installation
+# because a self-signed certificate needs to be installed.
+#
+# e.g. gsudo scoop install friesi23-bucket/mhabit
+
+# install
+scoop install friesi23-bucket/mhabit
+# or
+scoop install friesi23-bucket/mhabit-beta
 ```
 
 ### Note: Windows MSIX Insaller
