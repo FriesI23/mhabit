@@ -1311,7 +1311,7 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get batchCheckin_save_button_text => 'зберегти';
+  String get batchCheckin_save_button_text => 'Зберегти';
 
   @override
   String get batchCheckin_reset_button_text => 'Скинути';
@@ -1417,7 +1417,7 @@ class L10nUk extends L10n {
   String get common_customDateTimeFormatPicker_sepSlash_text => 'Слеш';
 
   @override
-  String get common_customDateTimeFormatPicker_sepSpace_text => 'космос';
+  String get common_customDateTimeFormatPicker_sepSpace_text => 'Космос';
 
   @override
   String get common_customDateTimeFormatPicker_sepDot_text => 'Крапка';
@@ -1461,7 +1461,7 @@ class L10nUk extends L10n {
   String get calendarPicker_clip_today => 'Сьогодні';
 
   @override
-  String get calendarPicker_clip_tomorrow => 'завтра';
+  String get calendarPicker_clip_tomorrow => 'Завтра';
 
   @override
   String calendarPicker_clip_after7Days(DateTime date) {
@@ -1508,7 +1508,7 @@ class L10nUk extends L10n {
   String get debug_logLevel_info => 'Інформація';
 
   @override
-  String get debug_logLevel_warn => 'УВАГА';
+  String get debug_logLevel_warn => 'Увага';
 
   @override
   String get debug_logLevel_error => 'Помилка';
@@ -1564,7 +1564,7 @@ class L10nUk extends L10n {
   String get debug_debuggerInfoCard_openButton_text => 'Відкрити';
 
   @override
-  String get debug_debuggerInfoCard_saveButton_text => 'зберегти';
+  String get debug_debuggerInfoCard_saveButton_text => 'Зберегти';
 
   @override
   String get debug_debuggerInfo_notificationTitle => 'Збір інформації про програму...';
@@ -1587,7 +1587,7 @@ class L10nUk extends L10n {
   String get confirmDialog_cancel_text => 'Скасувати';
 
   @override
-  String get snackbar_undoText => 'СКАСУВАТИ';
+  String get snackbar_undoText => 'ВІДМІНИТИ';
 
   @override
   String get snackbar_dismissText => 'ВІДХИЛИТИ';
