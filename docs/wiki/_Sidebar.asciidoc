@@ -1,0 +1,33 @@
+.Main
+[%collapsible%open]
+====
+* link:Home[Home]
+* link:Donors[Donors]
+====
+
+.User
+[%collapsible%open]
+====
+* link:Installation[How to Install]
+* link:Feature꞉WebDAV-Sync[Sync Habits Across Devices (WebDAV)]
+====
+
+.Contributing
+[%collapsible%open]
+====
+* link:L10n꞉-Request-New-Language[L10n: Request New Language]
+====
+
+.Developer
+[%collapsible%open]
+====
+* link:Dev꞉-Build-From-Source[Build From Source]
+* link:Dev꞉-Push-To-New-Version[Push to New Version]
+* link:FAQ꞉-For-Developers[FAQ]
+====
+
+.Design
+[%collapsible]
+====
+* link:Design꞉-WebDAV-Sync[WebDAV Sync]
+====

@@ -1,0 +1,13 @@
+services:
+  gollum:
+    image: gollumwiki/gollum:6
+    container_name: gollumwiki
+    environment:
+      APP_ENV: development
+    ports:
+      - 4567:4567/tcp
+    volumes:
+      - ../:/wiki
+    command:
+      - --no-edit
+    restart: no
