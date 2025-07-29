@@ -21,30 +21,25 @@ Moreover, this app completely open source.
 
 [![Get it on F-Droid][github-button]][github-myapp]
 [![Get it on Falthub][get-it-on-flathub]][flathub-source]
-
-**Android**:
-
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
-
-**iOS**:
 
 [![Get it on AltStore][get-it-on-altstore]][altstore-source]
 [![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
 
-> Public beta will be available through `TestFlight` once app is distributed
-> via the App Store.
-
 <!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
 
-## Screenshots
+| platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
+| ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| android                | ✅    | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
+| ios                    | ✅    | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
+| macos                  | ✅    | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li></ul>                                                                                |                                                                               |
+| windows <sup>(2)</sup> | ✅    | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
+| linux <sup>(2)</sup>   | ✅    | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 
-[![Create new habit][create-new-habit-tb]][create-new-habit]
-[![Check habit detail][check-habit-detail-tb]][check-habit-detail]
-[![Habit heatmap calendar][habit-heatmap-tb]][habit-heatmap]
-[![Habit display page][display-page-tb]][display-page]
-[![Habit display page operation][display-op-tb]][display-op]
-[![Habits export and import][export-and-import-tb]][export-and-import]
+> 1. Public beta will be available through TestFlight once app is distributed via the App Store.
+>
+> 2. Windows & Linux versions are still in beta, some features may be limited or unstable.
 
 ## Features
 
@@ -55,220 +50,25 @@ Moreover, this app completely open source.
 - Easily export and import habits using a human-readable format (JSON).
 - Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adaptation for landscape and large screen devices.
-- _[Experimental] Support network sync with WebDAV._
+- _[Beta] Support network sync with WebDAV._
 - No ADs in this app.
 
-You can customize each habit with the following options:
+For more information, please visit our [**Wiki**][wiki].
 
-- Name
-- Type (positive/negative)
-- Description
-- Color
-- Daily goal
-- Daily goal unit
-- The maximum goal expected to be completed each day
-- Frequency
-- Start date
-- Expected completion time
-- Reminder
-- etc.
+## Screenshots
 
-## Supported platforms
-
-| platform | build | publish                                                                                                                                                                                                                                                                   | desc.                      |
-| -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| android  | ✅    | <ul><li>[Github - apk][github-myapp]</li><li>[F-Droid][fdroid-myapp]</li></ul>                                                                                                                                                                                            |                            |
-| ios      | ✅    | <ul><li>[Github - ipa][github-myapp]</li><li>[AltStore - custom source][altstore-source]</li><li>[SideStore - custom source][sidestore-source]</li><li>[SideLoad](#note-ios-installation-sideloading)</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~</li></ul> |                            |
-| macos    | ✅    | <ul><li>[Github - dmg][github-myapp]</li><li>[HomeBrew - custom tap](#note-macos-installation-homebrew-cask)</li></ul>                                                                                                                                                    |                            |
-| windows  | ✅    | <ul><li>[Github - msix][github-myapp] [(1)](supported-platforms-1)</li><li>[Scoop - custom bucket](#note-windows-installation-scoop)</li></ul>                                                                                                                            | limit features: `reminder` |
-| linux    | ✅    | <ul><li>[Github - flatpak][github-myapp] [(1)](supported-platforms-1)</li><li>[FLathub][flathub-source]</li></ul>                                                                                                                                                         | limit features: `reminder` |
-
-> <a name="supported-platforms-1"></a> 1. Windows & Linux versions are still in beta,
-> some features may be limited or unstable.
-
-### Note: iOS Installation (Sideloading)
-
-1. Install [**AltStore**][altstore] / [**SideStore**][sidestore] follow official instructions.
-2. Download `mhabit-unsigned.ipa` on your iOS device directly from the [latest releases][github-myapp].
-3. Install this IPA file.
-
-### Note: macOS Installation (HomeBrew Cask)
-
-1. Add Third-Party Repo by running `brew tap FriesI23/brew-repo`.
-2. Install by running:
-
-```shell
-brew install table-habit
-# for pre-release version, use:
-brew install table-habit@beta
-```
-
-### Note: Windows Installation (Scoop)
-
-1. Add Third-Party Bucket by runngin `scoop bucket add friesi23-bucket https://github.com/FriesI23/scoop-bucket`
-2. Install by running:
-
-```pwsh
-# Note: Administrator privileges are required during first installation
-# because a self-signed certificate needs to be installed.
-#
-# e.g. gsudo scoop install friesi23-bucket/mhabit
-
-# install
-scoop install friesi23-bucket/mhabit
-# or
-scoop install friesi23-bucket/mhabit-beta
-```
-
-### Note: Windows MSIX Insaller
-
-On a first-time attempt to install this MSIX, following prompt may appear:
-
-> This app package’s publisher certificate could not be verified.
-> Contact your system administrator or the app developer to obtain
-> a new app package with verified certificates.
-> The root certificate and all immediate certificates of the signature
-> in the app package must be verified (0x800B010A)
-
-This is because the MSIX installation package provided in Github/Releases/Assets
-is a self-signed version, corresponding certificate must be trusted
-on each machine which attempt to install it.
-
-Install certificate by following the steps below:
-
-> See [**"Installing a test certificate directly from an MSIX package"**][msix-install-cert]
-> for steps with screenshots.
-
-1. Right click msix installer package, select **Properties**
-2. Switch to **Digital Signatures** tab and click signer under **Embedded Signatures**
-3. Click **Details**, In new window click **View Certificate**
-4. In new window (Certificate), click **Install Certificate**
-5. In **Certificate Import Wizard** window:
-   1. Select **Local Machine** and click **Next**
-   2. Select **Place all certificates in the following store**
-   3. Click **Browse** and select **Trusted Root Certification Authorities**
-   4. Click **Finish**.
-6. Finally a dialog with "_The import was successful._" should be poped-up.
-
-Or execute commands below:
-
-```powershell
-# run at administrator
-$signature = Get-AuthenticodeSignature -FilePath "\path\to\your\mhabit.msix"
-$certificate = $signature.SignerCertificate
-Export-Certificate -Cert $certificate -FilePath ".\mhabit.crt"
-Import-Certificate -FilePath ".\mhabit.crt" -CertStoreLocation Cert:\LocalMachine\Root
-```
-
-After operations above, this MSIX package should now be able to install successfully.
-
-> Trusting self-signed certificate always carries some risks.
-> Skipping signature verification to install via command below is also allowed:
->
-> ```powershell
-> Add-AppPackage -Path "\path\to\your\mhabit.msix" -AllowUnsigned
-> ```
+[![Create new habit][create-new-habit-tb]][create-new-habit]
+[![Check habit detail][check-habit-detail-tb]][check-habit-detail]
+[![Habit display page][display-page-tb]][display-page]
+[![Habit display page operation][display-op-tb]][display-op]
 
 ## Todo
 
 | status      | progress                   | desc.                 |
 | ----------- | -------------------------- | --------------------- |
-| In Progress | Publish to Flathub         |                       |
 | -           | Publish to Google Play     |                       |
 | In Progress | Publish to iOS App Store   | Waiting for Review 😔 |
 | -           | Publish to macOS App Store |                       |
-
-## Build from source
-
-Make sure your flutter version same as `.flutter`, You can use `fvm`` to keep
-multiple versions on your local machine, or simply use this submodule to build it!
-
-1. In the project folder, run `flutter pub get`
-2. Launch an emulator or connect a device for Android, iOS, Windows, macOS, or Linux
-3. Run `flutter run --debug` (optional: `--profile` or `--release`)
-
-### Building for iOS / macOS
-
-iOS required flavor, use `flutter run --debug --flavor f_dev/f_generic` instead command above.
-
-### Building for Linux Desktop
-
-**requires:**
-
-1. installing the following packages for [SQFlite database][sqflite-ffi-linux]
-   and [`flutter_secure_storage`][fss-linux]:
-
-   ```shell
-   sudo apt-get -y install \
-      libsqlite3-0 libsqlite3-dev \
-      libsecret-1-dev libjsoncpp-dev
-   ```
-
-2. Please follow this [official guide][flutter-linux] to initialize your
-   Flutter development environment.
-
-3. Once you've got the following result with the command `flutter doctor` you are good to go:
-
-   ```shell
-   Doctor summary (to see all details, run flutter doctor -v):
-   [✓] Flutter (Channel stable, X.X.X, on Your Linux Platform)
-   (...)
-   [✓] Linux toolchain - develop for Linux desktop
-   (...)
-   ```
-
-4. In project folder, run `flutter pub get`
-
-5. Then run `flutter build linux --release`, once finished you should see:
-
-   ```shell
-   Building Linux application...
-   ✓ Built build/linux/x64/release/bundle/mhabit
-   ```
-
-6. Enjoy by running the ouput binary `build/linux/x64/release/bundle/mhabit`
-
-## Configuring WebDAV Synchronization (Beta)
-
-You will need a compatible server for it, e.g. Nextcloud, Koofr, etc. You will find some configuration examples below.
-
-### Nextcloud Configuration
-
-1. Create a dedicated app password in your Nextcloud:
-
-   - Go to Profile → Settings → Security → bottom of the page
-   - Enter an app name (e.g., "mhabit" or "test") and confirm your password
-     ![Create new app][nextcloud-test-app]
-   - Save the generated password
-     ![Retrieve app credentials][nextcloud-test-app-credentials]
-
-2. Configure mhabit with your Nextcloud server:
-
-   - Go to Settings → Sync Options → Sync Server → Current: WebDAV
-   - Enter your server URL (format: `https://example.com/remote.php/dav/files/[nextcloud user]`)
-     ![Server configuration][nextcloud-test-app-server-config]
-
-3. Perform initial sync:
-
-   - Now return back to Settings
-   - Click the refresh button next to `Sync Now`
-   - Successful connection will display sync status
-     ![First synchronization][nextcloud-test-app-first-sync]
-
-4. Enjoy automatic sync:
-   - Additional syncs will occur without other modals
-   - Verify sync status by checking the last sync timestamp
-     ![Success synchronizations][nextcloud-test-app-sync-success]
-
-### Koofr Configuration
-
-Follow the ["How do I connect a service to Koofr through WebDAV?"][koofr-webdav]
-guide to create an application password and complete the connection settings in the app.
-
-> A1: Don’t use the root directory directly. Instead, create your own folder inside Koofr,
-> e.g. `https://app.koofr.net/dav/Koofr/your-folder-name/`
->
-> A2: If you see 429 error, please refer to [Error 429][koofr-err429].
 
 ## Contributing
 
@@ -276,7 +76,13 @@ I am an independent developer and do not have professional expertise in writing
 documentation and project management.
 
 If you have relevant knowledge and are willing to contribute to this project,
-you can help me improve the documentation, e.g `README.md` file.
+you can help me improve project documentations, e.g `README.md` file.
+
+To ensure wiki pages can be indexed by search engines (Limitations from GitHub),
+public editing permissions have been disabled.
+If you’d like to contribute documentation, please submit files to `docs` folder.
+
+Documations will be periodically migrated to wiki.
 
 When contribute code to this project, please try to follow
 [this][style-guide-for-flutter] guideline.
@@ -294,8 +100,10 @@ When contribute code to this project, please try to follow
 
 ## Translation
 
-Feel free to join and help with the translation for `Table Habit`,
-you can follow [docs/add_new_locale_support][l10n-doc] to get incolved.
+Feel free to join and help translate Table Habit!
+To request a new language, follow the instructions on ["Wiki – Request New Language"][l10n-doc].
+To update translations, you can either contribute directly on [Weblate.org][weblate]
+or modify the `.arb` files locally and request a PR to `weblate-translation` branch.
 
 <!-- ![L10nStat][l10n-stat-pic] -->
 
@@ -304,7 +112,7 @@ you can follow [docs/add_new_locale_support][l10n-doc] to get incolved.
 ## License
 
 ```text
-Copyright 2023 Fries_I23
+Copyright 2023-2025 Fries_I23
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -323,14 +131,10 @@ limitations under the License.
 [create-new-habit-tb]: docs/README/images/create-new-habit-tb.gif
 [check-habit-detail]: docs/README/images/check-habit-detail.gif
 [check-habit-detail-tb]: docs/README/images/check-habit-detail-tb.gif
-[habit-heatmap]: docs/README/images/habit-heatmap.gif
-[habit-heatmap-tb]: docs/README/images/habit-heatmap-tb.gif
 [display-page]: docs/README/images/habit-display-page.gif
 [display-page-tb]: docs/README/images/habit-display-page-tb.gif
 [display-op]: docs/README/images/habit-display-op.gif
 [display-op-tb]: docs/README/images/habit-display-op-tb.gif
-[export-and-import]: docs/README/images/export-and-import.gif
-[export-and-import-tb]: docs/README/images/export-and-import-tb.gif
 [fdroid-button]: docs/README/images/fdroid-get-it-on.png
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
@@ -355,7 +159,7 @@ limitations under the License.
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
-[l10n-doc]: docs/add_new_locale_support.md
+[l10n-doc]: https://github.com/FriesI23/mhabit/wiki/L10n%EA%9E%89-Request-New-Language
 [buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 [alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
 [wechat-badge]: https://img.shields.io/badge/WeChat-07C160?style=for-the-badge&logo=wechat&logoColor=white
@@ -368,18 +172,11 @@ limitations under the License.
 [weblate]: https://hosted.weblate.org/projects/mhabit/
 [weblate-engage-badge]: https://hosted.weblate.org/widget/mhabit/app-view/multi-auto.svg
 [weblate-engage]: https://hosted.weblate.org/engage/mhabit/
-[sqflite-ffi-linux]: https://pub.dev/packages/sqflite_common_ffi#linux
-[flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
-[msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
-[fss-linux]: https://pub.dev/packages/flutter_secure_storage#configure-linux-version
 [ios-testflight-pre-release]: https://testflight.apple.com/join/aJ5PWqaR
-[altstore]: https://altstore.io/
-[sidestore]: https://sidestore.io/
 [page-donors]: https://github.com/FriesI23/mhabit/wiki/Donors
-[nextcloud-test-app]: docs/README/images/nextcloud-test-app.png
-[nextcloud-test-app-credentials]: docs/README/images/nextcloud-test-app-credentials.png
-[nextcloud-test-app-server-config]: docs/README/images/nextcloud-test-app-server-config.png
-[nextcloud-test-app-first-sync]: docs/README/images/nextcloud-test-app-first-sync.png
-[nextcloud-test-app-sync-success]: docs/README/images/nextcloud-test-app-sync-success.png
-[koofr-webdav]: https://app.koofr.net/help/webdav#a-idhow-do-i-connect-a-service-to-koofr-through-webdava-how-do-i-connect-a-service-to-koofr-through-webdav
-[koofr-err429]: https://app.koofr.net/help/webdav#a-iderror-429a-error-429
+[fdroid-wiki]: https://github.com/FriesI23/mhabit/wiki/Installation#f-droid--lzzlzzyondroid
+[sideloaded-wiki]: https://github.com/FriesI23/mhabit/wiki/Installation#altstore--sidestore---custom-source
+[homebrew-tap-wiki]: https://github.com/FriesI23/mhabit/wiki/Installation#homebrew---custom-tap
+[flathub-wiki]: https://github.com/FriesI23/mhabit/wiki/Installation#flathub
+[scoop-bucket-wiki]: https://github.com/FriesI23/mhabit/wiki/Installation#scoop---custom-bucket
+[wiki]: https://github.com/FriesI23/mhabit/wiki
