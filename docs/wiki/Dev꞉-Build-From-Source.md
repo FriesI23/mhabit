@@ -1,6 +1,6 @@
 <!-- markdownlint-disable no-inline-html first-line-heading -->
 
-Make sure your flutter version same as `.flutter`, You can use `fvm`` to keep
+Make sure your flutter version same as `.flutter`, You can use `fvm` to keep
 multiple versions on your local machine, or simply use this submodule to build it!
 
 1. In the project folder, run `flutter pub get`
@@ -64,7 +64,7 @@ Build outputs located at:
 
 ### Building for Linux Desktop
 
-1. installing the following packages for [SQFlite database][sqflite-ffi-linux]
+1. Installing the following packages for [SQFlite database][sqflite-ffi-linux]
    and [`flutter_secure_storage`][fss-linux]:
 
    ```shell
@@ -95,7 +95,7 @@ Build outputs located at:
    ✓ Built build/linux/<arch>/release/bundle/mhabit
    ```
 
-6. Enjoy by running the ouput binary:
+6. Enjoy by running the output binary:
    - x86_64: `build/linux/x64/release/bundle/mhabit`
    - aarch64: `build/linux/arm64/release/bundle/mhabit`
 

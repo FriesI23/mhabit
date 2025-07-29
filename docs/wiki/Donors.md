@@ -28,10 +28,10 @@ Your contributions help keep the project alive and growing.
 
 **Want to be listed here?** Support us via [Donate Section](https://github.com/FriesI23/mhabit#donate)!
 
-If you're looking for any of following below:
+If you're looking for any of the following:
 
 - Wish to keep my donation private.
-- Donated via platforms like Alipay, cryptocurrency or other private channels.
+- Donate via platforms like Alipay, cryptocurrency or other private channels.
 - Need to update or add your personal information.
 
-Please Please send email or open an issue.
+Please send email or open an issue.

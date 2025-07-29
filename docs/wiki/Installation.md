@@ -38,8 +38,8 @@ Beta version marked as `pre-release`.
 
 1. Install [**AltStore**][altstore] / [**SideStore**][sidestore] follow official instructions.
 2. Press ["AltStore Source"][altstore-source] / ["SideStore Source"][sidestore-source],
-   then press `Add to *Store` on opened page.
-   this will add new source named `Friesi23's Source` at your store's app.
+   then press `Add to *Store` on opened page, this will add new source
+   named `Friesi23's Source` at your store's app.
 3. Click `Friesi23's Source`, find `Table Habit` and tap install button.
 
 ### Github: IPA
@@ -63,7 +63,7 @@ Beta version marked as `pre-release`.
 - Beta Version
 - Install an Update by `brew update && brew upgrade` command
 
-1. open `Terminal.app`.
+1. Open `Terminal.app`.
 2. Add Third-Party Repo by running `brew tap FriesI23/brew-repo`.
 3. Install by running:
 
@@ -108,7 +108,7 @@ more info see: [`Flathub - Setup`](https://flathub.org/setup)
 
    > Ensure to download correct architecture (aarch64/x86_64).
 
-2. running command below:
+2. Running command below:
 
    ```shell
    flatpak install --user mhabit-<arch>.flatpak -y
@@ -124,7 +124,7 @@ more info see: [`Flathub - Setup`](https://flathub.org/setup)
 
 Ensure Scoop is properly installed, more info see: [Scoop - Quickstart](https://scoop.sh/)
 
-1. Add Third-Party Bucket by runngin `scoop bucket add friesi23-bucket https://github.com/FriesI23/scoop-bucket`
+1. Add Third-Party Bucket by running `scoop bucket add friesi23-bucket https://github.com/FriesI23/scoop-bucket`
 2. Install by running:
 
 ```powershell
@@ -160,20 +160,20 @@ On a first-time attempt to install this MSIX, following prompt may appear:
 > Contact your system administrator or the app developer to obtain
 > a new app package with verified certificates.
 > The root certificate and all immediate certificates of the signature
-> in the app package must be verified (0x800B010A)
+> in the app package must be verified (0x800B010A).
 
 This is because the MSIX installation package provided in Github/Releases/Assets
 is a self-signed version, corresponding certificate must be trusted
 on each machine which attempt to install it.
 
-Install certificate by following the steps below:
+Install the certificate by following theese steps:
 
 > See [**"Installing a test certificate directly from an MSIX package"**][msix-install-cert]
 > for steps with screenshots.
 
 1. Right click msix installer package, select **Properties**
 2. Switch to **Digital Signatures** tab and click signer under **Embedded Signatures**
-3. Click **Details**, In new window click **View Certificate**
+3. Click **Details**, in new window click **View Certificate**
 4. In new window (Certificate), click **Install Certificate**
 5. In **Certificate Import Wizard** window:
    1. Select **Local Machine** and click **Next**
