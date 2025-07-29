@@ -78,11 +78,10 @@ documentation and project management.
 If you have relevant knowledge and are willing to contribute to this project,
 you can help me improve project documentations, e.g `README.md` file.
 
-To ensure wiki pages can be indexed by search engines (Limitations from GitHub),
-public editing permissions have been disabled.
-If you’d like to contribute documentation, please submit files to `docs` folder.
-
-Documations will be periodically migrated to wiki.
+To ensure wiki pages can be indexed by search engines (due to limitations from GitHub),
+public editing permissions have been disabled. If you’d like to contribute documentation,
+please submit files to the `docs/wiki` folder and open a PR.
+Once merged, an automated CI process will sync changes to the [wiki][wiki].
 
 When contribute code to this project, please try to follow
 [this][style-guide-for-flutter] guideline.
