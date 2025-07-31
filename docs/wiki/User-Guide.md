@@ -95,6 +95,27 @@ To create a new habit, just fill in a form with the following fields:
 
 Once the required fields are completed, you can click `"Save"` button upper-right the screen to save and create.
 
+## Select And Modify Habits
+
+Long-pressing a habit enters **"Selection Mode"**. THis allows batch operations on multiple habits:
+
+![select-habits-01](./images/User-Guide/select-habits-01.png)
+
+1. Selected habit count
+2. Selected / Unselected: Background color of selected habits will become darker.
+3. Archive selected habits
+4. Unarchive selected habits
+5. Select all visible habits
+6. Export selected habits as `json` format, You can re-import from "Import" setting
+   (**Note**: Exporting is not a sync method; imported habits will be treated as new habits).
+7. Delete selected habits
+8. Enter "Batch Check-in" screen. This will be explained in a later section.
+
+When long-pressing and held, current habit can be dragged up or down to change its position
+(Habit order can only be changed under _"My Order"_ Sort mode).
+
+![select-habits-02](./images/User-Guide/select-habits-02.png)
+
 <!-- refs -->
 
 [readme-contributing]: https://github.com/FriesI23/mhabit#contributing
