@@ -40,6 +40,61 @@ The check-in status is divided into the following types (using `"positive habits
    Values greater than the "Daily Goal" are considered "over-completed" and will earn additional points (up to a certain limit).
    Conversely, values below the "Daily Goal" cause partial point deductions (less than the "❌" status), also based on a penalty algorithm.
 
+## Create New Habit
+
+By clicking "+ New Habit" FAB at the bottom-right, a creation screen will pop up:
+
+![create-new-habit-01](./images/User-Guide/create-new-habit-01.png)
+
+To create a new habit, just fill in a form with the following fields:
+
+- **[REQUIRED]** Name
+- Color
+- Type:
+  Habits are divided into two types: _"Positive"_ and _"Negative"_.
+  The type you choose will affect the meaning of several fields below.
+- Daily Goal && Extra Goal (Below "Daily goal unit"):
+
+  - "Positive":
+
+    ```text
+    Check-in Value →
+    |--------|--------------------|------------------->
+    0    Daily Goal         Extra Goal
+
+    < Daily Goal: Incomplete
+    = Daily Goal: Completed (base score)
+    > Daily Goal, ≤ Extra Goal: Over-completed (extra score increases)
+    ≥ Extra Goal: Max bonus reached
+    ```
+
+  - "Negative":
+
+    ```text
+    Check-in Value →
+    |--------------|--------------------|------------------->
+           Daily Goal           Extra Goal
+
+    ≤ Daily Goal: Completed
+    > Daily Goal, < Extra Goal: Incomplete (penalty increases)
+    ≥ Extra Goal: Max penalty reached
+    ```
+
+- Goal Unit
+- Completion rule: The following options are currently available:
+  - Daily: Every day
+  - X/week: Any X days per week
+  - X/month: Any X days per month
+  - X/Y days: X times in any rolling Y-day window,
+    e.g. `3 times in 5 days: ✔️ ✔️ ✔️ ◻️ ✔️ ◻️ ❌ ...`
+- Start Date
+- Target Days: The minimum number of days required to reach the full score (100) without any deductions.
+- Reminder: Set a scheduled reminder, a notification will appear when the time is reached.
+  > Windows and Linux platforms are not supported yet.
+- Description: Support `Markdown` format.
+
+Once the required fields are completed, you can click `"Save"` button upper-right the screen to save and create.
+
 <!-- refs -->
 
 [readme-contributing]: https://github.com/FriesI23/mhabit#contributing
