@@ -9,6 +9,7 @@
 [%collapsible%open]
 ====
 * link:Installation[How to Install]
+* link:User-Guide[User Guide]
 * link:Feature꞉WebDAV-Sync[Sync Habits Across Devices (WebDAV)]
 ====
 

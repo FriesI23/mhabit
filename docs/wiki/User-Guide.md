@@ -154,6 +154,18 @@ and specific statuses can be modified by tapping or long-pressing.
 
 > \* This screenshot uses landscape mode here for better display only.
 
+## Edit Habit
+
+Editing can be entered by clicking `Edit` button on either the “Selection Mode” or “Habit Detail” screens.
+
+![habit-edit-01](./images/user-guide/habit-edit-01.png)
+
+The edit page uses the same process as creating, see ["Create New Habit"](#create-new-habit) for all field definitions.
+
+## Advanced settings
+
+- [Sync habits across devices using WebDAV](./Feature꞉WebDAV-Sync)
+
 <!-- refs -->
 
 [readme-contributing]: https://github.com/FriesI23/mhabit#contributing
