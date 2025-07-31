@@ -12,7 +12,7 @@ Contributions to this guide are welcome via [README#Contributing][readme-contrib
 
 The "Table Habit" Screen is the default view when app launched:
 
-![table-habit-screen-01](./images/User-Guide/table-habit-screen-01.png)
+![table-habit-screen-01](./images/user-guide/table-habit-screen-01.png)
 
 The blank area below the AppBar will display habit content after a habit is created. Other marked areas:
 
@@ -24,7 +24,7 @@ The blank area below the AppBar will display habit content after a habit is crea
 
 Once some habits are created and contain check-in information, the following details are included:
 
-![table-habit-screen-02](./images/User-Guide/table-habit-screen-02.png)
+![table-habit-screen-02](./images/user-guide/table-habit-screen-02.png)
 
 The left circular shows the habit score progress,right side is "check-in" area.
 The check-in status is divided into the following types (using `"positive habits`" as an example):
@@ -44,7 +44,7 @@ The check-in status is divided into the following types (using `"positive habits
 
 By clicking "+ New Habit" FAB at the bottom-right, a creation screen will pop up:
 
-![create-new-habit-01](./images/User-Guide/create-new-habit-01.png)
+![create-new-habit-01](./images/user-guide/create-new-habit-01.png)
 
 To create a new habit, just fill in a form with the following fields:
 
@@ -99,7 +99,7 @@ Once the required fields are completed, you can click `"Save"` button upper-righ
 
 Long-pressing a habit enters **"Selection Mode"**. THis allows batch operations on multiple habits:
 
-![select-habits-01](./images/User-Guide/select-habits-01.png)
+![select-habits-01](./images/user-guide/select-habits-01.png)
 
 1. Selected habit count
 2. Selected / Unselected: Background color of selected habits will become darker.
@@ -114,7 +114,23 @@ Long-pressing a habit enters **"Selection Mode"**. THis allows batch operations 
 When long-pressing and held, current habit can be dragged up or down to change its position
 (Habit order can only be changed under _"My Order"_ Sort mode).
 
-![select-habits-02](./images/User-Guide/select-habits-02.png)
+![select-habits-02](./images/user-guide/select-habits-02.png)
+
+## Batch Check-in
+
+In **"Selection Mode"**, tap FAB at the bottom-right to enter **"Batch Check-in"** mode.
+
+![batch-checkin-01](./images/user-guide/batch-checkin-01.png)
+
+The left and right buttons allow selection of the date to modify.
+The desired status can then be chosen from the bar below, and tapping **"Save"** will apply these changes.
+
+- "—": Skipped
+- "✓": Completed
+- "✓✓": Overfulfilled
+- "✗": Not completed
+
+If there is an overwrite status, a confirmation dialog will appear after press **"Save"** button.
 
 <!-- refs -->
 
