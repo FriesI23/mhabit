@@ -7,7 +7,9 @@ services:
     ports:
       - 4567:4567/tcp
     volumes:
-      - ../:/wiki
+      - ../../../:/wiki:ro
     command:
       - --no-edit
+      - --page-file-dir docs/wiki
+      # - --ref main
     restart: no
