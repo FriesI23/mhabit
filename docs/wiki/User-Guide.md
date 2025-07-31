@@ -109,7 +109,7 @@ Long-pressing a habit enters **"Selection Mode"**. THis allows batch operations 
 6. Export selected habits as `json` format, You can re-import from "Import" setting
    (**Note**: Exporting is not a sync method; imported habits will be treated as new habits).
 7. Delete selected habits
-8. Enter "Batch Check-in" screen. This will be explained in a later section.
+8. Enter "Batch Check-in" screen. This will be explained in a [later section](#batch-check-in).
 
 When long-pressing and held, current habit can be dragged up or down to change its position
 (Habit order can only be changed under _"My Order"_ Sort mode).
@@ -131,6 +131,28 @@ The desired status can then be chosen from the bar below, and tapping **"Save"**
 - "✗": Not completed
 
 If there is an overwrite status, a confirmation dialog will appear after press **"Save"** button.
+
+## Habit Detail
+
+In the "Table Habit" screen, tapping on a habit navigates to the "Habit Detail" page.
+
+![habit-detail-01](./images/user-guide/habit-detail-01.png)
+
+1. Edit Button
+2. Habit heatmap visually displays check-in activity.
+3. Score changes graph can be viewed with selectable aggregation by day, week, month, or year.
+4. Tap the FAB to enter "Heatmap Check-in" mode.
+5. Another bar chart displays the check-in status.
+6. Operation menu, see: ["Select And Modify Habits"](#select-and-modify-habits).
+
+### Heatmap Check-in Mode
+
+In "Heatmap Check-in" mode, check-in details can be shown more details than in “Habit Detail”,
+and specific statuses can be modified by tapping or long-pressing.
+
+![habit-detail-2](./images/user-guide/habit-detail-02.png)
+
+> \* This screenshot uses landscape mode here for better display only.
 
 <!-- refs -->
 
