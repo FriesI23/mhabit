@@ -97,7 +97,7 @@ Once the required fields are completed, you can click `"Save"` button upper-righ
 
 ## Select And Modify Habits
 
-Long-pressing a habit enters **"Selection Mode"**. THis allows batch operations on multiple habits:
+Long-pressing a habit enters **"Selection Mode"**. This allows batch operations on multiple habits:
 
 ![select-habits-01](./images/user-guide/select-habits-01.png)
 
