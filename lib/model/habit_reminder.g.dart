@@ -14,9 +14,9 @@ abstract class _$HabitReminderCWProxy {
   /// HabitReminder(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitReminder call({
-    HabitReminderType? type,
-    List<int>? extra,
-    TimeOfDay? time,
+    HabitReminderType type,
+    List<int> extra,
+    TimeOfDay time,
   });
 }
 
@@ -40,15 +40,15 @@ class _$HabitReminderCWProxyImpl implements _$HabitReminderCWProxy {
     Object? time = const $CopyWithPlaceholder(),
   }) {
     return HabitReminder(
-      type: type == const $CopyWithPlaceholder() || type == null
+      type: type == const $CopyWithPlaceholder()
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as HabitReminderType,
-      extra: extra == const $CopyWithPlaceholder() || extra == null
+      extra: extra == const $CopyWithPlaceholder()
           ? _value.extra
           // ignore: cast_nullable_to_non_nullable
           : extra as List<int>,
-      time: time == const $CopyWithPlaceholder() || time == null
+      time: time == const $CopyWithPlaceholder()
           ? _value.time
           // ignore: cast_nullable_to_non_nullable
           : time as TimeOfDay,

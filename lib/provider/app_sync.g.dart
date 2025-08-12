@@ -39,8 +39,8 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
   /// AppSyncContainer<T,R>(...).copyWith(id: 12, name: "My name")
   /// ````
   AppSyncContainer<T, R> call({
-    String? id,
-    T? task,
+    String id,
+    T task,
     DateTime? startTime,
     DateTime? endedTime,
     R? result,
@@ -49,7 +49,7 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
     num? percentage,
     ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer,
     NotiAppSyncProvider? notification,
-    void Function(LogEvent)? logEventCallback,
+    void Function(LogEvent) logEventCallback,
   });
 }
 
@@ -124,11 +124,11 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
     Object? logEventCallback = const $CopyWithPlaceholder(),
   }) {
     return AppSyncContainer<T, R>._copyWith(
-      id: id == const $CopyWithPlaceholder() || id == null
+      id: id == const $CopyWithPlaceholder()
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as String,
-      task: task == const $CopyWithPlaceholder() || task == null
+      task: task == const $CopyWithPlaceholder()
           ? _value.task
           // ignore: cast_nullable_to_non_nullable
           : task as T,
@@ -164,8 +164,7 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
           ? _value.notification
           // ignore: cast_nullable_to_non_nullable
           : notification as NotiAppSyncProvider?,
-      logEventCallback: logEventCallback == const $CopyWithPlaceholder() ||
-              logEventCallback == null
+      logEventCallback: logEventCallback == const $CopyWithPlaceholder()
           ? _value.logEventCallback
           // ignore: cast_nullable_to_non_nullable
           : logEventCallback as void Function(LogEvent),

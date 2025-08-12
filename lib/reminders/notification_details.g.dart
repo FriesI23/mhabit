@@ -83,38 +83,38 @@ abstract class _$AndroidNotificationDetailsCWProxy {
   /// AndroidNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ````
   AndroidNotificationDetails call({
-    String? channelId,
-    String? channelName,
+    String channelId,
+    String channelName,
     String? channelDescription,
     String? icon,
-    Importance? importance,
-    bool? channelBypassDnd,
-    Priority? priority,
+    Importance importance,
+    bool channelBypassDnd,
+    Priority priority,
     StyleInformation? styleInformation,
-    bool? playSound,
+    bool playSound,
     AndroidNotificationSound? sound,
-    bool? enableVibration,
+    bool enableVibration,
     Int64List? vibrationPattern,
     String? groupKey,
-    bool? setAsGroupSummary,
-    GroupAlertBehavior? groupAlertBehavior,
-    bool? autoCancel,
-    bool? ongoing,
-    bool? silent,
+    bool setAsGroupSummary,
+    GroupAlertBehavior groupAlertBehavior,
+    bool autoCancel,
+    bool ongoing,
+    bool silent,
     Color? color,
     AndroidBitmap<Object>? largeIcon,
-    bool? onlyAlertOnce,
-    bool? showWhen,
+    bool onlyAlertOnce,
+    bool showWhen,
     int? when,
-    bool? usesChronometer,
-    bool? chronometerCountDown,
-    bool? channelShowBadge,
-    bool? showProgress,
-    int? maxProgress,
-    int? progress,
-    bool? indeterminate,
-    AndroidNotificationChannelAction? channelAction,
-    bool? enableLights,
+    bool usesChronometer,
+    bool chronometerCountDown,
+    bool channelShowBadge,
+    bool showProgress,
+    int maxProgress,
+    int progress,
+    bool indeterminate,
+    AndroidNotificationChannelAction channelAction,
+    bool enableLights,
     Color? ledColor,
     int? ledOnMs,
     int? ledOffMs,
@@ -122,15 +122,15 @@ abstract class _$AndroidNotificationDetailsCWProxy {
     NotificationVisibility? visibility,
     int? timeoutAfter,
     AndroidNotificationCategory? category,
-    bool? fullScreenIntent,
+    bool fullScreenIntent,
     String? shortcutId,
     Int32List? additionalFlags,
     String? subText,
     String? tag,
     List<AndroidNotificationAction>? actions,
-    bool? colorized,
+    bool colorized,
     int? number,
-    AudioAttributesUsage? audioAttributesUsage,
+    AudioAttributesUsage audioAttributesUsage,
   });
 }
 
@@ -200,11 +200,11 @@ class _$AndroidNotificationDetailsCWProxyImpl
     Object? audioAttributesUsage = const $CopyWithPlaceholder(),
   }) {
     return AndroidNotificationDetails(
-      channelId == const $CopyWithPlaceholder() || channelId == null
+      channelId == const $CopyWithPlaceholder()
           ? _value.channelId
           // ignore: cast_nullable_to_non_nullable
           : channelId as String,
-      channelName == const $CopyWithPlaceholder() || channelName == null
+      channelName == const $CopyWithPlaceholder()
           ? _value.channelName
           // ignore: cast_nullable_to_non_nullable
           : channelName as String,
@@ -216,17 +216,15 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.icon
           // ignore: cast_nullable_to_non_nullable
           : icon as String?,
-      importance:
-          importance == const $CopyWithPlaceholder() || importance == null
-              ? _value.importance
-              // ignore: cast_nullable_to_non_nullable
-              : importance as Importance,
-      channelBypassDnd: channelBypassDnd == const $CopyWithPlaceholder() ||
-              channelBypassDnd == null
+      importance: importance == const $CopyWithPlaceholder()
+          ? _value.importance
+          // ignore: cast_nullable_to_non_nullable
+          : importance as Importance,
+      channelBypassDnd: channelBypassDnd == const $CopyWithPlaceholder()
           ? _value.channelBypassDnd
           // ignore: cast_nullable_to_non_nullable
           : channelBypassDnd as bool,
-      priority: priority == const $CopyWithPlaceholder() || priority == null
+      priority: priority == const $CopyWithPlaceholder()
           ? _value.priority
           // ignore: cast_nullable_to_non_nullable
           : priority as Priority,
@@ -234,7 +232,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.styleInformation
           // ignore: cast_nullable_to_non_nullable
           : styleInformation as StyleInformation?,
-      playSound: playSound == const $CopyWithPlaceholder() || playSound == null
+      playSound: playSound == const $CopyWithPlaceholder()
           ? _value.playSound
           // ignore: cast_nullable_to_non_nullable
           : playSound as bool,
@@ -242,8 +240,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.sound
           // ignore: cast_nullable_to_non_nullable
           : sound as AndroidNotificationSound?,
-      enableVibration: enableVibration == const $CopyWithPlaceholder() ||
-              enableVibration == null
+      enableVibration: enableVibration == const $CopyWithPlaceholder()
           ? _value.enableVibration
           // ignore: cast_nullable_to_non_nullable
           : enableVibration as bool,
@@ -255,26 +252,23 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.groupKey
           // ignore: cast_nullable_to_non_nullable
           : groupKey as String?,
-      setAsGroupSummary: setAsGroupSummary == const $CopyWithPlaceholder() ||
-              setAsGroupSummary == null
+      setAsGroupSummary: setAsGroupSummary == const $CopyWithPlaceholder()
           ? _value.setAsGroupSummary
           // ignore: cast_nullable_to_non_nullable
           : setAsGroupSummary as bool,
-      groupAlertBehavior: groupAlertBehavior == const $CopyWithPlaceholder() ||
-              groupAlertBehavior == null
+      groupAlertBehavior: groupAlertBehavior == const $CopyWithPlaceholder()
           ? _value.groupAlertBehavior
           // ignore: cast_nullable_to_non_nullable
           : groupAlertBehavior as GroupAlertBehavior,
-      autoCancel:
-          autoCancel == const $CopyWithPlaceholder() || autoCancel == null
-              ? _value.autoCancel
-              // ignore: cast_nullable_to_non_nullable
-              : autoCancel as bool,
-      ongoing: ongoing == const $CopyWithPlaceholder() || ongoing == null
+      autoCancel: autoCancel == const $CopyWithPlaceholder()
+          ? _value.autoCancel
+          // ignore: cast_nullable_to_non_nullable
+          : autoCancel as bool,
+      ongoing: ongoing == const $CopyWithPlaceholder()
           ? _value.ongoing
           // ignore: cast_nullable_to_non_nullable
           : ongoing as bool,
-      silent: silent == const $CopyWithPlaceholder() || silent == null
+      silent: silent == const $CopyWithPlaceholder()
           ? _value.silent
           // ignore: cast_nullable_to_non_nullable
           : silent as bool,
@@ -286,12 +280,11 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.largeIcon
           // ignore: cast_nullable_to_non_nullable
           : largeIcon as AndroidBitmap<Object>?,
-      onlyAlertOnce:
-          onlyAlertOnce == const $CopyWithPlaceholder() || onlyAlertOnce == null
-              ? _value.onlyAlertOnce
-              // ignore: cast_nullable_to_non_nullable
-              : onlyAlertOnce as bool,
-      showWhen: showWhen == const $CopyWithPlaceholder() || showWhen == null
+      onlyAlertOnce: onlyAlertOnce == const $CopyWithPlaceholder()
+          ? _value.onlyAlertOnce
+          // ignore: cast_nullable_to_non_nullable
+          : onlyAlertOnce as bool,
+      showWhen: showWhen == const $CopyWithPlaceholder()
           ? _value.showWhen
           // ignore: cast_nullable_to_non_nullable
           : showWhen as bool,
@@ -299,51 +292,42 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.when
           // ignore: cast_nullable_to_non_nullable
           : when as int?,
-      usesChronometer: usesChronometer == const $CopyWithPlaceholder() ||
-              usesChronometer == null
+      usesChronometer: usesChronometer == const $CopyWithPlaceholder()
           ? _value.usesChronometer
           // ignore: cast_nullable_to_non_nullable
           : usesChronometer as bool,
-      chronometerCountDown:
-          chronometerCountDown == const $CopyWithPlaceholder() ||
-                  chronometerCountDown == null
-              ? _value.chronometerCountDown
-              // ignore: cast_nullable_to_non_nullable
-              : chronometerCountDown as bool,
-      channelShowBadge: channelShowBadge == const $CopyWithPlaceholder() ||
-              channelShowBadge == null
+      chronometerCountDown: chronometerCountDown == const $CopyWithPlaceholder()
+          ? _value.chronometerCountDown
+          // ignore: cast_nullable_to_non_nullable
+          : chronometerCountDown as bool,
+      channelShowBadge: channelShowBadge == const $CopyWithPlaceholder()
           ? _value.channelShowBadge
           // ignore: cast_nullable_to_non_nullable
           : channelShowBadge as bool,
-      showProgress:
-          showProgress == const $CopyWithPlaceholder() || showProgress == null
-              ? _value.showProgress
-              // ignore: cast_nullable_to_non_nullable
-              : showProgress as bool,
-      maxProgress:
-          maxProgress == const $CopyWithPlaceholder() || maxProgress == null
-              ? _value.maxProgress
-              // ignore: cast_nullable_to_non_nullable
-              : maxProgress as int,
-      progress: progress == const $CopyWithPlaceholder() || progress == null
+      showProgress: showProgress == const $CopyWithPlaceholder()
+          ? _value.showProgress
+          // ignore: cast_nullable_to_non_nullable
+          : showProgress as bool,
+      maxProgress: maxProgress == const $CopyWithPlaceholder()
+          ? _value.maxProgress
+          // ignore: cast_nullable_to_non_nullable
+          : maxProgress as int,
+      progress: progress == const $CopyWithPlaceholder()
           ? _value.progress
           // ignore: cast_nullable_to_non_nullable
           : progress as int,
-      indeterminate:
-          indeterminate == const $CopyWithPlaceholder() || indeterminate == null
-              ? _value.indeterminate
-              // ignore: cast_nullable_to_non_nullable
-              : indeterminate as bool,
-      channelAction:
-          channelAction == const $CopyWithPlaceholder() || channelAction == null
-              ? _value.channelAction
-              // ignore: cast_nullable_to_non_nullable
-              : channelAction as AndroidNotificationChannelAction,
-      enableLights:
-          enableLights == const $CopyWithPlaceholder() || enableLights == null
-              ? _value.enableLights
-              // ignore: cast_nullable_to_non_nullable
-              : enableLights as bool,
+      indeterminate: indeterminate == const $CopyWithPlaceholder()
+          ? _value.indeterminate
+          // ignore: cast_nullable_to_non_nullable
+          : indeterminate as bool,
+      channelAction: channelAction == const $CopyWithPlaceholder()
+          ? _value.channelAction
+          // ignore: cast_nullable_to_non_nullable
+          : channelAction as AndroidNotificationChannelAction,
+      enableLights: enableLights == const $CopyWithPlaceholder()
+          ? _value.enableLights
+          // ignore: cast_nullable_to_non_nullable
+          : enableLights as bool,
       ledColor: ledColor == const $CopyWithPlaceholder()
           ? _value.ledColor
           // ignore: cast_nullable_to_non_nullable
@@ -372,8 +356,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.category
           // ignore: cast_nullable_to_non_nullable
           : category as AndroidNotificationCategory?,
-      fullScreenIntent: fullScreenIntent == const $CopyWithPlaceholder() ||
-              fullScreenIntent == null
+      fullScreenIntent: fullScreenIntent == const $CopyWithPlaceholder()
           ? _value.fullScreenIntent
           // ignore: cast_nullable_to_non_nullable
           : fullScreenIntent as bool,
@@ -397,7 +380,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<AndroidNotificationAction>?,
-      colorized: colorized == const $CopyWithPlaceholder() || colorized == null
+      colorized: colorized == const $CopyWithPlaceholder()
           ? _value.colorized
           // ignore: cast_nullable_to_non_nullable
           : colorized as bool,
@@ -405,12 +388,10 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.number
           // ignore: cast_nullable_to_non_nullable
           : number as int?,
-      audioAttributesUsage:
-          audioAttributesUsage == const $CopyWithPlaceholder() ||
-                  audioAttributesUsage == null
-              ? _value.audioAttributesUsage
-              // ignore: cast_nullable_to_non_nullable
-              : audioAttributesUsage as AudioAttributesUsage,
+      audioAttributesUsage: audioAttributesUsage == const $CopyWithPlaceholder()
+          ? _value.audioAttributesUsage
+          // ignore: cast_nullable_to_non_nullable
+          : audioAttributesUsage as AudioAttributesUsage,
     );
   }
 }
@@ -552,14 +533,14 @@ abstract class _$LinuxNotificationDetailsCWProxy {
     LinuxNotificationSound? sound,
     LinuxNotificationCategory? category,
     LinuxNotificationUrgency? urgency,
-    LinuxNotificationTimeout? timeout,
-    bool? resident,
-    bool? suppressSound,
-    bool? transient,
+    LinuxNotificationTimeout timeout,
+    bool resident,
+    bool suppressSound,
+    bool transient,
     LinuxNotificationLocation? location,
     String? defaultActionName,
-    List<LinuxNotificationAction>? actions,
-    bool? actionKeyAsIconName,
+    List<LinuxNotificationAction> actions,
+    bool actionKeyAsIconName,
   });
 }
 
@@ -609,20 +590,19 @@ class _$LinuxNotificationDetailsCWProxyImpl
           ? _value.urgency
           // ignore: cast_nullable_to_non_nullable
           : urgency as LinuxNotificationUrgency?,
-      timeout: timeout == const $CopyWithPlaceholder() || timeout == null
+      timeout: timeout == const $CopyWithPlaceholder()
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
           : timeout as LinuxNotificationTimeout,
-      resident: resident == const $CopyWithPlaceholder() || resident == null
+      resident: resident == const $CopyWithPlaceholder()
           ? _value.resident
           // ignore: cast_nullable_to_non_nullable
           : resident as bool,
-      suppressSound:
-          suppressSound == const $CopyWithPlaceholder() || suppressSound == null
-              ? _value.suppressSound
-              // ignore: cast_nullable_to_non_nullable
-              : suppressSound as bool,
-      transient: transient == const $CopyWithPlaceholder() || transient == null
+      suppressSound: suppressSound == const $CopyWithPlaceholder()
+          ? _value.suppressSound
+          // ignore: cast_nullable_to_non_nullable
+          : suppressSound as bool,
+      transient: transient == const $CopyWithPlaceholder()
           ? _value.transient
           // ignore: cast_nullable_to_non_nullable
           : transient as bool,
@@ -634,16 +614,14 @@ class _$LinuxNotificationDetailsCWProxyImpl
           ? _value.defaultActionName
           // ignore: cast_nullable_to_non_nullable
           : defaultActionName as String?,
-      actions: actions == const $CopyWithPlaceholder() || actions == null
+      actions: actions == const $CopyWithPlaceholder()
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<LinuxNotificationAction>,
-      actionKeyAsIconName:
-          actionKeyAsIconName == const $CopyWithPlaceholder() ||
-                  actionKeyAsIconName == null
-              ? _value.actionKeyAsIconName
-              // ignore: cast_nullable_to_non_nullable
-              : actionKeyAsIconName as bool,
+      actionKeyAsIconName: actionKeyAsIconName == const $CopyWithPlaceholder()
+          ? _value.actionKeyAsIconName
+          // ignore: cast_nullable_to_non_nullable
+          : actionKeyAsIconName as bool,
     );
   }
 }
@@ -663,12 +641,12 @@ abstract class _$WindowsNotificationDetailsCWProxy {
   /// WindowsNotificationDetails(...).copyWith(id: 12, name: "My name")
   /// ````
   WindowsNotificationDetails call({
-    List<WindowsAction>? actions,
-    List<WindowsInput>? inputs,
-    List<WindowsImage>? images,
-    List<WindowsRow>? rows,
-    List<WindowsProgressBar>? progressBars,
-    Map<String, String>? bindings,
+    List<WindowsAction> actions,
+    List<WindowsInput> inputs,
+    List<WindowsImage> images,
+    List<WindowsRow> rows,
+    List<WindowsProgressBar> progressBars,
+    Map<String, String> bindings,
     WindowsHeader? header,
     WindowsNotificationAudio? audio,
     WindowsNotificationDuration? duration,
@@ -708,28 +686,27 @@ class _$WindowsNotificationDetailsCWProxyImpl
     Object? subtitle = const $CopyWithPlaceholder(),
   }) {
     return WindowsNotificationDetails(
-      actions: actions == const $CopyWithPlaceholder() || actions == null
+      actions: actions == const $CopyWithPlaceholder()
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<WindowsAction>,
-      inputs: inputs == const $CopyWithPlaceholder() || inputs == null
+      inputs: inputs == const $CopyWithPlaceholder()
           ? _value.inputs
           // ignore: cast_nullable_to_non_nullable
           : inputs as List<WindowsInput>,
-      images: images == const $CopyWithPlaceholder() || images == null
+      images: images == const $CopyWithPlaceholder()
           ? _value.images
           // ignore: cast_nullable_to_non_nullable
           : images as List<WindowsImage>,
-      rows: rows == const $CopyWithPlaceholder() || rows == null
+      rows: rows == const $CopyWithPlaceholder()
           ? _value.rows
           // ignore: cast_nullable_to_non_nullable
           : rows as List<WindowsRow>,
-      progressBars:
-          progressBars == const $CopyWithPlaceholder() || progressBars == null
-              ? _value.progressBars
-              // ignore: cast_nullable_to_non_nullable
-              : progressBars as List<WindowsProgressBar>,
-      bindings: bindings == const $CopyWithPlaceholder() || bindings == null
+      progressBars: progressBars == const $CopyWithPlaceholder()
+          ? _value.progressBars
+          // ignore: cast_nullable_to_non_nullable
+          : progressBars as List<WindowsProgressBar>,
+      bindings: bindings == const $CopyWithPlaceholder()
           ? _value.bindings
           // ignore: cast_nullable_to_non_nullable
           : bindings as Map<String, String>,

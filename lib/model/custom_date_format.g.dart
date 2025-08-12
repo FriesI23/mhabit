@@ -14,11 +14,11 @@ abstract class _$CustomDateYmdHmsConfigCWProxy {
   /// CustomDateYmdHmsConfig(...).copyWith(id: 12, name: "My name")
   /// ````
   CustomDateYmdHmsConfig call({
-    YearMonthDayFormtEnum? ymdFormat,
-    DateSplitCharEnum? splitChar,
-    bool? twelveHoursOn,
-    bool? useMonthWithName,
-    bool? useSystemFormat,
+    YearMonthDayFormtEnum ymdFormat,
+    DateSplitCharEnum splitChar,
+    bool twelveHoursOn,
+    bool useMonthWithName,
+    bool useSystemFormat,
     bool? applyFreqChart,
     bool? applyHeatmapCal,
   });
@@ -49,26 +49,23 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
     Object? applyHeatmapCal = const $CopyWithPlaceholder(),
   }) {
     return CustomDateYmdHmsConfig(
-      ymdFormat: ymdFormat == const $CopyWithPlaceholder() || ymdFormat == null
+      ymdFormat: ymdFormat == const $CopyWithPlaceholder()
           ? _value.ymdFormat
           // ignore: cast_nullable_to_non_nullable
           : ymdFormat as YearMonthDayFormtEnum,
-      splitChar: splitChar == const $CopyWithPlaceholder() || splitChar == null
+      splitChar: splitChar == const $CopyWithPlaceholder()
           ? _value.splitChar
           // ignore: cast_nullable_to_non_nullable
           : splitChar as DateSplitCharEnum,
-      twelveHoursOn:
-          twelveHoursOn == const $CopyWithPlaceholder() || twelveHoursOn == null
-              ? _value.twelveHoursOn
-              // ignore: cast_nullable_to_non_nullable
-              : twelveHoursOn as bool,
-      useMonthWithName: useMonthWithName == const $CopyWithPlaceholder() ||
-              useMonthWithName == null
+      twelveHoursOn: twelveHoursOn == const $CopyWithPlaceholder()
+          ? _value.twelveHoursOn
+          // ignore: cast_nullable_to_non_nullable
+          : twelveHoursOn as bool,
+      useMonthWithName: useMonthWithName == const $CopyWithPlaceholder()
           ? _value.useMonthWithName
           // ignore: cast_nullable_to_non_nullable
           : useMonthWithName as bool,
-      useSystemFormat: useSystemFormat == const $CopyWithPlaceholder() ||
-              useSystemFormat == null
+      useSystemFormat: useSystemFormat == const $CopyWithPlaceholder()
           ? _value.useSystemFormat
           // ignore: cast_nullable_to_non_nullable
           : useSystemFormat as bool,

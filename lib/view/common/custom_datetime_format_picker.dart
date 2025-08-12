@@ -64,13 +64,15 @@ class _CustomDateTimeFormatPickerDialogState
 
   void _onYMDFormatChanged(YearMonthDayFormtEnum? newFormat) {
     setState(() {
-      _crtConfig = _crtConfig.copyWith(ymdFormat: newFormat);
+      _crtConfig =
+          _crtConfig.copyWith(ymdFormat: newFormat ?? _crtConfig.ymdFormat);
     });
   }
 
   void _onSplitCharChanged(DateSplitCharEnum? newChar) {
     setState(() {
-      _crtConfig = _crtConfig.copyWith(splitChar: newChar);
+      _crtConfig =
+          _crtConfig.copyWith(splitChar: newChar ?? _crtConfig.splitChar);
     });
   }
 

@@ -522,7 +522,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
             return WebDavAppSyncTask(
               sessionId: sessionId,
               config: config.copyWith(
-                  password: password,
+                  password: password ?? config.password,
                   timeout: isFirstSync
                       ? (config.timeout ?? defaultAppSyncTimeout) * 10
                       : config.timeout),

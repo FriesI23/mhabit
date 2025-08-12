@@ -14,19 +14,19 @@ abstract class _$AppWebDavSyncServerCWProxy {
   /// AppWebDavSyncServer(...).copyWith(id: 12, name: "My name")
   /// ````
   AppWebDavSyncServer call({
-    String? identity,
-    DateTime? createTime,
-    DateTime? modifyTime,
-    Uri? path,
-    String? username,
-    String? password,
+    String identity,
+    DateTime createTime,
+    DateTime modifyTime,
+    Uri path,
+    String username,
+    String password,
     Duration? timeout,
     int? connectRetryCount,
     Duration? connectTimeout,
-    bool? configed,
-    Iterable<AppSyncServerMobileNetwork>? syncMobileNetworks,
-    bool? syncInLowData,
-    bool? ignoreSSL,
+    bool configed,
+    Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
+    bool syncInLowData,
+    bool ignoreSSL,
   });
 }
 
@@ -60,29 +60,27 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
     Object? ignoreSSL = const $CopyWithPlaceholder(),
   }) {
     return AppWebDavSyncServer._copyWith(
-      identity: identity == const $CopyWithPlaceholder() || identity == null
+      identity: identity == const $CopyWithPlaceholder()
           ? _value.identity
           // ignore: cast_nullable_to_non_nullable
           : identity as String,
-      createTime:
-          createTime == const $CopyWithPlaceholder() || createTime == null
-              ? _value.createTime
-              // ignore: cast_nullable_to_non_nullable
-              : createTime as DateTime,
-      modifyTime:
-          modifyTime == const $CopyWithPlaceholder() || modifyTime == null
-              ? _value.modifyTime
-              // ignore: cast_nullable_to_non_nullable
-              : modifyTime as DateTime,
-      path: path == const $CopyWithPlaceholder() || path == null
+      createTime: createTime == const $CopyWithPlaceholder()
+          ? _value.createTime
+          // ignore: cast_nullable_to_non_nullable
+          : createTime as DateTime,
+      modifyTime: modifyTime == const $CopyWithPlaceholder()
+          ? _value.modifyTime
+          // ignore: cast_nullable_to_non_nullable
+          : modifyTime as DateTime,
+      path: path == const $CopyWithPlaceholder()
           ? _value.path
           // ignore: cast_nullable_to_non_nullable
           : path as Uri,
-      username: username == const $CopyWithPlaceholder() || username == null
+      username: username == const $CopyWithPlaceholder()
           ? _value.username
           // ignore: cast_nullable_to_non_nullable
           : username as String,
-      password: password == const $CopyWithPlaceholder() || password == null
+      password: password == const $CopyWithPlaceholder()
           ? _value.password
           // ignore: cast_nullable_to_non_nullable
           : password as String,
@@ -98,21 +96,19 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
           ? _value.connectTimeout
           // ignore: cast_nullable_to_non_nullable
           : connectTimeout as Duration?,
-      configed: configed == const $CopyWithPlaceholder() || configed == null
+      configed: configed == const $CopyWithPlaceholder()
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
           : configed as bool,
-      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder() ||
-              syncMobileNetworks == null
+      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder()
           ? _value.syncMobileNetworks
           // ignore: cast_nullable_to_non_nullable
           : syncMobileNetworks as Iterable<AppSyncServerMobileNetwork>,
-      syncInLowData:
-          syncInLowData == const $CopyWithPlaceholder() || syncInLowData == null
-              ? _value.syncInLowData
-              // ignore: cast_nullable_to_non_nullable
-              : syncInLowData as bool,
-      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder() || ignoreSSL == null
+      syncInLowData: syncInLowData == const $CopyWithPlaceholder()
+          ? _value.syncInLowData
+          // ignore: cast_nullable_to_non_nullable
+          : syncInLowData as bool,
+      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder()
           ? _value.ignoreSSL
           // ignore: cast_nullable_to_non_nullable
           : ignoreSSL as bool,
@@ -135,13 +131,13 @@ abstract class _$AppFakeSyncServerCWProxy {
   /// AppFakeSyncServer(...).copyWith(id: 12, name: "My name")
   /// ````
   AppFakeSyncServer call({
-    String? identity,
-    String? name,
-    DateTime? createTime,
-    DateTime? modifyTime,
+    String identity,
+    String name,
+    DateTime createTime,
+    DateTime modifyTime,
     String? password,
     Duration? timeout,
-    bool? configed,
+    bool configed,
   });
 }
 
@@ -169,24 +165,22 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppFakeSyncServer._copyWith(
-      identity: identity == const $CopyWithPlaceholder() || identity == null
+      identity: identity == const $CopyWithPlaceholder()
           ? _value.identity
           // ignore: cast_nullable_to_non_nullable
           : identity as String,
-      name: name == const $CopyWithPlaceholder() || name == null
+      name: name == const $CopyWithPlaceholder()
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
-      createTime:
-          createTime == const $CopyWithPlaceholder() || createTime == null
-              ? _value.createTime
-              // ignore: cast_nullable_to_non_nullable
-              : createTime as DateTime,
-      modifyTime:
-          modifyTime == const $CopyWithPlaceholder() || modifyTime == null
-              ? _value.modifyTime
-              // ignore: cast_nullable_to_non_nullable
-              : modifyTime as DateTime,
+      createTime: createTime == const $CopyWithPlaceholder()
+          ? _value.createTime
+          // ignore: cast_nullable_to_non_nullable
+          : createTime as DateTime,
+      modifyTime: modifyTime == const $CopyWithPlaceholder()
+          ? _value.modifyTime
+          // ignore: cast_nullable_to_non_nullable
+          : modifyTime as DateTime,
       password: password == const $CopyWithPlaceholder()
           ? _value.password
           // ignore: cast_nullable_to_non_nullable
@@ -195,7 +189,7 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
           : timeout as Duration?,
-      configed: configed == const $CopyWithPlaceholder() || configed == null
+      configed: configed == const $CopyWithPlaceholder()
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
           : configed as bool,
@@ -218,10 +212,10 @@ abstract class _$AppSyncServerFormCWProxy {
   /// AppSyncServerForm(...).copyWith(id: 12, name: "My name")
   /// ````
   AppSyncServerForm call({
-    UuidValue? uuid,
-    AppSyncServerType? type,
-    DateTime? createTime,
-    DateTime? modifyTime,
+    UuidValue uuid,
+    AppSyncServerType type,
+    DateTime createTime,
+    DateTime modifyTime,
     String? path,
     String? username,
     String? password,
@@ -231,7 +225,7 @@ abstract class _$AppSyncServerFormCWProxy {
     int? connectRetryCount,
     Set<AppSyncServerMobileNetwork>? syncMobileNetworks,
     bool? syncInLowData,
-    bool? configed,
+    bool configed,
   });
 }
 
@@ -266,24 +260,22 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
     Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppSyncServerForm(
-      uuid: uuid == const $CopyWithPlaceholder() || uuid == null
+      uuid: uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
           : uuid as UuidValue,
-      type: type == const $CopyWithPlaceholder() || type == null
+      type: type == const $CopyWithPlaceholder()
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as AppSyncServerType,
-      createTime:
-          createTime == const $CopyWithPlaceholder() || createTime == null
-              ? _value.createTime
-              // ignore: cast_nullable_to_non_nullable
-              : createTime as DateTime,
-      modifyTime:
-          modifyTime == const $CopyWithPlaceholder() || modifyTime == null
-              ? _value.modifyTime
-              // ignore: cast_nullable_to_non_nullable
-              : modifyTime as DateTime,
+      createTime: createTime == const $CopyWithPlaceholder()
+          ? _value.createTime
+          // ignore: cast_nullable_to_non_nullable
+          : createTime as DateTime,
+      modifyTime: modifyTime == const $CopyWithPlaceholder()
+          ? _value.modifyTime
+          // ignore: cast_nullable_to_non_nullable
+          : modifyTime as DateTime,
       path: path == const $CopyWithPlaceholder()
           ? _value.path
           // ignore: cast_nullable_to_non_nullable
@@ -320,7 +312,7 @@ class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
           ? _value.syncInLowData
           // ignore: cast_nullable_to_non_nullable
           : syncInLowData as bool?,
-      configed: configed == const $CopyWithPlaceholder() || configed == null
+      configed: configed == const $CopyWithPlaceholder()
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
           : configed as bool,

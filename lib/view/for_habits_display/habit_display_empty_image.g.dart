@@ -14,14 +14,14 @@ abstract class _$HabitDisplayEmptyImageStyleCWProxy {
   /// HabitDisplayEmptyImageStyle(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitDisplayEmptyImageStyle call({
-    Color? backBoardBackgroundColor,
-    Color? fronBoardBackgroundColor,
-    Color? boardStrokeColor,
-    Color? fronBoardTopColor,
-    Color? fronBoardFirstLineColor,
-    Color? fronBoardOtherLineColor,
-    Color? fronBoardSubtitleLineColor,
-    Color? backgroundCirlcColor,
+    Color backBoardBackgroundColor,
+    Color fronBoardBackgroundColor,
+    Color boardStrokeColor,
+    Color fronBoardTopColor,
+    Color fronBoardFirstLineColor,
+    Color fronBoardOtherLineColor,
+    Color fronBoardSubtitleLineColor,
+    Color backgroundCirlcColor,
   });
 }
 
@@ -52,51 +52,42 @@ class _$HabitDisplayEmptyImageStyleCWProxyImpl
   }) {
     return HabitDisplayEmptyImageStyle(
       backBoardBackgroundColor:
-          backBoardBackgroundColor == const $CopyWithPlaceholder() ||
-                  backBoardBackgroundColor == null
+          backBoardBackgroundColor == const $CopyWithPlaceholder()
               ? _value.backBoardBackgroundColor
               // ignore: cast_nullable_to_non_nullable
               : backBoardBackgroundColor as Color,
       fronBoardBackgroundColor:
-          fronBoardBackgroundColor == const $CopyWithPlaceholder() ||
-                  fronBoardBackgroundColor == null
+          fronBoardBackgroundColor == const $CopyWithPlaceholder()
               ? _value.fronBoardBackgroundColor
               // ignore: cast_nullable_to_non_nullable
               : fronBoardBackgroundColor as Color,
-      boardStrokeColor: boardStrokeColor == const $CopyWithPlaceholder() ||
-              boardStrokeColor == null
+      boardStrokeColor: boardStrokeColor == const $CopyWithPlaceholder()
           ? _value.boardStrokeColor
           // ignore: cast_nullable_to_non_nullable
           : boardStrokeColor as Color,
-      fronBoardTopColor: fronBoardTopColor == const $CopyWithPlaceholder() ||
-              fronBoardTopColor == null
+      fronBoardTopColor: fronBoardTopColor == const $CopyWithPlaceholder()
           ? _value.fronBoardTopColor
           // ignore: cast_nullable_to_non_nullable
           : fronBoardTopColor as Color,
       fronBoardFirstLineColor:
-          fronBoardFirstLineColor == const $CopyWithPlaceholder() ||
-                  fronBoardFirstLineColor == null
+          fronBoardFirstLineColor == const $CopyWithPlaceholder()
               ? _value.fronBoardFirstLineColor
               // ignore: cast_nullable_to_non_nullable
               : fronBoardFirstLineColor as Color,
       fronBoardOtherLineColor:
-          fronBoardOtherLineColor == const $CopyWithPlaceholder() ||
-                  fronBoardOtherLineColor == null
+          fronBoardOtherLineColor == const $CopyWithPlaceholder()
               ? _value.fronBoardOtherLineColor
               // ignore: cast_nullable_to_non_nullable
               : fronBoardOtherLineColor as Color,
       fronBoardSubtitleLineColor:
-          fronBoardSubtitleLineColor == const $CopyWithPlaceholder() ||
-                  fronBoardSubtitleLineColor == null
+          fronBoardSubtitleLineColor == const $CopyWithPlaceholder()
               ? _value.fronBoardSubtitleLineColor
               // ignore: cast_nullable_to_non_nullable
               : fronBoardSubtitleLineColor as Color,
-      backgroundCirlcColor:
-          backgroundCirlcColor == const $CopyWithPlaceholder() ||
-                  backgroundCirlcColor == null
-              ? _value.backgroundCirlcColor
-              // ignore: cast_nullable_to_non_nullable
-              : backgroundCirlcColor as Color,
+      backgroundCirlcColor: backgroundCirlcColor == const $CopyWithPlaceholder()
+          ? _value.backgroundCirlcColor
+          // ignore: cast_nullable_to_non_nullable
+          : backgroundCirlcColor as Color,
     );
   }
 }

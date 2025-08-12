@@ -14,11 +14,11 @@ abstract class _$HabitRangeDayStatisticCWProxy {
   /// HabitRangeDayStatistic(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitRangeDayStatistic call({
-    String? uuid,
-    num? startProgress,
-    HabitDate? lastStartRecordData,
-    num? enededProgress,
-    HabitDate? lastEndedRecordDate,
+    String uuid,
+    num startProgress,
+    HabitDate lastStartRecordData,
+    num enededProgress,
+    HabitDate lastEndedRecordDate,
   });
 }
 
@@ -45,32 +45,26 @@ class _$HabitRangeDayStatisticCWProxyImpl
     Object? lastEndedRecordDate = const $CopyWithPlaceholder(),
   }) {
     return HabitRangeDayStatistic(
-      uuid: uuid == const $CopyWithPlaceholder() || uuid == null
+      uuid: uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
           : uuid as String,
-      startProgress:
-          startProgress == const $CopyWithPlaceholder() || startProgress == null
-              ? _value.startProgress
-              // ignore: cast_nullable_to_non_nullable
-              : startProgress as num,
-      lastStartRecordData:
-          lastStartRecordData == const $CopyWithPlaceholder() ||
-                  lastStartRecordData == null
-              ? _value.lastStartRecordData
-              // ignore: cast_nullable_to_non_nullable
-              : lastStartRecordData as HabitDate,
-      enededProgress: enededProgress == const $CopyWithPlaceholder() ||
-              enededProgress == null
+      startProgress: startProgress == const $CopyWithPlaceholder()
+          ? _value.startProgress
+          // ignore: cast_nullable_to_non_nullable
+          : startProgress as num,
+      lastStartRecordData: lastStartRecordData == const $CopyWithPlaceholder()
+          ? _value.lastStartRecordData
+          // ignore: cast_nullable_to_non_nullable
+          : lastStartRecordData as HabitDate,
+      enededProgress: enededProgress == const $CopyWithPlaceholder()
           ? _value.enededProgress
           // ignore: cast_nullable_to_non_nullable
           : enededProgress as num,
-      lastEndedRecordDate:
-          lastEndedRecordDate == const $CopyWithPlaceholder() ||
-                  lastEndedRecordDate == null
-              ? _value.lastEndedRecordDate
-              // ignore: cast_nullable_to_non_nullable
-              : lastEndedRecordDate as HabitDate,
+      lastEndedRecordDate: lastEndedRecordDate == const $CopyWithPlaceholder()
+          ? _value.lastEndedRecordDate
+          // ignore: cast_nullable_to_non_nullable
+          : lastEndedRecordDate as HabitDate,
     );
   }
 }
@@ -99,10 +93,10 @@ abstract class _$HabitSummaryStatisticsDataCWProxy {
   /// HabitSummaryStatisticsData(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitSummaryStatisticsData call({
-    int? currentComplatedCount,
-    int? currentInProgressCount,
-    int? currentArchivedCount,
-    List<HabitRangeDayStatistic>? currentPopularityData,
+    int currentComplatedCount,
+    int currentInProgressCount,
+    int currentArchivedCount,
+    List<HabitRangeDayStatistic> currentPopularityData,
   });
 }
 
@@ -147,26 +141,21 @@ class _$HabitSummaryStatisticsDataCWProxyImpl
   }) {
     return HabitSummaryStatisticsData(
       currentComplatedCount:
-          currentComplatedCount == const $CopyWithPlaceholder() ||
-                  currentComplatedCount == null
+          currentComplatedCount == const $CopyWithPlaceholder()
               ? _value.currentComplatedCount
               // ignore: cast_nullable_to_non_nullable
               : currentComplatedCount as int,
       currentInProgressCount:
-          currentInProgressCount == const $CopyWithPlaceholder() ||
-                  currentInProgressCount == null
+          currentInProgressCount == const $CopyWithPlaceholder()
               ? _value.currentInProgressCount
               // ignore: cast_nullable_to_non_nullable
               : currentInProgressCount as int,
-      currentArchivedCount:
-          currentArchivedCount == const $CopyWithPlaceholder() ||
-                  currentArchivedCount == null
-              ? _value.currentArchivedCount
-              // ignore: cast_nullable_to_non_nullable
-              : currentArchivedCount as int,
+      currentArchivedCount: currentArchivedCount == const $CopyWithPlaceholder()
+          ? _value.currentArchivedCount
+          // ignore: cast_nullable_to_non_nullable
+          : currentArchivedCount as int,
       currentPopularityData:
-          currentPopularityData == const $CopyWithPlaceholder() ||
-                  currentPopularityData == null
+          currentPopularityData == const $CopyWithPlaceholder()
               ? _value.currentPopularityData
               // ignore: cast_nullable_to_non_nullable
               : currentPopularityData as List<HabitRangeDayStatistic>,

@@ -104,7 +104,7 @@ abstract class _$HabitExportDataCWProxy {
     String? reminderQuest,
     int? startDate,
     int? targetDays,
-    List<RecordExportData>? records,
+    List<RecordExportData> records,
   });
 }
 
@@ -206,7 +206,7 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
           ? _value.targetDays
           // ignore: cast_nullable_to_non_nullable
           : targetDays as int?,
-      records: records == const $CopyWithPlaceholder() || records == null
+      records: records == const $CopyWithPlaceholder()
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
           : records as List<RecordExportData>,

@@ -14,9 +14,9 @@ abstract class _$HabitStatusChangerFormCWProxy {
   /// HabitStatusChangerForm(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitStatusChangerForm call({
-    HabitDate? selectDate,
+    HabitDate selectDate,
     RecordStatusChangerStatus? selectStatus,
-    TextEditingController? skipInputController,
+    TextEditingController skipInputController,
   });
 }
 
@@ -41,21 +41,18 @@ class _$HabitStatusChangerFormCWProxyImpl
     Object? skipInputController = const $CopyWithPlaceholder(),
   }) {
     return HabitStatusChangerForm(
-      selectDate:
-          selectDate == const $CopyWithPlaceholder() || selectDate == null
-              ? _value.selectDate
-              // ignore: cast_nullable_to_non_nullable
-              : selectDate as HabitDate,
+      selectDate: selectDate == const $CopyWithPlaceholder()
+          ? _value.selectDate
+          // ignore: cast_nullable_to_non_nullable
+          : selectDate as HabitDate,
       selectStatus: selectStatus == const $CopyWithPlaceholder()
           ? _value.selectStatus
           // ignore: cast_nullable_to_non_nullable
           : selectStatus as RecordStatusChangerStatus?,
-      skipInputController:
-          skipInputController == const $CopyWithPlaceholder() ||
-                  skipInputController == null
-              ? _value.skipInputController
-              // ignore: cast_nullable_to_non_nullable
-              : skipInputController as TextEditingController,
+      skipInputController: skipInputController == const $CopyWithPlaceholder()
+          ? _value.skipInputController
+          // ignore: cast_nullable_to_non_nullable
+          : skipInputController as TextEditingController,
     );
   }
 }
