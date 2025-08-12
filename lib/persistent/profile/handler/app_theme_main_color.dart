@@ -48,5 +48,5 @@ final class _Encoder extends Converter<Color, int> {
   const _Encoder();
 
   @override
-  int convert(Color input) => input.value;
+  int convert(Color input) => input.toARGB32();
 }

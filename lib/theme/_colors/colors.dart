@@ -19,16 +19,16 @@ import '../../model/habit_form.dart';
 import '../color.dart';
 import 'custom_color.g.dart';
 
-final cc1Palette = CorePalette.of(cc1.value);
-final cc2Palette = CorePalette.of(cc2.value);
-final cc3Palette = CorePalette.of(cc3.value);
-final cc4Palette = CorePalette.of(cc4.value);
-final cc5Palette = CorePalette.of(cc5.value);
-final cc6Palette = CorePalette.of(cc6.value);
-final cc7Palette = CorePalette.of(cc7.value);
-final cc8Palette = CorePalette.of(cc8.value);
-final cc9Palette = CorePalette.of(cc9.value);
-final cc10Palette = CorePalette.of(cc10.value);
+final cc1Palette = CorePalette.of(cc1.toARGB32());
+final cc2Palette = CorePalette.of(cc2.toARGB32());
+final cc3Palette = CorePalette.of(cc3.toARGB32());
+final cc4Palette = CorePalette.of(cc4.toARGB32());
+final cc5Palette = CorePalette.of(cc5.toARGB32());
+final cc6Palette = CorePalette.of(cc6.toARGB32());
+final cc7Palette = CorePalette.of(cc7.toARGB32());
+final cc8Palette = CorePalette.of(cc8.toARGB32());
+final cc9Palette = CorePalette.of(cc9.toARGB32());
+final cc10Palette = CorePalette.of(cc10.toARGB32());
 
 final modifedLightCustomColors = lightCustomColors.copyWith(
   cc1: genHabitColorPrimaryLight(HabitColorType.cc1),
