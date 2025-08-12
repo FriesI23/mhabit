@@ -16,7 +16,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart' show OpenFile;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -114,7 +114,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     final debugInfo = await AppInfo().generateAppDebugInfo();
     await File(filePath).writeAsString(debugInfo, mode: FileMode.writeOnly);
     if (!mounted) return;
-    OpenFile.open(filePath, type: "text/plain", uti: "public.plain-text");
+    OpenFile.open(filePath, type: "text/plain");
   }
 
   void _onSaveDebugButtonPressed(BuildContext context) async {
