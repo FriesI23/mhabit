@@ -497,8 +497,6 @@ class _DatePickerHeader extends StatelessWidget {
   const _DatePickerHeader({
     required this.helpText,
     required this.titleText,
-    // ignore: unused_element
-    this.titleSemanticsLabel,
     required this.titleStyle,
     required this.orientation,
     this.isShort = false,
@@ -512,8 +510,6 @@ class _DatePickerHeader extends StatelessWidget {
   final String helpText;
 
   final String titleText;
-
-  final String? titleSemanticsLabel;
 
   final TextStyle? titleStyle;
 
@@ -548,7 +544,7 @@ class _DatePickerHeader extends StatelessWidget {
     );
     final Text title = Text(
       titleText,
-      semanticsLabel: titleSemanticsLabel ?? titleText,
+      semanticsLabel: titleText,
       style: titleStyle,
       maxLines: orientation == Orientation.portrait ? 1 : 2,
       overflow: TextOverflow.ellipsis,

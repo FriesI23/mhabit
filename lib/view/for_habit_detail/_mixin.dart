@@ -31,15 +31,15 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
       HabitHeatMapColorMapDefine.uncomplate:
           (colorData?.getColor(viewmodel.habitColorType!) ??
                   themeData.colorScheme.primary)
-              .withOpacity(0.2),
+              .withValues(alpha: 0.2),
       HabitHeatMapColorMapDefine.partiallyCompleted:
           (colorData?.getColor(viewmodel.habitColorType!) ??
                   themeData.colorScheme.primary)
-              .withOpacity(0.3),
+              .withValues(alpha: 0.3),
       HabitHeatMapColorMapDefine.autoComplate:
           (colorData?.getColor(viewmodel.habitColorType!) ??
                   themeData.colorScheme.primary)
-              .withOpacity(0.5),
+              .withValues(alpha: 0.5),
       HabitHeatMapColorMapDefine.complate:
           (colorData?.getColor(viewmodel.habitColorType!) ??
               themeData.colorScheme.primary),

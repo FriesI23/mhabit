@@ -15,7 +15,6 @@
 import 'dart:math' as math;
 
 import 'package:async/async.dart';
-import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -226,14 +225,16 @@ class HabitStatusChangerViewModel
 
   bool get canSave {
     if (_form.selectStatus == RecordStatusChangerStatus.skip &&
-        _isSkipReasonEdited) return true;
+        _isSkipReasonEdited) {
+      return true;
+    }
     return _form.selectStatus != null &&
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
 
   Iterable<HabitSummaryRecord> get selectDateRecords => dataDelegate.habits
       .map((e) => e.getRecordByDate(_form.selectDate))
-      .whereNotNull()
+      .nonNulls
       .where((e) => e.status != HabitRecordStatus.unknown);
 
   HabitDate get selectDate => _form.selectDate;

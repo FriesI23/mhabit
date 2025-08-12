@@ -413,7 +413,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
           .fromJson(json.map((e) => e as List).toList())
           .map((e) => WebDavSyncRecordData.fromJson(Map.of(e)))
           .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
-          .whereNotNull());
+          .nonNulls);
 
   const WebDavSyncHabitData({
     this.uuid,

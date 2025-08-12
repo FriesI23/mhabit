@@ -356,7 +356,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       // debugPrint("----------------- $crtRecord  $completeStatus");
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) continue;
+              completeStatus == HabitDailyComplateStatus.ok)) {
+        continue;
+      }
 
       window.add(crtDate);
       // debugPrint("window: $window");
@@ -423,7 +425,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) continue;
+              completeStatus == HabitDailyComplateStatus.ok)) {
+        continue;
+      }
 
       yearWeekRecordMap.update(
         crtDate.getFirstDayOfWeekWithStartDay(firstDay),
@@ -468,7 +472,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
       ).complateStatus;
       if (crtRecord.status != HabitRecordStatus.done ||
           !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) continue;
+              completeStatus == HabitDailyComplateStatus.ok)) {
+        continue;
+      }
 
       yearMonthRecordMap.update(
         crtDate.lastDayOfMonth,

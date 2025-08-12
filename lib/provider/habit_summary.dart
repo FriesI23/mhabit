@@ -15,7 +15,6 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -690,7 +689,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<List<HabitStatusChangedRecord>?> archivedSelectedHabits() async {
     final realNeedArchivedUUID = _selectorData.selectedColl
         .map(getHabit)
-        .whereNotNull()
+        .nonNulls
         .where((e) => e.status != HabitStatus.archived)
         .map((e) => e.uuid)
         .toList();
@@ -723,7 +722,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<List<HabitStatusChangedRecord>?> unarchivedSelectedHabits() async {
     final realNeedUnarchivedUUID = _selectorData.selectedColl
         .map(getHabit)
-        .whereNotNull()
+        .nonNulls
         .where((e) => e.status == HabitStatus.archived)
         .map((e) => e.uuid)
         .toList();
@@ -750,7 +749,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<List<HabitStatusChangedRecord>?> deleteSelectedHabits() async {
     final realNeedDeletedUUID = _selectorData.selectedColl
         .map(getHabit)
-        .whereNotNull()
+        .nonNulls
         .where((e) => e.status != HabitStatus.deleted)
         .map((e) => e.uuid)
         .toList();

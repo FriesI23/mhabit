@@ -15,7 +15,6 @@
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
@@ -1355,7 +1354,7 @@ class _FAB extends StatelessWidget {
     final selectedUUIDList = context
         .read<HabitSummaryViewModel>()
         .getSelectedHabitsData()
-        .whereNotNull()
+        .nonNulls
         .map((e) => e.uuid)
         .toList();
     final summary = context.read<HabitSummaryViewModel>();

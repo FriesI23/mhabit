@@ -140,7 +140,9 @@ class HabitScoreCalculator {
         toScore: crtScore,
         onScoreChanged: onScoreChanged,
         onTotalScoreCalculated: onTotalScoreCalculated,
-      )) return;
+      )) {
+        return;
+      }
 
       crtDays = _habitScore.calcHabitGrowCurveDay(crtScore);
       crtDate = date.addDays(1);
@@ -161,7 +163,9 @@ class HabitScoreCalculator {
         toScore: crtScore,
         onScoreChanged: onScoreChanged,
         onTotalScoreCalculated: onTotalScoreCalculated,
-      )) return;
+      )) {
+        return;
+      }
 
       crtDays = _habitScore.calcHabitGrowCurveDay(crtScore);
       // step 2.3:  Update current score with calculated increase days
@@ -174,7 +178,9 @@ class HabitScoreCalculator {
         toScore: crtScore,
         onScoreChanged: onScoreChanged,
         onTotalScoreCalculated: onTotalScoreCalculated,
-      )) return;
+      )) {
+        return;
+      }
     }
 
     // step 4: Calc score from last recorded date to the end

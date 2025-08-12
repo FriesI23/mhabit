@@ -159,8 +159,6 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
           return [formatMonth, formatDay, formatYear].join(splitChar.char);
         case YearMonthDayFormtEnum.dayMonthYear:
           return [formatDay, formatMonth, formatYear].join(splitChar.char);
-        default:
-          throw UnsupportedError("unsupport formatter with ymdhms config");
       }
     }
 
@@ -194,8 +192,6 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
       case YearMonthDayFormtEnum.dayMonthYear:
         return DateFormat(
             [formatMonth, formatYear].join(splitChar.char), locale);
-      default:
-        throw UnsupportedError("unsupport formatter with ym config");
     }
   }
 

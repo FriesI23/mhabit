@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
@@ -141,7 +140,7 @@ class _AppLoggerManager implements AppLoggerMananger {
     await Future.wait([
       AppLoggerMananger._normalLogger?.init,
       AppLoggerMananger._debuggingLogger?.init,
-    ].whereNotNull());
+    ].nonNulls);
 
     FlutterError.onError = _onFlutterErrorCatched;
     PlatformDispatcher.instance.onError = _onPlatformErrorCatched;

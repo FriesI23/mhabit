@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -113,7 +112,7 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
           children: [
             ...AppSyncServerMobileNetwork.allowed
                 .map((type) => _buildNetworkTypeChip(context, type))
-                .whereNotNull(),
+                .nonNulls,
             _buildLowDataModeChip(context),
           ],
         ),

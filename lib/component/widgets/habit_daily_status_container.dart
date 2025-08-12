@@ -166,8 +166,6 @@ class HabitDailyStatusContainer extends StatelessWidget {
               } else {
                 return withDoneAndZeroStatus();
               }
-            default:
-              return const SizedBox();
           }
       }
     }

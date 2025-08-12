@@ -107,7 +107,9 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
       if (!method.isPublic ||
           method.isStatic ||
           method.isOperator ||
-          generatedMethods.contains(method.name)) continue;
+          generatedMethods.contains(method.name)) {
+        continue;
+      }
 
       generatedMethods.add(method.name);
 

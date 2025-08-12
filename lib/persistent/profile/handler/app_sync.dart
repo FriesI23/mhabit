@@ -105,7 +105,7 @@ final class _AppSyncServerConfigEncoder
   JsonMap convert(AppSyncServer? input) => input?.toJson() ?? {};
 }
 
-/// Enabled Switch: <version> > 1.16.6+73
+/// Enabled Switch: \<version\> > 1.16.6+73
 class AppSyncExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   AppSyncExperimentalFeature(super.pref) : super(codec: const SameTypeCodec());
 

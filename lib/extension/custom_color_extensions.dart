@@ -143,6 +143,7 @@ extension HabitColorExtension on CustomColors {
         return l10n?.common_habitColorType_cc9 ?? fallbackColorName;
       case HabitColorType.cc10:
         return l10n?.common_habitColorType_cc10 ?? fallbackColorName;
+      // ignore: unreachable_switch_default
       default:
         return l10n?.common_habitColorType_default(colorType.code) ??
             fallbackColorName;

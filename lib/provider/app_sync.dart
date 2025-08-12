@@ -334,7 +334,9 @@ class AppSyncViewModel
   void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {
     if (!(mounted &&
         _serverConfig?.get() != null &&
-        _interval?.get()?.t != null)) return;
+        _interval?.get()?.t != null)) {
+      return;
+    }
     appLog.appsync.debug("AppSyncViewModel.delayedStartTaskOnce",
         ex: [delay, _delayedSyncTrigger]);
     _delayedSyncTrigger.exec(delay: delay);

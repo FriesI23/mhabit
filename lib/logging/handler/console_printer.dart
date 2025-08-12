@@ -14,7 +14,6 @@
 
 import 'dart:isolate';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
@@ -47,8 +46,7 @@ class AppLoggerConsolePrinter<T extends AppLoggerMessage>
       [
         "[${prefixMap[event.level]}]",
         " - ",
-        if (message != null)
-          message.toLogPrinterMessage().whereNotNull().join(" | "),
+        if (message != null) message.toLogPrinterMessage().nonNulls.join(" | "),
       ].join(),
     ];
   }
@@ -91,7 +89,7 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
               " [${prefixMap[event.level]}]",
           if (addTime ?? this.addTime) _errorPrinter.getTime(event.time),
           if (message != null)
-            message.toLogPrinterMessage().whereNotNull().join(" | "),
+            message.toLogPrinterMessage().nonNulls.join(" | "),
         ].join(" - ");
 
     if (event.level.value >= l.Level.error.value || event.error != null) {

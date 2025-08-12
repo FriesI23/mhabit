@@ -15,15 +15,16 @@
 import 'package:flutter/material.dart';
 
 extension CustomColorScheme on ColorScheme {
-  Color get outlineOpacity64 => outline.withOpacity(0.64);
+  Color get outlineOpacity64 => outline.withValues(alpha: 0.64);
 
-  Color get outlineOpacity48 => outline.withOpacity(0.48);
+  Color get outlineOpacity48 => outline.withValues(alpha: 0.48);
 
-  Color get outlineOpacity32 => outline.withOpacity(0.32);
+  Color get outlineOpacity32 => outline.withValues(alpha: 0.32);
 
-  Color get outlineOpacity16 => outline.withOpacity(0.16);
+  Color get outlineOpacity16 => outline.withValues(alpha: 0.16);
 
-  Color get onSurfaceOpacity08 => onSurface.withOpacity(0.08);
+  Color get onSurfaceOpacity08 => onSurface.withValues(alpha: 0.08);
 
-  Color get primaryContainerOpacity32 => primaryContainer.withOpacity(0.32);
+  Color get primaryContainerOpacity32 =>
+      primaryContainer.withValues(alpha: 0.32);
 }
