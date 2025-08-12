@@ -153,7 +153,9 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
 
         if (widget.isComplated &&
             !widget.showComplatedIcon &&
-            widget.showArchivedIcon) return 1.0;
+            widget.showArchivedIcon) {
+          return 1.0;
+        }
 
         if (!widget.isComplated && widget.showArchivedIcon) return 1.0;
 
@@ -165,7 +167,9 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
 
         if (widget.isComplated &&
             !widget.showComplatedIcon &&
-            widget.showDeletedIcon) return 1.0;
+            widget.showDeletedIcon) {
+          return 1.0;
+        }
 
         if (!widget.isComplated && widget.showComplatedIcon) return 1.0;
 

@@ -201,7 +201,9 @@ class _HabitDetailView extends State<HabitDetailView>
     final summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary == null ||
         !summary.mounted ||
-        viewmodel.getInsideVersion() == oldVersion) return;
+        viewmodel.getInsideVersion() == oldVersion) {
+      return;
+    }
     summary.rockreloadDBToggleSwich();
   }
 

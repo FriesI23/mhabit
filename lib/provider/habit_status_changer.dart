@@ -226,7 +226,9 @@ class HabitStatusChangerViewModel
 
   bool get canSave {
     if (_form.selectStatus == RecordStatusChangerStatus.skip &&
-        _isSkipReasonEdited) return true;
+        _isSkipReasonEdited) {
+      return true;
+    }
     return _form.selectStatus != null &&
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
