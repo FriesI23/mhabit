@@ -151,8 +151,8 @@ limitations under the License.
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
-[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.24.5-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
-[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.24.5
+[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.29.3-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
+[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.29.3
 [license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
