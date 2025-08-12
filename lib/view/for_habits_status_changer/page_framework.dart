@@ -14,7 +14,6 @@
 
 import 'dart:math' as math;
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -112,7 +111,7 @@ class _PageMainFramework extends StatelessWidget {
             habitTitle,
             const SliverPinnedHeader(child: Divider(height: 1)),
             habitsContent!
-          ].whereNotNull(),
+          ].nonNulls,
         if (debugContent != null) debugContent!,
       ],
     );

@@ -255,7 +255,7 @@ class _WebDavFailedDetailTile extends StatelessWidget {
               children: errorIter?.toList() ?? const [],
             );
           })
-          .whereNotNull()
+          .nonNulls
           .toList(),
     );
   }

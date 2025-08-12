@@ -459,7 +459,7 @@ class SyncDBHelper extends DBHelperHandler {
       return habit.copyWith(
           records: Map.fromEntries(records
               .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
-              .whereNotNull()));
+              .nonNulls));
     });
   }
 
