@@ -330,10 +330,10 @@ packages:
     dependency: "direct main"
     description:
       name: data_saver
-      sha256: "6733e8ac9b2516caf3d3a5acad2b3b633a4224e5572e2e4883150ca62280ef94"
+      sha256: "5e1634495e52c163ba02e3840a7ace20f292de418c3cb059b9aef35505edafcb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0"
   dbus:
     dependency: transitive
     description:
