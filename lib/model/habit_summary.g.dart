@@ -14,10 +14,10 @@ abstract class _$HabitSummaryRecordCWProxy {
   /// HabitSummaryRecord(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitSummaryRecord call({
-    String? uuid,
-    HabitDate? date,
-    HabitRecordStatus? status,
-    num? value,
+    String uuid,
+    HabitDate date,
+    HabitRecordStatus status,
+    num value,
   });
 }
 
@@ -42,19 +42,19 @@ class _$HabitSummaryRecordCWProxyImpl implements _$HabitSummaryRecordCWProxy {
     Object? value = const $CopyWithPlaceholder(),
   }) {
     return HabitSummaryRecord(
-      uuid == const $CopyWithPlaceholder() || uuid == null
+      uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
           : uuid as String,
-      date == const $CopyWithPlaceholder() || date == null
+      date == const $CopyWithPlaceholder()
           ? _value.date
           // ignore: cast_nullable_to_non_nullable
           : date as HabitDate,
-      status == const $CopyWithPlaceholder() || status == null
+      status == const $CopyWithPlaceholder()
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
           : status as HabitRecordStatus,
-      value == const $CopyWithPlaceholder() || value == null
+      value == const $CopyWithPlaceholder()
           ? _value.value
           // ignore: cast_nullable_to_non_nullable
           : value as num,

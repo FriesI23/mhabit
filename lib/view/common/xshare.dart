@@ -28,15 +28,19 @@ mixin XShare {
       List<String>? fileNameOverrides}) async {
     if (Platform.isIOS) {
       final box = context?.findRenderObject() as RenderBox?;
-      return Share.shareXFiles(files,
+      return SharePlus.instance.share(ShareParams(
+          files: files,
           subject: subject,
           text: text,
           sharePositionOrigin:
               box != null ? box.localToGlobal(Offset.zero) & box.size : null,
-          fileNameOverrides: fileNameOverrides);
+          fileNameOverrides: fileNameOverrides));
     } else {
-      return Share.shareXFiles(files,
-          subject: subject, text: text, fileNameOverrides: fileNameOverrides);
+      return SharePlus.instance.share(ShareParams(
+          files: files,
+          subject: subject,
+          text: text,
+          fileNameOverrides: fileNameOverrides));
     }
   }
 

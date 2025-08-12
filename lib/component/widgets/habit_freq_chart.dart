@@ -243,14 +243,14 @@ class HabitFreqChart extends StatelessWidget {
     final index = math.max(0, data.length - value - 1).toInt();
     final date = data[index].key;
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: _buildBottomTitleCell(context, date, value),
     );
   }
 
   Widget _buildRightTitle(double value, TitleMeta meta) {
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: Text(
         value.toInt().toString(),
         style: TextStyle(fontSize: rightTitleWidth - 10),

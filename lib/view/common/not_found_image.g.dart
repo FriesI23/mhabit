@@ -14,12 +14,12 @@ abstract class _$NotFoundImageStyleCWProxy {
   /// NotFoundImageStyle(...).copyWith(id: 12, name: "My name")
   /// ````
   NotFoundImageStyle call({
-    Color? backBoardBackgroundColor,
-    Color? backBoardPaperColor,
-    Color? fronBoardPaperColor,
-    Color? fronBoardPaperShadowColor,
-    Color? magnifierHandleColor,
-    Color? magnifierStrokeColor,
+    Color backBoardBackgroundColor,
+    Color backBoardPaperColor,
+    Color fronBoardPaperColor,
+    Color fronBoardPaperShadowColor,
+    Color magnifierHandleColor,
+    Color magnifierStrokeColor,
   });
 }
 
@@ -47,41 +47,31 @@ class _$NotFoundImageStyleCWProxyImpl implements _$NotFoundImageStyleCWProxy {
   }) {
     return NotFoundImageStyle(
       backBoardBackgroundColor:
-          backBoardBackgroundColor == const $CopyWithPlaceholder() ||
-                  backBoardBackgroundColor == null
+          backBoardBackgroundColor == const $CopyWithPlaceholder()
               ? _value.backBoardBackgroundColor
               // ignore: cast_nullable_to_non_nullable
               : backBoardBackgroundColor as Color,
-      backBoardPaperColor:
-          backBoardPaperColor == const $CopyWithPlaceholder() ||
-                  backBoardPaperColor == null
-              ? _value.backBoardPaperColor
-              // ignore: cast_nullable_to_non_nullable
-              : backBoardPaperColor as Color,
-      fronBoardPaperColor:
-          fronBoardPaperColor == const $CopyWithPlaceholder() ||
-                  fronBoardPaperColor == null
-              ? _value.fronBoardPaperColor
-              // ignore: cast_nullable_to_non_nullable
-              : fronBoardPaperColor as Color,
+      backBoardPaperColor: backBoardPaperColor == const $CopyWithPlaceholder()
+          ? _value.backBoardPaperColor
+          // ignore: cast_nullable_to_non_nullable
+          : backBoardPaperColor as Color,
+      fronBoardPaperColor: fronBoardPaperColor == const $CopyWithPlaceholder()
+          ? _value.fronBoardPaperColor
+          // ignore: cast_nullable_to_non_nullable
+          : fronBoardPaperColor as Color,
       fronBoardPaperShadowColor:
-          fronBoardPaperShadowColor == const $CopyWithPlaceholder() ||
-                  fronBoardPaperShadowColor == null
+          fronBoardPaperShadowColor == const $CopyWithPlaceholder()
               ? _value.fronBoardPaperShadowColor
               // ignore: cast_nullable_to_non_nullable
               : fronBoardPaperShadowColor as Color,
-      magnifierHandleColor:
-          magnifierHandleColor == const $CopyWithPlaceholder() ||
-                  magnifierHandleColor == null
-              ? _value.magnifierHandleColor
-              // ignore: cast_nullable_to_non_nullable
-              : magnifierHandleColor as Color,
-      magnifierStrokeColor:
-          magnifierStrokeColor == const $CopyWithPlaceholder() ||
-                  magnifierStrokeColor == null
-              ? _value.magnifierStrokeColor
-              // ignore: cast_nullable_to_non_nullable
-              : magnifierStrokeColor as Color,
+      magnifierHandleColor: magnifierHandleColor == const $CopyWithPlaceholder()
+          ? _value.magnifierHandleColor
+          // ignore: cast_nullable_to_non_nullable
+          : magnifierHandleColor as Color,
+      magnifierStrokeColor: magnifierStrokeColor == const $CopyWithPlaceholder()
+          ? _value.magnifierStrokeColor
+          // ignore: cast_nullable_to_non_nullable
+          : magnifierStrokeColor as Color,
     );
   }
 }

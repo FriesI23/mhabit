@@ -14,10 +14,10 @@ abstract class _$_HabitsSortableCacheCWProxy {
   /// _HabitsSortableCache(...).copyWith(id: 12, name: "My name")
   /// ````
   _HabitsSortableCache call({
-    HabitDisplaySortType? sortType,
-    HabitDisplaySortDirection? sortDirection,
-    HabitsDisplayFilter? filter,
-    List<HabitSortCache<dynamic>>? lastSortedDataCache,
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+    HabitsDisplayFilter filter,
+    List<HabitSortCache<dynamic>> lastSortedDataCache,
   });
 }
 
@@ -43,25 +43,22 @@ class _$_HabitsSortableCacheCWProxyImpl
     Object? lastSortedDataCache = const $CopyWithPlaceholder(),
   }) {
     return _HabitsSortableCache(
-      sortType: sortType == const $CopyWithPlaceholder() || sortType == null
+      sortType: sortType == const $CopyWithPlaceholder()
           ? _value.sortType
           // ignore: cast_nullable_to_non_nullable
           : sortType as HabitDisplaySortType,
-      sortDirection:
-          sortDirection == const $CopyWithPlaceholder() || sortDirection == null
-              ? _value.sortDirection
-              // ignore: cast_nullable_to_non_nullable
-              : sortDirection as HabitDisplaySortDirection,
-      filter: filter == const $CopyWithPlaceholder() || filter == null
+      sortDirection: sortDirection == const $CopyWithPlaceholder()
+          ? _value.sortDirection
+          // ignore: cast_nullable_to_non_nullable
+          : sortDirection as HabitDisplaySortDirection,
+      filter: filter == const $CopyWithPlaceholder()
           ? _value.filter
           // ignore: cast_nullable_to_non_nullable
           : filter as HabitsDisplayFilter,
-      lastSortedDataCache:
-          lastSortedDataCache == const $CopyWithPlaceholder() ||
-                  lastSortedDataCache == null
-              ? _value.lastSortedDataCache
-              // ignore: cast_nullable_to_non_nullable
-              : lastSortedDataCache as List<HabitSortCache<dynamic>>,
+      lastSortedDataCache: lastSortedDataCache == const $CopyWithPlaceholder()
+          ? _value.lastSortedDataCache
+          // ignore: cast_nullable_to_non_nullable
+          : lastSortedDataCache as List<HabitSortCache<dynamic>>,
     );
   }
 }

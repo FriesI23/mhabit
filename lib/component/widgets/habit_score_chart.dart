@@ -191,7 +191,7 @@ class HabitScoreChart extends StatelessWidget {
     final date = data[index].key;
     if (value > 0 && meta.min == value) {
       return SideTitleWidget(
-        axisSide: meta.axisSide,
+        meta: meta,
         child: _buildBottomTitleCell(context, date, 0),
       );
     }
@@ -204,14 +204,14 @@ class HabitScoreChart extends StatelessWidget {
       return Opacity(
         opacity: math.pow(value - meta.min, 2).toDouble(),
         child: SideTitleWidget(
-          axisSide: meta.axisSide,
+          meta: meta,
           child: _buildBottomTitleCell(context, date, value),
         ),
       );
     }
 
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       child: _buildBottomTitleCell(context, date, value),
     );
   }
@@ -219,7 +219,7 @@ class HabitScoreChart extends StatelessWidget {
   Widget _buildRightTitle(double value, TitleMeta meta) {
     if (value < 0 || value > 100) return const SizedBox();
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: leftTipsSpace,
       child: Text(
         value.toInt().toString(),

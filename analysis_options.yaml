@@ -12,9 +12,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - "build/**"
-    - "lib/**.g.dart"
-    - "lib/**.gen.dart"
-    - "lib/**.freezed.dart"
+    - "lib/theme/_icons/*.g.dart"
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -85,6 +83,5 @@ linter:
     prefer_const_constructors: true
     prefer_const_constructors_in_immutables: true
     prefer_const_declarations: true
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

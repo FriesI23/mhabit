@@ -20,9 +20,9 @@ abstract class _$HabitsDisplayFilterCWProxy {
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitsDisplayFilter call({
-    bool? allowInProgressHabits,
-    bool? allowArchivedHabits,
-    bool? allowCompleteHabits,
+    bool allowInProgressHabits,
+    bool allowArchivedHabits,
+    bool allowCompleteHabits,
   });
 }
 
@@ -59,23 +59,18 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   }) {
     return HabitsDisplayFilter(
       allowInProgressHabits:
-          allowInProgressHabits == const $CopyWithPlaceholder() ||
-                  allowInProgressHabits == null
+          allowInProgressHabits == const $CopyWithPlaceholder()
               ? _value.allowInProgressHabits
               // ignore: cast_nullable_to_non_nullable
               : allowInProgressHabits as bool,
-      allowArchivedHabits:
-          allowArchivedHabits == const $CopyWithPlaceholder() ||
-                  allowArchivedHabits == null
-              ? _value.allowArchivedHabits
-              // ignore: cast_nullable_to_non_nullable
-              : allowArchivedHabits as bool,
-      allowCompleteHabits:
-          allowCompleteHabits == const $CopyWithPlaceholder() ||
-                  allowCompleteHabits == null
-              ? _value.allowCompleteHabits
-              // ignore: cast_nullable_to_non_nullable
-              : allowCompleteHabits as bool,
+      allowArchivedHabits: allowArchivedHabits == const $CopyWithPlaceholder()
+          ? _value.allowArchivedHabits
+          // ignore: cast_nullable_to_non_nullable
+          : allowArchivedHabits as bool,
+      allowCompleteHabits: allowCompleteHabits == const $CopyWithPlaceholder()
+          ? _value.allowCompleteHabits
+          // ignore: cast_nullable_to_non_nullable
+          : allowCompleteHabits as bool,
     );
   }
 }
@@ -95,8 +90,8 @@ abstract class _$HabitDisplayOpConfigCWProxy {
   /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
   /// ````
   HabitDisplayOpConfig call({
-    UserAction? changeRecordStatus,
-    UserAction? openRecordStatusDialog,
+    UserAction changeRecordStatus,
+    UserAction openRecordStatusDialog,
   });
 }
 
@@ -120,14 +115,12 @@ class _$HabitDisplayOpConfigCWProxyImpl
     Object? openRecordStatusDialog = const $CopyWithPlaceholder(),
   }) {
     return HabitDisplayOpConfig(
-      changeRecordStatus: changeRecordStatus == const $CopyWithPlaceholder() ||
-              changeRecordStatus == null
+      changeRecordStatus: changeRecordStatus == const $CopyWithPlaceholder()
           ? _value.changeRecordStatus
           // ignore: cast_nullable_to_non_nullable
           : changeRecordStatus as UserAction,
       openRecordStatusDialog:
-          openRecordStatusDialog == const $CopyWithPlaceholder() ||
-                  openRecordStatusDialog == null
+          openRecordStatusDialog == const $CopyWithPlaceholder()
               ? _value.openRecordStatusDialog
               // ignore: cast_nullable_to_non_nullable
               : openRecordStatusDialog as UserAction,

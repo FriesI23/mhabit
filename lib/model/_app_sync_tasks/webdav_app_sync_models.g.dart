@@ -133,7 +133,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     int? targetDays,
     num? sortPostion,
     String? sessionId,
-    Map<String, WebDavSyncRecordData>? records,
+    Map<String, WebDavSyncRecordData> records,
     String? etag,
     int? dirty,
     int? dirtyTotal,
@@ -256,7 +256,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
           : sessionId as String?,
-      records: records == const $CopyWithPlaceholder() || records == null
+      records: records == const $CopyWithPlaceholder()
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
           : records as Map<String, WebDavSyncRecordData>,

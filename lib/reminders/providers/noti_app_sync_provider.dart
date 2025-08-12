@@ -572,7 +572,7 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
               subtitle: error != null
                   ? _l10n?.appSync_failedTile_errorText(error) ?? error
                   : null,
-              rows: rows));
+              rows: rows ?? data.appSyncFailed.windows?.rows ?? const []));
       task = showAppSyncFailed(title: title, body: body, details: details);
     } else {
       task = Future.value(true);

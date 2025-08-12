@@ -219,8 +219,9 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowArchivedHabits,
           onChanged: (value) {
-            final newFilter =
-                habitsDisplayFilter.copyWith(allowArchivedHabits: value);
+            final newFilter = habitsDisplayFilter.copyWith(
+                allowArchivedHabits:
+                    value ?? habitsDisplayFilter.allowArchivedHabits);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }
@@ -235,8 +236,9 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowInProgressHabits,
           onChanged: (value) {
-            final newFilter =
-                habitsDisplayFilter.copyWith(allowInProgressHabits: value);
+            final newFilter = habitsDisplayFilter.copyWith(
+                allowInProgressHabits:
+                    value ?? habitsDisplayFilter.allowInProgressHabits);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }
@@ -251,8 +253,9 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowCompleteHabits,
           onChanged: (value) {
-            final newFilter =
-                habitsDisplayFilter.copyWith(allowCompleteHabits: value);
+            final newFilter = habitsDisplayFilter.copyWith(
+                allowCompleteHabits:
+                    value ?? habitsDisplayFilter.allowCompleteHabits);
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }

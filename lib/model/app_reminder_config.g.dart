@@ -14,8 +14,8 @@ abstract class _$AppReminderConfigCWProxy {
   /// AppReminderConfig(...).copyWith(id: 12, name: "My name")
   /// ````
   AppReminderConfig call({
-    bool? enabled,
-    AppReminderConfigType? type,
+    bool enabled,
+    AppReminderConfigType type,
     TimeOfDay? timeOfDay,
   });
 }
@@ -40,11 +40,11 @@ class _$AppReminderConfigCWProxyImpl implements _$AppReminderConfigCWProxy {
     Object? timeOfDay = const $CopyWithPlaceholder(),
   }) {
     return AppReminderConfig(
-      enabled: enabled == const $CopyWithPlaceholder() || enabled == null
+      enabled: enabled == const $CopyWithPlaceholder()
           ? _value.enabled
           // ignore: cast_nullable_to_non_nullable
           : enabled as bool,
-      type: type == const $CopyWithPlaceholder() || type == null
+      type: type == const $CopyWithPlaceholder()
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as AppReminderConfigType,

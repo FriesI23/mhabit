@@ -96,7 +96,7 @@ SPEC CHECKSUMS:
   connectivity_plus: 0a976dfd033b59192912fa3c6c7b54aab5093802
   data_saver: cf0dbf1417118b00d13e38c2382d8062069f3fcd
   device_info_plus: 1b14eed9bf95428983aed283a8d51cce3d8c4215
-  dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
+  dynamic_color: 5fdff3953fb3457311091863f72914fc76ea3209
   file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
   flutter_local_notifications: 4ccab5b7a22835214a6672e3f9c5e8ae207dab36
   flutter_secure_storage_macos: c2754d3483d20bb207bb9e5a14f1b8e771abcdb9
@@ -112,4 +112,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5ffdafc0733c1ee93858d9a4e7dd7be57d4c1e80
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.16.2
