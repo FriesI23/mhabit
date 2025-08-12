@@ -13,6 +13,8 @@
 // limitations under the License.
 
 // ignore_for_file: depend_on_referenced_packages
+// FIXME: analyzer >= 8.0.0 will use new APIs. Keeping compatibility here.
+// ignore_for_file: deprecated_member_use
 
 import 'dart:async';
 

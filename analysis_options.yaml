@@ -12,12 +12,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - "build/**"
-    - "lib/**.g.dart"
-    - "lib/**.gen.dart"
-    - "lib/**.freezed.dart"
-
-  errors:
-    todo: ignore
+    - "lib/theme/_icons/*.g.dart"
 
 linter:
   # The lint rules applied to this project can be customized in the
