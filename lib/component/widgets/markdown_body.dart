@@ -40,8 +40,8 @@ class ColorfulMarkdownBlock extends StatelessWidget {
     return config.copy(configs: [
       isDark ? PreConfig.darkConfig : const PreConfig(),
       BlockquoteConfig(
-        sideColor: themeData.colorScheme.primary.withOpacity(0.5),
-        textColor: themeData.colorScheme.onSurface.withOpacity(0.8),
+        sideColor: themeData.colorScheme.primary.withValues(alpha: 0.5),
+        textColor: themeData.colorScheme.onSurface.withValues(alpha: 0.8),
       ),
       LinkConfig(
         style: TextStyle(

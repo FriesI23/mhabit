@@ -758,8 +758,8 @@ class _ChinaICPFillingNumberTile extends StatelessWidget {
       child: Center(
         child: Text(
           chinaICPFillingNumber,
-          style: theme.textTheme.labelSmall
-              ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+          style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
         ),
       ),
     );

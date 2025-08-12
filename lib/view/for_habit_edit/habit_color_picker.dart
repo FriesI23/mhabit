@@ -67,10 +67,10 @@ class HabitColorPickerDialog extends StatelessWidget {
                 foregroundColor: onColor,
                 backgroundColor: color,
                 disabledBackgroundColor:
-                    themeData.colorScheme.onSurface.withOpacity(0.12),
-                hoverColor: onColor?.withOpacity(0.08),
-                focusColor: onColor?.withOpacity(0.12),
-                highlightColor: onColor?.withOpacity(0.12),
+                    themeData.colorScheme.onSurface.withValues(alpha: 0.12),
+                hoverColor: onColor?.withValues(alpha: 0.08),
+                focusColor: onColor?.withValues(alpha: 0.12),
+                highlightColor: onColor?.withValues(alpha: 0.12),
               ),
             );
           },

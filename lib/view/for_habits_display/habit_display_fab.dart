@@ -38,7 +38,8 @@ class HabitDisplayFAB<T> extends StatelessWidget {
     return OpenContainer<T>(
       transitionDuration: const Duration(milliseconds: 250),
       transitionType: ContainerTransitionType.fadeThrough,
-      middleColor: themeData.colorScheme.primaryContainer.withOpacity(0.5),
+      middleColor:
+          themeData.colorScheme.primaryContainer.withValues(alpha: 0.5),
       closedShape: kDefaultScrollingFABShape,
       closedColor: themeData.colorScheme.surface,
       closedElevation: closedElevation ?? kDefaultScrollingFABElevation,
