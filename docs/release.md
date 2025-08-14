@@ -1,5 +1,11 @@
 # Pre-Released
 
+## v1.17.1+94-pre
+
+**🌐 Localization**
+
+- Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
+
 ## v1.17.0+93-pre
 
 **🌐 Localization**
