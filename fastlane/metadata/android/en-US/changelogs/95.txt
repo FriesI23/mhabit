@@ -1,5 +1,3 @@
-# Released: v1.17.2+95
-
 **🌐 Localization**
 
 - Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
