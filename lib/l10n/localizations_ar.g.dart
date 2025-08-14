@@ -160,19 +160,19 @@ class L10nAr extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'أي يوم في الأسبوع';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
+  String get habitEdit_reminder_freq_weekPrefixText => 'كل أسبوع';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' في كل أسبوع';
+  String get habitEdit_reminder_freq_weekSubfixText => ' •في كل أسبوع';
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'أي يوم في الشهر';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
+  String get habitEdit_reminder_freq_monthPrefixText => 'كل شهر';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' في كل شهر';
+  String get habitEdit_reminder_freq_monthSubfixText => ' •في كل شهر';
 
   @override
   String get habitEdit_reminderQuest_hintText => 'سؤال، مثلاً: هل تمرنت اليوم؟';
@@ -244,7 +244,7 @@ class L10nAr extends L10n {
   String get habitDisplay_fab_text => 'عادة جديدة';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'رحلة الأف ميل تبدأ بخطوة';
+  String get habitDisplay_emptyImage_text_01 => 'رحلة الألف ميل تبدأ بخطوة';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => 'أرشفة العادات المحددة؟';
@@ -662,7 +662,7 @@ class L10nAr extends L10n {
   String get appSetting_firstDayOfWeekDialog_titleText => 'أظهر أول يوم في الأسبوع';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (افتراضي)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' •(افتراضي)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
