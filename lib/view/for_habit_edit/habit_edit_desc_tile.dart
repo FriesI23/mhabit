@@ -40,7 +40,7 @@ class HabitEditDescTile extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration.collapsed(
             hintText: l10n?.habitEdit_desc_hintText,
-            hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+            hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
             border: InputBorder.none),
         keyboardType: TextInputType.multiline,
         maxLines: null,
