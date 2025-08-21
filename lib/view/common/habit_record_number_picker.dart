@@ -386,7 +386,7 @@ class _HabitRecordTextField extends StatelessWidget {
                   defaultDailyGoal.toSimpleString()) ??
               "Daily goal, "
                   "default: ${defaultDailyGoal.toSimpleString()}",
-          hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
           helperText: recordDate != null
               ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
               : null,

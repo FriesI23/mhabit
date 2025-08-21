@@ -83,7 +83,7 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
                 : const Text('Reminder'),
         textColor: widget.reminder != null
             ? null
-            : Theme.of(context).colorScheme.outlineOpacity16,
+            : Theme.of(context).colorScheme.outlineOpacity64,
         onTap: widget.onReminderTimeTilePressed,
       );
     }
@@ -107,7 +107,7 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
           controller: _questTextController,
           decoration: InputDecoration(
               hintText: l10n?.habitEdit_reminderQuest_hintText,
-              hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+              hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
               border: InputBorder.none),
           keyboardType: TextInputType.text,
           inputFormatters: [
