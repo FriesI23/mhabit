@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-git config commit.template templates/git/commit.template
+git config commit.template .templates/git/commit.template

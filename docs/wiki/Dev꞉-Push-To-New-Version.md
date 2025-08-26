@@ -118,7 +118,7 @@ For more info, see: [App Release][ghci-app-release].
 >   For details, see: [Update Flathub Manifest](#post-1-update-flathub-manifest)
 
 ```shell
-git commit -t templates/git/commit-bumpversion.template
+git commit -t .templates/git/commit-bumpversion.template
 # ...
 git tag <valid-version-tag>
 ```

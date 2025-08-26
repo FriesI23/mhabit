@@ -1,11 +1,9 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "$schema": "vscode://schemas/launch",
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mhabit (f_dev)",
+            "name": "mhabit debug (f_dev)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -35,7 +33,7 @@
             ]
         },
         {
-            "name": "mhabit (f_generic)",
+            "name": "mhabit debug (f_generic)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -65,7 +63,7 @@
             ]
         },
         {
-            "name": "mhabit (f_store)",
+            "name": "mhabit debug (f_store)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
@@ -95,7 +93,7 @@
             ]
         },
         {
-            "name": "mhabit",
+            "name": "mhabit debug",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug"
