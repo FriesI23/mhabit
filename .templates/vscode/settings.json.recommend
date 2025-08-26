@@ -1,0 +1,41 @@
+{
+    "$schema": "vscode://schemas/settings/workspace",
+    "licenser.author": "Fries_I23",
+    "debug.openDebug": "openOnDebugBreak",
+    "debug.internalConsoleOptions": "openOnSessionStart",
+    "search.exclude": {
+        "**/.fvm": true,
+        "**/.flutter": true
+    },
+    "files.watcherExclude": {
+        "**/.fvm": true,
+        "**/.flutter": true
+    },
+    "dart.flutterSdkPath": ".flutter",
+    "dart.flutterSdkPaths": [
+        ".fvm/flutter_sdk",
+        ".flutter"
+    ],
+    "dart.analysisExcludedFolders": [
+        ".fvm",
+        ".flutter"
+    ],
+    "python.formatting.provider": "yapf",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.project.resourceFilters": [
+        ".flutter"
+    ],
+    "github-actions.remote-name": "github",
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.wordBasedSuggestions": "off"
+    },
+    "[json]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnType": false
+    }
+}
