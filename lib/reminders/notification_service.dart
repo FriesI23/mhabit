@@ -121,7 +121,10 @@ final class NotificationServiceImpl implements NotificationService {
     const androidSettings = AndroidInitializationSettings(androidIconPath);
 
     // iOS & macOS setting
-    const darwinSettings = DarwinInitializationSettings();
+    const darwinSettings = DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestSoundPermission: false,
+        requestBadgePermission: false);
 
     // linux setting
     const linuxSettings =
