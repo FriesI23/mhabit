@@ -1,19 +1,22 @@
-# Released: v1.17.2+95
+<!-- markdownlint-disable MD036 -->
+<!--
+Title: Pre-Released or Released: v1.2.3+xx
+-->
+
+# Pre-Released
+
+## 1.17.3+96-pre
+
+**✨ New Features**
+
+- Cancel noti-permission request at app launch on iOS/macOS (#323)
+- Add leading zero in date option (#325)
 
 **🌐 Localization**
 
-- Updated Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate.
-- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
+- Updated Polish translation, thanks to Pandaman331's contribution on Weblate. (#324)
 
 **🧹 Others**
 
-- Bump Flutter version to v3.29.3 (#315)
-- Bump package dependencies (#316)
-  - Upgrade `share_plus` to 11.1.0 (major)
-  - Upgrade `data_saver` to 0.4.0 (major)
-  - Upgrade `fl_chart` to 1.0.0 (major)
-  - Upgrade `copy_with_extension_gen` to v6 (major)
-
-**📝 Documentation**
-
-- Add [Github Wiki](https://github.com/FriesI23/mhabit/wiki) (#312, #313)
+- Improve hint visibility under low brightness (#321)
+- Move vscode workspace settings to code-workspace (#322)
