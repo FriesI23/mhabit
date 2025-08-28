@@ -19,6 +19,7 @@ abstract class _$CustomDateYmdHmsConfigCWProxy {
     bool twelveHoursOn,
     bool useMonthWithName,
     bool useSystemFormat,
+    bool useLeadingZero,
     bool? applyFreqChart,
     bool? applyHeatmapCal,
   });
@@ -45,6 +46,7 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
     Object? twelveHoursOn = const $CopyWithPlaceholder(),
     Object? useMonthWithName = const $CopyWithPlaceholder(),
     Object? useSystemFormat = const $CopyWithPlaceholder(),
+    Object? useLeadingZero = const $CopyWithPlaceholder(),
     Object? applyFreqChart = const $CopyWithPlaceholder(),
     Object? applyHeatmapCal = const $CopyWithPlaceholder(),
   }) {
@@ -69,6 +71,10 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
           ? _value.useSystemFormat
           // ignore: cast_nullable_to_non_nullable
           : useSystemFormat as bool,
+      useLeadingZero: useLeadingZero == const $CopyWithPlaceholder()
+          ? _value.useLeadingZero
+          // ignore: cast_nullable_to_non_nullable
+          : useLeadingZero as bool,
       applyFreqChart: applyFreqChart == const $CopyWithPlaceholder()
           ? _value.applyFreqChart
           // ignore: cast_nullable_to_non_nullable
@@ -100,6 +106,7 @@ CustomDateYmdHmsConfig _$CustomDateYmdHmsConfigFromJson(
       twelveHoursOn: json['twelveHoursOn'] as bool,
       useMonthWithName: json['useMonthWithName'] as bool? ?? false,
       useSystemFormat: json['useSystemFormat'] as bool? ?? true,
+      useLeadingZero: json['useLeadingZero'] as bool? ?? false,
       applyFreqChart: json['applyFreqChart'] as bool?,
       applyHeatmapCal: json['applyHeatmapCal'] as bool?,
     );
@@ -112,6 +119,7 @@ Map<String, dynamic> _$CustomDateYmdHmsConfigToJson(
       'twelveHoursOn': instance.twelveHoursOn,
       'useMonthWithName': instance.useMonthWithName,
       'useSystemFormat': instance.useSystemFormat,
+      'useLeadingZero': instance.useLeadingZero,
       'applyFreqChart': instance.applyFreqChart,
       'applyHeatmapCal': instance.applyHeatmapCal,
     };

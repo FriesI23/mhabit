@@ -88,6 +88,12 @@ class _CustomDateTimeFormatPickerDialogState
     });
   }
 
+  void _onUseLeadingZeroChanged(bool value) {
+    setState(() {
+      _crtConfig = _crtConfig.copyWith(useLeadingZero: value);
+    });
+  }
+
   void _onApplyForFreqChartChanged(bool value) {
     setState(() {
       _crtConfig = _crtConfig.copyWith(applyFreqChart: value);
@@ -186,6 +192,15 @@ class _CustomDateTimeFormatPickerDialogState
       );
     }
 
+    Widget buildUseLeadingZeroListTile(BuildContext context, {L10n? l10n}) {
+      return SwitchListTile(
+        title: const Text("Use Leading Zero"),
+        contentPadding: EdgeInsets.zero,
+        value: _crtConfig.useLeadingZero,
+        onChanged: _onUseLeadingZeroChanged,
+      );
+    }
+
     Widget buildApplyFreqChartListTile(BuildContext context, {L10n? l10n}) {
       return SwitchListTile(
         title: l10n != null
@@ -270,6 +285,7 @@ class _CustomDateTimeFormatPickerDialogState
                     div,
                     buildUse12HoursListTile(context, l10n: l10n),
                     buildUseFullMonthNameListTile(context, l10n: l10n),
+                    buildUseLeadingZeroListTile(context, l10n: l10n),
                     div,
                     buildApplyFreqChartListTile(context, l10n: l10n),
                     buildApplHeapmapCalListTile(context, l10n: l10n),

@@ -61,6 +61,7 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
   final bool twelveHoursOn;
   final bool useMonthWithName;
   final bool useSystemFormat;
+  final bool useLeadingZero;
   final bool? applyFreqChart;
   final bool? applyHeatmapCal;
 
@@ -73,6 +74,7 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     required this.twelveHoursOn,
     this.useMonthWithName = false,
     this.useSystemFormat = true,
+    this.useLeadingZero = false,
     this.applyFreqChart,
     this.applyHeatmapCal,
   }) : assert(ymdFormat == YearMonthDayFormtEnum.dayMonthYear ||
@@ -85,6 +87,7 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
         twelveHoursOn = false,
         useMonthWithName = false,
         useSystemFormat = true,
+        useLeadingZero = false,
         applyFreqChart = false,
         applyHeatmapCal = false;
 
@@ -99,10 +102,12 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
 
   String? _getMonthFormatterString(String? locale) => useMonthWithName
       ? DateFormat(DateFormat.ABBR_MONTH, locale).pattern
-      : DateFormat.NUM_MONTH;
+      : (useLeadingZero ? "MM" : DateFormat.NUM_MONTH);
 
-  String? _getDayFormatterString(String? locale) =>
-      useMonthWithName ? DateFormat(DateFormat.DAY, locale).pattern : 'd';
+  String? _getDayFormatterString(String? locale) {
+    final dayFormat = useLeadingZero ? "dd" : DateFormat.DAY;
+    return useMonthWithName ? DateFormat(dayFormat, locale).pattern : dayFormat;
+  }
 
   DateFormat getFormatter([String? locale]) {
     if (useSystemFormat) {
