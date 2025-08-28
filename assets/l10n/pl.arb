@@ -1,41 +1,41 @@
 {
-    "@@locale": "pl",
-    "localeScriptName": "Polski",
-    "@localeScriptName": {
-        "description": "The human-readable name of the language used for the locale."
-    },
-    "appName": "Table Habit",
-    "@appName": {},
-    "habitEdit_saveButton_text": "Zapisz",
-    "@habitEdit_saveButton_text": {},
-    "habitEdit_habitName_hintText": "Nazwa Nawyku ...",
-    "@habitEdit_habitName_hintText": {},
-    "habitEdit_colorPicker_title": "Wybierz kolor",
-    "@habitEdit_colorPicker_title": {},
-    "habitEdit_habitTypeDialog_title": "Typ nawyku",
-    "@habitEdit_habitTypeDialog_title": {},
-    "habitEdit_habitType_positiveText": "Pozytywny",
-    "@habitEdit_habitType_positiveText": {},
-    "habitEdit_habitType_negativeText": "Negatywny",
-    "@habitEdit_habitType_negativeText": {},
-    "habitEdit_habitDailyGoal_hintText": "Podstawowy cel nawyku",
-    "@habitEdit_habitDailyGoal_hintText": {
-        "description": "default habit daily goal",
-        "placeholders": {
-            "number": {
-                "type": "num",
-                "example": "1"
-            }
-        }
-    },
-    "habitEdit_habitDailyGoal_negativeHintText": "Podstawowy cel negatywnego nawyku",
-    "@habitEdit_habitDailyGoal_negativeHintText": {
-        "description": "default habit daily goal for negative habit",
-        "placeholders": {
-            "number": {
-                "type": "num",
-                "example": "0"
-            }
-        }
+  "@@locale": "pl",
+  "localeScriptName": "Polski",
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
+  "appName": "Table Habit",
+  "@appName": {},
+  "habitEdit_saveButton_text": "Zapisz",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitName_hintText": "Nazwa Nawyku ...",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "Wybierz kolor",
+  "@habitEdit_colorPicker_title": {},
+  "habitEdit_habitTypeDialog_title": "Typ nawyku",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitType_positiveText": "Pozytywny",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitType_negativeText": "Negatywny",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitDailyGoal_hintText": "Podstawowy cel nawyku",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
     }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "Podstawowy cel negatywnego nawyku",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  }
 }
