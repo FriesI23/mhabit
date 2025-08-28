@@ -34,12 +34,12 @@ class L10nPl extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Podstawowy cel nawyku';
+    return 'Podstawowy cel nawyku (domyślnie: $number)';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeHintText(num number) {
-    return 'Podstawowy cel negatywnego nawyku';
+    return 'Podstawowy cel negatywnego nawyku (domyślnie: $number)';
   }
 
   @override

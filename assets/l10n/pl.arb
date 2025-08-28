@@ -18,7 +18,7 @@
   "@habitEdit_habitType_positiveText": {},
   "habitEdit_habitType_negativeText": "Negatywny",
   "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Podstawowy cel nawyku",
+  "habitEdit_habitDailyGoal_hintText": "Podstawowy cel nawyku (domyślnie: {number})",
   "@habitEdit_habitDailyGoal_hintText": {
     "description": "default habit daily goal",
     "placeholders": {
@@ -28,7 +28,7 @@
       }
     }
   },
-  "habitEdit_habitDailyGoal_negativeHintText": "Podstawowy cel negatywnego nawyku",
+  "habitEdit_habitDailyGoal_negativeHintText": "Podstawowy cel negatywnego nawyku (domyślnie: {number})",
   "@habitEdit_habitDailyGoal_negativeHintText": {
     "description": "default habit daily goal for negative habit",
     "placeholders": {
