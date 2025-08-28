@@ -1,0 +1,36 @@
+{
+    "$schema": "vscode://schemas/settings/workspace",
+    "licenser.projectName": "Table Habit",
+    "licenser.license": "AL2",
+    "search.exclude": {
+        "**/.flutter": true
+    },
+    "files.watcherExclude": {
+        "**/.flutter": true
+    },
+    "files.associations": {
+        "*.arb": "json",
+        "*.gradle": "groovy"
+    },
+    "dart.analysisExcludedFolders": [
+        ".flutter"
+    ],
+    "dartImport.fixOnSave": true,
+    "xml.format.spaceBeforeEmptyCloseTag": false,
+    "[dart]": {
+        "editor.tabSize": 2,
+        "editor.rulers": [
+            80,
+            100
+        ],
+        "editor.tabCompletion": "onlySnippets"
+    },
+    "[json]": {
+        "editor.indentSize": 2
+    },
+    "[xml]": {
+        "editor.wordWrap": "off",
+        "editor.tabSize": 4,
+        "files.trimFinalNewlines": false
+    }
+}

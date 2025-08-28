@@ -1,0 +1,11 @@
+{
+    "$schema": "vscode://schemas/workspaceConfig",
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": { },
+    "extensions": { },
+    "launch": { }
+}

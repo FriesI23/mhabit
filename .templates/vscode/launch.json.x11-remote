@@ -1,0 +1,33 @@
+{
+    "$schema": "vscode://schemas/launch",
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mhabit debug",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "env": {
+                "DISPLAY": ":10.0"
+            }
+        },
+        {
+            "name": "mhabit profile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "env": {
+                "DISPLAY": ":10.0"
+            }
+        },
+        {
+            "name": "mhabit release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "env": {
+                "DISPLAY": ":10.0"
+            }
+        }
+    ]
+}

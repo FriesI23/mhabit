@@ -188,7 +188,7 @@ class HabitRecordReasonField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: l10n?.habitDetail_skipReason_bodyHelpText ??
                 "Write something here...",
-            hintStyle: TextStyle(color: themeData.colorScheme.outlineOpacity16),
+            hintStyle: TextStyle(color: themeData.colorScheme.outlineOpacity64),
             helperText: recordDate != null
                 ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
                 : null,

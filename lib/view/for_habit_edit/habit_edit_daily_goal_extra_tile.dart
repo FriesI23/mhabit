@@ -62,7 +62,7 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
         decoration: InputDecoration(
           isCollapsed: true,
           hintText: _getHintText(l10n),
-          hintStyle: TextStyle(color: colorScheme.outlineOpacity16),
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
           border: InputBorder.none,
           errorText: isValid || dailyGoal == null
               ? null

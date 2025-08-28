@@ -70,11 +70,24 @@ echo "---"
 
 check_metainfo() {
   local meta_path="$1"
-  if [[ "$(uname)" == "Linux" && -x "$(command -v appstreamcli)" ]]; then
-    echo "checking metainfo at: $meta_path..."
-    if ! appstreamcli validate --pedantic --format yaml "$meta_path"; then
-      exit 1
-    fi
+  local cli_cmd=""
+
+  if [[ "$(uname)" != "Linux" ]]; then
+    return
+  fi
+
+  if flatpak info org.freedesktop.appstream.cli &>/dev/null; then
+    cli_cmd="flatpak run org.freedesktop.appstream.cli"
+  elif command -v appstreamcli &>/dev/null; then
+    cli_cmd="appstreamcli"
+  else
+    echo "No appstreamcli found (flatpak or system)"
+    return
+  fi
+
+  echo "checking metainfo at: $meta_path..."
+  if ! $cli_cmd validate --pedantic --format yaml "$meta_path"; then
+    exit 1
   fi
 }
 

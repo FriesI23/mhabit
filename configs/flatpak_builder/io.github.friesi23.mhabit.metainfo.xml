@@ -5,7 +5,9 @@
   <summary>Micro habit tracker for personal growth</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>Apache-2.0</project_license>
-  <developer_name>Fries_I23</developer_name>
+  <developer id="io.github.friesi23">
+    <name>Fries_I23</name>
+  </developer>
   <launchable type="desktop-id">io.github.friesi23.mhabit.desktop</launchable>
   <provides>
     <binary>mhabit</binary>
@@ -92,6 +94,12 @@
     <category>Utility</category>
   </categories>
   <releases>
+    <release version="1.17.2+95" date="2025-08-14">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.17.2+95</url>
+    </release>
+    <release version="1.17.1+94-pre" date="2025-08-14">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/pre-v1.17.1+94</url>
+    </release>
     <release version="1.17.0+93-pre" date="2025-08-12">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/pre-v1.17.0+93</url>
     </release>
