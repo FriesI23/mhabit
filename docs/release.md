@@ -5,6 +5,13 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## 1.17.4+97-pre
+
+**🧹 Others**
+
+- Implement Windows custom flavor support (#327)
+- Add conditional check for windows build test (#327)
+
 ## 1.17.3+96-pre
 
 **✨ New Features**
