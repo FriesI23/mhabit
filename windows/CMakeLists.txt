@@ -2,12 +2,21 @@
 cmake_minimum_required(VERSION 3.14)
 project(mhabit LANGUAGES CXX)
 
+# The name of the executable created for the application. Change this to change
+# the on-disk name of your application.
+set(BINARY_NAME "mhabit")
+
+# Application Name
+set(APP_NAME "Table Habit")
+
 # Custom Flavors
 if(DEFINED ENV{APP_FLAVOR_WIN})
   set(FLAVOR "$ENV{APP_FLAVOR_WIN}")
   add_definitions(-DFLAVOR="${FLAVOR}")
+  add_definitions(-DAPP_NAME="${APP_NAME}")
   if(FLAVOR STREQUAL "f_dev")
     set(FLAVOR_NAME "dev")
+    add_definitions(-DAPP_TITLE_SUFFIX=" - ${FLAVOR_NAME}")
   elseif(FLAVOR STREQUAL "f_store")
     set(FLAVOR_NAME "store")
   elseif(FLAVOR STREQUAL "f_generic")
@@ -37,11 +46,6 @@ else()
   safe_remove("${CMAKE_BINARY_DIR}/runner/Debug")
   safe_remove("${CMAKE_BINARY_DIR}/runner/Release")
 endif()
-
-# The name of the executable created for the application. Change this to change
-# the on-disk name of your application.
-set(BINARY_NAME "mhabit")
-set(APP_BASE_NAME "${BINARY_NAME}")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

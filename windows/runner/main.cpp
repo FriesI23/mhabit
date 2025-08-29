@@ -5,14 +5,14 @@
 #include "flutter_window.h"
 #include "utils.h"
 
-#ifndef APP_BASE_NAME
-#define APP_BASE_NAME L"mhabit"
+#ifndef APP_NAME
+#define APP_NAME L"mhabit"
 #endif
 
-#ifdef FLAVOR
-#define WINDOW_TITLE APP_BASE_NAME L"-" FLAVOR
+#ifdef APP_TITLE_SUFFIX
+#define WINDOW_TITLE APP_NAME APP_TITLE_SUFFIX
 #else
-#define WINDOW_TITLE APP_BASE_NAME
+#define WINDOW_TITLE APP_NAME
 #endif
 
 
@@ -38,7 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-  if (!window.Create(WINDOW_TITLE, origin, size)) {
+  if (!window.Create(L"" WINDOW_TITLE, origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
