@@ -1,6 +1,21 @@
 cmake_minimum_required(VERSION 3.14)
 project(runner LANGUAGES CXX)
 
+# Custom Flavors
+set(ORIGINAL_RC "Runner.rc.in")
+set(GENERATED_RC "Runner.rc")
+file(READ ${ORIGINAL_RC} RC_CONTENT)
+if(FLAVOR_NAME)
+    string(REPLACE "{PRODUCT_NAME}" "${BINARY_NAME}-${FLAVOR_NAME}" RC_CONTENT "${RC_CONTENT}")
+    string(REPLACE "{FILE_DESCRIPTION}" "${BINARY_NAME}-${FLAVOR_NAME}" RC_CONTENT "${RC_CONTENT}")
+    string(REPLACE "{INTERNAL_NAME}" "${BINARY_NAME}-${FLAVOR_NAME}" RC_CONTENT "${RC_CONTENT}")
+else()
+    string(REPLACE "{PRODUCT_NAME}" "${BINARY_NAME}" RC_CONTENT "${RC_CONTENT}")
+    string(REPLACE "{FILE_DESCRIPTION}" "${BINARY_NAME}" RC_CONTENT "${RC_CONTENT}")
+    string(REPLACE "{INTERNAL_NAME}" "${BINARY_NAME}" RC_CONTENT "${RC_CONTENT}")
+endif()
+file(WRITE ${GENERATED_RC} "${RC_CONTENT}")
+
 # Define the application target. To change its name, change BINARY_NAME in the
 # top-level CMakeLists.txt, not the value here, or `flutter run` will no longer
 # work.
@@ -12,7 +27,7 @@ add_executable(${BINARY_NAME} WIN32
   "utils.cpp"
   "win32_window.cpp"
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
-  "Runner.rc"
+  "${GENERATED_RC}"
   "runner.exe.manifest"
 )
 
@@ -38,3 +53,13 @@ target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)
+
+if(FLAVOR)
+  add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E rm -rf
+      "$<IF:$<CONFIG:Debug>,${CMAKE_BINARY_DIR}/runner/Debug,${CMAKE_BINARY_DIR}/runner/Release>"
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+      "$<IF:$<CONFIG:Debug>,${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG},${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}>"
+      "$<IF:$<CONFIG:Debug>,${CMAKE_BINARY_DIR}/runner/Debug,${CMAKE_BINARY_DIR}/runner/Release>"
+  )
+endif()
