@@ -10,7 +10,10 @@
             "args": [
                 "--flavor",
                 "f_dev"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_dev"
+            }
         },
         {
             "name": "mhabit profile (f_dev)",
@@ -20,7 +23,10 @@
             "args": [
                 "--flavor",
                 "f_dev"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_dev"
+            }
         },
         {
             "name": "mhabit release (f_dev)",
@@ -30,7 +36,10 @@
             "args": [
                 "--flavor",
                 "f_dev"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_dev"
+            }
         },
         {
             "name": "mhabit debug (f_generic)",
@@ -40,7 +49,10 @@
             "args": [
                 "--flavor",
                 "f_generic"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_generic"
+            }
         },
         {
             "name": "mhabit profile (f_generic)",
@@ -50,7 +62,10 @@
             "args": [
                 "--flavor",
                 "f_generic"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_generic"
+            }
         },
         {
             "name": "mhabit release (f_generic)",
@@ -60,7 +75,10 @@
             "args": [
                 "--flavor",
                 "f_generic"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_generic"
+            }
         },
         {
             "name": "mhabit debug (f_store)",
@@ -70,7 +88,10 @@
             "args": [
                 "--flavor",
                 "f_store"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_store"
+            }
         },
         {
             "name": "mhabit profile (f_store)",
@@ -80,7 +101,10 @@
             "args": [
                 "--flavor",
                 "f_store"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_store"
+            }
         },
         {
             "name": "mhabit release (f_store)",
@@ -90,7 +114,10 @@
             "args": [
                 "--flavor",
                 "f_store"
-            ]
+            ],
+            "env": {
+                "APP_FLAVOR_WIN": "f_store"
+            }
         },
         {
             "name": "mhabit debug",

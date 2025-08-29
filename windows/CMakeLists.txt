@@ -2,9 +2,46 @@
 cmake_minimum_required(VERSION 3.14)
 project(mhabit LANGUAGES CXX)
 
+# Custom Flavors
+if(DEFINED ENV{APP_FLAVOR_WIN})
+  set(FLAVOR "$ENV{APP_FLAVOR_WIN}")
+  add_definitions(-DFLAVOR="${FLAVOR}")
+  if(FLAVOR STREQUAL "f_dev")
+    set(FLAVOR_NAME "dev")
+  elseif(FLAVOR STREQUAL "f_store")
+    set(FLAVOR_NAME "store")
+  elseif(FLAVOR STREQUAL "f_generic")
+    set(FLAVOR_NAME "")
+  else()
+    message(FATAL_ERROR "Flavor:${FLAVOR} is not support, abort CMake.")
+  endif()
+  message("Building Windows with flavor: '${FLAVOR}'")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/runner/Debug-${FLAVOR}")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/runner/Release-${FLAVOR}")
+endif()
+
+function(safe_remove path)
+  if(IS_SYMLINK "${path}")
+    message("Removing symlink: ${path}")
+    file(REMOVE "${path}")
+  elseif(EXISTS "${path}")
+    message("Removing directory: ${path}")
+    file(REMOVE_RECURSE "${path}")
+  endif()
+endfunction()
+
+if(DEFINED FLAVOR)
+  safe_remove("${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}")
+  safe_remove("${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}")
+else()
+  safe_remove("${CMAKE_BINARY_DIR}/runner/Debug")
+  safe_remove("${CMAKE_BINARY_DIR}/runner/Release")
+endif()
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "mhabit")
+set(APP_BASE_NAME "${BINARY_NAME}")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

@@ -5,6 +5,17 @@
 #include "flutter_window.h"
 #include "utils.h"
 
+#ifndef APP_BASE_NAME
+#define APP_BASE_NAME L"mhabit"
+#endif
+
+#ifdef FLAVOR
+#define WINDOW_TITLE APP_BASE_NAME L"-" FLAVOR
+#else
+#define WINDOW_TITLE APP_BASE_NAME
+#endif
+
+
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
   // Attach to console when present (e.g., 'flutter run') or create a
@@ -27,7 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-  if (!window.Create(L"mhabit", origin, size)) {
+  if (!window.Create(WINDOW_TITLE, origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
