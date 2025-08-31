@@ -56,10 +56,17 @@ add_dependencies(${BINARY_NAME} flutter_assemble)
 
 if(FLAVOR)
   add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E rm -rf
-      "$<IF:$<CONFIG:Debug>,${CMAKE_BINARY_DIR}/runner/Debug,${CMAKE_BINARY_DIR}/runner/Release>"
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-      "$<IF:$<CONFIG:Debug>,${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG},${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}>"
-      "$<IF:$<CONFIG:Debug>,${CMAKE_BINARY_DIR}/runner/Debug,${CMAKE_BINARY_DIR}/runner/Release>"
+    # Debug
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Debug"
+    COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}" "${CMAKE_BINARY_DIR}/runner/Debug"
+
+    # Profile
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Profile"
+    COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_PROFILE}" "${CMAKE_BINARY_DIR}/runner/Profile"
+
+    # Release
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Release"
+    COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}" "${CMAKE_BINARY_DIR}/runner/Release"
   )
 endif()
+

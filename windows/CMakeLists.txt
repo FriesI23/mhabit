@@ -26,6 +26,7 @@ if(DEFINED ENV{APP_FLAVOR_WIN})
   endif()
   message("Building Windows with flavor: '${FLAVOR}'")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/runner/Debug-${FLAVOR}")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_PROFILE "${CMAKE_BINARY_DIR}/runner/Profile-${FLAVOR}")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/runner/Release-${FLAVOR}")
 endif()
 
@@ -39,13 +40,9 @@ function(safe_remove path)
   endif()
 endfunction()
 
-if(DEFINED FLAVOR)
-  # safe_remove("${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}")
-  # safe_remove("${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}")
-else()
-  safe_remove("${CMAKE_BINARY_DIR}/runner/Debug")
-  safe_remove("${CMAKE_BINARY_DIR}/runner/Release")
-endif()
+safe_remove("${CMAKE_BINARY_DIR}/runner/Debug")
+safe_remove("${CMAKE_BINARY_DIR}/runner/Profile")
+safe_remove("${CMAKE_BINARY_DIR}/runner/Release")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
