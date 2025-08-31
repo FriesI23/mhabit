@@ -59,11 +59,9 @@ if(FLAVOR)
     # Debug
     COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Debug"
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}" "${CMAKE_BINARY_DIR}/runner/Debug"
-
     # Profile
     COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Profile"
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_PROFILE}" "${CMAKE_BINARY_DIR}/runner/Profile"
-
     # Release
     COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/runner/Release"
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}" "${CMAKE_BINARY_DIR}/runner/Release"
