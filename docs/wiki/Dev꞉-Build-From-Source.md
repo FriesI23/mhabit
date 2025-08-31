@@ -14,20 +14,29 @@ or run it directly using `flutter run` (default: `--debug`).
 Following Android flavors are allowed:
 
 - `f_dev`
+
   - \# For development
   - appId: `io.github.friesi23.mhabit.dev`
   - command:
-    - `flutter run --flavor f_dev <other optional args>`
-    - `flutter build --flavor f_dev <other optional args>`
+
+    ```shell
+    flutter run --flavor f_dev <other optional args>
+    flutter build --flavor f_dev <other optional args>
+    ```
+
 - `f_generic`
+
   - **default**
   - \# For Publish
   - appId: `io.github.friesi23.mhabit`
   - command:
-    - `flutter run <other optional args>`
-    - `flutter run --flavor f_generic <other optional args>`
-    - `flutter build <other optional args>`
-    - `flutter build --flavor f_generic <other optional args>`
+
+    ```shell
+    flutter run <other optional args>
+    flutter run --flavor f_generic <other optional args>
+    flutter build <other optional args>
+    flutter build --flavor f_generic <other optional args>
+    ```
 
 Build outputs located at `build/app/outputs`.
 
@@ -36,23 +45,37 @@ Build outputs located at `build/app/outputs`.
 iOS requires a scheme. Supported schemes are as follows:
 
 - `f_dev`
+
   - \# For development
   - appId: `io.github.friesi23.mhabit.dev`
   - command:
-    - `flutter run --flavor f_dev <other optional args>`
-    - `flutter build --flavor f_dev <other optional args>`
+
+    ```shell
+    flutter run --flavor f_dev <other optional args>
+    flutter build --flavor f_dev <other optional args>
+    ```
+
 - `f_generic`
+
   - \# For Publish
   - appId: `io.github.friesi23.mhabit`
   - command:
-    - `flutter run --flavor f_generic <other optional args>`
-    - `flutter build --flavor f_generic <other optional args>`
+
+    ```shell
+    flutter run --flavor f_generic <other optional args>
+    flutter build --flavor f_generic <other optional args>
+    ```
+
 - `f_store`
+
   - \# For Publish to Apple Store
   - appId: `io.github.friesi23.mhabit.store`
   - command:
-    - `flutter run --flavor f_store <other optional args>`
-    - `flutter build --flavor f_store <other optional args>`
+
+    ```shell
+    flutter run --flavor f_store <other optional args>
+    flutter build --flavor f_store <other optional args>
+    ```
 
 Build outputs located at:
 
@@ -114,10 +137,45 @@ flutter pub get
 flutter build windows
 ```
 
-Build outputs located at `build\windows\x64\runner` (e.g. `build\windows\x64\runner\Release`)
+Default build outputs are located at `build\windows\x64\runner` (e.g. `build\windows\x64\runner\Release`)
 
 > To build `msix` package, refer to `scripts\build_msix.cmd`
 > and `.github\workflows\app-release.yml#jobs.build-windows-msix`.
+
+This project implement a variable-based approach to simulate Windows flavors.
+Following flavors are allowed:
+
+- `f_dev`
+
+  - \# For development
+  - productName: `mhabit-dev`
+  - UserData: `%AppData%\Roaming\io.github.friesi23\mhabit-dev`
+  - command:
+
+    ```pwsh
+    $env:APP_FLAVOR_WIN='f_dev'
+    flutter build windows <other optional args>
+    Remove-Item Env:\APP_FLAVOR_WIN
+    ```
+
+- `f_generic`
+
+  - **default**
+  - \# For Publish
+  - productName: `mhabit`
+  - UserData: `%AppData%\Roaming\io.github.friesi23\mhabit`
+  - command:
+
+    ```pwsh
+    # without flavor
+    flutter build windows <other optional args>
+    ```
+
+    ```pwsh
+    $env:APP_FLAVOR_WIN='f_generic'
+    flutter build windows <other optional args>
+    Remove-Item Env:\APP_FLAVOR_WIN
+    ```
 
 <!-- refs -->
 
@@ -128,6 +186,7 @@ Build outputs located at `build\windows\x64\runner` (e.g. `build\windows\x64\run
 
 ---
 
-1. [2025-07-29] Migrated from: [`FriesI23/mhabit/README.md`][_migrate]
+1. [2025-07-29] Migrated from: [`FriesI23/mhabit/README.md`][_migrate].
+2. [2025-08-31] Add guidance of variable-based flavor support for Windows platform.
 
 [_migrate]: https://github.com/FriesI23/mhabit/blob/09f6cabd6f7b2fa3aca1c087d48e9a6069c28033/README.md
