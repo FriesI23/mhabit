@@ -1,0 +1,20 @@
+**✨ New Features**
+
+- iOS/macOS 上取消应用启动时请求通知权限 (#323)
+- 日期选项中添加前导零 (#325)
+
+**🌐 Localization**
+
+- 更新波兰语翻译，感谢 Pandaman331 在 Weblate 上的贡献 (#324)
+
+**🧹 Others**
+
+- 在低亮度下改善提示可见性 (#321)
+- 将 VSCode 工作区设置迁移到 code-workspace (#322)
+- 实现 Windows 自定义 flavor 支持 (#327, #330)
+- 为 Windows 构建测试添加条件检查 (#327)
+
+**📝 Documentation**
+
+- Wiki：为 Windows 平台添加基于变量的 flavor 支持
+- Wiki：文档说明膝关分数计算 (#331)

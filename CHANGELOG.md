@@ -2,6 +2,29 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.17.5+98
+
+**✨ New Features**
+
+- Cancel noti-permission request at app launch on iOS/macOS (#323)
+- Add leading zero in date option (#325)
+
+**🌐 Localization**
+
+- Updated Polish translation, thanks to Pandaman331's contribution on Weblate. (#324)
+
+**🧹 Others**
+
+- Improve hint visibility under low brightness (#321)
+- Move vscode workspace settings to code-workspace (#322)
+- Implement Windows custom flavor support (#327, #330)
+- Add conditional check for windows build test (#327)
+
+**📝 Documentation**
+
+- Wiki: Add variable-based flavor support for Windows platform
+- Wiki: Document how the score works (#331)
+
 ## 1.17.2+95
 
 **🌐 Localization**
