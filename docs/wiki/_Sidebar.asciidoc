@@ -10,7 +10,7 @@
 ====
 * link:Installation[How to Install]
 * link:User-Guide[User Guide]
-* link:Feature꞉WebDAV-Sync[Sync Habits Across Devices (WebDAV)]
+* link:Feature꞉-WebDAV-Sync[Sync Habits Across Devices (WebDAV)]
 ====
 
 .Contributing
@@ -30,5 +30,6 @@
 .Design
 [%collapsible]
 ====
+* link:Design꞉-Habit-Score[Habit Score]
 * link:Design꞉-WebDAV-Sync[WebDAV Sync]
 ====
