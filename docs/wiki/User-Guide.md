@@ -164,7 +164,7 @@ The edit page uses the same process as creating, see ["Create New Habit"](#creat
 
 ## Advanced settings
 
-- [Sync habits across devices using WebDAV](./Feature꞉WebDAV-Sync)
+- [Sync habits across devices using WebDAV](./Feature꞉-WebDAV-Sync)
 
 <!-- refs -->
 
