@@ -34,7 +34,7 @@ class L10nHe extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
-    return 'Daily goal, default $number';
+    return 'מטרה יומית, ברירת המחדל היא $number';
   }
 
   @override
@@ -63,7 +63,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Daily goal unit';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'שם יחידה למטרה היומית';
 
   @override
   String get habitEdit_habitDailyGoalExtra_hintText => 'Desired maximum daily goal';
@@ -92,7 +92,7 @@ class L10nHe extends L10n {
   String get habitEdit_habitFreq_permonth => '';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'times per month';
+  String get habitEdit_habitFreq_permonth_ex01 => 'פעמים בחודש';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';
@@ -107,7 +107,7 @@ class L10nHe extends L10n {
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Daily';
+  String get habitEdit_habitFreq_show_daily => 'יומית';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
@@ -144,38 +144,38 @@ class L10nHe extends L10n {
 
   @override
   String habitEdit_targetDays_title(int targetDays) {
-    return '$targetDays days';
+    return '$targetDays ימים';
   }
 
   @override
   String get habitEdit_targetDays_dialogTitle => 'Select Target Days';
 
   @override
-  String get habitEdit_targetDays => 'days';
+  String get habitEdit_targetDays => 'ימים';
 
   @override
   String get habitEdit_reminder_hintText => 'תזכורת';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
+  String get habitEdit_reminder_freq_weekHelpText => 'כל יום בשבוע';
 
   @override
   String get habitEdit_reminder_freq_weekPrefixText => '';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
+  String get habitEdit_reminder_freq_weekSubfixText => ' בכל שבוע';
 
   @override
-  String get habitEdit_reminder_freq_monthHelpText => 'Any day of month';
+  String get habitEdit_reminder_freq_monthHelpText => 'כל יום בחודש';
 
   @override
   String get habitEdit_reminder_freq_monthPrefixText => '';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
+  String get habitEdit_reminder_freq_monthSubfixText => ' בכל חודש';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Question, e.g. Did you exercise today?';
+  String get habitEdit_reminderQuest_hintText => 'שאלה, למשל: עשית היום כושר?';
 
   @override
   String get habitEdit_reminder_dialogTitle => 'Choose reminder type';
@@ -184,13 +184,13 @@ class L10nHe extends L10n {
   String get habitEdit_reminder_dialogType_whenNeeded => 'When need to check in';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Daily';
+  String get habitEdit_reminder_dialogType_daily => 'יומית';
 
   @override
-  String get habitEdit_reminder_dialogType_week => 'Per week';
+  String get habitEdit_reminder_dialogType_week => 'לפי שבוע';
 
   @override
-  String get habitEdit_reminder_dialogType_month => 'Per month';
+  String get habitEdit_reminder_dialogType_month => 'לפי חודש';
 
   @override
   String get habitEdit_reminder_dialogConfirm => 'confirm';
@@ -199,10 +199,10 @@ class L10nHe extends L10n {
   String get habitEdit_reminder_dialogCancel => 'cancel';
 
   @override
-  String get habitEdit_reminder_cancelDialogTitle => 'Confirm';
+  String get habitEdit_reminder_cancelDialogTitle => 'אישור';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Do you confirm to remove this reminder';
+  String get habitEdit_reminder_cancelDialogSubtitle => 'להסיר תזכורת זו?';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'confirm';
@@ -211,25 +211,25 @@ class L10nHe extends L10n {
   String get habitEdit_reminder_cancelDialogCancel => 'cancel';
 
   @override
-  String get habitEdit_reminder_weekdayText_monday => 'Mon';
+  String get habitEdit_reminder_weekdayText_monday => 'שני';
 
   @override
-  String get habitEdit_reminder_weekdayText_tuesday => 'Tue';
+  String get habitEdit_reminder_weekdayText_tuesday => 'שלישי';
 
   @override
-  String get habitEdit_reminder_weekdayText_wednesday => 'Wed';
+  String get habitEdit_reminder_weekdayText_wednesday => 'רביעי';
 
   @override
-  String get habitEdit_reminder_weekdayText_thursday => 'Tur';
+  String get habitEdit_reminder_weekdayText_thursday => 'חמישי';
 
   @override
-  String get habitEdit_reminder_weekdayText_friday => 'Fri';
+  String get habitEdit_reminder_weekdayText_friday => 'שישי';
 
   @override
-  String get habitEdit_reminder_weekdayText_saturday => 'Sat';
+  String get habitEdit_reminder_weekdayText_saturday => 'יום ש׳';
 
   @override
-  String get habitEdit_reminder_weekdayText_sunday => 'Sun';
+  String get habitEdit_reminder_weekdayText_sunday => 'ראשון';
 
   @override
   String get habitEdit_desc_hintText => 'Memo, support Markdown';
@@ -238,10 +238,10 @@ class L10nHe extends L10n {
   String get habitEdit_create_datetime_prefix => 'נוצר בתאריך: ';
 
   @override
-  String get habitEdit_modify_datetime_prefix => 'Modified: ';
+  String get habitEdit_modify_datetime_prefix => 'שונה בתאריך: ';
 
   @override
-  String get habitDisplay_fab_text => 'New Habit';
+  String get habitDisplay_fab_text => 'יצירת הרגל';
 
   @override
   String get habitDisplay_emptyImage_text_01 => 'גם רומא לא נבנתה ביום אחד';
@@ -275,7 +275,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Delete Selected Habits?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title => 'למחוק את ההרגלים שנבחרו?';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'confirm';
@@ -294,64 +294,64 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get habitDisplay_editPopMenu_selectAll => 'Select All';
+  String get habitDisplay_editPopMenu_selectAll => 'לבחור הכול';
 
   @override
-  String get habitDisplay_editPopMenu_export => 'Export';
+  String get habitDisplay_editPopMenu_export => 'ייצוא';
 
   @override
-  String get habitDisplay_editPopMenu_delete => 'Delete';
+  String get habitDisplay_editPopMenu_delete => 'מחיקה';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Template';
+  String get habitDisplay_editPopMenu_clone => 'תבנית';
 
   @override
-  String get habitDisplay_editButton_tooltip => 'Edit';
+  String get habitDisplay_editButton_tooltip => 'עריכה';
 
   @override
-  String get habitDisplay_archiveButton_tooltip => 'Archive';
+  String get habitDisplay_archiveButton_tooltip => 'העברה לארכיון';
 
   @override
-  String get habitDisplay_unarchiveButton_tooltip => 'Unarchive';
+  String get habitDisplay_unarchiveButton_tooltip => 'הוצאה מהארכיון';
 
   @override
-  String get habitDisplay_settingButton_tooltip => 'Setting';
+  String get habitDisplay_settingButton_tooltip => 'הגדרות';
 
   @override
   String get habitDisplay_statsMenu_statSubgroupText => 'Current';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Completed';
+  String get habitDisplay_statsMenu_completedTileText => 'הושלם';
 
   @override
-  String get habitDisplay_statsMenu_inProgresTileText => 'In Progress';
+  String get habitDisplay_statsMenu_inProgresTileText => 'בתהליך';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Archived';
+  String get habitDisplay_statsMenu_archivedTileText => 'בארכיון';
 
   @override
   String get habitDisplay_statsMenu_popularitySubgroupText => 'Top Habits: Last 30 Days Changes';
 
   @override
-  String get habitDisplay_mainMenu_lightTheme => 'Light Theme';
+  String get habitDisplay_mainMenu_lightTheme => 'סגנון בהיר';
 
   @override
-  String get habitDisplay_mainMenu_darkTheme => 'Dark Theme';
+  String get habitDisplay_mainMenu_darkTheme => 'סגנון כהה';
 
   @override
-  String get habitDisplay_mainMenu_followSystemTheme => 'Follow System';
+  String get habitDisplay_mainMenu_followSystemTheme => 'לפי המערכת';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Show Archived';
+  String get habitDisplay_mainMenu_showArchivedTileText => 'הצגת הרגלים בארכיון';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Show Completed';
+  String get habitDisplay_mainMenu_showCompletedTileText => 'הצגת הרגלים שהושלמו';
 
   @override
   String get habitDisplay_mainMenu_showActivedTileText => 'Show Actived';
 
   @override
-  String get habitDisplay_mainMenu_settingTileText => 'Settings';
+  String get habitDisplay_mainMenu_settingTileText => 'הגדרות';
 
   @override
   String get habitDisplay_sort_reverseText => 'Reverse';
@@ -360,10 +360,10 @@ class L10nHe extends L10n {
   String get habitDisplay_sortDirection_asc => '(עולה)';
 
   @override
-  String get habitDisplay_sortDirection_Desc => '(Desc)';
+  String get habitDisplay_sortDirection_Desc => '(יורד)';
 
   @override
-  String get habitDisplay_sortType_manual => 'My order';
+  String get habitDisplay_sortType_manual => 'סדר מותאם אישית';
 
   @override
   String get habitDisplay_sortType_name => 'לפי שם';
@@ -381,7 +381,7 @@ class L10nHe extends L10n {
   String get habitDisplay_sortType_status => 'לפי מצב';
 
   @override
-  String get habitDisplay_sortTypeDialog_title => 'Sort';
+  String get habitDisplay_sortTypeDialog_title => 'מיון';
 
   @override
   String get habitDisplay_sortTypeDialog_confirm => 'confirm';
@@ -396,19 +396,19 @@ class L10nHe extends L10n {
   String get habitDetail_editButton_tooltip => 'Edit';
 
   @override
-  String get habitDetail_editPopMenu_unarchive => 'Unarchive';
+  String get habitDetail_editPopMenu_unarchive => 'הוצאה מהארכיון';
 
   @override
-  String get habitDetail_editPopMenu_archive => 'Archive';
+  String get habitDetail_editPopMenu_archive => 'העברה לארכיון';
 
   @override
-  String get habitDetail_editPopMenu_export => 'Export';
+  String get habitDetail_editPopMenu_export => 'ייצוא';
 
   @override
-  String get habitDetail_editPopMenu_delete => 'Delete';
+  String get habitDetail_editPopMenu_delete => 'מחיקה';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Template';
+  String get habitDetail_editPopMenu_clone => 'תבנית';
 
   @override
   String get habitDetail_confirmDialog_confirm => 'confirm';
@@ -417,16 +417,16 @@ class L10nHe extends L10n {
   String get habitDetail_confirmDialog_cancel => 'cancel';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archive Habit?';
+  String get habitDetail_archiveConfirmDialog_titleText => 'להעביר את ההרגל לארכיון?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Unarchive Habit?';
+  String get habitDetail_unarchiveConfirmDialog_titleText => 'להוציא את ההרגל מהארכיון?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Delete Habit?';
+  String get habitDetail_deleteConfirmDialog_titleText => 'למחוק את ההרגל?';
 
   @override
-  String get habitDetail_summary_title => 'Summary';
+  String get habitDetail_summary_title => 'סיכום';
 
   @override
   String habitDetail_summary_body(String score, int days) {
@@ -481,7 +481,7 @@ class L10nHe extends L10n {
 
   @override
   String habitDetail_descDailyGoal_unitText(String unit) {
-    return 'Unit: $unit';
+    return 'יחידה: $unit';
   }
 
   @override
@@ -501,43 +501,43 @@ class L10nHe extends L10n {
   String get habitDetail_descTargetDays_unitText => 'd';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Records';
+  String get habitDetail_descRecordsNum_titleText => 'רשומות';
 
   @override
-  String get habitDetail_scoreChart_title => 'Score';
+  String get habitDetail_scoreChart_title => 'ציון';
 
   @override
-  String get habitDetail_scoreChartCombine_dailyText => 'Day';
+  String get habitDetail_scoreChartCombine_dailyText => 'יום';
 
   @override
-  String get habitDetail_scoreChartCombine_weeklyText => 'Week';
+  String get habitDetail_scoreChartCombine_weeklyText => 'שבוע';
 
   @override
-  String get habitDetail_scoreChartCombine_monthlyText => 'Month';
+  String get habitDetail_scoreChartCombine_monthlyText => 'חודש';
 
   @override
-  String get habitDetail_scoreChartCombine_yearlyText => 'Year';
+  String get habitDetail_scoreChartCombine_yearlyText => 'שנה';
 
   @override
-  String get habitDetail_freqChart_freqTitle => 'Frequency';
+  String get habitDetail_freqChart_freqTitle => 'תדירות';
 
   @override
-  String get habitDetail_freqChart_historyTitle => 'History';
+  String get habitDetail_freqChart_historyTitle => 'היסטוריה';
 
   @override
-  String get habitDetail_freqChart_combinedTitle => 'Frequency & History';
+  String get habitDetail_freqChart_combinedTitle => 'תדירות והיסטוריה';
 
   @override
-  String get habitDetail_freqChartCombine_weeklyText => 'Week';
+  String get habitDetail_freqChartCombine_weeklyText => 'שבוע';
 
   @override
-  String get habitDetail_freqChartCombine_monthlyText => 'Month';
+  String get habitDetail_freqChartCombine_monthlyText => 'חודש';
 
   @override
-  String get habitDetail_freqChartCombine_yearlyText => 'Year';
+  String get habitDetail_freqChartCombine_yearlyText => 'שנה';
 
   @override
-  String get habitDetail_freqChartNaviBar_nowText => 'Now';
+  String get habitDetail_freqChartNaviBar_nowText => 'כעת';
 
   @override
   String get habitDetail_freqChart_expanded_hideTooltip => 'Hide History Chart';
@@ -546,28 +546,28 @@ class L10nHe extends L10n {
   String get habitDetail_freqChart_expanded_showTooltip => 'Show History Chart';
 
   @override
-  String get habitDetail_descSubgroup_title => 'Memo';
+  String get habitDetail_descSubgroup_title => 'הערה';
 
   @override
   String get habitDetail_otherSubgroup_title => 'Other';
 
   @override
-  String get habitDetail_habitType_title => 'Type';
+  String get habitDetail_habitType_title => 'סוג';
 
   @override
-  String get habitDetail_reminderTile_title => 'Reminder';
+  String get habitDetail_reminderTile_title => 'תזכורת';
 
   @override
-  String get habitDetail_freqTile_title => 'Repeat';
+  String get habitDetail_freqTile_title => 'חזרה';
 
   @override
-  String get habitDetail_startDateTile_title => 'Start Date';
+  String get habitDetail_startDateTile_title => 'תאריך התחלה';
 
   @override
-  String get habitDetail_createDateTile_title => 'Created';
+  String get habitDetail_createDateTile_title => 'תאריך יצירה';
 
   @override
-  String get habitDetail_modifyDateTile_title => 'Modified';
+  String get habitDetail_modifyDateTile_title => 'תאריך שינוי';
 
   @override
   String get habitDetail_editHeatmapCal_dateButtonText => 'date';
@@ -576,16 +576,16 @@ class L10nHe extends L10n {
   String get habitDetail_editHeatmapCal_valueButtonText => 'value';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'back to today';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'חזרה להיום';
 
   @override
-  String get habitDetail_notFoundText => 'Load habit failed';
+  String get habitDetail_notFoundText => 'טעינת ההרגל נכשלה';
 
   @override
-  String get habitDetail_notFoundRetryText => 'Try again';
+  String get habitDetail_notFoundRetryText => 'ניסיון חוזר';
 
   @override
-  String get habitDetail_changeGoal_title => 'Change goal';
+  String get habitDetail_changeGoal_title => 'שינוי מטרה';
 
   @override
   String habitDetail_changeGoal_currentChipText(String goal) {
@@ -617,10 +617,10 @@ class L10nHe extends L10n {
   String get habitDetail_changeGoal_saveText => 'save';
 
   @override
-  String get habitDetail_skipReason_title => 'Skip reason';
+  String get habitDetail_skipReason_title => 'סיבה לדילוג';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Write something here...';
+  String get habitDetail_skipReason_bodyHelpText => 'אפשר לכתוב כאן...';
 
   @override
   String get habitDetail_skipReason_cancelText => 'cancel';
@@ -629,13 +629,13 @@ class L10nHe extends L10n {
   String get habitDetail_skipReason_saveText => 'save';
 
   @override
-  String get appSetting_appbar_titleText => 'Settings';
+  String get appSetting_appbar_titleText => 'הגדרות';
 
   @override
-  String get appSetting_displaySubgroupText => 'Display';
+  String get appSetting_displaySubgroupText => 'תצוגה';
 
   @override
-  String get appSetting_operationSubgroupText => 'Operation';
+  String get appSetting_operationSubgroupText => 'פעולה';
 
   @override
   String get appSetting_dragCalendarByPageTile_titleText => 'Drag calendar by page';
@@ -656,27 +656,27 @@ class L10nHe extends L10n {
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modify the click behavior to open the detailed popup for daily records on main page.';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => 'First day of week';
+  String get appSetting_firstDayOfWeek_titleText => 'היום הראשון בשבוע';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Show first day of week';
+  String get appSetting_firstDayOfWeekDialog_titleText => 'הצגת היום הראשון בשבוע';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Default)';
+  String get appSetting_firstDayOfWeekDialog_defaultText => ' (ברירת מחדל)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
-    return 'Follow System ($localeName)';
+    return 'לפי המערכת ($localeName)';
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text => 'לפי המערכת';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'שפה';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'נא לבחור שפה';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -702,25 +702,25 @@ class L10nHe extends L10n {
   String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Default';
+  String get appSetting_collapsed_calendar_bararea_defaultText => 'ברירת מחדל';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Reminder & Notification';
+  String get appSetting_reminderSubgroupText => 'תזכורות והתראות';
 
   @override
-  String get appSetting_dailyReminder_titleText => 'Daily reminder';
+  String get appSetting_dailyReminder_titleText => 'תזכורת יומית';
 
   @override
   String get appSetting_backupAndRestoreSubgroupText => 'גיבוי ושחזור';
 
   @override
-  String get appSetting_export_titleText => 'Export';
+  String get appSetting_export_titleText => 'ייצוא';
 
   @override
   String get appSetting_export_subtitleText => 'Exported habits as JSON format, This file can be import back.';
 
   @override
-  String get appSetting_import_titleText => 'Import';
+  String get appSetting_import_titleText => 'ייבוא';
 
   @override
   String get appSetting_import_subtitleText => 'Import habits from json file.';
@@ -780,10 +780,10 @@ class L10nHe extends L10n {
   String get appSetting_developMode_titleText => 'Develop Mode';
 
   @override
-  String get appSetting_clearCache_titleText => 'Clear Cache';
+  String get appSetting_clearCache_titleText => 'ניקוי המטמון';
 
   @override
-  String get appSetting_clearCacheDialog_titleText => 'Clear Cache';
+  String get appSetting_clearCacheDialog_titleText => 'ניקוי המטמון';
 
   @override
   String get appSetting_clearCacheDialog_subtitleText => 'After clearing cache, some custom values will be restored to defaults.';
@@ -828,10 +828,10 @@ class L10nHe extends L10n {
   String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'סנכרון כעת';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'מתבצע סנכרון';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -844,11 +844,11 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'מועד הסנכרון האחרון: לא ידוע';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'מועד הסנכרון האחרון: $dateStr';
   }
 
   @override
@@ -860,7 +860,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'מתבצע סנכרון...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -874,7 +874,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'בתהליך ביטול...';
 
   @override
   String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
