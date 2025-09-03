@@ -9,28 +9,28 @@ class L10nHe extends L10n {
   L10nHe([String locale = 'he']) : super(locale);
 
   @override
-  String get localeScriptName => 'עִברִית';
+  String get localeScriptName => 'עברית';
 
   @override
-  String get appName => '🚧(he) - Table Habit';
+  String get appName => 'רשימת הרגלים';
 
   @override
-  String get habitEdit_saveButton_text => 'Save';
+  String get habitEdit_saveButton_text => 'שמירה';
 
   @override
-  String get habitEdit_habitName_hintText => 'Habit Name ...';
+  String get habitEdit_habitName_hintText => 'שם ההרגל';
 
   @override
-  String get habitEdit_colorPicker_title => 'Pick color';
+  String get habitEdit_colorPicker_title => 'נא לבחור צבע';
 
   @override
-  String get habitEdit_habitTypeDialog_title => 'Habit type';
+  String get habitEdit_habitTypeDialog_title => 'סוג הרגל';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Positive';
+  String get habitEdit_habitType_positiveText => 'חיובי';
 
   @override
-  String get habitEdit_habitType_negativeText => 'Negative';
+  String get habitEdit_habitType_negativeText => 'שלילי';
 
   @override
   String habitEdit_habitDailyGoal_hintText(num number) {
@@ -77,16 +77,16 @@ class L10nHe extends L10n {
   String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximum daily limit';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Select frequency';
+  String get habitEdit_frequencySelector_title => 'נא לבחור תדירות';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Daily';
+  String get habitEdit_habitFreq_daily => 'יומית';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
+  String get habitEdit_habitFreq_perweek_ex01 => 'פעמים בשבוע';
 
   @override
   String get habitEdit_habitFreq_permonth => '';
@@ -101,7 +101,7 @@ class L10nHe extends L10n {
   String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
 
   @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
+  String get habitEdit_habitFreq_predayfreq_ex02 => 'ימים';
 
   @override
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
@@ -154,7 +154,7 @@ class L10nHe extends L10n {
   String get habitEdit_targetDays => 'days';
 
   @override
-  String get habitEdit_reminder_hintText => 'Reminder';
+  String get habitEdit_reminder_hintText => 'תזכורת';
 
   @override
   String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
@@ -235,7 +235,7 @@ class L10nHe extends L10n {
   String get habitEdit_desc_hintText => 'Memo, support Markdown';
 
   @override
-  String get habitEdit_create_datetime_prefix => 'Created: ';
+  String get habitEdit_create_datetime_prefix => 'נוצר בתאריך: ';
 
   @override
   String get habitEdit_modify_datetime_prefix => 'Modified: ';
@@ -244,10 +244,10 @@ class L10nHe extends L10n {
   String get habitDisplay_fab_text => 'New Habit';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'A journey of a thousand miles begins with a single step';
+  String get habitDisplay_emptyImage_text_01 => 'גם רומא לא נבנתה ביום אחד';
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archive Selected Habits?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title => 'להעביר את הארכיונים שנבחרו לארכיון?';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'confirm';
@@ -357,7 +357,7 @@ class L10nHe extends L10n {
   String get habitDisplay_sort_reverseText => 'Reverse';
 
   @override
-  String get habitDisplay_sortDirection_asc => '(Asc)';
+  String get habitDisplay_sortDirection_asc => '(עולה)';
 
   @override
   String get habitDisplay_sortDirection_Desc => '(Desc)';
@@ -366,19 +366,19 @@ class L10nHe extends L10n {
   String get habitDisplay_sortType_manual => 'My order';
 
   @override
-  String get habitDisplay_sortType_name => 'By Name';
+  String get habitDisplay_sortType_name => 'לפי שם';
 
   @override
-  String get habitDisplay_sortType_colorType => 'By Color';
+  String get habitDisplay_sortType_colorType => 'לפי צבע';
 
   @override
   String get habitDisplay_sortType_progress => 'By Rate';
 
   @override
-  String get habitDisplay_sortType_startT => 'By Start Date';
+  String get habitDisplay_sortType_startT => 'לפי תאריך התחלה';
 
   @override
-  String get habitDisplay_sortType_status => 'By Status';
+  String get habitDisplay_sortType_status => 'לפי מצב';
 
   @override
   String get habitDisplay_sortTypeDialog_title => 'Sort';
@@ -711,7 +711,7 @@ class L10nHe extends L10n {
   String get appSetting_dailyReminder_titleText => 'Daily reminder';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Backup & restore';
+  String get appSetting_backupAndRestoreSubgroupText => 'גיבוי ושחזור';
 
   @override
   String get appSetting_export_titleText => 'Export';
