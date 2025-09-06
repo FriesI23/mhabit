@@ -18,7 +18,7 @@
   "@habitEdit_habitType_negativeText": {},
   "habitEdit_habitDailyGoal_hintText": "Щоденна мета, за замовчуванням {number}",
   "@habitEdit_habitDailyGoal_hintText": {
-    "description": "default habit daily goal",
+    "description": "test",
     "placeholders": {
       "number": {
         "type": "num",
