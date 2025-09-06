@@ -58,7 +58,7 @@
   },
   "habitEdit_habitDailyGoal_negativeErrorText01": "щоденна ціль має бути ≥ {number}",
   "@habitEdit_habitDailyGoal_negativeErrorText01": {
-    "description": "minimum number for negative habit daily goal",
+    "description": "мінімум number for negative habit daily goal",
     "placeholders": {
       "number": {
         "type": "num",
