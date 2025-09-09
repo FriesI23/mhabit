@@ -82,8 +82,8 @@ final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
     return Scaffold(
       appBar: AppBar(
           leading: const PageBackButton(reason: PageBackReason.back),
-          // TODO: l10n
-          title: const Text("Expermental Features")),
+          title: Text(l10n?.appSetting_experimentalFeatureTile_titleText ??
+              "Experimental Features")),
       body: ListView(
         children: [
           ExpandedSection(
