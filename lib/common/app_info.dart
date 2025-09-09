@@ -16,12 +16,13 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' hide appFlavor;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_path_provider.dart';
 import 'async.dart';
 import 'consts.dart';
+import 'flavor.dart';
 
 class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();

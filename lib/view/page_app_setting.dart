@@ -17,13 +17,13 @@ import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
+import '../common/flavor.dart';
 import '../common/utils.dart';
 import '../component/helper.dart';
 import '../component/widget.dart';
@@ -231,8 +231,22 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
     if (!context.mounted || filePath == null) return;
-    //TODO: add snackbar result
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context);
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context)
+        .then((result) {
+      if (!(result && context.mounted)) return;
+      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+        context,
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_exportAllHabitsSuccSnackbarText)
+              : const Text('Exported All Habits'),
+        ),
+        duration: kAppUndoDialogShowDuration,
+      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(snackBar);
+    });
   }
 
   void _onImportAllTilePressed() async {

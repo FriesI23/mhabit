@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../logging/level.dart';
+import '../routes/route_observer.dart';
 import 'utils.dart';
 
 //#region debug options
@@ -29,4 +30,8 @@ LogLevel kAppLogLevel = getDefaultLogLevel();
 //#region ui global key
 final snackbarKey = GlobalKey<ScaffoldMessengerState>();
 final navigatorKey = GlobalKey<NavigatorState>();
+//#endregion
+
+//#region routes
+final currentRouteObserver = CurrentRouteObserver();
 //#endregion

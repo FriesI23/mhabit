@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:io';
 
-import '../view/page_app_debugger.dart' as app_debugger;
-import 'notification_id_range.dart';
+import 'package:flutter/services.dart' as services;
 
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
+String? get appFlavor {
+  if (Platform.isWindows) {
+    return const String.fromEnvironment('APP_FLAVOR_WIN') != ''
+        ? const String.fromEnvironment('APP_FLAVOR_WIN')
+        : services.appFlavor;
+  } else {
+    return services.appFlavor;
   }
 }

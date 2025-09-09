@@ -600,6 +600,18 @@ abstract class L10n {
   /// **'Deleted habit: \"{name}\"'**
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name);
 
+  /// No description provided for @habitDisplay_exportHabitsSuccSnackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {Exported habit.} other {Exported {count} habits.}}'**
+  String habitDisplay_exportHabitsSuccSnackbarText(int count);
+
+  /// No description provided for @habitDisplay_exportAllHabitsSuccSnackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported All Habits'**
+  String get habitDisplay_exportAllHabitsSuccSnackbarText;
+
   /// No description provided for @habitDisplay_editPopMenu_selectAll.
   ///
   /// In en, this message translates to:

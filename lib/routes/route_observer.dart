@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
 
-import '../view/page_app_debugger.dart' as app_debugger;
-import 'notification_id_range.dart';
+class CurrentRouteObserver extends NavigatorObserver {
+  RouteSettings? route;
 
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
+  String? get routeName => route?.name;
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    this.route = route.settings;
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    this.route = previousRoute?.settings;
   }
 }

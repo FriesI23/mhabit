@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
+import '../common/flavor.dart';
 import '../common/global.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
@@ -97,7 +98,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    appLog.debugger.info("App Running Now", ex: [DateTime.now()]);
+    appLog.debugger.info("App Running Now", ex: [DateTime.now(), appFlavor]);
     return ProfileBuilder(
       handlers: _profileHandlers,
       errorBuilder: (details) => _buildErrorPage(context, details),
@@ -194,6 +195,7 @@ class BasicAppView extends StatelessWidget {
     return MaterialApp(
       onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
       navigatorKey: navigatorKey,
+      navigatorObservers: [currentRouteObserver],
       scaffoldMessengerKey: snackbarKey,
       theme: lightThemeBuilder?.call(),
       darkTheme: darkThemeBuilder?.call(),

@@ -18,8 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:uuid/uuid.dart';
 
 import '../common/async.dart';
+import '../common/consts.dart';
 import '../common/types.dart';
 import '../extension/notification_extensions.dart';
 import '../logging/helper.dart';
@@ -131,18 +133,32 @@ final class NotificationServiceImpl implements NotificationService {
         LinuxInitializationSettings(defaultActionName: "Open notification");
 
     // Windows setting
-    // Configs Share the same value as specified in `pubspec.yaml#msix_config`:
-    // - `appName`: `msix_config#display_name`
-    // - `appUserModelId`: `msix_config#identity_name`
-    // - `guid`: `msix_config#toast_activator#clsid`
-    const windowsSettins = WindowsInitializationSettings(
-      appName: "Table Habit",
-      appUserModelId: "Github.FriesI23.TableHabit",
-      guid: "03eef6f9-f653-5273-a0d6-111e2a8945b9",
-    );
+    WindowsInitializationSettings buildWindowsSettings() {
+      switch (appFlavor) {
+        case appFlavorDev:
+          const appName = "Table Habit (Dev)";
+          return WindowsInitializationSettings(
+            appName: appName,
+            appUserModelId: "Github.FriesI23.TableHabit.Dev",
+            guid: const Uuid().v5(appID, appName),
+          );
+        default:
+          // Configs Share the same value as specified in `pubspec.yaml#msix_config`:
+          // - `appName`: `msix_config#display_name`
+          // - `appUserModelId`: `msix_config#identity_name`
+          // - `guid`: `msix_config#toast_activator#clsid`
+          return const WindowsInitializationSettings(
+            appName: "Table Habit",
+            appUserModelId: "Github.FriesI23.TableHabit",
+            guid: "03eef6f9-f653-5273-a0d6-111e2a8945b9",
+          );
+      }
+    }
+
+    final windowsSettins = buildWindowsSettings();
 
     // combine settings
-    const initializationSettings = InitializationSettings(
+    final initializationSettings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
       macOS: darwinSettings,
@@ -380,10 +396,11 @@ final class NotificationServiceImpl implements NotificationService {
   }
 }
 
+// TODO: Some features are missing on Linux platform
 final class LinuxNotificationService extends NotificationServiceImpl {
   LinuxNotificationService();
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  /// Plugin doesn't support scheduling on Linux
   ///
   /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
   ///
@@ -397,7 +414,7 @@ final class LinuxNotificationService extends NotificationServiceImpl {
           Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
       Future.value(false);
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  /// Plugin doesn't support scheduling on Linux
   ///
   /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
   ///
@@ -416,11 +433,11 @@ final class LinuxNotificationService extends NotificationServiceImpl {
       Future.value(false);
 }
 
+// TODO: Some features are missing on Windows platform
 final class WindowsNotificationService extends NotificationServiceImpl {
   WindowsNotificationService();
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
-  ///
+  /// Plugin doesn't support scheduling on Windows
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
   /// - [id] on [FlutterLocalNotificationsPlugin.zonedSchedule] be implemented
@@ -437,7 +454,7 @@ final class WindowsNotificationService extends NotificationServiceImpl {
           Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
       Future.value(false);
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
+  /// Plugin doesn't support scheduling on Windows
   ///
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
