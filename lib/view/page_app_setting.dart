@@ -231,8 +231,22 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
     if (!context.mounted || filePath == null) return;
-    //TODO: add snackbar result
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context);
+    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context)
+        .then((result) {
+      if (!(result && context.mounted)) return;
+      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+        context,
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_exportAllHabitsSuccSnackbarText)
+              : const Text('Exported All Habits'),
+        ),
+        duration: kAppUndoDialogShowDuration,
+      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(snackBar);
+    });
   }
 
   void _onImportAllTilePressed() async {

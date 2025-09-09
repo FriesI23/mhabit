@@ -1,6 +1,7 @@
 {
   "ar": [
-    "habitDisplay_exportHabitsSuccSnackbarText"
+    "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText"
   ],
 
   "cs": [
@@ -58,6 +59,7 @@
     "habitDisplay_deleteHabitsSuccSnackbarText",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -412,6 +414,7 @@
   "de": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -534,6 +537,7 @@
 
   "es": [
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_notify_titleTile",
     "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
@@ -597,6 +601,7 @@
   "fa": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
@@ -713,6 +718,7 @@
   "fr": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -872,6 +878,7 @@
     "habitDisplay_deleteHabitsSuccSnackbarText",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_statsMenu_statSubgroupText",
     "habitDisplay_statsMenu_popularitySubgroupText",
     "habitDisplay_mainMenu_showActivedTileText",
@@ -1146,6 +1153,7 @@
     "habitEdit_habitFreq_predayfreq",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -1315,6 +1323,7 @@
     "habitDisplay_deleteHabitsSuccSnackbarText",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -1741,6 +1750,7 @@
     "habitDisplay_deleteHabitsSuccSnackbarText",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_editPopMenu_selectAll",
     "habitDisplay_editPopMenu_export",
     "habitDisplay_editPopMenu_delete",
@@ -2108,6 +2118,7 @@
     "habitDisplay_emptyImage_text_01",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDetail_heatmap_leftHelpText",
     "habitDetail_heatmap_rightHelpText",
     "habitDetail_descDailyGoal_titleText",
@@ -2232,11 +2243,13 @@
   ],
 
   "ru": [
-    "habitDisplay_exportHabitsSuccSnackbarText"
+    "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText"
   ],
 
   "tr": [
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_notify_titleTile",
     "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
@@ -2249,12 +2262,14 @@
   ],
 
   "uk": [
-    "habitDisplay_exportHabitsSuccSnackbarText"
+    "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText"
   ],
 
   "vi": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -2349,6 +2364,7 @@
   "zh_Hant": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_exportAllHabitsSuccSnackbarText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",

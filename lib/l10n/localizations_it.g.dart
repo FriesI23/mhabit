@@ -305,6 +305,9 @@ class L10nIt extends L10n {
   }
 
   @override
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => 'Seleziona tutto';
 
   @override

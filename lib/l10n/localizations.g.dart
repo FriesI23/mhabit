@@ -606,6 +606,12 @@ abstract class L10n {
   /// **'{count, plural, =1 {Exported habit.} other {Exported {count} habits.}}'**
   String habitDisplay_exportHabitsSuccSnackbarText(int count);
 
+  /// No description provided for @habitDisplay_exportAllHabitsSuccSnackbarText.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported All Habits'**
+  String get habitDisplay_exportAllHabitsSuccSnackbarText;
+
   /// No description provided for @habitDisplay_editPopMenu_selectAll.
   ///
   /// In en, this message translates to:

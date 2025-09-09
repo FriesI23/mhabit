@@ -287,6 +287,8 @@
       }
     }
   },
+  "habitDisplay_exportAllHabitsSuccSnackbarText": "已导出所有习惯",
+  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
   "habitDisplay_editPopMenu_selectAll": "全选",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "导出",
