@@ -226,6 +226,6 @@ msix_config:
   logo_path: ./assets/logo/macos-1024x1024.png
   capabilities: internetClient
   toast_activator:
-    # calc: uuidv4: const.appID + "Table Habit"
+    # calc: uuidv5: const.appID + "Table Habit"
     clsid: 03eef6f9-f653-5273-a0d6-111e2a8945b9
     display_name: Table Habit
