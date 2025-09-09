@@ -3,25 +3,24 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.17.5+98
+# Pre-Released
+
+## v1.17.6+98-pre
 
 **✨ New Features**
 
-- Cancel noti-permission request at app launch on iOS/macOS (#323)
-- Add leading zero in date option (#325)
+- Show snackbar after exporting habits. (#337)
+- Add localization support to Experimental Features bar. (#337)
+- Enable navigation from debugger notifications. (#337)
 
 **🌐 Localization**
 
-- Updated Polish translation, thanks to Pandaman331's contribution on Weblate. (#324)
+- Add Hebrew translation, thanks to Omer I.S's contribution on Weblate.
 
 **🧹 Others**
 
-- Improve hint visibility under low brightness (#321)
-- Move vscode workspace settings to code-workspace (#322)
-- Implement Windows custom flavor support (#327, #330)
-- Add conditional check for windows build test (#327)
+- Apply flavor settings to Windows notifications. (#337)
 
 **📝 Documentation**
 
-- Wiki: Add variable-based flavor support for Windows platform
-- Wiki: Document how the score works (#331)
+- Simplify TODO markers in notification code.
