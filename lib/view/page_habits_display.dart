@@ -487,9 +487,25 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     if (!context.mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();
-    //TODO: add snackbar result
     trySaveFiles([XFile(filePath)], defaultTargetPlatform,
-        text: "Export Select Habits", context: context);
+            text: "Export Select Habits", context: context)
+        .then((result) {
+      context = this.context;
+      if (!(result && context.mounted)) return;
+      final count = habitUUIDList.length;
+      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+        context,
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_exportHabitsSuccSnackbarText(count))
+              : const Text('Exported habits'),
+        ),
+        duration: kAppUndoDialogShowDuration,
+      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(snackBar);
+    });
   }
 
   void _openAppSettingsPage(BuildContext context) {

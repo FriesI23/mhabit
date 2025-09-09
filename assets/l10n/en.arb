@@ -277,6 +277,16 @@
       }
     }
   },
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Exported habit.} other {Exported {count} habits.}}",
+  "@habitDisplay_exportHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of exported habits",
+        "example": "3"
+      }
+    }
+  },
   "habitDisplay_editPopMenu_selectAll": "Select All",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Export",

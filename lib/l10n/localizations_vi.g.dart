@@ -294,6 +294,17 @@ class L10nVi extends L10n {
   }
 
   @override
+  String habitDisplay_exportHabitsSuccSnackbarText(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Exported $count habits.',
+      one: 'Exported habit.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => 'Chọn tất cả';
 
   @override

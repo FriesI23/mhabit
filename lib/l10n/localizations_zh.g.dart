@@ -294,6 +294,11 @@ class L10nZh extends L10n {
   }
 
   @override
+  String habitDisplay_exportHabitsSuccSnackbarText(int count) {
+    return '已导出 $count 个习惯';
+  }
+
+  @override
   String get habitDisplay_editPopMenu_selectAll => '全选';
 
   @override

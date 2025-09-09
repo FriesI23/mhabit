@@ -23,6 +23,7 @@ import '../../extension/custom_color_extensions.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../component/animation.dart';
+import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/async_extensions.dart';
 import '../extension/color_extensions.dart';
@@ -366,9 +367,24 @@ class _HabitDetailView extends State<HabitDetailView>
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,
     );
     if (!context.mounted || filePath == null) return;
-    //TODO: add snackbar result
     trySaveFiles([XFile(filePath)], defaultTargetPlatform,
-        context: context, text: 'Export Habit');
+            context: context, text: 'Export Habit')
+        .then((result) {
+      context = this.context;
+      if (!(result && context.mounted)) return;
+      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+        context,
+        content: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.habitDisplay_exportHabitsSuccSnackbarText(1))
+              : const Text('Exported habits'),
+        ),
+        duration: kAppUndoDialogShowDuration,
+      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(snackBar);
+    });
   }
 
   Widget _buildDebugInfo(BuildContext context) {
