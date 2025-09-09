@@ -22,10 +22,12 @@ import 'package:share_plus/share_plus.dart';
 
 import '../common/app_info.dart';
 import '../common/consts.dart';
+import '../common/global.dart' show currentRouteObserver, navigatorKey;
 import '../component/helper.dart';
 import '../component/widget.dart';
 import '../extension/colorscheme_extensions.dart';
 import '../l10n/localizations.dart';
+import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../logging/logger_manager.dart';
 import '../provider/app_debugger.dart';
@@ -37,10 +39,22 @@ import 'for_app_debugger/_widget.dart';
 
 const _kCardPadding = EdgeInsets.only(top: 4.0, bottom: 2.0);
 
+Future<void> onDebuggerNotificationTapped() async {
+  final context = navigatorKey.currentContext;
+  if (context == null) return;
+  final currentRouteName = currentRouteObserver.routeName;
+  appLog.debugger.info("onDebuggerNotificationTapped: navi",
+      ex: [PageAppDebugger.routerName, currentRouteName]);
+  if (currentRouteName != PageAppDebugger.routerName) {
+    naviToAppDebuggerPage(context: context);
+  }
+}
+
 Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
       builder: (context) => const PageAppDebugger(),
+      settings: const RouteSettings(name: PageAppDebugger.routerName),
     ),
   );
 }
@@ -51,6 +65,8 @@ Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
 /// - Required for callback:
 /// - Optional:
 class PageAppDebugger extends StatelessWidget {
+  static const routerName = "/app_debugger";
+
   const PageAppDebugger({super.key});
 
   @override

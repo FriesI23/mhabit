@@ -380,10 +380,11 @@ final class NotificationServiceImpl implements NotificationService {
   }
 }
 
+// TODO: Some features are missing on Linux platform
 final class LinuxNotificationService extends NotificationServiceImpl {
   LinuxNotificationService();
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  /// Plugin doesn't support scheduling on Linux
   ///
   /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
   ///
@@ -397,7 +398,7 @@ final class LinuxNotificationService extends NotificationServiceImpl {
           Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
       Future.value(false);
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Linux
+  /// Plugin doesn't support scheduling on Linux
   ///
   /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
   ///
@@ -416,11 +417,11 @@ final class LinuxNotificationService extends NotificationServiceImpl {
       Future.value(false);
 }
 
+// TODO: Some features are missing on Windows platform
 final class WindowsNotificationService extends NotificationServiceImpl {
   WindowsNotificationService();
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
-  ///
+  /// Plugin doesn't support scheduling on Windows
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
   /// - [id] on [FlutterLocalNotificationsPlugin.zonedSchedule] be implemented
@@ -437,7 +438,7 @@ final class WindowsNotificationService extends NotificationServiceImpl {
           Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
       Future.value(false);
 
-  /// TODO: Lame implementation: plugin doesn't support scheduling on Windows
+  /// Plugin doesn't support scheduling on Windows
   ///
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
