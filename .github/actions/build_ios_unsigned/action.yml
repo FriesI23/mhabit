@@ -1,0 +1,31 @@
+name: Build iOS (Unsigned)
+description: >
+  General iOS build process.
+  Build outputs are located in `build/ios/ipa/`.
+  Requires Flutter and Xcode installed on the runner.
+
+outputs:
+  ipa-path:
+    description: "Path to the generated App IPA file"
+    value: ${{ steps.build-ipa.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Build iOS App
+      run: |
+        flutter build ios --flavor f_generic --release --no-codesign
+        ls -al build/ios/iphoneos/
+      shell: bash
+    - name: Build IPA
+      env:
+        OUTPUT_PATH: build/ios/ipa/mhabit-unsigned.ipa
+      run: |
+        PAYLOAD_PATH=$RUNNER_TEMP/Payload
+        mkdir -p $PAYLOAD_PATH
+        cp -R build/ios/iphoneos/Runner.app $PAYLOAD_PATH
+        (cd $RUNNER_TEMP && zip -r mhabit.zip Payload)
+        mkdir -p build/ios/ipa
+        cp $RUNNER_TEMP/mhabit.zip $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
