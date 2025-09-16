@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
-      - id: build-android
+      - id: build
         uses: ./.github/actions/build_android
       - name: Released - Android
         uses: ncipollo/release-action@v1
@@ -64,11 +64,11 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            ${{ steps.build-android.outputs.abb-path }},
-            ${{ steps.build-android.outputs.apk-path }},
-            ${{ steps.build-android.outputs.apk-v7a-path }},
-            ${{ steps.build-android.outputs.apk-v8a-path }},
-            ${{ steps.build-android.outputs.apk-x64-path }}
+            ${{ steps.build.outputs.abb-path }},
+            ${{ steps.build.outputs.apk-path }},
+            ${{ steps.build.outputs.apk-v7a-path }},
+            ${{ steps.build.outputs.apk-v8a-path }},
+            ${{ steps.build.outputs.apk-x64-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
   build-ios:
@@ -82,10 +82,9 @@ jobs:
           xcode-version: ^16
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
-      - id: build-ios-unsigned
+      - id: build
         uses: ./.github/actions/build_ios_unsigned
       - name: Released - iOS
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -93,7 +92,7 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            ${{ steps.build-ios-unsigned.outputs.ipa-path }}
+            ${{ steps.build.outputs.ipa-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
   build-macos-dmg:
@@ -107,74 +106,9 @@ jobs:
           xcode-version: ^16
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
-      - name: Import Certificate
-        env:
-          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
-          APPLE_DEV_CERT_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
-          APPLE_DEV_CERT_P12_BASE64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
-        run: |
-          # refs: https://docs.github.com/en/actions/use-cases-and-examples/deploying/installing-an-apple-certificate-on-macos-runners-for-xcode-development
-          # create variables
-          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          # import certificate from secrets
-          echo "$APPLE_DEV_CERT_P12_BASE64" | base64 --decode > $CERTIFICATE_PATH
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH \
-            -k $KEYCHAIN_PATH \
-            -P "$APPLE_DEV_CERT_PASSWORD" \
-            -A -t cert -f pkcs12
-          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-      - name: Extract App Store Connect API Key
-        env:
-          APPLE_API_KEY_ID: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
-          APPLE_API_AUTHKEY_P8_BASE64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
-        run: |
-          mkdir ./private_keys
-          echo -n "$APPLE_API_AUTHKEY_P8_BASE64" | base64 --decode --output ./private_keys/AuthKey_$APPLE_API_KEY_ID.p8
-      - name: Build And Archive App
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          flutter build macos --release --config-only --flavor f_generic
-          xcodebuild CODE_SIGNING_ALLOWED=NO \
-            -workspace macos/Runner.xcworkspace \
-            -scheme f_generic \
-            -archivePath build/macos/Runner.xcarchive \
-            archive
-          ls -al build/macos/Runner.xcarchive/Products/Applications
-      - name: Signed and Exported App
-        env:
-          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
-          APPLE_API_KEY_ID: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          envsubst \
-            < ./installers/macos_exporter/GithubExportOptions.plist \
-            > ./installers/macos_exporter/GithubExportOptions.resolved.plist
-          cat ./installers/macos_exporter/GithubExportOptions.resolved.plist
-          plutil -lint ./installers/macos_exporter/GithubExportOptions.resolved.plist
-          xcodebuild -exportArchive -archivePath ./build/macos/Runner.xcarchive \
-            -exportPath ./build/macos/Build/Products/Release \
-            -exportOptionsPlist ./installers/macos_exporter/GithubExportOptions.resolved.plist \
-            -allowProvisioningUpdates \
-            -authenticationKeyIssuerID $APPLE_API_ISSUER_ID \
-            -authenticationKeyID $APPLE_API_KEY_ID \
-            -authenticationKeyPath `pwd`/private_keys/AuthKey_$APPLE_API_KEY_ID.p8
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          token: ${{ secrets.APP_RELEASE_TOKEN }}
-      - run: npm install -g appdmg
-      - name: Build macOS DMG
-        run: appdmg ./installers/dmg_creator/config.json ./build/macos/Build/Products/Release/mhabit.dmg
+      - id: build
+        uses: ./.github/actions/build_macos
       - name: Released - macOS
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -182,7 +116,7 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            build/macos/Build/Products/Release/mhabit.dmg
+            ${{ steps.build.outputs.dmg-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
   build-windows-msix:

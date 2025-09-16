@@ -6,7 +6,7 @@ description: >
 
 outputs:
   ipa-path:
-    description: "Path to the generated App IPA file"
+    description: Path to the generated App IPA file
     value: ${{ steps.build-ipa.outputs.path }}
 
 runs:
