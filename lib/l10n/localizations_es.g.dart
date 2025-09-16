@@ -1229,7 +1229,7 @@ class L10nEs extends L10n {
   String get appAbout_privacyTile_titleText => 'Privacy';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'Acceder a la política de privacidad';
 
   @override
   String get appAbout_donateTile_titleText => 'Donar';
