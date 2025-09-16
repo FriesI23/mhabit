@@ -5,7 +5,9 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
       - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
-      - "test-windows-builder"
+  pull_request:
+    branches:
+      - main
 
 env:
   PROPERTIES_PATH: "./android/key.properties"
@@ -39,8 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Released - Basic
-        if: ${{ !startsWith(github.ref, 'refs/tags/test-') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           draft: true
@@ -51,7 +54,6 @@ jobs:
 
   build-android:
     name: Build android APK
-    if: ${{ !startsWith(github.ref, 'refs/tags/test-windows-') }}
     needs:
       - pre-build
     runs-on: ubuntu-latest
@@ -85,6 +87,7 @@ jobs:
           md5sum build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
           md5sum build/app/outputs/flutter-apk/app-x86_64-release.apk
       - name: Released - Android
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -98,10 +101,17 @@ jobs:
             build/app/outputs/flutter-apk/app-arm64-v8a-release.apk,
             build/app/outputs/flutter-apk/app-x86_64-release.apk
           token: ${{ secrets.APP_RELEASE_TOKEN }}
+      - name: Built - Android
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android
+          path: |
+            build/app/outputs/bundle/release/app-release.aab
+            build/app/outputs/flutter-apk/*-release.apk
 
   build-ios:
     name: "Build Unsigned iOS IPA"
-    if: ${{ !startsWith(github.ref, 'refs/tags/test-windows-') }}
     needs:
       - pre-build
     runs-on: macos-latest
@@ -124,6 +134,7 @@ jobs:
           mkdir -p build/ios/ipa
           cp $RUNNER_TEMP/mhabit.zip build/ios/ipa/mhabit-unsigned.ipa
       - name: Released - iOS
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -136,7 +147,6 @@ jobs:
 
   build-macos-dmg:
     name: "Build macOS DMG"
-    if: ${{ !startsWith(github.ref, 'refs/tags/test-windows-') }}
     needs:
       - pre-build
     runs-on: macos-latest
@@ -213,6 +223,7 @@ jobs:
       - name: Build macOS DMG
         run: appdmg ./installers/dmg_creator/config.json ./build/macos/Build/Products/Release/mhabit.dmg
       - name: Released - macOS
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -237,7 +248,7 @@ jobs:
       - name: Build MSIX
         run: .flutter\bin\dart run msix:create --architecture x64 --output-name mhabit_x64 --certificate-path windows\certificate\publish.pfx --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' --signtool-options "/td SHA256" --install-certificate false
       - name: Released - Windows
-        if: ${{ !startsWith(github.ref, 'refs/tags/test-') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -248,14 +259,14 @@ jobs:
             build/windows/x64/runner/Release/mhabit_x64.msix
           token: ${{ secrets.APP_RELEASE_TOKEN }}
       - name: Built - Windows
-        if: ${{ startsWith(github.ref, 'refs/tags/test-') }}
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
+          name: Windows-x64
           path: build/windows/x64/runner/Release/mhabit_x64.msix
 
   build-linux:
     name: "Build Linux Bundle"
-    if: ${{ !startsWith(github.ref, 'refs/tags/test-windows-') }}
     needs:
       - pre-build
     strategy:
@@ -341,6 +352,7 @@ jobs:
           branch: main
           upload-artifact: false
       - name: Released - Linux
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
