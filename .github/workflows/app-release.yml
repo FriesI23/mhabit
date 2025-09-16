@@ -5,12 +5,7 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
       - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
-  pull_request:
-    branches:
-      - main
-
-env:
-  PROPERTIES_PATH: "./android/key.properties"
+      - "ci/test-action"
 
 jobs:
   analyzing:
@@ -41,9 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Released - Basic
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           draft: true
@@ -61,33 +54,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
-      - name: Signing APK
-        run: |
-          echo keyPassword=\${{ secrets.APP_SIGN_KEY_PASSWORD }} > ${{env.PROPERTIES_PATH}}
-          echo storePassword=\${{ secrets.APP_SIGN_STORE_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
-          echo keyAlias=\${{ secrets.APP_SIGN_KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-          echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
-          echo "${{ secrets.APP_SIGN_KEY_JKS }}" | base64 --decode > android/app/key.jks
-      - name: Build APPBUNDLE
-        run: |
-          flutter build appbundle --release --flavor f_generic
-          mkdir -p build/app/outputs/bundle/release
-          cp build/app/outputs/bundle/f_genericRelease/app-f_generic-release.aab \
-            build/app/outputs/bundle/release/app-release.aab
-          md5sum build/app/outputs/bundle/release/app-release.aab
-      - name: Build FAT-APK
-        run: |
-          flutter build apk --release
-          md5sum build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Build APK
-        run: |
-          flutter build apk --split-per-abi
-          md5sum build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-          md5sum build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-          md5sum build/app/outputs/flutter-apk/app-x86_64-release.apk
+      - id: build-android
+        uses: ./.github/actions/build_android
       - name: Released - Android
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -95,20 +64,12 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            build/app/outputs/bundle/release/app-release.aab,
-            build/app/outputs/flutter-apk/app-release.apk,
-            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk,
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk,
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
+            ${{ steps.build-android.outputs.abb-path }},
+            ${{ steps.build-android.outputs.apk-path }},
+            ${{ steps.build-android.outputs.apk-v7a-path }},
+            ${{ steps.build-android.outputs.apk-v8a-path }},
+            ${{ steps.build-android.outputs.apk-x64-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
-      - name: Built - Android
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android
-          path: |
-            build/app/outputs/bundle/release/app-release.aab
-            build/app/outputs/flutter-apk/*-release.apk
 
   build-ios:
     name: "Build Unsigned iOS IPA"

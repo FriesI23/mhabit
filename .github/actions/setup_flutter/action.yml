@@ -2,13 +2,12 @@ name: Setup Flutter
 description: setup shared Flutter environment for common use.
 
 runs:
-  using: "composite"
-
+  using: composite
   steps:
     - name: Update Flutter submodule
       run: git submodule update --init --recursive
       shell: bash
-    - name : Add Flutter to syspath
+    - name: Add Flutter to syspath
       run: |
         echo "${{ github.workspace }}/.flutter/bin:$PATH" >> $GITHUB_PATH
       shell: bash
