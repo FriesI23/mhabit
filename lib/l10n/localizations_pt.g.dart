@@ -175,10 +175,10 @@ class L10nPt extends L10n {
   String get habitEdit_reminder_freq_monthSubfixText => ' em cada mês';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Questão, p.e. Fizeste exercício hoje?';
+  String get habitEdit_reminderQuest_hintText => 'Questão, p.ex. Você se exercitou hoje?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Escolher tipo de lembrete';
+  String get habitEdit_reminder_dialogTitle => 'Escolher o tipo de lembrete';
 
   @override
   String get habitEdit_reminder_dialogType_whenNeeded => 'Verificar quando necessário';
