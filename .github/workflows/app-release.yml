@@ -123,17 +123,25 @@ jobs:
     name: "Build windows MSIX Installer"
     needs:
       - pre-build
-    runs-on: windows-latest
+    strategy:
+      # symbol `g_once_init_enter_pointer`` was introduced in glib>=2.80,
+      # fallback build host to ubuntu-22.04 for better compatibility.
+      # refs: https://github.com/cirruslabs/docker-images-flutter/issues/337.
+      matrix:
+        variant:
+          - arch: x64
+            runner: windows-latest
+          - arch: arm64
+            runner: windows-11-arm
+    runs-on: ${{ matrix.variant.runner }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
-      - name: Exposed Certificate
-        shell: bash
-        run: echo "${{ secrets.APP_SIGN_KEY_PFX }}" | base64 --decode > windows/certificate/publish.pfx
-      - name: Build MSIX
-        run: .flutter\bin\dart run msix:create --architecture x64 --output-name mhabit_x64 --certificate-path windows\certificate\publish.pfx --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' --signtool-options "/td SHA256" --install-certificate false
+      - id: build
+        uses: ./.github/actions/build_windows
+        with:
+          arch: ${{ matrix.variant.runner }}
       - name: Released - Windows
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -141,14 +149,8 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            build/windows/x64/runner/Release/mhabit_x64.msix
+            ${{ steps.build.outputs.msix-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
-      - name: Built - Windows
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Windows-x64
-          path: build/windows/x64/runner/Release/mhabit_x64.msix
 
   build-linux:
     name: "Build Linux Bundle"
