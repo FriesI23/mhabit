@@ -5,7 +5,19 @@ description: >
   Requires Flutter and Android SDK installed on the runner.
 
 inputs:
-  porperties-path:
+  app-sign-key-password:
+    description: Key password
+    required: true
+  app-sign-store-password:
+    description: Store password
+    required: true
+  app-sign-key-alias:
+    description: Key alias
+    required: true
+  app-sign-key-jks:
+    description: Base64 encoded JKS file
+    required: true
+  properties-path:
     description: Path to the `key.properties` file
     required: false
     default: android/key.properties
@@ -43,11 +55,11 @@ runs:
   steps:
     - name: Signing APK
       run: |
-        echo keyPassword=${{ secrets.APP_SIGN_KEY_PASSWORD }} > ${{ inputs.properties-path }}
-        echo storePassword=${{ secrets.APP_SIGN_STORE_PASSWORD }} >> ${{ inputs.properties-path }}
-        echo keyAlias=${{ secrets.APP_SIGN_KEY_ALIAS }} >> ${{ inputs.properties-path }}
+        echo keyPassword=${{ inputs.app-sign-key-password }} > ${{ inputs.properties-path }}
+        echo storePassword=${{ inputs.app-sign-store-password }} >> ${{ inputs.properties-path }}
+        echo keyAlias=${{ inputs.app-sign-key-alias }} >> ${{ inputs.properties-path }}
         echo storeFile=key.jks >> ${{ inputs.properties-path }}
-        echo "${{ secrets.APP_SIGN_KEY_JKS }}" | base64 --decode > android/app/key.jks
+        echo "${{ inputs.app-sign-key-jks }}" | base64 --decode > android/app/key.jks
       shell: bash
     - name: Build APPBUNDLE
       id: build-abb

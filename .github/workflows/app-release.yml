@@ -56,6 +56,13 @@ jobs:
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_android
+        with:
+          app-sign-key-password: ${{ secrets.APP_SIGN_KEY_PASSWORD }}
+          app-sign-store-password: ${{ secrets.APP_SIGN_STORE_PASSWORD }}
+          app-sign-key-alias: ${{ secrets.APP_SIGN_KEY_ALIAS }}
+          app-sign-key-jks: ${{ secrets.APP_SIGN_KEY_JKS }}
+          properties-path: android/key.properties
+          build-bundle: false
       - name: Released - Android
         uses: ncipollo/release-action@v1
         with:
@@ -64,7 +71,6 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           artifacts: >
-            ${{ steps.build.outputs.abb-path }},
             ${{ steps.build.outputs.apk-path }},
             ${{ steps.build.outputs.apk-v7a-path }},
             ${{ steps.build.outputs.apk-v8a-path }},
@@ -108,6 +114,15 @@ jobs:
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: true
       - name: Released - macOS
         uses: ncipollo/release-action@v1
         with:
@@ -130,9 +145,9 @@ jobs:
       matrix:
         variant:
           - arch: x64
-            runner: windows-latest
-          - arch: arm64
-            runner: windows-11-arm
+            runner: windows-2022
+          # - arch: arm64
+          #   runner: windows-11-arm
     runs-on: ${{ matrix.variant.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -140,7 +155,9 @@ jobs:
       - id: build
         uses: ./.github/actions/build_windows
         with:
-          arch: ${{ matrix.variant.runner }}
+          arch: ${{ matrix.variant.arch }}
+          app-sign-key-pfx: ${{ secrets.APP_SIGN_KEY_PFX }}
+          app-sign-key-pfx-password: ${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}
       - name: Released - Windows
         uses: ncipollo/release-action@v1
         with:
@@ -161,26 +178,37 @@ jobs:
         variant:
           - arch: x64
             runner: ubuntu-22.04
+            flatpak-arch: x86_64
           - arch: arm64
             runner: ubuntu-22.04-arm
+            flatpak-arch: aarch64
     uses: ./.github/workflows/_build-linux-flatpak.yml
     with:
       arch: ${{ matrix.variant.arch }}
+      flatpak-arch: ${{ matrix.variant.flatpak-arch }}
+      flatpak-name: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
       retention-days: 1
 
   publish-linux:
     needs:
       - build-linux-flatpak
+    strategy:
+      matrix:
+        variant:
+          - arch: x64
+            flatpak-arch: x86_64
+          - arch: arm64
+            flatpak-arch: aarch64
     runs-on: ubuntu-latest
     env:
-      FLATPAK_BUNDLE: ${{ needs.build-linux-flatpak.outputs.flatpak-name }}
+      FLATPAK_BUNDLE: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
     steps:
       - id: fetch
         uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{ needs.build-linux-flatpak.outputs.flatpak-artifact-id }}
-          path: ${{ env.FLATPAK_BUNDLE }}
+          name: ${{ env.FLATPAK_BUNDLE }}
           github-token: ${{ secrets.APP_RELEASE_TOKEN }}
+      - run: ls -R .
       - run: md5sum ${{ env.FLATPAK_BUNDLE }}
       - name: Released - Linux
         uses: ncipollo/release-action@v1

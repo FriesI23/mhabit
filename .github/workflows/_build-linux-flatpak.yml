@@ -4,8 +4,16 @@ on:
   workflow_call:
     inputs:
       arch:
-        description: Target architectures (x64, arm64)
+        description: Target architecture (x64, arm64)
         type: string
+      flatpak-arch:
+        description: Target architecture for Faltpak (x86_64, aarch64)
+        type: string
+      flatpak-name:
+        description: Name for Flatpak file
+        type: string
+        required: false
+        default: ""
       retention-days:
         description: >
           Duration after which artifact will expire in days.
@@ -17,7 +25,7 @@ on:
         description: artifact-id for generated Flatpak file
         value: ${{ jobs.build-flatpak.outputs.flatpak-artifact-id }}
       flatpak-name:
-        value: $${{ jobs.build-flatpak.outputs.flatpak-name }}
+        value: ${{ jobs.build-flatpak.outputs.flatpak-name }}
 
 jobs:
   pre-build:
@@ -35,11 +43,9 @@ jobs:
             # fallback build host to ubuntu-22.04 for better compatibility.
             # refs: https://github.com/cirruslabs/docker-images-flutter/issues/337.
             echo "runner=ubuntu-22.04" >> $GITHUB_OUTPUT
-            echo "flatpak-arch=x86_64" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.arch }}" == "amd64" ]]; then
+          elif [[ "${{ inputs.arch }}" == "arm64" ]]; then
             echo "run-build=true" >> $GITHUB_OUTPUT
             echo "runner=ubuntu-22.04-arm" >> $GITHUB_OUTPUT
-            echo "flatpak-arch=aarch64" >> $GITHUB_OUTPUT
           else
             echo "run-build=false" >> $GITHUB_OUTPUT
           fi
@@ -50,9 +56,12 @@ jobs:
       - pre-build
     runs-on: ${{ needs.pre-build.outputs.runner }}
     if: ${{ needs.pre-build.outputs.run-build == 'true' }}
+    env:
+      BUNDLE_NAME: linux-bundle-${{ inputs.arch }}
     outputs:
+      runner: ${{ needs.pre-build.outputs.runner }}
       bundle-path: ${{ steps.build.outputs.path }}
-      bundle-id: ${{ steps.upload-bundle.outputs.artifact-id }}
+      bundle-name: ${{ env.BUNDLE_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_flutter
@@ -64,7 +73,7 @@ jobs:
         id: upload-bundle
         uses: actions/upload-artifact@v4
         with:
-          name: linux-bundle-${{ inputs.arch }}
+          name: ${{ env.BUNDLE_NAME }}
           path: ${{ steps.build.outputs.path }}
           if-no-files-found: error
           retention-days: 1
@@ -72,25 +81,26 @@ jobs:
   build-flatpak:
     name: "Build linux Flatpak Installer"
     needs:
-      - pre-build
       - build
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-23.08
       options: --privileged
-    runs-on: ${{ needs.pre-build.outputs.runner }}
+    runs-on: ${{ needs.build.outputs.runner }}
     outputs:
       flatpak-artifact-id: ${{ steps.upload-bundle.outputs.artifact-id }}
       flatpak-name: ${{ env.FLATPAK_BUNDLE }}
     env:
-      FLATPAK_ARCH: ${{ needs.pre-build.outputs.flatpak-arch }}
-      FLATPAK_BUNDLE: mhabit-${{ needs.pre-build.outputs.flatpak-arch }}.flatpak
+      FLATPAK_ARCH: ${{ inputs.flatpak-arch }}
+      FLATPAK_BUNDLE: >
+        ${{ inputs.flatpak-name != '' && inputs.flatpak-name ||
+        format('mhabit-{0}.flatpak', inputs.flatpak-arch) }}
     steps:
       - uses: actions/checkout@v4
       - name: Fetch Bundle
         id: fetch-bundle-step
         uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{ needs.build.outputs.bundle-id }}
+          name: ${{ needs.build.outputs.bundle-name }}
           path: ${{ needs.build.outputs.bundle-path }}
           github-token: ${{ secrets.APP_RELEASE_TOKEN }}
       - run: ls -al ${{ needs.build.outputs.bundle-path }}

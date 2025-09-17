@@ -9,6 +9,12 @@ inputs:
     description: Target architecture of the MSIX package. Can be "x64" or "arm64".
     required: false
     default: x64
+  app-sign-key-pfx:
+    description: Base64 encoded PFX certificate for Windows signing
+    required: true
+  app-sign-key-pfx-password:
+    description: Password for the PFX certificate used for signing MSIX
+    required: true
 
 outputs:
   msix-path:
@@ -19,7 +25,7 @@ runs:
   using: composite
   steps:
     - name: Exposed Certificate
-      run: echo "${{ secrets.APP_SIGN_KEY_PFX }}" | base64 --decode > windows/certificate/publish.pfx
+      run: echo "${{ inputs.app-sign-key-pfx }}" | base64 --decode > windows/certificate/publish.pfx
       shell: bash
     - name: Build MSIX
       run: |
@@ -27,7 +33,7 @@ runs:
           --architecture ${{ inputs.arch }} `
           --output-name mhabit_${{ inputs.arch }} `
           --certificate-path windows\certificate\publish.pfx `
-          --certificate-password '${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}' `
+          --certificate-password '${{ inputs.app-sign-key-pfx-password }}' `
           --signtool-options "/td SHA256" `
           --install-certificate false
       shell: pwsh
