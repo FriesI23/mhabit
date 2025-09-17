@@ -2,11 +2,6 @@ name: Test CI
 
 on:
   workflow_call:
-    inputs:
-      with-artifact:
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   unittest:
@@ -24,3 +19,17 @@ jobs:
         with:
           name: flutter-unitTest-output
           path: test_report.log
+
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+    steps:
+      - uses: dorny/test-reporter@v1
+        with:
+          artifact: flutter-unitTest-output
+          name: flutter test
+          path: test_report.log
+          reporter: flutter-json

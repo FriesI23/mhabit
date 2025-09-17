@@ -1,4 +1,4 @@
-name: App Release
+name: Release App
 
 on:
   push:
@@ -17,22 +17,12 @@ jobs:
   testing:
     uses: ./.github/workflows/_test.yml
 
-  testing-report:
-    permissions:
-      contents: read
-      actions: read
-      checks: write
-    needs:
-      - testing
-    uses: ./.github/workflows/_test_report.yml
-
   pre-build:
     name: Pre Building
     needs:
       - analyzing
       - checking
       - testing
-      - testing-report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
