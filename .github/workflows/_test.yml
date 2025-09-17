@@ -17,19 +17,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
-          name: flutter-unitTest-output
+          name: flutter-unittest-result
           path: test_report.log
-
-  report:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: read
-      checks: write
-    steps:
-      - uses: dorny/test-reporter@v1
-        with:
-          artifact: flutter-unitTest-output
-          name: flutter test
-          path: test_report.log
-          reporter: flutter-json

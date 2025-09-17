@@ -21,6 +21,7 @@ jobs:
       - checking
       - testing
     runs-on: ubuntu-latest
+    environment: check-ci
     outputs:
       commit-id: ${{ steps.pr.outputs.comment-id }}
       common-changed: ${{ steps.filter.outputs.common }}
@@ -46,7 +47,7 @@ jobs:
         id: pr
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             Start Test Build...
@@ -58,6 +59,7 @@ jobs:
     needs:
       - test-build-filter
     runs-on: ubuntu-latest
+    environment: check-ci
     if: >
       needs.test-build-filter.outputs.common-changed == 'true' ||
       needs.test-build-filter.outputs.android-changed == 'true'
@@ -84,7 +86,7 @@ jobs:
         if: always()
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
           body: >
@@ -97,13 +99,14 @@ jobs:
       - build-android
     if: always()
     runs-on: ubuntu-latest
+    environment: check-ci
     steps:
       - id: date
         run: echo "now=$(date)" >> $GITHUB_OUTPUT
       - name: Comment on PR
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
           body: |
