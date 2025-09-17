@@ -1,0 +1,212 @@
+name: App Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
+      - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
+      - "ci/test-action"
+
+jobs:
+  analyzing:
+    uses: ./.github/workflows/_analyze.yml
+
+  checking:
+    uses: ./.github/workflows/_check.yml
+
+  testing:
+    uses: ./.github/workflows/_test.yml
+
+  pre-build:
+    name: Pre Building
+    needs:
+      - analyzing
+      - checking
+      - testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Released - Basic
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: ${{ startsWith(github.ref_name, 'pre-') }}
+          bodyFile: "docs/release.md"
+          artifactErrorsFailBuild: true
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-android:
+    name: Build android APK
+    needs:
+      - pre-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_jdk
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_android
+        with:
+          app-sign-key-password: ${{ secrets.APP_SIGN_KEY_PASSWORD }}
+          app-sign-store-password: ${{ secrets.APP_SIGN_STORE_PASSWORD }}
+          app-sign-key-alias: ${{ secrets.APP_SIGN_KEY_ALIAS }}
+          app-sign-key-jks: ${{ secrets.APP_SIGN_KEY_JKS }}
+          properties-path: android/key.properties
+          build-bundle: false
+      - name: Released - Android
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            ${{ steps.build.outputs.apk-path }},
+            ${{ steps.build.outputs.apk-v7a-path }},
+            ${{ steps.build.outputs.apk-v8a-path }},
+            ${{ steps.build.outputs.apk-x64-path }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-ios:
+    name: "Build Unsigned iOS IPA"
+    needs:
+      - pre-build
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^16
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_ios_unsigned
+      - name: Released - iOS
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            ${{ steps.build.outputs.ipa-path }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-macos-dmg:
+    name: "Build macOS DMG"
+    needs:
+      - pre-build
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^16
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: true
+      - name: Released - macOS
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            ${{ steps.build.outputs.dmg-path }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-windows-msix:
+    name: "Build windows MSIX Installer"
+    needs:
+      - pre-build
+    strategy:
+      # symbol `g_once_init_enter_pointer`` was introduced in glib>=2.80,
+      # fallback build host to ubuntu-22.04 for better compatibility.
+      # refs: https://github.com/cirruslabs/docker-images-flutter/issues/337.
+      matrix:
+        variant:
+          - arch: x64
+            runner: windows-2022
+          # - arch: arm64
+          #   runner: windows-11-arm
+    runs-on: ${{ matrix.variant.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_windows
+        with:
+          arch: ${{ matrix.variant.arch }}
+          app-sign-key-pfx: ${{ secrets.APP_SIGN_KEY_PFX }}
+          app-sign-key-pfx-password: ${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}
+      - name: Released - Windows
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            ${{ steps.build.outputs.msix-path }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  build-linux-flatpak:
+    name: "Build Linux Flatpak"
+    needs:
+      - pre-build
+    strategy:
+      matrix:
+        variant:
+          - arch: x64
+            runner: ubuntu-22.04
+            flatpak-arch: x86_64
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+            flatpak-arch: aarch64
+    uses: ./.github/workflows/_build-linux-flatpak.yml
+    with:
+      arch: ${{ matrix.variant.arch }}
+      flatpak-arch: ${{ matrix.variant.flatpak-arch }}
+      flatpak-name: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
+      retention-days: 1
+
+  publish-linux:
+    needs:
+      - build-linux-flatpak
+    strategy:
+      matrix:
+        variant:
+          - arch: x64
+            flatpak-arch: x86_64
+          - arch: arm64
+            flatpak-arch: aarch64
+    runs-on: ubuntu-latest
+    env:
+      FLATPAK_BUNDLE: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
+    steps:
+      - id: fetch
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.FLATPAK_BUNDLE }}
+          github-token: ${{ secrets.APP_RELEASE_TOKEN }}
+      - run: ls -R .
+      - run: md5sum ${{ env.FLATPAK_BUNDLE }}
+      - name: Released - Linux
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: >
+            ${{ env.FLATPAK_BUNDLE }}
+          token: ${{ secrets.APP_RELEASE_TOKEN }}

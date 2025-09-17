@@ -1,12 +1,7 @@
-name: Merge request checking
+name: Check Main Branch Push
 
 on:
-  workflow_call:
   push:
-    branches:
-      - main
-      - github-action-dev
-  pull_request:
     branches:
       - main
 
@@ -19,5 +14,3 @@ jobs:
 
   testing:
     uses: ./.github/workflows/_test.yml
-    with:
-      with-artifact: true

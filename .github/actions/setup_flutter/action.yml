@@ -2,13 +2,23 @@ name: Setup Flutter
 description: setup shared Flutter environment for common use.
 
 runs:
-  using: "composite"
-
+  using: composite
   steps:
     - name: Update Flutter submodule
       run: git submodule update --init --recursive
       shell: bash
-    - name : Add Flutter to syspath
+    - name: Install Linux dependencies
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y \
+          curl git unzip xz-utils zip libglu1-mesa \
+          clang cmake git \
+          ninja-build pkg-config \
+          libgtk-3-dev liblzma-dev \
+          libstdc++-12-dev
+      shell: bash
+    - name: Add Flutter to syspath
       run: |
         echo "${{ github.workspace }}/.flutter/bin:$PATH" >> $GITHUB_PATH
       shell: bash

@@ -1,0 +1,112 @@
+name: Check PR (Main Branch)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  analyzing:
+    uses: ./.github/workflows/_analyze.yml
+
+  checking:
+    uses: ./.github/workflows/_check.yml
+
+  testing:
+    uses: ./.github/workflows/_test.yml
+
+  test-build-filter:
+    needs:
+      - analyzing
+      - checking
+      - testing
+    runs-on: ubuntu-latest
+    environment: check-ci
+    outputs:
+      commit-id: ${{ steps.pr.outputs.comment-id }}
+      common-changed: ${{ steps.filter.outputs.common }}
+      android-changed: ${{ steps.filter.outputs.android }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            common:
+              - 'pubspec.yaml'
+              - 'pubspec.lock'
+              - 'lib/**'
+              - 'assets/**'
+              - 'configs/**'
+            android:
+              - 'android/**'
+      - id: date
+        run: echo "now=$(date)" >> $GITHUB_OUTPUT
+      - name: Comment on PR
+        id: pr
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Start Test Build...
+            ===
+            Start at: ${{ steps.date.outputs.now }}
+
+  build-android:
+    needs:
+      - test-build-filter
+    runs-on: ubuntu-latest
+    environment: check-ci
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.android-changed == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_jdk
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        env:
+          OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
+        run: |
+          flutter build apk --release
+          md5sum $OUTPUT_PATH
+          echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: >
+            ${{ job.status == 'success' && '✅ Android Build Completed:' || '❌ Android Build Failed' }}
+            ${{ steps.upload.outputs.artifact-url || '' }}
+
+  report:
+    needs:
+      - test-build-filter
+      - build-android
+    if: always()
+    runs-on: ubuntu-latest
+    environment: check-ci
+    steps:
+      - id: date
+        run: echo "now=$(date)" >> $GITHUB_OUTPUT
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: |
+            Ended at: ${{ steps.date.outputs.now }}

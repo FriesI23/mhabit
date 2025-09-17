@@ -1,8 +1,12 @@
 # see: https://github.com/dorny/test-reporter#recommended-setup-for-public-repositories
-name: "Test CI Report"
+name: Test CI Report
 
 on:
-  workflow_call:
+  workflow_run:
+    workflows:
+      - Test CI
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -13,9 +17,9 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - uses: dorny/test-reporter@v1
+      - uses: dorny/test-reporter@v2
         with:
-          artifact: flutter-unitTest-output
-          name: "flutter test"
-          path: "test_report.log"
-          reporter: "flutter-json"
+          artifact: flutter-unittest-result
+          name: Flutter Test
+          path: test_report.log
+          reporter: flutter-json

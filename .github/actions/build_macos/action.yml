@@ -1,0 +1,125 @@
+name: Build macOS
+description: >
+  General macOS build process.
+  Build outputs are located in `build/macos/Build/Products/Release`.
+  Requires Flutter and Xcode installed on the runner.
+
+inputs:
+  apple-keychain-password:
+    description: Password for temporary keychain
+    required: true
+  apple-dev-cert-password:
+    description: Password of the Apple Developer certificate
+    required: true
+  apple-dev-cert-p12-base64:
+    description: Base64 encoded Apple Developer certificate (.p12)
+    required: true
+  apple-macos-api-key-id:
+    description: App Store Connect API key ID
+    required: true
+  apple-macos-api-authkey-p8-base64:
+    description: Base64 encoded App Store Connect API AuthKey (.p8)
+    required: true
+  apple-api-issuer-id:
+    description: App Store Connect API issuer ID
+    required: true
+  apple-team-id:
+    description: Apple Developer Team ID
+    required: true
+  package-dmg:
+    description: Option to package the app into a .dmg installer (true/false)
+    required: false
+    default: "true"
+
+outputs:
+  path:
+    description: Path to the generated app
+    value: ${{ steps.build-macos.outputs.path }}
+  dmg-path:
+    description: Path to the generated dmg
+    value: ${{ steps.build-dmg.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Import Certificate
+      env:
+        KEYCHAIN_PASSWORD: ${{ inputs.apple-keychain-password }}
+        APPLE_DEV_CERT_PASSWORD: ${{ inputs.apple-dev-cert-password }}
+        APPLE_DEV_CERT_P12_BASE64: ${{ inputs.apple-dev-cert-p12-base64 }}
+      run: |
+        CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+        echo "$APPLE_DEV_CERT_P12_BASE64" | base64 --decode > $CERTIFICATE_PATH
+        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security import $CERTIFICATE_PATH \
+          -k $KEYCHAIN_PATH \
+          -P "$APPLE_DEV_CERT_PASSWORD" \
+          -A -t cert -f pkcs12
+        security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security list-keychain -d user -s $KEYCHAIN_PATH
+      shell: bash
+    - name: Extract App Store Connect API Key
+      env:
+        APPLE_API_KEY_ID: ${{ inputs.apple-macos-api-key-id }}
+        APPLE_API_AUTHKEY_P8_BASE64: ${{ inputs.apple-macos-api-authkey-p8-base64 }}
+      run: |
+        mkdir ./private_keys
+        echo -n "$APPLE_API_AUTHKEY_P8_BASE64" | base64 --decode --output ./private_keys/AuthKey_$APPLE_API_KEY_ID.p8
+      shell: bash
+    - name: Build And Archive App
+      env:
+        APPLE_TEAM_ID: ${{ inputs.apple-team-id }}
+      run: |
+        flutter build macos --release --config-only --flavor f_generic
+        xcodebuild CODE_SIGNING_ALLOWED=NO \
+          -workspace macos/Runner.xcworkspace \
+          -scheme f_generic \
+          -archivePath build/macos/Runner.xcarchive \
+          archive
+        ls -al build/macos/Runner.xcarchive/Products/Applications
+      shell: bash
+    - name: Signed and Exported App
+      id: build-macos
+      env:
+        APPLE_API_ISSUER_ID: ${{ inputs.apple-api-issuer-id }}
+        APPLE_API_KEY_ID: ${{ inputs.apple-macos-api-key-id }}
+        APPLE_TEAM_ID: ${{ inputs.apple-team-id }}
+        OUTPUT_PATH: build/macos/Build/Products/Release/mhabit.app
+      run: |
+        envsubst \
+          < ./installers/macos_exporter/GithubExportOptions.plist \
+          > ./installers/macos_exporter/GithubExportOptions.resolved.plist
+        cat ./installers/macos_exporter/GithubExportOptions.resolved.plist
+        plutil -lint ./installers/macos_exporter/GithubExportOptions.resolved.plist
+        xcodebuild -exportArchive -archivePath ./build/macos/Runner.xcarchive \
+          -exportPath ./build/macos/Build/Products/Release \
+          -exportOptionsPlist ./installers/macos_exporter/GithubExportOptions.resolved.plist \
+          -allowProvisioningUpdates \
+          -authenticationKeyIssuerID $APPLE_API_ISSUER_ID \
+          -authenticationKeyID $APPLE_API_KEY_ID \
+          -authenticationKeyPath `pwd`/private_keys/AuthKey_$APPLE_API_KEY_ID.p8
+        ls -al $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
+
+    - uses: actions/setup-node@v4
+      if: ${{ inputs.package-dmg == 'true' }}
+      with:
+        node-version: 20
+    - run: npm install -g appdmg
+      if: ${{ inputs.package-dmg == 'true' }}
+      shell: bash
+    - name: Build macOS DMG
+      id: build-dmg
+      if: ${{ inputs.package-dmg == 'true' }}
+      env:
+        OUTPUT_PATH: ./build/macos/Build/Products/Release/mhabit.dmg
+      run: |
+        npm install -g appdmg
+        appdmg ./installers/dmg_creator/config.json $OUTPUT_PATH
+        md5sum $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash

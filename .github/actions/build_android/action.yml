@@ -1,0 +1,102 @@
+name: Build Android
+description: >
+  General Android build process.
+  Build outputs are located in `build/app/outputs/`.
+  Requires Flutter and Android SDK installed on the runner.
+
+inputs:
+  app-sign-key-password:
+    description: Key password
+    required: true
+  app-sign-store-password:
+    description: Store password
+    required: true
+  app-sign-key-alias:
+    description: Key alias
+    required: true
+  app-sign-key-jks:
+    description: Base64 encoded JKS file
+    required: true
+  properties-path:
+    description: Path to the `key.properties` file
+    required: false
+    default: android/key.properties
+  build-bundle:
+    description: Option to generate the App Bundle (.aab), set as true/false
+    required: false
+    default: "true"
+  build-apk:
+    description: Option to build the release APK, set as true/false
+    required: false
+    default: "true"
+  build-split-apk:
+    description: Option to build split-per-ABI APKs, set as true/false
+    required: false
+    default: "true"
+outputs:
+  abb-path:
+    description: "Path to the generated App Bundle"
+    value: ${{ steps.build-abb.outputs.path }}
+  apk-path:
+    description: "Path to the FAT release APK"
+    value: ${{ steps.build-apk.outputs.path }}
+  apk-v7a-path:
+    description: "Path to the ARMv7 APK"
+    value: ${{ steps.build-split-apk.outputs.v7a-path }}
+  apk-v8a-path:
+    description: "Path to the ARM64 APK"
+    value: ${{ steps.build-split-apk.outputs.v8a-path }}
+  apk-x64-path:
+    description: "Path to the x86_64 APK"
+    value: ${{ steps.build-split-apk.outputs.x64-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Signing APK
+      run: |
+        echo keyPassword=${{ inputs.app-sign-key-password }} > ${{ inputs.properties-path }}
+        echo storePassword=${{ inputs.app-sign-store-password }} >> ${{ inputs.properties-path }}
+        echo keyAlias=${{ inputs.app-sign-key-alias }} >> ${{ inputs.properties-path }}
+        echo storeFile=key.jks >> ${{ inputs.properties-path }}
+        echo "${{ inputs.app-sign-key-jks }}" | base64 --decode > android/app/key.jks
+      shell: bash
+    - name: Build APPBUNDLE
+      id: build-abb
+      if: ${{ inputs.build-bundle == 'true' }}
+      env:
+        OUTPUT_PATH: build/app/outputs/bundle/release/app-release.aab
+      run: |
+        flutter build appbundle --release --flavor f_generic
+        mkdir -p build/app/outputs/bundle/release
+        cp build/app/outputs/bundle/f_genericRelease/app-f_generic-release.aab \
+          $OUTPUT_PATH
+        md5sum $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: Build FAT-APK
+      id: build-apk
+      if: ${{ inputs.build-apk == 'true' }}
+      env:
+        OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
+      run: |
+        flutter build apk --release
+        md5sum $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: Build APK
+      id: build-split-apk
+      if: ${{ inputs.build-split-apk == 'true' }}
+      env:
+        V7A_PATH: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+        V8A_PATH: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+        X64_PATH: build/app/outputs/flutter-apk/app-x86_64-release.apk
+      run: |
+        flutter build apk --split-per-abi
+        md5sum $V7A_PATH
+        md5sum $V8A_PATH
+        md5sum $X64_PATH
+        echo "v7a-path=$V7A_PATH" >> "$GITHUB_OUTPUT"
+        echo "v8a-path=$V8A_PATH" >> "$GITHUB_OUTPUT"
+        echo "x64-path=$X64_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash

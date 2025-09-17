@@ -1,0 +1,36 @@
+name: Build Linux
+description: >
+  General Linux build process.
+  Build outputs are located in `build/linux/<arch>/release/bundle`.
+  Requires Flutter and Xcode installed on the runner.
+
+inputs:
+  arch:
+    description: Target architecture of the Bundle. Can be "x64" or "arm64".
+    required: false
+    default: x64
+
+outputs:
+  path:
+    description: "Path to generated Bundle Dir"
+    value: ${{ steps.build-bundle.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y \
+          libsqlite3-0 libsqlite3-dev \
+          libsecret-1-dev libjsoncpp-dev
+      shell: bash
+    - name: Build Linux Bundle
+      id: build-bundle
+      env:
+        OUTPUT_PATH: build/linux/${{ inputs.arch }}/release/bundle
+      run: |
+        flutter build linux --release
+        ls -al $OUTPUT_PATH
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash

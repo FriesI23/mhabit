@@ -1,0 +1,46 @@
+name: Build Windows
+description: >
+  General Windows build process.
+  Build outputs are located in `build\windows\<arch>\runner\Release`.
+  Requires Flutter installed on the runner.
+
+inputs:
+  arch:
+    description: Target architecture of the MSIX package. Can be "x64" or "arm64".
+    required: false
+    default: x64
+  app-sign-key-pfx:
+    description: Base64 encoded PFX certificate for Windows signing
+    required: true
+  app-sign-key-pfx-password:
+    description: Password for the PFX certificate used for signing MSIX
+    required: true
+
+outputs:
+  msix-path:
+    description: Path to generated MSIX file
+    value: ${{ steps.output.outputs.msix-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Exposed Certificate
+      run: echo "${{ inputs.app-sign-key-pfx }}" | base64 --decode > windows/certificate/publish.pfx
+      shell: bash
+    - name: Build MSIX
+      run: |
+        .flutter\bin\dart run msix:create `
+          --architecture ${{ inputs.arch }} `
+          --output-name mhabit_${{ inputs.arch }} `
+          --certificate-path windows\certificate\publish.pfx `
+          --certificate-password '${{ inputs.app-sign-key-pfx-password }}' `
+          --signtool-options "/td SHA256" `
+          --install-certificate false
+      shell: pwsh
+    - id: output
+      env:
+        OUTPUT_PATH: build/windows/${{ inputs.arch }}/runner/Release/mhabit_${{ inputs.arch }}.msix
+      run: |
+        md5sum $OUTPUT_PATH
+        echo "msix-path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
