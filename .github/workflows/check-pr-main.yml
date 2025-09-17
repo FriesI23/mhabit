@@ -59,9 +59,9 @@ jobs:
       - test-build-filter
     runs-on: ubuntu-latest
     environment: check-ci
-    # if: >
-    #   needs.test-build-filter.outputs.common-changed == 'true' ||
-    #   needs.test-build-filter.outputs.android-changed == 'true'
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.android-changed == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_jdk
