@@ -51,18 +51,17 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             Start Test Build...
-            ===================================
+            ===
             Start at: ${{ steps.date.outputs.now }}
-            -----------------------------------
 
   build-android:
     needs:
       - test-build-filter
     runs-on: ubuntu-latest
     environment: check-ci
-    if: >
-      needs.test-build-filter.outputs.common-changed == 'true' ||
-      needs.test-build-filter.outputs.android-changed == 'true'
+    # if: >
+    #   needs.test-build-filter.outputs.common-changed == 'true' ||
+    #   needs.test-build-filter.outputs.android-changed == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_jdk
@@ -110,6 +109,4 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
           body: |
-            -----------------------------------
             Ended at: ${{ steps.date.outputs.now }}
-            ===================================
