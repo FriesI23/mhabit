@@ -152,94 +152,37 @@ jobs:
             ${{ steps.build.outputs.msix-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
-  build-linux:
-    name: "Build Linux Bundle"
+  build-linux-flatpak:
+    name: "Build Linux Flatpak"
     needs:
       - pre-build
     strategy:
-      # symbol `g_once_init_enter_pointer`` was introduced in glib>=2.80,
-      # fallback build host to ubuntu-22.04 for better compatibility.
-      # refs: https://github.com/cirruslabs/docker-images-flutter/issues/337.
       matrix:
         variant:
-          - arch: x86_64
+          - arch: x64
             runner: ubuntu-22.04
-            bundle_path: build/linux/x64/release/bundle
-          - arch: aarch64
+          - arch: arm64
             runner: ubuntu-22.04-arm
-            bundle_path: build/linux/arm64/release/bundle
-    runs-on: ${{ matrix.variant.runner }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Init Flutter Depends
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y \
-            curl git unzip xz-utils zip libglu1-mesa \
-            clang cmake git \
-            ninja-build pkg-config \
-            libgtk-3-dev liblzma-dev \
-            libstdc++-12-dev
-      - name: Init Flutter
-        uses: ./.github/actions/setup_flutter
-      - name: Build Linux Bundle
-        env:
-          BUNDLE_PATH: ${{ matrix.variant.bundle_path }}
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y \
-            libsqlite3-0 libsqlite3-dev \
-            libsecret-1-dev libjsoncpp-dev
-          flutter build linux --release
-          ls -al $BUNDLE_PATH
-      - name: Upload Bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-bundle-${{ matrix.variant.arch }}
-          path: ${{ matrix.variant.bundle_path }}
-          if-no-files-found: error
-          retention-days: 1
+    uses: ./.github/workflows/_build-linux-flatpak.yml
+    with:
+      arch: ${{ matrix.variant.arch }}
+      retention-days: 1
 
-  build-linux-flatpak:
-    name: "Build linux Flatpak Installer"
+  publish-linux:
     needs:
-      - build-linux
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-23.08
-      options: --privileged
-    strategy:
-      matrix:
-        variant:
-          - arch: x86_64
-            runner: ubuntu-22.04
-            bundle_path: build/linux/x64/release/bundle
-          - arch: aarch64
-            runner: ubuntu-22.04-arm
-            bundle_path: build/linux/arm64/release/bundle
-    runs-on: ${{ matrix.variant.runner }}
+      - build-linux-flatpak
+    runs-on: ubuntu-latest
     env:
-      ARTIFACT_NAME: linux-bundle-${{ matrix.variant.arch }}
-      FLATPAK_BUNDLE: mhabit-${{ matrix.variant.arch }}.flatpak
+      FLATPAK_BUNDLE: ${{ needs.build-linux-flatpak.outputs.flatpak-name }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Fetch Bundle
-        id: fetch-bundle-step
+      - id: fetch
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ matrix.variant.bundle_path }}
+          artifact-ids: ${{ needs.build-linux-flatpak.outputs.flatpak-artifact-id }}
+          path: ${{ env.FLATPAK_BUNDLE }}
           github-token: ${{ secrets.APP_RELEASE_TOKEN }}
-      - run: ls -al ${{ matrix.variant.bundle_path }}
-      - name: Build .flatpak
-        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: ${{ env.FLATPAK_BUNDLE }}
-          manifest-path: configs/flatpak_builder/io.github.friesi23.mhabit.yml
-          arch: ${{ matrix.variant.arch }}
-          branch: main
-          upload-artifact: false
+      - run: md5sum ${{ env.FLATPAK_BUNDLE }}
       - name: Released - Linux
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true

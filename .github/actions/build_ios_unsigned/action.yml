@@ -18,6 +18,7 @@ runs:
         ls -al build/ios/iphoneos/
       shell: bash
     - name: Build IPA
+      id: build-ipa
       env:
         OUTPUT_PATH: build/ios/ipa/mhabit-unsigned.ipa
       run: |
