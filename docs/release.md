@@ -5,6 +5,18 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released
 
+## v1.17.7+99-pre
+
+**🌐 Localization**
+
+- Updated Portuguese translation, thanks to Nikolas Gonçalves dos Santos's contribution on Weblate.
+- Updated Spain translation, thank to Andres Blasco Arnáiz's contribution on weblate.
+
+**🧹 Others**
+
+- Bump package dependencies (#342)
+- Refactor GitHub Workflows (#343)
+
 ## v1.17.6+98-pre
 
 **✨ New Features**
