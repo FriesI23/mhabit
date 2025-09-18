@@ -2,6 +2,30 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.17.8+100
+
+**✨ New Features**
+
+- Show snackbar after exporting habits. (#337)
+- Add localization support to Experimental Features bar. (#337)
+- Enable navigation from debugger notifications. (#337)
+
+**🌐 Localization**
+
+- Add Hebrew translation, thanks to Omer I.S's contribution on Weblate.
+- Updated Portuguese translation, thanks to Nikolas Gonçalves dos Santos's contribution on Weblate.
+- Updated Spain translation, thank to Andres Blasco Arnáiz's contribution on weblate.
+
+**🧹 Others**
+
+- Apply flavor settings to Windows notifications. (#337)
+- Bump package dependencies (#342)
+- Refactor GitHub Workflows (#343)
+
+**📝 Documentation**
+
+- Simplify TODO markers in notification code.
+
 ## 1.17.5+98
 
 **✨ New Features**
