@@ -1,24 +1,48 @@
 # 更新日志
 
+## 1.17.8+100
+
+**✨ 新功能**
+
+- 导出习惯后显示 Snackbar。 (#337)
+- 实验功能栏添加本地化支持。 (#337)
+- 支持点击 Debugger 通知跳转到对应界面。 (#337)
+
+**🌐 本地化**
+
+- 新增希伯来语翻译，感谢 Omer I.S 在 Weblate 上的贡献。
+- 更新葡萄牙语翻译，感谢 Nikolas Gonçalves dos Santos 在 Weblate 上的贡献。
+- 更新西班牙语翻译，感谢 Andres Blasco Arnáiz 在 Weblate 上的贡献。
+
+**🧹 其他**
+
+- 将 flavor 应用到 Windows 通知。 (#337)
+- 升级依赖包版本。 (#342)
+- 重构 GitHub 工作流。 (#343)
+
+**📝 文档**
+
+- 简化通知代码中的 TODO 标记。
+
 ## 1.17.5+98
 
-**✨ New Features**
+**✨ 新功能**
 
 - iOS/macOS 上取消应用启动时请求通知权限 (#323)
 - 日期选项中添加前导零 (#325)
 
-**🌐 Localization**
+**🌐 本地化**
 
 - 更新波兰语翻译，感谢 Pandaman331 在 Weblate 上的贡献 (#324)
 
-**🧹 Others**
+**🧹 其他**
 
 - 在低亮度下改善提示可见性 (#321)
 - 将 VSCode 工作区设置迁移到 code-workspace (#322)
 - 实现 Windows 自定义 flavor 支持 (#327, #330)
 - 为 Windows 构建测试添加条件检查 (#327)
 
-**📝 Documentation**
+**📝 文档**
 
 - Wiki：为 Windows 平台添加基于变量的 flavor 支持
 - Wiki：文档说明膝关分数计算 (#331)

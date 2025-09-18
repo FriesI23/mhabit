@@ -1,0 +1,21 @@
+**✨ 新功能**
+
+- 导出习惯后显示 Snackbar。 (#337)
+- 实验功能栏添加本地化支持。 (#337)
+- 支持点击 Debugger 通知跳转到对应界面。 (#337)
+
+**🌐 本地化**
+
+- 新增希伯来语翻译，感谢 Omer I.S 在 Weblate 上的贡献。
+- 更新葡萄牙语翻译，感谢 Nikolas Gonçalves dos Santos 在 Weblate 上的贡献。
+- 更新西班牙语翻译，感谢 Andres Blasco Arnáiz 在 Weblate 上的贡献。
+
+**🧹 其他**
+
+- 将 flavor 应用到 Windows 通知。 (#337)
+- 升级依赖包版本。 (#342)
+- 重构 GitHub 工作流。 (#343)
+
+**📝 文档**
+
+- 简化通知代码中的 TODO 标记。

@@ -147,8 +147,8 @@ limitations under the License.
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
 [get-it-on-flathub]: docs/README/images/flathub-get-it-on.png
 [flathub-source]: https://flathub.org/apps/io.github.friesi23.mhabit
-[github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml
-[github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/app-release.yml/badge.svg
+[github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml
+[github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
 [flutter-badge]: https://img.shields.io/badge/_Flutter_-3.29.3-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
