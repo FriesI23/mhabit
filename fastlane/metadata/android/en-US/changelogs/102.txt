@@ -1,0 +1,3 @@
+**🧹 Others**
+
+- Downgrade AGP to 8.11.1 due to fdroid incompatibility with >=8.12 (#347)

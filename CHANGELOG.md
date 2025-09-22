@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.17.10+102
+
+**🧹 Others**
+
+- Downgrade AGP to 8.11.1 due to fdroid incompatibility with >=8.12 (#347)
+
 ## 1.17.8+100
 
 **✨ New Features**
