@@ -3,26 +3,10 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.17.8+100
+# Pre-Released
 
-**✨ New Features**
-
-- Show snackbar after exporting habits. (#337)
-- Add localization support to Experimental Features bar. (#337)
-- Enable navigation from debugger notifications. (#337)
-
-**🌐 Localization**
-
-- Add Hebrew translation, thanks to Omer I.S's contribution on Weblate.
-- Updated Portuguese translation, thanks to Nikolas Gonçalves dos Santos's contribution on Weblate.
-- Updated Spain translation, thank to Andres Blasco Arnáiz's contribution on weblate.
+## v1.17.9+101
 
 **🧹 Others**
 
-- Apply flavor settings to Windows notifications. (#337)
-- Bump package dependencies (#342)
-- Refactor GitHub Workflows (#343)
-
-**📝 Documentation**
-
-- Simplify TODO markers in notification code.
+- Downgrade AGP to 8.11.1 due to fdroid incompatibility with >=8.12 (#347)
