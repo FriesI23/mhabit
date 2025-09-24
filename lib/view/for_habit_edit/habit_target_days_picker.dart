@@ -122,16 +122,15 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
   int get currentTargetDay => selectTargetDaysType.days ?? customTargetDays;
 
   void _onRadioChangeCallback(_HabitTargetDaysType? value) {
-    if (value != null) {
-      selectTargetDaysType = value;
-      // Text field might be empty in custom type when submitted;
-      // recompute the final value and type here.
-      final resultDay = _validateTargetDays(currentTargetDay);
-      final resultDayType = _HabitTargetDaysType.getTargetDaysType(resultDay);
-      final result = HabitTargetDaysPickerResult(resultDay,
-          isCustomDaysType: resultDayType == _HabitTargetDaysType.daysCustom);
-      Navigator.pop(context, result);
-    }
+    value = value ?? selectTargetDaysType;
+    selectTargetDaysType = value;
+    // Text field might be empty in custom type when submitted;
+    // recompute the final value and type here.
+    final resultDay = _validateTargetDays(currentTargetDay);
+    final resultDayType = _HabitTargetDaysType.getTargetDaysType(resultDay);
+    final result = HabitTargetDaysPickerResult(resultDay,
+        isCustomDaysType: resultDayType == _HabitTargetDaysType.daysCustom);
+    Navigator.pop(context, result);
   }
 
   void _onCustomTargetDaysInputChanged(String? value) {
@@ -248,6 +247,7 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Radio<_HabitTargetDaysType>(
         value: _HabitTargetDaysType.daysCustom,
+        toggleable: true,
         groupValue: groupValue,
         onChanged: onRadioChanged,
       ),

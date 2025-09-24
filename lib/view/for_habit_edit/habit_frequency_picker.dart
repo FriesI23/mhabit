@@ -120,60 +120,59 @@ class _HabitFrequencyPickerDialogView
     appLog.build.debug(context, ex: [selectFrequencyType, customFrequency]);
 
     void onRadioChangeCallback(_HabitFrequencyPickerType? value) {
-      if (value != null) {
-        selectFrequencyType = value;
-        switch (selectFrequencyType) {
-          case _HabitFrequencyPickerType.daily:
-            customFrequency = HabitFrequency.daily;
-            break;
-          case _HabitFrequencyPickerType.perweek:
-            int newValue;
-            try {
-              newValue = int.parse(_preweekInputController.text);
-            } on FormatException {
-              newValue = defaultFrequencyPreWeekFreq;
-            }
-            if (newValue > 7) {
-              newValue = 7;
-            } else if (newValue < 1) {
-              newValue = 1;
-            }
-            customFrequency = HabitFrequency.weekly(freq: newValue);
-            break;
-          case _HabitFrequencyPickerType.permonth:
-            int newValue;
-            try {
-              newValue = int.parse(_premonthInputController.text);
-            } on FormatException {
-              newValue = defaultFrequencyPreMonthFreq;
-            }
-            if (newValue > 31) {
-              newValue = 31;
-            } else if (newValue < 1) {
-              newValue = 1;
-            }
-            customFrequency = HabitFrequency.monthly(freq: newValue);
-            break;
-          case _HabitFrequencyPickerType.predayfreq:
-            int newFreq, newDays;
-            try {
-              newFreq = int.parse(_predayfreq01InputController.text);
-            } on FormatException {
-              newFreq = defaultFrequencyCustomFreq;
-            }
-            try {
-              newDays = int.parse(_predayfreq02InputController.text);
-            } on FormatException {
-              newDays = defaultFrequencyCustomDays;
-            }
-            newDays = math.min(newDays, maxFrequencyValue);
-            newFreq = math.min(newFreq, newDays);
-            customFrequency =
-                HabitFrequency.custom(days: newDays, freq: newFreq);
-            break;
-        }
-        Navigator.pop(context, customFrequency);
+      value = value ?? selectFrequencyType;
+
+      selectFrequencyType = value;
+      switch (selectFrequencyType) {
+        case _HabitFrequencyPickerType.daily:
+          customFrequency = HabitFrequency.daily;
+          break;
+        case _HabitFrequencyPickerType.perweek:
+          int newValue;
+          try {
+            newValue = int.parse(_preweekInputController.text);
+          } on FormatException {
+            newValue = defaultFrequencyPreWeekFreq;
+          }
+          if (newValue > 7) {
+            newValue = 7;
+          } else if (newValue < 1) {
+            newValue = 1;
+          }
+          customFrequency = HabitFrequency.weekly(freq: newValue);
+          break;
+        case _HabitFrequencyPickerType.permonth:
+          int newValue;
+          try {
+            newValue = int.parse(_premonthInputController.text);
+          } on FormatException {
+            newValue = defaultFrequencyPreMonthFreq;
+          }
+          if (newValue > 31) {
+            newValue = 31;
+          } else if (newValue < 1) {
+            newValue = 1;
+          }
+          customFrequency = HabitFrequency.monthly(freq: newValue);
+          break;
+        case _HabitFrequencyPickerType.predayfreq:
+          int newFreq, newDays;
+          try {
+            newFreq = int.parse(_predayfreq01InputController.text);
+          } on FormatException {
+            newFreq = defaultFrequencyCustomFreq;
+          }
+          try {
+            newDays = int.parse(_predayfreq02InputController.text);
+          } on FormatException {
+            newDays = defaultFrequencyCustomDays;
+          }
+          newDays = math.min(newDays, maxFrequencyValue);
+          newFreq = math.min(newFreq, newDays);
+          customFrequency = HabitFrequency.custom(days: newDays, freq: newFreq);
+          break;
       }
+      Navigator.pop(context, customFrequency);
     }
 
     void Function(String?) onInputTextSubmit(_HabitFrequencyPickerType type) {
@@ -324,6 +323,7 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Radio(
         value: _HabitFrequencyPickerType.perweek,
+        toggleable: true,
         groupValue: selectFrequencyType,
         onChanged: onRadioChangeCallback,
       ),
@@ -369,6 +369,7 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Radio(
         value: _HabitFrequencyPickerType.permonth,
+        toggleable: true,
         groupValue: selectFrequencyType,
         onChanged: onRadioChangeCallback,
       ),
@@ -426,6 +427,7 @@ class _HabitFrequencyPerDayTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Radio(
         value: _HabitFrequencyPickerType.predayfreq,
+        toggleable: true,
         groupValue: selectFrequencyType,
         onChanged: onRadioChangeCallback,
       ),
