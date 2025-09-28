@@ -15,12 +15,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../provider/app_sync.dart';
-
+import '../widgets/widget.dart';
 import 'page_app_sync.dart' as app_sync;
 
 Future<void> naviToExpFeaturesPage({required BuildContext context}) {

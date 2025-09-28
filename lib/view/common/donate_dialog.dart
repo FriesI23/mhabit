@@ -18,9 +18,9 @@ import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
 
 import '../../common/enums.dart';
 import '../../common/utils.dart';
-import '../../component/helper.dart';
-import '../../component/widgets/crypto_donate_button.dart';
 import '../../l10n/localizations.dart';
+import '../../widgets/helper.dart';
+import '../../widgets/widgets/crypto_donate_button.dart';
 
 enum DonateDialogResult { noAction, copied, donated }
 

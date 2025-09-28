@@ -17,12 +17,12 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../common/consts.dart';
-import '../component/widget.dart';
 import '../l10n/localizations.dart';
 import '../model/app_sync_server.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
 import '../provider/app_sync_server_form.dart';
+import '../widgets/widget.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'for_app_sync_server_editor/_widget.dart';

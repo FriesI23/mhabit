@@ -20,8 +20,6 @@ import 'package:tuple/tuple.dart';
 
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../component/helper.dart';
-import '../component/widget.dart';
 import '../extension/context_extensions.dart';
 import '../extension/navigator_extensions.dart';
 import '../logging/helper.dart';
@@ -35,6 +33,8 @@ import '../provider/app_sync.dart';
 import '../provider/habit_status_changer.dart';
 import '../provider/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
+import '../widgets/helper.dart';
+import '../widgets/widget.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'for_habits_status_changer/_widget.dart';

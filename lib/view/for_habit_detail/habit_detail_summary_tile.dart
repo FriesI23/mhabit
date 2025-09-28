@@ -14,11 +14,11 @@
 
 import 'package:flutter/material.dart';
 
-import '../../component/widget.dart';
 import '../../extension/colorscheme_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
+import '../../widgets/widget.dart';
 
 class HabitDetailSummaryTile extends StatelessWidget {
   final num habitProgress;

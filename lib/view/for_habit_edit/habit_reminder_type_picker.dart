@@ -14,10 +14,10 @@
 
 import 'package:flutter/material.dart';
 
-import '../../component/widget.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_reminder.dart';
+import '../../widgets/widget.dart';
 
 Future<HabitReminder?> showHabitReminderTypePickerDialog(
     {required BuildContext context,

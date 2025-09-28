@@ -16,11 +16,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../provider/app_developer.dart';
 import '../provider/app_sync.dart';
 import '../utils/app_path_provider.dart';
+import '../widgets/widget.dart';
 import 'for_app_sync/_dialog.dart';
 import 'for_app_sync/_widget.dart';
 import 'page_app_sync_server_editor.dart';

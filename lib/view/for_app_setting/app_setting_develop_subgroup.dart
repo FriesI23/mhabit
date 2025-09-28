@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../component/widget.dart';
+import '../../widgets/widget.dart';
 
 class AppSettingDevelopSubGroup extends StatelessWidget {
   final bool isInDevelopMode;

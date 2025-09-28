@@ -20,10 +20,10 @@ import 'package:provider/provider.dart';
 
 import '../assets/assets.dart';
 import '../common/app_info.dart';
-import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../model/contributor.dart';
 import '../provider/about_info.dart';
+import '../widgets/widget.dart';
 import 'common/_dialog.dart';
 import 'common/contributor_tile.dart';
 import 'for_app_about/_widget.dart';

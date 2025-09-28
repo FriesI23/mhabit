@@ -19,10 +19,10 @@ import 'package:flutter/services.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../common/app_info.dart';
-import '../component/helper.dart';
-import '../component/widget.dart';
 import '../extension/navigator_extensions.dart';
 import '../utils/app_path_provider.dart';
+import '../widgets/helper.dart';
+import '../widgets/widget.dart';
 
 class PageAppError extends StatelessWidget {
   final FlutterErrorDetails details;

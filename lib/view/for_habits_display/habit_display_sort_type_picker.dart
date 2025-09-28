@@ -16,10 +16,10 @@ import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
-import '../../component/widget.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_display.dart';
 import '../../provider/habits_sort.dart';
+import '../../widgets/widget.dart';
 
 typedef SortMenuOption
     = Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>;

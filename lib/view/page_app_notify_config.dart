@@ -15,10 +15,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../component/widget.dart';
 import '../l10n/localizations.dart';
 import '../provider/app_notify_config.dart';
 import '../reminders/notification_channel.dart';
+import '../widgets/widget.dart';
 
 Future<void> naviToNotifyConfigPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(
