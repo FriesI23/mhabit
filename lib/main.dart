@@ -15,8 +15,8 @@
 import 'package:flutter/material.dart';
 
 import 'common/app_info.dart';
+import 'entries/app.dart';
 import 'logging/logger_manager.dart';
-import 'pages/app.dart';
 import 'reminders/notification_service.dart';
 import 'utils/local_timezone.dart';
 
