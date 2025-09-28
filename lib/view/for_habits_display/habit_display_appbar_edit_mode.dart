@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../component/widget.dart';
+import '../../widgets/widget.dart';
 
 class HabitDisplayAppBarEditMode extends StatelessWidget {
   final double? scrolledUnderElevation;

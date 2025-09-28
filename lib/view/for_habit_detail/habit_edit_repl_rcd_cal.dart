@@ -19,7 +19,6 @@ import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
-import '../../component/widget.dart';
 import '../../extension/context_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_daily_record_form.dart';
@@ -30,6 +29,7 @@ import '../../provider/app_custom_date_format.dart';
 import '../../provider/app_sync.dart';
 import '../../provider/habit_detail.dart';
 import '../../theme/color.dart';
+import '../../widgets/widget.dart';
 import '../common/_dialog.dart';
 import '_mixin.dart';
 

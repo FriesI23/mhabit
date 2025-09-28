@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../component/widgets/enhanced_safe_area.dart';
+import '../widgets/widgets/enhanced_safe_area.dart';
 
 class SafedSliverList extends StatelessWidget {
   final List<Widget> children;

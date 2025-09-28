@@ -17,10 +17,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../common/types.dart';
-import '../../component/widget.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_detail_chart.dart';
+import '../../widgets/widget.dart';
 import 'habit_detail_chart_title.dart';
 
 class _HabitDetailFreqChartTitle extends StatelessWidget {

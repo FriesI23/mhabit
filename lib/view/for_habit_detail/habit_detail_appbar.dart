@@ -14,10 +14,10 @@
 
 import 'package:flutter/material.dart';
 
-import '../../component/widget.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';
+import '../../widgets/widget.dart';
 
 class HabitDetailAppBar extends StatelessWidget {
   final HabitColorType? colorType;

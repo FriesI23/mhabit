@@ -16,10 +16,10 @@ import 'package:flutter/material.dart';
 
 import '../common/consts.dart';
 import '../common/enums.dart';
-import '../component/widget.dart';
 import '../logging/helper.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
+import '../widgets/widget.dart';
 
 class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {
