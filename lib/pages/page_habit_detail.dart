@@ -46,7 +46,7 @@ import '../providers/habits_file_exporter.dart';
 import '../providers/utils.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
-import '../widgets/animation.dart';
+import '../widgets/animations.dart';
 import '../widgets/helper.dart';
 import '../widgets/widgets.dart';
 import '_debug.dart';
