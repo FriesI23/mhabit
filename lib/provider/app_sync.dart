@@ -37,13 +37,13 @@ import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
 import '../model/app_sync_timer.dart';
+import '../pages/common/app_sync_confirm_dialog.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
 import '../reminders/providers/noti_app_sync_provider.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/async_debouncer.dart';
-import '../view/common/app_sync_confirm_dialog.dart';
 import 'commons.dart';
 
 part 'app_sync.g.dart';

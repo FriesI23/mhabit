@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './app_language_changer.dart'
+export 'app_language_changer.dart'
     show
         AppLanguageChangerDialog,
         AppLanguageChangerDialogResult,
         showAppLanguageChangerDialog;
-export './app_setting_clear_cache.dart'
+export 'app_setting_clear_cache.dart'
     show AppSettingClearCacheDialog, showAppSettingClearCacheDialog;
-export './app_setting_confirm_clear_db.dart';
-export './app_setting_first_day.dart'
+export 'app_setting_confirm_clear_db.dart';
+export 'app_setting_first_day.dart'
     show AppSettingFirstDaySelectDialog, showAppSettingFirstDaySelectDialog;
-export './import_habits_confirm.dart';
+export 'import_habits_confirm.dart';

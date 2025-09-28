@@ -14,15 +14,15 @@
 
 import 'package:flutter/material.dart' show Size;
 
-export './app_about_contact_email_tile.dart';
-export './app_about_donate_tile.dart';
-export './app_about_issue_tracker_tile.dart';
-export './app_about_license_thirdparty_tile.dart';
-export './app_about_license_tile.dart';
-export './app_about_privay_tile.dart';
-export './app_about_source_code_tile.dart';
-export './app_about_version_tile.dart';
-export './page_providers.dart';
+export 'app_about_contact_email_tile.dart';
+export 'app_about_donate_tile.dart';
+export 'app_about_issue_tracker_tile.dart';
+export 'app_about_license_thirdparty_tile.dart';
+export 'app_about_license_tile.dart';
+export 'app_about_privay_tile.dart';
+export 'app_about_source_code_tile.dart';
+export 'app_about_version_tile.dart';
+export 'page_providers.dart';
 
 const kAppAboutListTileLeadingHeight = 56.0;
 const kAppAboutListTileLeadingWidth = kAppAboutListTileLeadingHeight;
