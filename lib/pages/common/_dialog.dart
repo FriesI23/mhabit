@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './confirm_dialog.dart';
-export './donate_dialog.dart' show DonateDialog, showDonateDialog;
-export './exporter_confirm_dialog.dart'
+export 'confirm_dialog.dart';
+export 'custom_datetime_format_picker.dart'
+    show CustomDateTimeFormatPickerDialog, showCustomDateTimeFormatPickerDialog;
+export 'donate_dialog.dart' show DonateDialog, showDonateDialog;
+export 'exporter_confirm_dialog.dart'
     show
         ExporterConfirmDialog,
         ExporterConfirmResultType,
         showExporterConfirmDialog;
-export './habit_record_number_picker.dart';
-export './habit_record_reason_modifier.dart'
+export 'habit_record_number_picker.dart';
+export 'habit_record_reason_modifier.dart'
     show HabitRecordReasonModifierDialog, showHabitRecordReasonModifierDialog;
-export './notification_activated.dart'
+export 'notification_activated.dart'
     show NotificationActivatedDialog, showNotificationActivatedDialog;
-export './notification_pending_requests.dart'
+export 'notification_pending_requests.dart'
     show
         NotificationPendingRequestsDialog,
         showNotificationPendingRequestsDialog;
-export 'custom_datetime_format_picker.dart'
-    show CustomDateTimeFormatPickerDialog, showCustomDateTimeFormatPickerDialog;
