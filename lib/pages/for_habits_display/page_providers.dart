@@ -19,13 +19,13 @@ import 'package:provider/provider.dart';
 
 import '../../persistent/db_helper_provider.dart';
 import '../../persistent/profile_provider.dart';
-import '../../provider/app_first_day.dart';
-import '../../provider/app_sync.dart';
-import '../../provider/habit_summary.dart';
-import '../../provider/habits_file_importer.dart';
-import '../../provider/habits_filter.dart';
-import '../../provider/habits_record_scroll_behavior.dart';
-import '../../provider/habits_sort.dart';
+import '../../providers/app_first_day.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/habit_summary.dart';
+import '../../providers/habits_file_importer.dart';
+import '../../providers/habits_filter.dart';
+import '../../providers/habits_record_scroll_behavior.dart';
+import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
 
 class PageProviders extends SingleChildStatelessWidget {

@@ -19,7 +19,7 @@ import 'package:mhabit/common/exceptions.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/model/habit_form.dart';
 import 'package:mhabit/model/habit_freq.dart';
-import 'package:mhabit/provider/habit_form.dart';
+import 'package:mhabit/providers/habit_form.dart';
 
 void main() {
   HabitFormViewModel getMockViewModel() {

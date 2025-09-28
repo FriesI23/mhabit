@@ -18,7 +18,7 @@ import 'package:tuple/tuple.dart';
 import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_display.dart';
-import '../../provider/habits_sort.dart';
+import '../../providers/habits_sort.dart';
 import '../../widgets/widget.dart';
 
 typedef SortMenuOption

@@ -19,7 +19,7 @@ import '../../common/consts.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_form.dart';
 import '../../model/material_localizations.dart';
-import '../../provider/app_first_day.dart';
+import '../../providers/app_first_day.dart';
 import '../../theme/color.dart';
 import '../../widgets/widget.dart';
 

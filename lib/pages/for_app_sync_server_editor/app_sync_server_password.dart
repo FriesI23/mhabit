@@ -21,7 +21,7 @@ import '../../extension/async_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../model/app_sync_server.dart';
-import '../../provider/app_sync_server_form.dart';
+import '../../providers/app_sync_server_form.dart';
 import '../../widgets/widget.dart';
 
 class AppSyncServerPasswordTile extends StatelessWidget {

@@ -17,10 +17,10 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../persistent/db_helper_provider.dart';
-import '../../provider/app_first_day.dart';
-import '../../provider/habit_detail.dart';
-import '../../provider/habit_detail_freqchart.dart';
-import '../../provider/habit_detail_scorechart.dart';
+import '../../providers/app_first_day.dart';
+import '../../providers/habit_detail.dart';
+import '../../providers/habit_detail_freqchart.dart';
+import '../../providers/habit_detail_scorechart.dart';
 import '../../reminders/notification_channel.dart';
 
 class PageProviders extends SingleChildStatelessWidget {

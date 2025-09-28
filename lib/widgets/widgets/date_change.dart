@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../logging/helper.dart';
 import '../../model/habit_date.dart';
-import '../../provider/commons.dart';
+import '../../providers/commons.dart';
 import '../../utils/local_timezone.dart';
 
 class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {

@@ -20,8 +20,8 @@ import 'package:provider/provider.dart';
 import '../../extension/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/app_sync_task.dart';
-import '../../provider/app_sync.dart';
-import '../../provider/habit_summary.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/habit_summary.dart';
 import '../../widgets/widget.dart';
 import 'sync_loading_indicator.dart';
 

@@ -22,7 +22,7 @@ import '../../extension/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_stat.dart';
-import '../../provider/habit_summary.dart';
+import '../../providers/habit_summary.dart';
 import '../../theme/icon.dart';
 
 Future<void> showHabitDisplayStatsMenuDialog({

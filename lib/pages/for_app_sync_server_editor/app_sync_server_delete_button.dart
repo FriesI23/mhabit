@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
-import '../../provider/app_sync.dart';
+import '../../providers/app_sync.dart';
 import '../common/_dialog.dart';
 
 enum AppSyncServerDeleteButtonStyle { normal, fullsreen }

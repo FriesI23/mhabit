@@ -21,7 +21,7 @@ import '../../common/consts.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
-import '../../provider/app_sync_server_form.dart';
+import '../../providers/app_sync_server_form.dart';
 
 class AppSyncServerTimeoutTile extends StatefulWidget {
   static const kAllowdMaxTimeoutSecond = 3600;

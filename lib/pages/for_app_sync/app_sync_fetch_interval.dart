@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
 import '../../model/app_sync_options.dart';
-import '../../provider/app_sync.dart';
+import '../../providers/app_sync.dart';
 
 Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog(
         {required BuildContext context, AppSyncFetchInterval? select}) =>

@@ -17,8 +17,8 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/app_sync_server.dart';
-import '../../provider/app_sync.dart';
-import '../../provider/app_sync_server_form.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/app_sync_server_form.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final AppSyncServer? initServerConfig;

@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../model/habit_form.dart';
 import '../../persistent/db_helper_provider.dart';
-import '../../provider/habit_form.dart';
+import '../../providers/habit_form.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final HabitForm? initForm;
