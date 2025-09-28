@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
 import '../../model/app_sync_server.dart';
-import '../../provider/app_sync_server_form.dart';
+import '../../providers/app_sync_server_form.dart';
 
 class AppSyncServerUsernameTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;

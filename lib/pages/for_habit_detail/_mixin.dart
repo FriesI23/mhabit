@@ -19,7 +19,7 @@ import '../../common/types.dart';
 import '../../extension/color_extensions.dart';
 import '../../extension/custom_color_extensions.dart';
 import '../../model/habit_detail_chart.dart';
-import '../../provider/habit_detail.dart';
+import '../../providers/habit_detail.dart';
 import '../../theme/color.dart';
 
 mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {

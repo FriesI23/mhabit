@@ -22,7 +22,7 @@ import '../common/consts.dart';
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../model/habit_summary.dart';
-import '../provider/commons.dart';
+import '../providers/commons.dart';
 import 'local/db_helper.dart';
 import 'local/handler/habit.dart';
 import 'local/handler/record.dart';

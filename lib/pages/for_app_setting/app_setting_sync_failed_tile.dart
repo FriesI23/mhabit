@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 
 import '../../logging/helper.dart';
 import '../../model/app_sync_task.dart';
-import '../../provider/app_sync.dart';
+import '../../providers/app_sync.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/widget.dart';
 import '../common/_mixin.dart';
