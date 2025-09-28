@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_reminder.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 Future<HabitReminder?> showHabitReminderTypePickerDialog(
     {required BuildContext context,

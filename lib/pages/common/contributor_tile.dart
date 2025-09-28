@@ -22,7 +22,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../model/contributor.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 class ContributorTile extends StatelessWidget {
   final Contributors contributors;

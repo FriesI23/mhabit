@@ -37,7 +37,7 @@ import '../providers/habit_form.dart';
 import '../reminders/notification_channel.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
 import '../reminders/notification_service.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';

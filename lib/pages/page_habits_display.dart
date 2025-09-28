@@ -52,7 +52,7 @@ import '../providers/habits_filter.dart';
 import '../providers/habits_record_scroll_behavior.dart';
 import '../providers/habits_sort.dart';
 import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';

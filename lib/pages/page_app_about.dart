@@ -23,7 +23,7 @@ import '../common/app_info.dart';
 import '../logging/helper.dart';
 import '../model/contributor.dart';
 import '../providers/about_info.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import 'common/_dialog.dart';
 import 'common/contributor_tile.dart';
 import 'for_app_about/_widget.dart';

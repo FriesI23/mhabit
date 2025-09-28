@@ -22,7 +22,7 @@ import '../common/app_info.dart';
 import '../extension/navigator_extensions.dart';
 import '../utils/app_path_provider.dart';
 import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 
 class PageAppError extends StatelessWidget {
   final FlutterErrorDetails details;

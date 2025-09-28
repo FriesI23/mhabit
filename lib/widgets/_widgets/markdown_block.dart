@@ -17,7 +17,7 @@ import 'package:markdown_widget/markdown_widget.dart';
 
 import '../../common/utils.dart';
 import '../../model/habit_form.dart';
-import '../widget.dart';
+import '../widgets.dart';
 
 class ColorfulMarkdownBlock extends StatelessWidget {
   final String data;

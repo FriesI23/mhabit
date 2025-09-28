@@ -48,7 +48,7 @@ import '../theme/color.dart';
 import '../theme/icon.dart';
 import '../widgets/animation.dart';
 import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';

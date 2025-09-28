@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../model/habit_form.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 class HabitEditColorTile extends StatelessWidget {
   final HabitColorType colorType;

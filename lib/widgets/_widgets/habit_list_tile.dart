@@ -17,7 +17,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../common/types.dart';
-import '../widget.dart';
+import '../widgets.dart';
 
 const kDefaultHabitListTilePadding = EdgeInsets.fromLTRB(2.0, 2.0, 6.0, 2.0);
 

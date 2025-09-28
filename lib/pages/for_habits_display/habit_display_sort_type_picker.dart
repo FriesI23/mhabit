@@ -19,7 +19,7 @@ import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_display.dart';
 import '../../providers/habits_sort.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 typedef SortMenuOption
     = Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>;

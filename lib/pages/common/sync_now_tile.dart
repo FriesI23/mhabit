@@ -22,7 +22,7 @@ import '../../l10n/localizations.dart';
 import '../../model/app_sync_task.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 import 'sync_loading_indicator.dart';
 
 class AppSyncNowTile extends StatefulWidget {

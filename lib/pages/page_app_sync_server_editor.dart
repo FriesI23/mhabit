@@ -22,7 +22,7 @@ import '../model/app_sync_server.dart';
 import '../providers/app_developer.dart';
 import '../providers/app_sync.dart';
 import '../providers/app_sync_server_form.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'for_app_sync_server_editor/_widget.dart';

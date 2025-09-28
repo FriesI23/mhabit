@@ -18,7 +18,7 @@ import 'package:markdown_widget/markdown_widget.dart';
 
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 import '_widget.dart';
 
 class AppAboutThirdPartyLicenseTile extends StatefulWidget {

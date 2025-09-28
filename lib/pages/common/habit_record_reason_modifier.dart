@@ -21,7 +21,7 @@ import '../../extension/colorscheme_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 Future<String?> showHabitRecordReasonModifierDialog({
   required BuildContext context,

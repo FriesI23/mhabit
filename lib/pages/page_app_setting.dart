@@ -50,7 +50,7 @@ import '../providers/habits_record_scroll_behavior.dart';
 import '../reminders/notification_service.dart';
 import '../utils/app_path_provider.dart';
 import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';

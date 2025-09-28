@@ -28,7 +28,7 @@ import '../../model/habit_daily_goal.dart';
 import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 const _kDefaultHabitRecordChipListHeight = 56.0;
 

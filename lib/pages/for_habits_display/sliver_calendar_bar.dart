@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../../common/types.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 const double kDefaultHabitCalendarBarHeight = 64.0;
 const double kDefaultHabitCalendarBarExtendedPrt = 0.85;

@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import '../model/habit_date.dart';
 import '../model/habit_detail_chart.dart';
 import '../model/habit_form.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 
 typedef DBID = int;
 

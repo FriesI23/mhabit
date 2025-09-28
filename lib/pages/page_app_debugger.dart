@@ -32,7 +32,7 @@ import '../providers/app_debugger.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/debug_info.dart';
 import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';

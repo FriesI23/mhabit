@@ -19,7 +19,7 @@ import '../common/enums.dart';
 import '../logging/helper.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 
 class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

@@ -15,8 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../widgets/provider.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 class DateChanger extends StatelessWidget {
   final Duration interval;

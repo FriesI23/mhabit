@@ -20,7 +20,7 @@ import '../../common/enums.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/helper.dart';
-import '../../widgets/widgets/crypto_donate_button.dart';
+import '../../widgets/widgets.dart';
 
 enum DonateDialogResult { noAction, copied, donated }
 
