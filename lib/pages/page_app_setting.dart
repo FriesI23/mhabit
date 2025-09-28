@@ -49,7 +49,7 @@ import '../providers/habits_file_importer.dart';
 import '../providers/habits_record_scroll_behavior.dart';
 import '../reminders/notification_service.dart';
 import '../utils/app_path_provider.dart';
-import '../widgets/helper.dart';
+import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
 import 'common/_dialog.dart';
 import 'common/_mixin.dart';
@@ -171,8 +171,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
       }
     }
 
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
-        content: L10nBuilder(
+    final snackBar = buildSnackBarWithDismiss(context, content: L10nBuilder(
       builder: (context, l10n) {
         final String? snackBarText;
         if (hasSuss && hasFail) {
@@ -234,7 +233,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
     trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context)
         .then((result) {
       if (!(result && context.mounted)) return;
-      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+      final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
@@ -330,7 +329,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
     await context.read<ProfileViewModel>().reload();
 
     if (!mounted) return;
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+    final snackBar = buildSnackBarWithDismiss(
       context,
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -382,7 +381,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
           break;
         } else {
           if (!context.mounted) return;
-          final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+          final snackBar = buildSnackBarWithDismiss(
             context,
             content: const Text("clear failed, must saved backup first"),
           );
@@ -398,7 +397,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
     await context.read<DBHelperViewModel>().reload();
     await NotificationService().cancelAllHabitReminders();
     if (!context.mounted) return;
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+    final snackBar = buildSnackBarWithDismiss(context,
         content: const Text("clear database success"));
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 

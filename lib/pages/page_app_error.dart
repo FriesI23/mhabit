@@ -21,7 +21,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../common/app_info.dart';
 import '../extension/navigator_extensions.dart';
 import '../utils/app_path_provider.dart';
-import '../widgets/helper.dart';
+import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
 
 class PageAppError extends StatelessWidget {
@@ -77,7 +77,7 @@ class PageAppError extends StatelessWidget {
 
     Clipboard.setData(ClipboardData(text: sb.toString())).then((value) {
       if (!context.mounted) return;
-      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+      final snackBar = buildSnackBarWithDismiss(context,
           content: L10nBuilder(
               builder: (context, l10n) =>
                   Text(l10n?.common_errorPage_copied ?? 'Copied')),

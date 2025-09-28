@@ -19,7 +19,7 @@ import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
 import '../../common/enums.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
-import '../../widgets/helper.dart';
+import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
 
 enum DonateDialogResult { noAction, copied, donated }
@@ -95,7 +95,7 @@ class _DonateDialogState extends State<DonateDialog> {
     if (!mounted) return;
     final l10n = L10n.of(context);
     if (l10n == null) return;
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+    final snackBar = buildSnackBarWithDismiss(
       context,
       duration: const Duration(seconds: 4),
       content: Text(

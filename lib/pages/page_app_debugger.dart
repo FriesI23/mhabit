@@ -31,7 +31,7 @@ import '../logging/logger_manager.dart';
 import '../providers/app_debugger.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/debug_info.dart';
-import '../widgets/helper.dart';
+import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
 import 'common/_mixin.dart';
 import 'common/_widget.dart';
@@ -116,7 +116,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
     await fileObj.delete();
     AppLoggerMananger.reloadDebuggingLogger(filePath: filePath);
     if (!context.mounted) return;
-    final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+    final snackbar = buildSnackBarWithDismiss(context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
               ? Text(l10n.dbeug_clearDebugLogs_complete_snackbar)
@@ -153,7 +153,7 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
 
   void _showDebugLogFileDismissSnackbar() {
     if (!mounted) return;
-    final snackbar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+    final snackbar = buildSnackBarWithDismiss(context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
               ? Text(l10n.debug_missingDebugLogFile_snackbar)

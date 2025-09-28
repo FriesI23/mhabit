@@ -33,7 +33,7 @@ import '../providers/app_sync.dart';
 import '../providers/habit_status_changer.dart';
 import '../providers/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
-import '../widgets/helper.dart';
+import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
 import 'common/_dialog.dart';
 import 'common/_widget.dart';
@@ -140,7 +140,7 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
       summary.forHabitsStatusChanger.onHabitDataChanged();
     }
 
-    final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(context,
+    final snackBar = buildSnackBarWithDismiss(context,
         content: L10nBuilder(
             builder: (context, l10n) => Text(
                 l10n?.batchCheckin_completed_snackbar_text(changedCount) ??

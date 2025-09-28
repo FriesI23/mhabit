@@ -47,7 +47,7 @@ import '../providers/utils.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
 import '../widgets/animations.dart';
-import '../widgets/helper.dart';
+import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
@@ -372,7 +372,7 @@ class _HabitDetailView extends State<HabitDetailView>
         .then((result) {
       context = this.context;
       if (!(result && context.mounted)) return;
-      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+      final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
