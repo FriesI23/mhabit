@@ -40,7 +40,7 @@ import '../../providers/app_theme.dart';
 import '../../reminders/notification_channel.dart';
 import '../../theme/color.dart';
 import '../../widgets/widgets.dart';
-import 'for_app/_widget.dart';
+import 'app_providers.dart';
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
