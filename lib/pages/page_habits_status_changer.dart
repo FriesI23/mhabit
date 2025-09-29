@@ -35,8 +35,6 @@ import '../providers/habit_summary.dart';
 import '../utils/safe_sliver_tools.dart';
 import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
-import 'common/_dialog.dart';
-import 'common/_widget.dart';
 import 'for_habits_status_changer/_widget.dart';
 
 /// Depend Providers

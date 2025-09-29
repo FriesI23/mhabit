@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../common/habit_divider.dart';
+import '../../widgets/widgets.dart' show HabitDivider;
 
 export 'habit_edit_app_bar.dart';
 export 'habit_edit_color_tile.dart';

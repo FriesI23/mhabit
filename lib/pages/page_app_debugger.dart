@@ -31,9 +31,9 @@ import '../logging/logger_manager.dart';
 import '../providers/app_debugger.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/debug_info.dart';
+import '../utils/xshare.dart';
 import '../widgets/helpers.dart';
 import '../widgets/widgets.dart';
-import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_app_debugger/_widget.dart';
 

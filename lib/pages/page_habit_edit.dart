@@ -39,8 +39,6 @@ import '../reminders/notification_id_range.dart' as notifyid;
 import '../reminders/notification_service.dart';
 import '../widgets/widgets.dart';
 import '_debug.dart';
-import 'common/_dialog.dart';
-import 'common/_widget.dart';
 import 'for_habit_edit/_dialogs.dart';
 import 'for_habit_edit/_widget.dart';
 
