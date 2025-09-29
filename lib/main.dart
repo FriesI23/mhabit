@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import 'common/app_info.dart';
-import 'entries/app.dart';
+import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
 import 'utils/local_timezone.dart';
@@ -28,5 +28,5 @@ Future<void> main() async {
   await NotificationService().init();
   await LocalTimeZoneManager().init();
 
-  runApp(const App());
+  runApp(const AppEntry());
 }
