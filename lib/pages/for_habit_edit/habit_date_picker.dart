@@ -21,7 +21,7 @@ import '../../model/habit_form.dart';
 import '../../model/material_localizations.dart';
 import '../../providers/app_first_day.dart';
 import '../../theme/color.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 Future<DateTime?> showHabitDatePickerDialog({
   required BuildContext context,

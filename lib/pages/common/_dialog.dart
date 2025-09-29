@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export 'confirm_dialog.dart';
 export 'custom_datetime_format_picker.dart'
     show CustomDateTimeFormatPickerDialog, showCustomDateTimeFormatPickerDialog;
 export 'donate_dialog.dart' show DonateDialog, showDonateDialog;

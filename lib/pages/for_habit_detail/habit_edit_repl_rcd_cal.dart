@@ -29,7 +29,7 @@ import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_detail.dart';
 import '../../theme/color.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 import '../common/_dialog.dart';
 import '_mixin.dart';
 

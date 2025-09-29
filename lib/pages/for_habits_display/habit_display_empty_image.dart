@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../assets/assets.dart';
 import '../../extension/color_extensions.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 part 'habit_display_empty_image.g.dart';
 

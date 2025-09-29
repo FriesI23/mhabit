@@ -51,11 +51,11 @@ import '../providers/habits_file_exporter.dart';
 import '../providers/habits_filter.dart';
 import '../providers/habits_record_scroll_behavior.dart';
 import '../providers/habits_sort.dart';
-import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../utils/xshare.dart';
+import '../widgets/helpers.dart';
+import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
-import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_habits_display/_dialog.dart';
 import 'for_habits_display/_widget.dart';
@@ -214,7 +214,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
-    final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
+    final snackBar = buildSnackBarWithUndo(
       context,
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -265,7 +265,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
-    final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
+    final snackBar = buildSnackBarWithUndo(
       context,
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -316,7 +316,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
     final deletedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
-    final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
+    final snackBar = buildSnackBarWithUndo(
       context,
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
@@ -493,7 +493,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       context = this.context;
       if (!(result && context.mounted)) return;
       final count = habitUUIDList.length;
-      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+      final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null
@@ -768,7 +768,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         case DetailPageReturnOpr.deleted:
           if (!mounted) break;
           final habitName = result.habitName ?? "";
-          final snackBar = BuildWidgetHelper().buildSnackBarWithUndo(
+          final snackBar = buildSnackBarWithUndo(
             context,
             content: L10nBuilder(
               builder: (context, l10n) => Text(

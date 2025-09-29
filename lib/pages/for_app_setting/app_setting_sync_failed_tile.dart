@@ -23,8 +23,8 @@ import '../../logging/helper.dart';
 import '../../model/app_sync_task.dart';
 import '../../providers/app_sync.dart';
 import '../../utils/app_path_provider.dart';
-import '../../widgets/widget.dart';
-import '../common/_mixin.dart';
+import '../../utils/xshare.dart';
+import '../../widgets/widgets.dart';
 
 class AppSettingSyncFailedTile extends StatefulWidget {
   final ExpansionTileController? controller;

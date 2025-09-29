@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../assets/assets.dart';
 import '../../extension/color_extensions.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 part 'not_found_image.g.dart';
 

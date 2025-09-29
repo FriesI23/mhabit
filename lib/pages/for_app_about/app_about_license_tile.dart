@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/localizations.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 import '_widget.dart';
 
 class AppAboutLicenseTile extends StatefulWidget {

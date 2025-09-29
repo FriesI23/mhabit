@@ -20,7 +20,7 @@ import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../model/custom_date_format.dart';
 import '../../model/habit_date.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 class DatePickerTile extends StatefulWidget {
   final HabitDate initDate;

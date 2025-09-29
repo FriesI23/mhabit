@@ -20,7 +20,7 @@ import '../logging/helper.dart';
 import '../providers/app_developer.dart';
 import '../providers/app_sync.dart';
 import '../utils/app_path_provider.dart';
-import '../widgets/widget.dart';
+import '../widgets/widgets.dart';
 import 'for_app_sync/_dialog.dart';
 import 'for_app_sync/_widget.dart';
 import 'page_app_sync_server_editor.dart';

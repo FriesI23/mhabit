@@ -46,12 +46,12 @@ import '../providers/habits_file_exporter.dart';
 import '../providers/utils.dart';
 import '../theme/color.dart';
 import '../theme/icon.dart';
-import '../widgets/animation.dart';
-import '../widgets/helper.dart';
-import '../widgets/widget.dart';
+import '../utils/xshare.dart';
+import '../widgets/animations.dart';
+import '../widgets/helpers.dart';
+import '../widgets/widgets.dart';
 import '_debug.dart';
 import 'common/_dialog.dart';
-import 'common/_mixin.dart';
 import 'common/_widget.dart';
 import 'for_habit_detail/_dialog.dart';
 import 'for_habit_detail/_mixin.dart';
@@ -372,7 +372,7 @@ class _HabitDetailView extends State<HabitDetailView>
         .then((result) {
       context = this.context;
       if (!(result && context.mounted)) return;
-      final snackBar = BuildWidgetHelper().buildSnackBarWithDismiss(
+      final snackBar = buildSnackBarWithDismiss(
         context,
         content: L10nBuilder(
           builder: (context, l10n) => l10n != null

@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../model/custom_date_format.dart';
-import '../../widgets/widget.dart';
+import '../../widgets/widgets.dart';
 
 class AppSettingDateDisplayFormatListTile extends StatelessWidget {
   final CustomDateYmdHmsConfig config;

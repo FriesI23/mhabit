@@ -25,7 +25,6 @@ import '../../common/global.dart';
 import '../../extension/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../pages/common/_widget.dart';
 import '../../pages/page_app_error.dart' show PageAppError;
 import '../../pages/page_habits_display.dart' show PageHabitsDisplay;
 import '../../persistent/db_helper_builder.dart';
@@ -40,6 +39,7 @@ import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../reminders/notification_channel.dart';
 import '../../theme/color.dart';
+import '../../widgets/widgets.dart';
 import 'for_app/_widget.dart';
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
