@@ -15,10 +15,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../common/app_info.dart';
-import '../../l10n/localizations.dart';
-import '../../widgets/widgets.dart';
-import '_widget.dart';
+import '../../../common/app_info.dart';
+import '../../../l10n/localizations.dart';
+import '../../../widgets/widgets.dart';
+import '../styles.dart';
 
 class AppAboutVersionTile extends StatefulWidget {
   final bool isMonoLogo;

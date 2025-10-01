@@ -17,38 +17,31 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../logging/helper.dart';
-import '../../logging/logger_stack.dart';
-import '../../providers/about_info.dart';
-import '_widget.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../providers/about_info.dart';
+import '../styles.dart';
 
-class AppAboutContactEmailTile extends StatefulWidget {
+class AppAboutIssueTrackerTile extends StatefulWidget {
   final String? url;
 
-  const AppAboutContactEmailTile({super.key, this.url});
+  const AppAboutIssueTrackerTile({super.key, this.url});
 
   @override
-  State<AppAboutContactEmailTile> createState() =>
-      _AppAboutContactEmailTileState();
+  State<AppAboutIssueTrackerTile> createState() =>
+      _AppAboutIssueTrackerTileState();
 }
 
-class _AppAboutContactEmailTileState extends State<AppAboutContactEmailTile> {
+class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
   void onPressed() async {
-    final l10n = L10n.of(context);
-    final url = Uri(
-      scheme: 'mailto',
-      path: context.read<AboutInfo>().contactEmail,
-      query: encodeUrlQueryParameters(<String, String>{
-        if (l10n != null) 'body': l10n.appAbout_contactEmailTile_emailBody,
-      }),
-    );
+    final url = Uri.parse(context.read<AboutInfo>().issueTrackerUrl);
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
       appLog.network.error("$widget.onPressed",
-          ex: ["Failed to open content email url", url],
+          ex: ["failed to open issue tracker url", url],
           stackTrace: LoggerStackTrace.from(StackTrace.current));
     }
   }
@@ -61,13 +54,13 @@ class _AppAboutContactEmailTileState extends State<AppAboutContactEmailTile> {
         leading: const SizedBox(
           height: kAppAboutListTileLeadingHeight,
           width: kAppAboutListTileLeadingWidth,
-          child: Icon(MdiIcons.emailOutline),
+          child: Icon(MdiIcons.bugOutline),
         ),
         title: l10n != null
-            ? Text(l10n.appAbout_contactEmailTile_titleText)
-            : const Text("Contact Email"),
-        subtitle: Text(value.contactEmail),
-        onTap: value.contactEmail.isNotEmpty ? onPressed : null,
+            ? Text(l10n.appAbout_issueTrackerTile_titleText)
+            : const Text("Issue tracker"),
+        subtitle: Text(value.issueTrackerUrl),
+        onTap: value.issueTrackerUrl.isNotEmpty ? onPressed : null,
       ),
     );
   }

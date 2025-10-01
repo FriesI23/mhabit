@@ -18,40 +18,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../assets/assets.dart';
-import '../common/app_info.dart';
-import '../logging/helper.dart';
-import '../model/contributor.dart';
-import '../providers/about_info.dart';
-import '../widgets/widgets.dart';
-import 'common/_dialog.dart';
-import 'common/contributor_tile.dart';
-import 'for_app_about/_widget.dart';
+import '../../assets/assets.dart';
+import '../../common/app_info.dart';
+import '../../logging/helper.dart';
+import '../../model/contributor.dart';
+import '../../providers/about_info.dart';
+import '../../widgets/widgets.dart';
+import '../common/_dialog.dart';
+import '../common/contributor_tile.dart';
+import 'widgets.dart';
 
 Future<void> naviToAppAboutPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => const PageAppAbout(),
+      builder: (context) => const AppAboutPage(),
     ),
   );
 }
 
-class PageAppAbout extends StatelessWidget {
-  const PageAppAbout({super.key});
+class AppAboutPage extends StatelessWidget {
+  const AppAboutPage({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      const PageProviders(child: AppAboutView());
+  Widget build(BuildContext context) => const PageProviders(child: _Page());
 }
 
-class AppAboutView extends StatefulWidget {
-  const AppAboutView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _AppAboutView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _AppAboutView extends State<AppAboutView> {
+class _PageState extends State<_Page> {
   void _onDonateTilePressed() async {
     final aboutInfo = context.read<AboutInfo>();
     showDonateDialog(

@@ -14,9 +14,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
-import '../../theme/icon.dart';
-import '_widget.dart';
+import '../../../l10n/localizations.dart';
+import '../../../theme/icon.dart';
+import '../styles.dart';
 
 class AppAboutDonateTile extends StatelessWidget {
   final VoidCallback? onPressed;

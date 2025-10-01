@@ -17,30 +17,38 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../logging/helper.dart';
-import '../../logging/logger_stack.dart';
-import '../../providers/about_info.dart';
-import '_widget.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../providers/about_info.dart';
+import '../styles.dart';
 
-class AppAboutSourceCodeTile extends StatefulWidget {
+class AppAboutContactEmailTile extends StatefulWidget {
   final String? url;
 
-  const AppAboutSourceCodeTile({super.key, this.url});
+  const AppAboutContactEmailTile({super.key, this.url});
 
   @override
-  State<AppAboutSourceCodeTile> createState() => _AppAboutSourceCodeTileState();
+  State<AppAboutContactEmailTile> createState() =>
+      _AppAboutContactEmailTileState();
 }
 
-class _AppAboutSourceCodeTileState extends State<AppAboutSourceCodeTile> {
+class _AppAboutContactEmailTileState extends State<AppAboutContactEmailTile> {
   void onPressed() async {
-    final url = Uri.parse(context.read<AboutInfo>().sourceCodeUrl);
+    final l10n = L10n.of(context);
+    final url = Uri(
+      scheme: 'mailto',
+      path: context.read<AboutInfo>().contactEmail,
+      query: encodeUrlQueryParameters(<String, String>{
+        if (l10n != null) 'body': l10n.appAbout_contactEmailTile_emailBody,
+      }),
+    );
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
       appLog.network.error("$widget.onPressed",
-          ex: ["failed to open source code url", url],
+          ex: ["Failed to open content email url", url],
           stackTrace: LoggerStackTrace.from(StackTrace.current));
     }
   }
@@ -53,13 +61,13 @@ class _AppAboutSourceCodeTileState extends State<AppAboutSourceCodeTile> {
         leading: const SizedBox(
           height: kAppAboutListTileLeadingHeight,
           width: kAppAboutListTileLeadingWidth,
-          child: Icon(MdiIcons.sourceBranch),
+          child: Icon(MdiIcons.emailOutline),
         ),
         title: l10n != null
-            ? Text(l10n.appAbout_sourceCodeTile_titleText)
-            : const Text("Source code"),
-        subtitle: Text(value.sourceCodeUrl),
-        onTap: value.sourceCodeUrl.isNotEmpty ? onPressed : null,
+            ? Text(l10n.appAbout_contactEmailTile_titleText)
+            : const Text("Contact Email"),
+        subtitle: Text(value.contactEmail),
+        onTap: value.contactEmail.isNotEmpty ? onPressed : null,
       ),
     );
   }

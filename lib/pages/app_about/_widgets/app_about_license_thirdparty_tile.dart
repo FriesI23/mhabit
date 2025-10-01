@@ -16,10 +16,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../widgets/widgets.dart';
-import '_widget.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../widgets/widgets.dart';
+import '../styles.dart';
 
 class AppAboutThirdPartyLicenseTile extends StatefulWidget {
   const AppAboutThirdPartyLicenseTile({super.key});

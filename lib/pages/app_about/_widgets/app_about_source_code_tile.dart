@@ -17,31 +17,30 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../logging/helper.dart';
-import '../../logging/logger_stack.dart';
-import '../../providers/about_info.dart';
-import '_widget.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../providers/about_info.dart';
+import '../styles.dart';
 
-class AppAboutIssueTrackerTile extends StatefulWidget {
+class AppAboutSourceCodeTile extends StatefulWidget {
   final String? url;
 
-  const AppAboutIssueTrackerTile({super.key, this.url});
+  const AppAboutSourceCodeTile({super.key, this.url});
 
   @override
-  State<AppAboutIssueTrackerTile> createState() =>
-      _AppAboutIssueTrackerTileState();
+  State<AppAboutSourceCodeTile> createState() => _AppAboutSourceCodeTileState();
 }
 
-class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
+class _AppAboutSourceCodeTileState extends State<AppAboutSourceCodeTile> {
   void onPressed() async {
-    final url = Uri.parse(context.read<AboutInfo>().issueTrackerUrl);
+    final url = Uri.parse(context.read<AboutInfo>().sourceCodeUrl);
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
       appLog.network.error("$widget.onPressed",
-          ex: ["failed to open issue tracker url", url],
+          ex: ["failed to open source code url", url],
           stackTrace: LoggerStackTrace.from(StackTrace.current));
     }
   }
@@ -54,13 +53,13 @@ class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
         leading: const SizedBox(
           height: kAppAboutListTileLeadingHeight,
           width: kAppAboutListTileLeadingWidth,
-          child: Icon(MdiIcons.bugOutline),
+          child: Icon(MdiIcons.sourceBranch),
         ),
         title: l10n != null
-            ? Text(l10n.appAbout_issueTrackerTile_titleText)
-            : const Text("Issue tracker"),
-        subtitle: Text(value.issueTrackerUrl),
-        onTap: value.issueTrackerUrl.isNotEmpty ? onPressed : null,
+            ? Text(l10n.appAbout_sourceCodeTile_titleText)
+            : const Text("Source code"),
+        subtitle: Text(value.sourceCodeUrl),
+        onTap: value.sourceCodeUrl.isNotEmpty ? onPressed : null,
       ),
     );
   }

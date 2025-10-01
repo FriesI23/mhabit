@@ -17,9 +17,9 @@ import 'package:flutter/services.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../l10n/localizations.dart';
-import '../../widgets/widgets.dart';
-import '_widget.dart';
+import '../../../l10n/localizations.dart';
+import '../../../widgets/widgets.dart';
+import '../styles.dart';
 
 class AppAboutPrivacyTile extends StatefulWidget {
   final String privacyPath;
