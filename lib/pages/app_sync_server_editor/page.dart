@@ -16,14 +16,14 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../common/consts.dart';
-import '../l10n/localizations.dart';
-import '../model/app_sync_server.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_sync.dart';
-import '../providers/app_sync_server_form.dart';
-import '../widgets/widgets.dart';
-import 'for_app_sync_server_editor/_widget.dart';
+import '../../common/consts.dart';
+import '../../l10n/localizations.dart';
+import '../../model/app_sync_server.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/app_sync_server_form.dart';
+import '../../widgets/widgets.dart';
+import 'widgets.dart';
 
 enum AppSyncServerEditorResultOp { update, delete }
 
@@ -52,18 +52,18 @@ Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   return showDialog<AppSyncServerEditorResult>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => PageAppSyncServerEditor(
+    builder: (context) => AppSyncServerEditorPage(
       serverConfig: serverConfig,
       showInFullscreenDialog: naviWithFullscreenDialog,
     ),
   );
 }
 
-class PageAppSyncServerEditor extends StatelessWidget {
+class AppSyncServerEditorPage extends StatelessWidget {
   final AppSyncServer? serverConfig;
   final bool? showInFullscreenDialog;
 
-  const PageAppSyncServerEditor({
+  const AppSyncServerEditorPage({
     super.key,
     this.serverConfig,
     this.showInFullscreenDialog,
@@ -76,7 +76,7 @@ class PageAppSyncServerEditor extends StatelessWidget {
       child: AppUiLayoutBuilder(
         ignoreHeight: false,
         ignoreWidth: false,
-        builder: (context, layoutType, child) => AppSyncServerEditorView(
+        builder: (context, layoutType, child) => _Page(
           serverConfig: serverConfig,
           showInFullscreenDialog: showInFullscreenDialog ??
               (layoutType == UiLayoutType.s ? true : false),
@@ -86,24 +86,23 @@ class PageAppSyncServerEditor extends StatelessWidget {
   }
 }
 
-class AppSyncServerEditorView extends StatefulWidget {
+class _Page extends StatefulWidget {
   final AppSyncServer? serverConfig;
   final bool showInFullscreenDialog;
 
-  const AppSyncServerEditorView({
-    super.key,
+  const _Page({
     this.serverConfig,
     required this.showInFullscreenDialog,
   });
 
   @override
-  State<StatefulWidget> createState() => _AppSyncServerEditerView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
+class _PageState extends State<_Page> {
   late bool showAdvanceConfig;
 
-  _AppSyncServerEditerView();
+  _PageState();
 
   @override
   void initState() {
@@ -209,7 +208,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
               FadeTransition(opacity: animation, child: child),
           duration: const Duration(milliseconds: 300),
           child: widget.showInFullscreenDialog
-              ? _AppSyncServerEditorFsDialog(
+              ? _PageFullScreenDialog(
                   key: const ValueKey("fullscreen"),
                   serverConfig: widget.serverConfig,
                   onSaveButtonPressed: _onSaveButtonPressed,
@@ -218,7 +217,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
                   showAdvanceConfig: showAdvanceConfig,
                   onAdvConfigExpansionChanged: _onAdvanceConfigExpansionChanged,
                 )
-              : _AppSyncServerEditorDialog(
+              : _PageDialog(
                   key: const ValueKey("dialog"),
                   serverConfig: widget.serverConfig,
                   onSaveButtonPressed: _onSaveButtonPressed,
@@ -231,7 +230,7 @@ class _AppSyncServerEditerView extends State<AppSyncServerEditorView> {
       );
 }
 
-class _AppSyncServerEditorFsDialog extends StatelessWidget {
+class _PageFullScreenDialog extends StatelessWidget {
   final AppSyncServer? serverConfig;
   final bool showAdvanceConfig;
   final VoidCallback? onSaveButtonPressed;
@@ -239,7 +238,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
   final VoidCallback? onDeleteButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
-  const _AppSyncServerEditorFsDialog({
+  const _PageFullScreenDialog({
     super.key,
     required this.serverConfig,
     required this.showAdvanceConfig,
@@ -267,7 +266,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
                 const AppSyncServerPathTile(),
                 const AppSyncServerUsernameTile(),
                 const AppSyncServerPasswordTile(),
-                _AppSyncServerEditorAdvConfigGroup(
+                _PageAdvancedSection(
                   type: UiLayoutType.s,
                   expanded: showAdvanceConfig,
                   onExpansionChanged: onAdvConfigExpansionChanged,
@@ -275,7 +274,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
                 AppSyncServerDeleteButton.fullscreen(
                     onPressed: onDeleteButtonPressed),
                 if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-                  const _DebuggerTile(),
+                  const _DebugTile(),
               ],
             ),
           ),
@@ -283,7 +282,7 @@ class _AppSyncServerEditorFsDialog extends StatelessWidget {
       );
 }
 
-class _AppSyncServerEditorDialog extends StatelessWidget {
+class _PageDialog extends StatelessWidget {
   static const dialogMaxWidth = 1240.0;
 
   final AppSyncServer? serverConfig;
@@ -293,7 +292,7 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
   final VoidCallback? onDeleteButtonPressed;
   final ValueChanged<bool>? onAdvConfigExpansionChanged;
 
-  const _AppSyncServerEditorDialog({
+  const _PageDialog({
     super.key,
     required this.serverConfig,
     required this.showAdvanceConfig,
@@ -346,13 +345,13 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
               const AppSyncServerTypeMenu(width: -1),
               const AppSyncServerPathTile(),
               _buildUserTiles(context),
-              _AppSyncServerEditorAdvConfigGroup(
+              _PageAdvancedSection(
                 type: UiLayoutType.l,
                 expanded: showAdvanceConfig,
                 onExpansionChanged: onAdvConfigExpansionChanged,
               ),
               if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-                const _DebuggerTile(),
+                const _DebugTile(),
             ],
           ),
           actions: [
@@ -369,12 +368,12 @@ class _AppSyncServerEditorDialog extends StatelessWidget {
       );
 }
 
-class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
+class _PageAdvancedSection extends StatelessWidget {
   final UiLayoutType type;
   final bool? expanded;
   final ValueChanged<bool>? onExpansionChanged;
 
-  const _AppSyncServerEditorAdvConfigGroup({
+  const _PageAdvancedSection({
     required this.type,
     this.expanded,
     this.onExpansionChanged,
@@ -420,14 +419,14 @@ class _AppSyncServerEditorAdvConfigGroup extends StatelessWidget {
       );
 }
 
-class _DebuggerTile extends StatefulWidget {
-  const _DebuggerTile();
+class _DebugTile extends StatefulWidget {
+  const _DebugTile();
 
   @override
-  State<_DebuggerTile> createState() => _DebuggerTileState();
+  State<_DebugTile> createState() => _DebugTileState();
 }
 
-class _DebuggerTileState extends State<_DebuggerTile> {
+class _DebugTileState extends State<_DebugTile> {
   late AppSyncServerFormViewModel formVM;
   late bool hided;
 

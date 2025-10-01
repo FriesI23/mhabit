@@ -21,7 +21,7 @@ import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/widgets.dart';
-import '../page_app_sync_server_editor.dart';
+import '../app_sync_server_editor/page.dart' as app_sync_server_editor;
 import 'widgets.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
@@ -63,20 +63,20 @@ final class _PageState extends State<_Page> {
     final config = context.read<AppSyncViewModel>().serverConfig;
     appLog.build
         .debug(context, ex: ["onServerConfigPressed", config?.toDebugString()]);
-    final result = await naviToAppSyncServerEditorDialog(
+    final result = await app_sync_server_editor.naviToAppSyncServerEditorDialog(
         context: context, serverConfig: config);
     if (!mounted) return;
     appLog.build.debug(context, ex: ["onServerConfigPressed", "Done", result]);
     if (result == null) return;
     switch (result.op) {
-      case AppSyncServerEditorResultOp.update:
+      case app_sync_server_editor.AppSyncServerEditorResultOp.update:
         final saveResult = await context
             .read<AppSyncViewModel>()
             .saveWithConfigForm(result.form);
         if (!mounted) return;
         appLog.build.info(context,
             ex: ["onServerConfigPressed", "Saved[$saveResult]", result]);
-      case AppSyncServerEditorResultOp.delete:
+      case app_sync_server_editor.AppSyncServerEditorResultOp.delete:
         final saveResult = await context
             .read<AppSyncViewModel>()
             .saveWithConfigForm(null, removable: true);
@@ -146,7 +146,7 @@ final class _PageState extends State<_Page> {
           if (context.read<AppDeveloperViewModel>().isInDevelopMode)
             SliverList.list(children: [
               const Divider(),
-              const _DebugShowTile(),
+              const _DebugTile(),
             ]),
         ],
       ),
@@ -180,8 +180,8 @@ class _AppSyncConfigSubgroup extends StatelessWidget {
   }
 }
 
-class _DebugShowTile extends StatelessWidget {
-  const _DebugShowTile();
+class _DebugTile extends StatelessWidget {
+  const _DebugTile();
 
   @override
   Widget build(BuildContext context) {

@@ -15,9 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../l10n/localizations.dart';
-import '../../providers/app_sync_server_form.dart';
-import '../../widgets/widgets.dart';
+import '../../../l10n/localizations.dart';
+import '../../../providers/app_sync_server_form.dart';
+import '../../../widgets/widgets.dart';
 
 class AppSyncServerSaveButton extends StatelessWidget {
   final VoidCallback? onPressed;

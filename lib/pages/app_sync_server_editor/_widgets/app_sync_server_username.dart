@@ -16,32 +16,42 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../l10n/localizations.dart';
-import '../../model/app_sync_server.dart';
-import '../../providers/app_sync_server_form.dart';
+import '../../../l10n/localizations.dart';
+import '../../../model/app_sync_server.dart';
+import '../../../providers/app_sync_server_form.dart';
 
-class AppSyncServerIgnoreSSLTile extends StatelessWidget {
+class AppSyncServerUsernameTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
 
-  const AppSyncServerIgnoreSSLTile({super.key, this.contentPadding});
+  const AppSyncServerUsernameTile({
+    super.key,
+    this.contentPadding,
+  });
 
   @override
   Widget build(BuildContext context) {
     final type = context
         .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final ignoreSSL =
-        context.select<AppSyncServerFormViewModel, bool?>((vm) => vm.ignoreSSL);
+    final controller =
+        context.select<AppSyncServerFormViewModel, TextEditingController>(
+            (vm) => vm.usernameInputController);
     final l10n = L10n.of(context);
     return Visibility(
-      visible: type.includeIgnoreSSLField,
-      child: CheckboxListTile.adaptive(
-        secondary: const Icon(MdiIcons.lockOffOutline),
+      visible: type.includePathField,
+      child: ListTile(
         contentPadding: contentPadding,
-        title: Text(l10n?.appSync_serverEditor_ignoreSSLTile_titleText ??
-            "Ignore SSL Certificate"),
-        value: ignoreSSL ?? false,
-        onChanged: (value) =>
-            context.read<AppSyncServerFormViewModel>().ignoreSSL = value,
+        title: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            icon: const Icon(MdiIcons.accountCircleOutline),
+            labelText:
+                l10n?.appSync_serverEditor_usernameTile_titleText ?? 'Username',
+            hintText: l10n?.appSync_serverEditor_usernameTile_hintText,
+          ),
+          keyboardType: TextInputType.text,
+          onChanged: (_) =>
+              context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
+        ),
       ),
     );
   }

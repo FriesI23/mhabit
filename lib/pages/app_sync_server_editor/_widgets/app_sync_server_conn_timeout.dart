@@ -17,11 +17,11 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/consts.dart';
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../model/app_sync_server.dart';
-import '../../providers/app_sync_server_form.dart';
+import '../../../common/consts.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../model/app_sync_server.dart';
+import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerConnTimeoutTile extends StatefulWidget {
   static const kAllowdMaxTimeoutSecond = 1800;
