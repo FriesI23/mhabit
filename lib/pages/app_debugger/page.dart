@@ -20,32 +20,29 @@ import 'package:open_file/open_file.dart' show OpenFile;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../common/app_info.dart';
-import '../common/consts.dart';
-import '../common/global.dart' show currentRouteObserver, navigatorKey;
-import '../extension/colorscheme_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../logging/level.dart';
-import '../logging/logger_manager.dart';
-import '../providers/app_debugger.dart';
-import '../utils/app_path_provider.dart';
-import '../utils/debug_info.dart';
-import '../utils/xshare.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
-import 'common/_widget.dart';
-import 'for_app_debugger/_widget.dart';
-
-const _kCardPadding = EdgeInsets.only(top: 4.0, bottom: 2.0);
+import '../../common/app_info.dart';
+import '../../common/consts.dart';
+import '../../common/global.dart' show currentRouteObserver, navigatorKey;
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../logging/level.dart';
+import '../../logging/logger_manager.dart';
+import '../../providers/app_debugger.dart';
+import '../../utils/app_path_provider.dart';
+import '../../utils/debug_info.dart';
+import '../../utils/xshare.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
+import '../common/_widget.dart';
+import 'widgets.dart';
 
 Future<void> onDebuggerNotificationTapped() async {
   final context = navigatorKey.currentContext;
   if (context == null) return;
   final currentRouteName = currentRouteObserver.routeName;
   appLog.debugger.info("onDebuggerNotificationTapped: navi",
-      ex: [PageAppDebugger.routerName, currentRouteName]);
-  if (currentRouteName != PageAppDebugger.routerName) {
+      ex: [AppDebuggerPage.routerName, currentRouteName]);
+  if (currentRouteName != AppDebuggerPage.routerName) {
     naviToAppDebuggerPage(context: context);
   }
 }
@@ -53,8 +50,8 @@ Future<void> onDebuggerNotificationTapped() async {
 Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => const PageAppDebugger(),
-      settings: const RouteSettings(name: PageAppDebugger.routerName),
+      builder: (context) => const AppDebuggerPage(),
+      settings: const RouteSettings(name: AppDebuggerPage.routerName),
     ),
   );
 }
@@ -64,25 +61,25 @@ Future<void> naviToAppDebuggerPage({required BuildContext context}) async {
 ///   - [AppDebuggerViewModel]
 /// - Required for callback:
 /// - Optional:
-class PageAppDebugger extends StatelessWidget {
+class AppDebuggerPage extends StatelessWidget {
   static const routerName = "/app_debugger";
 
-  const PageAppDebugger({super.key});
+  const AppDebuggerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const AppDebuggerView();
+    return const _Page();
   }
 }
 
-class AppDebuggerView extends StatefulWidget {
-  const AppDebuggerView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => AppDebuggerViewState();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
+class _PageState extends State<_Page> with XShare {
   void _onLogLevelChanged(LogLevel newLevel) async {
     if (!mounted) return;
     context.read<AppDebuggerViewModel>().updateLoggingLevel(newLevel);
@@ -201,14 +198,14 @@ class AppDebuggerViewState extends State<AppDebuggerView> with XShare {
           const SizedBox(height: 8),
           Padding(
             padding: kListTileContentPadding,
-            child: _DebuggerLogCard(
+            child: DebuggerLogCard(
               onDownloadPressed: _onDownloadLogButtonPressed,
               onClearPressed: _onClearLogButtongPressed,
             ),
           ),
           Padding(
             padding: kListTileContentPadding,
-            child: _DebuggerInfoCard(
+            child: DebuggerInfoCard(
               onOpenPressed: _onOpenDebugButtonPressed,
               onSavePressed: _onSaveDebugButtonPressed,
             ),
@@ -234,142 +231,6 @@ class _Sperator extends StatelessWidget {
         ),
         Spacer(),
       ],
-    );
-  }
-}
-
-class _DebuggerLogCard extends StatelessWidget {
-  final void Function(BuildContext context)? onDownloadPressed;
-  final void Function(BuildContext context)? onClearPressed;
-
-  const _DebuggerLogCard({
-    required this.onDownloadPressed,
-    required this.onClearPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.primaryContainerOpacity32,
-      child: Padding(
-        padding: _kCardPadding,
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.article_outlined),
-              title:
-                  l10n != null ? Text(l10n.debug_debuggerLogCard_title) : null,
-              subtitle: l10n != null
-                  ? Text(l10n.debug_debuggerLogCard_subtitle)
-                  : null,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Builder(builder: (context) {
-                  return TextButton(
-                    onPressed: onDownloadPressed != null
-                        ? () => onDownloadPressed!(context)
-                        : null,
-                    child: Text(
-                      l10n?.debug_debuggerLogCard_saveButton_text ?? 'Downlaod',
-                      style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer),
-                    ),
-                  );
-                }),
-                const SizedBox(width: 8),
-                Builder(builder: (context) {
-                  return TextButton(
-                    onPressed: onClearPressed != null
-                        ? () => onClearPressed!(context)
-                        : null,
-                    child: Text(
-                      l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
-                  );
-                }),
-                const SizedBox(width: 8),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DebuggerInfoCard extends StatelessWidget {
-  final void Function(BuildContext context)? onOpenPressed;
-  final void Function(BuildContext conetxt)? onSavePressed;
-
-  const _DebuggerInfoCard({this.onOpenPressed, this.onSavePressed});
-
-  Widget _buildOpenButton(BuildContext context, [L10n? l10n]) => TextButton(
-        onPressed: onOpenPressed != null ? () => onOpenPressed!(context) : null,
-        child: Text(
-          l10n?.debug_debuggerInfoCard_openButton_text ?? 'Open',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
-        ),
-      );
-
-  Widget _buildSaveButton(BuildContext context, [L10n? l10n]) => TextButton(
-        onPressed: onSavePressed != null ? () => onSavePressed!(context) : null,
-        child: Text(
-          l10n?.debug_debuggerInfoCard_saveButton_text ?? 'Save',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    Widget buildMainButton(BuildContext context) {
-      final l10n = L10n.of(context);
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.android:
-        case TargetPlatform.iOS:
-        case TargetPlatform.windows:
-        case TargetPlatform.linux:
-        case TargetPlatform.macOS:
-          return _buildOpenButton(context, l10n);
-        default:
-          return _buildSaveButton(context, l10n);
-      }
-    }
-
-    final l10n = L10n.of(context);
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.primaryContainerOpacity32,
-      child: Padding(
-        padding: _kCardPadding,
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.adb_outlined),
-              title:
-                  l10n != null ? Text(l10n.debug_debuggerInfoCard_title) : null,
-              subtitle: l10n != null
-                  ? Text(l10n.debug_debuggerInfoCard_subtitle)
-                  : null,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Builder(builder: buildMainButton),
-                const SizedBox(width: 8),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

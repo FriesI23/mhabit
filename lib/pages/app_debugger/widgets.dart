@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import '../pages/app_debugger/page.dart' as app_debugger;
-import 'notification_id_range.dart';
-
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
-  }
-}
+export '_widgets/change_logs_switcher_tile.dart';
+export '_widgets/debugger_info_card.dart';
+export '_widgets/debugger_log_card.dart';
+export 'styles.dart';

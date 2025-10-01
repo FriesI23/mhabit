@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,4 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export 'change_logs_switcher_tile.dart' show ChangeLogsSwitcherTile;
+import 'package:flutter/material.dart';
+
+const kDebuggerCardPadding = EdgeInsets.only(top: 4.0, bottom: 2.0);

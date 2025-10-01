@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
+import '../../../l10n/localizations.dart';
 
 class ChangeLogsSwitcherTile extends StatelessWidget {
   final bool value;
