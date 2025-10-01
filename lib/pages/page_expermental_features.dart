@@ -20,7 +20,7 @@ import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../providers/app_sync.dart';
 import '../widgets/widgets.dart';
-import 'page_app_sync.dart' as app_sync;
+import 'app_sync/page.dart' as app_sync;
 
 Future<void> naviToExpFeaturesPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(

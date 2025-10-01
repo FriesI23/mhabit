@@ -16,38 +16,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../logging/helper.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_sync.dart';
-import '../utils/app_path_provider.dart';
-import '../widgets/widgets.dart';
-import 'for_app_sync/_dialog.dart';
-import 'for_app_sync/_widget.dart';
-import 'page_app_sync_server_editor.dart';
+import '../../logging/helper.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_sync.dart';
+import '../../utils/app_path_provider.dart';
+import '../../widgets/widgets.dart';
+import '../page_app_sync_server_editor.dart';
+import 'widgets.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => const PageAppSync(),
+      builder: (context) => const AppSyncPage(),
     ),
   );
 }
 
-final class PageAppSync extends StatelessWidget {
-  const PageAppSync({super.key});
+final class AppSyncPage extends StatelessWidget {
+  const AppSyncPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const AppSyncView();
+  Widget build(BuildContext context) => const _Page();
 }
 
-final class AppSyncView extends StatefulWidget {
-  const AppSyncView({super.key});
+final class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _AppSyncView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-final class _AppSyncView extends State<AppSyncView> {
+final class _PageState extends State<_Page> {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);

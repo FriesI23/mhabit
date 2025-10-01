@@ -20,9 +20,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../l10n/localizations.dart';
-import '../../utils/app_sync.dart';
-import '../../utils/xshare.dart';
+import '../../../l10n/localizations.dart';
+import '../../../utils/app_sync.dart';
+import '../../../utils/xshare.dart';
 
 class AppSyncFailLogsTile extends StatefulWidget {
   final String? path;

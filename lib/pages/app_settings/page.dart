@@ -54,9 +54,9 @@ import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
 import '../app_about/page.dart' as app_about;
 import '../app_debugger/page.dart' as app_debugger;
+import '../app_sync/page.dart' as app_sync;
 import '../common/_dialog.dart';
 import '../common/_widget.dart';
-import '../page_app_sync.dart' as app_sync;
 import '../page_expermental_features.dart' as exp_feature;
 import 'widgets.dart';
 
