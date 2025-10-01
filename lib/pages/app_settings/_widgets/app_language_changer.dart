@@ -15,8 +15,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/consts.dart';
-import '../../l10n/localizations.dart';
+import '../../../common/consts.dart';
+import '../../../l10n/localizations.dart';
 
 Future<AppLanguageChangerDialogResult?> showAppLanguageChangerDialog({
   required BuildContext context,

@@ -19,12 +19,12 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../logging/helper.dart';
-import '../../model/app_sync_task.dart';
-import '../../providers/app_sync.dart';
-import '../../utils/app_path_provider.dart';
-import '../../utils/xshare.dart';
-import '../../widgets/widgets.dart';
+import '../../../logging/helper.dart';
+import '../../../model/app_sync_task.dart';
+import '../../../providers/app_sync.dart';
+import '../../../utils/app_path_provider.dart';
+import '../../../utils/xshare.dart';
+import '../../../widgets/widgets.dart';
 
 class AppSettingSyncFailedTile extends StatefulWidget {
   final ExpansionTileController? controller;

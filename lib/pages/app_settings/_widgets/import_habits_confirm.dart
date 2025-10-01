@@ -15,8 +15,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../l10n/localizations.dart';
-import '../../providers/habits_file_importer.dart';
+import '../../../l10n/localizations.dart';
+import '../../../providers/habits_file_importer.dart';
 
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,

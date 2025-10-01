@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
-import '../../widgets/widgets.dart';
+import '../../../l10n/localizations.dart';
+import '../../../widgets/widgets.dart';
 
 Future<bool?> showAppSettingClearCacheDialog(
     {required BuildContext context}) async {

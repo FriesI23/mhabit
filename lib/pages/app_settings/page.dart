@@ -21,45 +21,44 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import '../common/consts.dart';
-import '../common/enums.dart';
-import '../common/flavor.dart';
-import '../common/utils.dart';
-import '../extension/context_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../logging/logger_stack.dart';
-import '../model/app_reminder_config.dart';
-import '../model/custom_date_format.dart';
-import '../persistent/db_helper_provider.dart';
-import '../persistent/profile_provider.dart';
-import '../providers/app_caches.dart';
-import '../providers/app_compact_ui_switcher.dart';
-import '../providers/app_custom_date_format.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_first_day.dart';
-import '../providers/app_language.dart';
-import '../providers/app_reminder.dart';
-import '../providers/app_sync.dart';
-import '../providers/app_theme.dart';
-import '../providers/habit_op_config.dart';
-import '../providers/habit_summary.dart';
-import '../providers/habits_file_exporter.dart';
-import '../providers/habits_file_importer.dart';
-import '../providers/habits_record_scroll_behavior.dart';
-import '../reminders/notification_service.dart';
-import '../utils/app_path_provider.dart';
-import '../utils/xshare.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
-import 'app_about/page.dart' as app_about;
-import 'app_debugger/page.dart' as app_debugger;
-import 'common/_dialog.dart';
-import 'common/_widget.dart';
-import 'for_app_setting/_dialog.dart';
-import 'for_app_setting/_widget.dart';
-import 'page_app_sync.dart' as app_sync;
-import 'page_expermental_features.dart' as exp_feature;
+import '../../common/consts.dart';
+import '../../common/enums.dart';
+import '../../common/flavor.dart';
+import '../../common/utils.dart';
+import '../../extension/context_extensions.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../logging/logger_stack.dart';
+import '../../model/app_reminder_config.dart';
+import '../../model/custom_date_format.dart';
+import '../../persistent/db_helper_provider.dart';
+import '../../persistent/profile_provider.dart';
+import '../../providers/app_caches.dart';
+import '../../providers/app_compact_ui_switcher.dart';
+import '../../providers/app_custom_date_format.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_first_day.dart';
+import '../../providers/app_language.dart';
+import '../../providers/app_reminder.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/app_theme.dart';
+import '../../providers/habit_op_config.dart';
+import '../../providers/habit_summary.dart';
+import '../../providers/habits_file_exporter.dart';
+import '../../providers/habits_file_importer.dart';
+import '../../providers/habits_record_scroll_behavior.dart';
+import '../../reminders/notification_service.dart';
+import '../../utils/app_path_provider.dart';
+import '../../utils/xshare.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
+import '../app_about/page.dart' as app_about;
+import '../app_debugger/page.dart' as app_debugger;
+import '../common/_dialog.dart';
+import '../common/_widget.dart';
+import '../page_app_sync.dart' as app_sync;
+import '../page_expermental_features.dart' as exp_feature;
+import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
@@ -73,7 +72,7 @@ Future<void> naviToAppSettingPage({
           ChangeNotifierProvider.value(value: scrollBehavior),
           ChangeNotifierProvider.value(value: summary),
         ],
-        child: const PageAppSetting(),
+        child: const AppSettingPage(),
       ),
     ),
   );
@@ -94,23 +93,23 @@ Future<void> naviToAppSettingPage({
 ///   - [ProfileViewModel]
 /// - Optional:
 ///   - [HabitSummaryViewModel]
-class PageAppSetting extends StatelessWidget {
-  const PageAppSetting({super.key});
+class AppSettingPage extends StatelessWidget {
+  const AppSettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const AppSettingView();
+    return const _Page();
   }
 }
 
-class AppSettingView extends StatefulWidget {
-  const AppSettingView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _AppSettingView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _AppSettingView extends State<AppSettingView> with XShare {
+class _PageState extends State<_Page> with XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -722,7 +721,7 @@ class _AppSettingView extends State<AppSettingView> with XShare {
             final isInMainlandChina =
                 locale.languageCode == 'zh' && locale.scriptCode == null;
             return appFlavor == appFlaborStore && isInMainlandChina
-                ? const _ChinaICPFillingNumberTile()
+                ? const ICPFillingNumberTile()
                 : const SizedBox();
           },
         );
@@ -754,25 +753,6 @@ class _AppSettingView extends State<AppSettingView> with XShare {
               buildChinaIPC(context),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChinaICPFillingNumberTile extends StatelessWidget {
-  const _ChinaICPFillingNumberTile();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: kListTileContentPadding.copyWith(bottom: 5.0, top: 20.0),
-      child: Center(
-        child: Text(
-          chinaICPFillingNumber,
-          style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
         ),
       ),
     );

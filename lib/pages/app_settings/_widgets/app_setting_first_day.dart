@@ -15,9 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/consts.dart';
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
+import '../../../common/consts.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
 
 Future<int?> showAppSettingFirstDaySelectDialog({
   required BuildContext context,
