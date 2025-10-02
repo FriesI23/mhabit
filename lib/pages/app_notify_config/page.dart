@@ -15,21 +15,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../l10n/localizations.dart';
-import '../providers/app_notify_config.dart';
-import '../reminders/notification_channel.dart';
-import '../widgets/widgets.dart';
+import '../../l10n/localizations.dart';
+import '../../providers/app_notify_config.dart';
+import '../../reminders/notification_channel.dart';
+import '../../widgets/widgets.dart';
 
 Future<void> naviToNotifyConfigPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => const PageAppNotifyConfig(),
+      builder: (context) => const AppNotifyConfigPage(),
     ),
   );
 }
 
-class PageAppNotifyConfig extends StatelessWidget {
-  const PageAppNotifyConfig({super.key});
+class AppNotifyConfigPage extends StatelessWidget {
+  const AppNotifyConfigPage({super.key});
 
   @override
   Widget build(BuildContext context) => const AppNotifyConfigView();

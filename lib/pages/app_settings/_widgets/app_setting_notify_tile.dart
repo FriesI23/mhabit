@@ -18,7 +18,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../page_app_notify_config.dart' as app_notify_config;
+import '../../app_notify_config/page.dart' as app_notify_config;
 
 class AppSettingNotifyTile extends StatelessWidget {
   const AppSettingNotifyTile({super.key});
