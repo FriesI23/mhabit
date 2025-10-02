@@ -14,12 +14,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../../extension/custom_color_extensions.dart';
-import '../../logging/helper.dart';
-import '../../model/habit_date.dart';
-import '../../model/habit_summary.dart';
-import '../../theme/color.dart';
-import '../common/_widget.dart';
+import '../../../extension/custom_color_extensions.dart';
+import '../../../logging/helper.dart';
+import '../../../model/habit_date.dart';
+import '../../../model/habit_summary.dart';
+import '../../../theme/color.dart';
+import '../../common/_widget.dart';
 
 class HabitSpecialDateViewedTile extends StatelessWidget {
   final HabitSummaryData data;

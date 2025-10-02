@@ -19,7 +19,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 const _kSplittedLayoutWidth = 600.0;
 
-class PageFramework extends StatelessWidget {
+class PageScaffold extends StatelessWidget {
   final Widget appbar;
   final Widget content;
   final Widget? habitTitle;
@@ -28,7 +28,7 @@ class PageFramework extends StatelessWidget {
   final ScrollController? mainController;
   final ScrollController? rightController;
 
-  const PageFramework({
+  const PageScaffold({
     super.key,
     required this.appbar,
     required this.content,
@@ -58,7 +58,7 @@ class PageFramework extends StatelessWidget {
                   width: splittedLayout
                       ? calMainFrameworkWidth(constraints)
                       : constraints.maxWidth),
-              child: _PageMainFramework(
+              child: _MainSection(
                 appbar: appbar,
                 content: content,
                 habitTitle: habitTitle,
@@ -69,7 +69,7 @@ class PageFramework extends StatelessWidget {
             ),
             if (splittedLayout)
               Expanded(
-                child: _PageDescFramework(
+                child: _DescSection(
                   habitTitle: habitTitle,
                   habitsContent: habitsContent,
                   controller: rightController,
@@ -82,7 +82,7 @@ class PageFramework extends StatelessWidget {
   }
 }
 
-class _PageMainFramework extends StatelessWidget {
+class _MainSection extends StatelessWidget {
   final Widget appbar;
   final Widget content;
   final Widget? habitTitle;
@@ -90,7 +90,7 @@ class _PageMainFramework extends StatelessWidget {
   final Widget? debugContent;
   final ScrollController? controller;
 
-  const _PageMainFramework({
+  const _MainSection({
     required this.appbar,
     required this.content,
     this.habitTitle,
@@ -118,12 +118,12 @@ class _PageMainFramework extends StatelessWidget {
   }
 }
 
-class _PageDescFramework extends StatelessWidget {
+class _DescSection extends StatelessWidget {
   final Widget? habitTitle;
   final Widget habitsContent;
   final ScrollController? controller;
 
-  const _PageDescFramework({
+  const _DescSection({
     this.habitTitle,
     required this.habitsContent,
     this.controller,

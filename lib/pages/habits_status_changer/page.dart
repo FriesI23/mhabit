@@ -18,24 +18,24 @@ import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
-import '../common/types.dart';
-import '../common/utils.dart';
-import '../extension/context_extensions.dart';
-import '../extension/navigator_extensions.dart';
-import '../logging/helper.dart';
-import '../model/custom_date_format.dart';
-import '../model/habit_date.dart';
-import '../model/habit_summary.dart';
-import '../providers/app_compact_ui_switcher.dart';
-import '../providers/app_custom_date_format.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_sync.dart';
-import '../providers/habit_status_changer.dart';
-import '../providers/habit_summary.dart';
-import '../utils/safe_sliver_tools.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
-import 'for_habits_status_changer/_widget.dart';
+import '../../common/types.dart';
+import '../../common/utils.dart';
+import '../../extension/context_extensions.dart';
+import '../../extension/navigator_extensions.dart';
+import '../../logging/helper.dart';
+import '../../model/custom_date_format.dart';
+import '../../model/habit_date.dart';
+import '../../model/habit_summary.dart';
+import '../../providers/app_compact_ui_switcher.dart';
+import '../../providers/app_custom_date_format.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/habit_status_changer.dart';
+import '../../providers/habit_summary.dart';
+import '../../utils/safe_sliver_tools.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
+import 'widgets.dart';
 
 /// Depend Providers
 /// - Required for builder:
@@ -45,26 +45,26 @@ import 'for_habits_status_changer/_widget.dart';
 /// - Required for callback:
 /// - Optional:
 ///   - [HabitSummaryViewModel]
-class PageHabitsStatusChanger extends StatelessWidget {
+class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
-  const PageHabitsStatusChanger({super.key, required this.uuidList});
+  const HabitsStatusChangerPage({super.key, required this.uuidList});
 
   @override
   Widget build(BuildContext context) => PageProviders(
         uuidList: uuidList,
-        child: const HabitsStatusChangerView(),
+        child: const _Page(),
       );
 }
 
-class HabitsStatusChangerView extends StatefulWidget {
-  const HabitsStatusChangerView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _HabitsStatusChangerView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
+class _PageState extends State<_Page> {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -315,8 +315,8 @@ class _HabitsStatusChangerView extends State<HabitsStatusChangerView> {
         await _onClosePageButtonPressed(
             defaultConfirmResult: true, result: result);
       },
-      child: PageFramework(
-        appbar: _AppBar(
+      child: PageScaffold(
+        appbar: HabitStatusChangerAppbar(
           title: L10nBuilder(
             builder: (context, l10n) => l10n != null
                 ? Text(l10n.batchCheckin_appbar_title)
@@ -467,33 +467,6 @@ class _HabitListState extends State<_HabitList> {
           );
         },
       ),
-    );
-  }
-}
-
-class _AppBar extends StatelessWidget {
-  final Widget? title;
-  final Widget? bottomWidget;
-  final VoidCallback? onCloseButtonPressed;
-
-  const _AppBar({this.title, this.bottomWidget, this.onCloseButtonPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverAppBar(
-      leading: PageBackButton(
-        reason: PageBackReason.close,
-        onPressed: onCloseButtonPressed,
-      ),
-      title: title,
-      bottom: bottomWidget != null
-          ? PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: bottomWidget!)
-          : null,
-      automaticallyImplyLeading: false,
-      pinned: true,
-      floating: true,
     );
   }
 }

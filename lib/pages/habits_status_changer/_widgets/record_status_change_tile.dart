@@ -15,10 +15,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../common/consts.dart';
-import '../../l10n/localizations.dart';
-import '../../logging/helper.dart';
-import '../../providers/habit_status_changer.dart';
+import '../../../common/consts.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/helper.dart';
+import '../../../providers/habit_status_changer.dart';
 
 class RecordStatusChangeTile extends StatefulWidget {
   final RecordStatusChangerStatus? initStatus;

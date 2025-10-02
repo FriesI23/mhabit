@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
+import '../../../l10n/localizations.dart';
 
 class ConfirmButton extends StatelessWidget {
   final bool enbaleConfirm;
