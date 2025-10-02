@@ -18,18 +18,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../common/app_info.dart';
-import '../extension/navigator_extensions.dart';
-import '../utils/app_path_provider.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
+import '../../common/app_info.dart';
+import '../../extension/navigator_extensions.dart';
+import '../../utils/app_path_provider.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
 
-class PageAppError extends StatelessWidget {
+class AppErrorPage extends StatelessWidget {
   final FlutterErrorDetails details;
   final int lastLogLines;
   final bool showCloseBtn;
 
-  const PageAppError({
+  const AppErrorPage({
     super.key,
     required this.details,
     this.lastLogLines = 200,
