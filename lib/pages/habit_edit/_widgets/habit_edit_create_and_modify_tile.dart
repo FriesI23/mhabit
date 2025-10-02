@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../l10n/localizations.dart';
+import '../../../l10n/localizations.dart';
 
 class HabitEditCreateAndModifyTile extends StatelessWidget {
   final DateTime createT;

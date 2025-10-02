@@ -14,33 +14,37 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
-import '../../model/habit_freq.dart';
+import '../../../l10n/localizations.dart';
+import '../../../model/habit_form.dart';
 
-class HabitEditFrequencyTile extends StatelessWidget {
-  final HabitFrequency frequency;
-  final void Function(BuildContext context, HabitFrequency frequency)?
-      onPressed;
+class HabitEditHabitTypeTile extends StatelessWidget {
+  final HabitType habitType;
+  final bool readOnly;
+  final VoidCallback? onPressed;
 
-  const HabitEditFrequencyTile({
+  const HabitEditHabitTypeTile({
     super.key,
-    required this.frequency,
+    required this.habitType,
+    this.readOnly = false,
     this.onPressed,
   });
 
+  String getHabitTypeName([L10n? l10n]) =>
+      HabitType.getHabitTypeName(habitType, l10n);
+
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
+    final themeDate = Theme.of(context);
     final l10n = L10n.of(context);
 
     return ListTile(
       leading: Icon(
-        Icons.repeat,
-        color: themeData.colorScheme.outline,
+        habitType.getIcon(),
+        color: themeDate.colorScheme.outline,
       ),
-      title: Text(
-          l10n != null ? frequency.toLocalString(l10n) : frequency.toString()),
-      onTap: () => onPressed?.call(context, frequency),
+      title: Text(getHabitTypeName(l10n)),
+      textColor: readOnly ? themeDate.colorScheme.outlineVariant : null,
+      onTap: readOnly ? null : onPressed,
     );
   }
 }

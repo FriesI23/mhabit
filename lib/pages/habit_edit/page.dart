@@ -17,32 +17,29 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import '../common/consts.dart';
-import '../common/rules.dart';
-import '../common/types.dart';
-import '../extension/context_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../model/habit_daily_goal.dart';
-import '../model/habit_display.dart';
-import '../model/habit_form.dart';
-import '../model/habit_freq.dart';
-import '../model/habit_reminder.dart';
-import '../persistent/local/handler/habit.dart';
-import '../providers/app_caches.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_first_day.dart';
-import '../providers/app_sync.dart';
-import '../providers/habit_form.dart';
-import '../reminders/notification_channel.dart';
-import '../reminders/notification_id_range.dart' as notifyid;
-import '../reminders/notification_service.dart';
-import '../widgets/widgets.dart';
-import '_debug.dart';
-import 'for_habit_edit/_dialogs.dart';
-import 'for_habit_edit/_widget.dart';
-
-const double _kCommonEvalation = 1.0;
+import '../../common/consts.dart';
+import '../../common/rules.dart';
+import '../../common/types.dart';
+import '../../extension/context_extensions.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../model/habit_daily_goal.dart';
+import '../../model/habit_display.dart';
+import '../../model/habit_form.dart';
+import '../../model/habit_freq.dart';
+import '../../model/habit_reminder.dart';
+import '../../persistent/local/handler/habit.dart';
+import '../../providers/app_caches.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_first_day.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/habit_form.dart';
+import '../../reminders/notification_channel.dart';
+import '../../reminders/notification_id_range.dart' as notifyid;
+import '../../reminders/notification_service.dart';
+import '../../widgets/widgets.dart';
+import '../_debug.dart';
+import 'widgets.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({
   required BuildContext context,
@@ -329,7 +326,7 @@ class _HabitEditView extends State<HabitEditView> {
             colorType: colorType,
             controller:
                 context.read<HabitFormViewModel>().nameFieldInputController,
-            scrolledUnderElevation: _kCommonEvalation,
+            scrolledUnderElevation: kHabitEditCommonEvalation,
             autofocus: name.isNotEmpty ? false : true,
             isAppbarPinned: isAppbarPinned,
             showSaveButton: canSaveHabit,
@@ -575,30 +572,30 @@ class _HabitEditView extends State<HabitEditView> {
             _HabitEditSliverList(
               children: [
                 buildColorField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildHabitTypeField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildDailyGoalField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildDailyGoalUnitField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildDailyGoalExtraField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildFrequencyField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildStartDateField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildTargetDaysField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildRemindarField(context),
-                habitEditDiv,
+                kHabitDivider,
                 buildDescField(context),
                 if (formvm.editMode == HabitDisplayEditMode.edit) ...[
-                  habitEditDiv,
+                  kHabitDivider,
                   buildCreateAndModifyTimeField(context),
                 ],
                 if (context.read<AppDeveloperViewModel>().isInDevelopMode) ...[
-                  habitEditDiv,
+                  kHabitDivider,
                   _buildDebugInfo(context),
                 ],
                 const FixedPagePlaceHolder(),

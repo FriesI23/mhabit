@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../extension/colorscheme_extensions.dart';
-import '../../l10n/localizations.dart';
+import '../../../extension/colorscheme_extensions.dart';
+import '../../../l10n/localizations.dart';
 
 class HabitEditDescTile extends StatelessWidget {
   final TextEditingController controller;

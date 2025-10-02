@@ -53,12 +53,10 @@ import '../../widgets/widgets.dart';
 import '../_debug.dart';
 import '../common/_dialog.dart';
 import '../common/_widget.dart';
-import '../page_habit_edit.dart' as habit_edit;
+import '../habit_edit/page.dart' as habit_edit;
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
-
-const _div = HabitDivider();
 
 Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
@@ -982,23 +980,23 @@ class _PageState extends State<_Page>
                   delegate: SliverChildListDelegate([
                     builSummaryTile(context),
                     buildHeatmap(context),
-                    _div,
+                    kHabitDivider,
                     buildScoreChartTile(context),
-                    _div,
+                    kHabitDivider,
                     buildFreqChartTile(context),
                     if (context
                         .read<HabitDetailViewModel>()
                         .habitDesc
                         .isNotEmpty) ...[
-                      _div,
+                      kHabitDivider,
                       buildDescInfo(context),
                     ],
-                    _div,
+                    kHabitDivider,
                     buildOtherInfo(context),
                     if (context
                         .read<AppDeveloperViewModel>()
                         .isInDevelopMode) ...[
-                      _div,
+                      kHabitDivider,
                       _buildDebugInfo(context),
                     ],
                     const FixedPagePlaceHolder(),

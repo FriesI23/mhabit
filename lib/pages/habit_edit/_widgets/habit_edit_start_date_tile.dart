@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/habit_date.dart';
+import '../../../model/habit_date.dart';
 
 class HabitEditStartDateTile extends StatelessWidget {
   static const fullDateFormat = "E, MMM d, y";

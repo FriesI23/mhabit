@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
+import '../../../l10n/localizations.dart';
 
 class HabitEditTargetDaysTile extends StatelessWidget {
   final int targetDays;

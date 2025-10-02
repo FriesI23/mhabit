@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../../widgets/widgets.dart' show HabitDivider;
+
 export '_widgets/habit_desc_cell_tile.dart';
 export '_widgets/habit_detail_appbar.dart';
 export '_widgets/habit_detail_chart_title.dart';
@@ -27,3 +29,5 @@ export '_widgets/habit_heatmap.dart';
 export '_widgets/habit_other_info_tile.dart';
 export 'providers.dart';
 export 'styles.dart';
+
+const kHabitDivider = HabitDivider();
