@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../common/_widget.dart';
+import '../../common/_widget.dart';
 
 class HabitDisplayLoadingIndicator extends StatelessWidget {
   final double opacity;

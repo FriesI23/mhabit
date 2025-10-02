@@ -23,78 +23,67 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:tuple/tuple.dart';
 
-import '../common/consts.dart';
-import '../common/enums.dart';
-import '../common/types.dart';
-import '../extension/async_extensions.dart';
-import '../extension/color_extensions.dart';
-import '../extension/context_extensions.dart';
-import '../extension/navigator_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../model/habit_daily_record_form.dart';
-import '../model/habit_date.dart';
-import '../model/habit_display.dart';
-import '../model/habit_form.dart';
-import '../model/habit_stat.dart';
-import '../model/habit_status.dart';
-import "../model/habit_summary.dart";
-import '../persistent/local/handler/habit.dart';
-import '../providers/app_compact_ui_switcher.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_sync.dart';
-import '../providers/app_theme.dart';
-import '../providers/habit_detail.dart';
-import '../providers/habit_op_config.dart';
-import '../providers/habit_summary.dart';
-import '../providers/habits_file_exporter.dart';
-import '../providers/habits_filter.dart';
-import '../providers/habits_record_scroll_behavior.dart';
-import '../providers/habits_sort.dart';
-import '../utils/xshare.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
-import '_debug.dart';
-import 'app_settings/page.dart' as app_setting_view;
-import 'common/_dialog.dart';
-import 'common/_widget.dart';
-import 'for_habits_display/_dialog.dart';
-import 'for_habits_display/_widget.dart';
-import 'habit_detail/page.dart' as habit_detail_view;
-import 'habit_edit/page.dart' as habit_edit_view;
-import 'habits_status_changer/page.dart' as habits_status_changer_view;
-
-const _kCommonEvalation = 2.0;
-
-const _kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
-const _kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
-
-const _kFABModeChangeDuration = Duration(milliseconds: 300);
-
-const _kHabitListFutureLoadDuration = Duration(milliseconds: 300);
+import '../../common/consts.dart';
+import '../../common/enums.dart';
+import '../../common/types.dart';
+import '../../extension/async_extensions.dart';
+import '../../extension/color_extensions.dart';
+import '../../extension/context_extensions.dart';
+import '../../extension/navigator_extensions.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../model/habit_daily_record_form.dart';
+import '../../model/habit_date.dart';
+import '../../model/habit_display.dart';
+import '../../model/habit_form.dart';
+import '../../model/habit_stat.dart';
+import '../../model/habit_status.dart';
+import "../../model/habit_summary.dart";
+import '../../persistent/local/handler/habit.dart';
+import '../../providers/app_compact_ui_switcher.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/app_theme.dart';
+import '../../providers/habit_detail.dart';
+import '../../providers/habit_op_config.dart';
+import '../../providers/habit_summary.dart';
+import '../../providers/habits_file_exporter.dart';
+import '../../providers/habits_filter.dart';
+import '../../providers/habits_record_scroll_behavior.dart';
+import '../../providers/habits_sort.dart';
+import '../../utils/xshare.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
+import '../_debug.dart';
+import '../app_settings/page.dart' as app_settings;
+import '../common/_dialog.dart';
+import '../common/_widget.dart';
+import '../habit_detail/page.dart' as habit_detail;
+import '../habit_edit/page.dart' as habit_edit;
+import '../habits_status_changer/page.dart' as habits_status_changer;
+import 'widgets.dart';
 
 /// Depend Providers
 /// - Required for builder:
 ///   - [AppThemeViewModel]
 ///   - [AppCompactUISwitcherViewModel]
-class PageHabitsDisplay extends StatelessWidget {
-  const PageHabitsDisplay({super.key});
+class HabitsDisplayPage extends StatelessWidget {
+  const HabitsDisplayPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const PageProviders(child: HabitsDisplayView());
+    return const PageProviders(child: _Page());
   }
 }
 
-class HabitsDisplayView extends StatefulWidget {
-  const HabitsDisplayView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _HabitsDisplayView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _HabitsDisplayView extends State<HabitsDisplayView>
-    with HabitsDisplayViewDebug, XShare {
+class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -131,7 +120,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
 
   Future<void> _loadHabitData() async {
     if (!mounted) return;
-    final minBarShowTimeFuture = Future.delayed(_kHabitListFutureLoadDuration);
+    final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
     if (context.read<AppSyncViewModel>().mounted) {
       await context.read<AppSyncViewModel>().appSyncTask.processing;
     }
@@ -509,7 +498,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   }
 
   void _openAppSettingsPage(BuildContext context) {
-    app_setting_view.naviToAppSettingPage(
+    app_settings.naviToAppSettingPage(
       context: context,
       scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
       summary: context.read<HabitSummaryViewModel>(),
@@ -555,7 +544,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   }
 
   Future<bool> _enterHabitEditPage({
-    Duration exitEditModeDuration = _kEditModeChangeAnimateDuration,
+    Duration exitEditModeDuration = kEditModeChangeAnimateDuration,
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
     HabitSummaryViewModel viewmodel;
@@ -582,8 +571,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
     }
 
     if (!mounted) return false;
-    final result = await habit_edit_view.naviToHabitEidtPage(
-        context: context, initForm: form);
+    final result =
+        await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
 
     // Edit/Create Habit involves complex state changes (such as sorting by
     // completion rate, calculating the start date of check-in data, etc.),
@@ -753,7 +742,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
       if (!mounted) return;
 
       Navigator.of(context).popUntil((route) => route.isFirst);
-      final result = await habit_detail_view.naviToHabitDetailPage(
+      final result = await habit_detail.naviToHabitDetailPage(
         context: context,
         habitUUID: uuid,
         colorType:
@@ -855,7 +844,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
               final crtDate = contents.item4;
               final useCompactUI = compactUIConf.item1;
               final height = compactUIConf.item2;
-              return _HabitRecordListTile(
+              return _RecordsListTile(
                 uuid: uuid,
                 isExtended: isExtended,
                 crtDate: crtDate,
@@ -902,7 +891,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             final viewmodel = context.read<HabitSummaryViewModel>();
             final compactvm = context.read<AppCompactUISwitcherViewModel>();
             return HabitDisplayAppBarViewMode(
-              scrolledUnderElevation: _kCommonEvalation,
+              scrolledUnderElevation: kCommonEvalation,
               title: L10nBuilder(
                 builder: (context, l10n) =>
                     l10n != null ? Text(l10n.appName) : const Text(appName),
@@ -938,7 +927,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           builder: (context, stat, child) => L10nBuilder(
             builder: (context, l10n) =>
                 AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
-              buttonSwitchAnimateDuration: _kEditModeAppbarAnimateDuration,
+              buttonSwitchAnimateDuration: kEditModeAppbarAnimateDuration,
               actionConfigs: [
                 EditModeActionItemConfig.edit(
                     visible: stat.selected == 1,
@@ -981,7 +970,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
             return previous != next;
           },
           builder: (context, value, child) => AnimatedSwitcher(
-            duration: _kEditModeAppbarAnimateDuration,
+            duration: kEditModeAppbarAnimateDuration,
             child: Text(value.toString()),
           ),
         );
@@ -999,7 +988,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           builder: (context, occupyPrt, child) {
             final viewmodel = context.read<HabitSummaryViewModel>();
             return HabitDisplayAppBarEditMode(
-              scrolledUnderElevation: _kCommonEvalation,
+              scrolledUnderElevation: kCommonEvalation,
               title: buildAppbarTitle(context),
               bottom: SliverCalendarBar(
                 key: const Key('habit_display_calendar_bar'),
@@ -1027,7 +1016,7 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
           final viewmodel = context.read<HabitSummaryViewModel>();
           appLog.build.debug(context, ex: [status], name: "$widget.Appbar");
           return SliverAnimatedSwitcher(
-            duration: _kEditModeChangeAnimateDuration,
+            duration: kEditModeChangeAnimateDuration,
             child: viewmodel.isInEditMode
                 ? buildAppbarInEditMode(context, status.isClandarExpanded)
                 : buildAppbarInViewMode(context, status.isClandarExpanded),
@@ -1055,8 +1044,8 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
                         context, viewmodel.lastSortedDataCache, index, data);
               },
               viewmodel.lastSortedDataCache.length,
-              addAnimatedElevation: _kCommonEvalation,
-              morphDuration: _kEditModeChangeAnimateDuration,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
               reorderModel: AnimatedListReorderModel(
                 onReorderStart: _onHabitListReorderStart,
                 onReorderMove: _onHabitListReorderMove,
@@ -1150,10 +1139,10 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
         builder: (context, habitCount, child) =>
             Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
           selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
-          builder: (context, value, child) => _HabitDisplayEmptyImageFrame(
+          builder: (context, value, child) => _EmptyImageWrapper(
             habitCount: habitCount,
             offsetHeight: -(value.item2 + kToolbarHeight),
-            changedAnimateDuration: _kHabitListFutureLoadDuration,
+            changedAnimateDuration: kHabitListFutureLoadDuration,
             child: L10nBuilder(
               builder: (context, l10n) {
                 final theme = Theme.of(context);
@@ -1247,13 +1236,13 @@ class _HabitsDisplayView extends State<HabitsDisplayView>
   }
 }
 
-class _HabitDisplayEmptyImageFrame extends StatelessWidget {
+class _EmptyImageWrapper extends StatelessWidget {
   final int habitCount;
   final double offsetHeight;
   final Duration changedAnimateDuration;
   final Widget? child;
 
-  const _HabitDisplayEmptyImageFrame({
+  const _EmptyImageWrapper({
     required this.habitCount,
     this.offsetHeight = 0.0,
     required this.changedAnimateDuration,
@@ -1281,7 +1270,7 @@ class _HabitDisplayEmptyImageFrame extends StatelessWidget {
   }
 }
 
-class _HabitRecordListTile extends StatelessWidget {
+class _RecordsListTile extends StatelessWidget {
   final HabitUUID uuid;
   final bool isExtended;
   final HabitDate crtDate;
@@ -1293,7 +1282,7 @@ class _HabitRecordListTile extends StatelessWidget {
   final OnHabitSummaryPressCallback? onHabitRecordLongPressed;
   final OnHabitSummaryPressCallback? onHabitRecordDoublePressed;
 
-  const _HabitRecordListTile({
+  const _RecordsListTile({
     required this.uuid,
     required this.isExtended,
     required this.crtDate,
@@ -1354,7 +1343,7 @@ class _FAB extends StatelessWidget {
         secondChild: const Icon(Icons.calendar_view_day_rounded),
         crossFadeState:
             isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-        duration: _kFABModeChangeDuration);
+        duration: kFABModeChangeDuration);
 
     Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
         firstChild: L10nBuilder(
@@ -1365,7 +1354,7 @@ class _FAB extends StatelessWidget {
         secondChild: const SizedBox(),
         crossFadeState:
             isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-        duration: _kFABModeChangeDuration);
+        duration: kFABModeChangeDuration);
 
     final selectedUUIDList = context
         .read<HabitSummaryViewModel>()
@@ -1379,10 +1368,10 @@ class _FAB extends StatelessWidget {
       if (summary.mounted) {
         return ChangeNotifierProvider.value(
             value: summary,
-            child: habits_status_changer_view.HabitsStatusChangerPage(
+            child: habits_status_changer.HabitsStatusChangerPage(
                 uuidList: selectedUUIDList));
       }
-      return habits_status_changer_view.HabitsStatusChangerPage(
+      return habits_status_changer.HabitsStatusChangerPage(
           uuidList: selectedUUIDList);
     }
 
@@ -1398,7 +1387,7 @@ class _FAB extends StatelessWidget {
       },
       openBuilder: (context, action) => isInEditMode
           ? pageHabitsStatusChangerBuilder(context)
-          : const habit_edit_view.PageHabitEdit(showInFullscreenDialog: true),
+          : const habit_edit.PageHabitEdit(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {
           case HabitDBCell():

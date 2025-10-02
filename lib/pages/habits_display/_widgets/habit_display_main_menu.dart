@@ -15,13 +15,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../l10n/localizations.dart';
-import '../../model/habit_display.dart';
-import '../../providers/app_theme.dart';
-import '../../providers/habits_filter.dart';
-import '../../providers/habits_sort.dart';
-import '../../theme/color.dart';
-import '../../theme/icon.dart';
+import '../../../l10n/localizations.dart';
+import '../../../model/habit_display.dart';
+import '../../../providers/app_theme.dart';
+import '../../../providers/habits_filter.dart';
+import '../../../providers/habits_sort.dart';
+import '../../../theme/color.dart';
+import '../../../theme/icon.dart';
 
 Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
   required BuildContext context,

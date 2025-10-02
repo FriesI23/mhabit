@@ -1,10 +1,10 @@
-// Copyright 2023 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export 'habit_display_main_menu.dart';
-export 'habit_display_sort_type_picker.dart';
-export 'habit_display_stats_menu.dart';
+const kCommonEvalation = 2.0;
+
+const kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
+const kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
+
+const kFABModeChangeDuration = Duration(milliseconds: 300);
+
+const kHabitListFutureLoadDuration = Duration(milliseconds: 300);

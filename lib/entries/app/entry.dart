@@ -22,7 +22,7 @@ import '../../common/flavor.dart';
 import '../../extension/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../pages/page_habits_display.dart' show PageHabitsDisplay;
+import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../persistent/db_helper_builder.dart';
 import '../../persistent/profile/handler/app_notify_config.dart';
 import '../../persistent/profile/handlers.dart';
@@ -82,7 +82,7 @@ class AppEntry extends StatelessWidget {
           interval: const Duration(seconds: 10),
           builder: (context) => const AppProviders(
             child:
-                _AppEntry(homePage: _AppPostInit(child: PageHabitsDisplay())),
+                _AppEntry(homePage: _AppPostInit(child: HabitsDisplayPage())),
           ),
         ),
       ),
