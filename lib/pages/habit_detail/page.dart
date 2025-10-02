@@ -19,52 +19,42 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../extension/custom_color_extensions.dart';
-import '../common/consts.dart';
-import '../common/types.dart';
-import '../extension/async_extensions.dart';
-import '../extension/color_extensions.dart';
-import '../extension/context_extensions.dart';
-import '../extension/num_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../model/custom_date_format.dart';
-import '../model/habit_date.dart';
-import '../model/habit_detail_chart.dart';
-import '../model/habit_display.dart';
-import '../model/habit_form.dart';
-import '../persistent/local/handler/habit.dart';
-import '../providers/app_custom_date_format.dart';
-import '../providers/app_developer.dart';
-import '../providers/app_first_day.dart';
-import '../providers/app_sync.dart';
-import '../providers/habit_detail.dart';
-import '../providers/habit_detail_freqchart.dart';
-import '../providers/habit_detail_scorechart.dart';
-import '../providers/habit_summary.dart';
-import '../providers/habits_file_exporter.dart';
-import '../providers/utils.dart';
-import '../theme/color.dart';
-import '../theme/icon.dart';
-import '../utils/xshare.dart';
-import '../widgets/animations.dart';
-import '../widgets/helpers.dart';
-import '../widgets/widgets.dart';
-import '_debug.dart';
-import 'common/_dialog.dart';
-import 'common/_widget.dart';
-import 'for_habit_detail/_dialog.dart';
-import 'for_habit_detail/_mixin.dart';
-import 'for_habit_detail/_widget.dart';
-import 'page_habit_edit.dart' as habit_edit_view;
-
-const kHabitDetailLoadingCircleIndicatorSize = 64.0;
-const kHabitDetailFreqChartHeight = 240.0;
-const kHabitDetailFreqChartTitleHeight = 48.0;
-
-const _kHabitDetailFutureLoadDuration = Duration(milliseconds: 300);
-
-const kHabitDetailWidgetPadding = EdgeInsets.symmetric(horizontal: 16.0);
+import '../../../extension/custom_color_extensions.dart';
+import '../../common/consts.dart';
+import '../../common/types.dart';
+import '../../extension/async_extensions.dart';
+import '../../extension/color_extensions.dart';
+import '../../extension/context_extensions.dart';
+import '../../extension/num_extensions.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../model/custom_date_format.dart';
+import '../../model/habit_date.dart';
+import '../../model/habit_detail_chart.dart';
+import '../../model/habit_display.dart';
+import '../../model/habit_form.dart';
+import '../../persistent/local/handler/habit.dart';
+import '../../providers/app_custom_date_format.dart';
+import '../../providers/app_developer.dart';
+import '../../providers/app_first_day.dart';
+import '../../providers/app_sync.dart';
+import '../../providers/habit_detail.dart';
+import '../../providers/habit_detail_freqchart.dart';
+import '../../providers/habit_detail_scorechart.dart';
+import '../../providers/habit_summary.dart';
+import '../../providers/habits_file_exporter.dart';
+import '../../providers/utils.dart';
+import '../../theme/color.dart';
+import '../../theme/icon.dart';
+import '../../utils/xshare.dart';
+import '../../widgets/animations.dart';
+import '../../widgets/helpers.dart';
+import '../../widgets/widgets.dart';
+import '../_debug.dart';
+import '../common/_dialog.dart';
+import '../common/_widget.dart';
+import '../page_habit_edit.dart' as habit_edit;
+import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
 
@@ -82,7 +72,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
         providers: [
           ChangeNotifierProvider.value(value: summary),
         ],
-        child: PageHabitDetail(habitUUID: habitUUID, colorType: colorType),
+        child: HabitDetailPage(habitUUID: habitUUID, colorType: colorType),
       ),
     ),
   );
@@ -95,31 +85,31 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
 ///   - [HabitFileExporterViewModel]
 /// - Optional:
 ///   - [HabitSummaryViewModel]
-class PageHabitDetail extends StatelessWidget {
+class HabitDetailPage extends StatelessWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
 
-  const PageHabitDetail({super.key, required this.habitUUID, this.colorType});
+  const HabitDetailPage({super.key, required this.habitUUID, this.colorType});
 
   @override
   Widget build(BuildContext context) {
     return PageProviders(
-        child: HabitDetailView(habitUUID: habitUUID, colorType: colorType));
+        child: _Page(habitUUID: habitUUID, colorType: colorType));
   }
 }
 
-class HabitDetailView extends StatefulWidget {
+class _Page extends StatefulWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
 
-  const HabitDetailView({super.key, required this.habitUUID, this.colorType});
+  const _Page({required this.habitUUID, this.colorType});
 
   @override
-  State<StatefulWidget> createState() => _HabitDetailView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _HabitDetailView extends State<HabitDetailView>
-    with HabitHeatmapColorChooseMixin<HabitDetailView>, XShare {
+class _PageState extends State<_Page>
+    with HabitHeatmapColorChooseMixin<_Page>, XShare {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -146,8 +136,8 @@ class _HabitDetailView extends State<HabitDetailView>
     if (dbcell == null || !mounted) return false;
 
     final form = formBuilder(dbcell);
-    final result = await habit_edit_view.naviToHabitEidtPage(
-        context: context, initForm: form);
+    final result =
+        await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
 
     if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
@@ -891,11 +881,11 @@ class _HabitDetailView extends State<HabitDetailView>
     }
 
     Widget buildDescInfo(BuildContext conetxt) {
-      return const _HabitDescTileList();
+      return const HabitDetailDescTile();
     }
 
     Widget buildOtherInfo(BuildContext context) {
-      return const _HabitDetailOtherTileList();
+      return const _OtherInfo();
     }
 
     Widget buildFAB(BuildContext context) {
@@ -918,7 +908,7 @@ class _HabitDetailView extends State<HabitDetailView>
             final loading = context
                 .read<HabitDetailViewModel>()
                 .loadData(widget.habitUUID, inFutureBuilder: true);
-            await Future.delayed(_kHabitDetailFutureLoadDuration);
+            await Future.delayed(kHabitDetailFutureLoadDuration);
             await loading;
           }
 
@@ -1044,78 +1034,15 @@ class _HabitDetailView extends State<HabitDetailView>
   }
 }
 
-class _HabitDetailTileListFramework extends StatelessWidget {
-  final Widget? title;
-  final List<Widget>? contentChildren;
-
-  const _HabitDetailTileListFramework({
-    this.title,
-    this.contentChildren,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final titleHeight = MediaQuery.textScalerOf(context)
-        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3)
-        .scale(kHabitDetailFreqChartTitleHeight);
-
-    return Padding(
-      padding: kHabitDetailWidgetPadding,
-      child: Column(
-        children: [
-          if (title != null)
-            ConstrainedBox(
-              constraints: BoxConstraints.tightFor(height: titleHeight),
-              child: title,
-            ),
-          ...?contentChildren,
-        ],
-      ),
-    );
-  }
-}
-
-class _HabitDescTileList extends StatelessWidget {
-  const _HabitDescTileList();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-    final viewmodel = context.read<HabitDetailViewModel>();
-    final TextScaler textScaler = MediaQuery.textScalerOf(context)
-        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
-    final descMinHeight = textScaler.scale(kHabitDetailFreqChartTitleHeight);
-
-    return _HabitDetailTileListFramework(
-      title: HabitDetailChartTitle(
-          title: l10n?.habitDetail_descSubgroup_title ?? "Desc"),
-      contentChildren: [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-              minHeight: descMinHeight, minWidth: double.infinity),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ColorfulMarkdownBlock(
-              data: viewmodel.habitDesc,
-              colorType: viewmodel.habitColorType,
-              textScaler: textScaler,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _HabitDetailOtherTileList extends StatelessWidget {
-  const _HabitDetailOtherTileList();
+class _OtherInfo extends StatelessWidget {
+  const _OtherInfo();
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final viewmodel = context.read<HabitDetailViewModel>();
 
-    return _HabitDetailTileListFramework(
+    return HabitDetailTileList(
       title: HabitDetailChartTitle(
           title: l10n?.habitDetail_otherSubgroup_title ?? "Others"),
       contentChildren: [

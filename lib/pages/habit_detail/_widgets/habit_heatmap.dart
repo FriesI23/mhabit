@@ -13,9 +13,16 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
-import '../../model/habit_date.dart';
+import '../../../common/types.dart';
+import '../../../extension/color_extensions.dart';
+import '../../../extension/custom_color_extensions.dart';
+import '../../../model/habit_date.dart';
+import '../../../model/habit_detail_chart.dart';
+import '../../../providers/habit_detail.dart';
+import '../../../theme/color.dart';
 
 class HabitHeatmap extends StatelessWidget {
   final int firstday;
@@ -158,5 +165,57 @@ class HabitHeatmap extends StatelessWidget {
           ? buildWithHorizontal(context)
           : buildWithVertical(context),
     );
+  }
+}
+
+mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
+  Map<HabitDailyGoal, Color> buildHeatmapColorMap(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
+    final viewmodel = context.read<HabitDetailViewModel>();
+    return {
+      HabitHeatMapColorMapDefine.uncomplate:
+          (colorData?.getColor(viewmodel.habitColorType!) ??
+                  themeData.colorScheme.primary)
+              .withValues(alpha: 0.2),
+      HabitHeatMapColorMapDefine.partiallyCompleted:
+          (colorData?.getColor(viewmodel.habitColorType!) ??
+                  themeData.colorScheme.primary)
+              .withValues(alpha: 0.3),
+      HabitHeatMapColorMapDefine.autoComplate:
+          (colorData?.getColor(viewmodel.habitColorType!) ??
+                  themeData.colorScheme.primary)
+              .withValues(alpha: 0.5),
+      HabitHeatMapColorMapDefine.complate:
+          (colorData?.getColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.primary),
+      HabitHeatMapColorMapDefine.overfulfil:
+          (colorData?.getColor(viewmodel.habitColorType!) ??
+                  themeData.colorScheme.primary)
+              .darken(0.2),
+    };
+  }
+
+  Map<HabitDailyGoal, Color> buildHeatmapValueColorMap(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final CustomColors? colorData = themeData.extension<CustomColors>();
+    final viewmodel = context.read<HabitDetailViewModel>();
+    return {
+      HabitHeatMapColorMapDefine.uncomplate:
+          colorData?.getColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.primary,
+      HabitHeatMapColorMapDefine.partiallyCompleted:
+          colorData?.getColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.primary,
+      HabitHeatMapColorMapDefine.autoComplate:
+          colorData?.getOnColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.onPrimary,
+      HabitHeatMapColorMapDefine.complate:
+          colorData?.getOnColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.onPrimary,
+      HabitHeatMapColorMapDefine.overfulfil:
+          colorData?.getOnColor(viewmodel.habitColorType!) ??
+              themeData.colorScheme.onPrimary,
+    };
   }
 }

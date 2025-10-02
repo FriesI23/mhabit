@@ -17,21 +17,21 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
-import '../../common/consts.dart';
-import '../../common/types.dart';
-import '../../extension/context_extensions.dart';
-import '../../extension/custom_color_extensions.dart';
-import '../../model/habit_daily_record_form.dart';
-import '../../model/habit_date.dart';
-import '../../model/habit_detail_chart.dart';
-import '../../model/habit_form.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_detail.dart';
-import '../../theme/color.dart';
-import '../../widgets/widgets.dart';
-import '../common/_dialog.dart';
-import '_mixin.dart';
+import '../../../common/consts.dart';
+import '../../../common/types.dart';
+import '../../../extension/context_extensions.dart';
+import '../../../extension/custom_color_extensions.dart';
+import '../../../model/habit_daily_record_form.dart';
+import '../../../model/habit_date.dart';
+import '../../../model/habit_detail_chart.dart';
+import '../../../model/habit_form.dart';
+import '../../../providers/app_custom_date_format.dart';
+import '../../../providers/app_sync.dart';
+import '../../../providers/habit_detail.dart';
+import '../../../theme/color.dart';
+import '../../../widgets/widgets.dart';
+import '../../common/_dialog.dart';
+import 'habit_heatmap.dart';
 
 Future<void> showHabitEditReplacementRecordCalendarDialog({
   required BuildContext context,

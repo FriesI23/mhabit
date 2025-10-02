@@ -60,7 +60,7 @@ import 'common/_dialog.dart';
 import 'common/_widget.dart';
 import 'for_habits_display/_dialog.dart';
 import 'for_habits_display/_widget.dart';
-import 'page_habit_detail.dart' as habit_detail_view;
+import 'habit_detail/page.dart' as habit_detail_view;
 import 'page_habit_edit.dart' as habit_edit_view;
 import 'page_habits_status_changer.dart' as habits_status_changer_view;
 

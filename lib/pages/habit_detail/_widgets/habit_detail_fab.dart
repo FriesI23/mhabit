@@ -14,9 +14,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../../extension/custom_color_extensions.dart';
-import '../../model/habit_form.dart';
-import '../../theme/color.dart';
+import '../../../extension/custom_color_extensions.dart';
+import '../../../model/habit_form.dart';
+import '../../../theme/color.dart';
 
 class HabitDetailFAB extends StatelessWidget {
   final HabitColorType? colorType;
