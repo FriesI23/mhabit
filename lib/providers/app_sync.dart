@@ -37,7 +37,7 @@ import '../model/app_sync_options.dart';
 import '../model/app_sync_server.dart';
 import '../model/app_sync_task.dart';
 import '../model/app_sync_timer.dart';
-import '../pages/common/_widgets/app_sync_confirm_dialog.dart';
+import '../pages/common/widgets.dart';
 import '../persistent/db_helper_provider.dart';
 import '../persistent/profile/handlers.dart';
 import '../persistent/profile_provider.dart';

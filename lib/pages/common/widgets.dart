@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export '_widgets/app_sync_confirm_dialog.dart';
 export '_widgets/contributor_tile.dart';
 export '_widgets/custom_datetime_format_picker.dart';
 export '_widgets/donate_dialog.dart';

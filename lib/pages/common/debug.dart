@@ -18,7 +18,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../common/_debug.dart';
+import '../../common/debug.dart';
 import '../../common/consts.dart';
 import '../../common/utils.dart';
 import '../../model/habit_date.dart';
