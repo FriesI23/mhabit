@@ -15,36 +15,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../extension/context_extensions.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../providers/app_sync.dart';
-import '../widgets/widgets.dart';
-import 'app_sync/page.dart' as app_sync;
+import '../../extension/context_extensions.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../providers/app_sync.dart';
+import '../../widgets/widgets.dart';
+import '../app_sync/page.dart' as app_sync;
 
-Future<void> naviToExpFeaturesPage({required BuildContext context}) {
+Future<void> naviToExperimentalFeaturesPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => const PageExpermentalFeatures(),
+      builder: (context) => const ExpermentalFeaturesPage(),
     ),
   );
 }
 
-class PageExpermentalFeatures extends StatelessWidget {
-  const PageExpermentalFeatures({super.key});
+class ExpermentalFeaturesPage extends StatelessWidget {
+  const ExpermentalFeaturesPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const ExpermentalFeaturesView();
+  Widget build(BuildContext context) => const _Page();
 }
 
-class ExpermentalFeaturesView extends StatefulWidget {
-  const ExpermentalFeaturesView({super.key});
+class _Page extends StatefulWidget {
+  const _Page();
 
   @override
-  State<StatefulWidget> createState() => _ExpermentalFeaturesView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-final class _ExpermentalFeaturesView extends State<ExpermentalFeaturesView> {
+final class _PageState extends State<_Page> {
   AppSyncViewModel? syncvm;
   bool showWarningBanner = false;
 

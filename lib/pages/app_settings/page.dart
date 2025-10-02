@@ -57,7 +57,7 @@ import '../app_debugger/page.dart' as app_debugger;
 import '../app_sync/page.dart' as app_sync;
 import '../common/_dialog.dart';
 import '../common/_widget.dart';
-import '../page_expermental_features.dart' as exp_feature;
+import '../expermental_features/page.dart' as exp_feature;
 import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({
@@ -640,7 +640,8 @@ class _PageState extends State<_Page> with XShare {
                   l10n?.appSetting_experimentalFeatureTile_titleText ??
                       "Experimental Features"),
             ),
-            onTap: () => exp_feature.naviToExpFeaturesPage(context: context),
+            onTap: () =>
+                exp_feature.naviToExperimentalFeaturesPage(context: context),
           ),
           Selector<AppDeveloperViewModel, bool>(
             selector: (context, vm) => vm.isInDevelopMode,
