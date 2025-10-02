@@ -38,7 +38,7 @@ import '../../theme/color.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
-import 'app_providers.dart';
+import 'providers.dart';
 
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
