@@ -12,14 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
 
-import '../pages/app_debugger/page.dart' as app_debugger;
-import 'notification_id_range.dart';
+import '../../../common/consts.dart';
+import '../../common/widgets.dart';
 
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
+class RecordStatusSkipReasonTile extends StatelessWidget {
+  final TextEditingController inputController;
+
+  const RecordStatusSkipReasonTile({super.key, required this.inputController});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: HabitRecordReasonField(
+        chipTextList: skipReasonChipTextList,
+        inputController: inputController,
+      ),
+    );
   }
 }

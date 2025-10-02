@@ -16,7 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/consts.dart';
-import '../../pages/page_app_error.dart';
+import '../../pages/app_error/page.dart' as app_error;
 import '../../theme/color.dart';
 import '../common/app_root_view.dart';
 
@@ -40,7 +40,7 @@ class AppErrorEntry extends StatelessWidget {
               seedColor: appDefaultThemeMainColor, brightness: Brightness.dark),
           useMaterial3: true,
           extensions: [darkCustomColors]),
-      child: PageAppError(
+      child: app_error.AppErrorPage(
         details: errorDetails,
         showCloseBtn: switch (defaultTargetPlatform) {
           TargetPlatform.android => true,

@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
 
-import '../pages/app_debugger/page.dart' as app_debugger;
-import 'notification_id_range.dart';
+const kHabitDetailLoadingCircleIndicatorSize = 64.0;
 
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
-  }
-}
+const kHabitDetailFreqChartHeight = 240.0;
+
+const kHabitDetailFreqChartTitleHeight = 48.0;
+
+const kHabitDetailFutureLoadDuration = Duration(milliseconds: 300);
+
+const kHabitDetailWidgetPadding = EdgeInsets.symmetric(horizontal: 16.0);

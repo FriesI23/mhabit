@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import '../pages/app_debugger/page.dart' as app_debugger;
-import 'notification_id_range.dart';
-
-void notificationTap(NotificationResponse notificationResponse) {
-  final nid = notificationResponse.id;
-  if (nid == appDebuggerNotifyId) {
-    app_debugger.onDebuggerNotificationTapped();
-  }
-}
+export '_widgets/app_sync_fail_logs_tile.dart';
+export '_widgets/app_sync_fetch_interval.dart' show AppSyncFetchIntervalTile;
+export '_widgets/app_sync_fetch_interval.dart';
+export '_widgets/app_sync_summary_tile.dart';
