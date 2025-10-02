@@ -19,7 +19,7 @@ import '../../../logging/helper.dart';
 import '../../../model/habit_date.dart';
 import '../../../model/habit_summary.dart';
 import '../../../theme/color.dart';
-import '../../common/_widget.dart';
+import '../../common/widgets.dart';
 
 class HabitSpecialDateViewedTile extends StatelessWidget {
   final HabitSummaryData data;

@@ -52,11 +52,10 @@ import '../../utils/app_path_provider.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '../app_about/page.dart' as app_about;
 import '../app_debugger/page.dart' as app_debugger;
 import '../app_sync/page.dart' as app_sync;
-import '../common/_dialog.dart';
-import '../common/_widget.dart';
 import '../expermental_features/page.dart' as exp_feature;
 import 'widgets.dart';
 

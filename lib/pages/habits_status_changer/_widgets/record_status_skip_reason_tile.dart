@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/consts.dart';
-import '../../common/_widget.dart';
+import '../../common/widgets.dart';
 
 class RecordStatusSkipReasonTile extends StatelessWidget {
   final TextEditingController inputController;

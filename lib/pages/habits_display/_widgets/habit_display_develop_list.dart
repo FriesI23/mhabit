@@ -21,7 +21,7 @@ import '../../../reminders/notification_channel.dart';
 import '../../../reminders/notification_data.dart';
 import '../../../reminders/notification_id_range.dart' as notifyid;
 import '../../../reminders/notification_service.dart';
-import '../../common/_dialog.dart';
+import '../../common/widgets.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
   final void Function(int count)? onAddCountHabitsPressed;

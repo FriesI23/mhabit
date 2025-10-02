@@ -18,32 +18,30 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../common/_debug.dart';
-import '../common/consts.dart';
-import '../common/utils.dart';
-import '../model/habit_date.dart';
-import '../model/habit_form.dart';
-import '../model/habit_freq.dart';
-import '../persistent/db_helper_provider.dart';
-import '../persistent/local/handler/habit.dart';
+import '../../common/_debug.dart';
+import '../../common/consts.dart';
+import '../../common/utils.dart';
+import '../../model/habit_date.dart';
+import '../../model/habit_form.dart';
+import '../../model/habit_freq.dart';
+import '../../persistent/db_helper_provider.dart';
+import '../../persistent/local/handler/habit.dart';
 
 const _defaultSliverScrollChildCount = 10;
 
-class DebugBuilderMethods {
-  static SliverChildDelegate debugBuildSliverScrollDelegate({int? childCount}) {
-    return SliverChildBuilderDelegate(
-      (context, index) {
-        return Container(
-          color: index.isOdd ? Colors.white : Colors.black12,
-          height: 100.0,
-          child: Center(
-            child: Text('$index', textScaler: const TextScaler.linear(5)),
-          ),
-        );
-      },
-      childCount: childCount ?? _defaultSliverScrollChildCount,
-    );
-  }
+SliverChildDelegate debugBuildSliverScrollDelegate({int? childCount}) {
+  return SliverChildBuilderDelegate(
+    (context, index) {
+      return Container(
+        color: index.isOdd ? Colors.white : Colors.black12,
+        height: 100.0,
+        child: Center(
+          child: Text('$index', textScaler: const TextScaler.linear(5)),
+        ),
+      );
+    },
+    childCount: childCount ?? _defaultSliverScrollChildCount,
+  );
 }
 
 mixin HabitsDisplayViewDebug {

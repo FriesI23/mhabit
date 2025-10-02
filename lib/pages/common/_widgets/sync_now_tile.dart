@@ -17,12 +17,12 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../extension/context_extensions.dart';
-import '../../l10n/localizations.dart';
-import '../../model/app_sync_task.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_summary.dart';
-import '../../widgets/styles.dart';
+import '../../../extension/context_extensions.dart';
+import '../../../l10n/localizations.dart';
+import '../../../model/app_sync_task.dart';
+import '../../../providers/app_sync.dart';
+import '../../../providers/habit_summary.dart';
+import '../../../widgets/styles.dart';
 import 'sync_loading_indicator.dart';
 
 class AppSyncNowTile extends StatefulWidget {

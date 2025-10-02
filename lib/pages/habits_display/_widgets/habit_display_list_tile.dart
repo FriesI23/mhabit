@@ -20,7 +20,7 @@ import '../../../extension/colorscheme_extensions.dart';
 import '../../../model/habit_date.dart';
 import '../../../model/habit_summary.dart';
 import '../../../theme/color.dart';
-import '../../common/_widget.dart';
+import '../../common/widgets.dart';
 
 class HabitDisplayListTile extends StatelessWidget {
   final HabitDate? startDate;

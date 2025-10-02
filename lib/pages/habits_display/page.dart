@@ -54,10 +54,9 @@ import '../../providers/habits_sort.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
-import '../_debug.dart';
+import '../common/debug.dart';
+import '../common/widgets.dart';
 import '../app_settings/page.dart' as app_settings;
-import '../common/_dialog.dart';
-import '../common/_widget.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
@@ -867,9 +866,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   Widget _buildScrollablePlaceHolder(BuildContext context) {
-    return SliverList(
-        delegate:
-            DebugBuilderMethods.debugBuildSliverScrollDelegate(childCount: 0));
+    return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
 
   @override

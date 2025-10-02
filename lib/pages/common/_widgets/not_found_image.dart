@@ -15,9 +15,9 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../../assets/assets.dart';
-import '../../extension/color_extensions.dart';
-import '../../widgets/widgets.dart';
+import '../../../assets/assets.dart';
+import '../../../extension/color_extensions.dart';
+import '../../../widgets/widgets.dart';
 
 part 'not_found_image.g.dart';
 

@@ -38,7 +38,7 @@ import '../../reminders/notification_channel.dart';
 import '../../reminders/notification_id_range.dart' as notifyid;
 import '../../reminders/notification_service.dart';
 import '../../widgets/widgets.dart';
-import '../_debug.dart';
+import '../common/debug.dart';
 import 'widgets.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({
@@ -295,9 +295,7 @@ class _HabitEditView extends State<HabitEditView> {
   }
 
   Widget _buildScrollablePlaceHolder(BuildContext context) {
-    return SliverList(
-        delegate:
-            DebugBuilderMethods.debugBuildSliverScrollDelegate(childCount: 0));
+    return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
 
   @override

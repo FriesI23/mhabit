@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../l10n/localizations.dart';
+import '../../../l10n/localizations.dart';
 
 class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
   const AppSyncWebDavNewServerConfirmDialog({super.key});

@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/localizations.dart';
-import '../../logging/level.dart';
+import '../../../l10n/localizations.dart';
+import '../../../logging/level.dart';
 
 class LogLevelChangerTile extends StatelessWidget {
   final LogLevel crtLevel;

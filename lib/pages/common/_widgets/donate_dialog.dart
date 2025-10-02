@@ -16,11 +16,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_donation_buttons/flutter_donation_buttons.dart';
 
-import '../../common/enums.dart';
-import '../../common/utils.dart';
-import '../../l10n/localizations.dart';
-import '../../widgets/helpers.dart';
-import '../../widgets/widgets.dart';
+import '../../../common/enums.dart';
+import '../../../common/utils.dart';
+import '../../../l10n/localizations.dart';
+import '../../../widgets/helpers.dart';
+import '../../../widgets/widgets.dart';
 
 enum DonateDialogResult { noAction, copied, donated }
 

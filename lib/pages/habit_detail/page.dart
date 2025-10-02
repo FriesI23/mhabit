@@ -50,9 +50,8 @@ import '../../utils/xshare.dart';
 import '../../widgets/animations.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
-import '../_debug.dart';
-import '../common/_dialog.dart';
-import '../common/_widget.dart';
+import '../common/debug.dart';
+import '../common/widgets.dart';
 import '../habit_edit/page.dart' as habit_edit;
 import 'widgets.dart';
 
@@ -402,8 +401,7 @@ class _PageState extends State<_Page>
   Widget _buildScrollablePlaceHolder(BuildContext context) {
     assert(kDebugMode);
     return SliverList(
-      delegate:
-          DebugBuilderMethods.debugBuildSliverScrollDelegate(childCount: 0),
+      delegate: debugBuildSliverScrollDelegate(childCount: 0),
     );
   }
 

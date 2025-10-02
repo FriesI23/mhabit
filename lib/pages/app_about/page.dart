@@ -24,8 +24,7 @@ import '../../logging/helper.dart';
 import '../../model/contributor.dart';
 import '../../providers/about_info.dart';
 import '../../widgets/widgets.dart';
-import '../common/_dialog.dart';
-import '../common/contributor_tile.dart';
+import '../common/widgets.dart';
 import 'widgets.dart';
 
 Future<void> naviToAppAboutPage({required BuildContext context}) async {

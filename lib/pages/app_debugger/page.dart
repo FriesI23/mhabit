@@ -33,7 +33,7 @@ import '../../utils/debug_info.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
-import '../common/_widget.dart';
+import '../common/widgets.dart';
 import 'widgets.dart';
 
 Future<void> onDebuggerNotificationTapped() async {
