@@ -16,7 +16,7 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/persistent/utils.dart';
+import 'package:mhabit/storage/utils.dart';
 
 void main() {
   group("test processDuplicatedMap", () {

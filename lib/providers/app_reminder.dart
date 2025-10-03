@@ -18,9 +18,9 @@ import '../common/consts.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/app_reminder_config.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
 import '../reminders/notification_service.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 import 'commons.dart';
 
 class AppReminderViewModel extends ChangeNotifier

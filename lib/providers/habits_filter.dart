@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../logging/helper.dart';
 import '../model/habit_display.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 
 class HabitsFilterViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

@@ -31,8 +31,8 @@ import '../model/habit_daily_record_form.dart';
 import '../model/habit_date.dart';
 import '../model/habit_form.dart';
 import '../model/habit_summary.dart';
-import '../persistent/db_helper_provider.dart';
-import '../persistent/local/handler/record.dart';
+import '../storage/db/handlers/record.dart';
+import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 part 'habit_status_changer.g.dart';

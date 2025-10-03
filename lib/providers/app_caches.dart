@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import '../model/cache.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 
 enum _InputFillCacheKey {
   habitEditTargetDays,

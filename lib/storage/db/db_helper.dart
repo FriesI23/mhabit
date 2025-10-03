@@ -30,9 +30,9 @@ import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../utils/app_path_provider.dart';
 import '../utils.dart';
-import 'handler/habit.dart';
-import 'handler/record.dart';
-import 'handler/sync.dart';
+import 'handlers/habit.dart';
+import 'handlers/record.dart';
+import 'handlers/sync.dart';
 import 'sql.dart';
 import 'table.dart';
 

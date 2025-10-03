@@ -15,8 +15,8 @@
 import '../common/consts.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
-import '../persistent/local/handler/habit.dart';
-import '../persistent/local/handler/record.dart';
+import '../storage/db/handlers/habit.dart';
+import '../storage/db/handlers/record.dart';
 import 'habit_export.dart';
 
 class HabitImport {

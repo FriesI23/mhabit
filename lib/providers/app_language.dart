@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../persistent/profile/handler/app_language.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers/app_language.dart';
+import '../storage/profile_provider.dart';
 
 class AppLanguageViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   AppLanguageProfileHanlder? _language;

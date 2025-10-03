@@ -20,12 +20,12 @@ import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../logging/logger_manager.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
 import '../reminders/notification_channel.dart';
 import '../reminders/notification_data.dart';
 import '../reminders/notification_id_range.dart';
 import '../reminders/notification_service.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 import 'commons.dart';
 
 class AppDebuggerViewModel

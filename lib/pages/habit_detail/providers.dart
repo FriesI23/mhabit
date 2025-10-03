@@ -16,12 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../persistent/db_helper_provider.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
 import '../../reminders/notification_channel.dart';
+import '../../storage/db_helper_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});

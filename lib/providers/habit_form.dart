@@ -26,8 +26,8 @@ import '../model/habit_display.dart';
 import '../model/habit_form.dart';
 import '../model/habit_freq.dart';
 import '../model/habit_reminder.dart';
-import '../persistent/db_helper_provider.dart';
-import '../persistent/local/handler/habit.dart';
+import '../storage/db/handlers/habit.dart';
+import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFormViewModel extends ChangeNotifier

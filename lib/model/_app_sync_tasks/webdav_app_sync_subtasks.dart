@@ -24,7 +24,7 @@ import 'package:simple_webdav_client/utils.dart' hide IterableExtension;
 import '../../common/types.dart';
 import '../../extension/webdav_extensions.dart';
 import '../../logging/helper.dart';
-import '../../persistent/local/handler/sync.dart';
+import '../../storage/db/handlers/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
 import 'webdav_app_sync_models.dart';

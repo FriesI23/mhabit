@@ -17,8 +17,6 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../persistent/db_helper_provider.dart';
-import '../../persistent/profile_provider.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
@@ -27,6 +25,8 @@ import '../../providers/habits_filter.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
 import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
+import '../../storage/db_helper_provider.dart';
+import '../../storage/profile_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});

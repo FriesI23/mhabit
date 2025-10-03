@@ -18,8 +18,8 @@ import 'package:tuple/tuple.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../model/habit_display.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 import '../theme/icon.dart';
 
 class HabitsSortViewModel extends ChangeNotifier

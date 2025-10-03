@@ -20,7 +20,7 @@ import '../annotation/habit_display_op_config.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
-import '../persistent/local/handler/habit.dart';
+import '../storage/db/handlers/habit.dart';
 import 'common.dart';
 import 'habit_summary.dart';
 

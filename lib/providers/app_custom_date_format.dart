@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../logging/helper.dart';
 import '../model/custom_date_format.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 
 class AppCustomDateYmdHmsConfigViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

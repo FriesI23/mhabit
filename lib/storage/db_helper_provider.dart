@@ -23,10 +23,10 @@ import '../common/types.dart';
 import '../logging/helper.dart';
 import '../model/habit_summary.dart';
 import '../providers/commons.dart';
-import 'local/db_helper.dart';
-import 'local/handler/habit.dart';
-import 'local/handler/record.dart';
-import 'local/handler/sync.dart';
+import 'db/db_helper.dart';
+import 'db/handlers/habit.dart';
+import 'db/handlers/record.dart';
+import 'db/handlers/sync.dart';
 
 class DBHelperViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {

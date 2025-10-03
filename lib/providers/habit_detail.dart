@@ -31,8 +31,8 @@ import '../model/habit_form.dart';
 import '../model/habit_score.dart';
 import '../model/habit_status.dart';
 import '../model/habit_summary.dart';
-import '../persistent/db_helper_provider.dart';
 import '../reminders/notification_service.dart';
+import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 import 'utils.dart';
 

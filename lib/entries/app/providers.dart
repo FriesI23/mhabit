@@ -16,8 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../persistent/db_helper_provider.dart';
-import '../../persistent/profile_provider.dart';
 import '../../providers/app_caches.dart';
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
@@ -34,6 +32,8 @@ import '../../providers/habit_op_config.dart';
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../reminders/notification_channel.dart';
+import '../../storage/db_helper_provider.dart';
+import '../../storage/profile_provider.dart';
 
 class AppProviders extends SingleChildStatelessWidget {
   const AppProviders({super.key, super.child});

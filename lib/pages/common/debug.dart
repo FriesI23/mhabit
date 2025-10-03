@@ -24,8 +24,8 @@ import '../../common/utils.dart';
 import '../../model/habit_date.dart';
 import '../../model/habit_form.dart';
 import '../../model/habit_freq.dart';
-import '../../persistent/db_helper_provider.dart';
-import '../../persistent/local/handler/habit.dart';
+import '../../storage/db/handlers/habit.dart';
+import '../../storage/db_helper_provider.dart';
 
 const _defaultSliverScrollChildCount = 10;
 

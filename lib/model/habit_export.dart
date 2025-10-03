@@ -16,8 +16,8 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/types.dart';
-import '../persistent/local/handler/habit.dart';
-import '../persistent/local/handler/record.dart';
+import '../storage/db/handlers/habit.dart';
+import '../storage/db/handlers/record.dart';
 import 'common.dart';
 
 part 'habit_export.g.dart';

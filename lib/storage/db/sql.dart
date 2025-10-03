@@ -14,7 +14,7 @@
 
 import 'package:sqflite/sqflite.dart';
 
-import 'handler/sync.dart';
+import 'handlers/sync.dart';
 import 'table.dart';
 
 String buildConflictAlgorithm(ConflictAlgorithm conflictAlgorithm) =>
