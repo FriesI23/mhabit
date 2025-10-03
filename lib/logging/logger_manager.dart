@@ -17,14 +17,14 @@ import 'package:logger/logger.dart' as l;
 
 import '../common/async.dart';
 import '../utils/app_path_provider.dart';
-import 'handler/console_output.dart';
-import 'handler/console_printer.dart';
-import 'handler/filter.dart';
-import 'logger/app_sync_logger.dart';
-import 'logger/text_logger.dart';
-import 'logger/value_change_logger.dart';
-import 'logger/widget_logger.dart';
+import 'handlers/console_output.dart';
+import 'handlers/console_printer.dart';
+import 'handlers/filter.dart';
 import 'logger_type.dart';
+import 'loggers/app_sync_logger.dart';
+import 'loggers/text_logger.dart';
+import 'loggers/value_change_logger.dart';
+import 'loggers/widget_logger.dart';
 
 enum AppLoggerHandlerType {
   custom,
