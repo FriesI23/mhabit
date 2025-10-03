@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import '../common/consts.dart';
-import '../extension/datetime_extensions.dart';
+import '../extensions/datetime_extensions.dart';
 
 class HabitDate implements DateTime, DateTimeExtensionsABC {
   late final DateTime _date;

@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../extension/colorscheme_extensions.dart';
-import '../../../extension/custom_color_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
+import '../../../extensions/custom_color_extensions.dart';
 import '../../../model/habit_form.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';

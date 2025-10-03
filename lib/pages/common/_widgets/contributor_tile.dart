@@ -17,7 +17,7 @@ import 'package:intl/locale.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/utils.dart';
-import '../../../extension/locale_exntensions.dart';
+import '../../../extensions/locale_exntensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';

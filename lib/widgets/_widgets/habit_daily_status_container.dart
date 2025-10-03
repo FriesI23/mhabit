@@ -17,8 +17,8 @@ import 'package:intl/intl.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
-import '../../extension/colorscheme_extensions.dart';
-import '../../extension/custom_color_extensions.dart';
+import '../../extensions/colorscheme_extensions.dart';
+import '../../extensions/custom_color_extensions.dart';
 import '../../model/habit_daily_record_form.dart';
 import '../../model/habit_form.dart';
 import '../../theme/color.dart';

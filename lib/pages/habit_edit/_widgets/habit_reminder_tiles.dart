@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../../extension/colorscheme_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../model/habit_reminder.dart';
 import '../../../widgets/widgets.dart';

@@ -21,7 +21,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../annotation/_json_annotation.dart';
 import '../common/enums.dart';
 import '../common/utils.dart';
-import '../extension/datetime_extensions.dart';
+import '../extensions/datetime_extensions.dart';
 import '../l10n/localizations.dart';
 import 'common.dart';
 import 'habit_date.dart';

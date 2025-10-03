@@ -23,7 +23,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
-import '../extension/datetime_extensions.dart';
+import '../extensions/datetime_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';

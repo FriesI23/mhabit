@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../extension/num_extensions.dart';
+import '../extensions/num_extensions.dart';
 import '../logging/helper.dart';
 import '../model/habit_daily_goal.dart';
 import '../model/habit_display.dart';

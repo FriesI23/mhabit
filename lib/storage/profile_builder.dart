@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../extension/async_extensions.dart';
+import '../extensions/async_extensions.dart';
 import '../logging/helper.dart';
 import 'profile_provider.dart';
 

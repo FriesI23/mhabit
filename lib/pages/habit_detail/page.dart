@@ -19,13 +19,13 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../../extension/custom_color_extensions.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
-import '../../extension/async_extensions.dart';
-import '../../extension/color_extensions.dart';
-import '../../extension/context_extensions.dart';
-import '../../extension/num_extensions.dart';
+import '../../extensions/async_extensions.dart';
+import '../../extensions/color_extensions.dart';
+import '../../extensions/context_extensions.dart';
+import '../../extensions/custom_color_extensions.dart';
+import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../model/custom_date_format.dart';

@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../extension/colorscheme_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../reminders/notification_channel.dart';
 import '../../../reminders/notification_data.dart';

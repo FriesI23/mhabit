@@ -20,8 +20,8 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/types.dart';
 import '../../common/utils.dart';
-import '../../extension/context_extensions.dart';
-import '../../extension/navigator_extensions.dart';
+import '../../extensions/context_extensions.dart';
+import '../../extensions/navigator_extensions.dart';
 import '../../logging/helper.dart';
 import '../../model/custom_date_format.dart';
 import '../../model/habit_date.dart';

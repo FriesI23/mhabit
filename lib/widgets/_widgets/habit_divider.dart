@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../extension/colorscheme_extensions.dart';
+import '../../extensions/colorscheme_extensions.dart';
 
 class HabitDivider extends StatelessWidget {
   final double? height;

@@ -15,7 +15,7 @@
 import 'package:cryptofont/cryptofont.dart';
 import 'package:flutter/material.dart';
 
-import '../../extension/color_extensions.dart';
+import '../../extensions/color_extensions.dart';
 import '../../theme/color.dart';
 
 enum CryptoDonateButtonType {

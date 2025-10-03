@@ -25,7 +25,7 @@ import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
-import '../../extension/context_extensions.dart';
+import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';

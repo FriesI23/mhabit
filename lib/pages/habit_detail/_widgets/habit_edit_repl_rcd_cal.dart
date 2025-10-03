@@ -19,8 +19,8 @@ import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
-import '../../../extension/context_extensions.dart';
-import '../../../extension/custom_color_extensions.dart';
+import '../../../extensions/context_extensions.dart';
+import '../../../extensions/custom_color_extensions.dart';
 import '../../../model/habit_daily_record_form.dart';
 import '../../../model/habit_date.dart';
 import '../../../model/habit_detail_chart.dart';

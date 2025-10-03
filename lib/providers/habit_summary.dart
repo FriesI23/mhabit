@@ -25,7 +25,7 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../extension/iterable_extensions.dart';
+import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
 import '../model/habit_date.dart';

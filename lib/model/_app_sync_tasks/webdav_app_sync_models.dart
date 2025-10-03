@@ -26,7 +26,7 @@ import 'package:simple_webdav_client/error.dart';
 import '../../annotation/_json_annotation.dart';
 import '../../annotation/proxy_annotation.dart';
 import '../../common/types.dart';
-import '../../extension/webdav_extensions.dart';
+import '../../extensions/webdav_extensions.dart';
 import '../../logging/helper.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../storage/db/handlers/record.dart';

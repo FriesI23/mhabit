@@ -24,7 +24,7 @@ import 'package:simple_webdav_client/utils.dart';
 
 import '../../common/consts.dart';
 import '../../common/exceptions.dart';
-import '../../extension/webdav_extensions.dart';
+import '../../extensions/webdav_extensions.dart';
 import '../../logging/helper.dart';
 import '../../storage/db/handlers/sync.dart';
 import '../app_sync_server.dart';

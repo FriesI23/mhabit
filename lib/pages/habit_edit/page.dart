@@ -20,7 +20,7 @@ import 'package:tuple/tuple.dart';
 import '../../common/consts.dart';
 import '../../common/rules.dart';
 import '../../common/types.dart';
-import '../../extension/context_extensions.dart';
+import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../model/habit_daily_goal.dart';

@@ -23,7 +23,7 @@ import 'package:uuid/uuid.dart';
 import '../common/async.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
-import '../extension/notification_extensions.dart';
+import '../extensions/notification_extensions.dart';
 import '../logging/helper.dart';
 import '../model/app_notify_config.dart';
 import '../model/habit_date.dart';
