@@ -15,7 +15,7 @@
 import 'dart:convert';
 
 import '../../../common/types.dart';
-import '../../../model/habit_display.dart';
+import '../../../models/habit_display.dart';
 import '../profile_helper.dart';
 
 final class HabitCellGestureModeProfileHandler

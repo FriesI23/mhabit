@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 
 class HabitEditHabitTypeTile extends StatelessWidget {
   final HabitType habitType;

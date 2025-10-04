@@ -16,7 +16,7 @@ import 'dart:convert';
 
 import '../../../common/types.dart';
 import '../../../logging/helper.dart';
-import '../../../model/custom_date_format.dart';
+import '../../../models/custom_date_format.dart';
 import '../profile_helper.dart';
 
 final class ShowDateFormatProfileHandler

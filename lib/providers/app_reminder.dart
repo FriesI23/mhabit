@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
-import '../model/app_reminder_config.dart';
+import '../models/app_reminder_config.dart';
 import '../reminders/notification_service.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';

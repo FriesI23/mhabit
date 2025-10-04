@@ -21,7 +21,7 @@ import '../../../extensions/locale_exntensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
-import '../../../model/contributor.dart';
+import '../../../models/contributor.dart';
 import '../../../widgets/widgets.dart';
 
 class ContributorTile extends StatelessWidget {

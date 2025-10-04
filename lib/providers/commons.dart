@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/habit_summary.dart';
+import '../models/habit_summary.dart';
 import '../reminders/notification_channel.dart';
 
 mixin ScrollControllerChangeNotifierMixin {

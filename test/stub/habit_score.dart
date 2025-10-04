@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import 'package:mhabit/common/types.dart';
-import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_score.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_score.dart';
 
 class HabitScoreStub implements HabitScore {
   @override

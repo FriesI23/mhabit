@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:mhabit/model/custom_date_format.dart';
+import 'package:mhabit/models/custom_date_format.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
-import '../../model/app_sync_server.dart';
+import '../../models/app_sync_server.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_sync_server_form.dart';

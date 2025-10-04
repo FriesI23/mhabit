@@ -15,7 +15,7 @@
 import 'dart:convert';
 
 import '../../../common/types.dart';
-import '../../../model/app_notify_config.dart';
+import '../../../models/app_notify_config.dart';
 import '../profile_helper.dart';
 
 class AppNotifyConfigProfileHandler

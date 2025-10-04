@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../extensions/custom_color_extensions.dart';
-import '../../model/habit_form.dart';
+import '../../models/habit_form.dart';
 import '../../theme/color.dart';
 
 class MonthPickerCell extends StatelessWidget {

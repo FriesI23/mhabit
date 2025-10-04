@@ -17,7 +17,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_display.dart';
+import '../../../models/habit_display.dart';
 import '../../../providers/habits_sort.dart';
 import '../../../widgets/widgets.dart';
 

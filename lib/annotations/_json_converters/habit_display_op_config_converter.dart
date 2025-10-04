@@ -15,7 +15,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../common/enums.dart';
-import '../../model/habit_display.dart';
+import '../../models/habit_display.dart';
 
 class HabitDisplayOpConfigConverter
     implements JsonConverter<HabitDisplayOpConfig, List<int>> {

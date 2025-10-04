@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/habit_import.dart';
+import '../models/habit_import.dart';
 import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 

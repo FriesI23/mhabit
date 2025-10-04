@@ -16,9 +16,9 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:mhabit/common/types.dart';
-import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_freq.dart';
-import 'package:mhabit/model/habit_summary.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_summary.dart';
 
 void main() {
   sinplePerformanceTest(preRecordNum: 365, days: 7, freq: 3);

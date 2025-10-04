@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../logging/helper.dart';
-import '../model/custom_date_format.dart';
+import '../models/custom_date_format.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 

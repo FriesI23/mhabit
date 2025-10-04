@@ -24,10 +24,10 @@ import '../../../common/types.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../extensions/num_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_daily_goal.dart';
-import '../../../model/habit_daily_record_form.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_daily_goal.dart';
+import '../../../models/habit_daily_record_form.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 
 const _kDefaultHabitRecordChipListHeight = 56.0;

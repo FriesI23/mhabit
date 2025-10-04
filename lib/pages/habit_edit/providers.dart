@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/habit_form.dart';
+import '../../models/habit_form.dart';
 import '../../providers/habit_form.dart';
 import '../../storage/db_helper_provider.dart';
 

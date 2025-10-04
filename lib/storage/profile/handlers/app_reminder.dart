@@ -15,7 +15,7 @@
 import 'dart:convert';
 
 import '../../../common/types.dart';
-import '../../../model/app_reminder_config.dart';
+import '../../../models/app_reminder_config.dart';
 import '../profile_helper.dart';
 
 final class AppReminderProfileHandler

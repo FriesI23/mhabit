@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 

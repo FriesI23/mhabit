@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../model/cache.dart';
+import '../models/cache.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 

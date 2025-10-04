@@ -19,7 +19,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../common/types.dart';
 import '../../../logging/helper.dart';
-import '../../../model/app_sync_task.dart';
+import '../../../models/app_sync_tasks.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
 import '../table.dart';

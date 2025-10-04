@@ -14,7 +14,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../model/habit_date.dart';
+import '../../models/habit_date.dart';
 
 class EpochHabitDateConverter implements JsonConverter<HabitDate, int> {
   const EpochHabitDateConverter();

@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../../extensions/context_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/app_sync_task.dart';
+import '../../../models/app_sync_tasks.dart';
 import '../../../providers/app_sync.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../widgets/styles.dart';

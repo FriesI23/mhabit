@@ -21,7 +21,7 @@ import '../common/async.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../logging/helper.dart';
-import '../model/habit_summary.dart';
+import '../models/habit_summary.dart';
 import '../providers/commons.dart';
 import 'db/db_helper.dart';
 import 'db/handlers/habit.dart';

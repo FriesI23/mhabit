@@ -16,8 +16,8 @@ import 'dart:convert';
 
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
-import '../../../model/app_sync_options.dart';
-import '../../../model/app_sync_server.dart';
+import '../../../models/app_sync_options.dart';
+import '../../../models/app_sync_server.dart';
 import '../converter.dart';
 import '../profile_helper.dart';
 import 'app_experimental_feature.dart';

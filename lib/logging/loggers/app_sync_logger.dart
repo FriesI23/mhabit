@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../../model/_app_sync_tasks/app_sync_task.dart';
+import '../../models/app_sync_tasks.dart' show AppSyncContext;
 import '../logger_manager.dart';
 import '../logger_type.dart';
 import 'text_logger.dart';

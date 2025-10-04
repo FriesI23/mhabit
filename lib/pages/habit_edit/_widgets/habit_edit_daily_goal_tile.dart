@@ -18,7 +18,7 @@ import '../../../common/re.dart';
 import '../../../common/types.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 
 class HabitEditDailyGoalTile extends StatelessWidget {
   final HabitType habitType;

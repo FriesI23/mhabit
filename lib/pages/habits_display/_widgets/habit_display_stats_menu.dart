@@ -20,8 +20,8 @@ import 'package:provider/provider.dart';
 
 import '../../../extensions/num_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_stat.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_stat.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../theme/icon.dart';
 

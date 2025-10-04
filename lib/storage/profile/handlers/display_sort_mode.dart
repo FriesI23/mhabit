@@ -17,7 +17,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
-import '../../../model/habit_display.dart';
+import '../../../models/habit_display.dart';
 import '../profile_helper.dart';
 
 final class DisplaySortModeProfileHandler extends ProfileHelperConvertHandler<

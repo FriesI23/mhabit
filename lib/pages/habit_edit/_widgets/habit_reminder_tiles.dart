@@ -18,7 +18,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_reminder.dart';
+import '../../../models/habit_reminder.dart';
 import '../../../widgets/widgets.dart';
 
 class HabitReminderTiles extends StatefulWidget {

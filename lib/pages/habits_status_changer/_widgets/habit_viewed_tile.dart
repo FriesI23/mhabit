@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../logging/helper.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_summary.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
 import '../../common/widgets.dart';
 

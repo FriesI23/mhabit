@@ -17,8 +17,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/model/app_sync_server.dart';
-import 'package:mhabit/model/app_sync_task.dart';
+import 'package:mhabit/models/app_sync_server.dart';
+import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/storage/db/handlers/sync.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

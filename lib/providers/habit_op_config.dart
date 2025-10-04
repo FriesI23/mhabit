@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../common/enums.dart';
 import '../logging/helper.dart';
-import '../model/habit_display.dart';
+import '../models/habit_display.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 

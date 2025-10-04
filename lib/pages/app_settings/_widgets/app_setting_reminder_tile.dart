@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../model/app_reminder_config.dart';
+import '../../../models/app_reminder_config.dart';
 
 class AppSettingReminderTile extends StatefulWidget {
   final AppReminderConfig config;

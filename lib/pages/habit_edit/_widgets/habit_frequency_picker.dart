@@ -20,8 +20,8 @@ import 'package:flutter/services.dart';
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
-import '../../../model/habit_form.dart';
-import '../../../model/habit_freq.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/habit_freq.dart';
 
 const double _kDefaultHabitFreqTextFieldHeight = 30;
 const double _kDefualtHabitFreqTextFieldWidth = 48;

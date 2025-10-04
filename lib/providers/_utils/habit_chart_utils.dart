@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import '../../model/habit_date.dart';
-import '../../model/habit_detail_chart.dart';
+import '../../models/habit_date.dart';
+import '../../models/habit_detail_chart.dart';
 import '../../utils/habit_date.dart';
 
 typedef HabitDetailChartHelperDateFetcherCb<T> = HabitDate Function(

@@ -17,7 +17,7 @@ import 'dart:collection';
 import 'package:intl/locale.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../model/contributor.dart';
+import '../../models/contributor.dart';
 
 class ContributorCollectionConverter
     implements JsonConverter<ContributorCollection, Map<String, dynamic>> {

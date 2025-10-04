@@ -19,7 +19,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/types.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 import '../db_cell.dart';
 import '../db_helper.dart';
 import '../sql.dart';

@@ -18,10 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../l10n/localizations.dart';
-import '../model/app_reminder_config.dart';
-import '../model/app_sync_options.dart';
-import '../model/habit_display.dart';
-import '../model/habit_form.dart';
+import '../models/app_reminder_config.dart';
+import '../models/app_sync_options.dart';
+import '../models/habit_display.dart';
+import '../models/habit_form.dart';
 import '../theme/color.dart';
 import 'enums.dart';
 

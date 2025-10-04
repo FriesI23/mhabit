@@ -21,9 +21,9 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../common/debug.dart';
 import '../../common/utils.dart';
-import '../../model/habit_date.dart';
-import '../../model/habit_form.dart';
-import '../../model/habit_freq.dart';
+import '../../models/habit_date.dart';
+import '../../models/habit_form.dart';
+import '../../models/habit_freq.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../storage/db_helper_provider.dart';
 
