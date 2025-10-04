@@ -23,8 +23,8 @@ import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/error.dart';
 
-import '../../annotation/_json_annotation.dart';
-import '../../annotation/proxy_annotation.dart';
+import '../../annotations/json_annotations.dart';
+import '../../annotations/proxy_annotation.dart';
 import '../../common/types.dart';
 import '../../extensions/webdav_extensions.dart';
 import '../../logging/helper.dart';

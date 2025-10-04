@@ -14,7 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../annotation/proxy_annotation.dart';
+import '../annotations/proxy_annotation.dart';
 
 part 'material_localizations.g.dart';
 

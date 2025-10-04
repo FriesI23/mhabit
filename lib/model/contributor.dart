@@ -17,7 +17,7 @@ import 'dart:collection';
 import 'package:intl/locale.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../annotation/contributor_converter.dart';
+import '../annotations/json_annotations.dart';
 
 part 'contributor.g.dart';
 

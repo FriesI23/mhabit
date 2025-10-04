@@ -12,7 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export './epoch_date_time_converter.dart';
-export './epoch_habit_date_converter.dart';
-export './normalizing_list_converter.dart';
-export './time_of_day_converter.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import '../../model/habit_date.dart';
+
+class EpochHabitDateConverter implements JsonConverter<HabitDate, int> {
+  const EpochHabitDateConverter();
+
+  @override
+  HabitDate fromJson(int json) => HabitDate.fromEpochDay(json);
+
+  @override
+  int toJson(HabitDate object) => object.epochDay;
+}

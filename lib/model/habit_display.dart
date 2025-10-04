@@ -16,7 +16,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:quiver/core.dart';
 
-import '../annotation/habit_display_op_config.dart';
+import '../annotations/json_annotations.dart';
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';

@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../annotation/_json_annotation.dart';
+import '../annotations/json_annotations.dart';
 import '../common/enums.dart';
 import '../common/utils.dart';
 import '../extensions/datetime_extensions.dart';

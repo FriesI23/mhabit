@@ -14,7 +14,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import '../common/types.dart';
+import '../../common/types.dart';
 
 class NormalizingListConverter
     implements JsonConverter<List<JsonMap>, List<List>> {
