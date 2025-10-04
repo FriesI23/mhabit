@@ -16,9 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../../../common/types.dart';
-import '../../../extension/colorscheme_extensions.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_summary.dart';
+import '../../../extensions/colorscheme_extensions.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
 import '../../common/widgets.dart';
 

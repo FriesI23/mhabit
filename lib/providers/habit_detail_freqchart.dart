@@ -21,8 +21,8 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/utils.dart';
-import '../model/habit_date.dart';
-import '../model/habit_detail_chart.dart';
+import '../models/habit_date.dart';
+import '../models/habit_detail_chart.dart';
 import '../utils/habit_date.dart';
 import 'utils.dart';
 

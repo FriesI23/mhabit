@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../../extension/textscale_extensions.dart';
+import '../../extensions/textscale_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import 'chip_list.dart';

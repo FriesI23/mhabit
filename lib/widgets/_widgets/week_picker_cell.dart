@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/utils.dart';
-import '../../extension/custom_color_extensions.dart';
-import '../../model/habit_form.dart';
+import '../../extensions/custom_color_extensions.dart';
+import '../../models/habit_form.dart';
 import '../../theme/color.dart';
 
 class WeekPickerCell extends StatelessWidget {

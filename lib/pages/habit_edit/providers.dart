@@ -16,9 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/habit_form.dart';
-import '../../persistent/db_helper_provider.dart';
+import '../../models/habit_form.dart';
 import '../../providers/habit_form.dart';
+import '../../storage/db_helper_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final HabitForm? initForm;

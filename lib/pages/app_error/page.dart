@@ -19,7 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../common/app_info.dart';
-import '../../extension/navigator_extensions.dart';
+import '../../extensions/navigator_extensions.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';

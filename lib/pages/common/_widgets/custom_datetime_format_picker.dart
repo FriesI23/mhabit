@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../model/custom_date_format.dart';
+import '../../../models/custom_date_format.dart';
 import '../../../widgets/widgets.dart';
 
 Future<CustomDateYmdHmsConfig?> showCustomDateTimeFormatPickerDialog({

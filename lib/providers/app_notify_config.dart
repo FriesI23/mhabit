@@ -17,10 +17,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import '../model/app_notify_config.dart';
-import '../persistent/profile/handler/app_notify_config.dart';
-import '../persistent/profile_provider.dart';
+import '../models/app_notify_config.dart';
 import '../reminders/notification_service.dart';
+import '../storage/profile/handlers/app_notify_config.dart';
+import '../storage/profile_provider.dart';
 import 'commons.dart';
 
 abstract interface class AppNotifyConfigViewModel

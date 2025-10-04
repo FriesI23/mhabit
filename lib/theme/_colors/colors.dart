@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 
-import '../../model/habit_form.dart';
+import '../../models/habit_form.dart';
 import '../color.dart';
 import 'custom_color.g.dart';
 

@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/app_sync_server.dart';
+import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerTimeoutTile extends StatefulWidget {

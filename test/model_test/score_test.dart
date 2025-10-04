@@ -16,10 +16,10 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/model/habit_date.dart';
-import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_score.dart';
-import 'package:mhabit/model/habit_summary.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_score.dart';
+import 'package:mhabit/models/habit_summary.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
 

@@ -17,10 +17,10 @@ import 'package:provider/provider.dart';
 import 'package:simple_heatmap_calendar/simple_heatmap_calendar.dart';
 
 import '../../../common/types.dart';
-import '../../../extension/color_extensions.dart';
-import '../../../extension/custom_color_extensions.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_detail_chart.dart';
+import '../../../extensions/color_extensions.dart';
+import '../../../extensions/custom_color_extensions.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_detail_chart.dart';
 import '../../../providers/habit_detail.dart';
 import '../../../theme/color.dart';
 

@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../model/habit_import.dart';
-import '../persistent/db_helper_provider.dart';
+import '../models/habit_import.dart';
+import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier

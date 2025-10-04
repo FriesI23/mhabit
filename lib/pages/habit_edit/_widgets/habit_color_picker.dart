@@ -15,9 +15,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../../../extension/custom_color_extensions.dart';
+import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 import '../../../theme/color.dart';
 
 Future<HabitColorType?> showHabitColorPickerDialog({

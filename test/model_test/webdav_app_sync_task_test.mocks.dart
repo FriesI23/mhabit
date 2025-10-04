@@ -6,10 +6,10 @@
 import 'dart:async' as _i4;
 import 'dart:convert' as _i2;
 
-import 'package:mhabit/model/_app_sync_tasks/app_sync_task.dart' as _i7;
-import 'package:mhabit/model/_app_sync_tasks/webdav_app_sync_task_status.dart'
+import 'package:mhabit/models/_app_sync_tasks/app_sync_task.dart' as _i7;
+import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_task_status.dart'
     as _i5;
-import 'package:mhabit/model/app_sync_server.dart' as _i3;
+import 'package:mhabit/models/app_sync_server.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 

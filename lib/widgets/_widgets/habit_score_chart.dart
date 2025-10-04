@@ -24,8 +24,8 @@ import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../model/habit_date.dart';
-import '../../model/habit_detail_chart.dart';
+import '../../models/habit_date.dart';
+import '../../models/habit_detail_chart.dart';
 import 'l10n_builder.dart';
 import 'scrollable_chart.dart';
 

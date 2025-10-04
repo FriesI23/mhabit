@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../common/consts.dart';
-import '../../../extension/colorscheme_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 
 class HabitEditDailyGoalUnitTile extends StatelessWidget {

@@ -18,10 +18,10 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 import 'package:rxdart/rxdart.dart';
 
-import 'handler/console_printer.dart';
-import 'logger/text_logger.dart';
+import 'handlers/console_printer.dart';
 import 'logger_message.dart';
 import 'logger_type.dart';
+import 'loggers/text_logger.dart';
 
 class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
   final l.LogPrinter printer;

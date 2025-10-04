@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/persistent/local/handler/record.dart';
+import 'package:mhabit/storage/db/handlers/record.dart';
 
 void main() {
   group("RecordDBCell", () {

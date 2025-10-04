@@ -18,9 +18,9 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/types.dart';
-import '../../model/habit_daily_record_form.dart';
-import '../../model/habit_form.dart';
-import '../../model/habit_summary.dart';
+import '../../models/habit_daily_record_form.dart';
+import '../../models/habit_form.dart';
+import '../../models/habit_summary.dart';
 
 class ChangeRecordStatusHelper {
   final HabitSummaryData data;

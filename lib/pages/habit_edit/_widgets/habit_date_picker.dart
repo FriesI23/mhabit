@@ -16,9 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
-import '../../../extension/custom_color_extensions.dart';
-import '../../../model/habit_form.dart';
-import '../../../model/material_localizations.dart';
+import '../../../extensions/custom_color_extensions.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/material_localizations.dart';
 import '../../../providers/app_first_day.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';

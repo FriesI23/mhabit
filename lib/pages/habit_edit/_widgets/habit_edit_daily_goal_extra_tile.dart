@@ -15,9 +15,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/re.dart';
-import '../../../extension/colorscheme_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_form.dart';
 
 class HabitEditDailyGoalExtraTile extends StatelessWidget {
   final bool isValid;

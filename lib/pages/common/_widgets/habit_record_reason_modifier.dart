@@ -17,10 +17,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/consts.dart';
-import '../../../extension/colorscheme_extensions.dart';
+import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../model/habit_date.dart';
-import '../../../model/habit_form.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 
 Future<String?> showHabitRecordReasonModifierDialog({

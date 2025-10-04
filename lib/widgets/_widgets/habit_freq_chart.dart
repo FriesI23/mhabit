@@ -22,8 +22,8 @@ import 'package:intl/intl.dart';
 import '../../common/types.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../model/habit_date.dart';
-import '../../model/habit_detail_chart.dart';
+import '../../models/habit_date.dart';
+import '../../models/habit_detail_chart.dart';
 
 const kHabitFreqChartBarWidth = 16.0;
 const kHabitFreqChartEachSize = 42.0;

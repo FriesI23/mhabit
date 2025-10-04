@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../logging/helper.dart';
-import '../../model/habit_date.dart';
+import '../../models/habit_date.dart';
 import '../../providers/commons.dart';
 import '../../utils/local_timezone.dart';
 

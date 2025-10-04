@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../extension/datetime_extensions.dart';
+import '../../extensions/datetime_extensions.dart';
 
 class DateContainer extends StatelessWidget {
   final DateTime? date;

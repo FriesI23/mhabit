@@ -17,9 +17,9 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/types.dart';
-import '../../persistent/db_helper_provider.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/habit_status_changer.dart';
+import '../../storage/db_helper_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final List<HabitUUID> uuidList;

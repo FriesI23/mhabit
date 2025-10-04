@@ -21,8 +21,8 @@ import 'package:path/path.dart' as path;
 
 import '../common/types.dart';
 import '../logging/helper.dart';
-import '../model/habit_export.dart';
-import '../persistent/db_helper_provider.dart';
+import '../models/habit_export.dart';
+import '../storage/db_helper_provider.dart';
 import '../utils/app_path_provider.dart';
 
 class HabitFileExporterViewModel extends ChangeNotifier

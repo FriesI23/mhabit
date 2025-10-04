@@ -17,8 +17,8 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/utils.dart';
 import '../logging/helper.dart';
-import '../persistent/profile/handlers.dart';
-import '../persistent/profile_provider.dart';
+import '../storage/profile/handlers.dart';
+import '../storage/profile_provider.dart';
 
 class AppFirstDayViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {
