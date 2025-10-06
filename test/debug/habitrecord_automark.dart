@@ -17,9 +17,9 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit/common/types.dart';
-import 'package:mhabit/model/habit_form.dart';
-import 'package:mhabit/model/habit_freq.dart';
-import 'package:mhabit/model/habit_summary.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_summary.dart';
 
 void main() {
   // cusomFreqPerformanceTest(

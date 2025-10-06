@@ -14,8 +14,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/model/habit_date.dart';
-import 'package:mhabit/model/habit_reminder.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_reminder.dart';
 
 void main() {
   group("Test HabitReminder getNextRemindDate Per Month", () {

@@ -24,7 +24,7 @@ import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../annotation/proxy_annotation.dart';
+import '../annotations/proxy_annotation.dart';
 
 class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
   static String getMethodSignature(MethodElement method) {

@@ -14,7 +14,7 @@
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../view/page_app_debugger.dart' as app_debugger;
+import '../pages/app_debugger/page.dart' as app_debugger;
 import 'notification_id_range.dart';
 
 void notificationTap(NotificationResponse notificationResponse) {

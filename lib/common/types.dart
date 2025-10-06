@@ -14,10 +14,10 @@
 
 import 'package:flutter/material.dart';
 
-import '../component/widget.dart';
-import '../model/habit_date.dart';
-import '../model/habit_detail_chart.dart';
-import '../model/habit_form.dart';
+import '../models/habit_date.dart';
+import '../models/habit_detail_chart.dart';
+import '../models/habit_form.dart';
+import '../widgets/widgets.dart';
 
 typedef DBID = int;
 

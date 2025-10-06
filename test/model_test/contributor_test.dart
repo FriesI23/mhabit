@@ -16,8 +16,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/locale.dart';
-import 'package:mhabit/annotation/contributor_converter.dart';
-import 'package:mhabit/model/contributor.dart';
+import 'package:mhabit/annotations/json_annotations.dart';
+import 'package:mhabit/models/contributor.dart';
 
 void testContributorInfo() => group("test ContributorInfo", () {
       test("init", () {

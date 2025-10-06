@@ -20,8 +20,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../model/app_sync_server.dart';
-import '../../model/app_sync_task.dart';
+import '../../models/app_sync_server.dart';
+import '../../models/app_sync_tasks.dart';
 import '../notification_channel.dart';
 import '../notification_data.dart';
 import '../notification_details.dart';
