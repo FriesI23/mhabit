@@ -1,1371 +1,1383 @@
 {
-  "@@locale": "uk",
-  "localeScriptName": "Українська",
-  "@localeScriptName": {
-    "description": "The human-readable name of the language used for the locale."
-  },
-  "appName": "Table Habit",
-  "@appName": {},
-  "habitEdit_saveButton_text": "Зберегти",
-  "@habitEdit_saveButton_text": {},
-  "habitEdit_habitName_hintText": "Назва звички...",
-  "@habitEdit_habitName_hintText": {},
-  "habitEdit_colorPicker_title": "Оберіть колір",
-  "@habitEdit_colorPicker_title": {},
-  "habitEdit_habitTypeDialog_title": "Тип звички",
-  "@habitEdit_habitTypeDialog_title": {},
-  "habitEdit_habitType_positiveText": "Позитивна",
-  "@habitEdit_habitType_positiveText": {},
-  "habitEdit_habitType_negativeText": "Негативна",
-  "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Щоденна мета, за замовчуванням {number}",
-  "@habitEdit_habitDailyGoal_hintText": {
-    "description": "default habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeHintText": "Мінімальний щоденний поріг, за умовчанням {number}",
-  "@habitEdit_habitDailyGoal_negativeHintText": {
-    "description": "default habit daily goal for negative habit",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText01": "щоденна мета повинна > {number}",
-  "@habitEdit_habitDailyGoal_errorText01": {
-    "description": "minimum number for habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText02": "щоденна мета повинна бути ≤ {number}",
-  "@habitEdit_habitDailyGoal_errorText02": {
-    "description": "maximum number for habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText01": "щоденна ціль має бути ≥ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText01": {
-    "description": "minimum number for negative habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText02": "щоденна мета повинна бути ≤ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText02": {
-    "description": "maximum number for negative habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalUnit_hintText": "Одиниці вимірювання щоденної мети",
-  "@habitEdit_habitDailyGoalUnit_hintText": {},
-  "habitEdit_habitDailyGoalExtra_hintText": "Бажана максимальна щоденна мета",
-  "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitDailyGoalExtra_errorText": "введене значення має бути порожнім або ≥ {dailyGoal}",
-  "@habitEdit_habitDailyGoalExtra_errorText": {
-    "placeholders": {
-      "dailyGoal": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "Максимальне щоденне обмеження",
-  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
-  "habitEdit_frequencySelector_title": "Оберіть частоту",
-  "@habitEdit_frequencySelector_title": {},
-  "habitEdit_habitFreq_daily": "Щоденно",
-  "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek": "I",
-  "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_habitFreq_perweek_ex01": "разів за тиждень",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth": "i",
-  "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_permonth_ex01": "разів за місяць",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq": "І",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "разів за",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "днів",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
-  },
-  "habitEdit_habitFreq_show_daily": "Щоденно",
-  "@habitEdit_habitFreq_show_daily": {},
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{За тиждень} other{Щонайменше {freq} разів за тиждень}}",
-  "@habitEdit_habitFreq_show_perweek": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{За місяць} other{Щонайменше {freq} разів за місяць}}",
-  "@habitEdit_habitFreq_show_permonth": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Через кожні {days} днів} other{Принаймні {freq} разів за кожні {days} днів}}",
-  "@habitEdit_habitFreq_show_perdayfreq": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_title": "{targetDays} днів",
-  "@habitEdit_targetDays_title": {
-    "placeholders": {
-      "targetDays": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_dialogTitle": "Виберіть цільові дні",
-  "@habitEdit_targetDays_dialogTitle": {},
-  "habitEdit_targetDays": "днів",
-  "@habitEdit_targetDays": {},
-  "habitEdit_reminder_hintText": "Нагадування",
-  "@habitEdit_reminder_hintText": {},
-  "habitEdit_reminder_freq_weekHelpText": "Будь-який день тижня",
-  "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "і",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " кожного тижня",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
-  "habitEdit_reminder_freq_monthHelpText": "Будь-який день місяця",
-  "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "I",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " в кожному місяці",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
-  "habitEdit_reminderQuest_hintText": "Питання, напр. Ви займалися спортом сьогодні?",
-  "@habitEdit_reminderQuest_hintText": {},
-  "habitEdit_reminder_dialogTitle": "Виберіть тип нагадування",
-  "@habitEdit_reminder_dialogTitle": {},
-  "habitEdit_reminder_dialogType_whenNeeded": "Коли потрібно зареєструватися",
-  "@habitEdit_reminder_dialogType_whenNeeded": {},
-  "habitEdit_reminder_dialogType_daily": "Щодня",
-  "@habitEdit_reminder_dialogType_daily": {},
-  "habitEdit_reminder_dialogType_week": "на тиждень",
-  "@habitEdit_reminder_dialogType_week": {},
-  "habitEdit_reminder_dialogType_month": "на місяць",
-  "@habitEdit_reminder_dialogType_month": {},
-  "habitEdit_reminder_dialogConfirm": "підтвердити",
-  "@habitEdit_reminder_dialogConfirm": {},
-  "habitEdit_reminder_dialogCancel": "скасувати",
-  "@habitEdit_reminder_dialogCancel": {},
-  "habitEdit_reminder_cancelDialogTitle": "Підтвердити",
-  "@habitEdit_reminder_cancelDialogTitle": {},
-  "habitEdit_reminder_cancelDialogSubtitle": "Ви підтверджуєте видалення цього нагадування",
-  "@habitEdit_reminder_cancelDialogSubtitle": {},
-  "habitEdit_reminder_cancelDialogConfirm": "підтвердити",
-  "@habitEdit_reminder_cancelDialogConfirm": {},
-  "habitEdit_reminder_cancelDialogCancel": "скасувати",
-  "@habitEdit_reminder_cancelDialogCancel": {},
-  "habitEdit_reminder_weekdayText_monday": "Пн",
-  "@habitEdit_reminder_weekdayText_monday": {},
-  "habitEdit_reminder_weekdayText_tuesday": "Вт",
-  "@habitEdit_reminder_weekdayText_tuesday": {},
-  "habitEdit_reminder_weekdayText_wednesday": "ср",
-  "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_thursday": "Чт",
-  "@habitEdit_reminder_weekdayText_thursday": {},
-  "habitEdit_reminder_weekdayText_friday": "Пт",
-  "@habitEdit_reminder_weekdayText_friday": {},
-  "habitEdit_reminder_weekdayText_saturday": "Сб",
-  "@habitEdit_reminder_weekdayText_saturday": {},
-  "habitEdit_reminder_weekdayText_sunday": "Нд",
-  "@habitEdit_reminder_weekdayText_sunday": {},
-  "habitEdit_desc_hintText": "Memo, підтримка Markdown",
-  "@habitEdit_desc_hintText": {},
-  "habitEdit_create_datetime_prefix": "Створено: ",
-  "@habitEdit_create_datetime_prefix": {},
-  "habitEdit_modify_datetime_prefix": "Змінено: ",
-  "@habitEdit_modify_datetime_prefix": {},
-  "habitDisplay_fab_text": "Нова звичка",
-  "@habitDisplay_fab_text": {},
-  "habitDisplay_emptyImage_text_01": "Подорож у тисячу миль починається з одного кроку",
-  "@habitDisplay_emptyImage_text_01": {},
-  "habitDisplay_archiveHabitsConfirmDialog_title": "Архівувати вибрані звички?",
-  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
-  "habitDisplay_archiveHabitsConfirmDialog_confirm": "підтвердити",
-  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_archiveHabitsConfirmDialog_cancel": "скасувати",
-  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_archiveHabitsSuccSnackbarText": "Заархівовано {count} звичок",
-  "@habitDisplay_archiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Розархівувати вибрані звички?",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "підтвердити",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "скасувати",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_unarchiveHabitsSuccSnackbarText": "Розархівовано {count} звичок",
-  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteHabitsConfirmDialog_title": "Видалити вибрані звички?",
-  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
-  "habitDisplay_deleteHabitsConfirmDialog_confirm": "підтвердити",
-  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
-  "habitDisplay_deleteHabitsConfirmDialog_cancel": "скасувати",
-  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
-  "habitDisplay_deleteHabitsSuccSnackbarText": "Видалено {count} звичок",
-  "@habitDisplay_deleteHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Вилучена звичка: \"{name}\"",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Habit name."
-      }
-    }
-  },
-  "habitDisplay_editPopMenu_selectAll": "Виберіть усі",
-  "@habitDisplay_editPopMenu_selectAll": {},
-  "habitDisplay_editPopMenu_export": "Експорт",
-  "@habitDisplay_editPopMenu_export": {},
-  "habitDisplay_editPopMenu_delete": "Видалити",
-  "@habitDisplay_editPopMenu_delete": {},
-  "habitDisplay_editPopMenu_clone": "Шаблон",
-  "@habitDisplay_editPopMenu_clone": {},
-  "habitDisplay_editButton_tooltip": "Редагувати",
-  "@habitDisplay_editButton_tooltip": {},
-  "habitDisplay_archiveButton_tooltip": "Архів",
-  "@habitDisplay_archiveButton_tooltip": {},
-  "habitDisplay_unarchiveButton_tooltip": "Розархівувати",
-  "@habitDisplay_unarchiveButton_tooltip": {},
-  "habitDisplay_settingButton_tooltip": "Налаштування",
-  "@habitDisplay_settingButton_tooltip": {},
-  "habitDisplay_statsMenu_statSubgroupText": "Поточний",
-  "@habitDisplay_statsMenu_statSubgroupText": {},
-  "habitDisplay_statsMenu_completedTileText": "Виконано",
-  "@habitDisplay_statsMenu_completedTileText": {},
-  "habitDisplay_statsMenu_inProgresTileText": "В роботі",
-  "@habitDisplay_statsMenu_inProgresTileText": {},
-  "habitDisplay_statsMenu_archivedTileText": "Архівовано",
-  "@habitDisplay_statsMenu_archivedTileText": {},
-  "habitDisplay_statsMenu_popularitySubgroupText": "Головні звички: зміни за останні 30 днів",
-  "@habitDisplay_statsMenu_popularitySubgroupText": {},
-  "habitDisplay_mainMenu_lightTheme": "Світла тема",
-  "@habitDisplay_mainMenu_lightTheme": {},
-  "habitDisplay_mainMenu_darkTheme": "Темна тема",
-  "@habitDisplay_mainMenu_darkTheme": {},
-  "habitDisplay_mainMenu_followSystemTheme": "Слідкуйте за системою",
-  "@habitDisplay_mainMenu_followSystemTheme": {},
-  "habitDisplay_mainMenu_showArchivedTileText": "Показати в архіві",
-  "@habitDisplay_mainMenu_showArchivedTileText": {},
-  "habitDisplay_mainMenu_showCompletedTileText": "Показати завершено",
-  "@habitDisplay_mainMenu_showCompletedTileText": {},
-  "habitDisplay_mainMenu_showActivedTileText": "Показати активовано",
-  "@habitDisplay_mainMenu_showActivedTileText": {},
-  "habitDisplay_mainMenu_settingTileText": "Налаштування",
-  "@habitDisplay_mainMenu_settingTileText": {},
-  "habitDisplay_sort_reverseText": "Зворотний",
-  "@habitDisplay_sort_reverseText": {},
-  "habitDisplay_sortDirection_asc": "(Asc)",
-  "@habitDisplay_sortDirection_asc": {},
-  "habitDisplay_sortDirection_Desc": "(опис)",
-  "@habitDisplay_sortDirection_Desc": {},
-  "habitDisplay_sortType_manual": "Свій порядок",
-  "@habitDisplay_sortType_manual": {},
-  "habitDisplay_sortType_name": "По імені",
-  "@habitDisplay_sortType_name": {},
-  "habitDisplay_sortType_colorType": "За кольором",
-  "@habitDisplay_sortType_colorType": {},
-  "habitDisplay_sortType_progress": "За курсом",
-  "@habitDisplay_sortType_progress": {},
-  "habitDisplay_sortType_startT": "За датою початку",
-  "@habitDisplay_sortType_startT": {},
-  "habitDisplay_sortType_status": "За статусом",
-  "@habitDisplay_sortType_status": {},
-  "habitDisplay_sortTypeDialog_title": "Сортувати",
-  "@habitDisplay_sortTypeDialog_title": {},
-  "habitDisplay_sortTypeDialog_confirm": "підтвердити",
-  "@habitDisplay_sortTypeDialog_confirm": {},
-  "habitDisplay_sortTypeDialog_cancel": "скасувати",
-  "@habitDisplay_sortTypeDialog_cancel": {},
-  "habitDisplay_debug_debugSubgroup_title": "🛠️Налагодження",
-  "@habitDisplay_debug_debugSubgroup_title": {},
-  "habitDetail_editButton_tooltip": "Редагувати",
-  "@habitDetail_editButton_tooltip": {},
-  "habitDetail_editPopMenu_unarchive": "Розархівувати",
-  "@habitDetail_editPopMenu_unarchive": {},
-  "habitDetail_editPopMenu_archive": "Архів",
-  "@habitDetail_editPopMenu_archive": {},
-  "habitDetail_editPopMenu_export": "Експорт",
-  "@habitDetail_editPopMenu_export": {},
-  "habitDetail_editPopMenu_delete": "Видалити",
-  "@habitDetail_editPopMenu_delete": {},
-  "habitDetail_editPopMenu_clone": "Шаблон",
-  "@habitDetail_editPopMenu_clone": {},
-  "habitDetail_confirmDialog_confirm": "підтвердити",
-  "@habitDetail_confirmDialog_confirm": {},
-  "habitDetail_confirmDialog_cancel": "скасувати",
-  "@habitDetail_confirmDialog_cancel": {},
-  "habitDetail_archiveConfirmDialog_titleText": "Звичка архівувати?",
-  "@habitDetail_archiveConfirmDialog_titleText": {},
-  "habitDetail_unarchiveConfirmDialog_titleText": "Розархівувати звичку?",
-  "@habitDetail_unarchiveConfirmDialog_titleText": {},
-  "habitDetail_deleteConfirmDialog_titleText": "Видалити звичку?",
-  "@habitDetail_deleteConfirmDialog_titleText": {},
-  "habitDetail_summary_title": "Резюме",
-  "@habitDetail_summary_title": {},
-  "habitDetail_summary_body": "Поточна оцінка – {score}, а з початку минуло {days} дн.",
-  "@habitDetail_summary_body": {
-    "placeholders": {
-      "score": {
-        "type": "String",
-        "example": "0.0"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_summary_preBody": "{days, plural, =1{Починаючи завтра.} other{Початок через {days} днів.}}",
-  "@habitDetail_summary_preBody": {
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{НЕПОВНА} =2{НЕСТАНДАРТ} other{}}",
-  "@habitDetail_heatmap_leftHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{ПЕРЕВИКОНАНО} =2{BECCABLE} other{}}",
-  "@habitDetail_heatmap_rightHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Ціль}}",
-  "@habitDetail_descDailyGoal_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitText": "одиниця: {unit}",
-  "@habitDetail_descDailyGoal_unitText": {
-    "placeholders": {
-      "unit": {
-        "type": "String",
-        "example": "M/S"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitEmptyText": "нульовий",
-  "@habitDetail_descDailyGoal_unitEmptyText": {},
-  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Днів}}",
-  "@habitDetail_descTargetDays_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descTargetDays_unitText": "д",
-  "@habitDetail_descTargetDays_unitText": {},
-  "habitDetail_descRecordsNum_titleText": "Записи",
-  "@habitDetail_descRecordsNum_titleText": {},
-  "habitDetail_scoreChart_title": "Оцінка",
-  "@habitDetail_scoreChart_title": {},
-  "habitDetail_scoreChartCombine_dailyText": "День",
-  "@habitDetail_scoreChartCombine_dailyText": {},
-  "habitDetail_scoreChartCombine_weeklyText": "Тиждень",
-  "@habitDetail_scoreChartCombine_weeklyText": {},
-  "habitDetail_scoreChartCombine_monthlyText": "Місяць",
-  "@habitDetail_scoreChartCombine_monthlyText": {},
-  "habitDetail_scoreChartCombine_yearlyText": "Рік",
-  "@habitDetail_scoreChartCombine_yearlyText": {},
-  "habitDetail_freqChart_freqTitle": "Частота",
-  "@habitDetail_freqChart_freqTitle": {},
-  "habitDetail_freqChart_historyTitle": "Історія",
-  "@habitDetail_freqChart_historyTitle": {},
-  "habitDetail_freqChart_combinedTitle": "Частота та історія",
-  "@habitDetail_freqChart_combinedTitle": {},
-  "habitDetail_freqChartCombine_weeklyText": "Тиждень",
-  "@habitDetail_freqChartCombine_weeklyText": {},
-  "habitDetail_freqChartCombine_monthlyText": "Місяць",
-  "@habitDetail_freqChartCombine_monthlyText": {},
-  "habitDetail_freqChartCombine_yearlyText": "Рік",
-  "@habitDetail_freqChartCombine_yearlyText": {},
-  "habitDetail_freqChartNaviBar_nowText": "Зараз",
-  "@habitDetail_freqChartNaviBar_nowText": {},
-  "habitDetail_freqChart_expanded_hideTooltip": "Приховати діаграму історії",
-  "@habitDetail_freqChart_expanded_hideTooltip": {},
-  "habitDetail_freqChart_expanded_showTooltip": "Показати діаграму історії",
-  "@habitDetail_freqChart_expanded_showTooltip": {},
-  "habitDetail_descSubgroup_title": "Пам'ятка",
-  "@habitDetail_descSubgroup_title": {},
-  "habitDetail_otherSubgroup_title": "Інше",
-  "@habitDetail_otherSubgroup_title": {},
-  "habitDetail_habitType_title": "Тип",
-  "@habitDetail_habitType_title": {},
-  "habitDetail_reminderTile_title": "Нагадування",
-  "@habitDetail_reminderTile_title": {},
-  "habitDetail_freqTile_title": "Повторіть",
-  "@habitDetail_freqTile_title": {},
-  "habitDetail_startDateTile_title": "Дата початку",
-  "@habitDetail_startDateTile_title": {},
-  "habitDetail_createDateTile_title": "Створено",
-  "@habitDetail_createDateTile_title": {},
-  "habitDetail_modifyDateTile_title": "Змінено",
-  "@habitDetail_modifyDateTile_title": {},
-  "habitDetail_editHeatmapCal_dateButtonText": "дата",
-  "@habitDetail_editHeatmapCal_dateButtonText": {},
-  "habitDetail_editHeatmapCal_valueButtonText": "значення",
-  "@habitDetail_editHeatmapCal_valueButtonText": {},
-  "habitDetail_editHeatmapCal_backToToday_tooltipText": "повернутися до сьогоднішнього дня",
-  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
-  "habitDetail_notFoundText": "Завантажити звичку не вдалося",
-  "@habitDetail_notFoundText": {},
-  "habitDetail_notFoundRetryText": "Спробуйте знову",
-  "@habitDetail_notFoundRetryText": {},
-  "habitDetail_changeGoal_title": "Змінити ціль",
-  "@habitDetail_changeGoal_title": {},
-  "habitDetail_changeGoal_currentChipText": "поточний: {goal}",
-  "@habitDetail_changeGoal_currentChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_doneChipText": "зроблено: {goal}",
-  "@habitDetail_changeGoal_doneChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_undoneChipText": "скасовано",
-  "@habitDetail_changeGoal_undoneChipText": {},
-  "habitDetail_changeGoal_extraChipText": "{goal}",
-  "@habitDetail_changeGoal_extraChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_helpText": "Щоденна мета, за замовчуванням: {goal}",
-  "@habitDetail_changeGoal_helpText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_cancelText": "скасувати",
-  "@habitDetail_changeGoal_cancelText": {},
-  "habitDetail_changeGoal_saveText": "зберегти",
-  "@habitDetail_changeGoal_saveText": {},
-  "habitDetail_skipReason_title": "Пропустити причину",
-  "@habitDetail_skipReason_title": {},
-  "habitDetail_skipReason_bodyHelpText": "Напиши тут щось...",
-  "@habitDetail_skipReason_bodyHelpText": {},
-  "habitDetail_skipReason_cancelText": "скасувати",
-  "@habitDetail_skipReason_cancelText": {},
-  "habitDetail_skipReason_saveText": "зберегти",
-  "@habitDetail_skipReason_saveText": {},
-  "appSetting_appbar_titleText": "Налаштування",
-  "@appSetting_appbar_titleText": {},
-  "appSetting_displaySubgroupText": "Дисплей",
-  "@appSetting_displaySubgroupText": {},
-  "appSetting_operationSubgroupText": "Операція",
-  "@appSetting_operationSubgroupText": {},
-  "appSetting_dragCalendarByPageTile_titleText": "Перетягніть календар за сторінкою",
-  "@appSetting_dragCalendarByPageTile_titleText": {},
-  "appSetting_dragCalendarByPageTile_subtitleText": "Якщо перемикач увімкнено, календар на панелі додатків на домашній сторінці перетягуватиметься сторінка за сторінкою. За замовчуванням перемикач вимкнено.",
-  "@appSetting_dragCalendarByPageTile_subtitleText": {},
-  "appSetting_changeRecordStatusOpTile_titleText": "Змінити статус запису",
-  "@appSetting_changeRecordStatusOpTile_titleText": {},
-  "appSetting_changeRecordStatusOpTile_subtitleText": "Змініть поведінку кліків, щоб змінити статус щоденних записів на головній сторінці.",
-  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
-  "appSetting_openRecordStatusDialogOpTile_titleText": "Відкрийте докладний запис",
-  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
-  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.",
-  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
-  "appSetting_firstDayOfWeek_titleText": "Перший день тижня",
-  "@appSetting_firstDayOfWeek_titleText": {},
-  "appSetting_firstDayOfWeekDialog_titleText": "Показати перший день тижня",
-  "@appSetting_firstDayOfWeekDialog_titleText": {},
-  "appSetting_firstDayOfWeekDialog_defaultText": " (За замовчуванням)",
-  "@appSetting_firstDayOfWeekDialog_defaultText": {},
-  "appSetting_changeLanguage_followSystem_text": "Слідкуйте за системою ({localeName})",
-  "@appSetting_changeLanguage_followSystem_text": {
-    "placeholders": {
-      "localeName": {
-        "type": "String",
-        "example": "English"
-      }
-    }
-  },
-  "appSetting_changeLanguage_followSystem_noLocale_text": "Слідкуйте за системою",
-  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
-  "appSetting_changeLanguageTile_titleText": "Мова",
-  "@appSetting_changeLanguageTile_titleText": {},
-  "appSetting_changeLanguageDialog_titleText": "Виберіть мову",
-  "@appSetting_changeLanguageDialog_titleText": {},
-  "appSetting_dateDisplayFormat_titleText": "Формат відображення дати ({formatTemplate})",
-  "@appSetting_dateDisplayFormat_titleText": {
-    "placeholders": {
-      "formatTemplate": {
-        "type": "String",
-        "example": "yyyy/M/d"
-      }
-    }
-  },
-  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "дотримуйтеся налаштувань системи",
-  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
-  "appSetting_dateDisplayFormat_subTitleText": "Налаштований формат дати буде застосовано до відображення дати на сторінці з деталями про звичку.",
-  "@appSetting_dateDisplayFormat_subTitleText": {},
-  "appSetting_compactUISwitcher_titleText": "Увімкніть компактний інтерфейс на сторінці звичок",
-  "@appSetting_compactUISwitcher_titleText": {},
-  "appSetting_compactUISwitcher_subtitleText": "Дозволити таблицю перевірки звичок, щоб відображати більше вмісту, але деякі інтерфейси користувача та текст можуть виглядати меншими.",
-  "@appSetting_compactUISwitcher_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_titleText": "Звички перевіряють зону налаштування радіо",
-  "@appSetting_collapsed_calendar_bararea_titleText": {},
-  "appSetting_collapsed_calendar_bararea_subtitleText": "Відрегулюйте відсоток для збільшення/меншення місця в області таблиці перевірки звичок.",
-  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
-  "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Нагадування та сповіщення",
-  "@appSetting_reminderSubgroupText": {
-    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
-  },
-  "appSetting_dailyReminder_titleText": "Щоденне нагадування",
-  "@appSetting_dailyReminder_titleText": {},
-  "appSetting_backupAndRestoreSubgroupText": "Резервне копіювання та відновлення",
-  "@appSetting_backupAndRestoreSubgroupText": {},
-  "appSetting_export_titleText": "Експорт",
-  "@appSetting_export_titleText": {},
-  "appSetting_export_subtitleText": "Експортовані звички у форматі JSON. Цей файл можна імпортувати назад.",
-  "@appSetting_export_subtitleText": {},
-  "appSetting_import_titleText": "Імпорт",
-  "@appSetting_import_titleText": {},
-  "appSetting_import_subtitleText": "Імпортуйте звички з файлу json.",
-  "@appSetting_import_subtitleText": {},
-  "appSetting_importDialog_confirmTitle": "Підтвердити імпорт {count} звичок?",
-  "@appSetting_importDialog_confirmTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_confirmSubtitle": "Примітка. Імпорт не видаляє наявні звички.",
-  "@appSetting_importDialog_confirmSubtitle": {},
-  "appSetting_importDialog_confirm_confirmText": "підтвердити",
-  "@appSetting_importDialog_confirm_confirmText": {},
-  "appSetting_importDialog_confirm_cancelText": "скасувати",
-  "@appSetting_importDialog_confirm_cancelText": {},
-  "appSetting_importDialog_importingTitle": "Імпортні {completeCount}/{totalCount}",
-  "@appSetting_importDialog_importingTitle": {
-    "placeholders": {
-      "completeCount": {
-        "type": "int",
-        "example": "1"
-      },
-      "totalCount": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_completeTitle": "Повний імпорт {count}",
-  "@appSetting_importDialog_completeTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_complete_closeLabel": "закрити",
-  "@appSetting_importDialog_complete_closeLabel": {},
-  "appSetting_resetConfig_titleText": "Скинути конфігурації",
-  "@appSetting_resetConfig_titleText": {},
-  "appSetting_resetConfig_subtitleText": "Скинути всі конфігурації до стандартних.",
-  "@appSetting_resetConfig_subtitleText": {},
-  "appSetting_resetConfigDialog_titleText": "Скинути конфігурації?",
-  "@appSetting_resetConfigDialog_titleText": {},
-  "appSetting_resetConfigDialog_subtitleText": "Скинути всі конфігурації до стандартних, потрібно перезапустити програму, щоб застосувати.",
-  "@appSetting_resetConfigDialog_subtitleText": {},
-  "appSetting_resetConfigDialog_cancelText": "скасувати",
-  "@appSetting_resetConfigDialog_cancelText": {},
-  "appSetting_resetConfigDialog_confirmText": "підтвердити",
-  "@appSetting_resetConfigDialog_confirmText": {},
-  "appSetting_resetConfigSuccess_snackbarText": "скидання конфігурації програми успішне",
-  "@appSetting_resetConfigSuccess_snackbarText": {},
-  "appSetting_otherSubgroupText": "Інші",
-  "@appSetting_otherSubgroupText": {},
-  "appSetting_developMode_titleText": "Режим розробки",
-  "@appSetting_developMode_titleText": {},
-  "appSetting_clearCache_titleText": "Очистити кеш",
-  "@appSetting_clearCache_titleText": {},
-  "appSetting_clearCacheDialog_titleText": "Очистити кеш",
-  "@appSetting_clearCacheDialog_titleText": {},
-  "appSetting_clearCacheDialog_subtitleText": "Після очищення кешу деякі настроювані значення буде відновлено до значень за замовчуванням.",
-  "@appSetting_clearCacheDialog_subtitleText": {},
-  "appSetting_clearCacheDialog_cancelText": "скасувати",
-  "@appSetting_clearCacheDialog_cancelText": {},
-  "appSetting_clearCacheDialog_confirmText": "підтвердити",
-  "@appSetting_clearCacheDialog_confirmText": {},
-  "appSetting_clearCache_snackBar_partSuccText": "Не вдалося частково очистити кеш",
-  "@appSetting_clearCache_snackBar_partSuccText": {},
-  "appSetting_clearCache_snackBar_succText": "Кеш успішно очищено",
-  "@appSetting_clearCache_snackBar_succText": {},
-  "appSetting_clearCache_snackBar_failText": "Не вдалося очистити кеш",
-  "@appSetting_clearCache_snackBar_failText": {},
-  "appSetting_debugger_titleText": "Інформація про налагодження",
-  "@appSetting_debugger_titleText": {},
-  "appSetting_about_titleText": "Про",
-  "@appSetting_about_titleText": {},
-  "appSetting_experimentalFeatureTile_titleText": "Експериментальні функції",
-  "@appSetting_experimentalFeatureTile_titleText": {},
-  "appSetting_synSubgroupText": "Синхронізувати",
-  "@appSetting_synSubgroupText": {},
-  "appSetting_syncOption_titleText": "Параметри синхронізації",
-  "@appSetting_syncOption_titleText": {},
-  "appSetting_notify_titleTile": "Сповіщення",
-  "@appSetting_notify_titleTile": {},
-  "appSetting_notify_subtitleTile": "Керування налаштуваннями сповіщень",
-  "@appSetting_notify_subtitleTile": {},
-  "appSetting_notify_subtitleTile_android": "Натисніть, щоб відкрити налаштування системних сповіщень",
-  "@appSetting_notify_subtitleTile_android": {},
-  "appSync_nowTile_titleText": "Синхронізувати зараз",
-  "@appSync_nowTile_titleText": {},
-  "appSync_nowTile_titleText_syncing": "Синхронізація",
-  "@appSync_nowTile_titleText_syncing": {},
-  "appSync_nowTile_dateFormat": "{ymd} {jms}",
-  "@appSync_nowTile_dateFormat": {
-    "placeholders": {
-      "ymd": {
-        "type": "DateTime",
-        "format": "yMd"
-      },
-      "jms": {
-        "type": "DateTime",
-        "format": "jms"
-      }
-    }
-  },
-  "appSync_nowTile_text_noDate": "Остання синхронізація: Н/Д",
-  "@appSync_nowTile_text_noDate": {},
-  "appSync_nowTile_text": "Остання синхронізація: {dateStr}",
-  "@appSync_nowTile_text": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_nowTile_errorText_noDate": "Остання синхронізація (помилка): Н/Д",
-  "@appSync_nowTile_errorText_noDate": {},
-  "appSync_nowTile_errorText": "Остання синхронізація (помилка): {dateStr}",
-  "@appSync_nowTile_errorText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_nowTile_syncingText": "Синхронізація...",
-  "@appSync_nowTile_syncingText": {},
-  "appSync_nowTile_syncingText_withPrt": "Синхронізація: {prt}",
-  "@appSync_nowTile_syncingText_withPrt": {
-    "placeholders": {
-      "prt": {
-        "type": "num",
-        "description": "Current sync progress percentage (0-100).",
-        "format": "decimalPercentPattern",
-        "optionalParameters": {
-          "decimalDigits": 2
+    "@@locale": "uk",
+    "localeScriptName": "Українська",
+    "@localeScriptName": {
+        "description": "The human-readable name of the language used for the locale."
+    },
+    "appName": "Table Habit",
+    "@appName": {},
+    "habitEdit_saveButton_text": "Зберегти",
+    "@habitEdit_saveButton_text": {},
+    "habitEdit_habitName_hintText": "Назва звички...",
+    "@habitEdit_habitName_hintText": {},
+    "habitEdit_colorPicker_title": "Оберіть колір",
+    "@habitEdit_colorPicker_title": {},
+    "habitEdit_habitTypeDialog_title": "Тип звички",
+    "@habitEdit_habitTypeDialog_title": {},
+    "habitEdit_habitType_positiveText": "Позитивна",
+    "@habitEdit_habitType_positiveText": {},
+    "habitEdit_habitType_negativeText": "Негативна",
+    "@habitEdit_habitType_negativeText": {},
+    "habitEdit_habitDailyGoal_hintText": "Щоденна мета, за замовчуванням {number}",
+    "@habitEdit_habitDailyGoal_hintText": {
+        "description": "default habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "1"
+            }
         }
-      }
-    }
-  },
-  "appSync_nowTile_cancellingText": "Скасування...",
-  "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "Остання синхронізація (скасована): Н/Д",
-  "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_cancelText": "Остання синхронізація (скасована): {dateStr}",
-  "@appSync_nowTile_cancelText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_failedTile_titleText": "Перевірте журнали помилок",
-  "@appSync_failedTile_titleText": {},
-  "appSync_failedTile_errorText": "[Error]: {info}",
-  "@appSync_failedTile_errorText": {
-    "placeholders": {
-      "info": {
-        "type": "String",
-        "description": "Error information."
-      }
-    }
-  },
-  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
-  "@appSync_failedTile_webdavMulti_counterText": {
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus": "{status, select, success {Completed} cancelled {Canceled} failed {Failed} multi {Multiple statuses} other {Unknown status}}",
-  "@appSync_webdav_resultStatus": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus_withReason": "{status, select, success {Completed due to {reason}} cancelled {Canceled due to {reason}} failed {Failed due to {reason}} multi {Multiple statuses due to {reason}} other {Unknown status}}",
-  "@appSync_webdav_resultStatus_withReason": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      },
-      "reason": {
-        "type": "String",
-        "description": "The reason for the status"
-      }
-    }
-  },
-  "appSync_webdav_resultReason": "{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}",
-  "@appSync_webdav_resultReason": {
-    "placeholders": {
-      "reason": {
-        "type": "String",
-        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
-      }
-    }
-  },
-  "appSync_webdav_newServerConfirmDialog_titleText": "Нова локація",
-  "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "appSync_webdav_newServerConfirmDialog_subtitleText": "Синхронізація створить необхідні каталоги та завантажить локальні звички на сервер. Продовжити?",
-  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_newServerConfirmDialog_confirmText": "Синхронізувати зараз!",
-  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
-  "appSync_webdav_oldServerConfirmDialog_titleText": "Підтвердити синхронізацію",
-  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
-  "appSync_webdav_oldServerConfirmDialog_subtitleText": "Каталог не порожній. Синхронізація об’єднає серверні та локальні звички. Продовжити?",
-  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_oldServerConfirmDialog_confirmText": "Підтвердити об’єднання",
-  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
-  "appSync_exportAllLogsTile_titleText": "Експорт журналів невдалої синхронізації",
-  "@appSync_exportAllLogsTile_titleText": {},
-  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
-  "@appSync_exportAllLogsTile_subtitleText": {
-    "placeholders": {
-      "isEmpty": {
-        "type": "String",
-        "description": "<bool>.toString()"
-      }
-    }
-  },
-  "appSync_syncServerType_text": "{isCurrent, select, true {Current: } other {}}{name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
-  "@appSync_syncServerType_text": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Server name, depend on specific server type.",
-        "example": "WebDAV"
-      },
-      "isCurrent": {
-        "type": "String",
-        "description": "Is currently selected server",
-        "example": "true|false"
-      }
-    }
-  },
-  "appSync_networkType_text": "{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}",
-  "@appSync_networkType_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_syncInterval_text": "{name, select, manual {Вручну} minute5 {5 Хвилин} minute15 {15 Хвилин} minute30 {30 Хвилин} hour1 {1 Час} other {Unknown}}",
-  "@appSync_syncInterval_text": {
-    "description": "Localized display text for app sync interval",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "minute15",
-        "description": "<AppSyncFetchInterval>.name"
-      }
-    }
-  },
-  "appSync_syncIntervalTile_title": "Інтервал отримання",
-  "@appSync_syncIntervalTile_title": {},
-  "appSync_summaryTile_title": "Сервер синхронізації",
-  "@appSync_summaryTile_title": {},
-  "appSync_summaryTile_subtitle_text_notConfigured": "Не налаштовано",
-  "@appSync_summaryTile_subtitle_text_notConfigured": {},
-  "appSync_exportAllLogsTile_exportSubjectText": "Усі останні журнали невдалої синхронізації",
-  "@appSync_exportAllLogsTile_exportSubjectText": {},
-  "appSync_serverEditor_saveDialog_titleText": "Підтвердьте збереження змін",
-  "@appSync_serverEditor_saveDialog_titleText": {},
-  "appSync_serverEditor_saveDialog_subtitleText": "Збереження перезапише попередню конфігурацію сервера.",
-  "@appSync_serverEditor_saveDialog_subtitleText": {},
-  "appSync_serverEditor_exitDialog_titleText": "Незбережені зміни",
-  "@appSync_serverEditor_exitDialog_titleText": {},
-  "appSync_serverEditor_exitDialog_subtitleText": "Вихід призведе до скасування всіх незбережених змін.",
-  "@appSync_serverEditor_exitDialog_subtitleText": {},
-  "appSync_serverEditor_deleteDialog_titleText": "Підтвердьте видалення",
-  "@appSync_serverEditor_deleteDialog_titleText": {},
-  "appSync_serverEditor_deleteDialog_subtitleText": "Видалення призведе до видалення поточної конфігурації сервера.",
-  "@appSync_serverEditor_deleteDialog_subtitleText": {},
-  "appSync_serverEditor_titleText_add": "Новий сервер синхронізації",
-  "@appSync_serverEditor_titleText_add": {},
-  "appSync_serverEditor_titleText_modify": "Змінити сервер синхронізації",
-  "@appSync_serverEditor_titleText_modify": {},
-  "appSync_serverEditor_advance_titleText": "Розширені конфігурації",
-  "@appSync_serverEditor_advance_titleText": {},
-  "appSync_serverEditor_pathTile_titleText": "Шлях",
-  "@appSync_serverEditor_pathTile_titleText": {},
-  "appSync_serverEditor_pathTile_hintText": "Введіть тут дійсний шлях WebDAV.",
-  "@appSync_serverEditor_pathTile_hintText": {},
-  "appSync_serverEditor_pathTile_errorText_emptyPath": "Шлях не повинен бути порожнім!",
-  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
-  "appSync_serverEditor_usernameTile_titleText": "Ім'я користувача",
-  "@appSync_serverEditor_usernameTile_titleText": {},
-  "appSync_serverEditor_usernameTile_hintText": "Введіть тут ім’я користувача, залиште порожнім, якщо не потрібно.",
-  "@appSync_serverEditor_usernameTile_hintText": {},
-  "appSync_serverEditor_passwordTile_titleText": "Пароль",
-  "@appSync_serverEditor_passwordTile_titleText": {},
-  "appSync_serverEditor_ignoreSSLTile_titleText": "Ігнорувати сертифікат SSL",
-  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_titleText": "Секунди тайм-ауту синхронізації",
-  "@appSync_serverEditor_timeoutTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_timeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_timeoutTile_unitText": "с",
-  "@appSync_serverEditor_timeoutTile_unitText": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "Тайм-аут підключення до мережі, секунди",
-  "@appSync_serverEditor_connTimeoutTile_titleText": {},
-  "appSync_serverEditor_connTimeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_connTimeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_connTimeoutTile_unitText": "с",
-  "@appSync_serverEditor_connTimeoutTile_unitText": {},
-  "appSync_serverEditor_connRetryCountTile_titleText": "Кількість спроб підключення до мережі",
-  "@appSync_serverEditor_connRetryCountTile_titleText": {},
-  "appSync_serverEditor_connRetryCountTile_hintText": "За замовчуванням: {count, plural, =0 {Retry disabled} other {{count}}}",
-  "@appSync_serverEditor_connRetryCountTile_hintText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "10"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_titleText": "Режим мережевої синхронізації",
-  "@appSync_serverEditor_netTypeTile_titleText": {},
-  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Sync on Cellular Network} wifi {Sync on Wifi} other {Unknown}}",
-  "@appSync_serverEditor_netTypeTile_typeTooltip": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
-  "@appSync_serverEditor_netTypeTile_lowDataText": {},
-  "appSync_noti_readyToSync_body": "Підготовка до синхронізації...",
-  "@appSync_noti_readyToSync_body": {},
-  "appSync_noti_syncing_title": "{synced, select, synced {Синхронізовано ({type})} failed {Помилка синхронізації ({type})} other {Синхронізація ({type})}}",
-  "@appSync_noti_syncing_title": {
-    "placeholders": {
-      "synced": {
-        "type": "String",
-        "description": "<AppSyncNotiTitleEnum>.name",
-        "example": "synced"
-      },
-      "type": {
-        "type": "String",
-        "description": "Server type, see 'appSync_syncServerType_text' field",
-        "example": "WebDAV"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронізація в режимі низького рівня даних",
-  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
-  "experimentalFeatures_warnginBanner_title": "Увімкнено одну або кілька експериментальних функцій. Використовуйте з обережністю.",
-  "@experimentalFeatures_warnginBanner_title": {},
-  "experimentalFeatures_habitSyncTile_titleText": "Синхронізація з хмарою звичок",
-  "@experimentalFeatures_habitSyncTile_titleText": {},
-  "experimentalFeatures_habitSyncTile_subtitleText": "Після ввімкнення опція синхронізації програми з’явиться в налаштуваннях",
-  "@experimentalFeatures_habitSyncTile_subtitleText": {},
-  "experimentalFeatures_warnTile_titleText": "Експериментальна функція ({syncName}) вимкнена, але функція все ще працює.",
-  "@experimentalFeatures_warnTile_titleText": {
-    "placeholders": {
-      "syncName": {
-        "type": "String",
-        "example": "Habit Cloud Sync",
-        "description": "Experimental Feature's name."
-      }
-    }
-  },
-  "experimentalFeatures_warnTile_forHabitSyncText": "Щоб повністю вимкнути, утримуйте, щоб отримати доступ до '{menuName}' і вимкніть його.",
-  "@experimentalFeatures_warnTile_forHabitSyncText": {
-    "placeholders": {
-      "menuName": {
-        "type": "String",
-        "example": "Sync Option"
-      }
-    }
-  },
-  "appAbout_appbarTile_titleText": "Про",
-  "@appAbout_appbarTile_titleText": {},
-  "appAbout_versionTile_titleText": "Версія: {appVersion}",
-  "@appAbout_versionTile_titleText": {
-    "placeholders": {
-      "appVersion": {
-        "type": "String",
-        "example": "1.0.0"
-      }
-    }
-  },
-  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_versionTile_changeLogPath": {},
-  "appAbout_sourceCodeTile_titleText": "Вихідний код",
-  "@appAbout_sourceCodeTile_titleText": {},
-  "appAbout_issueTrackerTile_titleText": "Відстеження проблем",
-  "@appAbout_issueTrackerTile_titleText": {},
-  "appAbout_contactEmailTile_titleText": "Зв'яжіться зі мною",
-  "@appAbout_contactEmailTile_titleText": {},
-  "appAbout_contactEmailTile_emailBody": "Привіт, я радий, що ти звернувся до мене.\nЯкщо ви повідомляєте про помилку, будь ласка, вкажіть версію програми та опишіть кроки для її відтворення.\n-------------------------------------",
-  "@appAbout_contactEmailTile_emailBody": {},
-  "appAbout_licenseTile_titleText": "Ліцензія",
-  "@appAbout_licenseTile_titleText": {},
-  "appAbout_licenseTile_subtitleText": "Ліцензія Apache, версія 2.0",
-  "@appAbout_licenseTile_subtitleText": {},
-  "appAbout_licenseThirdPartyTile_titleText": "Заява про ліцензування третьої сторони",
-  "@appAbout_licenseThirdPartyTile_titleText": {},
-  "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
-  "@appAbout_licenseThirdPartyTile_subtitleText": {},
-  "appAbout_privacyTile_titleText": "Конфіденційність",
-  "@appAbout_privacyTile_titleText": {},
-  "appAbout_privacyTile_subTitleText": "Ознайомтеся з політикою конфіденційності в цьому додатку",
-  "@appAbout_privacyTile_subTitleText": {},
-  "appAbout_donateTile_titleText": "Пожертвуйте",
-  "@appAbout_donateTile_titleText": {},
-  "appAbout_donateTile_subTitleText": "Я персональний розробник. Якщо вам подобається цей додаток, купіть мені ☕.",
-  "@appAbout_donateTile_subTitleText": {},
-  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
-  "@appAbout_donateTile_ways": {
-    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
-  },
-  "donateWay_paypal": "Paypal",
-  "@donateWay_paypal": {},
-  "donateWay_buyMeACoffee": "Купи мені кави",
-  "@donateWay_buyMeACoffee": {},
-  "donateWay_alipay": "Alipay",
-  "@donateWay_alipay": {},
-  "donateWay_wechatPay": "Wechat Pay",
-  "@donateWay_wechatPay": {},
-  "donateWay_cryptoCurrency": "Криптовалюти",
-  "@donateWay_cryptoCurrency": {},
-  "donateWay_cryptoCurrency_BTC": "BTC",
-  "@donateWay_cryptoCurrency_BTC": {},
-  "donateWay_cryptoCurrency_ETH": "ETH",
-  "@donateWay_cryptoCurrency_ETH": {},
-  "donateWay_cryptoCurrency_BNB": "BNB",
-  "@donateWay_cryptoCurrency_BNB": {},
-  "donateWay_cryptoCurrency_AVAX": "AVAX",
-  "@donateWay_cryptoCurrency_AVAX": {},
-  "donateWay_cryptoCurrency_FTM": "FTM",
-  "@donateWay_cryptoCurrency_FTM": {},
-  "donateWay_firstQRGroup": "Alipay і Wechat Pay",
-  "@donateWay_firstQRGroup": {},
-  "appAbout_donateDialog_copiedCrypto_msg": "Скопійовано адресу {name}",
-  "@appAbout_donateDialog_copiedCrypto_msg": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "BTC"
-      }
-    }
-  },
-  "batchCheckin_appbar_title": "Пакетна реєстрація",
-  "@batchCheckin_appbar_title": {},
-  "batchCheckin_datePicker_prevButton_tooltip": "Попередній день",
-  "@batchCheckin_datePicker_prevButton_tooltip": {},
-  "batchCheckin_datePicker_nextButton_tooltip": "Наступного дня",
-  "@batchCheckin_datePicker_nextButton_tooltip": {},
-  "batchCheckin_status_skip_text": "Пропустити",
-  "@batchCheckin_status_skip_text": {},
-  "batchCheckin_status_ok_text": "Повний",
-  "@batchCheckin_status_ok_text": {},
-  "batchCheckin_status_double_text": "x2 удар!",
-  "@batchCheckin_status_double_text": {},
-  "batchCheckin_status_zero_text": "Неповний",
-  "@batchCheckin_status_zero_text": {},
-  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} вибрано",
-  "@batchCheckin_habits_groupTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_button_text": "Зберегти",
-  "@batchCheckin_save_button_text": {},
-  "batchCheckin_reset_button_text": "Скинути",
-  "@batchCheckin_reset_button_text": {},
-  "batchCheckin_completed_snackbar_text": "Змінено {count, plural, =1{статус звички} other{статус {count} звичок}}",
-  "@batchCheckin_completed_snackbar_text": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_confirmDialog_title": "Перезаписати існуючі записи",
-  "@batchCheckin_save_confirmDialog_title": {},
-  "batchCheckin_save_confirmDialog_body": "Існуючі записи буде перезаписано. Після збереження попередні записи буде втрачено.",
-  "@batchCheckin_save_confirmDialog_body": {},
-  "batchCheckin_save_confirmDialog_confirmButton_text": "зберегти",
-  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
-  "batchCheckin_save_confirmDialog_cancelButton_text": "скасувати",
-  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
-  "batchCheckin_close_confirmDialog_title": "Підтвердити повернення",
-  "@batchCheckin_close_confirmDialog_title": {},
-  "batchCheckin_close_confirmDialog_body": "Зміни статусу реєстрації не будуть застосовані до збереження",
-  "@batchCheckin_close_confirmDialog_body": {},
-  "batchCheckin_close_confirmDialog_confirmButton_text": "вихід",
-  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
-  "batchCheckin_close_confirmDialog_cancelButton_text": "скасувати",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
-  "appReminder_dailyReminder_title": "🏝 Чи дотрималися ви сьогодні своїх звичок?",
-  "@appReminder_dailyReminder_title": {},
-  "appReminder_dailyReminder_body": "натисніть, щоб увійти в програму та зайти вчасно.",
-  "@appReminder_dailyReminder_body": {},
-  "common_habitColorType_cc1": "Глибокий бузок",
-  "@common_habitColorType_cc1": {},
-  "common_habitColorType_cc2": "Червоний",
-  "@common_habitColorType_cc2": {},
-  "common_habitColorType_cc3": "Фіолетовий",
-  "@common_habitColorType_cc3": {},
-  "common_habitColorType_cc4": "Королівський синій",
-  "@common_habitColorType_cc4": {},
-  "common_habitColorType_cc5": "Темно-блакитний",
-  "@common_habitColorType_cc5": {},
-  "common_habitColorType_cc6": "Зелений",
-  "@common_habitColorType_cc6": {},
-  "common_habitColorType_cc7": "Бурштин",
-  "@common_habitColorType_cc7": {},
-  "common_habitColorType_cc8": "Помаранчевий",
-  "@common_habitColorType_cc8": {},
-  "common_habitColorType_cc9": "Зелений лайм",
-  "@common_habitColorType_cc9": {},
-  "common_habitColorType_cc10": "Темна орхідея",
-  "@common_habitColorType_cc10": {},
-  "common_habitColorType_default": "колір {index}",
-  "@common_habitColorType_default": {
-    "description": "unknown habit color type name",
-    "placeholders": {
-      "index": {
-        "type": "int",
-        "example": "0"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_useSystemFormat_text": "Використовуйте системний формат",
-  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
-  "common_customDateTimeFormatPicker_fmtTileText": "Формат дати",
-  "@common_customDateTimeFormatPicker_fmtTileText": {},
-  "common_customDateTimeFormatPicker_ymd_text": "Рік Місяць День",
-  "@common_customDateTimeFormatPicker_ymd_text": {},
-  "common_customDateTimeFormatPicker_mdy_text": "Місяць День Рік",
-  "@common_customDateTimeFormatPicker_mdy_text": {},
-  "common_customDateTimeFormatPicker_dmy_text": "День Місяць Рік",
-  "@common_customDateTimeFormatPicker_dmy_text": {},
-  "common_customDateTimeFormatPicker_SepTileText": "Роздільник",
-  "@common_customDateTimeFormatPicker_SepTileText": {},
-  "common_customDateTimeFormatPicker_sepDash_text": "Тире",
-  "@common_customDateTimeFormatPicker_sepDash_text": {},
-  "common_customDateTimeFormatPicker_sepSlash_text": "Слеш",
-  "@common_customDateTimeFormatPicker_sepSlash_text": {},
-  "common_customDateTimeFormatPicker_sepSpace_text": "Космос",
-  "@common_customDateTimeFormatPicker_sepSpace_text": {},
-  "common_customDateTimeFormatPicker_sepDot_text": "Крапка",
-  "@common_customDateTimeFormatPicker_sepDot_text": {},
-  "common_customDateTimeFormatPicker_empty_text": "Без роздільника",
-  "@common_customDateTimeFormatPicker_empty_text": {},
-  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
-  "@common_customDateTimeFormatPicker_sep_formatter": {
-    "description": "split char",
-    "placeholders": {
-      "splitName": {
-        "type": "String",
-        "example": "Dash"
-      },
-      "splitChar": {
-        "type": "String",
-        "example": "/"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_12Hour_text": "Використовуйте 12-годинний формат",
-  "@common_customDateTimeFormatPicker_12Hour_text": {},
-  "common_customDateTimeFormatPicker_monthName_text": "Використовуйте повне ім'я",
-  "@common_customDateTimeFormatPicker_monthName_text": {},
-  "common_customDateTimeFormatPicker_applyFreqChart_text": "Подайте заявку на Freq Chart",
-  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
-  "common_customDateTimeFormatPicker_applyHeapmap_text": "Подати заявку на Календар",
-  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
-  "common_customDateTimeFormatPicker_cancelButton_text": "скасувати",
-  "@common_customDateTimeFormatPicker_cancelButton_text": {},
-  "common_customDateTimeFormatPicker_confirmButton_text": "підтвердити",
-  "@common_customDateTimeFormatPicker_confirmButton_text": {},
-  "common_errorPage_title": "Ой, збій!",
-  "@common_errorPage_title": {},
-  "common_errorPage_copied": "Скопійовано інформацію про збій",
-  "@common_errorPage_copied": {},
-  "common_enable_text": "Увімкнено",
-  "@common_enable_text": {},
-  "calendarPicker_clip_today": "Сьогодні",
-  "@calendarPicker_clip_today": {},
-  "calendarPicker_clip_tomorrow": "Завтра",
-  "@calendarPicker_clip_tomorrow": {},
-  "calendarPicker_clip_after7Days": "Далі {date}",
-  "@calendarPicker_clip_after7Days": {
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "E"
-      }
-    }
-  },
-  "exportConfirmDialog_title_exportAll": "Експортувати всі звички?",
-  "@exportConfirmDialog_title_exportAll": {},
-  "exportConfirmDialog_title_exportMulti": "Експортувати {number, plural, =0{поточна звичка} =1{1 звичка} other{{number} звичок}}?",
-  "@exportConfirmDialog_title_exportMulti": {
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "exportConfirmDialog_option_includeRecords": "включити записи",
-  "@exportConfirmDialog_option_includeRecords": {},
-  "exportConfirmDialog_cancel_buttonText": "скасувати",
-  "@exportConfirmDialog_cancel_buttonText": {},
-  "exportConfirmDialog_confirm_buttonText": "експорт",
-  "@exportConfirmDialog_confirm_buttonText": {},
-  "debug_logLevelTile_title": "Рівень реєстрації",
-  "@debug_logLevelTile_title": {},
-  "debug_logLevelDialog_title": "Змінити рівень реєстрації",
-  "@debug_logLevelDialog_title": {},
-  "debug_logLevel_debug": "Налагодження",
-  "@debug_logLevel_debug": {},
-  "debug_logLevel_info": "Інформація",
-  "@debug_logLevel_info": {},
-  "debug_logLevel_warn": "Увага",
-  "@debug_logLevel_warn": {},
-  "debug_logLevel_error": "Помилка",
-  "@debug_logLevel_error": {},
-  "debug_logLevel_fatal": "Фатальний",
-  "@debug_logLevel_fatal": {},
-  "debug_collectLogTile_title": "Збір журналів",
-  "@debug_collectLogTile_title": {},
-  "debug_collectLogTile_enable_subtitle": "Торкніться, щоб припинити збір журналів.",
-  "@debug_collectLogTile_enable_subtitle": {},
-  "debug_collectLogTile_disable_subtitle": "Торкніться, щоб почати збір журналів.",
-  "@debug_collectLogTile_disable_subtitle": {},
-  "debug_downladDebugLogs_subject": "Завантаження журналів налагодження",
-  "@debug_downladDebugLogs_subject": {},
-  "dbeug_clearDebugLogs_complete_snackbar": "Журнали налагодження очищено.",
-  "@dbeug_clearDebugLogs_complete_snackbar": {},
-  "debug_downladDebugInfo_subject": "Завантаження інформації про налагодження",
-  "@debug_downladDebugInfo_subject": {},
-  "debug_downladDebugZip_subject": "Завантаження {fileName}",
-  "@debug_downladDebugZip_subject": {
-    "placeholders": {
-      "fileName": {
-        "type": "String",
-        "example": "debug.zip"
-      }
-    }
-  },
-  "debug_missingDebugLogFile_snackbar": "Журнал налагодження не існує.",
-  "@debug_missingDebugLogFile_snackbar": {},
-  "debug_debuggerLogCard_title": "Інформація про журнал",
-  "@debug_debuggerLogCard_title": {},
-  "debug_debuggerLogCard_subtitle": "Включає локальну інформацію журналу налагодження, потрібно ввімкнути перемикач збору журналів.",
-  "@debug_debuggerLogCard_subtitle": {},
-  "debug_debuggerLogCard_saveButton_text": "Завантажити",
-  "@debug_debuggerLogCard_saveButton_text": {},
-  "debug_debuggerLogCard_clearButton_text": "Очистити",
-  "@debug_debuggerLogCard_clearButton_text": {},
-  "debug_debuggerInfoCard_title": "Інформація про налагодження",
-  "@debug_debuggerInfoCard_title": {},
-  "debug_debuggerInfoCard_subtitle": "Включає інформацію про налагодження програми.",
-  "@debug_debuggerInfoCard_subtitle": {},
-  "debug_debuggerInfoCard_openButton_text": "Відкрити",
-  "@debug_debuggerInfoCard_openButton_text": {},
-  "debug_debuggerInfoCard_saveButton_text": "Зберегти",
-  "@debug_debuggerInfoCard_saveButton_text": {},
-  "debug_debuggerInfo_notificationTitle": "Збір інформації про програму...",
-  "@debug_debuggerInfo_notificationTitle": {},
-  "confirmDialog_confirm_text": "{type, select, save {Save} exit {Exit} delete {Delete} other {Confirm}}",
-  "@confirmDialog_confirm_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<NormalizeConfirmDialogType>.name",
-        "example": "confirm"
-      }
-    }
-  },
-  "confirmDialog_cancel_text": "Скасувати",
-  "@confirmDialog_cancel_text": {},
-  "snackbar_undoText": "ВІДМІНИТИ",
-  "@snackbar_undoText": {},
-  "snackbar_dismissText": "ВІДХИЛИТИ",
-  "@snackbar_dismissText": {},
-  "contributors_tile_title": "Дописувачі",
-  "@contributors_tile_title": {},
-  "userAction_tap": "Тапніть",
-  "@userAction_tap": {},
-  "userAction_doubleTap": "Двічі",
-  "@userAction_doubleTap": {},
-  "userAction_longTap": "Довгий",
-  "@userAction_longTap": {},
-  "channelName_habitReminder": "Нагадування про звички",
-  "@channelName_habitReminder": {},
-  "channelName_appReminder": "Підказка",
-  "@channelName_appReminder": {},
-  "channelName_appDebugger": "Налагоджувач",
-  "@channelName_appDebugger": {},
-  "channelName_appSyncing": "Процес синхронізації",
-  "@channelName_appSyncing": {},
-  "channelDesc_appSyncing": "Використовується для відображення прогресу синхронізації та результатів без помилок",
-  "@channelDesc_appSyncing": {},
-  "channelName_appSyncFailed": "Помилка синхронізації",
-  "@channelName_appSyncFailed": {},
-  "channelDesc_appSyncFailed": "Використовується для сповіщення про невдачу синхронізації",
-  "@channelDesc_appSyncFailed": {}
+    },
+    "habitEdit_habitDailyGoal_negativeHintText": "Мінімальний щоденний поріг, за умовчанням {number}",
+    "@habitEdit_habitDailyGoal_negativeHintText": {
+        "description": "default habit daily goal for negative habit",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText01": "щоденна мета повинна > {number}",
+    "@habitEdit_habitDailyGoal_errorText01": {
+        "description": "minimum number for habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText02": "щоденна мета повинна бути ≤ {number}",
+    "@habitEdit_habitDailyGoal_errorText02": {
+        "description": "maximum number for habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText01": "щоденна ціль має бути ≥ {number}",
+    "@habitEdit_habitDailyGoal_negativeErrorText01": {
+        "description": "minimum number for negative habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText02": "щоденна мета повинна бути ≤ {number}",
+    "@habitEdit_habitDailyGoal_negativeErrorText02": {
+        "description": "maximum number for negative habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalUnit_hintText": "Одиниці вимірювання щоденної мети",
+    "@habitEdit_habitDailyGoalUnit_hintText": {},
+    "habitEdit_habitDailyGoalExtra_hintText": "Бажана максимальна щоденна мета",
+    "@habitEdit_habitDailyGoalExtra_hintText": {},
+    "habitEdit_habitDailyGoalExtra_errorText": "введене значення має бути порожнім або ≥ {dailyGoal}",
+    "@habitEdit_habitDailyGoalExtra_errorText": {
+        "placeholders": {
+            "dailyGoal": {
+                "type": "num",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalExtra_negativeHintText": "Максимальне щоденне обмеження",
+    "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+    "habitEdit_frequencySelector_title": "Оберіть частоту",
+    "@habitEdit_frequencySelector_title": {},
+    "habitEdit_habitFreq_daily": "Щоденно",
+    "@habitEdit_habitFreq_daily": {},
+    "habitEdit_habitFreq_perweek": "I",
+    "@habitEdit_habitFreq_perweek": {},
+    "habitEdit_habitFreq_perweek_ex01": "разів за тиждень",
+    "@habitEdit_habitFreq_perweek_ex01": {},
+    "habitEdit_habitFreq_permonth": "i",
+    "@habitEdit_habitFreq_permonth": {},
+    "habitEdit_habitFreq_permonth_ex01": "разів за місяць",
+    "@habitEdit_habitFreq_permonth_ex01": {},
+    "habitEdit_habitFreq_predayfreq": "І",
+    "@habitEdit_habitFreq_predayfreq": {},
+    "habitEdit_habitFreq_predayfreq_ex01": "разів за",
+    "@habitEdit_habitFreq_predayfreq_ex01": {},
+    "habitEdit_habitFreq_predayfreq_ex02": "днів",
+    "@habitEdit_habitFreq_predayfreq_ex02": {},
+    "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+    "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+        "description": "If set to 1, the display widget list will be reversed."
+    },
+    "habitEdit_habitFreq_show_daily": "Щоденно",
+    "@habitEdit_habitFreq_show_daily": {},
+    "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{За тиждень} other{Щонайменше {freq} разів за тиждень}}",
+    "@habitEdit_habitFreq_show_perweek": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{За місяць} other{Щонайменше {freq} разів за місяць}}",
+    "@habitEdit_habitFreq_show_permonth": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Через кожні {days} днів} other{Принаймні {freq} разів за кожні {days} днів}}",
+    "@habitEdit_habitFreq_show_perdayfreq": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_title": "{targetDays} днів",
+    "@habitEdit_targetDays_title": {
+        "placeholders": {
+            "targetDays": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_dialogTitle": "Виберіть цільові дні",
+    "@habitEdit_targetDays_dialogTitle": {},
+    "habitEdit_targetDays": "днів",
+    "@habitEdit_targetDays": {},
+    "habitEdit_reminder_hintText": "Нагадування",
+    "@habitEdit_reminder_hintText": {},
+    "habitEdit_reminder_freq_weekHelpText": "Будь-який день тижня",
+    "@habitEdit_reminder_freq_weekHelpText": {},
+    "habitEdit_reminder_freq_weekPrefixText": "і",
+    "@habitEdit_reminder_freq_weekPrefixText": {},
+    "habitEdit_reminder_freq_weekSubfixText": " кожного тижня",
+    "@habitEdit_reminder_freq_weekSubfixText": {},
+    "habitEdit_reminder_freq_monthHelpText": "Будь-який день місяця",
+    "@habitEdit_reminder_freq_monthHelpText": {},
+    "habitEdit_reminder_freq_monthPrefixText": "I",
+    "@habitEdit_reminder_freq_monthPrefixText": {},
+    "habitEdit_reminder_freq_monthSubfixText": " в кожному місяці",
+    "@habitEdit_reminder_freq_monthSubfixText": {},
+    "habitEdit_reminderQuest_hintText": "Питання, напр. Ви займалися спортом сьогодні?",
+    "@habitEdit_reminderQuest_hintText": {},
+    "habitEdit_reminder_dialogTitle": "Виберіть тип нагадування",
+    "@habitEdit_reminder_dialogTitle": {},
+    "habitEdit_reminder_dialogType_whenNeeded": "Коли потрібно зареєструватися",
+    "@habitEdit_reminder_dialogType_whenNeeded": {},
+    "habitEdit_reminder_dialogType_daily": "Щодня",
+    "@habitEdit_reminder_dialogType_daily": {},
+    "habitEdit_reminder_dialogType_week": "на тиждень",
+    "@habitEdit_reminder_dialogType_week": {},
+    "habitEdit_reminder_dialogType_month": "на місяць",
+    "@habitEdit_reminder_dialogType_month": {},
+    "habitEdit_reminder_dialogConfirm": "підтвердити",
+    "@habitEdit_reminder_dialogConfirm": {},
+    "habitEdit_reminder_dialogCancel": "скасувати",
+    "@habitEdit_reminder_dialogCancel": {},
+    "habitEdit_reminder_cancelDialogTitle": "Підтвердити",
+    "@habitEdit_reminder_cancelDialogTitle": {},
+    "habitEdit_reminder_cancelDialogSubtitle": "Ви підтверджуєте видалення цього нагадування",
+    "@habitEdit_reminder_cancelDialogSubtitle": {},
+    "habitEdit_reminder_cancelDialogConfirm": "підтвердити",
+    "@habitEdit_reminder_cancelDialogConfirm": {},
+    "habitEdit_reminder_cancelDialogCancel": "скасувати",
+    "@habitEdit_reminder_cancelDialogCancel": {},
+    "habitEdit_reminder_weekdayText_monday": "Пн",
+    "@habitEdit_reminder_weekdayText_monday": {},
+    "habitEdit_reminder_weekdayText_tuesday": "Вт",
+    "@habitEdit_reminder_weekdayText_tuesday": {},
+    "habitEdit_reminder_weekdayText_wednesday": "ср",
+    "@habitEdit_reminder_weekdayText_wednesday": {},
+    "habitEdit_reminder_weekdayText_thursday": "Чт",
+    "@habitEdit_reminder_weekdayText_thursday": {},
+    "habitEdit_reminder_weekdayText_friday": "Пт",
+    "@habitEdit_reminder_weekdayText_friday": {},
+    "habitEdit_reminder_weekdayText_saturday": "Сб",
+    "@habitEdit_reminder_weekdayText_saturday": {},
+    "habitEdit_reminder_weekdayText_sunday": "Нд",
+    "@habitEdit_reminder_weekdayText_sunday": {},
+    "habitEdit_desc_hintText": "Memo, підтримка Markdown",
+    "@habitEdit_desc_hintText": {},
+    "habitEdit_create_datetime_prefix": "Створено: ",
+    "@habitEdit_create_datetime_prefix": {},
+    "habitEdit_modify_datetime_prefix": "Змінено: ",
+    "@habitEdit_modify_datetime_prefix": {},
+    "habitDisplay_fab_text": "Нова звичка",
+    "@habitDisplay_fab_text": {},
+    "habitDisplay_emptyImage_text_01": "Подорож у тисячу миль починається з одного кроку",
+    "@habitDisplay_emptyImage_text_01": {},
+    "habitDisplay_archiveHabitsConfirmDialog_title": "Архівувати вибрані звички?",
+    "@habitDisplay_archiveHabitsConfirmDialog_title": {},
+    "habitDisplay_archiveHabitsConfirmDialog_confirm": "підтвердити",
+    "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+    "habitDisplay_archiveHabitsConfirmDialog_cancel": "скасувати",
+    "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
+    "habitDisplay_archiveHabitsSuccSnackbarText": "Заархівовано {count} звичок",
+    "@habitDisplay_archiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_unarchiveHabitsConfirmDialog_title": "Розархівувати вибрані звички?",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
+    "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "підтвердити",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+    "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "скасувати",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
+    "habitDisplay_unarchiveHabitsSuccSnackbarText": "Розархівовано {count} звичок",
+    "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteHabitsConfirmDialog_title": "Видалити вибрані звички?",
+    "@habitDisplay_deleteHabitsConfirmDialog_title": {},
+    "habitDisplay_deleteHabitsConfirmDialog_confirm": "підтвердити",
+    "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
+    "habitDisplay_deleteHabitsConfirmDialog_cancel": "скасувати",
+    "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
+    "habitDisplay_deleteHabitsSuccSnackbarText": "Видалено {count} звичок",
+    "@habitDisplay_deleteHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Вилучена звичка: \"{name}\"",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_editPopMenu_selectAll": "Виберіть усі",
+    "@habitDisplay_editPopMenu_selectAll": {},
+    "habitDisplay_editPopMenu_export": "Експорт",
+    "@habitDisplay_editPopMenu_export": {},
+    "habitDisplay_editPopMenu_delete": "Видалити",
+    "@habitDisplay_editPopMenu_delete": {},
+    "habitDisplay_editPopMenu_clone": "Шаблон",
+    "@habitDisplay_editPopMenu_clone": {},
+    "habitDisplay_editButton_tooltip": "Редагувати",
+    "@habitDisplay_editButton_tooltip": {},
+    "habitDisplay_archiveButton_tooltip": "Архів",
+    "@habitDisplay_archiveButton_tooltip": {},
+    "habitDisplay_unarchiveButton_tooltip": "Розархівувати",
+    "@habitDisplay_unarchiveButton_tooltip": {},
+    "habitDisplay_settingButton_tooltip": "Налаштування",
+    "@habitDisplay_settingButton_tooltip": {},
+    "habitDisplay_statsMenu_statSubgroupText": "Поточний",
+    "@habitDisplay_statsMenu_statSubgroupText": {},
+    "habitDisplay_statsMenu_completedTileText": "Виконано",
+    "@habitDisplay_statsMenu_completedTileText": {},
+    "habitDisplay_statsMenu_inProgresTileText": "В роботі",
+    "@habitDisplay_statsMenu_inProgresTileText": {},
+    "habitDisplay_statsMenu_archivedTileText": "Архівовано",
+    "@habitDisplay_statsMenu_archivedTileText": {},
+    "habitDisplay_statsMenu_popularitySubgroupText": "Головні звички: зміни за останні 30 днів",
+    "@habitDisplay_statsMenu_popularitySubgroupText": {},
+    "habitDisplay_mainMenu_lightTheme": "Світла тема",
+    "@habitDisplay_mainMenu_lightTheme": {},
+    "habitDisplay_mainMenu_darkTheme": "Темна тема",
+    "@habitDisplay_mainMenu_darkTheme": {},
+    "habitDisplay_mainMenu_followSystemTheme": "Слідкуйте за системою",
+    "@habitDisplay_mainMenu_followSystemTheme": {},
+    "habitDisplay_mainMenu_showArchivedTileText": "Показати в архіві",
+    "@habitDisplay_mainMenu_showArchivedTileText": {},
+    "habitDisplay_mainMenu_showCompletedTileText": "Показати завершено",
+    "@habitDisplay_mainMenu_showCompletedTileText": {},
+    "habitDisplay_mainMenu_showActivedTileText": "Показати активовано",
+    "@habitDisplay_mainMenu_showActivedTileText": {},
+    "habitDisplay_mainMenu_settingTileText": "Налаштування",
+    "@habitDisplay_mainMenu_settingTileText": {},
+    "habitDisplay_sort_reverseText": "Зворотний",
+    "@habitDisplay_sort_reverseText": {},
+    "habitDisplay_sortDirection_asc": "(Asc)",
+    "@habitDisplay_sortDirection_asc": {},
+    "habitDisplay_sortDirection_Desc": "(опис)",
+    "@habitDisplay_sortDirection_Desc": {},
+    "habitDisplay_sortType_manual": "Свій порядок",
+    "@habitDisplay_sortType_manual": {},
+    "habitDisplay_sortType_name": "По імені",
+    "@habitDisplay_sortType_name": {},
+    "habitDisplay_sortType_colorType": "За кольором",
+    "@habitDisplay_sortType_colorType": {},
+    "habitDisplay_sortType_progress": "За курсом",
+    "@habitDisplay_sortType_progress": {},
+    "habitDisplay_sortType_startT": "За датою початку",
+    "@habitDisplay_sortType_startT": {},
+    "habitDisplay_sortType_status": "За статусом",
+    "@habitDisplay_sortType_status": {},
+    "habitDisplay_sortTypeDialog_title": "Сортувати",
+    "@habitDisplay_sortTypeDialog_title": {},
+    "habitDisplay_sortTypeDialog_confirm": "підтвердити",
+    "@habitDisplay_sortTypeDialog_confirm": {},
+    "habitDisplay_sortTypeDialog_cancel": "скасувати",
+    "@habitDisplay_sortTypeDialog_cancel": {},
+    "habitDisplay_debug_debugSubgroup_title": "🛠️Налагодження",
+    "@habitDisplay_debug_debugSubgroup_title": {},
+    "habitDetail_editButton_tooltip": "Редагувати",
+    "@habitDetail_editButton_tooltip": {},
+    "habitDetail_editPopMenu_unarchive": "Розархівувати",
+    "@habitDetail_editPopMenu_unarchive": {},
+    "habitDetail_editPopMenu_archive": "Архів",
+    "@habitDetail_editPopMenu_archive": {},
+    "habitDetail_editPopMenu_export": "Експорт",
+    "@habitDetail_editPopMenu_export": {},
+    "habitDetail_editPopMenu_delete": "Видалити",
+    "@habitDetail_editPopMenu_delete": {},
+    "habitDetail_editPopMenu_clone": "Шаблон",
+    "@habitDetail_editPopMenu_clone": {},
+    "habitDetail_confirmDialog_confirm": "підтвердити",
+    "@habitDetail_confirmDialog_confirm": {},
+    "habitDetail_confirmDialog_cancel": "скасувати",
+    "@habitDetail_confirmDialog_cancel": {},
+    "habitDetail_archiveConfirmDialog_titleText": "Звичка архівувати?",
+    "@habitDetail_archiveConfirmDialog_titleText": {},
+    "habitDetail_unarchiveConfirmDialog_titleText": "Розархівувати звичку?",
+    "@habitDetail_unarchiveConfirmDialog_titleText": {},
+    "habitDetail_deleteConfirmDialog_titleText": "Видалити звичку?",
+    "@habitDetail_deleteConfirmDialog_titleText": {},
+    "habitDetail_summary_title": "Резюме",
+    "@habitDetail_summary_title": {},
+    "habitDetail_summary_body": "Поточна оцінка – {score}, а з початку минуло {days} дн.",
+    "@habitDetail_summary_body": {
+        "placeholders": {
+            "score": {
+                "type": "String",
+                "example": "0.0"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_summary_preBody": "{days, plural, =1{Починаючи завтра.} other{Початок через {days} днів.}}",
+    "@habitDetail_summary_preBody": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{НЕПОВНА} =2{НЕСТАНДАРТ} other{}}",
+    "@habitDetail_heatmap_leftHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{ПЕРЕВИКОНАНО} =2{BECCABLE} other{}}",
+    "@habitDetail_heatmap_rightHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Threshold} other{Ціль}}",
+    "@habitDetail_descDailyGoal_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitText": "одиниця: {unit}",
+    "@habitDetail_descDailyGoal_unitText": {
+        "placeholders": {
+            "unit": {
+                "type": "String",
+                "example": "M/S"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitEmptyText": "нульовий",
+    "@habitDetail_descDailyGoal_unitEmptyText": {},
+    "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Днів}}",
+    "@habitDetail_descTargetDays_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descTargetDays_unitText": "д",
+    "@habitDetail_descTargetDays_unitText": {},
+    "habitDetail_descRecordsNum_titleText": "Записи",
+    "@habitDetail_descRecordsNum_titleText": {},
+    "habitDetail_scoreChart_title": "Оцінка",
+    "@habitDetail_scoreChart_title": {},
+    "habitDetail_scoreChartCombine_dailyText": "День",
+    "@habitDetail_scoreChartCombine_dailyText": {},
+    "habitDetail_scoreChartCombine_weeklyText": "Тиждень",
+    "@habitDetail_scoreChartCombine_weeklyText": {},
+    "habitDetail_scoreChartCombine_monthlyText": "Місяць",
+    "@habitDetail_scoreChartCombine_monthlyText": {},
+    "habitDetail_scoreChartCombine_yearlyText": "Рік",
+    "@habitDetail_scoreChartCombine_yearlyText": {},
+    "habitDetail_freqChart_freqTitle": "Частота",
+    "@habitDetail_freqChart_freqTitle": {},
+    "habitDetail_freqChart_historyTitle": "Історія",
+    "@habitDetail_freqChart_historyTitle": {},
+    "habitDetail_freqChart_combinedTitle": "Частота та історія",
+    "@habitDetail_freqChart_combinedTitle": {},
+    "habitDetail_freqChartCombine_weeklyText": "Тиждень",
+    "@habitDetail_freqChartCombine_weeklyText": {},
+    "habitDetail_freqChartCombine_monthlyText": "Місяць",
+    "@habitDetail_freqChartCombine_monthlyText": {},
+    "habitDetail_freqChartCombine_yearlyText": "Рік",
+    "@habitDetail_freqChartCombine_yearlyText": {},
+    "habitDetail_freqChartNaviBar_nowText": "Зараз",
+    "@habitDetail_freqChartNaviBar_nowText": {},
+    "habitDetail_freqChart_expanded_hideTooltip": "Приховати діаграму історії",
+    "@habitDetail_freqChart_expanded_hideTooltip": {},
+    "habitDetail_freqChart_expanded_showTooltip": "Показати діаграму історії",
+    "@habitDetail_freqChart_expanded_showTooltip": {},
+    "habitDetail_descSubgroup_title": "Пам'ятка",
+    "@habitDetail_descSubgroup_title": {},
+    "habitDetail_otherSubgroup_title": "Інше",
+    "@habitDetail_otherSubgroup_title": {},
+    "habitDetail_habitType_title": "Тип",
+    "@habitDetail_habitType_title": {},
+    "habitDetail_reminderTile_title": "Нагадування",
+    "@habitDetail_reminderTile_title": {},
+    "habitDetail_freqTile_title": "Повторіть",
+    "@habitDetail_freqTile_title": {},
+    "habitDetail_startDateTile_title": "Дата початку",
+    "@habitDetail_startDateTile_title": {},
+    "habitDetail_createDateTile_title": "Створено",
+    "@habitDetail_createDateTile_title": {},
+    "habitDetail_modifyDateTile_title": "Змінено",
+    "@habitDetail_modifyDateTile_title": {},
+    "habitDetail_editHeatmapCal_dateButtonText": "дата",
+    "@habitDetail_editHeatmapCal_dateButtonText": {},
+    "habitDetail_editHeatmapCal_valueButtonText": "значення",
+    "@habitDetail_editHeatmapCal_valueButtonText": {},
+    "habitDetail_editHeatmapCal_backToToday_tooltipText": "повернутися до сьогоднішнього дня",
+    "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+    "habitDetail_notFoundText": "Завантажити звичку не вдалося",
+    "@habitDetail_notFoundText": {},
+    "habitDetail_notFoundRetryText": "Спробуйте знову",
+    "@habitDetail_notFoundRetryText": {},
+    "habitDetail_changeGoal_title": "Змінити ціль",
+    "@habitDetail_changeGoal_title": {},
+    "habitDetail_changeGoal_currentChipText": "поточний: {goal}",
+    "@habitDetail_changeGoal_currentChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_doneChipText": "зроблено: {goal}",
+    "@habitDetail_changeGoal_doneChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_undoneChipText": "скасовано",
+    "@habitDetail_changeGoal_undoneChipText": {},
+    "habitDetail_changeGoal_extraChipText": "{goal}",
+    "@habitDetail_changeGoal_extraChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_helpText": "Щоденна мета, за замовчуванням: {goal}",
+    "@habitDetail_changeGoal_helpText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_cancelText": "скасувати",
+    "@habitDetail_changeGoal_cancelText": {},
+    "habitDetail_changeGoal_saveText": "зберегти",
+    "@habitDetail_changeGoal_saveText": {},
+    "habitDetail_skipReason_title": "Пропустити причину",
+    "@habitDetail_skipReason_title": {},
+    "habitDetail_skipReason_bodyHelpText": "Напиши тут щось...",
+    "@habitDetail_skipReason_bodyHelpText": {},
+    "habitDetail_skipReason_cancelText": "скасувати",
+    "@habitDetail_skipReason_cancelText": {},
+    "habitDetail_skipReason_saveText": "зберегти",
+    "@habitDetail_skipReason_saveText": {},
+    "appSetting_appbar_titleText": "Налаштування",
+    "@appSetting_appbar_titleText": {},
+    "appSetting_displaySubgroupText": "Дисплей",
+    "@appSetting_displaySubgroupText": {},
+    "appSetting_operationSubgroupText": "Операція",
+    "@appSetting_operationSubgroupText": {},
+    "appSetting_dragCalendarByPageTile_titleText": "Перетягніть календар за сторінкою",
+    "@appSetting_dragCalendarByPageTile_titleText": {},
+    "appSetting_dragCalendarByPageTile_subtitleText": "Якщо перемикач увімкнено, календар на панелі додатків на домашній сторінці перетягуватиметься сторінка за сторінкою. За замовчуванням перемикач вимкнено.",
+    "@appSetting_dragCalendarByPageTile_subtitleText": {},
+    "appSetting_changeRecordStatusOpTile_titleText": "Змінити статус запису",
+    "@appSetting_changeRecordStatusOpTile_titleText": {},
+    "appSetting_changeRecordStatusOpTile_subtitleText": "Змініть поведінку кліків, щоб змінити статус щоденних записів на головній сторінці.",
+    "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+    "appSetting_openRecordStatusDialogOpTile_titleText": "Відкрийте докладний запис",
+    "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+    "appSetting_openRecordStatusDialogOpTile_subtitleText": "Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.",
+    "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+    "appSetting_firstDayOfWeek_titleText": "Перший день тижня",
+    "@appSetting_firstDayOfWeek_titleText": {},
+    "appSetting_firstDayOfWeekDialog_titleText": "Показати перший день тижня",
+    "@appSetting_firstDayOfWeekDialog_titleText": {},
+    "appSetting_firstDayOfWeekDialog_defaultText": " (За замовчуванням)",
+    "@appSetting_firstDayOfWeekDialog_defaultText": {},
+    "appSetting_changeLanguage_followSystem_text": "Слідкуйте за системою ({localeName})",
+    "@appSetting_changeLanguage_followSystem_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Слідкуйте за системою",
+    "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+    "appSetting_changeLanguageTile_titleText": "Мова",
+    "@appSetting_changeLanguageTile_titleText": {},
+    "appSetting_changeLanguageDialog_titleText": "Виберіть мову",
+    "@appSetting_changeLanguageDialog_titleText": {},
+    "appSetting_dateDisplayFormat_titleText": "Формат відображення дати ({formatTemplate})",
+    "@appSetting_dateDisplayFormat_titleText": {
+        "placeholders": {
+            "formatTemplate": {
+                "type": "String",
+                "example": "yyyy/M/d"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "дотримуйтеся налаштувань системи",
+    "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+    "appSetting_dateDisplayFormat_subTitleText": "Налаштований формат дати буде застосовано до відображення дати на сторінці з деталями про звичку.",
+    "@appSetting_dateDisplayFormat_subTitleText": {},
+    "appSetting_compactUISwitcher_titleText": "Увімкніть компактний інтерфейс на сторінці звичок",
+    "@appSetting_compactUISwitcher_titleText": {},
+    "appSetting_compactUISwitcher_subtitleText": "Дозволити таблицю перевірки звичок, щоб відображати більше вмісту, але деякі інтерфейси користувача та текст можуть виглядати меншими.",
+    "@appSetting_compactUISwitcher_subtitleText": {},
+    "appSetting_collapsed_calendar_bararea_titleText": "Звички перевіряють зону налаштування радіо",
+    "@appSetting_collapsed_calendar_bararea_titleText": {},
+    "appSetting_collapsed_calendar_bararea_subtitleText": "Відрегулюйте відсоток для збільшення/меншення місця в області таблиці перевірки звичок.",
+    "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+    "appSetting_collapsed_calendar_bararea_defaultText": "За замовчуванням",
+    "@appSetting_collapsed_calendar_bararea_defaultText": {},
+    "appSetting_reminderSubgroupText": "Нагадування та сповіщення",
+    "@appSetting_reminderSubgroupText": {
+        "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+    },
+    "appSetting_dailyReminder_titleText": "Щоденне нагадування",
+    "@appSetting_dailyReminder_titleText": {},
+    "appSetting_backupAndRestoreSubgroupText": "Резервне копіювання та відновлення",
+    "@appSetting_backupAndRestoreSubgroupText": {},
+    "appSetting_export_titleText": "Експорт",
+    "@appSetting_export_titleText": {},
+    "appSetting_export_subtitleText": "Експортовані звички у форматі JSON. Цей файл можна імпортувати назад.",
+    "@appSetting_export_subtitleText": {},
+    "appSetting_import_titleText": "Імпорт",
+    "@appSetting_import_titleText": {},
+    "appSetting_import_subtitleText": "Імпортуйте звички з файлу json.",
+    "@appSetting_import_subtitleText": {},
+    "appSetting_importDialog_confirmTitle": "Підтвердити імпорт {count} звичок?",
+    "@appSetting_importDialog_confirmTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_confirmSubtitle": "Примітка. Імпорт не видаляє наявні звички.",
+    "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importDialog_confirm_confirmText": "підтвердити",
+    "@appSetting_importDialog_confirm_confirmText": {},
+    "appSetting_importDialog_confirm_cancelText": "скасувати",
+    "@appSetting_importDialog_confirm_cancelText": {},
+    "appSetting_importDialog_importingTitle": "Імпортні {completeCount}/{totalCount}",
+    "@appSetting_importDialog_importingTitle": {
+        "placeholders": {
+            "completeCount": {
+                "type": "int",
+                "example": "1"
+            },
+            "totalCount": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitle": "Повний імпорт {count}",
+    "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_complete_closeLabel": "закрити",
+    "@appSetting_importDialog_complete_closeLabel": {},
+    "appSetting_resetConfig_titleText": "Скинути конфігурації",
+    "@appSetting_resetConfig_titleText": {},
+    "appSetting_resetConfig_subtitleText": "Скинути всі конфігурації до стандартних.",
+    "@appSetting_resetConfig_subtitleText": {},
+    "appSetting_resetConfigDialog_titleText": "Скинути конфігурації?",
+    "@appSetting_resetConfigDialog_titleText": {},
+    "appSetting_resetConfigDialog_subtitleText": "Скинути всі конфігурації до стандартних, потрібно перезапустити програму, щоб застосувати.",
+    "@appSetting_resetConfigDialog_subtitleText": {},
+    "appSetting_resetConfigDialog_cancelText": "скасувати",
+    "@appSetting_resetConfigDialog_cancelText": {},
+    "appSetting_resetConfigDialog_confirmText": "підтвердити",
+    "@appSetting_resetConfigDialog_confirmText": {},
+    "appSetting_resetConfigSuccess_snackbarText": "скидання конфігурації програми успішне",
+    "@appSetting_resetConfigSuccess_snackbarText": {},
+    "appSetting_otherSubgroupText": "Інші",
+    "@appSetting_otherSubgroupText": {},
+    "appSetting_developMode_titleText": "Режим розробки",
+    "@appSetting_developMode_titleText": {},
+    "appSetting_clearCache_titleText": "Очистити кеш",
+    "@appSetting_clearCache_titleText": {},
+    "appSetting_clearCacheDialog_titleText": "Очистити кеш",
+    "@appSetting_clearCacheDialog_titleText": {},
+    "appSetting_clearCacheDialog_subtitleText": "Після очищення кешу деякі настроювані значення буде відновлено до значень за замовчуванням.",
+    "@appSetting_clearCacheDialog_subtitleText": {},
+    "appSetting_clearCacheDialog_cancelText": "скасувати",
+    "@appSetting_clearCacheDialog_cancelText": {},
+    "appSetting_clearCacheDialog_confirmText": "підтвердити",
+    "@appSetting_clearCacheDialog_confirmText": {},
+    "appSetting_clearCache_snackBar_partSuccText": "Не вдалося частково очистити кеш",
+    "@appSetting_clearCache_snackBar_partSuccText": {},
+    "appSetting_clearCache_snackBar_succText": "Кеш успішно очищено",
+    "@appSetting_clearCache_snackBar_succText": {},
+    "appSetting_clearCache_snackBar_failText": "Не вдалося очистити кеш",
+    "@appSetting_clearCache_snackBar_failText": {},
+    "appSetting_debugger_titleText": "Інформація про налагодження",
+    "@appSetting_debugger_titleText": {},
+    "appSetting_about_titleText": "Про",
+    "@appSetting_about_titleText": {},
+    "appSetting_experimentalFeatureTile_titleText": "Експериментальні функції",
+    "@appSetting_experimentalFeatureTile_titleText": {},
+    "appSetting_synSubgroupText": "Синхронізувати",
+    "@appSetting_synSubgroupText": {},
+    "appSetting_syncOption_titleText": "Параметри синхронізації",
+    "@appSetting_syncOption_titleText": {},
+    "appSetting_notify_titleTile": "Сповіщення",
+    "@appSetting_notify_titleTile": {},
+    "appSetting_notify_subtitleTile": "Керування налаштуваннями сповіщень",
+    "@appSetting_notify_subtitleTile": {},
+    "appSetting_notify_subtitleTile_android": "Натисніть, щоб відкрити налаштування системних сповіщень",
+    "@appSetting_notify_subtitleTile_android": {},
+    "appSync_nowTile_titleText": "Синхронізувати зараз",
+    "@appSync_nowTile_titleText": {},
+    "appSync_nowTile_titleText_syncing": "Синхронізація",
+    "@appSync_nowTile_titleText_syncing": {},
+    "appSync_nowTile_dateFormat": "{ymd} {jms}",
+    "@appSync_nowTile_dateFormat": {
+        "placeholders": {
+            "ymd": {
+                "type": "DateTime",
+                "format": "yMd"
+            },
+            "jms": {
+                "type": "DateTime",
+                "format": "jms"
+            }
+        }
+    },
+    "appSync_nowTile_text_noDate": "Остання синхронізація: Н/Д",
+    "@appSync_nowTile_text_noDate": {},
+    "appSync_nowTile_text": "Остання синхронізація: {dateStr}",
+    "@appSync_nowTile_text": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_errorText_noDate": "Остання синхронізація (помилка): Н/Д",
+    "@appSync_nowTile_errorText_noDate": {},
+    "appSync_nowTile_errorText": "Остання синхронізація (помилка): {dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "Синхронізація...",
+    "@appSync_nowTile_syncingText": {},
+    "appSync_nowTile_syncingText_withPrt": "Синхронізація: {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "Скасування...",
+    "@appSync_nowTile_cancellingText": {},
+    "appSync_nowTile_cancelText_noDate": "Остання синхронізація (скасована): Н/Д",
+    "@appSync_nowTile_cancelText_noDate": {},
+    "appSync_nowTile_cancelText": "Остання синхронізація (скасована): {dateStr}",
+    "@appSync_nowTile_cancelText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_failedTile_titleText": "Перевірте журнали помилок",
+    "@appSync_failedTile_titleText": {},
+    "appSync_failedTile_errorText": "[Error]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+    "@appSync_failedTile_webdavMulti_counterText": {
+        "placeholders": {
+            "reason": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus": "{status, select, success {Completed} cancelled {Canceled} failed {Failed} multi {Multiple statuses} other {Unknown status}}",
+    "@appSync_webdav_resultStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus_withReason": "{status, select, success {Completed due to {reason}} cancelled {Canceled due to {reason}} failed {Failed due to {reason}} multi {Multiple statuses due to {reason}} other {Unknown status}}",
+    "@appSync_webdav_resultStatus_withReason": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            },
+            "reason": {
+                "type": "String",
+                "description": "The reason for the status"
+            }
+        }
+    },
+    "appSync_webdav_resultReason": "{reason, select, error {Error} userAction {User action required} missingHabitUuid {Missing habit UUID} empty {Empty data} other {Unknown reason}}",
+    "@appSync_webdav_resultReason": {
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "Нова локація",
+    "@appSync_webdav_newServerConfirmDialog_titleText": {},
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "Синхронізація створить необхідні каталоги та завантажить локальні звички на сервер. Продовжити?",
+    "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+    "appSync_webdav_newServerConfirmDialog_confirmText": "Синхронізувати зараз!",
+    "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+    "appSync_webdav_oldServerConfirmDialog_titleText": "Підтвердити синхронізацію",
+    "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "Каталог не порожній. Синхронізація об’єднає серверні та локальні звички. Продовжити?",
+    "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Підтвердити об’єднання",
+    "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+    "appSync_exportAllLogsTile_titleText": "Експорт журналів невдалої синхронізації",
+    "@appSync_exportAllLogsTile_titleText": {},
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No log founded} false {Tap to export} other {loading...}}",
+    "@appSync_exportAllLogsTile_subtitleText": {
+        "placeholders": {
+            "isEmpty": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "appSync_syncServerType_text": "{isCurrent, select, true {Current: } other {}}{name, select, webdav {WebDAV} fake {Fake (Only For Debugger)} other {Unknown ({name})}}",
+    "@appSync_syncServerType_text": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Server name, depend on specific server type.",
+                "example": "WebDAV"
+            },
+            "isCurrent": {
+                "type": "String",
+                "description": "Is currently selected server",
+                "example": "true|false"
+            }
+        }
+    },
+    "appSync_networkType_text": "{type, select, mobile {Mobile} wifi {Wifi} other {Unknown}}",
+    "@appSync_networkType_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_syncInterval_text": "{name, select, manual {Вручну} minute5 {5 Хвилин} minute15 {15 Хвилин} minute30 {30 Хвилин} hour1 {1 Час} other {Unknown}}",
+    "@appSync_syncInterval_text": {
+        "description": "Localized display text for app sync interval",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "minute15",
+                "description": "<AppSyncFetchInterval>.name"
+            }
+        }
+    },
+    "appSync_syncIntervalTile_title": "Інтервал отримання",
+    "@appSync_syncIntervalTile_title": {},
+    "appSync_summaryTile_title": "Сервер синхронізації",
+    "@appSync_summaryTile_title": {},
+    "appSync_summaryTile_subtitle_text_notConfigured": "Не налаштовано",
+    "@appSync_summaryTile_subtitle_text_notConfigured": {},
+    "appSync_exportAllLogsTile_exportSubjectText": "Усі останні журнали невдалої синхронізації",
+    "@appSync_exportAllLogsTile_exportSubjectText": {},
+    "appSync_serverEditor_saveDialog_titleText": "Підтвердьте збереження змін",
+    "@appSync_serverEditor_saveDialog_titleText": {},
+    "appSync_serverEditor_saveDialog_subtitleText": "Збереження перезапише попередню конфігурацію сервера.",
+    "@appSync_serverEditor_saveDialog_subtitleText": {},
+    "appSync_serverEditor_exitDialog_titleText": "Незбережені зміни",
+    "@appSync_serverEditor_exitDialog_titleText": {},
+    "appSync_serverEditor_exitDialog_subtitleText": "Вихід призведе до скасування всіх незбережених змін.",
+    "@appSync_serverEditor_exitDialog_subtitleText": {},
+    "appSync_serverEditor_deleteDialog_titleText": "Підтвердьте видалення",
+    "@appSync_serverEditor_deleteDialog_titleText": {},
+    "appSync_serverEditor_deleteDialog_subtitleText": "Видалення призведе до видалення поточної конфігурації сервера.",
+    "@appSync_serverEditor_deleteDialog_subtitleText": {},
+    "appSync_serverEditor_titleText_add": "Новий сервер синхронізації",
+    "@appSync_serverEditor_titleText_add": {},
+    "appSync_serverEditor_titleText_modify": "Змінити сервер синхронізації",
+    "@appSync_serverEditor_titleText_modify": {},
+    "appSync_serverEditor_advance_titleText": "Розширені конфігурації",
+    "@appSync_serverEditor_advance_titleText": {},
+    "appSync_serverEditor_pathTile_titleText": "Шлях",
+    "@appSync_serverEditor_pathTile_titleText": {},
+    "appSync_serverEditor_pathTile_hintText": "Введіть тут дійсний шлях WebDAV.",
+    "@appSync_serverEditor_pathTile_hintText": {},
+    "appSync_serverEditor_pathTile_errorText_emptyPath": "Шлях не повинен бути порожнім!",
+    "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+    "appSync_serverEditor_usernameTile_titleText": "Ім'я користувача",
+    "@appSync_serverEditor_usernameTile_titleText": {},
+    "appSync_serverEditor_usernameTile_hintText": "Введіть тут ім’я користувача, залиште порожнім, якщо не потрібно.",
+    "@appSync_serverEditor_usernameTile_hintText": {},
+    "appSync_serverEditor_passwordTile_titleText": "Пароль",
+    "@appSync_serverEditor_passwordTile_titleText": {},
+    "appSync_serverEditor_ignoreSSLTile_titleText": "Ігнорувати сертифікат SSL",
+    "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+    "appSync_serverEditor_timeoutTile_titleText": "Секунди тайм-ауту синхронізації",
+    "@appSync_serverEditor_timeoutTile_titleText": {},
+    "appSync_serverEditor_timeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_timeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_timeoutTile_unitText": "с",
+    "@appSync_serverEditor_timeoutTile_unitText": {},
+    "appSync_serverEditor_connTimeoutTile_titleText": "Тайм-аут підключення до мережі, секунди",
+    "@appSync_serverEditor_connTimeoutTile_titleText": {},
+    "appSync_serverEditor_connTimeoutTile_hintText": "За замовчуванням: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_connTimeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_connTimeoutTile_unitText": "с",
+    "@appSync_serverEditor_connTimeoutTile_unitText": {},
+    "appSync_serverEditor_connRetryCountTile_titleText": "Кількість спроб підключення до мережі",
+    "@appSync_serverEditor_connRetryCountTile_titleText": {},
+    "appSync_serverEditor_connRetryCountTile_hintText": "За замовчуванням: {count, plural, =0 {Retry disabled} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_titleText": "Режим мережевої синхронізації",
+    "@appSync_serverEditor_netTypeTile_titleText": {},
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Sync on Cellular Network} wifi {Sync on Wifi} other {Unknown}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataText": "LowData",
+    "@appSync_serverEditor_netTypeTile_lowDataText": {},
+    "appSync_noti_readyToSync_body": "Підготовка до синхронізації...",
+    "@appSync_noti_readyToSync_body": {},
+    "appSync_noti_syncing_title": "{synced, select, synced {Синхронізовано ({type})} failed {Помилка синхронізації ({type})} other {Синхронізація ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Server type, see 'appSync_syncServerType_text' field",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "Синхронізація в режимі низького рівня даних",
+    "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+    "experimentalFeatures_warnginBanner_title": "Увімкнено одну або кілька експериментальних функцій. Використовуйте з обережністю.",
+    "@experimentalFeatures_warnginBanner_title": {},
+    "experimentalFeatures_habitSyncTile_titleText": "Синхронізація з хмарою звичок",
+    "@experimentalFeatures_habitSyncTile_titleText": {},
+    "experimentalFeatures_habitSyncTile_subtitleText": "Після ввімкнення опція синхронізації програми з’явиться в налаштуваннях",
+    "@experimentalFeatures_habitSyncTile_subtitleText": {},
+    "experimentalFeatures_warnTile_titleText": "Експериментальна функція ({syncName}) вимкнена, але функція все ще працює.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Habit Cloud Sync",
+                "description": "Experimental Feature's name."
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_forHabitSyncText": "Щоб повністю вимкнути, утримуйте, щоб отримати доступ до '{menuName}' і вимкніть його.",
+    "@experimentalFeatures_warnTile_forHabitSyncText": {
+        "placeholders": {
+            "menuName": {
+                "type": "String",
+                "example": "Sync Option"
+            }
+        }
+    },
+    "appAbout_appbarTile_titleText": "Про",
+    "@appAbout_appbarTile_titleText": {},
+    "appAbout_versionTile_titleText": "Версія: {appVersion}",
+    "@appAbout_versionTile_titleText": {
+        "placeholders": {
+            "appVersion": {
+                "type": "String",
+                "example": "1.0.0"
+            }
+        }
+    },
+    "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+    "@appAbout_versionTile_changeLogPath": {},
+    "appAbout_sourceCodeTile_titleText": "Вихідний код",
+    "@appAbout_sourceCodeTile_titleText": {},
+    "appAbout_issueTrackerTile_titleText": "Відстеження проблем",
+    "@appAbout_issueTrackerTile_titleText": {},
+    "appAbout_contactEmailTile_titleText": "Зв'яжіться зі мною",
+    "@appAbout_contactEmailTile_titleText": {},
+    "appAbout_contactEmailTile_emailBody": "Привіт, я радий, що ти звернувся до мене.\nЯкщо ви повідомляєте про помилку, будь ласка, вкажіть версію програми та опишіть кроки для її відтворення.\n-------------------------------------",
+    "@appAbout_contactEmailTile_emailBody": {},
+    "appAbout_licenseTile_titleText": "Ліцензія",
+    "@appAbout_licenseTile_titleText": {},
+    "appAbout_licenseTile_subtitleText": "Ліцензія Apache, версія 2.0",
+    "@appAbout_licenseTile_subtitleText": {},
+    "appAbout_licenseThirdPartyTile_titleText": "Заява про ліцензування третьої сторони",
+    "@appAbout_licenseThirdPartyTile_titleText": {},
+    "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
+    "@appAbout_licenseThirdPartyTile_subtitleText": {},
+    "appAbout_privacyTile_titleText": "Конфіденційність",
+    "@appAbout_privacyTile_titleText": {},
+    "appAbout_privacyTile_subTitleText": "Ознайомтеся з політикою конфіденційності в цьому додатку",
+    "@appAbout_privacyTile_subTitleText": {},
+    "appAbout_donateTile_titleText": "Пожертвуйте",
+    "@appAbout_donateTile_titleText": {},
+    "appAbout_donateTile_subTitleText": "Я персональний розробник. Якщо вам подобається цей додаток, купіть мені ☕.",
+    "@appAbout_donateTile_subTitleText": {},
+    "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+    "@appAbout_donateTile_ways": {
+        "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+    },
+    "donateWay_paypal": "Paypal",
+    "@donateWay_paypal": {},
+    "donateWay_buyMeACoffee": "Купи мені кави",
+    "@donateWay_buyMeACoffee": {},
+    "donateWay_alipay": "Alipay",
+    "@donateWay_alipay": {},
+    "donateWay_wechatPay": "Wechat Pay",
+    "@donateWay_wechatPay": {},
+    "donateWay_cryptoCurrency": "Криптовалюти",
+    "@donateWay_cryptoCurrency": {},
+    "donateWay_cryptoCurrency_BTC": "BTC",
+    "@donateWay_cryptoCurrency_BTC": {},
+    "donateWay_cryptoCurrency_ETH": "ETH",
+    "@donateWay_cryptoCurrency_ETH": {},
+    "donateWay_cryptoCurrency_BNB": "BNB",
+    "@donateWay_cryptoCurrency_BNB": {},
+    "donateWay_cryptoCurrency_AVAX": "AVAX",
+    "@donateWay_cryptoCurrency_AVAX": {},
+    "donateWay_cryptoCurrency_FTM": "FTM",
+    "@donateWay_cryptoCurrency_FTM": {},
+    "donateWay_firstQRGroup": "Alipay і Wechat Pay",
+    "@donateWay_firstQRGroup": {},
+    "appAbout_donateDialog_copiedCrypto_msg": "Скопійовано адресу {name}",
+    "@appAbout_donateDialog_copiedCrypto_msg": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "BTC"
+            }
+        }
+    },
+    "batchCheckin_appbar_title": "Пакетна реєстрація",
+    "@batchCheckin_appbar_title": {},
+    "batchCheckin_datePicker_prevButton_tooltip": "Попередній день",
+    "@batchCheckin_datePicker_prevButton_tooltip": {},
+    "batchCheckin_datePicker_nextButton_tooltip": "Наступного дня",
+    "@batchCheckin_datePicker_nextButton_tooltip": {},
+    "batchCheckin_status_skip_text": "Пропустити",
+    "@batchCheckin_status_skip_text": {},
+    "batchCheckin_status_ok_text": "Повний",
+    "@batchCheckin_status_ok_text": {},
+    "batchCheckin_status_double_text": "x2 удар!",
+    "@batchCheckin_status_double_text": {},
+    "batchCheckin_status_zero_text": "Неповний",
+    "@batchCheckin_status_zero_text": {},
+    "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Habit} other{Habits}} вибрано",
+    "@batchCheckin_habits_groupTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_button_text": "Зберегти",
+    "@batchCheckin_save_button_text": {},
+    "batchCheckin_reset_button_text": "Скинути",
+    "@batchCheckin_reset_button_text": {},
+    "batchCheckin_completed_snackbar_text": "Змінено {count, plural, =1{статус звички} other{статус {count} звичок}}",
+    "@batchCheckin_completed_snackbar_text": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_confirmDialog_title": "Перезаписати існуючі записи",
+    "@batchCheckin_save_confirmDialog_title": {},
+    "batchCheckin_save_confirmDialog_body": "Існуючі записи буде перезаписано. Після збереження попередні записи буде втрачено.",
+    "@batchCheckin_save_confirmDialog_body": {},
+    "batchCheckin_save_confirmDialog_confirmButton_text": "зберегти",
+    "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+    "batchCheckin_save_confirmDialog_cancelButton_text": "скасувати",
+    "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+    "batchCheckin_close_confirmDialog_title": "Підтвердити повернення",
+    "@batchCheckin_close_confirmDialog_title": {},
+    "batchCheckin_close_confirmDialog_body": "Зміни статусу реєстрації не будуть застосовані до збереження",
+    "@batchCheckin_close_confirmDialog_body": {},
+    "batchCheckin_close_confirmDialog_confirmButton_text": "вихід",
+    "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+    "batchCheckin_close_confirmDialog_cancelButton_text": "скасувати",
+    "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+    "appReminder_dailyReminder_title": "🏝 Чи дотрималися ви сьогодні своїх звичок?",
+    "@appReminder_dailyReminder_title": {},
+    "appReminder_dailyReminder_body": "натисніть, щоб увійти в програму та зайти вчасно.",
+    "@appReminder_dailyReminder_body": {},
+    "common_habitColorType_cc1": "Глибокий бузок",
+    "@common_habitColorType_cc1": {},
+    "common_habitColorType_cc2": "Червоний",
+    "@common_habitColorType_cc2": {},
+    "common_habitColorType_cc3": "Фіолетовий",
+    "@common_habitColorType_cc3": {},
+    "common_habitColorType_cc4": "Королівський синій",
+    "@common_habitColorType_cc4": {},
+    "common_habitColorType_cc5": "Темно-блакитний",
+    "@common_habitColorType_cc5": {},
+    "common_habitColorType_cc6": "Зелений",
+    "@common_habitColorType_cc6": {},
+    "common_habitColorType_cc7": "Бурштин",
+    "@common_habitColorType_cc7": {},
+    "common_habitColorType_cc8": "Помаранчевий",
+    "@common_habitColorType_cc8": {},
+    "common_habitColorType_cc9": "Зелений лайм",
+    "@common_habitColorType_cc9": {},
+    "common_habitColorType_cc10": "Темна орхідея",
+    "@common_habitColorType_cc10": {},
+    "common_habitColorType_default": "колір {index}",
+    "@common_habitColorType_default": {
+        "description": "unknown habit color type name",
+        "placeholders": {
+            "index": {
+                "type": "int",
+                "example": "0"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_useSystemFormat_text": "Використовуйте системний формат",
+    "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+    "common_customDateTimeFormatPicker_fmtTileText": "Формат дати",
+    "@common_customDateTimeFormatPicker_fmtTileText": {},
+    "common_customDateTimeFormatPicker_ymd_text": "Рік Місяць День",
+    "@common_customDateTimeFormatPicker_ymd_text": {},
+    "common_customDateTimeFormatPicker_mdy_text": "Місяць День Рік",
+    "@common_customDateTimeFormatPicker_mdy_text": {},
+    "common_customDateTimeFormatPicker_dmy_text": "День Місяць Рік",
+    "@common_customDateTimeFormatPicker_dmy_text": {},
+    "common_customDateTimeFormatPicker_SepTileText": "Роздільник",
+    "@common_customDateTimeFormatPicker_SepTileText": {},
+    "common_customDateTimeFormatPicker_sepDash_text": "Тире",
+    "@common_customDateTimeFormatPicker_sepDash_text": {},
+    "common_customDateTimeFormatPicker_sepSlash_text": "Слеш",
+    "@common_customDateTimeFormatPicker_sepSlash_text": {},
+    "common_customDateTimeFormatPicker_sepSpace_text": "Космос",
+    "@common_customDateTimeFormatPicker_sepSpace_text": {},
+    "common_customDateTimeFormatPicker_sepDot_text": "Крапка",
+    "@common_customDateTimeFormatPicker_sepDot_text": {},
+    "common_customDateTimeFormatPicker_empty_text": "Без роздільника",
+    "@common_customDateTimeFormatPicker_empty_text": {},
+    "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+    "@common_customDateTimeFormatPicker_sep_formatter": {
+        "description": "split char",
+        "placeholders": {
+            "splitName": {
+                "type": "String",
+                "example": "Dash"
+            },
+            "splitChar": {
+                "type": "String",
+                "example": "/"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_12Hour_text": "Використовуйте 12-годинний формат",
+    "@common_customDateTimeFormatPicker_12Hour_text": {},
+    "common_customDateTimeFormatPicker_monthName_text": "Використовуйте повне ім'я",
+    "@common_customDateTimeFormatPicker_monthName_text": {},
+    "common_customDateTimeFormatPicker_applyFreqChart_text": "Подайте заявку на Freq Chart",
+    "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+    "common_customDateTimeFormatPicker_applyHeapmap_text": "Подати заявку на Календар",
+    "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+    "common_customDateTimeFormatPicker_cancelButton_text": "скасувати",
+    "@common_customDateTimeFormatPicker_cancelButton_text": {},
+    "common_customDateTimeFormatPicker_confirmButton_text": "підтвердити",
+    "@common_customDateTimeFormatPicker_confirmButton_text": {},
+    "common_errorPage_title": "Ой, збій!",
+    "@common_errorPage_title": {},
+    "common_errorPage_copied": "Скопійовано інформацію про збій",
+    "@common_errorPage_copied": {},
+    "common_enable_text": "Увімкнено",
+    "@common_enable_text": {},
+    "calendarPicker_clip_today": "Сьогодні",
+    "@calendarPicker_clip_today": {},
+    "calendarPicker_clip_tomorrow": "Завтра",
+    "@calendarPicker_clip_tomorrow": {},
+    "calendarPicker_clip_after7Days": "Далі {date}",
+    "@calendarPicker_clip_after7Days": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "format": "E"
+            }
+        }
+    },
+    "exportConfirmDialog_title_exportAll": "Експортувати всі звички?",
+    "@exportConfirmDialog_title_exportAll": {},
+    "exportConfirmDialog_title_exportMulti": "Експортувати {number, plural, =0{поточна звичка} =1{1 звичка} other{{number} звичок}}?",
+    "@exportConfirmDialog_title_exportMulti": {
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "exportConfirmDialog_option_includeRecords": "включити записи",
+    "@exportConfirmDialog_option_includeRecords": {},
+    "exportConfirmDialog_cancel_buttonText": "скасувати",
+    "@exportConfirmDialog_cancel_buttonText": {},
+    "exportConfirmDialog_confirm_buttonText": "експорт",
+    "@exportConfirmDialog_confirm_buttonText": {},
+    "debug_logLevelTile_title": "Рівень реєстрації",
+    "@debug_logLevelTile_title": {},
+    "debug_logLevelDialog_title": "Змінити рівень реєстрації",
+    "@debug_logLevelDialog_title": {},
+    "debug_logLevel_debug": "Налагодження",
+    "@debug_logLevel_debug": {},
+    "debug_logLevel_info": "Інформація",
+    "@debug_logLevel_info": {},
+    "debug_logLevel_warn": "Увага",
+    "@debug_logLevel_warn": {},
+    "debug_logLevel_error": "Помилка",
+    "@debug_logLevel_error": {},
+    "debug_logLevel_fatal": "Фатальний",
+    "@debug_logLevel_fatal": {},
+    "debug_collectLogTile_title": "Збір журналів",
+    "@debug_collectLogTile_title": {},
+    "debug_collectLogTile_enable_subtitle": "Торкніться, щоб припинити збір журналів.",
+    "@debug_collectLogTile_enable_subtitle": {},
+    "debug_collectLogTile_disable_subtitle": "Торкніться, щоб почати збір журналів.",
+    "@debug_collectLogTile_disable_subtitle": {},
+    "debug_downladDebugLogs_subject": "Завантаження журналів налагодження",
+    "@debug_downladDebugLogs_subject": {},
+    "dbeug_clearDebugLogs_complete_snackbar": "Журнали налагодження очищено.",
+    "@dbeug_clearDebugLogs_complete_snackbar": {},
+    "debug_downladDebugInfo_subject": "Завантаження інформації про налагодження",
+    "@debug_downladDebugInfo_subject": {},
+    "debug_downladDebugZip_subject": "Завантаження {fileName}",
+    "@debug_downladDebugZip_subject": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "debug.zip"
+            }
+        }
+    },
+    "debug_missingDebugLogFile_snackbar": "Журнал налагодження не існує.",
+    "@debug_missingDebugLogFile_snackbar": {},
+    "debug_debuggerLogCard_title": "Інформація про журнал",
+    "@debug_debuggerLogCard_title": {},
+    "debug_debuggerLogCard_subtitle": "Включає локальну інформацію журналу налагодження, потрібно ввімкнути перемикач збору журналів.",
+    "@debug_debuggerLogCard_subtitle": {},
+    "debug_debuggerLogCard_saveButton_text": "Завантажити",
+    "@debug_debuggerLogCard_saveButton_text": {},
+    "debug_debuggerLogCard_clearButton_text": "Очистити",
+    "@debug_debuggerLogCard_clearButton_text": {},
+    "debug_debuggerInfoCard_title": "Інформація про налагодження",
+    "@debug_debuggerInfoCard_title": {},
+    "debug_debuggerInfoCard_subtitle": "Включає інформацію про налагодження програми.",
+    "@debug_debuggerInfoCard_subtitle": {},
+    "debug_debuggerInfoCard_openButton_text": "Відкрити",
+    "@debug_debuggerInfoCard_openButton_text": {},
+    "debug_debuggerInfoCard_saveButton_text": "Зберегти",
+    "@debug_debuggerInfoCard_saveButton_text": {},
+    "debug_debuggerInfo_notificationTitle": "Збір інформації про програму...",
+    "@debug_debuggerInfo_notificationTitle": {},
+    "confirmDialog_confirm_text": "{type, select, save {Save} exit {Exit} delete {Delete} other {Confirm}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<NormalizeConfirmDialogType>.name",
+                "example": "confirm"
+            }
+        }
+    },
+    "confirmDialog_cancel_text": "Скасувати",
+    "@confirmDialog_cancel_text": {},
+    "snackbar_undoText": "ВІДМІНИТИ",
+    "@snackbar_undoText": {},
+    "snackbar_dismissText": "ВІДХИЛИТИ",
+    "@snackbar_dismissText": {},
+    "contributors_tile_title": "Дописувачі",
+    "@contributors_tile_title": {},
+    "userAction_tap": "Тапніть",
+    "@userAction_tap": {},
+    "userAction_doubleTap": "Двічі",
+    "@userAction_doubleTap": {},
+    "userAction_longTap": "Довгий",
+    "@userAction_longTap": {},
+    "channelName_habitReminder": "Нагадування про звички",
+    "@channelName_habitReminder": {},
+    "channelName_appReminder": "Підказка",
+    "@channelName_appReminder": {},
+    "channelName_appDebugger": "Налагоджувач",
+    "@channelName_appDebugger": {},
+    "channelName_appSyncing": "Процес синхронізації",
+    "@channelName_appSyncing": {},
+    "channelDesc_appSyncing": "Використовується для відображення прогресу синхронізації та результатів без помилок",
+    "@channelDesc_appSyncing": {},
+    "channelName_appSyncFailed": "Помилка синхронізації",
+    "@channelName_appSyncFailed": {},
+    "channelDesc_appSyncFailed": "Використовується для сповіщення про невдачу синхронізації",
+    "@channelDesc_appSyncFailed": {},
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Експортована звичка.} other {Експортовано звичок: {count}.}}",
+    "@habitDisplay_exportHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of exported habits",
+                "example": "3"
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Експортовано всі звички",
+    "@habitDisplay_exportAllHabitsSuccSnackbarText": {}
 }
