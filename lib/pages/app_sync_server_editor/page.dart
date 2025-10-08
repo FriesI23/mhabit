@@ -113,9 +113,9 @@ class _PageState extends State<_Page> {
   void _onSaveButtonPressed() async {
     final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
-    assert(vm.canSave, "Can't save current config, got ${vm.formSnapshot}");
-    final form = vm.getFinalForm();
-    if (vm.edited && vm.crtServerConfig != null) {
+    assert(vm.canSave, "Can't save current config, got ${vm.form}");
+    final form = vm.finalForm();
+    if (vm.edited && vm.serverConfig != null) {
       confirmed = await showNormalizedConfirmDialog(
             context: context,
             title: L10nBuilder(
@@ -380,15 +380,15 @@ class _PageAdvancedSection extends StatelessWidget {
   });
 
   List<Widget> _buildForSmallScreen() => const [
-        AppSyncServerIgnoreSSLTile(),
+        _IgnoreSSLTile(),
         AppSyncServerTimeoutTile(),
         AppSyncServerConnTimeoutTile(),
         AppSyncServerConnRetryCountTile(),
-        AppSyncServerNetworkTypeTile(),
+        _NetworkTypeTile(),
       ];
 
   List<Widget> _buildForLargeScreen() => const [
-        AppSyncServerIgnoreSSLTile(),
+        _IgnoreSSLTile(),
         AppSyncServerTimeoutTile(),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -397,7 +397,7 @@ class _PageAdvancedSection extends StatelessWidget {
             Expanded(child: AppSyncServerConnRetryCountTile()),
           ],
         ),
-        AppSyncServerNetworkTypeTile(),
+        _NetworkTypeTile(),
       ];
 
   @override
@@ -482,7 +482,7 @@ class _DebugTileState extends State<_DebugTile> {
                 Text("Timeout: ${vm.timeout?.inSeconds}"),
                 Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
                 Text("Conn RetryCount: ${vm.connectRetryCount}"),
-                Text("Form: ${vm.formSnapshot.toDebugString()}"),
+                Text("Form: ${vm.form.toDebugString()}"),
               ],
             ),
             isThreeLine: true,
@@ -491,4 +491,37 @@ class _DebugTileState extends State<_DebugTile> {
       ),
     );
   }
+}
+
+final class _IgnoreSSLTile extends StatelessWidget {
+  const _IgnoreSSLTile();
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<AppSyncServerFormViewModel, AppSyncServerType>(
+        selector: (context, vm) => vm.type,
+        builder: (context, value, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => const AppWebDavSyncServerIgnoreSSLTile(),
+        },
+      );
+}
+
+final class _NetworkTypeTile extends StatelessWidget {
+  const _NetworkTypeTile();
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<AppSyncServerFormViewModel, AppSyncServerType>(
+        selector: (context, vm) => vm.type,
+        builder: (context, value, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            const AppWebDavSyncServerNetworkTypeTile(),
+        },
+      );
 }

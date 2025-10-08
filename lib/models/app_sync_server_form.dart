@@ -24,6 +24,10 @@ sealed class AppSyncServerForm {
   final AppSyncServerType type;
 
   const AppSyncServerForm({required this.uuid, required this.type});
+
+  bool canSave();
+
+  String toDebugString();
 }
 
 @CopyWith(skipFields: true)
@@ -33,6 +37,23 @@ final class FakeSyncServerForm extends AppSyncServerForm {
   const FakeSyncServerForm({required super.uuid})
       : super(type: AppSyncServerType.fake);
 
+  AppFakeSyncServer toConfig(
+          {required DateTime createTime,
+          required DateTime modifyTime,
+          required bool configed}) =>
+      AppFakeSyncServer.fromForm(this,
+          createTime: createTime,
+          modifyTime: modifyTime,
+          timeout: data.containsKey("timeout")
+              ? Duration(seconds: int.parse(data["timeout"]!))
+              : null,
+          data: data,
+          configed: configed);
+
+  @override
+  bool canSave() => true;
+
+  @override
   String toDebugString() {
     return """AppSyncServerForm(
   uuid=$uuid,type=$type,
@@ -69,6 +90,17 @@ final class WebDavSyncServerForm extends AppSyncServerForm {
     this.syncInLowData,
   }) : super(type: AppSyncServerType.webdav);
 
+  @override
+  bool canSave() => (path ?? '').isNotEmpty;
+
+  AppWebDavSyncServer toConfig(
+          {required DateTime createTime,
+          required DateTime modifyTime,
+          required bool configed}) =>
+      AppWebDavSyncServer.fromForm(this,
+          createTime: createTime, modifyTime: modifyTime, configed: configed);
+
+  @override
   String toDebugString() {
     final password = kDebugMode
         ? this.password

@@ -135,8 +135,8 @@ abstract class _$AppFakeSyncServerCWProxy {
     String name,
     DateTime createTime,
     DateTime modifyTime,
-    String? password,
     Duration? timeout,
+    Map<String, String>? data,
     bool configed,
   });
 }
@@ -160,8 +160,8 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
     Object? name = const $CopyWithPlaceholder(),
     Object? createTime = const $CopyWithPlaceholder(),
     Object? modifyTime = const $CopyWithPlaceholder(),
-    Object? password = const $CopyWithPlaceholder(),
     Object? timeout = const $CopyWithPlaceholder(),
+    Object? data = const $CopyWithPlaceholder(),
     Object? configed = const $CopyWithPlaceholder(),
   }) {
     return AppFakeSyncServer._copyWith(
@@ -181,14 +181,14 @@ class _$AppFakeSyncServerCWProxyImpl implements _$AppFakeSyncServerCWProxy {
           ? _value.modifyTime
           // ignore: cast_nullable_to_non_nullable
           : modifyTime as DateTime,
-      password: password == const $CopyWithPlaceholder()
-          ? _value.password
-          // ignore: cast_nullable_to_non_nullable
-          : password as String?,
       timeout: timeout == const $CopyWithPlaceholder()
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
           : timeout as Duration?,
+      data: data == const $CopyWithPlaceholder()
+          ? _value.data
+          // ignore: cast_nullable_to_non_nullable
+          : data as Map<String, String>?,
       configed: configed == const $CopyWithPlaceholder()
           ? _value.configed
           // ignore: cast_nullable_to_non_nullable
@@ -202,129 +202,6 @@ extension $AppFakeSyncServerCopyWith on AppFakeSyncServer {
   // ignore: library_private_types_in_public_api
   _$AppFakeSyncServerCWProxy get copyWith =>
       _$AppFakeSyncServerCWProxyImpl(this);
-}
-
-abstract class _$AppSyncServerFormCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
-  ///
-  /// Usage
-  /// ```dart
-  /// AppSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
-  AppSyncServerForm call({
-    UuidValue uuid,
-    AppSyncServerType type,
-    DateTime createTime,
-    DateTime modifyTime,
-    String? path,
-    String? username,
-    String? password,
-    bool? ignoreSSL,
-    Duration? timeout,
-    Duration? connectTimeout,
-    int? connectRetryCount,
-    Set<AppSyncServerMobileNetwork>? syncMobileNetworks,
-    bool? syncInLowData,
-    bool configed,
-  });
-}
-
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppSyncServerForm.copyWith(...)`.
-class _$AppSyncServerFormCWProxyImpl implements _$AppSyncServerFormCWProxy {
-  const _$AppSyncServerFormCWProxyImpl(this._value);
-
-  final AppSyncServerForm _value;
-
-  @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
-  ///
-  /// Usage
-  /// ```dart
-  /// AppSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
-  AppSyncServerForm call({
-    Object? uuid = const $CopyWithPlaceholder(),
-    Object? type = const $CopyWithPlaceholder(),
-    Object? createTime = const $CopyWithPlaceholder(),
-    Object? modifyTime = const $CopyWithPlaceholder(),
-    Object? path = const $CopyWithPlaceholder(),
-    Object? username = const $CopyWithPlaceholder(),
-    Object? password = const $CopyWithPlaceholder(),
-    Object? ignoreSSL = const $CopyWithPlaceholder(),
-    Object? timeout = const $CopyWithPlaceholder(),
-    Object? connectTimeout = const $CopyWithPlaceholder(),
-    Object? connectRetryCount = const $CopyWithPlaceholder(),
-    Object? syncMobileNetworks = const $CopyWithPlaceholder(),
-    Object? syncInLowData = const $CopyWithPlaceholder(),
-    Object? configed = const $CopyWithPlaceholder(),
-  }) {
-    return AppSyncServerForm(
-      uuid: uuid == const $CopyWithPlaceholder()
-          ? _value.uuid
-          // ignore: cast_nullable_to_non_nullable
-          : uuid as UuidValue,
-      type: type == const $CopyWithPlaceholder()
-          ? _value.type
-          // ignore: cast_nullable_to_non_nullable
-          : type as AppSyncServerType,
-      createTime: createTime == const $CopyWithPlaceholder()
-          ? _value.createTime
-          // ignore: cast_nullable_to_non_nullable
-          : createTime as DateTime,
-      modifyTime: modifyTime == const $CopyWithPlaceholder()
-          ? _value.modifyTime
-          // ignore: cast_nullable_to_non_nullable
-          : modifyTime as DateTime,
-      path: path == const $CopyWithPlaceholder()
-          ? _value.path
-          // ignore: cast_nullable_to_non_nullable
-          : path as String?,
-      username: username == const $CopyWithPlaceholder()
-          ? _value.username
-          // ignore: cast_nullable_to_non_nullable
-          : username as String?,
-      password: password == const $CopyWithPlaceholder()
-          ? _value.password
-          // ignore: cast_nullable_to_non_nullable
-          : password as String?,
-      ignoreSSL: ignoreSSL == const $CopyWithPlaceholder()
-          ? _value.ignoreSSL
-          // ignore: cast_nullable_to_non_nullable
-          : ignoreSSL as bool?,
-      timeout: timeout == const $CopyWithPlaceholder()
-          ? _value.timeout
-          // ignore: cast_nullable_to_non_nullable
-          : timeout as Duration?,
-      connectTimeout: connectTimeout == const $CopyWithPlaceholder()
-          ? _value.connectTimeout
-          // ignore: cast_nullable_to_non_nullable
-          : connectTimeout as Duration?,
-      connectRetryCount: connectRetryCount == const $CopyWithPlaceholder()
-          ? _value.connectRetryCount
-          // ignore: cast_nullable_to_non_nullable
-          : connectRetryCount as int?,
-      syncMobileNetworks: syncMobileNetworks == const $CopyWithPlaceholder()
-          ? _value.syncMobileNetworks
-          // ignore: cast_nullable_to_non_nullable
-          : syncMobileNetworks as Set<AppSyncServerMobileNetwork>?,
-      syncInLowData: syncInLowData == const $CopyWithPlaceholder()
-          ? _value.syncInLowData
-          // ignore: cast_nullable_to_non_nullable
-          : syncInLowData as bool?,
-      configed: configed == const $CopyWithPlaceholder()
-          ? _value.configed
-          // ignore: cast_nullable_to_non_nullable
-          : configed as bool,
-    );
-  }
-}
-
-extension $AppSyncServerFormCopyWith on AppSyncServerForm {
-  /// Returns a callable class that can be used as follows: `instanceOfAppSyncServerForm.copyWith(...)`.
-  // ignore: library_private_types_in_public_api
-  _$AppSyncServerFormCWProxy get copyWith =>
-      _$AppSyncServerFormCWProxyImpl(this);
 }
 
 // **************************************************************************
@@ -363,9 +240,9 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
       'timeout': instance.timeout?.inMicroseconds,
       'configed': instance.configed,
-      'password': instance.password,
       'path': instance.path.toString(),
       'username': instance.username,
+      'password': instance.password,
       'ignoreSSL': instance.ignoreSSL,
       'syncInLowData': instance.syncInLowData,
       'connectRetryCount': instance.connectRetryCount,
@@ -397,7 +274,9 @@ AppFakeSyncServer _$AppFakeSyncServerFromJson(Map<String, dynamic> json) =>
           ? null
           : Duration(microseconds: (json['timeout'] as num).toInt()),
       configed: json['configed'] as bool,
-      password: json['password'] as String?,
+      data: (json['data'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
     );
 
 Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
@@ -409,5 +288,5 @@ Map<String, dynamic> _$AppFakeSyncServerToJson(AppFakeSyncServer instance) =>
       'type_': _$AppSyncServerTypeEnumMap[instance.type]!,
       'timeout': instance.timeout?.inMicroseconds,
       'configed': instance.configed,
-      'password': instance.password,
+      'data': instance.data,
     };

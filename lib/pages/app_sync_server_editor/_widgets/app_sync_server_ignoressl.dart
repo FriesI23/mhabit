@@ -17,31 +17,51 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerIgnoreSSLTile extends StatelessWidget {
+  final bool? value;
   final EdgeInsetsGeometry? contentPadding;
+  final ValueChanged<bool?>? onChanged;
 
-  const AppSyncServerIgnoreSSLTile({super.key, this.contentPadding});
+  const AppSyncServerIgnoreSSLTile({
+    super.key,
+    this.value,
+    this.contentPadding,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final ignoreSSL =
-        context.select<AppSyncServerFormViewModel, bool?>((vm) => vm.ignoreSSL);
     final l10n = L10n.of(context);
     return Visibility(
-      visible: type.includeIgnoreSSLField,
       child: CheckboxListTile.adaptive(
         secondary: const Icon(MdiIcons.lockOffOutline),
         contentPadding: contentPadding,
         title: Text(l10n?.appSync_serverEditor_ignoreSSLTile_titleText ??
             "Ignore SSL Certificate"),
-        value: ignoreSSL ?? false,
-        onChanged: (value) =>
-            context.read<AppSyncServerFormViewModel>().ignoreSSL = value,
+        value: value,
+        onChanged: onChanged,
+      ),
+    );
+  }
+}
+
+class AppWebDavSyncServerIgnoreSSLTile extends StatelessWidget {
+  const AppWebDavSyncServerIgnoreSSLTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    context.select<AppSyncServerFormViewModel, bool>((vm) => vm.webdav != null);
+    return Selector<AppSyncServerFormViewModel, bool?>(
+      selector: (context, vm) => vm.webdav?.ignoreSSL,
+      builder: (context, ignoreSSL, child) => AppSyncServerIgnoreSSLTile(
+        value: ignoreSSL,
+        onChanged: (value) {
+          final vm = context.read<AppSyncServerFormViewModel>();
+          if (!vm.mounted || vm.webdav == null) return;
+          vm.webdav?.ignoreSSL = value;
+        },
       ),
     );
   }

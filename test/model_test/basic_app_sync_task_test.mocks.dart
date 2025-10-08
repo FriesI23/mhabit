@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mhabit/models/app_sync_server.dart' as _i2;
+import 'package:mhabit/models/app_sync_server_form.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 
@@ -23,17 +24,6 @@ import 'package:mockito/src/dummies.dart' as _i3;
 
 class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
   _FakeDateTime_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeAppSyncServerForm_1 extends _i1.SmartFake
-    implements _i2.AppSyncServerForm {
-  _FakeAppSyncServerForm_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -127,19 +117,19 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
       ) as bool);
 
   @override
-  _i2.AppSyncServerForm toForm() => (super.noSuchMethod(
+  _i4.AppSyncServerForm toForm() => (super.noSuchMethod(
         Invocation.method(
           #toForm,
           [],
         ),
-        returnValue: _FakeAppSyncServerForm_1(
+        returnValue: _i3.dummyValue<_i4.AppSyncServerForm>(
           this,
           Invocation.method(
             #toForm,
             [],
           ),
         ),
-      ) as _i2.AppSyncServerForm);
+      ) as _i4.AppSyncServerForm);
 
   @override
   String toDebugString() => (super.noSuchMethod(
