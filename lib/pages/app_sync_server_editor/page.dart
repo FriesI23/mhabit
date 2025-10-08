@@ -265,7 +265,7 @@ class _PageFullScreenDialog extends StatelessWidget {
               children: [
                 const AppSyncServerTypeMenu(),
                 const AppSyncServerPathTile(),
-                const AppSyncServerUsernameTile(),
+                const _UsernameTile(),
                 const AppSyncServerPasswordTile(),
                 _PageAdvancedSection(
                   type: UiLayoutType.s,
@@ -310,7 +310,7 @@ class _PageDialog extends StatelessWidget {
                 key: ValueKey("large"),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(child: AppSyncServerUsernameTile()),
+                  Expanded(child: _UsernameTile()),
                   Expanded(child: AppSyncServerPasswordTile()),
                 ],
               )
@@ -318,7 +318,7 @@ class _PageDialog extends StatelessWidget {
                 key: ValueKey("small"),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppSyncServerUsernameTile(),
+                  _UsernameTile(),
                   AppSyncServerPasswordTile(),
                 ],
               ),
@@ -590,6 +590,27 @@ final class _ServerTimeoutTile extends StatelessWidget {
               controller: controller,
               onChanged: (value) =>
                   controller.text = value?.inSeconds.toString() ?? "",
+            ),
+        },
+      );
+}
+
+final class _UsernameTile extends StatelessWidget {
+  const _UsernameTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav => vm.webdav?.username ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerUsernameTile(
+              controller: controller,
+              onChanged: (value) => controller.text = value ?? "",
             ),
         },
       );

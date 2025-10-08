@@ -17,42 +17,53 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerUsernameTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
-  const AppSyncServerUsernameTile({
-    super.key,
-    this.contentPadding,
-  });
+  const AppSyncServerUsernameTile(
+      {super.key, this.contentPadding, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final controller =
-        context.select<AppSyncServerFormViewModel, TextEditingController>(
-            (vm) => vm.usernameInputController);
     final l10n = L10n.of(context);
-    return Visibility(
-      visible: type.includePathField,
-      child: ListTile(
-        contentPadding: contentPadding,
-        title: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            icon: const Icon(MdiIcons.accountCircleOutline),
-            labelText:
-                l10n?.appSync_serverEditor_usernameTile_titleText ?? 'Username',
-            hintText: l10n?.appSync_serverEditor_usernameTile_hintText,
-          ),
-          keyboardType: TextInputType.text,
-          onChanged: (_) =>
-              context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
+    return ListTile(
+      contentPadding: contentPadding,
+      title: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          icon: const Icon(MdiIcons.accountCircleOutline),
+          labelText:
+              l10n?.appSync_serverEditor_usernameTile_titleText ?? 'Username',
+          hintText: l10n?.appSync_serverEditor_usernameTile_hintText,
         ),
+        keyboardType: TextInputType.text,
+        onChanged: onChanged,
       ),
+    );
+  }
+}
+
+class AppWebDavSyncServerUsernameTile extends StatelessWidget {
+  final TextEditingController? controller;
+  final ValueChanged<String?>? onChanged;
+
+  const AppWebDavSyncServerUsernameTile(
+      {super.key, this.controller, this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppSyncServerUsernameTile(
+      controller: controller,
+      onChanged: (value) {
+        final vm = context.read<AppSyncServerFormViewModel>();
+        if (!vm.mounted || vm.webdav == null) return;
+        vm.webdav?.username = value.isEmpty ? null : value;
+        onChanged?.call(vm.webdav?.username);
+      },
     );
   }
 }

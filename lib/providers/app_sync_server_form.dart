@@ -108,6 +108,16 @@ final class WebDavSyncServerFromHandler implements _Handler {
 
   void notifyListeners() => root.notifyListeners();
 
+  String? get username => form.username;
+  set username(String? value) {
+    if (value == username) return;
+    final oldValue = username;
+    form.username = value;
+    appLog.value
+        .info('$runtimeType.username', beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
   bool? get ignoreSSL => form.ignoreSSL;
   set ignoreSSL(bool? value) {
     if (value == ignoreSSL) return;
