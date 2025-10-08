@@ -20,9 +20,13 @@ import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerFormInputField extends StatefulWidget {
   final TextEditingController? controller;
-  final Widget Function(BuildContext context, AppSyncServerType value,
-      TextEditingController controller, Widget? child) builder;
-  final String Function(AppSyncServerType t, AppSyncServerFormViewModel vm)
+  final Widget Function(
+    BuildContext context,
+    AppSyncServerType type,
+    TextEditingController controller,
+    Widget? child,
+  ) builder;
+  final String Function(AppSyncServerType type, AppSyncServerFormViewModel vm)
       getValue;
 
   const AppSyncServerFormInputField({
@@ -38,44 +42,70 @@ class AppSyncServerFormInputField extends StatefulWidget {
 
 class _AppSyncServerFormInputFieldState
     extends State<AppSyncServerFormInputField> {
-  late TextEditingController controller;
   late AppSyncServerFormViewModel vm;
   late AppSyncServerType type;
-
-  _AppSyncServerFormInputFieldState();
+  late TextEditingController controller;
+  bool _controllerInitialized = false;
 
   String get value => widget.getValue(type, vm);
 
   @override
-  void initState() {
-    vm = context.read<AppSyncServerFormViewModel>();
-    type = vm.type;
-    controller = widget.controller != null
-        ? (widget.controller!..text = value)
-        : TextEditingController.fromValue(TextEditingValue(text: value));
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newVm = context.read<AppSyncServerFormViewModel>();
+    if (!_controllerInitialized || !identical(vm, newVm)) {
+      vm = newVm;
+      type = vm.type;
+      if (!_controllerInitialized) _initController();
+    }
+  }
+
+  void _initController() {
+    if (widget.controller != null) {
+      controller = widget.controller!;
+      if (controller.text != value) controller.text = value;
+    } else {
+      controller = TextEditingController(text: value);
+    }
+    _controllerInitialized = true;
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (type != vm.type) {
-      type = vm.type;
-      controller.text = value;
+  void didUpdateWidget(covariant AppSyncServerFormInputField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      final oldController = controller;
+      if (widget.controller != null) {
+        controller = widget.controller!;
+        if (controller.text != value) controller.text = value;
+      } else {
+        controller = TextEditingController(text: value);
+      }
+      if (oldWidget.controller == null) oldController.dispose();
+    } else if (oldWidget.getValue != widget.getValue) {
+      final newText = value;
+      if (controller.text != newText) controller.text = newText;
     }
   }
 
   @override
   void dispose() {
-    super.dispose();
     if (widget.controller == null) controller.dispose();
+    super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Selector<AppSyncServerFormViewModel, AppSyncServerType>(
-        selector: (context, vm) => vm.type,
-        builder: (context, value, child) =>
-            widget.builder(context, value, controller, child),
-      );
+  Widget build(BuildContext context) {
+    return Selector<AppSyncServerFormViewModel, AppSyncServerType>(
+      selector: (context, vm) => vm.type,
+      builder: (context, newType, child) {
+        if (newType != type) {
+          type = newType;
+          final newValue = value;
+          if (controller.text != newValue) controller.text = newValue;
+        }
+        return widget.builder(context, newType, controller, child);
+      },
+    );
+  }
 }

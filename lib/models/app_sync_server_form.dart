@@ -27,6 +27,8 @@ sealed class AppSyncServerForm {
 
   bool canSave();
 
+  AppSyncServerForm copy();
+
   String toDebugString();
 }
 
@@ -52,6 +54,9 @@ final class FakeSyncServerForm extends AppSyncServerForm {
 
   @override
   bool canSave() => true;
+
+  @override
+  FakeSyncServerForm copy() => copyWith();
 
   @override
   String toDebugString() {
@@ -99,6 +104,9 @@ final class WebDavSyncServerForm extends AppSyncServerForm {
           required bool configed}) =>
       AppWebDavSyncServer.fromForm(this,
           createTime: createTime, modifyTime: modifyTime, configed: configed);
+
+  @override
+  WebDavSyncServerForm copy() => copyWith();
 
   @override
   String toDebugString() {

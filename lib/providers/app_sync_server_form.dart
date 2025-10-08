@@ -60,6 +60,8 @@ class AppSyncServerFormViewModel extends ChangeNotifier
 
   bool get canSave => _form.canSave();
 
+  AppSyncServerForm get form => _form;
+
   WebDavSyncServerFromHandler? get webdav => type == AppSyncServerType.webdav
       ? WebDavSyncServerFromHandler(this)
       : null;
@@ -108,6 +110,16 @@ final class WebDavSyncServerFromHandler implements _Handler {
 
   void notifyListeners() => root.notifyListeners();
 
+  String? get path => form.path;
+  set path(String? value) {
+    if (value == path) return;
+    final oldValue = path;
+    form.path = value;
+    appLog.value
+        .info('$runtimeType.path', beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
   String? get username => form.username;
   set username(String? value) {
     if (value == username) return;
@@ -115,6 +127,16 @@ final class WebDavSyncServerFromHandler implements _Handler {
     form.username = value;
     appLog.value
         .info('$runtimeType.username', beforeVal: oldValue, afterVal: value);
+    notifyListeners();
+  }
+
+  String? get password => form.password;
+  set password(String? value) {
+    if (value == password) return;
+    final oldValue = password;
+    form.password = value;
+    appLog.value
+        .info('$runtimeType.password', beforeVal: oldValue, afterVal: value);
     notifyListeners();
   }
 

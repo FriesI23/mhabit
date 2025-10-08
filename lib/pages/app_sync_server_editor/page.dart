@@ -114,8 +114,8 @@ class _PageState extends State<_Page> {
   void _onSaveButtonPressed() async {
     final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
-    assert(vm.canSave, "Can't save current config, got ${vm.form}");
-    final form = vm.finalForm();
+    final form = vm.form.copy();
+    assert(vm.canSave, "Can't save current config, got $form");
     if (vm.edited && vm.serverConfig != null) {
       confirmed = await showNormalizedConfirmDialog(
             context: context,
@@ -264,9 +264,9 @@ class _PageFullScreenDialog extends StatelessWidget {
             body: ListView(
               children: [
                 const AppSyncServerTypeMenu(),
-                const AppSyncServerPathTile(),
+                const _PathTile(),
                 const _UsernameTile(),
-                const AppSyncServerPasswordTile(),
+                const _PasswordTile(),
                 _PageAdvancedSection(
                   type: UiLayoutType.s,
                   expanded: showAdvanceConfig,
@@ -311,7 +311,7 @@ class _PageDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Expanded(child: _UsernameTile()),
-                  Expanded(child: AppSyncServerPasswordTile()),
+                  Expanded(child: _PasswordTile()),
                 ],
               )
             : const Column(
@@ -319,7 +319,7 @@ class _PageDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _UsernameTile(),
-                  AppSyncServerPasswordTile(),
+                  _PasswordTile(),
                 ],
               ),
       );
@@ -344,7 +344,7 @@ class _PageDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const AppSyncServerTypeMenu(width: -1),
-              const AppSyncServerPathTile(),
+              const _PathTile(),
               _buildUserTiles(context),
               _PageAdvancedSection(
                 type: UiLayoutType.l,
@@ -428,33 +428,17 @@ class _DebugTile extends StatefulWidget {
 }
 
 class _DebugTileState extends State<_DebugTile> {
-  late AppSyncServerFormViewModel formVM;
   late bool hided;
-
-  void _changeListener() => setState(() {});
 
   @override
   void initState() {
     super.initState();
     hided = false;
-    formVM = context.read<AppSyncServerFormViewModel>();
-    formVM.pathInputController.addListener(_changeListener);
-    formVM.usernameInputController.addListener(_changeListener);
-    formVM.passwordInputController.addListener(_changeListener);
   }
 
   @override
   void dispose() {
-    formVM.pathInputController.removeListener(_changeListener);
-    formVM.usernameInputController.removeListener(_changeListener);
-    formVM.passwordInputController.removeListener(_changeListener);
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    formVM = context.read<AppSyncServerFormViewModel>();
   }
 
   @override
@@ -476,13 +460,19 @@ class _DebugTileState extends State<_DebugTile> {
               children: [
                 Text("Mounted: ${vm.mounted}"),
                 Text("Type: ${vm.type}"),
-                Text("Path: ${vm.pathInputController.text}"),
-                Text("Username: ${vm.usernameInputController.text}"),
-                Text("Password: ${vm.passwordInputController.text}"),
-                Text("IgnoreSSL: ${vm.ignoreSSL}"),
-                Text("Timeout: ${vm.timeout?.inSeconds}"),
-                Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
-                Text("Conn RetryCount: ${vm.connectRetryCount}"),
+                ...switch (vm.type) {
+                  AppSyncServerType.webdav => [
+                      Text("Path: ${vm.webdav?.path}"),
+                      Text("Username: ${vm.webdav?.username}"),
+                      Text("Password: ${vm.webdav?.password}"),
+                      Text("IgnoreSSL: ${vm.webdav?.ignoreSSL}"),
+                      Text("Timeout: ${vm.webdav?.timeout?.inSeconds}"),
+                      Text(
+                          "Conn Timeout: ${vm.webdav?.connectTimeout?.inSeconds}"),
+                      Text("Conn RetryCount: ${vm.webdav?.connectRetryCount}"),
+                    ],
+                  _ => const [],
+                },
                 Text("Form: ${vm.form.toDebugString()}"),
               ],
             ),
@@ -609,6 +599,45 @@ final class _UsernameTile extends StatelessWidget {
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
           AppSyncServerType.webdav => AppWebDavSyncServerUsernameTile(
+              controller: controller,
+              onChanged: (value) => controller.text = value ?? "",
+            ),
+        },
+      );
+}
+
+final class _PathTile extends StatelessWidget {
+  const _PathTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav => vm.webdav?.path ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerPathTile(
+              controller: controller,
+              onChanged: (value) => controller.text = value ?? "",
+            ),
+        },
+      );
+}
+
+final class _PasswordTile extends StatelessWidget {
+  const _PasswordTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => "",
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerPasswordTile(
               controller: controller,
               onChanged: (value) => controller.text = value ?? "",
             ),

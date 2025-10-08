@@ -17,47 +17,61 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
 class AppSyncServerPathTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
 
-  const AppSyncServerPathTile({
-    super.key,
-    this.contentPadding,
-  });
+  const AppSyncServerPathTile(
+      {super.key,
+      this.contentPadding,
+      required this.controller,
+      this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final controller =
-        context.select<AppSyncServerFormViewModel, TextEditingController>(
-            (vm) => vm.pathInputController);
     final canSave =
         context.select<AppSyncServerFormViewModel, bool>((vm) => vm.canSave);
     final l10n = L10n.of(context);
-    return Visibility(
-      visible: type.includePathField,
-      child: ListTile(
-        contentPadding: contentPadding,
-        title: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            icon: const Icon(MdiIcons.networkOutline),
-            labelText: l10n?.appSync_serverEditor_pathTile_titleText ?? 'Path',
-            hintText: l10n?.appSync_serverEditor_pathTile_hintText,
-            errorText: (!canSave && controller.text.isEmpty)
-                ? l10n?.appSync_serverEditor_pathTile_errorText_emptyPath ??
-                    "Path shouldn't be empty!"
-                : null,
-          ),
-          keyboardType: TextInputType.url,
-          onChanged: (_) =>
-              context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
+    return ListTile(
+      contentPadding: contentPadding,
+      title: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          icon: const Icon(MdiIcons.networkOutline),
+          labelText: l10n?.appSync_serverEditor_pathTile_titleText ?? 'Path',
+          hintText: l10n?.appSync_serverEditor_pathTile_hintText,
+          errorText: (!canSave && controller.text.isEmpty)
+              ? l10n?.appSync_serverEditor_pathTile_errorText_emptyPath ??
+                  "Path shouldn't be empty!"
+              : null,
         ),
+        keyboardType: TextInputType.url,
+        onChanged: onChanged,
       ),
+    );
+  }
+}
+
+class AppWebDavSyncServerPathTile extends StatelessWidget {
+  final TextEditingController controller;
+  final ValueChanged<String?>? onChanged;
+
+  const AppWebDavSyncServerPathTile(
+      {super.key, required this.controller, this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppSyncServerPathTile(
+      controller: controller,
+      onChanged: (value) {
+        final vm = context.read<AppSyncServerFormViewModel>();
+        if (!vm.mounted || vm.webdav == null) return;
+        vm.webdav?.path = value.isEmpty ? null : value;
+        onChanged?.call(vm.webdav?.path);
+      },
     );
   }
 }

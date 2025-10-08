@@ -20,76 +20,23 @@ import 'package:provider/provider.dart';
 import '../../../extensions/async_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 import '../../../widgets/styles.dart';
-
-class AppSyncServerPasswordTile extends StatelessWidget {
-  const AppSyncServerPasswordTile({super.key});
-
-  Widget _buildSnapshotWidget(BuildContext context,
-      AsyncSnapshot<(String, String?)> snapshot, String identity) {
-    if (snapshot.hasError || (snapshot.isDone && !snapshot.hasData)) {
-      if (kDebugMode) {
-        throw Error.throwWithStackTrace(snapshot.error!, snapshot.stackTrace!);
-      }
-      return const AppSyncServerPasswordField(enabled: false, loading: false);
-    }
-    if (snapshot.isDone) {
-      if (snapshot.data?.$1 != identity) {
-        return const AppSyncServerPasswordField(loading: false, enabled: false);
-      }
-      return Selector<AppSyncServerFormViewModel, TextEditingController>(
-          selector: (context, vm) => vm.passwordInputController,
-          builder: (context, value, child) =>
-              AppSyncServerPasswordField(controller: value));
-    }
-    return AppSyncServerPasswordField(
-        enabled: false, loading: !snapshot.isDone);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final identity =
-        context.select<AppSyncServerFormViewModel, String>((vm) => vm.identity);
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final vm = context.read<AppSyncServerFormViewModel>();
-    return Visibility(
-      visible: type.includePasswordField,
-      child: FutureBuilder(
-        future: vm.getPassword(),
-        builder: (context, snapshot) => Stack(
-          alignment: AlignmentDirectional.bottomCenter,
-          children: [
-            AnimatedOpacity(
-              opacity: (snapshot.isDone || vm.pwdLoaded) ? 0 : 1,
-              duration: const Duration(milliseconds: 300),
-              child: const Padding(
-                  padding: kListTileContentPadding,
-                  child: LinearProgressIndicator()),
-            ),
-            _buildSnapshotWidget(context, snapshot, identity),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class AppSyncServerPasswordField extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final bool loading;
   final bool enabled;
-  final TextEditingController? controller;
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
 
-  const AppSyncServerPasswordField({
-    super.key,
-    this.contentPadding,
-    this.loading = false,
-    this.enabled = true,
-    this.controller,
-  });
+  const AppSyncServerPasswordField(
+      {super.key,
+      this.contentPadding,
+      this.loading = false,
+      this.enabled = true,
+      required this.controller,
+      this.onChanged});
 
   @override
   State<AppSyncServerPasswordField> createState() =>
@@ -120,8 +67,7 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
 
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !showPassword) {
-        final controller =
-            context.read<AppSyncServerFormViewModel>().passwordInputController;
+        final controller = widget.controller;
         controller.selection =
             TextSelection(baseOffset: 0, extentOffset: controller.text.length);
       }
@@ -144,6 +90,7 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final controller = widget.controller;
     return ListTile(
       contentPadding: widget.contentPadding,
       trailing: IconButton(
@@ -152,7 +99,7 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
               ? const Icon(Icons.visibility_off)
               : const Icon(Icons.visibility)),
       title: TextField(
-        controller: widget.controller,
+        controller: controller,
         decoration: InputDecoration(
           icon: const Icon(MdiIcons.formTextboxPassword),
           labelText:
@@ -164,8 +111,66 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
         keyboardType: TextInputType.visiblePassword,
         focusNode: _focusNode,
         enabled: widget.enabled,
-        onChanged: (_) =>
-            context.read<AppSyncServerFormViewModel>().refreshCanSaveStatus(),
+        onChanged: widget.onChanged,
+      ),
+    );
+  }
+}
+
+class AppWebDavSyncServerPasswordTile extends StatelessWidget {
+  final TextEditingController controller;
+  final ValueChanged<String?>? onChanged;
+
+  const AppWebDavSyncServerPasswordTile(
+      {super.key, required this.controller, this.onChanged});
+
+  Widget _buildSnapshotWidget(BuildContext context,
+      AsyncSnapshot<(String, String?)> snapshot, String identity) {
+    if (snapshot.hasError || (snapshot.isDone && !snapshot.hasData)) {
+      if (kDebugMode) {
+        throw Error.throwWithStackTrace(snapshot.error!, snapshot.stackTrace!);
+      }
+      return AppSyncServerPasswordField(
+          controller: controller, enabled: false, loading: false);
+    }
+    if (snapshot.isDone) {
+      if (snapshot.data?.$1 != identity) {
+        return AppSyncServerPasswordField(
+            controller: controller, loading: false, enabled: false);
+      }
+      return AppSyncServerPasswordField(
+        controller: controller..text = snapshot.data?.$2 ?? "",
+        onChanged: (value) {
+          final vm = context.read<AppSyncServerFormViewModel>();
+          if (!vm.mounted || vm.webdav == null) return;
+          vm.webdav?.password = value.isEmpty ? null : value;
+          onChanged?.call(vm.webdav?.password);
+        },
+      );
+    }
+    return AppSyncServerPasswordField(
+        controller: controller, enabled: false, loading: !snapshot.isDone);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final identity =
+        context.select<AppSyncServerFormViewModel, String>((vm) => vm.identity);
+    final vm = context.read<AppSyncServerFormViewModel>();
+    return FutureBuilder<(String, String?)>(
+      future: vm.webdav?.readPassword(),
+      builder: (context, snapshot) => Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          AnimatedOpacity(
+            opacity: (snapshot.isDone || vm.pwdLoaded) ? 0 : 1,
+            duration: const Duration(milliseconds: 300),
+            child: const Padding(
+                padding: kListTileContentPadding,
+                child: LinearProgressIndicator()),
+          ),
+          _buildSnapshotWidget(context, snapshot, identity),
+        ],
       ),
     );
   }
