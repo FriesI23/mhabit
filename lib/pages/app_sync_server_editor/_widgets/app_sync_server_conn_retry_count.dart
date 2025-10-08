@@ -22,18 +22,13 @@ import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_sync_server_form.dart';
 
-class AppSyncServerConnTimeoutTile extends StatelessWidget {
+class AppSyncServerConnRetryCountTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
-  final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerConnTimeoutTile(
-      {super.key,
-      this.contentPadding,
-      this.inputFormatters,
-      this.controller,
-      this.onChanged});
+  const AppSyncServerConnRetryCountTile(
+      {super.key, this.contentPadding, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +38,16 @@ class AppSyncServerConnTimeoutTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
-          icon: const Icon(MdiIcons.lanPending),
-          labelText: l10n?.appSync_serverEditor_connTimeoutTile_titleText ??
-              'Network Connection Timeout Seconds',
-          hintText: l10n?.appSync_serverEditor_connTimeoutTile_hintText(
-              defaultAppSyncConnectTimeout.inSeconds,
-              l10n.appSync_serverEditor_connTimeoutTile_unitText),
-          suffixText: l10n?.appSync_serverEditor_connTimeoutTile_unitText,
+          icon: const Icon(MdiIcons.timelineClockOutline),
+          labelText: l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
+              'Network Connection Retry Count',
+          hintText: l10n?.appSync_serverEditor_connRetryCountTile_hintText(
+              defaultAppSyncConnectRetryCount ?? 0),
         ),
         keyboardType: const TextInputType.numberWithOptions(
             signed: false, decimal: false),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          ...?inputFormatters,
         ],
         onChanged: onChanged,
       ),
@@ -63,35 +55,27 @@ class AppSyncServerConnTimeoutTile extends StatelessWidget {
   }
 }
 
-class AppWebDavSyncServerConnTimeoutTile extends StatelessWidget {
-  static const kAllowdMaxTimeoutSecond = 1800;
-
+class AppWebDavSyncServerConnRetryCountTile extends StatelessWidget {
   final TextEditingController? controller;
-  final ValueChanged<Duration?>? onChanged;
+  final ValueChanged<int?>? onChanged;
 
-  const AppWebDavSyncServerConnTimeoutTile(
+  const AppWebDavSyncServerConnRetryCountTile(
       {super.key, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return AppSyncServerConnTimeoutTile(
+    return AppSyncServerConnRetryCountTile(
       controller: controller,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(
-            kAllowdMaxTimeoutSecond.toString().length),
-      ],
       onChanged: (value) {
         final vm = context.read<AppSyncServerFormViewModel>();
         if (!vm.mounted || vm.webdav == null) return;
         if (value.isNotEmpty) {
-          final realSecond = clampInt(num.parse(value).toInt(),
-              min: 0, max: kAllowdMaxTimeoutSecond);
-          final realTimeout = Duration(seconds: realSecond).abs();
-          vm.webdav?.connectTimeout = realTimeout;
+          final count = clampInt(num.parse(value).toInt(), min: 0);
+          vm.webdav?.connectRetryCount = count;
         } else {
-          vm.webdav?.connectTimeout = null;
+          vm.webdav?.connectRetryCount = null;
         }
-        onChanged?.call(vm.webdav?.connectTimeout);
+        onChanged?.call(vm.webdav?.connectRetryCount);
       },
     );
   }

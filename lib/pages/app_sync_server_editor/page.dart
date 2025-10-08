@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
+import '../../models/app_sync_server_form.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_sync_server_form.dart';
@@ -381,20 +382,20 @@ class _PageAdvancedSection extends StatelessWidget {
 
   List<Widget> _buildForSmallScreen() => const [
         _IgnoreSSLTile(),
-        AppSyncServerTimeoutTile(),
-        AppSyncServerConnTimeoutTile(),
-        AppSyncServerConnRetryCountTile(),
+        _ServerTimeoutTile(),
+        _ConnTimeoutTile(),
+        _ConnRetryCountTile(),
         _NetworkTypeTile(),
       ];
 
   List<Widget> _buildForLargeScreen() => const [
         _IgnoreSSLTile(),
-        AppSyncServerTimeoutTile(),
+        _ServerTimeoutTile(),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(child: AppSyncServerConnTimeoutTile()),
-            Expanded(child: AppSyncServerConnRetryCountTile()),
+            Expanded(child: _ConnTimeoutTile()),
+            Expanded(child: _ConnRetryCountTile()),
           ],
         ),
         _NetworkTypeTile(),
@@ -522,6 +523,74 @@ final class _NetworkTypeTile extends StatelessWidget {
             const SizedBox.shrink(),
           AppSyncServerType.webdav =>
             const AppWebDavSyncServerNetworkTypeTile(),
+        },
+      );
+}
+
+final class _ConnRetryCountTile extends StatelessWidget {
+  const _ConnRetryCountTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.connectRetryCount?.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerConnRetryCountTile(
+              controller: controller,
+              onChanged: (value) => controller.text = value?.toString() ?? "",
+            ),
+        },
+      );
+}
+
+final class _ConnTimeoutTile extends StatelessWidget {
+  const _ConnTimeoutTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.connectTimeout?.inSeconds.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerConnTimeoutTile(
+              controller: controller,
+              onChanged: (value) =>
+                  controller.text = value?.inSeconds.toString() ?? "",
+            ),
+        },
+      );
+}
+
+final class _ServerTimeoutTile extends StatelessWidget {
+  const _ServerTimeoutTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.timeout?.inSeconds.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => AppWebDavSyncServerTimeoutTile(
+              controller: controller,
+              onChanged: (value) =>
+                  controller.text = value?.inSeconds.toString() ?? "",
+            ),
         },
       );
 }
