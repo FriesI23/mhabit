@@ -20,10 +20,10 @@ import 'app_sync_server.dart';
 part 'app_sync_server_form.g.dart';
 
 sealed class AppSyncServerForm {
-  final String uuid;
-  final AppSyncServerType type;
+  String uuid;
+  AppSyncServerType type;
 
-  const AppSyncServerForm({required this.uuid, required this.type});
+  AppSyncServerForm({required this.uuid, required this.type});
 
   bool canSave();
 
@@ -34,7 +34,7 @@ sealed class AppSyncServerForm {
 final class FakeSyncServerForm extends AppSyncServerForm {
   final Map<String, String> data = const {};
 
-  const FakeSyncServerForm({required super.uuid})
+  FakeSyncServerForm({required super.uuid})
       : super(type: AppSyncServerType.fake);
 
   AppFakeSyncServer toConfig(
@@ -67,17 +67,17 @@ final class FakeSyncServerForm extends AppSyncServerForm {
 
 @CopyWith(skipFields: true)
 final class WebDavSyncServerForm extends AppSyncServerForm {
-  final String? path;
-  final String? username;
-  final String? password;
-  final bool? ignoreSSL;
-  final Duration? timeout;
-  final Duration? connectTimeout;
-  final int? connectRetryCount;
-  final Set<AppSyncServerMobileNetwork>? syncMobileNetworks;
-  final bool? syncInLowData;
+  String? path;
+  String? username;
+  String? password;
+  bool? ignoreSSL;
+  Duration? timeout;
+  Duration? connectTimeout;
+  int? connectRetryCount;
+  Set<AppSyncServerMobileNetwork>? syncMobileNetworks;
+  bool? syncInLowData;
 
-  const WebDavSyncServerForm({
+  WebDavSyncServerForm({
     required super.uuid,
     this.path,
     this.username,

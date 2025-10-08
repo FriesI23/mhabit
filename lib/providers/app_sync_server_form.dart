@@ -76,15 +76,6 @@ class AppSyncServerFormViewModel extends ChangeNotifier
     }
   }
 
-  void attachNewForm(AppSyncServerForm newForm, {bool listen = true}) {
-    assert(newForm.type == _form.type);
-    if (newForm == _form) return;
-    final oldForm = _form;
-    _form = newForm;
-    appLog.value.info('$runtimeType.form', beforeVal: oldForm, afterVal: _form);
-    if (listen) notifyListeners();
-  }
-
   String get identity => _form.uuid;
 
   AppSyncServerType get type => _form.type;
@@ -111,25 +102,20 @@ final class WebDavSyncServerFromHandler implements _Handler {
   @override
   final AppSyncServerFormViewModel root;
 
-  late final WebDavSyncServerForm _cache;
+  WebDavSyncServerFromHandler(this.root);
 
-  WebDavSyncServerFromHandler(this.root) {
-    _cache = root._form as WebDavSyncServerForm;
-  }
+  WebDavSyncServerForm get form => root._form as WebDavSyncServerForm;
 
-  WebDavSyncServerForm get form => _cache;
-  set form(WebDavSyncServerForm newForm) {
-    root.attachNewForm(newForm);
-    if (_cache != root._form) _cache = newForm;
-  }
+  void notifyListeners() => root.notifyListeners();
 
   bool? get ignoreSSL => form.ignoreSSL;
   set ignoreSSL(bool? value) {
     if (value == ignoreSSL) return;
     final oldValue = ignoreSSL;
-    form = form.copyWith(ignoreSSL: value);
+    form.ignoreSSL = value;
     appLog.value
         .info('$runtimeType.ignoreSSL', beforeVal: oldValue, afterVal: value);
+    notifyListeners();
   }
 
   Duration? get timeout => form.timeout;
@@ -137,9 +123,10 @@ final class WebDavSyncServerFromHandler implements _Handler {
     assert((value?.inSeconds ?? 0) >= 0);
     if (value == timeout) return;
     final oldValue = timeout;
-    form = form.copyWith(timeout: value);
+    form.timeout = value;
     appLog.value.info('$runtimeType.timeout',
         beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    notifyListeners();
   }
 
   Duration? get connectTimeout => form.connectTimeout;
@@ -147,9 +134,10 @@ final class WebDavSyncServerFromHandler implements _Handler {
     assert((value?.inSeconds ?? 0) >= 0);
     if (value == connectTimeout) return;
     final oldValue = connectTimeout;
-    form = form.copyWith(connectTimeout: value);
+    form.connectTimeout = value;
     appLog.value.info('$runtimeType.connectTimeout',
         beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    notifyListeners();
   }
 
   int? get connectRetryCount => form.connectRetryCount;
@@ -157,9 +145,10 @@ final class WebDavSyncServerFromHandler implements _Handler {
     assert((value ?? 0) >= 0);
     if (value == connectRetryCount) return;
     final oldValue = connectRetryCount;
-    form = form.copyWith(connectRetryCount: value);
+    form.connectRetryCount = value;
     appLog.value.info('$runtimeType.connectRetryCount',
         beforeVal: oldValue, afterVal: value);
+    notifyListeners();
   }
 
   Iterable<AppSyncServerMobileNetwork>? get syncMobileNetworks =>
@@ -168,18 +157,20 @@ final class WebDavSyncServerFromHandler implements _Handler {
     final newValue = value?.toSet();
     final oldValue = form.syncMobileNetworks;
     if (newValue == oldValue) return;
-    form = form.copyWith(syncMobileNetworks: newValue);
+    form.syncMobileNetworks = newValue;
     appLog.value.info('$runtimeType.syncMobileNetworks',
         beforeVal: oldValue, afterVal: newValue);
+    notifyListeners();
   }
 
   bool? get syncInLowData => form.syncInLowData;
   set syncInLowData(bool? value) {
     if (value == syncInLowData) return;
     final oldValue = syncInLowData;
-    form = form.copyWith(syncInLowData: value);
+    form.syncInLowData = value;
     appLog.value.info('$runtimeType.syncInLowData',
         beforeVal: oldValue, afterVal: value);
+    notifyListeners();
   }
 
   Future<(String, String?)> readPassword({
@@ -194,7 +185,10 @@ final class WebDavSyncServerFromHandler implements _Handler {
         .timeout(timeout)
         .then((value) {
           value = value ?? form.password;
-          if (form.password != value) form = form.copyWith(password: value);
+          if (form.password != value) {
+            form.password = value;
+            notifyListeners();
+          }
           return value;
         })
         .then((value) => completer.isCompleted
