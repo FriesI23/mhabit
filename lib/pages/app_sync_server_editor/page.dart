@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
+import '../../models/app_sync_server_form.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_sync_server_form.dart';
@@ -113,9 +114,9 @@ class _PageState extends State<_Page> {
   void _onSaveButtonPressed() async {
     final bool confirmed;
     final vm = context.read<AppSyncServerFormViewModel>();
-    assert(vm.canSave, "Can't save current config, got ${vm.formSnapshot}");
-    final form = vm.getFinalForm();
-    if (vm.edited && vm.crtServerConfig != null) {
+    final form = vm.form.copy();
+    assert(vm.canSave, "Can't save current config, got $form");
+    if (vm.edited && vm.serverConfig != null) {
       confirmed = await showNormalizedConfirmDialog(
             context: context,
             title: L10nBuilder(
@@ -263,9 +264,9 @@ class _PageFullScreenDialog extends StatelessWidget {
             body: ListView(
               children: [
                 const AppSyncServerTypeMenu(),
-                const AppSyncServerPathTile(),
-                const AppSyncServerUsernameTile(),
-                const AppSyncServerPasswordTile(),
+                const _PathTile(),
+                const _UsernameTile(),
+                const _PasswordTile(),
                 _PageAdvancedSection(
                   type: UiLayoutType.s,
                   expanded: showAdvanceConfig,
@@ -309,16 +310,16 @@ class _PageDialog extends StatelessWidget {
                 key: ValueKey("large"),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(child: AppSyncServerUsernameTile()),
-                  Expanded(child: AppSyncServerPasswordTile()),
+                  Expanded(child: _UsernameTile()),
+                  Expanded(child: _PasswordTile()),
                 ],
               )
             : const Column(
                 key: ValueKey("small"),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppSyncServerUsernameTile(),
-                  AppSyncServerPasswordTile(),
+                  _UsernameTile(),
+                  _PasswordTile(),
                 ],
               ),
       );
@@ -343,7 +344,7 @@ class _PageDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const AppSyncServerTypeMenu(width: -1),
-              const AppSyncServerPathTile(),
+              const _PathTile(),
               _buildUserTiles(context),
               _PageAdvancedSection(
                 type: UiLayoutType.l,
@@ -380,24 +381,24 @@ class _PageAdvancedSection extends StatelessWidget {
   });
 
   List<Widget> _buildForSmallScreen() => const [
-        AppSyncServerIgnoreSSLTile(),
-        AppSyncServerTimeoutTile(),
-        AppSyncServerConnTimeoutTile(),
-        AppSyncServerConnRetryCountTile(),
-        AppSyncServerNetworkTypeTile(),
+        _IgnoreSSLTile(),
+        _ServerTimeoutTile(),
+        _ConnTimeoutTile(),
+        _ConnRetryCountTile(),
+        _NetworkTypeTile(),
       ];
 
   List<Widget> _buildForLargeScreen() => const [
-        AppSyncServerIgnoreSSLTile(),
-        AppSyncServerTimeoutTile(),
+        _IgnoreSSLTile(),
+        _ServerTimeoutTile(),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(child: AppSyncServerConnTimeoutTile()),
-            Expanded(child: AppSyncServerConnRetryCountTile()),
+            Expanded(child: _ConnTimeoutTile()),
+            Expanded(child: _ConnRetryCountTile()),
           ],
         ),
-        AppSyncServerNetworkTypeTile(),
+        _NetworkTypeTile(),
       ];
 
   @override
@@ -427,33 +428,17 @@ class _DebugTile extends StatefulWidget {
 }
 
 class _DebugTileState extends State<_DebugTile> {
-  late AppSyncServerFormViewModel formVM;
   late bool hided;
-
-  void _changeListener() => setState(() {});
 
   @override
   void initState() {
     super.initState();
     hided = false;
-    formVM = context.read<AppSyncServerFormViewModel>();
-    formVM.pathInputController.addListener(_changeListener);
-    formVM.usernameInputController.addListener(_changeListener);
-    formVM.passwordInputController.addListener(_changeListener);
   }
 
   @override
   void dispose() {
-    formVM.pathInputController.removeListener(_changeListener);
-    formVM.usernameInputController.removeListener(_changeListener);
-    formVM.passwordInputController.removeListener(_changeListener);
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    formVM = context.read<AppSyncServerFormViewModel>();
   }
 
   @override
@@ -475,14 +460,20 @@ class _DebugTileState extends State<_DebugTile> {
               children: [
                 Text("Mounted: ${vm.mounted}"),
                 Text("Type: ${vm.type}"),
-                Text("Path: ${vm.pathInputController.text}"),
-                Text("Username: ${vm.usernameInputController.text}"),
-                Text("Password: ${vm.passwordInputController.text}"),
-                Text("IgnoreSSL: ${vm.ignoreSSL}"),
-                Text("Timeout: ${vm.timeout?.inSeconds}"),
-                Text("Conn Timeout: ${vm.connectTimeout?.inSeconds}"),
-                Text("Conn RetryCount: ${vm.connectRetryCount}"),
-                Text("Form: ${vm.formSnapshot.toDebugString()}"),
+                ...switch (vm.type) {
+                  AppSyncServerType.webdav => [
+                      Text("Path: ${vm.webdav?.path}"),
+                      Text("Username: ${vm.webdav?.username}"),
+                      Text("Password: ${vm.webdav?.password}"),
+                      Text("IgnoreSSL: ${vm.webdav?.ignoreSSL}"),
+                      Text("Timeout: ${vm.webdav?.timeout?.inSeconds}"),
+                      Text(
+                          "Conn Timeout: ${vm.webdav?.connectTimeout?.inSeconds}"),
+                      Text("Conn RetryCount: ${vm.webdav?.connectRetryCount}"),
+                    ],
+                  _ => const [],
+                },
+                Text("Form: ${vm.form.toDebugString()}"),
               ],
             ),
             isThreeLine: true,
@@ -491,4 +482,151 @@ class _DebugTileState extends State<_DebugTile> {
       ),
     );
   }
+}
+
+final class _IgnoreSSLTile extends StatelessWidget {
+  const _IgnoreSSLTile();
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<AppSyncServerFormViewModel, AppSyncServerType>(
+        selector: (context, vm) => vm.type,
+        builder: (context, value, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav => const AppWebDavSyncServerIgnoreSSLTile(),
+        },
+      );
+}
+
+final class _NetworkTypeTile extends StatelessWidget {
+  const _NetworkTypeTile();
+
+  @override
+  Widget build(BuildContext context) =>
+      Selector<AppSyncServerFormViewModel, AppSyncServerType>(
+        selector: (context, vm) => vm.type,
+        builder: (context, value, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            const AppWebDavSyncServerNetworkTypeTile(),
+        },
+      );
+}
+
+final class _ConnRetryCountTile extends StatelessWidget {
+  const _ConnRetryCountTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.connectRetryCount?.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerConnRetryCountTile(controller: controller),
+        },
+      );
+}
+
+final class _ConnTimeoutTile extends StatelessWidget {
+  const _ConnTimeoutTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.connectTimeout?.inSeconds.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerConnTimeoutTile(controller: controller),
+        },
+      );
+}
+
+final class _ServerTimeoutTile extends StatelessWidget {
+  const _ServerTimeoutTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav =>
+            vm.webdav?.timeout?.inSeconds.toString() ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerTimeoutTile(controller: controller),
+        },
+      );
+}
+
+final class _UsernameTile extends StatelessWidget {
+  const _UsernameTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav => vm.webdav?.username ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerUsernameTile(controller: controller),
+        },
+      );
+}
+
+final class _PathTile extends StatelessWidget {
+  const _PathTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => switch (vm.type) {
+          AppSyncServerType.unknown || AppSyncServerType.fake => "",
+          AppSyncServerType.webdav => vm.webdav?.path ?? "",
+        },
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerPathTile(controller: controller),
+        },
+      );
+}
+
+final class _PasswordTile extends StatelessWidget {
+  const _PasswordTile();
+
+  @override
+  Widget build(BuildContext context) => AppSyncServerFormInputField(
+        getValue: (_, vm) => "",
+        builder: (context, value, controller, child) => switch (value) {
+          AppSyncServerType.unknown ||
+          AppSyncServerType.fake =>
+            const SizedBox.shrink(),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerPasswordTile(controller: controller),
+        },
+      );
 }

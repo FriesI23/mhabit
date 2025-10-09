@@ -13,64 +13,69 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/consts.dart';
+import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_sync_server_form.dart';
 
-class AppSyncServerPathTile extends StatelessWidget {
+class AppSyncServerConnRetryCountTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerPathTile(
-      {super.key,
-      this.contentPadding,
-      required this.controller,
-      this.onChanged});
+  const AppSyncServerConnRetryCountTile(
+      {super.key, this.contentPadding, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final canSave =
-        context.select<AppSyncServerFormViewModel, bool>((vm) => vm.canSave);
     final l10n = L10n.of(context);
     return ListTile(
       contentPadding: contentPadding,
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
-          icon: const Icon(MdiIcons.networkOutline),
-          labelText: l10n?.appSync_serverEditor_pathTile_titleText ?? 'Path',
-          hintText: l10n?.appSync_serverEditor_pathTile_hintText,
-          errorText: (!canSave && controller.text.isEmpty)
-              ? l10n?.appSync_serverEditor_pathTile_errorText_emptyPath ??
-                  "Path shouldn't be empty!"
-              : null,
+          icon: const Icon(MdiIcons.timelineClockOutline),
+          labelText: l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
+              'Network Connection Retry Count',
+          hintText: l10n?.appSync_serverEditor_connRetryCountTile_hintText(
+              defaultAppSyncConnectRetryCount ?? 0),
         ),
-        keyboardType: TextInputType.url,
+        keyboardType: const TextInputType.numberWithOptions(
+            signed: false, decimal: false),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+        ],
         onChanged: onChanged,
       ),
     );
   }
 }
 
-class AppWebDavSyncServerPathTile extends StatelessWidget {
-  final TextEditingController controller;
-  final ValueChanged<String?>? onChanged;
+class AppWebDavSyncServerConnRetryCountTile extends StatelessWidget {
+  final TextEditingController? controller;
+  final ValueChanged<int?>? onChanged;
 
-  const AppWebDavSyncServerPathTile(
-      {super.key, required this.controller, this.onChanged});
+  const AppWebDavSyncServerConnRetryCountTile(
+      {super.key, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return AppSyncServerPathTile(
+    return AppSyncServerConnRetryCountTile(
       controller: controller,
       onChanged: (value) {
         final vm = context.read<AppSyncServerFormViewModel>();
         if (!vm.mounted || vm.webdav == null) return;
-        vm.webdav?.path = value.isEmpty ? null : value;
-        onChanged?.call(vm.webdav?.path);
+        if (value.isNotEmpty) {
+          final count = clampInt(num.parse(value).toInt(), min: 0);
+          vm.webdav?.connectRetryCount = count;
+        } else {
+          vm.webdav?.connectRetryCount = null;
+        }
+        onChanged?.call(vm.webdav?.connectRetryCount);
       },
     );
   }

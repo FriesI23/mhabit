@@ -35,6 +35,7 @@ import '../logging/logger_message.dart' show AppLoggerMessage;
 import '../logging/logger_utils.dart';
 import '../models/app_sync_options.dart';
 import '../models/app_sync_server.dart';
+import '../models/app_sync_server_form.dart';
 import '../models/app_sync_tasks.dart';
 import '../models/app_sync_timer.dart';
 import '../pages/common/widgets.dart';
@@ -197,18 +198,23 @@ class AppSyncViewModel
     }
   }
 
-  Future<String?> getPassword({String? identity}) {
+  Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return Future.value(null);
     return const FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
     ).read(key: "sync-pwd-$identity").catchError((e, s) {
       if (kDebugMode) Error.throwWithStackTrace(e, s);
-      return serverConfig?.password;
+      switch (serverConfig) {
+        case AppWebDavSyncServer(:final password):
+          return password;
+        default:
+          return null;
+      }
     });
   }
 
-  Future<bool> setPassword({String? identity, required String? value}) async {
+  Future<bool> writePassword({String? identity, required String? value}) async {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return false;
     try {
@@ -223,62 +229,103 @@ class AppSyncViewModel
     return true;
   }
 
-  Future<bool> saveWithConfigForm(AppSyncServerForm? form,
-      {bool resetStatus = false, bool removable = false}) async {
-    final oldConfig = serverConfig;
-    final tmpNewConfig = AppSyncServer.fromForm(form);
-    if (tmpNewConfig == null && !removable) return false;
+  Future<bool>? _setOrRemoveConfig(AppSyncServer? config) =>
+      config != null ? _serverConfig?.set(config) : _serverConfig?.remove();
 
-    final isSameServer = switch ((oldConfig, tmpNewConfig)) {
+  Future<bool> _removeOldPassword(
+          AppSyncServer? oldConfig, AppSyncServer? newConfig) =>
+      (oldConfig?.identity != newConfig?.identity && oldConfig != null)
+          ? writePassword(identity: oldConfig.identity, value: null)
+          : Future.value(true);
+
+  Future<bool> saveWithConfigForm(AppSyncServerForm? form,
+      {bool resetStatus = false, bool removable = false}) {
+    final now = DateTime.now();
+    final crtConfig = serverConfig;
+    final pendingConfig = switch (form) {
+      FakeSyncServerForm() => form.toConfig(
+          createTime: crtConfig?.createTime ?? now,
+          modifyTime: crtConfig?.modifyTime ?? now,
+          configed: crtConfig?.configed ?? false),
+      WebDavSyncServerForm() => form.toConfig(
+          createTime: crtConfig?.createTime ?? now,
+          modifyTime: crtConfig?.modifyTime ?? now,
+          configed: crtConfig?.configed ?? false),
+      null => null,
+    };
+    if (pendingConfig == null && !removable) return Future.value(false);
+
+    final isSameServer = switch ((crtConfig, pendingConfig)) {
       (null, null) => true,
       (null, _) || (_, null) => false,
-      (_, _) => oldConfig!.isSameServer(tmpNewConfig!, withoutPassword: true)
+      (_, _) => crtConfig!.isSameServer(pendingConfig!, withoutPassword: true)
     };
     appLog.appsync.info("saveWithConfigForm",
-        ex: [resetStatus, removable, oldConfig, tmpNewConfig]);
+        ex: [resetStatus, removable, crtConfig, pendingConfig]);
     appLog.appsync.debug("saveWithConfigForm.verbose", ex: [
       isSameServer,
       form?.toDebugString,
-      oldConfig?.toDebugString,
-      tmpNewConfig?.toDebugString
+      crtConfig?.toDebugString,
+      pendingConfig?.toDebugString
     ]);
 
     AppSyncServer? buildConfig({bool withPwd = false}) =>
         (!isSameServer || resetStatus)
-            ? AppSyncServer.fromForm(form?.copyWith(
-                uuid: isSameServer
-                    ? form.uuid
-                    : UuidValue.raw(AppSyncServer.genNewIdentity()),
-                configed: false,
-                password: withPwd ? form.password : ''))
-            : tmpNewConfig;
+            ? switch (form) {
+                FakeSyncServerForm() => form
+                    .copyWith(
+                        uuid: isSameServer
+                            ? form.uuid
+                            : AppSyncServer.genNewIdentity())
+                    .toConfig(
+                        createTime: pendingConfig?.createTime ?? now,
+                        modifyTime: pendingConfig?.modifyTime ?? now,
+                        configed: false),
+                WebDavSyncServerForm() => form
+                    .copyWith(
+                        uuid: isSameServer
+                            ? form.uuid
+                            : AppSyncServer.genNewIdentity(),
+                        password: withPwd ? form.password : '')
+                    .toConfig(
+                        createTime: pendingConfig?.createTime ?? now,
+                        modifyTime: pendingConfig?.modifyTime ?? now,
+                        configed: false),
+                null => null,
+              }
+            : pendingConfig?.copy(password: withPwd ? null : '');
 
-    Future<bool> doSave() async {
-      Future<bool>? setOrRemoveConfig(AppSyncServer? config) =>
-          config != null ? _serverConfig?.set(config) : _serverConfig?.remove();
-
-      // step1: set or remove new server config
-      final deidentifiedNewConfig = buildConfig();
-      if (await setOrRemoveConfig(deidentifiedNewConfig) != true) return false;
-      // step2(optional): remove old password from sec-storage if necessary
-      if (oldConfig?.identity != deidentifiedNewConfig?.identity &&
-          oldConfig != null) {
-        await setPassword(identity: oldConfig.identity, value: null);
-      }
-      // step3: set new password to sec-storage
-      final result = (tmpNewConfig != null && deidentifiedNewConfig != null)
-          ? await setPassword(
-              identity: deidentifiedNewConfig.identity,
-              value: tmpNewConfig.password)
-          : true;
-      // step4(optional): set server config with password (backup process)
-      if (result != true) {
-        return await setOrRemoveConfig(buildConfig(withPwd: true)) ?? false;
-      }
-      return true;
+    Future<bool> postSaveWebDavServer(AppWebDavSyncServer newConfig) async {
+      assert(pendingConfig is AppWebDavSyncServer);
+      if (pendingConfig is! AppWebDavSyncServer) return true;
+      final result = await writePassword(
+              identity: newConfig.identity, value: pendingConfig.password)
+          .then((result) async {
+        if (result) return result;
+        return await _setOrRemoveConfig(buildConfig(withPwd: true)) ?? false;
+      });
+      return result;
     }
 
-    return await doSave().then((value) {
+    Future<bool> doSave() async {
+      final oldConfig = crtConfig;
+      final deidentifiedNewConfig = buildConfig();
+      if (await _setOrRemoveConfig(deidentifiedNewConfig) != true) return false;
+      final removeOldPasswordTask =
+          _removeOldPassword(oldConfig, deidentifiedNewConfig);
+      final Future<bool>? postTask;
+      switch (deidentifiedNewConfig) {
+        case AppWebDavSyncServer():
+          postTask = postSaveWebDavServer(deidentifiedNewConfig);
+        default:
+          postTask = null;
+      }
+      return Future.wait(
+              [removeOldPasswordTask, if (postTask != null) postTask])
+          .then((results) => results.every((e) => e));
+    }
+
+    return doSave().then((value) {
       if (mounted) notifyListeners();
       return value;
     });
@@ -516,7 +563,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            final password = await root.getPassword(identity: config.identity);
+            final password = await root.readPassword(identity: config.identity);
             final sessionId = WebDavAppSyncTask.genSessionId();
             final isFirstSync = !config.configed;
             return WebDavAppSyncTask(

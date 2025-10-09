@@ -20,183 +20,79 @@ import 'package:provider/provider.dart';
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
-class AppSyncServerConnTimeoutTile extends StatefulWidget {
-  static const kAllowdMaxTimeoutSecond = 1800;
-
+class AppSyncServerConnTimeoutTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
-  const AppSyncServerConnTimeoutTile({super.key, this.contentPadding});
-
-  @override
-  State<AppSyncServerConnTimeoutTile> createState() =>
-      _AppSyncServerConnTimeoutTile();
-}
-
-class _AppSyncServerConnTimeoutTile
-    extends State<AppSyncServerConnTimeoutTile> {
-  late TextEditingController controller;
-  late AppSyncServerFormViewModel vm;
-  late AppSyncServerType crtType;
-
-  String get crtText => vm.connectTimeout?.inSeconds.toString() ?? '';
-
-  @override
-  void initState() {
-    vm = context.read<AppSyncServerFormViewModel>();
-    crtType = vm.type;
-    controller =
-        TextEditingController.fromValue(TextEditingValue(text: crtText));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    vm = context.read<AppSyncServerFormViewModel>();
-    if (crtType != vm.type) {
-      crtType = vm.type;
-      controller.text = crtText;
-    }
-  }
-
-  void _onChange(String value) {
-    if (value.isNotEmpty) {
-      final realSecond = clampInt(num.parse(value).toInt(),
-          min: 0, max: AppSyncServerConnTimeoutTile.kAllowdMaxTimeoutSecond);
-      final realTimeout = Duration(seconds: realSecond).abs();
-      vm.connectTimeout = realTimeout;
-      controller.text = realTimeout.inSeconds.toString();
-    } else {
-      vm.connectTimeout = null;
-      controller.text = '';
-    }
-  }
+  const AppSyncServerConnTimeoutTile(
+      {super.key,
+      this.contentPadding,
+      this.inputFormatters,
+      this.controller,
+      this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
     final l10n = L10n.of(context);
-    return Visibility(
-      visible: type.includeConnTimeoutField,
-      child: ListTile(
-        contentPadding: widget.contentPadding,
-        title: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            icon: const Icon(MdiIcons.lanPending),
-            labelText: l10n?.appSync_serverEditor_connTimeoutTile_titleText ??
-                'Network Connection Timeout Seconds',
-            hintText: l10n?.appSync_serverEditor_connTimeoutTile_hintText(
-                defaultAppSyncConnectTimeout.inSeconds,
-                l10n.appSync_serverEditor_connTimeoutTile_unitText),
-            suffixText: l10n?.appSync_serverEditor_connTimeoutTile_unitText,
-          ),
-          keyboardType: const TextInputType.numberWithOptions(
-              signed: false, decimal: false),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(AppSyncServerConnTimeoutTile
-                .kAllowdMaxTimeoutSecond
-                .toString()
-                .length)
-          ],
-          onChanged: _onChange,
+    return ListTile(
+      contentPadding: contentPadding,
+      title: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          icon: const Icon(MdiIcons.lanPending),
+          labelText: l10n?.appSync_serverEditor_connTimeoutTile_titleText ??
+              'Network Connection Timeout Seconds',
+          hintText: l10n?.appSync_serverEditor_connTimeoutTile_hintText(
+              defaultAppSyncConnectTimeout.inSeconds,
+              l10n.appSync_serverEditor_connTimeoutTile_unitText),
+          suffixText: l10n?.appSync_serverEditor_connTimeoutTile_unitText,
         ),
+        keyboardType: const TextInputType.numberWithOptions(
+            signed: false, decimal: false),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          ...?inputFormatters,
+        ],
+        onChanged: onChanged,
       ),
     );
   }
 }
 
-class AppSyncServerConnRetryCountTile extends StatefulWidget {
-  final EdgeInsetsGeometry? contentPadding;
+class AppWebDavSyncServerConnTimeoutTile extends StatelessWidget {
+  static const kAllowdMaxTimeoutSecond = 1800;
 
-  const AppSyncServerConnRetryCountTile({super.key, this.contentPadding});
+  final TextEditingController? controller;
+  final ValueChanged<Duration?>? onChanged;
 
-  @override
-  State<AppSyncServerConnRetryCountTile> createState() =>
-      _AppSyncServerConnRetryCountTile();
-}
-
-class _AppSyncServerConnRetryCountTile
-    extends State<AppSyncServerConnRetryCountTile> {
-  late TextEditingController controller;
-  late AppSyncServerFormViewModel vm;
-  late AppSyncServerType crtType;
-
-  String get crtText => vm.connectRetryCount?.toString() ?? '';
-
-  @override
-  void initState() {
-    vm = context.read<AppSyncServerFormViewModel>();
-    crtType = vm.type;
-    controller =
-        TextEditingController.fromValue(TextEditingValue(text: crtText));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (crtType != vm.type) {
-      crtType = vm.type;
-      controller.text = crtText;
-    }
-  }
-
-  void _onChange(String value) {
-    if (value.isNotEmpty) {
-      final count = clampInt(num.parse(value).toInt(), min: 0);
-      vm.connectRetryCount = count;
-      controller.text = count.toString();
-    } else {
-      vm.connectRetryCount = null;
-      controller.text = '';
-    }
-  }
+  const AppWebDavSyncServerConnTimeoutTile(
+      {super.key, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final type = context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    final l10n = L10n.of(context);
-    return Visibility(
-      visible: type.includeConnRetryCountField,
-      child: ListTile(
-        contentPadding: widget.contentPadding,
-        title: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            icon: const Icon(MdiIcons.timelineClockOutline),
-            labelText:
-                l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
-                    'Network Connection Retry Count',
-            hintText: l10n?.appSync_serverEditor_connRetryCountTile_hintText(
-                defaultAppSyncConnectRetryCount ?? 0),
-          ),
-          keyboardType: const TextInputType.numberWithOptions(
-              signed: false, decimal: false),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: _onChange,
-        ),
-      ),
+    return AppSyncServerConnTimeoutTile(
+      controller: controller,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(
+            kAllowdMaxTimeoutSecond.toString().length),
+      ],
+      onChanged: (value) {
+        final vm = context.read<AppSyncServerFormViewModel>();
+        if (!vm.mounted || vm.webdav == null) return;
+        if (value.isNotEmpty) {
+          final realSecond = clampInt(num.parse(value).toInt(),
+              min: 0, max: kAllowdMaxTimeoutSecond);
+          final realTimeout = Duration(seconds: realSecond).abs();
+          vm.webdav?.connectTimeout = realTimeout;
+        } else {
+          vm.webdav?.connectTimeout = null;
+        }
+        onChanged?.call(vm.webdav?.connectTimeout);
+      },
     );
   }
 }
