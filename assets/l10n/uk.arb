@@ -277,6 +277,18 @@
       }
     }
   },
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Експортована звичка.} other {Експортовано звичок: {count}.}}",
+  "@habitDisplay_exportHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of exported habits",
+        "example": "3"
+      }
+    }
+  },
+  "habitDisplay_exportAllHabitsSuccSnackbarText": "Експортовано всі звички",
+  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
   "habitDisplay_editPopMenu_selectAll": "Виберіть усі",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Експорт",
