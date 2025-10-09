@@ -293,7 +293,7 @@ class AppSyncViewModel
                         configed: false),
                 null => null,
               }
-            : pendingConfig;
+            : pendingConfig?.copy(password: withPwd ? null : '');
 
     Future<bool> postSaveWebDavServer(AppWebDavSyncServer newConfig) async {
       assert(pendingConfig is AppWebDavSyncServer);

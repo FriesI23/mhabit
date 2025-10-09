@@ -531,10 +531,8 @@ final class _ConnRetryCountTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerConnRetryCountTile(
-              controller: controller,
-              onChanged: (value) => controller.text = value?.toString() ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerConnRetryCountTile(controller: controller),
         },
       );
 }
@@ -553,11 +551,8 @@ final class _ConnTimeoutTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerConnTimeoutTile(
-              controller: controller,
-              onChanged: (value) =>
-                  controller.text = value?.inSeconds.toString() ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerConnTimeoutTile(controller: controller),
         },
       );
 }
@@ -576,11 +571,8 @@ final class _ServerTimeoutTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerTimeoutTile(
-              controller: controller,
-              onChanged: (value) =>
-                  controller.text = value?.inSeconds.toString() ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerTimeoutTile(controller: controller),
         },
       );
 }
@@ -598,10 +590,8 @@ final class _UsernameTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerUsernameTile(
-              controller: controller,
-              onChanged: (value) => controller.text = value ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerUsernameTile(controller: controller),
         },
       );
 }
@@ -619,10 +609,8 @@ final class _PathTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerPathTile(
-              controller: controller,
-              onChanged: (value) => controller.text = value ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerPathTile(controller: controller),
         },
       );
 }
@@ -637,10 +625,8 @@ final class _PasswordTile extends StatelessWidget {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
             const SizedBox.shrink(),
-          AppSyncServerType.webdav => AppWebDavSyncServerPasswordTile(
-              controller: controller,
-              onChanged: (value) => controller.text = value ?? "",
-            ),
+          AppSyncServerType.webdav =>
+            AppWebDavSyncServerPasswordTile(controller: controller),
         },
       );
 }

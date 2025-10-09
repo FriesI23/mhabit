@@ -114,7 +114,8 @@ final class WebDavSyncServerForm extends AppSyncServerForm {
         ? this.password
         : List.generate(this.password?.length ?? 0, (_) => "*").join();
     return """AppSyncServerForm(
-  uuid=$uuid,type=$type,
+  uuid=$uuid,
+  type=$type,
   path=$path,username=$username,password=$password,
   ignoreSSL=$ignoreSSL,timeout=$timeout,
   connectTimeout=$connectTimeout,connectRetryCount=$connectRetryCount,

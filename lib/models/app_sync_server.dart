@@ -146,6 +146,8 @@ abstract interface class AppSyncServer implements JsonAdaptor {
   /// Always `true` if `isSameConfig` returns `true`.
   bool isSameServer(AppSyncServer other, {bool withoutPassword = false});
 
+  AppSyncServer copy({String? password});
+
   AppSyncServerForm toForm();
   String toDebugString();
 }
@@ -300,6 +302,10 @@ class AppWebDavSyncServer implements AppSyncServer {
   }
 
   @override
+  AppSyncServer copy({String? password}) =>
+      copyWith(password: password ?? this.password);
+
+  @override
   Map<String, dynamic> toJson() => _$AppWebDavSyncServerToJson(this);
 
   @override
@@ -444,6 +450,9 @@ class AppFakeSyncServer implements AppSyncServer {
   @override
   bool isSameServer(AppSyncServer other, {bool withoutPassword = false}) =>
       isSameConfig(other, withoutPassword: withoutPassword);
+
+  @override
+  AppSyncServer copy({String? password}) => copyWith();
 
   @override
   AppSyncServerForm toForm() => FakeSyncServerForm(uuid: identity);
