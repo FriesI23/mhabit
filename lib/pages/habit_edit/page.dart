@@ -49,7 +49,7 @@ Future<HabitDBCell?> naviToHabitEidtPage({
   return Navigator.of(context).push<HabitDBCell>(
     MaterialPageRoute(
       fullscreenDialog: naviWithFullscreenDialog ?? true,
-      builder: (context) => PageHabitEdit(
+      builder: (context) => HabitEditPage(
         initForm: initForm,
         showInFullscreenDialog: false,
       ),
@@ -64,11 +64,11 @@ Future<HabitDBCell?> naviToHabitEidtPage({
 /// - Required for callback:
 ///   - [NotificationChannelData]
 ///   - [AppCachesViewModel]
-class PageHabitEdit extends StatelessWidget {
+class HabitEditPage extends StatelessWidget {
   final HabitForm? initForm;
   final bool showInFullscreenDialog;
 
-  const PageHabitEdit({
+  const HabitEditPage({
     super.key,
     this.initForm,
     this.showInFullscreenDialog = false,
@@ -78,27 +78,26 @@ class PageHabitEdit extends StatelessWidget {
   Widget build(BuildContext context) {
     return PageProviders(
         initForm: initForm,
-        child: HabitEditView(
+        child: _Page(
             initForm: initForm,
             showInFullscreenDialog: showInFullscreenDialog));
   }
 }
 
-class HabitEditView extends StatefulWidget {
+class _Page extends StatefulWidget {
   final HabitForm? initForm;
   final bool showInFullscreenDialog;
 
-  const HabitEditView({
-    super.key,
+  const _Page({
     this.initForm,
     this.showInFullscreenDialog = false,
   });
 
   @override
-  State<StatefulWidget> createState() => _HabitEditView();
+  State<StatefulWidget> createState() => _PageState();
 }
 
-class _HabitEditView extends State<HabitEditView> {
+class _PageState extends State<_Page> {
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
