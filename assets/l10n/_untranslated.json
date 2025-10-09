@@ -2260,11 +2260,6 @@
     "channelDesc_appSyncFailed"
   ],
 
-  "uk": [
-    "habitDisplay_exportHabitsSuccSnackbarText",
-    "habitDisplay_exportAllHabitsSuccSnackbarText"
-  ],
-
   "vi": [
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",

@@ -298,14 +298,14 @@ class L10nUk extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
-      one: 'Exported habit.',
+      other: 'Експортовано звичок: $count.',
+      one: 'Експортована звичка.',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Експортовано всі звички';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Виберіть усі';
