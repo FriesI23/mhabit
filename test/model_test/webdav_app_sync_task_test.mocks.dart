@@ -311,6 +311,23 @@ class MockAppWebDavSyncServer extends _i1.Mock
       ) as bool);
 
   @override
+  _i3.AppSyncServer copy({String? password}) => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+          {#password: password},
+        ),
+        returnValue: _FakeAppSyncServer_4(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+            {#password: password},
+          ),
+        ),
+      ) as _i3.AppSyncServer);
+
+  @override
   Map<String, dynamic> toJson() => (super.noSuchMethod(
         Invocation.method(
           #toJson,
@@ -433,6 +450,23 @@ class MockAppSyncServer extends _i1.Mock implements _i3.AppSyncServer {
         ),
         returnValue: false,
       ) as bool);
+
+  @override
+  _i3.AppSyncServer copy({String? password}) => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+          {#password: password},
+        ),
+        returnValue: _FakeAppSyncServer_4(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+            {#password: password},
+          ),
+        ),
+      ) as _i3.AppSyncServer);
 
   @override
   _i7.AppSyncServerForm toForm() => (super.noSuchMethod(

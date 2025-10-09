@@ -32,6 +32,16 @@ class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
         );
 }
 
+class _FakeAppSyncServer_1 extends _i1.SmartFake implements _i2.AppSyncServer {
+  _FakeAppSyncServer_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AppSyncServer].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -115,6 +125,23 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
         ),
         returnValue: false,
       ) as bool);
+
+  @override
+  _i2.AppSyncServer copy({String? password}) => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+          {#password: password},
+        ),
+        returnValue: _FakeAppSyncServer_1(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+            {#password: password},
+          ),
+        ),
+      ) as _i2.AppSyncServer);
 
   @override
   _i4.AppSyncServerForm toForm() => (super.noSuchMethod(
