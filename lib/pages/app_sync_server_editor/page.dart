@@ -522,7 +522,7 @@ final class _ConnRetryCountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => switch (vm.type) {
+        valueBuilder: (_, vm) => switch (vm.type) {
           AppSyncServerType.unknown || AppSyncServerType.fake => "",
           AppSyncServerType.webdav =>
             vm.webdav?.connectRetryCount?.toString() ?? "",
@@ -542,7 +542,7 @@ final class _ConnTimeoutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => switch (vm.type) {
+        valueBuilder: (_, vm) => switch (vm.type) {
           AppSyncServerType.unknown || AppSyncServerType.fake => "",
           AppSyncServerType.webdav =>
             vm.webdav?.connectTimeout?.inSeconds.toString() ?? "",
@@ -562,7 +562,7 @@ final class _ServerTimeoutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => switch (vm.type) {
+        valueBuilder: (_, vm) => switch (vm.type) {
           AppSyncServerType.unknown || AppSyncServerType.fake => "",
           AppSyncServerType.webdav =>
             vm.webdav?.timeout?.inSeconds.toString() ?? "",
@@ -582,7 +582,7 @@ final class _UsernameTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => switch (vm.type) {
+        valueBuilder: (_, vm) => switch (vm.type) {
           AppSyncServerType.unknown || AppSyncServerType.fake => "",
           AppSyncServerType.webdav => vm.webdav?.username ?? "",
         },
@@ -601,7 +601,7 @@ final class _PathTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => switch (vm.type) {
+        valueBuilder: (_, vm) => switch (vm.type) {
           AppSyncServerType.unknown || AppSyncServerType.fake => "",
           AppSyncServerType.webdav => vm.webdav?.path ?? "",
         },
@@ -620,7 +620,7 @@ final class _PasswordTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppSyncServerFormInputField(
-        getValue: (_, vm) => "",
+        valueBuilder: (_, vm) => "",
         builder: (context, value, controller, child) => switch (value) {
           AppSyncServerType.unknown ||
           AppSyncServerType.fake =>
