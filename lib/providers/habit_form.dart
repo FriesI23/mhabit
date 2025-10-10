@@ -35,8 +35,6 @@ class HabitFormViewModel extends ChangeNotifier
         DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted {
-  final TextEditingController _dailyGoalUnitFieldInputController;
-  final TextEditingController _descFieldInputController;
   // inside status
   bool _mounted = true;
 
@@ -45,9 +43,7 @@ class HabitFormViewModel extends ChangeNotifier
   HabitFormViewModel({
     HabitForm? initForm,
     required ScrollController appbarScrollController,
-    required TextEditingController dailyGoalUnitFieldInputController,
-    required TextEditingController descFieldInputController,
-  })  : _form = initForm ??
+  }) : _form = initForm ??
             HabitForm(
                 name: '',
                 colorType: defaultHabitColorType,
@@ -55,19 +51,13 @@ class HabitFormViewModel extends ChangeNotifier
                 frequency: HabitFrequency.daily,
                 dailyGoalUnit: defaultHabitDailyGoalUnit,
                 targetDays: defaultHabitTargetDays,
-                desc: ''),
-        _dailyGoalUnitFieldInputController = dailyGoalUnitFieldInputController,
-        _descFieldInputController = descFieldInputController {
+                desc: '') {
     initVerticalScrollController(notifyListeners, appbarScrollController);
-    _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
-    _descFieldInputController.text = _form.desc ?? '';
   }
 
   @override
   void dispose() {
     if (!_mounted) return;
-    _dailyGoalUnitFieldInputController.dispose();
-    _descFieldInputController.dispose();
     disposeVerticalScrollController();
     super.dispose();
     _mounted = false;
@@ -80,12 +70,6 @@ class HabitFormViewModel extends ChangeNotifier
   void notifyListeners() {
     super.notifyListeners();
   }
-
-  TextEditingController get dailyGoalUnitFieldInputController =>
-      _dailyGoalUnitFieldInputController;
-
-  TextEditingController get descFieldInputController =>
-      _descFieldInputController;
 
   String get name => _form.name ?? "";
   set name(String value) {
@@ -125,7 +109,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  String get dailyGoalUnit => _form.dailyGoalUnit!;
+  String get dailyGoalUnit => _form.dailyGoalUnit ?? '';
   set dailyGoalUnit(String newDailyGoalUnit) {
     appLog.value.debug("$runtimeType.dailyGoalUnit",
         beforeVal: _form.dailyGoalUnit, afterVal: newDailyGoalUnit);
@@ -168,7 +152,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  String get desc => _form.desc!;
+  String get desc => _form.desc ?? "";
   set desc(String newDesc) {
     appLog.value
         .debug("$runtimeType.desc", beforeVal: _form.desc, afterVal: newDesc);

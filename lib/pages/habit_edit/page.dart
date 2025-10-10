@@ -333,26 +333,6 @@ class _PageState extends State<_Page> {
       );
     }
 
-    Widget buildDailyGoalUnitField(BuildContext context) {
-      return HabitEditDailyGoalUnitTile(
-        controller: context
-            .read<HabitFormViewModel>()
-            .dailyGoalUnitFieldInputController,
-        onChanged: (value) {
-          if (!mounted) return;
-          final formvm = context.read<HabitFormViewModel>();
-          var newValue = value;
-          if (value.length <= minHabitDailyGoalUnitLength) {
-            formvm.dailyGoalUnitFieldInputController.text = '';
-            newValue = defaultHabitDailyGoalUnit;
-          } else if (value.length > maxHabitDailyGoalUnitLength) {
-            newValue = value.substring(0, maxHabitDailyGoalUnitLength);
-          }
-          formvm.dailyGoalUnit = newValue;
-        },
-      );
-    }
-
     Widget buildFrequencyField(BuildContext context) {
       return Selector<HabitFormViewModel, HabitFrequency>(
         selector: (context, formViewModel) => formViewModel.frequency,
@@ -422,14 +402,6 @@ class _PageState extends State<_Page> {
       );
     }
 
-    Widget buildDescField(BuildContext context) {
-      return HabitEditDescTile(
-        controller: context.read<HabitFormViewModel>().descFieldInputController,
-        onDescChanged: (value) =>
-            context.read<HabitFormViewModel>().desc = value,
-      );
-    }
-
     Widget buildCreateAndModifyTimeField(BuildContext context) {
       return HabitEditCreateAndModifyTile(
         createT: context.read<HabitFormViewModel>().createT!,
@@ -454,13 +426,11 @@ class _PageState extends State<_Page> {
                 kHabitDivider,
                 buildHabitTypeField(context),
                 kHabitDivider,
-                // buildDailyGoalField(context),
                 const _DailyGoalField(),
                 kHabitDivider,
-                buildDailyGoalUnitField(context),
+                const _DailyGoalUnitField(),
                 kHabitDivider,
                 const _DailyGoalExtraField(),
-                // buildDailyGoalExtraField(context),
                 kHabitDivider,
                 buildFrequencyField(context),
                 kHabitDivider,
@@ -470,7 +440,7 @@ class _PageState extends State<_Page> {
                 kHabitDivider,
                 buildRemindarField(context),
                 kHabitDivider,
-                buildDescField(context),
+                const _DescField(),
                 if (formvm.editMode == HabitDisplayEditMode.edit) ...[
                   kHabitDivider,
                   buildCreateAndModifyTimeField(context),
@@ -506,7 +476,7 @@ class _HabitEditSliverList extends StatelessWidget {
   }
 }
 
-class _Appbar extends StatelessWidget {
+final class _Appbar extends StatelessWidget {
   final bool showInFullscreenDialog;
   final VoidCallback? onSaveButtonPressed;
 
@@ -549,7 +519,7 @@ class _Appbar extends StatelessWidget {
   }
 }
 
-class _DailyGoalField extends StatelessWidget {
+final class _DailyGoalField extends StatelessWidget {
   const _DailyGoalField();
 
   @override
@@ -603,7 +573,7 @@ class _DailyGoalField extends StatelessWidget {
   }
 }
 
-class _DailyGoalExtraField extends StatelessWidget {
+final class _DailyGoalExtraField extends StatelessWidget {
   const _DailyGoalExtraField();
 
   @override
@@ -652,6 +622,52 @@ class _DailyGoalExtraField extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+final class _DailyGoalUnitField extends StatelessWidget {
+  const _DailyGoalUnitField();
+
+  @override
+  Widget build(BuildContext context) {
+    return HabitEditFormInputField(
+      valueBuilder: (vm) => vm.dailyGoalUnit,
+      builder: (context, controller, child) => HabitEditDailyGoalUnitTile(
+        controller: controller,
+        onChanged: (value) {
+          final vm = context.read<HabitFormViewModel>();
+          if (!vm.mounted) return;
+          final String newValue;
+          if (value.length <= minHabitDailyGoalUnitLength) {
+            controller.text = '';
+            newValue = defaultHabitDailyGoalUnit;
+          } else if (value.length > maxHabitDailyGoalUnitLength) {
+            newValue = value.substring(0, maxHabitDailyGoalUnitLength);
+          } else {
+            newValue = value;
+          }
+          vm.dailyGoalUnit = newValue;
+        },
+      ),
+    );
+  }
+}
+
+final class _DescField extends StatelessWidget {
+  const _DescField();
+
+  @override
+  Widget build(BuildContext context) {
+    return HabitEditFormInputField(
+      valueBuilder: (vm) => vm.desc,
+      builder: (context, controller, child) => HabitEditDescTile(
+        controller: controller,
+        onDescChanged: (value) {
+          final vm = context.read<HabitFormViewModel>();
+          if (vm.mounted) vm.desc = value;
+        },
+      ),
     );
   }
 }
