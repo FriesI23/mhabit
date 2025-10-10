@@ -28,7 +28,6 @@ void main() {
       nameFieldInputController: TextEditingController(),
       dailyGoalFieldInputController: TextEditingController(),
       dailyGoalUnitFieldInputController: TextEditingController(),
-      dailyGoalExtraFieldInpuController: TextEditingController(),
       descFieldInputController: TextEditingController(),
     );
   }

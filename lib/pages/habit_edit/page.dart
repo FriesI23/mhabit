@@ -353,45 +353,6 @@ class _PageState extends State<_Page> {
       );
     }
 
-    Widget buildDailyGoalExtraField(BuildContext context) {
-      return Selector<HabitFormViewModel,
-          Tuple3<HabitType, HabitDailyGoal?, HabitDailyGoal>>(
-        selector: (context, vm) =>
-            Tuple3(vm.habitType, vm.dailyGoalExtra, vm.dailyGoal),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, _, child) {
-          final formvm = context.read<HabitFormViewModel>();
-          return HabitEditDailyGoalExtraTile(
-            isValid: formvm.isDailyGoalExtraValueValid,
-            habitType: formvm.habitType,
-            dailyGoal: formvm.dailyGoal,
-            controller: formvm.dailyGoalExtraFieldInpuController,
-            onChanged: (value) {
-              if (!mounted) return;
-              final formvm = context.read<HabitFormViewModel>();
-              final newDailyGoalExtra = num.tryParse(value);
-              formvm.dailyGoalExtra = newDailyGoalExtra != null
-                  ? onDailyGoalTextInputChanged(
-                      newDailyGoalExtra,
-                      controller: formvm.dailyGoalExtraFieldInpuController,
-                      maxValue: maxHabitdailyGoalExtra,
-                      allowInputZero: true,
-                    )
-                  : newDailyGoalExtra;
-            },
-            onSubmitted: (value) {
-              if (!mounted) return;
-              final formvm = context.read<HabitFormViewModel>();
-              formvm.dailyGoalExtraFieldInpuController.text =
-                  formvm.dailyGoalExtra != null
-                      ? formvm.dailyGoalExtra.toString()
-                      : '';
-            },
-          );
-        },
-      );
-    }
-
     Widget buildFrequencyField(BuildContext context) {
       return Selector<HabitFormViewModel, HabitFrequency>(
         selector: (context, formViewModel) => formViewModel.frequency,
@@ -498,7 +459,8 @@ class _PageState extends State<_Page> {
                 kHabitDivider,
                 buildDailyGoalUnitField(context),
                 kHabitDivider,
-                buildDailyGoalExtraField(context),
+                const _DailyGoalExtraField(),
+                // buildDailyGoalExtraField(context),
                 kHabitDivider,
                 buildFrequencyField(context),
                 kHabitDivider,
@@ -593,7 +555,6 @@ class _DailyGoalField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-
     return HabitEditFormInputField(
       valueBuilder: (vm) =>
           HabitDailyGoalHelper(habitType: vm.habitType, dailyGoal: vm.dailyGoal)
@@ -635,6 +596,59 @@ class _DailyGoalField extends StatelessWidget {
                 .validitedGoal;
             if (dailyGoal != vm.dailyGoal) vm.dailyGoal = dailyGoal;
             controller.text = dailyGoal.toSimpleString();
+          },
+        );
+      },
+    );
+  }
+}
+
+class _DailyGoalExtraField extends StatelessWidget {
+  const _DailyGoalExtraField();
+
+  @override
+  Widget build(BuildContext context) {
+    return HabitEditFormInputField(
+      valueBuilder: (vm) => vm.dailyGoalExtra?.toSimpleString() ?? '',
+      builder: (context, controller, child) {
+        final (habitType, dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) =
+            context.select<
+                    HabitFormViewModel,
+                    (
+                      HabitType,
+                      HabitDailyGoal?,
+                      HabitDailyGoal,
+                      bool,
+                    )>(
+                (vm) => (
+                      vm.habitType,
+                      vm.dailyGoalExtra,
+                      vm.dailyGoal,
+                      vm.isDailyGoalExtraValueValid
+                    ));
+        return HabitEditDailyGoalExtraTile(
+          isValid: isDailyGoalExtraValid,
+          habitType: habitType,
+          dailyGoal: dailyGoal,
+          controller: controller,
+          onChanged: (value) {
+            final vm = context.read<HabitFormViewModel>();
+            if (!vm.mounted) return;
+            final newDailyGoalExtra = num.tryParse(value);
+            vm.dailyGoalExtra = newDailyGoalExtra != null
+                ? onDailyGoalTextInputChanged(
+                    newDailyGoalExtra,
+                    controller: controller,
+                    maxValue: maxHabitdailyGoalExtra,
+                    allowInputZero: true,
+                  )
+                : newDailyGoalExtra;
+          },
+          onSubmitted: (value) {
+            final vm = context.read<HabitFormViewModel>();
+            if (!vm.mounted) return;
+            controller.text =
+                vm.dailyGoalExtra != null ? vm.dailyGoalExtra.toString() : '';
           },
         );
       },

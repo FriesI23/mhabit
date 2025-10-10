@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../extensions/num_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_daily_goal.dart';
 import '../models/habit_display.dart';
@@ -37,7 +36,6 @@ class HabitFormViewModel extends ChangeNotifier
         DBOperationsMixin
     implements ProviderMounted {
   final TextEditingController _dailyGoalUnitFieldInputController;
-  final TextEditingController _dailyGoalExtraFieldInpuController;
   final TextEditingController _descFieldInputController;
   // inside status
   bool _mounted = true;
@@ -50,7 +48,6 @@ class HabitFormViewModel extends ChangeNotifier
     required TextEditingController nameFieldInputController,
     required TextEditingController dailyGoalFieldInputController,
     required TextEditingController dailyGoalUnitFieldInputController,
-    required TextEditingController dailyGoalExtraFieldInpuController,
     required TextEditingController descFieldInputController,
   })  : _form = initForm ??
             HabitForm(
@@ -62,13 +59,9 @@ class HabitFormViewModel extends ChangeNotifier
                 targetDays: defaultHabitTargetDays,
                 desc: ''),
         _dailyGoalUnitFieldInputController = dailyGoalUnitFieldInputController,
-        _dailyGoalExtraFieldInpuController = dailyGoalExtraFieldInpuController,
         _descFieldInputController = descFieldInputController {
     initVerticalScrollController(notifyListeners, appbarScrollController);
     _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
-    _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
-        ? _form.dailyGoalExtra!.toSimpleString()
-        : '';
     _descFieldInputController.text = _form.desc ?? '';
   }
 
@@ -76,7 +69,6 @@ class HabitFormViewModel extends ChangeNotifier
   void dispose() {
     if (!_mounted) return;
     _dailyGoalUnitFieldInputController.dispose();
-    _dailyGoalExtraFieldInpuController.dispose();
     _descFieldInputController.dispose();
     disposeVerticalScrollController();
     super.dispose();
@@ -93,9 +85,6 @@ class HabitFormViewModel extends ChangeNotifier
 
   TextEditingController get dailyGoalUnitFieldInputController =>
       _dailyGoalUnitFieldInputController;
-
-  TextEditingController get dailyGoalExtraFieldInpuController =>
-      _dailyGoalExtraFieldInpuController;
 
   TextEditingController get descFieldInputController =>
       _descFieldInputController;
