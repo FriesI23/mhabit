@@ -36,7 +36,6 @@ class HabitFormViewModel extends ChangeNotifier
         DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted {
-  final TextEditingController _nameFieldInputController;
   final TextEditingController _dailyGoalFieldInputController;
   final TextEditingController _dailyGoalUnitFieldInputController;
   final TextEditingController _dailyGoalExtraFieldInpuController;
@@ -63,13 +62,11 @@ class HabitFormViewModel extends ChangeNotifier
                 dailyGoalUnit: defaultHabitDailyGoalUnit,
                 targetDays: defaultHabitTargetDays,
                 desc: ''),
-        _nameFieldInputController = nameFieldInputController,
         _dailyGoalFieldInputController = dailyGoalFieldInputController,
         _dailyGoalUnitFieldInputController = dailyGoalUnitFieldInputController,
         _dailyGoalExtraFieldInpuController = dailyGoalExtraFieldInpuController,
         _descFieldInputController = descFieldInputController {
     initVerticalScrollController(notifyListeners, appbarScrollController);
-    _nameFieldInputController.text = _form.name ?? '';
     _dailyGoalFieldInputController.text =
         _form.dailyGoal?.toSimpleString() ?? '';
     _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
@@ -82,7 +79,6 @@ class HabitFormViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _nameFieldInputController.dispose();
     _dailyGoalFieldInputController.dispose();
     _dailyGoalUnitFieldInputController.dispose();
     _dailyGoalExtraFieldInpuController.dispose();
@@ -100,9 +96,6 @@ class HabitFormViewModel extends ChangeNotifier
     super.notifyListeners();
   }
 
-  TextEditingController get nameFieldInputController =>
-      _nameFieldInputController;
-
   TextEditingController get dailyGoalFieldInputController =>
       _dailyGoalFieldInputController;
 
@@ -115,11 +108,11 @@ class HabitFormViewModel extends ChangeNotifier
   TextEditingController get descFieldInputController =>
       _descFieldInputController;
 
-  String get name => _form.name!;
-  set name(String newName) {
-    appLog.value
-        .debug("$runtimeType.name", beforeVal: _form.name, afterVal: newName);
-    _form.name = newName;
+  String get name => _form.name ?? "";
+  set name(String value) {
+    final oldValue = _form.name;
+    _form.name = value;
+    appLog.value.debug("HabitForm.name", beforeVal: oldValue, afterVal: value);
     notifyListeners();
   }
 

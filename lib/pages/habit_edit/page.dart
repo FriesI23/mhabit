@@ -302,40 +302,6 @@ class _PageState extends State<_Page> {
     appLog.build.debug(context, ex: [widget.initForm]);
 
     //#region private builders
-    Widget buildAppbar(BuildContext context) {
-      return Selector<HabitFormViewModel,
-          Tuple4<String, HabitColorType, bool, bool>>(
-        selector: (context, viewmodel) => Tuple4(
-            viewmodel.name,
-            viewmodel.colorType,
-            viewmodel.isAppbarPinned,
-            viewmodel.canSaveHabit()),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, data, child) {
-          appLog.build
-              .debug(context, ex: [data], name: "$widget.Appbar.HabitEdit");
-          final name = data.item1;
-          final colorType = data.item2;
-          final isAppbarPinned = data.item3;
-          final canSaveHabit = data.item4;
-          return HabitEditAppBar(
-            name: name,
-            colorType: colorType,
-            controller:
-                context.read<HabitFormViewModel>().nameFieldInputController,
-            scrolledUnderElevation: kHabitEditCommonEvalation,
-            autofocus: name.isNotEmpty ? false : true,
-            isAppbarPinned: isAppbarPinned,
-            showSaveButton: canSaveHabit,
-            showInFullscreenDialog: widget.showInFullscreenDialog,
-            onNameChanged: (value) =>
-                context.read<HabitFormViewModel>().name = value,
-            onSaveButtonPressed: _onSaveButtonPressed,
-          );
-        },
-      );
-    }
-
     Widget buildColorField(BuildContext context) {
       return Selector<HabitFormViewModel, HabitColorType>(
         selector: (context, formViewModel) => formViewModel.colorType,
@@ -565,7 +531,9 @@ class _PageState extends State<_Page> {
         body: CustomScrollView(
           controller: formvm.verticalScrollController,
           slivers: [
-            buildAppbar(context),
+            _Appbar(
+                showInFullscreenDialog: widget.showInFullscreenDialog,
+                onSaveButtonPressed: _onSaveButtonPressed),
             _HabitEditSliverList(
               children: [
                 buildColorField(context),
@@ -617,6 +585,42 @@ class _HabitEditSliverList extends StatelessWidget {
       withSliver: true,
       child: SliverList(
         delegate: SliverChildListDelegate(children),
+      ),
+    );
+  }
+}
+
+class _Appbar extends StatelessWidget {
+  final bool showInFullscreenDialog;
+  final VoidCallback? onSaveButtonPressed;
+
+  const _Appbar(
+      {required this.showInFullscreenDialog, this.onSaveButtonPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final (name, colorType, pinned, canSave) = context.select<
+            HabitFormViewModel,
+            (String name, HabitColorType colorType, bool pinned, bool canSave)>(
+        (vm) => (vm.name, vm.colorType, vm.isAppbarPinned, vm.canSaveHabit()));
+    appLog.build.debug(context,
+        ex: [name, colorType, pinned, canSave], name: "Appbar.HabitEdit");
+    return HabitEditFormInputField(
+      valueBuilder: (vm) => vm.name,
+      builder: (context, controller, child) => HabitEditAppBar(
+        name: name,
+        colorType: colorType,
+        controller: controller,
+        scrolledUnderElevation: kHabitEditCommonEvalation,
+        autofocus: name.isNotEmpty ? false : true,
+        isAppbarPinned: pinned,
+        showSaveButton: canSave,
+        showInFullscreenDialog: showInFullscreenDialog,
+        onNameChanged: (value) {
+          final vm = context.read<HabitFormViewModel>();
+          if (vm.mounted) vm.name = value;
+        },
+        onSaveButtonPressed: onSaveButtonPressed,
       ),
     );
   }
