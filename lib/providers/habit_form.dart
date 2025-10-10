@@ -45,8 +45,6 @@ class HabitFormViewModel extends ChangeNotifier
   HabitFormViewModel({
     HabitForm? initForm,
     required ScrollController appbarScrollController,
-    required TextEditingController nameFieldInputController,
-    required TextEditingController dailyGoalFieldInputController,
     required TextEditingController dailyGoalUnitFieldInputController,
     required TextEditingController descFieldInputController,
   })  : _form = initForm ??

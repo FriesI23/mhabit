@@ -32,8 +32,6 @@ class PageProviders extends SingleChildStatelessWidget {
             create: (context) => HabitFormViewModel(
               initForm: initForm,
               appbarScrollController: ScrollController(),
-              nameFieldInputController: TextEditingController(),
-              dailyGoalFieldInputController: TextEditingController(),
               dailyGoalUnitFieldInputController: TextEditingController(),
               descFieldInputController: TextEditingController(),
             ),

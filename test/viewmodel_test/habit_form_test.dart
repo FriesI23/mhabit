@@ -25,8 +25,6 @@ void main() {
   HabitFormViewModel getMockViewModel() {
     return HabitFormViewModel(
       appbarScrollController: ScrollController(),
-      nameFieldInputController: TextEditingController(),
-      dailyGoalFieldInputController: TextEditingController(),
       dailyGoalUnitFieldInputController: TextEditingController(),
       descFieldInputController: TextEditingController(),
     );
