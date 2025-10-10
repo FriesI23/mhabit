@@ -525,15 +525,17 @@ final class _DailyGoalField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+    final habitType =
+        context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
     return HabitEditFormInputField(
       valueBuilder: (vm) =>
           HabitDailyGoalHelper(habitType: vm.habitType, dailyGoal: vm.dailyGoal)
               .validitedGoal
               .toSimpleString(),
       builder: (context, controller, child) {
-        final (habitType, dailyGoal, isDailyGoalValid) = context
-            .select<HabitFormViewModel, (HabitType, HabitDailyGoal, bool)>(
-                (vm) => (vm.habitType, vm.dailyGoal, vm.isDailyGoalValueValid));
+        final (dailyGoal, isDailyGoalValid) =
+            context.select<HabitFormViewModel, (HabitDailyGoal, bool)>(
+                (vm) => (vm.dailyGoal, vm.isDailyGoalValueValid));
         appLog.build.debug(context,
             ex: [habitType, dailyGoal], name: "HabitEditPage.DailyGoalField");
         return HabitEditDailyGoalTile(
@@ -578,20 +580,15 @@ final class _DailyGoalExtraField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final habitType =
+        context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
     return HabitEditFormInputField(
       valueBuilder: (vm) => vm.dailyGoalExtra?.toSimpleString() ?? '',
       builder: (context, controller, child) {
-        final (habitType, dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) =
-            context.select<
-                    HabitFormViewModel,
-                    (
-                      HabitType,
-                      HabitDailyGoal?,
-                      HabitDailyGoal,
-                      bool,
-                    )>(
+        final (dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) =
+            context.select<HabitFormViewModel,
+                    (HabitDailyGoal?, HabitDailyGoal, bool)>(
                 (vm) => (
-                      vm.habitType,
                       vm.dailyGoalExtra,
                       vm.dailyGoal,
                       vm.isDailyGoalExtraValueValid

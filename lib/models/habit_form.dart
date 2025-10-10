@@ -179,15 +179,15 @@ enum HabitDailyComplateStatus {
 }
 
 class HabitForm {
-  String? name;
-  HabitType? type;
-  HabitColorType? colorType;
+  String name;
+  HabitType type;
+  HabitColorType colorType;
   HabitDailyGoal? dailyGoal;
   String? dailyGoalUnit;
   HabitDailyGoal? dailyGoalExtra;
-  HabitFrequency? frequency;
-  HabitStartDate? startDate;
-  int? targetDays;
+  HabitFrequency frequency;
+  HabitStartDate startDate;
+  int targetDays;
   String? desc;
   HabitReminder? reminder;
   String? reminderQuest;
@@ -195,15 +195,15 @@ class HabitForm {
   final HabitDisplayEditParams? editParams;
 
   HabitForm({
-    this.name,
-    this.type,
-    this.colorType,
+    required this.name,
+    required this.type,
+    required this.colorType,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
-    this.frequency,
-    this.startDate,
-    this.targetDays,
+    required this.frequency,
+    required this.startDate,
+    required this.targetDays,
     this.desc,
     this.reminder,
     this.reminderQuest,
@@ -213,7 +213,12 @@ class HabitForm {
 
   HabitForm.fromHabitDBCell(HabitDBCell cell,
       {required this.editMode, this.editParams})
-      : name = cell.name,
+      : assert(cell.name != null &&
+            cell.type != null &&
+            cell.color != null &&
+            cell.freqCustom != null &&
+            cell.startDate != null),
+        name = cell.name!,
         type = HabitType.getFromDBCode(cell.type!)!,
         colorType = HabitColorType.getFromDBCode(cell.color!)!,
         dailyGoal = cell.dailyGoal,
@@ -222,7 +227,7 @@ class HabitForm {
         frequency = HabitFrequency.fromJson(
             {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)}),
         startDate = HabitStartDate.fromEpochDay(cell.startDate!),
-        targetDays = cell.targetDays,
+        targetDays = cell.targetDays!,
         desc = cell.desc,
         reminder = cell.remindCustom != null
             ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))

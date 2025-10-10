@@ -46,6 +46,7 @@ class HabitFormViewModel extends ChangeNotifier
   }) : _form = initForm ??
             HabitForm(
                 name: '',
+                type: defaultHabitType,
                 colorType: defaultHabitColorType,
                 startDate: HabitStartDate.dateTime(DateTime.now()),
                 frequency: HabitFrequency.daily,
@@ -71,7 +72,7 @@ class HabitFormViewModel extends ChangeNotifier
     super.notifyListeners();
   }
 
-  String get name => _form.name ?? "";
+  String get name => _form.name;
   set name(String value) {
     final oldValue = _form.name;
     _form.name = value;
@@ -79,7 +80,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  HabitType get habitType => _form.type ?? defaultHabitType;
+  HabitType get habitType => _form.type;
   set habitType(HabitType newHabitType) {
     appLog.value.debug("$runtimeType.habitType",
         beforeVal: _form.type, afterVal: newHabitType);
@@ -87,7 +88,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  HabitColorType get colorType => _form.colorType!;
+  HabitColorType get colorType => _form.colorType;
   set colorType(HabitColorType newColorType) {
     appLog.value.debug("$runtimeType.colorType",
         beforeVal: _form.colorType, afterVal: newColorType);
@@ -125,10 +126,12 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  bool get isDailyGoalExtraValueValid =>
-      dailyGoalExtra == null || dailyGoalExtra! >= dailyGoal;
+  bool get isDailyGoalExtraValueValid {
+    final dailyGoalExtra = this.dailyGoalExtra;
+    return dailyGoalExtra == null || dailyGoalExtra >= dailyGoal;
+  }
 
-  HabitFrequency get frequency => _form.frequency!;
+  HabitFrequency get frequency => _form.frequency;
   set frequency(HabitFrequency newHabitFrequency) {
     appLog.value.debug("$runtimeType.frequency",
         beforeVal: _form.frequency, afterVal: newHabitFrequency);
@@ -136,7 +139,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  HabitStartDate get startDate => _form.startDate!;
+  HabitStartDate get startDate => _form.startDate;
   set startDate(HabitStartDate newDate) {
     appLog.value.debug("$runtimeType.startDate",
         beforeVal: _form.startDate, afterVal: newDate);
@@ -144,7 +147,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  int get targetDays => _form.targetDays!;
+  int get targetDays => _form.targetDays;
   set targetDays(int newTargetDays) {
     appLog.value.debug("$runtimeType.targetDays",
         beforeVal: _form.targetDays, afterVal: newTargetDays);
@@ -217,6 +220,7 @@ class HabitFormViewModel extends ChangeNotifier
   Future<HabitDBCell?> _saveNewHabit({bool returnResult = false}) async {
     final freq = frequency.toJson();
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
+    final reminder = this.reminder;
     final dbCell = HabitDBCell(
         type: habitType.dbCode,
         uuid: genHabitUUID(),
@@ -231,7 +235,7 @@ class HabitFormViewModel extends ChangeNotifier
         freqCustom: jsonEncode(freq["args"]),
         startDate: startDate.epochDay,
         targetDays: targetDays,
-        remindCustom: reminder != null ? jsonEncode(reminder!.toJson()) : null,
+        remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
         remindQuestion: reminder != null ? reminderQuest : null,
         sortPosition: double.infinity,
         createT: now,
@@ -245,8 +249,11 @@ class HabitFormViewModel extends ChangeNotifier
   }
 
   Future<HabitDBCell?> _saveExistHabit({bool returnResult = false}) async {
+    assert(_form.editParams != null);
+
     final freq = frequency.toJson();
     final habitUUID = _form.editParams!.uuid;
+    final reminder = this.reminder;
     final dbCell = HabitDBCell(
       type: habitType.dbCode,
       uuid: habitUUID,
@@ -260,7 +267,7 @@ class HabitFormViewModel extends ChangeNotifier
       freqCustom: jsonEncode(freq["args"]),
       startDate: startDate.epochDay,
       targetDays: targetDays,
-      remindCustom: reminder != null ? jsonEncode(reminder!.toJson()) : null,
+      remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
     );
 
