@@ -280,7 +280,7 @@ class _PageState extends State<_Page> {
             Text("Name: ${value.habitType}"),
             Text("UUID: ${value.uuid}"),
             Text("Color: ${value.colorType}"),
-            Text("DailyGoal: ${value.dailyGoal} ${value.dailyGoalUnit}"),
+            Text("DailyGoal: ${value.dailyGoalValue} ${value.dailyGoalUnit}"),
             Text("Frequency: ${value.frequency}"),
             Text("StartDate: ${value.startDate}"),
             Text("TargetDays: ${value.targetDays}"),
@@ -522,40 +522,64 @@ final class _Appbar extends StatelessWidget {
 final class _DailyGoalField extends StatelessWidget {
   const _DailyGoalField();
 
+  String? getTileErrorHint(HabitType type, HabitDailyGoal dailyGoal,
+      [L10n? l10n]) {
+    switch (type) {
+      case HabitType.unknown:
+      case HabitType.normal:
+        if (dailyGoal <= minHabitDailyGoal) {
+          return l10n?.habitEdit_habitDailyGoal_errorText01(minHabitDailyGoal);
+        } else if (dailyGoal > maxHabitdailyGoal) {
+          return l10n?.habitEdit_habitDailyGoal_errorText02(maxHabitdailyGoal);
+        } else {
+          return null;
+        }
+      case HabitType.negative:
+        if (dailyGoal < minHabitDailyGoal) {
+          return l10n
+              ?.habitEdit_habitDailyGoal_negativeErrorText01(minHabitDailyGoal);
+        } else if (dailyGoal > maxHabitdailyGoal) {
+          return l10n
+              ?.habitEdit_habitDailyGoal_negativeErrorText02(minHabitDailyGoal);
+        } else {
+          return null;
+        }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final habitType =
         context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
     return HabitEditFormInputField(
-      valueBuilder: (vm) =>
-          HabitDailyGoalHelper(habitType: vm.habitType, dailyGoal: vm.dailyGoal)
-              .validitedGoal
-              .toSimpleString(),
+      valueBuilder: (vm) => vm.dailyGoal.normalizedGoal.toSimpleString(),
       builder: (context, controller, child) {
-        final (dailyGoal, isDailyGoalValid) =
-            context.select<HabitFormViewModel, (HabitDailyGoal, bool)>(
-                (vm) => (vm.dailyGoal, vm.isDailyGoalValueValid));
+        final (dailyGoal, defaultDailyGoal, isDailyGoalValid) = context
+            .select<HabitFormViewModel, (HabitDailyGoal, HabitDailyGoal, bool)>(
+                (vm) => (
+                      vm.dailyGoalValue,
+                      vm.dailyGoal.defaultDailyGoal,
+                      vm.isDailyGoalValueValid
+                    ));
         appLog.build.debug(context,
             ex: [habitType, dailyGoal], name: "HabitEditPage.DailyGoalField");
         return HabitEditDailyGoalTile(
           errorHint: isDailyGoalValid
               ? null
-              : HabitDailyGoalHelper(habitType: habitType, dailyGoal: dailyGoal)
-                  .getTileErrorHint(l10n),
+              : getTileErrorHint(habitType, dailyGoal, l10n),
           habitType: habitType,
-          defualtHabitDailyGoal:
-              HabitDailyGoalHelper.getDefaultDailyGoal(habitType),
+          defualtHabitDailyGoal: defaultDailyGoal,
           controller: controller,
           onChanged: (value) {
             final vm = context.read<HabitFormViewModel>();
             if (!vm.mounted) return;
-            final newDailyGoal = HabitDailyGoal.tryParse(value) ??
-                HabitDailyGoalHelper.getDefaultDailyGoal(vm.habitType);
-            vm.dailyGoal = onDailyGoalTextInputChanged(
-              HabitDailyGoalHelper(
-                      habitType: vm.habitType, dailyGoal: newDailyGoal)
-                  .validitedGoal,
+            final newDailyGoal =
+                HabitDailyGoal.tryParse(value) ?? vm.dailyGoal.defaultDailyGoal;
+            vm.dailyGoalValue = onDailyGoalTextInputChanged(
+              HabitDailyGoalContainer(
+                      type: vm.habitType, dailyGoal: newDailyGoal)
+                  .normalizedGoal,
               controller: controller,
               allowInputZero: vm.allowZeroDailyGoal(),
             );
@@ -563,10 +587,8 @@ final class _DailyGoalField extends StatelessWidget {
           onSubmitted: (value) {
             final vm = context.read<HabitFormViewModel>();
             if (!vm.mounted) return;
-            final dailyGoal = HabitDailyGoalHelper(
-                    habitType: vm.habitType, dailyGoal: vm.dailyGoal)
-                .validitedGoal;
-            if (dailyGoal != vm.dailyGoal) vm.dailyGoal = dailyGoal;
+            final dailyGoal = vm.dailyGoal.normalizedGoal;
+            if (dailyGoal != vm.dailyGoalValue) vm.dailyGoalValue = dailyGoal;
             controller.text = dailyGoal.toSimpleString();
           },
         );
@@ -590,7 +612,7 @@ final class _DailyGoalExtraField extends StatelessWidget {
                     (HabitDailyGoal?, HabitDailyGoal, bool)>(
                 (vm) => (
                       vm.dailyGoalExtra,
-                      vm.dailyGoal,
+                      vm.dailyGoalValue,
                       vm.isDailyGoalExtraValueValid
                     ));
         return HabitEditDailyGoalExtraTile(

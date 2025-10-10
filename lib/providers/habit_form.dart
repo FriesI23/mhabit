@@ -43,16 +43,7 @@ class HabitFormViewModel extends ChangeNotifier
   HabitFormViewModel({
     HabitForm? initForm,
     required ScrollController appbarScrollController,
-  }) : _form = initForm ??
-            HabitForm(
-                name: '',
-                type: defaultHabitType,
-                colorType: defaultHabitColorType,
-                startDate: HabitStartDate.dateTime(DateTime.now()),
-                frequency: HabitFrequency.daily,
-                dailyGoalUnit: defaultHabitDailyGoalUnit,
-                targetDays: defaultHabitTargetDays,
-                desc: '') {
+  }) : _form = initForm ?? HabitForm.empty() {
     initVerticalScrollController(notifyListeners, appbarScrollController);
   }
 
@@ -85,6 +76,7 @@ class HabitFormViewModel extends ChangeNotifier
     appLog.value.debug("$runtimeType.habitType",
         beforeVal: _form.type, afterVal: newHabitType);
     _form.type = newHabitType;
+    _form.dailyGoal = _form.dailyGoal.transform(type: _form.type);
     notifyListeners();
   }
 
@@ -96,39 +88,43 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  num get dailyGoal =>
-      _form.dailyGoal ?? HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
+  bool get isDailyGoalValueValid => _form.dailyGoal.isGoalValid();
 
-  bool get isDailyGoalValueValid =>
-      HabitDailyGoalHelper(habitType: habitType, dailyGoal: dailyGoal)
-          .isGoalValid;
+  HabitDailyGoalContainer get dailyGoal => _form.dailyGoal;
 
-  set dailyGoal(num newDailyGoal) {
+  num get dailyGoalValue => _form.dailyGoal.dailyGoal;
+  set dailyGoalValue(num newDailyGoal) {
     appLog.value.debug("$runtimeType.dailyGoal",
-        beforeVal: _form.dailyGoal, afterVal: newDailyGoal);
-    _form.dailyGoal = newDailyGoal;
+        beforeVal: _form.dailyGoal.dailyGoal,
+        afterVal: newDailyGoal,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoal = newDailyGoal;
     notifyListeners();
   }
 
-  String get dailyGoalUnit => _form.dailyGoalUnit ?? '';
+  String get dailyGoalUnit => _form.dailyGoal.dailyGoalUnit;
   set dailyGoalUnit(String newDailyGoalUnit) {
     appLog.value.debug("$runtimeType.dailyGoalUnit",
-        beforeVal: _form.dailyGoalUnit, afterVal: newDailyGoalUnit);
-    _form.dailyGoalUnit = newDailyGoalUnit;
+        beforeVal: _form.dailyGoal.dailyGoalUnit,
+        afterVal: newDailyGoalUnit,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoalUnit = newDailyGoalUnit;
     notifyListeners();
   }
 
-  num? get dailyGoalExtra => _form.dailyGoalExtra;
+  num? get dailyGoalExtra => _form.dailyGoal.dailyGoalExtra;
   set dailyGoalExtra(num? newDailyGoalExtra) {
     appLog.value.debug("$runtimeType.dailyGoalExtra",
-        beforeVal: _form.dailyGoalExtra, afterVal: newDailyGoalExtra);
-    _form.dailyGoalExtra = newDailyGoalExtra;
+        beforeVal: _form.dailyGoal.dailyGoalExtra,
+        afterVal: newDailyGoalExtra,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoalExtra = newDailyGoalExtra;
     notifyListeners();
   }
 
   bool get isDailyGoalExtraValueValid {
     final dailyGoalExtra = this.dailyGoalExtra;
-    return dailyGoalExtra == null || dailyGoalExtra >= dailyGoal;
+    return dailyGoalExtra == null || dailyGoalExtra >= dailyGoalValue;
   }
 
   HabitFrequency get frequency => _form.frequency;
@@ -228,7 +224,7 @@ class HabitFormViewModel extends ChangeNotifier
         name: name,
         desc: desc,
         color: colorType.dbCode,
-        dailyGoal: dailyGoal,
+        dailyGoal: dailyGoalValue,
         dailyGoalUnit: dailyGoalUnit,
         dailyGoalExtra: dailyGoalExtra,
         freqType: freq["type"],
@@ -260,7 +256,7 @@ class HabitFormViewModel extends ChangeNotifier
       name: name,
       desc: desc,
       color: colorType.dbCode,
-      dailyGoal: dailyGoal,
+      dailyGoal: dailyGoalValue,
       dailyGoalUnit: dailyGoalUnit,
       dailyGoalExtra: dailyGoalExtra,
       freqType: freq["type"],

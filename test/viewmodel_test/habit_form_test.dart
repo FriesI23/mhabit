@@ -48,11 +48,11 @@ void main() {
     });
     test('dailyGoal', () {
       final provider = getMockViewModel();
-      expect(provider.dailyGoal, defaultHabitDailyGoal);
+      expect(provider.dailyGoalValue, defaultHabitDailyGoal);
       provider.addListener(() async {
-        expect(provider.dailyGoal, 10.5);
+        expect(provider.dailyGoalValue, 10.5);
       });
-      provider.dailyGoal = 10.5;
+      provider.dailyGoalValue = 10.5;
     });
     test('dailyGoalUnit', () {
       final provider = getMockViewModel();
