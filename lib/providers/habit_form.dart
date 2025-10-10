@@ -36,7 +36,6 @@ class HabitFormViewModel extends ChangeNotifier
         DBHelperLoadedMixin,
         DBOperationsMixin
     implements ProviderMounted {
-  final TextEditingController _dailyGoalFieldInputController;
   final TextEditingController _dailyGoalUnitFieldInputController;
   final TextEditingController _dailyGoalExtraFieldInpuController;
   final TextEditingController _descFieldInputController;
@@ -62,13 +61,10 @@ class HabitFormViewModel extends ChangeNotifier
                 dailyGoalUnit: defaultHabitDailyGoalUnit,
                 targetDays: defaultHabitTargetDays,
                 desc: ''),
-        _dailyGoalFieldInputController = dailyGoalFieldInputController,
         _dailyGoalUnitFieldInputController = dailyGoalUnitFieldInputController,
         _dailyGoalExtraFieldInpuController = dailyGoalExtraFieldInpuController,
         _descFieldInputController = descFieldInputController {
     initVerticalScrollController(notifyListeners, appbarScrollController);
-    _dailyGoalFieldInputController.text =
-        _form.dailyGoal?.toSimpleString() ?? '';
     _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
     _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
         ? _form.dailyGoalExtra!.toSimpleString()
@@ -79,7 +75,6 @@ class HabitFormViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _dailyGoalFieldInputController.dispose();
     _dailyGoalUnitFieldInputController.dispose();
     _dailyGoalExtraFieldInpuController.dispose();
     _descFieldInputController.dispose();
@@ -95,9 +90,6 @@ class HabitFormViewModel extends ChangeNotifier
   void notifyListeners() {
     super.notifyListeners();
   }
-
-  TextEditingController get dailyGoalFieldInputController =>
-      _dailyGoalFieldInputController;
 
   TextEditingController get dailyGoalUnitFieldInputController =>
       _dailyGoalUnitFieldInputController;
@@ -132,10 +124,8 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  num get dailyGoal {
-    if (_form.dailyGoal != null) return _form.dailyGoal!;
-    return HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
-  }
+  num get dailyGoal =>
+      _form.dailyGoal ?? HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
 
   bool get isDailyGoalValueValid =>
       HabitDailyGoalHelper(habitType: habitType, dailyGoal: dailyGoal)
