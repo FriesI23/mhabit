@@ -14,96 +14,196 @@
 
 import '../common/consts.dart';
 import '../common/types.dart';
-import '../l10n/localizations.dart';
 import 'habit_form.dart';
 
-class HabitDailyGoalHelper {
-  final HabitType _habitType;
-  final HabitDailyGoal _dailyGoal;
+abstract interface class HabitDailyGoalContainer {
+  HabitType get type;
+  HabitDailyGoal get dailyGoal;
+  String get dailyGoalUnit;
+  HabitDailyGoal? get dailyGoalExtra;
 
-  const HabitDailyGoalHelper({
-    required HabitType habitType,
-    required HabitDailyGoal dailyGoal,
-  })  : _habitType = habitType,
-        _dailyGoal = dailyGoal;
+  num get normalizedGoal;
+  HabitDailyGoal get defaultDailyGoal;
 
-  static HabitDailyGoal getDefaultDailyGoal(HabitType habitType) {
-    switch (habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        return defaultHabitDailyGoal;
-      case HabitType.negative:
-        return defaultNegativeHabitDailyGoal;
+  bool isGoalValid();
+
+  HabitDailyGoalData transform({required HabitType type});
+
+  factory HabitDailyGoalContainer(
+          {required HabitType type,
+          HabitDailyGoal? dailyGoal,
+          String? dailyGoalUnit,
+          HabitDailyGoal? dailyGoalExtra}) =>
+      HabitDailyGoalData(
+        type: type,
+        dailyGoal: dailyGoal,
+        dailyGoalUnit: dailyGoalUnit,
+        dailyGoalExtra: dailyGoalExtra,
+      );
+}
+
+abstract interface class HabitDailyGoalData implements HabitDailyGoalContainer {
+  set dailyGoal(HabitDailyGoal value);
+  set dailyGoalUnit(String value);
+  set dailyGoalExtra(HabitDailyGoal? value);
+
+  factory HabitDailyGoalData(
+          {required HabitType type,
+          HabitDailyGoal? dailyGoal,
+          String? dailyGoalUnit,
+          HabitDailyGoal? dailyGoalExtra}) =>
+      switch (type) {
+        HabitType.normal => PositiveHabitDailyGoalData(
+            dailyGoal: dailyGoal,
+            dailyGoalUnit: dailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra),
+        HabitType.negative => NegativeHabitDailyGoalData(
+            dailyGoal: dailyGoal,
+            dailyGoalUnit: dailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra),
+        _ => throw UnsupportedError("Unsupport habit type: $type"),
+      };
+}
+
+abstract class _BaseHabitDailyGoalData implements HabitDailyGoalData {
+  @override
+  HabitDailyGoal dailyGoal;
+  @override
+  String dailyGoalUnit;
+  @override
+  HabitDailyGoal? dailyGoalExtra;
+
+  _BaseHabitDailyGoalData(
+      {required this.dailyGoal,
+      required this.dailyGoalUnit,
+      this.dailyGoalExtra});
+
+  @override
+  HabitDailyGoalData transform({required HabitType type}) => switch (type) {
+        HabitType.normal => PositiveHabitDailyGoalData(
+            dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
+            dailyGoalUnit: dailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra,
+          ),
+        HabitType.negative => NegativeHabitDailyGoalData(
+            dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
+            dailyGoalUnit: dailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra,
+          ),
+        _ => throw UnsupportedError("Unsupport habit type: $type"),
+      };
+}
+
+final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
+    implements HabitDailyGoalData {
+  static const _defaultGoal = defaultHabitDailyGoal;
+
+  @override
+  final HabitType type = HabitType.normal;
+  @override
+  HabitDailyGoal defaultDailyGoal = _defaultGoal;
+
+  PositiveHabitDailyGoalData._(
+      {required super.dailyGoal,
+      required super.dailyGoalUnit,
+      super.dailyGoalExtra});
+
+  PositiveHabitDailyGoalData({
+    HabitDailyGoal? dailyGoal,
+    String? dailyGoalUnit,
+    HabitDailyGoal? dailyGoalExtra,
+  }) : this._(
+            dailyGoal: dailyGoal ?? _defaultGoal,
+            dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra);
+
+  @override
+  bool isGoalValid() {
+    if (dailyGoal <= minHabitDailyGoal) {
+      return false;
+    } else if (dailyGoal > maxHabitdailyGoal) {
+      return false;
+    } else {
+      return true;
     }
   }
 
-  HabitDailyGoal get defaultDailyGoal => getDefaultDailyGoal(_habitType);
-
-  bool get isGoalValid {
-    switch (_habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        if (_dailyGoal <= minHabitDailyGoal) {
-          return false;
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return false;
-        } else {
-          return true;
-        }
-      case HabitType.negative:
-        if (_dailyGoal < minHabitDailyGoal) {
-          return false;
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return false;
-        } else {
-          return true;
-        }
+  @override
+  num get normalizedGoal {
+    if (dailyGoal <= minHabitDailyGoal) {
+      return defaultDailyGoal;
+    } else if (dailyGoal > maxHabitdailyGoal) {
+      return maxHabitdailyGoal;
+    } else {
+      return dailyGoal;
     }
   }
 
-  num get validitedGoal {
-    switch (_habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        if (_dailyGoal <= minHabitDailyGoal) {
-          return defaultDailyGoal;
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return maxHabitdailyGoal;
-        } else {
-          return _dailyGoal;
-        }
-      case HabitType.negative:
-        if (_dailyGoal < minHabitDailyGoal) {
-          return defaultDailyGoal;
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return maxHabitdailyGoal;
-        } else {
-          return _dailyGoal;
-        }
+  @override
+  HabitDailyGoalData transform({required HabitType type}) => switch (type) {
+        final newType when newType == this.type => this,
+        _ => super.transform(type: type),
+      };
+
+  @override
+  String toString() => "PositiveHabitDailyGoalData(dailyGoal=$dailyGoal,"
+      "dailyGoalUnit=$dailyGoalUnit,dailyGoalExtra=$dailyGoalExtra"
+      ")";
+}
+
+final class NegativeHabitDailyGoalData extends _BaseHabitDailyGoalData
+    implements HabitDailyGoalData {
+  static const _defaultGoal = defaultNegativeHabitDailyGoal;
+
+  @override
+  final HabitType type = HabitType.negative;
+  @override
+  HabitDailyGoal defaultDailyGoal = _defaultGoal;
+
+  NegativeHabitDailyGoalData._(
+      {required super.dailyGoal,
+      required super.dailyGoalUnit,
+      super.dailyGoalExtra});
+
+  NegativeHabitDailyGoalData({
+    HabitDailyGoal? dailyGoal,
+    String? dailyGoalUnit,
+    HabitDailyGoal? dailyGoalExtra,
+  }) : this._(
+            dailyGoal: dailyGoal ?? _defaultGoal,
+            dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
+            dailyGoalExtra: dailyGoalExtra);
+
+  @override
+  bool isGoalValid() {
+    if (dailyGoal < minHabitDailyGoal) {
+      return false;
+    } else if (dailyGoal > maxHabitdailyGoal) {
+      return false;
+    } else {
+      return true;
     }
   }
 
-  String? getTileErrorHint([L10n? l10n]) {
-    switch (_habitType) {
-      case HabitType.unknown:
-      case HabitType.normal:
-        if (_dailyGoal <= minHabitDailyGoal) {
-          return l10n?.habitEdit_habitDailyGoal_errorText01(minHabitDailyGoal);
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return l10n?.habitEdit_habitDailyGoal_errorText02(maxHabitdailyGoal);
-        } else {
-          return null;
-        }
-      case HabitType.negative:
-        if (_dailyGoal < minHabitDailyGoal) {
-          return l10n
-              ?.habitEdit_habitDailyGoal_negativeErrorText01(minHabitDailyGoal);
-        } else if (_dailyGoal > maxHabitdailyGoal) {
-          return l10n
-              ?.habitEdit_habitDailyGoal_negativeErrorText02(minHabitDailyGoal);
-        } else {
-          return null;
-        }
+  @override
+  num get normalizedGoal {
+    if (dailyGoal < minHabitDailyGoal) {
+      return defaultDailyGoal;
+    } else if (dailyGoal > maxHabitdailyGoal) {
+      return maxHabitdailyGoal;
+    } else {
+      return dailyGoal;
     }
   }
+
+  @override
+  HabitDailyGoalData transform({required HabitType type}) => switch (type) {
+        final newType when newType == this.type => this,
+        _ => super.transform(type: type),
+      };
+
+  @override
+  String toString() => "NegativeHabitDailyGoalData(dailyGoal=$dailyGoal,"
+      "dailyGoalUnit=$dailyGoalUnit,dailyGoalExtra=$dailyGoalExtra"
+      ")";
 }

@@ -15,53 +15,50 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/app_sync_server.dart';
-import '../../../providers/app_sync_server_form.dart';
+import '../../../providers/habit_form.dart';
 import '../../../widgets/widgets.dart';
 
-class AppSyncServerFormInputField extends BaseTextEditingControllerWidget {
+class HabitEditFormInputField extends BaseTextEditingControllerWidget {
   final Widget Function(
     BuildContext context,
-    AppSyncServerType type,
     TextEditingController controller,
     Widget? child,
   ) builder;
-  final String Function(AppSyncServerType type, AppSyncServerFormViewModel vm)
-      valueBuilder;
+  final String Function(HabitFormViewModel vm) valueBuilder;
+  final Widget? child;
 
-  const AppSyncServerFormInputField({
+  const HabitEditFormInputField({
     super.key,
     super.controller,
     required this.builder,
     required this.valueBuilder,
+    this.child,
   });
 
   @override
   State<BaseTextEditingControllerWidget> createState() =>
-      _AppSyncServerFormInputFieldState();
+      _HabitEditFormInputFieldState();
 }
 
-class _AppSyncServerFormInputFieldState
-    extends BaseTextEditingControllerWidgetState<AppSyncServerFormInputField> {
-  late AppSyncServerFormViewModel vm;
-  late AppSyncServerType type;
+class _HabitEditFormInputFieldState
+    extends BaseTextEditingControllerWidgetState<HabitEditFormInputField> {
+  late HabitFormViewModel vm;
 
   @override
-  String get value => widget.valueBuilder(type, vm);
+  String get value => widget.valueBuilder(vm);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final newVm = context.read<AppSyncServerFormViewModel>();
+    final newVm = context.read<HabitFormViewModel>();
     if (!controllerInitialized || !identical(vm, newVm)) {
       vm = newVm;
-      type = vm.type;
     }
     ensureControllerInitialized();
   }
 
   @override
-  void didUpdateWidget(AppSyncServerFormInputField oldWidget) {
+  void didUpdateWidget(HabitEditFormInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     ensureControllerUpdated(oldWidget);
     if (oldWidget.valueBuilder != widget.valueBuilder) {
@@ -72,16 +69,6 @@ class _AppSyncServerFormInputFieldState
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AppSyncServerFormViewModel, AppSyncServerType>(
-      selector: (context, vm) => vm.type,
-      builder: (context, newType, child) {
-        if (newType != type) {
-          type = newType;
-          final newValue = value;
-          if (controller.text != newValue) controller.text = newValue;
-        }
-        return widget.builder(context, newType, controller, child);
-      },
-    );
+    return widget.builder(context, controller, widget.child);
   }
 }

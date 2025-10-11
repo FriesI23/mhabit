@@ -1384,7 +1384,7 @@ class _FAB extends StatelessWidget {
       },
       openBuilder: (context, action) => isInEditMode
           ? pageHabitsStatusChangerBuilder(context)
-          : const habit_edit.PageHabitEdit(showInFullscreenDialog: true),
+          : const habit_edit.HabitEditPage(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {
           case HabitDBCell():

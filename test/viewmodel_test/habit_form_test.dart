@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/exceptions.dart';
@@ -23,14 +22,7 @@ import 'package:mhabit/providers/habit_form.dart';
 
 void main() {
   HabitFormViewModel getMockViewModel() {
-    return HabitFormViewModel(
-      appbarScrollController: ScrollController(),
-      nameFieldInputController: TextEditingController(),
-      dailyGoalFieldInputController: TextEditingController(),
-      dailyGoalUnitFieldInputController: TextEditingController(),
-      dailyGoalExtraFieldInpuController: TextEditingController(),
-      descFieldInputController: TextEditingController(),
-    );
+    return HabitFormViewModel();
   }
 
   group("HabitFormViewModel:API", () {
@@ -53,11 +45,11 @@ void main() {
     });
     test('dailyGoal', () {
       final provider = getMockViewModel();
-      expect(provider.dailyGoal, defaultHabitDailyGoal);
+      expect(provider.dailyGoalValue, defaultHabitDailyGoal);
       provider.addListener(() async {
-        expect(provider.dailyGoal, 10.5);
+        expect(provider.dailyGoalValue, 10.5);
       });
-      provider.dailyGoal = 10.5;
+      provider.dailyGoalValue = 10.5;
     });
     test('dailyGoalUnit', () {
       final provider = getMockViewModel();
