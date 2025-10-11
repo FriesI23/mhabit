@@ -158,7 +158,7 @@ class AppWebDavSyncServerPasswordTile extends StatelessWidget {
         context.select<AppSyncServerFormViewModel, String>((vm) => vm.identity);
     final vm = context.read<AppSyncServerFormViewModel>();
     return FutureBuilder<(String, String?)>(
-      future: vm.webdav?.readPassword(),
+      future: vm.webdav?.readPassword(useCache: true),
       builder: (context, snapshot) => Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
