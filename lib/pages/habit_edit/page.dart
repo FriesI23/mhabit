@@ -99,15 +99,35 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
+  late final ScrollController _verticalScrollController;
+
+  void _changeAppbarStatus({required bool pinned}) {
+    final vm = context.maybeRead<HabitFormViewModel>();
+    if (vm == null || !vm.mounted) return;
+    pinned ? vm.pinAppbar() : vm.unpinAppbar();
+  }
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
+    _verticalScrollController = ScrollController();
+    _verticalScrollController.addListener(() {
+      if (!mounted) return;
+      if (_verticalScrollController.hasClients &&
+          _verticalScrollController.offset > kToolbarHeight) {
+        _changeAppbarStatus(pinned: true);
+      } else if (_verticalScrollController.hasClients &&
+          _verticalScrollController.offset < kToolbarHeight) {
+        _changeAppbarStatus(pinned: false);
+      }
+    });
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -415,7 +435,7 @@ class _PageState extends State<_Page> {
     return ColorfulNavibar(
       child: Scaffold(
         body: CustomScrollView(
-          controller: formvm.verticalScrollController,
+          controller: _verticalScrollController,
           slivers: [
             _Appbar(
                 showInFullscreenDialog: widget.showInFullscreenDialog,

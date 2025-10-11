@@ -30,33 +30,40 @@ import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFormViewModel extends ChangeNotifier
-    with
-        ScrollControllerChangeNotifierMixin,
-        DBHelperLoadedMixin,
-        DBOperationsMixin
+    with DBHelperLoadedMixin, DBOperationsMixin
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
+  bool _isAppbarPinned = false;
 
   final HabitForm _form;
 
-  HabitFormViewModel({
-    HabitForm? initForm,
-    required ScrollController appbarScrollController,
-  }) : _form = initForm ?? HabitForm.empty() {
-    initVerticalScrollController(notifyListeners, appbarScrollController);
-  }
+  HabitFormViewModel({HabitForm? initForm})
+      : _form = initForm ?? HabitForm.empty();
 
   @override
   void dispose() {
     if (!_mounted) return;
-    disposeVerticalScrollController();
     super.dispose();
     _mounted = false;
   }
 
   @override
   bool get mounted => _mounted;
+
+  bool get isAppbarPinned => _isAppbarPinned;
+
+  void pinAppbar() {
+    if (isAppbarPinned) return;
+    _isAppbarPinned = true;
+    notifyListeners();
+  }
+
+  void unpinAppbar() {
+    if (!isAppbarPinned) return;
+    _isAppbarPinned = false;
+    notifyListeners();
+  }
 
   @override
   void notifyListeners() {
