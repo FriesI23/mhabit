@@ -205,12 +205,13 @@ final class WebDavSyncServerFromHandler implements _Handler {
     notifyListeners();
   }
 
-  Future<(String, String?)> readPassword({
-    Duration timeout = const Duration(seconds: 1),
-    bool changeController = true,
-  }) {
+  Future<(String, String?)> readPassword(
+      {Duration timeout = const Duration(seconds: 1), bool useCache = false}) {
     final crtCompleter = root._pwdCompleter;
     if (crtCompleter != null) return crtCompleter.future;
+    if (useCache && root._pwdLoaded) {
+      return Future.value((root.identity, form.password));
+    }
     final completer = root._pwdCompleter = Completer<(String, String?)>();
     final identity = root.identity;
     (root._parent?.readPassword(identity: identity) ?? Future.value(null))
@@ -219,6 +220,7 @@ final class WebDavSyncServerFromHandler implements _Handler {
           value = value ?? form.password;
           if (form.password != value) {
             form.password = value;
+            root._pwdLoaded = true;
             notifyListeners();
           }
           return value;
