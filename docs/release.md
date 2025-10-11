@@ -3,8 +3,18 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: 1.17.10+102
+# Pre-Released: v1.18.0
+
+## v1.18.0-pre.1+103
+
+**🌐 Localization**
+
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
 
 **🧹 Others**
 
-- Downgrade AGP to 8.11.1 due to fdroid incompatibility with >=8.12 (#347)
+- Numbers changes can be saved on iOS/iPadOS (#351)
+- Adjusted project code directory structure (#353)
+- Refactored App Sync Server Form with MVVM architecture (#364)
+- Refactored Habit Form with MVVM architecture (#366)
+- [Github Action]: Added pre-release cleanup CI for app release

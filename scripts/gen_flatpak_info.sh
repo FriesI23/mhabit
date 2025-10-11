@@ -53,12 +53,17 @@ META_PATH="$HERE/../configs/flatpak_builder/io.github.friesi23.mhabit.metainfo.x
 RELEASE_META_PATH="$HERE/../flatpak/io.github.friesi23.mhabit.metainfo.xml"
 
 TIMESTAMP=$(date +"%Y-%m-%d")
+
 VERSION=$(awk -F': ' '/^version:/ {gsub(/\r/, "", $2); print $2; exit}' pubspec.yaml)
-if [[ "$VERSION" =~ ^(.*)\-pre$ ]]; then
-  VERSION_TAG="${PREFIX}pre-v${BASH_REMATCH[1]}"
+if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-pre(\.[0-9]+)?(\+[0-9]+)?$ ]]; then
+  BASE_VERSION="${BASH_REMATCH[1]}"
+  PRE_SUFFIX="${BASH_REMATCH[2]}"
+  BUILD_META="${BASH_REMATCH[3]}"
+  VERSION_TAG="${PREFIX}pre${PRE_SUFFIX}-v${BASE_VERSION}${BUILD_META}"
 else
   VERSION_TAG="${PREFIX}v$VERSION"
 fi
+
 DETAILS_URL="https://github.com/FriesI23/mhabit/releases/tag/$VERSION_TAG"
 echo "version: $VERSION"
 echo "tag: $VERSION_TAG"
@@ -122,7 +127,7 @@ fi
 check_metainfo $META_PATH
 
 echo "processing $RELEASE_META_PATH..."
-PRE_SUFFIX_XPATH="substring(@version, string-length(@version) - 3) = '-pre'"
+PRE_SUFFIX_XPATH="contains(@version, '-pre')"
 NEW_CONTENT=$(xmlstarlet ed -d "/component/releases/release[$PRE_SUFFIX_XPATH]" "$META_PATH")
 OLD_CONTENT=$(cat "$RELEASE_META_PATH")
 if [ "$NEW_CONTENT" != "$OLD_CONTENT" ]; then
