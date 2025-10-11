@@ -5,7 +5,7 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
       - 'pre-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
-      - "ci/test-action"
+      - 'pre.[0-9]+-v[0-9]+.[0-9]+.[0-9]+\+[0-9]+'
 
 jobs:
   analyzing:
@@ -24,16 +24,66 @@ jobs:
       - checking
       - testing
     runs-on: ubuntu-latest
+    outputs:
+      pre-release: ${{ steps.pre-release.outputs.pre-release }}
     steps:
       - uses: actions/checkout@v4
+      - name: Check if prerelease
+        id: pre-release
+        run: |
+          if [[ "${GITHUB_REF_NAME}" =~ ^pre- ]] || \
+              [[ "${GITHUB_REF_NAME}" =~ ^pre\.[0-9]+- ]]; then
+            echo "pre-release=true" >> $GITHUB_OUTPUT
+          else
+            echo "pre-release=false" >> $GITHUB_OUTPUT
+          fi
       - name: Released - Basic
         uses: ncipollo/release-action@v1
         with:
           draft: true
-          prerelease: ${{ startsWith(github.ref_name, 'pre-') }}
+          prerelease: ${{ steps.pre-release.outputs.pre-release }}
           bodyFile: "docs/release.md"
           artifactErrorsFailBuild: true
           token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  post-build:
+    name: Post Building
+    needs:
+      - pre-build
+      - build-android
+      - build-ios
+      - build-macos-dmg
+      - build-windows-msix
+      - build-linux-flatpak
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sersoft-gmbh/setup-gh-cli-action@v2
+        with:
+          version: stable
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete pre-releases
+        if: ${{ needs.pre-build.outputs.pre-release != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.APP_RELEASE_TOKEN }}
+        run: |
+          CURRENT_TAG=${GITHUB_REF_NAME}
+          ESCAPED_TAG=$(printf '%s\n' "$CURRENT_TAG" \
+            | sed 's/[][\/.^$*+?(){|}]/\\&/g')
+          echo "CURRENT_TAG=$CURRENT_TAG"
+          echo "ESCAPED_TAG=$ESCAPED_TAG"
+          MATCHING_TAGS=$(gh release list --limit 1000 --json tagName \
+            | jq -r '.[] | .tagName' \
+            | grep -E "^pre\.[0-9]+-$ESCAPED_TAG$" || true)
+          echo "MATCHING_TAGS=$MATCHING_TAGS"
+          if [ -z "$MATCHING_TAGS" ]; then
+            echo "No matching pre-release found."
+            exit 0
+          fi
+          for tag in $MATCHING_TAGS; do
+            echo "Deleting release: $tag"
+            gh release delete "$tag" --yes
+          done
 
   build-android:
     name: Build android APK
