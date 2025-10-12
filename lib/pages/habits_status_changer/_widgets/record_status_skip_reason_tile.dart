@@ -19,8 +19,10 @@ import '../../common/widgets.dart';
 
 class RecordStatusSkipReasonTile extends StatelessWidget {
   final TextEditingController inputController;
+  final ValueChanged<String>? onChanged;
 
-  const RecordStatusSkipReasonTile({super.key, required this.inputController});
+  const RecordStatusSkipReasonTile(
+      {super.key, required this.inputController, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class RecordStatusSkipReasonTile extends StatelessWidget {
       title: HabitRecordReasonField(
         chipTextList: skipReasonChipTextList,
         inputController: inputController,
+        onChanged: onChanged,
       ),
     );
   }

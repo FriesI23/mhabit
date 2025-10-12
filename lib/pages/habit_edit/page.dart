@@ -505,7 +505,7 @@ final class _Appbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HabitEditFormInputField(
+    return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.name,
       builder: (context, controller, child) {
         final (name, colorType, pinned, canSave) = context
@@ -572,7 +572,7 @@ final class _DailyGoalField extends StatelessWidget {
     final l10n = L10n.of(context);
     final habitType =
         context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
-    return HabitEditFormInputField(
+    return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.dailyGoal.normalizedGoal.toSimpleString(),
       builder: (context, controller, child) {
         final (dailyGoal, defaultDailyGoal, isDailyGoalValid) = context
@@ -624,7 +624,7 @@ final class _DailyGoalExtraField extends StatelessWidget {
   Widget build(BuildContext context) {
     final habitType =
         context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
-    return HabitEditFormInputField(
+    return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.dailyGoalExtra?.toSimpleString() ?? '',
       builder: (context, controller, child) {
         final (dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) =
@@ -670,7 +670,7 @@ final class _DailyGoalUnitField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HabitEditFormInputField(
+    return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.dailyGoalUnit,
       builder: (context, controller, child) => HabitEditDailyGoalUnitTile(
         controller: controller,
@@ -698,7 +698,7 @@ final class _DescField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HabitEditFormInputField(
+    return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.desc,
       builder: (context, controller, child) => HabitEditDescTile(
         controller: controller,

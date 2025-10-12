@@ -17,9 +17,7 @@ import 'dart:math' as math;
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
-import 'package:markdown_widget/config/configs.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -79,13 +77,7 @@ class HabitStatusChangerViewModel
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
       : _selectedUUIDList = uuidList {
-    _form = HabitStatusChangerForm(
-        selectDate: HabitDate.now(),
-        skipInputController: TextEditingController());
-    _form.skipInputController.addListener(() {
-      _isSkipReasonEdited = true;
-      notifyListeners();
-    });
+    _form = HabitStatusChangerForm(selectDate: HabitDate.now());
     _dataDelate = HabitsDataDelagate(this);
   }
 
@@ -212,8 +204,6 @@ class HabitStatusChangerViewModel
   bool get mounted => _mounted;
   //#endregion
 
-  TextEditingController get skipInputController => _form.skipInputController;
-
   HabitsDataDelagate get dataDelegate => _dataDelate;
 
   bool get canSave {
@@ -232,7 +222,15 @@ class HabitStatusChangerViewModel
 
   HabitDate get selectDate => _form.selectDate;
 
-  String get skipReason => skipInputController.text;
+  String get skipReason => _form.skipReason ?? '';
+  set skipReason(String value) {
+    if (value == skipReason) return;
+    appLog.value.debug("HabitStatusChangerViewModel.startDate",
+        beforeVal: _form.skipReason, afterVal: value);
+    _form.skipReason = value;
+    _isSkipReasonEdited = true;
+    notifyListeners();
+  }
 
   HabitDate get earlistStartDate {
     var startDate = selectDate;
@@ -287,7 +285,7 @@ class HabitStatusChangerViewModel
               .reduce((value, element) => value == element ? value : null);
 
   void updateSelectStatus(RecordStatusChangerStatus? newStatus,
-      {ValueCallback? onStatusChanged, bool listen = true}) {
+      {ValueChanged? onStatusChanged, bool listen = true}) {
     if (newStatus == selectStatus) return;
     _updateForm(_form.copyWith(selectStatus: newStatus));
     onStatusChanged?.call(selectStatus);
@@ -362,21 +360,19 @@ class HabitStatusChangerViewModel
 final class HabitStatusChangerForm {
   final HabitDate selectDate;
   final RecordStatusChangerStatus? selectStatus;
-  final TextEditingController skipInputController;
+  String? skipReason;
 
-  const HabitStatusChangerForm({
+  HabitStatusChangerForm({
     required this.selectDate,
     this.selectStatus,
-    required this.skipInputController,
+    this.skipReason,
   });
 
-  HabitStatusChangerForm toNewDate(HabitDate newDate) => copyWith(
-      selectDate: newDate,
-      selectStatus: null,
-      skipInputController: skipInputController..clear());
+  HabitStatusChangerForm toNewDate(HabitDate newDate) =>
+      copyWith(selectDate: newDate, selectStatus: null, skipReason: null);
 
-  HabitStatusChangerForm toDefault() => copyWith(
-      selectStatus: null, skipInputController: skipInputController..clear());
+  HabitStatusChangerForm toDefault() =>
+      copyWith(selectStatus: null, skipReason: null);
 
   HabitSummaryRecord? buildRecordFromHabit(HabitSummaryData data) {
     final uuid = data.getRecordByDate(selectDate)?.uuid;
@@ -463,7 +459,7 @@ final class HabitStatusChangerForm {
   @override
   String toString() =>
       "HabitStatusChangerForm(date=$selectDate,status=$selectStatus,"
-      "skipInputController=$skipInputController)";
+      "skipReason=$skipReason)";
 }
 
 final class HabitsDataDelagate {

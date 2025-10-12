@@ -267,23 +267,6 @@ class _PageState extends State<_Page> {
           },
         );
 
-    Widget buildSkipStatusReasonField(BuildContext context) {
-      return Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
-        selector: (context, vm) => vm.selectStatus,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, selectStatus, child) {
-          final vm = context.read<HabitStatusChangerViewModel>();
-          return ExpandedSection(
-            duration: _Page.mainScrollAnimatedDuration,
-            curve: _Page.mainScrollAnimatedCurve,
-            expand: selectStatus == RecordStatusChangerStatus.skip,
-            child: RecordStatusSkipReasonTile(
-                inputController: vm.skipInputController),
-          );
-        },
-      );
-    }
-
     Widget buildConfirmButton(BuildContext context) {
       return Selector<HabitStatusChangerViewModel, bool>(
         selector: (context, vm) => vm.canSave,
@@ -345,7 +328,7 @@ class _PageState extends State<_Page> {
           pushPinnedChildren: false,
           children: [
             SliverPinnedHeader(child: buildStatusChangeTile(context)),
-            buildSkipStatusReasonField(context),
+            const _SkipStatusReasonField(),
             SliverPinnedHeader(child: buildConfirmButton(context)),
           ],
         ),
@@ -482,6 +465,33 @@ class _HabitListState extends State<_HabitList> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _SkipStatusReasonField extends StatelessWidget {
+  const _SkipStatusReasonField();
+
+  @override
+  Widget build(BuildContext context) {
+    final selectStatus =
+        context.select<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
+            (vm) => vm.selectStatus);
+    return ExpandedSection(
+      duration: _Page.mainScrollAnimatedDuration,
+      curve: _Page.mainScrollAnimatedCurve,
+      expand: selectStatus == RecordStatusChangerStatus.skip,
+      child: SingleTextFormInputField<HabitStatusChangerViewModel>(
+        valueBuilder: (vm) => vm.skipReason,
+        builder: (context, controller, child) => RecordStatusSkipReasonTile(
+          inputController: controller,
+          onChanged: (value) {
+            final vm = context.read<HabitStatusChangerViewModel>();
+            if (!vm.mounted) return;
+            vm.skipReason = value;
+          },
+        ),
       ),
     );
   }

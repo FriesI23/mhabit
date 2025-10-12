@@ -15,7 +15,6 @@
 export '_widgets/animated_linear_progress.dart';
 export '_widgets/app_ui_layout_builder.dart';
 export '_widgets/appbar_actions.dart';
-export '_widgets/base_text_editing_controller_widget.dart';
 export '_widgets/beta_badge.dart';
 export '_widgets/chip_list.dart';
 export '_widgets/color_display_chip.dart';
@@ -48,6 +47,7 @@ export '_widgets/scroll_physics.dart';
 export '_widgets/scrollable_chart.dart';
 export '_widgets/scrolling_fab.dart';
 export '_widgets/svg_template_image.dart';
+export '_widgets/text_editing_controller_widget.dart';
 export '_widgets/theme_with_custom_colors.dart';
 export '_widgets/week_picker_cell.dart';
 export 'styles.dart';
