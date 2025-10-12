@@ -19,6 +19,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
+import 'package:markdown_widget/config/configs.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -67,8 +68,6 @@ class HabitStatusChangerViewModel
   late HabitStatusChangerForm _form;
   // status
   CancelableCompleter<void>? _loading;
-  // controller
-  late final ScrollController mainScrollController;
   // dispatcher
   final Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>> _dispatchers =
       {};
@@ -78,14 +77,8 @@ class HabitStatusChangerViewModel
   // sync from setting
   int _firstday = defaultFirstDay;
 
-  Duration get mainScrollAnimatedDuration => const Duration(milliseconds: 300);
-  Curve get mainScrollAnimatedCurve => Curves.fastOutSlowIn;
-
-  HabitStatusChangerViewModel(
-      {ScrollController? mainScrollController,
-      required List<HabitUUID> uuidList})
+  HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
       : _selectedUUIDList = uuidList {
-    this.mainScrollController = mainScrollController ?? ScrollController();
     _form = HabitStatusChangerForm(
         selectDate: HabitDate.now(),
         skipInputController: TextEditingController());
@@ -294,13 +287,10 @@ class HabitStatusChangerViewModel
               .reduce((value, element) => value == element ? value : null);
 
   void updateSelectStatus(RecordStatusChangerStatus? newStatus,
-      {bool listen = true}) {
+      {ValueCallback? onStatusChanged, bool listen = true}) {
     if (newStatus == selectStatus) return;
     _updateForm(_form.copyWith(selectStatus: newStatus));
-    if (selectStatus == RecordStatusChangerStatus.skip) {
-      mainScrollController.animateTo(0,
-          duration: mainScrollAnimatedDuration, curve: mainScrollAnimatedCurve);
-    }
+    onStatusChanged?.call(selectStatus);
     if (listen) notifyListeners();
   }
 

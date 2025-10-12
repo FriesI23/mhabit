@@ -58,6 +58,10 @@ class HabitsStatusChangerPage extends StatelessWidget {
 }
 
 class _Page extends StatefulWidget {
+  static const Duration mainScrollAnimatedDuration =
+      Duration(milliseconds: 300);
+  static const Curve mainScrollAnimatedCurve = Curves.fastOutSlowIn;
+
   const _Page();
 
   @override
@@ -65,15 +69,19 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
+  late final ScrollController _mainScrollController;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
+    _mainScrollController = ScrollController();
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _mainScrollController.dispose();
     super.dispose();
   }
 
@@ -89,7 +97,16 @@ class _PageState extends State<_Page> {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
-    vm.updateSelectStatus(nd);
+    vm.updateSelectStatus(
+      nd,
+      onStatusChanged: (status) {
+        if (status == RecordStatusChangerStatus.skip) {
+          _mainScrollController.animateTo(0,
+              duration: _Page.mainScrollAnimatedDuration,
+              curve: _Page.mainScrollAnimatedCurve);
+        }
+      },
+    );
   }
 
   void _onConfirmButtonpressed() async {
@@ -257,8 +274,8 @@ class _PageState extends State<_Page> {
         builder: (context, selectStatus, child) {
           final vm = context.read<HabitStatusChangerViewModel>();
           return ExpandedSection(
-            duration: vm.mainScrollAnimatedDuration,
-            curve: vm.mainScrollAnimatedCurve,
+            duration: _Page.mainScrollAnimatedDuration,
+            curve: _Page.mainScrollAnimatedCurve,
             expand: selectStatus == RecordStatusChangerStatus.skip,
             child: RecordStatusSkipReasonTile(
                 inputController: vm.skipInputController),
@@ -306,7 +323,6 @@ class _PageState extends State<_Page> {
           ),
         );
 
-    final vm = context.read<HabitStatusChangerViewModel>();
     final div = buildDivider(context);
     return PopScope(
       canPop: false,
@@ -338,7 +354,7 @@ class _PageState extends State<_Page> {
         debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
             ? SafedSliverList(children: [div, _buildDebugInfo(context)])
             : null,
-        mainController: vm.mainScrollController,
+        mainController: _mainScrollController,
       ),
     );
   }
