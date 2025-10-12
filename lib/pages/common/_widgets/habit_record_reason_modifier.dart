@@ -138,6 +138,7 @@ class HabitRecordReasonField extends StatelessWidget {
   final HabitDate? recordDate;
   final List<String> chipTextList;
   final TextEditingController inputController;
+  final ValueChanged<String>? onChanged;
 
   const HabitRecordReasonField({
     super.key,
@@ -146,6 +147,7 @@ class HabitRecordReasonField extends StatelessWidget {
     this.recordDate,
     this.chipTextList = const [],
     required this.inputController,
+    this.onChanged,
   });
 
   Widget _buildEmojiChip(BuildContext context, String emoji) {
@@ -164,6 +166,7 @@ class HabitRecordReasonField extends StatelessWidget {
         inputController.text = newText;
         inputController.selection = TextSelection.fromPosition(
             TextPosition(offset: cursorPosition + emoji.length));
+        onChanged?.call(inputController.text);
       },
     );
   }
@@ -197,6 +200,7 @@ class HabitRecordReasonField extends StatelessWidget {
           style: themeData.textTheme.bodyLarge,
           minLines: 1,
           maxLines: 4,
+          onChanged: onChanged,
         ),
       ],
     );

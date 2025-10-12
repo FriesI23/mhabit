@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,10 @@ class HabitsStatusChangerPage extends StatelessWidget {
 }
 
 class _Page extends StatefulWidget {
+  static const Duration mainScrollAnimatedDuration =
+      Duration(milliseconds: 300);
+  static const Curve mainScrollAnimatedCurve = Curves.fastOutSlowIn;
+
   const _Page();
 
   @override
@@ -65,15 +70,19 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
+  late final ScrollController _mainScrollController;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
+    _mainScrollController = ScrollController();
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _mainScrollController.dispose();
     super.dispose();
   }
 
@@ -89,7 +98,16 @@ class _PageState extends State<_Page> {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
-    vm.updateSelectStatus(nd);
+    vm.updateSelectStatus(
+      nd,
+      onStatusChanged: (status) {
+        if (status == RecordStatusChangerStatus.skip) {
+          _mainScrollController.animateTo(0,
+              duration: _Page.mainScrollAnimatedDuration,
+              curve: _Page.mainScrollAnimatedCurve);
+        }
+      },
+    );
   }
 
   void _onConfirmButtonpressed() async {
@@ -250,23 +268,6 @@ class _PageState extends State<_Page> {
           },
         );
 
-    Widget buildSkipStatusReasonField(BuildContext context) {
-      return Selector<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
-        selector: (context, vm) => vm.selectStatus,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, selectStatus, child) {
-          final vm = context.read<HabitStatusChangerViewModel>();
-          return ExpandedSection(
-            duration: vm.mainScrollAnimatedDuration,
-            curve: vm.mainScrollAnimatedCurve,
-            expand: selectStatus == RecordStatusChangerStatus.skip,
-            child: RecordStatusSkipReasonTile(
-                inputController: vm.skipInputController),
-          );
-        },
-      );
-    }
-
     Widget buildConfirmButton(BuildContext context) {
       return Selector<HabitStatusChangerViewModel, bool>(
         selector: (context, vm) => vm.canSave,
@@ -306,7 +307,6 @@ class _PageState extends State<_Page> {
           ),
         );
 
-    final vm = context.read<HabitStatusChangerViewModel>();
     final div = buildDivider(context);
     return PopScope(
       canPop: false,
@@ -329,7 +329,7 @@ class _PageState extends State<_Page> {
           pushPinnedChildren: false,
           children: [
             SliverPinnedHeader(child: buildStatusChangeTile(context)),
-            buildSkipStatusReasonField(context),
+            const _SkipStatusReasonField(),
             SliverPinnedHeader(child: buildConfirmButton(context)),
           ],
         ),
@@ -338,7 +338,7 @@ class _PageState extends State<_Page> {
         debugContent: context.read<AppDeveloperViewModel>().isInDevelopMode
             ? SafedSliverList(children: [div, _buildDebugInfo(context)])
             : null,
-        mainController: vm.mainScrollController,
+        mainController: _mainScrollController,
       ),
     );
   }
@@ -352,48 +352,80 @@ class _HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<_HabitList> {
-  late final Key identity;
-  late HabitStatusChangerViewModel? viewmodel;
+  late final AnimatedListDiffListDispatcher<HabitSortCache> dispatcher;
 
   @override
   void initState() {
-    final viewmodel =
-        this.viewmodel = context.read<HabitStatusChangerViewModel>();
-    final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
-      controller: AnimatedListController(),
-      itemBuilder: (context, element, data) {
-        if (data.measuring) {
-          return SizedBox(
-              height: context
-                  .read<AppCompactUISwitcherViewModel>()
-                  .appHabitDisplayListTileHeight);
-        } else if (element is HabitSummaryDataSortCache) {
-          return _buildHabitsContentCell(context, element.uuid);
-        } else {
-          return const SizedBox();
-        }
-      },
-      currentList: viewmodel.dataDelegate.habitsSortableCache.toList(),
-      comparator: AnimatedListDiffListComparator<HabitSortCache>(
-        sameItem: (a, b) => a.isSameItem(b),
-        sameContent: (a, b) => a.isSameContent(b),
-      ),
-    );
-    identity = UniqueKey();
-    viewmodel.regDispatcher(identity, dispatcher);
     super.initState();
+    _initDispatcher();
+  }
+
+  void _initDispatcher() {
+    const msg = "init dispatcher";
+    dispatcher = buildDispatcher();
+    if (kDebugMode) {
+      appLog.value.debug("_HabitList[${widget.key}]",
+          beforeVal: null, afterVal: dispatcher.currentList, ex: const [msg]);
+    }
+    appLog.build.info(context, ex: [msg, dispatcher.currentList.hashCode]);
   }
 
   @override
   void dispose() {
-    viewmodel?.unRegDispatcher(identity);
+    dispatcher.discard();
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    viewmodel = context.maybeRead<HabitStatusChangerViewModel>();
-    super.didChangeDependencies();
+  AnimatedListDiffListDispatcher<HabitSortCache> buildDispatcher() =>
+      AnimatedListDiffListDispatcher<HabitSortCache>(
+        controller: AnimatedListController(),
+        itemBuilder: (context, element, data) {
+          if (data.measuring) {
+            return SizedBox(
+                height: context
+                    .read<AppCompactUISwitcherViewModel>()
+                    .appHabitDisplayListTileHeight);
+          } else if (element is HabitSummaryDataSortCache) {
+            return _buildHabitsContentCell(context, element.uuid);
+          } else {
+            return const SizedBox();
+          }
+        },
+        currentList: context
+            .read<HabitStatusChangerViewModel>()
+            .dataDelegate
+            .habitsSortableCache
+            .toList(),
+        comparator: AnimatedListDiffListComparator<HabitSortCache>(
+          sameItem: (a, b) => a.isSameItem(b),
+          sameContent: (a, b) => a.isSameContent(b),
+        ),
+      );
+
+  void dispatchNewList() {
+    const msg = "dispatch new list";
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    final newList = vm.dataDelegate.habitsSortableCache.toList();
+    if (kDebugMode) {
+      appLog.value.debug("_HabitList[${widget.key}]",
+          beforeVal: dispatcher.currentList,
+          afterVal: newList,
+          ex: const [msg]);
+    }
+    appLog.build.info(context,
+        ex: [msg, dispatcher.currentList.hashCode, newList.hashCode]);
+    dispatcher.dispatchNewList(newList);
+  }
+
+  Future _loadData() async {
+    if (!mounted) return;
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (!vm.mounted) return;
+    final isDataLoaded = vm.isDataLoading;
+    await vm.loadData(inFutureBuilder: true);
+    if (!isDataLoaded) dispatchNewList();
   }
 
   Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) =>
@@ -413,18 +445,11 @@ class _HabitListState extends State<_HabitList> {
   @override
   Widget build(BuildContext context) {
     Widget buildHabitsTileList(BuildContext context) {
-      final viewmodel = this.viewmodel!;
-      final dispatcher = viewmodel.getDispatcher(identity)!;
       return AnimatedSliverList(
         controller: dispatcher.controller,
         delegate: AnimatedSliverChildBuilderDelegate(
-          (context, index, data) {
-            final dispatcher = context
-                .read<HabitStatusChangerViewModel>()
-                .getDispatcher(identity)!;
-            return dispatcher.builder(
-                context, dispatcher.currentList, index, data);
-          },
+          (context, index, data) =>
+              dispatcher.builder(context, dispatcher.currentList, index, data),
           dispatcher.currentList.length,
           addLongPressReorderable: false,
         ),
@@ -435,9 +460,7 @@ class _HabitListState extends State<_HabitList> {
       selector: (context, vm) => vm.dataDelegate,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
-        future: context
-            .read<HabitStatusChangerViewModel>()
-            .loadData(inFutureBuilder: true),
+        future: _loadData(),
         builder: (context, snapshot) {
           final viewmodel = context.read<HabitStatusChangerViewModel>();
           // appLog.load.debug("$this.buildHabits", ex: [
@@ -466,6 +489,33 @@ class _HabitListState extends State<_HabitList> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _SkipStatusReasonField extends StatelessWidget {
+  const _SkipStatusReasonField();
+
+  @override
+  Widget build(BuildContext context) {
+    final selectStatus =
+        context.select<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
+            (vm) => vm.selectStatus);
+    return ExpandedSection(
+      duration: _Page.mainScrollAnimatedDuration,
+      curve: _Page.mainScrollAnimatedCurve,
+      expand: selectStatus == RecordStatusChangerStatus.skip,
+      child: SingleTextFormInputField<HabitStatusChangerViewModel>(
+        valueBuilder: (vm) => vm.skipReason,
+        builder: (context, controller, child) => RecordStatusSkipReasonTile(
+          inputController: controller,
+          onChanged: (value) {
+            final vm = context.read<HabitStatusChangerViewModel>();
+            if (!vm.mounted) return;
+            vm.skipReason = value;
+          },
+        ),
       ),
     );
   }

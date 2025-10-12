@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 abstract class BaseTextEditingControllerWidget extends StatefulWidget {
   final TextEditingController? controller;
@@ -60,5 +61,60 @@ abstract class BaseTextEditingControllerWidgetState<
   void dispose() {
     if (widget.controller == null) controller.dispose();
     super.dispose();
+  }
+}
+
+class SingleTextFormInputField<T> extends BaseTextEditingControllerWidget {
+  final Widget Function(
+    BuildContext context,
+    TextEditingController controller,
+    Widget? child,
+  ) builder;
+  final String Function(T vm) valueBuilder;
+  final Widget? child;
+
+  const SingleTextFormInputField({
+    super.key,
+    super.controller,
+    required this.builder,
+    required this.valueBuilder,
+    this.child,
+  });
+
+  @override
+  State<BaseTextEditingControllerWidget> createState() =>
+      _SingleTextFormInputFieldState<T>();
+}
+
+class _SingleTextFormInputFieldState<T>
+    extends BaseTextEditingControllerWidgetState<SingleTextFormInputField<T>> {
+  late T vm;
+
+  @override
+  String get value => widget.valueBuilder(vm);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newVm = context.read<T>();
+    if (!controllerInitialized || !identical(vm, newVm)) {
+      vm = newVm;
+    }
+    ensureControllerInitialized();
+  }
+
+  @override
+  void didUpdateWidget(SingleTextFormInputField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    ensureControllerUpdated(oldWidget);
+    if (oldWidget.valueBuilder != widget.valueBuilder) {
+      final newText = value;
+      if (controller.text != newText) controller.text = newText;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, controller, widget.child);
   }
 }
