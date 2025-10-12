@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:great_list_view/great_list_view.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -66,9 +65,6 @@ class HabitStatusChangerViewModel
   late HabitStatusChangerForm _form;
   // status
   CancelableCompleter<void>? _loading;
-  // dispatcher
-  final Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>> _dispatchers =
-      {};
   // inside status
   bool _mounted = true;
   bool _isSkipReasonEdited = false;
@@ -101,12 +97,22 @@ class HabitStatusChangerViewModel
     }
   }
 
-  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
+  CancelableCompleter<void>? _getCurrentLoadingCompleter() {
     final crtLoading = _loading;
     if (crtLoading != null && !crtLoading.isCanceled) {
+      return crtLoading;
+    }
+    return null;
+  }
+
+  bool get isDataLoading => _getCurrentLoadingCompleter() != null;
+
+  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
+    final currentLoading = _getCurrentLoadingCompleter();
+    if (currentLoading != null) {
       appLog.load.warn("$runtimeType.loadData",
-          ex: ["data already loaded", crtLoading.isCompleted]);
-      return crtLoading.operation.valueOrCancellation();
+          ex: ["data is currently loading", currentLoading.isCompleted]);
+      return currentLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
@@ -146,7 +152,7 @@ class HabitStatusChangerViewModel
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
-      _reDispached();
+
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
       loading.complete();
@@ -161,31 +167,6 @@ class HabitStatusChangerViewModel
 
     loadingData();
     return loading.operation.valueOrCancellation();
-  }
-  //#endregion
-
-  //#region dispatcher
-  @visibleForTesting
-  Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>>
-      get debugDispatchers => _dispatchers;
-
-  AnimatedListDiffListDispatcher<HabitSortCache>? getDispatcher(Key? key) =>
-      _dispatchers[key];
-
-  void regDispatcher(
-      Key? key, AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    assert(!_dispatchers.containsKey(key));
-    _dispatchers[key] = dispatcher;
-  }
-
-  void unRegDispatcher(Key? key) => _dispatchers.remove(key)?.discard();
-
-  void _reDispached({List<Key>? keys}) {
-    for (var key in _dispatchers.keys) {
-      if (keys != null && !keys.contains(key)) continue;
-      _dispatchers[key]!
-          .dispatchNewList(dataDelegate.habitsSortableCache.toList());
-    }
   }
   //#endregion
 
@@ -338,9 +319,6 @@ class HabitStatusChangerViewModel
   @override
   void dispose() {
     if (!_mounted) return;
-    for (var dispatcher in _dispatchers.values) {
-      dispatcher.discard();
-    }
     _cancelLoading();
     super.dispose();
     _mounted = false;
