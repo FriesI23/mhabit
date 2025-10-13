@@ -17,7 +17,6 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:great_list_view/great_list_view.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -46,12 +45,12 @@ class HabitSummaryViewModel extends ChangeNotifier
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
         DBOperationsMixin,
-        PinnedAppbarMixin
+        PinnedAppbarMixin,
+        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
     implements ProviderMounted, HabitSummaryDirtyMarker {
   static final _fakeValueListenable = ValueNotifier(0);
 
   // dispatcher
-  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
   late final DispatcherForHabitDetail forHabitDetail;
   late final DispatcherForHabitsStatusChanger forHabitsStatusChanger;
   // data
@@ -86,12 +85,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
     _onAutoSyncTick = WeakReference(_fakeValueListenable);
   }
-
-  AnimatedListController get dispatcherLinkedController =>
-      _dispatcher.controller;
-
-  AnimatedListDiffBuilder<List<HabitSortCache>> get dispatcherLinkedBuilder =>
-      _dispatcher.builder;
 
   @override
   bool get mounted => _mounted;
@@ -192,17 +185,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     return result;
   }
 
-  void initDispatcher(
-      AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    _dispatcher = dispatcher;
-  }
-
   @override
   void dispose() {
     if (!_mounted) return;
     _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
     _scrollCalendarToStartController.close();
-    _dispatcher.discard();
+    dispatcher.discard();
     _cancelLoading();
     super.dispose();
     _mounted = false;
@@ -444,7 +432,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       newSortbaleData = newSortbaleData.copyWith(
           lastSortedDataCache: List.of(newSortbaleData.lastSortedDataCache));
     }
-    _dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
+    dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
     _sortableCache = newSortbaleData;
   }
   //#endregion

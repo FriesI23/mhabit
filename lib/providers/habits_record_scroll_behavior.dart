@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'
+    show PageScrollPhysics, ScrollMetrics, ScrollPhysics;
 
 import '../common/consts.dart';
 import '../common/enums.dart';
