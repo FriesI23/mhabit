@@ -16,9 +16,9 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../common/flavor.dart';
+import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -103,19 +103,18 @@ class _AppEntry extends StatelessWidget {
         selector: (context, vm) => vm.languange,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, language, child) =>
-            Selector<AppThemeViewModel, Tuple2<ThemeMode, Color>>(
+            Selector<AppThemeViewModel, (AppThemeType, Color)>(
           selector: (context, viewmodel) =>
-              Tuple2(viewmodel.matertialThemeType, viewmodel.mainColor),
+              (viewmodel.themeType, viewmodel.mainColor),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, appThemeArgs, child) {
-            final themeMode = appThemeArgs.item1;
-            final themeMainColor = appThemeArgs.item2;
+            final (themeMode, themeMainColor) = appThemeArgs;
             final appColorLight = ColorScheme.fromSeed(
                 seedColor: themeMainColor, brightness: Brightness.light);
             final appColorDark = ColorScheme.fromSeed(
                 seedColor: themeMainColor, brightness: Brightness.dark);
             return AppRootView(
-              themeMode: themeMode,
+              themeMode: transToMaterialThemeType(themeMode),
               themeMainColor: themeMainColor,
               language: language,
               lightThemeBuilder: () => ThemeData(
