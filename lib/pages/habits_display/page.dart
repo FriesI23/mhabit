@@ -86,6 +86,7 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
+  late final PinnedAppbarScrollController _verticalScrollController;
 
   @override
   void initState() {
@@ -114,11 +115,15 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     );
     viewmodel.initDispatcher(dispatcher);
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
+    _verticalScrollController = PinnedAppbarScrollController(
+      onAppbarStatusChanged: _changeAppbarStatus,
+    )..addChangeAppbarStatusListener();
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -130,6 +135,12 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
           duration: scrollDuration ?? const Duration(milliseconds: 500),
           curve: Curves.fastOutSlowIn);
     }
+  }
+
+  void _changeAppbarStatus(bool pinned) {
+    final vm = context.maybeRead<HabitSummaryViewModel>();
+    if (vm == null || !vm.mounted) return;
+    pinned ? vm.pinAppbar() : vm.unpinAppbar();
   }
 
   Future<void> _loadHabitData() async {
@@ -866,6 +877,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                 displayPageOccupyPrt: occupyPrt,
                 useCompactUI: useCompactUI,
                 height: height,
+                verticalScrollController: _verticalScrollController,
                 horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
                 onHabitRecordPressed:
@@ -912,7 +924,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               ),
               bottom: SliverCalendarBar(
                 key: const Key('habit_display_calendar_bar'),
-                verticalScrollController: viewmodel.verticalScrollController,
+                verticalScrollController: _verticalScrollController,
                 horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
@@ -1005,7 +1017,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               title: buildAppbarTitle(context),
               bottom: SliverCalendarBar(
                 key: const Key('habit_display_calendar_bar'),
-                verticalScrollController: viewmodel.verticalScrollController,
+                verticalScrollController: _verticalScrollController,
                 horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
@@ -1222,9 +1234,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                   CustomScrollView(
                     physics: const ClampingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
-                    controller: context
-                        .read<HabitSummaryViewModel>()
-                        .verticalScrollController,
+                    controller: _verticalScrollController,
                     slivers: [
                       buildAppbar(context),
                       const HabitDivider(withSliver: true, height: 1),
@@ -1289,6 +1299,7 @@ class _RecordsListTile extends StatelessWidget {
   final int displayPageOccupyPrt;
   final bool useCompactUI;
   final double height;
+  final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup horizonalScrollControllerGroup;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onHabitRecordPressed;
@@ -1302,6 +1313,7 @@ class _RecordsListTile extends StatelessWidget {
     required this.displayPageOccupyPrt,
     required this.useCompactUI,
     required this.height,
+    this.verticalScrollController,
     required this.horizonalScrollControllerGroup,
     this.onHabitSummaryDataPressed,
     this.onHabitRecordPressed,
@@ -1329,7 +1341,7 @@ class _RecordsListTile extends StatelessWidget {
       height: height,
       compactVisual: useCompactUI,
       data: data,
-      verticalScrollController: viewmodel.verticalScrollController,
+      verticalScrollController: verticalScrollController,
       horizonalScrollControllerGroup: horizonalScrollControllerGroup,
       onHabitSummaryDataPressed: onHabitSummaryDataPressed,
       onHabitRecordPressed: onHabitRecordPressed,

@@ -40,6 +40,7 @@ import '../../reminders/notification_service.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
+import '../common/widgets.dart';
 import 'widgets.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({
@@ -99,9 +100,9 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
-  late final ScrollController _verticalScrollController;
+  late final PinnedAppbarScrollController _verticalScrollController;
 
-  void _changeAppbarStatus({required bool pinned}) {
+  void _changeAppbarStatus(bool pinned) {
     final vm = context.maybeRead<HabitFormViewModel>();
     if (vm == null || !vm.mounted) return;
     pinned ? vm.pinAppbar() : vm.unpinAppbar();
@@ -111,17 +112,9 @@ class _PageState extends State<_Page> {
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    _verticalScrollController = ScrollController();
-    _verticalScrollController.addListener(() {
-      if (!mounted) return;
-      if (_verticalScrollController.hasClients &&
-          _verticalScrollController.offset > kToolbarHeight) {
-        _changeAppbarStatus(pinned: true);
-      } else if (_verticalScrollController.hasClients &&
-          _verticalScrollController.offset < kToolbarHeight) {
-        _changeAppbarStatus(pinned: false);
-      }
-    });
+    _verticalScrollController =
+        PinnedAppbarScrollController(onAppbarStatusChanged: _changeAppbarStatus)
+          ..addChangeAppbarStatusListener();
   }
 
   @override

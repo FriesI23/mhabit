@@ -17,7 +17,6 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 
 import '../common/consts.dart';
@@ -44,10 +43,10 @@ part 'habit_summary.g.dart';
 
 class HabitSummaryViewModel extends ChangeNotifier
     with
-        ScrollControllerChangeNotifierMixin,
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
-        DBOperationsMixin
+        DBOperationsMixin,
+        PinnedAppbarMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
   static final _fakeValueListenable = ValueNotifier(0);
 
@@ -80,8 +79,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   late WeakReference<ValueListenable<num>> _onAutoSyncTick;
   // data
 
-  HabitSummaryViewModel({required ScrollController verticalScrollController}) {
-    initVerticalScrollController(notifyListeners, verticalScrollController);
+  HabitSummaryViewModel() {
     forHabitDetail = DispatcherForHabitDetail(this);
     forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
     _onAutoSyncTick = WeakReference(_fakeValueListenable);
@@ -195,7 +193,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (!_mounted) return;
     _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
     _dispatcher.discard();
-    disposeVerticalScrollController();
     _cancelLoading();
     super.dispose();
     _mounted = false;

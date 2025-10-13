@@ -32,9 +32,7 @@ class PageProviders extends SingleChildStatelessWidget {
 
   Iterable<SingleChildWidget> _buildPageViewModel() => [
         ChangeNotifierProvider<HabitSummaryViewModel>(
-          create: (context) => HabitSummaryViewModel(
-            verticalScrollController: ScrollController(),
-          ),
+          create: (context) => HabitSummaryViewModel(),
         ),
         ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),

@@ -30,11 +30,10 @@ import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFormViewModel extends ChangeNotifier
-    with DBHelperLoadedMixin, DBOperationsMixin
+    with DBHelperLoadedMixin, DBOperationsMixin, PinnedAppbarMixin
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
-  bool _isAppbarPinned = false;
 
   final HabitForm _form;
 
@@ -50,20 +49,6 @@ class HabitFormViewModel extends ChangeNotifier
 
   @override
   bool get mounted => _mounted;
-
-  bool get isAppbarPinned => _isAppbarPinned;
-
-  void pinAppbar() {
-    if (isAppbarPinned) return;
-    _isAppbarPinned = true;
-    notifyListeners();
-  }
-
-  void unpinAppbar() {
-    if (!isAppbarPinned) return;
-    _isAppbarPinned = false;
-    notifyListeners();
-  }
 
   @override
   void notifyListeners() {
