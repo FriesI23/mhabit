@@ -14,7 +14,7 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' show IconData;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
