@@ -834,17 +834,21 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     viewmodel.exitEditMode();
   }
 
-  ScrollPhysics? _buildScrollPhysics(double itemSize, double length) =>
-      context.read<HabitsRecordScrollBehaviorViewModel>().getPhysics(
-          itemSize,
-          FixedScrollMetrics(
-            minScrollExtent: null,
-            maxScrollExtent: null,
-            pixels: null,
-            viewportDimension: null,
-            axisDirection: AxisDirection.down,
-            devicePixelRatio: View.of(context).devicePixelRatio,
-          ));
+  ScrollPhysics? _buildScrollPhysics(double itemSize, double length) => switch (
+          context.read<HabitsRecordScrollBehaviorViewModel>().scrollBehavior) {
+        HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
+        HabitsRecordScrollBehavior.scrollable => MagnetScrollPhysics(
+            itemSize: itemSize,
+            metrics: FixedScrollMetrics(
+              minScrollExtent: null,
+              maxScrollExtent: null,
+              pixels: null,
+              viewportDimension: null,
+              axisDirection: AxisDirection.down,
+              devicePixelRatio: View.of(context).devicePixelRatio,
+            )),
+        _ => null
+      };
 
   Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) {
     return Selector<HabitSummaryViewModel,
