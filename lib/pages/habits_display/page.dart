@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -83,6 +85,8 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
+  late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -109,12 +113,23 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       ),
     );
     viewmodel.initDispatcher(dispatcher);
+    _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     super.dispose();
+  }
+
+  FutureOr<void> resetHorizonalScrollController({Duration? scrollDuration}) {
+    if (scrollDuration == Duration.zero) {
+      _horizonalScrollControllerGroup.jumpTo(0);
+    } else {
+      return _horizonalScrollControllerGroup.animateTo(0,
+          duration: scrollDuration ?? const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn);
+    }
   }
 
   Future<void> _loadHabitData() async {
@@ -617,9 +632,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
 
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
-    context
-        .read<HabitSummaryViewModel>()
-        .updateCalendarExpanedStatus(!lastStatus);
+    context.read<HabitSummaryViewModel>().toggleCalendarStatus();
+    resetHorizonalScrollController();
   }
 
   OnHabitSummaryPressCallback? _getOnHabitRecordedActionTriggeredFn(
@@ -683,6 +697,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         ..hideCurrentSnackBar()
         ..clearSnackBars();
       viewmodel.switchToEditMode();
+      resetHorizonalScrollController(scrollDuration: Duration.zero);
       final data = viewmodel.getHabitBySortId(index);
       if (data is HabitSummaryDataSortCache) {
         viewmodel.selectHabit(data.uuid, listen: false);
@@ -790,7 +805,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       return false;
     }
     if (viewmodel.isCalendarExpanded) {
-      await viewmodel.updateCalendarExpanedStatus(false);
+      viewmodel.collapseCalendar();
+      await resetHorizonalScrollController();
       return false;
     }
 
@@ -850,6 +866,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                 displayPageOccupyPrt: occupyPrt,
                 useCompactUI: useCompactUI,
                 height: height,
+                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
                 onHabitRecordPressed:
                     _getOnHabitRecordedActionTriggeredFn(UserAction.tap),
@@ -896,8 +913,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               bottom: SliverCalendarBar(
                 key: const Key('habit_display_calendar_bar'),
                 verticalScrollController: viewmodel.verticalScrollController,
-                horizonalScrollControllerGroup:
-                    viewmodel.horizonalScrollControllerGroup,
+                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
                 isExtended: isExtended,
@@ -990,8 +1006,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               bottom: SliverCalendarBar(
                 key: const Key('habit_display_calendar_bar'),
                 verticalScrollController: viewmodel.verticalScrollController,
-                horizonalScrollControllerGroup:
-                    viewmodel.horizonalScrollControllerGroup,
+                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 startDate: DateChangeProvider.of(context).dateTime,
                 endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
                 isExtended: isExtended,
@@ -1274,6 +1289,7 @@ class _RecordsListTile extends StatelessWidget {
   final int displayPageOccupyPrt;
   final bool useCompactUI;
   final double height;
+  final LinkedScrollControllerGroup horizonalScrollControllerGroup;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onHabitRecordPressed;
   final OnHabitSummaryPressCallback? onHabitRecordLongPressed;
@@ -1286,6 +1302,7 @@ class _RecordsListTile extends StatelessWidget {
     required this.displayPageOccupyPrt,
     required this.useCompactUI,
     required this.height,
+    required this.horizonalScrollControllerGroup,
     this.onHabitSummaryDataPressed,
     this.onHabitRecordPressed,
     this.onHabitRecordDoublePressed,
@@ -1313,7 +1330,7 @@ class _RecordsListTile extends StatelessWidget {
       compactVisual: useCompactUI,
       data: data,
       verticalScrollController: viewmodel.verticalScrollController,
-      horizonalScrollControllerGroup: viewmodel.horizonalScrollControllerGroup,
+      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
       onHabitSummaryDataPressed: onHabitSummaryDataPressed,
       onHabitRecordPressed: onHabitRecordPressed,
       onHabitRecordLongPressed: onHabitRecordLongPressed,

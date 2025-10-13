@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +34,6 @@ class PageProviders extends SingleChildStatelessWidget {
         ChangeNotifierProvider<HabitSummaryViewModel>(
           create: (context) => HabitSummaryViewModel(
             verticalScrollController: ScrollController(),
-            horizonalScrollControllerGroup: LinkedScrollControllerGroup(),
           ),
         ),
         ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
