@@ -15,7 +15,7 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart' show AxisDirection;
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';

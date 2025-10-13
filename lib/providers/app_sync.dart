@@ -19,7 +19,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:data_saver/data_saver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+// FIXME: migrate showDailog to UI layer
+import 'package:flutter/material.dart' show showDialog;
+import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart' as l;
 import 'package:logger/logger.dart' show LogEvent;

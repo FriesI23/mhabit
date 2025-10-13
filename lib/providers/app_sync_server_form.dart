@@ -14,7 +14,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../logging/helper.dart';
 import '../models/app_sync_server.dart';
