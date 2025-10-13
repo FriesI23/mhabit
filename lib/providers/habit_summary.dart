@@ -77,7 +77,9 @@ class HabitSummaryViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   // sync from appsync
   late WeakReference<ValueListenable<num>> _onAutoSyncTick;
-  // data
+  // listenable
+  final StreamController<Duration?> _scrollCalendarToStartController =
+      StreamController<Duration?>.broadcast();
 
   HabitSummaryViewModel() {
     forHabitDetail = DispatcherForHabitDetail(this);
@@ -104,6 +106,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     _firstday = day;
   }
 
+  Stream<Duration?> get scrollCalendarToStartEvent =>
+      _scrollCalendarToStartController.stream;
+
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
         isAppbarPinned: isAppbarPinned,
         reloadDBToggleSwich: reloadDBToggleSwich,
@@ -121,13 +126,17 @@ class HabitSummaryViewModel extends ChangeNotifier
   void collapseCalendar({bool listen = true}) {
     if (!isCalendarExpanded) return;
     _isCalandarExpanded = false;
-    if (listen) notifyListeners();
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
   }
 
   void expandCalendar({bool listen = true}) {
     if (isCalendarExpanded) return;
     _isCalandarExpanded = true;
-    if (listen) notifyListeners();
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
   }
 
   bool get canBeDragged => _canBeDragged;
@@ -192,6 +201,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   void dispose() {
     if (!_mounted) return;
     _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
+    _scrollCalendarToStartController.close();
     _dispatcher.discard();
     _cancelLoading();
     super.dispose();
@@ -351,7 +361,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     _isInEditMode = true;
     if (clearAllSelected) clearAllSelectHabits();
     collapseCalendar(listen: false);
-    if (listen) notifyListeners();
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(Duration.zero);
   }
 
   void exitEditMode({bool clearAllSelected = true, bool listen = true}) {

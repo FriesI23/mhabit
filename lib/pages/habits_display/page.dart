@@ -93,6 +93,10 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
     final viewmodel = context.read<HabitSummaryViewModel>();
+    // events
+    viewmodel.scrollCalendarToStartEvent
+        .listen(_resetHorizonalScrollController);
+    // dispatcher
     final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
       itemBuilder: (context, element, data) {
@@ -114,6 +118,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       ),
     );
     viewmodel.initDispatcher(dispatcher);
+    // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
     _verticalScrollController = PinnedAppbarScrollController(
       onAppbarStatusChanged: _changeAppbarStatus,
@@ -127,7 +132,9 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     super.dispose();
   }
 
-  FutureOr<void> resetHorizonalScrollController({Duration? scrollDuration}) {
+  FutureOr<void> _resetHorizonalScrollController(Duration? scrollDuration) {
+    appLog.build.debug(context,
+        ex: ["reset HorizonalScrollController", scrollDuration]);
     if (scrollDuration == Duration.zero) {
       _horizonalScrollControllerGroup.jumpTo(0);
     } else {
@@ -644,7 +651,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
     context.read<HabitSummaryViewModel>().toggleCalendarStatus();
-    resetHorizonalScrollController();
   }
 
   OnHabitSummaryPressCallback? _getOnHabitRecordedActionTriggeredFn(
@@ -708,7 +714,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         ..hideCurrentSnackBar()
         ..clearSnackBars();
       viewmodel.switchToEditMode();
-      resetHorizonalScrollController(scrollDuration: Duration.zero);
       final data = viewmodel.getHabitBySortId(index);
       if (data is HabitSummaryDataSortCache) {
         viewmodel.selectHabit(data.uuid, listen: false);
@@ -817,7 +822,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     }
     if (viewmodel.isCalendarExpanded) {
       viewmodel.collapseCalendar();
-      await resetHorizonalScrollController();
       return false;
     }
 
