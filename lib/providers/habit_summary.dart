@@ -17,9 +17,7 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -45,15 +43,13 @@ part 'habit_summary.g.dart';
 
 class HabitSummaryViewModel extends ChangeNotifier
     with
-        ScrollControllerChangeNotifierMixin,
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
-        DBOperationsMixin
+        DBOperationsMixin,
+        PinnedAppbarMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
   static final _fakeValueListenable = ValueNotifier(0);
 
-  // scroll controller
-  final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   // dispatcher
   late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
   late final DispatcherForHabitDetail forHabitDetail;
@@ -81,20 +77,15 @@ class HabitSummaryViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   // sync from appsync
   late WeakReference<ValueListenable<num>> _onAutoSyncTick;
-  // data
+  // listenable
+  final StreamController<Duration?> _scrollCalendarToStartController =
+      StreamController<Duration?>.broadcast();
 
-  HabitSummaryViewModel({
-    required ScrollController verticalScrollController,
-    required LinkedScrollControllerGroup horizonalScrollControllerGroup,
-  }) : _horizonalScrollControllerGroup = horizonalScrollControllerGroup {
-    initVerticalScrollController(notifyListeners, verticalScrollController);
+  HabitSummaryViewModel() {
     forHabitDetail = DispatcherForHabitDetail(this);
     forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
     _onAutoSyncTick = WeakReference(_fakeValueListenable);
   }
-
-  LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
-      _horizonalScrollControllerGroup;
 
   AnimatedListController get dispatcherLinkedController =>
       _dispatcher.controller;
@@ -115,6 +106,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     _firstday = day;
   }
 
+  Stream<Duration?> get scrollCalendarToStartEvent =>
+      _scrollCalendarToStartController.stream;
+
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
         isAppbarPinned: isAppbarPinned,
         reloadDBToggleSwich: reloadDBToggleSwich,
@@ -125,22 +119,24 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isCalendarExpanded => _isCalandarExpanded;
 
-  Future<void> updateCalendarExpanedStatus(bool newValue,
-      {Duration? scrollDuration,
-      bool waitingScroll = false,
-      bool listen = true}) async {
-    if (newValue != _isCalandarExpanded) {
-      _isCalandarExpanded = newValue;
-      if (scrollDuration == Duration.zero) {
-        _horizonalScrollControllerGroup.jumpTo(0);
-      } else {
-        final future = _horizonalScrollControllerGroup.animateTo(0,
-            duration: scrollDuration ?? const Duration(milliseconds: 500),
-            curve: Curves.fastOutSlowIn);
-        if (waitingScroll) await future;
-      }
-      if (listen) notifyListeners();
-    }
+  void toggleCalendarStatus({bool listen = true}) => isCalendarExpanded
+      ? collapseCalendar(listen: listen)
+      : expandCalendar(listen: listen);
+
+  void collapseCalendar({bool listen = true}) {
+    if (!isCalendarExpanded) return;
+    _isCalandarExpanded = false;
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
+  }
+
+  void expandCalendar({bool listen = true}) {
+    if (isCalendarExpanded) return;
+    _isCalandarExpanded = true;
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
   }
 
   bool get canBeDragged => _canBeDragged;
@@ -205,8 +201,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   void dispose() {
     if (!_mounted) return;
     _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
+    _scrollCalendarToStartController.close();
     _dispatcher.discard();
-    disposeVerticalScrollController();
     _cancelLoading();
     super.dispose();
     _mounted = false;
@@ -364,9 +360,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     _canBeDragged = false;
     _isInEditMode = true;
     if (clearAllSelected) clearAllSelectHabits();
-    await updateCalendarExpanedStatus(false,
-        scrollDuration: Duration.zero, waitingScroll: true, listen: false);
-    if (listen) notifyListeners();
+    collapseCalendar(listen: false);
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(Duration.zero);
   }
 
   void exitEditMode({bool clearAllSelected = true, bool listen = true}) {

@@ -141,7 +141,8 @@ class _PageState extends State<_Page>
     viewmodel.rockreloadDBToggleSwich();
     final summary = context.maybeRead<HabitSummaryViewModel>();
     if (summary != null && summary.mounted) {
-      summary.updateCalendarExpanedStatus(false, listen: false);
+      // FIXME: use provider-adapter
+      // summary.updateCalendarExpanedStatus(false, listen: false);
       summary.rockreloadDBToggleSwich();
     }
     return true;
