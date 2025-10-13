@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
@@ -352,28 +351,12 @@ class _HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<_HabitList> {
-  late final AnimatedListDiffListDispatcher<HabitSortCache> dispatcher;
-
   @override
   void initState() {
     super.initState();
-    _initDispatcher();
-  }
-
-  void _initDispatcher() {
-    const msg = "init dispatcher";
-    dispatcher = buildDispatcher();
-    if (kDebugMode) {
-      appLog.value.debug("_HabitList[${widget.key}]",
-          beforeVal: null, afterVal: dispatcher.currentList, ex: const [msg]);
-    }
-    appLog.build.info(context, ex: [msg, dispatcher.currentList.hashCode]);
-  }
-
-  @override
-  void dispose() {
-    dispatcher.discard();
-    super.dispose();
+    final vm = context.read<HabitStatusChangerViewModel>();
+    // dispatcher
+    vm.initDispatcher(buildDispatcher());
   }
 
   AnimatedListDiffListDispatcher<HabitSortCache> buildDispatcher() =>
@@ -402,30 +385,11 @@ class _HabitListState extends State<_HabitList> {
         ),
       );
 
-  void dispatchNewList() {
-    const msg = "dispatch new list";
-    if (!mounted) return;
-    final vm = context.read<HabitStatusChangerViewModel>();
-    if (!vm.mounted) return;
-    final newList = vm.dataDelegate.habitsSortableCache.toList();
-    if (kDebugMode) {
-      appLog.value.debug("_HabitList[${widget.key}]",
-          beforeVal: dispatcher.currentList,
-          afterVal: newList,
-          ex: const [msg]);
-    }
-    appLog.build.info(context,
-        ex: [msg, dispatcher.currentList.hashCode, newList.hashCode]);
-    dispatcher.dispatchNewList(newList);
-  }
-
   Future _loadData() async {
     if (!mounted) return;
     final vm = context.read<HabitStatusChangerViewModel>();
     if (!vm.mounted) return;
-    final isDataLoaded = vm.isDataLoading;
     await vm.loadData(inFutureBuilder: true);
-    if (!isDataLoaded) dispatchNewList();
   }
 
   Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) =>
@@ -445,12 +409,15 @@ class _HabitListState extends State<_HabitList> {
   @override
   Widget build(BuildContext context) {
     Widget buildHabitsTileList(BuildContext context) {
+      final vm = context.read<HabitStatusChangerViewModel>();
       return AnimatedSliverList(
-        controller: dispatcher.controller,
+        controller: vm.dispatcherLinkedController,
         delegate: AnimatedSliverChildBuilderDelegate(
-          (context, index, data) =>
-              dispatcher.builder(context, dispatcher.currentList, index, data),
-          dispatcher.currentList.length,
+          (context, index, data) {
+            return vm.dispatcherLinkedBuilder(
+                context, vm.dispatcherCurrentList, index, data);
+          },
+          vm.dispatcherCurrentList.length,
           addLongPressReorderable: false,
         ),
       );

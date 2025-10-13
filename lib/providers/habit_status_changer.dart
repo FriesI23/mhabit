@@ -56,7 +56,10 @@ enum RecordStatusChangerStatus {
 }
 
 class HabitStatusChangerViewModel
-    with ChangeNotifier, DBHelperLoadedMixin
+    with
+        ChangeNotifier,
+        DBHelperLoadedMixin,
+        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
@@ -105,8 +108,6 @@ class HabitStatusChangerViewModel
     return null;
   }
 
-  bool get isDataLoading => _getCurrentLoadingCompleter() != null;
-
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
     final currentLoading = _getCurrentLoadingCompleter();
     if (currentLoading != null) {
@@ -152,6 +153,7 @@ class HabitStatusChangerViewModel
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
+      _dispatchNewList();
 
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
@@ -316,10 +318,19 @@ class HabitStatusChangerViewModel
     if (listen) notifyListeners();
   }
 
+  void _dispatchNewList() {
+    if (!mounted) return;
+    final newList = dataDelegate.habitsSortableCache.toList();
+    appLog.load.info("dispatch new list",
+        ex: [dispatcher.currentList.hashCode, newList.hashCode]);
+    dispatcher.dispatchNewList(newList);
+  }
+
   @override
   void dispose() {
     if (!_mounted) return;
     _cancelLoading();
+    dispatcher.discard();
     super.dispose();
     _mounted = false;
   }

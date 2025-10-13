@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
+import 'package:great_list_view/great_list_view.dart';
 
 import '../models/habit_summary.dart';
 import '../reminders/notification_channel.dart';
@@ -48,5 +49,22 @@ mixin PinnedAppbarMixin on ChangeNotifier {
     if (!isAppbarPinned) return;
     _isAppbarPinned = false;
     notifyListeners();
+  }
+}
+
+mixin SingleAnimatedListDiffListDispatcherMixin<T> {
+  @protected
+  late final AnimatedListDiffListDispatcher<T> dispatcher;
+
+  AnimatedListController get dispatcherLinkedController =>
+      dispatcher.controller;
+
+  AnimatedListDiffBuilder<List<T>> get dispatcherLinkedBuilder =>
+      dispatcher.builder;
+
+  List<T> get dispatcherCurrentList => dispatcher.currentList;
+
+  void initDispatcher(AnimatedListDiffListDispatcher<T> dispatcher) {
+    this.dispatcher = dispatcher;
   }
 }
