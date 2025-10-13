@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
-
 // copyRight StackOverflow user @NearHuscarl
 // see: https://stackoverflow.com/a/58604669
+import 'dart:ui' show Color;
+
+import 'package:flutter/rendering.dart' show HSLColor;
+
 extension ColorBrightness on Color {
   Color darken([double amount = .1]) {
     assert(amount >= 0 && amount <= 1);

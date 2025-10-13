@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'dart:ui' show Locale;
+
 import 'package:intl/locale.dart' as intl_locale;
 
 extension IntlLocaleExtension on intl_locale.Locale {

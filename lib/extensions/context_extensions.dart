@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:provider/provider.dart';
 
 extension ProviderReadExtension on BuildContext {

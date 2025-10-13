@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import 'dart:ui' show Color;
 
 import '../profile_helper.dart';
 

@@ -15,7 +15,7 @@
 import 'dart:developer';
 import 'dart:isolate';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as l;
 
 import '../logger_message.dart';
