@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show NavigatorState, optionalTypeArgs;
 
 extension NavigatorExtension on NavigatorState {
   @optionalTypeArgs

@@ -13,15 +13,12 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart'
-    show PageScrollPhysics, ScrollMetrics, ScrollPhysics;
 
 import '../common/consts.dart';
 import '../common/enums.dart';
 import '../logging/helper.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
-import '../widgets/widgets.dart';
 
 class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {
@@ -44,17 +41,6 @@ class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
           beforeVal: scrollBehavior, afterVal: newBehavior);
       await _scroll?.set(newBehavior);
       notifyListeners();
-    }
-  }
-
-  ScrollPhysics? getPhysics(double itemSize, ScrollMetrics metrics) {
-    switch (scrollBehavior) {
-      case HabitsRecordScrollBehavior.page:
-        return const PageScrollPhysics();
-      case HabitsRecordScrollBehavior.scrollable:
-        return MagnetScrollPhysics(itemSize: itemSize, metrics: metrics);
-      default:
-        return null;
     }
   }
 }

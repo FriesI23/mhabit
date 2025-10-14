@@ -14,9 +14,11 @@
 
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:ui' show Size, TextDirection;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ThemeMode, Tooltip;
+import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle;
 import 'package:flutter/scheduler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;

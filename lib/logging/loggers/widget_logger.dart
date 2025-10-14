@@ -15,7 +15,7 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' show BuildContext, Widget;
 import 'package:logger/logger.dart' as l;
 
 import '../logger_manager.dart';

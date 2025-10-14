@@ -13,8 +13,11 @@
 // limitations under the License.
 // coverage:ignore-file
 
+import 'dart:ui' show Color, Locale;
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/widgets.dart' show LocalizationsDelegate;
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../l10n/localizations.dart';

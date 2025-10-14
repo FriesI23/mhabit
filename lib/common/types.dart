@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart'
+    show BuildContext, ScrollPhysics, ValueKey, Widget;
 
 import '../models/habit_date.dart';
 import '../models/habit_detail_chart.dart';
 import '../models/habit_form.dart';
-import '../widgets/widgets.dart';
+import '../widgets/widgets.dart' show HabitFreqChartDisplayMethod;
 
 typedef DBID = int;
 
