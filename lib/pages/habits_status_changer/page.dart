@@ -44,7 +44,8 @@ import 'widgets.dart';
 ///   - [AppDeveloperViewModel]
 /// - Required for callback:
 /// - Optional:
-///   - [HabitSummaryViewModel]
+///   - [AppSyncViewModel]
+///   - [HabitsStatusChangerAdapter]
 class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -150,9 +151,9 @@ class _PageState extends State<_Page> {
     if (appSync != null && appSync.mounted) {
       appSync.delayedStartTaskOnce();
     }
-    final summary = context.maybeRead<HabitSummaryViewModel>();
+    final summary = context.maybeRead<HabitsStatusChangerAdapter>();
     if (summary != null && summary.mounted) {
-      summary.forHabitsStatusChanger.onHabitDataChanged();
+      summary.onHabitDataChanged();
     }
 
     final snackBar = buildSnackBarWithDismiss(context,

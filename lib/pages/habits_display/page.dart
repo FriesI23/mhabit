@@ -532,7 +532,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   void _openAppSettingsPage(BuildContext context) {
     app_settings.naviToAppSettingPage(
       context: context,
-      scrollBehavior: context.read<HabitsRecordScrollBehaviorViewModel>(),
       summary: context.read<HabitSummaryViewModel>(),
     );
   }
@@ -550,8 +549,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         if (kDebugMode) Error.throwWithStackTrace(e, s);
       }
     }
-    if (!mounted) return;
-    context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
   }
 
   Future<void> _onFABPressed(VoidCallback action) async {
@@ -1399,14 +1396,14 @@ class _FAB extends StatelessWidget {
     final summary = context.read<HabitSummaryViewModel>();
 
     Widget pageHabitsStatusChangerBuilder(BuildContext context) {
-      if (summary.mounted) {
-        return ChangeNotifierProvider.value(
-            value: summary,
-            child: habits_status_changer.HabitsStatusChangerPage(
-                uuidList: selectedUUIDList));
-      }
-      return habits_status_changer.HabitsStatusChangerPage(
-          uuidList: selectedUUIDList);
+      final page = habits_status_changer.HabitsStatusChangerPage(
+        uuidList: selectedUUIDList,
+      );
+      if (!summary.mounted) return page;
+      return Provider.value(
+        value: summary.buildHabitStatusCHangerAdapter(),
+        child: page,
+      );
     }
 
     return HabitDisplayFAB<Object?>(

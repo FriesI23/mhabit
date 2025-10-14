@@ -17,11 +17,9 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../extensions/context_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_tasks.dart';
 import '../../../providers/app_sync.dart';
-import '../../../providers/habit_summary.dart';
 import '../../../widgets/styles.dart';
 import 'sync_loading_indicator.dart';
 
@@ -39,14 +37,10 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
     vm.appSyncTask.cancelSync();
   }
 
-  void _onStartButtonPressed() async {
+  void _onStartButtonPressed() {
     final vm = context.read<AppSyncViewModel>();
     if (!vm.mounted) return;
-    await vm.startSync(initWait: kAppSyncDelayDuration1);
-    if (!mounted) return;
-    final summary = context.maybeRead<HabitSummaryViewModel>();
-    if (summary == null || !summary.mounted) return;
-    summary.rockreloadDBToggleSwich();
+    vm.startSync(initWait: kAppSyncDelayDuration1);
   }
 
   @override

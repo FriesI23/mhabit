@@ -61,8 +61,6 @@ class AppSyncViewModel
     implements ProviderMounted {
   late final AppSyncTaskDispatcher appSyncTask;
 
-  late final ValueNotifier<num> _autoSyncTickNotifier;
-
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
 
   late AppLifecycleListener _lifecycleListener;
@@ -82,7 +80,6 @@ class AppSyncViewModel
   AppSyncViewModel() {
     appSyncTask = AppSyncTaskDispatcher(this);
     appSyncTask.addListener(notifyListeners);
-    _autoSyncTickNotifier = ValueNotifier(0);
     _delayedSyncTrigger = CascadingAsyncDebouncer(action: () async {
       if (!mounted) return;
       appLog.appsync.debug("AppSyncViewModel.onSyncTriggerred",
@@ -124,7 +121,6 @@ class AppSyncViewModel
   void dispose() {
     if (!mounted) return;
     _mounted = false;
-    _autoSyncTickNotifier.dispose();
     _lifecycleListener.dispose();
     _delayedSyncTrigger.cancel();
     _autoSyncTimer?.cancel();
@@ -344,8 +340,6 @@ class AppSyncViewModel
       .getSyncFailLogDir()
       .then((dir) => cleanExpiredFiles(dir, const Duration(days: 30)));
 
-  ValueListenable<num> get onAutoSyncTick => _autoSyncTickNotifier;
-
   void regrPeriodicSync({Duration? fireDelay}) {
     final interval = _interval?.get();
     if (interval == null || interval.t == null) {
@@ -362,7 +356,6 @@ class AppSyncViewModel
         if (!enabled || !(await appSyncTask.shouldSync())) return;
         if (!mounted) return;
         await appSyncTask.startSync();
-        _autoSyncTickNotifier.value += 1;
       }
 
       final oldTimer = _autoSyncTimer?..cancel();
@@ -497,12 +490,14 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
 final class AppSyncTaskDispatcher with ChangeNotifier {
   final AppSyncViewModel _root;
   final StreamController<AppSyncNeedConfirmEvent> _confirmEventController;
+  final StreamController<String> _startSyncEventController;
 
   AppSyncContainer? _task;
 
   AppSyncTaskDispatcher(this._root)
       : _task = null,
-        _confirmEventController = StreamController() {
+        _confirmEventController = StreamController.broadcast(),
+        _startSyncEventController = StreamController.broadcast() {
     addListener(() {
       final task = _task;
       if (task != null) {
@@ -525,9 +520,12 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
   Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
       _confirmEventController.stream;
 
+  Stream<String> get startSyncEvents => _startSyncEventController.stream;
+
   @override
   void dispose() {
     _confirmEventController.close();
+    _startSyncEventController.close();
     super.dispose();
   }
 
@@ -735,6 +733,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       finalTask.notification?.syncComplete(result: finalTask.result);
     });
 
+    _startSyncEventController.add(newTask.id);
     notifyListeners();
   }
 
