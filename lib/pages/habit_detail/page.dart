@@ -40,7 +40,7 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
-import '../../providers/habit_summary.dart';
+import '../../providers/habit_summary.dart' as habit_summary;
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/utils.dart';
 import '../../storage/db/handlers/habit.dart';
@@ -61,7 +61,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
   required HabitUUID habitUUID,
   HabitColorType? colorType,
-  HabitSummaryViewModel? summary,
+  habit_summary.HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<DetailPageReturn>(
     MaterialPageRoute(
@@ -79,7 +79,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
 /// - Required for callback:
 ///   - [HabitFileExporterViewModel]
 /// - Optional:
-///   - [HabitsStatusChangerAdapter]
+///   - [habit_summary.HabitDetailAdapter]
 class HabitDetailPage extends StatelessWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
@@ -137,7 +137,7 @@ class _PageState extends State<_Page>
     if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
     viewmodel.rockreloadDBToggleSwich();
-    final summary = context.maybeRead<HabitDetailAdapter>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary != null && summary.mounted) summary.onHabitDataChanged();
     return true;
   }
@@ -181,7 +181,7 @@ class _PageState extends State<_Page>
     );
 
     if (!mounted) return;
-    final summary = context.maybeRead<HabitDetailAdapter>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null ||
         !summary.mounted ||
         viewmodel.getInsideVersion() == oldVersion) {
@@ -238,7 +238,7 @@ class _PageState extends State<_Page>
     final habitUUID = viewmodel.habitUUID;
     if (!viewmodel.mounted || habitUUID == null) return;
 
-    final summary = context.maybeRead<HabitDetailAdapter>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToArchiveHabit();
     } else {
@@ -270,7 +270,7 @@ class _PageState extends State<_Page>
     final habitUUID = viewmodel.habitUUID;
     if (!viewmodel.mounted || habitUUID == null) return;
 
-    final summary = context.maybeRead<HabitDetailAdapter>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToUnarchiveHabit();
     } else {
@@ -302,7 +302,7 @@ class _PageState extends State<_Page>
     final habitUUID = viewmodel.habitUUID;
     if (!viewmodel.mounted || habitUUID == null) return;
 
-    final summary = context.maybeRead<HabitDetailAdapter>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     final changes = summary != null && summary.mounted
         ? await summary.onConfirmToDeleteHabit(habitUUID)
         : await viewmodel

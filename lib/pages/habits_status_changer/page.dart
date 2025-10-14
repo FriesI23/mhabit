@@ -31,7 +31,7 @@ import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_status_changer.dart';
-import '../../providers/habit_summary.dart';
+import '../../providers/habit_summary.dart' as habit_summary;
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
@@ -45,7 +45,7 @@ import 'widgets.dart';
 /// - Required for callback:
 /// - Optional:
 ///   - [AppSyncViewModel]
-///   - [HabitsStatusChangerAdapter]
+///   - [habit_summary.HabitsStatusChangerAdapter]
 class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -151,7 +151,8 @@ class _PageState extends State<_Page> {
     if (appSync != null && appSync.mounted) {
       appSync.delayedStartTaskOnce();
     }
-    final summary = context.maybeRead<HabitsStatusChangerAdapter>();
+    final summary =
+        context.maybeRead<habit_summary.HabitsStatusChangerAdapter>();
     if (summary != null && summary.mounted) {
       summary.onHabitDataChanged();
     }
