@@ -41,7 +41,7 @@ import '../../providers/app_reminder.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_op_config.dart';
-import '../../providers/habit_summary.dart';
+import '../../providers/habit_summary.dart' as habit_summary;
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
@@ -61,16 +61,12 @@ import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({
   required BuildContext context,
-  required HabitsRecordScrollBehaviorViewModel scrollBehavior,
-  HabitSummaryViewModel? summary,
+  habit_summary.HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: scrollBehavior),
-          ChangeNotifierProvider.value(value: summary),
-        ],
+      builder: (context) => Provider.value(
+        value: summary?.buildAppSettingAdapter(),
         child: const AppSettingPage(),
       ),
     ),
@@ -91,7 +87,7 @@ Future<void> naviToAppSettingPage({
 ///   - [HabitFileImporterViewModel]
 ///   - [ProfileViewModel]
 /// - Optional:
-///   - [HabitSummaryViewModel]
+///   - [habit_summary.AppSettingAdapter]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
 
@@ -399,9 +395,7 @@ class _PageState extends State<_Page> with XShare {
         content: const Text("clear database success"));
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context
-        .maybeRead<HabitSummaryViewModel>()
-        ?.rockreloadDBToggleSwich(clearSnackBar: false);
+    context.maybeRead<habit_summary.AppSettingAdapter>()?.onDatabaseCleared();
   }
 
   @override

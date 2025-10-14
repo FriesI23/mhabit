@@ -40,7 +40,7 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
-import '../../providers/habit_summary.dart';
+import '../../providers/habit_summary.dart' as habit_summary;
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/utils.dart';
 import '../../storage/db/handlers/habit.dart';
@@ -61,14 +61,12 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
   required HabitUUID habitUUID,
   HabitColorType? colorType,
-  HabitSummaryViewModel? summary,
+  habit_summary.HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<DetailPageReturn>(
     MaterialPageRoute(
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: summary),
-        ],
+      builder: (context) => Provider.value(
+        value: summary?.buildHabitDetailAdapter(),
         child: HabitDetailPage(habitUUID: habitUUID, colorType: colorType),
       ),
     ),
@@ -81,7 +79,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
 /// - Required for callback:
 ///   - [HabitFileExporterViewModel]
 /// - Optional:
-///   - [HabitSummaryViewModel]
+///   - [habit_summary.HabitDetailAdapter]
 class HabitDetailPage extends StatelessWidget {
   final HabitUUID habitUUID;
   final HabitColorType? colorType;
@@ -139,12 +137,8 @@ class _PageState extends State<_Page>
     if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
     viewmodel.rockreloadDBToggleSwich();
-    final summary = context.maybeRead<HabitSummaryViewModel>();
-    if (summary != null && summary.mounted) {
-      // FIXME: use provider-adapter
-      // summary.updateCalendarExpanedStatus(false, listen: false);
-      summary.rockreloadDBToggleSwich();
-    }
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
+    if (summary != null && summary.mounted) summary.onHabitDataChanged();
     return true;
   }
 
@@ -187,13 +181,13 @@ class _PageState extends State<_Page>
     );
 
     if (!mounted) return;
-    final summary = context.maybeRead<HabitSummaryViewModel>();
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null ||
         !summary.mounted ||
         viewmodel.getInsideVersion() == oldVersion) {
       return;
     }
-    summary.rockreloadDBToggleSwich();
+    summary.onHabitDataChanged();
   }
 
   Future<bool?> _openHabitOpConfirmDialog(
@@ -228,7 +222,6 @@ class _PageState extends State<_Page>
   }
 
   void _openHabitArchiveConfirmDialog() async {
-    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
     final result = await _openHabitOpConfirmDialog(
@@ -242,25 +235,25 @@ class _PageState extends State<_Page>
 
     if (result == null || result == false || !mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
-    summary = context.maybeRead<HabitSummaryViewModel>();
+    final habitUUID = viewmodel.habitUUID;
+    if (!viewmodel.mounted || habitUUID == null) return;
+
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToArchiveHabit();
     } else {
-      // use summary method in default
-      await summary.forHabitDetail
-          .onConfirmToArchiveHabit(viewmodel.habitUUID!);
-      if (!mounted) return;
-      viewmodel = context.read<HabitDetailViewModel>();
-      if (!viewmodel.mounted) return;
-      viewmodel.rockreloadDBToggleSwich();
+      await summary.onConfirmToArchiveHabit(habitUUID).whenComplete(() {
+        if (!mounted) return;
+        viewmodel = context.read<HabitDetailViewModel>();
+        if (!viewmodel.mounted) return;
+        viewmodel.rockreloadDBToggleSwich();
+      });
     }
 
     _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitUnarchiveConfirmDialog() async {
-    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
     final result = await _openHabitOpConfirmDialog(
@@ -274,25 +267,25 @@ class _PageState extends State<_Page>
 
     if (result == null || result == false || !mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
-    summary = context.maybeRead<HabitSummaryViewModel>();
+    final habitUUID = viewmodel.habitUUID;
+    if (!viewmodel.mounted || habitUUID == null) return;
+
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary == null || !summary.mounted) {
       await viewmodel.onConfirmToUnarchiveHabit();
     } else {
-      // use summary method in default
-      await summary.forHabitDetail
-          .onConfirmToUnarchiveHabit(viewmodel.habitUUID!);
-      if (!mounted) return;
-      viewmodel = context.read<HabitDetailViewModel>();
-      if (!viewmodel.mounted) return;
-      viewmodel.rockreloadDBToggleSwich();
+      await summary.onConfirmToUnarchiveHabit(habitUUID).whenComplete(() {
+        if (!mounted) return;
+        viewmodel = context.read<HabitDetailViewModel>();
+        if (!viewmodel.mounted) return;
+        viewmodel.rockreloadDBToggleSwich();
+      });
     }
 
     _onHabitStatusChangeConfirmed();
   }
 
   void _openHabitDeleteConfirmDialog() async {
-    HabitSummaryViewModel? summary;
     HabitDetailViewModel viewmodel;
 
     final result = await _openHabitOpConfirmDialog(
@@ -306,35 +299,24 @@ class _PageState extends State<_Page>
 
     if (result == null || result == false || !mounted) return;
     viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted || viewmodel.habitUUID == null) return;
-    summary = context.maybeRead<HabitSummaryViewModel>();
+    final habitUUID = viewmodel.habitUUID;
+    if (!viewmodel.mounted || habitUUID == null) return;
 
-    if (summary != null && summary.mounted) {
-      final changes = await summary.forHabitDetail
-          .onConfirmToDeleteHabit(viewmodel.habitUUID!);
-      if (mounted) {
-        Navigator.pop(
-          context,
-          DetailPageReturn(
-            op: DetailPageReturnOpr.deleted,
-            habitName: viewmodel.habitName,
-            recordList: changes,
-          ),
-        );
-      }
-    } else {
-      final change = await viewmodel.onConfirmToDeleteHabit();
-      if (mounted) {
-        Navigator.pop(
-          context,
-          DetailPageReturn(
-            op: DetailPageReturnOpr.deleted,
-            habitName: viewmodel.habitName,
-            recordList: change != null ? [change] : null,
-          ),
-        );
-      }
-    }
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
+    final changes = summary != null && summary.mounted
+        ? await summary.onConfirmToDeleteHabit(habitUUID)
+        : await viewmodel
+            .onConfirmToDeleteHabit()
+            .then((result) => result != null ? [result] : null);
+    if (!mounted) return;
+    Navigator.pop(
+      context,
+      DetailPageReturn(
+        op: DetailPageReturnOpr.deleted,
+        habitName: viewmodel.habitName,
+        recordList: changes,
+      ),
+    );
 
     _onHabitStatusChangeConfirmed();
   }

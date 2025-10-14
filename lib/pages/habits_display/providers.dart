@@ -21,7 +21,6 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_filter.dart';
-import '../../providers/habits_record_scroll_behavior.dart';
 import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
@@ -41,15 +40,8 @@ class PageProviders extends SingleChildStatelessWidget {
         ),
         ChangeNotifierProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) {
-            previous!.updateFromAppSync(value);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (value.appSyncTask.processing != null) {
-                previous.onAutoSyncTick();
-              }
-            });
-            return previous;
-          },
+          update: (context, value, previous) =>
+              previous!..updateFromAppSync(value),
         ),
         ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
             HabitSummaryViewModel>(
@@ -108,12 +100,6 @@ class PageProviders extends SingleChildStatelessWidget {
           ),
           ChangeNotifierProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
             create: (context) => HabitsFilterViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              HabitsRecordScrollBehaviorViewModel>(
-            create: (context) => HabitsRecordScrollBehaviorViewModel(),
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),

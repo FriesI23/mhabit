@@ -59,9 +59,7 @@ class AppSyncViewModel
         DBHelperLoadedMixin,
         NotificationChannelDataMixin
     implements ProviderMounted {
-  late final DispatcherForAppSyncTask appSyncTask;
-
-  late final ValueNotifier<num> _autoSyncTickNotifier;
+  late final AppSyncTaskDispatcher appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
 
@@ -80,9 +78,8 @@ class AppSyncViewModel
   bool _clearLogsOnStartup = false;
 
   AppSyncViewModel() {
-    appSyncTask = DispatcherForAppSyncTask(this);
+    appSyncTask = AppSyncTaskDispatcher(this);
     appSyncTask.addListener(notifyListeners);
-    _autoSyncTickNotifier = ValueNotifier(0);
     _delayedSyncTrigger = CascadingAsyncDebouncer(action: () async {
       if (!mounted) return;
       appLog.appsync.debug("AppSyncViewModel.onSyncTriggerred",
@@ -124,7 +121,6 @@ class AppSyncViewModel
   void dispose() {
     if (!mounted) return;
     _mounted = false;
-    _autoSyncTickNotifier.dispose();
     _lifecycleListener.dispose();
     _delayedSyncTrigger.cancel();
     _autoSyncTimer?.cancel();
@@ -344,8 +340,6 @@ class AppSyncViewModel
       .getSyncFailLogDir()
       .then((dir) => cleanExpiredFiles(dir, const Duration(days: 30)));
 
-  ValueListenable<num> get onAutoSyncTick => _autoSyncTickNotifier;
-
   void regrPeriodicSync({Duration? fireDelay}) {
     final interval = _interval?.get();
     if (interval == null || interval.t == null) {
@@ -362,7 +356,6 @@ class AppSyncViewModel
         if (!enabled || !(await appSyncTask.shouldSync())) return;
         if (!mounted) return;
         await appSyncTask.startSync();
-        _autoSyncTickNotifier.value += 1;
       }
 
       final oldTimer = _autoSyncTimer?..cancel();
@@ -494,19 +487,17 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
       ")";
 }
 
-abstract class _ForAppSynDispatcher {
-  final AppSyncViewModel root;
-
-  const _ForAppSynDispatcher(this.root);
-}
-
-final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
-    with ChangeNotifier {
-  final _confirmEventController = StreamController<AppSyncNeedConfirmEvent>();
+final class AppSyncTaskDispatcher with ChangeNotifier {
+  final AppSyncViewModel _root;
+  final StreamController<AppSyncNeedConfirmEvent> _confirmEventController;
+  final StreamController<String> _startSyncEventController;
 
   AppSyncContainer? _task;
 
-  DispatcherForAppSyncTask(super.root) : _task = null {
+  AppSyncTaskDispatcher(this._root)
+      : _task = null,
+        _confirmEventController = StreamController.broadcast(),
+        _startSyncEventController = StreamController.broadcast() {
     addListener(() {
       final task = _task;
       if (task != null) {
@@ -529,9 +520,12 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
   Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
       _confirmEventController.stream;
 
+  Stream<String> get startSyncEvents => _startSyncEventController.stream;
+
   @override
   void dispose() {
     _confirmEventController.close();
+    _startSyncEventController.close();
     super.dispose();
   }
 
@@ -591,7 +585,8 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            final password = await root.readPassword(identity: config.identity);
+            final password =
+                await _root.readPassword(identity: config.identity);
             final sessionId = WebDavAppSyncTask.genSessionId();
             final isFirstSync = !config.configed;
             return WebDavAppSyncTask(
@@ -601,7 +596,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                   timeout: isFirstSync
                       ? (config.timeout ?? defaultAppSyncTimeout) * 10
                       : config.timeout),
-              syncDBHelper: root.syncDBHelper,
+              syncDBHelper: _root.syncDBHelper,
               initWait: initWait,
               progressController: WebDavProgressController(
                 onPercentageChanged: (percentage) {
@@ -612,10 +607,10 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
               onConfigTaskComplete: (result) {
                 if (_task?.task.sessionId != sessionId) return;
                 if (!result.isSuccessed || config.configed) return;
-                final crtConfig = root._serverConfig?.get();
+                final crtConfig = _root._serverConfig?.get();
                 if (crtConfig == null) return;
                 if (config.isSameConfig(crtConfig)) {
-                  root._serverConfig?.set(config.copyWith(configed: true));
+                  _root._serverConfig?.set(config.copyWith(configed: true));
                 }
               },
               onNeedConfirmCallback: (checklist) {
@@ -637,13 +632,13 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
 
   Future<bool> shouldSync() async {
     bool basicCheck([AppSyncServer? config]) {
-      if (!root.enabled) return false;
-      config = config ?? root._serverConfig?.get();
+      if (!_root.enabled) return false;
+      config = config ?? _root._serverConfig?.get();
       if (config == null) return false;
       return true;
     }
 
-    final config = root._serverConfig?.get();
+    final config = _root._serverConfig?.get();
     if (!(basicCheck(config))) return false;
     switch (config?.type) {
       case AppSyncServerType.unknown || null:
@@ -681,7 +676,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       ]).then((results) => results.every((e) => e));
 
   Future<void> startSync({Duration? initWait}) async {
-    final config = root._serverConfig?.get();
+    final config = _root._serverConfig?.get();
     if (config == null) return;
 
     final tmpNewTask = (_task == null || _task!.task.isDone)
@@ -692,8 +687,8 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                       task: task,
                       filePath: filePath,
                       notification: NotiAppSyncProvider.generate(
-                          data: root.channelData,
-                          l10n: root._l10n?.target,
+                          data: _root.channelData,
+                          l10n: _root._l10n?.target,
                           type: config.type),
                     )),
           )
@@ -738,6 +733,7 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
       finalTask.notification?.syncComplete(result: finalTask.result);
     });
 
+    _startSyncEventController.add(newTask.id);
     notifyListeners();
   }
 
