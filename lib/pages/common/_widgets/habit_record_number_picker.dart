@@ -19,7 +19,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../../../common/consts.dart';
 import '../../../common/re.dart';
-import '../../../common/rules.dart';
 import '../../../common/types.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../extensions/num_extensions.dart';
@@ -29,6 +28,7 @@ import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
+import 'habit_input_helper.dart';
 
 const _kDefaultHabitRecordChipListHeight = 56.0;
 

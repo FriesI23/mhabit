@@ -14,8 +14,8 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'consts.dart';
-import 'types.dart';
+import '../../../common/consts.dart';
+import '../../../common/types.dart';
 
 HabitDailyGoal onDailyGoalTextInputChanged(
   num newDailyGoal, {
