@@ -13,10 +13,13 @@
 // limitations under the License.
 
 import 'dart:io';
+import 'dart:ui' show Offset;
 
 import 'package:collection/collection.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart' show RenderBox;
+import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
