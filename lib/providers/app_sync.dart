@@ -19,8 +19,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:data_saver/data_saver.dart';
 import 'package:flutter/foundation.dart';
-// FIXME: migrate showDailog to UI layer
-import 'package:flutter/material.dart' show showDialog;
 import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart' as l;
@@ -29,7 +27,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../common/consts.dart';
-import '../common/global.dart';
 import '../common/utils.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
@@ -40,7 +37,6 @@ import '../models/app_sync_server.dart';
 import '../models/app_sync_server_form.dart';
 import '../models/app_sync_tasks.dart';
 import '../models/app_sync_timer.dart';
-import '../pages/common/widgets.dart';
 import '../reminders/providers/noti_app_sync_provider.dart';
 import '../storage/db_helper_provider.dart';
 import '../storage/profile/handlers.dart';
@@ -392,6 +388,19 @@ class AppSyncViewModel
   }
 }
 
+class AppSyncNeedConfirmEvent<T> {
+  final T checklist;
+  final Completer<bool> _completer;
+
+  AppSyncNeedConfirmEvent(this.checklist) : _completer = Completer<bool>();
+
+  Future<bool> get future => _completer.future;
+
+  void complete(FutureOr<bool> value) {
+    if (!_completer.isCompleted) _completer.complete(value);
+  }
+}
+
 @CopyWith(skipFields: false, copyWithNull: false, constructor: "_copyWith")
 class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   final String id;
@@ -493,6 +502,8 @@ abstract class _ForAppSynDispatcher {
 
 final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     with ChangeNotifier {
+  final _confirmEventController = StreamController<AppSyncNeedConfirmEvent>();
+
   AppSyncContainer? _task;
 
   DispatcherForAppSyncTask(super.root) : _task = null {
@@ -515,6 +526,15 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
 
   AppSyncContainer? get task => _task;
 
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
+      _confirmEventController.stream;
+
+  @override
+  void dispose() {
+    _confirmEventController.close();
+    super.dispose();
+  }
+
   void changePercentage({required num? prt}) {
     prt = prt?.clamp(0.0, 1.0);
     if (_task?.percentage != prt) {
@@ -528,6 +548,12 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
     AppSyncTask buildDefaultTask() => BasicAppSyncTask(
         config: config,
         onExec: (task) => Future.value(const BasicAppSyncTaskResult.error()));
+
+    Future<bool> requestWebDavUserConfirm(WebDavConfigTaskChecklist checklist) {
+      final event = AppSyncNeedConfirmEvent(checklist);
+      _confirmEventController.add(event);
+      return event.future;
+    }
 
     switch (config.type) {
       case AppSyncServerType.fake:
@@ -593,15 +619,11 @@ final class DispatcherForAppSyncTask extends _ForAppSynDispatcher
                 }
               },
               onNeedConfirmCallback: (checklist) {
-                if (_task?.task.sessionId != sessionId) return false;
-                final context = navigatorKey.currentState?.context;
-                if (context == null) return true;
-                return showDialog<bool>(
-                  context: context,
-                  builder: (context) => checklist.isEmptyDir
-                      ? const AppSyncWebDavNewServerConfirmDialog()
-                      : const AppSyncWebDavOldServerConfirmDialog(),
-                ).then((value) => value ?? false);
+                final task = _task;
+                if (task == null) return false;
+                final sessionId = task.task.sessionId;
+                if (task.task.sessionId != sessionId) return false;
+                return requestWebDavUserConfirm(checklist);
               },
             );
           default:

@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +25,8 @@ import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_sync_tasks.dart';
+import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_debugger.dart';
 import '../../providers/app_language.dart';
@@ -144,6 +149,8 @@ class _AppPostInit extends SingleChildStatefulWidget {
 }
 
 class _AppPostInitState extends SingleChildState<_AppPostInit> {
+  StreamSubscription<AppSyncNeedConfirmEvent>? _confirmSub;
+
   late bool inited;
 
   @override
@@ -157,10 +164,41 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
     context.maybeRead<AppSyncViewModel>()?.onL10nUpdate(l10n);
   }
 
+  void _onConfirmSubscriptionUpdate() {
+    _confirmSub?.cancel();
+    _confirmSub = context
+        .maybeRead<AppSyncViewModel>()
+        ?.appSyncTask
+        .confirmEvents
+        .listen((event) => switch (event) {
+              AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() =>
+                _onWebDavAppSyncUserConfirmNeedCheck(event.checklist)
+                    .then(event.complete),
+              _ => kDebugMode ? debugPrint("Unhandled event: $event") : null
+            });
+  }
+
+  Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
+      WebDavConfigTaskChecklist checklist) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => checklist.isEmptyDir
+          ? const AppSyncWebDavNewServerConfirmDialog()
+          : const AppSyncWebDavOldServerConfirmDialog(),
+    ).then((value) => value ?? false);
+  }
+
   @override
   void didChangeDependencies() {
     _onL10nUpdate(L10n.of(context));
+    _onConfirmSubscriptionUpdate();
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _confirmSub?.cancel();
+    super.dispose();
   }
 
   void onPostInitHandled(BuildContext context) {
