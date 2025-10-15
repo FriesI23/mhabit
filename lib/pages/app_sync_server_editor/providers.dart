@@ -29,18 +29,14 @@ class PageProviders extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (context) => AppSyncServerFormViewModel(
-              initServerConfig: initServerConfig,
-              pathInputController: TextEditingController(),
-              usernameInputController: TextEditingController(),
-              passwordInputController: TextEditingController(),
-            ),
+            create: (context) =>
+                AppSyncServerFormViewModel(initServerConfig: initServerConfig),
           ),
           ChangeNotifierProxyProvider<AppSyncViewModel,
               AppSyncServerFormViewModel>(
             create: (context) => context.read<AppSyncServerFormViewModel>(),
             update: (context, value, previous) =>
-                previous!..updateParentViewModel(value),
+                previous!..attachParent(value),
           ),
         ],
         child: child,

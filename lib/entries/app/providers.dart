@@ -31,6 +31,7 @@ import '../../providers/global.dart';
 import '../../providers/habit_op_config.dart';
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
+import '../../providers/habits_record_scroll_behavior.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
@@ -140,6 +141,12 @@ class AppProviders extends SingleChildStatelessWidget {
             update: (context, profile, channel, previous) => previous!
               ..setNotificationChannelData(channel)
               ..updateProfile(profile),
+          ),
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              HabitsRecordScrollBehaviorViewModel>(
+            create: (context) => HabitsRecordScrollBehaviorViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
           ),
           ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
             create: (context) =>

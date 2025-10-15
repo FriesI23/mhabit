@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import 'consts.dart';
-import 'types.dart';
+import '../../../common/consts.dart';
+import '../../../common/types.dart';
 
 HabitDailyGoal onDailyGoalTextInputChanged(
   num newDailyGoal, {

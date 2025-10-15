@@ -15,8 +15,10 @@
 export '_widgets/app_sync_confirm_dialog.dart';
 export '_widgets/contributor_tile.dart';
 export '_widgets/custom_datetime_format_picker.dart';
+export '_widgets/custom_scroll_controllers.dart';
 export '_widgets/donate_dialog.dart';
 export '_widgets/exporter_confirm_dialog.dart';
+export '_widgets/habit_input_helper.dart';
 export '_widgets/habit_record_number_picker.dart';
 export '_widgets/habit_record_reason_modifier.dart';
 export '_widgets/habit_summary_list_tile.dart';

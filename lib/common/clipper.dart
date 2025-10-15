@@ -13,7 +13,7 @@
 // limitations under the License.
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class RingAngleClipper extends CustomClipper<Path> {
   final double innerRadius;

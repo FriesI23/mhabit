@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show Size, TextScaler;
 
 extension TextScaleExtension on TextScaler {
   Size scaleForSize<T extends Size>(T size) =>

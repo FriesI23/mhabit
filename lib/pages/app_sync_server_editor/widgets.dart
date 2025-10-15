@@ -13,8 +13,10 @@
 // limitations under the License.
 
 export '_widgets/app_sync_server_buttons.dart';
+export '_widgets/app_sync_server_conn_retry_count.dart';
 export '_widgets/app_sync_server_conn_timeout.dart';
 export '_widgets/app_sync_server_delete_button.dart';
+export '_widgets/app_sync_server_form_input.dart';
 export '_widgets/app_sync_server_ignoressl.dart';
 export '_widgets/app_sync_server_network_type.dart';
 export '_widgets/app_sync_server_password.dart';

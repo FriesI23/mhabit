@@ -14,14 +14,16 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' show IconData;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../common/consts.dart';
 import '../common/enums.dart';
 import '../common/types.dart';
 import '../l10n/localizations.dart';
 import '../storage/db/handlers/habit.dart';
+import 'habit_daily_goal.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
@@ -179,15 +181,13 @@ enum HabitDailyComplateStatus {
 }
 
 class HabitForm {
-  String? name;
-  HabitType? type;
-  HabitColorType? colorType;
-  HabitDailyGoal? dailyGoal;
-  String? dailyGoalUnit;
-  HabitDailyGoal? dailyGoalExtra;
-  HabitFrequency? frequency;
-  HabitStartDate? startDate;
-  int? targetDays;
+  String name;
+  HabitType type;
+  HabitColorType colorType;
+  HabitDailyGoalData dailyGoal;
+  HabitFrequency frequency;
+  HabitStartDate startDate;
+  int targetDays;
   String? desc;
   HabitReminder? reminder;
   String? reminderQuest;
@@ -195,15 +195,13 @@ class HabitForm {
   final HabitDisplayEditParams? editParams;
 
   HabitForm({
-    this.name,
-    this.type,
-    this.colorType,
-    this.dailyGoal,
-    this.dailyGoalUnit,
-    this.dailyGoalExtra,
-    this.frequency,
-    this.startDate,
-    this.targetDays,
+    required this.name,
+    required this.type,
+    required this.colorType,
+    required this.dailyGoal,
+    required this.frequency,
+    required this.startDate,
+    required this.targetDays,
     this.desc,
     this.reminder,
     this.reminderQuest,
@@ -211,29 +209,75 @@ class HabitForm {
     this.editParams,
   });
 
-  HabitForm.fromHabitDBCell(HabitDBCell cell,
-      {required this.editMode, this.editParams})
-      : name = cell.name,
-        type = HabitType.getFromDBCode(cell.type!)!,
-        colorType = HabitColorType.getFromDBCode(cell.color!)!,
-        dailyGoal = cell.dailyGoal,
-        dailyGoalUnit = cell.dailyGoalUnit,
-        dailyGoalExtra = cell.dailyGoalExtra,
-        frequency = HabitFrequency.fromJson(
-            {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)}),
-        startDate = HabitStartDate.fromEpochDay(cell.startDate!),
-        targetDays = cell.targetDays,
-        desc = cell.desc,
-        reminder = cell.remindCustom != null
-            ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
-            : null,
-        reminderQuest = cell.remindQuestion;
+  HabitForm._fromHabitDBCell({
+    required this.name,
+    required this.type,
+    required this.colorType,
+    required this.dailyGoal,
+    required this.frequency,
+    required this.startDate,
+    required this.targetDays,
+    this.desc,
+    this.reminder,
+    this.reminderQuest,
+    required this.editMode,
+    required this.editParams,
+  });
+
+  HabitForm.empty({
+    HabitType type = defaultHabitType,
+    HabitColorType colorType = defaultHabitColorType,
+  }) : this(
+            name: '',
+            type: type,
+            colorType: colorType,
+            startDate: HabitStartDate.dateTime(DateTime.now()),
+            frequency: HabitFrequency.daily,
+            dailyGoal: HabitDailyGoalData(type: type),
+            targetDays: defaultHabitTargetDays,
+            desc: '');
+
+  factory HabitForm.fromHabitDBCell(HabitDBCell cell,
+      {required HabitDisplayEditMode editMode,
+      HabitDisplayEditParams? editParams}) {
+    assert(cell.name != null &&
+        cell.type != null &&
+        cell.color != null &&
+        cell.freqCustom != null &&
+        cell.startDate != null);
+    final name = cell.name!;
+    final type = HabitType.getFromDBCode(cell.type!)!;
+    final dailyGoal = HabitDailyGoalData(
+        type: type,
+        dailyGoal: cell.dailyGoal,
+        dailyGoalUnit: cell.dailyGoalUnit,
+        dailyGoalExtra: cell.dailyGoalExtra);
+    final frequency = HabitFrequency.fromJson(
+        {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)});
+    final startDate = HabitStartDate.fromEpochDay(cell.startDate!);
+    final targetDays = cell.targetDays!;
+    final reminder = cell.remindCustom != null
+        ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
+        : null;
+    return HabitForm._fromHabitDBCell(
+        name: name,
+        type: type,
+        colorType: HabitColorType.getFromDBCode(cell.color!)!,
+        dailyGoal: dailyGoal,
+        frequency: frequency,
+        startDate: startDate,
+        targetDays: targetDays,
+        desc: cell.desc,
+        reminder: reminder,
+        reminderQuest: cell.remindQuestion,
+        editMode: editMode,
+        editParams: editParams);
+  }
 
   @override
   String toString() {
     return 'HabitForm(name=$name,type=$type,colorType=$colorType,'
-        'dailyGoal=$dailyGoal,dailyGoalUnit=$dailyGoalUnit,'
-        'dailyGoalExtra=$dailyGoalExtra,frequency=$frequency,'
+        'dailyGoal=$dailyGoal,frequency=$frequency,'
         'startDate=$startDate,targetDays=$targetDays,desc=$desc,'
         'reminder=$reminder,reminderQuest=$reminderQuest,editMode=$editMode,'
         'editParams=$editParams)';

@@ -17,9 +17,6 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:great_list_view/great_list_view.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -45,19 +42,12 @@ part 'habit_summary.g.dart';
 
 class HabitSummaryViewModel extends ChangeNotifier
     with
-        ScrollControllerChangeNotifierMixin,
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
-        DBOperationsMixin
+        DBOperationsMixin,
+        PinnedAppbarMixin,
+        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
     implements ProviderMounted, HabitSummaryDirtyMarker {
-  static final _fakeValueListenable = ValueNotifier(0);
-
-  // scroll controller
-  final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
-  // dispatcher
-  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
-  late final DispatcherForHabitDetail forHabitDetail;
-  late final DispatcherForHabitsStatusChanger forHabitsStatusChanger;
   // data
   final _data = HabitSummaryDataCollection();
   var _sortableCache = const _HabitsSortableCache(
@@ -80,27 +70,20 @@ class HabitSummaryViewModel extends ChangeNotifier
   // sync from setting
   int _firstday = defaultFirstDay;
   // sync from appsync
-  late WeakReference<ValueListenable<num>> _onAutoSyncTick;
-  // data
+  StreamSubscription<String>? _startSyncSub;
+  // listenable
+  final StreamController<Duration?> _scrollCalendarToStartController =
+      StreamController<Duration?>.broadcast();
 
-  HabitSummaryViewModel({
-    required ScrollController verticalScrollController,
-    required LinkedScrollControllerGroup horizonalScrollControllerGroup,
-  }) : _horizonalScrollControllerGroup = horizonalScrollControllerGroup {
-    initVerticalScrollController(notifyListeners, verticalScrollController);
-    forHabitDetail = DispatcherForHabitDetail(this);
-    forHabitsStatusChanger = DispatcherForHabitsStatusChanger(this);
-    _onAutoSyncTick = WeakReference(_fakeValueListenable);
-  }
+  HabitSummaryViewModel();
 
-  LinkedScrollControllerGroup get horizonalScrollControllerGroup =>
-      _horizonalScrollControllerGroup;
+  HabitDetailAdapter buildHabitDetailAdapter() =>
+      HabitDetailAdapter(root: this);
 
-  AnimatedListController get dispatcherLinkedController =>
-      _dispatcher.controller;
+  HabitsStatusChangerAdapter buildHabitStatusCHangerAdapter() =>
+      HabitsStatusChangerAdapter(root: this);
 
-  AnimatedListDiffBuilder<List<HabitSortCache>> get dispatcherLinkedBuilder =>
-      _dispatcher.builder;
+  AppSettingAdapter buildAppSettingAdapter() => AppSettingAdapter(root: this);
 
   @override
   bool get mounted => _mounted;
@@ -115,6 +98,9 @@ class HabitSummaryViewModel extends ChangeNotifier
     _firstday = day;
   }
 
+  Stream<Duration?> get scrollCalendarToStartEvent =>
+      _scrollCalendarToStartController.stream;
+
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
         isAppbarPinned: isAppbarPinned,
         reloadDBToggleSwich: reloadDBToggleSwich,
@@ -125,22 +111,24 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isCalendarExpanded => _isCalandarExpanded;
 
-  Future<void> updateCalendarExpanedStatus(bool newValue,
-      {Duration? scrollDuration,
-      bool waitingScroll = false,
-      bool listen = true}) async {
-    if (newValue != _isCalandarExpanded) {
-      _isCalandarExpanded = newValue;
-      if (scrollDuration == Duration.zero) {
-        _horizonalScrollControllerGroup.jumpTo(0);
-      } else {
-        final future = _horizonalScrollControllerGroup.animateTo(0,
-            duration: scrollDuration ?? const Duration(milliseconds: 500),
-            curve: Curves.fastOutSlowIn);
-        if (waitingScroll) await future;
-      }
-      if (listen) notifyListeners();
-    }
+  void toggleCalendarStatus({bool listen = true}) => isCalendarExpanded
+      ? collapseCalendar(listen: listen)
+      : expandCalendar(listen: listen);
+
+  void collapseCalendar({bool listen = true}) {
+    if (!isCalendarExpanded) return;
+    _isCalandarExpanded = false;
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
+  }
+
+  void expandCalendar({bool listen = true}) {
+    if (isCalendarExpanded) return;
+    _isCalandarExpanded = true;
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(null);
   }
 
   bool get canBeDragged => _canBeDragged;
@@ -196,17 +184,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     return result;
   }
 
-  void initDispatcher(
-      AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    _dispatcher = dispatcher;
-  }
-
   @override
   void dispose() {
     if (!_mounted) return;
-    _onAutoSyncTick.target?.removeListener(onAutoSyncTick);
-    _dispatcher.discard();
-    disposeVerticalScrollController();
+    _startSyncSub?.cancel();
+    _scrollCalendarToStartController.close();
+    dispatcher.discard();
     _cancelLoading();
     super.dispose();
     _mounted = false;
@@ -364,9 +347,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     _canBeDragged = false;
     _isInEditMode = true;
     if (clearAllSelected) clearAllSelectHabits();
-    await updateCalendarExpanedStatus(false,
-        scrollDuration: Duration.zero, waitingScroll: true, listen: false);
-    if (listen) notifyListeners();
+    collapseCalendar(listen: false);
+    if (!listen) return;
+    notifyListeners();
+    _scrollCalendarToStartController.add(Duration.zero);
   }
 
   void exitEditMode({bool clearAllSelected = true, bool listen = true}) {
@@ -447,7 +431,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       newSortbaleData = newSortbaleData.copyWith(
           lastSortedDataCache: List.of(newSortbaleData.lastSortedDataCache));
     }
-    _dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
+    dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
     _sortableCache = newSortbaleData;
   }
   //#endregion
@@ -508,21 +492,12 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   //#region: auto sync
   void updateFromAppSync(AppSyncViewModel appSync) {
-    if (appSync.onAutoSyncTick != _onAutoSyncTick.target) {
-      final oldTicker = _onAutoSyncTick.target?..removeListener(onAutoSyncTick);
-      _onAutoSyncTick =
-          WeakReference(appSync.onAutoSyncTick..addListener(onAutoSyncTick));
-      appLog.habit.info("updateFromAppSync", ex: [
-        "regr listener",
-        _onAutoSyncTick.target.hashCode,
-        oldTicker?.hashCode
-      ]);
-    }
-  }
-
-  void onAutoSyncTick() {
-    appLog.habit.debug("onAutoSyncTick", ex: [reloadDBToggleSwich]);
-    rockreloadDBToggleSwich(clearSnackBar: false);
+    _startSyncSub?.cancel();
+    _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
+      appLog.habit
+          .debug("onStartSyncEventTriggered", ex: [reloadDBToggleSwich]);
+      rockreloadDBToggleSwich(clearSnackBar: false);
+    });
   }
   //#endregion
 
@@ -839,63 +814,107 @@ class _SelectedHabitsData {
   String toString() => "$runtimeType(data=$_selectUUIDColl)";
 }
 
-abstract class _ForSummaryDispatcher {
-  final HabitSummaryViewModel _root;
+final class HabitDetailAdapter implements ProviderMounted {
+  late final WeakReference<HabitSummaryViewModel> _root;
 
-  const _ForSummaryDispatcher(this._root);
-}
+  HabitDetailAdapter({required HabitSummaryViewModel root}) {
+    _root = WeakReference(root);
+  }
 
-final class DispatcherForHabitDetail extends _ForSummaryDispatcher {
-  DispatcherForHabitDetail(super.root);
+  @override
+  bool get mounted => _root.target?.mounted == true;
 
-  String get _clsName => "${_root.runtimeType}.DispatcherForHabitDetail";
+  HabitSummaryViewModel? _fetchRoot() {
+    final root = _root.target;
+    if (root == null || !root.mounted) return null;
+    return root;
+  }
 
   Future<List<HabitStatusChangedRecord>?> onConfirmToArchiveHabit(
       HabitUUID habitUUID) async {
-    appLog.habit.info("$_clsName.onConfirmToArchiveHabit", ex: [habitUUID]);
-    if (!_root.mounted) return null;
-    final habit = _root.getHabit(habitUUID);
+    appLog.habit.info("HabitDetailAdapter.onConfirmToArchiveHabit",
+        ex: [_root, habitUUID]);
+    final root = _fetchRoot();
+    if (root == null) return null;
+    final habit = root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
     final recordList =
-        await _root._changeHabitsStatus([habitUUID], HabitStatus.archived);
-    if (_root.mounted) _root.resortData();
+        root._changeHabitsStatus([habitUUID], HabitStatus.archived);
+    _fetchRoot()?.resortData();
     return recordList;
   }
 
   Future<List<HabitStatusChangedRecord>?> onConfirmToUnarchiveHabit(
       HabitUUID habitUUID) async {
-    appLog.habit.info("$_clsName.onConfirmToUnarchiveHabit", ex: [habitUUID]);
-    if (!_root.mounted) return null;
-    final habit = _root.getHabit(habitUUID);
+    appLog.habit.info("HabitDetailAdapter.onConfirmToUnarchiveHabit",
+        ex: [_root, habitUUID]);
+    final root = _fetchRoot();
+    if (root == null) return null;
+    final habit = root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
     final recordList =
-        await _root._changeHabitsStatus([habitUUID], HabitStatus.activated);
-    if (_root.mounted) _root.resortData();
+        await root._changeHabitsStatus([habitUUID], HabitStatus.activated);
+    _fetchRoot()?.resortData();
     return recordList;
   }
 
   Future<List<HabitStatusChangedRecord>?> onConfirmToDeleteHabit(
       HabitUUID habitUUID) async {
-    appLog.habit.info("$_clsName.onConfirmToDeleteHabit", ex: [habitUUID]);
-    if (!_root.mounted) return null;
-    final habit = _root.getHabit(habitUUID);
+    appLog.habit.info("HabitDetailAdapter.onConfirmToDeleteHabit",
+        ex: [_root, habitUUID]);
+    final root = _fetchRoot();
+    if (root == null) return null;
+    final habit = root.getHabit(habitUUID);
     if (habit == null || habit.status == HabitStatus.deleted) return null;
     final recordList =
-        await _root._changeHabitsStatus([habitUUID], HabitStatus.deleted);
-    if (_root.mounted) _root.resortData();
+        await root._changeHabitsStatus([habitUUID], HabitStatus.deleted);
+    _fetchRoot()?.resortData();
     return recordList;
+  }
+
+  void onHabitDataChanged() {
+    final root = _fetchRoot();
+    if (root == null) return;
+    root.collapseCalendar();
+    root.rockreloadDBToggleSwich();
   }
 }
 
-final class DispatcherForHabitsStatusChanger extends _ForSummaryDispatcher {
-  DispatcherForHabitsStatusChanger(super.root);
+final class HabitsStatusChangerAdapter implements ProviderMounted {
+  late final WeakReference<HabitSummaryViewModel> _root;
 
-  String get _clsName => "${_root.runtimeType}.DispatcherForHabitsStausChanger";
+  HabitsStatusChangerAdapter({required HabitSummaryViewModel root}) {
+    _root = WeakReference(root);
+  }
 
-  Future onHabitDataChanged() async {
-    appLog.habit.info("$_clsName.onHabitDataChanged");
-    if (!_root.mounted) return null;
-    _root.exitEditMode();
-    _root.rockreloadDBToggleSwich(clearSnackBar: false);
+  @override
+  bool get mounted => _root.target?.mounted == true;
+
+  void onHabitDataChanged() {
+    final root = _root.target;
+    if (root == null || !root.mounted) return;
+    appLog.habit
+        .info("HabitsStatusChangerAdapter.onHabitDataChanged", ex: [_root]);
+    root.exitEditMode();
+    root.rockreloadDBToggleSwich(clearSnackBar: false);
+  }
+}
+
+final class AppSettingAdapter implements ProviderMounted {
+  late final WeakReference<HabitSummaryViewModel> _root;
+
+  AppSettingAdapter({required HabitSummaryViewModel root}) {
+    _root = WeakReference(root);
+  }
+
+  @override
+  bool get mounted => _root.target?.mounted == true;
+
+  void onDatabaseCleared() {
+    final root = _root.target;
+    if (root == null || !root.mounted) return;
+    appLog.habit
+        .info("HabitsStatusChangerAdapter.onDatabaseCleared", ex: [_root]);
+    root.rockreloadDBToggleSwich(clearSnackBar: false);
   }
 }

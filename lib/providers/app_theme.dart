@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'dart:ui' show Color;
+
+import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
-import '../common/utils.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 import '../theme/color.dart';
@@ -38,7 +39,6 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
 
   //#region app theme
   AppThemeType get themeType => _theme?.get() ?? appDefaultThemeType;
-  ThemeMode get matertialThemeType => transToMaterialThemeType(themeType);
 
   Future<void> setNewthemeType(AppThemeType newThemeType) async {
     if (_theme?.get() != newThemeType) {

@@ -1,4 +1,4 @@
-// Copyright 2024 Fries_I23
+// Copyright 2025 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,24 +14,26 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../common/consts.dart';
-import '../../common/widgets.dart';
+class PinnedAppbarScrollController extends ScrollController {
+  final ValueChanged<bool>? onAppbarStatusChanged;
 
-class RecordStatusSkipReasonTile extends StatelessWidget {
-  final TextEditingController inputController;
-  final ValueChanged<String>? onChanged;
+  PinnedAppbarScrollController({this.onAppbarStatusChanged}) : super();
 
-  const RecordStatusSkipReasonTile(
-      {super.key, required this.inputController, this.onChanged});
+  void _onAppbarStatusChanged() {
+    if (hasClients && offset > kToolbarHeight) {
+      onAppbarStatusChanged?.call(true);
+    } else if (hasClients && offset < kToolbarHeight) {
+      onAppbarStatusChanged?.call(false);
+    }
+  }
+
+  void addChangeAppbarStatusListener() {
+    addListener(_onAppbarStatusChanged);
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: HabitRecordReasonField(
-        chipTextList: skipReasonChipTextList,
-        inputController: inputController,
-        onChanged: onChanged,
-      ),
-    );
+  void dispose() {
+    removeListener(_onAppbarStatusChanged);
+    super.dispose();
   }
 }

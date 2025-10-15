@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../common/types.dart';

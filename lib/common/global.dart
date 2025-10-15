@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show ScaffoldMessengerState;
+import 'package:flutter/widgets.dart' show GlobalKey, NavigatorState;
 
 import '../logging/level.dart';
 import '../routes/route_observer.dart';

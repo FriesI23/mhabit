@@ -17,8 +17,6 @@ import 'dart:math' as math;
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:great_list_view/great_list_view.dart';
 import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
@@ -58,7 +56,10 @@ enum RecordStatusChangerStatus {
 }
 
 class HabitStatusChangerViewModel
-    with ChangeNotifier, DBHelperLoadedMixin
+    with
+        ChangeNotifier,
+        DBHelperLoadedMixin,
+        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
@@ -67,32 +68,15 @@ class HabitStatusChangerViewModel
   late HabitStatusChangerForm _form;
   // status
   CancelableCompleter<void>? _loading;
-  // controller
-  late final ScrollController mainScrollController;
-  // dispatcher
-  final Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>> _dispatchers =
-      {};
   // inside status
   bool _mounted = true;
   bool _isSkipReasonEdited = false;
   // sync from setting
   int _firstday = defaultFirstDay;
 
-  Duration get mainScrollAnimatedDuration => const Duration(milliseconds: 300);
-  Curve get mainScrollAnimatedCurve => Curves.fastOutSlowIn;
-
-  HabitStatusChangerViewModel(
-      {ScrollController? mainScrollController,
-      required List<HabitUUID> uuidList})
+  HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
       : _selectedUUIDList = uuidList {
-    this.mainScrollController = mainScrollController ?? ScrollController();
-    _form = HabitStatusChangerForm(
-        selectDate: HabitDate.now(),
-        skipInputController: TextEditingController());
-    _form.skipInputController.addListener(() {
-      _isSkipReasonEdited = true;
-      notifyListeners();
-    });
+    _form = HabitStatusChangerForm(selectDate: HabitDate.now());
     _dataDelate = HabitsDataDelagate(this);
   }
 
@@ -116,12 +100,20 @@ class HabitStatusChangerViewModel
     }
   }
 
-  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
+  CancelableCompleter<void>? _getCurrentLoadingCompleter() {
     final crtLoading = _loading;
     if (crtLoading != null && !crtLoading.isCanceled) {
+      return crtLoading;
+    }
+    return null;
+  }
+
+  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
+    final currentLoading = _getCurrentLoadingCompleter();
+    if (currentLoading != null) {
       appLog.load.warn("$runtimeType.loadData",
-          ex: ["data already loaded", crtLoading.isCompleted]);
-      return crtLoading.operation.valueOrCancellation();
+          ex: ["data is currently loading", currentLoading.isCompleted]);
+      return currentLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
@@ -161,7 +153,8 @@ class HabitStatusChangerViewModel
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
-      _reDispached();
+      _dispatchNewList();
+
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
       loading.complete();
@@ -179,31 +172,6 @@ class HabitStatusChangerViewModel
   }
   //#endregion
 
-  //#region dispatcher
-  @visibleForTesting
-  Map<Key?, AnimatedListDiffListDispatcher<HabitSortCache>>
-      get debugDispatchers => _dispatchers;
-
-  AnimatedListDiffListDispatcher<HabitSortCache>? getDispatcher(Key? key) =>
-      _dispatchers[key];
-
-  void regDispatcher(
-      Key? key, AnimatedListDiffListDispatcher<HabitSortCache> dispatcher) {
-    assert(!_dispatchers.containsKey(key));
-    _dispatchers[key] = dispatcher;
-  }
-
-  void unRegDispatcher(Key? key) => _dispatchers.remove(key)?.discard();
-
-  void _reDispached({List<Key>? keys}) {
-    for (var key in _dispatchers.keys) {
-      if (keys != null && !keys.contains(key)) continue;
-      _dispatchers[key]!
-          .dispatchNewList(dataDelegate.habitsSortableCache.toList());
-    }
-  }
-  //#endregion
-
   //#region: firstday
   int get firstday => _firstday;
 
@@ -218,8 +186,6 @@ class HabitStatusChangerViewModel
   @override
   bool get mounted => _mounted;
   //#endregion
-
-  TextEditingController get skipInputController => _form.skipInputController;
 
   HabitsDataDelagate get dataDelegate => _dataDelate;
 
@@ -239,7 +205,15 @@ class HabitStatusChangerViewModel
 
   HabitDate get selectDate => _form.selectDate;
 
-  String get skipReason => skipInputController.text;
+  String get skipReason => _form.skipReason ?? '';
+  set skipReason(String value) {
+    if (value == skipReason) return;
+    appLog.value.debug("HabitStatusChangerViewModel.startDate",
+        beforeVal: _form.skipReason, afterVal: value);
+    _form.skipReason = value;
+    _isSkipReasonEdited = true;
+    notifyListeners();
+  }
 
   HabitDate get earlistStartDate {
     var startDate = selectDate;
@@ -294,13 +268,10 @@ class HabitStatusChangerViewModel
               .reduce((value, element) => value == element ? value : null);
 
   void updateSelectStatus(RecordStatusChangerStatus? newStatus,
-      {bool listen = true}) {
+      {ValueChanged? onStatusChanged, bool listen = true}) {
     if (newStatus == selectStatus) return;
     _updateForm(_form.copyWith(selectStatus: newStatus));
-    if (selectStatus == RecordStatusChangerStatus.skip) {
-      mainScrollController.animateTo(0,
-          duration: mainScrollAnimatedDuration, curve: mainScrollAnimatedCurve);
-    }
+    onStatusChanged?.call(selectStatus);
     if (listen) notifyListeners();
   }
 
@@ -347,13 +318,19 @@ class HabitStatusChangerViewModel
     if (listen) notifyListeners();
   }
 
+  void _dispatchNewList() {
+    if (!mounted) return;
+    final newList = dataDelegate.habitsSortableCache.toList();
+    appLog.load.info("dispatch new list",
+        ex: [dispatcher.currentList.hashCode, newList.hashCode]);
+    dispatcher.dispatchNewList(newList);
+  }
+
   @override
   void dispose() {
     if (!_mounted) return;
-    for (var dispatcher in _dispatchers.values) {
-      dispatcher.discard();
-    }
     _cancelLoading();
+    dispatcher.discard();
     super.dispose();
     _mounted = false;
   }
@@ -372,21 +349,19 @@ class HabitStatusChangerViewModel
 final class HabitStatusChangerForm {
   final HabitDate selectDate;
   final RecordStatusChangerStatus? selectStatus;
-  final TextEditingController skipInputController;
+  String? skipReason;
 
-  const HabitStatusChangerForm({
+  HabitStatusChangerForm({
     required this.selectDate,
     this.selectStatus,
-    required this.skipInputController,
+    this.skipReason,
   });
 
-  HabitStatusChangerForm toNewDate(HabitDate newDate) => copyWith(
-      selectDate: newDate,
-      selectStatus: null,
-      skipInputController: skipInputController..clear());
+  HabitStatusChangerForm toNewDate(HabitDate newDate) =>
+      copyWith(selectDate: newDate, selectStatus: null, skipReason: null);
 
-  HabitStatusChangerForm toDefault() => copyWith(
-      selectStatus: null, skipInputController: skipInputController..clear());
+  HabitStatusChangerForm toDefault() =>
+      copyWith(selectStatus: null, skipReason: null);
 
   HabitSummaryRecord? buildRecordFromHabit(HabitSummaryData data) {
     final uuid = data.getRecordByDate(selectDate)?.uuid;
@@ -473,7 +448,7 @@ final class HabitStatusChangerForm {
   @override
   String toString() =>
       "HabitStatusChangerForm(date=$selectDate,status=$selectStatus,"
-      "skipInputController=$skipInputController)";
+      "skipReason=$skipReason)";
 }
 
 final class HabitsDataDelagate {

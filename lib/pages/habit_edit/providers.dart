@@ -29,15 +29,7 @@ class PageProviders extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (context) => HabitFormViewModel(
-              initForm: initForm,
-              appbarScrollController: ScrollController(),
-              nameFieldInputController: TextEditingController(),
-              dailyGoalFieldInputController: TextEditingController(),
-              dailyGoalUnitFieldInputController: TextEditingController(),
-              dailyGoalExtraFieldInpuController: TextEditingController(),
-              descFieldInputController: TextEditingController(),
-            ),
+            create: (context) => HabitFormViewModel(initForm: initForm),
           ),
           ChangeNotifierProxyProvider<DBHelperViewModel, HabitFormViewModel>(
             create: (context) => context.read<HabitFormViewModel>(),

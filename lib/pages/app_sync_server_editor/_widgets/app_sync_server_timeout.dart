@@ -20,73 +20,26 @@ import 'package:provider/provider.dart';
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
-import '../../../models/app_sync_server.dart';
 import '../../../providers/app_sync_server_form.dart';
 
-class AppSyncServerTimeoutTile extends StatefulWidget {
-  static const kAllowdMaxTimeoutSecond = 3600;
-
+class AppSyncServerTimeoutTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
-  const AppSyncServerTimeoutTile({super.key, this.contentPadding});
-
-  @override
-  State<AppSyncServerTimeoutTile> createState() => _AppSyncServerTimeoutTile();
-}
-
-class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
-  late TextEditingController controller;
-  late AppSyncServerFormViewModel vm;
-  late AppSyncServerType crtType;
-
-  String get crtText => vm.timeout?.inSeconds.toString() ?? '';
-
-  @override
-  void initState() {
-    vm = context.read<AppSyncServerFormViewModel>();
-    crtType = vm.type;
-    controller =
-        TextEditingController.fromValue(TextEditingValue(text: crtText));
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    vm = context.read<AppSyncServerFormViewModel>();
-    if (crtType != vm.type) {
-      crtType = vm.type;
-      controller.text = crtText;
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
-
-  void _onChange(String value) {
-    if (value.isNotEmpty) {
-      final realSecond = clampInt(int.parse(value),
-          min: 0, max: AppSyncServerTimeoutTile.kAllowdMaxTimeoutSecond);
-      final realTimeout = Duration(seconds: realSecond).abs();
-      vm.timeout = realTimeout;
-      controller.text = realTimeout.inSeconds.toString();
-    } else {
-      vm.timeout = null;
-      controller.text = '';
-    }
-  }
+  const AppSyncServerTimeoutTile(
+      {super.key,
+      this.contentPadding,
+      this.inputFormatters,
+      this.controller,
+      this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    context
-        .select<AppSyncServerFormViewModel, AppSyncServerType>((vm) => vm.type);
-    debugPrint(controller.text);
     final l10n = L10n.of(context);
     return ListTile(
-      contentPadding: widget.contentPadding,
+      contentPadding: contentPadding,
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -102,13 +55,44 @@ class _AppSyncServerTimeoutTile extends State<AppSyncServerTimeoutTile> {
             signed: false, decimal: false),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(AppSyncServerTimeoutTile
-              .kAllowdMaxTimeoutSecond
-              .toString()
-              .length)
+          ...?inputFormatters
         ],
-        onChanged: _onChange,
+        onChanged: onChanged,
       ),
+    );
+  }
+}
+
+class AppWebDavSyncServerTimeoutTile extends StatelessWidget {
+  static const kAllowdMaxTimeoutSecond = 3600;
+
+  final TextEditingController? controller;
+  final ValueChanged<Duration?>? onChanged;
+
+  const AppWebDavSyncServerTimeoutTile(
+      {super.key, this.controller, this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppSyncServerTimeoutTile(
+      controller: controller,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(
+            kAllowdMaxTimeoutSecond.toString().length),
+      ],
+      onChanged: (value) {
+        final vm = context.read<AppSyncServerFormViewModel>();
+        if (!vm.mounted || vm.webdav == null) return;
+        if (value.isNotEmpty) {
+          final realSecond = clampInt(num.parse(value).toInt(),
+              min: 0, max: kAllowdMaxTimeoutSecond);
+          final realTimeout = Duration(seconds: realSecond).abs();
+          vm.webdav?.timeout = realTimeout;
+        } else {
+          vm.webdav?.timeout = null;
+        }
+        onChanged?.call(vm.webdav?.timeout);
+      },
     );
   }
 }

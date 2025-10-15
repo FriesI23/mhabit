@@ -12,41 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:great_list_view/great_list_view.dart';
 
 import '../models/habit_summary.dart';
 import '../reminders/notification_channel.dart';
-
-mixin ScrollControllerChangeNotifierMixin {
-  late final ScrollController _verticalScrollController;
-  bool _isAppbarPinned = false;
-
-  void initVerticalScrollController(
-      Function notifyListeners, ScrollController scrollController) {
-    _verticalScrollController = scrollController;
-    _verticalScrollController.addListener(() {
-      if (!_isAppbarPinned &&
-          _verticalScrollController.hasClients &&
-          _verticalScrollController.offset > kToolbarHeight) {
-        _isAppbarPinned = true;
-        notifyListeners();
-      } else if (_isAppbarPinned &&
-          _verticalScrollController.hasClients &&
-          _verticalScrollController.offset < kToolbarHeight) {
-        _isAppbarPinned = false;
-        notifyListeners();
-      }
-    });
-  }
-
-  void disposeVerticalScrollController() {
-    _verticalScrollController.dispose();
-  }
-
-  ScrollController get verticalScrollController => _verticalScrollController;
-
-  bool get isAppbarPinned => _isAppbarPinned;
-}
 
 abstract interface class ProviderMounted {
   bool get mounted;
@@ -61,5 +31,40 @@ mixin NotificationChannelDataMixin {
 
   void setNotificationChannelData(NotificationChannelData newData) {
     channelData = newData;
+  }
+}
+
+mixin PinnedAppbarMixin on ChangeNotifier {
+  bool _isAppbarPinned = false;
+
+  bool get isAppbarPinned => _isAppbarPinned;
+
+  void pinAppbar() {
+    if (isAppbarPinned) return;
+    _isAppbarPinned = true;
+    notifyListeners();
+  }
+
+  void unpinAppbar() {
+    if (!isAppbarPinned) return;
+    _isAppbarPinned = false;
+    notifyListeners();
+  }
+}
+
+mixin SingleAnimatedListDiffListDispatcherMixin<T> {
+  @protected
+  late final AnimatedListDiffListDispatcher<T> dispatcher;
+
+  AnimatedListController get dispatcherLinkedController =>
+      dispatcher.controller;
+
+  AnimatedListDiffBuilder<List<T>> get dispatcherLinkedBuilder =>
+      dispatcher.builder;
+
+  List<T> get dispatcherCurrentList => dispatcher.currentList;
+
+  void initDispatcher(AnimatedListDiffListDispatcher<T> dispatcher) {
+    this.dispatcher = dispatcher;
   }
 }

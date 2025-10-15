@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'dart:ui' show Color;
+
+import 'package:flutter/material.dart' show ColorScheme;
 
 extension CustomColorScheme on ColorScheme {
   Color get outlineOpacity64 => outline.withValues(alpha: 0.64);

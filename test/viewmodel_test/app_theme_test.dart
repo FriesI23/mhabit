@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/providers/app_theme.dart';
@@ -30,10 +29,6 @@ void main() async {
     test("getThemeType", () async {
       final obj = AppThemeViewModel()..updateProfile(profile);
       expect(obj.themeType, appDefaultThemeType);
-    });
-    test("getMatertialThemeType", () async {
-      final obj = AppThemeViewModel()..updateProfile(profile);
-      expect(obj.matertialThemeType, ThemeMode.system);
     });
   });
 }

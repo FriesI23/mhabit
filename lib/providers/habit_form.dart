@@ -14,12 +14,11 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../extensions/num_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_daily_goal.dart';
 import '../models/habit_display.dart';
@@ -31,63 +30,19 @@ import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitFormViewModel extends ChangeNotifier
-    with
-        ScrollControllerChangeNotifierMixin,
-        DBHelperLoadedMixin,
-        DBOperationsMixin
+    with DBHelperLoadedMixin, DBOperationsMixin, PinnedAppbarMixin
     implements ProviderMounted {
-  final TextEditingController _nameFieldInputController;
-  final TextEditingController _dailyGoalFieldInputController;
-  final TextEditingController _dailyGoalUnitFieldInputController;
-  final TextEditingController _dailyGoalExtraFieldInpuController;
-  final TextEditingController _descFieldInputController;
   // inside status
   bool _mounted = true;
 
   final HabitForm _form;
 
-  HabitFormViewModel({
-    HabitForm? initForm,
-    required ScrollController appbarScrollController,
-    required TextEditingController nameFieldInputController,
-    required TextEditingController dailyGoalFieldInputController,
-    required TextEditingController dailyGoalUnitFieldInputController,
-    required TextEditingController dailyGoalExtraFieldInpuController,
-    required TextEditingController descFieldInputController,
-  })  : _form = initForm ??
-            HabitForm(
-                name: '',
-                colorType: defaultHabitColorType,
-                startDate: HabitStartDate.dateTime(DateTime.now()),
-                frequency: HabitFrequency.daily,
-                dailyGoalUnit: defaultHabitDailyGoalUnit,
-                targetDays: defaultHabitTargetDays,
-                desc: ''),
-        _nameFieldInputController = nameFieldInputController,
-        _dailyGoalFieldInputController = dailyGoalFieldInputController,
-        _dailyGoalUnitFieldInputController = dailyGoalUnitFieldInputController,
-        _dailyGoalExtraFieldInpuController = dailyGoalExtraFieldInpuController,
-        _descFieldInputController = descFieldInputController {
-    initVerticalScrollController(notifyListeners, appbarScrollController);
-    _nameFieldInputController.text = _form.name ?? '';
-    _dailyGoalFieldInputController.text =
-        _form.dailyGoal?.toSimpleString() ?? '';
-    _dailyGoalUnitFieldInputController.text = _form.dailyGoalUnit ?? '';
-    _dailyGoalExtraFieldInpuController.text = _form.dailyGoalExtra != null
-        ? _form.dailyGoalExtra!.toSimpleString()
-        : '';
-    _descFieldInputController.text = _form.desc ?? '';
-  }
+  HabitFormViewModel({HabitForm? initForm})
+      : _form = initForm ?? HabitForm.empty();
 
   @override
   void dispose() {
     if (!_mounted) return;
-    _nameFieldInputController.dispose();
-    _dailyGoalFieldInputController.dispose();
-    _dailyGoalUnitFieldInputController.dispose();
-    _dailyGoalExtraFieldInpuController.dispose();
-    _descFieldInputController.dispose();
-    disposeVerticalScrollController();
     super.dispose();
     _mounted = false;
   }
@@ -100,38 +55,24 @@ class HabitFormViewModel extends ChangeNotifier
     super.notifyListeners();
   }
 
-  TextEditingController get nameFieldInputController =>
-      _nameFieldInputController;
-
-  TextEditingController get dailyGoalFieldInputController =>
-      _dailyGoalFieldInputController;
-
-  TextEditingController get dailyGoalUnitFieldInputController =>
-      _dailyGoalUnitFieldInputController;
-
-  TextEditingController get dailyGoalExtraFieldInpuController =>
-      _dailyGoalExtraFieldInpuController;
-
-  TextEditingController get descFieldInputController =>
-      _descFieldInputController;
-
-  String get name => _form.name!;
-  set name(String newName) {
-    appLog.value
-        .debug("$runtimeType.name", beforeVal: _form.name, afterVal: newName);
-    _form.name = newName;
+  String get name => _form.name;
+  set name(String value) {
+    final oldValue = _form.name;
+    _form.name = value;
+    appLog.value.debug("HabitForm.name", beforeVal: oldValue, afterVal: value);
     notifyListeners();
   }
 
-  HabitType get habitType => _form.type ?? defaultHabitType;
+  HabitType get habitType => _form.type;
   set habitType(HabitType newHabitType) {
     appLog.value.debug("$runtimeType.habitType",
         beforeVal: _form.type, afterVal: newHabitType);
     _form.type = newHabitType;
+    _form.dailyGoal = _form.dailyGoal.transform(type: _form.type);
     notifyListeners();
   }
 
-  HabitColorType get colorType => _form.colorType!;
+  HabitColorType get colorType => _form.colorType;
   set colorType(HabitColorType newColorType) {
     appLog.value.debug("$runtimeType.colorType",
         beforeVal: _form.colorType, afterVal: newColorType);
@@ -139,42 +80,46 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  num get dailyGoal {
-    if (_form.dailyGoal != null) return _form.dailyGoal!;
-    return HabitDailyGoalHelper.getDefaultDailyGoal(habitType);
-  }
+  bool get isDailyGoalValueValid => _form.dailyGoal.isGoalValid();
 
-  bool get isDailyGoalValueValid =>
-      HabitDailyGoalHelper(habitType: habitType, dailyGoal: dailyGoal)
-          .isGoalValid;
+  HabitDailyGoalContainer get dailyGoal => _form.dailyGoal;
 
-  set dailyGoal(num newDailyGoal) {
+  num get dailyGoalValue => _form.dailyGoal.dailyGoal;
+  set dailyGoalValue(num newDailyGoal) {
     appLog.value.debug("$runtimeType.dailyGoal",
-        beforeVal: _form.dailyGoal, afterVal: newDailyGoal);
-    _form.dailyGoal = newDailyGoal;
+        beforeVal: _form.dailyGoal.dailyGoal,
+        afterVal: newDailyGoal,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoal = newDailyGoal;
     notifyListeners();
   }
 
-  String get dailyGoalUnit => _form.dailyGoalUnit!;
+  String get dailyGoalUnit => _form.dailyGoal.dailyGoalUnit;
   set dailyGoalUnit(String newDailyGoalUnit) {
     appLog.value.debug("$runtimeType.dailyGoalUnit",
-        beforeVal: _form.dailyGoalUnit, afterVal: newDailyGoalUnit);
-    _form.dailyGoalUnit = newDailyGoalUnit;
+        beforeVal: _form.dailyGoal.dailyGoalUnit,
+        afterVal: newDailyGoalUnit,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoalUnit = newDailyGoalUnit;
     notifyListeners();
   }
 
-  num? get dailyGoalExtra => _form.dailyGoalExtra;
+  num? get dailyGoalExtra => _form.dailyGoal.dailyGoalExtra;
   set dailyGoalExtra(num? newDailyGoalExtra) {
     appLog.value.debug("$runtimeType.dailyGoalExtra",
-        beforeVal: _form.dailyGoalExtra, afterVal: newDailyGoalExtra);
-    _form.dailyGoalExtra = newDailyGoalExtra;
+        beforeVal: _form.dailyGoal.dailyGoalExtra,
+        afterVal: newDailyGoalExtra,
+        ex: [_form.dailyGoal.type]);
+    _form.dailyGoal.dailyGoalExtra = newDailyGoalExtra;
     notifyListeners();
   }
 
-  bool get isDailyGoalExtraValueValid =>
-      dailyGoalExtra == null || dailyGoalExtra! >= dailyGoal;
+  bool get isDailyGoalExtraValueValid {
+    final dailyGoalExtra = this.dailyGoalExtra;
+    return dailyGoalExtra == null || dailyGoalExtra >= dailyGoalValue;
+  }
 
-  HabitFrequency get frequency => _form.frequency!;
+  HabitFrequency get frequency => _form.frequency;
   set frequency(HabitFrequency newHabitFrequency) {
     appLog.value.debug("$runtimeType.frequency",
         beforeVal: _form.frequency, afterVal: newHabitFrequency);
@@ -182,7 +127,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  HabitStartDate get startDate => _form.startDate!;
+  HabitStartDate get startDate => _form.startDate;
   set startDate(HabitStartDate newDate) {
     appLog.value.debug("$runtimeType.startDate",
         beforeVal: _form.startDate, afterVal: newDate);
@@ -190,7 +135,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  int get targetDays => _form.targetDays!;
+  int get targetDays => _form.targetDays;
   set targetDays(int newTargetDays) {
     appLog.value.debug("$runtimeType.targetDays",
         beforeVal: _form.targetDays, afterVal: newTargetDays);
@@ -198,7 +143,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  String get desc => _form.desc!;
+  String get desc => _form.desc ?? "";
   set desc(String newDesc) {
     appLog.value
         .debug("$runtimeType.desc", beforeVal: _form.desc, afterVal: newDesc);
@@ -263,6 +208,7 @@ class HabitFormViewModel extends ChangeNotifier
   Future<HabitDBCell?> _saveNewHabit({bool returnResult = false}) async {
     final freq = frequency.toJson();
     final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
+    final reminder = this.reminder;
     final dbCell = HabitDBCell(
         type: habitType.dbCode,
         uuid: genHabitUUID(),
@@ -270,14 +216,14 @@ class HabitFormViewModel extends ChangeNotifier
         name: name,
         desc: desc,
         color: colorType.dbCode,
-        dailyGoal: dailyGoal,
+        dailyGoal: dailyGoalValue,
         dailyGoalUnit: dailyGoalUnit,
         dailyGoalExtra: dailyGoalExtra,
         freqType: freq["type"],
         freqCustom: jsonEncode(freq["args"]),
         startDate: startDate.epochDay,
         targetDays: targetDays,
-        remindCustom: reminder != null ? jsonEncode(reminder!.toJson()) : null,
+        remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
         remindQuestion: reminder != null ? reminderQuest : null,
         sortPosition: double.infinity,
         createT: now,
@@ -291,22 +237,25 @@ class HabitFormViewModel extends ChangeNotifier
   }
 
   Future<HabitDBCell?> _saveExistHabit({bool returnResult = false}) async {
+    assert(_form.editParams != null);
+
     final freq = frequency.toJson();
     final habitUUID = _form.editParams!.uuid;
+    final reminder = this.reminder;
     final dbCell = HabitDBCell(
       type: habitType.dbCode,
       uuid: habitUUID,
       name: name,
       desc: desc,
       color: colorType.dbCode,
-      dailyGoal: dailyGoal,
+      dailyGoal: dailyGoalValue,
       dailyGoalUnit: dailyGoalUnit,
       dailyGoalExtra: dailyGoalExtra,
       freqType: freq["type"],
       freqCustom: jsonEncode(freq["args"]),
       startDate: startDate.epochDay,
       targetDays: targetDays,
-      remindCustom: reminder != null ? jsonEncode(reminder!.toJson()) : null,
+      remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
     );
 
