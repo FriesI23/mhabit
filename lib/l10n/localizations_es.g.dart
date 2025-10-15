@@ -298,14 +298,14 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
-      one: 'Exported habit.',
+      other: '$count hábitos exportados ',
+      one: 'Hábito exportado',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Hábitos exportados';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Seleccionar todo';
@@ -719,7 +719,7 @@ class L10nEs extends L10n {
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Por defecto';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Recordatorio';
+  String get appSetting_reminderSubgroupText => 'Recordatorios y notificaciones';
 
   @override
   String get appSetting_dailyReminder_titleText => 'Recordatorio diario';
@@ -833,13 +833,13 @@ class L10nEs extends L10n {
   String get appSetting_syncOption_titleText => 'Opciones de sincronización';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Notificaciones';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+  String get appSetting_notify_subtitleTile => 'Preferencias de notificaciones';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
+  String get appSetting_notify_subtitleTile_android => 'Pulsa para abrir los ajustes de notificaciones';
 
   @override
   String get appSync_nowTile_titleText => 'Sincronizar ahora';
@@ -960,7 +960,7 @@ class L10nEs extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => 'Ubicación nueva';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'La sincronización creará los directorios necesarios y subirá los hábitos al servidor. ¿Continuar?';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sincronizar ahora!';
@@ -969,10 +969,10 @@ class L10nEs extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirmar sincronización';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'El directorio está vacío. La sincronización mezclará los hábitos subidos y en local. ¿Continuar?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirmar mezcla';
 
   @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
