@@ -5,7 +5,12 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 # Pre-Released: v1.18.0
 
-## v1.18.0-pre.2+104
+## v1.18.0-pre+105
+
+**🌐 Localization**
+
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
+- Updated Spain translation, thank to Andres Blasco Arnáiz's contribution on weblate.
 
 **🧹 Others**
 
@@ -23,15 +28,6 @@ Title: Pre-Released or Released: v1.2.3+xx
   - Separate ShowDialog from ViewModel
 - Refactor Move onDailyGoalTextInputChanged to Habit Input Helper
 - Refactor Habit Data Flow with Dispatcher (#374)
-
-## v1.18.0-pre.1+103
-
-**🌐 Localization**
-
-- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
-
-**🧹 Others**
-
 - Numbers changes can be saved on iOS/iPadOS (#351)
 - Adjusted project code directory structure (#353)
 - Refactored App Sync Server Form with MVVM architecture (#364)
