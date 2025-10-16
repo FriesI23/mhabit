@@ -92,7 +92,7 @@ brew install table-habit@beta
 Download by visiting ["Flathub"][flathub-myapp] or running:
 
 ```shell
-flatpak install flathub io.github.friesi23.mhabitTable Habit
+flatpak install flathub io.github.friesi23.mhabit
 ```
 
 Ensure Flatpak is properly installed and Flathub is correctly configured,
