@@ -1,10 +1,3 @@
-<!-- markdownlint-disable MD036 -->
-<!--
-Title: Pre-Released or Released: v1.2.3+xx
--->
-
-# Released: v1.18.0+106
-
 **🌐 Localization**
 
 - Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
@@ -12,9 +5,9 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 **🧹 Others**
 
+- Numbers changes can be saved on iOS/iPadOS (#351)
 - Fix App Sync Form to Keep Local Password on UI Changes (#368)
-  - Numbers changes can be saved on iOS/iPadOS (#351)
-- Refactor Project Code:
+- **Refactor Project Code**:
   - Adjusted project code directory structure (#353)
   - Refactored App Sync Server Form with MVVM architecture (#364)
   - Refactored Habit Form with MVVM architecture (#366)
@@ -31,4 +24,4 @@ Title: Pre-Released or Released: v1.2.3+xx
     - Separate ShowDialog from ViewModel
   - Refactor Habit Data Flow with Dispatcher (#374)
   - Refactor Move onDailyGoalTextInputChanged to Habit Input Helper
-- [Github Action]: Added pre-release cleanup CI for app release
+- **[Github Action]:** Added pre-release cleanup CI for app release
