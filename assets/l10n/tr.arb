@@ -277,6 +277,18 @@
       }
     }
   },
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Alışkanlık dışa aktarıldı.} other {{count} alışkanlık dışa aktarıldı.}}",
+  "@habitDisplay_exportHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of exported habits",
+        "example": "3"
+      }
+    }
+  },
+  "habitDisplay_exportAllHabitsSuccSnackbarText": "Bütün Alışkanlıklar Dışa Aktarıldı",
+  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
   "habitDisplay_editPopMenu_selectAll": "Hepsini Seç",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "Dışa aktar",
@@ -608,7 +620,7 @@
   "@appSetting_collapsed_calendar_bararea_subtitleText": {},
   "appSetting_collapsed_calendar_bararea_defaultText": "Varsayılan",
   "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Hatırlatıcı",
+  "appSetting_reminderSubgroupText": "Hatırlatıcı & Bildirim",
   "@appSetting_reminderSubgroupText": {
     "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
   },
@@ -707,6 +719,12 @@
   "@appSetting_synSubgroupText": {},
   "appSetting_syncOption_titleText": "Eşleme Ayarları",
   "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "Bildirimler",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "Bildirim tercihlerini düzenle",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "Sistem bildirim ayarlarını açmak için dokun",
+  "@appSetting_notify_subtitleTile_android": {},
   "appSync_nowTile_titleText": "Şimdi Eşle",
   "@appSync_nowTile_titleText": {},
   "appSync_nowTile_titleText_syncing": "Eşleniyor",
@@ -983,6 +1001,23 @@
   },
   "appSync_serverEditor_netTypeTile_lowDataText": "Düşük Veri",
   "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "Eşitlemeye hazırlanıyor...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {Eşitlendi ({type})} failed {Eşitleme Başarısız ({type})} other {Eşitleniyor ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
   "appSync_serverEditor_netTypeTile_lowDataTooltip": "Düşük veri kipinde eşle",
   "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
   "experimentalFeatures_warnginBanner_title": "Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.",
@@ -1336,5 +1371,13 @@
   "channelName_appReminder": "Hatırlatma",
   "@channelName_appReminder": {},
   "channelName_appDebugger": "Hata ayıklayıcı",
-  "@channelName_appDebugger": {}
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "Eşitleme Süreci",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "Eşitleme ilerlemesini ve başarılı sonuçları göstermek için kullanılır",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "Eşitleme Başarısız",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "Eşitleme başarısız olduğunda uyarmak için kullanılır",
+  "@channelDesc_appSyncFailed": {}
 }
