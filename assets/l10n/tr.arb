@@ -1,1340 +1,1383 @@
 {
-  "@@locale": "tr",
-  "localeScriptName": "Türkçe",
-  "@localeScriptName": {
-    "description": "The human-readable name of the language used for the locale."
-  },
-  "appName": "Table Habit",
-  "@appName": {},
-  "habitEdit_saveButton_text": "Kaydet",
-  "@habitEdit_saveButton_text": {},
-  "habitEdit_habitName_hintText": "Alışkanlık Adı ...",
-  "@habitEdit_habitName_hintText": {},
-  "habitEdit_colorPicker_title": "Renk seç",
-  "@habitEdit_colorPicker_title": {},
-  "habitEdit_habitTypeDialog_title": "Alışkanlık türü",
-  "@habitEdit_habitTypeDialog_title": {},
-  "habitEdit_habitType_positiveText": "Olumlu",
-  "@habitEdit_habitType_positiveText": {},
-  "habitEdit_habitType_negativeText": "Olumsuz",
-  "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Günlük hedef, varsayılan {number}",
-  "@habitEdit_habitDailyGoal_hintText": {
-    "description": "default habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeHintText": "Günlük alt sınır, varsayılan {number}",
-  "@habitEdit_habitDailyGoal_negativeHintText": {
-    "description": "default habit daily goal for negative habit",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText01": "Günlük hedef {number}'den büyük olmalı",
-  "@habitEdit_habitDailyGoal_errorText01": {
-    "description": "minimum number for habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText02": "Günlük hedef en fazla {number} olabilir",
-  "@habitEdit_habitDailyGoal_errorText02": {
-    "description": "maximum number for habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText01": "Günlük hedef en az {number} olabilir",
-  "@habitEdit_habitDailyGoal_negativeErrorText01": {
-    "description": "minimum number for negative habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText02": "Günlük hedef en fazla {number} olabilir",
-  "@habitEdit_habitDailyGoal_negativeErrorText02": {
-    "description": "maximum number for negative habit daily goal",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalUnit_hintText": "Günlük hedef birimi",
-  "@habitEdit_habitDailyGoalUnit_hintText": {},
-  "habitEdit_habitDailyGoalExtra_hintText": "İstenilen maksimum günlük hedef",
-  "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitDailyGoalExtra_errorText": "Geçersiz değer, boş bırakılmalı ya da {dailyGoal}'den büyük veya eşit olmalı",
-  "@habitEdit_habitDailyGoalExtra_errorText": {
-    "placeholders": {
-      "dailyGoal": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maksimum günlük limit",
-  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
-  "habitEdit_frequencySelector_title": "Sıklık seç",
-  "@habitEdit_frequencySelector_title": {},
-  "habitEdit_habitFreq_daily": "Günlük",
-  "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek": "",
-  "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_habitFreq_perweek_ex01": "kez haftada",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth": "",
-  "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_permonth_ex01": "kez ayda",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "gün",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "günde",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
-  },
-  "habitEdit_habitFreq_show_daily": "Günlük",
-  "@habitEdit_habitFreq_show_daily": {},
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Haftada bir} other{Haftada en az {freq} kez}}",
-  "@habitEdit_habitFreq_show_perweek": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Ayda bir} other{Ayda en az {freq} kez}}",
-  "@habitEdit_habitFreq_show_permonth": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Her {days} günde bir} other{Her {days} günde en az {freq} kez}}",
-  "@habitEdit_habitFreq_show_perdayfreq": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_title": "{targetDays} gün",
-  "@habitEdit_targetDays_title": {
-    "placeholders": {
-      "targetDays": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_dialogTitle": "Hedef Günleri Seçin",
-  "@habitEdit_targetDays_dialogTitle": {},
-  "habitEdit_targetDays": "gün",
-  "@habitEdit_targetDays": {},
-  "habitEdit_reminder_hintText": "Hatırlatıcı",
-  "@habitEdit_reminder_hintText": {},
-  "habitEdit_reminder_freq_weekHelpText": "Haftanın her günü",
-  "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " her hafta",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
-  "habitEdit_reminder_freq_monthHelpText": "Ayın her günü",
-  "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " her ay",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
-  "habitEdit_reminderQuest_hintText": "Soru, örn. Bugün egzersiz yaptın mı?",
-  "@habitEdit_reminderQuest_hintText": {},
-  "habitEdit_reminder_dialogTitle": "Hatırlatıcı tipi seç",
-  "@habitEdit_reminder_dialogTitle": {},
-  "habitEdit_reminder_dialogType_whenNeeded": "Tamamlanması gerektiğinde",
-  "@habitEdit_reminder_dialogType_whenNeeded": {},
-  "habitEdit_reminder_dialogType_daily": "Günlük",
-  "@habitEdit_reminder_dialogType_daily": {},
-  "habitEdit_reminder_dialogType_week": "Haftalık",
-  "@habitEdit_reminder_dialogType_week": {},
-  "habitEdit_reminder_dialogType_month": "Aylık",
-  "@habitEdit_reminder_dialogType_month": {},
-  "habitEdit_reminder_dialogConfirm": "onayla",
-  "@habitEdit_reminder_dialogConfirm": {},
-  "habitEdit_reminder_dialogCancel": "iptal et",
-  "@habitEdit_reminder_dialogCancel": {},
-  "habitEdit_reminder_cancelDialogTitle": "Onayla",
-  "@habitEdit_reminder_cancelDialogTitle": {},
-  "habitEdit_reminder_cancelDialogSubtitle": "Bu hatırlatıcıyı silmeyi onaylıyor musunuz",
-  "@habitEdit_reminder_cancelDialogSubtitle": {},
-  "habitEdit_reminder_cancelDialogConfirm": "onayla",
-  "@habitEdit_reminder_cancelDialogConfirm": {},
-  "habitEdit_reminder_cancelDialogCancel": "iptal et",
-  "@habitEdit_reminder_cancelDialogCancel": {},
-  "habitEdit_reminder_weekdayText_monday": "Pzt",
-  "@habitEdit_reminder_weekdayText_monday": {},
-  "habitEdit_reminder_weekdayText_tuesday": "Sal",
-  "@habitEdit_reminder_weekdayText_tuesday": {},
-  "habitEdit_reminder_weekdayText_wednesday": "Çar",
-  "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_thursday": "Per",
-  "@habitEdit_reminder_weekdayText_thursday": {},
-  "habitEdit_reminder_weekdayText_friday": "Cum",
-  "@habitEdit_reminder_weekdayText_friday": {},
-  "habitEdit_reminder_weekdayText_saturday": "Cmt",
-  "@habitEdit_reminder_weekdayText_saturday": {},
-  "habitEdit_reminder_weekdayText_sunday": "Paz",
-  "@habitEdit_reminder_weekdayText_sunday": {},
-  "habitEdit_desc_hintText": "Not, Markdown desteklenir",
-  "@habitEdit_desc_hintText": {},
-  "habitEdit_create_datetime_prefix": "Oluşturuldu: ",
-  "@habitEdit_create_datetime_prefix": {},
-  "habitEdit_modify_datetime_prefix": "Düzenlendi: ",
-  "@habitEdit_modify_datetime_prefix": {},
-  "habitDisplay_fab_text": "Yeni Alışkanlık",
-  "@habitDisplay_fab_text": {},
-  "habitDisplay_emptyImage_text_01": "Uzun bir yolculuk, ilk adımla başlar",
-  "@habitDisplay_emptyImage_text_01": {},
-  "habitDisplay_archiveHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Arşivle?",
-  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
-  "habitDisplay_archiveHabitsConfirmDialog_confirm": "onayla",
-  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_archiveHabitsConfirmDialog_cancel": "iptal et",
-  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_archiveHabitsSuccSnackbarText": "{count} alışkanlık arşivlendi",
-  "@habitDisplay_archiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Arşivden Çıkar?",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "onayla",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "iptal et",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} alışkanlık arşivden çıkarıldı",
-  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Sil?",
-  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
-  "habitDisplay_deleteHabitsConfirmDialog_confirm": "onayla",
-  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
-  "habitDisplay_deleteHabitsConfirmDialog_cancel": "iptal et",
-  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
-  "habitDisplay_deleteHabitsSuccSnackbarText": "{count} alışkanlık silindi",
-  "@habitDisplay_deleteHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Alışkanlık silindi: “{name}”",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Habit name."
-      }
-    }
-  },
-  "habitDisplay_editPopMenu_selectAll": "Hepsini Seç",
-  "@habitDisplay_editPopMenu_selectAll": {},
-  "habitDisplay_editPopMenu_export": "Dışa aktar",
-  "@habitDisplay_editPopMenu_export": {},
-  "habitDisplay_editPopMenu_delete": "Sil",
-  "@habitDisplay_editPopMenu_delete": {},
-  "habitDisplay_editPopMenu_clone": "Şablon",
-  "@habitDisplay_editPopMenu_clone": {},
-  "habitDisplay_editButton_tooltip": "Düzenle",
-  "@habitDisplay_editButton_tooltip": {},
-  "habitDisplay_archiveButton_tooltip": "Arşivle",
-  "@habitDisplay_archiveButton_tooltip": {},
-  "habitDisplay_unarchiveButton_tooltip": "Arşivden çıkar",
-  "@habitDisplay_unarchiveButton_tooltip": {},
-  "habitDisplay_settingButton_tooltip": "Ayar",
-  "@habitDisplay_settingButton_tooltip": {},
-  "habitDisplay_statsMenu_statSubgroupText": "Güncel",
-  "@habitDisplay_statsMenu_statSubgroupText": {},
-  "habitDisplay_statsMenu_completedTileText": "Tamamlandı",
-  "@habitDisplay_statsMenu_completedTileText": {},
-  "habitDisplay_statsMenu_inProgresTileText": "Sürüyor",
-  "@habitDisplay_statsMenu_inProgresTileText": {},
-  "habitDisplay_statsMenu_archivedTileText": "Arşivlendi",
-  "@habitDisplay_statsMenu_archivedTileText": {},
-  "habitDisplay_statsMenu_popularitySubgroupText": "En İyi Alışkanlıklar: Son 30 Gündeki Değişiklikler",
-  "@habitDisplay_statsMenu_popularitySubgroupText": {},
-  "habitDisplay_mainMenu_lightTheme": "Açık Tema",
-  "@habitDisplay_mainMenu_lightTheme": {},
-  "habitDisplay_mainMenu_darkTheme": "Koyu Tema",
-  "@habitDisplay_mainMenu_darkTheme": {},
-  "habitDisplay_mainMenu_followSystemTheme": "Sistemi İzle",
-  "@habitDisplay_mainMenu_followSystemTheme": {},
-  "habitDisplay_mainMenu_showArchivedTileText": "Arşivlenenleri Göster",
-  "@habitDisplay_mainMenu_showArchivedTileText": {},
-  "habitDisplay_mainMenu_showCompletedTileText": "Tamamlananları Göster",
-  "@habitDisplay_mainMenu_showCompletedTileText": {},
-  "habitDisplay_mainMenu_showActivedTileText": "Aktif Olanları Göster",
-  "@habitDisplay_mainMenu_showActivedTileText": {},
-  "habitDisplay_mainMenu_settingTileText": "Ayarlar",
-  "@habitDisplay_mainMenu_settingTileText": {},
-  "habitDisplay_sort_reverseText": "Ters çevir",
-  "@habitDisplay_sort_reverseText": {},
-  "habitDisplay_sortDirection_asc": "(Yükselen)",
-  "@habitDisplay_sortDirection_asc": {},
-  "habitDisplay_sortDirection_Desc": "(Alçalan)",
-  "@habitDisplay_sortDirection_Desc": {},
-  "habitDisplay_sortType_manual": "Benim sıralamam",
-  "@habitDisplay_sortType_manual": {},
-  "habitDisplay_sortType_name": "Ada göre",
-  "@habitDisplay_sortType_name": {},
-  "habitDisplay_sortType_colorType": "Renge göre",
-  "@habitDisplay_sortType_colorType": {},
-  "habitDisplay_sortType_progress": "Orana göre",
-  "@habitDisplay_sortType_progress": {},
-  "habitDisplay_sortType_startT": "Başlangıç tarihine göre",
-  "@habitDisplay_sortType_startT": {},
-  "habitDisplay_sortType_status": "Duruma göre",
-  "@habitDisplay_sortType_status": {},
-  "habitDisplay_sortTypeDialog_title": "Sırala",
-  "@habitDisplay_sortTypeDialog_title": {},
-  "habitDisplay_sortTypeDialog_confirm": "onayla",
-  "@habitDisplay_sortTypeDialog_confirm": {},
-  "habitDisplay_sortTypeDialog_cancel": "iptal et",
-  "@habitDisplay_sortTypeDialog_cancel": {},
-  "habitDisplay_debug_debugSubgroup_title": "🛠️Hata ayıkla",
-  "@habitDisplay_debug_debugSubgroup_title": {},
-  "habitDetail_editButton_tooltip": "Düzenle",
-  "@habitDetail_editButton_tooltip": {},
-  "habitDetail_editPopMenu_unarchive": "Arşivden çıkar",
-  "@habitDetail_editPopMenu_unarchive": {},
-  "habitDetail_editPopMenu_archive": "Arşivle",
-  "@habitDetail_editPopMenu_archive": {},
-  "habitDetail_editPopMenu_export": "Dışa aktar",
-  "@habitDetail_editPopMenu_export": {},
-  "habitDetail_editPopMenu_delete": "Sil",
-  "@habitDetail_editPopMenu_delete": {},
-  "habitDetail_editPopMenu_clone": "Şablon",
-  "@habitDetail_editPopMenu_clone": {},
-  "habitDetail_confirmDialog_confirm": "onayla",
-  "@habitDetail_confirmDialog_confirm": {},
-  "habitDetail_confirmDialog_cancel": "iptal et",
-  "@habitDetail_confirmDialog_cancel": {},
-  "habitDetail_archiveConfirmDialog_titleText": "Alışkanlığı Arşivle?",
-  "@habitDetail_archiveConfirmDialog_titleText": {},
-  "habitDetail_unarchiveConfirmDialog_titleText": "Alışkanlığı Arşivden Çıkar?",
-  "@habitDetail_unarchiveConfirmDialog_titleText": {},
-  "habitDetail_deleteConfirmDialog_titleText": "Alışkanlığı Sil?",
-  "@habitDetail_deleteConfirmDialog_titleText": {},
-  "habitDetail_summary_title": "Özet",
-  "@habitDetail_summary_title": {},
-  "habitDetail_summary_body": "Mevcut puan {score}, başlangıçtan bu yana {days} gün geçti.",
-  "@habitDetail_summary_body": {
-    "placeholders": {
-      "score": {
-        "type": "String",
-        "example": "0.0"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_summary_preBody": "{days, plural, =1{Yarın başlıyor.} other{{days} gün sonra başlayacak.}}",
-  "@habitDetail_summary_preBody": {
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{TAMAMLANMADI} =2{YETERSİZ} other{}}",
-  "@habitDetail_heatmap_leftHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{FAZLASIYLA TAMAMLANDI} =2{KUSURSUZ} other{}}",
-  "@habitDetail_heatmap_rightHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Eşik Değeri} other{Hedef}}",
-  "@habitDetail_descDailyGoal_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitText": "Birim: {unit}",
-  "@habitDetail_descDailyGoal_unitText": {
-    "placeholders": {
-      "unit": {
-        "type": "String",
-        "example": "M/S"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitEmptyText": "boş",
-  "@habitDetail_descDailyGoal_unitEmptyText": {},
-  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Günler}}",
-  "@habitDetail_descTargetDays_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descTargetDays_unitText": "g",
-  "@habitDetail_descTargetDays_unitText": {},
-  "habitDetail_descRecordsNum_titleText": "Kayıtlar",
-  "@habitDetail_descRecordsNum_titleText": {},
-  "habitDetail_scoreChart_title": "Puan",
-  "@habitDetail_scoreChart_title": {},
-  "habitDetail_scoreChartCombine_dailyText": "Gün",
-  "@habitDetail_scoreChartCombine_dailyText": {},
-  "habitDetail_scoreChartCombine_weeklyText": "Hafta",
-  "@habitDetail_scoreChartCombine_weeklyText": {},
-  "habitDetail_scoreChartCombine_monthlyText": "Ay",
-  "@habitDetail_scoreChartCombine_monthlyText": {},
-  "habitDetail_scoreChartCombine_yearlyText": "Yıl",
-  "@habitDetail_scoreChartCombine_yearlyText": {},
-  "habitDetail_freqChart_freqTitle": "Sıklık",
-  "@habitDetail_freqChart_freqTitle": {},
-  "habitDetail_freqChart_historyTitle": "Geçmiş",
-  "@habitDetail_freqChart_historyTitle": {},
-  "habitDetail_freqChart_combinedTitle": "Sıklık & Geçmiş",
-  "@habitDetail_freqChart_combinedTitle": {},
-  "habitDetail_freqChartCombine_weeklyText": "Hafta",
-  "@habitDetail_freqChartCombine_weeklyText": {},
-  "habitDetail_freqChartCombine_monthlyText": "Ay",
-  "@habitDetail_freqChartCombine_monthlyText": {},
-  "habitDetail_freqChartCombine_yearlyText": "Yıl",
-  "@habitDetail_freqChartCombine_yearlyText": {},
-  "habitDetail_freqChartNaviBar_nowText": "Şimdi",
-  "@habitDetail_freqChartNaviBar_nowText": {},
-  "habitDetail_freqChart_expanded_hideTooltip": "Geçmiş Grafiğini Gizle",
-  "@habitDetail_freqChart_expanded_hideTooltip": {},
-  "habitDetail_freqChart_expanded_showTooltip": "Geçmiş Grafiğini Göster",
-  "@habitDetail_freqChart_expanded_showTooltip": {},
-  "habitDetail_descSubgroup_title": "Not",
-  "@habitDetail_descSubgroup_title": {},
-  "habitDetail_otherSubgroup_title": "Diğer",
-  "@habitDetail_otherSubgroup_title": {},
-  "habitDetail_habitType_title": "Tür",
-  "@habitDetail_habitType_title": {},
-  "habitDetail_reminderTile_title": "Hatırlatıcı",
-  "@habitDetail_reminderTile_title": {},
-  "habitDetail_freqTile_title": "Tekrar",
-  "@habitDetail_freqTile_title": {},
-  "habitDetail_startDateTile_title": "Başlangıç Tarihi",
-  "@habitDetail_startDateTile_title": {},
-  "habitDetail_createDateTile_title": "Oluşturuldu",
-  "@habitDetail_createDateTile_title": {},
-  "habitDetail_modifyDateTile_title": "Düzenlendi",
-  "@habitDetail_modifyDateTile_title": {},
-  "habitDetail_editHeatmapCal_dateButtonText": "tarih",
-  "@habitDetail_editHeatmapCal_dateButtonText": {},
-  "habitDetail_editHeatmapCal_valueButtonText": "değer",
-  "@habitDetail_editHeatmapCal_valueButtonText": {},
-  "habitDetail_editHeatmapCal_backToToday_tooltipText": "bugüne geri dön",
-  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
-  "habitDetail_notFoundText": "Alışkanlığı yükleme başarısız oldu",
-  "@habitDetail_notFoundText": {},
-  "habitDetail_notFoundRetryText": "Tekrar dene",
-  "@habitDetail_notFoundRetryText": {},
-  "habitDetail_changeGoal_title": "Hedefi değiştir",
-  "@habitDetail_changeGoal_title": {},
-  "habitDetail_changeGoal_currentChipText": "güncel: {goal}",
-  "@habitDetail_changeGoal_currentChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_doneChipText": "tamamlanan: {goal}",
-  "@habitDetail_changeGoal_doneChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_undoneChipText": "tamamlanmamış",
-  "@habitDetail_changeGoal_undoneChipText": {},
-  "habitDetail_changeGoal_extraChipText": "{goal}",
-  "@habitDetail_changeGoal_extraChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_helpText": "Günlük hedef, varsayılan: {goal}",
-  "@habitDetail_changeGoal_helpText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_cancelText": "iptal et",
-  "@habitDetail_changeGoal_cancelText": {},
-  "habitDetail_changeGoal_saveText": "kaydet",
-  "@habitDetail_changeGoal_saveText": {},
-  "habitDetail_skipReason_title": "Sebebi geç",
-  "@habitDetail_skipReason_title": {},
-  "habitDetail_skipReason_bodyHelpText": "Buraya bir şey yaz...",
-  "@habitDetail_skipReason_bodyHelpText": {},
-  "habitDetail_skipReason_cancelText": "iptal et",
-  "@habitDetail_skipReason_cancelText": {},
-  "habitDetail_skipReason_saveText": "kaydet",
-  "@habitDetail_skipReason_saveText": {},
-  "appSetting_appbar_titleText": "Ayarlar",
-  "@appSetting_appbar_titleText": {},
-  "appSetting_displaySubgroupText": "Görünüm",
-  "@appSetting_displaySubgroupText": {},
-  "appSetting_operationSubgroupText": "Kullanım",
-  "@appSetting_operationSubgroupText": {},
-  "appSetting_dragCalendarByPageTile_titleText": "Takvimi sayfa sayfa kaydır",
-  "@appSetting_dragCalendarByPageTile_titleText": {},
-  "appSetting_dragCalendarByPageTile_subtitleText": "Bu özellik etkinleştirildiğinde, ana sayfadaki uygulama çubuğu takvimi sayfa sayfa kaydırılacaktır. Varsayılan olarak kapalıdır.",
-  "@appSetting_dragCalendarByPageTile_subtitleText": {},
-  "appSetting_changeRecordStatusOpTile_titleText": "Kayıt Durumunu Değiştir",
-  "@appSetting_changeRecordStatusOpTile_titleText": {},
-  "appSetting_changeRecordStatusOpTile_subtitleText": "Ana sayfadaki günlük kayıtların durumunu değiştirmek için tıklama davranışını düzenleyin.",
-  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
-  "appSetting_openRecordStatusDialogOpTile_titleText": "Detaylı Kaydı Aç",
-  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
-  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.",
-  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
-  "appSetting_firstDayOfWeek_titleText": "Haftanın ilk günü",
-  "@appSetting_firstDayOfWeek_titleText": {},
-  "appSetting_firstDayOfWeekDialog_titleText": "Haftanın ilk gününü göster",
-  "@appSetting_firstDayOfWeekDialog_titleText": {},
-  "appSetting_firstDayOfWeekDialog_defaultText": " (Varsayılan)",
-  "@appSetting_firstDayOfWeekDialog_defaultText": {},
-  "appSetting_changeLanguage_followSystem_text": "Sistemi İzle ({localeName})",
-  "@appSetting_changeLanguage_followSystem_text": {
-    "placeholders": {
-      "localeName": {
-        "type": "String",
-        "example": "English"
-      }
-    }
-  },
-  "appSetting_changeLanguage_followSystem_noLocale_text": "Sistemi İzle",
-  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
-  "appSetting_changeLanguageTile_titleText": "Dil",
-  "@appSetting_changeLanguageTile_titleText": {},
-  "appSetting_changeLanguageDialog_titleText": "Dil Seç",
-  "@appSetting_changeLanguageDialog_titleText": {},
-  "appSetting_dateDisplayFormat_titleText": "Tarih gösterim biçimi ({formatTemplate})",
-  "@appSetting_dateDisplayFormat_titleText": {
-    "placeholders": {
-      "formatTemplate": {
-        "type": "String",
-        "example": "yyyy/M/d"
-      }
-    }
-  },
-  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "sistem ayarını izle",
-  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
-  "appSetting_dateDisplayFormat_subTitleText": "Yapılandırılan tarih formatı, alışkanlık detay sayfasındaki tarih gösterimine uygulanacaktır.",
-  "@appSetting_dateDisplayFormat_subTitleText": {},
-  "appSetting_compactUISwitcher_titleText": "Alışkanlıklar sayfasında Kompakt Kullanıcı Arayüzünü etkinleştir",
-  "@appSetting_compactUISwitcher_titleText": {},
-  "appSetting_compactUISwitcher_subtitleText": "Alışkanlıklar kontrol tablosunun daha fazla içerik görüntülemesine izin verin, ancak bazı kullanıcı arayüzü ve metinler daha küçük görünebilir.",
-  "@appSetting_compactUISwitcher_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_titleText": "Alışkanlık işaretleme alanı boyut ayarı",
-  "@appSetting_collapsed_calendar_bararea_titleText": {},
-  "appSetting_collapsed_calendar_bararea_subtitleText": "Alışkanlık işaretleme tablo alanında daha fazla/az alan için yüzdeyi ayarlayın.",
-  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_defaultText": "Varsayılan",
-  "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Hatırlatıcı",
-  "@appSetting_reminderSubgroupText": {
-    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
-  },
-  "appSetting_dailyReminder_titleText": "Günlük hatırlatıcı",
-  "@appSetting_dailyReminder_titleText": {},
-  "appSetting_backupAndRestoreSubgroupText": "Yedekleme & geri yükleme",
-  "@appSetting_backupAndRestoreSubgroupText": {},
-  "appSetting_export_titleText": "Dışa aktar",
-  "@appSetting_export_titleText": {},
-  "appSetting_export_subtitleText": "Dışa aktarılan alışkanlıklar JSON formatındadır, bu dosya geri içe aktarılabilir.",
-  "@appSetting_export_subtitleText": {},
-  "appSetting_import_titleText": "İçe aktar",
-  "@appSetting_import_titleText": {},
-  "appSetting_import_subtitleText": "Alışkanlıkları JSON dosyadan içe aktar.",
-  "@appSetting_import_subtitleText": {},
-  "appSetting_importDialog_confirmTitle": "{count} alışkanlıkları içe aktarmayı onayla?",
-  "@appSetting_importDialog_confirmTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_confirmSubtitle": "Not: İçe aktarma, mevcut alışkanlıkları silmez.",
-  "@appSetting_importDialog_confirmSubtitle": {},
-  "appSetting_importDialog_confirm_confirmText": "onayla",
-  "@appSetting_importDialog_confirm_confirmText": {},
-  "appSetting_importDialog_confirm_cancelText": "iptal et",
-  "@appSetting_importDialog_confirm_cancelText": {},
-  "appSetting_importDialog_importingTitle": "İçe aktarıldı {completeCount}/{totalCount}",
-  "@appSetting_importDialog_importingTitle": {
-    "placeholders": {
-      "completeCount": {
-        "type": "int",
-        "example": "1"
-      },
-      "totalCount": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_completeTitle": "İçe aktarılan {count}",
-  "@appSetting_importDialog_completeTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_complete_closeLabel": "kapat",
-  "@appSetting_importDialog_complete_closeLabel": {},
-  "appSetting_resetConfig_titleText": "Yapılandırmaları sıfırla",
-  "@appSetting_resetConfig_titleText": {},
-  "appSetting_resetConfig_subtitleText": "Tüm yapılandırmaları varsayılana sıfırla.",
-  "@appSetting_resetConfig_subtitleText": {},
-  "appSetting_resetConfigDialog_titleText": "Yapılandırmaları sıfırla?",
-  "@appSetting_resetConfigDialog_titleText": {},
-  "appSetting_resetConfigDialog_subtitleText": "Tüm yapılandırmaları varsayılana sıfırla, uygulamak için uygulama yeniden başlatılmalıdır.",
-  "@appSetting_resetConfigDialog_subtitleText": {},
-  "appSetting_resetConfigDialog_cancelText": "iptal et",
-  "@appSetting_resetConfigDialog_cancelText": {},
-  "appSetting_resetConfigDialog_confirmText": "onayla",
-  "@appSetting_resetConfigDialog_confirmText": {},
-  "appSetting_resetConfigSuccess_snackbarText": "uygulama yapılandırmalarını sıfırlama başarılı",
-  "@appSetting_resetConfigSuccess_snackbarText": {},
-  "appSetting_otherSubgroupText": "Diğer",
-  "@appSetting_otherSubgroupText": {},
-  "appSetting_developMode_titleText": "Geliştirici Modu",
-  "@appSetting_developMode_titleText": {},
-  "appSetting_clearCache_titleText": "Önbelleği Temizle",
-  "@appSetting_clearCache_titleText": {},
-  "appSetting_clearCacheDialog_titleText": "Önbelleği Temizle",
-  "@appSetting_clearCacheDialog_titleText": {},
-  "appSetting_clearCacheDialog_subtitleText": "Önbellek temizlendikten sonra, bazı özel değerler varsayılan değerlere geri yüklenir.",
-  "@appSetting_clearCacheDialog_subtitleText": {},
-  "appSetting_clearCacheDialog_cancelText": "iptal et",
-  "@appSetting_clearCacheDialog_cancelText": {},
-  "appSetting_clearCacheDialog_confirmText": "onayla",
-  "@appSetting_clearCacheDialog_confirmText": {},
-  "appSetting_clearCache_snackBar_partSuccText": "Kısmi önbellek temizlenemedi",
-  "@appSetting_clearCache_snackBar_partSuccText": {},
-  "appSetting_clearCache_snackBar_succText": "Önbellek başarıyla temizlendi",
-  "@appSetting_clearCache_snackBar_succText": {},
-  "appSetting_clearCache_snackBar_failText": "Önbellek temizlenemedi",
-  "@appSetting_clearCache_snackBar_failText": {},
-  "appSetting_debugger_titleText": "Hata Ayıklama Bilgisi",
-  "@appSetting_debugger_titleText": {},
-  "appSetting_about_titleText": "Hakkında",
-  "@appSetting_about_titleText": {},
-  "appSetting_experimentalFeatureTile_titleText": "Deneysel Özellikler",
-  "@appSetting_experimentalFeatureTile_titleText": {},
-  "appSetting_synSubgroupText": "Eşleme",
-  "@appSetting_synSubgroupText": {},
-  "appSetting_syncOption_titleText": "Eşleme Ayarları",
-  "@appSetting_syncOption_titleText": {},
-  "appSync_nowTile_titleText": "Şimdi Eşle",
-  "@appSync_nowTile_titleText": {},
-  "appSync_nowTile_titleText_syncing": "Eşleniyor",
-  "@appSync_nowTile_titleText_syncing": {},
-  "appSync_nowTile_dateFormat": "{ymd} {jms}",
-  "@appSync_nowTile_dateFormat": {
-    "placeholders": {
-      "ymd": {
-        "type": "DateTime",
-        "format": "yMd"
-      },
-      "jms": {
-        "type": "DateTime",
-        "format": "jms"
-      }
-    }
-  },
-  "appSync_nowTile_text_noDate": "Son eşleme: Yok",
-  "@appSync_nowTile_text_noDate": {},
-  "appSync_nowTile_text": "Son eşleme: {dateStr}",
-  "@appSync_nowTile_text": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_nowTile_errorText_noDate": "Son eşleme (Hata): Yok",
-  "@appSync_nowTile_errorText_noDate": {},
-  "appSync_nowTile_errorText": "Son eşleme (Hata): {dateStr}",
-  "@appSync_nowTile_errorText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_nowTile_syncingText": "Eşleniyor...",
-  "@appSync_nowTile_syncingText": {},
-  "appSync_nowTile_syncingText_withPrt": "Eşleniyor: {prt}",
-  "@appSync_nowTile_syncingText_withPrt": {
-    "placeholders": {
-      "prt": {
-        "type": "num",
-        "description": "Current sync progress percentage (0-100).",
-        "format": "decimalPercentPattern",
-        "optionalParameters": {
-          "decimalDigits": 2
+    "@@locale": "tr",
+    "localeScriptName": "Türkçe",
+    "@localeScriptName": {
+        "description": "The human-readable name of the language used for the locale."
+    },
+    "appName": "Table Habit",
+    "@appName": {},
+    "habitEdit_saveButton_text": "Kaydet",
+    "@habitEdit_saveButton_text": {},
+    "habitEdit_habitName_hintText": "Alışkanlık Adı ...",
+    "@habitEdit_habitName_hintText": {},
+    "habitEdit_colorPicker_title": "Renk seç",
+    "@habitEdit_colorPicker_title": {},
+    "habitEdit_habitTypeDialog_title": "Alışkanlık türü",
+    "@habitEdit_habitTypeDialog_title": {},
+    "habitEdit_habitType_positiveText": "Olumlu",
+    "@habitEdit_habitType_positiveText": {},
+    "habitEdit_habitType_negativeText": "Olumsuz",
+    "@habitEdit_habitType_negativeText": {},
+    "habitEdit_habitDailyGoal_hintText": "Günlük hedef, varsayılan {number}",
+    "@habitEdit_habitDailyGoal_hintText": {
+        "description": "default habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "1"
+            }
         }
-      }
-    }
-  },
-  "appSync_nowTile_cancellingText": "İptal ediliyor...",
-  "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "Son eşleme (İptal edildi): Yok",
-  "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_cancelText": "Son eşleme (İptal edildi): {dateStr}",
-  "@appSync_nowTile_cancelText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Last sync date."
-      }
-    }
-  },
-  "appSync_failedTile_titleText": "Hata Kayıtlarını Kontrol Et",
-  "@appSync_failedTile_titleText": {},
-  "appSync_failedTile_errorText": "[Hata]: {info}",
-  "@appSync_failedTile_errorText": {
-    "placeholders": {
-      "info": {
-        "type": "String",
-        "description": "Error information."
-      }
-    }
-  },
-  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
-  "@appSync_failedTile_webdavMulti_counterText": {
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus": "{status, select, success {Tamamlandı} cancelled {İptal edildi} failed {Başarısız} multi {Birden fazla durum} other {Bilinmeyen durum}}",
-  "@appSync_webdav_resultStatus": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus_withReason": "{status, select, success {{reason} nedeniyle tamamlandı} cancelled {{reason} nedeniyle iptal edildi} failed {{reason} nedeniyle başarısız oldu} multi {{reason} nedeniyle birden fazla durum oluştu} other {Bilinmeyen durum}}",
-  "@appSync_webdav_resultStatus_withReason": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
-      },
-      "reason": {
-        "type": "String",
-        "description": "The reason for the status"
-      }
-    }
-  },
-  "appSync_webdav_resultReason": "{reason, select, error {Hata} userAction {Kullanıcı müdahalesi gerekli} missingHabitUuid {Alışkanlık UUID'si eksik} empty {Boş veri} other {Bilinmeyen neden}}",
-  "@appSync_webdav_resultReason": {
-    "placeholders": {
-      "reason": {
-        "type": "String",
-        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
-      }
-    }
-  },
-  "appSync_webdav_newServerConfirmDialog_titleText": "Yeni Konum",
-  "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "appSync_webdav_newServerConfirmDialog_subtitleText": "Eşleme gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?",
-  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_newServerConfirmDialog_confirmText": "Şimdi Eşle!",
-  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
-  "appSync_webdav_oldServerConfirmDialog_titleText": "Eşlemeyi Onayla",
-  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
-  "appSync_webdav_oldServerConfirmDialog_subtitleText": "Klasör boş değil. Eşleme, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?",
-  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_oldServerConfirmDialog_confirmText": "Birleştirmeyi Onayla",
-  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
-  "appSync_exportAllLogsTile_titleText": "Hatalı Eşleme Kayıtlarını Dışa Aktar",
-  "@appSync_exportAllLogsTile_titleText": {},
-  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Kayıt bulunamadı} false {Dışa aktarmak için dokunun} other {yükleniyor...}}",
-  "@appSync_exportAllLogsTile_subtitleText": {
-    "placeholders": {
-      "isEmpty": {
-        "type": "String",
-        "description": "<bool>.toString()"
-      }
-    }
-  },
-  "appSync_syncServerType_text": "{isCurrent, select, true {Mevcut: } other {}}{name, select, webdav {WebDAV} fake {Test (Sadece Geliştirici İçin)} other {Bilinmeyen ({name})}}",
-  "@appSync_syncServerType_text": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Server name, depend on specific server type.",
-        "example": "WebDAV"
-      },
-      "isCurrent": {
-        "type": "String",
-        "description": "Is currently selected server",
-        "example": "true|false"
-      }
-    }
-  },
-  "appSync_networkType_text": "{type, select, mobile {Mobil} wifi {Wifi} other {Bilinmeyen}}",
-  "@appSync_networkType_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_syncInterval_text": "{name, select, manual {Manuel} minute5 {5 Dakika} minute15 {15 Dakika} minute30 {30 Dakika} hour1 {1 Saat} other {Bilinmeyen}}",
-  "@appSync_syncInterval_text": {
-    "description": "Localized display text for app sync interval",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "minute15",
-        "description": "<AppSyncFetchInterval>.name"
-      }
-    }
-  },
-  "appSync_syncIntervalTile_title": "Senkronizasyon Sıklığı",
-  "@appSync_syncIntervalTile_title": {},
-  "appSync_summaryTile_title": "Eşleme Sunucusu",
-  "@appSync_summaryTile_title": {},
-  "appSync_summaryTile_subtitle_text_notConfigured": "Yapılandırılmadı",
-  "@appSync_summaryTile_subtitle_text_notConfigured": {},
-  "appSync_exportAllLogsTile_exportSubjectText": "Tüm son başarısız eşleme kayıtları",
-  "@appSync_exportAllLogsTile_exportSubjectText": {},
-  "appSync_serverEditor_saveDialog_titleText": "Değişiklikleri Kaydetmeyi Onayla",
-  "@appSync_serverEditor_saveDialog_titleText": {},
-  "appSync_serverEditor_saveDialog_subtitleText": "Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.",
-  "@appSync_serverEditor_saveDialog_subtitleText": {},
-  "appSync_serverEditor_exitDialog_titleText": "Kaydedilmemiş Değişiklikler",
-  "@appSync_serverEditor_exitDialog_titleText": {},
-  "appSync_serverEditor_exitDialog_subtitleText": "Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.",
-  "@appSync_serverEditor_exitDialog_subtitleText": {},
-  "appSync_serverEditor_deleteDialog_titleText": "Silmeyi Onayla",
-  "@appSync_serverEditor_deleteDialog_titleText": {},
-  "appSync_serverEditor_deleteDialog_subtitleText": "Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.",
-  "@appSync_serverEditor_deleteDialog_subtitleText": {},
-  "appSync_serverEditor_titleText_add": "Yeni Eşleme Sunucusu",
-  "@appSync_serverEditor_titleText_add": {},
-  "appSync_serverEditor_titleText_modify": "Eşleme Sunucusunu Değiştir",
-  "@appSync_serverEditor_titleText_modify": {},
-  "appSync_serverEditor_advance_titleText": "Gelişmiş Yapılandırmalar",
-  "@appSync_serverEditor_advance_titleText": {},
-  "appSync_serverEditor_pathTile_titleText": "Yol",
-  "@appSync_serverEditor_pathTile_titleText": {},
-  "appSync_serverEditor_pathTile_hintText": "Buraya geçerli bir WebDAV yolu girin.",
-  "@appSync_serverEditor_pathTile_hintText": {},
-  "appSync_serverEditor_pathTile_errorText_emptyPath": "Yol boş olmamalı!",
-  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
-  "appSync_serverEditor_usernameTile_titleText": "Kullanıcı adı",
-  "@appSync_serverEditor_usernameTile_titleText": {},
-  "appSync_serverEditor_usernameTile_hintText": "Buraya kullanıcı adını girin, gerekli değilse boş bırakın.",
-  "@appSync_serverEditor_usernameTile_hintText": {},
-  "appSync_serverEditor_passwordTile_titleText": "Parola",
-  "@appSync_serverEditor_passwordTile_titleText": {},
-  "appSync_serverEditor_ignoreSSLTile_titleText": "SSL sertifikasını yok say",
-  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_titleText": "Senkronizasyon Zaman Aşımı (Saniye)",
-  "@appSync_serverEditor_timeoutTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_timeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_timeoutTile_unitText": "sn",
-  "@appSync_serverEditor_timeoutTile_unitText": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "Ağ Bağlantısı Zaman Aşımı (Saniye)",
-  "@appSync_serverEditor_connTimeoutTile_titleText": {},
-  "appSync_serverEditor_connTimeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_connTimeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_connTimeoutTile_unitText": "sn",
-  "@appSync_serverEditor_connTimeoutTile_unitText": {},
-  "appSync_serverEditor_connRetryCountTile_titleText": "Ağ bağlantısı yeniden deneme sayısı",
-  "@appSync_serverEditor_connRetryCountTile_titleText": {},
-  "appSync_serverEditor_connRetryCountTile_hintText": "Varsayılan: {count, plural, =0 {Retry disabled} other {{count}}}",
-  "@appSync_serverEditor_connRetryCountTile_hintText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "10"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_titleText": "Ağ eşleme kipi",
-  "@appSync_serverEditor_netTypeTile_titleText": {},
-  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Hücresel ağda eşleme} wifi {WiFi'de eşleme} other {Bilinmiyor}}",
-  "@appSync_serverEditor_netTypeTile_typeTooltip": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataText": "Düşük Veri",
-  "@appSync_serverEditor_netTypeTile_lowDataText": {},
-  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Düşük veri kipinde eşle",
-  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
-  "experimentalFeatures_warnginBanner_title": "Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.",
-  "@experimentalFeatures_warnginBanner_title": {},
-  "experimentalFeatures_habitSyncTile_titleText": "Alışkanlık bulut eşlemesi",
-  "@experimentalFeatures_habitSyncTile_titleText": {},
-  "experimentalFeatures_habitSyncTile_subtitleText": "Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir",
-  "@experimentalFeatures_habitSyncTile_subtitleText": {},
-  "experimentalFeatures_warnTile_titleText": "Deneysel özellik ({syncName}) devre dışı bırakılır, ancak işlev hala çalışıyor.",
-  "@experimentalFeatures_warnTile_titleText": {
-    "placeholders": {
-      "syncName": {
-        "type": "String",
-        "example": "Habit Cloud Sync",
-        "description": "Experimental Feature's name."
-      }
-    }
-  },
-  "experimentalFeatures_warnTile_forHabitSyncText": "Tamamen devre dışı bırakmak için '{menuName}' a erişmek ve kapatmak için uzun basın.",
-  "@experimentalFeatures_warnTile_forHabitSyncText": {
-    "placeholders": {
-      "menuName": {
-        "type": "String",
-        "example": "Sync Option"
-      }
-    }
-  },
-  "appAbout_appbarTile_titleText": "Hakkında",
-  "@appAbout_appbarTile_titleText": {},
-  "appAbout_versionTile_titleText": "Versiyon: {appVersion}",
-  "@appAbout_versionTile_titleText": {
-    "placeholders": {
-      "appVersion": {
-        "type": "String",
-        "example": "1.0.0"
-      }
-    }
-  },
-  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_versionTile_changeLogPath": {},
-  "appAbout_sourceCodeTile_titleText": "Kaynak kodu",
-  "@appAbout_sourceCodeTile_titleText": {},
-  "appAbout_issueTrackerTile_titleText": "Hata izleyici",
-  "@appAbout_issueTrackerTile_titleText": {},
-  "appAbout_contactEmailTile_titleText": "Bana ulaş",
-  "@appAbout_contactEmailTile_titleText": {},
-  "appAbout_contactEmailTile_emailBody": "Merhaba, Bana yazdığın için memnunum.\nEğer bir hata bildiriyorsan, lütfen uygulama versiyonunu belirt ve hatayı ortaya çıkaran adımları açıkla.\n--------------------------------------",
-  "@appAbout_contactEmailTile_emailBody": {},
-  "appAbout_licenseTile_titleText": "Lisans",
-  "@appAbout_licenseTile_titleText": {},
-  "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
-  "@appAbout_licenseTile_subtitleText": {},
-  "appAbout_licenseThirdPartyTile_titleText": "Üçüncü Taraf Lisanslama Bildirimi",
-  "@appAbout_licenseThirdPartyTile_titleText": {},
-  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
-  "@appAbout_licenseThirdPartyTile_subtitleText": {},
-  "appAbout_privacyTile_titleText": "Gizlilik",
-  "@appAbout_privacyTile_titleText": {},
-  "appAbout_privacyTile_subTitleText": "Uygulamadaki gizlilik politikasına erişin",
-  "@appAbout_privacyTile_subTitleText": {},
-  "appAbout_donateTile_titleText": "Bağış yap",
-  "@appAbout_donateTile_titleText": {},
-  "appAbout_donateTile_subTitleText": "Ben kişisel bir geliştiriciyim. Bu uygulamayı beğendiyseniz, lütfen bana bir ☕ satın alın.",
-  "@appAbout_donateTile_subTitleText": {},
-  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
-  "@appAbout_donateTile_ways": {
-    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
-  },
-  "donateWay_paypal": "Paypal",
-  "@donateWay_paypal": {},
-  "donateWay_buyMeACoffee": "Bana bir kahve ısmarla",
-  "@donateWay_buyMeACoffee": {},
-  "donateWay_alipay": "Alipay",
-  "@donateWay_alipay": {},
-  "donateWay_wechatPay": "Wechat Pay",
-  "@donateWay_wechatPay": {},
-  "donateWay_cryptoCurrency": "Kripto Paralar",
-  "@donateWay_cryptoCurrency": {},
-  "donateWay_cryptoCurrency_BTC": "BTC",
-  "@donateWay_cryptoCurrency_BTC": {},
-  "donateWay_cryptoCurrency_ETH": "ETH",
-  "@donateWay_cryptoCurrency_ETH": {},
-  "donateWay_cryptoCurrency_BNB": "BNB",
-  "@donateWay_cryptoCurrency_BNB": {},
-  "donateWay_cryptoCurrency_AVAX": "AVAX",
-  "@donateWay_cryptoCurrency_AVAX": {},
-  "donateWay_cryptoCurrency_FTM": "FTM",
-  "@donateWay_cryptoCurrency_FTM": {},
-  "donateWay_firstQRGroup": "Alipay & Wechat Pay",
-  "@donateWay_firstQRGroup": {},
-  "appAbout_donateDialog_copiedCrypto_msg": "{name}'in adresi kopyalandı",
-  "@appAbout_donateDialog_copiedCrypto_msg": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "BTC"
-      }
-    }
-  },
-  "batchCheckin_appbar_title": "Toplu Giriş",
-  "@batchCheckin_appbar_title": {},
-  "batchCheckin_datePicker_prevButton_tooltip": "Önceki gün",
-  "@batchCheckin_datePicker_prevButton_tooltip": {},
-  "batchCheckin_datePicker_nextButton_tooltip": "Sonraki gün",
-  "@batchCheckin_datePicker_nextButton_tooltip": {},
-  "batchCheckin_status_skip_text": "Geç",
-  "@batchCheckin_status_skip_text": {},
-  "batchCheckin_status_ok_text": "Tamamlandı",
-  "@batchCheckin_status_ok_text": {},
-  "batchCheckin_status_double_text": "x2 Başarı!",
-  "@batchCheckin_status_double_text": {},
-  "batchCheckin_status_zero_text": "Tamamlanmadı",
-  "@batchCheckin_status_zero_text": {},
-  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Alışkanlık} other{Alışkanlıklar}} seçildi",
-  "@batchCheckin_habits_groupTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_button_text": "Kaydet",
-  "@batchCheckin_save_button_text": {},
-  "batchCheckin_reset_button_text": "Sıfırla",
-  "@batchCheckin_reset_button_text": {},
-  "batchCheckin_completed_snackbar_text": "{count, plural, =1{Alışkanlık durumu} other{{count} alışkanlığın durumu}} güncellendi",
-  "@batchCheckin_completed_snackbar_text": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_confirmDialog_title": "Mevcut Kayıtların Üzerine Yaz",
-  "@batchCheckin_save_confirmDialog_title": {},
-  "batchCheckin_save_confirmDialog_body": "Kaydedildikten sonra mevcut kayıtların üzerine yazılacak, önceki kayıtlar kaybolacak.",
-  "@batchCheckin_save_confirmDialog_body": {},
-  "batchCheckin_save_confirmDialog_confirmButton_text": "kaydet",
-  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
-  "batchCheckin_save_confirmDialog_cancelButton_text": "iptal et",
-  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
-  "batchCheckin_close_confirmDialog_title": "Dönüşü Onayla",
-  "@batchCheckin_close_confirmDialog_title": {},
-  "batchCheckin_close_confirmDialog_body": "Giriş durumu değişiklikleri kaydedilmeden uygulanmayacak",
-  "@batchCheckin_close_confirmDialog_body": {},
-  "batchCheckin_close_confirmDialog_confirmButton_text": "çıkış",
-  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
-  "batchCheckin_close_confirmDialog_cancelButton_text": "iptal et",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
-  "appReminder_dailyReminder_title": "🏝 Bugün alışkanlıklarınıza bağlı kaldınız mı?",
-  "@appReminder_dailyReminder_title": {},
-  "appReminder_dailyReminder_body": "Uygulamayı açıp zamanında giriş yapmak için tıklayın.",
-  "@appReminder_dailyReminder_body": {},
-  "common_habitColorType_cc1": "Koyu leylak",
-  "@common_habitColorType_cc1": {},
-  "common_habitColorType_cc2": "Kırmızı",
-  "@common_habitColorType_cc2": {},
-  "common_habitColorType_cc3": "Mor",
-  "@common_habitColorType_cc3": {},
-  "common_habitColorType_cc4": "Kraliyet mavisi",
-  "@common_habitColorType_cc4": {},
-  "common_habitColorType_cc5": "Koyu camgöbeği",
-  "@common_habitColorType_cc5": {},
-  "common_habitColorType_cc6": "Yeşil",
-  "@common_habitColorType_cc6": {},
-  "common_habitColorType_cc7": "Kehribar",
-  "@common_habitColorType_cc7": {},
-  "common_habitColorType_cc8": "Turuncu",
-  "@common_habitColorType_cc8": {},
-  "common_habitColorType_cc9": "Limon yeşili",
-  "@common_habitColorType_cc9": {},
-  "common_habitColorType_cc10": "Koyu orkide",
-  "@common_habitColorType_cc10": {},
-  "common_habitColorType_default": "Renk {index}",
-  "@common_habitColorType_default": {
-    "description": "unknown habit color type name",
-    "placeholders": {
-      "index": {
-        "type": "int",
-        "example": "0"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_useSystemFormat_text": "Sistem formatını kullan",
-  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
-  "common_customDateTimeFormatPicker_fmtTileText": "Tarih formatı",
-  "@common_customDateTimeFormatPicker_fmtTileText": {},
-  "common_customDateTimeFormatPicker_ymd_text": "Yıl Ay Gün",
-  "@common_customDateTimeFormatPicker_ymd_text": {},
-  "common_customDateTimeFormatPicker_mdy_text": "Ay Gün Yıl",
-  "@common_customDateTimeFormatPicker_mdy_text": {},
-  "common_customDateTimeFormatPicker_dmy_text": "Gün Ay Yıl",
-  "@common_customDateTimeFormatPicker_dmy_text": {},
-  "common_customDateTimeFormatPicker_SepTileText": "Ayırıcı",
-  "@common_customDateTimeFormatPicker_SepTileText": {},
-  "common_customDateTimeFormatPicker_sepDash_text": "Tire",
-  "@common_customDateTimeFormatPicker_sepDash_text": {},
-  "common_customDateTimeFormatPicker_sepSlash_text": "Eğik çizgi",
-  "@common_customDateTimeFormatPicker_sepSlash_text": {},
-  "common_customDateTimeFormatPicker_sepSpace_text": "Boşluk",
-  "@common_customDateTimeFormatPicker_sepSpace_text": {},
-  "common_customDateTimeFormatPicker_sepDot_text": "Nokta",
-  "@common_customDateTimeFormatPicker_sepDot_text": {},
-  "common_customDateTimeFormatPicker_empty_text": "Ayırıcı yok",
-  "@common_customDateTimeFormatPicker_empty_text": {},
-  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
-  "@common_customDateTimeFormatPicker_sep_formatter": {
-    "description": "split char",
-    "placeholders": {
-      "splitName": {
-        "type": "String",
-        "example": "Dash"
-      },
-      "splitChar": {
-        "type": "String",
-        "example": "/"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_12Hour_text": "12 saatlik formatı kullan",
-  "@common_customDateTimeFormatPicker_12Hour_text": {},
-  "common_customDateTimeFormatPicker_monthName_text": "Tam adı kullan",
-  "@common_customDateTimeFormatPicker_monthName_text": {},
-  "common_customDateTimeFormatPicker_applyFreqChart_text": "Sıklık Grafiğine Uygula",
-  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
-  "common_customDateTimeFormatPicker_applyHeapmap_text": "Takvime Uygula",
-  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
-  "common_customDateTimeFormatPicker_cancelButton_text": "iptal et",
-  "@common_customDateTimeFormatPicker_cancelButton_text": {},
-  "common_customDateTimeFormatPicker_confirmButton_text": "onayla",
-  "@common_customDateTimeFormatPicker_confirmButton_text": {},
-  "common_errorPage_title": "Tüh, çöktü!",
-  "@common_errorPage_title": {},
-  "common_errorPage_copied": "Çökme bilgileri kopyalandı",
-  "@common_errorPage_copied": {},
-  "common_enable_text": "Etkinleştirildi",
-  "@common_enable_text": {},
-  "calendarPicker_clip_today": "Bugün",
-  "@calendarPicker_clip_today": {},
-  "calendarPicker_clip_tomorrow": "Yarın",
-  "@calendarPicker_clip_tomorrow": {},
-  "calendarPicker_clip_after7Days": "Sonraki {date}",
-  "@calendarPicker_clip_after7Days": {
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "E"
-      }
-    }
-  },
-  "exportConfirmDialog_title_exportAll": "Bütün alışkanlıkları dışa aktar?",
-  "@exportConfirmDialog_title_exportAll": {},
-  "exportConfirmDialog_title_exportMulti": "{number, plural, =0{mevcut alışkanlık} =1{1 alışkanlık} other{{number} alışkanlık}} dışa aktar?",
-  "@exportConfirmDialog_title_exportMulti": {
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "exportConfirmDialog_option_includeRecords": "kayıtları dahil et",
-  "@exportConfirmDialog_option_includeRecords": {},
-  "exportConfirmDialog_cancel_buttonText": "iptal et",
-  "@exportConfirmDialog_cancel_buttonText": {},
-  "exportConfirmDialog_confirm_buttonText": "dışa aktar",
-  "@exportConfirmDialog_confirm_buttonText": {},
-  "debug_logLevelTile_title": "Günlük Kaydı Seviyesi",
-  "@debug_logLevelTile_title": {},
-  "debug_logLevelDialog_title": "Günlük Kaydı Seviyesini Değiştir",
-  "@debug_logLevelDialog_title": {},
-  "debug_logLevel_debug": "Hata Ayıklama",
-  "@debug_logLevel_debug": {},
-  "debug_logLevel_info": "Bilgi",
-  "@debug_logLevel_info": {},
-  "debug_logLevel_warn": "Uyarı",
-  "@debug_logLevel_warn": {},
-  "debug_logLevel_error": "Hata",
-  "@debug_logLevel_error": {},
-  "debug_logLevel_fatal": "Kritik",
-  "@debug_logLevel_fatal": {},
-  "debug_collectLogTile_title": "Kayıtlar Toplanıyor",
-  "@debug_collectLogTile_title": {},
-  "debug_collectLogTile_enable_subtitle": "Kayıtları toplamayı durdurmak için dokunun.",
-  "@debug_collectLogTile_enable_subtitle": {},
-  "debug_collectLogTile_disable_subtitle": "Kayıtları toplamayı başlatmak için dokunun.",
-  "@debug_collectLogTile_disable_subtitle": {},
-  "debug_downladDebugLogs_subject": "Hata ayıklama kayıtları indiriliyor",
-  "@debug_downladDebugLogs_subject": {},
-  "dbeug_clearDebugLogs_complete_snackbar": "Hata ayıklama kayıtları temizlendi.",
-  "@dbeug_clearDebugLogs_complete_snackbar": {},
-  "debug_downladDebugInfo_subject": "Hata ayıklama bilgisi indiriliyor",
-  "@debug_downladDebugInfo_subject": {},
-  "debug_downladDebugZip_subject": "{fileName} indiriliyor",
-  "@debug_downladDebugZip_subject": {
-    "placeholders": {
-      "fileName": {
-        "type": "String",
-        "example": "debug.zip"
-      }
-    }
-  },
-  "debug_missingDebugLogFile_snackbar": "Hata ayıklama günlüğü mevcut değil.",
-  "@debug_missingDebugLogFile_snackbar": {},
-  "debug_debuggerLogCard_title": "Günlük Bilgileri",
-  "@debug_debuggerLogCard_title": {},
-  "debug_debuggerLogCard_subtitle": "Yerel hata ayıklama günlüklerini içerir, günlük toplama özelliğinin açık olması gerekir.",
-  "@debug_debuggerLogCard_subtitle": {},
-  "debug_debuggerLogCard_saveButton_text": "İndir",
-  "@debug_debuggerLogCard_saveButton_text": {},
-  "debug_debuggerLogCard_clearButton_text": "Temizle",
-  "@debug_debuggerLogCard_clearButton_text": {},
-  "debug_debuggerInfoCard_title": "Hata Ayıklama Bilgileri",
-  "@debug_debuggerInfoCard_title": {},
-  "debug_debuggerInfoCard_subtitle": "Uygulamanın hata ayıklama bilgilerini içerir.",
-  "@debug_debuggerInfoCard_subtitle": {},
-  "debug_debuggerInfoCard_openButton_text": "Aç",
-  "@debug_debuggerInfoCard_openButton_text": {},
-  "debug_debuggerInfoCard_saveButton_text": "Kaydet",
-  "@debug_debuggerInfoCard_saveButton_text": {},
-  "debug_debuggerInfo_notificationTitle": "Uygulama Bilgileri Toplanıyor...",
-  "@debug_debuggerInfo_notificationTitle": {},
-  "confirmDialog_confirm_text": "{type, select, save {Kaydet} exit {Çıkış} delete {Sil} other {Onayla}}",
-  "@confirmDialog_confirm_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<NormalizeConfirmDialogType>.name",
-        "example": "confirm"
-      }
-    }
-  },
-  "confirmDialog_cancel_text": "İptal",
-  "@confirmDialog_cancel_text": {},
-  "snackbar_undoText": "GERİ AL",
-  "@snackbar_undoText": {},
-  "snackbar_dismissText": "KAPAT",
-  "@snackbar_dismissText": {},
-  "contributors_tile_title": "Katkıda bulunanlar",
-  "@contributors_tile_title": {},
-  "userAction_tap": "Dokun",
-  "@userAction_tap": {},
-  "userAction_doubleTap": "Çift",
-  "@userAction_doubleTap": {},
-  "userAction_longTap": "Uzun",
-  "@userAction_longTap": {},
-  "channelName_habitReminder": "Alışkanlık hatırlatıcısı",
-  "@channelName_habitReminder": {},
-  "channelName_appReminder": "Hatırlatma",
-  "@channelName_appReminder": {},
-  "channelName_appDebugger": "Hata ayıklayıcı",
-  "@channelName_appDebugger": {}
+    },
+    "habitEdit_habitDailyGoal_negativeHintText": "Günlük alt sınır, varsayılan {number}",
+    "@habitEdit_habitDailyGoal_negativeHintText": {
+        "description": "default habit daily goal for negative habit",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText01": "Günlük hedef {number}'den büyük olmalı",
+    "@habitEdit_habitDailyGoal_errorText01": {
+        "description": "minimum number for habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText02": "Günlük hedef en fazla {number} olabilir",
+    "@habitEdit_habitDailyGoal_errorText02": {
+        "description": "maximum number for habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText01": "Günlük hedef en az {number} olabilir",
+    "@habitEdit_habitDailyGoal_negativeErrorText01": {
+        "description": "minimum number for negative habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText02": "Günlük hedef en fazla {number} olabilir",
+    "@habitEdit_habitDailyGoal_negativeErrorText02": {
+        "description": "maximum number for negative habit daily goal",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalUnit_hintText": "Günlük hedef birimi",
+    "@habitEdit_habitDailyGoalUnit_hintText": {},
+    "habitEdit_habitDailyGoalExtra_hintText": "İstenilen maksimum günlük hedef",
+    "@habitEdit_habitDailyGoalExtra_hintText": {},
+    "habitEdit_habitDailyGoalExtra_errorText": "Geçersiz değer, boş bırakılmalı ya da {dailyGoal}'den büyük veya eşit olmalı",
+    "@habitEdit_habitDailyGoalExtra_errorText": {
+        "placeholders": {
+            "dailyGoal": {
+                "type": "num",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalExtra_negativeHintText": "Maksimum günlük limit",
+    "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+    "habitEdit_frequencySelector_title": "Sıklık seç",
+    "@habitEdit_frequencySelector_title": {},
+    "habitEdit_habitFreq_daily": "Günlük",
+    "@habitEdit_habitFreq_daily": {},
+    "habitEdit_habitFreq_perweek": "",
+    "@habitEdit_habitFreq_perweek": {},
+    "habitEdit_habitFreq_perweek_ex01": "kez haftada",
+    "@habitEdit_habitFreq_perweek_ex01": {},
+    "habitEdit_habitFreq_permonth": "",
+    "@habitEdit_habitFreq_permonth": {},
+    "habitEdit_habitFreq_permonth_ex01": "kez ayda",
+    "@habitEdit_habitFreq_permonth_ex01": {},
+    "habitEdit_habitFreq_predayfreq": "",
+    "@habitEdit_habitFreq_predayfreq": {},
+    "habitEdit_habitFreq_predayfreq_ex01": "gün",
+    "@habitEdit_habitFreq_predayfreq_ex01": {},
+    "habitEdit_habitFreq_predayfreq_ex02": "günde",
+    "@habitEdit_habitFreq_predayfreq_ex02": {},
+    "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+    "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+        "description": "If set to 1, the display widget list will be reversed."
+    },
+    "habitEdit_habitFreq_show_daily": "Günlük",
+    "@habitEdit_habitFreq_show_daily": {},
+    "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Haftada bir} other{Haftada en az {freq} kez}}",
+    "@habitEdit_habitFreq_show_perweek": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Ayda bir} other{Ayda en az {freq} kez}}",
+    "@habitEdit_habitFreq_show_permonth": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{Her {days} günde bir} other{Her {days} günde en az {freq} kez}}",
+    "@habitEdit_habitFreq_show_perdayfreq": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_title": "{targetDays} gün",
+    "@habitEdit_targetDays_title": {
+        "placeholders": {
+            "targetDays": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_dialogTitle": "Hedef Günleri Seçin",
+    "@habitEdit_targetDays_dialogTitle": {},
+    "habitEdit_targetDays": "gün",
+    "@habitEdit_targetDays": {},
+    "habitEdit_reminder_hintText": "Hatırlatıcı",
+    "@habitEdit_reminder_hintText": {},
+    "habitEdit_reminder_freq_weekHelpText": "Haftanın her günü",
+    "@habitEdit_reminder_freq_weekHelpText": {},
+    "habitEdit_reminder_freq_weekPrefixText": "",
+    "@habitEdit_reminder_freq_weekPrefixText": {},
+    "habitEdit_reminder_freq_weekSubfixText": " her hafta",
+    "@habitEdit_reminder_freq_weekSubfixText": {},
+    "habitEdit_reminder_freq_monthHelpText": "Ayın her günü",
+    "@habitEdit_reminder_freq_monthHelpText": {},
+    "habitEdit_reminder_freq_monthPrefixText": "",
+    "@habitEdit_reminder_freq_monthPrefixText": {},
+    "habitEdit_reminder_freq_monthSubfixText": " her ay",
+    "@habitEdit_reminder_freq_monthSubfixText": {},
+    "habitEdit_reminderQuest_hintText": "Soru, örn. Bugün egzersiz yaptın mı?",
+    "@habitEdit_reminderQuest_hintText": {},
+    "habitEdit_reminder_dialogTitle": "Hatırlatıcı tipi seç",
+    "@habitEdit_reminder_dialogTitle": {},
+    "habitEdit_reminder_dialogType_whenNeeded": "Tamamlanması gerektiğinde",
+    "@habitEdit_reminder_dialogType_whenNeeded": {},
+    "habitEdit_reminder_dialogType_daily": "Günlük",
+    "@habitEdit_reminder_dialogType_daily": {},
+    "habitEdit_reminder_dialogType_week": "Haftalık",
+    "@habitEdit_reminder_dialogType_week": {},
+    "habitEdit_reminder_dialogType_month": "Aylık",
+    "@habitEdit_reminder_dialogType_month": {},
+    "habitEdit_reminder_dialogConfirm": "onayla",
+    "@habitEdit_reminder_dialogConfirm": {},
+    "habitEdit_reminder_dialogCancel": "iptal et",
+    "@habitEdit_reminder_dialogCancel": {},
+    "habitEdit_reminder_cancelDialogTitle": "Onayla",
+    "@habitEdit_reminder_cancelDialogTitle": {},
+    "habitEdit_reminder_cancelDialogSubtitle": "Bu hatırlatıcıyı silmeyi onaylıyor musunuz",
+    "@habitEdit_reminder_cancelDialogSubtitle": {},
+    "habitEdit_reminder_cancelDialogConfirm": "onayla",
+    "@habitEdit_reminder_cancelDialogConfirm": {},
+    "habitEdit_reminder_cancelDialogCancel": "iptal et",
+    "@habitEdit_reminder_cancelDialogCancel": {},
+    "habitEdit_reminder_weekdayText_monday": "Pzt",
+    "@habitEdit_reminder_weekdayText_monday": {},
+    "habitEdit_reminder_weekdayText_tuesday": "Sal",
+    "@habitEdit_reminder_weekdayText_tuesday": {},
+    "habitEdit_reminder_weekdayText_wednesday": "Çar",
+    "@habitEdit_reminder_weekdayText_wednesday": {},
+    "habitEdit_reminder_weekdayText_thursday": "Per",
+    "@habitEdit_reminder_weekdayText_thursday": {},
+    "habitEdit_reminder_weekdayText_friday": "Cum",
+    "@habitEdit_reminder_weekdayText_friday": {},
+    "habitEdit_reminder_weekdayText_saturday": "Cmt",
+    "@habitEdit_reminder_weekdayText_saturday": {},
+    "habitEdit_reminder_weekdayText_sunday": "Paz",
+    "@habitEdit_reminder_weekdayText_sunday": {},
+    "habitEdit_desc_hintText": "Not, Markdown desteklenir",
+    "@habitEdit_desc_hintText": {},
+    "habitEdit_create_datetime_prefix": "Oluşturuldu: ",
+    "@habitEdit_create_datetime_prefix": {},
+    "habitEdit_modify_datetime_prefix": "Düzenlendi: ",
+    "@habitEdit_modify_datetime_prefix": {},
+    "habitDisplay_fab_text": "Yeni Alışkanlık",
+    "@habitDisplay_fab_text": {},
+    "habitDisplay_emptyImage_text_01": "Uzun bir yolculuk, ilk adımla başlar",
+    "@habitDisplay_emptyImage_text_01": {},
+    "habitDisplay_archiveHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Arşivle?",
+    "@habitDisplay_archiveHabitsConfirmDialog_title": {},
+    "habitDisplay_archiveHabitsConfirmDialog_confirm": "onayla",
+    "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+    "habitDisplay_archiveHabitsConfirmDialog_cancel": "iptal et",
+    "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
+    "habitDisplay_archiveHabitsSuccSnackbarText": "{count} alışkanlık arşivlendi",
+    "@habitDisplay_archiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_unarchiveHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Arşivden Çıkar?",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
+    "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "onayla",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+    "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "iptal et",
+    "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
+    "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} alışkanlık arşivden çıkarıldı",
+    "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Sil?",
+    "@habitDisplay_deleteHabitsConfirmDialog_title": {},
+    "habitDisplay_deleteHabitsConfirmDialog_confirm": "onayla",
+    "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
+    "habitDisplay_deleteHabitsConfirmDialog_cancel": "iptal et",
+    "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
+    "habitDisplay_deleteHabitsSuccSnackbarText": "{count} alışkanlık silindi",
+    "@habitDisplay_deleteHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Alışkanlık silindi: “{name}”",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_editPopMenu_selectAll": "Hepsini Seç",
+    "@habitDisplay_editPopMenu_selectAll": {},
+    "habitDisplay_editPopMenu_export": "Dışa aktar",
+    "@habitDisplay_editPopMenu_export": {},
+    "habitDisplay_editPopMenu_delete": "Sil",
+    "@habitDisplay_editPopMenu_delete": {},
+    "habitDisplay_editPopMenu_clone": "Şablon",
+    "@habitDisplay_editPopMenu_clone": {},
+    "habitDisplay_editButton_tooltip": "Düzenle",
+    "@habitDisplay_editButton_tooltip": {},
+    "habitDisplay_archiveButton_tooltip": "Arşivle",
+    "@habitDisplay_archiveButton_tooltip": {},
+    "habitDisplay_unarchiveButton_tooltip": "Arşivden çıkar",
+    "@habitDisplay_unarchiveButton_tooltip": {},
+    "habitDisplay_settingButton_tooltip": "Ayar",
+    "@habitDisplay_settingButton_tooltip": {},
+    "habitDisplay_statsMenu_statSubgroupText": "Güncel",
+    "@habitDisplay_statsMenu_statSubgroupText": {},
+    "habitDisplay_statsMenu_completedTileText": "Tamamlandı",
+    "@habitDisplay_statsMenu_completedTileText": {},
+    "habitDisplay_statsMenu_inProgresTileText": "Sürüyor",
+    "@habitDisplay_statsMenu_inProgresTileText": {},
+    "habitDisplay_statsMenu_archivedTileText": "Arşivlendi",
+    "@habitDisplay_statsMenu_archivedTileText": {},
+    "habitDisplay_statsMenu_popularitySubgroupText": "En İyi Alışkanlıklar: Son 30 Gündeki Değişiklikler",
+    "@habitDisplay_statsMenu_popularitySubgroupText": {},
+    "habitDisplay_mainMenu_lightTheme": "Açık Tema",
+    "@habitDisplay_mainMenu_lightTheme": {},
+    "habitDisplay_mainMenu_darkTheme": "Koyu Tema",
+    "@habitDisplay_mainMenu_darkTheme": {},
+    "habitDisplay_mainMenu_followSystemTheme": "Sistemi İzle",
+    "@habitDisplay_mainMenu_followSystemTheme": {},
+    "habitDisplay_mainMenu_showArchivedTileText": "Arşivlenenleri Göster",
+    "@habitDisplay_mainMenu_showArchivedTileText": {},
+    "habitDisplay_mainMenu_showCompletedTileText": "Tamamlananları Göster",
+    "@habitDisplay_mainMenu_showCompletedTileText": {},
+    "habitDisplay_mainMenu_showActivedTileText": "Aktif Olanları Göster",
+    "@habitDisplay_mainMenu_showActivedTileText": {},
+    "habitDisplay_mainMenu_settingTileText": "Ayarlar",
+    "@habitDisplay_mainMenu_settingTileText": {},
+    "habitDisplay_sort_reverseText": "Ters çevir",
+    "@habitDisplay_sort_reverseText": {},
+    "habitDisplay_sortDirection_asc": "(Yükselen)",
+    "@habitDisplay_sortDirection_asc": {},
+    "habitDisplay_sortDirection_Desc": "(Alçalan)",
+    "@habitDisplay_sortDirection_Desc": {},
+    "habitDisplay_sortType_manual": "Benim sıralamam",
+    "@habitDisplay_sortType_manual": {},
+    "habitDisplay_sortType_name": "Ada göre",
+    "@habitDisplay_sortType_name": {},
+    "habitDisplay_sortType_colorType": "Renge göre",
+    "@habitDisplay_sortType_colorType": {},
+    "habitDisplay_sortType_progress": "Orana göre",
+    "@habitDisplay_sortType_progress": {},
+    "habitDisplay_sortType_startT": "Başlangıç tarihine göre",
+    "@habitDisplay_sortType_startT": {},
+    "habitDisplay_sortType_status": "Duruma göre",
+    "@habitDisplay_sortType_status": {},
+    "habitDisplay_sortTypeDialog_title": "Sırala",
+    "@habitDisplay_sortTypeDialog_title": {},
+    "habitDisplay_sortTypeDialog_confirm": "onayla",
+    "@habitDisplay_sortTypeDialog_confirm": {},
+    "habitDisplay_sortTypeDialog_cancel": "iptal et",
+    "@habitDisplay_sortTypeDialog_cancel": {},
+    "habitDisplay_debug_debugSubgroup_title": "🛠️Hata ayıkla",
+    "@habitDisplay_debug_debugSubgroup_title": {},
+    "habitDetail_editButton_tooltip": "Düzenle",
+    "@habitDetail_editButton_tooltip": {},
+    "habitDetail_editPopMenu_unarchive": "Arşivden çıkar",
+    "@habitDetail_editPopMenu_unarchive": {},
+    "habitDetail_editPopMenu_archive": "Arşivle",
+    "@habitDetail_editPopMenu_archive": {},
+    "habitDetail_editPopMenu_export": "Dışa aktar",
+    "@habitDetail_editPopMenu_export": {},
+    "habitDetail_editPopMenu_delete": "Sil",
+    "@habitDetail_editPopMenu_delete": {},
+    "habitDetail_editPopMenu_clone": "Şablon",
+    "@habitDetail_editPopMenu_clone": {},
+    "habitDetail_confirmDialog_confirm": "onayla",
+    "@habitDetail_confirmDialog_confirm": {},
+    "habitDetail_confirmDialog_cancel": "iptal et",
+    "@habitDetail_confirmDialog_cancel": {},
+    "habitDetail_archiveConfirmDialog_titleText": "Alışkanlığı Arşivle?",
+    "@habitDetail_archiveConfirmDialog_titleText": {},
+    "habitDetail_unarchiveConfirmDialog_titleText": "Alışkanlığı Arşivden Çıkar?",
+    "@habitDetail_unarchiveConfirmDialog_titleText": {},
+    "habitDetail_deleteConfirmDialog_titleText": "Alışkanlığı Sil?",
+    "@habitDetail_deleteConfirmDialog_titleText": {},
+    "habitDetail_summary_title": "Özet",
+    "@habitDetail_summary_title": {},
+    "habitDetail_summary_body": "Mevcut puan {score}, başlangıçtan bu yana {days} gün geçti.",
+    "@habitDetail_summary_body": {
+        "placeholders": {
+            "score": {
+                "type": "String",
+                "example": "0.0"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_summary_preBody": "{days, plural, =1{Yarın başlıyor.} other{{days} gün sonra başlayacak.}}",
+    "@habitDetail_summary_preBody": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{TAMAMLANMADI} =2{YETERSİZ} other{}}",
+    "@habitDetail_heatmap_leftHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{FAZLASIYLA TAMAMLANDI} =2{KUSURSUZ} other{}}",
+    "@habitDetail_heatmap_rightHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Eşik Değeri} other{Hedef}}",
+    "@habitDetail_descDailyGoal_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitText": "Birim: {unit}",
+    "@habitDetail_descDailyGoal_unitText": {
+        "placeholders": {
+            "unit": {
+                "type": "String",
+                "example": "M/S"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitEmptyText": "boş",
+    "@habitDetail_descDailyGoal_unitEmptyText": {},
+    "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Günler}}",
+    "@habitDetail_descTargetDays_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descTargetDays_unitText": "g",
+    "@habitDetail_descTargetDays_unitText": {},
+    "habitDetail_descRecordsNum_titleText": "Kayıtlar",
+    "@habitDetail_descRecordsNum_titleText": {},
+    "habitDetail_scoreChart_title": "Puan",
+    "@habitDetail_scoreChart_title": {},
+    "habitDetail_scoreChartCombine_dailyText": "Gün",
+    "@habitDetail_scoreChartCombine_dailyText": {},
+    "habitDetail_scoreChartCombine_weeklyText": "Hafta",
+    "@habitDetail_scoreChartCombine_weeklyText": {},
+    "habitDetail_scoreChartCombine_monthlyText": "Ay",
+    "@habitDetail_scoreChartCombine_monthlyText": {},
+    "habitDetail_scoreChartCombine_yearlyText": "Yıl",
+    "@habitDetail_scoreChartCombine_yearlyText": {},
+    "habitDetail_freqChart_freqTitle": "Sıklık",
+    "@habitDetail_freqChart_freqTitle": {},
+    "habitDetail_freqChart_historyTitle": "Geçmiş",
+    "@habitDetail_freqChart_historyTitle": {},
+    "habitDetail_freqChart_combinedTitle": "Sıklık & Geçmiş",
+    "@habitDetail_freqChart_combinedTitle": {},
+    "habitDetail_freqChartCombine_weeklyText": "Hafta",
+    "@habitDetail_freqChartCombine_weeklyText": {},
+    "habitDetail_freqChartCombine_monthlyText": "Ay",
+    "@habitDetail_freqChartCombine_monthlyText": {},
+    "habitDetail_freqChartCombine_yearlyText": "Yıl",
+    "@habitDetail_freqChartCombine_yearlyText": {},
+    "habitDetail_freqChartNaviBar_nowText": "Şimdi",
+    "@habitDetail_freqChartNaviBar_nowText": {},
+    "habitDetail_freqChart_expanded_hideTooltip": "Geçmiş Grafiğini Gizle",
+    "@habitDetail_freqChart_expanded_hideTooltip": {},
+    "habitDetail_freqChart_expanded_showTooltip": "Geçmiş Grafiğini Göster",
+    "@habitDetail_freqChart_expanded_showTooltip": {},
+    "habitDetail_descSubgroup_title": "Not",
+    "@habitDetail_descSubgroup_title": {},
+    "habitDetail_otherSubgroup_title": "Diğer",
+    "@habitDetail_otherSubgroup_title": {},
+    "habitDetail_habitType_title": "Tür",
+    "@habitDetail_habitType_title": {},
+    "habitDetail_reminderTile_title": "Hatırlatıcı",
+    "@habitDetail_reminderTile_title": {},
+    "habitDetail_freqTile_title": "Tekrar",
+    "@habitDetail_freqTile_title": {},
+    "habitDetail_startDateTile_title": "Başlangıç Tarihi",
+    "@habitDetail_startDateTile_title": {},
+    "habitDetail_createDateTile_title": "Oluşturuldu",
+    "@habitDetail_createDateTile_title": {},
+    "habitDetail_modifyDateTile_title": "Düzenlendi",
+    "@habitDetail_modifyDateTile_title": {},
+    "habitDetail_editHeatmapCal_dateButtonText": "tarih",
+    "@habitDetail_editHeatmapCal_dateButtonText": {},
+    "habitDetail_editHeatmapCal_valueButtonText": "değer",
+    "@habitDetail_editHeatmapCal_valueButtonText": {},
+    "habitDetail_editHeatmapCal_backToToday_tooltipText": "bugüne geri dön",
+    "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+    "habitDetail_notFoundText": "Alışkanlığı yükleme başarısız oldu",
+    "@habitDetail_notFoundText": {},
+    "habitDetail_notFoundRetryText": "Tekrar dene",
+    "@habitDetail_notFoundRetryText": {},
+    "habitDetail_changeGoal_title": "Hedefi değiştir",
+    "@habitDetail_changeGoal_title": {},
+    "habitDetail_changeGoal_currentChipText": "güncel: {goal}",
+    "@habitDetail_changeGoal_currentChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_doneChipText": "tamamlanan: {goal}",
+    "@habitDetail_changeGoal_doneChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_undoneChipText": "tamamlanmamış",
+    "@habitDetail_changeGoal_undoneChipText": {},
+    "habitDetail_changeGoal_extraChipText": "{goal}",
+    "@habitDetail_changeGoal_extraChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_helpText": "Günlük hedef, varsayılan: {goal}",
+    "@habitDetail_changeGoal_helpText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_cancelText": "iptal et",
+    "@habitDetail_changeGoal_cancelText": {},
+    "habitDetail_changeGoal_saveText": "kaydet",
+    "@habitDetail_changeGoal_saveText": {},
+    "habitDetail_skipReason_title": "Sebebi geç",
+    "@habitDetail_skipReason_title": {},
+    "habitDetail_skipReason_bodyHelpText": "Buraya bir şey yaz...",
+    "@habitDetail_skipReason_bodyHelpText": {},
+    "habitDetail_skipReason_cancelText": "iptal et",
+    "@habitDetail_skipReason_cancelText": {},
+    "habitDetail_skipReason_saveText": "kaydet",
+    "@habitDetail_skipReason_saveText": {},
+    "appSetting_appbar_titleText": "Ayarlar",
+    "@appSetting_appbar_titleText": {},
+    "appSetting_displaySubgroupText": "Görünüm",
+    "@appSetting_displaySubgroupText": {},
+    "appSetting_operationSubgroupText": "Kullanım",
+    "@appSetting_operationSubgroupText": {},
+    "appSetting_dragCalendarByPageTile_titleText": "Takvimi sayfa sayfa kaydır",
+    "@appSetting_dragCalendarByPageTile_titleText": {},
+    "appSetting_dragCalendarByPageTile_subtitleText": "Bu özellik etkinleştirildiğinde, ana sayfadaki uygulama çubuğu takvimi sayfa sayfa kaydırılacaktır. Varsayılan olarak kapalıdır.",
+    "@appSetting_dragCalendarByPageTile_subtitleText": {},
+    "appSetting_changeRecordStatusOpTile_titleText": "Kayıt Durumunu Değiştir",
+    "@appSetting_changeRecordStatusOpTile_titleText": {},
+    "appSetting_changeRecordStatusOpTile_subtitleText": "Ana sayfadaki günlük kayıtların durumunu değiştirmek için tıklama davranışını düzenleyin.",
+    "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+    "appSetting_openRecordStatusDialogOpTile_titleText": "Detaylı Kaydı Aç",
+    "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+    "appSetting_openRecordStatusDialogOpTile_subtitleText": "Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.",
+    "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+    "appSetting_firstDayOfWeek_titleText": "Haftanın ilk günü",
+    "@appSetting_firstDayOfWeek_titleText": {},
+    "appSetting_firstDayOfWeekDialog_titleText": "Haftanın ilk gününü göster",
+    "@appSetting_firstDayOfWeekDialog_titleText": {},
+    "appSetting_firstDayOfWeekDialog_defaultText": " (Varsayılan)",
+    "@appSetting_firstDayOfWeekDialog_defaultText": {},
+    "appSetting_changeLanguage_followSystem_text": "Sistemi İzle ({localeName})",
+    "@appSetting_changeLanguage_followSystem_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Sistemi İzle",
+    "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+    "appSetting_changeLanguageTile_titleText": "Dil",
+    "@appSetting_changeLanguageTile_titleText": {},
+    "appSetting_changeLanguageDialog_titleText": "Dil Seç",
+    "@appSetting_changeLanguageDialog_titleText": {},
+    "appSetting_dateDisplayFormat_titleText": "Tarih gösterim biçimi ({formatTemplate})",
+    "@appSetting_dateDisplayFormat_titleText": {
+        "placeholders": {
+            "formatTemplate": {
+                "type": "String",
+                "example": "yyyy/M/d"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "sistem ayarını izle",
+    "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+    "appSetting_dateDisplayFormat_subTitleText": "Yapılandırılan tarih formatı, alışkanlık detay sayfasındaki tarih gösterimine uygulanacaktır.",
+    "@appSetting_dateDisplayFormat_subTitleText": {},
+    "appSetting_compactUISwitcher_titleText": "Alışkanlıklar sayfasında Kompakt Kullanıcı Arayüzünü etkinleştir",
+    "@appSetting_compactUISwitcher_titleText": {},
+    "appSetting_compactUISwitcher_subtitleText": "Alışkanlıklar kontrol tablosunun daha fazla içerik görüntülemesine izin verin, ancak bazı kullanıcı arayüzü ve metinler daha küçük görünebilir.",
+    "@appSetting_compactUISwitcher_subtitleText": {},
+    "appSetting_collapsed_calendar_bararea_titleText": "Alışkanlık işaretleme alanı boyut ayarı",
+    "@appSetting_collapsed_calendar_bararea_titleText": {},
+    "appSetting_collapsed_calendar_bararea_subtitleText": "Alışkanlık işaretleme tablo alanında daha fazla/az alan için yüzdeyi ayarlayın.",
+    "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+    "appSetting_collapsed_calendar_bararea_defaultText": "Varsayılan",
+    "@appSetting_collapsed_calendar_bararea_defaultText": {},
+    "appSetting_reminderSubgroupText": "Hatırlatıcı & Bildirim",
+    "@appSetting_reminderSubgroupText": {
+        "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+    },
+    "appSetting_dailyReminder_titleText": "Günlük hatırlatıcı",
+    "@appSetting_dailyReminder_titleText": {},
+    "appSetting_backupAndRestoreSubgroupText": "Yedekleme & geri yükleme",
+    "@appSetting_backupAndRestoreSubgroupText": {},
+    "appSetting_export_titleText": "Dışa aktar",
+    "@appSetting_export_titleText": {},
+    "appSetting_export_subtitleText": "Dışa aktarılan alışkanlıklar JSON formatındadır, bu dosya geri içe aktarılabilir.",
+    "@appSetting_export_subtitleText": {},
+    "appSetting_import_titleText": "İçe aktar",
+    "@appSetting_import_titleText": {},
+    "appSetting_import_subtitleText": "Alışkanlıkları JSON dosyadan içe aktar.",
+    "@appSetting_import_subtitleText": {},
+    "appSetting_importDialog_confirmTitle": "{count} alışkanlıkları içe aktarmayı onayla?",
+    "@appSetting_importDialog_confirmTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_confirmSubtitle": "Not: İçe aktarma, mevcut alışkanlıkları silmez.",
+    "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importDialog_confirm_confirmText": "onayla",
+    "@appSetting_importDialog_confirm_confirmText": {},
+    "appSetting_importDialog_confirm_cancelText": "iptal et",
+    "@appSetting_importDialog_confirm_cancelText": {},
+    "appSetting_importDialog_importingTitle": "İçe aktarıldı {completeCount}/{totalCount}",
+    "@appSetting_importDialog_importingTitle": {
+        "placeholders": {
+            "completeCount": {
+                "type": "int",
+                "example": "1"
+            },
+            "totalCount": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitle": "İçe aktarılan {count}",
+    "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_complete_closeLabel": "kapat",
+    "@appSetting_importDialog_complete_closeLabel": {},
+    "appSetting_resetConfig_titleText": "Yapılandırmaları sıfırla",
+    "@appSetting_resetConfig_titleText": {},
+    "appSetting_resetConfig_subtitleText": "Tüm yapılandırmaları varsayılana sıfırla.",
+    "@appSetting_resetConfig_subtitleText": {},
+    "appSetting_resetConfigDialog_titleText": "Yapılandırmaları sıfırla?",
+    "@appSetting_resetConfigDialog_titleText": {},
+    "appSetting_resetConfigDialog_subtitleText": "Tüm yapılandırmaları varsayılana sıfırla, uygulamak için uygulama yeniden başlatılmalıdır.",
+    "@appSetting_resetConfigDialog_subtitleText": {},
+    "appSetting_resetConfigDialog_cancelText": "iptal et",
+    "@appSetting_resetConfigDialog_cancelText": {},
+    "appSetting_resetConfigDialog_confirmText": "onayla",
+    "@appSetting_resetConfigDialog_confirmText": {},
+    "appSetting_resetConfigSuccess_snackbarText": "uygulama yapılandırmalarını sıfırlama başarılı",
+    "@appSetting_resetConfigSuccess_snackbarText": {},
+    "appSetting_otherSubgroupText": "Diğer",
+    "@appSetting_otherSubgroupText": {},
+    "appSetting_developMode_titleText": "Geliştirici Modu",
+    "@appSetting_developMode_titleText": {},
+    "appSetting_clearCache_titleText": "Önbelleği Temizle",
+    "@appSetting_clearCache_titleText": {},
+    "appSetting_clearCacheDialog_titleText": "Önbelleği Temizle",
+    "@appSetting_clearCacheDialog_titleText": {},
+    "appSetting_clearCacheDialog_subtitleText": "Önbellek temizlendikten sonra, bazı özel değerler varsayılan değerlere geri yüklenir.",
+    "@appSetting_clearCacheDialog_subtitleText": {},
+    "appSetting_clearCacheDialog_cancelText": "iptal et",
+    "@appSetting_clearCacheDialog_cancelText": {},
+    "appSetting_clearCacheDialog_confirmText": "onayla",
+    "@appSetting_clearCacheDialog_confirmText": {},
+    "appSetting_clearCache_snackBar_partSuccText": "Kısmi önbellek temizlenemedi",
+    "@appSetting_clearCache_snackBar_partSuccText": {},
+    "appSetting_clearCache_snackBar_succText": "Önbellek başarıyla temizlendi",
+    "@appSetting_clearCache_snackBar_succText": {},
+    "appSetting_clearCache_snackBar_failText": "Önbellek temizlenemedi",
+    "@appSetting_clearCache_snackBar_failText": {},
+    "appSetting_debugger_titleText": "Hata Ayıklama Bilgisi",
+    "@appSetting_debugger_titleText": {},
+    "appSetting_about_titleText": "Hakkında",
+    "@appSetting_about_titleText": {},
+    "appSetting_experimentalFeatureTile_titleText": "Deneysel Özellikler",
+    "@appSetting_experimentalFeatureTile_titleText": {},
+    "appSetting_synSubgroupText": "Eşleme",
+    "@appSetting_synSubgroupText": {},
+    "appSetting_syncOption_titleText": "Eşleme Ayarları",
+    "@appSetting_syncOption_titleText": {},
+    "appSync_nowTile_titleText": "Şimdi Eşle",
+    "@appSync_nowTile_titleText": {},
+    "appSync_nowTile_titleText_syncing": "Eşleniyor",
+    "@appSync_nowTile_titleText_syncing": {},
+    "appSync_nowTile_dateFormat": "{ymd} {jms}",
+    "@appSync_nowTile_dateFormat": {
+        "placeholders": {
+            "ymd": {
+                "type": "DateTime",
+                "format": "yMd"
+            },
+            "jms": {
+                "type": "DateTime",
+                "format": "jms"
+            }
+        }
+    },
+    "appSync_nowTile_text_noDate": "Son eşleme: Yok",
+    "@appSync_nowTile_text_noDate": {},
+    "appSync_nowTile_text": "Son eşleme: {dateStr}",
+    "@appSync_nowTile_text": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_errorText_noDate": "Son eşleme (Hata): Yok",
+    "@appSync_nowTile_errorText_noDate": {},
+    "appSync_nowTile_errorText": "Son eşleme (Hata): {dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "Eşleniyor...",
+    "@appSync_nowTile_syncingText": {},
+    "appSync_nowTile_syncingText_withPrt": "Eşleniyor: {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "İptal ediliyor...",
+    "@appSync_nowTile_cancellingText": {},
+    "appSync_nowTile_cancelText_noDate": "Son eşleme (İptal edildi): Yok",
+    "@appSync_nowTile_cancelText_noDate": {},
+    "appSync_nowTile_cancelText": "Son eşleme (İptal edildi): {dateStr}",
+    "@appSync_nowTile_cancelText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_failedTile_titleText": "Hata Kayıtlarını Kontrol Et",
+    "@appSync_failedTile_titleText": {},
+    "appSync_failedTile_errorText": "[Hata]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+    "@appSync_failedTile_webdavMulti_counterText": {
+        "placeholders": {
+            "reason": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus": "{status, select, success {Tamamlandı} cancelled {İptal edildi} failed {Başarısız} multi {Birden fazla durum} other {Bilinmeyen durum}}",
+    "@appSync_webdav_resultStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus_withReason": "{status, select, success {{reason} nedeniyle tamamlandı} cancelled {{reason} nedeniyle iptal edildi} failed {{reason} nedeniyle başarısız oldu} multi {{reason} nedeniyle birden fazla durum oluştu} other {Bilinmeyen durum}}",
+    "@appSync_webdav_resultStatus_withReason": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            },
+            "reason": {
+                "type": "String",
+                "description": "The reason for the status"
+            }
+        }
+    },
+    "appSync_webdav_resultReason": "{reason, select, error {Hata} userAction {Kullanıcı müdahalesi gerekli} missingHabitUuid {Alışkanlık UUID'si eksik} empty {Boş veri} other {Bilinmeyen neden}}",
+    "@appSync_webdav_resultReason": {
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "Yeni Konum",
+    "@appSync_webdav_newServerConfirmDialog_titleText": {},
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "Eşleme gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?",
+    "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+    "appSync_webdav_newServerConfirmDialog_confirmText": "Şimdi Eşle!",
+    "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+    "appSync_webdav_oldServerConfirmDialog_titleText": "Eşlemeyi Onayla",
+    "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "Klasör boş değil. Eşleme, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?",
+    "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Birleştirmeyi Onayla",
+    "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+    "appSync_exportAllLogsTile_titleText": "Hatalı Eşleme Kayıtlarını Dışa Aktar",
+    "@appSync_exportAllLogsTile_titleText": {},
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Kayıt bulunamadı} false {Dışa aktarmak için dokunun} other {yükleniyor...}}",
+    "@appSync_exportAllLogsTile_subtitleText": {
+        "placeholders": {
+            "isEmpty": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "appSync_syncServerType_text": "{isCurrent, select, true {Mevcut: } other {}}{name, select, webdav {WebDAV} fake {Test (Sadece Geliştirici İçin)} other {Bilinmeyen ({name})}}",
+    "@appSync_syncServerType_text": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Server name, depend on specific server type.",
+                "example": "WebDAV"
+            },
+            "isCurrent": {
+                "type": "String",
+                "description": "Is currently selected server",
+                "example": "true|false"
+            }
+        }
+    },
+    "appSync_networkType_text": "{type, select, mobile {Mobil} wifi {Wifi} other {Bilinmeyen}}",
+    "@appSync_networkType_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_syncInterval_text": "{name, select, manual {Manuel} minute5 {5 Dakika} minute15 {15 Dakika} minute30 {30 Dakika} hour1 {1 Saat} other {Bilinmeyen}}",
+    "@appSync_syncInterval_text": {
+        "description": "Localized display text for app sync interval",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "minute15",
+                "description": "<AppSyncFetchInterval>.name"
+            }
+        }
+    },
+    "appSync_syncIntervalTile_title": "Senkronizasyon Sıklığı",
+    "@appSync_syncIntervalTile_title": {},
+    "appSync_summaryTile_title": "Eşleme Sunucusu",
+    "@appSync_summaryTile_title": {},
+    "appSync_summaryTile_subtitle_text_notConfigured": "Yapılandırılmadı",
+    "@appSync_summaryTile_subtitle_text_notConfigured": {},
+    "appSync_exportAllLogsTile_exportSubjectText": "Tüm son başarısız eşleme kayıtları",
+    "@appSync_exportAllLogsTile_exportSubjectText": {},
+    "appSync_serverEditor_saveDialog_titleText": "Değişiklikleri Kaydetmeyi Onayla",
+    "@appSync_serverEditor_saveDialog_titleText": {},
+    "appSync_serverEditor_saveDialog_subtitleText": "Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.",
+    "@appSync_serverEditor_saveDialog_subtitleText": {},
+    "appSync_serverEditor_exitDialog_titleText": "Kaydedilmemiş Değişiklikler",
+    "@appSync_serverEditor_exitDialog_titleText": {},
+    "appSync_serverEditor_exitDialog_subtitleText": "Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.",
+    "@appSync_serverEditor_exitDialog_subtitleText": {},
+    "appSync_serverEditor_deleteDialog_titleText": "Silmeyi Onayla",
+    "@appSync_serverEditor_deleteDialog_titleText": {},
+    "appSync_serverEditor_deleteDialog_subtitleText": "Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.",
+    "@appSync_serverEditor_deleteDialog_subtitleText": {},
+    "appSync_serverEditor_titleText_add": "Yeni Eşleme Sunucusu",
+    "@appSync_serverEditor_titleText_add": {},
+    "appSync_serverEditor_titleText_modify": "Eşleme Sunucusunu Değiştir",
+    "@appSync_serverEditor_titleText_modify": {},
+    "appSync_serverEditor_advance_titleText": "Gelişmiş Yapılandırmalar",
+    "@appSync_serverEditor_advance_titleText": {},
+    "appSync_serverEditor_pathTile_titleText": "Yol",
+    "@appSync_serverEditor_pathTile_titleText": {},
+    "appSync_serverEditor_pathTile_hintText": "Buraya geçerli bir WebDAV yolu girin.",
+    "@appSync_serverEditor_pathTile_hintText": {},
+    "appSync_serverEditor_pathTile_errorText_emptyPath": "Yol boş olmamalı!",
+    "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+    "appSync_serverEditor_usernameTile_titleText": "Kullanıcı adı",
+    "@appSync_serverEditor_usernameTile_titleText": {},
+    "appSync_serverEditor_usernameTile_hintText": "Buraya kullanıcı adını girin, gerekli değilse boş bırakın.",
+    "@appSync_serverEditor_usernameTile_hintText": {},
+    "appSync_serverEditor_passwordTile_titleText": "Parola",
+    "@appSync_serverEditor_passwordTile_titleText": {},
+    "appSync_serverEditor_ignoreSSLTile_titleText": "SSL sertifikasını yok say",
+    "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+    "appSync_serverEditor_timeoutTile_titleText": "Senkronizasyon Zaman Aşımı (Saniye)",
+    "@appSync_serverEditor_timeoutTile_titleText": {},
+    "appSync_serverEditor_timeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_timeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_timeoutTile_unitText": "sn",
+    "@appSync_serverEditor_timeoutTile_unitText": {},
+    "appSync_serverEditor_connTimeoutTile_titleText": "Ağ Bağlantısı Zaman Aşımı (Saniye)",
+    "@appSync_serverEditor_connTimeoutTile_titleText": {},
+    "appSync_serverEditor_connTimeoutTile_hintText": "Varsayılan: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_connTimeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_connTimeoutTile_unitText": "sn",
+    "@appSync_serverEditor_connTimeoutTile_unitText": {},
+    "appSync_serverEditor_connRetryCountTile_titleText": "Ağ bağlantısı yeniden deneme sayısı",
+    "@appSync_serverEditor_connRetryCountTile_titleText": {},
+    "appSync_serverEditor_connRetryCountTile_hintText": "Varsayılan: {count, plural, =0 {Retry disabled} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_titleText": "Ağ eşleme kipi",
+    "@appSync_serverEditor_netTypeTile_titleText": {},
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Hücresel ağda eşleme} wifi {WiFi'de eşleme} other {Bilinmiyor}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataText": "Düşük Veri",
+    "@appSync_serverEditor_netTypeTile_lowDataText": {},
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "Düşük veri kipinde eşle",
+    "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+    "experimentalFeatures_warnginBanner_title": "Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.",
+    "@experimentalFeatures_warnginBanner_title": {},
+    "experimentalFeatures_habitSyncTile_titleText": "Alışkanlık bulut eşlemesi",
+    "@experimentalFeatures_habitSyncTile_titleText": {},
+    "experimentalFeatures_habitSyncTile_subtitleText": "Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir",
+    "@experimentalFeatures_habitSyncTile_subtitleText": {},
+    "experimentalFeatures_warnTile_titleText": "Deneysel özellik ({syncName}) devre dışı bırakılır, ancak işlev hala çalışıyor.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Habit Cloud Sync",
+                "description": "Experimental Feature's name."
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_forHabitSyncText": "Tamamen devre dışı bırakmak için '{menuName}' a erişmek ve kapatmak için uzun basın.",
+    "@experimentalFeatures_warnTile_forHabitSyncText": {
+        "placeholders": {
+            "menuName": {
+                "type": "String",
+                "example": "Sync Option"
+            }
+        }
+    },
+    "appAbout_appbarTile_titleText": "Hakkında",
+    "@appAbout_appbarTile_titleText": {},
+    "appAbout_versionTile_titleText": "Versiyon: {appVersion}",
+    "@appAbout_versionTile_titleText": {
+        "placeholders": {
+            "appVersion": {
+                "type": "String",
+                "example": "1.0.0"
+            }
+        }
+    },
+    "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+    "@appAbout_versionTile_changeLogPath": {},
+    "appAbout_sourceCodeTile_titleText": "Kaynak kodu",
+    "@appAbout_sourceCodeTile_titleText": {},
+    "appAbout_issueTrackerTile_titleText": "Hata izleyici",
+    "@appAbout_issueTrackerTile_titleText": {},
+    "appAbout_contactEmailTile_titleText": "Bana ulaş",
+    "@appAbout_contactEmailTile_titleText": {},
+    "appAbout_contactEmailTile_emailBody": "Merhaba, Bana yazdığın için memnunum.\nEğer bir hata bildiriyorsan, lütfen uygulama versiyonunu belirt ve hatayı ortaya çıkaran adımları açıkla.\n--------------------------------------",
+    "@appAbout_contactEmailTile_emailBody": {},
+    "appAbout_licenseTile_titleText": "Lisans",
+    "@appAbout_licenseTile_titleText": {},
+    "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
+    "@appAbout_licenseTile_subtitleText": {},
+    "appAbout_licenseThirdPartyTile_titleText": "Üçüncü Taraf Lisanslama Bildirimi",
+    "@appAbout_licenseThirdPartyTile_titleText": {},
+    "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+    "@appAbout_licenseThirdPartyTile_subtitleText": {},
+    "appAbout_privacyTile_titleText": "Gizlilik",
+    "@appAbout_privacyTile_titleText": {},
+    "appAbout_privacyTile_subTitleText": "Uygulamadaki gizlilik politikasına erişin",
+    "@appAbout_privacyTile_subTitleText": {},
+    "appAbout_donateTile_titleText": "Bağış yap",
+    "@appAbout_donateTile_titleText": {},
+    "appAbout_donateTile_subTitleText": "Ben kişisel bir geliştiriciyim. Bu uygulamayı beğendiyseniz, lütfen bana bir ☕ satın alın.",
+    "@appAbout_donateTile_subTitleText": {},
+    "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+    "@appAbout_donateTile_ways": {
+        "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+    },
+    "donateWay_paypal": "Paypal",
+    "@donateWay_paypal": {},
+    "donateWay_buyMeACoffee": "Bana bir kahve ısmarla",
+    "@donateWay_buyMeACoffee": {},
+    "donateWay_alipay": "Alipay",
+    "@donateWay_alipay": {},
+    "donateWay_wechatPay": "Wechat Pay",
+    "@donateWay_wechatPay": {},
+    "donateWay_cryptoCurrency": "Kripto Paralar",
+    "@donateWay_cryptoCurrency": {},
+    "donateWay_cryptoCurrency_BTC": "BTC",
+    "@donateWay_cryptoCurrency_BTC": {},
+    "donateWay_cryptoCurrency_ETH": "ETH",
+    "@donateWay_cryptoCurrency_ETH": {},
+    "donateWay_cryptoCurrency_BNB": "BNB",
+    "@donateWay_cryptoCurrency_BNB": {},
+    "donateWay_cryptoCurrency_AVAX": "AVAX",
+    "@donateWay_cryptoCurrency_AVAX": {},
+    "donateWay_cryptoCurrency_FTM": "FTM",
+    "@donateWay_cryptoCurrency_FTM": {},
+    "donateWay_firstQRGroup": "Alipay & Wechat Pay",
+    "@donateWay_firstQRGroup": {},
+    "appAbout_donateDialog_copiedCrypto_msg": "{name}'in adresi kopyalandı",
+    "@appAbout_donateDialog_copiedCrypto_msg": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "BTC"
+            }
+        }
+    },
+    "batchCheckin_appbar_title": "Toplu Giriş",
+    "@batchCheckin_appbar_title": {},
+    "batchCheckin_datePicker_prevButton_tooltip": "Önceki gün",
+    "@batchCheckin_datePicker_prevButton_tooltip": {},
+    "batchCheckin_datePicker_nextButton_tooltip": "Sonraki gün",
+    "@batchCheckin_datePicker_nextButton_tooltip": {},
+    "batchCheckin_status_skip_text": "Geç",
+    "@batchCheckin_status_skip_text": {},
+    "batchCheckin_status_ok_text": "Tamamlandı",
+    "@batchCheckin_status_ok_text": {},
+    "batchCheckin_status_double_text": "x2 Başarı!",
+    "@batchCheckin_status_double_text": {},
+    "batchCheckin_status_zero_text": "Tamamlanmadı",
+    "@batchCheckin_status_zero_text": {},
+    "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{Alışkanlık} other{Alışkanlıklar}} seçildi",
+    "@batchCheckin_habits_groupTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_button_text": "Kaydet",
+    "@batchCheckin_save_button_text": {},
+    "batchCheckin_reset_button_text": "Sıfırla",
+    "@batchCheckin_reset_button_text": {},
+    "batchCheckin_completed_snackbar_text": "{count, plural, =1{Alışkanlık durumu} other{{count} alışkanlığın durumu}} güncellendi",
+    "@batchCheckin_completed_snackbar_text": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_confirmDialog_title": "Mevcut Kayıtların Üzerine Yaz",
+    "@batchCheckin_save_confirmDialog_title": {},
+    "batchCheckin_save_confirmDialog_body": "Kaydedildikten sonra mevcut kayıtların üzerine yazılacak, önceki kayıtlar kaybolacak.",
+    "@batchCheckin_save_confirmDialog_body": {},
+    "batchCheckin_save_confirmDialog_confirmButton_text": "kaydet",
+    "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+    "batchCheckin_save_confirmDialog_cancelButton_text": "iptal et",
+    "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+    "batchCheckin_close_confirmDialog_title": "Dönüşü Onayla",
+    "@batchCheckin_close_confirmDialog_title": {},
+    "batchCheckin_close_confirmDialog_body": "Giriş durumu değişiklikleri kaydedilmeden uygulanmayacak",
+    "@batchCheckin_close_confirmDialog_body": {},
+    "batchCheckin_close_confirmDialog_confirmButton_text": "çıkış",
+    "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+    "batchCheckin_close_confirmDialog_cancelButton_text": "iptal et",
+    "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+    "appReminder_dailyReminder_title": "🏝 Bugün alışkanlıklarınıza bağlı kaldınız mı?",
+    "@appReminder_dailyReminder_title": {},
+    "appReminder_dailyReminder_body": "Uygulamayı açıp zamanında giriş yapmak için tıklayın.",
+    "@appReminder_dailyReminder_body": {},
+    "common_habitColorType_cc1": "Koyu leylak",
+    "@common_habitColorType_cc1": {},
+    "common_habitColorType_cc2": "Kırmızı",
+    "@common_habitColorType_cc2": {},
+    "common_habitColorType_cc3": "Mor",
+    "@common_habitColorType_cc3": {},
+    "common_habitColorType_cc4": "Kraliyet mavisi",
+    "@common_habitColorType_cc4": {},
+    "common_habitColorType_cc5": "Koyu camgöbeği",
+    "@common_habitColorType_cc5": {},
+    "common_habitColorType_cc6": "Yeşil",
+    "@common_habitColorType_cc6": {},
+    "common_habitColorType_cc7": "Kehribar",
+    "@common_habitColorType_cc7": {},
+    "common_habitColorType_cc8": "Turuncu",
+    "@common_habitColorType_cc8": {},
+    "common_habitColorType_cc9": "Limon yeşili",
+    "@common_habitColorType_cc9": {},
+    "common_habitColorType_cc10": "Koyu orkide",
+    "@common_habitColorType_cc10": {},
+    "common_habitColorType_default": "Renk {index}",
+    "@common_habitColorType_default": {
+        "description": "unknown habit color type name",
+        "placeholders": {
+            "index": {
+                "type": "int",
+                "example": "0"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_useSystemFormat_text": "Sistem formatını kullan",
+    "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+    "common_customDateTimeFormatPicker_fmtTileText": "Tarih formatı",
+    "@common_customDateTimeFormatPicker_fmtTileText": {},
+    "common_customDateTimeFormatPicker_ymd_text": "Yıl Ay Gün",
+    "@common_customDateTimeFormatPicker_ymd_text": {},
+    "common_customDateTimeFormatPicker_mdy_text": "Ay Gün Yıl",
+    "@common_customDateTimeFormatPicker_mdy_text": {},
+    "common_customDateTimeFormatPicker_dmy_text": "Gün Ay Yıl",
+    "@common_customDateTimeFormatPicker_dmy_text": {},
+    "common_customDateTimeFormatPicker_SepTileText": "Ayırıcı",
+    "@common_customDateTimeFormatPicker_SepTileText": {},
+    "common_customDateTimeFormatPicker_sepDash_text": "Tire",
+    "@common_customDateTimeFormatPicker_sepDash_text": {},
+    "common_customDateTimeFormatPicker_sepSlash_text": "Eğik çizgi",
+    "@common_customDateTimeFormatPicker_sepSlash_text": {},
+    "common_customDateTimeFormatPicker_sepSpace_text": "Boşluk",
+    "@common_customDateTimeFormatPicker_sepSpace_text": {},
+    "common_customDateTimeFormatPicker_sepDot_text": "Nokta",
+    "@common_customDateTimeFormatPicker_sepDot_text": {},
+    "common_customDateTimeFormatPicker_empty_text": "Ayırıcı yok",
+    "@common_customDateTimeFormatPicker_empty_text": {},
+    "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+    "@common_customDateTimeFormatPicker_sep_formatter": {
+        "description": "split char",
+        "placeholders": {
+            "splitName": {
+                "type": "String",
+                "example": "Dash"
+            },
+            "splitChar": {
+                "type": "String",
+                "example": "/"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_12Hour_text": "12 saatlik formatı kullan",
+    "@common_customDateTimeFormatPicker_12Hour_text": {},
+    "common_customDateTimeFormatPicker_monthName_text": "Tam adı kullan",
+    "@common_customDateTimeFormatPicker_monthName_text": {},
+    "common_customDateTimeFormatPicker_applyFreqChart_text": "Sıklık Grafiğine Uygula",
+    "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+    "common_customDateTimeFormatPicker_applyHeapmap_text": "Takvime Uygula",
+    "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+    "common_customDateTimeFormatPicker_cancelButton_text": "iptal et",
+    "@common_customDateTimeFormatPicker_cancelButton_text": {},
+    "common_customDateTimeFormatPicker_confirmButton_text": "onayla",
+    "@common_customDateTimeFormatPicker_confirmButton_text": {},
+    "common_errorPage_title": "Tüh, çöktü!",
+    "@common_errorPage_title": {},
+    "common_errorPage_copied": "Çökme bilgileri kopyalandı",
+    "@common_errorPage_copied": {},
+    "common_enable_text": "Etkinleştirildi",
+    "@common_enable_text": {},
+    "calendarPicker_clip_today": "Bugün",
+    "@calendarPicker_clip_today": {},
+    "calendarPicker_clip_tomorrow": "Yarın",
+    "@calendarPicker_clip_tomorrow": {},
+    "calendarPicker_clip_after7Days": "Sonraki {date}",
+    "@calendarPicker_clip_after7Days": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "format": "E"
+            }
+        }
+    },
+    "exportConfirmDialog_title_exportAll": "Bütün alışkanlıkları dışa aktar?",
+    "@exportConfirmDialog_title_exportAll": {},
+    "exportConfirmDialog_title_exportMulti": "{number, plural, =0{mevcut alışkanlık} =1{1 alışkanlık} other{{number} alışkanlık}} dışa aktar?",
+    "@exportConfirmDialog_title_exportMulti": {
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "exportConfirmDialog_option_includeRecords": "kayıtları dahil et",
+    "@exportConfirmDialog_option_includeRecords": {},
+    "exportConfirmDialog_cancel_buttonText": "iptal et",
+    "@exportConfirmDialog_cancel_buttonText": {},
+    "exportConfirmDialog_confirm_buttonText": "dışa aktar",
+    "@exportConfirmDialog_confirm_buttonText": {},
+    "debug_logLevelTile_title": "Günlük Kaydı Seviyesi",
+    "@debug_logLevelTile_title": {},
+    "debug_logLevelDialog_title": "Günlük Kaydı Seviyesini Değiştir",
+    "@debug_logLevelDialog_title": {},
+    "debug_logLevel_debug": "Hata Ayıklama",
+    "@debug_logLevel_debug": {},
+    "debug_logLevel_info": "Bilgi",
+    "@debug_logLevel_info": {},
+    "debug_logLevel_warn": "Uyarı",
+    "@debug_logLevel_warn": {},
+    "debug_logLevel_error": "Hata",
+    "@debug_logLevel_error": {},
+    "debug_logLevel_fatal": "Kritik",
+    "@debug_logLevel_fatal": {},
+    "debug_collectLogTile_title": "Kayıtlar Toplanıyor",
+    "@debug_collectLogTile_title": {},
+    "debug_collectLogTile_enable_subtitle": "Kayıtları toplamayı durdurmak için dokunun.",
+    "@debug_collectLogTile_enable_subtitle": {},
+    "debug_collectLogTile_disable_subtitle": "Kayıtları toplamayı başlatmak için dokunun.",
+    "@debug_collectLogTile_disable_subtitle": {},
+    "debug_downladDebugLogs_subject": "Hata ayıklama kayıtları indiriliyor",
+    "@debug_downladDebugLogs_subject": {},
+    "dbeug_clearDebugLogs_complete_snackbar": "Hata ayıklama kayıtları temizlendi.",
+    "@dbeug_clearDebugLogs_complete_snackbar": {},
+    "debug_downladDebugInfo_subject": "Hata ayıklama bilgisi indiriliyor",
+    "@debug_downladDebugInfo_subject": {},
+    "debug_downladDebugZip_subject": "{fileName} indiriliyor",
+    "@debug_downladDebugZip_subject": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "debug.zip"
+            }
+        }
+    },
+    "debug_missingDebugLogFile_snackbar": "Hata ayıklama günlüğü mevcut değil.",
+    "@debug_missingDebugLogFile_snackbar": {},
+    "debug_debuggerLogCard_title": "Günlük Bilgileri",
+    "@debug_debuggerLogCard_title": {},
+    "debug_debuggerLogCard_subtitle": "Yerel hata ayıklama günlüklerini içerir, günlük toplama özelliğinin açık olması gerekir.",
+    "@debug_debuggerLogCard_subtitle": {},
+    "debug_debuggerLogCard_saveButton_text": "İndir",
+    "@debug_debuggerLogCard_saveButton_text": {},
+    "debug_debuggerLogCard_clearButton_text": "Temizle",
+    "@debug_debuggerLogCard_clearButton_text": {},
+    "debug_debuggerInfoCard_title": "Hata Ayıklama Bilgileri",
+    "@debug_debuggerInfoCard_title": {},
+    "debug_debuggerInfoCard_subtitle": "Uygulamanın hata ayıklama bilgilerini içerir.",
+    "@debug_debuggerInfoCard_subtitle": {},
+    "debug_debuggerInfoCard_openButton_text": "Aç",
+    "@debug_debuggerInfoCard_openButton_text": {},
+    "debug_debuggerInfoCard_saveButton_text": "Kaydet",
+    "@debug_debuggerInfoCard_saveButton_text": {},
+    "debug_debuggerInfo_notificationTitle": "Uygulama Bilgileri Toplanıyor...",
+    "@debug_debuggerInfo_notificationTitle": {},
+    "confirmDialog_confirm_text": "{type, select, save {Kaydet} exit {Çıkış} delete {Sil} other {Onayla}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<NormalizeConfirmDialogType>.name",
+                "example": "confirm"
+            }
+        }
+    },
+    "confirmDialog_cancel_text": "İptal",
+    "@confirmDialog_cancel_text": {},
+    "snackbar_undoText": "GERİ AL",
+    "@snackbar_undoText": {},
+    "snackbar_dismissText": "KAPAT",
+    "@snackbar_dismissText": {},
+    "contributors_tile_title": "Katkıda bulunanlar",
+    "@contributors_tile_title": {},
+    "userAction_tap": "Dokun",
+    "@userAction_tap": {},
+    "userAction_doubleTap": "Çift",
+    "@userAction_doubleTap": {},
+    "userAction_longTap": "Uzun",
+    "@userAction_longTap": {},
+    "channelName_habitReminder": "Alışkanlık hatırlatıcısı",
+    "@channelName_habitReminder": {},
+    "channelName_appReminder": "Hatırlatma",
+    "@channelName_appReminder": {},
+    "channelName_appDebugger": "Hata ayıklayıcı",
+    "@channelName_appDebugger": {},
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Alışkanlık dışa aktarıldı.} other {{count} alışkanlık dışa aktarıldı.}}",
+    "@habitDisplay_exportHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of exported habits",
+                "example": "3"
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Bütün Alışkanlıklar Dışa Aktarıldı",
+    "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
+    "appSetting_notify_titleTile": "Bildirimler",
+    "@appSetting_notify_titleTile": {},
+    "appSetting_notify_subtitleTile": "Bildirim tercihlerini düzenle",
+    "@appSetting_notify_subtitleTile": {},
+    "appSetting_notify_subtitleTile_android": "Sistem bildirim ayarlarını açmak için dokun",
+    "@appSetting_notify_subtitleTile_android": {},
+    "appSync_noti_readyToSync_body": "Eşitlemeye hazırlanıyor...",
+    "@appSync_noti_readyToSync_body": {},
+    "appSync_noti_syncing_title": "{synced, select, synced {Eşitlendi ({type})} failed {Eşitleme Başarısız ({type})} other {Eşitleniyor ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Server type, see 'appSync_syncServerType_text' field",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "channelName_appSyncing": "Eşitleme Süreci",
+    "@channelName_appSyncing": {},
+    "channelDesc_appSyncing": "Eşitleme ilerlemesini ve başarılı sonuçları göstermek için kullanılır",
+    "@channelDesc_appSyncing": {},
+    "channelName_appSyncFailed": "Eşitleme Başarısız",
+    "@channelName_appSyncFailed": {},
+    "channelDesc_appSyncFailed": "Eşitleme başarısız olduğunda uyarmak için kullanılır",
+    "@channelDesc_appSyncFailed": {}
 }
