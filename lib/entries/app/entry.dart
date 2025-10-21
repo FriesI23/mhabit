@@ -70,6 +70,7 @@ class AppEntry extends StatelessWidget {
     AppSyncServerConfigHandler.new,
     AppSyncFetchIntervalHandler.new,
     AppSyncExperimentalFeature.new,
+    HabitExportExperimentalFeature.new,
     AppNotifyConfigProfileHandler.new,
   ];
 

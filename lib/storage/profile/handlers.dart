@@ -26,6 +26,7 @@ export 'handlers/display_habits_filter.dart';
 export 'handlers/display_sort_mode.dart';
 export 'handlers/first_day.dart';
 export 'handlers/habit_cell_gesture_mode.dart';
+export 'handlers/habit_search.dart';
 export 'handlers/input_fill_cache.dart';
 export 'handlers/logging_level.dart';
 export 'handlers/show_data_format.dart';

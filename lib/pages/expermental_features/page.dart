@@ -79,6 +79,63 @@ final class _PageState extends State<_Page> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
+
+    List<Widget> buildAppSyncWidgets(BuildContext context) => [
+          Selector<AppExperimentalFeatureViewModel, bool>(
+            selector: (context, vm) => vm.appSync,
+            builder: (context, value, child) => SwitchListTile(
+                title: Text(
+                    l10n?.experimentalFeatures_habitSyncTile_titleText ??
+                        "Habit Sync"),
+                subtitle: l10n != null
+                    ? Text(l10n.experimentalFeatures_habitSyncTile_subtitleText)
+                    : null,
+                value: value,
+                onChanged: (value) async {
+                  await vm?.setAppSync(value);
+                  if (vm?.appSync == true) {
+                    setState(() => showWarningBanner = true);
+                  }
+                }),
+          ),
+          Selector2<AppSyncViewModel, AppExperimentalFeatureViewModel, bool>(
+            selector: (context, vm1, vm2) => vm1.enabled && !vm2.appSync,
+            builder: (context, value, child) => ExpandedSection(
+                expand: value,
+                child: ListTile(
+                  leading: const Icon(Icons.warning_amber_outlined),
+                  title: Text(l10n?.experimentalFeatures_warnTile_titleText(
+                          l10n.experimentalFeatures_habitSyncTile_titleText) ??
+                      "Experimental feature (Habit Network Sync) is off, "
+                          "but function still running."),
+                  subtitle: l10n != null
+                      ? Text(
+                          l10n.experimentalFeatures_warnTile_forHabitSyncText(
+                              l10n.appSetting_syncOption_titleText))
+                      : null,
+                  onLongPress: () =>
+                      app_sync.naviToAppSyncPage(context: context),
+                )),
+          )
+        ];
+
+    List<Widget> buildHabitSearchWidgets(BuildContext context) => [
+          Selector<AppExperimentalFeatureViewModel, bool>(
+            selector: (context, vm) => vm.habitSearch,
+            builder: (context, value, child) => SwitchListTile(
+                // TODO(search): l10n
+                title: const Text("Habit Search"),
+                subtitle: null,
+                value: value,
+                onChanged: (value) async {
+                  await vm?.setHabitSearch(value);
+                  if (vm?.habitSearch == true) {
+                    setState(() => showWarningBanner = true);
+                  }
+                }),
+          ),
+        ];
+
     return Scaffold(
       appBar: AppBar(
           leading: const PageBackButton(reason: PageBackReason.back),
@@ -100,45 +157,8 @@ final class _PageState extends State<_Page> {
                       child: Text(l10n?.snackbar_dismissText ?? "DISMISS")),
                 ]),
           ),
-          if (vm != null) ...[
-            Selector<AppExperimentalFeatureViewModel, bool>(
-              selector: (context, vm) => vm.appSync,
-              builder: (context, value, child) => SwitchListTile(
-                  title: Text(
-                      l10n?.experimentalFeatures_habitSyncTile_titleText ??
-                          "Habit Sync"),
-                  subtitle: l10n != null
-                      ? Text(
-                          l10n.experimentalFeatures_habitSyncTile_subtitleText)
-                      : null,
-                  value: value,
-                  onChanged: (value) async {
-                    await vm?.setAppSync(value);
-                    if (vm?.appSync == true) {
-                      setState(() => showWarningBanner = true);
-                    }
-                  }),
-            ),
-            Selector2<AppSyncViewModel, AppExperimentalFeatureViewModel, bool>(
-              selector: (context, vm1, vm2) => vm1.enabled && !vm2.appSync,
-              builder: (context, value, child) => ExpandedSection(
-                  expand: value,
-                  child: ListTile(
-                    leading: const Icon(Icons.warning_amber_outlined),
-                    title: Text(l10n?.experimentalFeatures_warnTile_titleText(
-                            l10n.experimentalFeatures_habitSyncTile_titleText) ??
-                        "Experimental feature (Habit Network Sync) is off, "
-                            "but function still running."),
-                    subtitle: l10n != null
-                        ? Text(
-                            l10n.experimentalFeatures_warnTile_forHabitSyncText(
-                                l10n.appSetting_syncOption_titleText))
-                        : null,
-                    onLongPress: () =>
-                        app_sync.naviToAppSyncPage(context: context),
-                  )),
-            )
-          ],
+          if (vm != null) ...buildAppSyncWidgets(context),
+          if (vm != null) ...buildHabitSearchWidgets(context)
         ],
       ),
     );

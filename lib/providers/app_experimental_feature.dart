@@ -29,20 +29,31 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
     _handlers
       ..clear()
       ..[AppSyncExperimentalFeature] =
-          profile.getHandler<AppSyncExperimentalFeature>();
+          profile.getHandler<AppSyncExperimentalFeature>()
+      ..[HabitExportExperimentalFeature] =
+          profile.getHandler<HabitExportExperimentalFeature>();
   }
 
   Iterable<AppExperimentalFeature> get allFeatures => _handlers.values.nonNulls;
 
-  bool get appSync => _handlers.containsKey(AppSyncExperimentalFeature)
-      ? _handlers[AppSyncExperimentalFeature]?.get() ?? false
-      : true;
+  bool _getBool<T>() =>
+      _handlers.containsKey(T) ? _handlers[T]?.get() ?? false : true;
 
-  Future<void> setAppSync(bool value, {bool listen = true}) async {
-    final switcher = _handlers[AppSyncExperimentalFeature];
+  Future<void> _setBool<T>(bool value, {required bool listen}) async {
+    final switcher = _handlers[T];
     if (switcher?.get() != value) {
       await switcher?.set(value);
       if (listen) notifyListeners();
     }
   }
+
+  bool get appSync => _getBool<AppSyncExperimentalFeature>();
+
+  Future<void> setAppSync(bool value, {bool listen = true}) =>
+      _setBool<AppSyncExperimentalFeature>(value, listen: listen);
+
+  bool get habitSearch => _getBool<HabitExportExperimentalFeature>();
+
+  Future<void> setHabitSearch(bool vlaue, {bool listen = true}) =>
+      _setBool<HabitExportExperimentalFeature>(vlaue, listen: listen);
 }
