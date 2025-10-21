@@ -20,6 +20,8 @@ abstract mixin class AppExperimentalFeature<S, T>
   String get key => "app_expf_$expKey";
 
   String get expKey;
+
+  bool get enabled;
 }
 
 abstract class AppExperimentalFeatureBool<T>

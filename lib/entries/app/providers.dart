@@ -21,6 +21,7 @@ import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_debugger.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
 import '../../providers/app_notify_config.dart';
@@ -82,6 +83,12 @@ class AppProviders extends SingleChildStatelessWidget {
           ),
           ProxyProvider<ProfileViewModel, AppCachesViewModel>(
             create: (context) => AppCachesViewModel(),
+            update: (context, profile, previous) =>
+                previous!..updateProfile(profile),
+          ),
+          ChangeNotifierProxyProvider<ProfileViewModel,
+              AppExperimentalFeatureViewModel>(
+            create: (context) => AppExperimentalFeatureViewModel(),
             update: (context, profile, previous) =>
                 previous!..updateProfile(profile),
           ),

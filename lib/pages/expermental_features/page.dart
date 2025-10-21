@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../widgets/widgets.dart';
 import '../app_sync/page.dart' as app_sync;
@@ -45,27 +46,27 @@ class _Page extends StatefulWidget {
 }
 
 final class _PageState extends State<_Page> {
-  AppSyncViewModel? syncvm;
+  AppExperimentalFeatureViewModel? vm;
   bool showWarningBanner = false;
+
+  bool shouldShowWarningBanner() =>
+      vm?.allFeatures.any((e) => e.enabled) == true;
 
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
-    syncvm = context.maybeRead<AppSyncViewModel>();
-    if ([syncvm?.expFeatureEnabled].any((e) => e == true)) {
-      showWarningBanner = true;
-    }
-
+    vm = context.maybeRead<AppExperimentalFeatureViewModel>();
+    if (shouldShowWarningBanner()) showWarningBanner = true;
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    final oldSyncvm = syncvm;
-    syncvm = context.maybeRead<AppSyncViewModel>();
+    final oldSyncvm = vm;
+    vm = context.maybeRead<AppExperimentalFeatureViewModel>();
     final oldShown = showWarningBanner;
-    showWarningBanner = [syncvm?.expFeatureEnabled].any((e) => e == true);
-    if (oldSyncvm != syncvm || oldShown != showWarningBanner) setState(() {});
+    showWarningBanner = shouldShowWarningBanner();
+    if (oldSyncvm != vm || oldShown != showWarningBanner) setState(() {});
     super.didChangeDependencies();
   }
 
@@ -99,9 +100,9 @@ final class _PageState extends State<_Page> {
                       child: Text(l10n?.snackbar_dismissText ?? "DISMISS")),
                 ]),
           ),
-          if (syncvm != null) ...[
-            Selector<AppSyncViewModel, bool>(
-              selector: (context, vm) => vm.expFeatureEnabled,
+          if (vm != null) ...[
+            Selector<AppExperimentalFeatureViewModel, bool>(
+              selector: (context, vm) => vm.appSync,
               builder: (context, value, child) => SwitchListTile(
                   title: Text(
                       l10n?.experimentalFeatures_habitSyncTile_titleText ??
@@ -111,15 +112,15 @@ final class _PageState extends State<_Page> {
                           l10n.experimentalFeatures_habitSyncTile_subtitleText)
                       : null,
                   value: value,
-                  onChanged: (value) {
-                    syncvm?.setExpFeatureSwitch(value);
-                    if (syncvm?.expFeatureEnabled == true) {
+                  onChanged: (value) async {
+                    await vm?.setAppSync(value);
+                    if (vm?.appSync == true) {
                       setState(() => showWarningBanner = true);
                     }
                   }),
             ),
-            Selector<AppSyncViewModel, bool>(
-              selector: (context, vm) => vm.enabled && !vm.expFeatureEnabled,
+            Selector2<AppSyncViewModel, AppExperimentalFeatureViewModel, bool>(
+              selector: (context, vm1, vm2) => vm1.enabled && !vm2.appSync,
               builder: (context, value, child) => ExpandedSection(
                   expand: value,
                   child: ListTile(

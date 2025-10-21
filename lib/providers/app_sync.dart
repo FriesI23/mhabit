@@ -71,7 +71,6 @@ class AppSyncViewModel
   AppSyncSwitchHandler? _switch;
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
-  AppSyncExperimentalFeature? _expSwitch;
   Stopwatch? _appPauseStopwatch;
 
   AppSyncPeriodicTimer? _autoSyncTimer;
@@ -137,7 +136,6 @@ class AppSyncViewModel
     _switch = newProfile.getHandler<AppSyncSwitchHandler>();
     _interval = newProfile.getHandler<AppSyncFetchIntervalHandler>();
     _serverConfig = newProfile.getHandler<AppSyncServerConfigHandler>();
-    _expSwitch = newProfile.getHandler<AppSyncExperimentalFeature>();
     // start auto sync
     regrPeriodicSync(fireDelay: kAppSyncDelayDuration3);
     // clear failed sync logs
@@ -181,16 +179,6 @@ class AppSyncViewModel
   }
 
   AppSyncServer? get serverConfig => _serverConfig?.get();
-
-  bool get expFeatureEnabled =>
-      _expSwitch == null ? true : _expSwitch?.get() ?? false;
-
-  Future<void> setExpFeatureSwitch(bool value, {bool listen = true}) async {
-    if (_expSwitch?.get() != value) {
-      await _expSwitch?.set(value);
-      if (listen) notifyListeners();
-    }
-  }
 
   Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
