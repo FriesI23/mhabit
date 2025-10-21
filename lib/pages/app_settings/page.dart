@@ -35,10 +35,10 @@ import '../../providers/app_caches.dart';
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
 import '../../providers/app_reminder.dart';
-import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_op_config.dart';
 import '../../providers/habit_summary.dart' as habit_summary;
@@ -734,8 +734,8 @@ class _PageState extends State<_Page> with XShare {
           child: ListView(
             children: [
               ...buildSyncSubGroup(context).map((e) =>
-                  Selector<AppSyncViewModel, bool>(
-                      selector: (context, vm) => vm.expFeatureEnabled,
+                  Selector<AppExperimentalFeatureViewModel, bool>(
+                      selector: (context, vm) => vm.appSync,
                       builder: (context, value, child) =>
                           Visibility(visible: value, child: e))),
               ...buildDisplaySubGroup(context),

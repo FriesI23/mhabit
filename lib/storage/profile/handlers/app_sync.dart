@@ -114,4 +114,7 @@ class AppSyncExperimentalFeature extends AppExperimentalFeatureBool<bool> {
 
   @override
   bool get() => super.get() ?? true;
+
+  @override
+  bool get enabled => get();
 }
