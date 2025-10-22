@@ -114,20 +114,28 @@ class _AppEntry extends StatelessWidget {
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, appThemeArgs, child) {
             final (themeMode, themeMainColor) = appThemeArgs;
-            final appColorLight = ColorScheme.fromSeed(
-                seedColor: themeMainColor, brightness: Brightness.light);
-            final appColorDark = ColorScheme.fromSeed(
-                seedColor: themeMainColor, brightness: Brightness.dark);
             return AppRootView(
               themeMode: transToMaterialThemeType(themeMode),
               themeMainColor: themeMainColor,
               language: language,
               lightThemeBuilder: () => ThemeData(
-                  colorScheme: lightDynamic ?? appColorLight,
+                  colorScheme: lightDynamic != null
+                      ? ColorScheme.fromSeed(
+                          seedColor: Color(lightDynamic.primary.toARGB32()),
+                          brightness: Brightness.light)
+                      : ColorScheme.fromSeed(
+                          seedColor: themeMainColor,
+                          brightness: Brightness.light),
                   useMaterial3: true,
                   extensions: [modifedLightCustomColors]),
               darkThemeBuilder: () => ThemeData(
-                  colorScheme: darkDynamic ?? appColorDark,
+                  colorScheme: darkDynamic != null
+                      ? ColorScheme.fromSeed(
+                          seedColor: Color(darkDynamic.primary.toARGB32()),
+                          brightness: Brightness.dark)
+                      : ColorScheme.fromSeed(
+                          seedColor: themeMainColor,
+                          brightness: Brightness.dark),
                   useMaterial3: true,
                   extensions: [darkCustomColors]),
               child: child,
