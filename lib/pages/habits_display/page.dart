@@ -38,7 +38,6 @@ import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
-import '../../models/habit_stat.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_compact_ui_switcher.dart';
@@ -352,7 +351,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       ..showSnackBar(snackBar);
   }
 
-  void _openHabitSummaryMenuDialog(BuildContext context) async {
+  void _openHabitSummaryMenuDialog() async {
+    if (!mounted) return;
     final result = await showHabitDisplayMainMenuDialog(
       context: context,
       sortType: context.read<HabitsSortViewModel>().sortType,
@@ -367,17 +367,17 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         return;
       case HabitDisplayMainMenuDialogOpr.showSortMenu:
         await Future.delayed(const Duration(milliseconds: 300));
-        if (!context.mounted) return;
-        _openHabitSummarySortSelectorDialog(context);
+        if (!mounted) return;
+        _openHabitSummarySortSelectorDialog();
         break;
       case HabitDisplayMainMenuDialogOpr.openSettings:
-        if (!context.mounted) return;
-        _openAppSettingsPage(context);
+        if (!mounted) return;
+        _openAppSettingsPage();
         break;
     }
   }
 
-  void _openHabitSummaryStatisticsDialog(BuildContext context) {
+  void _openHabitSummaryStatisticsDialog() {
     if (!mounted) return;
     showHabitDisplayStatsMenuDialog(
       context: context,
@@ -385,14 +385,15 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     );
   }
 
-  void _openHabitSummarySortSelectorDialog(BuildContext context) async {
+  void _openHabitSummarySortSelectorDialog() async {
+    if (!mounted) return;
     final result = await showHabitDisplaySortTypePickerDialog(
       context: context,
       sortType: context.read<HabitsSortViewModel>().sortType,
       sortDirection: context.read<HabitsSortViewModel>().sortDirection,
     );
 
-    if (!context.mounted || result == null) return;
+    if (!mounted || result == null) return;
     context
         .read<HabitsSortViewModel>()
         .setNewSortMode(sortType: result.item1, sortDirection: result.item2);
@@ -529,7 +530,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     });
   }
 
-  void _openAppSettingsPage(BuildContext context) {
+  void _openAppSettingsPage() {
+    if (!mounted) return;
     app_settings.naviToAppSettingPage(
       context: context,
       summary: context.read<HabitSummaryViewModel>(),
@@ -629,8 +631,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   void _onAppbarSelectAllActionPressed() =>
       context.read<HabitSummaryViewModel>().selectAllHabit();
 
-  void _onAppbarExportAllActionPressed(BuildContext? context) =>
-      _exportSelectedHabitsAndShared(context ?? this.context);
+  void _onAppbarExportAllActionPressed() =>
+      _exportSelectedHabitsAndShared(context);
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
@@ -908,147 +910,52 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     appLog.build.debug(context);
 
     //#region: appbar
-    Widget buildAppbarInViewMode(BuildContext context, bool isExtended) {
-      return Selector<HabitsRecordScrollBehaviorViewModel,
-          HabitsRecordScrollBehavior>(
-        key: const ValueKey("view-app-bar"),
-        selector: (context, vm) => vm.scrollBehavior,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) =>
-            Selector<AppThemeViewModel, int>(
-          selector: (context, vm) => vm.displayPageOccupyPrt,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, occupyPrt, child) {
-            final viewmodel = context.read<HabitSummaryViewModel>();
-            final compactvm = context.read<AppCompactUISwitcherViewModel>();
-            return HabitDisplayAppBarViewMode(
-              scrolledUnderElevation: kCommonEvalation,
-              title: L10nBuilder(
-                builder: (context, l10n) =>
-                    l10n != null ? Text(l10n.appName) : const Text(appName),
-              ),
-              bottom: SliverCalendarBar(
-                key: const Key('habit_display_calendar_bar'),
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                startDate: DateChangeProvider.of(context).dateTime,
-                endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
-                isExtended: isExtended,
-                collapsePrt: occupyPrt,
-                height: compactvm.appCalendarBarHeight,
-                itemPadding: compactvm.appCalendarBarItemPadding,
-                onLeftBtnPressed: _onAppbarLeftButtonPressed,
-                scrollPhysicsBuilder: _buildScrollPhysics,
-              ),
-              onInfoButtonPressed: () =>
-                  _openHabitSummaryStatisticsDialog(context),
-              onMenuButtonPressed: () => _openHabitSummaryMenuDialog(context),
-            );
-          },
-        ),
-      );
-    }
-
-    Widget buildAppbarInEditMode(BuildContext context, bool isExtended) {
-      Widget buildEditAppbarActions(BuildContext context) {
-        return Selector<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
-          selector: (context, viewmodel) => viewmodel.selectStatistic,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, stat, child) => L10nBuilder(
-            builder: (context, l10n) =>
-                AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
-              buttonSwitchAnimateDuration: kEditModeAppbarAnimateDuration,
-              actionConfigs: [
-                EditModeActionItemConfig.edit(
-                    visible: stat.selected == 1,
-                    text: l10n?.habitDisplay_editButton_tooltip ?? "Edit",
-                    callback: _onAppbarEditActionPressed),
-                EditModeActionItemConfig.unarchive(
-                    visible: stat.archived > 0,
-                    text: l10n?.habitDisplay_unarchiveButton_tooltip ??
-                        "Unarchive",
-                    callback: _onAppbarUnArchiveActionPressed),
-                EditModeActionItemConfig.archive(
-                    visible: stat.activated > 0,
-                    text: l10n?.habitDisplay_archiveButton_tooltip ?? "Archive",
-                    callback: _onAppbarArchiveActionPressed),
-                EditModeActionItemConfig.selectall(
-                    text: l10n?.habitDisplay_editPopMenu_selectAll ??
-                        "Select All",
-                    callback: _onAppbarSelectAllActionPressed),
-                EditModeActionItemConfig.clone(
-                    visible: stat.selected == 1,
-                    text: l10n?.habitDisplay_editPopMenu_clone ?? "Clone",
-                    callback: _onAppbarCloneActionPressed),
-                EditModeActionItemConfig.exportall(
-                    text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
-                    callback: () => _onAppbarExportAllActionPressed(context)),
-                EditModeActionItemConfig.delete(
-                    text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',
-                    callback: _onAppbarDeleteActionPressed),
-              ],
-            ),
-          ),
-        );
-      }
-
-      Widget buildAppbarTitle(BuildContext context) {
-        return Selector<HabitSummaryViewModel, int>(
-          selector: (context, viewmodel) => viewmodel.selectedHabitsCount,
-          shouldRebuild: (previous, next) {
-            if (next <= 0) return false;
-            return previous != next;
-          },
-          builder: (context, value, child) => AnimatedSwitcher(
-            duration: kEditModeAppbarAnimateDuration,
-            child: Text(value.toString()),
-          ),
-        );
-      }
-
-      return Selector<HabitsRecordScrollBehaviorViewModel,
-          HabitsRecordScrollBehavior>(
-        key: const ValueKey("edit-app-bar"),
-        selector: (context, vm) => vm.scrollBehavior,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, scrollBehavior, child) =>
-            Selector<AppThemeViewModel, int>(
-          selector: (context, vm) => vm.displayPageOccupyPrt,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, occupyPrt, child) {
-            final viewmodel = context.read<HabitSummaryViewModel>();
-            return HabitDisplayAppBarEditMode(
-              scrolledUnderElevation: kCommonEvalation,
-              title: buildAppbarTitle(context),
-              bottom: SliverCalendarBar(
-                key: const Key('habit_display_calendar_bar'),
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                startDate: DateChangeProvider.of(context).dateTime,
-                endDate: viewmodel.earliestSummaryDataStartDate?.startDate,
-                isExtended: isExtended,
-                collapsePrt: occupyPrt,
-              ),
-              actionBuilder: buildEditAppbarActions,
-              onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
-            );
-          },
-        ),
-      );
-    }
-
     Widget buildAppbar(BuildContext context) {
       return Selector<HabitSummaryViewModel, HabitSummaryStatusCache>(
-        selector: (context, viewmodel) => viewmodel.currentState,
+        selector: (context, vm) => vm.currentState,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, status, child) {
-          final viewmodel = context.read<HabitSummaryViewModel>();
-          appLog.build.debug(context, ex: [status], name: "$widget.Appbar");
+        builder: (context, state, child) {
+          appLog.build.debug(context, ex: [state], name: "$widget.Appbar");
+
+          final Widget appbar;
+          if (state.isInEditMode) {
+            appbar = SliverTopAppBarWrapper(
+              key: const ValueKey("edit"),
+              builder: (context, value, child) => SliverEditTopAppBar(
+                isClandarExpanded: state.isClandarExpanded,
+                verticalScrollController: _verticalScrollController,
+                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
+                onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
+                scrollPhysicsBuilder: _buildScrollPhysics,
+                action: SliverEditTopAppBarAction(
+                  onEdit: _onAppbarEditActionPressed,
+                  onUnarchive: _onAppbarUnArchiveActionPressed,
+                  onArchive: _onAppbarArchiveActionPressed,
+                  onSelectAll: _onAppbarSelectAllActionPressed,
+                  onClone: _onAppbarCloneActionPressed,
+                  onExportAll: _onAppbarExportAllActionPressed,
+                  onDelete: _onAppbarDeleteActionPressed,
+                ),
+              ),
+            );
+          } else {
+            appbar = SliverTopAppBarWrapper(
+              key: const ValueKey("view"),
+              builder: (context, value, child) => SliverViewTopAppBar(
+                isClandarExpanded: state.isClandarExpanded,
+                verticalScrollController: _verticalScrollController,
+                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
+                onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
+                onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
+                onMenuButtonPressed: _openHabitSummaryMenuDialog,
+                scrollPhysicsBuilder: _buildScrollPhysics,
+              ),
+            );
+          }
+
           return SliverAnimatedSwitcher(
             duration: kEditModeChangeAnimateDuration,
-            child: viewmodel.isInEditMode
-                ? buildAppbarInEditMode(context, status.isClandarExpanded)
-                : buildAppbarInViewMode(context, status.isClandarExpanded),
+            child: appbar,
           );
         },
       );

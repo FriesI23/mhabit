@@ -24,5 +24,6 @@ export '_widgets/habit_display_main_menu.dart';
 export '_widgets/habit_display_sort_type_picker.dart';
 export '_widgets/habit_display_stats_menu.dart';
 export '_widgets/sliver_calendar_bar.dart';
+export '_widgets/sliver_top_app_bar.dart';
 export 'providers.dart';
 export 'styles.dart';
