@@ -259,9 +259,16 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
   }
 
+  CancelableCompleter<void>? get _isDataLoaded {
+    final loading = _loading;
+    return (loading != null && !loading.isCanceled) ? loading : null;
+  }
+
+  bool get isDataLoaded => _isDataLoaded != null;
+
   Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    final crtLoading = _loading;
-    if (crtLoading != null && !crtLoading.isCanceled) {
+    final crtLoading = _isDataLoaded;
+    if (crtLoading != null) {
       appLog.load.warn("$runtimeType.loadData",
           ex: ["data already loaded", crtLoading.isCompleted]);
       return crtLoading.operation.valueOrCancellation();
