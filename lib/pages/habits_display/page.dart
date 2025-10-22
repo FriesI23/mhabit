@@ -156,11 +156,13 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       await context.read<AppSyncViewModel>().appSyncTask.processing;
     }
     if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
-    await Future.wait([
-      context.read<HabitSummaryViewModel>().loadData(inFutureBuilder: true),
-      minBarShowTimeFuture,
-    ]);
-    if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
+    if (!context.read<HabitSummaryViewModel>().isDataLoaded) {
+      await Future.wait([
+        context.read<HabitSummaryViewModel>().loadData(inFutureBuilder: true),
+        minBarShowTimeFuture,
+      ]);
+      if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
+    }
     if (context.read<HabitSummaryViewModel>().consumeClearSnackBarFlag()) {
       ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
     }
@@ -994,10 +996,11 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     }
 
     Widget buildHabits(BuildContext context) {
-      return Selector<HabitSummaryViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
+      return Selector<HabitSummaryViewModel, (bool, bool)>(
+        selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) {
+          final (_, isDataLoaded) = value;
           return FutureBuilder(
             future: _loadHabitData(),
             builder: (context, snapshot) {
@@ -1015,7 +1018,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                 children: [
                   buildHabitsContent(context),
                   HabitDisplayLoadingIndicator(
-                      opacity: snapshot.isDone ? 0.0 : 1.0),
+                      opacity: snapshot.isDone || isDataLoaded ? 0.0 : 1.0),
                 ],
               );
             },
@@ -1130,7 +1133,10 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                 if (context == null) {
                   return defaultScrollNotificationPredicate(notification);
                 }
-                if (context.read<HabitSummaryViewModel>().isInEditMode) {
+                final summary = context.read<HabitSummaryViewModel>();
+                final sync = context.read<AppSyncViewModel>();
+                if (summary.isInEditMode ||
+                    !(sync.enabled && sync.serverConfig != null)) {
                   return false;
                 }
                 return defaultScrollNotificationPredicate(notification);
