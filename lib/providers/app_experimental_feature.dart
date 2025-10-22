@@ -30,8 +30,8 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
       ..clear()
       ..[AppSyncExperimentalFeature] =
           profile.getHandler<AppSyncExperimentalFeature>()
-      ..[HabitExportExperimentalFeature] =
-          profile.getHandler<HabitExportExperimentalFeature>();
+      ..[HabitSearchExperimentalFeature] =
+          profile.getHandler<HabitSearchExperimentalFeature>();
   }
 
   Iterable<AppExperimentalFeature> get allFeatures => _handlers.values.nonNulls;
@@ -52,8 +52,8 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
   Future<void> setAppSync(bool value, {bool listen = true}) =>
       _setBool<AppSyncExperimentalFeature>(value, listen: listen);
 
-  bool get habitSearch => _getBool<HabitExportExperimentalFeature>();
+  bool get habitSearch => _getBool<HabitSearchExperimentalFeature>();
 
   Future<void> setHabitSearch(bool vlaue, {bool listen = true}) =>
-      _setBool<HabitExportExperimentalFeature>(vlaue, listen: listen);
+      _setBool<HabitSearchExperimentalFeature>(vlaue, listen: listen);
 }

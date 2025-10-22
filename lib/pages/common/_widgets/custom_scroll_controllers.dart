@@ -15,14 +15,20 @@
 import 'package:flutter/material.dart';
 
 class PinnedAppbarScrollController extends ScrollController {
+  final double? _toolbarHeight;
   final ValueChanged<bool>? onAppbarStatusChanged;
 
-  PinnedAppbarScrollController({this.onAppbarStatusChanged}) : super();
+  PinnedAppbarScrollController(
+      {double? toolbarHeight, this.onAppbarStatusChanged})
+      : _toolbarHeight = toolbarHeight,
+        super();
+
+  double get toolbarHeight => _toolbarHeight ?? kToolbarHeight;
 
   void _onAppbarStatusChanged() {
-    if (hasClients && offset > kToolbarHeight) {
+    if (hasClients && offset > toolbarHeight) {
       onAppbarStatusChanged?.call(true);
-    } else if (hasClients && offset < kToolbarHeight) {
+    } else if (hasClients && offset < toolbarHeight) {
       onAppbarStatusChanged?.call(false);
     }
   }

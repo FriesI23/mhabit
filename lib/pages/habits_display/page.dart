@@ -42,6 +42,7 @@ import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_detail.dart';
@@ -85,7 +86,8 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
-  late final PinnedAppbarScrollController _verticalScrollController;
+  late PinnedAppbarScrollController _verticalScrollController;
+  late double _toolbarHeight;
 
   @override
   void initState() {
@@ -119,9 +121,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     viewmodel.initDispatcher(dispatcher);
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
-    _verticalScrollController = PinnedAppbarScrollController(
-      onAppbarStatusChanged: _changeAppbarStatus,
-    )..addChangeAppbarStatusListener();
+    _initVerticalScrollController();
   }
 
   @override
@@ -140,6 +140,27 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       return _horizonalScrollControllerGroup.animateTo(0,
           duration: scrollDuration ?? const Duration(milliseconds: 500),
           curve: Curves.fastOutSlowIn);
+    }
+  }
+
+  void _initVerticalScrollController() {
+    final vm = context.read<AppExperimentalFeatureViewModel>();
+    _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
+    _verticalScrollController = PinnedAppbarScrollController(
+      toolbarHeight: _toolbarHeight,
+      onAppbarStatusChanged: _changeAppbarStatus,
+    )..addChangeAppbarStatusListener();
+    vm
+      ..removeListener(_updateVerticalScrollController)
+      ..addListener(_updateVerticalScrollController);
+  }
+
+  void _updateVerticalScrollController() {
+    final oldController = _verticalScrollController;
+    try {
+      _initVerticalScrollController();
+    } finally {
+      if (oldController != _verticalScrollController) oldController.dispose();
     }
   }
 
@@ -925,6 +946,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               key: const ValueKey("edit"),
               builder: (context, value, child) => SliverEditTopAppBar(
                 isClandarExpanded: state.isClandarExpanded,
+                height: _toolbarHeight,
                 verticalScrollController: _verticalScrollController,
                 horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
@@ -943,14 +965,35 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
           } else {
             appbar = SliverTopAppBarWrapper(
               key: const ValueKey("view"),
-              builder: (context, value, child) => SliverViewTopAppBar(
-                isClandarExpanded: state.isClandarExpanded,
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
-                onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
-                onMenuButtonPressed: _openHabitSummaryMenuDialog,
-                scrollPhysicsBuilder: _buildScrollPhysics,
+              builder: (context, value, child) =>
+                  Selector<AppExperimentalFeatureViewModel, bool>(
+                selector: (context, vm) => vm.habitSearch,
+                builder: (context, value, child) {
+                  if (value) {
+                    return SliverSearchTopAppBar(
+                      isClandarExpanded: state.isClandarExpanded,
+                      height: _toolbarHeight,
+                      verticalScrollController: _verticalScrollController,
+                      horizonalScrollControllerGroup:
+                          _horizonalScrollControllerGroup,
+                      onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
+                      onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
+                      onMenuButtonPressed: _openHabitSummaryMenuDialog,
+                      scrollPhysicsBuilder: _buildScrollPhysics,
+                    );
+                  }
+                  return SliverViewTopAppBar(
+                    isClandarExpanded: state.isClandarExpanded,
+                    height: _toolbarHeight,
+                    verticalScrollController: _verticalScrollController,
+                    horizonalScrollControllerGroup:
+                        _horizonalScrollControllerGroup,
+                    onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
+                    onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
+                    onMenuButtonPressed: _openHabitSummaryMenuDialog,
+                    scrollPhysicsBuilder: _buildScrollPhysics,
+                  );
+                },
               ),
             );
           }
