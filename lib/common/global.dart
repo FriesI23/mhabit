@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart' show ScaffoldMessengerState;
-import 'package:flutter/widgets.dart' show GlobalKey, NavigatorState;
+import 'package:flutter/widgets.dart'
+    show GlobalKey, NavigatorState, PageRoute, RouteObserver;
 
 import '../logging/level.dart';
 import '../routes/route_observer.dart';
@@ -35,4 +36,5 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 //#region routes
 final currentRouteObserver = CurrentRouteObserver();
+final pageRouteObserver = RouteObserver<PageRoute>();
 //#endregion

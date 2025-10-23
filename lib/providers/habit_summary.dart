@@ -64,6 +64,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _reloadUIToggleSwitch = false;
   bool _isCalandarExpanded = false;
   bool _isInEditMode = false;
+  bool _isInSearchMode = false;
   bool _canBeDragged = true;
   // inside status
   bool _mounted = true;
@@ -107,6 +108,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         reloadUIToggleSwitch: reloadUIToggleSwitch,
         isClandarExpanded: isCalendarExpanded,
         isInEditMode: isInEditMode,
+        isInSearchMode: isInSearchMode,
       );
 
   bool get isCalendarExpanded => _isCalandarExpanded;
@@ -369,6 +371,20 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   void exitEditModeOnly({bool listen = true}) {
     _isInEditMode = false;
+    if (listen) notifyListeners();
+  }
+  //#endregion
+
+  //#region: search mode
+  bool get isInSearchMode => _isInSearchMode;
+
+  void enterSearchMode({bool listen = true}) {
+    _isInSearchMode = true;
+    if (listen) notifyListeners();
+  }
+
+  void exitSearchMode({bool listen = true}) {
+    _isInSearchMode = false;
     if (listen) notifyListeners();
   }
   //#endregion

@@ -33,10 +33,12 @@ export 'sliver_search_top_app_bar.dart';
 class SliverTopAppBarContainer {
   final HabitsRecordScrollBehavior scrollBehavior;
   final int displayPageOccupyPrt;
+  final DateTime? earliestStartDate;
 
   const SliverTopAppBarContainer({
     required this.scrollBehavior,
     required this.displayPageOccupyPrt,
+    this.earliestStartDate,
   });
 }
 
@@ -52,11 +54,14 @@ class SliverTopAppBarWrapper extends StatelessWidget {
         HabitsRecordScrollBehavior>((vm) => vm.scrollBehavior);
     final displayPageOccupyPrt =
         context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
+    final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
+        (vm) => vm.earliestSummaryDataStartDate?.startDate);
     return builder(
         context,
         SliverTopAppBarContainer(
           displayPageOccupyPrt: displayPageOccupyPrt,
           scrollBehavior: scrollBehavior,
+          earliestStartDate: earliestStartDate,
         ),
         child);
   }
@@ -64,7 +69,9 @@ class SliverTopAppBarWrapper extends StatelessWidget {
 
 class SliverViewTopAppBar extends StatelessWidget {
   final bool isClandarExpanded;
+  final DateTime? endDate;
   final double? height;
+  final int? collapsePrt;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
@@ -74,8 +81,10 @@ class SliverViewTopAppBar extends StatelessWidget {
 
   const SliverViewTopAppBar({
     super.key,
-    this.height,
+    this.endDate,
     this.isClandarExpanded = false,
+    this.height,
+    this.collapsePrt,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCalendarToggleExpandPressed,
@@ -86,10 +95,9 @@ class SliverViewTopAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayPageOccupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
-    final vm = context.read<HabitSummaryViewModel>();
-    final compactUI = context.read<AppCompactUISwitcherViewModel>();
+    final (appCalendarBarHeight, appCalendarBarItemPadding) =
+        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
+            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
     return _ViewAppBar(
       scrolledUnderElevation: kCommonEvalation,
       height: height,
@@ -102,11 +110,11 @@ class SliverViewTopAppBar extends StatelessWidget {
         verticalScrollController: verticalScrollController,
         horizonalScrollControllerGroup: horizonalScrollControllerGroup,
         startDate: DateChangeProvider.of(context).dateTime,
-        endDate: vm.earliestSummaryDataStartDate?.startDate,
+        endDate: endDate,
         isExtended: isClandarExpanded,
-        collapsePrt: displayPageOccupyPrt,
-        height: compactUI.appCalendarBarHeight,
-        itemPadding: compactUI.appCalendarBarItemPadding,
+        collapsePrt: collapsePrt,
+        height: appCalendarBarHeight,
+        itemPadding: appCalendarBarItemPadding,
         onLeftBtnPressed: onCalendarToggleExpandPressed,
         scrollPhysicsBuilder: scrollPhysicsBuilder,
       ),
@@ -118,7 +126,9 @@ class SliverViewTopAppBar extends StatelessWidget {
 
 class SliverEditTopAppBar extends StatelessWidget {
   final bool isClandarExpanded;
+  final DateTime? endDate;
   final double? height;
+  final int? collapsePrt;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final VoidCallback? onLeadingButtonPressed;
@@ -127,7 +137,9 @@ class SliverEditTopAppBar extends StatelessWidget {
 
   const SliverEditTopAppBar({
     super.key,
+    this.endDate,
     this.height,
+    this.collapsePrt,
     this.isClandarExpanded = false,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -138,10 +150,6 @@ class SliverEditTopAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayPageOccupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
-    final vm = context.read<HabitSummaryViewModel>();
-
     Widget buildAppbarTitle(BuildContext context) {
       return Selector<HabitSummaryViewModel, int>(
         selector: (context, vm) => vm.selectedHabitsCount,
@@ -166,9 +174,9 @@ class SliverEditTopAppBar extends StatelessWidget {
         verticalScrollController: verticalScrollController,
         horizonalScrollControllerGroup: horizonalScrollControllerGroup,
         startDate: DateChangeProvider.of(context).dateTime,
-        endDate: vm.earliestSummaryDataStartDate?.startDate,
+        endDate: endDate,
         isExtended: isClandarExpanded,
-        collapsePrt: displayPageOccupyPrt,
+        collapsePrt: collapsePrt,
       ),
       actions: action != null ? [action] : null,
       onLeadingButtonPressed: onLeadingButtonPressed,

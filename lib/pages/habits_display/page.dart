@@ -27,6 +27,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
+import '../../common/global.dart';
 import '../../common/types.dart';
 import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
@@ -84,7 +85,8 @@ class _Page extends StatefulWidget {
   State<StatefulWidget> createState() => _PageState();
 }
 
-class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
+class _PageState extends State<_Page>
+    with HabitsDisplayViewDebug, XShare, RouteAware {
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   late PinnedAppbarScrollController _verticalScrollController;
   late double _toolbarHeight;
@@ -125,10 +127,29 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      pageRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    pageRouteObserver.unsubscribe(this);
     _verticalScrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didPushNext() {
+    appLog.build.debug(context, ex: ["didPushNext"], widget: widget);
+    if (!mounted) return;
+    final vm = context.read<HabitSummaryViewModel>();
+    if (!vm.mounted) return;
+    if (vm.isInSearchMode) vm.exitSearchMode();
   }
 
   FutureOr<void> _resetHorizonalScrollController(Duration? scrollDuration) {
@@ -946,7 +967,9 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               key: const ValueKey("edit"),
               builder: (context, value, child) => SliverEditTopAppBar(
                 isClandarExpanded: state.isClandarExpanded,
+                endDate: value.earliestStartDate,
                 height: _toolbarHeight,
+                collapsePrt: value.displayPageOccupyPrt,
                 verticalScrollController: _verticalScrollController,
                 horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
                 onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
@@ -968,11 +991,13 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               builder: (context, value, child) =>
                   Selector<AppExperimentalFeatureViewModel, bool>(
                 selector: (context, vm) => vm.habitSearch,
-                builder: (context, value, child) {
-                  if (value) {
+                builder: (context, enableSearch, child) {
+                  if (enableSearch) {
                     return SliverSearchTopAppBar(
                       isClandarExpanded: state.isClandarExpanded,
+                      endDate: value.earliestStartDate,
                       height: _toolbarHeight,
+                      collapsePrt: value.displayPageOccupyPrt,
                       verticalScrollController: _verticalScrollController,
                       horizonalScrollControllerGroup:
                           _horizonalScrollControllerGroup,
@@ -984,7 +1009,9 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                   }
                   return SliverViewTopAppBar(
                     isClandarExpanded: state.isClandarExpanded,
+                    endDate: value.earliestStartDate,
                     height: _toolbarHeight,
+                    collapsePrt: value.displayPageOccupyPrt,
                     verticalScrollController: _verticalScrollController,
                     horizonalScrollControllerGroup:
                         _horizonalScrollControllerGroup,

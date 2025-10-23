@@ -19,13 +19,14 @@ import 'package:provider/provider.dart';
 import '../../../common/types.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_compact_ui_switcher.dart';
-import '../../../providers/app_theme.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
 import '../widgets.dart';
 
 class SliverSearchTopAppBar extends StatelessWidget {
   final bool isClandarExpanded;
+  final DateTime? endDate;
+  final int? collapsePrt;
   final double? height;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -37,6 +38,8 @@ class SliverSearchTopAppBar extends StatelessWidget {
   const SliverSearchTopAppBar({
     super.key,
     this.isClandarExpanded = false,
+    this.endDate,
+    this.collapsePrt,
     this.height,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
@@ -48,21 +51,19 @@ class SliverSearchTopAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayPageOccupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
-    final vm = context.read<HabitSummaryViewModel>();
-    final compactUI = context.read<AppCompactUISwitcherViewModel>();
-
+    final (appCalendarBarHeight, appCalendarBarItemPadding) =
+        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
+            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
     final calendarBar = SliverCalendarBar(
       key: const Key('calendar-bar'),
       verticalScrollController: verticalScrollController,
       horizonalScrollControllerGroup: horizonalScrollControllerGroup,
       startDate: DateChangeProvider.of(context).dateTime,
-      endDate: vm.earliestSummaryDataStartDate?.startDate,
+      endDate: endDate,
       isExtended: isClandarExpanded,
-      collapsePrt: displayPageOccupyPrt,
-      height: compactUI.appCalendarBarHeight,
-      itemPadding: compactUI.appCalendarBarItemPadding,
+      collapsePrt: collapsePrt,
+      height: appCalendarBarHeight,
+      itemPadding: appCalendarBarItemPadding,
       onLeftBtnPressed: onCalendarToggleExpandPressed,
       scrollPhysicsBuilder: scrollPhysicsBuilder,
     );
@@ -70,7 +71,7 @@ class SliverSearchTopAppBar extends StatelessWidget {
     return _AppBar(
       height: height ?? kSearchAppBarHeight,
       scrolledUnderElevation: kCommonEvalation,
-      title: const SliverSearchTopAppBarTitle(),
+      title: const _SearchBar(height: 48.0),
       bottom: calendarBar,
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
@@ -78,24 +79,80 @@ class SliverSearchTopAppBar extends StatelessWidget {
   }
 }
 
-class SliverSearchTopAppBarTitle extends StatefulWidget {
+class _SearchBar extends StatefulWidget {
   final double? height;
 
-  const SliverSearchTopAppBarTitle({
-    super.key,
-    this.height,
-  });
+  const _SearchBar({this.height});
 
   @override
-  State<SliverSearchTopAppBarTitle> createState() =>
-      _SliverSearchTopAppBarTitleState();
+  State<_SearchBar> createState() => _SearchBarState();
 }
 
-class _SliverSearchTopAppBarTitleState
-    extends State<SliverSearchTopAppBarTitle> {
-  bool _scrolledUnder = false;
+class _SearchBarState extends State<_SearchBar> {
+  late HabitSummaryViewModel _vm;
+  late bool _scrolledUnder;
+  late FocusNode _focusNode;
+  late TextEditingController _controller;
 
-  _SliverSearchTopAppBarTitleState();
+  @override
+  void initState() {
+    super.initState();
+    _vm = context.read<HabitSummaryViewModel>();
+    _scrolledUnder = false;
+    _focusNode = FocusNode();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SearchBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final vm = context.read<HabitSummaryViewModel>();
+    if (vm != _vm) _vm = vm;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  bool get isViewModelMounted => mounted && _vm.mounted;
+
+  void _enterSeach() {
+    if (!isViewModelMounted) return;
+    _vm.enterSearchMode();
+    if (!_focusNode.hasFocus) _focusNode.requestFocus();
+  }
+
+  void _exitSearch() {
+    if (!isViewModelMounted) return;
+    _vm.exitSearchMode();
+    if (_focusNode.hasFocus) _focusNode.unfocus();
+  }
+
+  void _onSearchButtonPressed() {
+    _enterSeach();
+  }
+
+  void _onCloseButtonPressed() {
+    _exitSearch();
+  }
+
+  void _onTapOutside(PointerDownEvent event) {
+    if (_controller.text.isNotEmpty) return;
+    _exitSearch();
+  }
+
+  void _onChanged(String text) {
+    if (!isViewModelMounted) return;
+    final isEmpty = text.isEmpty;
+    if (isEmpty) {
+      if (_vm.isInSearchMode) _exitSearch();
+    } else {
+      if (!_vm.isInSearchMode) _enterSeach();
+    }
+  }
 
   /// From Material3 Design Duidelines
   ///
@@ -128,6 +185,8 @@ class _SliverSearchTopAppBarTitleState
     return LayoutBuilder(
       builder: (context, constraints) {
         return SearchBar(
+          focusNode: _focusNode,
+          controller: _controller,
           backgroundColor: _scrolledUnder
               ? WidgetStatePropertyAll(
                   Theme.of(context).colorScheme.surfaceContainerLow)
@@ -136,10 +195,12 @@ class _SliverSearchTopAppBarTitleState
           constraints: calcSearchBarConstraints(constraints),
           // TODO(search): l10n
           hintText: "Search Habits",
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search_outlined),
+          leading: _SearchIconButton(
+            onSearchButtonPressed: _onSearchButtonPressed,
+            onCloseButtonPressed: _onCloseButtonPressed,
           ),
+          onTapOutside: _onTapOutside,
+          onChanged: _onChanged,
         );
       },
     );
@@ -189,5 +250,38 @@ class _AppBar extends StatelessWidget {
       ],
       bottom: bottom,
     );
+  }
+}
+
+class _SearchIconButton extends StatelessWidget {
+  static const animateDuration = Duration(milliseconds: 300);
+
+  final VoidCallback? onSearchButtonPressed;
+  final VoidCallback? onCloseButtonPressed;
+
+  const _SearchIconButton({
+    this.onSearchButtonPressed,
+    this.onCloseButtonPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isInSearchMode =
+        context.select<HabitSummaryViewModel, bool>((vm) => vm.isInSearchMode);
+    return AnimatedCrossFade(
+        firstChild: IconButton(
+          key: const ValueKey(1),
+          onPressed: onCloseButtonPressed,
+          icon: const Icon(Icons.close),
+        ),
+        secondChild: IconButton(
+          key: const ValueKey(2),
+          onPressed: onSearchButtonPressed,
+          icon: const Icon(Icons.search_outlined),
+        ),
+        crossFadeState: isInSearchMode
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
+        duration: animateDuration);
   }
 }
