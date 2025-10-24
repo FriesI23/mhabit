@@ -407,6 +407,9 @@ class L10nRu extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠 Отладка';
 
   @override
+  String get habitDisplay_searchBar_hintText => 'Search habits';
+
+  @override
   String get habitDetail_editButton_tooltip => 'Редактировать';
 
   @override
@@ -1203,6 +1206,12 @@ class L10nRu extends L10n {
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
     return 'Чтобы полностью отключить долго нажмите, чтобы получить доступ к \'$menuName\' и выключите его.';
   }
+
+  @override
+  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+
+  @override
+  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
 
   @override
   String get appAbout_appbarTile_titleText => 'О приложении';

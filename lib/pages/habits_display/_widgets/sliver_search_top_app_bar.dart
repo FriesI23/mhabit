@@ -270,6 +270,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
+        final l10n = L10n.of(context);
         final colors = Theme.of(context).colorScheme;
         final brightness = Theme.of(context).brightness;
         return SearchBar(
@@ -284,8 +285,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
               : null,
           elevation: const WidgetStatePropertyAll(0.0),
           constraints: calcSearchBarConstraints(constraints),
-          // TODO(search): l10n
-          hintText: "Search Habits",
+          hintText: l10n?.habitDisplay_searchBar_hintText,
           leading: _SearchIconButton(
             onSearchButtonPressed: _onSearchButtonPressed,
             onCloseButtonPressed: _onCloseButtonPressed,

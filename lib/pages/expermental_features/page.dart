@@ -123,9 +123,13 @@ final class _PageState extends State<_Page> {
           Selector<AppExperimentalFeatureViewModel, bool>(
             selector: (context, vm) => vm.habitSearch,
             builder: (context, value, child) => SwitchListTile(
-                // TODO(search): l10n
-                title: const Text("Habit Search"),
-                subtitle: null,
+                title: Text(
+                    l10n?.experimentalFeatures_habitSearchTile_titleText ??
+                        "Habit Search"),
+                subtitle: l10n != null
+                    ? Text(
+                        l10n.experimentalFeatures_habitSearchTile_subtitleText)
+                    : null,
                 value: value,
                 onChanged: (value) async {
                   await vm?.setHabitSearch(value);

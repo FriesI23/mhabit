@@ -810,6 +810,12 @@ abstract class L10n {
   /// **'🛠️Debug'**
   String get habitDisplay_debug_debugSubgroup_title;
 
+  /// No description provided for @habitDisplay_searchBar_hintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Search habits'**
+  String get habitDisplay_searchBar_hintText;
+
   /// No description provided for @habitDetail_editButton_tooltip.
   ///
   /// In en, this message translates to:
@@ -1961,6 +1967,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'To completely disable, long press to access \'{menuName}\' and turn it off.'**
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName);
+
+  /// No description provided for @experimentalFeatures_habitSearchTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Search'**
+  String get experimentalFeatures_habitSearchTile_titleText;
+
+  /// No description provided for @experimentalFeatures_habitSearchTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.'**
+  String get experimentalFeatures_habitSearchTile_subtitleText;
 
   /// No description provided for @appAbout_appbarTile_titleText.
   ///

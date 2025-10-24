@@ -355,6 +355,8 @@
   "@habitDisplay_sortTypeDialog_cancel": {},
   "habitDisplay_debug_debugSubgroup_title": "🛠️Debug",
   "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDisplay_searchBar_hintText": "Search habits",
+  "@habitDisplay_searchBar_hintText": {},
   "habitDetail_editButton_tooltip": "Edit",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Unarchive",
@@ -1045,6 +1047,10 @@
       }
     }
   },
+  "experimentalFeatures_habitSearchTile_titleText": "Habit Search",
+  "@experimentalFeatures_habitSearchTile_titleText": {},
+  "experimentalFeatures_habitSearchTile_subtitleText": "Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.",
+  "@experimentalFeatures_habitSearchTile_subtitleText": {},
   "appAbout_appbarTile_titleText": "About",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Version: {appVersion}",
