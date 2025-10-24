@@ -51,7 +51,7 @@ class AppRootView extends StatelessWidget {
     return MaterialApp(
       onGenerateTitle: (context) => L10n.of(context)?.appName ?? appName,
       navigatorKey: navigatorKey,
-      navigatorObservers: [currentRouteObserver, pageRouteObserver],
+      navigatorObservers: [currentRouteObserver],
       scaffoldMessengerKey: snackbarKey,
       theme: lightThemeBuilder?.call(),
       darkTheme: darkThemeBuilder?.call(),

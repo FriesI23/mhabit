@@ -27,7 +27,6 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
-import '../../common/global.dart';
 import '../../common/types.dart';
 import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
@@ -85,8 +84,9 @@ class _Page extends StatefulWidget {
   State<StatefulWidget> createState() => _PageState();
 }
 
-class _PageState extends State<_Page>
-    with HabitsDisplayViewDebug, XShare, RouteAware {
+class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
+  late HabitSummaryViewModel _vm;
+
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   late PinnedAppbarScrollController _verticalScrollController;
   late double _toolbarHeight;
@@ -95,10 +95,9 @@ class _PageState extends State<_Page>
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    final viewmodel = context.read<HabitSummaryViewModel>();
+    _vm = context.read<HabitSummaryViewModel>();
     // events
-    viewmodel.scrollCalendarToStartEvent
-        .listen(_resetHorizonalScrollController);
+    _vm.scrollCalendarToStartEvent.listen(_resetHorizonalScrollController);
     // dispatcher
     final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
@@ -114,13 +113,13 @@ class _PageState extends State<_Page>
           return const SizedBox();
         }
       },
-      currentList: viewmodel.lastSortedDataCache,
+      currentList: _vm.lastSortedDataCache,
       comparator: AnimatedListDiffListComparator<HabitSortCache>(
         sameItem: (a, b) => a.isSameItem(b),
         sameContent: (a, b) => a.isSameContent(b),
       ),
     );
-    viewmodel.initDispatcher(dispatcher);
+    _vm.initDispatcher(dispatcher);
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
     _initVerticalScrollController();
@@ -129,27 +128,17 @@ class _PageState extends State<_Page>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final route = ModalRoute.of(context);
-    if (route is PageRoute) {
-      pageRouteObserver.subscribe(this, route);
+    final vm = context.read<HabitSummaryViewModel>();
+    if (vm != _vm) {
+      _vm = vm;
     }
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
-    pageRouteObserver.unsubscribe(this);
     _verticalScrollController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didPushNext() {
-    appLog.build.debug(context, ex: ["didPushNext"], widget: widget);
-    if (!mounted) return;
-    final vm = context.read<HabitSummaryViewModel>();
-    if (!vm.mounted) return;
-    if (vm.isInSearchMode) vm.exitSearchMode();
   }
 
   FutureOr<void> _resetHorizonalScrollController(Duration? scrollDuration) {
@@ -576,6 +565,10 @@ class _PageState extends State<_Page>
 
   void _openAppSettingsPage() {
     if (!mounted) return;
+    if (_vm.mounted) {
+      _vm.exitSearchMode();
+      _vm.exitEditMode();
+    }
     app_settings.naviToAppSettingPage(
       context: context,
       summary: context.read<HabitSummaryViewModel>(),
