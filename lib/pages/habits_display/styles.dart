@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/animation.dart' show Curves;
+import 'package:great_list_view/great_list_view.dart'
+    show DefaultAnimatedListAnimator;
+
 const kCommonEvalation = 2.0;
 
 const kEditModeChangeAnimateDuration = Duration(milliseconds: 200);
@@ -20,3 +24,14 @@ const kEditModeAppbarAnimateDuration = Duration(milliseconds: 200);
 const kFABModeChangeDuration = Duration(milliseconds: 300);
 
 const kHabitListFutureLoadDuration = Duration(milliseconds: 300);
+
+const kHabitContentListAnimator = DefaultAnimatedListAnimator(
+  dismissIncomingDuration: Duration(milliseconds: 300),
+  resizeDuration: Duration(milliseconds: 300),
+  reorderDuration: Duration(milliseconds: 250),
+  movingDuration: Duration(milliseconds: 300),
+  dismissIncomingCurve: Curves.easeInOut,
+  resizeCurve: Curves.easeInOut,
+  reorderCurve: Curves.fastOutSlowIn,
+  movingCurve: Curves.easeInOut,
+);

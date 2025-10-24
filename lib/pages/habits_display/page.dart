@@ -850,18 +850,20 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
 
   Future<bool> onWillPop() async {
     if (!mounted) return true;
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return true;
-    if (viewmodel.isInEditMode) {
-      viewmodel.exitEditMode();
-      return false;
+    var count = 0;
+    if (_vm.isInEditMode) {
+      _vm.exitEditMode();
+      count++;
     }
-    if (viewmodel.isCalendarExpanded) {
-      viewmodel.collapseCalendar();
-      return false;
+    if (_vm.isInSearchMode) {
+      _vm.exitSearchMode();
+      count++;
     }
-
-    return true;
+    if (_vm.isCalendarExpanded) {
+      _vm.collapseCalendar();
+      count++;
+    }
+    return count <= 0;
   }
 
   void _onHabitEditAppbarLeadingButtonPressed() {
@@ -1025,6 +1027,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                         context, viewmodel.lastSortedDataCache, index, data);
               },
               viewmodel.lastSortedDataCache.length,
+              animator: kHabitContentListAnimator,
               addAnimatedElevation: kCommonEvalation,
               morphDuration: kEditModeChangeAnimateDuration,
               reorderModel: AnimatedListReorderModel(
@@ -1445,17 +1448,20 @@ class _CalendarBar extends StatelessWidget {
       scrolledUnderElevation: scrolledUnderElevation,
       titleSpacing: 0.0,
       primary: false,
-      title: SliverCalendarBar(
-        verticalScrollController: verticalScrollController,
-        horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-        startDate: DateChangeProvider.of(context).dateTime,
-        endDate: earliestStartDate,
-        isExtended: state.isClandarExpanded,
-        collapsePrt: displayPageOccupyPrt,
-        height: appCalendarBarHeight,
-        itemPadding: appCalendarBarItemPadding,
-        onLeftBtnPressed: onCalendarToggleExpandPressed,
-        scrollPhysicsBuilder: scrollPhysicsBuilder,
+      toolbarHeight: appCalendarBarHeight,
+      title: EnhancedSafeArea.edgeToEdgeSafe(
+        child: SliverCalendarBar(
+          verticalScrollController: verticalScrollController,
+          horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+          startDate: DateChangeProvider.of(context).dateTime,
+          endDate: earliestStartDate,
+          isExtended: state.isClandarExpanded,
+          collapsePrt: displayPageOccupyPrt,
+          height: appCalendarBarHeight,
+          itemPadding: appCalendarBarItemPadding,
+          onLeftBtnPressed: onCalendarToggleExpandPressed,
+          scrollPhysicsBuilder: scrollPhysicsBuilder,
+        ),
       ),
     );
   }

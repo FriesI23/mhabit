@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
@@ -382,24 +383,33 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitDisplaySearchOptions get searchOptions => _searchController.options;
 
   void enterSearchMode({bool listen = true}) {
+    if (isInSearchMode) return;
     _searchController.enable();
+    _resortData();
     if (listen) notifyListeners();
   }
 
   void exitSearchMode({bool listen = true}) {
+    if (!isInSearchMode) return;
     _searchController
       ..disable()
       ..clearOptions();
+    _resortData();
     if (listen) notifyListeners();
   }
 
   void onSeachKeywordChanged(String text, {bool listen = true}) {
-    _searchController.options.keyword = text;
+    final lastKeyword = _searchController.options.keyword;
+    final result = _searchController.updateKeyword(text);
+    if (!result && text.isNotEmpty) return;
     if (_searchController.options.isEmpty) {
-      if (_searchController.enabled) _searchController.disable();
+      if (_searchController.enabled && lastKeyword.isEmpty) {
+        _searchController.disable();
+      }
     } else {
       if (!_searchController.enabled) _searchController.enable();
     }
+    _resortData();
     if (listen) notifyListeners();
   }
   //#endregion
@@ -457,8 +467,15 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _resortData() {
-    final newObj = _sortableCache.copyWithSortableData(_data);
-    _saveAndDispatch(newObj);
+    _HabitsSortableCache genSortableCache() {
+      if (isInSearchMode) {
+        return _sortableCache.copyWithSortableData(_data,
+            searchOptions: searchOptions, filter: HabitsDisplayFilter.allTrue);
+      }
+      return _sortableCache.copyWithSortableData(_data);
+    }
+
+    _saveAndDispatch(genSortableCache());
   }
 
   void _saveAndDispatch(_HabitsSortableCache newSortbaleData) {
@@ -814,14 +831,24 @@ class _HabitsSortableCache {
     }
   }
 
-  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data) =>
-      copyWith(
-        lastSortedDataCache: data
-            .sort(sortType, sortDirection)
-            .where(filter.getDisplayFilterFunction())
-            .map((e) => HabitSummaryDataSortCache(data: e))
-            .toList(),
-      );
+  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data,
+      {HabitDisplaySearchOptions? searchOptions, HabitsDisplayFilter? filter}) {
+    var sorted = data
+        .sort(sortType, sortDirection)
+        .where((filter ?? this.filter).getDisplayFilterFunction());
+    if (searchOptions != null) {
+      final keywords = searchOptions.keyword
+          .toUpperCase()
+          .split(' ')
+          .whereNot((e) => e.isEmpty);
+      sorted = sorted.where(
+          (e) => searchOptions.filter(e, caps: true, keywords: keywords));
+    }
+    return copyWith(
+      lastSortedDataCache:
+          sorted.map((e) => HabitSummaryDataSortCache(data: e)).toList(),
+    );
+  }
 
   @override
   String toString() =>
@@ -854,20 +881,26 @@ class _SelectedHabitsData {
 
 class _HabitSummarySearchController {
   bool _active = false;
-  HabitDisplaySearchEditOptions _options;
+  HabitDisplaySearchOptions _options;
 
   _HabitSummarySearchController()
-      : _options = HabitDisplaySearchEditOptions.empty();
+      : _options = const HabitDisplaySearchOptions.empty();
 
   bool get enabled => _active;
 
-  HabitDisplaySearchEditOptions get options => _options;
+  HabitDisplaySearchOptions get options => _options;
 
   void enable() => _active = true;
 
   void disable() => _active = false;
 
-  void clearOptions() => _options = HabitDisplaySearchEditOptions.empty();
+  void clearOptions() => _options = const HabitDisplaySearchOptions.empty();
+
+  bool updateKeyword(String text) {
+    if (text == _options.keyword) return false;
+    _options = _options.copyWith(keyword: text);
+    return true;
+  }
 }
 
 final class HabitDetailAdapter implements ProviderMounted {
