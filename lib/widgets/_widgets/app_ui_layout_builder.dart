@@ -15,18 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../common/consts.dart';
-
-enum UiLayoutType {
-  /// Small
-  s(0),
-
-  /// Large
-  l(10);
-
-  final int value;
-
-  const UiLayoutType(this.value);
-}
+import '../../common/utils.dart';
 
 class AppUiLayoutBuilder extends StatelessWidget {
   final Widget? child;
@@ -51,32 +40,16 @@ class AppUiLayoutBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
-          final isWidthLarger =
-              constraints.maxWidth >= kHabitLargeScreenAdaptWidth;
-          final isHeightLarger =
-              constraints.maxHeight >= kHabitLargeScreenAdaptHeight;
-
-          if (ignoreWidth && ignoreHeight) {
-            return builder(context, defaultUiType, child);
-          } else if (ignoreWidth) {
-            return builder(
-              context,
-              isHeightLarger ? UiLayoutType.l : UiLayoutType.s,
-              child,
-            );
-          } else if (ignoreHeight) {
-            return builder(
-              context,
-              isWidthLarger ? UiLayoutType.l : UiLayoutType.s,
-              child,
-            );
-          } else {
-            return builder(
-              context,
-              isWidthLarger && isHeightLarger ? UiLayoutType.l : UiLayoutType.s,
-              child,
-            );
-          }
+          final layoutType = computeLayoutType(
+            width: constraints.maxWidth,
+            height: constraints.maxHeight,
+            largeScreenWidth: kHabitLargeScreenAdaptWidth,
+            largeScreenHeight: kHabitLargeScreenAdaptHeight,
+            ignoreWidth: ignoreWidth,
+            ignoreHeight: ignoreHeight,
+            defaultType: defaultUiType,
+          );
+          return builder(context, layoutType, child);
         },
       );
 }

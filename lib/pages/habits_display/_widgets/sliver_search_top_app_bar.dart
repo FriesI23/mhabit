@@ -15,12 +15,14 @@
 import 'package:flutter/material.dart' hide PreferredSize;
 import 'package:provider/provider.dart';
 
+import '../../../common/consts.dart';
+import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
 import '../styles.dart';
 
-class SliverSearchTopAppBar extends StatelessWidget {
+class SliverSearchTopAppBar extends StatefulWidget {
   final double? height;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
@@ -33,59 +35,111 @@ class SliverSearchTopAppBar extends StatelessWidget {
   });
 
   @override
+  State<SliverSearchTopAppBar> createState() => _SliverSearchTopAppBarState();
+}
+
+class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _AppBar(
-      height: height ?? kSearchAppBarHeight,
+      height: widget.height ?? kSearchAppBarHeight,
       scrolledUnderElevation: kCommonEvalation,
-      title: const _SearchBar(height: 48.0),
+      searchBar: _SearchBar(
+        key: const ValueKey("search-bar"),
+        height: 48.0,
+        controller: _controller,
+      ),
       bottom: PreferredSize.zero,
       shawdowColor: Colors.transparent,
-      onInfoButtonPressed: onInfoButtonPressed,
-      onMenuButtonPressed: onMenuButtonPressed,
+      onInfoButtonPressed: widget.onInfoButtonPressed,
+      onMenuButtonPressed: widget.onMenuButtonPressed,
     );
   }
 }
 
+enum SearchEnterMode { click, other }
+
 class _SearchBar extends StatefulWidget {
+  static const kSearchFullWidthLimit = 312.0;
+
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
   final double? height;
 
-  const _SearchBar({this.height});
+  const _SearchBar({super.key, this.height, this.controller})
+      : focusNode = null;
 
   @override
   State<_SearchBar> createState() => _SearchBarState();
 }
 
-enum SearchEnterMode { click, other }
-
-class _SearchBarState extends State<_SearchBar> {
+class _SearchBarState extends State<_SearchBar> with RestorationMixin {
   late HabitSummaryViewModel _vm;
   late bool _scrolledUnder;
-  late FocusNode _focusNode;
-  late TextEditingController _controller;
   late bool _prevSearchMode;
+  FocusNode? _focusNode;
+  RestorableTextEditingController? _controller;
 
   SearchEnterMode? _enterMode;
+
+  FocusNode get _effectiveFocusNode =>
+      widget.focusNode ?? (_focusNode ??= FocusNode());
+  TextEditingController get _effectiveController =>
+      widget.controller ?? (_controller!.value);
 
   @override
   void initState() {
     super.initState();
+
     _vm = context.read<HabitSummaryViewModel>()
       ..addListener(_onViewModelNotified);
     _scrolledUnder = false;
-    _focusNode = FocusNode();
-    _controller = TextEditingController(text: _vm.searchOptions.keyword);
     _prevSearchMode = _vm.isInSearchMode;
-    if (_vm.isInSearchMode) _enterMode = SearchEnterMode.other;
+    if (widget.controller == null) {
+      _createLocalController(TextEditingValue(text: _vm.searchOptions.keyword));
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_vm.isInSearchMode) {
+      _enterMode = SearchEnterMode.other;
+      _effectiveFocusNode.requestFocus();
+    }
   }
 
   @override
   void didUpdateWidget(covariant _SearchBar oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (widget.controller == null && oldWidget.controller != null) {
+      _createLocalController(oldWidget.controller!.value);
+    } else if (widget.controller != null && oldWidget.controller == null) {
+      unregisterFromRestoration(_controller!);
+      _controller!.dispose();
+      _controller = null;
+    }
+
     final vm = context.read<HabitSummaryViewModel>();
     if (vm != _vm) {
       _vm.removeListener(_onViewModelNotified);
       _vm = vm..addListener(_onViewModelNotified);
-      _controller.text = _vm.searchOptions.keyword;
+      _effectiveController.text = _vm.searchOptions.keyword;
       _prevSearchMode = _vm.isInSearchMode;
       _enterMode = _vm.isInSearchMode ? SearchEnterMode.other : null;
     }
@@ -93,18 +147,45 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
+    _controller?.dispose();
+    _focusNode?.dispose();
     _vm.removeListener(_onViewModelNotified);
     super.dispose();
   }
 
+  //#region controller
+  @override
+  String? get restorationId => null;
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (_controller != null) {
+      _registerController();
+    }
+  }
+
+  void _registerController() {
+    assert(_controller != null);
+    registerForRestoration(_controller!, 'controller');
+  }
+
+  void _createLocalController([TextEditingValue? value]) {
+    assert(_controller == null);
+    _controller = value == null
+        ? RestorableTextEditingController()
+        : RestorableTextEditingController.fromValue(value);
+    if (!restorePending) {
+      _registerController();
+    }
+  }
+  //#endregion
+
   void _onViewModelNotified() {
-    if (_controller.text != _vm.searchOptions.keyword) {
-      _controller.text = _vm.searchOptions.keyword;
+    if (_effectiveController.text != _vm.searchOptions.keyword) {
+      _effectiveController.text = _vm.searchOptions.keyword;
     }
     if (_prevSearchMode && !_vm.isInSearchMode) {
-      _focusNode.unfocus();
+      _effectiveFocusNode.unfocus();
     }
     _prevSearchMode = _vm.isInSearchMode;
     if (!_vm.isInSearchMode) _enterMode = null;
@@ -115,14 +196,14 @@ class _SearchBarState extends State<_SearchBar> {
   void _enterSeach({SearchEnterMode mode = SearchEnterMode.other}) {
     if (!isViewModelMounted) return;
     _vm.enterSearchMode();
-    if (!_focusNode.hasFocus) _focusNode.requestFocus();
+    if (!_effectiveFocusNode.hasFocus) _effectiveFocusNode.requestFocus();
     _enterMode = mode;
   }
 
   void _exitSearch() {
     if (!isViewModelMounted) return;
     _vm.exitSearchMode();
-    if (_focusNode.hasFocus) _focusNode.unfocus();
+    if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
     _enterMode = null;
   }
 
@@ -154,13 +235,27 @@ class _SearchBarState extends State<_SearchBar> {
   ///
   /// see: https://m3.material.io/components/app-bars/guidelines#3f4c81c8-4af9-402e-a322-5d638dcfb337
   BoxConstraints calcSearchBarConstraints(BoxConstraints constraints) {
-    const maxSearchWidth = 312.0;
+    const maxSearchWidth = _SearchBar.kSearchFullWidthLimit;
     final availableWidth = constraints.maxWidth;
     final width = availableWidth <= maxSearchWidth
         ? availableWidth
         : maxSearchWidth + (availableWidth - maxSearchWidth) / 2;
     return BoxConstraints.tightFor(height: widget.height ?? 48.0, width: width);
   }
+
+  WidgetStateProperty<Color?>? getLightOverlayColor(ColorScheme colors) =>
+      WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return colors.onSurfaceVariant.withValues(alpha: 0.1);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return colors.onSurfaceVariant.withValues(alpha: 0.08);
+        }
+        if (states.contains(WidgetState.focused)) {
+          return Colors.transparent;
+        }
+        return Colors.transparent;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -173,15 +268,19 @@ class _SearchBarState extends State<_SearchBar> {
         setState(() {});
       });
     }
-
     return LayoutBuilder(
       builder: (context, constraints) {
+        final colors = Theme.of(context).colorScheme;
+        final brightness = Theme.of(context).brightness;
         return SearchBar(
-          focusNode: _focusNode,
-          controller: _controller,
+          focusNode: _effectiveFocusNode,
+          controller: _effectiveController,
+          keyboardType: TextInputType.streetAddress,
+          overlayColor: getLightOverlayColor(colors),
           backgroundColor: _scrolledUnder
-              ? WidgetStatePropertyAll(
-                  Theme.of(context).colorScheme.surfaceContainerLow)
+              ? WidgetStatePropertyAll(brightness == Brightness.dark
+                  ? colors.surfaceContainer
+                  : colors.surfaceContainerLowest)
               : null,
           elevation: const WidgetStatePropertyAll(0.0),
           constraints: calcSearchBarConstraints(constraints),
@@ -201,7 +300,7 @@ class _SearchBarState extends State<_SearchBar> {
 
 class _AppBar extends StatelessWidget {
   final double? scrolledUnderElevation;
-  final Widget? title;
+  final Widget? searchBar;
   final PreferredSizeWidget? bottom;
   final double? height;
   final Color? shawdowColor;
@@ -210,7 +309,7 @@ class _AppBar extends StatelessWidget {
 
   const _AppBar({
     this.scrolledUnderElevation,
-    this.title,
+    this.searchBar,
     this.bottom,
     this.height,
     this.shawdowColor,
@@ -221,28 +320,62 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    return SliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      centerTitle: false,
-      toolbarHeight: height ?? kToolbarHeight,
-      scrolledUnderElevation: scrolledUnderElevation,
-      shadowColor: shawdowColor,
-      title: title,
-      actionsPadding: kSearchAppBarActionPadding,
-      bottom: bottom,
-      actions: [
-        IconButton(
-          onPressed: onInfoButtonPressed,
-          icon: const Icon(Icons.article_outlined),
-        ),
-        IconButton(
-          onPressed: onMenuButtonPressed,
-          icon: const Icon(Icons.settings_outlined),
-          tooltip: l10n?.habitDisplay_settingButton_tooltip,
-        )
-      ],
+
+    final infoButton = IconButton(
+      onPressed: onInfoButtonPressed,
+      icon: const Icon(Icons.article_outlined),
+    );
+    final menuButton = IconButton(
+      onPressed: onMenuButtonPressed,
+      icon: const Icon(Icons.settings_outlined),
+      tooltip: l10n?.habitDisplay_settingButton_tooltip,
+    );
+    final searchBar = this.searchBar;
+    const sliverAppBarKey = ValueKey("bar");
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        final uiLayout = computeLayoutType(
+            width: constraints.crossAxisExtent,
+            height: constraints.viewportMainAxisExtent);
+        return switch (uiLayout) {
+          UiLayoutType.s => SliverAppBar(
+              key: sliverAppBarKey,
+              floating: true,
+              snap: true,
+              pinned: true,
+              centerTitle: false,
+              toolbarHeight: height ?? kToolbarHeight,
+              scrolledUnderElevation: scrolledUnderElevation,
+              shadowColor: shawdowColor,
+              title: searchBar,
+              actionsPadding: kSearchAppBarActionPadding,
+              bottom: bottom,
+              actions: [infoButton, menuButton],
+            ),
+          UiLayoutType.l => SliverAppBar(
+              key: sliverAppBarKey,
+              floating: true,
+              snap: true,
+              pinned: true,
+              centerTitle: false,
+              toolbarHeight: height ?? kToolbarHeight,
+              scrolledUnderElevation: scrolledUnderElevation,
+              shadowColor: shawdowColor,
+              leading: infoButton,
+              title: Text(l10n?.appName ?? appName),
+              actionsPadding: kSearchAppBarActionPadding,
+              bottom: bottom,
+              actions: [
+                if (searchBar != null)
+                  ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                          width: _SearchBar.kSearchFullWidthLimit),
+                      child: searchBar),
+                menuButton
+              ],
+            ),
+        };
+      },
     );
   }
 }

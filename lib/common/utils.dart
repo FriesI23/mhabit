@@ -298,3 +298,38 @@ Future<List<String>> cleanExpiredFiles(
   }
   return results;
 }
+
+enum UiLayoutType {
+  /// Small
+  s(0),
+
+  /// Large
+  l(10);
+
+  final int value;
+
+  const UiLayoutType(this.value);
+}
+
+UiLayoutType computeLayoutType({
+  required double width,
+  required double height,
+  num largeScreenWidth = kHabitLargeScreenAdaptWidth,
+  num largeScreenHeight = kHabitLargeScreenAdaptHeight,
+  bool ignoreWidth = false,
+  bool ignoreHeight = true,
+  UiLayoutType defaultType = UiLayoutType.s,
+}) {
+  final isWidthLarger = width >= largeScreenWidth;
+  final isHeightLarger = height >= largeScreenHeight;
+
+  if (ignoreWidth && ignoreHeight) {
+    return defaultType;
+  } else if (ignoreWidth) {
+    return isHeightLarger ? UiLayoutType.l : UiLayoutType.s;
+  } else if (ignoreHeight) {
+    return isWidthLarger ? UiLayoutType.l : UiLayoutType.s;
+  } else {
+    return (isWidthLarger && isHeightLarger) ? UiLayoutType.l : UiLayoutType.s;
+  }
+}
