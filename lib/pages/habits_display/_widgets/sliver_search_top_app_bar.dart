@@ -55,12 +55,16 @@ class _SearchBar extends StatefulWidget {
   State<_SearchBar> createState() => _SearchBarState();
 }
 
+enum SearchEnterMode { click, other }
+
 class _SearchBarState extends State<_SearchBar> {
   late HabitSummaryViewModel _vm;
   late bool _scrolledUnder;
   late FocusNode _focusNode;
   late TextEditingController _controller;
   late bool _prevSearchMode;
+
+  SearchEnterMode? _enterMode;
 
   @override
   void initState() {
@@ -71,6 +75,7 @@ class _SearchBarState extends State<_SearchBar> {
     _focusNode = FocusNode();
     _controller = TextEditingController(text: _vm.searchOptions.keyword);
     _prevSearchMode = _vm.isInSearchMode;
+    if (_vm.isInSearchMode) _enterMode = SearchEnterMode.other;
   }
 
   @override
@@ -82,6 +87,7 @@ class _SearchBarState extends State<_SearchBar> {
       _vm = vm..addListener(_onViewModelNotified);
       _controller.text = _vm.searchOptions.keyword;
       _prevSearchMode = _vm.isInSearchMode;
+      _enterMode = _vm.isInSearchMode ? SearchEnterMode.other : null;
     }
   }
 
@@ -101,24 +107,27 @@ class _SearchBarState extends State<_SearchBar> {
       _focusNode.unfocus();
     }
     _prevSearchMode = _vm.isInSearchMode;
+    if (!_vm.isInSearchMode) _enterMode = null;
   }
 
   bool get isViewModelMounted => mounted && _vm.mounted;
 
-  void _enterSeach() {
+  void _enterSeach({SearchEnterMode mode = SearchEnterMode.other}) {
     if (!isViewModelMounted) return;
     _vm.enterSearchMode();
     if (!_focusNode.hasFocus) _focusNode.requestFocus();
+    _enterMode = mode;
   }
 
   void _exitSearch() {
     if (!isViewModelMounted) return;
     _vm.exitSearchMode();
     if (_focusNode.hasFocus) _focusNode.unfocus();
+    _enterMode = null;
   }
 
   void _onSearchButtonPressed() {
-    _enterSeach();
+    _enterSeach(mode: SearchEnterMode.click);
   }
 
   void _onCloseButtonPressed() {
@@ -126,7 +135,9 @@ class _SearchBarState extends State<_SearchBar> {
   }
 
   void _onTapOutside(PointerDownEvent event) {
-    if (_vm.searchOptions.isNotEmpty) return;
+    if (_vm.searchOptions.isNotEmpty || _enterMode == SearchEnterMode.click) {
+      return;
+    }
     _exitSearch();
   }
 
