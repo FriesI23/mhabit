@@ -12,67 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:flutter/material.dart' hide PreferredSize;
 import 'package:provider/provider.dart';
 
-import '../../../common/types.dart';
 import '../../../l10n/localizations.dart';
-import '../../../providers/app_compact_ui_switcher.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
-import '../widgets.dart';
+import '../styles.dart';
 
 class SliverSearchTopAppBar extends StatelessWidget {
-  final bool isClandarExpanded;
-  final DateTime? endDate;
-  final int? collapsePrt;
   final double? height;
-  final ScrollController? verticalScrollController;
-  final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
-  final ValueChanged<bool>? onCalendarToggleExpandPressed;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
-  final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const SliverSearchTopAppBar({
     super.key,
-    this.isClandarExpanded = false,
-    this.endDate,
-    this.collapsePrt,
     this.height,
-    this.verticalScrollController,
-    this.horizonalScrollControllerGroup,
-    this.onCalendarToggleExpandPressed,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-    this.scrollPhysicsBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
-    final (appCalendarBarHeight, appCalendarBarItemPadding) =
-        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
-            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
-    final calendarBar = SliverCalendarBar(
-      key: const Key('calendar-bar'),
-      verticalScrollController: verticalScrollController,
-      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-      startDate: DateChangeProvider.of(context).dateTime,
-      endDate: endDate,
-      isExtended: isClandarExpanded,
-      collapsePrt: collapsePrt,
-      height: appCalendarBarHeight,
-      itemPadding: appCalendarBarItemPadding,
-      onLeftBtnPressed: onCalendarToggleExpandPressed,
-      scrollPhysicsBuilder: scrollPhysicsBuilder,
-    );
-
     return _AppBar(
       height: height ?? kSearchAppBarHeight,
       scrolledUnderElevation: kCommonEvalation,
       title: const _SearchBar(height: 48.0),
-      bottom: calendarBar,
+      bottom: PreferredSize.zero,
+      shawdowColor: Colors.transparent,
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
     );
@@ -226,6 +193,7 @@ class _AppBar extends StatelessWidget {
   final Widget? title;
   final PreferredSizeWidget? bottom;
   final double? height;
+  final Color? shawdowColor;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
 
@@ -234,6 +202,7 @@ class _AppBar extends StatelessWidget {
     this.title,
     this.bottom,
     this.height,
+    this.shawdowColor,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
   });
@@ -248,9 +217,10 @@ class _AppBar extends StatelessWidget {
       centerTitle: false,
       toolbarHeight: height ?? kToolbarHeight,
       scrolledUnderElevation: scrolledUnderElevation,
-      shadowColor: Theme.of(context).colorScheme.shadow,
+      shadowColor: shawdowColor,
       title: title,
       actionsPadding: kSearchAppBarActionPadding,
+      bottom: bottom,
       actions: [
         IconButton(
           onPressed: onInfoButtonPressed,
@@ -262,7 +232,6 @@ class _AppBar extends StatelessWidget {
           tooltip: l10n?.habitDisplay_settingButton_tooltip,
         )
       ],
-      bottom: bottom,
     );
   }
 }

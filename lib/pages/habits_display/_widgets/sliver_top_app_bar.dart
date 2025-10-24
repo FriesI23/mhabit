@@ -12,92 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:flutter/material.dart' hide PreferredSize;
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
-import '../../../common/enums.dart';
-import '../../../common/types.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_stat.dart';
-import '../../../providers/app_compact_ui_switcher.dart';
-import '../../../providers/app_theme.dart';
 import '../../../providers/habit_summary.dart';
-import '../../../providers/habits_record_scroll_behavior.dart';
 import '../../../widgets/widgets.dart';
 import '../widgets.dart';
 
 export 'sliver_search_top_app_bar.dart';
 
-class SliverTopAppBarContainer {
-  final HabitsRecordScrollBehavior scrollBehavior;
-  final int displayPageOccupyPrt;
-  final DateTime? earliestStartDate;
-
-  const SliverTopAppBarContainer({
-    required this.scrollBehavior,
-    required this.displayPageOccupyPrt,
-    this.earliestStartDate,
-  });
-}
-
-class SliverTopAppBarWrapper extends StatelessWidget {
-  final ValueWidgetBuilder<SliverTopAppBarContainer> builder;
-  final Widget? child;
-
-  const SliverTopAppBarWrapper({super.key, required this.builder, this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final scrollBehavior = context.select<HabitsRecordScrollBehaviorViewModel,
-        HabitsRecordScrollBehavior>((vm) => vm.scrollBehavior);
-    final displayPageOccupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
-    final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
-        (vm) => vm.earliestSummaryDataStartDate?.startDate);
-    return builder(
-        context,
-        SliverTopAppBarContainer(
-          displayPageOccupyPrt: displayPageOccupyPrt,
-          scrollBehavior: scrollBehavior,
-          earliestStartDate: earliestStartDate,
-        ),
-        child);
-  }
-}
-
 class SliverViewTopAppBar extends StatelessWidget {
-  final bool isClandarExpanded;
-  final DateTime? endDate;
   final double? height;
-  final int? collapsePrt;
-  final ScrollController? verticalScrollController;
-  final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
-  final ValueChanged<bool>? onCalendarToggleExpandPressed;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
-  final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const SliverViewTopAppBar({
     super.key,
-    this.endDate,
-    this.isClandarExpanded = false,
     this.height,
-    this.collapsePrt,
-    this.verticalScrollController,
-    this.horizonalScrollControllerGroup,
-    this.onCalendarToggleExpandPressed,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
-    this.scrollPhysicsBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
-    final (appCalendarBarHeight, appCalendarBarItemPadding) =
-        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
-            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
     return _ViewAppBar(
       scrolledUnderElevation: kCommonEvalation,
       height: height,
@@ -105,19 +45,8 @@ class SliverViewTopAppBar extends StatelessWidget {
         builder: (context, l10n) =>
             l10n != null ? Text(l10n.appName) : const Text(appName),
       ),
-      bottom: SliverCalendarBar(
-        key: const Key('calendar-bar'),
-        verticalScrollController: verticalScrollController,
-        horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-        startDate: DateChangeProvider.of(context).dateTime,
-        endDate: endDate,
-        isExtended: isClandarExpanded,
-        collapsePrt: collapsePrt,
-        height: appCalendarBarHeight,
-        itemPadding: appCalendarBarItemPadding,
-        onLeftBtnPressed: onCalendarToggleExpandPressed,
-        scrollPhysicsBuilder: scrollPhysicsBuilder,
-      ),
+      bottom: PreferredSize.zero,
+      shawdowColor: Colors.transparent,
       onInfoButtonPressed: onInfoButtonPressed,
       onMenuButtonPressed: onMenuButtonPressed,
     );
@@ -125,27 +54,15 @@ class SliverViewTopAppBar extends StatelessWidget {
 }
 
 class SliverEditTopAppBar extends StatelessWidget {
-  final bool isClandarExpanded;
-  final DateTime? endDate;
   final double? height;
-  final int? collapsePrt;
-  final ScrollController? verticalScrollController;
-  final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final VoidCallback? onLeadingButtonPressed;
   final Widget? action;
-  final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const SliverEditTopAppBar({
     super.key,
-    this.endDate,
     this.height,
-    this.collapsePrt,
-    this.isClandarExpanded = false,
-    this.verticalScrollController,
-    this.horizonalScrollControllerGroup,
     this.onLeadingButtonPressed,
     this.action,
-    this.scrollPhysicsBuilder,
   });
 
   @override
@@ -169,15 +86,6 @@ class SliverEditTopAppBar extends StatelessWidget {
       scrolledUnderElevation: kCommonEvalation,
       height: height,
       title: buildAppbarTitle(context),
-      bottom: SliverCalendarBar(
-        key: const Key('calendar-bar'),
-        verticalScrollController: verticalScrollController,
-        horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-        startDate: DateChangeProvider.of(context).dateTime,
-        endDate: endDate,
-        isExtended: isClandarExpanded,
-        collapsePrt: collapsePrt,
-      ),
       actions: action != null ? [action] : null,
       onLeadingButtonPressed: onLeadingButtonPressed,
     );
@@ -255,6 +163,7 @@ class _ViewAppBar extends StatelessWidget {
   final Widget? title;
   final PreferredSizeWidget? bottom;
   final double? height;
+  final Color? shawdowColor;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
 
@@ -263,6 +172,7 @@ class _ViewAppBar extends StatelessWidget {
     this.title,
     this.bottom,
     this.height,
+    this.shawdowColor,
     this.onInfoButtonPressed,
     this.onMenuButtonPressed,
   });
@@ -277,7 +187,8 @@ class _ViewAppBar extends StatelessWidget {
       centerTitle: true,
       toolbarHeight: height ?? kToolbarHeight,
       scrolledUnderElevation: scrolledUnderElevation,
-      shadowColor: Theme.of(context).colorScheme.shadow,
+      shadowColor: shawdowColor,
+      bottom: bottom,
       title: title,
       leading: IconButton(
         onPressed: onInfoButtonPressed,
@@ -290,7 +201,6 @@ class _ViewAppBar extends StatelessWidget {
           tooltip: l10n?.habitDisplay_settingButton_tooltip,
         )
       ],
-      bottom: bottom,
     );
   }
 }
@@ -299,7 +209,6 @@ class _EditAppBar extends StatelessWidget {
   final double? scrolledUnderElevation;
   final double? height;
   final Widget? title;
-  final PreferredSizeWidget? bottom;
   final List<Widget>? actions;
   final VoidCallback? onLeadingButtonPressed;
 
@@ -307,7 +216,6 @@ class _EditAppBar extends StatelessWidget {
     this.scrolledUnderElevation,
     this.height,
     this.title,
-    this.bottom,
     this.actions,
     this.onLeadingButtonPressed,
   });
@@ -327,7 +235,6 @@ class _EditAppBar extends StatelessWidget {
         onPressed: onLeadingButtonPressed,
       ),
       actions: actions,
-      bottom: bottom,
     );
   }
 }
