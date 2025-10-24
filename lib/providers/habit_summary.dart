@@ -64,7 +64,6 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _reloadUIToggleSwitch = false;
   bool _isCalandarExpanded = false;
   bool _isInEditMode = false;
-  bool _isInSearchMode = false;
   bool _canBeDragged = true;
   // inside status
   bool _mounted = true;
@@ -75,6 +74,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
+  // delegates
+  final _searchController = _HabitSummarySearchController();
 
   HabitSummaryViewModel();
 
@@ -376,15 +377,29 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#endregion
 
   //#region: search mode
-  bool get isInSearchMode => _isInSearchMode;
+  bool get isInSearchMode => _searchController.enabled;
+
+  HabitDisplaySearchOptions get searchOptions => _searchController.options;
 
   void enterSearchMode({bool listen = true}) {
-    _isInSearchMode = true;
+    _searchController.enable();
     if (listen) notifyListeners();
   }
 
   void exitSearchMode({bool listen = true}) {
-    _isInSearchMode = false;
+    _searchController
+      ..disable()
+      ..clearOptions();
+    if (listen) notifyListeners();
+  }
+
+  void onSeachKeywordChanged(String text, {bool listen = true}) {
+    _searchController.options.keyword = text;
+    if (_searchController.options.isEmpty) {
+      if (_searchController.enabled) _searchController.disable();
+    } else {
+      if (!_searchController.enabled) _searchController.enable();
+    }
     if (listen) notifyListeners();
   }
   //#endregion
@@ -835,6 +850,24 @@ class _SelectedHabitsData {
 
   @override
   String toString() => "$runtimeType(data=$_selectUUIDColl)";
+}
+
+class _HabitSummarySearchController {
+  bool _active = false;
+  HabitDisplaySearchEditOptions _options;
+
+  _HabitSummarySearchController()
+      : _options = HabitDisplaySearchEditOptions.empty();
+
+  bool get enabled => _active;
+
+  HabitDisplaySearchEditOptions get options => _options;
+
+  void enable() => _active = true;
+
+  void disable() => _active = false;
+
+  void clearOptions() => _options = HabitDisplaySearchEditOptions.empty();
 }
 
 final class HabitDetailAdapter implements ProviderMounted {

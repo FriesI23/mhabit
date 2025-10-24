@@ -93,28 +93,47 @@ class _SearchBarState extends State<_SearchBar> {
   late bool _scrolledUnder;
   late FocusNode _focusNode;
   late TextEditingController _controller;
+  late bool _prevSearchMode;
 
   @override
   void initState() {
     super.initState();
-    _vm = context.read<HabitSummaryViewModel>();
+    _vm = context.read<HabitSummaryViewModel>()
+      ..addListener(_onViewModelNotified);
     _scrolledUnder = false;
     _focusNode = FocusNode();
-    _controller = TextEditingController();
+    _controller = TextEditingController(text: _vm.searchOptions.keyword);
+    _prevSearchMode = _vm.isInSearchMode;
   }
 
   @override
   void didUpdateWidget(covariant _SearchBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     final vm = context.read<HabitSummaryViewModel>();
-    if (vm != _vm) _vm = vm;
+    if (vm != _vm) {
+      _vm.removeListener(_onViewModelNotified);
+      _vm = vm..addListener(_onViewModelNotified);
+      _controller.text = _vm.searchOptions.keyword;
+      _prevSearchMode = _vm.isInSearchMode;
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _vm.removeListener(_onViewModelNotified);
     super.dispose();
+  }
+
+  void _onViewModelNotified() {
+    if (_controller.text != _vm.searchOptions.keyword) {
+      _controller.text = _vm.searchOptions.keyword;
+    }
+    if (_prevSearchMode && !_vm.isInSearchMode) {
+      _focusNode.unfocus();
+    }
+    _prevSearchMode = _vm.isInSearchMode;
   }
 
   bool get isViewModelMounted => mounted && _vm.mounted;
@@ -140,18 +159,13 @@ class _SearchBarState extends State<_SearchBar> {
   }
 
   void _onTapOutside(PointerDownEvent event) {
-    if (_controller.text.isNotEmpty) return;
+    if (_vm.searchOptions.isNotEmpty) return;
     _exitSearch();
   }
 
   void _onChanged(String text) {
     if (!isViewModelMounted) return;
-    final isEmpty = text.isEmpty;
-    if (isEmpty) {
-      if (_vm.isInSearchMode) _exitSearch();
-    } else {
-      if (!_vm.isInSearchMode) _enterSeach();
-    }
+    _vm.onSeachKeywordChanged(text);
   }
 
   /// From Material3 Design Duidelines

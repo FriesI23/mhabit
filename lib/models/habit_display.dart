@@ -201,3 +201,27 @@ class HabitDisplayOpConfig implements JsonAdaptor {
   @override
   String toString() => "$runtimeType(${toJson()})";
 }
+
+abstract interface class HabitDisplaySearchOptions {
+  String get keyword;
+
+  bool get isEmpty;
+
+  bool get isNotEmpty;
+}
+
+@CopyWith(skipFields: true)
+class HabitDisplaySearchEditOptions implements HabitDisplaySearchOptions {
+  @override
+  String keyword;
+
+  HabitDisplaySearchEditOptions({required this.keyword});
+
+  HabitDisplaySearchEditOptions.empty() : keyword = "";
+
+  @override
+  bool get isEmpty => keyword.isEmpty;
+
+  @override
+  bool get isNotEmpty => keyword.isNotEmpty;
+}
