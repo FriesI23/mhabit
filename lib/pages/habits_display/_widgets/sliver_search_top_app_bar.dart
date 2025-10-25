@@ -22,7 +22,7 @@ import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
 import '../styles.dart';
 
-class SliverSearchTopAppBar extends StatefulWidget {
+class SliverSearchTopAppBar extends StatelessWidget {
   final double? height;
   final VoidCallback? onInfoButtonPressed;
   final VoidCallback? onMenuButtonPressed;
@@ -35,38 +35,15 @@ class SliverSearchTopAppBar extends StatefulWidget {
   });
 
   @override
-  State<SliverSearchTopAppBar> createState() => _SliverSearchTopAppBarState();
-}
-
-class _SliverSearchTopAppBarState extends State<SliverSearchTopAppBar> {
-  late TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return _AppBar(
-      height: widget.height ?? kSearchAppBarHeight,
+      height: height ?? kSearchAppBarHeight,
       scrolledUnderElevation: kCommonEvalation,
-      searchBar: _SearchBar(
-        key: const ValueKey("search-bar"),
-        height: 48.0,
-        controller: _controller,
-      ),
+      searchBar: const _SearchBar(key: ValueKey("search-bar"), height: 48.0),
       bottom: PreferredSize.zero,
       shawdowColor: Colors.transparent,
-      onInfoButtonPressed: widget.onInfoButtonPressed,
-      onMenuButtonPressed: widget.onMenuButtonPressed,
+      onInfoButtonPressed: onInfoButtonPressed,
+      onMenuButtonPressed: onMenuButtonPressed,
     );
   }
 }
@@ -80,8 +57,9 @@ class _SearchBar extends StatefulWidget {
   final TextEditingController? controller;
   final double? height;
 
-  const _SearchBar({super.key, this.height, this.controller})
-      : focusNode = null;
+  const _SearchBar({super.key, this.height})
+      : focusNode = null,
+        controller = null;
 
   @override
   State<_SearchBar> createState() => _SearchBarState();
@@ -155,7 +133,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
   //#region controller
   @override
-  String? get restorationId => null;
+  String? get restorationId => 'controller';
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -276,7 +254,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
         return SearchBar(
           focusNode: _effectiveFocusNode,
           controller: _effectiveController,
-          keyboardType: TextInputType.streetAddress,
+          textInputAction: TextInputAction.search,
           overlayColor: getLightOverlayColor(colors),
           backgroundColor: _scrolledUnder
               ? WidgetStatePropertyAll(brightness == Brightness.dark

@@ -735,15 +735,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result =
         await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
 
-    if (!_sortableCache.filter.allowArchivedHabits) {
-      final filteredSortCache = lastSortedDataCache
-          .where((element) => !(element is HabitSummaryDataSortCache &&
-              realNeedArchivedUUID.contains(element.uuid)))
-          .toList();
-      _sortableCache =
-          _sortableCache.copyWith(lastSortedDataCache: filteredSortCache);
-      _saveAndDispatch(_sortableCache);
-    }
+    resortData(listen: false);
 
     exitEditMode();
     return result;
@@ -768,9 +760,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result = await _changeHabitsStatus(
         realNeedUnarchivedUUID, HabitStatus.activated);
 
-    if (_sortableCache.filter.allowArchivedHabits) {
-      resortData(listen: false);
-    }
+    resortData(listen: false);
 
     exitEditMode();
     return result;
