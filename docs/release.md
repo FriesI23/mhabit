@@ -3,32 +3,27 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.18.0+106
+# Pre-Released: v1.19.0+107-pre
+
+**✨ New Features**
+
+- Feature: Quick Search (#385)
+  - Added an experimental feature switch
+  - Added a new search bar
+  - Added a flexible UI layout
+  - Improved UI refresh logic to ensure the state updates correctly
+  - Separated the calendar bar from the main view
+  - Removed RouteAware to simplify route management
+- Cleanup: Removed App Sync experimental feature switch (#386)
 
 **🌐 Localization**
 
-- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate.
-- Updated Spain translation, thank to Andres Blasco Arnáiz's contribution on weblate.
+- Update Turkish translation, thanks to Soykan Aydın's contributions on Weblate
 
 **🧹 Others**
 
-- Fix App Sync Form to Keep Local Password on UI Changes (#368)
-  - Numbers changes can be saved on iOS/iPadOS (#351)
-- Refactor Project Code:
-  - Adjusted project code directory structure (#353)
-  - Refactored App Sync Server Form with MVVM architecture (#364)
-  - Refactored Habit Form with MVVM architecture (#366)
-  - Refactor Habit Status Changer Structure and Logic (#369)
-  - Refactor Habit Summary Structure and Logic (#370)
-  - Refactor Miscellaneous Code Cleanup (#371)
-    - Move Habit Status Changer Dispatcher Back to ViewModel
-    - Decouple Providers from Material and Widgets
-    - Decouple Models from Material and Widgets
-  - Refactor Separate UI Logic (#372)
-    - Replace Material and Widgets Exports with Specific Imports
-    - Separate Scroll Behavior Logic from ViewModel
-    - Separate Material Theme Logic from ViewModel
-    - Separate ShowDialog from ViewModel
-  - Refactor Habit Data Flow with Dispatcher (#374)
-  - Refactor Move onDailyGoalTextInputChanged to Habit Input Helper
-- [Github Action]: Added pre-release cleanup CI for app release
+- Refactor: Moved App Sync experimental feature switches to a separate provider (#381)
+- Refactor: Extracted AppBar build logic from the main page (#382)
+- Fix: Skip redundant data loading on the `Habit Display` page (#383)
+- Fix: Rebuilt `ColorScheme.fromSeed` when dynamic colors are active (#384)
+- Chore: Bumped dependency versions
