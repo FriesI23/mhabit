@@ -48,8 +48,6 @@ class SliverSearchTopAppBar extends StatelessWidget {
   }
 }
 
-enum SearchEnterMode { click, other }
-
 class _SearchBar extends StatefulWidget {
   static const kSearchFullWidthLimit = 312.0;
 
@@ -71,8 +69,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
   late bool _prevSearchMode;
   FocusNode? _focusNode;
   RestorableTextEditingController? _controller;
-
-  SearchEnterMode? _enterMode;
+  bool _changed = false;
 
   FocusNode get _effectiveFocusNode =>
       widget.focusNode ?? (_focusNode ??= FocusNode());
@@ -89,15 +86,6 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     _prevSearchMode = _vm.isInSearchMode;
     if (widget.controller == null) {
       _createLocalController(TextEditingValue(text: _vm.searchOptions.keyword));
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_vm.isInSearchMode) {
-      _enterMode = SearchEnterMode.other;
-      _effectiveFocusNode.requestFocus();
     }
   }
 
@@ -119,7 +107,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
       _vm = vm..addListener(_onViewModelNotified);
       _effectiveController.text = _vm.searchOptions.keyword;
       _prevSearchMode = _vm.isInSearchMode;
-      _enterMode = _vm.isInSearchMode ? SearchEnterMode.other : null;
+      if (_effectiveController.text.isNotEmpty) _changed = true;
     }
   }
 
@@ -161,32 +149,32 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
   void _onViewModelNotified() {
     if (_effectiveController.text != _vm.searchOptions.keyword) {
       _effectiveController.text = _vm.searchOptions.keyword;
+      _changed = true;
     }
     if (_prevSearchMode && !_vm.isInSearchMode) {
       _effectiveFocusNode.unfocus();
     }
     _prevSearchMode = _vm.isInSearchMode;
-    if (!_vm.isInSearchMode) _enterMode = null;
+    if (!_vm.isInSearchMode) _changed = false;
   }
 
   bool get isViewModelMounted => mounted && _vm.mounted;
 
-  void _enterSeach({SearchEnterMode mode = SearchEnterMode.other}) {
+  void _enterSeach() {
     if (!isViewModelMounted) return;
     _vm.enterSearchMode();
     if (!_effectiveFocusNode.hasFocus) _effectiveFocusNode.requestFocus();
-    _enterMode = mode;
   }
 
   void _exitSearch() {
     if (!isViewModelMounted) return;
     _vm.exitSearchMode();
     if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
-    _enterMode = null;
+    _changed = false;
   }
 
   void _onSearchButtonPressed() {
-    _enterSeach(mode: SearchEnterMode.click);
+    _enterSeach();
   }
 
   void _onCloseButtonPressed() {
@@ -194,7 +182,8 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
   }
 
   void _onTapOutside(PointerDownEvent event) {
-    if (_vm.searchOptions.isNotEmpty || _enterMode == SearchEnterMode.click) {
+    if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
+    if (_vm.searchOptions.isNotEmpty || !_changed) {
       return;
     }
     _exitSearch();
@@ -203,6 +192,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
   void _onChanged(String text) {
     if (!isViewModelMounted) return;
     _vm.onSeachKeywordChanged(text);
+    _changed = true;
   }
 
   /// From Material3 Design Duidelines
