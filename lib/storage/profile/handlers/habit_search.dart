@@ -25,7 +25,8 @@ class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   String get expKey => "search";
 
   @override
-  bool get() => super.get() ?? true;
+  // TODO(search): enable in future versions.
+  bool get() => super.get() ?? false;
 
   @override
   bool get enabled => get();
