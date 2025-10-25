@@ -35,7 +35,6 @@ import '../../providers/app_caches.dart';
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
-import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
 import '../../providers/app_reminder.dart';
@@ -678,14 +677,8 @@ class _PageState extends State<_Page> with XShare {
     Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
           GroupTitleListTile(
               title: L10nBuilder(
-                  builder: (context, l10n) => Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 4,
-                        children: [
-                          Text(l10n?.appSetting_synSubgroupText ?? "Sync"),
-                          const BetaBadge()
-                        ],
-                      ))),
+                  builder: (context, l10n) =>
+                      Text(l10n?.appSetting_synSubgroupText ?? "Sync"))),
           const AppSyncNowTile(),
           const AppSettingSyncFailedTile(),
           ListTile(
@@ -733,11 +726,7 @@ class _PageState extends State<_Page> with XShare {
         body: EnhancedSafeArea.edgeToEdgeSafe(
           child: ListView(
             children: [
-              ...buildSyncSubGroup(context).map((e) =>
-                  Selector<AppExperimentalFeatureViewModel, bool>(
-                      selector: (context, vm) => vm.appSync,
-                      builder: (context, value, child) =>
-                          Visibility(visible: value, child: e))),
+              ...buildSyncSubGroup(context),
               ...buildDisplaySubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),
