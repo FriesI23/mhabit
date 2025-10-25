@@ -135,6 +135,52 @@ extension $HabitDisplayOpConfigCopyWith on HabitDisplayOpConfig {
       _$HabitDisplayOpConfigCWProxyImpl(this);
 }
 
+abstract class _$HabitDisplaySearchOptionsCWProxy {
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// HabitDisplaySearchOptions(...).copyWith(id: 12, name: "My name")
+  /// ````
+  HabitDisplaySearchOptions call({
+    String keyword,
+  });
+}
+
+/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
+class _$HabitDisplaySearchOptionsCWProxyImpl
+    implements _$HabitDisplaySearchOptionsCWProxy {
+  const _$HabitDisplaySearchOptionsCWProxyImpl(this._value);
+
+  final HabitDisplaySearchOptions _value;
+
+  @override
+
+  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  ///
+  /// Usage
+  /// ```dart
+  /// HabitDisplaySearchOptions(...).copyWith(id: 12, name: "My name")
+  /// ````
+  HabitDisplaySearchOptions call({
+    Object? keyword = const $CopyWithPlaceholder(),
+  }) {
+    return HabitDisplaySearchOptions(
+      keyword: keyword == const $CopyWithPlaceholder()
+          ? _value.keyword
+          // ignore: cast_nullable_to_non_nullable
+          : keyword as String,
+    );
+  }
+}
+
+extension $HabitDisplaySearchOptionsCopyWith on HabitDisplaySearchOptions {
+  /// Returns a callable class that can be used as follows: `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
+  // ignore: library_private_types_in_public_api
+  _$HabitDisplaySearchOptionsCWProxy get copyWith =>
+      _$HabitDisplaySearchOptionsCWProxyImpl(this);
+}
+
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************

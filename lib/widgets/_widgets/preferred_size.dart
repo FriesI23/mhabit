@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
-const kExpanedDailogInsetPadding =
-    EdgeInsets.only(left: 40.0, right: 40.0, bottom: 10.0);
+import 'package:flutter/widgets.dart' as widgets;
 
-const kListTileContentPadding =
-    EdgeInsetsDirectional.only(start: 16.0, end: 24.0);
+class PreferredSize extends widgets.PreferredSize {
+  static const zero =
+      PreferredSize(preferredSize: Size.zero, child: widgets.SizedBox.shrink());
 
-const kAppUndoDialogShowDuration = Duration(seconds: 4);
-
-/// https://m3.material.io/components/app-bars/specs#14978a2b-e102-46df-8103-c0365076be82
-const double kSearchAppBarHeight = 64.0;
-const EdgeInsetsGeometry kSearchAppBarActionPadding =
-    EdgeInsets.only(right: 4.0);
+  const PreferredSize(
+      {super.key, required super.preferredSize, required super.child});
+}

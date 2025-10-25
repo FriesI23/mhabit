@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
@@ -74,6 +75,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
+  // delegates
+  final _searchController = _HabitSummarySearchController();
 
   HabitSummaryViewModel();
 
@@ -107,6 +110,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         reloadUIToggleSwitch: reloadUIToggleSwitch,
         isClandarExpanded: isCalendarExpanded,
         isInEditMode: isInEditMode,
+        isInSearchMode: isInSearchMode,
       );
 
   bool get isCalendarExpanded => _isCalandarExpanded;
@@ -373,6 +377,43 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
   //#endregion
 
+  //#region: search mode
+  bool get isInSearchMode => _searchController.enabled;
+
+  HabitDisplaySearchOptions get searchOptions => _searchController.options;
+
+  void enterSearchMode({bool listen = true}) {
+    if (isInSearchMode) return;
+    _searchController.enable();
+    _resortData();
+    if (listen) notifyListeners();
+  }
+
+  void exitSearchMode({bool listen = true}) {
+    if (!isInSearchMode) return;
+    _searchController
+      ..disable()
+      ..clearOptions();
+    _resortData();
+    if (listen) notifyListeners();
+  }
+
+  void onSeachKeywordChanged(String text, {bool listen = true}) {
+    final lastKeyword = _searchController.options.keyword;
+    final result = _searchController.updateKeyword(text);
+    if (!result && text.isNotEmpty) return;
+    if (_searchController.options.isEmpty) {
+      if (_searchController.enabled && lastKeyword.isEmpty) {
+        _searchController.disable();
+      }
+    } else {
+      if (!_searchController.enabled) _searchController.enable();
+    }
+    _resortData();
+    if (listen) notifyListeners();
+  }
+  //#endregion
+
   //#region statistics
   HabitSummaryStatisticsData get statisticsData {
     int archivedCount = 0, complatedCount = 0, inProgressCount = 0;
@@ -426,8 +467,15 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _resortData() {
-    final newObj = _sortableCache.copyWithSortableData(_data);
-    _saveAndDispatch(newObj);
+    _HabitsSortableCache genSortableCache() {
+      if (isInSearchMode) {
+        return _sortableCache.copyWithSortableData(_data,
+            searchOptions: searchOptions, filter: HabitsDisplayFilter.allTrue);
+      }
+      return _sortableCache.copyWithSortableData(_data);
+    }
+
+    _saveAndDispatch(genSortableCache());
   }
 
   void _saveAndDispatch(_HabitsSortableCache newSortbaleData) {
@@ -687,15 +735,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result =
         await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
 
-    if (!_sortableCache.filter.allowArchivedHabits) {
-      final filteredSortCache = lastSortedDataCache
-          .where((element) => !(element is HabitSummaryDataSortCache &&
-              realNeedArchivedUUID.contains(element.uuid)))
-          .toList();
-      _sortableCache =
-          _sortableCache.copyWith(lastSortedDataCache: filteredSortCache);
-      _saveAndDispatch(_sortableCache);
-    }
+    resortData(listen: false);
 
     exitEditMode();
     return result;
@@ -720,9 +760,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result = await _changeHabitsStatus(
         realNeedUnarchivedUUID, HabitStatus.activated);
 
-    if (_sortableCache.filter.allowArchivedHabits) {
-      resortData(listen: false);
-    }
+    resortData(listen: false);
 
     exitEditMode();
     return result;
@@ -783,14 +821,24 @@ class _HabitsSortableCache {
     }
   }
 
-  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data) =>
-      copyWith(
-        lastSortedDataCache: data
-            .sort(sortType, sortDirection)
-            .where(filter.getDisplayFilterFunction())
-            .map((e) => HabitSummaryDataSortCache(data: e))
-            .toList(),
-      );
+  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data,
+      {HabitDisplaySearchOptions? searchOptions, HabitsDisplayFilter? filter}) {
+    var sorted = data
+        .sort(sortType, sortDirection)
+        .where((filter ?? this.filter).getDisplayFilterFunction());
+    if (searchOptions != null) {
+      final keywords = searchOptions.keyword
+          .toUpperCase()
+          .split(' ')
+          .whereNot((e) => e.isEmpty);
+      sorted = sorted.where(
+          (e) => searchOptions.filter(e, caps: true, keywords: keywords));
+    }
+    return copyWith(
+      lastSortedDataCache:
+          sorted.map((e) => HabitSummaryDataSortCache(data: e)).toList(),
+    );
+  }
 
   @override
   String toString() =>
@@ -819,6 +867,30 @@ class _SelectedHabitsData {
 
   @override
   String toString() => "$runtimeType(data=$_selectUUIDColl)";
+}
+
+class _HabitSummarySearchController {
+  bool _active = false;
+  HabitDisplaySearchOptions _options;
+
+  _HabitSummarySearchController()
+      : _options = const HabitDisplaySearchOptions.empty();
+
+  bool get enabled => _active;
+
+  HabitDisplaySearchOptions get options => _options;
+
+  void enable() => _active = true;
+
+  void disable() => _active = false;
+
+  void clearOptions() => _options = const HabitDisplaySearchOptions.empty();
+
+  bool updateKeyword(String text) {
+    if (text == _options.keyword) return false;
+    _options = _options.copyWith(keyword: text);
+    return true;
+  }
 }
 
 final class HabitDetailAdapter implements ProviderMounted {

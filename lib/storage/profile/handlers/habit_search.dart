@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart';
+import '../converter.dart';
+import 'app_experimental_feature.dart';
 
-const kExpanedDailogInsetPadding =
-    EdgeInsets.only(left: 40.0, right: 40.0, bottom: 10.0);
+/// FIXME(search): Update version number
+/// Enabled Switch: \<version\> > 1.19.0+107
+class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
+  HabitSearchExperimentalFeature(super.pref)
+      : super(codec: const SameTypeCodec());
 
-const kListTileContentPadding =
-    EdgeInsetsDirectional.only(start: 16.0, end: 24.0);
+  @override
+  String get expKey => "search";
 
-const kAppUndoDialogShowDuration = Duration(seconds: 4);
+  @override
+  // TODO(search): enable in future versions.
+  bool get() => super.get() ?? false;
 
-/// https://m3.material.io/components/app-bars/specs#14978a2b-e102-46df-8103-c0365076be82
-const double kSearchAppBarHeight = 64.0;
-const EdgeInsetsGeometry kSearchAppBarActionPadding =
-    EdgeInsets.only(right: 4.0);
+  @override
+  bool get enabled => get();
+}

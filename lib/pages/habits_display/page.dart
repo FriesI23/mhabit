@@ -42,6 +42,7 @@ import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_detail.dart';
@@ -84,17 +85,19 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
+  late HabitSummaryViewModel _vm;
+
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
-  late final PinnedAppbarScrollController _verticalScrollController;
+  late PinnedAppbarScrollController _verticalScrollController;
+  late double _toolbarHeight;
 
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    final viewmodel = context.read<HabitSummaryViewModel>();
+    _vm = context.read<HabitSummaryViewModel>();
     // events
-    viewmodel.scrollCalendarToStartEvent
-        .listen(_resetHorizonalScrollController);
+    _vm.scrollCalendarToStartEvent.listen(_resetHorizonalScrollController);
     // dispatcher
     final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
       controller: AnimatedListController(),
@@ -110,18 +113,25 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
           return const SizedBox();
         }
       },
-      currentList: viewmodel.lastSortedDataCache,
+      currentList: _vm.lastSortedDataCache,
       comparator: AnimatedListDiffListComparator<HabitSortCache>(
         sameItem: (a, b) => a.isSameItem(b),
         sameContent: (a, b) => a.isSameContent(b),
       ),
     );
-    viewmodel.initDispatcher(dispatcher);
+    _vm.initDispatcher(dispatcher);
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
-    _verticalScrollController = PinnedAppbarScrollController(
-      onAppbarStatusChanged: _changeAppbarStatus,
-    )..addChangeAppbarStatusListener();
+    _initVerticalScrollController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitSummaryViewModel>();
+    if (vm != _vm) {
+      _vm = vm;
+    }
   }
 
   @override
@@ -140,6 +150,27 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       return _horizonalScrollControllerGroup.animateTo(0,
           duration: scrollDuration ?? const Duration(milliseconds: 500),
           curve: Curves.fastOutSlowIn);
+    }
+  }
+
+  void _initVerticalScrollController() {
+    final vm = context.read<AppExperimentalFeatureViewModel>();
+    _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
+    _verticalScrollController = PinnedAppbarScrollController(
+      toolbarHeight: _toolbarHeight,
+      onAppbarStatusChanged: _changeAppbarStatus,
+    )..addChangeAppbarStatusListener();
+    vm
+      ..removeListener(_updateVerticalScrollController)
+      ..addListener(_updateVerticalScrollController);
+  }
+
+  void _updateVerticalScrollController() {
+    final oldController = _verticalScrollController;
+    try {
+      _initVerticalScrollController();
+    } finally {
+      if (oldController != _verticalScrollController) oldController.dispose();
     }
   }
 
@@ -534,6 +565,10 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
 
   void _openAppSettingsPage() {
     if (!mounted) return;
+    if (_vm.mounted) {
+      _vm.exitSearchMode();
+      _vm.exitEditMode();
+    }
     app_settings.naviToAppSettingPage(
       context: context,
       summary: context.read<HabitSummaryViewModel>(),
@@ -815,18 +850,20 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
 
   Future<bool> onWillPop() async {
     if (!mounted) return true;
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return true;
-    if (viewmodel.isInEditMode) {
-      viewmodel.exitEditMode();
-      return false;
+    var count = 0;
+    if (_vm.isInEditMode) {
+      _vm.exitEditMode();
+      count++;
     }
-    if (viewmodel.isCalendarExpanded) {
-      viewmodel.collapseCalendar();
-      return false;
+    if (_vm.isInSearchMode) {
+      _vm.exitSearchMode();
+      count++;
     }
-
-    return true;
+    if (_vm.isCalendarExpanded) {
+      _vm.collapseCalendar();
+      count++;
+    }
+    return count <= 0;
   }
 
   void _onHabitEditAppbarLeadingButtonPressed() {
@@ -917,49 +954,57 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         selector: (context, vm) => vm.currentState,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, state, child) {
-          appLog.build.debug(context, ex: [state], name: "$widget.Appbar");
+          Widget build(BuildContext context) => state.isInEditMode
+              ? SliverEditTopAppBar(
+                  height: _toolbarHeight,
+                  onLeadingButtonPressed:
+                      _onHabitEditAppbarLeadingButtonPressed,
+                  action: SliverEditTopAppBarAction(
+                    onEdit: _onAppbarEditActionPressed,
+                    onUnarchive: _onAppbarUnArchiveActionPressed,
+                    onArchive: _onAppbarArchiveActionPressed,
+                    onSelectAll: _onAppbarSelectAllActionPressed,
+                    onClone: _onAppbarCloneActionPressed,
+                    onExportAll: _onAppbarExportAllActionPressed,
+                    onDelete: _onAppbarDeleteActionPressed,
+                  ),
+                )
+              : Selector<AppExperimentalFeatureViewModel, bool>(
+                  selector: (context, vm) => vm.habitSearch,
+                  builder: (context, enableSearch, child) {
+                    if (enableSearch) {
+                      return SliverSearchTopAppBar(
+                        height: _toolbarHeight,
+                        onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
+                        onMenuButtonPressed: _openHabitSummaryMenuDialog,
+                      );
+                    }
+                    return SliverViewTopAppBar(
+                      height: _toolbarHeight,
+                      onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
+                      onMenuButtonPressed: _openHabitSummaryMenuDialog,
+                    );
+                  },
+                );
 
-          final Widget appbar;
-          if (state.isInEditMode) {
-            appbar = SliverTopAppBarWrapper(
-              key: const ValueKey("edit"),
-              builder: (context, value, child) => SliverEditTopAppBar(
-                isClandarExpanded: state.isClandarExpanded,
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                onLeadingButtonPressed: _onHabitEditAppbarLeadingButtonPressed,
-                scrollPhysicsBuilder: _buildScrollPhysics,
-                action: SliverEditTopAppBarAction(
-                  onEdit: _onAppbarEditActionPressed,
-                  onUnarchive: _onAppbarUnArchiveActionPressed,
-                  onArchive: _onAppbarArchiveActionPressed,
-                  onSelectAll: _onAppbarSelectAllActionPressed,
-                  onClone: _onAppbarCloneActionPressed,
-                  onExportAll: _onAppbarExportAllActionPressed,
-                  onDelete: _onAppbarDeleteActionPressed,
-                ),
-              ),
-            );
-          } else {
-            appbar = SliverTopAppBarWrapper(
-              key: const ValueKey("view"),
-              builder: (context, value, child) => SliverViewTopAppBar(
-                isClandarExpanded: state.isClandarExpanded,
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
-                onInfoButtonPressed: _openHabitSummaryStatisticsDialog,
-                onMenuButtonPressed: _openHabitSummaryMenuDialog,
-                scrollPhysicsBuilder: _buildScrollPhysics,
-              ),
-            );
-          }
-
+          appLog.build.debug(context, ex: [state], name: "HabitDisplay.Appbar");
           return SliverAnimatedSwitcher(
             duration: kEditModeChangeAnimateDuration,
-            child: appbar,
+            child: build(context),
           );
         },
+      );
+    }
+    //#endregion
+
+    //#region calendar bar
+    Widget buildCalendarBar(BuildContext context) {
+      return _CalendarBar(
+        key: const ValueKey("calendar-bar"),
+        verticalScrollController: _verticalScrollController,
+        horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
+        onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
+        scrollPhysicsBuilder: _buildScrollPhysics,
       );
     }
     //#endregion
@@ -982,6 +1027,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                         context, viewmodel.lastSortedDataCache, index, data);
               },
               viewmodel.lastSortedDataCache.length,
+              animator: kHabitContentListAnimator,
               addAnimatedElevation: kCommonEvalation,
               morphDuration: kEditModeChangeAnimateDuration,
               reorderModel: AnimatedListReorderModel(
@@ -1155,7 +1201,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                     controller: _verticalScrollController,
                     slivers: [
                       buildAppbar(context),
-                      const HabitDivider(withSliver: true, height: 1),
+                      buildCalendarBar(context),
+                      const PinnedHeaderSliver(child: HabitDivider(height: 1)),
                       EnhancedSafeArea.edgeToEdgeSafe(
                         withSliver: true,
                         child: buildHabits(context),
@@ -1354,4 +1401,68 @@ class _FAB extends StatelessWidget {
         builder: (context, value, child) => _buildFAB(context,
             isAppbarPinned: value.item1, isInEditMode: value.item2),
       );
+}
+
+class _CalendarBar extends StatelessWidget {
+  final ScrollController? verticalScrollController;
+  final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
+  final ValueChanged<bool>? onCalendarToggleExpandPressed;
+  final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
+
+  const _CalendarBar({
+    super.key,
+    this.verticalScrollController,
+    this.horizonalScrollControllerGroup,
+    this.onCalendarToggleExpandPressed,
+    this.scrollPhysicsBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final state =
+        context.select<HabitSummaryViewModel, HabitSummaryStatusCache>(
+            (vm) => vm.currentState);
+    final displayPageOccupyPrt =
+        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
+    final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
+        (vm) => vm.earliestSummaryDataStartDate?.startDate);
+    final (appCalendarBarHeight, appCalendarBarItemPadding) =
+        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
+            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
+    appLog.build.debug(context,
+        ex: [
+          state,
+          displayPageOccupyPrt,
+          earliestStartDate,
+          appCalendarBarHeight,
+          appCalendarBarItemPadding
+        ],
+        name: "HabitDisplay.calendarBar");
+    final scrolledUnderElevation = state.isInEditMode ? 0.0 : kCommonEvalation;
+    final backgroundColor =
+        state.isInEditMode ? Theme.of(context).colorScheme.surface : null;
+    return SliverAppBar(
+      pinned: true,
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      backgroundColor: backgroundColor,
+      scrolledUnderElevation: scrolledUnderElevation,
+      titleSpacing: 0.0,
+      primary: false,
+      toolbarHeight: appCalendarBarHeight,
+      title: EnhancedSafeArea.edgeToEdgeSafe(
+        child: SliverCalendarBar(
+          verticalScrollController: verticalScrollController,
+          horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+          startDate: DateChangeProvider.of(context).dateTime,
+          endDate: earliestStartDate,
+          isExtended: state.isClandarExpanded,
+          collapsePrt: displayPageOccupyPrt,
+          height: appCalendarBarHeight,
+          itemPadding: appCalendarBarItemPadding,
+          onLeftBtnPressed: onCalendarToggleExpandPressed,
+          scrollPhysicsBuilder: scrollPhysicsBuilder,
+        ),
+      ),
+    );
+  }
 }

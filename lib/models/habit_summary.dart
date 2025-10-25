@@ -770,6 +770,7 @@ class HabitSummaryStatusCache {
   final bool reloadUIToggleSwitch;
   final bool isClandarExpanded;
   final bool isInEditMode;
+  final bool isInSearchMode;
 
   const HabitSummaryStatusCache({
     required this.isAppbarPinned,
@@ -777,12 +778,13 @@ class HabitSummaryStatusCache {
     required this.reloadUIToggleSwitch,
     required this.isClandarExpanded,
     required this.isInEditMode,
+    required this.isInSearchMode,
   });
 
   @override
   String toString() {
     return "HabitSummaryStatusCache($isAppbarPinned|$reloadDBToggleSwich|"
-        "$reloadUIToggleSwitch|$isClandarExpanded|$isInEditMode)";
+        "$reloadUIToggleSwitch|$isClandarExpanded|$isInEditMode|$isInSearchMode)";
   }
 
   @override
@@ -793,7 +795,8 @@ class HabitSummaryStatusCache {
         reloadDBToggleSwich == other.reloadDBToggleSwich &&
         reloadUIToggleSwitch == other.reloadUIToggleSwitch &&
         isClandarExpanded == other.isClandarExpanded &&
-        isInEditMode == other.isInEditMode;
+        isInEditMode == other.isInEditMode &&
+        isInSearchMode == other.isInSearchMode;
   }
 
   @override

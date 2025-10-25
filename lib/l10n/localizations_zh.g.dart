@@ -401,6 +401,9 @@ class L10nZh extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️调试选项';
 
   @override
+  String get habitDisplay_searchBar_hintText => '搜索习惯';
+
+  @override
   String get habitDetail_editButton_tooltip => '编辑';
 
   @override
@@ -1192,6 +1195,12 @@ class L10nZh extends L10n {
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
     return '要完全禁用，请长按访问“$menuName”并将其关闭。';
   }
+
+  @override
+  String get experimentalFeatures_habitSearchTile_titleText => '习惯搜索';
+
+  @override
+  String get experimentalFeatures_habitSearchTile_subtitleText => '启用后，Habits 界面顶部将出现一个搜索栏，用于搜索习惯。';
 
   @override
   String get appAbout_appbarTile_titleText => '关于';

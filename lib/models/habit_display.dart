@@ -124,6 +124,12 @@ class HabitsDisplayFilter {
     allowCompleteHabits: false,
   );
 
+  static const allTrue = HabitsDisplayFilter(
+    allowInProgressHabits: true,
+    allowArchivedHabits: true,
+    allowCompleteHabits: true,
+  );
+
   const HabitsDisplayFilter({
     required this.allowInProgressHabits,
     required this.allowArchivedHabits,
@@ -200,4 +206,25 @@ class HabitDisplayOpConfig implements JsonAdaptor {
 
   @override
   String toString() => "$runtimeType(${toJson()})";
+}
+
+@CopyWith(skipFields: true)
+class HabitDisplaySearchOptions {
+  final String keyword;
+
+  const HabitDisplaySearchOptions({required this.keyword});
+
+  const HabitDisplaySearchOptions.empty() : keyword = "";
+
+  bool get isEmpty => keyword.isEmpty;
+
+  bool get isNotEmpty => keyword.isNotEmpty;
+
+  bool filter(HabitSummaryData data,
+      {Iterable<String>? keywords, bool caps = false}) {
+    final kws = keywords ?? [keyword];
+    final name = caps ? data.name.toUpperCase() : data.name;
+    if (kws.isNotEmpty && kws.any((kw) => !name.contains(kw))) return false;
+    return true;
+  }
 }

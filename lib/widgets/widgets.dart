@@ -43,6 +43,7 @@ export '_widgets/markdown_block.dart';
 export '_widgets/month_picker_cell.dart';
 export '_widgets/page_back_button.dart';
 export '_widgets/page_loading_indicator.dart';
+export '_widgets/preferred_size.dart';
 export '_widgets/scroll_physics.dart';
 export '_widgets/scrollable_chart.dart';
 export '_widgets/scrolling_fab.dart';

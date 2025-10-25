@@ -355,6 +355,8 @@
   "@habitDisplay_sortTypeDialog_cancel": {},
   "habitDisplay_debug_debugSubgroup_title": "🛠️调试选项",
   "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDisplay_searchBar_hintText": "搜索习惯",
+  "@habitDisplay_searchBar_hintText": {},
   "habitDetail_editButton_tooltip": "编辑",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "取消归档",
@@ -1045,6 +1047,10 @@
       }
     }
   },
+  "experimentalFeatures_habitSearchTile_titleText": "习惯搜索",
+  "@experimentalFeatures_habitSearchTile_titleText": {},
+  "experimentalFeatures_habitSearchTile_subtitleText": "启用后，Habits 界面顶部将出现一个搜索栏，用于搜索习惯。",
+  "@experimentalFeatures_habitSearchTile_subtitleText": {},
   "appAbout_appbarTile_titleText": "关于",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "版本：{appVersion}",
