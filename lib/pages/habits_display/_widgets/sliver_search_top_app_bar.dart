@@ -183,9 +183,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
   void _onTapOutside(PointerDownEvent event) {
     if (_effectiveFocusNode.hasFocus) _effectiveFocusNode.unfocus();
-    if (_vm.searchOptions.isNotEmpty || !_changed) {
-      return;
-    }
+    if (_vm.searchOptions.isNotEmpty || !_changed) return;
     _exitSearch();
   }
 
@@ -194,6 +192,8 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     _vm.onSeachKeywordChanged(text);
     _changed = true;
   }
+
+  void _onSubmitted(String text) => _changed ? _onChanged(text) : null;
 
   /// From Material3 Design Duidelines
   ///
@@ -260,6 +260,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
           ),
           onTapOutside: _onTapOutside,
           onChanged: _onChanged,
+          onSubmitted: _onSubmitted,
         );
       },
     );
