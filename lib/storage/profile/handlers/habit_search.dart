@@ -15,8 +15,7 @@
 import '../converter.dart';
 import 'app_experimental_feature.dart';
 
-/// FIXME(search): Update version number
-/// Enabled Switch: \<version\> > 1.19.0+107
+/// Enabled Switch: \<version\> > 1.19.0+109
 class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   HabitSearchExperimentalFeature(super.pref)
       : super(codec: const SameTypeCodec());

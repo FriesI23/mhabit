@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.19.0+108-pre
+## 1.19.0+109
 
 **✨ New Features**
 
@@ -12,7 +12,7 @@
   - Added a flexible UI layout
   - Improved UI refresh logic to ensure the state updates correctly
   - Separated the calendar bar from the main view
-  - Removed RouteAware to simplify route management
+  - Removed `RouteAware` to simplify route management
 - Cleanup: Removed App Sync experimental feature switch (#386)
 
 **🌐 Localization**
@@ -24,12 +24,11 @@
 - Fix: Skip redundant data loading on the `Habit Display` page (#383)
 - Fix: Rebuilt `ColorScheme.fromSeed` when dynamic colors are active (#384)
 - Fix: Ensure search mode exit correctly after submit (#388)
-- Refactor: Moved App Sync experimental feature switches to a separate provider (#381)
+- Refactor: Moved experimental feature switches to a separate provider (#381)
 - Refactor: Extracted AppBar build logic from the main page (#382)
 - Chore: Bumped dependency versions
-- Chore(CI): Add conditional execution for test-build label (#389)
+- Chore(CI): Add conditional execution for `need test-build` label (#389)
 - Doc(Wiki): Update donors
-
 
 ## 1.18.0+106
 

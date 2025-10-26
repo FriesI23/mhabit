@@ -2,13 +2,12 @@ name: Check PR (Main Branch)
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
-      - ready_for_review
     branches:
       - main
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   analyzing:
