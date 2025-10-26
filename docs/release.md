@@ -3,7 +3,7 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Released: v1.19.0+107-pre
+# Pre-Released: v1.19.0+108-pre
 
 **✨ New Features**
 
@@ -22,8 +22,11 @@ Title: Pre-Released or Released: v1.2.3+xx
 
 **🧹 Others**
 
-- Refactor: Moved App Sync experimental feature switches to a separate provider (#381)
-- Refactor: Extracted AppBar build logic from the main page (#382)
 - Fix: Skip redundant data loading on the `Habit Display` page (#383)
 - Fix: Rebuilt `ColorScheme.fromSeed` when dynamic colors are active (#384)
+- Fix: Ensure search mode exit correctly after submit (#388)
+- Refactor: Moved App Sync experimental feature switches to a separate provider (#381)
+- Refactor: Extracted AppBar build logic from the main page (#382)
 - Chore: Bumped dependency versions
+- Chore(CI): Add conditional execution for test-build label (#389)
+- Doc(Wiki): Update donors
