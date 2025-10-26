@@ -2,6 +2,11 @@ name: Check PR (Main Branch)
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
+      - ready_for_review
     branches:
       - main
 
@@ -22,6 +27,11 @@ jobs:
       - testing
     runs-on: ubuntu-latest
     environment: check-ci
+    if: >
+      github.event.pull_request.draft == false &&
+      contains(
+        join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
+        'need test-build')
     outputs:
       commit-id: ${{ steps.pr.outputs.comment-id }}
       common-changed: ${{ steps.filter.outputs.common }}
@@ -38,7 +48,6 @@ jobs:
               - 'pubspec.lock'
               - 'lib/**'
               - 'assets/**'
-              - 'configs/**'
             android:
               - 'android/**'
       - id: date
@@ -96,7 +105,10 @@ jobs:
     needs:
       - test-build-filter
       - build-android
-    if: always()
+    if: >
+      always() &&
+      needs.test-build-filter.outputs.commit-id != null &&
+      needs.test-build-filter.outputs.commit-id != ''
     runs-on: ubuntu-latest
     environment: check-ci
     steps:
