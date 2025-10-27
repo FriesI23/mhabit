@@ -398,10 +398,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
-  void onSeachKeywordChanged(String text, {bool listen = true}) {
+  void _onSeachOptionsChanged(HabitDisplaySearchOptions newOptions,
+      {required bool listen}) {
+    debugPrint(newOptions.toString());
     final lastKeyword = _searchController.options.keyword;
-    final result = _searchController.updateKeyword(text);
-    if (!result && text.isNotEmpty) return;
+    final result = _searchController.updateOptions(newOptions);
+    if (!result && newOptions.isNotEmpty) return;
     if (_searchController.options.isEmpty) {
       if (_searchController.enabled && lastKeyword.isEmpty) {
         _searchController.disable();
@@ -412,6 +414,38 @@ class HabitSummaryViewModel extends ChangeNotifier
     _resortData();
     if (listen) notifyListeners();
   }
+
+  void onSeachKeywordChanged(String text, {bool listen = true}) =>
+      _onSeachOptionsChanged(_searchController.options.copyWith(keyword: text),
+          listen: listen);
+
+  void onSearchOngoingChanged(bool value, {bool listen = true}) =>
+      _onSeachOptionsChanged(
+          _searchController.options.copyWith(activated: value),
+          listen: listen);
+
+  void onSearchCompletedChanged(bool value, {bool listen = true}) =>
+      _onSeachOptionsChanged(
+          _searchController.options.copyWith(completed: value),
+          listen: listen);
+
+  void onSearchHabitTypeChanged(HabitType type, bool value,
+          {bool listen = true}) =>
+      _onSeachOptionsChanged(
+          _searchController.options.copyWith(
+            types: value
+                ? {..._searchController.options.types, type}
+                : ({..._searchController.options.types}..remove(type)),
+          ),
+          listen: listen);
+
+  void onClearSearchFilter({bool clearKeyboard = false, bool listen = true}) =>
+      _onSeachOptionsChanged(
+          clearKeyboard
+              ? const HabitDisplaySearchOptions.empty()
+              : HabitDisplaySearchOptions(
+                  keyword: _searchController.options.keyword),
+          listen: listen);
   //#endregion
 
   //#region statistics
@@ -886,9 +920,9 @@ class _HabitSummarySearchController {
 
   void clearOptions() => _options = const HabitDisplaySearchOptions.empty();
 
-  bool updateKeyword(String text) {
-    if (text == _options.keyword) return false;
-    _options = _options.copyWith(keyword: text);
+  bool updateOptions(HabitDisplaySearchOptions newOptions) {
+    if (newOptions == _options) return false;
+    _options = newOptions;
     return true;
   }
 }

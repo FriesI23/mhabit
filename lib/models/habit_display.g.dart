@@ -144,6 +144,9 @@ abstract class _$HabitDisplaySearchOptionsCWProxy {
   /// ````
   HabitDisplaySearchOptions call({
     String keyword,
+    bool activated,
+    bool completed,
+    Set<HabitType> types,
   });
 }
 
@@ -164,12 +167,27 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
   /// ````
   HabitDisplaySearchOptions call({
     Object? keyword = const $CopyWithPlaceholder(),
+    Object? activated = const $CopyWithPlaceholder(),
+    Object? completed = const $CopyWithPlaceholder(),
+    Object? types = const $CopyWithPlaceholder(),
   }) {
     return HabitDisplaySearchOptions(
       keyword: keyword == const $CopyWithPlaceholder()
           ? _value.keyword
           // ignore: cast_nullable_to_non_nullable
           : keyword as String,
+      activated: activated == const $CopyWithPlaceholder()
+          ? _value.activated
+          // ignore: cast_nullable_to_non_nullable
+          : activated as bool,
+      completed: completed == const $CopyWithPlaceholder()
+          ? _value.completed
+          // ignore: cast_nullable_to_non_nullable
+          : completed as bool,
+      types: types == const $CopyWithPlaceholder()
+          ? _value.types
+          // ignore: cast_nullable_to_non_nullable
+          : types as Set<HabitType>,
     );
   }
 }

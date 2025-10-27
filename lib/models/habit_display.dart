@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:collection';
+
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:quiver/core.dart';
 
@@ -22,6 +25,7 @@ import '../common/enums.dart';
 import '../common/types.dart';
 import '../storage/db/handlers/habit.dart';
 import 'common.dart';
+import 'habit_form.dart';
 import 'habit_summary.dart';
 
 part 'habit_display.g.dart';
@@ -211,20 +215,54 @@ class HabitDisplayOpConfig implements JsonAdaptor {
 @CopyWith(skipFields: true)
 class HabitDisplaySearchOptions {
   final String keyword;
+  final bool activated;
+  final bool completed;
+  final Set<HabitType> _types;
 
-  const HabitDisplaySearchOptions({required this.keyword});
+  Set<HabitType> get types => UnmodifiableSetView(_types);
 
-  const HabitDisplaySearchOptions.empty() : keyword = "";
+  const HabitDisplaySearchOptions({
+    this.keyword = "",
+    this.activated = false,
+    this.completed = false,
+    Set<HabitType> types = const {},
+  }) : _types = types;
 
-  bool get isEmpty => keyword.isEmpty;
+  const HabitDisplaySearchOptions.empty() : this();
 
-  bool get isNotEmpty => keyword.isNotEmpty;
+  bool get isEmpty => keyword.isEmpty && isFilterEmpty;
+
+  bool get isFilterEmpty => !activated && !completed && types.isEmpty;
+
+  bool get isNotEmpty => !isEmpty;
 
   bool filter(HabitSummaryData data,
       {Iterable<String>? keywords, bool caps = false}) {
     final kws = keywords ?? [keyword];
     final name = caps ? data.name.toUpperCase() : data.name;
     if (kws.isNotEmpty && kws.any((kw) => !name.contains(kw))) return false;
+    if (activated && !data.isActived) return false;
+    if (completed && !data.isComplated) return false;
+    if (types.isNotEmpty && !types.contains(data.type)) return false;
     return true;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! HabitDisplaySearchOptions) return false;
+    return keyword == other.keyword &&
+        activated == other.activated &&
+        completed == other.completed &&
+        setEquals(types, other.types);
+  }
+
+  @override
+  int get hashCode => hashObjects([keyword, activated, completed, ...types]);
+
+  @override
+  String toString() {
+    return 'HabitDisplaySearchOptions(keyword=$keyword,activated=$activated, '
+        'completed=$completed,types=$types)';
   }
 }
