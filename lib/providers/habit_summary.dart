@@ -400,7 +400,6 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   void _onSeachOptionsChanged(HabitDisplaySearchOptions newOptions,
       {required bool listen}) {
-    debugPrint(newOptions.toString());
     final lastKeyword = _searchController.options.keyword;
     final result = _searchController.updateOptions(newOptions);
     if (!result && newOptions.isNotEmpty) return;
