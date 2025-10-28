@@ -282,8 +282,6 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
             };
             return switch (uiLayout) {
               UiLayoutType.l => SearchFilterPopupMenuButton(
-                  position: PopupMenuPosition.over,
-                  offset: Offset(-18.0, _effectiveHeight / 2),
                   ongoingChanged: _onOngingFilterChanged,
                   completedChanged: _onCompletedFilterChanged,
                   typeChanged: _onTypeFilterChanged,

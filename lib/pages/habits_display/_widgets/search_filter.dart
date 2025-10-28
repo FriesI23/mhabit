@@ -60,9 +60,7 @@ class SearchFilterIcon extends StatelessWidget {
   }
 }
 
-class SearchFilterPopupMenuButton extends StatefulWidget {
-  final PopupMenuPosition? position;
-  final Offset? offset;
+class SearchFilterPopupMenuButton extends StatelessWidget {
   final ValueChanged<bool?>? ongoingChanged;
   final ValueChanged<bool?>? completedChanged;
   final ValueChanged<(HabitType, bool?)>? typeChanged;
@@ -70,8 +68,6 @@ class SearchFilterPopupMenuButton extends StatefulWidget {
 
   const SearchFilterPopupMenuButton({
     super.key,
-    this.position,
-    this.offset,
     this.ongoingChanged,
     this.completedChanged,
     this.typeChanged,
@@ -79,128 +75,65 @@ class SearchFilterPopupMenuButton extends StatefulWidget {
   });
 
   @override
-  State<SearchFilterPopupMenuButton> createState() =>
-      _SearchFilterPopupMenuButtonState();
-}
-
-class _SearchFilterPopupMenuButtonState
-    extends State<SearchFilterPopupMenuButton> {
-  bool _menuOpen = false;
-
-  PopupMenuEntry _popMenuItemBuilder(BuildContext context,
-      {required WidgetBuilder builder, HabitSummaryViewModel? vm}) {
-    final widget = vm != null
-        ? ChangeNotifierProvider.value(
-            value: vm, builder: (context, child) => builder(context))
-        : builder(context);
-    return switch (widget) {
-      PopupMenuEntry() => widget,
-      _ => PopupMenuItem(padding: EdgeInsets.zero, child: widget)
-    };
-  }
-
-  @override
   Widget build(BuildContext context) {
     const div = PopupMenuDivider();
-    final typeChanged = widget.typeChanged;
+    final typeChanged = this.typeChanged;
     final l10n = L10n.of(context);
     final options =
         context.select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
             (vm) => vm.searchOptions);
-    final vm = context.read<HabitSummaryViewModel>();
-    return PopupMenuButton<void>(
-      onOpened: () {
-        setState(() {
-          _menuOpen = true;
-        });
-      },
-      onCanceled: () {
-        setState(() {
-          _menuOpen = false;
-        });
-      },
-      onSelected: (value) {
-        setState(() {
-          _menuOpen = false;
-        });
-      },
-      position: widget.position,
-      offset: widget.offset ?? Offset.zero,
-      tooltip: l10n?.habitDisplay_searchFilter_tooltips,
-      itemBuilder: (context) => [
-        _popMenuItemBuilder(
-          context,
-          vm: vm,
-          builder: (context) => Tooltip(
-            message: l10n?.habitDisplay_searchFilter_ongoing_desc,
-            triggerMode: TooltipTriggerMode.longPress,
-            child: CheckboxListTile(
-              value: context
-                  .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-                      (vm) => vm.searchOptions)
-                  .activated,
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: widget.ongoingChanged,
-              title: Text(l10n?.habitDisplay_searchFilter_ongoing ?? "Ongoing"),
-            ),
+    return MenuAnchor(
+      builder: (context, controller, child) => IconButton(
+        icon: SearchFilterIcon(
+          filtered: !options.isFilterEmpty,
+          opacity: controller.isOpen ? 0.2 : 1.0,
+        ),
+        tooltip: l10n?.habitDisplay_searchFilter_tooltips,
+        onPressed: () =>
+            controller.isOpen ? controller.close() : controller.open(),
+      ),
+      menuChildren: [
+        Tooltip(
+          message: l10n?.habitDisplay_searchFilter_ongoing_desc,
+          child: CheckboxListTile(
+            value: options.activated,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: ongoingChanged,
+            title: Text(l10n?.habitDisplay_searchFilter_ongoing ?? "Onging"),
           ),
         ),
-        _popMenuItemBuilder(
-          context,
-          vm: vm,
-          builder: (context) => CheckboxListTile(
-            value: context
-                .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-                    (vm) => vm.searchOptions)
-                .completed,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: widget.completedChanged,
-            title:
-                Text(l10n?.habitDisplay_searchFilter_completed ?? "Completed"),
-          ),
+        CheckboxListTile(
+          value: options.completed,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: completedChanged,
+          title: Text(l10n?.habitDisplay_searchFilter_completed ?? "Completed"),
         ),
         div,
-        PopupMenuItem(
-            enabled: false,
-            child: GroupTitleListTile(
-                title: Text(
-                    l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
-                        "Habit Type"))),
-        ...HabitType.values
-            .whereNot((e) => e == HabitType.unknown)
-            .map((e) => _popMenuItemBuilder(
-                  context,
-                  vm: vm,
-                  builder: (context) => CheckboxListTile(
-                    value: context
-                        .select<HabitSummaryViewModel,
-                            HabitDisplaySearchOptions>((vm) => vm.searchOptions)
-                        .types
-                        .contains(e),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: typeChanged != null
-                        ? (value) => typeChanged((e, value))
-                        : null,
-                    title: Text(e.getTypeName(l10n)),
-                  ),
-                )),
+        GroupTitleListTile(
+            title: Text(l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
+                "Habit Type")),
+        ...HabitType.values.whereNot((e) => e == HabitType.unknown).map(
+              (e) => CheckboxListTile(
+                value: options.types.contains(e),
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: typeChanged != null
+                    ? (value) => typeChanged((e, value))
+                    : null,
+                title: Text(e.getTypeName(l10n)),
+              ),
+            ),
         if (!options.isFilterEmpty) ...[
           div,
-          PopupMenuItem(
-              onTap: widget.onClearFilterPressed,
-              child: ListTile(
-                leading: const Icon(Icons.filter_alt_off_outlined),
-                title: Text(l10n?.habitDisplay_searchFilter_clearFilter ??
-                    "Clear Filters"),
-                iconColor: Theme.of(context).colorScheme.error,
-                textColor: Theme.of(context).colorScheme.error,
-              )),
+          ListTile(
+            leading: const Icon(Icons.filter_alt_off_outlined),
+            title: Text(
+                l10n?.habitDisplay_searchFilter_clearFilter ?? "Clear Filters"),
+            iconColor: Theme.of(context).colorScheme.error,
+            textColor: Theme.of(context).colorScheme.error,
+            onTap: onClearFilterPressed,
+          ),
         ]
       ],
-      icon: SearchFilterIcon(
-        filtered: !options.isFilterEmpty,
-        opacity: _menuOpen ? 0.2 : 1.0,
-      ),
     );
   }
 }
