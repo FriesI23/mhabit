@@ -45,8 +45,12 @@
             "id": 9,
             "name": "spar34vi",
             "url": "https://github.com/spar34vi"
+        },
+        {
+            "id": 10,
+            "name": "croozer4",
+            "url": "https://github.com/croozer4"
         }
-
     ],
     "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9,
         {
@@ -122,7 +126,8 @@
             {
                 "name": "Pandaman331",
                 "email": "kozekmc.1234@gmail.com"
-            }
+            },
+            10
         ],
         "pt": [
             {
