@@ -46,11 +46,12 @@ Moreover, this app completely open source.
 - A scoring system to help develop your own micro habits.
 - Support both positive and negative habit.
 - An easy-to-use interface for habit check in.
+- A quick search and filter to help quickly find past habits.
 - Different colors used to distinguish between various habits.
 - Easily export and import habits using a human-readable format (JSON).
 - Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
 - Adaptation for landscape and large screen devices.
-- _[Beta] Support network sync with WebDAV._
+- Support network sync with WebDAV.
 - No ADs in this app.
 
 For more information, please visit our [**Wiki**][wiki].
