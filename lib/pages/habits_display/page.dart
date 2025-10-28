@@ -28,7 +28,6 @@ import 'package:tuple/tuple.dart';
 import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/types.dart';
-import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
@@ -1045,31 +1044,10 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       return Selector<HabitSummaryViewModel, (bool, bool)>(
         selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) {
-          final (_, isDataLoaded) = value;
-          return FutureBuilder(
-            future: _loadHabitData(),
-            builder: (context, snapshot) {
-              // final viewmodel = context.read<HabitSummaryViewModel>();
-              // appLog.load.debug("$widget.buildHabits", ex: [
-              //   "Loading data",
-              //   snapshot.connectionState,
-              //   viewmodel.habitCount
-              // ]);
-              // if (kDebugMode && snapshot.isDone) {
-              //   appLog.load.debug("$widget.buildHabits",
-              //       ex: ["Loaded", viewmodel.debugGetDataString()]);
-              // }
-              return SliverStack(
-                children: [
-                  buildHabitsContent(context),
-                  HabitDisplayLoadingIndicator(
-                      opacity: snapshot.isDone || isDataLoaded ? 0.0 : 1.0),
-                ],
-              );
-            },
-          );
-        },
+        builder: (context, _, child) => FutureBuilder(
+          future: _loadHabitData(),
+          builder: (context, _) => buildHabitsContent(context),
+        ),
       );
     }
     //#endregion
@@ -1450,19 +1428,40 @@ class _CalendarBar extends StatelessWidget {
       primary: false,
       toolbarHeight: appCalendarBarHeight,
       title: EnhancedSafeArea.edgeToEdgeSafe(
-        child: SliverCalendarBar(
-          verticalScrollController: verticalScrollController,
-          horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-          startDate: DateChangeProvider.of(context).dateTime,
-          endDate: earliestStartDate,
-          isExtended: state.isClandarExpanded,
-          collapsePrt: displayPageOccupyPrt,
-          height: appCalendarBarHeight,
-          itemPadding: appCalendarBarItemPadding,
-          onLeftBtnPressed: onCalendarToggleExpandPressed,
-          scrollPhysicsBuilder: scrollPhysicsBuilder,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            SliverCalendarBar(
+              verticalScrollController: verticalScrollController,
+              horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+              startDate: DateChangeProvider.of(context).dateTime,
+              endDate: earliestStartDate,
+              isExtended: state.isClandarExpanded,
+              collapsePrt: displayPageOccupyPrt,
+              height: appCalendarBarHeight,
+              itemPadding: appCalendarBarItemPadding,
+              onLeftBtnPressed: onCalendarToggleExpandPressed,
+              scrollPhysicsBuilder: scrollPhysicsBuilder,
+            ),
+            const _LoadingIndicator(),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _LoadingIndicator extends StatelessWidget {
+  const _LoadingIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDataLoaded =
+        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoaded);
+    return AnimatedOpacity(
+      opacity: isDataLoaded ? 0.0 : 1.0,
+      duration: const Duration(milliseconds: 200),
+      child: const AppSyncLoadingIndicator(),
     );
   }
 }

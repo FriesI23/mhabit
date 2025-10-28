@@ -17,7 +17,6 @@ export '_widgets/habit_display_edit_mode_action.dart';
 export '_widgets/habit_display_empty_image.dart';
 export '_widgets/habit_display_fab.dart';
 export '_widgets/habit_display_list_tile.dart';
-export '_widgets/habit_display_loading_indicator.dart';
 export '_widgets/habit_display_main_menu.dart';
 export '_widgets/habit_display_sort_type_picker.dart';
 export '_widgets/habit_display_stats_menu.dart';
