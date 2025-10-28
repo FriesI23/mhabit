@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide PreferredSize;
 import 'package:provider/provider.dart';
 
@@ -219,6 +220,13 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     _vm.onClearSearchFilter();
   }
 
+  void _openSearchFilterBottonSheet() async {
+    final result = await showSearchFilterBottomSheet(
+        context: context, options: _vm.searchOptions);
+    if (!mounted || result == null) return;
+    _vm.onSearchFilterChanged(result);
+  }
+
   /// From Material3 Design Duidelines
   ///
   /// > The search container of the search app bar should fill 100% of the space
@@ -260,11 +268,40 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
         setState(() {});
       });
     }
+
+    Widget buildSearchFilter() => Builder(
+          builder: (context) {
+            final size = MediaQuery.of(context).size;
+            final uiLayout = switch (defaultTargetPlatform) {
+              TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
+                  width: size.width,
+                  height: size.height,
+                  ignoreHeight: false,
+                  largeScreenHeight: 600),
+              _ => UiLayoutType.l,
+            };
+            return switch (uiLayout) {
+              UiLayoutType.l => SearchFilterPopupMenuButton(
+                  position: PopupMenuPosition.over,
+                  offset: Offset(-18.0, _effectiveHeight / 2),
+                  ongoingChanged: _onOngingFilterChanged,
+                  completedChanged: _onCompletedFilterChanged,
+                  typeChanged: _onTypeFilterChanged,
+                  onClearFilterPressed: _onClearFilterPressed,
+                ),
+              UiLayoutType.s => SearchFilterIconButton(
+                  onPreesed: _openSearchFilterBottonSheet,
+                ),
+            };
+          },
+        );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final l10n = L10n.of(context);
         final colors = Theme.of(context).colorScheme;
         final brightness = Theme.of(context).brightness;
+
         return SearchBar(
           focusNode: _effectiveFocusNode,
           controller: _effectiveController,
@@ -282,16 +319,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
             onSearchButtonPressed: _onSearchButtonPressed,
             onCloseButtonPressed: _onCloseButtonPressed,
           ),
-          trailing: [
-            SearchFilterPopupMenuButton(
-              position: PopupMenuPosition.over,
-              offset: Offset(-18.0, _effectiveHeight / 2),
-              ongoingChanged: _onOngingFilterChanged,
-              completedChanged: _onCompletedFilterChanged,
-              typeChanged: _onTypeFilterChanged,
-              onClearFilterPressed: _onClearFilterPressed,
-            ),
-          ],
+          trailing: [buildSearchFilter()],
           onTapOutside: _onTapOutside,
           onChanged: _onChanged,
           onSubmitted: _onSubmitted,

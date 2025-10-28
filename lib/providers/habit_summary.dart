@@ -445,6 +445,12 @@ class HabitSummaryViewModel extends ChangeNotifier
               : HabitDisplaySearchOptions(
                   keyword: _searchController.options.keyword),
           listen: listen);
+
+  void onSearchFilterChanged(HabitDisplaySearchOptions options,
+          {bool listen = true}) =>
+      _onSeachOptionsChanged(
+          options.copyWith(keyword: _searchController.options.keyword),
+          listen: listen);
   //#endregion
 
   //#region statistics

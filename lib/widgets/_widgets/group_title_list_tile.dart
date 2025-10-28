@@ -18,12 +18,14 @@ class GroupTitleListTile extends StatelessWidget {
   final Widget? title;
   final Color? textColor;
   final EdgeInsetsGeometry? contentPadding;
+  final VisualDensity? visualDensity;
 
   const GroupTitleListTile({
     super.key,
     this.title,
     this.textColor,
     this.contentPadding,
+    this.visualDensity,
   });
 
   @override
@@ -33,6 +35,7 @@ class GroupTitleListTile extends StatelessWidget {
       title: title,
       textColor: textColor ?? Theme.of(context).colorScheme.primary,
       contentPadding: contentPadding,
+      visualDensity: visualDensity,
     );
   }
 }
