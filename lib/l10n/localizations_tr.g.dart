@@ -410,6 +410,24 @@ class L10nTr extends L10n {
   String get habitDisplay_searchBar_hintText => 'Search habits';
 
   @override
+  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+
+  @override
+  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+
+  @override
+  String get habitDisplay_searchFilter_completed => 'Tamamlandı';
+
+  @override
+  String get habitDisplay_searchFilter_habitType_groupTitle => 'Alışkanlık türü';
+
+  @override
+  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+
+  @override
+  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+
+  @override
   String get habitDetail_editButton_tooltip => 'Düzenle';
 
   @override

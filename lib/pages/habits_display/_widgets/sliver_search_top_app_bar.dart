@@ -11,16 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide PreferredSize;
 import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/habit_form.dart';
 import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
 import '../styles.dart';
+import 'search_filter.dart';
 
 class SliverSearchTopAppBar extends StatelessWidget {
   final double? height;
@@ -49,7 +51,8 @@ class SliverSearchTopAppBar extends StatelessWidget {
 }
 
 class _SearchBar extends StatefulWidget {
-  static const kSearchFullWidthLimit = 312.0;
+  static const double kSearchFullWidthLimit = 312.0;
+  static const double kSearchHeight = 48.0;
 
   final FocusNode? focusNode;
   final TextEditingController? controller;
@@ -75,6 +78,8 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
       widget.focusNode ?? (_focusNode ??= FocusNode());
   TextEditingController get _effectiveController =>
       widget.controller ?? (_controller!.value);
+
+  double get _effectiveHeight => widget.height ?? _SearchBar.kSearchHeight;
 
   @override
   void initState() {
@@ -195,6 +200,33 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
   void _onSubmitted(String text) => _changed ? _onChanged(text) : null;
 
+  void _onOngingFilterChanged(bool? value) {
+    if (value == null) return;
+    _vm.onSearchOngoingChanged(value);
+  }
+
+  void _onCompletedFilterChanged(bool? value) {
+    if (value == null) return;
+    _vm.onSearchCompletedChanged(value);
+  }
+
+  void _onTypeFilterChanged((HabitType, bool?) value) {
+    final (type, include) = value;
+    if (include == null || type == HabitType.unknown) return;
+    _vm.onSearchHabitTypeChanged(type, include);
+  }
+
+  void _onClearFilterPressed() {
+    _vm.onClearSearchFilter();
+  }
+
+  void _openSearchFilterBottonSheet() async {
+    final result = await showSearchFilterBottomSheet(
+        context: context, options: _vm.searchOptions);
+    if (!mounted || result == null) return;
+    _vm.onSearchFilterChanged(result);
+  }
+
   /// From Material3 Design Duidelines
   ///
   /// > The search container of the search app bar should fill 100% of the space
@@ -208,7 +240,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     final width = availableWidth <= maxSearchWidth
         ? availableWidth
         : maxSearchWidth + (availableWidth - maxSearchWidth) / 2;
-    return BoxConstraints.tightFor(height: widget.height ?? 48.0, width: width);
+    return BoxConstraints.tightFor(height: _effectiveHeight, width: width);
   }
 
   WidgetStateProperty<Color?>? getLightOverlayColor(ColorScheme colors) =>
@@ -236,11 +268,38 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
         setState(() {});
       });
     }
+
+    Widget buildSearchFilter() => Builder(
+          builder: (context) {
+            final size = MediaQuery.of(context).size;
+            final uiLayout = switch (defaultTargetPlatform) {
+              TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
+                  width: size.width,
+                  height: size.height,
+                  ignoreHeight: false,
+                  largeScreenHeight: 600),
+              _ => UiLayoutType.l,
+            };
+            return switch (uiLayout) {
+              UiLayoutType.l => SearchFilterPopupMenuButton(
+                  ongoingChanged: _onOngingFilterChanged,
+                  completedChanged: _onCompletedFilterChanged,
+                  typeChanged: _onTypeFilterChanged,
+                  onClearFilterPressed: _onClearFilterPressed,
+                ),
+              UiLayoutType.s => SearchFilterIconButton(
+                  onPreesed: _openSearchFilterBottonSheet,
+                ),
+            };
+          },
+        );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final l10n = L10n.of(context);
         final colors = Theme.of(context).colorScheme;
         final brightness = Theme.of(context).brightness;
+
         return SearchBar(
           focusNode: _effectiveFocusNode,
           controller: _effectiveController,
@@ -258,6 +317,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
             onSearchButtonPressed: _onSearchButtonPressed,
             onCloseButtonPressed: _onCloseButtonPressed,
           ),
+          trailing: [buildSearchFilter()],
           onTapOutside: _onTapOutside,
           onChanged: _onChanged,
           onSubmitted: _onSubmitted,

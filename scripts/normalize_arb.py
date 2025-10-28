@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import copy
 import json
 import typing as t
@@ -29,6 +30,7 @@ def format_arb(
     template_filepath: t.Optional[str] = None,
     force_use_template_metadata: bool = False,
     indent: t.Optional[int] = None,
+    refs_filepath: str = None,
 ):
     with open(input_filepath, "r") as fp:
         input = json.load(fp, object_pairs_hook=OrderedDict)
@@ -37,8 +39,16 @@ def format_arb(
         else:
             with open(template_filepath, "r") as fp:
                 template = json.load(fp)
+
+        output = input
+
+        if refs_filepath is not None and os.path.exists(refs_filepath):
+            with open(refs_filepath, "r") as fp:
+                refs = json.load(fp)
+                output = _preprocess_arb_refs(input=output, refs=refs)
+
         output = _format_arb(
-            input=input,
+            input=output,
             template=template,
             force_use_template_metadata=force_use_template_metadata,
         )
@@ -49,6 +59,22 @@ def format_arb(
             fp.write("\n")
     else:
         print(json.dumps(output, indent=indent, ensure_ascii=False))
+
+
+def _preprocess_arb_refs(input: T_JSON, refs: T_JSON) -> T_JSON:
+    refs_header = "@refs:"
+    output = input.copy()
+    for key, point_key in refs.items():
+        if not (key not in input and point_key in input):
+            continue
+        output[key] = input[point_key]
+        # meta = output.setdefault(f"@{key}", {})
+        # data = f"{refs_header}{point_key}"
+        # if meta.get("comment", ""):
+        #     meta["comment"] = f"{meta["comment"]}|{data}"
+        # else:
+        #     meta["comment"] = data
+    return output
 
 
 def _format_arb(
@@ -83,6 +109,7 @@ def parse_args() -> ap.ArgumentParser:
     parser.add_argument("-t", "--template", type=str)
     parser.add_argument("--indent", type=int, default=2)
     parser.add_argument("--force-template", action=ap.BooleanOptionalAction)
+    parser.add_argument("--refs", type=str, default="{}")
     return parser
 
 
@@ -94,12 +121,14 @@ def main():
     template_filepath = args.template  # type: str
     indent = args.indent  # type: int
     force_template = args.force_template  # type: bool
+    refs_filepath: str = args.refs
     format_arb(
         input_filepath=input_filepath,
         output_filepath=output_filepath,
         template_filepath=template_filepath,
         force_use_template_metadata=force_template,
         indent=indent,
+        refs_filepath=refs_filepath,
     )
 
 

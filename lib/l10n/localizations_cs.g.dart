@@ -410,6 +410,24 @@ class L10nCs extends L10n {
   String get habitDisplay_searchBar_hintText => 'Search habits';
 
   @override
+  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+
+  @override
+  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+
+  @override
+  String get habitDisplay_searchFilter_completed => 'Completed';
+
+  @override
+  String get habitDisplay_searchFilter_habitType_groupTitle => 'Typ zvyku';
+
+  @override
+  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+
+  @override
+  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+
+  @override
   String get habitDetail_editButton_tooltip => 'Edit';
 
   @override
