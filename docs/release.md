@@ -3,30 +3,19 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.19.0+109
+# Pre-Released: v1.20.0+110-pre
 
 **✨ New Features**
 
-- Feature: Quick Search (#385)
-  - Added an experimental feature switch
-  - Added a new search bar
-  - Added a flexible UI layout
-  - Improved UI refresh logic to ensure the state updates correctly
-  - Separated the calendar bar from the main view
-  - Removed RouteAware to simplify route management
-- Cleanup: Removed App Sync experimental feature switch (#386)
+- Feature[v1.19.0+109]: Quick Search (#385)
+- Feature: Add advance search filter (#392)
 
 **🌐 Localization**
 
-- Update Turkish translation, thanks to Soykan Aydın's contributions on Weblate
+- Update Polish translation, thanks to croozer4's contributions on Github
 
 **🧹 Others**
 
-- Fix: Skip redundant data loading on the `Habit Display` page (#383)
-- Fix: Rebuilt `ColorScheme.fromSeed` when dynamic colors are active (#384)
-- Fix: Ensure search mode exit correctly after submit (#388)
-- Refactor: Moved App Sync experimental feature switches to a separate provider (#381)
-- Refactor: Extracted AppBar build logic from the main page (#382)
-- Chore: Bumped dependency versions
-- Chore(CI): Add conditional execution for test-build label (#389)
-- Doc(Wiki): Update donors
+- Fixed: Keep loading indicator visible while scrolling (#395)
+- Chore: Enable `Quick Search` experimental feature by default
+- Doc: Update Application Description files
