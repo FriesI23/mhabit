@@ -404,6 +404,24 @@ class L10nZh extends L10n {
   String get habitDisplay_searchBar_hintText => '搜索习惯';
 
   @override
+  String get habitDisplay_searchFilter_ongoing => '激活中';
+
+  @override
+  String get habitDisplay_searchFilter_ongoing_desc => '显示当前活跃且正在进行的习惯（未归档或删除）。';
+
+  @override
+  String get habitDisplay_searchFilter_completed => '已完成';
+
+  @override
+  String get habitDisplay_searchFilter_habitType_groupTitle => '习惯类型';
+
+  @override
+  String get habitDisplay_searchFilter_tooltips => '显示筛选';
+
+  @override
+  String get habitDisplay_searchFilter_clearFilter => '清除筛选';
+
+  @override
   String get habitDetail_editButton_tooltip => '编辑';
 
   @override
@@ -2007,6 +2025,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDisplay_debug_debugSubgroup_title => '🛠️ 除錯';
+
+  @override
+  String get habitDisplay_searchFilter_completed => '已完成';
+
+  @override
+  String get habitDisplay_searchFilter_habitType_groupTitle => '習慣類型';
 
   @override
   String get habitDetail_editButton_tooltip => '編輯';

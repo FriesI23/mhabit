@@ -15,10 +15,11 @@
 SCRIPT_PATH=$(dirname $0)
 L10N_DIR="$SCRIPT_PATH/../assets/l10n"
 TEMPLATE_FILE=$L10N_DIR/en.arb
+L10N_REFS_FILE="$SCRIPT_PATH/../configs/l10n_refs.json"
 echo "Normalizing ARB files from $L10N_DIR"
 for file in $L10N_DIR/*.arb; do
     if [ -f "$file" ]; then
-        python $SCRIPT_PATH/normalize_arb.py -i $file -t $TEMPLATE_FILE -o $file
+        python $SCRIPT_PATH/normalize_arb.py -i $file -t $TEMPLATE_FILE -o $file --refs $L10N_REFS_FILE
         _ERRCODE=$?
         echo "Done[$_ERRCODE]: $file"
     fi

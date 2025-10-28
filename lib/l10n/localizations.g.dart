@@ -816,6 +816,42 @@ abstract class L10n {
   /// **'Search habits'**
   String get habitDisplay_searchBar_hintText;
 
+  /// No description provided for @habitDisplay_searchFilter_ongoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ongoing'**
+  String get habitDisplay_searchFilter_ongoing;
+
+  /// No description provided for @habitDisplay_searchFilter_ongoing_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows habits that are currently active and ongoing (not archived or deleted).'**
+  String get habitDisplay_searchFilter_ongoing_desc;
+
+  /// No description provided for @habitDisplay_searchFilter_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get habitDisplay_searchFilter_completed;
+
+  /// No description provided for @habitDisplay_searchFilter_habitType_groupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Type'**
+  String get habitDisplay_searchFilter_habitType_groupTitle;
+
+  /// No description provided for @habitDisplay_searchFilter_tooltips.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Filters'**
+  String get habitDisplay_searchFilter_tooltips;
+
+  /// No description provided for @habitDisplay_searchFilter_clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get habitDisplay_searchFilter_clearFilter;
+
   /// No description provided for @habitDetail_editButton_tooltip.
   ///
   /// In en, this message translates to:

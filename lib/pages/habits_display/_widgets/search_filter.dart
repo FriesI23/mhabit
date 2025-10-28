@@ -126,18 +126,23 @@ class _SearchFilterPopupMenuButtonState
       },
       position: widget.position,
       offset: widget.offset ?? Offset.zero,
+      tooltip: l10n?.habitDisplay_searchFilter_tooltips,
       itemBuilder: (context) => [
         _popMenuItemBuilder(
           context,
           vm: vm,
-          builder: (context) => CheckboxListTile(
-            value: context
-                .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-                    (vm) => vm.searchOptions)
-                .activated,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: widget.ongoingChanged,
-            title: Text("Ongoing"),
+          builder: (context) => Tooltip(
+            message: l10n?.habitDisplay_searchFilter_ongoing_desc,
+            triggerMode: TooltipTriggerMode.longPress,
+            child: CheckboxListTile(
+              value: context
+                  .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
+                      (vm) => vm.searchOptions)
+                  .activated,
+              controlAffinity: ListTileControlAffinity.leading,
+              onChanged: widget.ongoingChanged,
+              title: Text(l10n?.habitDisplay_searchFilter_ongoing ?? "Ongoing"),
+            ),
           ),
         ),
         _popMenuItemBuilder(
@@ -150,14 +155,17 @@ class _SearchFilterPopupMenuButtonState
                 .completed,
             controlAffinity: ListTileControlAffinity.leading,
             onChanged: widget.completedChanged,
-            title: Text(
-                l10n?.habitDisplay_statsMenu_completedTileText ?? "Completed"),
+            title:
+                Text(l10n?.habitDisplay_searchFilter_completed ?? "Completed"),
           ),
         ),
         div,
-        const PopupMenuItem(
+        PopupMenuItem(
             enabled: false,
-            child: GroupTitleListTile(title: Text("Habit Type"))),
+            child: GroupTitleListTile(
+                title: Text(
+                    l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
+                        "Habit Type"))),
         ...HabitType.values
             .whereNot((e) => e == HabitType.unknown)
             .map((e) => _popMenuItemBuilder(
@@ -182,7 +190,8 @@ class _SearchFilterPopupMenuButtonState
               onTap: widget.onClearFilterPressed,
               child: ListTile(
                 leading: const Icon(Icons.filter_alt_off_outlined),
-                title: Text("Clear Filters"),
+                title: Text(l10n?.habitDisplay_searchFilter_clearFilter ??
+                    "Clear Filters"),
                 iconColor: Theme.of(context).colorScheme.error,
                 textColor: Theme.of(context).colorScheme.error,
               )),
@@ -203,10 +212,12 @@ class SearchFilterIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     final options =
         context.select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
             (vm) => vm.searchOptions);
     return IconButton(
+      tooltip: l10n?.habitDisplay_searchFilter_tooltips,
       icon: SearchFilterIcon(filtered: !options.isFilterEmpty),
       onPressed: onPreesed,
     );
@@ -302,21 +313,25 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CheckboxListTile(
-                      value: _options.activated,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      visualDensity: VisualDensity.compact,
-                      onChanged: _onOngoingChanged,
-                      title: Text("Ongoing"),
+                    Tooltip(
+                      message: l10n?.habitDisplay_searchFilter_ongoing_desc,
+                      triggerMode: TooltipTriggerMode.longPress,
+                      child: CheckboxListTile(
+                        value: _options.activated,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        visualDensity: VisualDensity.compact,
+                        onChanged: _onOngoingChanged,
+                        title: Text(l10n?.habitDisplay_searchFilter_ongoing ??
+                            "Ongoing"),
+                      ),
                     ),
                     CheckboxListTile(
                       value: _options.completed,
                       controlAffinity: ListTileControlAffinity.leading,
                       visualDensity: VisualDensity.compact,
                       onChanged: _onCompletedChanged,
-                      title: Text(
-                          l10n?.habitDisplay_statsMenu_completedTileText ??
-                              "Completed"),
+                      title: Text(l10n?.habitDisplay_searchFilter_completed ??
+                          "Completed"),
                     ),
                     const HabitDivider(),
                     const GroupTitleListTile(
@@ -345,7 +360,10 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
               final saveButton = ListTile(
                 minVerticalPadding: 0.0,
                 title: FilledButton(
-                    onPressed: canSave ? _doSave : null, child: Text("Save")),
+                    onPressed: canSave ? _doSave : null,
+                    child: Text(l10n?.confirmDialog_confirm_text(
+                            NormalizeConfirmDialogType.save.name) ??
+                        "Save")),
               );
 
               final clearButton = ListTile(
@@ -353,7 +371,8 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 minVerticalPadding: 0.0,
                 title: TextButton.icon(
                     onPressed: filtered ? _doClearFilter : null,
-                    label: Text("Clear Filters"),
+                    label: Text(l10n?.habitDisplay_searchFilter_clearFilter ??
+                        "Clear Filters"),
                     icon: const Icon(Icons.filter_alt_off_outlined)),
               );
 

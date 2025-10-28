@@ -64,6 +64,8 @@
   "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
   "habitDisplay_sortTypeDialog_confirm": "Potvrdit",
   "@habitDisplay_sortTypeDialog_confirm": {},
+  "habitDisplay_searchFilter_habitType_groupTitle": "Typ zvyku",
+  "@habitDisplay_searchFilter_habitType_groupTitle": {},
   "habitDetail_confirmDialog_confirm": "Potvrdit",
   "@habitDetail_confirmDialog_confirm": {},
   "batchCheckin_save_button_text": "Uložit",
