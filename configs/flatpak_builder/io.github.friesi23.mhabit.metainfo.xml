@@ -73,7 +73,7 @@
       <li>A scoring system to help develop your own micro habits.</li>
       <li>Support both positive and negative habit.</li>
       <li>An easy-to-use interface for habit check in.</li>
-      <lin>A quick search and filter to help quickly find past habits.</lin>
+      <li>A quick search and filter to help quickly find past habits.</li>
       <li>Different colors used to distinguish between various habits.</li>
       <li>Easily export and import habits using a human-readable format (JSON).</li>
       <li>Adapt to Material3 and Dynamic Color for Android 12 and later versions.</li>
@@ -96,7 +96,7 @@
   </categories>
   <releases>
     <release version="1.20.0+111" date="2025-10-29">
-      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.20.0+111</url>
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/flathub-v1.20.0+111</url>
     </release>
     <release version="1.20.0+110-pre" date="2025-10-28">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.20.0+110-pre</url>
