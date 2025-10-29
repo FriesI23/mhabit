@@ -2,11 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.20.0+110-pre
+## 1.20.0+111
 
 **✨ New Features**
 
-- Feature[v1.19.0+109]: Quick Search (#385)
+- Feature[v1.19.0+109](#1190109): Quick Search (#385)
 - Feature: Add advance search filter (#392)
 
 **🌐 Localization**
@@ -17,6 +17,9 @@
 
 - Fixed: Keep loading indicator visible while scrolling (#395)
 - Chore: Enable `Quick Search` experimental feature by default
+
+**📝 Documentation**
+
 - Doc: Update Application Description files
 
 ## 1.19.0+109
