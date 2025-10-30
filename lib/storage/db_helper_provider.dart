@@ -94,15 +94,21 @@ class DBHelperViewModel extends ChangeNotifier
 }
 
 abstract mixin class DBHelperLoadedMixin {
+  DBHelper? _lastLocalHelper;
+
   late HabitDBHelper habitDBHelper;
   late RecordDBHelper recordDBHelper;
   late SyncDBHelper syncDBHelper;
 
   void updateDBHelper(DBHelperViewModel newHelper) {
-    appLog.load.info("$runtimeType.updateDBHelper", ex: [newHelper]);
-    habitDBHelper = HabitDBHelper(newHelper.local);
-    recordDBHelper = RecordDBHelper(newHelper.local);
-    syncDBHelper = SyncDBHelper(newHelper.local);
+    final localHelper = newHelper.local;
+    if (localHelper != _lastLocalHelper) {
+      appLog.load.info("$runtimeType.updateDBHelper.local", ex: [newHelper]);
+      habitDBHelper = HabitDBHelper(newHelper.local);
+      recordDBHelper = RecordDBHelper(newHelper.local);
+      syncDBHelper = SyncDBHelper(newHelper.local);
+      _lastLocalHelper = localHelper;
+    }
   }
 }
 

@@ -61,10 +61,10 @@ class HabitStatusChangerViewModel
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
-  HabitSummaryDataCollection _data = HabitSummaryDataCollection();
-  late HabitsDataDelagate _dataDelate;
   late HabitStatusChangerForm _form;
   List<HabitSortCache> _currentHabitList = const [];
+  // controller
+  final _habitDataController = _HabitDataController();
   // status
   CancelableCompleter<void>? _loading;
   // inside status
@@ -76,7 +76,6 @@ class HabitStatusChangerViewModel
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
       : _selectedUUIDList = uuidList {
     _form = HabitStatusChangerForm(selectDate: HabitDate.now());
-    _dataDelate = HabitsDataDelagate(this);
   }
 
   //#region loading data
@@ -84,31 +83,24 @@ class HabitStatusChangerViewModel
     final loading = _loading;
     if (loading == null) return;
 
-    void onCancelled() {
-      if (_loading == loading) _loading = null;
-      appLog.load.info("$runtimeType._cancelLoading",
-          ex: ['cancelled', loading.hashCode]);
-    }
-
-    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
-    if (loading.isCompleted || loading.isCanceled) {
-      onCancelled();
-    } else {
+    if (!(loading.isCompleted || loading.isCanceled)) {
+      appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
       loading.operation.cancel();
-      onCancelled();
     }
+    if (_loading == loading) _loading = null;
+    appLog.load.info("$runtimeType._cancelLoading",
+        ex: ['cancelled', loading.hashCode]);
   }
 
-  CancelableCompleter<void>? _getCurrentLoadingCompleter() {
-    final crtLoading = _loading;
-    if (crtLoading != null && !crtLoading.isCanceled) {
-      return crtLoading;
-    }
-    return null;
+  CancelableCompleter<void>? get _effectiveLoading {
+    final loading = _loading;
+    return (loading != null && !loading.isCanceled) ? loading : null;
   }
 
-  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    final currentLoading = _getCurrentLoadingCompleter();
+  bool get isDataLoading => _effectiveLoading != null;
+
+  Future loadData({bool listen = true}) async {
+    final currentLoading = _effectiveLoading;
     if (currentLoading != null) {
       appLog.load.warn("$runtimeType.loadData",
           ex: ["data is currently loading", currentLoading.isCompleted]);
@@ -136,7 +128,7 @@ class HabitStatusChangerViewModel
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+          ex: ["loading data", loading.hashCode, listen]);
 
       // init habits
       final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
@@ -149,9 +141,10 @@ class HabitStatusChangerViewModel
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
 
-      _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
-      _data.forEach((_, habit) =>
-          habit.reCalculateAutoComplateRecords(firstDay: firstday));
+      _habitDataController.replaceData(HabitSummaryDataCollection()
+        ..initDataFromDBQueuryResult(habitLoaded, recordLoaded)
+        ..forEach((_, habit) =>
+            habit.reCalculateAutoComplateRecords(firstDay: firstday)));
       _updateCurrentHabitList();
 
       _updateForm(_form, withDefaultChangerStatus: true);
@@ -159,11 +152,10 @@ class HabitStatusChangerViewModel
       loading.complete();
       // reload
       if (listen) {
-        if (inFutureBuilder) _dataDelate = HabitsDataDelagate(this);
         notifyListeners();
       }
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
+      appLog.load
+          .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
     }
 
     loadingData();
@@ -189,7 +181,10 @@ class HabitStatusChangerViewModel
   UnmodifiableListView<HabitSortCache> get currentHabitList =>
       UnmodifiableListView(_currentHabitList);
 
-  HabitsDataDelagate get dataDelegate => _dataDelate;
+  int get currentHabitCount => _currentHabitList.length;
+
+  HabitSummaryData? fetchHabit(HabitUUID uuid) =>
+      _habitDataController.getHabit(uuid);
 
   bool get canSave {
     if (_form.selectStatus == RecordStatusChangerStatus.skip &&
@@ -200,10 +195,11 @@ class HabitStatusChangerViewModel
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
 
-  Iterable<HabitSummaryRecord> get selectDateRecords => dataDelegate.habits
-      .map((e) => e.getRecordByDate(_form.selectDate))
-      .nonNulls
-      .where((e) => e.status != HabitRecordStatus.unknown);
+  Iterable<HabitSummaryRecord> get selectDateRecords =>
+      _habitDataController.habits
+          .map((e) => e.getRecordByDate(_form.selectDate))
+          .nonNulls
+          .where((e) => e.status != HabitRecordStatus.unknown);
 
   HabitDate get selectDate => _form.selectDate;
 
@@ -219,7 +215,7 @@ class HabitStatusChangerViewModel
 
   HabitDate get earlistStartDate {
     var startDate = selectDate;
-    for (var d in _data.values) {
+    for (var d in _habitDataController.habits) {
       if (d.startDate.isBefore(startDate)) startDate = d.startDate;
     }
     return startDate;
@@ -244,7 +240,7 @@ class HabitStatusChangerViewModel
   Set<RecordStatusChangerStatus> get selectDateAllowedStatus {
     Set<RecordStatusChangerStatus> statusColl =
         Set.from(RecordStatusChangerStatus.values);
-    for (var d in _data.values) {
+    for (var d in _habitDataController.habits) {
       switch (d.type) {
         case HabitType.normal:
           statusColl =
@@ -263,9 +259,9 @@ class HabitStatusChangerViewModel
 
   RecordStatusChangerStatus? getDefaultChangerStatus(
           HabitStatusChangerForm form) =>
-      _data.length <= 0
+      _habitDataController.habitCount <= 0
           ? null
-          : _data.values
+          : _habitDataController.habits
               .map((e) => form.convertStatusFromHabit(e))
               .reduce((value, element) => value == element ? value : null);
 
@@ -284,7 +280,7 @@ class HabitStatusChangerViewModel
 
   Future<int> saveSelectStatus({bool listen = true}) async {
     if (!mounted || !canSave) return 0;
-    final records = dataDelegate.habits
+    final records = _habitDataController.habits
         .where((e) => e.startDate <= _form.selectDate)
         .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
         .where((e) => e.item1 != null)
@@ -310,19 +306,11 @@ class HabitStatusChangerViewModel
     return records.length;
   }
 
-  void updateDataColl(List<HabitSummaryData> dataList,
-      {bool needClear = false, bool listen = true}) {
-    _data = needClear ? HabitSummaryDataCollection() : _data;
-    _dataDelate.updateData(dataList, listen: listen);
-  }
-
-  void _onUpdateDataColl({required bool listen}) {
-    if (listen) notifyListeners();
-  }
-
   void _updateCurrentHabitList() {
     if (!mounted) return;
-    final newList = dataDelegate.habitsSortableCache.toList(growable: false);
+    final newList = _habitDataController.habits
+        .map((e) => HabitSummaryDataSortCache(data: e))
+        .toList(growable: false);
     appLog.load.info("_updateCurrentHabitList",
         ex: [_currentHabitList.hashCode, newList.hashCode]);
     _currentHabitList = newList;
@@ -337,13 +325,12 @@ class HabitStatusChangerViewModel
   }
 
   void regToReloadData() {
-    _dataDelate = HabitsDataDelagate(this);
     _cancelLoading();
     notifyListeners();
   }
 
   @override
-  String toString() => "$runtimeType(form=$_form,data=$_dataDelate)";
+  String toString() => "$runtimeType(form=$_form,data=$_habitDataController)";
 }
 
 @CopyWith(skipFields: true)
@@ -452,50 +439,23 @@ final class HabitStatusChangerForm {
       "skipReason=$skipReason)";
 }
 
-final class HabitsDataDelagate {
-  final WeakReference<HabitStatusChangerViewModel> _vm;
-  UniqueKey _updateFlag;
+class _HabitDataController {
+  HabitSummaryDataCollection _data = HabitSummaryDataCollection();
 
-  HabitsDataDelagate(HabitStatusChangerViewModel vm)
-      : _vm = WeakReference(vm),
-        _updateFlag = UniqueKey();
+  _HabitDataController();
 
-  Iterable<HabitSummaryData> get habits => _vm.target?._data.values ?? const [];
+  Iterable<HabitSummaryData> get habits => _data.values;
 
-  Iterable<HabitSortCache> get habitsSortableCache =>
-      _vm.target?._data.values.map((e) => HabitSummaryDataSortCache(data: e)) ??
-      const [];
+  int get habitCount => _data.length;
 
-  int get habitCount => _vm.target?._data.length ?? 0;
+  bool containsHabit(HabitUUID uuid) => _data.containsHabitUUID(uuid);
 
-  bool containsHabitUUID(HabitUUID uuid) =>
-      _vm.target?._data.containsHabitUUID(uuid) ?? false;
+  HabitSummaryData? getHabit(HabitUUID uuid) => _data.getHabitByUUID(uuid);
 
-  HabitSummaryData? getHabitByUUID(HabitUUID uuid) =>
-      _vm.target?._data.getHabitByUUID(uuid);
-
-  void _reUpdateFlag() => _updateFlag = UniqueKey();
-
-  void updateData(List<HabitSummaryData> dataList, {bool listen = false}) {
-    if (_vm.target == null) return;
-    final vm = _vm.target!;
-    for (var data in dataList) {
-      vm._data.addNewHabit(data, forceAdd: true);
-    }
-    _reUpdateFlag();
-    vm._onUpdateDataColl(listen: listen);
+  void replaceData(HabitSummaryDataCollection newData) {
+    _data = newData;
   }
 
   @override
-  bool operator ==(Object other) {
-    if (other is! HabitsDataDelagate) return false;
-    return _updateFlag == other._updateFlag;
-  }
-
-  @override
-  int get hashCode => _updateFlag.hashCode;
-
-  @override
-  String toString() =>
-      "HabitsDataDelagate(upflag=$_updateFlag,data=${_vm.target?._data})";
+  String toString() => "_HabitDataController(data=$_data)";
 }
