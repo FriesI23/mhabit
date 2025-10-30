@@ -97,28 +97,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     _vm = context.read<HabitSummaryViewModel>();
     // events
     _vm.scrollCalendarToStartEvent.listen(_resetHorizonalScrollController);
-    // dispatcher
-    final dispatcher = AnimatedListDiffListDispatcher<HabitSortCache>(
-      controller: AnimatedListController(),
-      itemBuilder: (context, element, data) {
-        if (data.measuring) {
-          return SizedBox(
-              height: context
-                  .read<AppCompactUISwitcherViewModel>()
-                  .appHabitDisplayListTileHeight);
-        } else if (element is HabitSummaryDataSortCache) {
-          return _buildHabitsContentCell(context, element.uuid);
-        } else {
-          return const SizedBox();
-        }
-      },
-      currentList: _vm.lastSortedDataCache,
-      comparator: AnimatedListDiffListComparator<HabitSortCache>(
-        sameItem: (a, b) => a.isSameItem(b),
-        sameContent: (a, b) => a.isSameContent(b),
-      ),
-    );
-    _vm.initDispatcher(dispatcher);
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
     _initVerticalScrollController();
@@ -177,25 +155,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     final vm = context.maybeRead<HabitSummaryViewModel>();
     if (vm == null || !vm.mounted) return;
     pinned ? vm.pinAppbar() : vm.unpinAppbar();
-  }
-
-  Future<void> _loadHabitData() async {
-    if (!mounted) return;
-    final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
-    if (context.read<AppSyncViewModel>().mounted) {
-      await context.read<AppSyncViewModel>().appSyncTask.processing;
-    }
-    if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
-    if (!context.read<HabitSummaryViewModel>().isDataLoaded) {
-      await Future.wait([
-        context.read<HabitSummaryViewModel>().loadData(inFutureBuilder: true),
-        minBarShowTimeFuture,
-      ]);
-      if (!(mounted && context.read<HabitSummaryViewModel>().mounted)) return;
-    }
-    if (context.read<HabitSummaryViewModel>().consumeClearSnackBarFlag()) {
-      ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
-    }
   }
 
   void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
@@ -517,6 +476,44 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     });
   }
 
+  void _openRecordStatusDialog(
+    HabitUUID puuid,
+    HabitRecordUUID? uuid,
+    HabitRecordDate date,
+    HabitRecordStatus crt,
+  ) async {
+    if (!mounted) return;
+
+    final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
+    if (data == null) return;
+
+    final record = data.getRecordByDate(date);
+    switch (record?.status) {
+      case HabitRecordStatus.skip:
+        return _openHabitRecordResonModifierDialog(
+            context, puuid, uuid, date, crt);
+      default:
+        return _openHabitRecordCusomNumberPickerDialog(
+            context, puuid, uuid, date, crt);
+    }
+  }
+
+  void _changeRecordStatus(
+    HabitUUID puuid,
+    HabitRecordUUID? uuid,
+    HabitRecordDate date,
+    HabitRecordStatus crt,
+  ) async {
+    if (!mounted) return;
+    context
+        .read<HabitSummaryViewModel>()
+        .changeRecordStatus(puuid, date)
+        .then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
   void _exportSelectedHabitsAndShared(BuildContext context) async {
     if (!mounted) return;
 
@@ -688,56 +685,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     context.read<HabitSummaryViewModel>().toggleCalendarStatus();
   }
 
-  OnHabitSummaryPressCallback? _getOnHabitRecordedActionTriggeredFn(
-      UserAction action) {
-    void handleChangeRecordStatus(
-      HabitUUID puuid,
-      HabitRecordUUID? uuid,
-      HabitRecordDate date,
-      HabitRecordStatus crt,
-    ) async {
-      if (!mounted) return;
-      context
-          .read<HabitSummaryViewModel>()
-          .changeRecordStatus(puuid, date)
-          .then((record) {
-        if (!mounted || record == null) return;
-        _onRecordChangeConfirmed();
-      });
-    }
-
-    void handleOpenRecordStatusDialog(
-      HabitUUID puuid,
-      HabitRecordUUID? uuid,
-      HabitRecordDate date,
-      HabitRecordStatus crt,
-    ) async {
-      if (!mounted) return;
-
-      final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
-      if (data == null) return;
-
-      final record = data.getRecordByDate(date);
-      switch (record?.status) {
-        case HabitRecordStatus.skip:
-          return _openHabitRecordResonModifierDialog(
-              context, puuid, uuid, date, crt);
-        default:
-          return _openHabitRecordCusomNumberPickerDialog(
-              context, puuid, uuid, date, crt);
-      }
-    }
-
-    final opConfig = context.read<HabitRecordOpConfigViewModel>();
-    if (action == opConfig.changeRecordStatus) {
-      return handleChangeRecordStatus;
-    } else if (action == opConfig.openRecordStatusDialog) {
-      return handleOpenRecordStatusDialog;
-    } else {
-      return null;
-    }
-  }
-
   bool _onHabitListReorderStart(int index, double dx, double dy) {
     if (!mounted) return false;
 
@@ -810,9 +757,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       final result = await habit_detail.naviToHabitDetailPage(
         context: context,
         habitUUID: uuid,
-        colorType:
-            context.read<HabitSummaryViewModel>().getHabit(uuid)?.colorType,
-        summary: context.read<HabitSummaryViewModel>(),
+        colorType: _vm.getHabit(uuid)?.colorType,
+        summary: _vm,
       );
 
       if (result == null || !mounted) return;
@@ -840,7 +786,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       }
     }
 
-    if (context.read<HabitSummaryViewModel>().isInEditMode) {
+    if (_vm.isInEditMode) {
       preessedInEditMode();
     } else {
       await pressedInViewMode();
@@ -869,74 +815,6 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     if (!mounted) return;
     final viewmodel = context.read<HabitSummaryViewModel>();
     viewmodel.exitEditMode();
-  }
-
-  ScrollPhysics? _buildScrollPhysics(double itemSize, double length) => switch (
-          context.read<HabitsRecordScrollBehaviorViewModel>().scrollBehavior) {
-        HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
-        HabitsRecordScrollBehavior.scrollable => MagnetScrollPhysics(
-            itemSize: itemSize,
-            metrics: FixedScrollMetrics(
-              minScrollExtent: null,
-              maxScrollExtent: null,
-              pixels: null,
-              viewportDimension: null,
-              axisDirection: AxisDirection.down,
-              devicePixelRatio: View.of(context).devicePixelRatio,
-            )),
-        _ => null
-      };
-
-  Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) {
-    return Selector<HabitSummaryViewModel,
-        Tuple4<bool, UniqueKey, bool, HabitDate>>(
-      selector: (context, viewmodel) => Tuple4(
-        viewmodel.isCalendarExpanded,
-        viewmodel.getHabitInsideVersion(uuid),
-        viewmodel.isHabitSelected(uuid),
-        DateChangeProvider.of(context).dateTime,
-      ),
-      shouldRebuild: (previous, next) => previous != next,
-      builder: (context, contents, child) => Selector<AppThemeViewModel, int>(
-        selector: (context, vm) => vm.displayPageOccupyPrt,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, occupyPrt, child) =>
-            Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
-          selector: (context, vm) =>
-              Tuple2(vm.flag, vm.appHabitDisplayListTileHeight),
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, compactUIConf, child) => Selector<
-              HabitRecordOpConfigViewModel, Tuple2<UserAction, UserAction>>(
-            selector: (context, vm) =>
-                Tuple2(vm.changeRecordStatus, vm.openRecordStatusDialog),
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, _, child) {
-              final isExtended = contents.item1;
-              final crtDate = contents.item4;
-              final useCompactUI = compactUIConf.item1;
-              final height = compactUIConf.item2;
-              return _RecordsListTile(
-                uuid: uuid,
-                isExtended: isExtended,
-                crtDate: crtDate,
-                displayPageOccupyPrt: occupyPrt,
-                useCompactUI: useCompactUI,
-                height: height,
-                verticalScrollController: _verticalScrollController,
-                horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-                onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
-                onHabitRecordPressed:
-                    _getOnHabitRecordedActionTriggeredFn(UserAction.tap),
-                onHabitRecordLongPressed:
-                    _getOnHabitRecordedActionTriggeredFn(UserAction.longTap),
-                onHabitRecordDoublePressed:
-                    _getOnHabitRecordedActionTriggeredFn(UserAction.doubleTap),
-              );
-            },
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildScrollablePlaceHolder(BuildContext context) {
@@ -1003,50 +881,25 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         verticalScrollController: _verticalScrollController,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
-        scrollPhysicsBuilder: _buildScrollPhysics,
       );
     }
     //#endregion
 
     //#region habits list
-    Widget buildHabitsContent(BuildContext context) {
-      return Selector<HabitSummaryViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.reloadUIToggleSwitch,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) {
-          final viewmodel = context.read<HabitSummaryViewModel>();
-          appLog.build.debug(context, ex: [value], name: "$widget.HabitList");
-          return AnimatedSliverList(
-            controller: viewmodel.dispatcherLinkedController,
-            delegate: AnimatedSliverChildBuilderDelegate(
-              (context, index, data) {
-                return context
-                    .read<HabitSummaryViewModel>()
-                    .dispatcherLinkedBuilder(
-                        context, viewmodel.lastSortedDataCache, index, data);
-              },
-              viewmodel.lastSortedDataCache.length,
-              animator: kHabitContentListAnimator,
-              addAnimatedElevation: kCommonEvalation,
-              morphDuration: kEditModeChangeAnimateDuration,
-              reorderModel: AnimatedListReorderModel(
-                onReorderStart: _onHabitListReorderStart,
-                onReorderMove: _onHabitListReorderMove,
-                onReorderComplete: _onHabitListReorderComplete,
-              ),
-            ),
-          );
-        },
-      );
-    }
-
     Widget buildHabits(BuildContext context) {
-      return Selector<HabitSummaryViewModel, (bool, bool)>(
-        selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, _, child) => FutureBuilder(
-          future: _loadHabitData(),
-          builder: (context, _) => buildHabitsContent(context),
+      return EnhancedSafeArea.edgeToEdgeSafe(
+        withSliver: true,
+        child: _HabitList(
+          horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
+          verticalScrollController: _verticalScrollController,
+          reorderModel: AnimatedListReorderModel(
+            onReorderStart: _onHabitListReorderStart,
+            onReorderMove: _onHabitListReorderMove,
+            onReorderComplete: _onHabitListReorderComplete,
+          ),
+          onHabitSummaryDataPressed: _onHabitSummaryDataPressed,
+          onOpenRecordStatusDialog: _openRecordStatusDialog,
+          onChangeRecordStatus: _changeRecordStatus,
         ),
       );
     }
@@ -1097,7 +950,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     //#region: empty image
     Widget buildEmptyImage(BuildContext context) {
       return Selector<HabitSummaryViewModel, int>(
-        selector: (context, viewmodel) => viewmodel.lastSortedDataCache.length,
+        selector: (context, viewmodel) => viewmodel.currentHabitList.length,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, habitCount, child) =>
             Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
@@ -1181,10 +1034,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
                       buildAppbar(context),
                       buildCalendarBar(context),
                       const PinnedHeaderSliver(child: HabitDivider(height: 1)),
-                      EnhancedSafeArea.edgeToEdgeSafe(
-                        withSliver: true,
-                        child: buildHabits(context),
-                      ),
+                      buildHabits(context),
                       buildDevelopSliverList(context),
                       buildBottomPlaceHolder(context),
                       if (kDebugMode) _buildScrollablePlaceHolder(context),
@@ -1197,6 +1047,239 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
           floatingActionButton: buildFAB(context),
         ),
       ),
+    );
+  }
+}
+
+class _HabitList extends StatefulWidget {
+  final LinkedScrollControllerGroup horizonalScrollControllerGroup;
+  final PinnedAppbarScrollController verticalScrollController;
+  final AnimatedListBaseReorderModel? reorderModel;
+  final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
+  final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
+  final OnHabitSummaryPressCallback? onChangeRecordStatus;
+
+  const _HabitList({
+    required this.horizonalScrollControllerGroup,
+    required this.verticalScrollController,
+    this.reorderModel,
+    this.onHabitSummaryDataPressed,
+    this.onOpenRecordStatusDialog,
+    this.onChangeRecordStatus,
+  });
+
+  @override
+  State<_HabitList> createState() => _HabitListState();
+}
+
+class _HabitListState extends State<_HabitList> {
+  late HabitSummaryViewModel _vm;
+
+  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
+
+  LinkedScrollControllerGroup get _effectiveHorizonalScrollControllerGroup =>
+      widget.horizonalScrollControllerGroup;
+
+  PinnedAppbarScrollController get _effectiveVerticalScrollController =>
+      widget.verticalScrollController;
+
+  @override
+  void initState() {
+    appLog.build.debug(context, ex: ["init"]);
+    super.initState();
+    _vm = context.read<HabitSummaryViewModel>()
+      ..addListener(_onViewModelNotified);
+    _dispatcher = buildDispatcher();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitSummaryViewModel>();
+    if (vm != _vm) {
+      _vm.removeListener(_onViewModelNotified);
+      _vm = vm..addListener(_onViewModelNotified);
+    }
+  }
+
+  @override
+  void dispose() {
+    _dispatcher.discard();
+    _vm.removeListener(_onViewModelNotified);
+    super.dispose();
+  }
+
+  void _onViewModelNotified() {
+    _dispatcher.dispatchNewList(_vm.currentHabitList);
+  }
+
+  @visibleForTesting
+  AnimatedListDiffListDispatcher<HabitSortCache> buildDispatcher() =>
+      AnimatedListDiffListDispatcher<HabitSortCache>(
+        controller: AnimatedListController(),
+        itemBuilder: (context, element, data) {
+          if (data.measuring) {
+            return const _HabitListItemMeasurer();
+          } else if (element is HabitSummaryDataSortCache) {
+            return _HabitListItem(
+              uuid: element.uuid,
+              horizonalScrollControllerGroup:
+                  _effectiveHorizonalScrollControllerGroup,
+              verticalScrollController: _effectiveVerticalScrollController,
+              onHabitSummaryDataPressed: widget.onHabitSummaryDataPressed,
+              onChangeRecordStatus: widget.onChangeRecordStatus,
+              onOpenRecordStatusDialog: widget.onOpenRecordStatusDialog,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+        currentList: _vm.currentHabitList,
+        comparator: AnimatedListDiffListComparator<HabitSortCache>(
+          sameItem: (a, b) => a.isSameItem(b),
+          sameContent: (a, b) => a.isSameContent(b),
+        ),
+      );
+
+  @visibleForTesting
+  Future<void> loadData() async {
+    if (!mounted) return;
+    final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
+    final sync = context.read<AppSyncViewModel>();
+    if (sync.mounted) await sync.appSyncTask.processing;
+    if (!(mounted && _vm.mounted)) return;
+    if (!_vm.isDataLoaded) {
+      await Future.wait(
+          [_vm.loadData(inFutureBuilder: true), minBarShowTimeFuture]);
+      if (!(mounted && _vm.mounted)) return;
+    }
+    if (_vm.consumeClearSnackBarFlag()) {
+      ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<HabitSummaryViewModel, (bool, bool)>(
+      selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, _, child) => FutureBuilder(
+        future: loadData(),
+        builder: (context, _) => Selector<HabitSummaryViewModel, bool>(
+          selector: (context, viewmodel) => viewmodel.reloadUIToggleSwitch,
+          shouldRebuild: (previous, next) => previous != next,
+          builder: (context, _, child) => AnimatedSliverList(
+            controller: _dispatcher.controller,
+            delegate: AnimatedSliverChildBuilderDelegate(
+                (context, index, data) => _dispatcher.builder(
+                    context, _vm.currentHabitList, index, data),
+                _vm.currentHabitList.length,
+                animator: kHabitContentListAnimator,
+                addAnimatedElevation: kCommonEvalation,
+                morphDuration: kEditModeChangeAnimateDuration,
+                reorderModel: widget.reorderModel),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HabitListItemMeasurer extends StatelessWidget {
+  const _HabitListItemMeasurer();
+
+  @override
+  Widget build(BuildContext context) {
+    final height = context.select<AppCompactUISwitcherViewModel, double>(
+        (vm) => vm.appHabitDisplayListTileHeight);
+    return SizedBox(height: height);
+  }
+}
+
+class _HabitListItemRecordCallbackResolver {
+  final _HabitListItem widget;
+  final UserAction changeRecordStatusAction;
+  final UserAction openRecordStatusDialogAction;
+
+  const _HabitListItemRecordCallbackResolver(
+    this.widget, {
+    required this.changeRecordStatusAction,
+    required this.openRecordStatusDialogAction,
+  });
+
+  OnHabitSummaryPressCallback? resolve(UserAction action) =>
+      (changeRecordStatusAction == action
+          ? widget.onChangeRecordStatus
+          : null) ??
+      (openRecordStatusDialogAction == action
+          ? widget.onOpenRecordStatusDialog
+          : null);
+}
+
+class _HabitListItem extends StatelessWidget {
+  final HabitUUID uuid;
+  final LinkedScrollControllerGroup horizonalScrollControllerGroup;
+  final PinnedAppbarScrollController verticalScrollController;
+  final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
+  final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
+  final OnHabitSummaryPressCallback? onChangeRecordStatus;
+
+  const _HabitListItem({
+    required this.uuid,
+    required this.horizonalScrollControllerGroup,
+    required this.verticalScrollController,
+    this.onHabitSummaryDataPressed,
+    this.onOpenRecordStatusDialog,
+    this.onChangeRecordStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final crtDate = DateChangeProvider.of(context).dateTime;
+    final (isExtended, data, endedDate, isSelected, isInEditMode, _) =
+        context.select<HabitSummaryViewModel,
+                (bool, HabitSummaryData?, HabitDate?, bool, bool, UniqueKey)>(
+            (vm) => (
+                  vm.isCalendarExpanded,
+                  vm.getHabit(uuid),
+                  vm.earliestSummaryDataStartDate?.startDate,
+                  vm.isHabitSelected(uuid),
+                  vm.isInEditMode,
+                  vm.getHabitInsideVersion(uuid),
+                ));
+    final occupyPrt =
+        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
+    final (useCompactUI, height) =
+        context.select<AppCompactUISwitcherViewModel, (bool, double)>(
+            (vm) => (vm.flag, vm.appHabitDisplayListTileHeight));
+    final (changeRecordStatusAction, openRecordStatusDialogAction) =
+        context.select<HabitRecordOpConfigViewModel, (UserAction, UserAction)>(
+            (vm) => (vm.changeRecordStatus, vm.openRecordStatusDialog));
+    final actionResolver = _HabitListItemRecordCallbackResolver(this,
+        changeRecordStatusAction: changeRecordStatusAction,
+        openRecordStatusDialogAction: openRecordStatusDialogAction);
+    if (data == null) {
+      appLog.build
+          .warn(context, ex: ["data not found", uuid], name: "_HabitListItem");
+      return const SizedBox.shrink();
+    }
+    appLog.build.debug(context, ex: ["habit", uuid], name: "_HabitListItem");
+    return HabitDisplayListTile(
+      startDate: crtDate,
+      endedData: endedDate,
+      isExtended: isExtended,
+      isSelected: isSelected,
+      isInEditMode: isInEditMode,
+      collapsePrt: occupyPrt,
+      compactVisual: useCompactUI,
+      height: height,
+      data: data,
+      verticalScrollController: verticalScrollController,
+      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
+      onHabitSummaryDataPressed: onHabitSummaryDataPressed,
+      onHabitRecordPressed: actionResolver.resolve(UserAction.tap),
+      onHabitRecordLongPressed: actionResolver.resolve(UserAction.longTap),
+      onHabitRecordDoublePressed: actionResolver.resolve(UserAction.doubleTap),
     );
   }
 }
@@ -1231,65 +1314,6 @@ class _EmptyImageWrapper extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _RecordsListTile extends StatelessWidget {
-  final HabitUUID uuid;
-  final bool isExtended;
-  final HabitDate crtDate;
-  final int displayPageOccupyPrt;
-  final bool useCompactUI;
-  final double height;
-  final ScrollController? verticalScrollController;
-  final LinkedScrollControllerGroup horizonalScrollControllerGroup;
-  final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
-  final OnHabitSummaryPressCallback? onHabitRecordPressed;
-  final OnHabitSummaryPressCallback? onHabitRecordLongPressed;
-  final OnHabitSummaryPressCallback? onHabitRecordDoublePressed;
-
-  const _RecordsListTile({
-    required this.uuid,
-    required this.isExtended,
-    required this.crtDate,
-    required this.displayPageOccupyPrt,
-    required this.useCompactUI,
-    required this.height,
-    this.verticalScrollController,
-    required this.horizonalScrollControllerGroup,
-    this.onHabitSummaryDataPressed,
-    this.onHabitRecordPressed,
-    this.onHabitRecordDoublePressed,
-    this.onHabitRecordLongPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final viewmodel = context.read<HabitSummaryViewModel>();
-    final data = viewmodel.getHabit(uuid);
-
-    appLog.build.debug(context, ex: [isExtended, uuid, data?.name]);
-    if (data == null) {
-      appLog.build.warn(context, ex: ["data not found", uuid]);
-      return const SizedBox();
-    }
-    return HabitDisplayListTile(
-      startDate: crtDate,
-      endedData: viewmodel.earliestSummaryDataStartDate?.startDate,
-      isExtended: isExtended,
-      isSelected: viewmodel.isHabitSelected(uuid),
-      isInEditMode: viewmodel.isInEditMode,
-      collapsePrt: displayPageOccupyPrt,
-      height: height,
-      compactVisual: useCompactUI,
-      data: data,
-      verticalScrollController: verticalScrollController,
-      horizonalScrollControllerGroup: horizonalScrollControllerGroup,
-      onHabitSummaryDataPressed: onHabitSummaryDataPressed,
-      onHabitRecordPressed: onHabitRecordPressed,
-      onHabitRecordLongPressed: onHabitRecordLongPressed,
-      onHabitRecordDoublePressed: onHabitRecordDoublePressed,
     );
   }
 }
@@ -1385,14 +1409,12 @@ class _CalendarBar extends StatelessWidget {
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
   final ValueChanged<bool>? onCalendarToggleExpandPressed;
-  final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
 
   const _CalendarBar({
     super.key,
     this.verticalScrollController,
     this.horizonalScrollControllerGroup,
     this.onCalendarToggleExpandPressed,
-    this.scrollPhysicsBuilder,
   });
 
   @override
@@ -1407,6 +1429,8 @@ class _CalendarBar extends StatelessWidget {
     final (appCalendarBarHeight, appCalendarBarItemPadding) =
         context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
             (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
+    final scrollBehavior = context.select<HabitsRecordScrollBehaviorViewModel,
+        HabitsRecordScrollBehavior>((vm) => vm.scrollBehavior);
     appLog.build.debug(context,
         ex: [
           state,
@@ -1419,6 +1443,24 @@ class _CalendarBar extends StatelessWidget {
     final scrolledUnderElevation = state.isInEditMode ? 0.0 : kCommonEvalation;
     final backgroundColor =
         state.isInEditMode ? Theme.of(context).colorScheme.surface : null;
+
+    ScrollPhysics? buildScrollPhysics(double itemSize, double length) {
+      return switch (scrollBehavior) {
+        HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
+        HabitsRecordScrollBehavior.scrollable => MagnetScrollPhysics(
+            itemSize: itemSize,
+            metrics: FixedScrollMetrics(
+              minScrollExtent: null,
+              maxScrollExtent: null,
+              pixels: null,
+              viewportDimension: null,
+              axisDirection: AxisDirection.down,
+              devicePixelRatio: View.of(context).devicePixelRatio,
+            )),
+        _ => null
+      };
+    }
+
     return SliverAppBar(
       pinned: true,
       shadowColor: Theme.of(context).colorScheme.shadow,
@@ -1441,7 +1483,7 @@ class _CalendarBar extends StatelessWidget {
               height: appCalendarBarHeight,
               itemPadding: appCalendarBarItemPadding,
               onLeftBtnPressed: onCalendarToggleExpandPressed,
-              scrollPhysicsBuilder: scrollPhysicsBuilder,
+              scrollPhysicsBuilder: buildScrollPhysics,
             ),
             const _LoadingIndicator(),
           ],
