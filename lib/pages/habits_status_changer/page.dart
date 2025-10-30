@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../common/types.dart';
 import '../../common/utils.dart';
@@ -353,99 +352,79 @@ class _HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<_HabitList> {
+  late HabitStatusChangerViewModel _vm;
+
+  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
+
   @override
   void initState() {
     super.initState();
-    final vm = context.read<HabitStatusChangerViewModel>();
-    // dispatcher
-    vm.initDispatcher(buildDispatcher());
+    _vm = context.read<HabitStatusChangerViewModel>()
+      ..addListener(_onViewModelNotified);
+    _dispatcher = buildDispatcher();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitStatusChangerViewModel>();
+    if (vm != _vm) {
+      _vm.removeListener(_onViewModelNotified);
+      _vm = vm..addListener(_onViewModelNotified);
+    }
+  }
+
+  @override
+  void dispose() {
+    _dispatcher.discard();
+    _vm.removeListener(_onViewModelNotified);
+    super.dispose();
+  }
+
+  void _onViewModelNotified() {
+    _dispatcher.dispatchNewList(_vm.currentHabitList);
+  }
+
+  @visibleForTesting
   AnimatedListDiffListDispatcher<HabitSortCache> buildDispatcher() =>
       AnimatedListDiffListDispatcher<HabitSortCache>(
         controller: AnimatedListController(),
         itemBuilder: (context, element, data) {
           if (data.measuring) {
-            return SizedBox(
-                height: context
-                    .read<AppCompactUISwitcherViewModel>()
-                    .appHabitDisplayListTileHeight);
+            return const _HabitListItemMeasurer();
           } else if (element is HabitSummaryDataSortCache) {
-            return _buildHabitsContentCell(context, element.uuid);
+            return _HabitListItem(uuid: element.uuid);
           } else {
-            return const SizedBox();
+            return const SizedBox.shrink();
           }
         },
-        currentList: context
-            .read<HabitStatusChangerViewModel>()
-            .dataDelegate
-            .habitsSortableCache
-            .toList(),
+        currentList: _vm.dataDelegate.habitsSortableCache.toList(),
         comparator: AnimatedListDiffListComparator<HabitSortCache>(
           sameItem: (a, b) => a.isSameItem(b),
           sameContent: (a, b) => a.isSameContent(b),
         ),
       );
 
-  Future _loadData() async {
-    if (!mounted) return;
-    final vm = context.read<HabitStatusChangerViewModel>();
-    if (!vm.mounted) return;
-    await vm.loadData(inFutureBuilder: true);
+  @visibleForTesting
+  Future loadData() async {
+    if (!(mounted && _vm.mounted)) return;
+    await _vm.loadData(inFutureBuilder: true);
   }
-
-  Widget _buildHabitsContentCell(BuildContext context, HabitUUID uuid) =>
-      Selector<HabitStatusChangerViewModel,
-          Tuple2<HabitSummaryData?, HabitDate>>(
-        selector: (context, vm) =>
-            Tuple2(vm.dataDelegate.getHabitByUUID(uuid), vm.selectDate),
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) {
-          final data = value.item1;
-          if (data == null) return const SizedBox();
-          final selectDate = value.item2;
-          return HabitSpecialDateViewedTile(data: data, date: selectDate);
-        },
-      );
 
   @override
   Widget build(BuildContext context) {
-    Widget buildHabitsTileList(BuildContext context) {
-      final vm = context.read<HabitStatusChangerViewModel>();
-      return AnimatedSliverList(
-        controller: vm.dispatcherLinkedController,
-        delegate: AnimatedSliverChildBuilderDelegate(
-          (context, index, data) {
-            return vm.dispatcherLinkedBuilder(
-                context, vm.dispatcherCurrentList, index, data);
-          },
-          vm.dispatcherCurrentList.length,
-          addLongPressReorderable: false,
-        ),
-      );
-    }
-
     return Selector<HabitStatusChangerViewModel, HabitsDataDelagate>(
       selector: (context, vm) => vm.dataDelegate,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
-        future: _loadData(),
+        future: loadData(),
         builder: (context, snapshot) {
-          final viewmodel = context.read<HabitStatusChangerViewModel>();
-          // appLog.load.debug("$this.buildHabits", ex: [
-          //   "Loading data",
-          //   snapshot.connectionState,
-          //   viewmodel.dataDelegate.habitCount,
-          // ]);
-          // if (kDebugMode && snapshot.isDone) {
-          //   appLog.load.debug("$this.buildHabits", ex: ["Loaded", viewmodel]);
-          // }
           return SliverStack(
             children: [
               SliverAnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
                 opacity: snapshot.connectionState == ConnectionState.waiting &&
-                        viewmodel.dataDelegate.habitCount == 0
+                        _vm.dataDelegate.habitCount == 0
                     ? 1.0
                     : 0.0,
                 sliver: SliverFillRemaining(
@@ -454,12 +433,46 @@ class _HabitListState extends State<_HabitList> {
                   child: const PageLoadingIndicator(),
                 ),
               ),
-              buildHabitsTileList(context),
+              AnimatedSliverList(
+                controller: _dispatcher.controller,
+                delegate: AnimatedSliverChildBuilderDelegate(
+                  (context, index, data) => _dispatcher.builder(
+                      context, _dispatcher.currentList, index, data),
+                  _dispatcher.currentList.length,
+                  addLongPressReorderable: false,
+                ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+}
+
+class _HabitListItemMeasurer extends StatelessWidget {
+  const _HabitListItemMeasurer();
+
+  @override
+  Widget build(BuildContext context) {
+    final height = context.select<AppCompactUISwitcherViewModel, double>(
+        (vm) => vm.appHabitDisplayListTileHeight);
+    return SizedBox(height: height);
+  }
+}
+
+class _HabitListItem extends StatelessWidget {
+  final HabitUUID uuid;
+
+  const _HabitListItem({required this.uuid});
+
+  @override
+  Widget build(BuildContext context) {
+    final (data, selectDate) = context
+        .select<HabitStatusChangerViewModel, (HabitSummaryData?, HabitDate)>(
+            (vm) => (vm.dataDelegate.getHabitByUUID(uuid), vm.selectDate));
+    if (data == null) return const SizedBox.shrink();
+    return HabitSpecialDateViewedTile(data: data, date: selectDate);
   }
 }
 

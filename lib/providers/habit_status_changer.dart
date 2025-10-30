@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:async/async.dart';
@@ -56,16 +57,14 @@ enum RecordStatusChangerStatus {
 }
 
 class HabitStatusChangerViewModel
-    with
-        ChangeNotifier,
-        DBHelperLoadedMixin,
-        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
+    with ChangeNotifier, DBHelperLoadedMixin
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
   HabitSummaryDataCollection _data = HabitSummaryDataCollection();
   late HabitsDataDelagate _dataDelate;
   late HabitStatusChangerForm _form;
+  List<HabitSortCache> _currentHabitList = const [];
   // status
   CancelableCompleter<void>? _loading;
   // inside status
@@ -153,7 +152,7 @@ class HabitStatusChangerViewModel
       _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) =>
           habit.reCalculateAutoComplateRecords(firstDay: firstday));
-      _dispatchNewList();
+      _updateCurrentHabitList();
 
       _updateForm(_form, withDefaultChangerStatus: true);
       // complete
@@ -186,6 +185,9 @@ class HabitStatusChangerViewModel
   @override
   bool get mounted => _mounted;
   //#endregion
+
+  UnmodifiableListView<HabitSortCache> get currentHabitList =>
+      UnmodifiableListView(_currentHabitList);
 
   HabitsDataDelagate get dataDelegate => _dataDelate;
 
@@ -318,19 +320,18 @@ class HabitStatusChangerViewModel
     if (listen) notifyListeners();
   }
 
-  void _dispatchNewList() {
+  void _updateCurrentHabitList() {
     if (!mounted) return;
-    final newList = dataDelegate.habitsSortableCache.toList();
-    appLog.load.info("dispatch new list",
-        ex: [dispatcher.currentList.hashCode, newList.hashCode]);
-    dispatcher.dispatchNewList(newList);
+    final newList = dataDelegate.habitsSortableCache.toList(growable: false);
+    appLog.load.info("_updateCurrentHabitList",
+        ex: [_currentHabitList.hashCode, newList.hashCode]);
+    _currentHabitList = newList;
   }
 
   @override
   void dispose() {
     if (!_mounted) return;
     _cancelLoading();
-    dispatcher.discard();
     super.dispose();
     _mounted = false;
   }
