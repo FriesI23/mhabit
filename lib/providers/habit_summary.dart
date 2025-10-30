@@ -46,8 +46,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
         DBOperationsMixin,
-        PinnedAppbarMixin,
-        SingleAnimatedListDiffListDispatcherMixin<HabitSortCache>
+        PinnedAppbarMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
   // data
   final _data = HabitSummaryDataCollection();
@@ -193,7 +192,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (!_mounted) return;
     _startSyncSub?.cancel();
     _scrollCalendarToStartController.close();
-    dispatcher.discard();
     _cancelLoading();
     super.dispose();
     _mounted = false;
@@ -485,7 +483,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#endregion
 
   //#region sortbale habits list
-  List<HabitSortCache> get lastSortedDataCache =>
+  List<HabitSortCache> get currentHabitList =>
       _sortableCache.lastSortedDataCache;
 
   void updateSortOptions(HabitDisplaySortType sortType,
@@ -506,27 +504,22 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _resortData() {
-    _HabitsSortableCache genSortableCache() {
-      if (isInSearchMode) {
-        return _sortableCache.copyWithSortableData(_data,
-            searchOptions: searchOptions, filter: HabitsDisplayFilter.allTrue);
-      }
-      return _sortableCache.copyWithSortableData(_data);
-    }
-
-    _saveAndDispatch(genSortableCache());
+    _replaceSortbaleCache(isInSearchMode
+        ? _sortableCache.copyWithData(_data,
+            searchOptions: searchOptions, filter: HabitsDisplayFilter.allTrue)
+        : _sortableCache.copyWithData(_data));
   }
 
-  void _saveAndDispatch(_HabitsSortableCache newSortbaleData) {
-    if (identical(newSortbaleData.lastSortedDataCache,
+  void _replaceSortbaleCache(_HabitsSortableCache newSortbaleCache) {
+    if (identical(newSortbaleCache.lastSortedDataCache,
         _sortableCache.lastSortedDataCache)) {
-      appLog.load.warn("$runtimeType._saveAndDispatch",
-          ex: ["fixed cache", newSortbaleData, _sortableCache]);
-      newSortbaleData = newSortbaleData.copyWith(
-          lastSortedDataCache: List.of(newSortbaleData.lastSortedDataCache));
+      appLog.load.warn("$runtimeType._replaceSortbaleCache",
+          ex: ["fixed cache", newSortbaleCache, _sortableCache]);
+      newSortbaleCache = newSortbaleCache.copyWith(
+          lastSortedDataCache:
+              List.of(newSortbaleCache.lastSortedDataCache, growable: false));
     }
-    dispatcher.dispatchNewList(newSortbaleData.lastSortedDataCache);
-    _sortableCache = newSortbaleData;
+    _sortableCache = newSortbaleCache;
   }
   //#endregion
 
@@ -656,7 +649,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> _writeChangedSortPositionToDB() async {
-    final filteredlastSortedDataCache = lastSortedDataCache
+    final filteredlastSortedDataCache = currentHabitList
         .whereType<HabitSummaryDataSortCache>()
         .where((e) => e.data != null)
         .toList();
@@ -703,7 +696,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> onHabitReorderComplate(int index, int dropIndex) {
-    lastSortedDataCache.insert(dropIndex, lastSortedDataCache.removeAt(index));
+    currentHabitList.insert(dropIndex, currentHabitList.removeAt(index));
     return _writeChangedSortPositionToDB();
   }
 
@@ -860,7 +853,7 @@ class _HabitsSortableCache {
     }
   }
 
-  _HabitsSortableCache copyWithSortableData(HabitSummaryDataCollection data,
+  _HabitsSortableCache copyWithData(HabitSummaryDataCollection data,
       {HabitDisplaySearchOptions? searchOptions, HabitsDisplayFilter? filter}) {
     var sorted = data
         .sort(sortType, sortDirection)
