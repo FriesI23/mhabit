@@ -3,22 +3,17 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Released: v1.20.0+111
-
-**✨ New Features**
-
-- Feature[v1.19.0+109]: Quick Search (#385)
-- Feature: Add advance search filter (#392)
+# Pre-Released: v1.20.1+112-pre
 
 **🌐 Localization**
 
-- Update Polish translation, thanks to croozer4's contributions on Github
+- Updated Ukrainian translation, thank to maksim2005UKR's contribution on Weblate.
 
 **🧹 Others**
 
-- Fixed: Keep loading indicator visible while scrolling (#395)
-- Chore: Enable `Quick Search` experimental feature by default
-
-**📝 Documentation**
-
-- Doc: Update Application Description files
+- Fixed: Dispatcher incorrectly reused on layout/size changes
+- Refactor: `Habit Status Changer` (#397)
+  - Migrate list dispatcher to UI layer
+  - Switch data control from delegate to controller
+- Refactor: `Habit Display` (#398)
+  - Migrate list dispatcher to UI layer
