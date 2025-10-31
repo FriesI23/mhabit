@@ -355,6 +355,8 @@
   "@habitDisplay_sortTypeDialog_cancel": {},
   "habitDisplay_debug_debugSubgroup_title": "🛠️Налагодження",
   "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDisplay_searchBar_hintText": "Звички пошуку",
+  "@habitDisplay_searchBar_hintText": {},
   "habitDisplay_searchFilter_completed": "Виконано",
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Тип звички",
@@ -1049,6 +1051,10 @@
       }
     }
   },
+  "experimentalFeatures_habitSearchTile_titleText": "Пошук звички",
+  "@experimentalFeatures_habitSearchTile_titleText": {},
+  "experimentalFeatures_habitSearchTile_subtitleText": "Після ввімкнення у верхній частині екрана «Звички» з’явиться рядок пошуку, який дозволить шукати звички.",
+  "@experimentalFeatures_habitSearchTile_subtitleText": {},
   "appAbout_appbarTile_titleText": "Про",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Версія: {appVersion}",
