@@ -407,7 +407,7 @@ class L10nUk extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Налагодження';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Звички пошуку';
 
   @override
   String get habitDisplay_searchFilter_ongoing => 'Ongoing';
@@ -1226,10 +1226,10 @@ class L10nUk extends L10n {
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText => 'Пошук звички';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText => 'Після ввімкнення у верхній частині екрана «Звички» з’явиться рядок пошуку, який дозволить шукати звички.';
 
   @override
   String get appAbout_appbarTile_titleText => 'Про';
