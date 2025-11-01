@@ -22,15 +22,16 @@ import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../logging/helper.dart';
+import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_status_changer.dart';
-import '../../providers/habit_summary.dart' as habit_summary;
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
@@ -44,7 +45,6 @@ import 'widgets.dart';
 /// - Required for callback:
 /// - Optional:
 ///   - [AppSyncViewModel]
-///   - [habit_summary.HabitsStatusChangerAdapter]
 class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -152,11 +152,6 @@ class _PageState extends State<_Page> {
     if (appSync != null && appSync.mounted) {
       appSync.delayedStartTaskOnce();
     }
-    final summary =
-        context.maybeRead<habit_summary.HabitsStatusChangerAdapter>();
-    if (summary != null && summary.mounted) {
-      summary.onHabitDataChanged();
-    }
 
     final snackBar = buildSnackBarWithDismiss(context,
         content: L10nBuilder(
@@ -164,6 +159,10 @@ class _PageState extends State<_Page> {
                 l10n?.batchCheckin_completed_snackbar_text(changedCount) ??
                     "Changed: $changedCount")));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    context.read<AppEventViewModel>().push(const ReloadDataEvent(
+        msg: "habit_status_changer._onConfirmButtonpressed",
+        exiEditMode: true));
   }
 
   void _onResetButtonPressed() {

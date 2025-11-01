@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
@@ -38,10 +39,14 @@ class PageProviders extends SingleChildStatelessWidget {
           update: (context, value, previous) =>
               previous!..updateDBHelper(value),
         ),
-        ChangeNotifierProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+        ChangeNotifierProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),
           update: (context, value, previous) =>
-              previous!..updateFromAppSync(value),
+              previous!..updateAppEvent(value),
+        ),
+        ChangeNotifierProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+          create: (context) => context.read<HabitSummaryViewModel>(),
+          update: (context, value, previous) => previous!..updateAppSync(value),
         ),
         ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
             HabitSummaryViewModel>(

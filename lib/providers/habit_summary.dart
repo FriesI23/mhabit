@@ -26,6 +26,7 @@ import '../common/utils.dart';
 import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
+import '../models/app_event.dart';
 import '../models/habit_date.dart';
 import '../models/habit_display.dart';
 import '../models/habit_form.dart';
@@ -35,6 +36,7 @@ import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
 import '../reminders/notification_service.dart';
 import '../storage/db_helper_provider.dart';
+import 'app_event.dart';
 import 'app_sync.dart';
 import 'commons.dart';
 import 'utils.dart';
@@ -47,7 +49,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         DBHelperLoadedMixin,
         DBOperationsMixin,
         PinnedAppbarMixin
-    implements ProviderMounted, HabitSummaryDirtyMarker {
+    implements ProviderMounted, HabitSummaryDirtyMarker, AppEventLoaded {
   // data
   final _data = HabitSummaryDataCollection();
   var _sortableCache = const _HabitsSortableCache(
@@ -69,8 +71,9 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
-  // sync from appsync
+  // subscriptions
   StreamSubscription<String>? _startSyncSub;
+  StreamSubscription<AppEvent>? _clearDatabaseSub;
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
@@ -81,11 +84,6 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   HabitDetailAdapter buildHabitDetailAdapter() =>
       HabitDetailAdapter(root: this);
-
-  HabitsStatusChangerAdapter buildHabitStatusCHangerAdapter() =>
-      HabitsStatusChangerAdapter(root: this);
-
-  AppSettingAdapter buildAppSettingAdapter() => AppSettingAdapter(root: this);
 
   @override
   bool get mounted => _mounted;
@@ -578,12 +576,25 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#endregion
 
   //#region: auto sync
-  void updateFromAppSync(AppSyncViewModel appSync) {
+  void updateAppSync(AppSyncViewModel appSync) {
     _startSyncSub?.cancel();
     _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
       appLog.habit
-          .debug("onStartSyncEventTriggered", ex: [reloadDBToggleSwich]);
+          .debug("onStartSyncEventTriggered", ex: [id, reloadDBToggleSwich]);
       rockreloadDBToggleSwich(clearSnackBar: false);
+    });
+  }
+  //#endregion
+
+  //#region: app event
+  @override
+  void updateAppEvent(AppEventViewModel newAppEvent) {
+    _clearDatabaseSub?.cancel();
+    _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
+      appLog.habit.debug("onReloadDataEventTriggered",
+          ex: [event, reloadDBToggleSwich]);
+      if (event.exiEditMode) exitEditMode();
+      rockreloadDBToggleSwich(clearSnackBar: event.clearSnackBar);
     });
   }
   //#endregion
@@ -988,44 +999,5 @@ final class HabitDetailAdapter implements ProviderMounted {
     if (root == null) return;
     root.collapseCalendar();
     root.rockreloadDBToggleSwich();
-  }
-}
-
-final class HabitsStatusChangerAdapter implements ProviderMounted {
-  late final WeakReference<HabitSummaryViewModel> _root;
-
-  HabitsStatusChangerAdapter({required HabitSummaryViewModel root}) {
-    _root = WeakReference(root);
-  }
-
-  @override
-  bool get mounted => _root.target?.mounted == true;
-
-  void onHabitDataChanged() {
-    final root = _root.target;
-    if (root == null || !root.mounted) return;
-    appLog.habit
-        .info("HabitsStatusChangerAdapter.onHabitDataChanged", ex: [_root]);
-    root.exitEditMode();
-    root.rockreloadDBToggleSwich(clearSnackBar: false);
-  }
-}
-
-final class AppSettingAdapter implements ProviderMounted {
-  late final WeakReference<HabitSummaryViewModel> _root;
-
-  AppSettingAdapter({required HabitSummaryViewModel root}) {
-    _root = WeakReference(root);
-  }
-
-  @override
-  bool get mounted => _root.target?.mounted == true;
-
-  void onDatabaseCleared() {
-    final root = _root.target;
-    if (root == null || !root.mounted) return;
-    appLog.habit
-        .info("HabitsStatusChangerAdapter.onDatabaseCleared", ex: [_root]);
-    root.rockreloadDBToggleSwich(clearSnackBar: false);
   }
 }
