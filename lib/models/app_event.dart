@@ -16,8 +16,14 @@ abstract interface class AppEvent {}
 
 final class ReloadDataEvent implements AppEvent {
   final String? msg;
+  final bool exiEditMode;
+  final bool clearSnackBar;
 
-  const ReloadDataEvent({this.msg});
+  const ReloadDataEvent({
+    this.msg,
+    this.exiEditMode = false,
+    this.clearSnackBar = false,
+  });
 
   @override
   String toString() {

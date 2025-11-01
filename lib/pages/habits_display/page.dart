@@ -1352,18 +1352,10 @@ class _FAB extends StatelessWidget {
         .nonNulls
         .map((e) => e.uuid)
         .toList();
-    final summary = context.read<HabitSummaryViewModel>();
 
-    Widget pageHabitsStatusChangerBuilder(BuildContext context) {
-      final page = habits_status_changer.HabitsStatusChangerPage(
-        uuidList: selectedUUIDList,
-      );
-      if (!summary.mounted) return page;
-      return Provider.value(
-        value: summary.buildHabitStatusCHangerAdapter(),
-        child: page,
-      );
-    }
+    Widget habitsStatusChangerPageBuilder(BuildContext context) =>
+        habits_status_changer.HabitsStatusChangerPage(
+            uuidList: selectedUUIDList);
 
     return HabitDisplayFAB<Object?>(
       closeBuilder: (context, action) {
@@ -1376,7 +1368,7 @@ class _FAB extends StatelessWidget {
         );
       },
       openBuilder: (context, action) => isInEditMode
-          ? pageHabitsStatusChangerBuilder(context)
+          ? habitsStatusChangerPageBuilder(context)
           : const habit_edit.HabitEditPage(showInFullscreenDialog: true),
       onClosed: (data) {
         switch (data) {

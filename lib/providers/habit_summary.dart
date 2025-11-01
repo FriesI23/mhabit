@@ -85,9 +85,6 @@ class HabitSummaryViewModel extends ChangeNotifier
   HabitDetailAdapter buildHabitDetailAdapter() =>
       HabitDetailAdapter(root: this);
 
-  HabitsStatusChangerAdapter buildHabitStatusCHangerAdapter() =>
-      HabitsStatusChangerAdapter(root: this);
-
   @override
   bool get mounted => _mounted;
 
@@ -596,7 +593,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
       appLog.habit.debug("onReloadDataEventTriggered",
           ex: [event, reloadDBToggleSwich]);
-      rockreloadDBToggleSwich(clearSnackBar: false);
+      if (event.exiEditMode) exitEditMode();
+      rockreloadDBToggleSwich(clearSnackBar: event.clearSnackBar);
     });
   }
   //#endregion
@@ -1001,25 +999,5 @@ final class HabitDetailAdapter implements ProviderMounted {
     if (root == null) return;
     root.collapseCalendar();
     root.rockreloadDBToggleSwich();
-  }
-}
-
-final class HabitsStatusChangerAdapter implements ProviderMounted {
-  late final WeakReference<HabitSummaryViewModel> _root;
-
-  HabitsStatusChangerAdapter({required HabitSummaryViewModel root}) {
-    _root = WeakReference(root);
-  }
-
-  @override
-  bool get mounted => _root.target?.mounted == true;
-
-  void onHabitDataChanged() {
-    final root = _root.target;
-    if (root == null || !root.mounted) return;
-    appLog.habit
-        .info("HabitsStatusChangerAdapter.onHabitDataChanged", ex: [_root]);
-    root.exitEditMode();
-    root.rockreloadDBToggleSwich(clearSnackBar: false);
   }
 }
