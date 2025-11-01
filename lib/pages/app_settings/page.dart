@@ -25,22 +25,22 @@ import '../../common/consts.dart';
 import '../../common/enums.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
-import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
+import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
 import '../../providers/app_caches.dart';
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
 import '../../providers/app_reminder.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_op_config.dart';
-import '../../providers/habit_summary.dart' as habit_summary;
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
@@ -58,16 +58,10 @@ import '../common/widgets.dart';
 import '../expermental_features/page.dart' as exp_feature;
 import 'widgets.dart';
 
-Future<void> naviToAppSettingPage({
-  required BuildContext context,
-  habit_summary.HabitSummaryViewModel? summary,
-}) async {
+Future<void> naviToAppSettingPage({required BuildContext context}) async {
   return Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (context) => Provider.value(
-        value: summary?.buildAppSettingAdapter(),
-        child: const AppSettingPage(),
-      ),
+      builder: (context) => const AppSettingPage(),
     ),
   );
 }
@@ -85,8 +79,6 @@ Future<void> naviToAppSettingPage({
 /// - Required for callback:
 ///   - [HabitFileImporterViewModel]
 ///   - [ProfileViewModel]
-/// - Optional:
-///   - [habit_summary.AppSettingAdapter]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
 
@@ -394,7 +386,9 @@ class _PageState extends State<_Page> with XShare {
         content: const Text("clear database success"));
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context.maybeRead<habit_summary.AppSettingAdapter>()?.onDatabaseCleared();
+    context
+        .read<AppEventViewModel>()
+        .push(const ReloadDataEvent(msg: "app_settings._onClearDBTilePressed"));
   }
 
   @override

@@ -565,10 +565,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       _vm.exitSearchMode();
       _vm.exitEditMode();
     }
-    app_settings.naviToAppSettingPage(
-      context: context,
-      summary: context.read<HabitSummaryViewModel>(),
-    );
+    app_settings.naviToAppSettingPage(context: context);
   }
 
   Future<void> _onRefreshIndicatorTriggered() async {
