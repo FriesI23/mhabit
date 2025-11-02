@@ -12,23 +12,109 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import '../common/types.dart';
 import '../logging/helper.dart';
+import '../models/habit_date.dart';
 import '../models/habit_form.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
 import '../reminders/notification_service.dart';
+import '../storage/db/handlers/record.dart';
 import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
 class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   HabitsManager();
 
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitsStatus(
-      {required ChangeHabitsStatusAction action}) {
-    return habitDBHelper
-        .updateSelectedHabitStatus(
-            action.data.map((e) => e.uuid).toList(), action.status)
-        .then((_) => action.resolve());
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  }) async {
+    await habitDBHelper.updateSelectedHabitStatus(
+        action.data.map((e) => e.uuid).toList(), action.status);
+    final result = action.resolve();
+    if (extraResolver is Future) {
+      await Future.wait(result.map((e) async => extraResolver?.call(e)));
+    } else if (extraResolver != null) {
+      for (var r in result) {
+        extraResolver(r);
+      }
+    }
+    return result;
+  }
+
+  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
+    required ChangeRecordStatusAction<HabitDate> preAction,
+    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
+            List<ChangeRecordStatusResult> results)?
+        postActionBuilder,
+    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
+  }) async {
+    final data = preAction.data;
+    final preResults = preAction.resolve();
+
+    if (preResults.length == 1) {
+      await saveHabitRecordToDB(data.id, data.uuid, preResults.first.data,
+          isNew: preResults.first.isNew, withReason: preResults.first.reason);
+    } else {
+      await saveMultiHabitRecordToDB(data.id, data.uuid, preResults);
+    }
+
+    final results = postActionBuilder?.call(preResults).resolve() ?? preResults;
+    if (extraResolver is Future) {
+      await Future.wait(results.map((e) async => extraResolver?.call(e)));
+    } else if (extraResolver != null) {
+      for (var r in results) {
+        extraResolver(r);
+      }
+    }
+    return results;
+  }
+
+  Future<RecordDBCell> saveHabitRecordToDB(
+      DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
+      {bool isNew = false, String? withReason}) async {
+    final int dbid;
+    final RecordDBCell dbCell;
+    if (isNew) {
+      dbCell = RecordDBCell.build(
+        parentId: parentId,
+        parentUUID: parentUUID,
+        uuid: record.uuid,
+        recordDate: record.date.epochDay,
+        recordType: record.status.dbCode,
+        recordValue: record.value,
+        reason: withReason,
+      );
+      dbid = await recordDBHelper.insertNewRecord(dbCell);
+    } else {
+      dbCell = RecordDBCell(
+        uuid: record.uuid,
+        parentUUID: parentUUID,
+        recordType: record.status.dbCode,
+        recordValue: record.value,
+        reason: withReason,
+      );
+      dbid = await recordDBHelper.updateRecord(dbCell);
+    }
+
+    return dbCell.copyWith(id: dbid);
+  }
+
+  Future<void> saveMultiHabitRecordToDB(DBID parentId, HabitUUID parentUUID,
+      Iterable<ChangeRecordStatusResult> records) async {
+    final cells = records.map((record) => RecordDBCell.build(
+          parentId: parentId,
+          parentUUID: parentUUID,
+          uuid: record.data.uuid,
+          recordDate: record.data.date.epochDay,
+          recordType: record.data.status.dbCode,
+          recordValue: record.data.value,
+          reason: record.reason,
+        ));
+    await recordDBHelper.insertOrUpdateMultiRecords(cells);
   }
 
   Future<void> updateHabitReminder(HabitSummaryData data) async {

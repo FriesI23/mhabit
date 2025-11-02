@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'dart:collection';
 
 import '../../common/consts.dart';
@@ -30,25 +29,24 @@ class ChangeHabitStatusResult {
   });
 }
 
-abstract interface class ChangeHabitsStatusAction
-    implements HabitRepoAction<FutureOr<List<ChangeHabitStatusResult>>> {
+abstract interface class ChangeHabitStatusAction
+    implements HabitRepoAction<List<ChangeHabitStatusResult>> {
   HabitStatus get status;
   UnmodifiableListView<HabitSummaryData> get data;
 
-  FutureOr<ChangeHabitStatusResult> resolveSingle(HabitSummaryData data);
+  ChangeHabitStatusResult resolveSingle(HabitSummaryData data);
 }
 
-final class BasicChangeHabitsStatusAction implements ChangeHabitsStatusAction {
+final class ChangeMultiHabitStatusAction implements ChangeHabitStatusAction {
+  @override
   final HabitStatus status;
   final int firstDay;
   final List<HabitSummaryData> _data;
-  final FutureOr<void> Function(HabitSummaryData data)? extraResolver;
 
-  const BasicChangeHabitsStatusAction(
+  const ChangeMultiHabitStatusAction(
     List<HabitSummaryData> data, {
     required this.status,
     this.firstDay = defaultFirstDay,
-    this.extraResolver,
   }) : _data = data;
 
   @override
@@ -56,35 +54,13 @@ final class BasicChangeHabitsStatusAction implements ChangeHabitsStatusAction {
       UnmodifiableListView(_data);
 
   @override
-  FutureOr<List<ChangeHabitStatusResult>> resolve() {
-    bool hasFuture = false;
-    final results = <FutureOr<ChangeHabitStatusResult>>[];
-    for (final d in _data) {
-      final r = resolveSingle(d);
-      results.add(r);
-      if (r is Future<ChangeHabitStatusResult>) {
-        hasFuture = true;
-      }
-    }
-    if (!hasFuture) {
-      return results.cast<ChangeHabitStatusResult>();
-    }
-    return Future.wait(results.map(Future.value));
-  }
+  List<ChangeHabitStatusResult> resolve() => _data.map(resolveSingle).toList();
 
   @override
-  FutureOr<ChangeHabitStatusResult> resolveSingle(HabitSummaryData data) {
+  ChangeHabitStatusResult resolveSingle(HabitSummaryData data) {
     final orgStatus = data.status;
     data.status = status;
     data.bumpVersion();
-    final result = ChangeHabitStatusResult(data: data, orgStatus: orgStatus);
-    final extraResolver = this.extraResolver;
-    if (extraResolver != null) {
-      final maybeFuture = extraResolver(data);
-      if (maybeFuture is Future<void>) {
-        return maybeFuture.then((_) => result);
-      }
-    }
-    return result;
+    return ChangeHabitStatusResult(data: data, orgStatus: orgStatus);
   }
 }

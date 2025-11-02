@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export '_habit_repo_actions/change_habit_status_action.dart';
+export '_habit_repo_actions/change_record_status_action.dart';
 
 abstract interface class HabitRepoAction<R> {
   R resolve();

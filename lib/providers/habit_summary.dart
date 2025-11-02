@@ -581,28 +581,25 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnTap();
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
-
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
     _updateHabitAutoCompleteStatistics(data);
 
     appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
     if (listen) notifyListeners();
 
     await _bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
@@ -631,6 +628,21 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     if (listen) notifyListeners();
     await _bumpHatbitVersion(data);
+    return record;
+  }
+
+  Future<HabitSummaryRecord?> changeRecordReason(
+      HabitUUID habitUUID, HabitRecordDate date, String newReason,
+      {bool listen = true}) async {
+    final data = _data.getHabitByUUID(habitUUID);
+    if (data == null) return null;
+    final record = data.getRecordByDate(date);
+    if (record == null) return null;
+
+    await saveHabitRecordToDB(data.id, data.uuid, record,
+        isNew: false, withReason: newReason);
+
+    if (listen) notifyListeners();
     return record;
   }
 
@@ -666,21 +678,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         changedUUIDList, changedPosList);
   }
 
-  Future<HabitSummaryRecord?> changeRecordReason(
-      HabitUUID habitUUID, HabitRecordDate date, String newReason,
-      {bool listen = true}) async {
-    final data = _data.getHabitByUUID(habitUUID);
-    if (data == null) return null;
-    final record = data.getRecordByDate(date);
-    if (record == null) return null;
-
-    await saveHabitRecordToDB(data.id, data.uuid, record,
-        isNew: false, withReason: newReason);
-
-    if (listen) notifyListeners();
-    return record;
-  }
-
   Future<void> onHabitReorderComplate(int index, int dropIndex) {
     currentHabitList.insert(dropIndex, currentHabitList.removeAt(index));
     return _writeChangedSortPositionToDB();
@@ -691,18 +688,18 @@ class HabitSummaryViewModel extends ChangeNotifier
     appLog.habit
         .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
     final dataList = uuidList.map(getHabit).nonNulls.toList();
-    final result = await habitsManager.changeHabitsStatus(
-        action: BasicChangeHabitsStatusAction(
-      dataList,
-      status: newStatus,
-      firstDay: firstday,
-      extraResolver: (data) async {
-        final t1 = _updateHabitReminder(data);
-        _updateHabitAutoCompleteStatistics(data);
-        await t1;
-      },
-    ));
-    return result
+    final results = await habitsManager.changeHabitStatus(
+        action: ChangeMultiHabitStatusAction(
+          dataList,
+          status: newStatus,
+          firstDay: firstday,
+        ),
+        extraResolver: (result) async {
+          final t1 = _updateHabitReminder(result.data);
+          _updateHabitAutoCompleteStatistics(result.data);
+          await t1;
+        });
+    return results
         .map((e) => HabitStatusChangedRecord(
             habitUUID: e.data.uuid,
             newStatus: e.data.status,
