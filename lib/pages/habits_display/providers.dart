@@ -22,9 +22,9 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_filter.dart';
+import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
-import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -34,10 +34,10 @@ class PageProviders extends SingleChildStatelessWidget {
         ChangeNotifierProvider<HabitSummaryViewModel>(
           create: (context) => HabitSummaryViewModel(),
         ),
-        ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
+        ChangeNotifierProxyProvider<HabitsManager, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),
           update: (context, value, previous) =>
-              previous!..updateDBHelper(value),
+              previous!..updateHabitManager(value),
         ),
         ChangeNotifierProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),
@@ -68,7 +68,7 @@ class PageProviders extends SingleChildStatelessWidget {
           update: (context, value, previous) {
             if (value.consumeReloadDisplayFlag()) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous!.rockreloadDBToggleSwich();
+                previous!.requestReload();
               });
             }
             return previous!;
@@ -81,7 +81,7 @@ class PageProviders extends SingleChildStatelessWidget {
             if (value.firstDay != previous!.firstday) {
               previous.updateFirstday(value.firstDay);
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.rockreloadDBToggleSwich();
+                previous.requestReload();
               });
             }
             return previous;

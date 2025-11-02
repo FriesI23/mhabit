@@ -766,16 +766,14 @@ class HabitSummaryDataSortCache
 
 class HabitSummaryStatusCache {
   final bool isAppbarPinned;
-  final bool reloadDBToggleSwich;
-  final bool reloadUIToggleSwitch;
+  final int reloadHashcode;
   final bool isClandarExpanded;
   final bool isInEditMode;
   final bool isInSearchMode;
 
   const HabitSummaryStatusCache({
     required this.isAppbarPinned,
-    required this.reloadDBToggleSwich,
-    required this.reloadUIToggleSwitch,
+    required this.reloadHashcode,
     required this.isClandarExpanded,
     required this.isInEditMode,
     required this.isInSearchMode,
@@ -783,8 +781,8 @@ class HabitSummaryStatusCache {
 
   @override
   String toString() {
-    return "HabitSummaryStatusCache($isAppbarPinned|$reloadDBToggleSwich|"
-        "$reloadUIToggleSwitch|$isClandarExpanded|$isInEditMode|$isInSearchMode)";
+    return "HabitSummaryStatusCache($isAppbarPinned|$reloadHashcode|"
+        "$isClandarExpanded|$isInEditMode|$isInSearchMode)";
   }
 
   @override
@@ -792,8 +790,7 @@ class HabitSummaryStatusCache {
     if (identical(this, other)) return true;
     return other is HabitSummaryStatusCache &&
         isAppbarPinned == other.isAppbarPinned &&
-        reloadDBToggleSwich == other.reloadDBToggleSwich &&
-        reloadUIToggleSwitch == other.reloadUIToggleSwitch &&
+        reloadHashcode == other.reloadHashcode &&
         isClandarExpanded == other.isClandarExpanded &&
         isInEditMode == other.isInEditMode &&
         isInSearchMode == other.isInSearchMode;
@@ -803,8 +800,7 @@ class HabitSummaryStatusCache {
   int get hashCode {
     return hashObjects([
       isAppbarPinned,
-      reloadDBToggleSwich,
-      reloadUIToggleSwitch,
+      reloadHashcode,
       isClandarExpanded,
       isInEditMode,
     ]);

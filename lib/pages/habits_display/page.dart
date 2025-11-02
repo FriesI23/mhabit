@@ -178,15 +178,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
-    HabitSummaryViewModel viewmodel;
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    await viewmodel.revertHabitsStatus(recordList);
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    viewmodel.rockReloadUIToggleSwitch();
-
+    if (!(mounted && _vm.mounted)) return;
+    await _vm.revertHabitsStatus(recordList);
     _onHabitStatusChangeConfirmed();
   }
 
@@ -391,27 +384,16 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _openHabitRecordResonModifierDialog(
-    BuildContext context,
     HabitUUID parentUUID,
     HabitRecordUUID? uuid,
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    String initReason = '';
-    HabitSummaryViewModel viewmodel;
-
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return;
-    final data = viewmodel.getHabit(parentUUID);
+    if (!_vm.mounted) return;
+    final data = _vm.getHabit(parentUUID);
     if (data == null) return;
-
-    final recordUUID = data.getRecordByDate(date)?.uuid;
-    if (recordUUID != null) {
-      final rcd = await viewmodel.recordDBHelper.loadSingleRecord(recordUUID);
-      initReason = rcd?.reason ?? '';
-    }
-
-    if (!context.mounted) return;
+    final initReason = await _vm.loadRecordReason(data, date) ?? '';
+    if (!mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
       context: context,
       initReason: initReason,
@@ -420,39 +402,24 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       colorType: data.colorType,
     );
 
-    if (result == null || result == initReason || !context.mounted) return;
-    context
-        .read<HabitSummaryViewModel>()
-        .changeRecordReason(parentUUID, date, result)
-        .then((record) {
+    if (result == null || result == initReason) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordReason(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
       _onRecordChangeConfirmed();
     });
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
-    BuildContext context,
     HabitUUID parentUUID,
     HabitRecordUUID? uuid,
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    HabitSummaryViewModel viewmodel;
-
-    viewmodel = context.read<HabitSummaryViewModel>();
-    final data = viewmodel.getHabit(parentUUID);
+    final data = _vm.getHabit(parentUUID);
     if (data == null) return;
-
-    final HabitDailyGoal crtNum;
+    final crtNum = data.getEffectiveDailyValue(date);
     final record = data.getRecordByDate(date);
-    final orgNum = record?.value ?? -1;
-    if (record != null) {
-      if (record.status != HabitRecordStatus.done) return;
-      crtNum = record.value;
-    } else {
-      crtNum = data.dailyGoal;
-    }
-
     final result = await showHabitRecordCustomNumberPickerDialog(
       context: context,
       recordForm: HabitDailyRecordForm.getImp(
@@ -467,10 +434,9 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       colorType: data.colorType,
     );
 
-    if (result == null || result == orgNum || !context.mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.changeRecordValue(parentUUID, date, result).then((record) {
+    if (result == null || result == record?.value) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordValue(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
       _onRecordChangeConfirmed();
     });
@@ -482,19 +448,17 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    if (!mounted) return;
+    if (!(mounted && _vm.mounted)) return;
 
-    final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
+    final data = _vm.getHabit(puuid);
     if (data == null) return;
 
     final record = data.getRecordByDate(date);
     switch (record?.status) {
       case HabitRecordStatus.skip:
-        return _openHabitRecordResonModifierDialog(
-            context, puuid, uuid, date, crt);
+        return _openHabitRecordResonModifierDialog(puuid, uuid, date, crt);
       default:
-        return _openHabitRecordCusomNumberPickerDialog(
-            context, puuid, uuid, date, crt);
+        return _openHabitRecordCusomNumberPickerDialog(puuid, uuid, date, crt);
     }
   }
 
@@ -595,52 +559,34 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _onNewHabitCreated(HabitDBCell result) async {
-    HabitSummaryViewModel viewmodel;
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    final habit = HabitSummaryData.fromDBQueryCell(result);
-    final addResult = viewmodel.addNewData(habit);
-    if (addResult) viewmodel.rockReloadUIToggleSwitch();
+    if (!(mounted && _vm.mounted)) return;
+    _vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
   }
 
   Future<bool> _enterHabitEditPage({
     Duration exitEditModeDuration = kEditModeChangeAnimateDuration,
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
-    HabitSummaryViewModel viewmodel;
-
-    if (!mounted) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return false;
-    final selectedData = viewmodel.getSelectedHabitsData().firstWhere(
-          (element) => element != null,
-          orElse: () => null,
-        );
-
-    if (selectedData == null) return false;
-    final dbcell =
-        await viewmodel.habitDBHelper.loadHabitDetail(selectedData.uuid);
-
-    if (!mounted || dbcell == null) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return false;
+    if (!(mounted && _vm.mounted)) return false;
+    final dbcell = await _vm.loadSelectedHabitDetail();
+    if (dbcell == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
     final form = formBuilder(dbcell);
-    if (viewmodel.isInEditMode) {
-      context.read<HabitSummaryViewModel>().exitEditMode();
+    if (_vm.isInEditMode) {
+      _vm.exitEditMode();
       await Future.delayed(exitEditModeDuration);
+      if (!mounted) return false;
     }
 
-    if (!mounted) return false;
     final result =
         await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
 
+    if (result == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
     // Edit/Create Habit involves complex state changes (such as sorting by
     // completion rate, calculating the start date of check-in data, etc.),
     // so it is necessary to reload all data from the database.
-    if (result == null || !mounted) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    viewmodel.rockreloadDBToggleSwich();
+    _vm.requestReload();
     return true;
   }
 
@@ -915,7 +861,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
+                context.read<HabitSummaryViewModel>().requestReload();
               },
             ),
           ),
@@ -1145,9 +1091,8 @@ class _HabitListState extends State<_HabitList> {
     final sync = context.read<AppSyncViewModel>();
     if (sync.mounted) await sync.appSyncTask.processing;
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoaded) {
-      await Future.wait(
-          [_vm.loadData(inFutureBuilder: true), minBarShowTimeFuture]);
+    if (!_vm.isDataLoading) {
+      await Future.wait([_vm.loadData(), minBarShowTimeFuture]);
       if (!(mounted && _vm.mounted)) return;
     }
     if (_vm.consumeClearSnackBarFlag()) {
@@ -1157,25 +1102,21 @@ class _HabitListState extends State<_HabitList> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<HabitSummaryViewModel, (bool, bool)>(
-      selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
+    return Selector<HabitSummaryViewModel, bool>(
+      selector: (context, vm) => vm.isDataLoading,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
-        builder: (context, _) => Selector<HabitSummaryViewModel, bool>(
-          selector: (context, viewmodel) => viewmodel.reloadUIToggleSwitch,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, _, child) => AnimatedSliverList(
-            controller: _dispatcher.controller,
-            delegate: AnimatedSliverChildBuilderDelegate(
-                (context, index, data) => _dispatcher.builder(
-                    context, _vm.currentHabitList, index, data),
-                _vm.currentHabitList.length,
-                animator: kHabitContentListAnimator,
-                addAnimatedElevation: kCommonEvalation,
-                morphDuration: kEditModeChangeAnimateDuration,
-                reorderModel: widget.reorderModel),
-          ),
+        builder: (context, _) => AnimatedSliverList(
+          controller: _dispatcher.controller,
+          delegate: AnimatedSliverChildBuilderDelegate(
+              (context, index, data) => _dispatcher.builder(
+                  context, _vm.currentHabitList, index, data),
+              _vm.currentHabitList.length,
+              animator: kHabitContentListAnimator,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
+              reorderModel: widget.reorderModel),
         ),
       ),
     );
@@ -1488,7 +1429,7 @@ class _LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDataLoaded =
-        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoaded);
+        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoading);
     return AnimatedOpacity(
       opacity: isDataLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),

@@ -301,7 +301,7 @@ class HabitStatusChangerViewModel
     await recordDBHelper.insertOrUpdateMultiRecords(records);
     if (!mounted) return 0;
 
-    regToReloadData();
+    requestReloadData();
     if (listen) notifyListeners();
     return records.length;
   }
@@ -324,7 +324,7 @@ class HabitStatusChangerViewModel
     _mounted = false;
   }
 
-  void regToReloadData() {
+  void requestReloadData() {
     _cancelLoading();
     notifyListeners();
   }
