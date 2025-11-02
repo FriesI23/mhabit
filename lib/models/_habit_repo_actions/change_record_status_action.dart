@@ -149,3 +149,50 @@ final class AutoChangeRecordStatusAction
         origin: isNew ? null : orgRecord, data: record);
   }
 }
+
+final class ChangeMultiRecordStatusAction
+    implements ChangeRecordStatusAction<HabitRecordDate> {
+  @override
+  final HabitSummaryData data;
+  final HabitDailyGoal? goal;
+  final String? reason;
+  final HabitRecordStatus status;
+  final List<HabitRecordDate> _dateList;
+
+  const ChangeMultiRecordStatusAction({
+    required this.data,
+    this.goal,
+    this.reason,
+    this.status = HabitRecordStatus.done,
+    required List<HabitRecordDate> dateList,
+  }) : _dateList = dateList;
+
+  @override
+  List<HabitRecordDate> get valueList => _dateList;
+
+  @override
+  List<ChangeRecordStatusResult> resolve() =>
+      _dateList.map(resolveSingle).toList();
+
+  @override
+  ChangeRecordStatusResult resolveSingle(HabitRecordDate date) {
+    final HabitSummaryRecord orgRecord;
+    final HabitSummaryRecord record;
+    final bool isNew;
+
+    if (data.containsRecordDate(date)) {
+      orgRecord = data.getRecordByDate(date)!;
+      isNew = false;
+    } else {
+      orgRecord = HabitSummaryRecord.generate(date, parentUUID: data.uuid);
+      isNew = true;
+    }
+
+    final newGoal = goal?.clamp(minHabitDailyGoal, maxHabitdailyGoal);
+    record =
+        orgRecord.copyWith(value: newGoal ?? orgRecord.value, status: status);
+
+    return ChangeRecordStatusResult(
+        origin: isNew ? null : orgRecord, data: record, reason: reason);
+  }
+}

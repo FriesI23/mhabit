@@ -40,7 +40,6 @@ import 'app_event.dart';
 import 'app_sync.dart';
 import 'commons.dart';
 import 'habits_manager.dart';
-import 'utils.dart';
 
 part 'habit_summary.g.dart';
 
@@ -49,7 +48,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         NotificationChannelDataMixin,
         HabitsManagerLoadedMixin,
         DBHelperLoadedMixin,
-        DBOperationsMixin,
         PinnedAppbarMixin
     implements ProviderMounted, AppEventLoaded {
   // data
@@ -141,11 +139,6 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool get reloadUIToggleSwitch => _reloadUIToggleSwitch;
 
   int get habitCount => _data.length;
-
-  Future<void> _bumpHatbitVersion(HabitSummaryData data) async {
-    data.bumpVersion();
-    await _updateHabitReminder(data);
-  }
 
   HabitSummaryData? get earliestSummaryDataStartDate {
     HabitSummaryData? result;
@@ -589,16 +582,14 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    _updateHabitAutoCompleteStatistics(data);
-
-    appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
+    appLog.value.info("HabitSummary.changeRecordStatus",
         beforeVal: result.origin,
         afterVal: result.data,
         ex: ["rst=$result", data.id, data.progress]);
 
+    _updateHabitAutoCompleteStatistics(data);
+    _updateHabitReminder(data);
     if (listen) notifyListeners();
-
-    await _bumpHatbitVersion(data);
     return result.data;
   }
 
@@ -608,27 +599,24 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnLongTap(newValue);
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data, goal: newValue, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
+    appLog.value.info("HabitSummary.changeRecordValue",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
     _updateHabitAutoCompleteStatistics(data);
-
-    appLog.value.info("onLongPressChangeRecordValue",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
-
+    _updateHabitReminder(data);
     if (listen) notifyListeners();
-    await _bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordReason(
@@ -636,14 +624,28 @@ class HabitSummaryViewModel extends ChangeNotifier
       {bool listen = true}) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
-    final record = data.getRecordByDate(date);
-    if (record == null) return null;
 
-    await saveHabitRecordToDB(data.id, data.uuid, record,
-        isNew: false, withReason: newReason);
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data,
+          reason: newReason,
+          status: HabitRecordStatus.skip,
+          dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
+    appLog.value.info("HabitSummary.changeRecordReason",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
+
+    _updateHabitAutoCompleteStatistics(data);
+    _updateHabitReminder(data);
     if (listen) notifyListeners();
-    return record;
+    return result.data;
   }
 
   Future<void> _writeChangedSortPositionToDB() async {
@@ -689,11 +691,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
     final dataList = uuidList.map(getHabit).nonNulls.toList();
     final results = await habitsManager.changeHabitStatus(
-        action: ChangeMultiHabitStatusAction(
-          dataList,
-          status: newStatus,
-          firstDay: firstday,
-        ),
+        action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
         extraResolver: (result) async {
           final t1 = _updateHabitReminder(result.data);
           _updateHabitAutoCompleteStatistics(result.data);
@@ -747,7 +745,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
 
     resortData(listen: false);
-
     exitEditMode();
     return result;
   }
@@ -772,7 +769,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         realNeedUnarchivedUUID, HabitStatus.activated);
 
     resortData(listen: false);
-
     exitEditMode();
     return result;
   }
@@ -797,7 +793,6 @@ class HabitSummaryViewModel extends ChangeNotifier
         await _changeHabitsStatus(realNeedDeletedUUID, HabitStatus.deleted);
 
     resortData(listen: false);
-
     exitEditMode();
     return result;
   }

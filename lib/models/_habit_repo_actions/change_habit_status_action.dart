@@ -14,7 +14,6 @@
 
 import 'dart:collection';
 
-import '../../common/consts.dart';
 import '../habit_form.dart';
 import '../habit_repo_actions.dart';
 import '../habit_summary.dart';
@@ -40,13 +39,11 @@ abstract interface class ChangeHabitStatusAction
 final class ChangeMultiHabitStatusAction implements ChangeHabitStatusAction {
   @override
   final HabitStatus status;
-  final int firstDay;
   final List<HabitSummaryData> _data;
 
   const ChangeMultiHabitStatusAction(
     List<HabitSummaryData> data, {
     required this.status,
-    this.firstDay = defaultFirstDay,
   }) : _data = data;
 
   @override
