@@ -23,7 +23,6 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../common/types.dart';
 import '../common/utils.dart';
-import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
 import '../models/app_event.dart';
@@ -35,7 +34,7 @@ import '../models/habit_score.dart';
 import '../models/habit_stat.dart';
 import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
-import '../storage/db_helper_provider.dart';
+import '../storage/db/handlers/habit.dart';
 import 'app_event.dart';
 import 'app_sync.dart';
 import 'commons.dart';
@@ -43,11 +42,20 @@ import 'habits_manager.dart';
 
 part 'habit_summary.g.dart';
 
+extension HabitSummaryDataExntesion on HabitSummaryData {
+  HabitDailyGoal getEffectiveDailyValue(HabitRecordDate date) {
+    final record = getRecordByDate(date);
+    if (record != null && record.status == HabitRecordStatus.done) {
+      return record.value;
+    }
+    return dailyGoal;
+  }
+}
+
 class HabitSummaryViewModel extends ChangeNotifier
     with
         NotificationChannelDataMixin,
         HabitsManagerLoadedMixin,
-        DBHelperLoadedMixin,
         PinnedAppbarMixin
     implements ProviderMounted, AppEventLoaded {
   // data
@@ -208,6 +216,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
   }
 
+  //#region loading
   void _cancelLoading() {
     final loading = _loading;
     if (loading == null) return;
@@ -266,15 +275,11 @@ class HabitSummaryViewModel extends ChangeNotifier
           ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
 
       // init habits
-      final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection();
-      final recordLoadTask = recordDBHelper.loadAllRecords();
-      final habitLoaded = await habitLoadTask;
-      final recordLoaded = await recordLoadTask;
+      await habitsManager.loadHabitSummaryCollectionData(
+          initedCollection: _data);
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
-
-      _data.initDataFromDBQueuryResult(habitLoaded, recordLoaded);
       _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
       _resortData();
 
@@ -305,6 +310,17 @@ class HabitSummaryViewModel extends ChangeNotifier
     return _data.getHabitByUUID(habitUUID);
   }
 
+  Future<String?> loadRecordReason(
+          HabitSummaryData data, HabitRecordDate date) =>
+      habitsManager.loadHabitRecordReason(data, date);
+
+  Future<HabitDBCell?> loadSelectedHabitDetail() async {
+    final selectedData = getSelectedHabitsData()
+        .firstWhere((element) => element != null, orElse: () => null);
+    if (selectedData == null) return null;
+    return habitsManager.loadHabitDetail(selectedData.uuid);
+  }
+
   bool addNewData(HabitSummaryData cell, {bool listen = false}) {
     final bool addResult = _data.addNewHabit(cell, forceAdd: false);
     final data = _data.getHabitByUUID(cell.uuid);
@@ -313,6 +329,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
     return addResult;
   }
+  //#endregion
 
   //#region: edit mode
   bool get isInEditMode => _isInEditMode;
@@ -649,35 +666,21 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> _writeChangedSortPositionToDB() async {
-    final filteredlastSortedDataCache = currentHabitList
+    final dataList = currentHabitList
         .whereType<HabitSummaryDataSortCache>()
-        .where((e) => e.data != null)
+        .map((e) => e.data)
+        .nonNulls
         .toList();
+    if (dataList.isEmpty) return;
 
-    final posList = filteredlastSortedDataCache
-        .map((e) => e.data!.sortPostion)
-        .makeUniqueAndIncreasing(
-          sortPositionConflictIncreaseStep,
-          isSorted: false,
-          decimalPlaces: sortPositionConflictDecimalPlaces,
-        );
+    final changedUUIDs = await habitsManager.fixAndSaveSortPositions(
+      dataList,
+      increaseStep: sortPositionConflictIncreaseStep,
+      decimalPlaces: sortPositionConflictDecimalPlaces,
+    );
 
-    final changedUUIDList = <HabitUUID>[];
-    final changedPosList = <num>[];
-    for (var i = 0; i < filteredlastSortedDataCache.length; i++) {
-      final data = filteredlastSortedDataCache[i];
-      final pos = posList[i];
-      if (data.data!.sortPostion != pos) {
-        data.data!.sortPostion = pos;
-        changedUUIDList.add(data.uuid);
-        changedPosList.add(pos);
-      }
-    }
-
-    appLog.habit.debug("$runtimeType.rewriteAllHabitsSortPostion",
-        ex: [changedUUIDList, changedPosList]);
-    await habitDBHelper.updateSelectedHabitsSortPostion(
-        changedUUIDList, changedPosList);
+    appLog.habit.debug("HabitSummary._writeChangedSortPositionToDB",
+        ex: [changedUUIDs]);
   }
 
   Future<void> onHabitReorderComplate(int index, int dropIndex) {

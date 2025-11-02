@@ -25,7 +25,6 @@ import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
-import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -39,11 +38,6 @@ class PageProviders extends SingleChildStatelessWidget {
           create: (context) => context.read<HabitSummaryViewModel>(),
           update: (context, value, previous) =>
               previous!..updateHabitManager(value),
-        ),
-        ChangeNotifierProxyProvider<DBHelperViewModel, HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) =>
-              previous!..updateDBHelper(value),
         ),
         ChangeNotifierProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
           create: (context) => context.read<HabitSummaryViewModel>(),

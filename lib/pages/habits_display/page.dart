@@ -391,27 +391,16 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _openHabitRecordResonModifierDialog(
-    BuildContext context,
     HabitUUID parentUUID,
     HabitRecordUUID? uuid,
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    String initReason = '';
-    HabitSummaryViewModel viewmodel;
-
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return;
-    final data = viewmodel.getHabit(parentUUID);
+    if (!_vm.mounted) return;
+    final data = _vm.getHabit(parentUUID);
     if (data == null) return;
-
-    final recordUUID = data.getRecordByDate(date)?.uuid;
-    if (recordUUID != null) {
-      final rcd = await viewmodel.recordDBHelper.loadSingleRecord(recordUUID);
-      initReason = rcd?.reason ?? '';
-    }
-
-    if (!context.mounted) return;
+    final initReason = await _vm.loadRecordReason(data, date) ?? '';
+    if (!mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
       context: context,
       initReason: initReason,
@@ -420,39 +409,24 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       colorType: data.colorType,
     );
 
-    if (result == null || result == initReason || !context.mounted) return;
-    context
-        .read<HabitSummaryViewModel>()
-        .changeRecordReason(parentUUID, date, result)
-        .then((record) {
+    if (result == null || result == initReason) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordReason(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
       _onRecordChangeConfirmed();
     });
   }
 
   void _openHabitRecordCusomNumberPickerDialog(
-    BuildContext context,
     HabitUUID parentUUID,
     HabitRecordUUID? uuid,
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    HabitSummaryViewModel viewmodel;
-
-    viewmodel = context.read<HabitSummaryViewModel>();
-    final data = viewmodel.getHabit(parentUUID);
+    final data = _vm.getHabit(parentUUID);
     if (data == null) return;
-
-    final HabitDailyGoal crtNum;
+    final crtNum = data.getEffectiveDailyValue(date);
     final record = data.getRecordByDate(date);
-    final orgNum = record?.value ?? -1;
-    if (record != null) {
-      if (record.status != HabitRecordStatus.done) return;
-      crtNum = record.value;
-    } else {
-      crtNum = data.dailyGoal;
-    }
-
     final result = await showHabitRecordCustomNumberPickerDialog(
       context: context,
       recordForm: HabitDailyRecordForm.getImp(
@@ -467,10 +441,9 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
       colorType: data.colorType,
     );
 
-    if (result == null || result == orgNum || !context.mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.changeRecordValue(parentUUID, date, result).then((record) {
+    if (result == null || result == record?.value) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordValue(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
       _onRecordChangeConfirmed();
     });
@@ -482,19 +455,17 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     HabitRecordDate date,
     HabitRecordStatus crt,
   ) async {
-    if (!mounted) return;
+    if (!(mounted && _vm.mounted)) return;
 
-    final data = context.read<HabitSummaryViewModel>().getHabit(puuid);
+    final data = _vm.getHabit(puuid);
     if (data == null) return;
 
     final record = data.getRecordByDate(date);
     switch (record?.status) {
       case HabitRecordStatus.skip:
-        return _openHabitRecordResonModifierDialog(
-            context, puuid, uuid, date, crt);
+        return _openHabitRecordResonModifierDialog(puuid, uuid, date, crt);
       default:
-        return _openHabitRecordCusomNumberPickerDialog(
-            context, puuid, uuid, date, crt);
+        return _openHabitRecordCusomNumberPickerDialog(puuid, uuid, date, crt);
     }
   }
 
@@ -608,39 +579,26 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     Duration exitEditModeDuration = kEditModeChangeAnimateDuration,
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
-    HabitSummaryViewModel viewmodel;
-
-    if (!mounted) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return false;
-    final selectedData = viewmodel.getSelectedHabitsData().firstWhere(
-          (element) => element != null,
-          orElse: () => null,
-        );
-
-    if (selectedData == null) return false;
-    final dbcell =
-        await viewmodel.habitDBHelper.loadHabitDetail(selectedData.uuid);
-
-    if (!mounted || dbcell == null) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    if (!viewmodel.mounted) return false;
+    if (!(mounted && _vm.mounted)) return false;
+    final dbcell = await _vm.loadSelectedHabitDetail();
+    if (dbcell == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
     final form = formBuilder(dbcell);
-    if (viewmodel.isInEditMode) {
-      context.read<HabitSummaryViewModel>().exitEditMode();
+    if (_vm.isInEditMode) {
+      _vm.exitEditMode();
       await Future.delayed(exitEditModeDuration);
+      if (!mounted) return false;
     }
 
-    if (!mounted) return false;
     final result =
         await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
 
+    if (result == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
     // Edit/Create Habit involves complex state changes (such as sorting by
     // completion rate, calculating the start date of check-in data, etc.),
     // so it is necessary to reload all data from the database.
-    if (result == null || !mounted) return false;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    viewmodel.rockreloadDBToggleSwich();
+    _vm.rockreloadDBToggleSwich();
     return true;
   }
 

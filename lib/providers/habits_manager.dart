@@ -14,13 +14,17 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import '../common/types.dart';
+import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_date.dart';
 import '../models/habit_form.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
 import '../reminders/notification_service.dart';
+import '../storage/db/handlers/habit.dart';
 import '../storage/db/handlers/record.dart';
 import '../storage/db_helper_provider.dart';
 import 'commons.dart';
@@ -117,6 +121,67 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     await recordDBHelper.insertOrUpdateMultiRecords(cells);
   }
 
+  Future<String?> loadHabitRecordReason(
+      HabitSummaryData data, HabitRecordDate date) async {
+    final recordUUID = data.getRecordByDate(date)?.uuid;
+    if (recordUUID == null) return null;
+    final rcd = await recordDBHelper.loadSingleRecord(recordUUID);
+    return rcd?.reason ?? '';
+  }
+
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData(
+      {HabitSummaryDataCollection? initedCollection,
+      List<HabitUUID>? habitUUIDs}) async {
+    final habitLoadTask =
+        habitDBHelper.loadHabitAboutDataCollection(uuidFilter: habitUUIDs);
+    final recordLoadTask =
+        recordDBHelper.loadAllRecords(uuidFilter: habitUUIDs);
+    final habitLoaded = await habitLoadTask;
+    final recordLoaded = await recordLoadTask;
+    if (initedCollection != null) {
+      return initedCollection
+        ..initDataFromDBQueuryResult(habitLoaded, recordLoaded);
+    } else {
+      return HabitSummaryDataCollection.fromDBQueryResult(
+          habitLoaded, recordLoaded);
+    }
+  }
+
+  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
+      habitDBHelper.loadHabitDetail(uuid);
+
+  Future<List<HabitUUID>> fixAndSaveSortPositions(
+    List<HabitSummaryData> habits, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) async {
+    final posList = habits.map((e) => e.sortPostion).makeUniqueAndIncreasing(
+          increaseStep,
+          isSorted: false,
+          decimalPlaces: decimalPlaces,
+        );
+
+    final changedUUIDs = <HabitUUID>[];
+    final changedPositions = <num>[];
+
+    for (var i = 0; i < habits.length; i++) {
+      final habit = habits[i];
+      final pos = posList[i];
+      if (habit.sortPostion != pos) {
+        habit.sortPostion = pos;
+        changedUUIDs.add(habit.uuid);
+        changedPositions.add(pos);
+      }
+    }
+
+    if (changedUUIDs.isNotEmpty) {
+      await habitDBHelper.updateSelectedHabitsSortPostion(
+          changedUUIDs, changedPositions);
+    }
+
+    return changedUUIDs;
+  }
+
   Future<void> updateHabitReminder(HabitSummaryData data) async {
     try {
       switch (data.status) {
@@ -150,6 +215,7 @@ mixin HabitsManagerLoadedMixin {
   bool _loaded = false;
   late HabitsManager _habitsManager;
 
+  @protected
   HabitsManager get habitsManager => _habitsManager;
 
   void updateHabitManager(HabitsManager newManager) {
