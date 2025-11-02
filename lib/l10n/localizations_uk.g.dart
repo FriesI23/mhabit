@@ -410,10 +410,10 @@ class L10nUk extends L10n {
   String get habitDisplay_searchBar_hintText => 'Звички пошуку';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'Поточний';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc => 'Показує звички, які є активними та тривають (не архівовані чи видалені).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Виконано';
@@ -422,10 +422,10 @@ class L10nUk extends L10n {
   String get habitDisplay_searchFilter_habitType_groupTitle => 'Тип звички';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Показати фільтри';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Очистити фільтри';
 
   @override
   String get habitDetail_editButton_tooltip => 'Редагувати';
