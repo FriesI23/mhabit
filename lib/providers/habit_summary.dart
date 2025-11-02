@@ -69,9 +69,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   final _last30daysProgressChangeData = HabitLast30DaysProgressChangeData();
   // status
   CancelableCompleter<void>? _loading;
-  bool _reloadDBToggleSwich = false;
   bool _nextRefreshClearSnackBar = false;
-  bool _reloadUIToggleSwitch = false;
   bool _isCalandarExpanded = false;
   bool _isInEditMode = false;
   bool _canBeDragged = true;
@@ -111,8 +109,7 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
         isAppbarPinned: isAppbarPinned,
-        reloadDBToggleSwich: reloadDBToggleSwich,
-        reloadUIToggleSwitch: reloadUIToggleSwitch,
+        reloadHashcode: _effectiveLoading.hashCode,
         isClandarExpanded: isCalendarExpanded,
         isInEditMode: isInEditMode,
         isInSearchMode: isInSearchMode,
@@ -142,10 +139,6 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get canBeDragged => _canBeDragged;
 
-  bool get reloadDBToggleSwich => _reloadDBToggleSwich;
-
-  bool get reloadUIToggleSwitch => _reloadUIToggleSwitch;
-
   int get habitCount => _data.length;
 
   HabitSummaryData? get earliestSummaryDataStartDate {
@@ -168,18 +161,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     _mounted = false;
   }
 
-  bool rockReloadUIToggleSwitch() {
-    _reloadUIToggleSwitch = !_reloadUIToggleSwitch;
-    notifyListeners();
-    return _reloadUIToggleSwitch;
-  }
-
-  bool rockreloadDBToggleSwich({bool clearSnackBar = true}) {
-    _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    _nextRefreshClearSnackBar = clearSnackBar;
+  void requestReload({bool clearSnackBar = true}) {
+    if (!_nextRefreshClearSnackBar && clearSnackBar) {
+      _nextRefreshClearSnackBar = clearSnackBar;
+    }
     _cancelLoading();
     notifyListeners();
-    return _reloadDBToggleSwich;
   }
 
   bool consumeClearSnackBarFlag() {
@@ -236,15 +223,15 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
   }
 
-  CancelableCompleter<void>? get _isDataLoaded {
+  CancelableCompleter<void>? get _effectiveLoading {
     final loading = _loading;
     return (loading != null && !loading.isCanceled) ? loading : null;
   }
 
-  bool get isDataLoaded => _isDataLoaded != null;
+  bool get isDataLoading => _effectiveLoading != null;
 
-  Future loadData({bool listen = true, bool inFutureBuilder = false}) async {
-    final crtLoading = _isDataLoaded;
+  Future loadData({bool listen = true}) async {
+    final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
       appLog.load.warn("$runtimeType.loadData",
           ex: ["data already loaded", crtLoading.isCompleted]);
@@ -272,7 +259,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+          ex: ["loading data", loading.hashCode, listen]);
 
       // init habits
       await habitsManager.loadHabitSummaryCollectionData(
@@ -295,11 +282,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       loading.complete();
       // reload
       if (listen) {
-        if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
         notifyListeners();
       }
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", loading.hashCode, listen, inFutureBuilder]);
+      appLog.load
+          .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
     }
 
     loadingData();
@@ -564,9 +550,8 @@ class HabitSummaryViewModel extends ChangeNotifier
   void updateAppSync(AppSyncViewModel appSync) {
     _startSyncSub?.cancel();
     _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
-      appLog.habit
-          .debug("onStartSyncEventTriggered", ex: [id, reloadDBToggleSwich]);
-      rockreloadDBToggleSwich(clearSnackBar: false);
+      appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
+      requestReload(clearSnackBar: false);
     });
   }
   //#endregion
@@ -576,10 +561,9 @@ class HabitSummaryViewModel extends ChangeNotifier
   void updateAppEvent(AppEventViewModel newAppEvent) {
     _clearDatabaseSub?.cancel();
     _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      appLog.habit.debug("onReloadDataEventTriggered",
-          ex: [event, reloadDBToggleSwich]);
+      appLog.habit.debug("onReloadDataEventTriggered", ex: [event]);
       if (event.exiEditMode) exitEditMode();
-      rockreloadDBToggleSwich(clearSnackBar: event.clearSnackBar);
+      requestReload(clearSnackBar: event.clearSnackBar);
     });
   }
   //#endregion
@@ -964,6 +948,6 @@ final class HabitDetailAdapter implements ProviderMounted {
     final root = _fetchRoot();
     if (root == null) return;
     root.collapseCalendar();
-    root.rockreloadDBToggleSwich();
+    root.requestReload();
   }
 }

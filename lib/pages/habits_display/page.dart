@@ -178,15 +178,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
-    HabitSummaryViewModel viewmodel;
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    await viewmodel.revertHabitsStatus(recordList);
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    viewmodel.rockReloadUIToggleSwitch();
-
+    if (!(mounted && _vm.mounted)) return;
+    await _vm.revertHabitsStatus(recordList);
     _onHabitStatusChangeConfirmed();
   }
 
@@ -566,13 +559,8 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   }
 
   void _onNewHabitCreated(HabitDBCell result) async {
-    HabitSummaryViewModel viewmodel;
-
-    if (!mounted) return;
-    viewmodel = context.read<HabitSummaryViewModel>();
-    final habit = HabitSummaryData.fromDBQueryCell(result);
-    final addResult = viewmodel.addNewData(habit);
-    if (addResult) viewmodel.rockReloadUIToggleSwitch();
+    if (!(mounted && _vm.mounted)) return;
+    _vm.addNewData(HabitSummaryData.fromDBQueryCell(result));
   }
 
   Future<bool> _enterHabitEditPage({
@@ -598,7 +586,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     // Edit/Create Habit involves complex state changes (such as sorting by
     // completion rate, calculating the start date of check-in data, etc.),
     // so it is necessary to reload all data from the database.
-    _vm.rockreloadDBToggleSwich();
+    _vm.requestReload();
     return true;
   }
 
@@ -873,7 +861,7 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<HabitSummaryViewModel>().rockreloadDBToggleSwich();
+                context.read<HabitSummaryViewModel>().requestReload();
               },
             ),
           ),
@@ -1103,9 +1091,8 @@ class _HabitListState extends State<_HabitList> {
     final sync = context.read<AppSyncViewModel>();
     if (sync.mounted) await sync.appSyncTask.processing;
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoaded) {
-      await Future.wait(
-          [_vm.loadData(inFutureBuilder: true), minBarShowTimeFuture]);
+    if (!_vm.isDataLoading) {
+      await Future.wait([_vm.loadData(), minBarShowTimeFuture]);
       if (!(mounted && _vm.mounted)) return;
     }
     if (_vm.consumeClearSnackBarFlag()) {
@@ -1115,25 +1102,21 @@ class _HabitListState extends State<_HabitList> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<HabitSummaryViewModel, (bool, bool)>(
-      selector: (context, vm) => (vm.reloadDBToggleSwich, vm.isDataLoaded),
+    return Selector<HabitSummaryViewModel, bool>(
+      selector: (context, vm) => vm.isDataLoading,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
-        builder: (context, _) => Selector<HabitSummaryViewModel, bool>(
-          selector: (context, viewmodel) => viewmodel.reloadUIToggleSwitch,
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, _, child) => AnimatedSliverList(
-            controller: _dispatcher.controller,
-            delegate: AnimatedSliverChildBuilderDelegate(
-                (context, index, data) => _dispatcher.builder(
-                    context, _vm.currentHabitList, index, data),
-                _vm.currentHabitList.length,
-                animator: kHabitContentListAnimator,
-                addAnimatedElevation: kCommonEvalation,
-                morphDuration: kEditModeChangeAnimateDuration,
-                reorderModel: widget.reorderModel),
-          ),
+        builder: (context, _) => AnimatedSliverList(
+          controller: _dispatcher.controller,
+          delegate: AnimatedSliverChildBuilderDelegate(
+              (context, index, data) => _dispatcher.builder(
+                  context, _vm.currentHabitList, index, data),
+              _vm.currentHabitList.length,
+              animator: kHabitContentListAnimator,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
+              reorderModel: widget.reorderModel),
         ),
       ),
     );
@@ -1446,7 +1429,7 @@ class _LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDataLoaded =
-        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoaded);
+        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoading);
     return AnimatedOpacity(
       opacity: isDataLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),

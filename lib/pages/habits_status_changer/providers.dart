@@ -46,7 +46,7 @@ class PageProviders extends SingleChildStatelessWidget {
               if (value.firstDay != previous!.firstday) {
                 previous.updateFirstday(value.firstDay);
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  previous.regToReloadData();
+                  previous.requestReloadData();
                 });
               }
               return previous;

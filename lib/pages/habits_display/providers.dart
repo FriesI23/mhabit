@@ -68,7 +68,7 @@ class PageProviders extends SingleChildStatelessWidget {
           update: (context, value, previous) {
             if (value.consumeReloadDisplayFlag()) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous!.rockreloadDBToggleSwich();
+                previous!.requestReload();
               });
             }
             return previous!;
@@ -81,7 +81,7 @@ class PageProviders extends SingleChildStatelessWidget {
             if (value.firstDay != previous!.firstday) {
               previous.updateFirstday(value.firstDay);
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.rockreloadDBToggleSwich();
+                previous.requestReload();
               });
             }
             return previous;
