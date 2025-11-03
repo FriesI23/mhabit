@@ -157,7 +157,14 @@ class _PageState extends State<_Page>
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
-    if (_summary?.mounted == true) _summary!.onHabitDataChanged();
+    if (_summary?.mounted == true) {
+      _summary!.onHabitDataChanged();
+      if (mounted && form.editMode == HabitDisplayEditMode.create) {
+        Navigator.maybePop(context).then((popResult) {
+          if (!popResult) appLog.navi.info("habit_detail", ex: ["didn't pop"]);
+        });
+      }
+    }
     return true;
   }
 
