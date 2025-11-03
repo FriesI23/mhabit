@@ -27,7 +27,7 @@ import '../utils/habit_date.dart';
 import 'utils.dart';
 
 class HabitDetailFreqChartViewModel extends ChangeNotifier {
-  late final UniqueKey _parentVersion;
+  late final Key _parentVersion;
   late final HabitDetailFreqChartCombine _chartCombine;
   late final SplayTreeMap<HabitDate, HabitDetailFreqChartData> _data;
   late final bool _reversedData;
@@ -40,7 +40,7 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
 
   HabitDetailFreqChartViewModel();
 
-  UniqueKey get parentVersion => _parentVersion;
+  Key get parentVersion => _parentVersion;
 
   bool get isInited => _inited;
 
@@ -78,7 +78,7 @@ class HabitDetailFreqChartViewModel extends ChangeNotifier {
   }
 
   void initState({
-    required UniqueKey parentVersion,
+    required Key parentVersion,
     required HabitDetailFreqChartCombine chartCombine,
     Iterable<MapEntry<HabitDate, HabitDetailFreqChartData>>? iter,
     bool reversedData = true,

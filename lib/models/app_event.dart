@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../common/types.dart';
+import 'habit_form.dart';
+
 abstract interface class AppEvent {}
 
 final class ReloadDataEvent implements AppEvent {
@@ -30,6 +33,64 @@ final class ReloadDataEvent implements AppEvent {
     final bf = StringBuffer("ReloadDataEvent(");
     final data = <String>[
       if (msg != null) "msg=$msg",
+      "exiEditMode=$exiEditMode",
+      "clearSnackBar=$clearSnackBar"
+    ];
+    bf.writeAll(data, ",");
+    bf.write(")");
+    return bf.toString();
+  }
+}
+
+final class HabitStatusChangedEvent implements AppEvent {
+  final String? msg;
+  final List<HabitUUID> uuidList;
+  final HabitStatus status;
+
+  const HabitStatusChangedEvent({
+    this.msg,
+    required this.uuidList,
+    required this.status,
+  });
+
+  @override
+  String toString() {
+    final bf = StringBuffer("HabitStatusChangedEvent(");
+    final data = <String>[
+      if (msg != null) "msg=$msg",
+      "uuidList=$uuidList",
+      "status=$status"
+    ];
+    bf.writeAll(data, ",");
+    bf.write(")");
+    return bf.toString();
+  }
+}
+
+final class HabitRecordsChangedEvents implements AppEvent {
+  final String? msg;
+  final List<HabitUUID> uuidList;
+  final List<HabitRecordDate> dateList;
+  final HabitRecordStatus? status;
+  final String? reason;
+
+  const HabitRecordsChangedEvents(
+      {this.msg,
+      required this.uuidList,
+      required this.dateList,
+      this.status,
+      this.reason})
+      : assert(status != HabitRecordStatus.unknown);
+
+  @override
+  String toString() {
+    final bf = StringBuffer("HabitRecordsChangedEvents(");
+    final data = <String>[
+      if (msg != null) "msg=$msg",
+      "uuidList=$uuidList",
+      "dateList=$dateList",
+      "status=$status",
+      "reason=$reason"
     ];
     bf.writeAll(data, ",");
     bf.write(")");

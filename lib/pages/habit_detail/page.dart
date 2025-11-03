@@ -28,13 +28,16 @@ import '../../extensions/custom_color_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_detail_chart.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_status.dart';
 import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_detail.dart';
@@ -73,6 +76,13 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
+extension _AppEventViewModelExtension on AppEventViewModel {
+  void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
+    push(HabitStatusChangedEvent(
+        msg: msg, uuidList: [result.habitUUID], status: result.newStatus));
+  }
+}
+
 /// Depend Providers
 /// - Required for builder:
 ///   - [AppFirstDayViewModel]
@@ -105,10 +115,28 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page>
     with HabitHeatmapColorChooseMixin<_Page>, XShare {
+  late HabitDetailViewModel _vm;
+  habit_summary.HabitDetailAdapter? _summary;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
+    _vm = context.read<HabitDetailViewModel>();
+    _summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitDetailViewModel>();
+    if (_vm != vm) {
+      _vm = vm;
+    }
+    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
+    if (_summary != summary) {
+      _summary = summary;
+    }
   }
 
   @override
@@ -120,25 +148,27 @@ class _PageState extends State<_Page>
   Future<bool> _enterHabitEditPage({
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
-    final uuid = widget.habitUUID;
-    HabitDetailViewModel viewmodel;
-
-    if (!mounted) return false;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return false;
-
-    final dbcell = await viewmodel.habitDBHelper.loadHabitDetail(uuid);
+    if (!(mounted && _vm.mounted)) return false;
+    final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
-
     final form = formBuilder(dbcell);
     final result =
         await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
-
-    if (result == null || !mounted) return false;
-    viewmodel = context.read<HabitDetailViewModel>();
-    viewmodel.rockreloadDBToggleSwich();
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary != null && summary.mounted) summary.onHabitDataChanged();
+    if (result == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
+    _vm.requestReload();
+    if (_summary?.mounted != true) {
+      context
+          .read<AppEventViewModel>()
+          .push(const ReloadDataEvent(msg: "habit_detail._enterHabitEditPage"));
+    } else {
+      _summary!.onHabitDataChanged();
+      if (mounted && form.editMode == HabitDisplayEditMode.create) {
+        Navigator.maybePop(context).then((popResult) {
+          if (!popResult) appLog.navi.info("habit_detail", ex: ["didn't pop"]);
+        });
+      }
+    }
     return true;
   }
 
@@ -162,32 +192,31 @@ class _PageState extends State<_Page>
       );
 
   void _openRetryButtonPressed() {
-    if (!mounted) return;
-    context.read<HabitDetailViewModel>().rockreloadDBToggleSwich();
+    if (!(mounted && _vm.mounted)) return;
+    _vm.requestReload();
   }
 
   void _openEditDialog() async {
-    HabitDetailViewModel viewmodel;
+    if (!(mounted && _vm.mounted)) return;
+    if (_vm.habitDetailData == null) return;
+    final oldVersion = _vm.getInsideVersion();
 
-    if (!mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (viewmodel.habitDetailData == null) return;
-    final oldVersion = viewmodel.getInsideVersion();
     await showHabitEditReplacementRecordCalendarDialog(
       context: context,
-      habitColorType: viewmodel.habitColorType,
-      firstday: viewmodel.firstday,
-      detail: viewmodel,
+      habitColorType: _vm.habitColorType,
+      firstday: _vm.firstday,
+      detail: _vm,
     );
 
-    if (!mounted) return;
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary == null ||
-        !summary.mounted ||
-        viewmodel.getInsideVersion() == oldVersion) {
-      return;
+    if (!(mounted && _vm.mounted)) return;
+    if (_vm.getInsideVersion() == oldVersion) return;
+    if (_summary?.mounted != true) {
+      context
+          .read<AppEventViewModel>()
+          .push(const ReloadDataEvent(msg: "habit_detail._openEditDialog"));
+    } else {
+      _summary!.onHabitDataChanged();
     }
-    summary.onHabitDataChanged();
   }
 
   Future<bool?> _openHabitOpConfirmDialog(
@@ -222,8 +251,6 @@ class _PageState extends State<_Page>
   }
 
   void _openHabitArchiveConfirmDialog() async {
-    HabitDetailViewModel viewmodel;
-
     final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
@@ -232,21 +259,18 @@ class _PageState extends State<_Page>
             : const Text("Archive Habit?"),
       ),
     );
-
     if (result == null || result == false || !mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    final habitUUID = viewmodel.habitUUID;
-    if (!viewmodel.mounted || habitUUID == null) return;
-
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary == null || !summary.mounted) {
-      await viewmodel.onConfirmToArchiveHabit();
+    if (_summary?.mounted != true) {
+      final result = await _vm.onConfirmToArchiveHabit();
+      if (result == null || !mounted) return;
+      context.read<AppEventViewModel>().pushHabitChangeStatus(result,
+          msg: "habit_detail._openHabitArchiveConfirmDialog");
     } else {
-      await summary.onConfirmToArchiveHabit(habitUUID).whenComplete(() {
-        if (!mounted) return;
-        viewmodel = context.read<HabitDetailViewModel>();
-        if (!viewmodel.mounted) return;
-        viewmodel.rockreloadDBToggleSwich();
+      final habitUUID = _vm.habitUUID;
+      if (habitUUID == null) return;
+      await _summary!.onConfirmToArchiveHabit(habitUUID).whenComplete(() {
+        if (!(mounted && _vm.mounted)) return;
+        _vm.requestReload();
       });
     }
 
@@ -254,8 +278,6 @@ class _PageState extends State<_Page>
   }
 
   void _openHabitUnarchiveConfirmDialog() async {
-    HabitDetailViewModel viewmodel;
-
     final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
@@ -264,21 +286,18 @@ class _PageState extends State<_Page>
             : const Text("Unarchive Habit?"),
       ),
     );
-
     if (result == null || result == false || !mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    final habitUUID = viewmodel.habitUUID;
-    if (!viewmodel.mounted || habitUUID == null) return;
-
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary == null || !summary.mounted) {
-      await viewmodel.onConfirmToUnarchiveHabit();
+    if (_summary?.mounted != true) {
+      final result = await _vm.onConfirmToUnarchiveHabit();
+      if (result == null || !mounted) return;
+      context.read<AppEventViewModel>().pushHabitChangeStatus(result,
+          msg: "habit_detail._openHabitUnarchiveConfirmDialog");
     } else {
-      await summary.onConfirmToUnarchiveHabit(habitUUID).whenComplete(() {
-        if (!mounted) return;
-        viewmodel = context.read<HabitDetailViewModel>();
-        if (!viewmodel.mounted) return;
-        viewmodel.rockreloadDBToggleSwich();
+      final habitUUID = _vm.habitUUID;
+      if (habitUUID == null) return;
+      await _summary!.onConfirmToUnarchiveHabit(habitUUID).whenComplete(() {
+        if (!(mounted && _vm.mounted)) return;
+        _vm.requestReload();
       });
     }
 
@@ -286,8 +305,6 @@ class _PageState extends State<_Page>
   }
 
   void _openHabitDeleteConfirmDialog() async {
-    HabitDetailViewModel viewmodel;
-
     final result = await _openHabitOpConfirmDialog(
       context,
       L10nBuilder(
@@ -296,25 +313,30 @@ class _PageState extends State<_Page>
             : const Text("Delete Habit?"),
       ),
     );
-
     if (result == null || result == false || !mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    final habitUUID = viewmodel.habitUUID;
-    if (!viewmodel.mounted || habitUUID == null) return;
 
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    final changes = summary != null && summary.mounted
-        ? await summary.onConfirmToDeleteHabit(habitUUID)
-        : await viewmodel
-            .onConfirmToDeleteHabit()
-            .then((result) => result != null ? [result] : null);
-    if (!mounted) return;
+    Future<HabitStatusChangedRecord?> exec() async {
+      if (_summary?.mounted != true) {
+        final changedRecord = await _vm.onConfirmToDeleteHabit();
+        if (changedRecord == null || !mounted) return null;
+        context.read<AppEventViewModel>().pushHabitChangeStatus(changedRecord,
+            msg: "habit_detail._openHabitDeleteConfirmDialog");
+        return changedRecord;
+      } else {
+        final habitUUID = _vm.habitUUID;
+        if (habitUUID == null) return null;
+        return _summary!.onConfirmToDeleteHabit(habitUUID);
+      }
+    }
+
+    final changedRecord = await exec();
+    if (!(mounted && _vm.mounted)) return;
     Navigator.pop(
       context,
       DetailPageReturn(
         op: DetailPageReturnOpr.deleted,
-        habitName: viewmodel.habitName,
-        recordList: changes,
+        habitName: _vm.habitName,
+        recordList: changedRecord != null ? [changedRecord] : null,
       ),
     );
 
@@ -388,6 +410,15 @@ class _PageState extends State<_Page>
     );
   }
 
+  @visibleForTesting
+  Future<void> loadData() async {
+    if (!mounted) return;
+    final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
+    if (!_vm.isDataLoading) {
+      await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     appLog.build.debug(context);
@@ -458,7 +489,7 @@ class _PageState extends State<_Page>
     }
 
     Widget builSummaryTile(BuildContext context) {
-      return Selector<HabitDetailViewModel, UniqueKey>(
+      return Selector<HabitDetailViewModel, Key>(
         selector: (context, vm) => vm.getInsideVersion(),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
@@ -539,7 +570,7 @@ class _PageState extends State<_Page>
       }
 
       Widget buildDescRecordsNumTile(BuildContext context, L10n? l10n) {
-        return Selector<HabitDetailViewModel, UniqueKey>(
+        return Selector<HabitDetailViewModel, Key>(
           selector: (context, viewmodel) => viewmodel.getInsideVersion(),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => HabitDescCellTile(
@@ -880,17 +911,9 @@ class _PageState extends State<_Page>
 
     Widget buildBody(BuildContext context) {
       return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
+        selector: (context, viewmodel) => viewmodel.isDataLoading,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
-          Future<void> loadData() async {
-            final loading = context
-                .read<HabitDetailViewModel>()
-                .loadData(widget.habitUUID, inFutureBuilder: true);
-            await Future.delayed(kHabitDetailFutureLoadDuration);
-            await loading;
-          }
-
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {

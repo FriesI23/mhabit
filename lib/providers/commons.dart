@@ -14,15 +14,10 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../models/habit_summary.dart';
 import '../reminders/notification_channel.dart';
 
 abstract interface class ProviderMounted {
   bool get mounted;
-}
-
-abstract interface class HabitSummaryDirtyMarker {
-  void bumpHatbitVersion(HabitSummaryData data);
 }
 
 mixin NotificationChannelDataMixin {

@@ -21,11 +21,14 @@ import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../extensions/context_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
+import '../../../models/habit_summary.dart';
 import '../../../providers/app_custom_date_format.dart';
+import '../../../providers/app_event.dart';
 import '../../../providers/app_sync.dart';
 import '../../../providers/habit_detail.dart';
 import '../../../theme/color.dart';
@@ -72,6 +75,8 @@ class HabitEditReplacementRecordCalendarDialog extends StatefulWidget {
 class _HabitEditReplacementRecordCalendarDialog
     extends State<HabitEditReplacementRecordCalendarDialog>
     with HabitHeatmapColorChooseMixin {
+  late HabitDetailViewModel _vm;
+
   late final ScrollController _heatmapScrollController;
   bool _showDailyGoalValue = false;
 
@@ -80,122 +85,111 @@ class _HabitEditReplacementRecordCalendarDialog
   @override
   void initState() {
     super.initState();
+    _vm = context.read<HabitDetailViewModel>();
     _heatmapScrollController = ScrollController();
   }
 
-  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitDetailViewModel>();
+    if (vm != _vm) {
+      _vm = vm;
+    }
+  }
+
+  void _onRecordChangeConfirmed(HabitSummaryRecord record,
+      {String? reason, bool shouldSyncOnce = true}) {
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
       if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
     }
+    final habitUUID = _vm.habitUUID;
+    if (habitUUID != null) {
+      context.read<AppEventViewModel>().push(HabitRecordsChangedEvents(
+          msg: "habit_detail.calendar._onRecordChangeConfirmed",
+          uuidList: [habitUUID],
+          dateList: [record.date],
+          status: record.status,
+          reason: reason));
+    }
   }
 
   void onHeatmapCellPressed(DateTime date, num? value) {
-    if (!mounted) return;
-    final viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.changeRecordStatus(HabitDate.dateTime(date)).then((record) {
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordStatus(HabitDate.dateTime(date)).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record);
     });
   }
 
   void onHeatmapCellLongPressed(DateTime date, num? value) async {
+    if (!(mounted && _vm.mounted)) return;
     final habitDate = HabitDate.dateTime(date);
-
-    if (!mounted) return;
-    final viewmodel = context.read<HabitDetailViewModel>();
-
-    if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
-    final record = viewmodel.getHabitRecordData(habitDate);
+    if (_vm.habitDetailData == null) return;
+    final record = _vm.getHabitRecordData(habitDate);
     switch (record?.status) {
       case HabitRecordStatus.skip:
-        _openHabitRecordResonModifierDialog(context, habitDate);
-        break;
+        _openHabitRecordResonModifierDialog(habitDate);
       default:
-        _openHabitRecordCusomNumberPickerDialog(context, habitDate);
-        break;
+        _openHabitRecordCusomNumberPickerDialog(habitDate);
     }
   }
 
-  void _openHabitRecordResonModifierDialog(
-      BuildContext context, HabitRecordDate date) async {
-    HabitDetailViewModel viewmodel;
-    String initReason = '';
-
-    if (!context.mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-
-    if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
-    final record = viewmodel.getHabitRecordData(date);
-
-    final recordUUID = record?.uuid;
-    if (recordUUID != null) {
-      final rcd = await viewmodel.recordDBHelper.loadSingleRecord(recordUUID);
-      initReason = rcd?.reason ?? '';
-    }
-
-    if (!context.mounted) return;
+  void _openHabitRecordResonModifierDialog(HabitRecordDate date) async {
+    if (!_vm.mounted) return;
+    final initReason = await _vm.loadRecordReason(date) ?? '';
+    final colorType = _vm.habitColorType;
+    if (!mounted) return;
     final result = await showHabitRecordReasonModifierDialog(
       context: context,
       initReason: initReason,
       recordDate: date,
       chipTextList: skipReasonChipTextList,
-      colorType: viewmodel.habitColorType,
+      colorType: colorType,
     );
-
-    if (result == null || result == initReason || !context.mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return;
-    viewmodel.changeRecordReason(date, result).then((record) {
+    if (result == null || result == initReason) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordReason(date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record, reason: result);
     });
   }
 
-  void _openHabitRecordCusomNumberPickerDialog(
-      BuildContext context, HabitRecordDate date) async {
-    late final HabitDailyRecordForm form;
-
-    if (!mounted) return;
-    final viewmodel = context.read<HabitDetailViewModel>();
-
-    if (!viewmodel.mounted || viewmodel.habitDetailData == null) return;
-    final record = viewmodel.getHabitRecordData(date);
+  void _openHabitRecordCusomNumberPickerDialog(HabitRecordDate date) async {
+    if (!(mounted && _vm.mounted)) return;
+    if (_vm.habitDetailData == null) return;
+    final record = _vm.getHabitRecordData(date);
     final num orgNum = record?.value ?? -1;
-    if (record != null && record.status == HabitRecordStatus.done) {
-      form = HabitDailyRecordForm.getImp(
-        type: viewmodel.habitType!,
-        value: record.value,
-        targetValue: viewmodel.habitDailyGoal!,
-        extraTargetValue: viewmodel.habitDailyGoalExtra,
-      );
-    } else {
-      form = HabitDailyRecordForm.getImp(
-        type: viewmodel.habitType!,
-        value: viewmodel.habitDailyGoal!,
-        targetValue: viewmodel.habitDailyGoal!,
-        extraTargetValue: viewmodel.habitDailyGoalExtra,
-      );
-    }
-
+    final form = (record != null && record.status == HabitRecordStatus.done)
+        ? HabitDailyRecordForm.getImp(
+            type: _vm.habitType!,
+            value: record.value,
+            targetValue: _vm.habitDailyGoal!,
+            extraTargetValue: _vm.habitDailyGoalExtra,
+          )
+        : HabitDailyRecordForm.getImp(
+            type: _vm.habitType!,
+            value: _vm.habitDailyGoal!,
+            targetValue: _vm.habitDailyGoal!,
+            extraTargetValue: _vm.habitDailyGoalExtra,
+          );
     final result = await showHabitRecordCustomNumberPickerDialog(
       context: context,
       recordForm: form,
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
-      targetExtraValue: viewmodel.habitDailyGoalExtra,
-      colorType: viewmodel.habitColorType,
+      targetExtraValue: _vm.habitDailyGoalExtra,
+      colorType: _vm.habitColorType,
     );
 
-    if (result == null || result == orgNum || !mounted || !viewmodel.mounted) {
-      return;
-    }
-    viewmodel.changeRecordValue(date, result).then((record) {
+    if (result == null || result == orgNum) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordValue(date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record);
     });
   }
 
@@ -206,7 +200,6 @@ class _HabitEditReplacementRecordCalendarDialog
     final colorData = themeData.extension<CustomColors>();
 
     final configvm = context.read<AppCustomDateYmdHmsConfigViewModel>();
-    final viewmodel = context.read<HabitDetailViewModel>();
 
     final valueColor = (widget.defaultColorType != null
             ? colorData?.getColor(widget.defaultColorType!)
@@ -216,12 +209,12 @@ class _HabitEditReplacementRecordCalendarDialog
     final heatmap = HeatmapCalendar<num>(
       firstDay: widget.firstday,
       controller: _heatmapScrollController,
-      startDate: viewmodel.habitStartDate,
+      startDate: _vm.habitStartDate,
       endedDate: HabitDate.now(),
       withUTC: true,
       colorMap: buildHeatmapColorMap(context),
       valueColorMap: buildHeatmapValueColorMap(context),
-      selectedMap: viewmodel.heatmapDateToColorMap,
+      selectedMap: _vm.heatmapDateToColorMap,
       cellSize: Size.square(cellSize),
       cellSpaceBetween: 4.0,
       weekLabalCellSize: Size(40.0, cellSize),

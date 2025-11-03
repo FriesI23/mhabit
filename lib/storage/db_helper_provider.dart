@@ -113,36 +113,6 @@ abstract mixin class DBHelperLoadedMixin {
 }
 
 mixin DBOperationsMixin on DBHelperLoadedMixin {
-  Future<RecordDBCell> saveHabitRecordToDB(
-      DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
-      {bool isNew = false, String? withReason}) async {
-    final int dbid;
-    final RecordDBCell dbCell;
-    if (isNew) {
-      dbCell = RecordDBCell.build(
-        parentId: parentId,
-        parentUUID: parentUUID,
-        uuid: record.uuid,
-        recordDate: record.date.epochDay,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await recordDBHelper.insertNewRecord(dbCell);
-    } else {
-      dbCell = RecordDBCell(
-        uuid: record.uuid,
-        parentUUID: parentUUID,
-        recordType: record.status.dbCode,
-        recordValue: record.value,
-        reason: withReason,
-      );
-      dbid = await recordDBHelper.updateRecord(dbCell);
-    }
-
-    return dbCell.copyWith(id: dbid);
-  }
-
   Future<HabitSummaryData?> loadSingleHabitSummaryFromDB(HabitUUID uuid,
       {int firstDay = defaultFirstDay}) async {
     final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);

@@ -28,26 +28,26 @@ import '../models/habit_date.dart';
 import '../models/habit_detail.dart';
 import '../models/habit_detail_chart.dart';
 import '../models/habit_form.dart';
+import '../models/habit_repo_actions.dart';
 import '../models/habit_score.dart';
 import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
-import '../reminders/notification_service.dart';
-import '../storage/db_helper_provider.dart';
+import '../storage/db/handlers/habit.dart';
 import 'commons.dart';
+import 'habits_manager.dart';
 import 'utils.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
 class HabitDetailViewModel extends ChangeNotifier
-    with NotificationChannelDataMixin, DBHelperLoadedMixin, DBOperationsMixin
-    implements ProviderMounted, HabitSummaryDirtyMarker {
+    with NotificationChannelDataMixin, HabitsManagerLoadedMixin
+    implements ProviderMounted {
   // data
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
   final _habitScoreChangedDateColl = <HabitDate, num>{};
   // status
-  bool _reloadDBToggleSwich = false;
   CancelableCompleter<void>? _loading;
   HabitDetailFreqChartCombine _freqChartCombine =
       defaultHabitDetailFreqChardCombine;
@@ -74,8 +74,6 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   HabitDetailData? get habitDetailData => _habitDetailData;
-
-  bool get reloadDBToggleSwich => _reloadDBToggleSwich;
 
   String get habitName =>
       _habitDetailData != null ? _habitDetailData!.name : '';
@@ -119,8 +117,10 @@ class HabitDetailViewModel extends ChangeNotifier
 
   HabitUUID? get habitUUID => _habitDetailData?.data.uuid;
 
-  UniqueKey getInsideVersion() {
-    return _habitDetailData != null ? _habitDetailData!.diryMark : UniqueKey();
+  Key getInsideVersion() {
+    return _habitDetailData != null
+        ? _habitDetailData!.diryMark
+        : ValueKey(hashCode);
   }
 
   HabitSummaryRecord? getHabitRecordData(HabitDate date) {
@@ -135,20 +135,39 @@ class HabitDetailViewModel extends ChangeNotifier
     _mounted = false;
   }
 
-  @override
-  Future<void> bumpHatbitVersion(HabitSummaryData data) async {
-    data.bumpVersion();
-    // add reminder
-    await _regrHabitReminder(data);
+  void _updateHabitAutoCompleteStatistics() {
+    _habitScoreChangedDateColl.clear();
+    _habitDetailData?.data.reCalculateAutoComplateRecords(
+      firstDay: firstday,
+      onScoreChange: (fromDate, toDate, fromScore, toScore) {
+        _habitScoreChangedDateColl.addEntries(HabitScoreChangedProtoData(
+          fromDate: fromDate,
+          toDate: toDate,
+          fromScore: fromScore,
+          toScore: toScore,
+        ).expandToDate());
+      },
+    );
+    if (habitDetailData != null) {
+      _heatmapDateToColorMap
+        ..clear()
+        ..addAll(HeatmapColorsCalculator(habitDetailData!).calculate());
+    }
   }
 
-  bool rockreloadDBToggleSwich() {
-    _reloadDBToggleSwich = !_reloadDBToggleSwich;
+  Future<void> _updateHabitReminder() {
+    final data = _habitDetailData?.data;
+    return data != null
+        ? habitsManager.updateHabitReminder(data)
+        : Future.value();
+  }
+
+  void requestReload() {
     _cancelLoading();
     notifyListeners();
-    return _reloadDBToggleSwich;
   }
 
+  //#region loading
   void _cancelLoading() {
     final loading = _loading;
     if (loading == null) return;
@@ -168,10 +187,16 @@ class HabitDetailViewModel extends ChangeNotifier
     }
   }
 
-  Future<void> loadData(HabitUUID uuid,
-      {bool listen = true, bool inFutureBuilder = false}) async {
-    final crtLoading = _loading;
-    if (crtLoading != null && !crtLoading.isCanceled) {
+  CancelableCompleter<void>? get _effectiveLoading {
+    final loading = _loading;
+    return (loading != null && !loading.isCanceled) ? loading : null;
+  }
+
+  bool get isDataLoading => _effectiveLoading != null;
+
+  Future<void> loadData(HabitUUID uuid, {bool listen = true}) async {
+    final crtLoading = _effectiveLoading;
+    if (crtLoading != null) {
       appLog.load.warn("$runtimeType.load",
           ex: ["data already loaded", uuid, crtLoading.isCompleted]);
       return crtLoading.operation.valueOrCancellation();
@@ -198,84 +223,44 @@ class HabitDetailViewModel extends ChangeNotifier
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
+          ex: ["loading data", loading.hashCode, listen]);
 
       // init habit
-      final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
-      final recordLoadTask = recordDBHelper.loadRecords(uuid);
-      final cell = await dataLoadTask;
-      final records = await recordLoadTask;
-      if (cell == null) return loadingFailed(["data load failed", uuid]);
+      final data = await habitsManager.loadHabitDetailData(uuid);
+      if (data == null) return loadingFailed(["data load failed", uuid]);
+      // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
       if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
-
-      final data = HabitDetailData.fromDBQueryCell(cell);
-      data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;
-      _calcHabitInfo();
+      _updateHabitAutoCompleteStatistics();
+      _updateHabitReminder();
       // complete
       loading.complete();
       // reload
       if (listen) {
-        if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
         notifyListeners();
       }
       appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", loading.hashCode, listen, inFutureBuilder, data]);
+          ex: ["loaded", loading.hashCode, listen, data]);
     }
 
     loadingData();
     return loading.operation.valueOrCancellation();
   }
 
-  void _calcHabitInfo() {
-    _habitScoreChangedDateColl.clear();
-    _habitDetailData?.data.reCalculateAutoComplateRecords(
-      firstDay: firstday,
-      onScoreChange: (fromDate, toDate, fromScore, toScore) {
-        _habitScoreChangedDateColl.addEntries(HabitScoreChangedProtoData(
-          fromDate: fromDate,
-          toDate: toDate,
-          fromScore: fromScore,
-          toScore: toScore,
-        ).expandToDate());
-      },
-    );
-    if (habitDetailData != null) {
-      _heatmapDateToColorMap
-        ..clear()
-        ..addAll(HeatmapColorsCalculator(habitDetailData!).calculate());
-    }
+  Future<String?> loadRecordReason(HabitRecordDate date) async {
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
+    return habitsManager.loadHabitRecordReason(data, date);
   }
 
-  Future<void> _regrHabitReminder(HabitSummaryData data) async {
-    try {
-      switch (data.status) {
-        case HabitStatus.activated:
-          if (data.reminder != null) {
-            NotificationService().regrHabitReminder(
-              id: data.id,
-              uuid: data.uuid,
-              name: data.name,
-              quest: data.reminderQuest,
-              reminder: data.reminder!,
-              lastUntrackDate: data.getFirstUnTrackedDate(),
-              details: channelData.habitReminder,
-            );
-          }
-          break;
-        case HabitStatus.unknown:
-        case HabitStatus.deleted:
-        case HabitStatus.archived:
-          NotificationService().cancelHabitReminder(id: data.id);
-          break;
-      }
-    } on Exception catch (e) {
-      appLog.notify.error("$runtimeType._regrHabitReminder",
-          ex: ["catch err when try regr reminder"], error: e);
-    }
+  Future<HabitDBCell?> loadCurrentHabitDetail() async {
+    final habitUUID = this.habitUUID;
+    if (habitUUID == null) return null;
+    return habitsManager.loadHabitDetail(habitUUID);
   }
+  //#endregion
 
   //#region heatmap
   Map<HabitDate, num> get heatmapDateToColorMap => _heatmapDateToColorMap;
@@ -333,99 +318,114 @@ class HabitDetailViewModel extends ChangeNotifier
   //#region actions
   Future<HabitSummaryRecord?> changeRecordStatus(HabitRecordDate date,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnTap();
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
+    appLog.value.info("HabitDetail.changeRecordStatus",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
-    _calcHabitInfo();
-
-    appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
+    _updateHabitAutoCompleteStatistics();
+    _updateHabitReminder();
     if (listen) notifyListeners();
-
-    await bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordReason(
       HabitRecordDate date, String newReason,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data,
+          reason: newReason,
+          status: HabitRecordStatus.skip,
+          dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final record = data.getRecordByDate(date);
-    if (record == null) return null;
+    appLog.value.info("HabitDetail.changeRecordReason",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record,
-        isNew: false, withReason: newReason);
-
+    _updateHabitAutoCompleteStatistics();
+    _updateHabitReminder();
     if (listen) notifyListeners();
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
       HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnLongTap(newValue);
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data, goal: newValue, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
+    appLog.value.info("HabitDetail.changeRecordValue",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
-    _calcHabitInfo();
-
-    appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
-
+    _updateHabitAutoCompleteStatistics();
+    _updateHabitReminder();
     if (listen) notifyListeners();
-    await bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
-      HabitUUID habitUUID, HabitStatus newStatus) async {
+      HabitStatus newStatus) async {
+    final habitDetailData = this.habitDetailData;
     if (habitDetailData == null) return null;
-    final orgStatus = habitDetailData!.data.status;
-    final changes =
-        await habitDBHelper.updateSelectedHabitStatus([habitUUID], newStatus);
-    if (changes < 1 || !mounted) return null;
+
+    final results = await habitsManager.changeHabitStatus(
+        action: ChangeMultiHabitStatusAction([habitDetailData.data],
+            status: newStatus),
+        extraResolver: (result) async {
+          final t1 = _updateHabitReminder();
+          _updateHabitAutoCompleteStatistics();
+          await t1;
+        });
+
+    if (results.isEmpty || !mounted) return null;
+    final result = results.first;
     return HabitStatusChangedRecord(
-        habitUUID: habitUUID, newStatus: newStatus, orgStatus: orgStatus);
+        habitUUID: result.data.uuid,
+        newStatus: result.data.status,
+        orgStatus: result.orgStatus);
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
       {bool listen = true}) async {
     appLog.habit.info("$runtimeType.onConfirmToArchiveHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.archived);
-    if (listen) rockreloadDBToggleSwich();
+    final result = await _changeHabitsStatus(HabitStatus.archived);
+    if (listen) requestReload();
     return result;
   }
 
@@ -433,12 +433,11 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = true}) async {
     appLog.habit.info("$runtimeType.onConfirmToUnarchiveHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.activated);
-    if (listen) rockreloadDBToggleSwich();
+    final result = await _changeHabitsStatus(HabitStatus.activated);
+    if (listen) requestReload();
     return result;
   }
 
@@ -446,12 +445,11 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = false}) async {
     appLog.habit.info("$runtimeType.onConfirmToDeleteHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.deleted);
-    if (listen) rockreloadDBToggleSwich();
+    final result = await _changeHabitsStatus(HabitStatus.deleted);
+    if (listen) requestReload();
     return result;
   }
   //#endregion

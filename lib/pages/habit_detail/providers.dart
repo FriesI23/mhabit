@@ -20,8 +20,8 @@ import '../../providers/app_first_day.dart';
 import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
+import '../../providers/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
-import '../../storage/db_helper_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
@@ -30,10 +30,10 @@ class PageProviders extends SingleChildStatelessWidget {
         ChangeNotifierProvider<HabitDetailViewModel>(
           create: (context) => HabitDetailViewModel(),
         ),
-        ChangeNotifierProxyProvider<DBHelperViewModel, HabitDetailViewModel>(
+        ChangeNotifierProxyProvider<HabitsManager, HabitDetailViewModel>(
           create: (context) => context.read<HabitDetailViewModel>(),
           update: (context, value, previous) =>
-              previous!..updateDBHelper(value),
+              previous!..updateHabitManager(value),
         ),
         ChangeNotifierProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
           create: (context) => context.read<HabitDetailViewModel>(),
@@ -41,7 +41,7 @@ class PageProviders extends SingleChildStatelessWidget {
             if (value.firstDay != previous!.firstday) {
               previous.updateFirstday(value.firstDay);
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.rockreloadDBToggleSwich();
+                previous.requestReload();
               });
             }
             return previous;

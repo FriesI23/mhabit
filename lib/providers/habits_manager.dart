@@ -20,6 +20,7 @@ import '../common/types.dart';
 import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_date.dart';
+import '../models/habit_detail.dart';
 import '../models/habit_form.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
@@ -145,6 +146,17 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
       return HabitSummaryDataCollection.fromDBQueryResult(
           habitLoaded, recordLoaded);
     }
+  }
+
+  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) async {
+    final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
+    final recordLoadTask = recordDBHelper.loadRecords(uuid);
+    final cell = await dataLoadTask;
+    if (cell == null) return null;
+    final records = await recordLoadTask;
+    final data = HabitDetailData.fromDBQueryCell(cell);
+    data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
+    return data;
   }
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
