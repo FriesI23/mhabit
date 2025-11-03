@@ -80,6 +80,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
   StreamSubscription<AppEvent>? _clearDatabaseSub;
+  StreamSubscription<AppEvent>? _habitStatusChangedSub;
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
@@ -560,10 +561,16 @@ class HabitSummaryViewModel extends ChangeNotifier
   @override
   void updateAppEvent(AppEventViewModel newAppEvent) {
     _clearDatabaseSub?.cancel();
+    _habitStatusChangedSub?.cancel();
     _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      appLog.habit.debug("onReloadDataEventTriggered", ex: [event]);
+      appLog.habit.debug("app event triggered", ex: [event]);
       if (event.exiEditMode) exitEditMode();
       requestReload(clearSnackBar: event.clearSnackBar);
+    });
+    _habitStatusChangedSub =
+        newAppEvent.on<HabitStatusChangedEvent>().listen((event) {
+      appLog.habit.debug("app event triggered", ex: [event]);
+      requestReload(clearSnackBar: false);
     });
   }
   //#endregion
@@ -902,46 +909,36 @@ final class HabitDetailAdapter implements ProviderMounted {
     return root;
   }
 
-  Future<List<HabitStatusChangedRecord>?> onConfirmToArchiveHabit(
+  Future<HabitStatusChangedRecord?> _changeHabitsStatus(
+      HabitUUID habitUUID, HabitStatus status) async {
+    final root = _fetchRoot();
+    if (root == null) return null;
+    final habit = root.getHabit(habitUUID);
+    if (habit == null || habit.status == HabitStatus.deleted) return null;
+    final recordList = await root._changeHabitsStatus([habitUUID], status);
+    _fetchRoot()?.resortData();
+    return recordList.firstOrNull;
+  }
+
+  Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
       HabitUUID habitUUID) async {
     appLog.habit.info("HabitDetailAdapter.onConfirmToArchiveHabit",
         ex: [_root, habitUUID]);
-    final root = _fetchRoot();
-    if (root == null) return null;
-    final habit = root.getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    final recordList =
-        root._changeHabitsStatus([habitUUID], HabitStatus.archived);
-    _fetchRoot()?.resortData();
-    return recordList;
+    return _changeHabitsStatus(habitUUID, HabitStatus.archived);
   }
 
-  Future<List<HabitStatusChangedRecord>?> onConfirmToUnarchiveHabit(
+  Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit(
       HabitUUID habitUUID) async {
     appLog.habit.info("HabitDetailAdapter.onConfirmToUnarchiveHabit",
         ex: [_root, habitUUID]);
-    final root = _fetchRoot();
-    if (root == null) return null;
-    final habit = root.getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    final recordList =
-        await root._changeHabitsStatus([habitUUID], HabitStatus.activated);
-    _fetchRoot()?.resortData();
-    return recordList;
+    return _changeHabitsStatus(habitUUID, HabitStatus.activated);
   }
 
-  Future<List<HabitStatusChangedRecord>?> onConfirmToDeleteHabit(
+  Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit(
       HabitUUID habitUUID) async {
     appLog.habit.info("HabitDetailAdapter.onConfirmToDeleteHabit",
         ex: [_root, habitUUID]);
-    final root = _fetchRoot();
-    if (root == null) return null;
-    final habit = root.getHabit(habitUUID);
-    if (habit == null || habit.status == HabitStatus.deleted) return null;
-    final recordList =
-        await root._changeHabitsStatus([habitUUID], HabitStatus.deleted);
-    _fetchRoot()?.resortData();
-    return recordList;
+    return _changeHabitsStatus(habitUUID, HabitStatus.deleted);
   }
 
   void onHabitDataChanged() {

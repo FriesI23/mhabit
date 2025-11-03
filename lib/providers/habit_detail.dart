@@ -28,6 +28,7 @@ import '../models/habit_date.dart';
 import '../models/habit_detail.dart';
 import '../models/habit_detail_chart.dart';
 import '../models/habit_form.dart';
+import '../models/habit_repo_actions.dart';
 import '../models/habit_score.dart';
 import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
@@ -238,6 +239,7 @@ class HabitDetailViewModel extends ChangeNotifier
       // init habit
       final data = await habitsManager.loadHabitDetailData(uuid);
       if (data == null) return loadingFailed(["data load failed", uuid]);
+      // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
       if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
@@ -388,25 +390,35 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
-      HabitUUID habitUUID, HabitStatus newStatus) async {
+      HabitStatus newStatus) async {
+    final habitDetailData = this.habitDetailData;
     if (habitDetailData == null) return null;
-    final orgStatus = habitDetailData!.data.status;
-    final changes =
-        await habitDBHelper.updateSelectedHabitStatus([habitUUID], newStatus);
-    if (changes < 1 || !mounted) return null;
+
+    final results = await habitsManager.changeHabitStatus(
+        action: ChangeMultiHabitStatusAction([habitDetailData.data],
+            status: newStatus),
+        extraResolver: (result) async {
+          final t1 = _updateHabitReminder();
+          _updateHabitAutoCompleteStatistics();
+          await t1;
+        });
+
+    if (results.isEmpty || !mounted) return null;
+    final result = results.first;
     return HabitStatusChangedRecord(
-        habitUUID: habitUUID, newStatus: newStatus, orgStatus: orgStatus);
+        habitUUID: result.data.uuid,
+        newStatus: result.data.status,
+        orgStatus: result.orgStatus);
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
       {bool listen = true}) async {
     appLog.habit.info("$runtimeType.onConfirmToArchiveHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.archived);
+    final result = await _changeHabitsStatus(HabitStatus.archived);
     if (listen) requestReload();
     return result;
   }
@@ -415,11 +427,10 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = true}) async {
     appLog.habit.info("$runtimeType.onConfirmToUnarchiveHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.activated);
+    final result = await _changeHabitsStatus(HabitStatus.activated);
     if (listen) requestReload();
     return result;
   }
@@ -428,11 +439,10 @@ class HabitDetailViewModel extends ChangeNotifier
       {bool listen = false}) async {
     appLog.habit.info("$runtimeType.onConfirmToDeleteHabit",
         ex: [listen, habitDetailData?.data]);
-    if (!(habitDetailData != null &&
-        habitDetailData?.data.status != HabitStatus.deleted)) {
+    if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
-    final result = await _changeHabitsStatus(habitUUID!, HabitStatus.deleted);
+    final result = await _changeHabitsStatus(HabitStatus.deleted);
     if (listen) requestReload();
     return result;
   }
