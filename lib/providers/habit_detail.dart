@@ -31,16 +31,20 @@ import '../models/habit_form.dart';
 import '../models/habit_score.dart';
 import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
-import '../reminders/notification_service.dart';
 import '../storage/db_helper_provider.dart';
 import 'commons.dart';
+import 'habits_manager.dart';
 import 'utils.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
 class HabitDetailViewModel extends ChangeNotifier
-    with NotificationChannelDataMixin, DBHelperLoadedMixin, DBOperationsMixin
+    with
+        NotificationChannelDataMixin,
+        DBHelperLoadedMixin,
+        DBOperationsMixin,
+        HabitsManagerLoadedMixin
     implements ProviderMounted, HabitSummaryDirtyMarker {
   // data
   HabitDetailData? _habitDetailData;
@@ -134,7 +138,7 @@ class HabitDetailViewModel extends ChangeNotifier
     _mounted = false;
   }
 
-  void _calcHabitInfo() {
+  void _updateHabitAutoCompleteStatistics() {
     _habitScoreChangedDateColl.clear();
     _habitDetailData?.data.reCalculateAutoComplateRecords(
       firstDay: firstday,
@@ -154,39 +158,18 @@ class HabitDetailViewModel extends ChangeNotifier
     }
   }
 
-  Future<void> _regrHabitReminder(HabitSummaryData data) async {
-    try {
-      switch (data.status) {
-        case HabitStatus.activated:
-          if (data.reminder != null) {
-            NotificationService().regrHabitReminder(
-              id: data.id,
-              uuid: data.uuid,
-              name: data.name,
-              quest: data.reminderQuest,
-              reminder: data.reminder!,
-              lastUntrackDate: data.getFirstUnTrackedDate(),
-              details: channelData.habitReminder,
-            );
-          }
-          break;
-        case HabitStatus.unknown:
-        case HabitStatus.deleted:
-        case HabitStatus.archived:
-          NotificationService().cancelHabitReminder(id: data.id);
-          break;
-      }
-    } on Exception catch (e) {
-      appLog.notify.error("$runtimeType._regrHabitReminder",
-          ex: ["catch err when try regr reminder"], error: e);
-    }
+  Future<void> _updateHabitReminder() {
+    final data = _habitDetailData?.data;
+    return data != null
+        ? habitsManager.updateHabitReminder(data)
+        : Future.value();
   }
 
   @override
   Future<void> bumpHatbitVersion(HabitSummaryData data) async {
     data.bumpVersion();
     // add reminder
-    await _regrHabitReminder(data);
+    await _updateHabitReminder();
   }
 
   void requestReload() {
@@ -253,19 +236,14 @@ class HabitDetailViewModel extends ChangeNotifier
           ex: ["loading data", loading.hashCode, listen]);
 
       // init habit
-      final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
-      final recordLoadTask = recordDBHelper.loadRecords(uuid);
-      final cell = await dataLoadTask;
-      final records = await recordLoadTask;
-      if (cell == null) return loadingFailed(["data load failed", uuid]);
+      final data = await habitsManager.loadHabitDetailData(uuid);
+      if (data == null) return loadingFailed(["data load failed", uuid]);
       if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
-
-      final data = HabitDetailData.fromDBQueryCell(cell);
-      data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
       _habitDetailData = data;
-      _calcHabitInfo();
+      _updateHabitAutoCompleteStatistics();
+      _updateHabitReminder();
       // complete
       loading.complete();
       // reload
@@ -351,7 +329,7 @@ class HabitDetailViewModel extends ChangeNotifier
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     final result = data.addRecord(record, replaced: true);
-    _calcHabitInfo();
+    _updateHabitAutoCompleteStatistics();
 
     appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
         beforeVal: orgRecord,
@@ -397,7 +375,7 @@ class HabitDetailViewModel extends ChangeNotifier
     await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
 
     final result = data.addRecord(record, replaced: true);
-    _calcHabitInfo();
+    _updateHabitAutoCompleteStatistics();
 
     appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
         beforeVal: orgRecord,

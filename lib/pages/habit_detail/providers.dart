@@ -20,6 +20,7 @@ import '../../providers/app_first_day.dart';
 import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
+import '../../providers/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
 
@@ -34,6 +35,11 @@ class PageProviders extends SingleChildStatelessWidget {
           create: (context) => context.read<HabitDetailViewModel>(),
           update: (context, value, previous) =>
               previous!..updateDBHelper(value),
+        ),
+        ChangeNotifierProxyProvider<HabitsManager, HabitDetailViewModel>(
+          create: (context) => context.read<HabitDetailViewModel>(),
+          update: (context, value, previous) =>
+              previous!..updateHabitManager(value),
         ),
         ChangeNotifierProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
           create: (context) => context.read<HabitDetailViewModel>(),
