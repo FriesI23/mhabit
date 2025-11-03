@@ -1175,16 +1175,17 @@ class _HabitListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final crtDate = DateChangeProvider.of(context).dateTime;
     final (isExtended, data, endedDate, isSelected, isInEditMode, _) =
-        context.select<HabitSummaryViewModel,
-                (bool, HabitSummaryData?, HabitDate?, bool, bool, UniqueKey)>(
-            (vm) => (
-                  vm.isCalendarExpanded,
-                  vm.getHabit(uuid),
-                  vm.earliestSummaryDataStartDate?.startDate,
-                  vm.isHabitSelected(uuid),
-                  vm.isInEditMode,
-                  vm.getHabitInsideVersion(uuid),
-                ));
+        context
+            .select<HabitSummaryViewModel,
+                    (bool, HabitSummaryData?, HabitDate?, bool, bool, Key)>(
+                (vm) => (
+                      vm.isCalendarExpanded,
+                      vm.getHabit(uuid),
+                      vm.earliestSummaryDataStartDate?.startDate,
+                      vm.isHabitSelected(uuid),
+                      vm.isInEditMode,
+                      vm.getHabitInsideVersion(uuid),
+                    ));
     final occupyPrt =
         context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
     final (useCompactUI, height) =

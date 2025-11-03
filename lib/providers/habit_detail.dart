@@ -47,7 +47,6 @@ class HabitDetailViewModel extends ChangeNotifier
   final _heatmapDateToColorMap = <HabitDate, num>{};
   final _habitScoreChangedDateColl = <HabitDate, num>{};
   // status
-  bool _reloadDBToggleSwich = false;
   CancelableCompleter<void>? _loading;
   HabitDetailFreqChartCombine _freqChartCombine =
       defaultHabitDetailFreqChardCombine;
@@ -74,8 +73,6 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   HabitDetailData? get habitDetailData => _habitDetailData;
-
-  bool get reloadDBToggleSwich => _reloadDBToggleSwich;
 
   String get habitName =>
       _habitDetailData != null ? _habitDetailData!.name : '';
@@ -119,8 +116,10 @@ class HabitDetailViewModel extends ChangeNotifier
 
   HabitUUID? get habitUUID => _habitDetailData?.data.uuid;
 
-  UniqueKey getInsideVersion() {
-    return _habitDetailData != null ? _habitDetailData!.diryMark : UniqueKey();
+  Key getInsideVersion() {
+    return _habitDetailData != null
+        ? _habitDetailData!.diryMark
+        : ValueKey(hashCode);
   }
 
   HabitSummaryRecord? getHabitRecordData(HabitDate date) {
@@ -133,100 +132,6 @@ class HabitDetailViewModel extends ChangeNotifier
     _cancelLoading();
     super.dispose();
     _mounted = false;
-  }
-
-  @override
-  Future<void> bumpHatbitVersion(HabitSummaryData data) async {
-    data.bumpVersion();
-    // add reminder
-    await _regrHabitReminder(data);
-  }
-
-  bool rockreloadDBToggleSwich() {
-    _reloadDBToggleSwich = !_reloadDBToggleSwich;
-    _cancelLoading();
-    notifyListeners();
-    return _reloadDBToggleSwich;
-  }
-
-  void _cancelLoading() {
-    final loading = _loading;
-    if (loading == null) return;
-
-    void onCancelled() {
-      if (_loading == loading) _loading = null;
-      appLog.load.info("$runtimeType._cancelLoading",
-          ex: ['cancelled', loading.hashCode]);
-    }
-
-    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
-    if (loading.isCompleted || loading.isCanceled) {
-      onCancelled();
-    } else {
-      loading.operation.cancel();
-      onCancelled();
-    }
-  }
-
-  Future<void> loadData(HabitUUID uuid,
-      {bool listen = true, bool inFutureBuilder = false}) async {
-    final crtLoading = _loading;
-    if (crtLoading != null && !crtLoading.isCanceled) {
-      appLog.load.warn("$runtimeType.load",
-          ex: ["data already loaded", uuid, crtLoading.isCompleted]);
-      return crtLoading.operation.valueOrCancellation();
-    }
-
-    final loading = _loading = CancelableCompleter<void>();
-
-    void loadingFailed(List errmsg) {
-      appLog.load.error("$runtimeType.load",
-          ex: [...errmsg, loading.hashCode],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
-      if (!loading.isCompleted) {
-        loading.completeError(
-            FlutterError(errmsg.join(" ")), StackTrace.current);
-      }
-    }
-
-    void loadingCancelled() {
-      appLog.load
-          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
-    }
-
-    Future<void> loadingData() async {
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen, inFutureBuilder]);
-
-      // init habit
-      final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
-      final recordLoadTask = recordDBHelper.loadRecords(uuid);
-      final cell = await dataLoadTask;
-      final records = await recordLoadTask;
-      if (cell == null) return loadingFailed(["data load failed", uuid]);
-      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
-      if (loading.isCanceled) return loadingCancelled();
-      if (loading.isCompleted) return;
-
-      final data = HabitDetailData.fromDBQueryCell(cell);
-      data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
-      _habitDetailData = data;
-      _calcHabitInfo();
-      // complete
-      loading.complete();
-      // reload
-      if (listen) {
-        if (!inFutureBuilder) _reloadDBToggleSwich = !_reloadDBToggleSwich;
-        notifyListeners();
-      }
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", loading.hashCode, listen, inFutureBuilder, data]);
-    }
-
-    loadingData();
-    return loading.operation.valueOrCancellation();
   }
 
   void _calcHabitInfo() {
@@ -276,6 +181,105 @@ class HabitDetailViewModel extends ChangeNotifier
           ex: ["catch err when try regr reminder"], error: e);
     }
   }
+
+  @override
+  Future<void> bumpHatbitVersion(HabitSummaryData data) async {
+    data.bumpVersion();
+    // add reminder
+    await _regrHabitReminder(data);
+  }
+
+  void requestReload() {
+    _cancelLoading();
+    notifyListeners();
+  }
+
+  //#region loading
+  void _cancelLoading() {
+    final loading = _loading;
+    if (loading == null) return;
+
+    void onCancelled() {
+      if (_loading == loading) _loading = null;
+      appLog.load.info("$runtimeType._cancelLoading",
+          ex: ['cancelled', loading.hashCode]);
+    }
+
+    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
+    if (loading.isCompleted || loading.isCanceled) {
+      onCancelled();
+    } else {
+      loading.operation.cancel();
+      onCancelled();
+    }
+  }
+
+  CancelableCompleter<void>? get _effectiveLoading {
+    final loading = _loading;
+    return (loading != null && !loading.isCanceled) ? loading : null;
+  }
+
+  bool get isDataLoading => _effectiveLoading != null;
+
+  Future<void> loadData(HabitUUID uuid, {bool listen = true}) async {
+    final crtLoading = _effectiveLoading;
+    if (crtLoading != null) {
+      appLog.load.warn("$runtimeType.load",
+          ex: ["data already loaded", uuid, crtLoading.isCompleted]);
+      return crtLoading.operation.valueOrCancellation();
+    }
+
+    final loading = _loading = CancelableCompleter<void>();
+
+    void loadingFailed(List errmsg) {
+      appLog.load.error("$runtimeType.load",
+          ex: [...errmsg, loading.hashCode],
+          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      if (!loading.isCompleted) {
+        loading.completeError(
+            FlutterError(errmsg.join(" ")), StackTrace.current);
+      }
+    }
+
+    void loadingCancelled() {
+      appLog.load
+          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
+    }
+
+    Future<void> loadingData() async {
+      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
+      if (loading.isCanceled) return loadingCancelled();
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen]);
+
+      // init habit
+      final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
+      final recordLoadTask = recordDBHelper.loadRecords(uuid);
+      final cell = await dataLoadTask;
+      final records = await recordLoadTask;
+      if (cell == null) return loadingFailed(["data load failed", uuid]);
+      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
+      if (loading.isCanceled) return loadingCancelled();
+      if (loading.isCompleted) return;
+
+      final data = HabitDetailData.fromDBQueryCell(cell);
+      data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
+      _habitDetailData = data;
+      _calcHabitInfo();
+      // complete
+      loading.complete();
+      // reload
+      if (listen) {
+        notifyListeners();
+      }
+      appLog.load.debug("$runtimeType.load",
+          ex: ["loaded", loading.hashCode, listen, data]);
+    }
+
+    loadingData();
+    return loading.operation.valueOrCancellation();
+  }
+  //#endregion
 
   //#region heatmap
   Map<HabitDate, num> get heatmapDateToColorMap => _heatmapDateToColorMap;
@@ -425,7 +429,7 @@ class HabitDetailViewModel extends ChangeNotifier
       return null;
     }
     final result = await _changeHabitsStatus(habitUUID!, HabitStatus.archived);
-    if (listen) rockreloadDBToggleSwich();
+    if (listen) requestReload();
     return result;
   }
 
@@ -438,7 +442,7 @@ class HabitDetailViewModel extends ChangeNotifier
       return null;
     }
     final result = await _changeHabitsStatus(habitUUID!, HabitStatus.activated);
-    if (listen) rockreloadDBToggleSwich();
+    if (listen) requestReload();
     return result;
   }
 
@@ -451,7 +455,7 @@ class HabitDetailViewModel extends ChangeNotifier
       return null;
     }
     final result = await _changeHabitsStatus(habitUUID!, HabitStatus.deleted);
-    if (listen) rockreloadDBToggleSwich();
+    if (listen) requestReload();
     return result;
   }
   //#endregion

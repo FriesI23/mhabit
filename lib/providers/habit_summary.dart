@@ -175,7 +175,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     return tmp;
   }
 
-  UniqueKey getHabitInsideVersion(HabitUUID uuid) {
+  Key getHabitInsideVersion(HabitUUID uuid) {
     final data = _data.getHabitByUUID(uuid);
     return data != null ? data.diryMark : UniqueKey();
   }

@@ -105,10 +105,22 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page>
     with HabitHeatmapColorChooseMixin<_Page>, XShare {
+  late HabitDetailViewModel _vm;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
+    _vm = context.read<HabitDetailViewModel>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitDetailViewModel>();
+    if (_vm != vm) {
+      _vm = vm;
+    }
   }
 
   @override
@@ -136,7 +148,7 @@ class _PageState extends State<_Page>
 
     if (result == null || !mounted) return false;
     viewmodel = context.read<HabitDetailViewModel>();
-    viewmodel.rockreloadDBToggleSwich();
+    viewmodel.requestReload();
     final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (summary != null && summary.mounted) summary.onHabitDataChanged();
     return true;
@@ -163,7 +175,7 @@ class _PageState extends State<_Page>
 
   void _openRetryButtonPressed() {
     if (!mounted) return;
-    context.read<HabitDetailViewModel>().rockreloadDBToggleSwich();
+    context.read<HabitDetailViewModel>().requestReload();
   }
 
   void _openEditDialog() async {
@@ -246,7 +258,7 @@ class _PageState extends State<_Page>
         if (!mounted) return;
         viewmodel = context.read<HabitDetailViewModel>();
         if (!viewmodel.mounted) return;
-        viewmodel.rockreloadDBToggleSwich();
+        viewmodel.requestReload();
       });
     }
 
@@ -278,7 +290,7 @@ class _PageState extends State<_Page>
         if (!mounted) return;
         viewmodel = context.read<HabitDetailViewModel>();
         if (!viewmodel.mounted) return;
-        viewmodel.rockreloadDBToggleSwich();
+        viewmodel.requestReload();
       });
     }
 
@@ -388,6 +400,15 @@ class _PageState extends State<_Page>
     );
   }
 
+  @visibleForTesting
+  Future<void> loadData() async {
+    if (!mounted) return;
+    final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
+    if (!_vm.isDataLoading) {
+      await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     appLog.build.debug(context);
@@ -458,7 +479,7 @@ class _PageState extends State<_Page>
     }
 
     Widget builSummaryTile(BuildContext context) {
-      return Selector<HabitDetailViewModel, UniqueKey>(
+      return Selector<HabitDetailViewModel, Key>(
         selector: (context, vm) => vm.getInsideVersion(),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
@@ -539,7 +560,7 @@ class _PageState extends State<_Page>
       }
 
       Widget buildDescRecordsNumTile(BuildContext context, L10n? l10n) {
-        return Selector<HabitDetailViewModel, UniqueKey>(
+        return Selector<HabitDetailViewModel, Key>(
           selector: (context, viewmodel) => viewmodel.getInsideVersion(),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => HabitDescCellTile(
@@ -880,17 +901,9 @@ class _PageState extends State<_Page>
 
     Widget buildBody(BuildContext context) {
       return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.reloadDBToggleSwich,
+        selector: (context, viewmodel) => viewmodel.isDataLoading,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
-          Future<void> loadData() async {
-            final loading = context
-                .read<HabitDetailViewModel>()
-                .loadData(widget.habitUUID, inFutureBuilder: true);
-            await Future.delayed(kHabitDetailFutureLoadDuration);
-            await loading;
-          }
-
           return FutureBuilder(
             future: loadData(),
             builder: (context, snapshot) {

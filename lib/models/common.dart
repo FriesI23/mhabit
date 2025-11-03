@@ -17,9 +17,9 @@ import 'package:flutter/foundation.dart';
 import '../common/types.dart';
 
 mixin DirtyMarkMixin {
-  UniqueKey _dirtyMark = UniqueKey();
+  Key _dirtyMark = UniqueKey();
 
-  UniqueKey get diryMark => _dirtyMark;
+  Key get diryMark => _dirtyMark;
 
   void bumpVersion() {
     _dirtyMark = UniqueKey();
