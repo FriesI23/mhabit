@@ -13,4 +13,3 @@
 // limitations under the License.
 
 export '_utils/habit_chart_utils.dart';
-export '_utils/habit_record_utils.dart';
