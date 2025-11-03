@@ -148,25 +148,16 @@ class _PageState extends State<_Page>
   Future<bool> _enterHabitEditPage({
     required HabitForm Function(HabitDBCell) formBuilder,
   }) async {
-    final uuid = widget.habitUUID;
-    HabitDetailViewModel viewmodel;
-
-    if (!mounted) return false;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (!viewmodel.mounted) return false;
-
-    final dbcell = await viewmodel.habitDBHelper.loadHabitDetail(uuid);
+    if (!(mounted && _vm.mounted)) return false;
+    final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
-
     final form = formBuilder(dbcell);
     final result =
         await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
-
-    if (result == null || !mounted) return false;
-    viewmodel = context.read<HabitDetailViewModel>();
-    viewmodel.requestReload();
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary != null && summary.mounted) summary.onHabitDataChanged();
+    if (result == null) return false;
+    if (!(mounted && _vm.mounted)) return false;
+    _vm.requestReload();
+    if (_summary?.mounted == true) _summary!.onHabitDataChanged();
     return true;
   }
 

@@ -22,7 +22,6 @@ import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
 import '../../providers/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
-import '../../storage/db_helper_provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
@@ -30,11 +29,6 @@ class PageProviders extends SingleChildStatelessWidget {
   Iterable<SingleChildWidget> _buildPageViewModel() => [
         ChangeNotifierProvider<HabitDetailViewModel>(
           create: (context) => HabitDetailViewModel(),
-        ),
-        ChangeNotifierProxyProvider<DBHelperViewModel, HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) =>
-              previous!..updateDBHelper(value),
         ),
         ChangeNotifierProxyProvider<HabitsManager, HabitDetailViewModel>(
           create: (context) => context.read<HabitDetailViewModel>(),

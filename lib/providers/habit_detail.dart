@@ -32,7 +32,7 @@ import '../models/habit_repo_actions.dart';
 import '../models/habit_score.dart';
 import '../models/habit_status.dart';
 import '../models/habit_summary.dart';
-import '../storage/db_helper_provider.dart';
+import '../storage/db/handlers/habit.dart';
 import 'commons.dart';
 import 'habits_manager.dart';
 import 'utils.dart';
@@ -41,10 +41,7 @@ const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
 class HabitDetailViewModel extends ChangeNotifier
-    with
-        NotificationChannelDataMixin,
-        DBHelperLoadedMixin,
-        HabitsManagerLoadedMixin
+    with NotificationChannelDataMixin, HabitsManagerLoadedMixin
     implements ProviderMounted {
   // data
   HabitDetailData? _habitDetailData;
@@ -250,6 +247,18 @@ class HabitDetailViewModel extends ChangeNotifier
 
     loadingData();
     return loading.operation.valueOrCancellation();
+  }
+
+  Future<String?> loadRecordReason(HabitRecordDate date) async {
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
+    return habitsManager.loadHabitRecordReason(data, date);
+  }
+
+  Future<HabitDBCell?> loadCurrentHabitDetail() async {
+    final habitUUID = this.habitUUID;
+    if (habitUUID == null) return null;
+    return habitsManager.loadHabitDetail(habitUUID);
   }
   //#endregion
 
