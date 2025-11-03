@@ -66,3 +66,34 @@ final class HabitStatusChangedEvent implements AppEvent {
     return bf.toString();
   }
 }
+
+final class HabitRecordsChangedEvents implements AppEvent {
+  final String? msg;
+  final List<HabitUUID> uuidList;
+  final List<HabitRecordDate> dateList;
+  final HabitRecordStatus? status;
+  final String? reason;
+
+  const HabitRecordsChangedEvents(
+      {this.msg,
+      required this.uuidList,
+      required this.dateList,
+      this.status,
+      this.reason})
+      : assert(status != HabitRecordStatus.unknown);
+
+  @override
+  String toString() {
+    final bf = StringBuffer("HabitRecordsChangedEvents(");
+    final data = <String>[
+      if (msg != null) "msg=$msg",
+      "uuidList=$uuidList",
+      "dateList=$dateList",
+      "status=$status",
+      "reason=$reason"
+    ];
+    bf.writeAll(data, ",");
+    bf.write(")");
+    return bf.toString();
+  }
+}

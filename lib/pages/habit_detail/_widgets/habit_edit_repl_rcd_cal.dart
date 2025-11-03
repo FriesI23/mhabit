@@ -21,11 +21,14 @@ import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../extensions/context_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
+import '../../../models/habit_summary.dart';
 import '../../../providers/app_custom_date_format.dart';
+import '../../../providers/app_event.dart';
 import '../../../providers/app_sync.dart';
 import '../../../providers/habit_detail.dart';
 import '../../../theme/color.dart';
@@ -95,12 +98,22 @@ class _HabitEditReplacementRecordCalendarDialog
     }
   }
 
-  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+  void _onRecordChangeConfirmed(HabitSummaryRecord record,
+      {String? reason, bool shouldSyncOnce = true}) {
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
       if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    }
+    final habitUUID = _vm.habitUUID;
+    if (habitUUID != null) {
+      context.read<AppEventViewModel>().push(HabitRecordsChangedEvents(
+          msg: "habit_detail.calendar._onRecordChangeConfirmed",
+          uuidList: [habitUUID],
+          dateList: [record.date],
+          status: record.status,
+          reason: reason));
     }
   }
 
@@ -108,7 +121,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!(mounted && _vm.mounted)) return;
     _vm.changeRecordStatus(HabitDate.dateTime(date)).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record);
     });
   }
 
@@ -141,7 +154,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!(mounted && _vm.mounted)) return;
     _vm.changeRecordReason(date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record, reason: result);
     });
   }
 
@@ -176,7 +189,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!(mounted && _vm.mounted)) return;
     _vm.changeRecordValue(date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(record);
     });
   }
 

@@ -157,7 +157,11 @@ class _PageState extends State<_Page>
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
-    if (_summary?.mounted == true) {
+    if (_summary?.mounted != true) {
+      context
+          .read<AppEventViewModel>()
+          .push(const ReloadDataEvent(msg: "habit_detail._enterHabitEditPage"));
+    } else {
       _summary!.onHabitDataChanged();
       if (mounted && form.editMode == HabitDisplayEditMode.create) {
         Navigator.maybePop(context).then((popResult) {
@@ -188,32 +192,31 @@ class _PageState extends State<_Page>
       );
 
   void _openRetryButtonPressed() {
-    if (!mounted) return;
-    context.read<HabitDetailViewModel>().requestReload();
+    if (!(mounted && _vm.mounted)) return;
+    _vm.requestReload();
   }
 
   void _openEditDialog() async {
-    HabitDetailViewModel viewmodel;
+    if (!(mounted && _vm.mounted)) return;
+    if (_vm.habitDetailData == null) return;
+    final oldVersion = _vm.getInsideVersion();
 
-    if (!mounted) return;
-    viewmodel = context.read<HabitDetailViewModel>();
-    if (viewmodel.habitDetailData == null) return;
-    final oldVersion = viewmodel.getInsideVersion();
     await showHabitEditReplacementRecordCalendarDialog(
       context: context,
-      habitColorType: viewmodel.habitColorType,
-      firstday: viewmodel.firstday,
-      detail: viewmodel,
+      habitColorType: _vm.habitColorType,
+      firstday: _vm.firstday,
+      detail: _vm,
     );
 
-    if (!mounted) return;
-    final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    if (summary == null ||
-        !summary.mounted ||
-        viewmodel.getInsideVersion() == oldVersion) {
-      return;
+    if (!(mounted && _vm.mounted)) return;
+    if (_vm.getInsideVersion() == oldVersion) return;
+    if (_summary?.mounted != true) {
+      context
+          .read<AppEventViewModel>()
+          .push(const ReloadDataEvent(msg: "habit_detail._openEditDialog"));
+    } else {
+      _summary!.onHabitDataChanged();
     }
-    summary.onHabitDataChanged();
   }
 
   Future<bool?> _openHabitOpConfirmDialog(
