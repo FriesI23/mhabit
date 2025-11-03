@@ -44,9 +44,8 @@ class HabitDetailViewModel extends ChangeNotifier
     with
         NotificationChannelDataMixin,
         DBHelperLoadedMixin,
-        DBOperationsMixin,
         HabitsManagerLoadedMixin
-    implements ProviderMounted, HabitSummaryDirtyMarker {
+    implements ProviderMounted {
   // data
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
@@ -164,13 +163,6 @@ class HabitDetailViewModel extends ChangeNotifier
     return data != null
         ? habitsManager.updateHabitReminder(data)
         : Future.value();
-  }
-
-  @override
-  Future<void> bumpHatbitVersion(HabitSummaryData data) async {
-    data.bumpVersion();
-    // add reminder
-    await _updateHabitReminder();
   }
 
   void requestReload() {
@@ -317,76 +309,81 @@ class HabitDetailViewModel extends ChangeNotifier
   //#region actions
   Future<HabitSummaryRecord?> changeRecordStatus(HabitRecordDate date,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnTap();
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
+    appLog.value.info("HabitDetail.changeRecordStatus",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
     _updateHabitAutoCompleteStatistics();
-
-    appLog.value.info("$runtimeType.onTapToChangeRecordStatus",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
+    _updateHabitReminder();
     if (listen) notifyListeners();
-
-    await bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordReason(
       HabitRecordDate date, String newReason,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data,
+          reason: newReason,
+          status: HabitRecordStatus.skip,
+          dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final record = data.getRecordByDate(date);
-    if (record == null) return null;
+    appLog.value.info("HabitDetail.changeRecordReason",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record,
-        isNew: false, withReason: newReason);
-
+    _updateHabitAutoCompleteStatistics();
+    _updateHabitReminder();
     if (listen) notifyListeners();
-    return record;
+    return result.data;
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
       HabitRecordDate date, HabitDailyGoal newValue,
       {bool listen = true}) async {
-    if (_habitDetailData == null) return null;
+    final data = _habitDetailData?.data;
+    if (data == null) return null;
 
-    final data = _habitDetailData!.data;
-    final util = ChangeRecordStatusHelper(date: date, data: data);
-    final recordTuple = util.getNewRecordOnLongTap(newValue);
-    if (recordTuple == null) return null;
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data, goal: newValue, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
 
-    final orgRecord = recordTuple.item1;
-    final record = recordTuple.item2;
-    final isNew = recordTuple.item3;
+    appLog.value.info("HabitDetail.changeRecordValue",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
 
-    await saveHabitRecordToDB(data.id, data.uuid, record, isNew: isNew);
-
-    final result = data.addRecord(record, replaced: true);
     _updateHabitAutoCompleteStatistics();
-
-    appLog.value.info("$runtimeType.onLongPressChangeRecordValue",
-        beforeVal: orgRecord,
-        afterVal: record,
-        ex: ["rst=$result", data.id, data.progress, isNew]);
-
+    _updateHabitReminder();
     if (listen) notifyListeners();
-    await bumpHatbitVersion(data);
-    return record;
+    return result.data;
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
