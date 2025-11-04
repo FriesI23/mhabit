@@ -38,6 +38,7 @@ import '../../providers/habits_record_scroll_behavior.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
+import '../../widgets/provider.dart';
 
 class AppProviders extends SingleChildStatelessWidget {
   const AppProviders({super.key, super.child});
@@ -45,122 +46,99 @@ class AppProviders extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
-          Provider<Global>(
-            create: (context) => Global(),
-          ),
+          Provider<Global>(create: (context) => Global()),
           Provider<NotificationChannelData>(
-            create: (context) => NotificationChannelData(),
-          ),
+              create: (context) => NotificationChannelData()),
           ChangeNotifierProvider<AppEventViewModel>(
-            create: (context) => AppEventViewModel(),
-          ),
+              create: (context) => AppEventViewModel()),
           ProxyProvider2<DBHelperViewModel, NotificationChannelData,
-              HabitsManager>(
-            create: (context) => HabitsManager(),
-            update: (context, db, channel, previous) => previous!
-              ..updateDBHelper(db)
-              ..setNotificationChannelData(channel),
-          ),
-          ChangeNotifierProxyProvider2<ProfileViewModel,
-              NotificationChannelData, AppDebuggerViewModel>(
-            lazy: false,
-            create: (context) => AppDebuggerViewModel(),
-            update: (context, profile, channel, previous) => previous!
-              ..setNotificationChannelData(channel)
-              ..updateProfile(profile),
-          ),
+                  HabitsManager>(
+              create: (context) => HabitsManager(),
+              update: (context, db, channel, previous) =>
+                  (previous ?? HabitsManager())
+                    ..updateDBHelper(db)
+                    ..setNotificationChannelData(channel)),
+          ViewModelProxyProvider2<ProfileViewModel, NotificationChannelData,
+                  AppDebuggerViewModel>(
+              lazy: false,
+              create: (context) => AppDebuggerViewModel(),
+              update: (context, profile, channel, previous) => previous
+                ..setNotificationChannelData(channel)
+                ..updateProfile(profile)),
           ProxyProvider<ProfileViewModel, AppCachesViewModel>(
-            create: (context) => AppCachesViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              AppExperimentalFeatureViewModel>(
-            create: (context) => AppExperimentalFeatureViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel, AppLanguageViewModel>(
-            create: (context) => AppLanguageViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel, AppThemeViewModel>(
-            create: (context) => AppThemeViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              AppCompactUISwitcherViewModel>(
-            create: (context) => AppCompactUISwitcherViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
-            create: (context) => AppFirstDayViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              AppCustomDateYmdHmsConfigViewModel>(
-            create: (context) => AppCustomDateYmdHmsConfigViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              AppNotifyConfigViewModel>(
-            // Config needs to be synced with Notification Service.
-            lazy: false,
-            create: (context) => AppNotifyConfigViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider3<ProfileViewModel, DBHelperViewModel,
-              NotificationChannelData, AppSyncViewModel>(
-            create: (context) => AppSyncViewModel(),
-            update: (context, profile, helper, channel, previous) => previous!
-              ..updateProfile(profile)
-              ..updateDBHelper(helper)
-              ..setNotificationChannelData(channel),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              HabitRecordOpConfigViewModel>(
-            create: (context) => HabitRecordOpConfigViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider2<ProfileViewModel,
-              NotificationChannelData, AppReminderViewModel>(
-            lazy: false,
-            create: (context) => AppReminderViewModel(),
-            update: (context, profile, channel, previous) => previous!
-              ..setNotificationChannelData(channel)
-              ..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel,
-              HabitsRecordScrollBehaviorViewModel>(
-            create: (context) => HabitsRecordScrollBehaviorViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<Global, AppDeveloperViewModel>(
-            create: (context) =>
-                AppDeveloperViewModel(global: context.read<Global>()),
-            update: (context, value, previous) =>
-                previous!..updateGlobal(value),
-          ),
-          ChangeNotifierProxyProvider<DBHelperViewModel,
-              HabitFileExporterViewModel>(
-            create: (context) => HabitFileExporterViewModel(),
-            update: (context, value, previous) =>
-                previous!..updateDBHelper(value),
-          ),
-          ChangeNotifierProxyProvider<DBHelperViewModel,
-              HabitFileImporterViewModel>(
-            create: (context) => HabitFileImporterViewModel(),
-            update: (context, value, previous) =>
-                previous!..updateDBHelper(value),
-          ),
+              create: (context) => AppCachesViewModel(),
+              update: (context, profile, previous) =>
+                  (previous ?? AppCachesViewModel())..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel,
+                  AppExperimentalFeatureViewModel>(
+              create: (context) => AppExperimentalFeatureViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel, AppLanguageViewModel>(
+              create: (context) => AppLanguageViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel, AppThemeViewModel>(
+              create: (context) => AppThemeViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel,
+                  AppCompactUISwitcherViewModel>(
+              create: (context) => AppCompactUISwitcherViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
+              create: (context) => AppFirstDayViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel,
+                  AppCustomDateYmdHmsConfigViewModel>(
+              create: (context) => AppCustomDateYmdHmsConfigViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigViewModel>(
+              // Config needs to be synced with Notification Service.
+              lazy: false,
+              create: (context) => AppNotifyConfigViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider3<ProfileViewModel, DBHelperViewModel,
+                  NotificationChannelData, AppSyncViewModel>(
+              create: (context) => AppSyncViewModel(),
+              update: (context, profile, helper, channel, previous) => previous
+                ..updateProfile(profile)
+                ..updateDBHelper(helper)
+                ..setNotificationChannelData(channel)),
+          ViewModelProxyProvider<ProfileViewModel,
+                  HabitRecordOpConfigViewModel>(
+              create: (context) => HabitRecordOpConfigViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider2<ProfileViewModel, NotificationChannelData,
+                  AppReminderViewModel>(
+              lazy: false,
+              create: (context) => AppReminderViewModel(),
+              update: (context, profile, channel, previous) => previous
+                ..setNotificationChannelData(channel)
+                ..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel,
+                  HabitsRecordScrollBehaviorViewModel>(
+              create: (context) => HabitsRecordScrollBehaviorViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<Global, AppDeveloperViewModel>(
+              create: (context) =>
+                  AppDeveloperViewModel(global: context.read<Global>()),
+              update: (context, value, previous) =>
+                  previous..updateGlobal(value)),
+          ViewModelProxyProvider<DBHelperViewModel, HabitFileExporterViewModel>(
+              create: (context) => HabitFileExporterViewModel(),
+              update: (context, value, previous) =>
+                  previous..updateDBHelper(value)),
+          ViewModelProxyProvider<DBHelperViewModel, HabitFileImporterViewModel>(
+              create: (context) => HabitFileImporterViewModel(),
+              update: (context, value, previous) =>
+                  previous..updateDBHelper(value)),
         ],
         child: child,
       );

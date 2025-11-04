@@ -26,88 +26,57 @@ import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/profile_provider.dart';
+import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
   Iterable<SingleChildWidget> _buildPageViewModel() => [
         ChangeNotifierProvider<HabitSummaryViewModel>(
-          create: (context) => HabitSummaryViewModel(),
-        ),
-        ChangeNotifierProxyProvider<HabitsManager, HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) =>
-              previous!..updateHabitManager(value),
-        ),
-        ChangeNotifierProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) =>
-              previous!..updateAppEvent(value),
-        ),
-        ChangeNotifierProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) => previous!..updateAppSync(value),
-        ),
-        ChangeNotifierProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, sortOptions, habitDisplayFilter, previous) {
-            previous!.updateSortOptions(
-                sortOptions.sortType, sortOptions.sortDirection);
-            previous.updateHabitDisplayFilter(
-                habitDisplayFilter.habitsDisplayFilter);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              previous.resortData();
-            });
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<HabitFileImporterViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) {
-            if (value.consumeReloadDisplayFlag()) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous!.requestReload();
-              });
-            }
-            return previous!;
-          },
-        ),
-        ChangeNotifierProxyProvider<AppFirstDayViewModel,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) {
-            if (value.firstDay != previous!.firstday) {
-              previous.updateFirstday(value.firstDay);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.requestReload();
-              });
-            }
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<NotificationChannelData,
-            HabitSummaryViewModel>(
-          create: (context) => context.read<HabitSummaryViewModel>(),
-          update: (context, value, previous) =>
-              previous!..setNotificationChannelData(value),
-        ),
+            create: (context) => HabitSummaryViewModel()),
+        ViewModelProxyProvider<HabitsManager, HabitSummaryViewModel>(
+            update: (context, value, previous) =>
+                previous..updateHabitManager(value)),
+        ViewModelProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppEvent(value)),
+        ViewModelProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppSync(value)),
+        ViewModelProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
+                HabitSummaryViewModel>(
+            update: (context, sortOptions, habitDisplayFilter, previous) =>
+                previous
+                  ..updateSortOptions(
+                      sortOptions.sortType, sortOptions.sortDirection)
+                  ..updateHabitDisplayFilter(
+                      habitDisplayFilter.habitsDisplayFilter),
+            post: (t, _, __, vm) => vm.resortData()),
+        ViewModelProxyProvider<HabitFileImporterViewModel,
+                HabitSummaryViewModel>(
+            post: (t, value, vm) =>
+                value.consumeReloadDisplayFlag() ? vm.requestReload() : null),
+        ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(
+            update: (context, value, previous) =>
+                previous..updateFirstday(value.firstDay),
+            post: (t, value, vm) =>
+                value.firstDay != vm.firstday ? vm.requestReload() : null),
+        ViewModelProxyProvider<NotificationChannelData, HabitSummaryViewModel>(
+            update: (context, value, previous) =>
+                previous..setNotificationChannelData(value)),
       ];
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
-          ChangeNotifierProxyProvider<ProfileViewModel, HabitsSortViewModel>(
-            create: (context) => HabitsSortViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
-          ChangeNotifierProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
-            create: (context) => HabitsFilterViewModel(),
-            update: (context, profile, previous) =>
-                previous!..updateProfile(profile),
-          ),
+          ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
+              create: (context) => HabitsSortViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
+          ViewModelProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
+              create: (context) => HabitsFilterViewModel(),
+              update: (context, profile, previous) =>
+                  previous..updateProfile(profile)),
           ..._buildPageViewModel(),
         ],
         child: child,
