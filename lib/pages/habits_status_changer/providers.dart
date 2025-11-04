@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 import '../../common/types.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/habit_status_changer.dart';
-import '../../storage/db_helper_provider.dart';
+import '../../providers/habits_manager.dart';
 import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -33,10 +33,9 @@ class PageProviders extends SingleChildStatelessWidget {
           ChangeNotifierProvider<HabitStatusChangerViewModel>(
               create: (context) =>
                   HabitStatusChangerViewModel(uuidList: uuidList)),
-          ViewModelProxyProvider<DBHelperViewModel,
-                  HabitStatusChangerViewModel>(
+          ViewModelProxyProvider<HabitsManager, HabitStatusChangerViewModel>(
               update: (context, value, previous) =>
-                  previous..updateDBHelper(value)),
+                  previous..updateHabitManager(value)),
           ViewModelProxyProvider<AppFirstDayViewModel,
                   HabitStatusChangerViewModel>(
               update: (context, value, previous) =>

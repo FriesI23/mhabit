@@ -18,7 +18,6 @@ import 'dart:math' as math;
 import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
-import 'package:tuple/tuple.dart';
 
 import '../common/consts.dart';
 import '../common/exceptions.dart';
@@ -29,10 +28,10 @@ import '../logging/logger_stack.dart';
 import '../models/habit_daily_record_form.dart';
 import '../models/habit_date.dart';
 import '../models/habit_form.dart';
+import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
-import '../storage/db/handlers/record.dart';
-import '../storage/db_helper_provider.dart';
 import 'commons.dart';
+import 'habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
 
@@ -57,7 +56,7 @@ enum RecordStatusChangerStatus {
 }
 
 class HabitStatusChangerViewModel
-    with ChangeNotifier, DBHelperLoadedMixin
+    with ChangeNotifier, HabitsManagerLoadedMixin
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
@@ -131,23 +130,18 @@ class HabitStatusChangerViewModel
           ex: ["loading data", loading.hashCode, listen]);
 
       // init habits
-      final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
-          uuidFilter: _selectedUUIDList);
-      final recordLoadTask =
-          recordDBHelper.loadAllRecords(uuidFilter: _selectedUUIDList);
-      final habitLoaded = await habitLoadTask;
-      final recordLoaded = await recordLoadTask;
+      final collection = await habitsManager.loadHabitSummaryCollectionData(
+          habitUUIDs: _selectedUUIDList);
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
 
-      _habitDataController.replaceData(HabitSummaryDataCollection()
-        ..initDataFromDBQueuryResult(habitLoaded, recordLoaded)
+      _habitDataController.replaceData(collection
         ..forEach((_, habit) =>
             habit.reCalculateAutoComplateRecords(firstDay: firstday)));
       _updateCurrentHabitList();
-
       _updateForm(_form, withDefaultChangerStatus: true);
+
       // complete
       loading.complete();
       // reload
@@ -282,23 +276,18 @@ class HabitStatusChangerViewModel
     if (!mounted || !canSave) return 0;
     final records = _habitDataController.habits
         .where((e) => e.startDate <= _form.selectDate)
-        .map((e) => Tuple2(_form.buildRecordFromHabit(e), e))
-        .where((e) => e.item1 != null)
         .map((e) {
-      final record = e.item1!;
-      final habit = e.item2;
-      return RecordDBCell.build(
-          parentId: habit.id,
-          parentUUID: habit.uuid,
-          recordDate: record.date.epochDay,
-          recordType: record.status.dbCode,
-          recordValue: record.value,
-          uuid: record.uuid,
-          reason: selectStatus == RecordStatusChangerStatus.skip
-              ? skipReason
-              : null);
-    }).toList();
-    await recordDBHelper.insertOrUpdateMultiRecords(records);
+          final record = _form.buildRecordFromHabit(e);
+          return record != null ? (record: record, habit: e) : null;
+        })
+        .nonNulls
+        .map((e) => ChangeRecordStatusResult.record(
+            habit: e.habit,
+            data: e.record,
+            reason: selectStatus == RecordStatusChangerStatus.skip
+                ? skipReason
+                : null));
+    await habitsManager.saveMultiHabitRecordToDB(records);
     if (!mounted) return 0;
 
     requestReloadData();

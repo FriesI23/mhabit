@@ -57,14 +57,13 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
         postActionBuilder,
     FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
   }) async {
-    final data = preAction.data;
     final preResults = preAction.resolve();
-
     if (preResults.length == 1) {
+      final data = preAction.data;
       await saveHabitRecordToDB(data.id, data.uuid, preResults.first.data,
           isNew: preResults.first.isNew, withReason: preResults.first.reason);
     } else {
-      await saveMultiHabitRecordToDB(data.id, data.uuid, preResults);
+      await saveMultiHabitRecordToDB(preResults);
     }
 
     final results = postActionBuilder?.call(preResults).resolve() ?? preResults;
@@ -108,19 +107,18 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return dbCell.copyWith(id: dbid);
   }
 
-  Future<void> saveMultiHabitRecordToDB(DBID parentId, HabitUUID parentUUID,
-      Iterable<ChangeRecordStatusResult> records) async {
-    final cells = records.map((record) => RecordDBCell.build(
-          parentId: parentId,
-          parentUUID: parentUUID,
-          uuid: record.data.uuid,
-          recordDate: record.data.date.epochDay,
-          recordType: record.data.status.dbCode,
-          recordValue: record.data.value,
-          reason: record.reason,
-        ));
-    await recordDBHelper.insertOrUpdateMultiRecords(cells);
-  }
+  Future<void> saveMultiHabitRecordToDB(
+          Iterable<ChangeRecordStatusResult> records) =>
+      recordDBHelper.insertOrUpdateMultiRecords(
+          records.map((record) => RecordDBCell.build(
+                parentId: record.habit.id,
+                parentUUID: record.habit.uuid,
+                uuid: record.data.uuid,
+                recordDate: record.data.date.epochDay,
+                recordType: record.data.status.dbCode,
+                recordValue: record.data.value,
+                reason: record.reason,
+              )));
 
   Future<String?> loadHabitRecordReason(
       HabitSummaryData data, HabitRecordDate date) async {
