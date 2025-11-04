@@ -14,12 +14,11 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../models/habit_import.dart';
-import '../storage/db_helper_provider.dart';
 import 'commons.dart';
+import 'habits_manager.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier
-    with DBHelperLoadedMixin
+    with HabitsManagerLoadedMixin
     implements ProviderMounted {
   // status
   bool _needReloadDisplayUI = false;
@@ -55,8 +54,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
       if (listen) notifyListeners();
     }
 
-    final importer = HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
-    final futures = importer.importData();
+    final futures = habitsManager.getImporter(jsonData).importData();
     if (futures.isEmpty) return false;
 
     var completeCount = 0;
@@ -71,9 +69,8 @@ class HabitFileImporterViewModel extends ChangeNotifier
     return true;
   }
 
-  HabitImport importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    final importer = HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
-    return importer;
+  int importHabitsDataDryRun(Iterable<Object?> jsonData) {
+    return habitsManager.getImporter(jsonData).habitsCount;
   }
 
   @override

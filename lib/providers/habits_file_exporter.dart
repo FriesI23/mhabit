@@ -22,11 +22,11 @@ import 'package:path/path.dart' as path;
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../models/habit_export.dart';
-import '../storage/db_helper_provider.dart';
 import '../utils/app_path_provider.dart';
+import 'habits_manager.dart';
 
 class HabitFileExporterViewModel extends ChangeNotifier
-    with DBHelperLoadedMixin {
+    with HabitsManagerLoadedMixin {
   static const defaultExportFileNamePrefix = "export-habits";
 
   String _getExportDataFileName(
@@ -64,9 +64,8 @@ class HabitFileExporterViewModel extends ChangeNotifier
 
   Future<String?> exportHabitData(HabitUUID habitUUID,
       {withRecords = true, bool listen = true}) async {
-    final exporter =
-        HabitExporter(habitDBHelper, recordDBHelper, uuidList: [habitUUID]);
-    final result = await exporter.exportData(withRecords: withRecords);
+    final result = await habitsManager.getExporter(
+        uuidList: [habitUUID]).exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -83,9 +82,9 @@ class HabitFileExporterViewModel extends ChangeNotifier
 
   Future<String?> exportMultiHabitsData(List<HabitUUID> uuidList,
       {withRecords = true, bool listen = true}) async {
-    final exporter =
-        HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
-    final result = await exporter.exportData(withRecords: withRecords);
+    final result = await habitsManager
+        .getExporter(uuidList: uuidList)
+        .exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -104,8 +103,8 @@ class HabitFileExporterViewModel extends ChangeNotifier
       {withRecords = true, bool listen = true}) async {
     Iterable<HabitExportData> habitExportData;
 
-    habitExportData = await HabitExportAll(habitDBHelper, recordDBHelper)
-        .exportData(withRecords: withRecords);
+    habitExportData =
+        await habitsManager.getExporter().exportData(withRecords: withRecords);
 
     final data = formatExportJsonData(habits: habitExportData);
     final jsonData = jsonEncode(data);

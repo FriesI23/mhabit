@@ -21,7 +21,9 @@ import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_date.dart';
 import '../models/habit_detail.dart';
+import '../models/habit_export.dart';
 import '../models/habit_form.dart';
+import '../models/habit_import.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
 import '../reminders/notification_id_range.dart';
@@ -34,6 +36,7 @@ import 'commons.dart';
 class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   HabitsManager();
 
+  //#region status
   Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
     required ChangeHabitStatusAction action,
     FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
@@ -77,7 +80,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     }
     return results;
   }
+  //#endregion
 
+  //#region write to db
   Future<RecordDBCell> saveHabitRecordToDB(
       DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
       {bool isNew = false, String? withReason}) async {
@@ -147,7 +152,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
         : null;
     return result;
   }
+  //#endregion
 
+  //#region load from db
   Future<String?> loadHabitRecordReason(
       HabitSummaryData data, HabitRecordDate date) async {
     final recordUUID = data.getRecordByDate(date)?.uuid;
@@ -187,6 +194,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
       habitDBHelper.loadHabitDetail(uuid);
+  //#endregion
 
   Future<List<HabitUUID>> fixAndSaveSortPositions(
     List<HabitSummaryData> habits, {
@@ -248,6 +256,14 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
           ex: ["catch err when try regr reminder"], error: e);
     }
   }
+
+  //#region import and export
+  HabitExporter getExporter({List<HabitUUID>? uuidList}) =>
+      HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
+
+  HabitImport getImporter(Iterable<Object?> jsonData) =>
+      HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
+  //#endregion
 }
 
 mixin HabitsManagerLoadedMixin {

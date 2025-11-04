@@ -131,14 +131,14 @@ class AppProviders extends SingleChildStatelessWidget {
                   AppDeveloperViewModel(global: context.read<Global>()),
               update: (context, value, previous) =>
                   previous..updateGlobal(value)),
-          ViewModelProxyProvider<DBHelperViewModel, HabitFileExporterViewModel>(
+          ViewModelProxyProvider<HabitsManager, HabitFileExporterViewModel>(
               create: (context) => HabitFileExporterViewModel(),
               update: (context, value, previous) =>
-                  previous..updateDBHelper(value)),
-          ViewModelProxyProvider<DBHelperViewModel, HabitFileImporterViewModel>(
+                  previous..updateHabitManager(value)),
+          ViewModelProxyProvider<HabitsManager, HabitFileImporterViewModel>(
               create: (context) => HabitFileImporterViewModel(),
               update: (context, value, previous) =>
-                  previous..updateDBHelper(value)),
+                  previous..updateHabitManager(value)),
         ],
         child: child,
       );
