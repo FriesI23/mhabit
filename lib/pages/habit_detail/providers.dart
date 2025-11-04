@@ -22,37 +22,25 @@ import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
 import '../../providers/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
+import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
   Iterable<SingleChildWidget> _buildPageViewModel() => [
         ChangeNotifierProvider<HabitDetailViewModel>(
-          create: (context) => HabitDetailViewModel(),
-        ),
-        ChangeNotifierProxyProvider<HabitsManager, HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) =>
-              previous!..updateHabitManager(value),
-        ),
-        ChangeNotifierProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) {
-            if (value.firstDay != previous!.firstday) {
-              previous.updateFirstday(value.firstDay);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                previous.requestReload();
-              });
-            }
-            return previous;
-          },
-        ),
-        ChangeNotifierProxyProvider<NotificationChannelData,
-            HabitDetailViewModel>(
-          create: (context) => context.read<HabitDetailViewModel>(),
-          update: (context, value, previous) =>
-              previous!..setNotificationChannelData(value),
-        ),
+            create: (context) => HabitDetailViewModel()),
+        ViewModelProxyProvider<HabitsManager, HabitDetailViewModel>(
+            update: (context, value, previous) =>
+                previous..updateHabitManager(value)),
+        ViewModelProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
+            update: (context, value, previous) =>
+                previous..updateFirstday(value.firstDay),
+            post: (t, value, vm) =>
+                value.firstDay != vm.firstday ? vm.requestReload() : null),
+        ViewModelProxyProvider<NotificationChannelData, HabitDetailViewModel>(
+            update: (context, value, previous) =>
+                previous..setNotificationChannelData(value)),
       ];
 
   @override

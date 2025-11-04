@@ -20,6 +20,7 @@ import '../../common/types.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/habit_status_changer.dart';
 import '../../storage/db_helper_provider.dart';
+import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final List<HabitUUID> uuidList;
@@ -30,28 +31,19 @@ class PageProviders extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
           ChangeNotifierProvider<HabitStatusChangerViewModel>(
-            create: (context) =>
-                HabitStatusChangerViewModel(uuidList: uuidList),
-          ),
-          ChangeNotifierProxyProvider<DBHelperViewModel,
-              HabitStatusChangerViewModel>(
-            create: (context) => context.read<HabitStatusChangerViewModel>(),
-            update: (context, value, previous) =>
-                previous!..updateDBHelper(value),
-          ),
-          ChangeNotifierProxyProvider<AppFirstDayViewModel,
-              HabitStatusChangerViewModel>(
-            create: (context) => context.read<HabitStatusChangerViewModel>(),
-            update: (context, value, previous) {
-              if (value.firstDay != previous!.firstday) {
-                previous.updateFirstday(value.firstDay);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  previous.requestReloadData();
-                });
-              }
-              return previous;
-            },
-          ),
+              create: (context) =>
+                  HabitStatusChangerViewModel(uuidList: uuidList)),
+          ViewModelProxyProvider<DBHelperViewModel,
+                  HabitStatusChangerViewModel>(
+              update: (context, value, previous) =>
+                  previous..updateDBHelper(value)),
+          ViewModelProxyProvider<AppFirstDayViewModel,
+                  HabitStatusChangerViewModel>(
+              update: (context, value, previous) =>
+                  previous..updateFirstday(value.firstDay),
+              post: (t, value, vm) => value.firstDay != vm.firstday
+                  ? vm.requestReloadData()
+                  : null),
         ],
         child: child,
       );
