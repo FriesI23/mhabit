@@ -24,6 +24,7 @@ import '../models/habit_detail.dart';
 import '../models/habit_form.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
+import '../reminders/notification_id_range.dart';
 import '../reminders/notification_service.dart';
 import '../storage/db/handlers/habit.dart';
 import '../storage/db/handlers/record.dart';
@@ -120,6 +121,33 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
                 reason: record.reason,
               )));
 
+  Future<HabitDBCell?> saveNewHabitToDB(HabitDBCell cell,
+      {bool returnResult = false}) async {
+    final dbid = await habitDBHelper.insertNewHabit(cell);
+    final result =
+        returnResult ? await habitDBHelper.queryHabitByDBID(dbid) : null;
+    return result;
+  }
+
+  Future<HabitDBCell?> updateExistHabitToDB(HabitDBCell cell,
+      {bool withReminder = true, bool returnResult = false}) async {
+    assert(cell.uuid != null);
+    final habitUUID = cell.uuid;
+    if (habitUUID == null) return null;
+    final count = await habitDBHelper.updateExistHabit(cell,
+        includeNullKeys: withReminder
+            ? const [
+                HabitDBCellKey.remindCustom,
+                HabitDBCellKey.remindQuestion,
+                HabitDBCellKey.dailyGoalExtra,
+              ]
+            : const []);
+    final result = (count > 0 && returnResult)
+        ? await habitDBHelper.queryHabitByUUID(habitUUID)
+        : null;
+    return result;
+  }
+
   Future<String?> loadHabitRecordReason(
       HabitSummaryData data, HabitRecordDate date) async {
     final recordUUID = data.getRecordByDate(date)?.uuid;
@@ -193,26 +221,27 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   }
 
   Future<void> updateHabitReminder(HabitSummaryData data) async {
+    final reminderId = getHabitReminderId(data.id);
+
+    Future<bool> regr() => NotificationService().regrHabitReminder(
+          id: reminderId,
+          uuid: data.uuid,
+          name: data.name,
+          quest: data.reminderQuest,
+          reminder: data.reminder!,
+          lastUntrackDate: data.getFirstUnTrackedDate(),
+          details: channelData.habitReminder,
+        );
+
+    Future<bool> unregr() =>
+        NotificationService().cancelHabitReminder(id: reminderId);
+
     try {
       switch (data.status) {
         case HabitStatus.activated:
-          if (data.reminder != null) {
-            await NotificationService().regrHabitReminder(
-              id: data.id,
-              uuid: data.uuid,
-              name: data.name,
-              quest: data.reminderQuest,
-              reminder: data.reminder!,
-              lastUntrackDate: data.getFirstUnTrackedDate(),
-              details: channelData.habitReminder,
-            );
-          }
-          break;
-        case HabitStatus.unknown:
-        case HabitStatus.deleted:
-        case HabitStatus.archived:
-          await NotificationService().cancelHabitReminder(id: data.id);
-          break;
+          await (data.reminder != null ? regr() : unregr());
+        case HabitStatus.archived || HabitStatus.deleted || HabitStatus.unknown:
+          await unregr();
       }
     } on Exception catch (e) {
       appLog.notify.error("HabitsManager._regrHabitReminder",

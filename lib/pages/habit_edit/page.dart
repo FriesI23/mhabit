@@ -34,7 +34,6 @@ import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_form.dart';
 import '../../reminders/notification_channel.dart';
-import '../../reminders/notification_id_range.dart' as notifyid;
 import '../../reminders/notification_service.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
@@ -242,41 +241,15 @@ class _PageState extends State<_Page> {
     if (!mounted) return;
     formvm = context.read<HabitFormViewModel>();
     if (!formvm.canSaveHabit()) return;
-    final HabitDBCell? result = await formvm.saveHabit();
+    final result = await formvm.saveHabit();
     if (!mounted) return;
-    // add or remove reminder
-    final uuid = result?.uuid;
-    final dbid = result?.id;
-    if (uuid != null) {
-      final details = context.read<NotificationChannelData>().habitReminder;
-      formvm
-          .loadSingleHabitSummaryFromDB(uuid,
-              firstDay: context.read<AppFirstDayViewModel>().firstDay)
-          .then((habit) {
-        if (habit != null && habit.reminder != null) {
-          NotificationService().regrHabitReminder(
-            id: notifyid.getHabitReminderId(habit.id),
-            uuid: habit.uuid,
-            name: habit.name,
-            reminder: habit.reminder!,
-            quest: habit.reminderQuest,
-            lastUntrackDate: habit.getFirstUnTrackedDate(),
-            details: details,
-          );
-        } else if (dbid != null) {
-          NotificationService().cancelHabitReminder(
-            id: notifyid.getHabitReminderId(dbid),
-          );
-        }
-      });
-    }
-    // pop result
-    Navigator.of(context).pop(result);
     // try sync once
     if (mounted && result != null) {
       final appSync = context.maybeRead<AppSyncViewModel>();
       if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
     }
+    // pop result
+    Navigator.of(context).maybePop(result);
   }
 
   Widget _buildDebugInfo(BuildContext context) {
