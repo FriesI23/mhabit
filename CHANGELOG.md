@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.20.1+113-pre
+## 1.20.1+114-pre
 
 **🌐 Localization**
 
@@ -11,19 +11,11 @@
 
 **🧹 Others**
 
-- Fixed: Dispatcher incorrectly reused on layout/size changes
-- Refactor: `Habit Status Changer` (#397)
-  - Migrate list dispatcher to UI layer
-  - Switch data control from delegate to controller
-- Refactor: `Habit Display` (#398)
-  - Migrate list dispatcher to UI layer
-- Refactor: Avoid UI depending on ViewModels from other widgets layer (#400)
-  - migrate habit_summary AppSync adapter to AppEvent
-  - migrate habit_summary HabitsStatusChanger adapter to AppEvent
-- Refactor: Habit Summary ViewModel (#401)
-  - Migrate habit_summary logic to habit_manager, refactor responsibility boundaries
-  - Unify and rename APIs: change_habit_status, change_record_status, change_record_value, etc.
-  - Remove unused statuses
+- Fix: Prevent dispatcher reuse across layout/size changes
+- Refactor: Adopt new ViewModel call pattern (#405)
+- Refactor: Enforce widget-local ViewModel boundaries (#400)
+- Refactor: Simplify Provider initialization (#404)
+- Refactor: Habit module architecture clean-up (#397, #398, #401, #403)
 
 ## 1.20.0+111
 
