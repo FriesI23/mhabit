@@ -209,8 +209,16 @@ class HabitExportData implements JsonAdaptor {
   }
 }
 
-abstract class HabitExporterABC {
+abstract class HabitExporter {
   Future<Iterable<HabitExportData>> exportData({bool withRecords = true});
+
+  factory HabitExporter(HabitDBHelper helper, RecordDBHelper recordDBHelper,
+      {List<HabitUUID>? uuidList}) {
+    if (uuidList != null) {
+      return HabitExporterImpl(helper, recordDBHelper, uuidList: uuidList);
+    }
+    return HabitExportAll(helper, recordDBHelper);
+  }
 }
 
 mixin HabitExporterMixin {
@@ -234,12 +242,12 @@ mixin HabitExporterMixin {
   }
 }
 
-class HabitExporter with HabitExporterMixin implements HabitExporterABC {
+class HabitExporterImpl with HabitExporterMixin implements HabitExporter {
   final List<HabitUUID> uuidList;
   final HabitDBHelper helper;
   final RecordDBHelper recordDBHelper;
 
-  const HabitExporter(this.helper, this.recordDBHelper,
+  const HabitExporterImpl(this.helper, this.recordDBHelper,
       {this.uuidList = const []});
 
   @override
@@ -255,7 +263,7 @@ class HabitExporter with HabitExporterMixin implements HabitExporterABC {
   }
 }
 
-class HabitExportAll with HabitExporterMixin implements HabitExporterABC {
+class HabitExportAll with HabitExporterMixin implements HabitExporter {
   final HabitDBHelper helper;
   final RecordDBHelper recordDBHelper;
 

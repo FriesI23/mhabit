@@ -21,9 +21,12 @@ import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
 import '../models/habit_date.dart';
 import '../models/habit_detail.dart';
+import '../models/habit_export.dart';
 import '../models/habit_form.dart';
+import '../models/habit_import.dart';
 import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
+import '../reminders/notification_id_range.dart';
 import '../reminders/notification_service.dart';
 import '../storage/db/handlers/habit.dart';
 import '../storage/db/handlers/record.dart';
@@ -33,6 +36,7 @@ import 'commons.dart';
 class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   HabitsManager();
 
+  //#region status
   Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
     required ChangeHabitStatusAction action,
     FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
@@ -57,14 +61,13 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
         postActionBuilder,
     FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
   }) async {
-    final data = preAction.data;
     final preResults = preAction.resolve();
-
     if (preResults.length == 1) {
+      final data = preAction.data;
       await saveHabitRecordToDB(data.id, data.uuid, preResults.first.data,
           isNew: preResults.first.isNew, withReason: preResults.first.reason);
     } else {
-      await saveMultiHabitRecordToDB(data.id, data.uuid, preResults);
+      await saveMultiHabitRecordToDB(preResults);
     }
 
     final results = postActionBuilder?.call(preResults).resolve() ?? preResults;
@@ -77,7 +80,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     }
     return results;
   }
+  //#endregion
 
+  //#region write to db
   Future<RecordDBCell> saveHabitRecordToDB(
       DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
       {bool isNew = false, String? withReason}) async {
@@ -108,20 +113,48 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return dbCell.copyWith(id: dbid);
   }
 
-  Future<void> saveMultiHabitRecordToDB(DBID parentId, HabitUUID parentUUID,
-      Iterable<ChangeRecordStatusResult> records) async {
-    final cells = records.map((record) => RecordDBCell.build(
-          parentId: parentId,
-          parentUUID: parentUUID,
-          uuid: record.data.uuid,
-          recordDate: record.data.date.epochDay,
-          recordType: record.data.status.dbCode,
-          recordValue: record.data.value,
-          reason: record.reason,
-        ));
-    await recordDBHelper.insertOrUpdateMultiRecords(cells);
+  Future<void> saveMultiHabitRecordToDB(
+          Iterable<ChangeRecordStatusResult> records) =>
+      recordDBHelper.insertOrUpdateMultiRecords(
+          records.map((record) => RecordDBCell.build(
+                parentId: record.habit.id,
+                parentUUID: record.habit.uuid,
+                uuid: record.data.uuid,
+                recordDate: record.data.date.epochDay,
+                recordType: record.data.status.dbCode,
+                recordValue: record.data.value,
+                reason: record.reason,
+              )));
+
+  Future<HabitDBCell?> saveNewHabitToDB(HabitDBCell cell,
+      {bool returnResult = false}) async {
+    final dbid = await habitDBHelper.insertNewHabit(cell);
+    final result =
+        returnResult ? await habitDBHelper.queryHabitByDBID(dbid) : null;
+    return result;
   }
 
+  Future<HabitDBCell?> updateExistHabitToDB(HabitDBCell cell,
+      {bool withReminder = true, bool returnResult = false}) async {
+    assert(cell.uuid != null);
+    final habitUUID = cell.uuid;
+    if (habitUUID == null) return null;
+    final count = await habitDBHelper.updateExistHabit(cell,
+        includeNullKeys: withReminder
+            ? const [
+                HabitDBCellKey.remindCustom,
+                HabitDBCellKey.remindQuestion,
+                HabitDBCellKey.dailyGoalExtra,
+              ]
+            : const []);
+    final result = (count > 0 && returnResult)
+        ? await habitDBHelper.queryHabitByUUID(habitUUID)
+        : null;
+    return result;
+  }
+  //#endregion
+
+  //#region load from db
   Future<String?> loadHabitRecordReason(
       HabitSummaryData data, HabitRecordDate date) async {
     final recordUUID = data.getRecordByDate(date)?.uuid;
@@ -161,6 +194,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
       habitDBHelper.loadHabitDetail(uuid);
+  //#endregion
 
   Future<List<HabitUUID>> fixAndSaveSortPositions(
     List<HabitSummaryData> habits, {
@@ -195,32 +229,41 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   }
 
   Future<void> updateHabitReminder(HabitSummaryData data) async {
+    final reminderId = getHabitReminderId(data.id);
+
+    Future<bool> regr() => NotificationService().regrHabitReminder(
+          id: reminderId,
+          uuid: data.uuid,
+          name: data.name,
+          quest: data.reminderQuest,
+          reminder: data.reminder!,
+          lastUntrackDate: data.getFirstUnTrackedDate(),
+          details: channelData.habitReminder,
+        );
+
+    Future<bool> unregr() =>
+        NotificationService().cancelHabitReminder(id: reminderId);
+
     try {
       switch (data.status) {
         case HabitStatus.activated:
-          if (data.reminder != null) {
-            await NotificationService().regrHabitReminder(
-              id: data.id,
-              uuid: data.uuid,
-              name: data.name,
-              quest: data.reminderQuest,
-              reminder: data.reminder!,
-              lastUntrackDate: data.getFirstUnTrackedDate(),
-              details: channelData.habitReminder,
-            );
-          }
-          break;
-        case HabitStatus.unknown:
-        case HabitStatus.deleted:
-        case HabitStatus.archived:
-          await NotificationService().cancelHabitReminder(id: data.id);
-          break;
+          await (data.reminder != null ? regr() : unregr());
+        case HabitStatus.archived || HabitStatus.deleted || HabitStatus.unknown:
+          await unregr();
       }
     } on Exception catch (e) {
       appLog.notify.error("HabitsManager._regrHabitReminder",
           ex: ["catch err when try regr reminder"], error: e);
     }
   }
+
+  //#region import and export
+  HabitExporter getExporter({List<HabitUUID>? uuidList}) =>
+      HabitExporter(habitDBHelper, recordDBHelper, uuidList: uuidList);
+
+  HabitImport getImporter(Iterable<Object?> jsonData) =>
+      HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
+  //#endregion
 }
 
 mixin HabitsManagerLoadedMixin {

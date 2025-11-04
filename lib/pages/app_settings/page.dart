@@ -265,8 +265,7 @@ class _PageState extends State<_Page> with XShare {
     final habitsData = jsonData["habits"] as Iterable<Object?>? ?? const [];
 
     final fileImporter = context.read<HabitFileImporterViewModel>();
-    final habitCount =
-        fileImporter.importHabitsDataDryRun(habitsData).habitsCount;
+    final habitCount = fileImporter.importHabitsDataDryRun(habitsData);
     showAppSettingImportHabitsConfirmDialog(
       context: context,
       habitsData: habitsData,

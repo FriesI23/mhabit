@@ -14,6 +14,7 @@ abstract class _$ChangeRecordStatusResultCWProxy {
   /// ChangeRecordStatusResult(...).copyWith(id: 12, name: "My name")
   /// ````
   ChangeRecordStatusResult call({
+    HabitSummaryData habit,
     HabitSummaryRecord? origin,
     HabitSummaryRecord data,
     String? reason,
@@ -37,12 +38,17 @@ class _$ChangeRecordStatusResultCWProxyImpl
   /// ChangeRecordStatusResult(...).copyWith(id: 12, name: "My name")
   /// ````
   ChangeRecordStatusResult call({
+    Object? habit = const $CopyWithPlaceholder(),
     Object? origin = const $CopyWithPlaceholder(),
     Object? data = const $CopyWithPlaceholder(),
     Object? reason = const $CopyWithPlaceholder(),
     Object? added = const $CopyWithPlaceholder(),
   }) {
     return ChangeRecordStatusResult(
+      habit: habit == const $CopyWithPlaceholder()
+          ? _value.habit
+          // ignore: cast_nullable_to_non_nullable
+          : habit as HabitSummaryData,
       origin: origin == const $CopyWithPlaceholder()
           ? _value.origin
           // ignore: cast_nullable_to_non_nullable

@@ -25,17 +25,26 @@ part 'change_record_status_action.g.dart';
 
 @CopyWith(skipFields: true)
 class ChangeRecordStatusResult {
+  final HabitSummaryData habit;
   final HabitSummaryRecord? origin;
   final HabitSummaryRecord data;
   final String? reason;
   final bool added;
 
   const ChangeRecordStatusResult({
+    required this.habit,
     this.origin,
     required this.data,
     this.reason,
     this.added = false,
   });
+
+  const ChangeRecordStatusResult.record({
+    required this.habit,
+    required this.data,
+    this.reason,
+  })  : added = false,
+        origin = null;
 
   bool get isNew => origin == null;
 
@@ -146,7 +155,7 @@ final class AutoChangeRecordStatusAction
     }
 
     return ChangeRecordStatusResult(
-        origin: isNew ? null : orgRecord, data: record);
+        habit: data, origin: isNew ? null : orgRecord, data: record);
   }
 }
 
@@ -193,6 +202,9 @@ final class ChangeMultiRecordStatusAction
         orgRecord.copyWith(value: newGoal ?? orgRecord.value, status: status);
 
     return ChangeRecordStatusResult(
-        origin: isNew ? null : orgRecord, data: record, reason: reason);
+        habit: data,
+        origin: isNew ? null : orgRecord,
+        data: record,
+        reason: reason);
   }
 }

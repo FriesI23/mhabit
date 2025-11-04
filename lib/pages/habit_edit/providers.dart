@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/habit_form.dart';
 import '../../providers/habit_form.dart';
-import '../../storage/db_helper_provider.dart';
+import '../../providers/habits_manager.dart';
 import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -32,9 +32,9 @@ class PageProviders extends SingleChildStatelessWidget {
           ChangeNotifierProvider(
             create: (context) => HabitFormViewModel(initForm: initForm),
           ),
-          ViewModelProxyProvider<DBHelperViewModel, HabitFormViewModel>(
+          ViewModelProxyProvider<HabitsManager, HabitFormViewModel>(
               update: (context, value, previous) =>
-                  previous..updateDBHelper(value)),
+                  previous..updateHabitManager(value)),
         ],
         child: child,
       );

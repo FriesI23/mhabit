@@ -20,7 +20,6 @@ import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
-import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
@@ -52,10 +51,6 @@ class PageProviders extends SingleChildStatelessWidget {
                   ..updateHabitDisplayFilter(
                       habitDisplayFilter.habitsDisplayFilter),
             post: (t, _, __, vm) => vm.resortData()),
-        ViewModelProxyProvider<HabitFileImporterViewModel,
-                HabitSummaryViewModel>(
-            post: (t, value, vm) =>
-                value.consumeReloadDisplayFlag() ? vm.requestReload() : null),
         ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(
             update: (context, value, previous) =>
                 previous..updateFirstday(value.firstDay),

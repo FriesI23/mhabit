@@ -18,10 +18,7 @@ import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
 import '../common/async.dart';
-import '../common/consts.dart';
-import '../common/types.dart';
 import '../logging/helper.dart';
-import '../models/habit_summary.dart';
 import '../providers/commons.dart';
 import 'db/db_helper.dart';
 import 'db/handlers/habit.dart';
@@ -109,22 +106,5 @@ abstract mixin class DBHelperLoadedMixin {
       syncDBHelper = SyncDBHelper(newHelper.local);
       _lastLocalHelper = localHelper;
     }
-  }
-}
-
-mixin DBOperationsMixin on DBHelperLoadedMixin {
-  Future<HabitSummaryData?> loadSingleHabitSummaryFromDB(HabitUUID uuid,
-      {int firstDay = defaultFirstDay}) async {
-    final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
-    final recordLoadTask = recordDBHelper.loadRecords(uuid);
-    final cell = await dataLoadTask;
-    final records = await recordLoadTask;
-    if (cell == null) return null;
-    final habit = HabitSummaryData.fromDBQueryCell(cell);
-    habit.initRecords(
-      records.map(HabitSummaryRecord.fromDBQueryCell),
-    );
-    habit.reCalculateAutoComplateRecords(firstDay: firstDay);
-    return habit;
   }
 }

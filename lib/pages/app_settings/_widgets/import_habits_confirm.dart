@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
+import '../../../models/app_event.dart';
+import '../../../providers/app_event.dart';
 import '../../../providers/habits_file_importer.dart';
 
 Future<void> showAppSettingImportHabitsConfirmDialog({
@@ -55,22 +57,28 @@ class _AppSettingImportHabitsConfirmDialog
   bool _confirmed = false;
   bool _completed = false;
   int completeCount = 0;
+  int failedCount = 0;
   int totalCount = 0;
+
+  int get currentCount => completeCount + failedCount;
 
   void confirmed() {
     _confirmed = true;
   }
 
-  void _whenHabitLoad(int count, int total) {
+  void _whenHabitLoad(int count, int failed, int total) {
     if (!mounted) return;
     setState(() {
       completeCount = count;
+      failedCount = failed;
       totalCount = total;
     });
   }
 
-  void _whenAllHabitsLoad(int total) async {
+  void _whenAllHabitsLoad(int count, int failed, int total) {
     if (!mounted) return;
+    context.read<AppEventViewModel>().push(const ReloadDataEvent(
+        msg: "appt_settings.import._whenAllHabitsLoad", clearSnackBar: true));
     setState(() {
       _completed = true;
     });
@@ -80,12 +88,12 @@ class _AppSettingImportHabitsConfirmDialog
     if (!mounted || _confirmed) return;
     final dataImporter = context.read<HabitFileImporterViewModel>();
     if (!dataImporter.mounted) return;
-    final result = dataImporter.importHabitsData(
+    final task = dataImporter.importHabitsData(
       widget.data,
       whenloadHabit: _whenHabitLoad,
       whenloadAllHabits: _whenAllHabitsLoad,
     );
-    if (!result) {
+    if (task == null) {
       Navigator.of(context).maybePop();
       return;
     }
@@ -100,13 +108,13 @@ class _AppSettingImportHabitsConfirmDialog
       if (_completed) {
         return Text(
           l10n?.appSetting_importDialog_completeTitle(totalCount) ??
-              "Completed  $completeCount/$totalCount",
+              "Completed  $completeCount/$failedCount/$totalCount",
         );
       } else if (_confirmed) {
         return Text(
           l10n?.appSetting_importDialog_importingTitle(
-                  completeCount, totalCount) ??
-              "Imported $completeCount/$totalCount",
+                  currentCount, totalCount) ??
+              "Imported $completeCount/$failedCount/$totalCount",
         );
       } else {
         return Text(
@@ -124,7 +132,7 @@ class _AppSettingImportHabitsConfirmDialog
         secondChild: Padding(
           padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
           child: LinearProgressIndicator(
-            value: totalCount > 0 ? completeCount / totalCount : null,
+            value: totalCount > 0 ? currentCount / totalCount : null,
           ),
         ),
         crossFadeState:
