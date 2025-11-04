@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'commons.dart';
@@ -20,8 +22,6 @@ import 'habits_manager.dart';
 class HabitFileImporterViewModel extends ChangeNotifier
     with HabitsManagerLoadedMixin
     implements ProviderMounted {
-  // status
-  bool _needReloadDisplayUI = false;
   // inside status
   bool _mounted = true;
 
@@ -32,41 +32,38 @@ class HabitFileImporterViewModel extends ChangeNotifier
     _mounted = false;
   }
 
-  void markReloadDisplayFlag() {
-    _needReloadDisplayUI = true;
-  }
-
-  bool consumeReloadDisplayFlag() {
-    final tmp = _needReloadDisplayUI;
-    _needReloadDisplayUI = false;
-    return tmp;
-  }
-
-  bool importHabitsData(
+  Future<int>? importHabitsData(
     Iterable<Object?> jsonData, {
-    void Function(int count, int total)? whenloadHabit,
-    void Function(int total)? whenloadAllHabits,
+    void Function(int count, int failed, int total)? whenloadHabit,
+    void Function(int count, int failed, int total)? whenloadAllHabits,
     bool listen = true,
   }) {
-    void onAllFutureComplated(int total) {
-      whenloadAllHabits?.call(total);
-      markReloadDisplayFlag();
+    void onAllFutureComplated(int count, int failed, int total) {
+      whenloadAllHabits?.call(count, failed, total);
       if (listen) notifyListeners();
     }
 
     final futures = habitsManager.getImporter(jsonData).importData();
-    if (futures.isEmpty) return false;
+    if (futures.isEmpty) return null;
 
-    var completeCount = 0;
+    final completer = Completer<int>();
+    var completeCount = 0, failedCount = 0;
     final allCount = futures.length;
     for (var future in futures) {
-      future.whenComplete(() {
+      future.then((_) {
         completeCount += 1;
-        whenloadHabit?.call(completeCount, allCount);
-        if (completeCount >= allCount) onAllFutureComplated(allCount);
+      }).catchError((e, s) {
+        failedCount += 1;
+      }).whenComplete(() {
+        whenloadHabit?.call(completeCount, failedCount, allCount);
+        final totalCount = completeCount + failedCount;
+        if (totalCount >= allCount) {
+          completer.complete(totalCount);
+          onAllFutureComplated(completeCount, failedCount, allCount);
+        }
       });
     }
-    return true;
+    return completer.future;
   }
 
   int importHabitsDataDryRun(Iterable<Object?> jsonData) {
