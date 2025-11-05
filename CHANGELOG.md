@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.20.1+114-pre
+## 1.20.1+115
 
 **🌐 Localization**
 
@@ -13,7 +13,7 @@
 
 - Fix: Prevent dispatcher reuse across layout/size changes
 - Refactor: Adopt new ViewModel call pattern (#405)
-- Refactor: Enforce widget-local ViewModel boundaries (#400)
+- Refactor: Enforce widget-bound ViewModel boundaries (#400)
 - Refactor: Simplify Provider initialization (#404)
 - Refactor: Habit module architecture clean-up (#397, #398, #401, #403)
 
