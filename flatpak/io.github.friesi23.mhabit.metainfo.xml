@@ -95,6 +95,9 @@
     <category>Utility</category>
   </categories>
   <releases>
+    <release version="1.20.1+115" date="2025-11-05">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.20.1+115</url>
+    </release>
     <release version="1.20.0+111" date="2025-10-29">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/flathub-v1.20.0+111</url>
     </release>

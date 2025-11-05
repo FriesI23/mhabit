@@ -1,0 +1,12 @@
+**🌐 Localization**
+
+- Updated Ukrainian translation, thank to maksim2005UKR's contribution on Weblate.
+- Updated Russian F-Droid description translation, thanks to an anonymous contribution on Weblate.
+
+**🧹 Others**
+
+- Fix: Prevent dispatcher reuse across layout/size changes
+- Refactor: Adopt new ViewModel call pattern (#405)
+- Refactor: Enforce widget-bound ViewModel boundaries (#400)
+- Refactor: Simplify Provider initialization (#404)
+- Refactor: Habit module architecture clean-up (#397, #398, #401, #403)
