@@ -298,14 +298,14 @@ class L10nAr extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
-      one: 'Exported habit.',
+      other: ' $count عادة/عادات مصدرة .',
+      one: 'عادة مصدرة.',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'صٌدرت جميع العادات';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'اختيار الكل';
@@ -407,13 +407,13 @@ class L10nAr extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️فحص';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'البحث عن العادات';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'جارية';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc => 'يعرض العادات النشطة والجارية حاليًا (غير المؤرشفة أو المحذوفة).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'مكتملة';
@@ -422,10 +422,10 @@ class L10nAr extends L10n {
   String get habitDisplay_searchFilter_habitType_groupTitle => 'نوع العادة';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'عرض المرشحات';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'مسح المرشحات';
 
   @override
   String get habitDetail_editButton_tooltip => 'تحرير';
@@ -1226,10 +1226,10 @@ class L10nAr extends L10n {
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText => 'البحث عن عادة';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText => 'بمجرد التفعيل، سيظهر شريط بحث في أعلى شاشة العادات ويسمح بالبحث عن العادات.';
 
   @override
   String get appAbout_appbarTile_titleText => 'عن';

@@ -277,6 +277,18 @@
       }
     }
   },
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {عادة مصدرة.} other { {count} عادة/عادات مصدرة .}}",
+  "@habitDisplay_exportHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of exported habits",
+        "example": "3"
+      }
+    }
+  },
+  "habitDisplay_exportAllHabitsSuccSnackbarText": "صٌدرت جميع العادات",
+  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
   "habitDisplay_editPopMenu_selectAll": "اختيار الكل",
   "@habitDisplay_editPopMenu_selectAll": {},
   "habitDisplay_editPopMenu_export": "تصدير",
@@ -343,10 +355,20 @@
   "@habitDisplay_sortTypeDialog_cancel": {},
   "habitDisplay_debug_debugSubgroup_title": "🛠️فحص",
   "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDisplay_searchBar_hintText": "البحث عن العادات",
+  "@habitDisplay_searchBar_hintText": {},
+  "habitDisplay_searchFilter_ongoing": "جارية",
+  "@habitDisplay_searchFilter_ongoing": {},
+  "habitDisplay_searchFilter_ongoing_desc": "يعرض العادات النشطة والجارية حاليًا (غير المؤرشفة أو المحذوفة).",
+  "@habitDisplay_searchFilter_ongoing_desc": {},
   "habitDisplay_searchFilter_completed": "مكتملة",
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "نوع العادة",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_searchFilter_tooltips": "عرض المرشحات",
+  "@habitDisplay_searchFilter_tooltips": {},
+  "habitDisplay_searchFilter_clearFilter": "مسح المرشحات",
+  "@habitDisplay_searchFilter_clearFilter": {},
   "habitDetail_editButton_tooltip": "تحرير",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "عدم أرشفة",
@@ -1037,6 +1059,10 @@
       }
     }
   },
+  "experimentalFeatures_habitSearchTile_titleText": "البحث عن عادة",
+  "@experimentalFeatures_habitSearchTile_titleText": {},
+  "experimentalFeatures_habitSearchTile_subtitleText": "بمجرد التفعيل، سيظهر شريط بحث في أعلى شاشة العادات ويسمح بالبحث عن العادات.",
+  "@experimentalFeatures_habitSearchTile_subtitleText": {},
   "appAbout_appbarTile_titleText": "عن",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "الإصدار: {appVersion}",
