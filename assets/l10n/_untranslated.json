@@ -1,16 +1,4 @@
 {
-  "ar": [
-    "habitDisplay_exportHabitsSuccSnackbarText",
-    "habitDisplay_exportAllHabitsSuccSnackbarText",
-    "habitDisplay_searchBar_hintText",
-    "habitDisplay_searchFilter_ongoing",
-    "habitDisplay_searchFilter_ongoing_desc",
-    "habitDisplay_searchFilter_tooltips",
-    "habitDisplay_searchFilter_clearFilter",
-    "experimentalFeatures_habitSearchTile_titleText",
-    "experimentalFeatures_habitSearchTile_subtitleText"
-  ],
-
   "cs": [
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoal_errorText01",
