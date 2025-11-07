@@ -13,6 +13,18 @@
 
 [![Trello][app-trello-badge]][app-trello-board]
 
+> 警告: 近期在 iOS/Android 以及其他平台有疑似盗版我的应用（`微习惯`，`微小习惯`）并以公司的名义上架中国大陆各大应用商店。
+> 我是独立开发者，并且这款应用为**自由软件**，永远不会以任何公司名义上架或发售
+>
+> ---
+>
+> Warning: Recently, there have been suspected pirated versions of my app (AKA `微习惯`, `微小习惯`)
+> released on iOS/Android/etc. platforms in major app stores across mainland China under some company names.
+> I am an independent developer, and this app is **Free Software**
+> — it will NEVER EVER be published or sold under any company name
+>
+> Shame on all of them
+
 "Table Habit" is an app that helps you establish and track your own micro habit.
 It includes a complete set of growth curves and charts to help you build habits more effectively,
 and keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
@@ -31,11 +43,11 @@ Moreover, this app completely open source.
 
 | platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
 | ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| android                | ✅    | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
-| ios                    | ✅    | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
-| macos                  | ✅    | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li></ul>                                                                                |                                                                               |
-| windows <sup>(2)</sup> | ✅    | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
-| linux <sup>(2)</sup>   | ✅    | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
+| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
+| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
+| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li></ul>                                                                                |                                                                               |
+| windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
+| linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 
 > 1. Public beta will be available through TestFlight once app is distributed via the App Store.
 >
@@ -65,11 +77,11 @@ For more information, please visit our [**Wiki**][wiki].
 
 ## Todo
 
-| status      | progress                   | desc.                 |
-| ----------- | -------------------------- | --------------------- |
-| -           | Publish to Google Play     |                       |
+| status      | progress                   | desc.                |
+| ----------- | -------------------------- | -------------------- |
+| -           | Publish to Google Play     |                      |
 | In Progress | Publish to iOS App Store   | Waiting for Review 😔 |
-| -           | Publish to macOS App Store |                       |
+| -           | Publish to macOS App Store |                      |
 
 ## Contributing
 
