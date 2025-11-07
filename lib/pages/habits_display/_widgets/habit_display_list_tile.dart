@@ -131,6 +131,7 @@ class HabitDisplayListTile extends StatelessWidget {
               data: data,
               startDate: startDate,
               endDate: endedData,
+              canScroll: true,
               isExtended: isExtended,
               isSelected: isSelected,
               selectColor: bgcolor,

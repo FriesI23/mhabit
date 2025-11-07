@@ -35,6 +35,7 @@ const int kHabitSummaryListTilMinShowDate = 1;
 class HabitSummaryListTile extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
+  final bool? canScroll;
   final bool isExtended;
   final bool isSelected;
   final Color? selectColor;
@@ -56,6 +57,7 @@ class HabitSummaryListTile extends StatefulWidget {
     super.key,
     this.startDate,
     this.endDate,
+    this.canScroll,
     required this.isExtended,
     this.isSelected = false,
     this.selectColor,
@@ -250,7 +252,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           ? kDefaultHabitSummaryListTileExtendedPrt
           : collapsePrt,
       stackAutoWrap: !widget.isExtended,
-      canScroll: widget.isExtended,
+      canScroll: widget.canScroll ?? widget.isExtended,
       mainScrollController: widget.verticalScrollController,
       listScrollController: _horizonalScrollController,
       itemCount: limitItemCount,
