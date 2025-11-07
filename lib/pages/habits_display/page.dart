@@ -934,6 +934,48 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     }
     //#endregion
 
+    final body = Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
+      selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
+      builder: (context, value, child) => RefreshIndicator(
+        notificationPredicate: (notification) {
+          final context = notification.context;
+          if (context == null) {
+            return defaultScrollNotificationPredicate(notification);
+          }
+          final summary = context.read<HabitSummaryViewModel>();
+          final sync = context.read<AppSyncViewModel>();
+          if (summary.isInEditMode ||
+              !(sync.enabled && sync.serverConfig != null)) {
+            return false;
+          }
+          return defaultScrollNotificationPredicate(notification);
+        },
+        onRefresh: _onRefreshIndicatorTriggered,
+        edgeOffset:
+            kToolbarHeight + value.item2 + MediaQuery.paddingOf(context).top,
+        triggerMode: RefreshIndicatorTriggerMode.onEdge,
+        child: Stack(
+          children: [
+            buildEmptyImage(context),
+            CustomScrollView(
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: _verticalScrollController,
+              slivers: [
+                buildAppbar(context),
+                buildCalendarBar(context),
+                const PinnedHeaderSliver(child: HabitDivider(height: 1)),
+                buildHabits(context),
+                buildDevelopSliverList(context),
+                buildBottomPlaceHolder(context),
+                if (kDebugMode) _buildScrollablePlaceHolder(context),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
     return ColorfulNavibar(
       child: PopScope(
         canPop: false,
@@ -945,48 +987,10 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
-            selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
-            builder: (context, value, child) => RefreshIndicator(
-              notificationPredicate: (notification) {
-                final context = notification.context;
-                if (context == null) {
-                  return defaultScrollNotificationPredicate(notification);
-                }
-                final summary = context.read<HabitSummaryViewModel>();
-                final sync = context.read<AppSyncViewModel>();
-                if (summary.isInEditMode ||
-                    !(sync.enabled && sync.serverConfig != null)) {
-                  return false;
-                }
-                return defaultScrollNotificationPredicate(notification);
-              },
-              onRefresh: _onRefreshIndicatorTriggered,
-              edgeOffset: kToolbarHeight +
-                  value.item2 +
-                  MediaQuery.paddingOf(context).top,
-              triggerMode: RefreshIndicatorTriggerMode.onEdge,
-              child: Stack(
-                children: [
-                  buildEmptyImage(context),
-                  CustomScrollView(
-                    physics: const ClampingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics()),
-                    controller: _verticalScrollController,
-                    slivers: [
-                      buildAppbar(context),
-                      buildCalendarBar(context),
-                      const PinnedHeaderSliver(child: HabitDivider(height: 1)),
-                      buildHabits(context),
-                      buildDevelopSliverList(context),
-                      buildBottomPlaceHolder(context),
-                      if (kDebugMode) _buildScrollablePlaceHolder(context),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          body: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: body),
           floatingActionButton: buildFAB(context),
         ),
       ),
