@@ -13,11 +13,6 @@
 
 [![Trello][app-trello-badge]][app-trello-board]
 
-> 警告: 近期在 iOS/Android 以及其他平台有疑似盗版我的应用（`微习惯`，`微小习惯`）并以公司的名义上架中国大陆各大应用商店。
-> 我是独立开发者，并且这款应用为**自由软件**，永远不会以任何公司名义上架或发售
->
-> ---
->
 > Warning: Recently, there have been suspected pirated versions of my app (AKA `微习惯`, `微小习惯`)
 > released on iOS/Android/etc. platforms in major app stores across mainland China under some company names.
 > I am an independent developer, and this app is **Free Software**
