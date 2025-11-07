@@ -85,20 +85,29 @@ class _Page extends StatefulWidget {
 
 class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
   late HabitSummaryViewModel _vm;
+  late AppCompactUISwitcherViewModel _uiSwitcher;
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   late PinnedAppbarScrollController _verticalScrollController;
   late double _toolbarHeight;
+
+  late StreamSubscription<Duration?> _scrollCalendarToStartSub;
+  Completer<void>? _horizonalScrolling;
+  double _lastHorizonalScrollOffset = 0.0;
 
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
     _vm = context.read<HabitSummaryViewModel>();
+    _uiSwitcher = context.read<AppCompactUISwitcherViewModel>();
     // events
-    _vm.scrollCalendarToStartEvent.listen(_resetHorizonalScrollController);
+    _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent
+        .listen(_onScrollCalendarToStartEventNotified);
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
+    _horizonalScrollControllerGroup
+        .addOffsetChangedListener(_onHorizonalOffsetChanged);
     _initVerticalScrollController();
   }
 
@@ -108,17 +117,55 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
     final vm = context.read<HabitSummaryViewModel>();
     if (vm != _vm) {
       _vm = vm;
+      _scrollCalendarToStartSub.cancel();
+      _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent
+          .listen(_onScrollCalendarToStartEventNotified);
+    }
+    final uiSwitcher = context.read<AppCompactUISwitcherViewModel>();
+    if (uiSwitcher != _uiSwitcher) {
+      _uiSwitcher = uiSwitcher;
     }
   }
 
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _scrollCalendarToStartSub.cancel();
     _verticalScrollController.dispose();
     super.dispose();
   }
 
-  FutureOr<void> _resetHorizonalScrollController(Duration? scrollDuration) {
+  void _onHorizonalOffsetChanged() {
+    final scrolling = _horizonalScrolling;
+    final controller = _horizonalScrollControllerGroup;
+    if (scrolling != null && !scrolling.isCompleted) return;
+    final offset = controller.offset;
+    final lastOffset = _lastHorizonalScrollOffset;
+    final expanded = _vm.isCalendarExpanded;
+    final window = _uiSwitcher.appHabitDisplayListTileHeight ~/ 2;
+    if (!expanded && lastOffset < window && offset >= window) {
+      _vm.expandCalendar();
+    } else if (expanded && offset < lastOffset && offset <= 0) {
+      _vm.collapseCalendar();
+    }
+    _lastHorizonalScrollOffset = offset;
+  }
+
+  void _onScrollCalendarToStartEventNotified(Duration? scrollDuration) {
+    if (_horizonalScrolling?.isCompleted == false) {
+      _horizonalScrolling?.complete();
+    }
+    final completer = _horizonalScrolling = Completer.sync();
+    _resetHorizonalScrollController(scrollDuration).catchError((e, s) {
+      if (!completer.isCompleted) completer.completeError(e, s);
+    }).whenComplete(() {
+      if (completer.isCompleted) return;
+      completer.complete();
+      _lastHorizonalScrollOffset = _horizonalScrollControllerGroup.offset;
+    });
+  }
+
+  Future<void> _resetHorizonalScrollController(Duration? scrollDuration) async {
     appLog.build.debug(context,
         ex: ["reset HorizonalScrollController", scrollDuration]);
     if (scrollDuration == Duration.zero) {
@@ -990,7 +1037,13 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
           body: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: body),
+              child: Actions(actions: {
+                DismissIntent: CallbackAction(onInvoke: (intent) {
+                  if (!(mounted && _vm.mounted)) return;
+                  if (_vm.isCalendarExpanded) _vm.collapseCalendar();
+                  return null;
+                })
+              }, child: body)),
           floatingActionButton: buildFAB(context),
         ),
       ),
@@ -1206,8 +1259,8 @@ class _HabitListItem extends StatelessWidget {
           .warn(context, ex: ["data not found", uuid], name: "_HabitListItem");
       return const SizedBox.shrink();
     }
-    appLog.build.debug(context, ex: ["habit", uuid], name: "_HabitListItem");
-    return HabitDisplayListTile(
+
+    final tile = HabitDisplayListTile(
       startDate: crtDate,
       endedData: endedDate,
       isExtended: isExtended,
@@ -1224,6 +1277,9 @@ class _HabitListItem extends StatelessWidget {
       onHabitRecordLongPressed: actionResolver.resolve(UserAction.longTap),
       onHabitRecordDoublePressed: actionResolver.resolve(UserAction.doubleTap),
     );
+
+    appLog.build.debug(context, ex: ["habit", uuid], name: "_HabitListItem");
+    return tile;
   }
 }
 

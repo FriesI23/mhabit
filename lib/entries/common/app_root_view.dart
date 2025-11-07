@@ -57,6 +57,8 @@ class AppRootView extends StatelessWidget {
       darkTheme: darkThemeBuilder?.call(),
       themeMode: themeMode,
       locale: language,
+      shortcuts: WidgetsApp.defaultShortcuts,
+      actions: WidgetsApp.defaultActions,
       home: child,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
