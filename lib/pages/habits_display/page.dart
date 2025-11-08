@@ -1034,16 +1034,13 @@ class _PageState extends State<_Page> with HabitsDisplayViewDebug, XShare {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: Actions(actions: {
-                DismissIntent: CallbackAction(onInvoke: (intent) {
-                  if (!(mounted && _vm.mounted)) return;
-                  if (_vm.isCalendarExpanded) _vm.collapseCalendar();
-                  return null;
-                })
-              }, child: body)),
+          body: Actions(actions: {
+            DismissIntent: CallbackAction(onInvoke: (intent) {
+              if (!(mounted && _vm.mounted)) return;
+              if (_vm.isCalendarExpanded) _vm.collapseCalendar();
+              return null;
+            })
+          }, child: body),
           floatingActionButton: buildFAB(context),
         ),
       ),

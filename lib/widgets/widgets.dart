@@ -50,5 +50,6 @@ export '_widgets/scrolling_fab.dart';
 export '_widgets/svg_template_image.dart';
 export '_widgets/text_editing_controller_widget.dart';
 export '_widgets/theme_with_custom_colors.dart';
+export '_widgets/unfocus_on_tap.dart';
 export '_widgets/week_picker_cell.dart';
 export 'styles.dart';

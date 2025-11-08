@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import '../../common/consts.dart';
 import '../../common/global.dart';
 import '../../l10n/localizations.dart';
+import '../../widgets/widgets.dart';
 
 class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
@@ -59,6 +60,7 @@ class AppRootView extends StatelessWidget {
       locale: language,
       shortcuts: WidgetsApp.defaultShortcuts,
       actions: WidgetsApp.defaultActions,
+      builder: (context, child) => UnfocusOnTap(child: child),
       home: child,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
