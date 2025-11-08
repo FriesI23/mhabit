@@ -1435,16 +1435,6 @@ class _CalendarBar extends StatelessWidget {
     ScrollPhysics? buildScrollPhysics(double itemSize, double length) {
       return switch (scrollBehavior) {
         HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
-        HabitsRecordScrollBehavior.scrollable => MagnetScrollPhysics(
-            itemSize: itemSize,
-            metrics: FixedScrollMetrics(
-              minScrollExtent: null,
-              maxScrollExtent: null,
-              pixels: null,
-              viewportDimension: null,
-              axisDirection: AxisDirection.down,
-              devicePixelRatio: View.of(context).devicePixelRatio,
-            )),
         _ => null
       };
     }
