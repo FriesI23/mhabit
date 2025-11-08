@@ -2,6 +2,22 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## v1.21.0+116-pre
+
+**✨ New Features**
+
+- Improve `habit_display` focus, scrolling, and keyboard action (#409)
+- Add global `UnfocusOnTap` wrapper (#410)
+
+**🌐 Localization**
+
+- Update Arabic translation, thanks to Abdelbasset Jabrane's contribution on Weblate
+- Add Portuguese (Brazil) F-Droid description translation, thanks to Jonathan Soares's contribution on Weblate
+
+**🧹 Others**
+
+- Fixed auto-unfocus when tapping outside
+
 ## 1.20.1+115
 
 **🌐 Localization**
