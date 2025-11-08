@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## v1.21.0+116-pre
+## v1.21.0+117-pre
 
 **✨ New Features**
 
@@ -17,6 +17,7 @@
 **🧹 Others**
 
 - Fixed auto-unfocus when tapping outside
+- Fixed calendar not collapsing on Android when scrolled to edge (#411)
 
 ## 1.20.1+115
 

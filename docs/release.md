@@ -3,7 +3,7 @@
 Title: Pre-Released or Released: v1.2.3+xx
 -->
 
-# Pre-Released: v1.21.0+116
+# Pre-Released: v1.21.0+117
 
 **✨ New Features**
 
@@ -18,3 +18,5 @@ Title: Pre-Released or Released: v1.2.3+xx
 **🧹 Others**
 
 - Fixed auto-unfocus when tapping outside
+- Fixed calendar not collapsing on Android when scrolled to edge (#411)
+
