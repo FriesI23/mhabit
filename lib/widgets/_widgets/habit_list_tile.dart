@@ -99,6 +99,7 @@ class HabitListTile extends StatelessWidget {
 
     Widget rightBuilder(BuildContext context, int? itemCount,
         double limitItemSize, double height) {
+      const overlayPhysics = BouncingScrollPhysics();
       final physics = canScroll
           ? (scrollPhysicsBuilder ??
                   (size, length) =>
@@ -112,7 +113,9 @@ class HabitListTile extends StatelessWidget {
         child: ListView.builder(
           primary: false,
           controller: listScrollController,
-          physics: physics,
+          physics: physics != null
+              ? physics.applyTo(overlayPhysics)
+              : overlayPhysics,
           shrinkWrap: true,
           itemCount: itemCount,
           scrollDirection: Axis.horizontal,
