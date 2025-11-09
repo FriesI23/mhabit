@@ -15,6 +15,10 @@ project 'Runner', {
   'Debug-f_generic' => :debug,
   'Profile-f_generic' => :release,
   'Release-f_generic' => :release,
+  # Flavor: store
+  'Debug-f_store' => :debug,
+  'Profile-f_store' => :release,
+  'Release-f_store' => :release,
 }
 
 def flutter_root
