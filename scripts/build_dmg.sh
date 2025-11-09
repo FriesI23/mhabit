@@ -12,6 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#!/bin/bash
+
+FLAVOR="f_generic"
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --flavor)
+      FLAVOR="$2"
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
 if [[ "$(uname)" != "Darwin" ]]; then
     echo "Error: This script is only intended for macOS systems."
     exit 1
@@ -23,15 +39,33 @@ if ! command -v appdmg &>/dev/null; then
 fi
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-APP_FILEPATH=$HERE/../build/macos/Build/Products/Release/mhabit.app
+APP_ORGPATH=$HERE/../build/macos/Build/Products/Release
+if [[ -n "$FLAVOR" ]]; then
+  APP_FILEPATH=$HERE/../build/macos/Build/Products/Release-${FLAVOR}/mhabit.app
+else
+  APP_FILEPATH=$APP_ORGPATH
+fi
 DMG_DIR=$HERE/../build/macos_dmg
-DMG_FILEPATH=$DMG_DIR/mhabit-$(date +"%Y-%m-%d-%H-%M-%S").dmg
+DMG_FILEPATH=$DMG_DIR/mhabit-$FLAVOR-$(date +"%Y-%m-%d-%H-%M-%S").dmg
 
 if [ -f "$APP_FILEPATH" ] || [ -d "$APP_FILEPATH" ]; then
-    echo "App $APP_FILEPATH exists, cleaning..."
-    rm -fr "$APP_FILEPATH"
+  echo "App $APP_FILEPATH exists, cleaning..."
+  rm -fr "$APP_FILEPATH"
 fi
-flutter build macos --release
+
+echo "app file path: $APP_FILEPATH"
+echo "dmg outp path: $DMG_FILEPATH"
+if [[ -n "$FLAVOR" ]]; then
+  echo "building use flavor: $FLAVOR"
+  flutter build macos --flavor "$FLAVOR"
+  if [  -d "$APP_ORGPATH" ]; then
+    rm -fr $APP_ORGPATH
+  fi
+  mkdir -p "$APP_ORGPATH"
+  cp -rf $APP_FILEPATH $APP_ORGPATH
+else
+  flutter build macos
+fi
 
 if [ ! -d "$DMG_DIR" ]; then
     mkdir -p "$DMG_DIR"
