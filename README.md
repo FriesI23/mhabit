@@ -13,12 +13,14 @@
 
 [![Trello][app-trello-badge]][app-trello-board]
 
-> Warning: Recently, there have been suspected pirated versions of my app (AKA `微习惯`, `微小习惯`)
-> released on iOS/Android/etc. platforms in major app stores across mainland China under some company names.
-> I am an independent developer, and this app is **Free Software**
-> — it will NEVER EVER be published or sold under any company name
+> 🔴 Recently, suspected pirated versions of my app, using the names 微习惯 or 微小习惯,
+> have been released on iOS/Android/etc.
+> platforms in major app stores across mainland China under some company names.
 >
-> Shame on all of them
+> I am an independent developer, and this app is Free Software
+> — it will NEVER EVER be published or sold under any company name.
+>
+> **Shame on all of them**
 
 "Table Habit" is an app that helps you establish and track your own micro habit.
 It includes a complete set of growth curves and charts to help you build habits more effectively,
@@ -31,22 +33,26 @@ Moreover, this app completely open source.
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 
+[![Get is on AppStore][get-on-apple]][appsotre-myapp]
+<!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
+
 [![Get it on AltStore][get-it-on-altstore]][altstore-source]
 [![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
 
-<!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
 
 | platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
 | ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
 | ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
-| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li></ul>                                                                                |                                                                               |
+| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp]  <sup>(3)</sup></li></ul>                            |                                                                               |
 | windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 | linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 
 > 1. Public beta will be available through TestFlight once app is distributed via the App Store.
 >
 > 2. Windows & Linux versions are still in beta, some features may be limited or unstable.
+>
+> 3. App Store version is identical to the free community one — buying it is just a way to support the project and say thanks ❤️️.
 
 ## Features
 
@@ -76,7 +82,7 @@ For more information, please visit our [**Wiki**][wiki].
 | ----------- | -------------------------- | -------------------- |
 | -           | Publish to Google Play     |                      |
 | In Progress | Publish to iOS App Store   | Waiting for Review 😔 |
-| -           | Publish to macOS App Store |                      |
+| -           | Publish to Microsoft Store |                      |
 
 ## Contributing
 
@@ -151,6 +157,8 @@ limitations under the License.
 [altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
 [sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
 [testflight-button]: docs/README/images/testflight-get-it-on.png
+[get-on-apple]: docs/README/images/apple-get-it-on.png
+[appsotre-myapp]: https://apps.apple.com/app/table-habit/id6744886469
 [github-button]: docs/README/images/github-get-it-on.png
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
 [get-it-on-flathub]: docs/README/images/flathub-get-it-on.png
