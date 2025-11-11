@@ -13,15 +13,6 @@
 
 [![Trello][app-trello-badge]][app-trello-board]
 
-> 🔴 Recently, suspected pirated versions of my app, using the names 微习惯 or 微小习惯,
-> have been released on iOS/Android/etc.
-> platforms in major app stores across mainland China under some company names.
->
-> I am an independent developer, and this app is Free Software
-> — it will NEVER EVER be published or sold under any company name.
->
-> **Shame on all of them**
-
 "Table Habit" is an app that helps you establish and track your own micro habit.
 It includes a complete set of growth curves and charts to help you build habits more effectively,
 and keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
