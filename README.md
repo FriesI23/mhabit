@@ -113,6 +113,16 @@ or modify the `.arb` files locally and request a PR to `weblate-translation` bra
 
 [![Engage][weblate-engage-badge]][weblate-engage]
 
+## Star History
+
+<a href="https://www.star-history.com/#FriesI23/mhabit&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=FriesI23/mhabit&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## License
 
 ```text
