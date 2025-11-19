@@ -355,10 +355,20 @@
   "@habitDisplay_sortTypeDialog_cancel": {},
   "habitDisplay_debug_debugSubgroup_title": "🛠️Búsqueda de errores",
   "@habitDisplay_debug_debugSubgroup_title": {},
-  "habitDisplay_searchFilter_completed": "Completados",
+  "habitDisplay_searchBar_hintText": "Buscar habitos",
+  "@habitDisplay_searchBar_hintText": {},
+  "habitDisplay_searchFilter_ongoing": "En curso",
+  "@habitDisplay_searchFilter_ongoing": {},
+  "habitDisplay_searchFilter_ongoing_desc": "Muestra hábitos que está activos actualmente y en curso (no archivados o borrados)",
+  "@habitDisplay_searchFilter_ongoing_desc": {},
+  "habitDisplay_searchFilter_completed": "Completado",
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Tipo de hábito",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_searchFilter_tooltips": "Mostrar filtros",
+  "@habitDisplay_searchFilter_tooltips": {},
+  "habitDisplay_searchFilter_clearFilter": "Limpiar filtros",
+  "@habitDisplay_searchFilter_clearFilter": {},
   "habitDetail_editButton_tooltip": "Editar",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Desarchivar",
@@ -827,6 +837,28 @@
       }
     }
   },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {Completado debido a {reason}} cancelled {Cancelado debido a {reason}} failed {Fallido debido a {reason}} multi {Múltiples estados debido a {reason}} other {Estado desconocido}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {Error} userAction {Acción del usuario requerida} missingHabitUuid {Falta el UUID del hábito} empty {Datos vacíos} other {Razón desconocida}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
   "appSync_webdav_newServerConfirmDialog_titleText": "Ubicación nueva",
   "@appSync_webdav_newServerConfirmDialog_titleText": {},
   "appSync_webdav_newServerConfirmDialog_subtitleText": "La sincronización creará los directorios necesarios y subirá los hábitos al servidor. ¿Continuar?",
@@ -839,8 +871,76 @@
   "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
   "appSync_webdav_oldServerConfirmDialog_confirmText": "Confirmar mezcla",
   "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "Exportar registros de sincronización fallida",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {No se encontró ningún registro} false {Toca para exportar} other {cargando...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {Actual: } other {}}{name, select, webdav {WebDAV} fake {Falso (Solo para depuración)} other {Desconocido ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_networkType_text": "{type, select, mobile {Móvil} wifi {Wifi} other {Desconocido}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_syncInterval_text": "{name, select, manual {Manual} minute5 {5 Minutos} minute15 {15 Minutos} minute30 {30 Minutos} hour1 {1 Hora} other {Desconocido}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "Obtener Intervalo",
+  "@appSync_syncIntervalTile_title": {},
+  "appSync_summaryTile_title": "Servidor de sincronización",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "No Configurado",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "Todos los registros de sincronización fallida recientes",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
   "appSync_serverEditor_saveDialog_titleText": "Confirmar cambios",
   "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "Guardar sobrescribirá la configuración anterior del servidor.",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "Cambios no guardados",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "Salir descartará todos los cambios no guardados",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "Confirmar eliminación",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "Eliminar quitará la configuración actual del servidor.",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "Nuevo servidor de sincronización",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "Modificar servidor de sincronización",
+  "@appSync_serverEditor_titleText_modify": {},
   "appSync_serverEditor_advance_titleText": "Configuración avanzada",
   "@appSync_serverEditor_advance_titleText": {},
   "appSync_serverEditor_pathTile_titleText": "Ruta",
@@ -851,10 +951,44 @@
   "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
   "appSync_serverEditor_usernameTile_titleText": "Usuario",
   "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "Ingrese el nombre de usuario aquí, deje vacío si no es necesario",
+  "@appSync_serverEditor_usernameTile_hintText": {},
   "appSync_serverEditor_passwordTile_titleText": "Contraseña",
   "@appSync_serverEditor_passwordTile_titleText": {},
   "appSync_serverEditor_ignoreSSLTile_titleText": "Ignorar certificado SSL",
   "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "Segundos de tiempo de espera de sincronización",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "Predeterminado: {seconds, plural, =0 {Infinito} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_unitText": "sg",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "Segundos de tiempo de espera de conexión de red",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "Predeterminado: {seconds, plural, =0 {Infinito} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
   "appAbout_appbarTile_titleText": "Acerca de",
   "@appAbout_appbarTile_titleText": {},
   "appAbout_versionTile_titleText": "Versión: {appVersion}",

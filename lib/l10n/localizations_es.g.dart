@@ -407,25 +407,25 @@ class L10nEs extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Búsqueda de errores';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Buscar habitos';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'En curso';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc => 'Muestra hábitos que está activos actualmente y en curso (no archivados o borrados)';
 
   @override
-  String get habitDisplay_searchFilter_completed => 'Completados';
+  String get habitDisplay_searchFilter_completed => 'Completado';
 
   @override
   String get habitDisplay_searchFilter_habitType_groupTitle => 'Tipo de hábito';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Mostrar filtros';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Limpiar filtros';
 
   @override
   String get habitDetail_editButton_tooltip => 'Editar';
@@ -952,11 +952,11 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       status,
       {
-        'success': 'Completed due to $reason',
-        'cancelled': 'Canceled due to $reason',
-        'failed': 'Failed due to $reason',
-        'multi': 'Multiple statuses due to $reason',
-        'other': 'Unknown status',
+        'success': 'Completado debido a $reason',
+        'cancelled': 'Cancelado debido a $reason',
+        'failed': 'Fallido debido a $reason',
+        'multi': 'Múltiples estados debido a $reason',
+        'other': 'Estado desconocido',
       },
     );
     return '$_temp0';
@@ -968,10 +968,10 @@ class L10nEs extends L10n {
       reason,
       {
         'error': 'Error',
-        'userAction': 'User action required',
-        'missingHabitUuid': 'Missing habit UUID',
-        'empty': 'Empty data',
-        'other': 'Unknown reason',
+        'userAction': 'Acción del usuario requerida',
+        'missingHabitUuid': 'Falta el UUID del hábito',
+        'empty': 'Datos vacíos',
+        'other': 'Razón desconocida',
       },
     );
     return '$_temp0';
@@ -996,16 +996,16 @@ class L10nEs extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirmar mezcla';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'Exportar registros de sincronización fallida';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
     String _temp0 = intl.Intl.selectLogic(
       isEmpty,
       {
-        'true': 'No log founded',
-        'false': 'Tap to export',
-        'other': 'loading...',
+        'true': 'No se encontró ningún registro',
+        'false': 'Toca para exportar',
+        'other': 'cargando...',
       },
     );
     return '$_temp0';
@@ -1016,7 +1016,7 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       isCurrent,
       {
-        'true': 'Current: ',
+        'true': 'Actual: ',
         'other': '',
       },
     );
@@ -1024,8 +1024,8 @@ class L10nEs extends L10n {
       name,
       {
         'webdav': 'WebDAV',
-        'fake': 'Fake (Only For Debugger)',
-        'other': 'Unknown ($name)',
+        'fake': 'Falso (Solo para depuración)',
+        'other': 'Desconocido ($name)',
       },
     );
     return '$_temp0$_temp1';
@@ -1036,9 +1036,9 @@ class L10nEs extends L10n {
     String _temp0 = intl.Intl.selectLogic(
       type,
       {
-        'mobile': 'Mobile',
+        'mobile': 'Móvil',
         'wifi': 'Wifi',
-        'other': 'Unknown',
+        'other': 'Desconocido',
       },
     );
     return '$_temp0';
@@ -1050,51 +1050,51 @@ class L10nEs extends L10n {
       name,
       {
         'manual': 'Manual',
-        'minute5': '5 Minutes',
-        'minute15': '15 Minutes',
-        'minute30': '30 Minutes',
-        'hour1': '1 Hour',
-        'other': 'Unknown',
+        'minute5': '5 Minutos',
+        'minute15': '15 Minutos',
+        'minute30': '30 Minutos',
+        'hour1': '1 Hora',
+        'other': 'Desconocido',
       },
     );
     return '$_temp0';
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Obtener Intervalo';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Servidor de sincronización';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'No Configurado';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'Todos los registros de sincronización fallida recientes';
 
   @override
   String get appSync_serverEditor_saveDialog_titleText => 'Confirmar cambios';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Guardar sobrescribirá la configuración anterior del servidor.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Cambios no guardados';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Salir descartará todos los cambios no guardados';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Confirmar eliminación';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Eliminar quitará la configuración actual del servidor.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Nuevo servidor de sincronización';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Modificar servidor de sincronización';
 
   @override
   String get appSync_serverEditor_advance_titleText => 'Configuración avanzada';
@@ -1112,7 +1112,7 @@ class L10nEs extends L10n {
   String get appSync_serverEditor_usernameTile_titleText => 'Usuario';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'Ingrese el nombre de usuario aquí, deje vacío si no es necesario';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'Contraseña';
@@ -1121,7 +1121,7 @@ class L10nEs extends L10n {
   String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignorar certificado SSL';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'Segundos de tiempo de espera de sincronización';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1129,16 +1129,16 @@ class L10nEs extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'Infinito',
     );
-    return 'Default: $_temp0';
+    return 'Predeterminado: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_timeoutTile_unitText => 's';
+  String get appSync_serverEditor_timeoutTile_unitText => 'sg';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Segundos de tiempo de espera de conexión de red';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1146,9 +1146,9 @@ class L10nEs extends L10n {
       seconds,
       locale: localeName,
       other: '$seconds$unit',
-      zero: 'Infinite',
+      zero: 'Infinito',
     );
-    return 'Default: $_temp0';
+    return 'Predeterminado: $_temp0';
   }
 
   @override
