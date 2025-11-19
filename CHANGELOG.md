@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.21.1+119-pre
+
+**🌐 Localization**
+
+- Update Spanish translation, thanks to Angel's contribution on Weblate
+
+**🧹 Others**
+
+- Update README
+
 ## 1.21.0+118
 
 **✨ New Features**
