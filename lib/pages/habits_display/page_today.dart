@@ -19,11 +19,22 @@ class TodayTabPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Coming soon',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
+    return CustomScrollView(
+      slivers: [
+        _Appbar(),
+      ],
+    );
+  }
+}
+
+class _Appbar extends StatelessWidget {
+  const _Appbar();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      centerTitle: true,
+      title: Text("Today"),
     );
   }
 }

@@ -102,14 +102,14 @@ class _PageState extends State<_Page> {
 
     const destinations = [
       NavigationDestination(
-        icon: Icon(Icons.list_alt_outlined),
-        selectedIcon: Icon(Icons.list_alt),
+        icon: Icon(Icons.home_outlined),
+        selectedIcon: Icon(Icons.home),
         label: 'Habits',
       ),
       NavigationDestination(
-        icon: Icon(Icons.more_horiz_outlined),
-        selectedIcon: Icon(Icons.more_horiz),
-        label: 'More',
+        icon: Icon(Icons.calendar_today_outlined),
+        selectedIcon: Icon(Icons.calendar_today),
+        label: 'Today',
       ),
     ];
 

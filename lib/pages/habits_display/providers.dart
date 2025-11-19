@@ -23,6 +23,7 @@ import '../../providers/habit_summary.dart';
 import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
+import '../../providers/habits_today.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
@@ -61,6 +62,11 @@ class PageProviders extends SingleChildStatelessWidget {
                 previous..setNotificationChannelData(value)),
       ];
 
+  Iterable<SingleChildWidget> _buildTodayViewModel() => [
+        ChangeNotifierProvider<HabitsTodayViewModel>(
+            create: (context) => HabitsTodayViewModel()),
+      ];
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
@@ -73,6 +79,7 @@ class PageProviders extends SingleChildStatelessWidget {
               update: (context, profile, previous) =>
                   previous..updateProfile(profile)),
           ..._buildPageViewModel(),
+          ..._buildTodayViewModel(),
         ],
         child: child,
       );
