@@ -75,7 +75,7 @@ class HabitsTabPage extends StatefulWidget {
 }
 
 class HabitsTabPageState extends State<HabitsTabPage>
-    with HabitsDisplayViewDebug, XShare {
+    with HabitsDisplayViewDebug, XShare, AutomaticKeepAliveClientMixin {
   late HabitSummaryViewModel _vm;
   late AppCompactUISwitcherViewModel _uiSwitcher;
 
@@ -132,6 +132,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _verticalScrollController.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _onHorizonalOffsetChanged() {
     final scrolling = _horizonalScrolling;
@@ -833,6 +836,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     appLog.build.debug(context);
 
     //#region: appbar

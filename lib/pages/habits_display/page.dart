@@ -15,11 +15,17 @@
 import 'package:flutter/material.dart';
 
 import '../../common/utils.dart';
+import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
+import '../../models/app_entry.dart';
+import '../../storage/profile/handlers/app_launch_entry.dart';
+import '../../storage/profile_provider.dart';
 import '../../widgets/widgets.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
 import 'providers.dart';
+
+enum _PageTabs { display, today }
 
 /// Depend Providers
 /// - Required for builder:
@@ -51,6 +57,27 @@ class _PageState extends State<_Page> {
 
   final GlobalKey<HabitsTabPageState> _habitsTabKey =
       GlobalKey<HabitsTabPageState>();
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    final entryPoint = context
+        .maybeRead<ProfileViewModel>()
+        ?.getHandler<AppLaunchEntryProfileHandler>()
+        ?.get();
+    _currentTabIndex = switch (entryPoint) {
+      AppEntrys.habitToday => _PageTabs.today.index,
+      _ => 0,
+    };
+    _pageController = PageController(initialPage: _currentTabIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _handleBottomNavVisibilityChanged(bool visible) {
     if (_isBottomNavVisible == visible) return;
@@ -58,7 +85,7 @@ class _PageState extends State<_Page> {
   }
 
   Widget? _buildFloatingActionButton(double bottomNavHeight) {
-    if (_currentTabIndex != 0) return null;
+    if (_currentTabIndex != _PageTabs.display.index) return null;
     final state = _habitsTabKey.currentState;
     if (state == null) {
       if (!_fabRebuildPending) {
@@ -78,7 +105,7 @@ class _PageState extends State<_Page> {
   }
 
   Future<bool> _handleWillPop() async {
-    if (_currentTabIndex == 0) {
+    if (_currentTabIndex == _PageTabs.display.index) {
       final state = _habitsTabKey.currentState;
       if (state != null) {
         return await state.onWillPop();
@@ -88,7 +115,7 @@ class _PageState extends State<_Page> {
   }
 
   void _handleDismissIntent() {
-    if (_currentTabIndex != 0) return;
+    if (_currentTabIndex != _PageTabs.display.index) return;
     _habitsTabKey.currentState?.handleDismissIntent();
   }
 
@@ -113,17 +140,35 @@ class _PageState extends State<_Page> {
       ),
     ];
 
-    final tabs = <Widget>[
-      HabitsTabPage(
-        key: _habitsTabKey,
-        onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
-      ),
-      const TodayTabPage(),
-    ];
-
-    final tabBody = IndexedStack(
-      index: _currentTabIndex,
-      children: tabs,
+    final tabBody = PageView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      controller: _pageController,
+      itemCount: _PageTabs.values.length,
+      itemBuilder: (context, index) {
+        if (index == _PageTabs.display.index) {
+          return HabitsTabPage(
+            key: _habitsTabKey,
+            onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
+          );
+        }
+        if (index == _PageTabs.today.index) {
+          return const TodayTabPage();
+        }
+        return null;
+      },
+      onPageChanged: (index) {
+        setState(() {
+          _currentTabIndex = index;
+          _isBottomNavVisible = true;
+          final newLaunchEntry = AppEntrys.getFromDBCode(_currentTabIndex + 1);
+          if (newLaunchEntry != null) {
+            context
+                .maybeRead<ProfileViewModel>()
+                ?.getHandler<AppLaunchEntryProfileHandler>()
+                ?.set(newLaunchEntry);
+          }
+        });
+      },
     );
 
     final bottomNavigationBar = AnimatedSlide(
@@ -140,12 +185,10 @@ class _PageState extends State<_Page> {
               ? NavigationDestinationLabelBehavior.alwaysHide
               : NavigationDestinationLabelBehavior.alwaysShow,
           destinations: destinations,
-          onDestinationSelected: (index) {
-            setState(() {
-              _currentTabIndex = index;
-              _isBottomNavVisible = true;
-            });
-          },
+          onDestinationSelected: (index) => setState(() {
+            _pageController.jumpToPage(index);
+            _isBottomNavVisible = true;
+          }),
         ),
       ),
     );
