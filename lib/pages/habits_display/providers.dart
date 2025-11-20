@@ -65,6 +65,22 @@ class PageProviders extends SingleChildStatelessWidget {
   Iterable<SingleChildWidget> _buildTodayViewModel() => [
         ChangeNotifierProvider<HabitsTodayViewModel>(
             create: (context) => HabitsTodayViewModel()),
+        ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateHabitManager(value)),
+        ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppEvent(value)),
+        ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
+            update: (context, sortOptions, previous) => previous
+              ..updateSortOptions(
+                  sortOptions.sortType, sortOptions.sortDirection),
+            post: (t, _, vm) => vm.resortData()),
+        ViewModelProxyProvider<AppFirstDayViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateFirstday(value.firstDay),
+            post: (t, value, vm) =>
+                value.firstDay != vm.firstday ? vm.requestReload() : null),
       ];
 
   @override
@@ -81,6 +97,10 @@ class PageProviders extends SingleChildStatelessWidget {
           ..._buildPageViewModel(),
           ..._buildTodayViewModel(),
         ],
+        builder: (context, child) {
+          context.read<HabitSummaryViewModel>().loadData();
+          return child!;
+        },
         child: child,
       );
 }
