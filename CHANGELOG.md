@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.21.1+119-pre
+## 1.21.1+120
 
 **🌐 Localization**
 

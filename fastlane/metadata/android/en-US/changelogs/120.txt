@@ -1,5 +1,3 @@
-# Released: v1.21.1+120
-
 **🌐 Localization**
 
 - Update Spanish translation, thanks to Angel's contribution on Weblate
