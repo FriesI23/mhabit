@@ -28,6 +28,16 @@
       }
     }
   },
+  "habitEdit_habitDailyGoal_negativeHintText": "סף יומי מינימלי, ברירת מחדל {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
   "habitEdit_habitDailyGoalUnit_hintText": "שם יחידה למטרה היומית",
   "@habitEdit_habitDailyGoalUnit_hintText": {},
   "habitEdit_frequencySelector_title": "נא לבחור תדירות",
