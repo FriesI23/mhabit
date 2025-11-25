@@ -14,10 +14,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:great_list_view/great_list_view.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/consts.dart';
 import '../../common/types.dart';
+import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_date.dart';
@@ -158,30 +159,39 @@ class _HabitsGroupView extends StatelessWidget {
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
-        builder: (context, _) => const _HabitList(),
+        builder: (context, _) => SliverPadding(
+          padding: kListTileContentPadding,
+          sliver: AppUiLayoutBuilder.useScreenSize(
+            ignoreHeight: false,
+            builder: (context, layoutType, child) => switch (layoutType) {
+              UiLayoutType.l => const _HabitGrid(),
+              UiLayoutType.s => const _HabitList(),
+            },
+          ),
+        ),
       ),
     );
   }
 }
 
-class _HabitList extends StatefulWidget {
-  const _HabitList();
+class _HabitGrid extends StatefulWidget {
+  const _HabitGrid();
 
   @override
-  State<_HabitList> createState() => _HabitListState();
+  State<_HabitGrid> createState() => _HabitGridState();
 }
 
-class _HabitListState extends State<_HabitList> {
+class _HabitGridState extends State<_HabitGrid> {
   late HabitsTodayViewModel _vm;
 
-  late final AnimatedListDiffListDispatcher<HabitSortCache> _dispatcher;
+  late List<HabitSortCache> _habits;
 
   @override
   void initState() {
     super.initState();
     _vm = context.read<HabitsTodayViewModel>()
       ..addListener(_onViewModelNotified);
-    _dispatcher = buildDispatcher();
+    _habits = _vm.currentHabitList;
   }
 
   @override
@@ -196,47 +206,112 @@ class _HabitListState extends State<_HabitList> {
 
   @override
   void dispose() {
-    _dispatcher.discard();
+    _habits = const [];
     _vm.removeListener(_onViewModelNotified);
     super.dispose();
   }
 
   void _onViewModelNotified() {
-    _dispatcher.dispatchNewList(_vm.currentHabitList);
+    final newHabits = _vm.currentHabitList;
+    if (_habits == newHabits) return;
+    setState(() {
+      _habits = _vm.currentHabitList;
+    });
   }
-
-  @visibleForTesting
-  AnimatedListDiffListDispatcher<HabitSortCache> buildDispatcher() =>
-      AnimatedListDiffListDispatcher<HabitSortCache>(
-        controller: AnimatedListController(),
-        itemBuilder: (context, element, data) {
-          if (data.measuring) {
-            return const SizedBox.shrink();
-          } else if (element is HabitSummaryDataSortCache) {
-            return _HabitListItem(uuid: element.uuid);
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-        currentList: _vm.currentHabitList,
-        comparator: AnimatedListDiffListComparator<HabitSortCache>(
-          sameItem: (a, b) => a.isSameItem(b),
-          sameContent: (a, b) => a.isSameContent(b),
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSliverList(
-      controller: _dispatcher.controller,
-      delegate: AnimatedSliverChildBuilderDelegate(
-        (context, index, data) =>
-            _dispatcher.builder(context, _vm.currentHabitList, index, data),
-        _vm.currentHabitList.length,
-        animator: kHabitContentListAnimator,
-        addAnimatedElevation: kCommonEvalation,
-        morphDuration: kEditModeChangeAnimateDuration,
-      ),
+    final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.618;
+    return SliverReorderableAnimatedList<HabitSortCache>.grid(
+      scrollDirection: Axis.vertical,
+      items: _habits,
+      isSameItem: (a, b) => a.isSameItem(b),
+      itemBuilder: (context, index) {
+        final item = _habits[index];
+        if (item is HabitSummaryDataSortCache) {
+          return _HabitGridItem(key: ValueKey(item.uuid), uuid: item.uuid);
+        } else {
+          return SizedBox.shrink(key: ValueKey("notfound-$index"));
+        }
+      },
+      sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: width, mainAxisExtent: width * 0.618),
+    );
+  }
+}
+
+class _HabitGridItem extends StatelessWidget {
+  final HabitUUID uuid;
+
+  const _HabitGridItem({super.key, required this.uuid});
+
+  @override
+  Widget build(BuildContext context) {
+    final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
+        (vm) => vm.getHabit(uuid));
+    return HabitTodayCard(testData: data);
+  }
+}
+
+class _HabitList extends StatefulWidget {
+  const _HabitList();
+
+  @override
+  State<_HabitList> createState() => _HabitListState();
+}
+
+class _HabitListState extends State<_HabitList> {
+  late HabitsTodayViewModel _vm;
+
+  late List<HabitSortCache> _habits;
+
+  @override
+  void initState() {
+    super.initState();
+    _vm = context.read<HabitsTodayViewModel>()
+      ..addListener(_onViewModelNotified);
+    _habits = _vm.currentHabitList;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitsTodayViewModel>();
+    if (_vm != vm) {
+      _vm.removeListener(_onViewModelNotified);
+      _vm = vm..addListener(_onViewModelNotified);
+    }
+  }
+
+  @override
+  void dispose() {
+    _habits = const [];
+    _vm.removeListener(_onViewModelNotified);
+    super.dispose();
+  }
+
+  void _onViewModelNotified() {
+    final newHabits = _vm.currentHabitList;
+    if (_habits == newHabits) return;
+    setState(() {
+      _habits = _vm.currentHabitList;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverReorderableAnimatedList<HabitSortCache>(
+      scrollDirection: Axis.vertical,
+      items: _habits,
+      isSameItem: (a, b) => a.isSameItem(b),
+      itemBuilder: (context, index) {
+        final item = _habits[index];
+        if (item is HabitSummaryDataSortCache) {
+          return _HabitListItem(key: ValueKey(item.uuid), uuid: item.uuid);
+        } else {
+          return SizedBox.shrink(key: ValueKey("notfound-$index"));
+        }
+      },
     );
   }
 }
@@ -244,15 +319,13 @@ class _HabitListState extends State<_HabitList> {
 class _HabitListItem extends StatelessWidget {
   final HabitUUID uuid;
 
-  const _HabitListItem({required this.uuid});
+  const _HabitListItem({super.key, required this.uuid});
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
-    return Padding(
-        padding: kListTileContentPadding,
-        child: HabitTodayCard(testData: data));
+    return HabitTodayCard(testData: data);
   }
 }
 
