@@ -43,3 +43,49 @@ class PinnedAppbarScrollController extends ScrollController {
     super.dispose();
   }
 }
+
+class VerticalScrollVisibilityDispatcher {
+  final Duration animationDuration;
+  final void Function(bool visible) onVisibilityChanged;
+  late final ScrollController controller;
+  double _lastOffset = 0.0;
+  bool _lastVisible = true;
+
+  VerticalScrollVisibilityDispatcher({
+    required double toolbarHeight,
+    required this.onVisibilityChanged,
+    this.animationDuration = const Duration(milliseconds: 250),
+  }) {
+    controller = PinnedAppbarScrollController(
+      toolbarHeight: toolbarHeight,
+      onAppbarStatusChanged: (_) {},
+    )..addListener(_onScroll);
+    _lastOffset = controller.initialScrollOffset;
+  }
+
+  void _onScroll() {
+    if (!controller.hasClients) return;
+    final offset = controller.offset.clamp(0.0, double.infinity);
+    final delta = offset - _lastOffset;
+    const threshold = 8.0;
+    if (delta.abs() < threshold) return;
+
+    _lastOffset = offset;
+
+    bool? targetVisible;
+    if (delta > 0 && _lastVisible) {
+      targetVisible = false;
+    } else if (delta < 0 && !_lastVisible) {
+      targetVisible = true;
+    }
+
+    if (targetVisible == null) return;
+    _lastVisible = targetVisible;
+    onVisibilityChanged(targetVisible);
+  }
+
+  void dispose() {
+    controller.removeListener(_onScroll);
+    controller.dispose();
+  }
+}

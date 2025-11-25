@@ -71,6 +71,9 @@ class PageProviders extends SingleChildStatelessWidget {
         ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
             update: (context, value, previous) =>
                 previous..updateAppEvent(value)),
+        ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppSync(value)),
         ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
             update: (context, sortOptions, previous) => previous
               ..updateSortOptions(

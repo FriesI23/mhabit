@@ -55,8 +55,8 @@ class _PageState extends State<_Page> {
   bool _isBottomNavVisible = true;
   bool _fabRebuildPending = false;
 
-  final GlobalKey<HabitsTabPageState> _habitsTabKey =
-      GlobalKey<HabitsTabPageState>();
+  final GlobalKey<HabitsTabPageState> _habitsTabKey = GlobalKey();
+  final GlobalKey<TodayTabPageState> _todayTabKey = GlobalKey();
   late final PageController _pageController;
 
   @override
@@ -152,7 +152,10 @@ class _PageState extends State<_Page> {
           );
         }
         if (index == _PageTabs.today.index) {
-          return const TodayTabPage();
+          return TodayTabPage(
+            key: _todayTabKey,
+            onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
+          );
         }
         return null;
       },

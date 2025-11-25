@@ -63,12 +63,12 @@ import '../habits_status_changer/page.dart' as habits_status_changer;
 import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
+  final ValueChanged<bool> onBottomNavVisibilityChanged;
+
   const HabitsTabPage({
     super.key,
     required this.onBottomNavVisibilityChanged,
   });
-
-  final ValueChanged<bool> onBottomNavVisibilityChanged;
 
   @override
   HabitsTabPageState createState() => HabitsTabPageState();
@@ -80,13 +80,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late AppCompactUISwitcherViewModel _uiSwitcher;
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
-  late PinnedAppbarScrollController _verticalScrollController;
-  late double _toolbarHeight;
+  late final double _toolbarHeight;
 
   static const Duration _bottomNavAnimationDuration =
       Duration(milliseconds: 250);
-  bool _lastBottomNavVisible = true;
-  double _lastVerticalScrollOffset = 0.0;
+
+  late final VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
 
   late StreamSubscription<Duration?> _scrollCalendarToStartSub;
   Completer<void>? _horizonalScrolling;
@@ -105,7 +104,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
     _horizonalScrollControllerGroup
         .addOffsetChangedListener(_onHorizonalOffsetChanged);
-    _initVerticalScrollController();
+    final vm = context.read<AppExperimentalFeatureViewModel>();
+    _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
+    _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
+      toolbarHeight: _toolbarHeight,
+      onVisibilityChanged: widget.onBottomNavVisibilityChanged,
+    );
   }
 
   @override
@@ -128,8 +132,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     _scrollCalendarToStartSub.cancel();
-    _verticalScrollController.removeListener(_onVerticalScroll);
-    _verticalScrollController.dispose();
+    _scrollVisibilityDispatcher.dispose();
     super.dispose();
   }
 
@@ -176,36 +179,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
           duration: scrollDuration ?? const Duration(milliseconds: 500),
           curve: Curves.fastOutSlowIn);
     }
-  }
-
-  void _initVerticalScrollController() {
-    final vm = context.read<AppExperimentalFeatureViewModel>();
-    _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
-    final controller = PinnedAppbarScrollController(
-      toolbarHeight: _toolbarHeight,
-      onAppbarStatusChanged: _changeAppbarStatus,
-    )..addChangeAppbarStatusListener();
-    controller.addListener(_onVerticalScroll);
-    _verticalScrollController = controller;
-    _lastVerticalScrollOffset = controller.initialScrollOffset;
-    vm
-      ..removeListener(_updateVerticalScrollController)
-      ..addListener(_updateVerticalScrollController);
-  }
-
-  void _updateVerticalScrollController() {
-    final oldController = _verticalScrollController;
-    _initVerticalScrollController();
-    if (oldController != _verticalScrollController) {
-      oldController.removeListener(_onVerticalScroll);
-      oldController.dispose();
-    }
-  }
-
-  void _changeAppbarStatus(bool pinned) {
-    final vm = context.maybeRead<HabitSummaryViewModel>();
-    if (vm == null || !vm.mounted) return;
-    pinned ? vm.pinAppbar() : vm.unpinAppbar();
   }
 
   void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
@@ -815,25 +788,6 @@ class HabitsTabPageState extends State<HabitsTabPage>
     return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
 
-  void _onVerticalScroll() {
-    if (!mounted) return;
-    if (!_verticalScrollController.hasClients) return;
-    final offset = _verticalScrollController.offset.clamp(0.0, double.infinity);
-    final delta = offset - _lastVerticalScrollOffset;
-    const threshold = 8.0;
-    if (delta.abs() < threshold) return;
-    _lastVerticalScrollOffset = offset;
-    bool? targetVisible;
-    if (delta > 0 && _lastBottomNavVisible) {
-      targetVisible = false;
-    } else if (delta < 0 && !_lastBottomNavVisible) {
-      targetVisible = true;
-    }
-    if (targetVisible == null) return;
-    _lastBottomNavVisible = targetVisible;
-    widget.onBottomNavVisibilityChanged(targetVisible);
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -892,7 +846,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     Widget buildCalendarBar(BuildContext context) {
       return _CalendarBar(
         key: const ValueKey("calendar-bar"),
-        verticalScrollController: _verticalScrollController,
+        verticalScrollController: _scrollVisibilityDispatcher.controller,
         horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
         onCalendarToggleExpandPressed: _onAppbarLeftButtonPressed,
       );
@@ -905,7 +859,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
         withSliver: true,
         child: _HabitList(
           horizonalScrollControllerGroup: _horizonalScrollControllerGroup,
-          verticalScrollController: _verticalScrollController,
+          verticalScrollController: _scrollVisibilityDispatcher.controller,
           reorderModel: AnimatedListReorderModel(
             onReorderStart: _onHabitListReorderStart,
             onReorderMove: _onHabitListReorderMove,
@@ -1021,7 +975,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
             CustomScrollView(
               physics: const ClampingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics()),
-              controller: _verticalScrollController,
+              controller: _scrollVisibilityDispatcher.controller,
               slivers: [
                 buildAppbar(context),
                 buildCalendarBar(context),
@@ -1076,7 +1030,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
 class _HabitList extends StatefulWidget {
   final LinkedScrollControllerGroup horizonalScrollControllerGroup;
-  final PinnedAppbarScrollController verticalScrollController;
+  final ScrollController verticalScrollController;
   final AnimatedListBaseReorderModel? reorderModel;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
@@ -1103,7 +1057,7 @@ class _HabitListState extends State<_HabitList> {
   LinkedScrollControllerGroup get _effectiveHorizonalScrollControllerGroup =>
       widget.horizonalScrollControllerGroup;
 
-  PinnedAppbarScrollController get _effectiveVerticalScrollController =>
+  ScrollController get _effectiveVerticalScrollController =>
       widget.verticalScrollController;
 
   @override
@@ -1237,7 +1191,7 @@ class _HabitListItemRecordCallbackResolver {
 class _HabitListItem extends StatelessWidget {
   final HabitUUID uuid;
   final LinkedScrollControllerGroup horizonalScrollControllerGroup;
-  final PinnedAppbarScrollController verticalScrollController;
+  final ScrollController verticalScrollController;
   final void Function(HabitUUID uuid)? onHabitSummaryDataPressed;
   final OnHabitSummaryPressCallback? onOpenRecordStatusDialog;
   final OnHabitSummaryPressCallback? onChangeRecordStatus;

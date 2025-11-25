@@ -27,6 +27,7 @@ import '../models/app_event.dart';
 import '../models/habit_display.dart';
 import '../models/habit_summary.dart';
 import 'app_event.dart';
+import 'app_sync.dart';
 import 'commons.dart';
 import 'habits_manager.dart';
 
@@ -45,6 +46,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
   // subscriptions
+  StreamSubscription<String>? _startSyncSub;
   StreamSubscription<AppEvent>? _clearDatabaseSub;
   StreamSubscription<AppEvent>? _habitStatusChangedSub;
 
@@ -66,6 +68,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
+    _startSyncSub?.cancel();
     super.dispose();
     _mounted = false;
   }
@@ -207,6 +210,16 @@ class HabitsTodayViewModel extends ChangeNotifier
       cache = List.of(cache, growable: false);
     }
     _lastSortedDataCache = cache;
+  }
+  //#endregion
+
+  //#region: auto sync
+  void updateAppSync(AppSyncViewModel appSync) {
+    _startSyncSub?.cancel();
+    _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
+      appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
+      requestReload();
+    });
   }
   //#endregion
 
