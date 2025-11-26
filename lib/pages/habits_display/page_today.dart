@@ -19,12 +19,16 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
+import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
+import '../../models/habit_form.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
+import '../../providers/habit_summary.dart';
 import '../../providers/habits_today.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
@@ -306,6 +310,95 @@ class _HabitListState extends State<_HabitList> {
     });
   }
 
+  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+    if (!mounted) return;
+    // try sync once
+    if (shouldSyncOnce) {
+      final sync = context.maybeRead<AppSyncViewModel>();
+      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    }
+  }
+
+  void _onMainButtonPressed(HabitUUID uuid) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm.changeRecordValue(uuid, habit.dailyGoal).then((record) {
+      if (!(mounted && record != null)) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
+  void _onDualButtonPressed(HabitUUID uuid) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm
+        .changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal)
+        .then((record) {
+      if (!(mounted && record != null)) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
+  void _onSkipButtonPressed(HabitUUID uuid, [String? reason]) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm.changeRecordStatus(uuid, reason: reason).then((record) {
+      if (!(mounted && record != null)) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
+  void _onValueWithButtonPressed(HabitUUID uuid) async {
+    final data = _vm.getHabit(uuid);
+    if (data == null) return;
+    final date = HabitRecordDate.now();
+    final crtNum = data.getEffectiveDailyValue(date);
+    final record = data.getRecordByDate(date);
+    final result = await showHabitRecordCustomNumberPickerDialog(
+      context: context,
+      recordForm: HabitDailyRecordForm.getImp(
+        type: data.type,
+        value: crtNum,
+        targetValue: data.dailyGoal,
+        extraTargetValue: data.dailyGoalExtra,
+      ),
+      recordStatus: record?.status ?? HabitRecordStatus.unknown,
+      recordDate: date,
+      targetExtraValue: data.dailyGoalExtra,
+      colorType: data.colorType,
+    );
+    if (result == null || result == record?.value) return;
+    if (!(mounted && _vm.mounted)) return;
+
+    _vm.changeRecordValue(uuid, result).then((record) {
+      if (!(mounted && record != null)) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
+  void _onSkipWithButtonPressed(HabitUUID uuid) async {
+    if (!_vm.mounted) return;
+    final data = _vm.getHabit(uuid);
+    if (data == null) return;
+    final date = HabitRecordDate.now();
+    final initReason = await _vm.loadRecordReason(data, date) ?? '';
+    if (!mounted) return;
+    final result = await showHabitRecordReasonModifierDialog(
+      context: context,
+      initReason: initReason,
+      recordDate: date,
+      chipTextList: skipReasonChipTextList,
+      colorType: data.colorType,
+    );
+
+    if (result == null || result == initReason) return;
+    if (!(mounted && _vm.mounted)) return;
+    _vm.changeRecordStatus(uuid, reason: result).then((record) {
+      if (!mounted || record == null) return;
+      _onRecordChangeConfirmed();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverReorderableAnimatedList<HabitSortCache>(
@@ -315,7 +408,23 @@ class _HabitListState extends State<_HabitList> {
       itemBuilder: (context, index) {
         final item = _habits[index];
         if (item is HabitSummaryDataSortCache) {
-          return _HabitListItem(key: ValueKey(item.uuid), uuid: item.uuid);
+          final uuid = item.uuid;
+          return _HabitListItem(
+            key: ValueKey(uuid),
+            uuid: item.uuid,
+            selected: _vm.getHabitExpandStatus(uuid) ?? false,
+            onExpandChanged: (value) {
+              if (!(mounted && _vm.mounted)) return;
+              _vm.updateHabitExpandStatus(uuid, value);
+            },
+            onMainPressed: () => _onMainButtonPressed(uuid),
+            buttonCallbacked: HabitTodayListCardButtonCallbacks(
+              onDualPressed: () => _onDualButtonPressed(uuid),
+              onSkipPressed: () => _onSkipButtonPressed(uuid),
+              onValueWithPressed: () => _onValueWithButtonPressed(uuid),
+              onSkipWithPressed: () => _onSkipWithButtonPressed(uuid),
+            ),
+          );
         } else {
           return SizedBox.shrink(key: ValueKey("notfound-$index"));
         }
@@ -326,15 +435,32 @@ class _HabitListState extends State<_HabitList> {
 
 class _HabitListItem extends StatelessWidget {
   final HabitUUID uuid;
+  final bool selected;
+  final ValueChanged<bool>? onExpandChanged;
+  final VoidCallback? onMainPressed;
+  final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const _HabitListItem({super.key, required this.uuid});
+  const _HabitListItem({
+    super.key,
+    required this.uuid,
+    required this.selected,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  });
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
     assert(data != null);
-    return HabitTodayCard(data: data!);
+    return HabitTodayCard(
+      data: data!,
+      selected: selected,
+      onExpandChanged: onExpandChanged,
+      onMainPressed: onMainPressed,
+      buttonCallbacked: buttonCallbacked,
+    );
   }
 }
 

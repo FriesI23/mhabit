@@ -25,17 +25,33 @@ const kHabitTodayCardShape = RoundedRectangleBorder(
 class HabitTodayCard extends StatelessWidget {
   final HabitSummaryData data;
   final bool selected;
+  final ValueChanged<bool>? onExpandChanged;
+  final VoidCallback? onMainPressed;
+  final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const HabitTodayCard({super.key, required this.data, this.selected = false});
+  const HabitTodayCard({
+    super.key,
+    required this.data,
+    this.selected = false,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  });
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final colorData = themeData.extension<CustomColors>();
     return Theme(
-        data: themeData.copyWith(
-            colorScheme: themeData.colorScheme
-                .copyWith(primary: colorData?.getColor(data.colorType))),
-        child: HabitTodayListCard(data: data, expanded: selected));
+      data: themeData.copyWith(
+          colorScheme: themeData.colorScheme
+              .copyWith(primary: colorData?.getColor(data.colorType))),
+      child: HabitTodayListCard(
+          data: data,
+          expanded: selected,
+          onExpandChanged: onExpandChanged,
+          onMainPressed: onMainPressed,
+          buttonCallbacked: buttonCallbacked),
+    );
   }
 }

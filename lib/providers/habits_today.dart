@@ -24,7 +24,10 @@ import '../common/utils.dart';
 import '../logging/helper.dart';
 import '../logging/logger_stack.dart';
 import '../models/app_event.dart';
+import '../models/habit_date.dart';
 import '../models/habit_display.dart';
+import '../models/habit_form.dart';
+import '../models/habit_repo_actions.dart';
 import '../models/habit_summary.dart';
 import '../storage/db/handlers/habit.dart';
 import 'app_event.dart';
@@ -60,6 +63,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   List<HabitSortCache> _lastSortedDataCache = const [];
   // status
   CancelableCompleter<void>? _loading;
+  final Map<HabitUUID, bool> _expandStatus;
   // inside status
   bool _mounted = true;
   // sync from setting
@@ -71,7 +75,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   StreamSubscription<AppEvent>? _clearDatabaseSub;
   StreamSubscription<AppEvent>? _habitStatusChangedSub;
 
-  HabitsTodayViewModel();
+  HabitsTodayViewModel() : _expandStatus = {};
 
   @override
   bool get mounted => _mounted;
@@ -198,6 +202,10 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitSummaryData? getHabit(HabitUUID habitUUID) {
     return _data.getHabitByUUID(habitUUID);
   }
+
+  Future<String?> loadRecordReason(
+          HabitSummaryData data, HabitRecordDate date) =>
+      habitsManager.loadHabitRecordReason(data, date);
   //#endregion
 
   //#region sortbale habits list
@@ -218,8 +226,14 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   void _resortData() {
+    final now = HabitDate.now();
     final newData = _data
         .sort(_sortType, _sortDirection)
+        .where((e) {
+          if (!e.isActived) return false;
+          if (e.getRecordByDate(now) != null) return false;
+          return true;
+        })
         .map((e) => HabitSummaryDataSortCache(data: e))
         .toList();
     _replaceSortbaleCache(newData);
@@ -259,6 +273,77 @@ class HabitsTodayViewModel extends ChangeNotifier
       appLog.habit.debug("app event triggered", ex: [event]);
       requestReload();
     });
+  }
+  //#endregion
+
+  //#region expand
+  void updateHabitExpandStatus(HabitUUID uuid, bool newStatus,
+      {bool listen = true}) {
+    if (newStatus == _expandStatus[uuid]) return;
+    _expandStatus[uuid] = newStatus;
+    if (listen) notifyListeners();
+  }
+
+  bool? getHabitExpandStatus(HabitUUID uuid) => _expandStatus[uuid];
+  //#endregion
+
+  //#region actions
+  Future<HabitSummaryRecord?> changeRecordStatus(HabitUUID uuid,
+      {String? reason, bool listen = true}) async {
+    final data = getHabit(uuid);
+    if (data == null) return null;
+
+    final date = HabitDate.now();
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data,
+          status: HabitRecordStatus.skip,
+          reason: reason,
+          dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
+
+    appLog.value.info("HabitDetail.changeRecordStatus",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
+
+    _updateHabitAutoCompleteStatistics(data);
+    _updateHabitReminder(data);
+    _resortData();
+    if (listen) notifyListeners();
+    return result.data;
+  }
+
+  Future<HabitSummaryRecord?> changeRecordValue(
+      HabitUUID uuid, HabitDailyGoal newValue,
+      {bool listen = true}) async {
+    final data = getHabit(uuid);
+    if (data == null) return null;
+
+    final date = HabitDate.now();
+    final results = await habitsManager.changeHabitRecordStatus(
+      preAction: ChangeMultiRecordStatusAction(
+          data: data, goal: newValue, dateList: [date]),
+      postActionBuilder: (results) =>
+          ChangeRecordStatusPostAction(data: data, results: results),
+    );
+    final result = results.firstOrNull;
+    if (result == null) return null;
+
+    appLog.value.info("HabitsToday.changeRecordValue",
+        beforeVal: result.origin,
+        afterVal: result.data,
+        ex: ["rst=$result", data.id, data.progress]);
+
+    _updateHabitAutoCompleteStatistics(data);
+    _updateHabitReminder(data);
+    _resortData();
+    if (listen) notifyListeners();
+    return result.data;
   }
   //#endregion
 
