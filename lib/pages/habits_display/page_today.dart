@@ -222,6 +222,7 @@ class _HabitGridState extends State<_HabitGrid> {
   @override
   Widget build(BuildContext context) {
     final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.618;
+    final height = width * 0.618;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
       scrollDirection: Axis.vertical,
       items: _habits,
@@ -229,27 +230,34 @@ class _HabitGridState extends State<_HabitGrid> {
       itemBuilder: (context, index) {
         final item = _habits[index];
         if (item is HabitSummaryDataSortCache) {
-          return _HabitGridItem(key: ValueKey(item.uuid), uuid: item.uuid);
+          return _HabitGridItem(
+              key: ValueKey(item.uuid), uuid: item.uuid, height: height);
         } else {
           return SizedBox.shrink(key: ValueKey("notfound-$index"));
         }
       },
       sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: width, mainAxisExtent: width * 0.618),
+          maxCrossAxisExtent: width,
+          mainAxisExtent: height,
+          childAspectRatio: height / width),
     );
   }
 }
 
 class _HabitGridItem extends StatelessWidget {
   final HabitUUID uuid;
+  final double? height;
 
-  const _HabitGridItem({super.key, required this.uuid});
+  const _HabitGridItem({super.key, required this.uuid, this.height});
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
-    return HabitTodayCard(testData: data);
+    assert(data != null);
+    final card = HabitTodayCard(data: data!);
+    if (height != null) return SizedBox(height: height, child: card);
+    return card;
   }
 }
 
@@ -325,7 +333,8 @@ class _HabitListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
-    return HabitTodayCard(testData: data);
+    assert(data != null);
+    return HabitTodayCard(data: data!);
   }
 }
 

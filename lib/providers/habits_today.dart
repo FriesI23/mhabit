@@ -26,6 +26,7 @@ import '../logging/logger_stack.dart';
 import '../models/app_event.dart';
 import '../models/habit_display.dart';
 import '../models/habit_summary.dart';
+import '../storage/db/handlers/habit.dart';
 import 'app_event.dart';
 import 'app_sync.dart';
 import 'commons.dart';
@@ -34,6 +35,26 @@ import 'habits_manager.dart';
 class HabitsTodayViewModel extends ChangeNotifier
     with HabitsManagerLoadedMixin
     implements ProviderMounted, AppEventLoaded {
+  static const _loadHabitDataCollectionColumns = [
+    HabitDBCellKey.id,
+    HabitDBCellKey.uuid,
+    HabitDBCellKey.type,
+    HabitDBCellKey.name,
+    HabitDBCellKey.color,
+    HabitDBCellKey.dailyGoal,
+    HabitDBCellKey.dailyGoalExtra,
+    HabitDBCellKey.targetDays,
+    HabitDBCellKey.freqType,
+    HabitDBCellKey.freqCustom,
+    HabitDBCellKey.startDate,
+    HabitDBCellKey.remindCustom,
+    HabitDBCellKey.remindQuestion,
+    HabitDBCellKey.status,
+    HabitDBCellKey.sortPosition,
+    HabitDBCellKey.createT,
+    HabitDBCellKey.desc,
+  ];
+
   // data
   final _data = HabitSummaryDataCollection();
   List<HabitSortCache> _lastSortedDataCache = const [];
@@ -144,7 +165,8 @@ class HabitsTodayViewModel extends ChangeNotifier
 
       // init habits
       await habitsManager.loadHabitSummaryCollectionData(
-          initedCollection: _data);
+          initedCollection: _data,
+          habitsColmns: _loadHabitDataCollectionColumns);
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;

@@ -165,9 +165,10 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData(
       {HabitSummaryDataCollection? initedCollection,
+      List<String>? habitsColmns,
       List<HabitUUID>? habitUUIDs}) async {
-    final habitLoadTask =
-        habitDBHelper.loadHabitAboutDataCollection(uuidFilter: habitUUIDs);
+    final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
+        uuidFilter: habitUUIDs, columns: habitsColmns);
     final recordLoadTask =
         recordDBHelper.loadAllRecords(uuidFilter: habitUUIDs);
     final habitLoaded = await habitLoadTask;

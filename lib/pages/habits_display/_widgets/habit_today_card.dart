@@ -14,21 +14,28 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../extensions/custom_color_extensions.dart';
 import '../../../models/habit_summary.dart';
+import '../../../theme/color.dart';
+import 'habit_today_list_card.dart';
+
+const kHabitTodayCardShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(12.0)));
 
 class HabitTodayCard extends StatelessWidget {
-  final HabitSummaryData? testData;
+  final HabitSummaryData data;
+  final bool selected;
 
-  const HabitTodayCard({super.key, this.testData});
+  const HabitTodayCard({super.key, required this.data, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
-    return Card.filled(
-      child: ListTile(
-        isThreeLine: true,
-        title: Text(testData?.name ?? "<NOT FOUND>"),
-        subtitle: Text(testData.toString()),
-      ),
-    );
+    final themeData = Theme.of(context);
+    final colorData = themeData.extension<CustomColors>();
+    return Theme(
+        data: themeData.copyWith(
+            colorScheme: themeData.colorScheme
+                .copyWith(primary: colorData?.getColor(data.colorType))),
+        child: HabitTodayListCard(data: data, expanded: selected));
   }
 }
