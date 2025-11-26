@@ -21,12 +21,14 @@ import 'theme_with_custom_colors.dart' show ThemeWithCustomColors;
 
 class ColorfulMarkdownBlock extends StatelessWidget {
   final String data;
+  final bool selectable;
   final HabitColorType? colorType;
   final TextScaler? textScaler;
 
   const ColorfulMarkdownBlock({
     super.key,
     required this.data,
+    this.selectable = true,
     this.colorType,
     this.textScaler,
   });
@@ -70,6 +72,7 @@ class ColorfulMarkdownBlock extends StatelessWidget {
             // Use Builder to apply colorful theme
             builder: (context) => MarkdownBlock(
               data: data,
+              selectable: selectable,
               config: _getConfig(context),
             ),
           ),
@@ -79,11 +82,13 @@ class ColorfulMarkdownBlock extends StatelessWidget {
 
 class ThematicMarkdownBlock extends StatelessWidget {
   final String data;
+  final bool selectable;
   final MarkdownConfig Function(MarkdownConfig config)? configBuilder;
 
   const ThematicMarkdownBlock({
     super.key,
     required this.data,
+    this.selectable = true,
     this.configBuilder,
   });
 
@@ -94,6 +99,7 @@ class ThematicMarkdownBlock extends StatelessWidget {
         isDark ? MarkdownConfig.darkConfig : MarkdownConfig.defaultConfig;
     return MarkdownBlock(
       data: data,
+      selectable: selectable,
       config: configBuilder?.call(config) ?? config,
     );
   }

@@ -225,7 +225,7 @@ class _HabitGridState extends State<_HabitGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.618;
+    final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.66;
     final height = width * 0.618;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
       scrollDirection: Axis.vertical,
@@ -234,8 +234,20 @@ class _HabitGridState extends State<_HabitGrid> {
       itemBuilder: (context, index) {
         final item = _habits[index];
         if (item is HabitSummaryDataSortCache) {
+          final uuid = item.uuid;
+          final (lastExpandUuid, lastExpandStatus) =
+              _vm.getLastHabitExpandStatus(onlySucc: true);
           return _HabitGridItem(
-              key: ValueKey(item.uuid), uuid: item.uuid, height: height);
+            key: ValueKey(item.uuid),
+            uuid: uuid,
+            height: height,
+            selected: uuid == lastExpandUuid && lastExpandStatus == true,
+            onExpandChanged: (value) {
+              if (!(mounted && _vm.mounted)) return;
+              _vm.toggleHabitExpandStatus(uuid);
+              setState(() {});
+            },
+          );
         } else {
           return SizedBox.shrink(key: ValueKey("notfound-$index"));
         }
@@ -251,15 +263,31 @@ class _HabitGridState extends State<_HabitGrid> {
 class _HabitGridItem extends StatelessWidget {
   final HabitUUID uuid;
   final double? height;
+  final bool selected;
+  final ValueChanged<bool>? onExpandChanged;
+  final VoidCallback? onMainPressed;
+  final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const _HabitGridItem({super.key, required this.uuid, this.height});
+  const _HabitGridItem(
+      {super.key,
+      required this.uuid,
+      this.height,
+      required this.selected,
+      this.onExpandChanged,
+      this.onMainPressed,
+      this.buttonCallbacked});
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
     assert(data != null);
-    final card = HabitTodayCard(data: data!);
+    final card = HabitTodayCard.grid(
+        data: data!,
+        selected: selected,
+        onExpandChanged: onExpandChanged,
+        onMainPressed: onMainPressed,
+        buttonCallbacked: buttonCallbacked);
     if (height != null) return SizedBox(height: height, child: card);
     return card;
   }

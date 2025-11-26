@@ -29,6 +29,8 @@ class HabitTodayCard extends StatelessWidget {
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
+  final bool _isGridView;
+
   const HabitTodayCard({
     super.key,
     required this.data,
@@ -36,7 +38,16 @@ class HabitTodayCard extends StatelessWidget {
     this.onExpandChanged,
     this.onMainPressed,
     this.buttonCallbacked,
-  });
+  }) : _isGridView = false;
+
+  const HabitTodayCard.grid({
+    super.key,
+    required this.data,
+    this.selected = false,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  }) : _isGridView = true;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +60,9 @@ class HabitTodayCard extends StatelessWidget {
       child: HabitTodayListCard(
           data: data,
           expanded: selected,
+          canScroll: _isGridView,
+          showProgessInfo: _isGridView,
+          showDescInfo: _isGridView,
           onExpandChanged: onExpandChanged,
           onMainPressed: onMainPressed,
           buttonCallbacked: buttonCallbacked),

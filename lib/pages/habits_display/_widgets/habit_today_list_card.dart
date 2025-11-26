@@ -27,6 +27,9 @@ import '../widgets.dart';
 class HabitTodayListCard extends StatefulWidget {
   final HabitSummaryData data;
   final bool expanded;
+  final bool canScroll;
+  final bool? showProgessInfo;
+  final bool? showDescInfo;
   final ValueChanged<bool>? onExpandChanged;
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
@@ -35,6 +38,9 @@ class HabitTodayListCard extends StatefulWidget {
       {super.key,
       required this.data,
       required this.expanded,
+      required this.canScroll,
+      this.showProgessInfo,
+      this.showDescInfo,
       this.onExpandChanged,
       this.onMainPressed,
       this.buttonCallbacked});
@@ -92,12 +98,12 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       isThreeLine: true,
       title: Text(data.name),
       titleTextStyle: themeData.textTheme.titleLarge,
-      trailing: trailing,
+      trailing: const Icon(null),
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ExpandedSection(
-            expand: _effectiveExpanded,
+            expand: _effectiveExpanded || widget.showProgessInfo == true,
             child: ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(data.progress.toStringAsFixed(2)),
@@ -112,10 +118,18 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       ),
     );
 
+    final bottomButtons = _HabitTodayListCardButtonGroup(
+      data: data,
+      onDualPressed: widget.buttonCallbacked?.onDualPressed,
+      onSkipPressed: widget.buttonCallbacked?.onSkipPressed,
+      onSkipWithPressed: widget.buttonCallbacked?.onSkipWithPressed,
+      onValueWithPressed: widget.buttonCallbacked?.onValueWithPressed,
+    );
+
     final textScaler = MediaQuery.textScalerOf(context)
         .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
     final extra = ExpandedSection(
-      expand: _effectiveExpanded,
+      expand: _effectiveExpanded || widget.showDescInfo == true,
       child: Padding(
         padding: kListTileContentPadding,
         child: Column(
@@ -124,19 +138,31 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
             const Divider(),
             ColorfulMarkdownBlock(
                 data: data.desc,
+                selectable: false,
                 colorType: data.colorType,
                 textScaler: textScaler),
-            _HabitTodayListCardButtonGroup(
-              data: data,
-              onDualPressed: widget.buttonCallbacked?.onDualPressed,
-              onSkipPressed: widget.buttonCallbacked?.onSkipPressed,
-              onSkipWithPressed: widget.buttonCallbacked?.onSkipWithPressed,
-              onValueWithPressed: widget.buttonCallbacked?.onValueWithPressed,
-            ),
+            if (!widget.canScroll) bottomButtons,
           ],
         ),
       ),
     );
+
+    Widget buildListCardBody() => Column(children: [body, extra]);
+
+    Widget buildScrollableListCardBody() => Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(children: [body, extra]),
+              ),
+            ),
+            ExpandedSection(
+                expand: _effectiveExpanded, child: bottomButtons), // 固定在底部
+          ],
+        );
+
+    final cardBodyContent =
+        widget.canScroll ? buildScrollableListCardBody() : buildListCardBody();
 
     final cardBody = InkWell(
       borderRadius: kHabitTodayCardShape.borderRadius.resolve(null),
@@ -144,8 +170,11 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
         _expanded = !_effectiveExpanded;
         widget.onExpandChanged?.call(_effectiveExpanded);
       }),
-      child: Column(
-        children: [body, extra],
+      child: Stack(
+        children: [
+          cardBodyContent,
+          Positioned(right: 16, top: 12, child: trailing),
+        ],
       ),
     );
 
@@ -221,7 +250,16 @@ class _HabitTodayListCardButtonGroup extends StatelessWidget {
                 index.isEven ? buttons[index ~/ 2] : const Spacer(flex: 2),
           ));
         } else {
-          return Wrap(spacing: spacing, children: buttons);
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                children: List.generate(
+              buttons.length * 2 - 1,
+              (index) => index.isEven
+                  ? buttons[index ~/ 2]
+                  : const SizedBox(width: spacing),
+            )),
+          );
         }
       },
     );

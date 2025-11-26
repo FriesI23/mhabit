@@ -13,8 +13,10 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
@@ -63,7 +65,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   List<HabitSortCache> _lastSortedDataCache = const [];
   // status
   CancelableCompleter<void>? _loading;
-  final Map<HabitUUID, bool> _expandStatus;
+  final LinkedHashMap<HabitUUID, bool> _expandStatus;
   // inside status
   bool _mounted = true;
   // sync from setting
@@ -75,7 +77,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   StreamSubscription<AppEvent>? _clearDatabaseSub;
   StreamSubscription<AppEvent>? _habitStatusChangedSub;
 
-  HabitsTodayViewModel() : _expandStatus = {};
+  HabitsTodayViewModel() : _expandStatus = LinkedHashMap();
 
   @override
   bool get mounted => _mounted;
@@ -278,10 +280,33 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   //#region expand
   void updateHabitExpandStatus(HabitUUID uuid, bool newStatus,
-      {bool listen = true}) {
-    if (newStatus == _expandStatus[uuid]) return;
+      {bool force = false, bool exclusive = false, bool listen = true}) {
+    if (newStatus == _expandStatus[uuid] && !force) return;
+    if (exclusive) _expandStatus.clear();
+    _expandStatus.remove(uuid);
     _expandStatus[uuid] = newStatus;
     if (listen) notifyListeners();
+  }
+
+  void toggleHabitExpandStatus(HabitUUID uuid, {bool listen = true}) {
+    final (lastUUID, lastStatus) = getLastHabitExpandStatus();
+    final bool status;
+    if (lastUUID == uuid) {
+      status = !(lastStatus ?? false);
+    } else {
+      status = true;
+    }
+    updateHabitExpandStatus(uuid, status,
+        force: true, exclusive: true, listen: listen);
+  }
+
+  (HabitUUID?, bool?) getLastHabitExpandStatus({bool onlySucc = false}) {
+    final uuid = _expandStatus.entries
+        .lastWhereOrNull((e) => onlySucc ? e.value : true)
+        ?.key;
+    if (uuid == null) return (uuid, null);
+    final status = getHabitExpandStatus(uuid);
+    return (uuid, status);
   }
 
   bool? getHabitExpandStatus(HabitUUID uuid) => _expandStatus[uuid];
