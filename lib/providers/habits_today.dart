@@ -74,8 +74,9 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<AppEvent>? _clearDatabaseSub;
-  StreamSubscription<AppEvent>? _habitStatusChangedSub;
+  StreamSubscription<ReloadDataEvent>? _reloadData;
+  StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
+  StreamSubscription<HabitRecordsChangedEvents>? _habitRecordStatusChangedSub;
 
   HabitsTodayViewModel() : _expandStatus = LinkedHashMap();
 
@@ -264,15 +265,30 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventViewModel newAppEvent) {
-    _clearDatabaseSub?.cancel();
+    _reloadData?.cancel();
     _habitStatusChangedSub?.cancel();
-    _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      appLog.habit.debug("app event triggered", ex: [event]);
+    _habitRecordStatusChangedSub?.cancel();
+    _reloadData = newAppEvent.on<ReloadDataEvent>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.habitToday)) return;
+      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
       requestReload();
     });
     _habitStatusChangedSub =
         newAppEvent.on<HabitStatusChangedEvent>().listen((event) {
-      appLog.habit.debug("app event triggered", ex: [event]);
+      if (event.isInTrace(AppEventPageSource.habitToday)) return;
+      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
+      requestReload();
+    });
+    _habitRecordStatusChangedSub =
+        newAppEvent.on<HabitRecordsChangedEvents>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.habitToday)) return;
+      final now = HabitDate.now();
+      if (!event.dateList.contains(now)) return;
+      final allHabitCheckedIn = event.uuidList
+          .map((e) => getHabit(e)?.getRecordByDate(now))
+          .every((e) => e != null);
+      if (allHabitCheckedIn) return;
+      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
       requestReload();
     });
   }

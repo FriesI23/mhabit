@@ -79,8 +79,9 @@ class HabitSummaryViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<AppEvent>? _clearDatabaseSub;
-  StreamSubscription<AppEvent>? _habitStatusChangedSub;
+  StreamSubscription<ReloadDataEvent>? _reloadData;
+  StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
+  StreamSubscription<HabitRecordsChangedEvents>? _habitRecordStatusChangedSub;
   // listenable
   final StreamController<Duration?> _scrollCalendarToStartController =
       StreamController<Duration?>.broadcast();
@@ -560,16 +561,30 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventViewModel newAppEvent) {
-    _clearDatabaseSub?.cancel();
+    _reloadData?.cancel();
     _habitStatusChangedSub?.cancel();
-    _clearDatabaseSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      appLog.habit.debug("app event triggered", ex: [event]);
+    _habitRecordStatusChangedSub?.cancel();
+    _reloadData = newAppEvent.on<ReloadDataEvent>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
+      if (event.isInTrace(AppEventPageSource.habitEdit)) {
+        appLog.habit
+            .debug("HabitSummary.skipped", ex: ["app event triggered", event]);
+        return;
+      }
+      appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
       if (event.exiEditMode) exitEditMode();
       requestReload(clearSnackBar: event.clearSnackBar);
     });
     _habitStatusChangedSub =
         newAppEvent.on<HabitStatusChangedEvent>().listen((event) {
-      appLog.habit.debug("app event triggered", ex: [event]);
+      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
+      appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
+      requestReload(clearSnackBar: false);
+    });
+    _habitRecordStatusChangedSub =
+        newAppEvent.on<HabitRecordsChangedEvents>().listen((event) {
+      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
+      appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
       requestReload(clearSnackBar: false);
     });
   }

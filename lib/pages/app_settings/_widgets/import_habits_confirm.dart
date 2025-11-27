@@ -78,7 +78,12 @@ class _AppSettingImportHabitsConfirmDialog
   void _whenAllHabitsLoad(int count, int failed, int total) {
     if (!mounted) return;
     context.read<AppEventViewModel>().push(const ReloadDataEvent(
-        msg: "appt_settings.import._whenAllHabitsLoad", clearSnackBar: true));
+          msg: "appt_settings.import._whenAllHabitsLoad",
+          clearSnackBar: true,
+          trace: {
+            AppEventPageSource.appSetting: {AppEventFunctionSource.habitImport}
+          },
+        ));
     setState(() {
       _completed = true;
     });

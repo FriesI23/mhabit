@@ -22,16 +22,19 @@ import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_event.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_today.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
+import 'extensions.dart';
 import 'widgets.dart';
 
 class TodayTabPage extends StatefulWidget {
@@ -217,7 +220,14 @@ class _HabitsTodayController {
     _onChanged?.call();
   }
 
-  void _syncOnce() {
+  void _onRecordChangeConfirmed(HabitUUID uuid, HabitSummaryRecord record,
+      {String? reason}) {
+    // fire event
+    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(uuid, record,
+        reason: reason,
+        msg: "habit_today._onRecordChangeConfirmed",
+        source: AppEventPageSource.habitToday);
+    // try sync once
     final sync = context.maybeRead<AppSyncViewModel>();
     if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
   }
@@ -226,7 +236,7 @@ class _HabitsTodayController {
     final habit = _vm.getHabit(uuid);
     if (habit == null) return;
     _vm.changeRecordValue(uuid, habit.dailyGoal).then((record) {
-      if (record != null) _syncOnce();
+      if (record != null) _onRecordChangeConfirmed(uuid, record);
     });
   }
 
@@ -236,7 +246,7 @@ class _HabitsTodayController {
     _vm
         .changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal)
         .then((record) {
-      if (record != null) _syncOnce();
+      if (record != null) _onRecordChangeConfirmed(uuid, record);
     });
   }
 
@@ -244,7 +254,9 @@ class _HabitsTodayController {
     final habit = _vm.getHabit(uuid);
     if (habit == null) return;
     _vm.changeRecordStatus(uuid, reason: reason).then((record) {
-      if (record != null) _syncOnce();
+      if (record != null) {
+        _onRecordChangeConfirmed(uuid, record, reason: reason);
+      }
     });
   }
 
@@ -273,7 +285,7 @@ class _HabitsTodayController {
     if (result == null || result == record?.value) return;
 
     _vm.changeRecordValue(uuid, result).then((record) {
-      if (record != null) _syncOnce();
+      if (record != null) _onRecordChangeConfirmed(uuid, record);
     });
   }
 
@@ -296,7 +308,9 @@ class _HabitsTodayController {
     if (result == null || result == initReason) return;
 
     _vm.changeRecordStatus(uuid, reason: result).then((record) {
-      if (record != null) _syncOnce();
+      if (record != null) {
+        _onRecordChangeConfirmed(uuid, record, reason: result);
+      }
     });
   }
 }

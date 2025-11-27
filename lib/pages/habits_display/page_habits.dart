@@ -32,6 +32,7 @@ import '../../extensions/color_extensions.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_event.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_display.dart';
@@ -40,6 +41,7 @@ import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
 import '../../providers/app_compact_ui_switcher.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
@@ -60,6 +62,7 @@ import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
+import 'extensions.dart';
 import 'widgets.dart';
 
 class HabitsTabPage extends StatefulWidget {
@@ -181,8 +184,13 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
   }
 
-  void _onHabitStatusChangeConfirmed({bool shouldSyncOnce = true}) {
+  void _onHabitStatusChangeConfirmed(List<HabitStatusChangedRecord> recordList,
+      {bool shouldSyncOnce = true}) {
     if (!mounted) return;
+    // fire event
+    context.read<AppEventViewModel>().pushHabitsChangeStatus(recordList,
+        msg: "habit_display._onHabitStatusChangeConfirmed",
+        source: AppEventPageSource.habitDisplay);
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
@@ -192,8 +200,14 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
   }
 
-  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
+  void _onRecordChangeConfirmed(HabitUUID uuid, HabitSummaryRecord record,
+      {String? reason, bool shouldSyncOnce = true}) {
     if (!mounted) return;
+    // fire event
+    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(uuid, record,
+        reason: reason,
+        msg: "habit_display._onRecordChangeConfirmed",
+        source: AppEventPageSource.habitDisplay);
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
@@ -204,7 +218,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _revertHabitsStatus(List<HabitStatusChangedRecord> recordList) async {
     if (!(mounted && _vm.mounted)) return;
     await _vm.revertHabitsStatus(recordList);
-    _onHabitStatusChangeConfirmed();
+    _onHabitStatusChangeConfirmed(recordList);
   }
 
   void _openHabitArchiveConfirmDialog(BuildContext context) async {
@@ -238,7 +252,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final recordList = await viewmodel.archivedSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
-    _onHabitStatusChangeConfirmed();
+    _onHabitStatusChangeConfirmed(recordList);
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -289,7 +303,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final recordList = await viewmodel.unarchivedSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
-    _onHabitStatusChangeConfirmed();
+    _onHabitStatusChangeConfirmed(recordList);
 
     final archivedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -340,7 +354,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final recordList = await viewmodel.deleteSelectedHabits();
     if (!context.mounted || recordList == null) return;
 
-    _onHabitStatusChangeConfirmed();
+    _onHabitStatusChangeConfirmed(recordList);
 
     final deletedCount = recordList.length;
     viewmodel = context.read<HabitSummaryViewModel>();
@@ -430,7 +444,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!(mounted && _vm.mounted)) return;
     _vm.changeRecordReason(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(parentUUID, record, reason: result);
     });
   }
 
@@ -462,7 +476,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!(mounted && _vm.mounted)) return;
     _vm.changeRecordValue(parentUUID, date, result).then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(parentUUID, record);
     });
   }
 
@@ -498,7 +512,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
         .changeRecordStatus(puuid, date)
         .then((record) {
       if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
+      _onRecordChangeConfirmed(puuid, record);
     });
   }
 
@@ -694,6 +708,14 @@ class HabitsTabPageState extends State<HabitsTabPage>
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
+        context.read<AppEventViewModel>().push(const ReloadDataEvent(
+              msg: "habit_display._onHabitListReorderComplete",
+              trace: {
+                AppEventPageSource.habitDisplay: {
+                  AppEventFunctionSource.habitChanged
+                }
+              },
+            ));
         final appSync = context.maybeRead<AppSyncViewModel>();
         if (appSync == null || !appSync.mounted) return;
         appSync.delayedStartTaskOnce();

@@ -23,6 +23,7 @@ import '../../extensions/context_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
+import '../../models/app_event.dart';
 import '../../models/habit_daily_goal.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
@@ -30,6 +31,7 @@ import '../../models/habit_freq.dart';
 import '../../models/habit_reminder.dart';
 import '../../providers/app_caches.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/habit_form.dart';
@@ -243,8 +245,27 @@ class _PageState extends State<_Page> {
     if (!formvm.canSaveHabit()) return;
     final result = await formvm.saveHabit();
     if (!mounted) return;
-    // try sync once
     if (mounted && result != null) {
+      // fire event
+      context.read<AppEventViewModel>().push(switch (formvm.editMode) {
+            HabitDisplayEditMode.create => const ReloadDataEvent(
+                msg: "habit_edit._onSaveButtonPressed.create",
+                trace: {
+                  AppEventPageSource.habitEdit: {
+                    AppEventFunctionSource.habitCreated
+                  }
+                },
+              ),
+            HabitDisplayEditMode.edit => const ReloadDataEvent(
+                msg: "habit_edit._onSaveButtonPressed.edit",
+                trace: {
+                  AppEventPageSource.habitEdit: {
+                    AppEventFunctionSource.habitChanged
+                  }
+                },
+              ),
+          });
+      // try sync once
       final appSync = context.maybeRead<AppSyncViewModel>();
       if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
     }
