@@ -178,6 +178,129 @@ class _HabitsGroupView extends StatelessWidget {
   }
 }
 
+class _HabitsTodayController {
+  final BuildContext context;
+
+  late final HabitsTodayViewModel _vm;
+  List<HabitSortCache> _habits = const [];
+
+  VoidCallback? _onChanged;
+
+  _HabitsTodayController(this.context);
+
+  List<HabitSortCache> get habits => _habits;
+  HabitsTodayViewModel get vm => _vm;
+
+  void init(VoidCallback onChanged) {
+    _onChanged = onChanged;
+    _vm = context.read<HabitsTodayViewModel>()..addListener(_handleVmChanged);
+    _habits = _vm.currentHabitList;
+  }
+
+  void didChangeDependencies(BuildContext context) {
+    final vm = context.read<HabitsTodayViewModel>();
+    if (_vm != vm) {
+      _vm.removeListener(_handleVmChanged);
+      _vm = vm..addListener(_handleVmChanged);
+    }
+  }
+
+  void dispose() {
+    _vm.removeListener(_handleVmChanged);
+    _onChanged = null;
+  }
+
+  void _handleVmChanged() {
+    final newList = _vm.currentHabitList;
+    if (_habits == newList) return;
+    _habits = newList;
+    _onChanged?.call();
+  }
+
+  void _syncOnce() {
+    final sync = context.maybeRead<AppSyncViewModel>();
+    if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+  }
+
+  void onMain(HabitUUID uuid) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm.changeRecordValue(uuid, habit.dailyGoal).then((record) {
+      if (record != null) _syncOnce();
+    });
+  }
+
+  void onDual(HabitUUID uuid) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm
+        .changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal)
+        .then((record) {
+      if (record != null) _syncOnce();
+    });
+  }
+
+  void onSkip(HabitUUID uuid, [String? reason]) {
+    final habit = _vm.getHabit(uuid);
+    if (habit == null) return;
+    _vm.changeRecordStatus(uuid, reason: reason).then((record) {
+      if (record != null) _syncOnce();
+    });
+  }
+
+  Future<void> onValueWith(HabitUUID uuid) async {
+    final data = _vm.getHabit(uuid);
+    if (data == null) return;
+
+    final date = HabitRecordDate.now();
+    final crtNum = data.getEffectiveDailyValue(date);
+    final record = data.getRecordByDate(date);
+
+    final result = await showHabitRecordCustomNumberPickerDialog(
+      context: context,
+      recordForm: HabitDailyRecordForm.getImp(
+        type: data.type,
+        value: crtNum,
+        targetValue: data.dailyGoal,
+        extraTargetValue: data.dailyGoalExtra,
+      ),
+      recordStatus: record?.status ?? HabitRecordStatus.unknown,
+      recordDate: date,
+      targetExtraValue: data.dailyGoalExtra,
+      colorType: data.colorType,
+    );
+
+    if (result == null || result == record?.value) return;
+
+    _vm.changeRecordValue(uuid, result).then((record) {
+      if (record != null) _syncOnce();
+    });
+  }
+
+  Future<void> onSkipWith(HabitUUID uuid) async {
+    final data = _vm.getHabit(uuid);
+    if (data == null) return;
+
+    final date = HabitRecordDate.now();
+    final initReason = await _vm.loadRecordReason(data, date) ?? '';
+    if (!context.mounted) return;
+
+    final result = await showHabitRecordReasonModifierDialog(
+      context: context,
+      initReason: initReason,
+      recordDate: date,
+      chipTextList: skipReasonChipTextList,
+      colorType: data.colorType,
+    );
+
+    if (result == null || result == initReason) return;
+
+    _vm.changeRecordStatus(uuid, reason: result).then((record) {
+      if (record != null) _syncOnce();
+    });
+  }
+}
+
 class _HabitGrid extends StatefulWidget {
   const _HabitGrid();
 
@@ -186,66 +309,65 @@ class _HabitGrid extends StatefulWidget {
 }
 
 class _HabitGridState extends State<_HabitGrid> {
-  late HabitsTodayViewModel _vm;
-
-  late List<HabitSortCache> _habits;
+  late final _HabitsTodayController _controller =
+      _HabitsTodayController(context);
 
   @override
   void initState() {
     super.initState();
-    _vm = context.read<HabitsTodayViewModel>()
-      ..addListener(_onViewModelNotified);
-    _habits = _vm.currentHabitList;
+    _controller.init(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final vm = context.read<HabitsTodayViewModel>();
-    if (_vm != vm) {
-      _vm.removeListener(_onViewModelNotified);
-      _vm = vm..addListener(_onViewModelNotified);
-    }
+    _controller.didChangeDependencies(context);
   }
 
   @override
   void dispose() {
-    _habits = const [];
-    _vm.removeListener(_onViewModelNotified);
+    _controller.dispose();
     super.dispose();
-  }
-
-  void _onViewModelNotified() {
-    final newHabits = _vm.currentHabitList;
-    if (_habits == newHabits) return;
-    setState(() {
-      _habits = _vm.currentHabitList;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final habits = _controller.habits;
+    final vm = _controller.vm;
+
     final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.66;
     final height = width * 0.618;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
       scrollDirection: Axis.vertical,
-      items: _habits,
+      items: habits,
       isSameItem: (a, b) => a.isSameItem(b),
       itemBuilder: (context, index) {
-        final item = _habits[index];
+        final item = habits[index];
         if (item is HabitSummaryDataSortCache) {
           final uuid = item.uuid;
-          final (lastExpandUuid, lastExpandStatus) =
-              _vm.getLastHabitExpandStatus(onlySucc: true);
-          return _HabitGridItem(
+          return Selector<HabitsTodayViewModel, bool>(
             key: ValueKey(item.uuid),
-            uuid: uuid,
-            height: height,
-            selected: uuid == lastExpandUuid && lastExpandStatus == true,
-            onExpandChanged: (value) {
-              if (!(mounted && _vm.mounted)) return;
-              _vm.toggleHabitExpandStatus(uuid);
-              setState(() {});
+            selector: (context, vm) {
+              final (lastExpandUuid, lastExpandStatus) =
+                  vm.getLastHabitExpandStatus(onlySucc: true);
+              return uuid == lastExpandUuid && lastExpandStatus == true;
+            },
+            builder: (context, value, child) {
+              return _HabitGridItem(
+                uuid: uuid,
+                height: height,
+                selected: value,
+                onExpandChanged: (value) => vm.toggleHabitExpandStatus(uuid),
+                onMainPressed: () => _controller.onMain(uuid),
+                buttonCallbacked: HabitTodayListCardButtonCallbacks(
+                  onDualPressed: () => _controller.onDual(uuid),
+                  onSkipPressed: () => _controller.onSkip(uuid),
+                  onValueWithPressed: () => _controller.onValueWith(uuid),
+                  onSkipWithPressed: () => _controller.onSkipWith(uuid),
+                ),
+              );
             },
           );
         } else {
@@ -269,8 +391,7 @@ class _HabitGridItem extends StatelessWidget {
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
   const _HabitGridItem(
-      {super.key,
-      required this.uuid,
+      {required this.uuid,
       this.height,
       required this.selected,
       this.onExpandChanged,
@@ -301,161 +422,62 @@ class _HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<_HabitList> {
-  late HabitsTodayViewModel _vm;
-
-  late List<HabitSortCache> _habits;
+  late final _HabitsTodayController _controller =
+      _HabitsTodayController(context);
 
   @override
   void initState() {
     super.initState();
-    _vm = context.read<HabitsTodayViewModel>()
-      ..addListener(_onViewModelNotified);
-    _habits = _vm.currentHabitList;
+    _controller.init(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final vm = context.read<HabitsTodayViewModel>();
-    if (_vm != vm) {
-      _vm.removeListener(_onViewModelNotified);
-      _vm = vm..addListener(_onViewModelNotified);
-    }
+    _controller.didChangeDependencies(context);
   }
 
   @override
   void dispose() {
-    _habits = const [];
-    _vm.removeListener(_onViewModelNotified);
+    _controller.dispose();
     super.dispose();
-  }
-
-  void _onViewModelNotified() {
-    final newHabits = _vm.currentHabitList;
-    if (_habits == newHabits) return;
-    setState(() {
-      _habits = _vm.currentHabitList;
-    });
-  }
-
-  void _onRecordChangeConfirmed({bool shouldSyncOnce = true}) {
-    if (!mounted) return;
-    // try sync once
-    if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
-    }
-  }
-
-  void _onMainButtonPressed(HabitUUID uuid) {
-    final habit = _vm.getHabit(uuid);
-    if (habit == null) return;
-    _vm.changeRecordValue(uuid, habit.dailyGoal).then((record) {
-      if (!(mounted && record != null)) return;
-      _onRecordChangeConfirmed();
-    });
-  }
-
-  void _onDualButtonPressed(HabitUUID uuid) {
-    final habit = _vm.getHabit(uuid);
-    if (habit == null) return;
-    _vm
-        .changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal)
-        .then((record) {
-      if (!(mounted && record != null)) return;
-      _onRecordChangeConfirmed();
-    });
-  }
-
-  void _onSkipButtonPressed(HabitUUID uuid, [String? reason]) {
-    final habit = _vm.getHabit(uuid);
-    if (habit == null) return;
-    _vm.changeRecordStatus(uuid, reason: reason).then((record) {
-      if (!(mounted && record != null)) return;
-      _onRecordChangeConfirmed();
-    });
-  }
-
-  void _onValueWithButtonPressed(HabitUUID uuid) async {
-    final data = _vm.getHabit(uuid);
-    if (data == null) return;
-    final date = HabitRecordDate.now();
-    final crtNum = data.getEffectiveDailyValue(date);
-    final record = data.getRecordByDate(date);
-    final result = await showHabitRecordCustomNumberPickerDialog(
-      context: context,
-      recordForm: HabitDailyRecordForm.getImp(
-        type: data.type,
-        value: crtNum,
-        targetValue: data.dailyGoal,
-        extraTargetValue: data.dailyGoalExtra,
-      ),
-      recordStatus: record?.status ?? HabitRecordStatus.unknown,
-      recordDate: date,
-      targetExtraValue: data.dailyGoalExtra,
-      colorType: data.colorType,
-    );
-    if (result == null || result == record?.value) return;
-    if (!(mounted && _vm.mounted)) return;
-
-    _vm.changeRecordValue(uuid, result).then((record) {
-      if (!(mounted && record != null)) return;
-      _onRecordChangeConfirmed();
-    });
-  }
-
-  void _onSkipWithButtonPressed(HabitUUID uuid) async {
-    if (!_vm.mounted) return;
-    final data = _vm.getHabit(uuid);
-    if (data == null) return;
-    final date = HabitRecordDate.now();
-    final initReason = await _vm.loadRecordReason(data, date) ?? '';
-    if (!mounted) return;
-    final result = await showHabitRecordReasonModifierDialog(
-      context: context,
-      initReason: initReason,
-      recordDate: date,
-      chipTextList: skipReasonChipTextList,
-      colorType: data.colorType,
-    );
-
-    if (result == null || result == initReason) return;
-    if (!(mounted && _vm.mounted)) return;
-    _vm.changeRecordStatus(uuid, reason: result).then((record) {
-      if (!mounted || record == null) return;
-      _onRecordChangeConfirmed();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final habits = _controller.habits;
+    final vm = _controller.vm;
+
     return SliverReorderableAnimatedList<HabitSortCache>(
       scrollDirection: Axis.vertical,
-      items: _habits,
+      items: habits,
       isSameItem: (a, b) => a.isSameItem(b),
       itemBuilder: (context, index) {
-        final item = _habits[index];
+        final item = habits[index];
         if (item is HabitSummaryDataSortCache) {
           final uuid = item.uuid;
-          return _HabitListItem(
+          return Selector<HabitsTodayViewModel, bool>(
             key: ValueKey(uuid),
-            uuid: item.uuid,
-            selected: _vm.getHabitExpandStatus(uuid) ?? false,
-            onExpandChanged: (value) {
-              if (!(mounted && _vm.mounted)) return;
-              _vm.updateHabitExpandStatus(uuid, value);
+            selector: (context, vm) => vm.getHabitExpandStatus(uuid) ?? false,
+            builder: (context, value, child) {
+              return _HabitListItem(
+                uuid: uuid,
+                selected: value,
+                onExpandChanged: (v) => vm.updateHabitExpandStatus(uuid, v),
+                onMainPressed: () => _controller.onMain(uuid),
+                buttonCallbacked: HabitTodayListCardButtonCallbacks(
+                  onDualPressed: () => _controller.onDual(uuid),
+                  onSkipPressed: () => _controller.onSkip(uuid),
+                  onValueWithPressed: () => _controller.onValueWith(uuid),
+                  onSkipWithPressed: () => _controller.onSkipWith(uuid),
+                ),
+              );
             },
-            onMainPressed: () => _onMainButtonPressed(uuid),
-            buttonCallbacked: HabitTodayListCardButtonCallbacks(
-              onDualPressed: () => _onDualButtonPressed(uuid),
-              onSkipPressed: () => _onSkipButtonPressed(uuid),
-              onValueWithPressed: () => _onValueWithButtonPressed(uuid),
-              onSkipWithPressed: () => _onSkipWithButtonPressed(uuid),
-            ),
           );
-        } else {
-          return SizedBox.shrink(key: ValueKey("notfound-$index"));
         }
+        return SizedBox.shrink(key: ValueKey("notfound-$index"));
       },
     );
   }
@@ -468,14 +490,12 @@ class _HabitListItem extends StatelessWidget {
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const _HabitListItem({
-    super.key,
-    required this.uuid,
-    required this.selected,
-    this.onExpandChanged,
-    this.onMainPressed,
-    this.buttonCallbacked,
-  });
+  const _HabitListItem(
+      {required this.uuid,
+      required this.selected,
+      this.onExpandChanged,
+      this.onMainPressed,
+      this.buttonCallbacked});
 
   @override
   Widget build(BuildContext context) {

@@ -179,7 +179,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     );
 
     return _effectiveExpanded
-        ? Card(child: cardBody)
+        ? Card(elevation: 3.0, child: cardBody)
         : Card.filled(child: cardBody);
   }
 }
