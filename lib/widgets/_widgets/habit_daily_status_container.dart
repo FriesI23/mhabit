@@ -63,6 +63,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!enabled) return const SizedBox.shrink();
     return Ink(
       padding: padding ?? const EdgeInsets.all(8.0),
       height: height,
