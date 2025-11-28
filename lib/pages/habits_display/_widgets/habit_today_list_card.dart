@@ -174,7 +174,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       child: Stack(
         children: [
           cardBodyContent,
-          Positioned(right: 16, top: 12, child: trailing),
+          PositionedDirectional(end: 16, top: 12, child: trailing),
         ],
       ),
     );

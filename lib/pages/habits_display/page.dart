@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
@@ -134,8 +135,8 @@ class _PageState extends State<_Page> {
         label: 'Habits',
       ),
       NavigationDestination(
-        icon: Icon(Icons.calendar_today_outlined),
-        selectedIcon: Icon(Icons.calendar_today),
+        icon: Icon(MdiIcons.calendarTodayOutline),
+        selectedIcon: Icon(MdiIcons.calendarToday),
         label: 'Today',
       ),
     ];
