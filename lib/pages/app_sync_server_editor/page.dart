@@ -305,7 +305,7 @@ class _PageDialog extends StatelessWidget {
   });
 
   Widget _buildUserTiles(BuildContext context) => Builder(
-        builder: (context) => MediaQuery.of(context).size.width >=
+        builder: (context) => MediaQuery.sizeOf(context).width >=
                 kHabitLargeScreenAdaptWidth * 1.5
             ? const Row(
                 key: ValueKey("large"),

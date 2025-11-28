@@ -122,7 +122,7 @@ class _PageState extends State<_Page> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
     final uiLayoutType =
         computeLayoutType(width: size.width, height: size.height);
     final isWideLayout = uiLayoutType == UiLayoutType.l;

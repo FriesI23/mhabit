@@ -271,7 +271,7 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
     Widget buildSearchFilter() => Builder(
           builder: (context) {
-            final size = MediaQuery.of(context).size;
+            final size = MediaQuery.sizeOf(context);
             final uiLayout = switch (defaultTargetPlatform) {
               TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
                   width: size.width,

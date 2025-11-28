@@ -40,7 +40,7 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
           child: Builder(
             builder: (context) => ConstrainedBox(
                 constraints: BoxConstraints(
-                    maxWidth: clampDouble(MediaQuery.of(context).size.width,
+                    maxWidth: clampDouble(MediaQuery.sizeOf(context).width,
                             _tableMinScrollMinWidth, _tableMinScrollMaxWidth) -
                         200),
                 child: child),

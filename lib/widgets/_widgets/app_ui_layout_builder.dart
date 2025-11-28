@@ -49,7 +49,7 @@ class AppUiLayoutBuilder extends StatelessWidget {
   }) : _useSize = true;
 
   Widget _buildSizeOf(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
     final layoutType = computeLayoutType(
       width: size.width,
       height: size.height,
