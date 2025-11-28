@@ -369,11 +369,24 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "Clear Filters",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitDisplay_tab_habits_label": "Habits",
+  "@habitDisplay_tab_habits_label": {},
+  "habitDisplay_tab_today_label": "Today",
+  "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "Today",
   "@habitToday_appBar_title": {},
   "habitToday_image_desc": "YOU MADE IT",
   "@habitToday_image_desc": {
     "description": "Celebratory text shown when the user completes all their habit tasks for today"
+  },
+  "habitToday_card_subtitle_text": "Kept it up for {days} days",
+  "@habitToday_card_subtitle_text": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Days since the chosen start date"
+      }
+    }
   },
   "habitToday_card_donePlusButton_label": "Done+",
   "@habitToday_card_donePlusButton_label": {

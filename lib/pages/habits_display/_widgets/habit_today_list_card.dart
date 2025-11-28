@@ -65,8 +65,8 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     }
   }
 
-  Text getKeepDaysText(int days, [L10n? l10n]) =>
-      Text("Kept it up for $days days");
+  Text getKeepDaysText(int days, [L10n? l10n]) => Text(
+      l10n?.habitToday_card_subtitle_text(days) ?? "Kept it up for $days days");
 
   @override
   Widget build(BuildContext context) {

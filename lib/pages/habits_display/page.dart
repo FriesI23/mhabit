@@ -128,19 +128,6 @@ class _PageState extends State<_Page> {
     final isWideLayout = uiLayoutType == UiLayoutType.l;
     final bottomNavHeight = isWideLayout ? kBottomNavigationBarHeight : 80.0;
 
-    const destinations = [
-      NavigationDestination(
-        icon: Icon(Icons.home_outlined),
-        selectedIcon: Icon(Icons.home),
-        label: 'Habits',
-      ),
-      NavigationDestination(
-        icon: Icon(MdiIcons.calendarTodayOutline),
-        selectedIcon: Icon(MdiIcons.calendarToday),
-        label: 'Today',
-      ),
-    ];
-
     final tabBody = PageView.builder(
       physics: const NeverScrollableScrollPhysics(),
       controller: _pageController,
@@ -175,6 +162,33 @@ class _PageState extends State<_Page> {
       },
     );
 
+    final naviBarBody = L10nBuilder(builder: (context, l10n) {
+      final destinations = [
+        NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
+        ),
+        NavigationDestination(
+          icon: const Icon(MdiIcons.calendarTodayOutline),
+          selectedIcon: const Icon(MdiIcons.calendarToday),
+          label: l10n?.habitDisplay_tab_today_label ?? 'Today',
+        ),
+      ];
+      return NavigationBar(
+        height: bottomNavHeight,
+        selectedIndex: _currentTabIndex,
+        labelBehavior: isWideLayout
+            ? NavigationDestinationLabelBehavior.alwaysHide
+            : NavigationDestinationLabelBehavior.alwaysShow,
+        destinations: destinations,
+        onDestinationSelected: (index) => setState(() {
+          _pageController.jumpToPage(index);
+          _isBottomNavVisible = true;
+        }),
+      );
+    });
+
     final bottomNavigationBar = AnimatedSlide(
       duration: _bottomNavAnimationDuration,
       curve: Curves.easeOut,
@@ -182,18 +196,7 @@ class _PageState extends State<_Page> {
       child: AnimatedOpacity(
         duration: _bottomNavAnimationDuration,
         opacity: _isBottomNavVisible ? 1 : 0,
-        child: NavigationBar(
-          height: bottomNavHeight,
-          selectedIndex: _currentTabIndex,
-          labelBehavior: isWideLayout
-              ? NavigationDestinationLabelBehavior.alwaysHide
-              : NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: destinations,
-          onDestinationSelected: (index) => setState(() {
-            _pageController.jumpToPage(index);
-            _isBottomNavVisible = true;
-          }),
-        ),
+        child: naviBarBody,
       ),
     );
 

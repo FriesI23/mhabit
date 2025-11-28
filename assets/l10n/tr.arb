@@ -359,6 +359,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Alışkanlık türü",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_tab_today_label": "Bugün",
+  "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "Bugün",
   "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Düzenle",

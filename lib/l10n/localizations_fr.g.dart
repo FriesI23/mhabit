@@ -428,10 +428,21 @@ class L10nFr extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
 
   @override
+  String get habitDisplay_tab_habits_label => 'Habits';
+
+  @override
+  String get habitDisplay_tab_today_label => 'Aujourd’hui';
+
+  @override
   String get habitToday_appBar_title => 'Aujourd’hui';
 
   @override
   String get habitToday_image_desc => 'YOU MADE IT';
+
+  @override
+  String habitToday_card_subtitle_text(int days) {
+    return 'Kept it up for $days days';
+  }
 
   @override
   String get habitToday_card_donePlusButton_label => 'Done+';

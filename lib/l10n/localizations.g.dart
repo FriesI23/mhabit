@@ -852,6 +852,18 @@ abstract class L10n {
   /// **'Clear Filters'**
   String get habitDisplay_searchFilter_clearFilter;
 
+  /// No description provided for @habitDisplay_tab_habits_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits'**
+  String get habitDisplay_tab_habits_label;
+
+  /// No description provided for @habitDisplay_tab_today_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get habitDisplay_tab_today_label;
+
   /// No description provided for @habitToday_appBar_title.
   ///
   /// In en, this message translates to:
@@ -863,6 +875,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'YOU MADE IT'**
   String get habitToday_image_desc;
+
+  /// No description provided for @habitToday_card_subtitle_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept it up for {days} days'**
+  String habitToday_card_subtitle_text(int days);
 
   /// Button label for completing today's habit with dialog
   ///

@@ -338,11 +338,24 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "習慣類型",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_tab_habits_label": "習慣",
+  "@habitDisplay_tab_habits_label": {},
+  "habitDisplay_tab_today_label": "今日",
+  "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "今日",
   "@habitToday_appBar_title": {},
   "habitToday_image_desc": "全都完成囉！",
   "@habitToday_image_desc": {
     "description": "顯示使用者完成今日所有打卡任務時的慶祝文字"
+  },
+  "habitToday_card_subtitle_text": "已持續 {days} 天",
+  "@habitToday_card_subtitle_text": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Days since the chosen start date"
+      }
+    }
   },
   "habitToday_card_donePlusButton_label": "完成＋",
   "@habitToday_card_donePlusButton_label": {

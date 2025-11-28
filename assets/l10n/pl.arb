@@ -361,6 +361,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Typ nawyku",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_tab_today_label": "Dzisiaj",
+  "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "Dzisiaj",
   "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Edytuj",

@@ -1,4 +1,5 @@
 {
     "habitDisplay_searchFilter_habitType_groupTitle": "habitEdit_habitTypeDialog_title", "habitDisplay_searchFilter_completed": "habitDisplay_statsMenu_completedTileText",
-    "habitToday_appBar_title": "calendarPicker_clip_today"
+    "habitToday_appBar_title": "calendarPicker_clip_today",
+    "habitDisplay_tab_today_label": "habitToday_appBar_title"
 }

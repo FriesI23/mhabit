@@ -422,10 +422,21 @@ class L10nZh extends L10n {
   String get habitDisplay_searchFilter_clearFilter => '清除筛选';
 
   @override
+  String get habitDisplay_tab_habits_label => '习惯';
+
+  @override
+  String get habitDisplay_tab_today_label => '今日';
+
+  @override
   String get habitToday_appBar_title => '今日';
 
   @override
   String get habitToday_image_desc => '今日达成！';
+
+  @override
+  String habitToday_card_subtitle_text(int days) {
+    return '已连续坚持 $days 天';
+  }
 
   @override
   String get habitToday_card_donePlusButton_label => '完成＋';
@@ -2045,10 +2056,21 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_searchFilter_habitType_groupTitle => '習慣類型';
 
   @override
+  String get habitDisplay_tab_habits_label => '習慣';
+
+  @override
+  String get habitDisplay_tab_today_label => '今日';
+
+  @override
   String get habitToday_appBar_title => '今日';
 
   @override
   String get habitToday_image_desc => '全都完成囉！';
+
+  @override
+  String habitToday_card_subtitle_text(int days) {
+    return '已持續 $days 天';
+  }
 
   @override
   String get habitToday_card_donePlusButton_label => '完成＋';
