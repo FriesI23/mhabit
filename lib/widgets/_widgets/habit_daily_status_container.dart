@@ -42,134 +42,28 @@ class HabitDailyStatusContainer extends StatelessWidget {
   final bool enabled;
   final bool isAutoComplated;
 
-  const HabitDailyStatusContainer(
-      {super.key,
-      this.width,
-      this.height,
-      this.iconSize,
-      this.padding,
-      required this.date,
-      this.colorType = HabitColorType.cc1,
-      required this.habitDailyStatus,
-      required this.habitDailyRecordForm,
-      this.onPressed,
-      this.onLongPressed,
-      this.onDoublePressed,
-      this.enabled = true,
-      this.isAutoComplated = false});
+  const HabitDailyStatusContainer({
+    super.key,
+    this.width,
+    this.height,
+    this.iconSize,
+    this.padding,
+    required this.date,
+    this.colorType = HabitColorType.cc1,
+    required this.habitDailyStatus,
+    required this.habitDailyRecordForm,
+    this.onPressed,
+    this.onLongPressed,
+    this.onDoublePressed,
+    this.enabled = true,
+    this.isAutoComplated = false,
+  });
 
   double getIconSize() => iconSize ?? kDefaultHabitDailyStatusContainerIconSize;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final habitListTileColor = themeData.extension<HabitSummaryListTileColor>();
-    final globalColor = themeData.extension<HabitSummaryDailyStatusColor>();
-    final defaultColor = _getDefaultDailyStatusColor(themeData);
-
-    Widget withAutoMarkStatus() {
-      return Icon(
-        kRecordAutoMarkStatusIcon,
-        color: habitListTileColor?.dailyStatusTheme?.autoMark ??
-            globalColor?.autoMark ??
-            defaultColor.autoMark,
-      );
-    }
-
-    Widget withUnknownStatus() {
-      return Icon(
-        kRecordUnknownStatusIcon,
-        color: habitListTileColor?.dailyStatusTheme?.unknown ??
-            globalColor?.unknown ??
-            defaultColor.unknown,
-      );
-    }
-
-    Widget withSkipStatus() {
-      return Icon(
-        kRecordSkipStatusIcon,
-        color: habitListTileColor?.dailyStatusTheme?.skip ??
-            globalColor?.skip ??
-            defaultColor.skip,
-      );
-    }
-
-    Widget withDoneAndOkStatus() {
-      return Icon(
-        kRecordDoneStatusIcon,
-        color: habitListTileColor?.dailyStatusTheme?.doneAndOk ??
-            globalColor?.doneAndOk ??
-            defaultColor.doneAndOk,
-      );
-    }
-
-    Widget withDoneAndZeroStatus() {
-      return Icon(
-        kRecordZeroStatusIcon,
-        color: habitListTileColor?.dailyStatusTheme?.doneAndZero ??
-            globalColor?.doneAndZero ??
-            defaultColor.doneAndZero,
-      );
-    }
-
-    Widget withDoneAndGoodjobStatus() {
-      return Text(
-        NumberFormat.compact(
-                locale: Localizations.localeOf(context).toLanguageTag())
-            .format(habitDailyRecordForm.value),
-        style: TextStyle(
-          color: habitListTileColor?.dailyStatusTheme?.doneAndGoodjob ??
-              globalColor?.doneAndGoodjob ??
-              defaultColor.doneAndGoodjob,
-        ),
-      );
-    }
-
-    Widget withDoneAndTryhardStatus() {
-      return Text(
-        NumberFormat.compact(
-                locale: Localizations.localeOf(context).toLanguageTag())
-            .format(habitDailyRecordForm.value),
-        style: TextStyle(
-          color: habitListTileColor?.dailyStatusTheme?.doneAndTryhard ??
-              globalColor?.doneAndTryhard ??
-              defaultColor.doneAndTryhard,
-        ),
-      );
-    }
-
-    Widget getButtonContent() {
-      if (!enabled) {
-        return const SizedBox();
-      }
-      switch (habitDailyStatus) {
-        case HabitRecordStatus.unknown:
-          if (isAutoComplated) {
-            return withAutoMarkStatus();
-          } else {
-            return withUnknownStatus();
-          }
-        case HabitRecordStatus.skip:
-          return withSkipStatus();
-        case HabitRecordStatus.done:
-          switch (habitDailyRecordForm.complateStatus) {
-            case HabitDailyComplateStatus.ok:
-              return withDoneAndOkStatus();
-            case HabitDailyComplateStatus.goodjob:
-              return withDoneAndGoodjobStatus();
-            case HabitDailyComplateStatus.noeffect:
-            case HabitDailyComplateStatus.tryhard:
-              return withDoneAndTryhardStatus();
-            case HabitDailyComplateStatus.zero:
-              if (isAutoComplated) {
-                return withAutoMarkStatus();
-              } else {
-                return withDoneAndZeroStatus();
-              }
-          }
-      }
-    }
-
+    if (!enabled) return const SizedBox.shrink();
     return Ink(
       padding: padding ?? const EdgeInsets.all(8.0),
       height: height,
@@ -188,11 +82,117 @@ class HabitDailyStatusContainer extends StatelessWidget {
         excludeFromSemantics: true,
         child: IconButton(
           iconSize: getIconSize(),
-          icon: getButtonContent(),
+          icon: HabitDailyStatusIcon(
+            habitDailyStatus: habitDailyStatus,
+            habitDailyRecordForm: habitDailyRecordForm,
+            colorType: colorType,
+            isAutoComplated: isAutoComplated,
+          ),
           onPressed: null,
         ),
       ),
     );
+  }
+}
+
+class HabitDailyStatusIcon extends StatelessWidget {
+  final HabitRecordStatus habitDailyStatus;
+  final HabitDailyRecordForm habitDailyRecordForm;
+  final HabitColorType colorType;
+  final bool isAutoComplated;
+
+  const HabitDailyStatusIcon({
+    super.key,
+    required this.habitDailyStatus,
+    required this.habitDailyRecordForm,
+    required this.colorType,
+    this.isAutoComplated = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final listTileColor = theme.extension<HabitSummaryListTileColor>();
+    final globalColor = theme.extension<HabitSummaryDailyStatusColor>();
+    final defaultColor = _getDefaultDailyStatusColor(theme);
+
+    Widget withAutoMarkStatus() => Icon(
+          kRecordAutoMarkStatusIcon,
+          color: listTileColor?.dailyStatusTheme?.autoMark ??
+              globalColor?.autoMark ??
+              defaultColor.autoMark,
+        );
+
+    Widget withUnknownStatus() => Icon(
+          kRecordUnknownStatusIcon,
+          color: listTileColor?.dailyStatusTheme?.unknown ??
+              globalColor?.unknown ??
+              defaultColor.unknown,
+        );
+
+    Widget withSkipStatus() => Icon(
+          kRecordSkipStatusIcon,
+          color: listTileColor?.dailyStatusTheme?.skip ??
+              globalColor?.skip ??
+              defaultColor.skip,
+        );
+
+    Widget withDoneAndOkStatus() => Icon(
+          kRecordDoneStatusIcon,
+          color: listTileColor?.dailyStatusTheme?.doneAndOk ??
+              globalColor?.doneAndOk ??
+              defaultColor.doneAndOk,
+        );
+
+    Widget withDoneAndZeroStatus() => Icon(
+          kRecordZeroStatusIcon,
+          color: listTileColor?.dailyStatusTheme?.doneAndZero ??
+              globalColor?.doneAndZero ??
+              defaultColor.doneAndZero,
+        );
+
+    Widget withDoneAndGoodjobStatus() => Text(
+          NumberFormat.compact(
+                  locale: Localizations.localeOf(context).toLanguageTag())
+              .format(habitDailyRecordForm.value),
+          style: TextStyle(
+            color: listTileColor?.dailyStatusTheme?.doneAndGoodjob ??
+                globalColor?.doneAndGoodjob ??
+                defaultColor.doneAndGoodjob,
+          ),
+        );
+
+    Widget withDoneAndTryhardStatus() => Text(
+          NumberFormat.compact(
+                  locale: Localizations.localeOf(context).toLanguageTag())
+              .format(habitDailyRecordForm.value),
+          style: TextStyle(
+            color: listTileColor?.dailyStatusTheme?.doneAndTryhard ??
+                globalColor?.doneAndTryhard ??
+                defaultColor.doneAndTryhard,
+          ),
+        );
+
+    switch (habitDailyStatus) {
+      case HabitRecordStatus.unknown:
+        return isAutoComplated ? withAutoMarkStatus() : withUnknownStatus();
+      case HabitRecordStatus.skip:
+        return withSkipStatus();
+      case HabitRecordStatus.done:
+        switch (habitDailyRecordForm.complateStatus) {
+          case HabitDailyComplateStatus.ok:
+            return withDoneAndOkStatus();
+          case HabitDailyComplateStatus.goodjob:
+            return withDoneAndGoodjobStatus();
+          case HabitDailyComplateStatus.tryhard:
+          case HabitDailyComplateStatus.noeffect:
+            return withDoneAndTryhardStatus();
+          case HabitDailyComplateStatus.zero:
+            return isAutoComplated
+                ? withAutoMarkStatus()
+                : withDoneAndZeroStatus();
+        }
+    }
   }
 
   HabitSummaryDailyStatusColor _getDefaultDailyStatusColor(

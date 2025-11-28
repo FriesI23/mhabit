@@ -267,33 +267,27 @@ class HabitDBHelper extends DBHelperHandler {
   ];
 
   Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection(
-      {List<HabitUUID>? uuidFilter}) async {
-    if (uuidFilter != null) {
-      return _loadHabitsAboutDataCollection(uuidFilter);
-    }
-    return _loadAllHabitAboutDataCollection();
-  }
-
-  Future<Iterable<HabitDBCell>> _loadAllHabitAboutDataCollection() async {
-    final queryArgs = loadedHabitStatus.map((e) => e.dbCode).toList();
-    final result = await db.query(table,
-        columns: _loadHabitAboutDataCollectionColumns,
-        where: "${HabitDBCellKey.status} "
-            "IN (${queryArgs.map((e) => '?').join(', ')})",
-        whereArgs: queryArgs);
-    return result.map(HabitDBCell.fromJson);
-  }
-
-  Future<Iterable<HabitDBCell>> _loadHabitsAboutDataCollection(
-      List<HabitUUID> uuidList) async {
+      {List<HabitUUID>? uuidFilter, List<String>? columns}) async {
     final statusList = loadedHabitStatus.map((e) => e.dbCode).toList();
-    final result = await db.query(table,
-        columns: _loadHabitAboutDataCollectionColumns,
-        where: "${HabitDBCellKey.status} "
-            "IN (${statusList.map((e) => '?').join(', ')}) "
-            "AND ${HabitDBCellKey.uuid} "
-            "IN (${uuidList.map((e) => '?').join(', ')}) ",
-        whereArgs: [...statusList, ...uuidList]);
+
+    final whereClauses = [
+      "${HabitDBCellKey.status} IN (${statusList.map((e) => '?').join(', ')})"
+    ];
+    final whereArgs = <dynamic>[...statusList];
+
+    if (uuidFilter != null && uuidFilter.isNotEmpty) {
+      whereClauses.add(
+          "${HabitDBCellKey.uuid} IN (${uuidFilter.map((e) => '?').join(', ')})");
+      whereArgs.addAll(uuidFilter);
+    }
+
+    final result = await db.query(
+      table,
+      columns: columns ?? _loadHabitAboutDataCollectionColumns,
+      where: whereClauses.join(' AND '),
+      whereArgs: whereArgs,
+    );
+
     return result.map(HabitDBCell.fromJson);
   }
 

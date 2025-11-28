@@ -369,6 +369,33 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "清除筛选",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitDisplay_tab_habits_label": "习惯",
+  "@habitDisplay_tab_habits_label": {},
+  "habitDisplay_tab_today_label": "今日",
+  "@habitDisplay_tab_today_label": {},
+  "habitToday_appBar_title": "今日",
+  "@habitToday_appBar_title": {},
+  "habitToday_image_desc": "今日达成！",
+  "@habitToday_image_desc": {
+    "description": "显示用户完成今日所有打卡任务时的庆祝文字"
+  },
+  "habitToday_card_subtitle_text": "已连续坚持 {days} 天",
+  "@habitToday_card_subtitle_text": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Days since the chosen start date"
+      }
+    }
+  },
+  "habitToday_card_donePlusButton_label": "完成＋",
+  "@habitToday_card_donePlusButton_label": {
+    "description": "Button label for completing today's habit with dialog"
+  },
+  "habitToday_card_skipPlusButton_label": "跳过＋",
+  "@habitToday_card_skipPlusButton_label": {
+    "description": "Button label for skipping today's habit with dialog"
+  },
   "habitDetail_editButton_tooltip": "编辑",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "取消归档",

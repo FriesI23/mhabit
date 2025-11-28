@@ -28,6 +28,8 @@ class AppUiLayoutBuilder extends StatelessWidget {
     Widget? child,
   ) builder;
 
+  final bool _useSize;
+
   const AppUiLayoutBuilder({
     super.key,
     this.ignoreHeight = true,
@@ -35,21 +37,46 @@ class AppUiLayoutBuilder extends StatelessWidget {
     this.defaultUiType = UiLayoutType.s,
     this.child,
     required this.builder,
-  });
+  }) : _useSize = false;
+
+  const AppUiLayoutBuilder.useScreenSize({
+    super.key,
+    this.ignoreHeight = true,
+    this.ignoreWidth = false,
+    this.defaultUiType = UiLayoutType.s,
+    this.child,
+    required this.builder,
+  }) : _useSize = true;
+
+  Widget _buildSizeOf(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final layoutType = computeLayoutType(
+      width: size.width,
+      height: size.height,
+      largeScreenWidth: kHabitLargeScreenAdaptWidth,
+      largeScreenHeight: kHabitLargeScreenAdaptHeight,
+      ignoreWidth: ignoreWidth,
+      ignoreHeight: ignoreHeight,
+      defaultType: defaultUiType,
+    );
+    return builder(context, layoutType, child);
+  }
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final layoutType = computeLayoutType(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight,
-            largeScreenWidth: kHabitLargeScreenAdaptWidth,
-            largeScreenHeight: kHabitLargeScreenAdaptHeight,
-            ignoreWidth: ignoreWidth,
-            ignoreHeight: ignoreHeight,
-            defaultType: defaultUiType,
-          );
-          return builder(context, layoutType, child);
-        },
-      );
+  Widget build(BuildContext context) => _useSize
+      ? _buildSizeOf(context)
+      : LayoutBuilder(
+          builder: (context, constraints) {
+            final layoutType = computeLayoutType(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
+              largeScreenWidth: kHabitLargeScreenAdaptWidth,
+              largeScreenHeight: kHabitLargeScreenAdaptHeight,
+              ignoreWidth: ignoreWidth,
+              ignoreHeight: ignoreHeight,
+              defaultType: defaultUiType,
+            );
+            return builder(context, layoutType, child);
+          },
+        );
 }

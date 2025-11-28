@@ -15,9 +15,56 @@
 import '../common/types.dart';
 import 'habit_form.dart';
 
-abstract interface class AppEvent {}
+enum AppEventPageSource {
+  appSetting,
+  habitDisplay,
+  habitToday,
+  habitDetail,
+  habitEdit,
+  habitStatusChanger
+}
 
-final class ReloadDataEvent implements AppEvent {
+enum AppEventFunctionSource {
+  habitImport,
+  databaseCleared,
+  habitCreated,
+  habitChanged,
+  recordChanged
+}
+
+abstract interface class AppEvent {
+  Map<AppEventPageSource, Set<AppEventFunctionSource>> get trace;
+}
+
+abstract class AppEventBase implements AppEvent {
+  @override
+  final Map<AppEventPageSource, Set<AppEventFunctionSource>> trace;
+
+  const AppEventBase({this.trace = const {}});
+
+  AppEventBase extendSource(
+      AppEventPageSource page, AppEventFunctionSource function);
+
+  bool isInTrace(AppEventPageSource page, [AppEventFunctionSource? function]) {
+    final functions = trace[page];
+    if (functions == null) return false;
+    return function == null || functions.contains(function);
+  }
+
+  bool isAllInTrace(
+          Iterable<(AppEventPageSource, AppEventFunctionSource?)> sources) =>
+      sources.every((entry) => isInTrace(entry.$1, entry.$2));
+
+  Map<AppEventPageSource, Set<AppEventFunctionSource>> buildNewTrace(
+      AppEventPageSource page, AppEventFunctionSource function) {
+    return {
+      ...trace,
+      page: {if (trace.containsKey(page)) ...trace[page]!, function},
+    };
+  }
+}
+
+final class ReloadDataEvent extends AppEventBase {
   final String? msg;
   final bool exiEditMode;
   final bool clearSnackBar;
@@ -26,7 +73,18 @@ final class ReloadDataEvent implements AppEvent {
     this.msg,
     this.exiEditMode = false,
     this.clearSnackBar = false,
+    super.trace,
   });
+
+  @override
+  ReloadDataEvent extendSource(
+          AppEventPageSource page, AppEventFunctionSource function) =>
+      ReloadDataEvent(
+        msg: msg,
+        exiEditMode: exiEditMode,
+        clearSnackBar: clearSnackBar,
+        trace: buildNewTrace(page, function),
+      );
 
   @override
   String toString() {
@@ -34,7 +92,8 @@ final class ReloadDataEvent implements AppEvent {
     final data = <String>[
       if (msg != null) "msg=$msg",
       "exiEditMode=$exiEditMode",
-      "clearSnackBar=$clearSnackBar"
+      "clearSnackBar=$clearSnackBar",
+      "trace=$trace",
     ];
     bf.writeAll(data, ",");
     bf.write(")");
@@ -42,7 +101,7 @@ final class ReloadDataEvent implements AppEvent {
   }
 }
 
-final class HabitStatusChangedEvent implements AppEvent {
+final class HabitStatusChangedEvent extends AppEventBase {
   final String? msg;
   final List<HabitUUID> uuidList;
   final HabitStatus status;
@@ -51,7 +110,18 @@ final class HabitStatusChangedEvent implements AppEvent {
     this.msg,
     required this.uuidList,
     required this.status,
+    super.trace,
   });
+
+  @override
+  HabitStatusChangedEvent extendSource(
+          AppEventPageSource page, AppEventFunctionSource function) =>
+      HabitStatusChangedEvent(
+        msg: msg,
+        uuidList: uuidList,
+        status: status,
+        trace: buildNewTrace(page, function),
+      );
 
   @override
   String toString() {
@@ -59,7 +129,8 @@ final class HabitStatusChangedEvent implements AppEvent {
     final data = <String>[
       if (msg != null) "msg=$msg",
       "uuidList=$uuidList",
-      "status=$status"
+      "status=$status",
+      "trace=$trace",
     ];
     bf.writeAll(data, ",");
     bf.write(")");
@@ -67,20 +138,33 @@ final class HabitStatusChangedEvent implements AppEvent {
   }
 }
 
-final class HabitRecordsChangedEvents implements AppEvent {
+final class HabitRecordsChangedEvents extends AppEventBase {
   final String? msg;
   final List<HabitUUID> uuidList;
   final List<HabitRecordDate> dateList;
   final HabitRecordStatus? status;
   final String? reason;
 
-  const HabitRecordsChangedEvents(
-      {this.msg,
-      required this.uuidList,
-      required this.dateList,
-      this.status,
-      this.reason})
-      : assert(status != HabitRecordStatus.unknown);
+  const HabitRecordsChangedEvents({
+    this.msg,
+    required this.uuidList,
+    required this.dateList,
+    this.status,
+    this.reason,
+    super.trace,
+  }) : assert(status != HabitRecordStatus.unknown);
+
+  @override
+  HabitRecordsChangedEvents extendSource(
+          AppEventPageSource page, AppEventFunctionSource function) =>
+      HabitRecordsChangedEvents(
+        msg: msg,
+        uuidList: uuidList,
+        dateList: dateList,
+        status: status,
+        reason: reason,
+        trace: buildNewTrace(page, function),
+      );
 
   @override
   String toString() {
@@ -90,7 +174,8 @@ final class HabitRecordsChangedEvents implements AppEvent {
       "uuidList=$uuidList",
       "dateList=$dateList",
       "status=$status",
-      "reason=$reason"
+      "reason=$reason",
+      "trace=$trace",
     ];
     bf.writeAll(data, ",");
     bf.write(")");

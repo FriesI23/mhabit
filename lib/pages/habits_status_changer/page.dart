@@ -161,8 +161,14 @@ class _PageState extends State<_Page> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
     context.read<AppEventViewModel>().push(const ReloadDataEvent(
-        msg: "habit_status_changer._onConfirmButtonpressed",
-        exiEditMode: true));
+          msg: "habit_status_changer._onConfirmButtonpressed",
+          exiEditMode: true,
+          trace: {
+            AppEventPageSource.habitStatusChanger: {
+              AppEventFunctionSource.recordChanged
+            }
+          },
+        ));
   }
 
   void _onResetButtonPressed() {

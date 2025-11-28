@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export '_widgets/app_sync_confirm_dialog.dart';
+export '_widgets/app_theme_switch_button.dart';
 export '_widgets/contributor_tile.dart';
 export '_widgets/custom_datetime_format_picker.dart';
 export '_widgets/custom_scroll_controllers.dart';
@@ -28,3 +29,4 @@ export '_widgets/notification_activated.dart';
 export '_widgets/notification_pending_requests.dart';
 export '_widgets/sync_loading_indicator.dart';
 export '_widgets/sync_now_tile.dart';
+export '_widgets/today_done_image.dart';

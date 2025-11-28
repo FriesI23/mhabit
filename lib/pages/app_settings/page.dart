@@ -385,9 +385,14 @@ class _PageState extends State<_Page> with XShare {
         content: const Text("clear database success"));
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context
-        .read<AppEventViewModel>()
-        .push(const ReloadDataEvent(msg: "app_settings._onClearDBTilePressed"));
+    context.read<AppEventViewModel>().push(const ReloadDataEvent(
+          msg: "app_settings._onClearDBTilePressed",
+          trace: {
+            AppEventPageSource.appSetting: {
+              AppEventFunctionSource.databaseCleared
+            }
+          },
+        ));
   }
 
   @override

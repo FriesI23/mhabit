@@ -36,6 +36,7 @@ import '../../providers/app_theme.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
+import '../../storage/profile/handlers/app_launch_entry.dart';
 import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_builder.dart';
 import '../../storage/profile_provider.dart';
@@ -71,6 +72,7 @@ class AppEntry extends StatelessWidget {
     AppSyncFetchIntervalHandler.new,
     HabitSearchExperimentalFeature.new,
     AppNotifyConfigProfileHandler.new,
+    AppLaunchEntryProfileHandler.new,
   ];
 
   const AppEntry({super.key});

@@ -23,6 +23,7 @@ import '../../providers/habit_summary.dart';
 import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
+import '../../providers/habits_today.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
@@ -61,6 +62,30 @@ class PageProviders extends SingleChildStatelessWidget {
                 previous..setNotificationChannelData(value)),
       ];
 
+  Iterable<SingleChildWidget> _buildTodayViewModel() => [
+        ChangeNotifierProvider<HabitsTodayViewModel>(
+            create: (context) => HabitsTodayViewModel()),
+        ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateHabitManager(value)),
+        ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppEvent(value)),
+        ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateAppSync(value)),
+        ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
+            update: (context, sortOptions, previous) => previous
+              ..updateSortOptions(
+                  sortOptions.sortType, sortOptions.sortDirection),
+            post: (t, _, vm) => vm.resortData()),
+        ViewModelProxyProvider<AppFirstDayViewModel, HabitsTodayViewModel>(
+            update: (context, value, previous) =>
+                previous..updateFirstday(value.firstDay),
+            post: (t, value, vm) =>
+                value.firstDay != vm.firstday ? vm.requestReload() : null),
+      ];
+
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
         providers: [
@@ -73,7 +98,12 @@ class PageProviders extends SingleChildStatelessWidget {
               update: (context, profile, previous) =>
                   previous..updateProfile(profile)),
           ..._buildPageViewModel(),
+          ..._buildTodayViewModel(),
         ],
+        builder: (context, child) {
+          context.read<HabitSummaryViewModel>().loadData();
+          return child!;
+        },
         child: child,
       );
 }

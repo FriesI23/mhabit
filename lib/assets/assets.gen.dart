@@ -58,6 +58,13 @@ class $AssetsImagesGen {
   /// File path: assets/images/not-found.svg.template
   String get notFoundSvg => 'assets/images/not-found.svg.template';
 
+  /// File path: assets/images/today-done.svg
+  SvgGenImage get todayDone =>
+      const SvgGenImage('assets/images/today-done.svg');
+
+  /// File path: assets/images/today-done.svg.template
+  String get todayDoneSvg => 'assets/images/today-done.svg.template';
+
   /// List of all assets
   List<dynamic> get values => [
         donateAlipay,
@@ -65,7 +72,9 @@ class $AssetsImagesGen {
         emptyHabits,
         emptyHabitsSvg,
         notFound,
-        notFoundSvg
+        notFoundSvg,
+        todayDone,
+        todayDoneSvg
       ];
 }
 

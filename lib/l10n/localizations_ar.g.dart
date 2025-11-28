@@ -428,6 +428,29 @@ class L10nAr extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'مسح المرشحات';
 
   @override
+  String get habitDisplay_tab_habits_label => 'Habits';
+
+  @override
+  String get habitDisplay_tab_today_label => 'اليوم';
+
+  @override
+  String get habitToday_appBar_title => 'اليوم';
+
+  @override
+  String get habitToday_image_desc => 'YOU MADE IT';
+
+  @override
+  String habitToday_card_subtitle_text(int days) {
+    return 'Kept it up for $days days';
+  }
+
+  @override
+  String get habitToday_card_donePlusButton_label => 'Done+';
+
+  @override
+  String get habitToday_card_skipPlusButton_label => 'Skip+';
+
+  @override
   String get habitDetail_editButton_tooltip => 'تحرير';
 
   @override

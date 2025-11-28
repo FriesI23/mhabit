@@ -13,6 +13,7 @@
 // limitations under the License.
 
 export '_widgets/animated_linear_progress.dart';
+export '_widgets/animated_reorderable_list.dart';
 export '_widgets/app_ui_layout_builder.dart';
 export '_widgets/appbar_actions.dart';
 export '_widgets/beta_badge.dart';

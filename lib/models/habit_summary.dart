@@ -233,6 +233,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   bool get isInProgress => isActived && !isComplated;
 
+  Duration get duringFromStartDate => HabitDate.now().difference(startDate);
+
   HabitDailyGoal get habitOkValue {
     switch (type) {
       case HabitType.unknown:

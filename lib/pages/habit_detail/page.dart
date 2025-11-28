@@ -79,7 +79,15 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
 extension _AppEventViewModelExtension on AppEventViewModel {
   void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
     push(HabitStatusChangedEvent(
-        msg: msg, uuidList: [result.habitUUID], status: result.newStatus));
+      msg: msg,
+      uuidList: [result.habitUUID],
+      status: result.newStatus,
+      trace: {
+        AppEventPageSource.habitDetail: const {
+          AppEventFunctionSource.habitChanged
+        }
+      },
+    ));
   }
 }
 
@@ -158,9 +166,14 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
     if (_summary?.mounted != true) {
-      context
-          .read<AppEventViewModel>()
-          .push(const ReloadDataEvent(msg: "habit_detail._enterHabitEditPage"));
+      context.read<AppEventViewModel>().push(const ReloadDataEvent(
+            msg: "habit_detail._enterHabitEditPage",
+            trace: {
+              AppEventPageSource.habitDetail: {
+                AppEventFunctionSource.habitChanged
+              }
+            },
+          ));
     } else {
       _summary!.onHabitDataChanged();
       if (mounted && form.editMode == HabitDisplayEditMode.create) {
@@ -211,9 +224,13 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return;
     if (_vm.getInsideVersion() == oldVersion) return;
     if (_summary?.mounted != true) {
-      context
-          .read<AppEventViewModel>()
-          .push(const ReloadDataEvent(msg: "habit_detail._openEditDialog"));
+      context.read<AppEventViewModel>().push(
+            const ReloadDataEvent(msg: "habit_detail._openEditDialog", trace: {
+              AppEventPageSource.habitDetail: {
+                AppEventFunctionSource.recordChanged
+              }
+            }),
+          );
     } else {
       _summary!.onHabitDataChanged();
     }
