@@ -173,7 +173,6 @@ flutter:
     - configs/about_info.json
     - configs/contributors.json
     - assets/sql/
-    - assets/icons/
     - assets/images/
     - assets/logo/icon-momo.svg
 

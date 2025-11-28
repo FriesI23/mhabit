@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +35,7 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_today.dart';
 import '../../widgets/widgets.dart';
+import '../common/_widgets/today_done_image.dart';
 import '../common/widgets.dart';
 import 'extensions.dart';
 import 'widgets.dart';
@@ -105,14 +108,20 @@ class TodayTabPageState extends State<TodayTabPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    const appbarHeight = kToolbarHeight;
+
     final body = CustomScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       controller: _scrollVisibilityDispatcher.controller,
       slivers: [
-        _Appbar(),
+        _Appbar(toolbarHeight: appbarHeight),
         _HabitsGroupView(),
         _DevelopTile(),
       ],
     );
+    const image = _TodayDoneImage(
+        changedAnimateDuration: Duration(milliseconds: 300),
+        offsetHeight: -appbarHeight);
     final page = RefreshIndicator(
       notificationPredicate: (notification) {
         final context = notification.context;
@@ -127,19 +136,22 @@ class TodayTabPageState extends State<TodayTabPage>
       },
       onRefresh: _onRefreshIndicatorTriggered,
       edgeOffset: kToolbarHeight + MediaQuery.paddingOf(context).top,
-      child: body,
+      child: Stack(children: [image, body]),
     );
     return page;
   }
 }
 
 class _Appbar extends StatelessWidget {
-  const _Appbar();
+  final double toolbarHeight;
+
+  const _Appbar({required this.toolbarHeight});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       centerTitle: true,
+      toolbarHeight: toolbarHeight,
       title: Text("Today"),
     );
   }
@@ -416,9 +428,9 @@ class _HabitGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
-    assert(data != null);
+    if (data == null) return const SizedBox.shrink();
     final card = HabitTodayCard.grid(
-        data: data!,
+        data: data,
         selected: selected,
         onExpandChanged: onExpandChanged,
         onMainPressed: onMainPressed,
@@ -515,13 +527,93 @@ class _HabitListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
         (vm) => vm.getHabit(uuid));
-    assert(data != null);
+    if (data == null) return const SizedBox.shrink();
     return HabitTodayCard(
-      data: data!,
+      data: data,
       selected: selected,
       onExpandChanged: onExpandChanged,
       onMainPressed: onMainPressed,
       buttonCallbacked: buttonCallbacked,
+    );
+  }
+}
+
+class _TodayDoneImage extends StatefulWidget {
+  final double offsetHeight;
+  final Duration changedAnimateDuration;
+
+  const _TodayDoneImage({
+    this.offsetHeight = 0.0,
+    required this.changedAnimateDuration,
+  });
+
+  @override
+  State<_TodayDoneImage> createState() => _TodayDoneImageState();
+}
+
+class _TodayDoneImageState extends State<_TodayDoneImage> {
+  Brightness? _lastBrightness;
+  Color? _lastPrimary;
+  late TodayDoneImageStyle _adaptedStyle;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final themeData = Theme.of(context);
+    final brightness = themeData.brightness;
+    final primary = themeData.colorScheme.primary;
+
+    // 只在 Theme 改变时重新计算
+    if (_lastBrightness != brightness || _lastPrimary != primary) {
+      _lastBrightness = brightness;
+      _lastPrimary = primary;
+      _adaptedStyle = _adaptStyle(TodayDoneImageStyle.inDefault, themeData);
+    }
+  }
+
+  TodayDoneImageStyle _adaptStyle(TodayDoneImageStyle style, ThemeData theme) {
+    Color blend(Color original) =>
+        Color.lerp(original, theme.colorScheme.primary, 0.2)!;
+
+    return TodayDoneImageStyle(
+      laserColor: blend(style.laserColor),
+      sunColor: blend(style.sunColor),
+      horizonColor: blend(style.horizonColor),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDataLoaded =
+        context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
+    final habitCount = context
+        .select<HabitsTodayViewModel, int>((vm) => vm.currentHabitList.length);
+
+    bool shouldShowImage() => isDataLoaded && habitCount <= 0;
+
+    final image = TodayDoneImage(
+      size: const Size.square(300),
+      padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
+      descChild: Text("YOU MADE IT"),
+      style: _adaptedStyle,
+    );
+
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) => Align(
+          alignment: Alignment.bottomCenter,
+          child: ConstrainedBox(
+            constraints: constraints.copyWith(
+                maxHeight:
+                    math.max(constraints.maxHeight + widget.offsetHeight, 0)),
+            child: AnimatedOpacity(
+              opacity: shouldShowImage() ? 1.0 : 0.0,
+              duration: widget.changedAnimateDuration,
+              child: image,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
