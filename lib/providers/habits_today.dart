@@ -74,7 +74,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<ReloadDataEvent>? _reloadData;
+  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
   StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
   StreamSubscription<HabitRecordsChangedEvents>? _habitRecordStatusChangedSub;
 
@@ -267,10 +267,10 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventViewModel newAppEvent) {
-    _reloadData?.cancel();
+    _reloadDataSub?.cancel();
     _habitStatusChangedSub?.cancel();
     _habitRecordStatusChangedSub?.cancel();
-    _reloadData = newAppEvent.on<ReloadDataEvent>().listen((event) {
+    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
       if (event.isInTrace(AppEventPageSource.habitToday)) return;
       appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
       requestReload();

@@ -29,3 +29,4 @@ export '_widgets/notification_activated.dart';
 export '_widgets/notification_pending_requests.dart';
 export '_widgets/sync_loading_indicator.dart';
 export '_widgets/sync_now_tile.dart';
+export '_widgets/today_done_image.dart';

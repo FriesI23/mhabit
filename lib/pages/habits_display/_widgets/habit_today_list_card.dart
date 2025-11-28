@@ -157,8 +157,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
                 child: Column(children: [body, extra]),
               ),
             ),
-            ExpandedSection(
-                expand: _effectiveExpanded, child: bottomButtons), // 固定在底部
+            ExpandedSection(expand: _effectiveExpanded, child: bottomButtons),
           ],
         );
 

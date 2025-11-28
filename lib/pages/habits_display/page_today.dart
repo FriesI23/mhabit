@@ -35,7 +35,6 @@ import '../../providers/app_sync.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_today.dart';
 import '../../widgets/widgets.dart';
-import '../common/_widgets/today_done_image.dart';
 import '../common/widgets.dart';
 import 'extensions.dart';
 import 'widgets.dart';
@@ -566,7 +565,6 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
     final brightness = themeData.brightness;
     final primary = themeData.colorScheme.primary;
 
-    // 只在 Theme 改变时重新计算
     if (_lastBrightness != brightness || _lastPrimary != primary) {
       _lastBrightness = brightness;
       _lastPrimary = primary;

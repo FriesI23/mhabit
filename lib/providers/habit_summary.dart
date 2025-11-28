@@ -79,7 +79,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<ReloadDataEvent>? _reloadData;
+  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
   StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
   StreamSubscription<HabitRecordsChangedEvents>? _habitRecordStatusChangedSub;
   // listenable
@@ -561,10 +561,10 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: app event
   @override
   void updateAppEvent(AppEventViewModel newAppEvent) {
-    _reloadData?.cancel();
+    _reloadDataSub?.cancel();
     _habitStatusChangedSub?.cancel();
     _habitRecordStatusChangedSub?.cancel();
-    _reloadData = newAppEvent.on<ReloadDataEvent>().listen((event) {
+    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
       if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
       if (event.isInTrace(AppEventPageSource.habitEdit)) {
         appLog.habit
