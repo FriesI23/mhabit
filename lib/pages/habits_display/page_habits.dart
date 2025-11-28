@@ -908,7 +908,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<HabitSummaryViewModel>().requestReload();
+                context.read<AppEventViewModel>().push(const ReloadDataEvent(
+                    msg: "habit_display.debugAddMultiTempHabit"));
               },
             ),
           ),
