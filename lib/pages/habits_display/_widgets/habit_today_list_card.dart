@@ -95,27 +95,32 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
               extraTargetValue: data.dailyGoalExtra),
         ));
 
-    final body = ListTile(
-      isThreeLine: true,
-      title: Text(data.name),
-      titleTextStyle: themeData.textTheme.titleLarge,
-      trailing: const Icon(null),
-      subtitle: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ExpandedSection(
-            expand: _effectiveExpanded || widget.showProgessInfo == true,
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(data.progress.toStringAsFixed(2)),
-              titleTextStyle: themeData.textTheme.titleLarge,
-              subtitle: LinearProgressIndicator(value: data.progress / 100),
+    final body = MediaQuery.removePadding(
+      context: context,
+      removeLeft: true,
+      removeRight: true,
+      child: ListTile(
+        isThreeLine: true,
+        title: Text(data.name),
+        titleTextStyle: themeData.textTheme.titleLarge,
+        trailing: const Icon(null),
+        subtitle: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ExpandedSection(
+              expand: _effectiveExpanded || widget.showProgessInfo == true,
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(data.progress.toStringAsFixed(2)),
+                titleTextStyle: themeData.textTheme.titleLarge,
+                subtitle: LinearProgressIndicator(value: data.progress / 100),
+              ),
             ),
-          ),
-          SizedBox(
-              width: double.infinity,
-              child: getKeepDaysText(data.duringFromStartDate.inDays, l10n)),
-        ],
+            SizedBox(
+                width: double.infinity,
+                child: getKeepDaysText(data.duringFromStartDate.inDays, l10n)),
+          ],
+        ),
       ),
     );
 
@@ -154,6 +159,9 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
           children: [
             Expanded(
               child: SingleChildScrollView(
+                physics: _effectiveExpanded
+                    ? null
+                    : const NeverScrollableScrollPhysics(),
                 child: Column(children: [body, extra]),
               ),
             ),
