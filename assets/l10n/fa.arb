@@ -338,6 +338,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "نوع عادت",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitToday_appBar_title": "امروز",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "ویرایش",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "خارج کردن از حالت آرشیو",

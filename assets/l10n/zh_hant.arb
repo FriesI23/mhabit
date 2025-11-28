@@ -338,6 +338,20 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "習慣類型",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitToday_appBar_title": "今日",
+  "@habitToday_appBar_title": {},
+  "habitToday_image_desc": "全都完成囉！",
+  "@habitToday_image_desc": {
+    "description": "顯示使用者完成今日所有打卡任務時的慶祝文字"
+  },
+  "habitToday_card_donePlusButton_label": "完成＋",
+  "@habitToday_card_donePlusButton_label": {
+    "description": "Button label for completing today's habit with dialog"
+  },
+  "habitToday_card_skipPlusButton_label": "跳過＋",
+  "@habitToday_card_skipPlusButton_label": {
+    "description": "Button label for skipping today's habit with dialog"
+  },
   "habitDetail_editButton_tooltip": "編輯",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "解除封存",

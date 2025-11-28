@@ -309,6 +309,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Tipo de hábito",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitToday_appBar_title": "Hoje",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Editar",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Desarquivar",

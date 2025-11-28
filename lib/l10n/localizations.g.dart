@@ -852,6 +852,30 @@ abstract class L10n {
   /// **'Clear Filters'**
   String get habitDisplay_searchFilter_clearFilter;
 
+  /// No description provided for @habitToday_appBar_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get habitToday_appBar_title;
+
+  /// Celebratory text shown when the user completes all their habit tasks for today
+  ///
+  /// In en, this message translates to:
+  /// **'YOU MADE IT'**
+  String get habitToday_image_desc;
+
+  /// Button label for completing today's habit with dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Done+'**
+  String get habitToday_card_donePlusButton_label;
+
+  /// Button label for skipping today's habit with dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Skip+'**
+  String get habitToday_card_skipPlusButton_label;
+
   /// No description provided for @habitDetail_editButton_tooltip.
   ///
   /// In en, this message translates to:

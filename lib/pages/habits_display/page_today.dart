@@ -111,9 +111,9 @@ class TodayTabPageState extends State<TodayTabPage>
     const appbarHeight = kToolbarHeight;
 
     final body = CustomScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       controller: _scrollVisibilityDispatcher.controller,
-      slivers: [
+      slivers: const [
         _Appbar(toolbarHeight: appbarHeight),
         _HabitsGroupView(),
         _DevelopTile(),
@@ -149,11 +149,12 @@ class _Appbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return SliverAppBar(
       centerTitle: true,
       toolbarHeight: toolbarHeight,
-      title: Text("Today"),
-      actions: [AppThemeSwitchButton()],
+      title: Text(l10n?.habitToday_appBar_title ?? "Today"),
+      actions: const [AppThemeSwitchButton()],
       actionsPadding: kSearchAppBarActionPadding,
     );
   }
@@ -596,7 +597,9 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
     final image = TodayDoneImage(
       size: const Size.square(300),
       padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
-      descChild: Text("YOU MADE IT"),
+      descChild: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.habitToday_image_desc ?? "YOU MADE IT")),
       style: _adaptedStyle,
     );
 

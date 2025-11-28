@@ -428,6 +428,18 @@ class L10nUk extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Очистити фільтри';
 
   @override
+  String get habitToday_appBar_title => 'Сьогодні';
+
+  @override
+  String get habitToday_image_desc => 'YOU MADE IT';
+
+  @override
+  String get habitToday_card_donePlusButton_label => 'Done+';
+
+  @override
+  String get habitToday_card_skipPlusButton_label => 'Skip+';
+
+  @override
   String get habitDetail_editButton_tooltip => 'Редагувати';
 
   @override

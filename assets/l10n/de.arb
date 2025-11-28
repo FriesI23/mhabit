@@ -338,6 +338,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Gewohnheitstyp",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitToday_appBar_title": "Heute",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Bearbeiten",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Dearchivieren",

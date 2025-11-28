@@ -369,6 +369,8 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "Очистити фільтри",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitToday_appBar_title": "Сьогодні",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Редагувати",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Розархівувати",

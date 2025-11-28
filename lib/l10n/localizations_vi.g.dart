@@ -428,6 +428,18 @@ class L10nVi extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
 
   @override
+  String get habitToday_appBar_title => 'Hôm nay';
+
+  @override
+  String get habitToday_image_desc => 'YOU MADE IT';
+
+  @override
+  String get habitToday_card_donePlusButton_label => 'Done+';
+
+  @override
+  String get habitToday_card_skipPlusButton_label => 'Skip+';
+
+  @override
   String get habitDetail_editButton_tooltip => 'Biên tập';
 
   @override

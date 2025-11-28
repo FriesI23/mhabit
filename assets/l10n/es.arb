@@ -369,6 +369,8 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "Limpiar filtros",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitToday_appBar_title": "Hoy",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Editar",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Desarchivar",

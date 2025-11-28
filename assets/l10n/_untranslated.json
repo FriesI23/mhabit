@@ -1,4 +1,10 @@
 {
+  "ar": [
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label"
+  ],
+
   "cs": [
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoal_errorText01",
@@ -93,6 +99,10 @@
     "habitDisplay_searchFilter_completed",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_appBar_title",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "habitDetail_editButton_tooltip",
     "habitDetail_editPopMenu_unarchive",
     "habitDetail_editPopMenu_archive",
@@ -423,6 +433,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -546,6 +559,9 @@
   ],
 
   "es": [
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSync_serverEditor_connTimeoutTile_unitText",
     "appSync_serverEditor_connRetryCountTile_titleText",
     "appSync_serverEditor_connRetryCountTile_hintText",
@@ -586,6 +602,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
@@ -710,6 +729,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSetting_changeLanguage_followSystem_text",
     "appSetting_changeLanguage_followSystem_noLocale_text",
     "appSetting_changeLanguageTile_titleText",
@@ -884,6 +906,10 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_appBar_title",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "habitDetail_editButton_tooltip",
     "habitDetail_confirmDialog_confirm",
     "habitDetail_confirmDialog_cancel",
@@ -1158,6 +1184,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -1370,6 +1399,10 @@
     "habitDisplay_searchFilter_habitType_groupTitle",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_appBar_title",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "habitDetail_editButton_tooltip",
     "habitDetail_editPopMenu_unarchive",
     "habitDetail_editPopMenu_archive",
@@ -1698,7 +1731,10 @@
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
-    "habitDisplay_searchFilter_clearFilter"
+    "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label"
   ],
 
   "pt": [
@@ -1719,6 +1755,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "habitDetail_heatmap_leftHelpText",
     "habitDetail_heatmap_rightHelpText",
     "habitDetail_descDailyGoal_titleText",
@@ -1852,6 +1891,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText"
   ],
@@ -1862,8 +1904,17 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText"
+  ],
+
+  "uk": [
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label"
   ],
 
   "vi": [
@@ -1875,6 +1926,9 @@
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
+    "habitToday_image_desc",
+    "habitToday_card_donePlusButton_label",
+    "habitToday_card_skipPlusButton_label",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",

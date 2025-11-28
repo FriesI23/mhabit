@@ -336,6 +336,8 @@
   "@habitDisplay_searchFilter_completed": {},
   "habitDisplay_searchFilter_habitType_groupTitle": "Tipologia abitudine",
   "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitToday_appBar_title": "Oggi",
+  "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "Modifica",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Rimuovi dall'archivio",

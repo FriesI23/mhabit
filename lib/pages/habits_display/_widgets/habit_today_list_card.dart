@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
@@ -215,53 +216,36 @@ class _HabitTodayListCardButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const spacing = 16.0;
+    const spacing = 4.0;
     final extraGoal = data.dailyGoalExtra;
-    final buttons = [
+    final l10n = L10n.of(context);
+
+    final buttons = <Widget>[
       if (extraGoal != null)
         TextButton(onPressed: onDualPressed, child: Text(extraGoal.toString())),
-      TextButton(onPressed: onSkipPressed, child: Text("Skip")),
-      TextButton(onPressed: onValueWithPressed, child: Text("Done With...")),
-      TextButton(onPressed: onSkipWithPressed, child: Text("Skip With...")),
+      TextButton(
+          onPressed: onSkipPressed, child: const Icon(MdiIcons.minusThick)),
+      TextButton.icon(
+          onPressed: onValueWithPressed,
+          icon: const Icon(MdiIcons.checkboxMarkedOutline),
+          label: Text(l10n?.habitToday_card_donePlusButton_label ?? "Done +")),
+      TextButton.icon(
+          onPressed: onSkipWithPressed,
+          icon: const Icon(MdiIcons.minusBoxOutline),
+          label: Text(l10n?.habitToday_card_skipPlusButton_label ?? "Skip +")),
     ];
 
-    double estimateButtonWidth(BuildContext context, Widget btn) {
-      final text = (btn as TextButton).child as Text;
-      final font = DefaultTextStyle.of(context).style;
-      final tp = TextPainter(
-        text: TextSpan(text: text.data, style: font),
-        maxLines: 1,
-        textDirection: TextDirection.ltr,
-      )..layout();
-      return tp.width + spacing;
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final minWidth = buttons.fold<double>(0, (sum, btn) {
-              return sum + estimateButtonWidth(context, btn) + spacing;
-            }) +
-            spacing;
-        if (constraints.maxWidth >= minWidth) {
-          return Row(
-              children: List.generate(
-            buttons.length * 2 - 1,
-            (index) =>
-                index.isEven ? buttons[index ~/ 2] : const Spacer(flex: 2),
-          ));
-        } else {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-                children: List.generate(
-              buttons.length * 2 - 1,
-              (index) => index.isEven
-                  ? buttons[index ~/ 2]
-                  : const SizedBox(width: spacing),
-            )),
-          );
-        }
-      },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(
+          buttons.length * 2 - 1,
+          (index) => index.isEven
+              ? buttons[index ~/ 2]
+              : const SizedBox(width: spacing),
+        ),
+      ),
     );
   }
 }
