@@ -153,6 +153,8 @@ class _Appbar extends StatelessWidget {
       centerTitle: true,
       toolbarHeight: toolbarHeight,
       title: Text("Today"),
+      actions: [AppThemeSwitchButton()],
+      actionsPadding: kSearchAppBarActionPadding,
     );
   }
 }
