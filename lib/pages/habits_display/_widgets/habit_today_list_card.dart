@@ -27,6 +27,7 @@ import '../widgets.dart';
 
 class HabitTodayListCard extends StatefulWidget {
   final HabitSummaryData data;
+  final HabitDate date;
   final bool expanded;
   final bool canScroll;
   final bool? showProgessInfo;
@@ -38,6 +39,7 @@ class HabitTodayListCard extends StatefulWidget {
   const HabitTodayListCard(
       {super.key,
       required this.data,
+      required this.date,
       required this.expanded,
       required this.canScroll,
       this.showProgessInfo,
@@ -74,7 +76,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     final colorData = themeData.extension<CustomColors>();
     final l10n = L10n.of(context);
     final data = widget.data;
-    final record = data.getRecordByDate(HabitDate.now());
+    final record = data.getRecordByDate(widget.date);
     final color = colorData?.getColor(data.colorType);
     final trailing = IconButton.filled(
         onPressed: widget.onMainPressed ?? () {},

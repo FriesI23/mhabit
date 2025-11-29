@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
+import '../../../models/habit_date.dart';
 import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
 import 'habit_today_list_card.dart';
@@ -24,6 +25,7 @@ const kHabitTodayCardShape = RoundedRectangleBorder(
 
 class HabitTodayCard extends StatelessWidget {
   final HabitSummaryData data;
+  final HabitDate date;
   final bool selected;
   final ValueChanged<bool>? onExpandChanged;
   final VoidCallback? onMainPressed;
@@ -34,6 +36,7 @@ class HabitTodayCard extends StatelessWidget {
   const HabitTodayCard({
     super.key,
     required this.data,
+    required this.date,
     this.selected = false,
     this.onExpandChanged,
     this.onMainPressed,
@@ -43,6 +46,7 @@ class HabitTodayCard extends StatelessWidget {
   const HabitTodayCard.grid({
     super.key,
     required this.data,
+    required this.date,
     this.selected = false,
     this.onExpandChanged,
     this.onMainPressed,
@@ -59,6 +63,7 @@ class HabitTodayCard extends StatelessWidget {
               .copyWith(primary: colorData?.getColor(data.colorType))),
       child: HabitTodayListCard(
           data: data,
+          date: date,
           expanded: selected,
           canScroll: _isGridView,
           showProgessInfo: _isGridView,

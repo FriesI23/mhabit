@@ -199,19 +199,19 @@ class _HabitsTodayController {
   final BuildContext context;
 
   late final HabitsTodayViewModel _vm;
-  List<HabitSortCache> _habits = const [];
+  List<HabitSortCache> _lastHabits = const [];
 
   VoidCallback? _onChanged;
 
   _HabitsTodayController(this.context);
 
-  List<HabitSortCache> get habits => _habits;
+  List<HabitSortCache> get habits => _vm.currentHabitList;
   HabitsTodayViewModel get vm => _vm;
 
   void init(VoidCallback onChanged) {
     _onChanged = onChanged;
     _vm = context.read<HabitsTodayViewModel>()..addListener(_handleVmChanged);
-    _habits = _vm.currentHabitList;
+    _lastHabits = _vm.currentHabitList;
   }
 
   void didChangeDependencies(BuildContext context) {
@@ -229,8 +229,8 @@ class _HabitsTodayController {
 
   void _handleVmChanged() {
     final newList = _vm.currentHabitList;
-    if (_habits == newList) return;
-    _habits = newList;
+    if (_lastHabits == newList) return;
+    _lastHabits = newList;
     _onChanged?.call();
   }
 
@@ -352,6 +352,7 @@ class _HabitGridState extends State<_HabitGrid> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller.didChangeDependencies(context);
+    _controller.vm.resortData(listen: false);
   }
 
   @override
@@ -365,6 +366,7 @@ class _HabitGridState extends State<_HabitGrid> {
     final habits = _controller.habits;
     final vm = _controller.vm;
 
+    final today = DateChangeProvider.of(context).dateTime;
     final width = kHabitLargeScreenAdaptWidth.toDouble() * 0.66;
     final height = width * 0.618;
     return SliverReorderableAnimatedList<HabitSortCache>.grid(
@@ -385,6 +387,7 @@ class _HabitGridState extends State<_HabitGrid> {
             builder: (context, value, child) {
               return _HabitGridItem(
                 uuid: uuid,
+                date: today,
                 height: height,
                 selected: value,
                 onExpandChanged: (value) => vm.toggleHabitExpandStatus(uuid),
@@ -412,6 +415,7 @@ class _HabitGridState extends State<_HabitGrid> {
 
 class _HabitGridItem extends StatelessWidget {
   final HabitUUID uuid;
+  final HabitDate date;
   final double? height;
   final bool selected;
   final ValueChanged<bool>? onExpandChanged;
@@ -420,6 +424,7 @@ class _HabitGridItem extends StatelessWidget {
 
   const _HabitGridItem(
       {required this.uuid,
+      required this.date,
       this.height,
       required this.selected,
       this.onExpandChanged,
@@ -433,6 +438,7 @@ class _HabitGridItem extends StatelessWidget {
     if (data == null) return const SizedBox.shrink();
     final card = HabitTodayCard.grid(
         data: data,
+        date: date,
         selected: selected,
         onExpandChanged: onExpandChanged,
         onMainPressed: onMainPressed,
@@ -465,6 +471,7 @@ class _HabitListState extends State<_HabitList> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller.didChangeDependencies(context);
+    _controller.vm.resortData(listen: false);
   }
 
   @override
@@ -478,6 +485,7 @@ class _HabitListState extends State<_HabitList> {
     final habits = _controller.habits;
     final vm = _controller.vm;
 
+    final today = DateChangeProvider.of(context).dateTime;
     return SliverReorderableAnimatedList<HabitSortCache>(
       scrollDirection: Axis.vertical,
       items: habits,
@@ -492,6 +500,7 @@ class _HabitListState extends State<_HabitList> {
             builder: (context, value, child) {
               return _HabitListItem(
                 uuid: uuid,
+                date: today,
                 selected: value,
                 onExpandChanged: (v) => vm.updateHabitExpandStatus(uuid, v),
                 onMainPressed: () => _controller.onMain(uuid),
@@ -513,6 +522,7 @@ class _HabitListState extends State<_HabitList> {
 
 class _HabitListItem extends StatelessWidget {
   final HabitUUID uuid;
+  final HabitDate date;
   final bool selected;
   final ValueChanged<bool>? onExpandChanged;
   final VoidCallback? onMainPressed;
@@ -520,6 +530,7 @@ class _HabitListItem extends StatelessWidget {
 
   const _HabitListItem(
       {required this.uuid,
+      required this.date,
       required this.selected,
       this.onExpandChanged,
       this.onMainPressed,
@@ -532,6 +543,7 @@ class _HabitListItem extends StatelessWidget {
     if (data == null) return const SizedBox.shrink();
     return HabitTodayCard(
       data: data,
+      date: date,
       selected: selected,
       onExpandChanged: onExpandChanged,
       onMainPressed: onMainPressed,
