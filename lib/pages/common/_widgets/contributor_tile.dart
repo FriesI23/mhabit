@@ -35,25 +35,30 @@ class ContributorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget buildContributorCell(BuildContext context, ContributorInfo info) {
       final url = info.url != null ? Uri.parse(info.url!) : null;
-      if (url != null) {
-        return InkWell(
-          onTap: () async {
-            if (await canLaunchUrl(url)) {
-              await launchExternalUrl(url);
-            } else {
-              appLog.network.error("$this",
-                  ex: ["failed to open url", info],
-                  stackTrace: LoggerStackTrace.from(StackTrace.current));
-            }
-          },
-          child: Text(
-            "@${info.name}",
-            style: const TextStyle(
-                decoration: TextDecoration.underline, color: Colors.blue),
-          ),
-        );
-      }
-      return Text(info.name);
+      final textWidget = Text(
+        "@${info.name}",
+        style: url != null
+            ? const TextStyle(
+                decoration: TextDecoration.underline, color: Colors.blue)
+            : null,
+      );
+      final child = url != null
+          ? InkWell(
+              onTap: () async {
+                if (await canLaunchUrl(url)) {
+                  await launchExternalUrl(url);
+                } else {
+                  appLog.network.error("$this",
+                      ex: ["failed to open url", info],
+                      stackTrace: LoggerStackTrace.from(StackTrace.current));
+                }
+              },
+              child: textWidget,
+            )
+          : textWidget;
+      return (info.comment != null && info.comment!.isNotEmpty)
+          ? Tooltip(message: info.comment!, child: child)
+          : child;
     }
 
     Iterable<Widget> buildContributor(BuildContext context, [L10n? l10n]) {

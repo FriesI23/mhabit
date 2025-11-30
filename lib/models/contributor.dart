@@ -26,15 +26,16 @@ class ContributorInfo {
   final int? id;
   final String name;
   final String? url;
+  final String? comment;
 
-  const ContributorInfo({this.id, required this.name, this.url});
+  const ContributorInfo({this.id, required this.name, this.url, this.comment});
 
   factory ContributorInfo.fromJson(Map<String, dynamic> json) =>
       _$ContributorInfoFromJson(json);
 
   @override
   String toString() {
-    return "$runtimeType(id=$id,name=$name,url=$url)";
+    return "$runtimeType(id=$id,name=$name,url=$url,comment=$comment)";
   }
 }
 

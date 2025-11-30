@@ -11,4 +11,5 @@ ContributorInfo _$ContributorInfoFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String,
       url: json['url'] as String?,
+      comment: json['comment'] as String?,
     );
