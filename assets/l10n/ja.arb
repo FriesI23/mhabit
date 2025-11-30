@@ -369,6 +369,8 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "フィルターをクリア",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitDisplay_tab_today_label": "今日",
+  "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "今日",
   "@habitToday_appBar_title": {},
   "habitDetail_editButton_tooltip": "編集",

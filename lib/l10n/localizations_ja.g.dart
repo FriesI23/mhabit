@@ -431,7 +431,7 @@ class L10nJa extends L10n {
   String get habitDisplay_tab_habits_label => 'Habits';
 
   @override
-  String get habitDisplay_tab_today_label => 'Today';
+  String get habitDisplay_tab_today_label => '今日';
 
   @override
   String get habitToday_appBar_title => '今日';
