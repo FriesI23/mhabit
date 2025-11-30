@@ -1,0 +1,1403 @@
+{
+  "@@locale": "ja",
+  "localeScriptName": "日本語",
+  "@localeScriptName": {
+    "description": "The human-readable name of the language used for the locale."
+  },
+  "appName": "Table Habit",
+  "@appName": {},
+  "habitEdit_saveButton_text": "保存",
+  "@habitEdit_saveButton_text": {},
+  "habitEdit_habitName_hintText": "習慣の名称...",
+  "@habitEdit_habitName_hintText": {},
+  "habitEdit_colorPicker_title": "色を選択",
+  "@habitEdit_colorPicker_title": {},
+  "habitEdit_habitTypeDialog_title": "習慣のタイプ",
+  "@habitEdit_habitTypeDialog_title": {},
+  "habitEdit_habitType_positiveText": "良い習慣",
+  "@habitEdit_habitType_positiveText": {},
+  "habitEdit_habitType_negativeText": "悪い習慣",
+  "@habitEdit_habitType_negativeText": {},
+  "habitEdit_habitDailyGoal_hintText": "1日の目標、デフォルト: {number}",
+  "@habitEdit_habitDailyGoal_hintText": {
+    "description": "default habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeHintText": "1日の最小目標、デフォルト: {number}",
+  "@habitEdit_habitDailyGoal_negativeHintText": {
+    "description": "default habit daily goal for negative habit",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText01": "1日の目標は {number} より大きい必要があります",
+  "@habitEdit_habitDailyGoal_errorText01": {
+    "description": "minimum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_errorText02": "1日の目標は {number} 以下である必要があります",
+  "@habitEdit_habitDailyGoal_errorText02": {
+    "description": "maximum number for habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText01": "1日の目標は {number} 以上である必要があります",
+  "@habitEdit_habitDailyGoal_negativeErrorText01": {
+    "description": "minimum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoal_negativeErrorText02": "1日の目標は {number} 以下である必要があります",
+  "@habitEdit_habitDailyGoal_negativeErrorText02": {
+    "description": "maximum number for negative habit daily goal",
+    "placeholders": {
+      "number": {
+        "type": "num",
+        "example": "0"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalUnit_hintText": "単位",
+  "@habitEdit_habitDailyGoalUnit_hintText": {},
+  "habitEdit_habitDailyGoalExtra_hintText": "1日の最大目標（任意）",
+  "@habitEdit_habitDailyGoalExtra_hintText": {},
+  "habitEdit_habitDailyGoalExtra_errorText": "有効な値です。空欄または {dailyGoal} 以上である必要があります",
+  "@habitEdit_habitDailyGoalExtra_errorText": {
+    "placeholders": {
+      "dailyGoal": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitDailyGoalExtra_negativeHintText": "1日の上限目標",
+  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
+  "habitEdit_frequencySelector_title": "頻度を選択",
+  "@habitEdit_frequencySelector_title": {},
+  "habitEdit_habitFreq_daily": "毎日",
+  "@habitEdit_habitFreq_daily": {},
+  "habitEdit_habitFreq_perweek": "",
+  "@habitEdit_habitFreq_perweek": {},
+  "habitEdit_habitFreq_perweek_ex01": "回／週",
+  "@habitEdit_habitFreq_perweek_ex01": {},
+  "habitEdit_habitFreq_permonth": "",
+  "@habitEdit_habitFreq_permonth": {},
+  "habitEdit_habitFreq_permonth_ex01": "回／月",
+  "@habitEdit_habitFreq_permonth_ex01": {},
+  "habitEdit_habitFreq_predayfreq": "",
+  "@habitEdit_habitFreq_predayfreq": {},
+  "habitEdit_habitFreq_predayfreq_ex01": "回",
+  "@habitEdit_habitFreq_predayfreq_ex01": {},
+  "habitEdit_habitFreq_predayfreq_ex02": "日あたり",
+  "@habitEdit_habitFreq_predayfreq_ex02": {},
+  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
+  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
+    "description": "If set to 1, the display widget list will be reversed."
+  },
+  "habitEdit_habitFreq_show_daily": "毎日",
+  "@habitEdit_habitFreq_show_daily": {},
+  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{毎週} other{週に最低{freq}回}}",
+  "@habitEdit_habitFreq_show_perweek": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{毎月} other{月に最低{freq}回}}",
+  "@habitEdit_habitFreq_show_permonth": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{{days}日ごとに} other{{days}日ごとに最低{freq}回}}",
+  "@habitEdit_habitFreq_show_perdayfreq": {
+    "placeholders": {
+      "freq": {
+        "type": "int",
+        "example": "1"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_title": "{targetDays} 日",
+  "@habitEdit_targetDays_title": {
+    "placeholders": {
+      "targetDays": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitEdit_targetDays_dialogTitle": "目標日数を選択",
+  "@habitEdit_targetDays_dialogTitle": {},
+  "habitEdit_targetDays": "日",
+  "@habitEdit_targetDays": {},
+  "habitEdit_reminder_hintText": "リマインダー",
+  "@habitEdit_reminder_hintText": {},
+  "habitEdit_reminder_freq_weekHelpText": "特定の曜日に繰り返し",
+  "@habitEdit_reminder_freq_weekHelpText": {},
+  "habitEdit_reminder_freq_weekPrefixText": "",
+  "@habitEdit_reminder_freq_weekPrefixText": {},
+  "habitEdit_reminder_freq_weekSubfixText": " 毎週",
+  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_monthHelpText": "特定の日に繰り返し",
+  "@habitEdit_reminder_freq_monthHelpText": {},
+  "habitEdit_reminder_freq_monthPrefixText": "",
+  "@habitEdit_reminder_freq_monthPrefixText": {},
+  "habitEdit_reminder_freq_monthSubfixText": " 毎月",
+  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminderQuest_hintText": "質問例: 今日は運動しましたか。",
+  "@habitEdit_reminderQuest_hintText": {},
+  "habitEdit_reminder_dialogTitle": "リマインダーのタイプを選択",
+  "@habitEdit_reminder_dialogTitle": {},
+  "habitEdit_reminder_dialogType_whenNeeded": "チェックインが必要な時",
+  "@habitEdit_reminder_dialogType_whenNeeded": {},
+  "habitEdit_reminder_dialogType_daily": "毎日",
+  "@habitEdit_reminder_dialogType_daily": {},
+  "habitEdit_reminder_dialogType_week": "毎週",
+  "@habitEdit_reminder_dialogType_week": {},
+  "habitEdit_reminder_dialogType_month": "毎月",
+  "@habitEdit_reminder_dialogType_month": {},
+  "habitEdit_reminder_dialogConfirm": "確認",
+  "@habitEdit_reminder_dialogConfirm": {},
+  "habitEdit_reminder_dialogCancel": "キャンセル",
+  "@habitEdit_reminder_dialogCancel": {},
+  "habitEdit_reminder_cancelDialogTitle": "確認",
+  "@habitEdit_reminder_cancelDialogTitle": {},
+  "habitEdit_reminder_cancelDialogSubtitle": "このリマインダーを削除してもよろしいですか",
+  "@habitEdit_reminder_cancelDialogSubtitle": {},
+  "habitEdit_reminder_cancelDialogConfirm": "確認",
+  "@habitEdit_reminder_cancelDialogConfirm": {},
+  "habitEdit_reminder_cancelDialogCancel": "キャンセル",
+  "@habitEdit_reminder_cancelDialogCancel": {},
+  "habitEdit_reminder_weekdayText_monday": "月",
+  "@habitEdit_reminder_weekdayText_monday": {},
+  "habitEdit_reminder_weekdayText_tuesday": "火",
+  "@habitEdit_reminder_weekdayText_tuesday": {},
+  "habitEdit_reminder_weekdayText_wednesday": "水",
+  "@habitEdit_reminder_weekdayText_wednesday": {},
+  "habitEdit_reminder_weekdayText_thursday": "木",
+  "@habitEdit_reminder_weekdayText_thursday": {},
+  "habitEdit_reminder_weekdayText_friday": "金",
+  "@habitEdit_reminder_weekdayText_friday": {},
+  "habitEdit_reminder_weekdayText_saturday": "土",
+  "@habitEdit_reminder_weekdayText_saturday": {},
+  "habitEdit_reminder_weekdayText_sunday": "日",
+  "@habitEdit_reminder_weekdayText_sunday": {},
+  "habitEdit_desc_hintText": "メモ、Markdownをサポート",
+  "@habitEdit_desc_hintText": {},
+  "habitEdit_create_datetime_prefix": "作成日: ",
+  "@habitEdit_create_datetime_prefix": {},
+  "habitEdit_modify_datetime_prefix": "修正日: ",
+  "@habitEdit_modify_datetime_prefix": {},
+  "habitDisplay_fab_text": "新しい習慣",
+  "@habitDisplay_fab_text": {},
+  "habitDisplay_emptyImage_text_01": "千里の道も一歩から始まる",
+  "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_archiveHabitsConfirmDialog_title": "選択した習慣をアーカイブしますか。",
+  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
+  "habitDisplay_archiveHabitsConfirmDialog_confirm": "確認",
+  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_archiveHabitsConfirmDialog_cancel": "キャンセル",
+  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
+  "habitDisplay_archiveHabitsSuccSnackbarText": "習慣を {count} 件アーカイブしました",
+  "@habitDisplay_archiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_unarchiveHabitsConfirmDialog_title": "選択した習慣のアーカイブを解除しますか。",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "確認",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
+  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "キャンセル",
+  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
+  "habitDisplay_unarchiveHabitsSuccSnackbarText": "習慣を {count} 件アーカイブ解除しました",
+  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteHabitsConfirmDialog_title": "選択した習慣を削除しますか。",
+  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
+  "habitDisplay_deleteHabitsConfirmDialog_confirm": "確認",
+  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
+  "habitDisplay_deleteHabitsConfirmDialog_cancel": "キャンセル",
+  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
+  "habitDisplay_deleteHabitsSuccSnackbarText": "習慣を {count} 件削除しました",
+  "@habitDisplay_deleteHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDisplay_deleteSingleHabitSuccSnackbarText": "習慣「{name}」を削除しました",
+  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Habit name."
+      }
+    }
+  },
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {習慣をエクスポートしました} other {習慣を {count} 件エクスポートしました}}",
+  "@habitDisplay_exportHabitsSuccSnackbarText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of exported habits",
+        "example": "3"
+      }
+    }
+  },
+  "habitDisplay_exportAllHabitsSuccSnackbarText": "全ての習慣をエクスポートしました",
+  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
+  "habitDisplay_editPopMenu_selectAll": "すべて選択",
+  "@habitDisplay_editPopMenu_selectAll": {},
+  "habitDisplay_editPopMenu_export": "エクスポート",
+  "@habitDisplay_editPopMenu_export": {},
+  "habitDisplay_editPopMenu_delete": "削除",
+  "@habitDisplay_editPopMenu_delete": {},
+  "habitDisplay_editPopMenu_clone": "テンプレート",
+  "@habitDisplay_editPopMenu_clone": {},
+  "habitDisplay_editButton_tooltip": "編集",
+  "@habitDisplay_editButton_tooltip": {},
+  "habitDisplay_archiveButton_tooltip": "アーカイブ",
+  "@habitDisplay_archiveButton_tooltip": {},
+  "habitDisplay_unarchiveButton_tooltip": "アーカイブ解除",
+  "@habitDisplay_unarchiveButton_tooltip": {},
+  "habitDisplay_settingButton_tooltip": "設定",
+  "@habitDisplay_settingButton_tooltip": {},
+  "habitDisplay_statsMenu_statSubgroupText": "現在",
+  "@habitDisplay_statsMenu_statSubgroupText": {},
+  "habitDisplay_statsMenu_completedTileText": "完了",
+  "@habitDisplay_statsMenu_completedTileText": {},
+  "habitDisplay_statsMenu_inProgresTileText": "進行中",
+  "@habitDisplay_statsMenu_inProgresTileText": {},
+  "habitDisplay_statsMenu_archivedTileText": "アーカイブ済み",
+  "@habitDisplay_statsMenu_archivedTileText": {},
+  "habitDisplay_statsMenu_popularitySubgroupText": "トップ習慣: 過去30日間の変化",
+  "@habitDisplay_statsMenu_popularitySubgroupText": {},
+  "habitDisplay_mainMenu_lightTheme": "ライトテーマ",
+  "@habitDisplay_mainMenu_lightTheme": {},
+  "habitDisplay_mainMenu_darkTheme": "ダークテーマ",
+  "@habitDisplay_mainMenu_darkTheme": {},
+  "habitDisplay_mainMenu_followSystemTheme": "システムに従う",
+  "@habitDisplay_mainMenu_followSystemTheme": {},
+  "habitDisplay_mainMenu_showArchivedTileText": "アーカイブを表示",
+  "@habitDisplay_mainMenu_showArchivedTileText": {},
+  "habitDisplay_mainMenu_showCompletedTileText": "完了済みを表示",
+  "@habitDisplay_mainMenu_showCompletedTileText": {},
+  "habitDisplay_mainMenu_showActivedTileText": "進行中を表示",
+  "@habitDisplay_mainMenu_showActivedTileText": {},
+  "habitDisplay_mainMenu_settingTileText": "設定",
+  "@habitDisplay_mainMenu_settingTileText": {},
+  "habitDisplay_sort_reverseText": "反転",
+  "@habitDisplay_sort_reverseText": {},
+  "habitDisplay_sortDirection_asc": "(昇順)",
+  "@habitDisplay_sortDirection_asc": {},
+  "habitDisplay_sortDirection_Desc": "(降順)",
+  "@habitDisplay_sortDirection_Desc": {},
+  "habitDisplay_sortType_manual": "自分の順序",
+  "@habitDisplay_sortType_manual": {},
+  "habitDisplay_sortType_name": "名前順",
+  "@habitDisplay_sortType_name": {},
+  "habitDisplay_sortType_colorType": "色順",
+  "@habitDisplay_sortType_colorType": {},
+  "habitDisplay_sortType_progress": "達成率順",
+  "@habitDisplay_sortType_progress": {},
+  "habitDisplay_sortType_startT": "開始日順",
+  "@habitDisplay_sortType_startT": {},
+  "habitDisplay_sortType_status": "ステータス順",
+  "@habitDisplay_sortType_status": {},
+  "habitDisplay_sortTypeDialog_title": "並べ替え",
+  "@habitDisplay_sortTypeDialog_title": {},
+  "habitDisplay_sortTypeDialog_confirm": "確認",
+  "@habitDisplay_sortTypeDialog_confirm": {},
+  "habitDisplay_sortTypeDialog_cancel": "キャンセル",
+  "@habitDisplay_sortTypeDialog_cancel": {},
+  "habitDisplay_debug_debugSubgroup_title": "🛠️デバッグ",
+  "@habitDisplay_debug_debugSubgroup_title": {},
+  "habitDisplay_searchBar_hintText": "習慣を検索",
+  "@habitDisplay_searchBar_hintText": {},
+  "habitDisplay_searchFilter_ongoing": "進行中",
+  "@habitDisplay_searchFilter_ongoing": {},
+  "habitDisplay_searchFilter_ongoing_desc": "現在アクティブで進行中の習慣を表示します（アーカイブ済みや削除済みを除く）。",
+  "@habitDisplay_searchFilter_ongoing_desc": {},
+  "habitDisplay_searchFilter_completed": "完了",
+  "@habitDisplay_searchFilter_completed": {},
+  "habitDisplay_searchFilter_habitType_groupTitle": "習慣のタイプ",
+  "@habitDisplay_searchFilter_habitType_groupTitle": {},
+  "habitDisplay_searchFilter_tooltips": "フィルターを表示",
+  "@habitDisplay_searchFilter_tooltips": {},
+  "habitDisplay_searchFilter_clearFilter": "フィルターをクリア",
+  "@habitDisplay_searchFilter_clearFilter": {},
+  "habitToday_appBar_title": "今日",
+  "@habitToday_appBar_title": {},
+  "habitDetail_editButton_tooltip": "編集",
+  "@habitDetail_editButton_tooltip": {},
+  "habitDetail_editPopMenu_unarchive": "アーカイブ解除",
+  "@habitDetail_editPopMenu_unarchive": {},
+  "habitDetail_editPopMenu_archive": "アーカイブ",
+  "@habitDetail_editPopMenu_archive": {},
+  "habitDetail_editPopMenu_export": "エクスポート",
+  "@habitDetail_editPopMenu_export": {},
+  "habitDetail_editPopMenu_delete": "削除",
+  "@habitDetail_editPopMenu_delete": {},
+  "habitDetail_editPopMenu_clone": "テンプレート",
+  "@habitDetail_editPopMenu_clone": {},
+  "habitDetail_confirmDialog_confirm": "確認",
+  "@habitDetail_confirmDialog_confirm": {},
+  "habitDetail_confirmDialog_cancel": "キャンセル",
+  "@habitDetail_confirmDialog_cancel": {},
+  "habitDetail_archiveConfirmDialog_titleText": "習慣をアーカイブしますか。",
+  "@habitDetail_archiveConfirmDialog_titleText": {},
+  "habitDetail_unarchiveConfirmDialog_titleText": "習慣のアーカイブを解除しますか。",
+  "@habitDetail_unarchiveConfirmDialog_titleText": {},
+  "habitDetail_deleteConfirmDialog_titleText": "習慣を削除しますか。",
+  "@habitDetail_deleteConfirmDialog_titleText": {},
+  "habitDetail_summary_title": "概要",
+  "@habitDetail_summary_title": {},
+  "habitDetail_summary_body": "現在のスコアは {score} で、開始から {days} 日が経過しました。",
+  "@habitDetail_summary_body": {
+    "placeholders": {
+      "score": {
+        "type": "String",
+        "example": "0.0"
+      },
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_summary_preBody": "{days, plural, =1{明日開始します} other{{days} 日後に開始します}}",
+  "@habitDetail_summary_preBody": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{未完了} =2{不十分} other{}}",
+  "@habitDetail_heatmap_leftHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{達成} =2{完璧} other{}}",
+  "@habitDetail_heatmap_rightHelpText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{閾値} other{目標}}",
+  "@habitDetail_descDailyGoal_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitText": "単位: {unit}",
+  "@habitDetail_descDailyGoal_unitText": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "M/S"
+      }
+    }
+  },
+  "habitDetail_descDailyGoal_unitEmptyText": "なし",
+  "@habitDetail_descDailyGoal_unitEmptyText": {},
+  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{日数}}",
+  "@habitDetail_descTargetDays_titleText": {
+    "placeholders": {
+      "habitType": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "habitDetail_descTargetDays_unitText": "日",
+  "@habitDetail_descTargetDays_unitText": {},
+  "habitDetail_descRecordsNum_titleText": "記録数",
+  "@habitDetail_descRecordsNum_titleText": {},
+  "habitDetail_scoreChart_title": "スコア",
+  "@habitDetail_scoreChart_title": {},
+  "habitDetail_scoreChartCombine_dailyText": "日",
+  "@habitDetail_scoreChartCombine_dailyText": {},
+  "habitDetail_scoreChartCombine_weeklyText": "週",
+  "@habitDetail_scoreChartCombine_weeklyText": {},
+  "habitDetail_scoreChartCombine_monthlyText": "月",
+  "@habitDetail_scoreChartCombine_monthlyText": {},
+  "habitDetail_scoreChartCombine_yearlyText": "年",
+  "@habitDetail_scoreChartCombine_yearlyText": {},
+  "habitDetail_freqChart_freqTitle": "頻度",
+  "@habitDetail_freqChart_freqTitle": {},
+  "habitDetail_freqChart_historyTitle": "履歴",
+  "@habitDetail_freqChart_historyTitle": {},
+  "habitDetail_freqChart_combinedTitle": "頻度と履歴",
+  "@habitDetail_freqChart_combinedTitle": {},
+  "habitDetail_freqChartCombine_weeklyText": "週",
+  "@habitDetail_freqChartCombine_weeklyText": {},
+  "habitDetail_freqChartCombine_monthlyText": "月",
+  "@habitDetail_freqChartCombine_monthlyText": {},
+  "habitDetail_freqChartCombine_yearlyText": "年",
+  "@habitDetail_freqChartCombine_yearlyText": {},
+  "habitDetail_freqChartNaviBar_nowText": "現在",
+  "@habitDetail_freqChartNaviBar_nowText": {},
+  "habitDetail_freqChart_expanded_hideTooltip": "履歴チャートを隠す",
+  "@habitDetail_freqChart_expanded_hideTooltip": {},
+  "habitDetail_freqChart_expanded_showTooltip": "履歴チャートを表示",
+  "@habitDetail_freqChart_expanded_showTooltip": {},
+  "habitDetail_descSubgroup_title": "メモ",
+  "@habitDetail_descSubgroup_title": {},
+  "habitDetail_otherSubgroup_title": "その他",
+  "@habitDetail_otherSubgroup_title": {},
+  "habitDetail_habitType_title": "タイプ",
+  "@habitDetail_habitType_title": {},
+  "habitDetail_reminderTile_title": "リマインダー",
+  "@habitDetail_reminderTile_title": {},
+  "habitDetail_freqTile_title": "繰り返し",
+  "@habitDetail_freqTile_title": {},
+  "habitDetail_startDateTile_title": "開始日",
+  "@habitDetail_startDateTile_title": {},
+  "habitDetail_createDateTile_title": "作成日",
+  "@habitDetail_createDateTile_title": {},
+  "habitDetail_modifyDateTile_title": "修正日",
+  "@habitDetail_modifyDateTile_title": {},
+  "habitDetail_editHeatmapCal_dateButtonText": "日付",
+  "@habitDetail_editHeatmapCal_dateButtonText": {},
+  "habitDetail_editHeatmapCal_valueButtonText": "値",
+  "@habitDetail_editHeatmapCal_valueButtonText": {},
+  "habitDetail_editHeatmapCal_backToToday_tooltipText": "今日に戻る",
+  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
+  "habitDetail_notFoundText": "習慣の読み込みに失敗しました",
+  "@habitDetail_notFoundText": {},
+  "habitDetail_notFoundRetryText": "再試行",
+  "@habitDetail_notFoundRetryText": {},
+  "habitDetail_changeGoal_title": "目標を変更",
+  "@habitDetail_changeGoal_title": {},
+  "habitDetail_changeGoal_currentChipText": "現在: {goal}",
+  "@habitDetail_changeGoal_currentChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_doneChipText": "完了: {goal}",
+  "@habitDetail_changeGoal_doneChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_undoneChipText": "未完了",
+  "@habitDetail_changeGoal_undoneChipText": {},
+  "habitDetail_changeGoal_extraChipText": "{goal}",
+  "@habitDetail_changeGoal_extraChipText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_helpText": "1日の目標、デフォルト: {goal}",
+  "@habitDetail_changeGoal_helpText": {
+    "placeholders": {
+      "goal": {
+        "type": "String",
+        "example": "1.5"
+      }
+    }
+  },
+  "habitDetail_changeGoal_cancelText": "キャンセル",
+  "@habitDetail_changeGoal_cancelText": {},
+  "habitDetail_changeGoal_saveText": "保存",
+  "@habitDetail_changeGoal_saveText": {},
+  "habitDetail_skipReason_title": "スキップの理由",
+  "@habitDetail_skipReason_title": {},
+  "habitDetail_skipReason_bodyHelpText": "ここに何か書いてください...",
+  "@habitDetail_skipReason_bodyHelpText": {},
+  "habitDetail_skipReason_cancelText": "キャンセル",
+  "@habitDetail_skipReason_cancelText": {},
+  "habitDetail_skipReason_saveText": "保存",
+  "@habitDetail_skipReason_saveText": {},
+  "appSetting_appbar_titleText": "設定",
+  "@appSetting_appbar_titleText": {},
+  "appSetting_displaySubgroupText": "表示",
+  "@appSetting_displaySubgroupText": {},
+  "appSetting_operationSubgroupText": "操作",
+  "@appSetting_operationSubgroupText": {},
+  "appSetting_dragCalendarByPageTile_titleText": "カレンダーをページごとにドラッグ",
+  "@appSetting_dragCalendarByPageTile_titleText": {},
+  "appSetting_dragCalendarByPageTile_subtitleText": "スイッチを有効にすると、ホーム画面のアプリバーのカレンダーがページごとにドラッグされます。デフォルトでは無効です。",
+  "@appSetting_dragCalendarByPageTile_subtitleText": {},
+  "appSetting_changeRecordStatusOpTile_titleText": "記録ステータスの変更",
+  "@appSetting_changeRecordStatusOpTile_titleText": {},
+  "appSetting_changeRecordStatusOpTile_subtitleText": "メインページでの毎日の記録ステータスを変更するクリック動作を変更します。",
+  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
+  "appSetting_openRecordStatusDialogOpTile_titleText": "詳細記録を開く",
+  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
+  "appSetting_openRecordStatusDialogOpTile_subtitleText": "メインページで毎日の記録の詳細ポップアップを開くクリック動作を変更します。",
+  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+  "appSetting_firstDayOfWeek_titleText": "週の開始日",
+  "@appSetting_firstDayOfWeek_titleText": {},
+  "appSetting_firstDayOfWeekDialog_titleText": "週の開始日を表示",
+  "@appSetting_firstDayOfWeekDialog_titleText": {},
+  "appSetting_firstDayOfWeekDialog_defaultText": " (デフォルト)",
+  "@appSetting_firstDayOfWeekDialog_defaultText": {},
+  "appSetting_changeLanguage_followSystem_text": "システムに従う ({localeName})",
+  "@appSetting_changeLanguage_followSystem_text": {
+    "placeholders": {
+      "localeName": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "appSetting_changeLanguage_followSystem_noLocale_text": "システムに従う",
+  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
+  "appSetting_changeLanguageTile_titleText": "言語",
+  "@appSetting_changeLanguageTile_titleText": {},
+  "appSetting_changeLanguageDialog_titleText": "言語を選択",
+  "@appSetting_changeLanguageDialog_titleText": {},
+  "appSetting_dateDisplayFormat_titleText": "日付表示形式 ({formatTemplate})",
+  "@appSetting_dateDisplayFormat_titleText": {
+    "placeholders": {
+      "formatTemplate": {
+        "type": "String",
+        "example": "yyyy/M/d"
+      }
+    }
+  },
+  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "システム設定に従う",
+  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
+  "appSetting_dateDisplayFormat_subTitleText": "設定された日付形式は、習慣詳細ページの日付表示に適用されます。",
+  "@appSetting_dateDisplayFormat_subTitleText": {},
+  "appSetting_compactUISwitcher_titleText": "習慣ページでコンパクト表示を有効にする",
+  "@appSetting_compactUISwitcher_titleText": {},
+  "appSetting_compactUISwitcher_subtitleText": "習慣チェックテーブルにより多くのコンテンツを表示できるようにしますが、一部のUIやテキストが小さく表示される場合があります。",
+  "@appSetting_compactUISwitcher_subtitleText": {},
+  "appSetting_collapsed_calendar_bararea_titleText": "習慣チェック領域の表示比率",
+  "@appSetting_collapsed_calendar_bararea_titleText": {},
+  "appSetting_collapsed_calendar_bararea_subtitleText": "習慣チェック領域の表示サイズを調整します。",
+  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
+  "appSetting_collapsed_calendar_bararea_defaultText": "デフォルト",
+  "@appSetting_collapsed_calendar_bararea_defaultText": {},
+  "appSetting_reminderSubgroupText": "リマインダーと通知",
+  "@appSetting_reminderSubgroupText": {
+    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+  },
+  "appSetting_dailyReminder_titleText": "デイリーリマインダー",
+  "@appSetting_dailyReminder_titleText": {},
+  "appSetting_backupAndRestoreSubgroupText": "バックアップと復元",
+  "@appSetting_backupAndRestoreSubgroupText": {},
+  "appSetting_export_titleText": "エクスポート",
+  "@appSetting_export_titleText": {},
+  "appSetting_export_subtitleText": "習慣をJSON形式でエクスポートします。このファイルはインポート可能です。",
+  "@appSetting_export_subtitleText": {},
+  "appSetting_import_titleText": "インポート",
+  "@appSetting_import_titleText": {},
+  "appSetting_import_subtitleText": "JSONファイルから習慣をインポートします。",
+  "@appSetting_import_subtitleText": {},
+  "appSetting_importDialog_confirmTitle": "{count} 個の習慣をインポートしますか。",
+  "@appSetting_importDialog_confirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_confirmSubtitle": "注: インポートは既存の習慣を削除しません。",
+  "@appSetting_importDialog_confirmSubtitle": {},
+  "appSetting_importDialog_confirm_confirmText": "確認",
+  "@appSetting_importDialog_confirm_confirmText": {},
+  "appSetting_importDialog_confirm_cancelText": "キャンセル",
+  "@appSetting_importDialog_confirm_cancelText": {},
+  "appSetting_importDialog_importingTitle": "{completeCount}/{totalCount} をインポートしました",
+  "@appSetting_importDialog_importingTitle": {
+    "placeholders": {
+      "completeCount": {
+        "type": "int",
+        "example": "1"
+      },
+      "totalCount": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_completeTitle": "{count} 個のインポートを完了しました",
+  "@appSetting_importDialog_completeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "appSetting_importDialog_complete_closeLabel": "閉じる",
+  "@appSetting_importDialog_complete_closeLabel": {},
+  "appSetting_resetConfig_titleText": "設定をリセット",
+  "@appSetting_resetConfig_titleText": {},
+  "appSetting_resetConfig_subtitleText": "すべての設定をデフォルトにリセットします。",
+  "@appSetting_resetConfig_subtitleText": {},
+  "appSetting_resetConfigDialog_titleText": "設定をリセットしますか。",
+  "@appSetting_resetConfigDialog_titleText": {},
+  "appSetting_resetConfigDialog_subtitleText": "すべての設定をデフォルトにリセットします。適用するにはアプリを再起動する必要があります。",
+  "@appSetting_resetConfigDialog_subtitleText": {},
+  "appSetting_resetConfigDialog_cancelText": "キャンセル",
+  "@appSetting_resetConfigDialog_cancelText": {},
+  "appSetting_resetConfigDialog_confirmText": "確認",
+  "@appSetting_resetConfigDialog_confirmText": {},
+  "appSetting_resetConfigSuccess_snackbarText": "アプリ設定のリセットに成功しました",
+  "@appSetting_resetConfigSuccess_snackbarText": {},
+  "appSetting_otherSubgroupText": "その他",
+  "@appSetting_otherSubgroupText": {},
+  "appSetting_developMode_titleText": "開発モード",
+  "@appSetting_developMode_titleText": {},
+  "appSetting_clearCache_titleText": "キャッシュをクリア",
+  "@appSetting_clearCache_titleText": {},
+  "appSetting_clearCacheDialog_titleText": "キャッシュをクリア",
+  "@appSetting_clearCacheDialog_titleText": {},
+  "appSetting_clearCacheDialog_subtitleText": "キャッシュをクリアすると、一部のカスタム値はデフォルトに戻ります。",
+  "@appSetting_clearCacheDialog_subtitleText": {},
+  "appSetting_clearCacheDialog_cancelText": "キャンセル",
+  "@appSetting_clearCacheDialog_cancelText": {},
+  "appSetting_clearCacheDialog_confirmText": "確認",
+  "@appSetting_clearCacheDialog_confirmText": {},
+  "appSetting_clearCache_snackBar_partSuccText": "部分的なキャッシュのクリアに失敗しました",
+  "@appSetting_clearCache_snackBar_partSuccText": {},
+  "appSetting_clearCache_snackBar_succText": "キャッシュのクリアに成功しました",
+  "@appSetting_clearCache_snackBar_succText": {},
+  "appSetting_clearCache_snackBar_failText": "キャッシュのクリアに失敗しました",
+  "@appSetting_clearCache_snackBar_failText": {},
+  "appSetting_debugger_titleText": "デバッグ情報",
+  "@appSetting_debugger_titleText": {},
+  "appSetting_about_titleText": "アプリについて",
+  "@appSetting_about_titleText": {},
+  "appSetting_experimentalFeatureTile_titleText": "実験的な機能",
+  "@appSetting_experimentalFeatureTile_titleText": {},
+  "appSetting_synSubgroupText": "同期",
+  "@appSetting_synSubgroupText": {},
+  "appSetting_syncOption_titleText": "同期オプション",
+  "@appSetting_syncOption_titleText": {},
+  "appSetting_notify_titleTile": "通知",
+  "@appSetting_notify_titleTile": {},
+  "appSetting_notify_subtitleTile": "通知設定を管理",
+  "@appSetting_notify_subtitleTile": {},
+  "appSetting_notify_subtitleTile_android": "タップしてシステムの通知設定を開く",
+  "@appSetting_notify_subtitleTile_android": {},
+  "appSync_nowTile_titleText": "今すぐ同期",
+  "@appSync_nowTile_titleText": {},
+  "appSync_nowTile_titleText_syncing": "同期中",
+  "@appSync_nowTile_titleText_syncing": {},
+  "appSync_nowTile_dateFormat": "{ymd} {jms}",
+  "@appSync_nowTile_dateFormat": {
+    "placeholders": {
+      "ymd": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "jms": {
+        "type": "DateTime",
+        "format": "jms"
+      }
+    }
+  },
+  "appSync_nowTile_text_noDate": "最終同期: なし",
+  "@appSync_nowTile_text_noDate": {},
+  "appSync_nowTile_text": "最終同期: {dateStr}",
+  "@appSync_nowTile_text": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_errorText_noDate": "最終同期 (エラー): なし",
+  "@appSync_nowTile_errorText_noDate": {},
+  "appSync_nowTile_errorText": "最終同期 (エラー): {dateStr}",
+  "@appSync_nowTile_errorText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_nowTile_syncingText": "同期中...",
+  "@appSync_nowTile_syncingText": {},
+  "appSync_nowTile_syncingText_withPrt": "同期中: {prt}",
+  "@appSync_nowTile_syncingText_withPrt": {
+    "placeholders": {
+      "prt": {
+        "type": "num",
+        "description": "Current sync progress percentage (0-100).",
+        "format": "decimalPercentPattern",
+        "optionalParameters": {
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
+  "appSync_nowTile_cancellingText": "キャンセル中...",
+  "@appSync_nowTile_cancellingText": {},
+  "appSync_nowTile_cancelText_noDate": "最終同期 (キャンセル): なし",
+  "@appSync_nowTile_cancelText_noDate": {},
+  "appSync_nowTile_cancelText": "最終同期 (キャンセル): {dateStr}",
+  "@appSync_nowTile_cancelText": {
+    "placeholders": {
+      "dateStr": {
+        "type": "String",
+        "description": "Last sync date."
+      }
+    }
+  },
+  "appSync_failedTile_titleText": "失敗ログを確認",
+  "@appSync_failedTile_titleText": {},
+  "appSync_failedTile_errorText": "[エラー]: {info}",
+  "@appSync_failedTile_errorText": {
+    "placeholders": {
+      "info": {
+        "type": "String",
+        "description": "Error information."
+      }
+    }
+  },
+  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+  "@appSync_failedTile_webdavMulti_counterText": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus": "{status, select, success {完了} cancelled {キャンセル} failed {失敗} multi {複数のステータス} other {不明なステータス}}",
+  "@appSync_webdav_resultStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      }
+    }
+  },
+  "appSync_webdav_resultStatus_withReason": "{status, select, success {完了: {reason}} cancelled {キャンセル: {reason}} failed {失敗: {reason}} multi {複数のステータス: {reason}} other {不明なステータス}}",
+  "@appSync_webdav_resultStatus_withReason": {
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+      },
+      "reason": {
+        "type": "String",
+        "description": "The reason for the status"
+      }
+    }
+  },
+  "appSync_webdav_resultReason": "{reason, select, error {エラー} userAction {ユーザー操作が必要} missingHabitUuid {習慣のUUIDが欠落} empty {空のデータ} other {不明な理由}}",
+  "@appSync_webdav_resultReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String",
+        "description": "The reason for the WebDAV AppSync task result, see: [WebDavAppSyncTaskResultSubStatus]"
+      }
+    }
+  },
+  "appSync_webdav_newServerConfirmDialog_titleText": "新しい保存先",
+  "@appSync_webdav_newServerConfirmDialog_titleText": {},
+  "appSync_webdav_newServerConfirmDialog_subtitleText": "同期には必要なディレクトリの作成と、サーバーへのローカル習慣データのアップロードが必要です。続行しますか。",
+  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_newServerConfirmDialog_confirmText": "今すぐ同期！",
+  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
+  "appSync_webdav_oldServerConfirmDialog_titleText": "同期の確認",
+  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
+  "appSync_webdav_oldServerConfirmDialog_subtitleText": "ディレクトリが空ではありません。同期するとサーバーとローカルの習慣がマージされます。続行しますか。",
+  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
+  "appSync_webdav_oldServerConfirmDialog_confirmText": "マージを確認",
+  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
+  "appSync_exportAllLogsTile_titleText": "失敗した同期ログをエクスポート",
+  "@appSync_exportAllLogsTile_titleText": {},
+  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {ログが見つかりません} false {タップしてエクスポート} other {読み込み中...}}",
+  "@appSync_exportAllLogsTile_subtitleText": {
+    "placeholders": {
+      "isEmpty": {
+        "type": "String",
+        "description": "<bool>.toString()"
+      }
+    }
+  },
+  "appSync_syncServerType_text": "{isCurrent, select, true {現在: } other {}}{name, select, webdav {WebDAV} fake {Fake (デバッグ用のみ)} other {不明 ({name})}}",
+  "@appSync_syncServerType_text": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Server name, depend on specific server type.",
+        "example": "WebDAV"
+      },
+      "isCurrent": {
+        "type": "String",
+        "description": "Is currently selected server",
+        "example": "true|false"
+      }
+    }
+  },
+  "appSync_networkType_text": "{type, select, mobile {モバイル通信} wifi {Wi-Fi} other {不明}}",
+  "@appSync_networkType_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_syncInterval_text": "{name, select, manual {手動} minute5 {5分} minute15 {15分} minute30 {30分} hour1 {1時間} other {不明}}",
+  "@appSync_syncInterval_text": {
+    "description": "Localized display text for app sync interval",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "minute15",
+        "description": "<AppSyncFetchInterval>.name"
+      }
+    }
+  },
+  "appSync_syncIntervalTile_title": "取得間隔",
+  "@appSync_syncIntervalTile_title": {},
+  "appSync_summaryTile_title": "同期サーバー",
+  "@appSync_summaryTile_title": {},
+  "appSync_summaryTile_subtitle_text_notConfigured": "未設定",
+  "@appSync_summaryTile_subtitle_text_notConfigured": {},
+  "appSync_exportAllLogsTile_exportSubjectText": "最近のすべての失敗した同期ログ",
+  "@appSync_exportAllLogsTile_exportSubjectText": {},
+  "appSync_serverEditor_saveDialog_titleText": "変更を保存",
+  "@appSync_serverEditor_saveDialog_titleText": {},
+  "appSync_serverEditor_saveDialog_subtitleText": "保存すると、以前のサーバー設定が上書きされます。",
+  "@appSync_serverEditor_saveDialog_subtitleText": {},
+  "appSync_serverEditor_exitDialog_titleText": "未保存の変更",
+  "@appSync_serverEditor_exitDialog_titleText": {},
+  "appSync_serverEditor_exitDialog_subtitleText": "終了すると、未保存の変更はすべて破棄されます。",
+  "@appSync_serverEditor_exitDialog_subtitleText": {},
+  "appSync_serverEditor_deleteDialog_titleText": "削除を確認",
+  "@appSync_serverEditor_deleteDialog_titleText": {},
+  "appSync_serverEditor_deleteDialog_subtitleText": "削除すると、現在のサーバー設定が削除されます。",
+  "@appSync_serverEditor_deleteDialog_subtitleText": {},
+  "appSync_serverEditor_titleText_add": "新しい同期サーバー",
+  "@appSync_serverEditor_titleText_add": {},
+  "appSync_serverEditor_titleText_modify": "同期サーバーを修正",
+  "@appSync_serverEditor_titleText_modify": {},
+  "appSync_serverEditor_advance_titleText": "詳細設定",
+  "@appSync_serverEditor_advance_titleText": {},
+  "appSync_serverEditor_pathTile_titleText": "パス",
+  "@appSync_serverEditor_pathTile_titleText": {},
+  "appSync_serverEditor_pathTile_hintText": "有効なWebDAVパスをここに入力してください。",
+  "@appSync_serverEditor_pathTile_hintText": {},
+  "appSync_serverEditor_pathTile_errorText_emptyPath": "パスを空にすることはできません！",
+  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
+  "appSync_serverEditor_usernameTile_titleText": "ユーザー名",
+  "@appSync_serverEditor_usernameTile_titleText": {},
+  "appSync_serverEditor_usernameTile_hintText": "ユーザー名を入力してください（不要な場合は空欄）。",
+  "@appSync_serverEditor_usernameTile_hintText": {},
+  "appSync_serverEditor_passwordTile_titleText": "パスワード",
+  "@appSync_serverEditor_passwordTile_titleText": {},
+  "appSync_serverEditor_ignoreSSLTile_titleText": "SSL証明書を無視",
+  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_titleText": "同期タイムアウト（秒）",
+  "@appSync_serverEditor_timeoutTile_titleText": {},
+  "appSync_serverEditor_timeoutTile_hintText": "デフォルト: {seconds, plural, =0 {無制限} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_timeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_timeoutTile_unitText": "秒",
+  "@appSync_serverEditor_timeoutTile_unitText": {},
+  "appSync_serverEditor_connTimeoutTile_titleText": "ネットワーク接続タイムアウト（秒）",
+  "@appSync_serverEditor_connTimeoutTile_titleText": {},
+  "appSync_serverEditor_connTimeoutTile_hintText": "デフォルト: {seconds, plural, =0 {無制限} other {{seconds}{unit}}}",
+  "@appSync_serverEditor_connTimeoutTile_hintText": {
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "10"
+      },
+      "unit": {
+        "type": "String",
+        "example": "s"
+      }
+    }
+  },
+  "appSync_serverEditor_connTimeoutTile_unitText": "秒",
+  "@appSync_serverEditor_connTimeoutTile_unitText": {},
+  "appSync_serverEditor_connRetryCountTile_titleText": "ネットワーク接続再試行回数",
+  "@appSync_serverEditor_connRetryCountTile_titleText": {},
+  "appSync_serverEditor_connRetryCountTile_hintText": "デフォルト: {count, plural, =0 {再試行しない} other {{count}}}",
+  "@appSync_serverEditor_connRetryCountTile_hintText": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_titleText": "ネットワーク同期モード",
+  "@appSync_serverEditor_netTypeTile_titleText": {},
+  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {モバイル通信で同期} wifi {Wi-Fiで同期} other {不明}}",
+  "@appSync_serverEditor_netTypeTile_typeTooltip": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<AppSyncServerMobileNetwork>.name"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataText": "省データモード",
+  "@appSync_serverEditor_netTypeTile_lowDataText": {},
+  "appSync_noti_readyToSync_body": "同期の準備中...",
+  "@appSync_noti_readyToSync_body": {},
+  "appSync_noti_syncing_title": "{synced, select, synced {同期完了 ({type})} failed {同期失敗 ({type})} other {同期中 ({type})}}",
+  "@appSync_noti_syncing_title": {
+    "placeholders": {
+      "synced": {
+        "type": "String",
+        "description": "<AppSyncNotiTitleEnum>.name",
+        "example": "synced"
+      },
+      "type": {
+        "type": "String",
+        "description": "Server type, see 'appSync_syncServerType_text' field",
+        "example": "WebDAV"
+      }
+    }
+  },
+  "appSync_serverEditor_netTypeTile_lowDataTooltip": "省データモードでの同期",
+  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
+  "experimentalFeatures_warnginBanner_title": "1つ以上の実験的な機能が有効になっています。注意して使用してください。",
+  "@experimentalFeatures_warnginBanner_title": {},
+  "experimentalFeatures_habitSyncTile_titleText": "習慣クラウド同期",
+  "@experimentalFeatures_habitSyncTile_titleText": {},
+  "experimentalFeatures_habitSyncTile_subtitleText": "有効にすると、設定にアプリの同期オプションが表示されます",
+  "@experimentalFeatures_habitSyncTile_subtitleText": {},
+  "experimentalFeatures_warnTile_titleText": "実験的な機能 ({syncName}) は無効ですが、機能はまだ実行中です。",
+  "@experimentalFeatures_warnTile_titleText": {
+    "placeholders": {
+      "syncName": {
+        "type": "String",
+        "example": "Habit Cloud Sync",
+        "description": "Experimental Feature's name."
+      }
+    }
+  },
+  "experimentalFeatures_warnTile_forHabitSyncText": "完全に無効にするには、長押しして '{menuName}' にアクセスし、オフにしてください。",
+  "@experimentalFeatures_warnTile_forHabitSyncText": {
+    "placeholders": {
+      "menuName": {
+        "type": "String",
+        "example": "Sync Option"
+      }
+    }
+  },
+  "experimentalFeatures_habitSearchTile_titleText": "習慣検索",
+  "@experimentalFeatures_habitSearchTile_titleText": {},
+  "experimentalFeatures_habitSearchTile_subtitleText": "有効にすると、習慣画面の上部に検索バーが表示され、習慣を検索できるようになります。",
+  "@experimentalFeatures_habitSearchTile_subtitleText": {},
+  "appAbout_appbarTile_titleText": "アプリについて",
+  "@appAbout_appbarTile_titleText": {},
+  "appAbout_versionTile_titleText": "バージョン: {appVersion}",
+  "@appAbout_versionTile_titleText": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+  "@appAbout_versionTile_changeLogPath": {},
+  "appAbout_sourceCodeTile_titleText": "ソースコード",
+  "@appAbout_sourceCodeTile_titleText": {},
+  "appAbout_issueTrackerTile_titleText": "課題追跡 (Issue Tracker)",
+  "@appAbout_issueTrackerTile_titleText": {},
+  "appAbout_contactEmailTile_titleText": "お問い合わせ",
+  "@appAbout_contactEmailTile_titleText": {},
+  "appAbout_contactEmailTile_emailBody": "ご連絡ありがとうございます。\nバグを報告する場合は、アプリのバージョンを示し、再現手順を説明してください。\n--------------------------------------",
+  "@appAbout_contactEmailTile_emailBody": {},
+  "appAbout_licenseTile_titleText": "ライセンス",
+  "@appAbout_licenseTile_titleText": {},
+  "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
+  "@appAbout_licenseTile_subtitleText": {},
+  "appAbout_licenseThirdPartyTile_titleText": "サードパーティライセンス声明",
+  "@appAbout_licenseThirdPartyTile_titleText": {},
+  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+  "@appAbout_licenseThirdPartyTile_subtitleText": {},
+  "appAbout_privacyTile_titleText": "プライバシー",
+  "@appAbout_privacyTile_titleText": {},
+  "appAbout_privacyTile_subTitleText": "このアプリのプライバシーポリシーにアクセスする",
+  "@appAbout_privacyTile_subTitleText": {},
+  "appAbout_donateTile_titleText": "寄付",
+  "@appAbout_donateTile_titleText": {},
+  "appAbout_donateTile_subTitleText": "私は個人の開発者です。もしこのアプリを気に入っていただけたら、コーヒーを一杯ご馳走してください ☕",
+  "@appAbout_donateTile_subTitleText": {},
+  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+  "@appAbout_donateTile_ways": {
+    "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+  },
+  "donateWay_paypal": "Paypal",
+  "@donateWay_paypal": {},
+  "donateWay_buyMeACoffee": "Buy me a coffee",
+  "@donateWay_buyMeACoffee": {},
+  "donateWay_alipay": "Alipay",
+  "@donateWay_alipay": {},
+  "donateWay_wechatPay": "Wechat Pay",
+  "@donateWay_wechatPay": {},
+  "donateWay_cryptoCurrency": "暗号通貨",
+  "@donateWay_cryptoCurrency": {},
+  "donateWay_cryptoCurrency_BTC": "BTC",
+  "@donateWay_cryptoCurrency_BTC": {},
+  "donateWay_cryptoCurrency_ETH": "ETH",
+  "@donateWay_cryptoCurrency_ETH": {},
+  "donateWay_cryptoCurrency_BNB": "BNB",
+  "@donateWay_cryptoCurrency_BNB": {},
+  "donateWay_cryptoCurrency_AVAX": "AVAX",
+  "@donateWay_cryptoCurrency_AVAX": {},
+  "donateWay_cryptoCurrency_FTM": "FTM",
+  "@donateWay_cryptoCurrency_FTM": {},
+  "donateWay_firstQRGroup": "Alipay & Wechat Pay",
+  "@donateWay_firstQRGroup": {},
+  "appAbout_donateDialog_copiedCrypto_msg": "{name} のアドレスをコピーしました",
+  "@appAbout_donateDialog_copiedCrypto_msg": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "BTC"
+      }
+    }
+  },
+  "batchCheckin_appbar_title": "一括チェックイン",
+  "@batchCheckin_appbar_title": {},
+  "batchCheckin_datePicker_prevButton_tooltip": "前の日",
+  "@batchCheckin_datePicker_prevButton_tooltip": {},
+  "batchCheckin_datePicker_nextButton_tooltip": "次の日",
+  "@batchCheckin_datePicker_nextButton_tooltip": {},
+  "batchCheckin_status_skip_text": "スキップ",
+  "@batchCheckin_status_skip_text": {},
+  "batchCheckin_status_ok_text": "完了",
+  "@batchCheckin_status_ok_text": {},
+  "batchCheckin_status_double_text": "x2 達成!",
+  "@batchCheckin_status_double_text": {},
+  "batchCheckin_status_zero_text": "未完了",
+  "@batchCheckin_status_zero_text": {},
+  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{個の習慣} other{個の習慣}} を選択中",
+  "@batchCheckin_habits_groupTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_button_text": "保存",
+  "@batchCheckin_save_button_text": {},
+  "batchCheckin_reset_button_text": "リセット",
+  "@batchCheckin_reset_button_text": {},
+  "batchCheckin_completed_snackbar_text": "{count, plural, =1{習慣のステータス} other{{count} 個の習慣のステータス}}を修正しました",
+  "@batchCheckin_completed_snackbar_text": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "batchCheckin_save_confirmDialog_title": "既存の記録を上書き",
+  "@batchCheckin_save_confirmDialog_title": {},
+  "batchCheckin_save_confirmDialog_body": "既存の記録は上書きされます。保存後、以前の記録は失われます。",
+  "@batchCheckin_save_confirmDialog_body": {},
+  "batchCheckin_save_confirmDialog_confirmButton_text": "保存",
+  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
+  "batchCheckin_save_confirmDialog_cancelButton_text": "キャンセル",
+  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
+  "batchCheckin_close_confirmDialog_title": "戻る確認",
+  "@batchCheckin_close_confirmDialog_title": {},
+  "batchCheckin_close_confirmDialog_body": "チェックインステータスの変更は保存されずに破棄されます。",
+  "@batchCheckin_close_confirmDialog_body": {},
+  "batchCheckin_close_confirmDialog_confirmButton_text": "終了",
+  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
+  "batchCheckin_close_confirmDialog_cancelButton_text": "キャンセル",
+  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
+  "appReminder_dailyReminder_title": "🏝 今日の習慣を守りましたか。",
+  "@appReminder_dailyReminder_title": {},
+  "appReminder_dailyReminder_body": "クリックしてアプリに入り、時間通りに記録しましょう。",
+  "@appReminder_dailyReminder_body": {},
+  "common_habitColorType_cc1": "ディーライラック",
+  "@common_habitColorType_cc1": {},
+  "common_habitColorType_cc2": "レッド",
+  "@common_habitColorType_cc2": {},
+  "common_habitColorType_cc3": "パープル",
+  "@common_habitColorType_cc3": {},
+  "common_habitColorType_cc4": "ロイヤルブルー",
+  "@common_habitColorType_cc4": {},
+  "common_habitColorType_cc5": "ダークシアン",
+  "@common_habitColorType_cc5": {},
+  "common_habitColorType_cc6": "グリーン",
+  "@common_habitColorType_cc6": {},
+  "common_habitColorType_cc7": "アンバー",
+  "@common_habitColorType_cc7": {},
+  "common_habitColorType_cc8": "オレンジ",
+  "@common_habitColorType_cc8": {},
+  "common_habitColorType_cc9": "ライムグリーン",
+  "@common_habitColorType_cc9": {},
+  "common_habitColorType_cc10": "ダークオーキッド",
+  "@common_habitColorType_cc10": {},
+  "common_habitColorType_default": "色 {index}",
+  "@common_habitColorType_default": {
+    "description": "unknown habit color type name",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_useSystemFormat_text": "システム形式を使用",
+  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
+  "common_customDateTimeFormatPicker_fmtTileText": "日付形式",
+  "@common_customDateTimeFormatPicker_fmtTileText": {},
+  "common_customDateTimeFormatPicker_ymd_text": "年 月 日",
+  "@common_customDateTimeFormatPicker_ymd_text": {},
+  "common_customDateTimeFormatPicker_mdy_text": "月 日 年",
+  "@common_customDateTimeFormatPicker_mdy_text": {},
+  "common_customDateTimeFormatPicker_dmy_text": "日 月 年",
+  "@common_customDateTimeFormatPicker_dmy_text": {},
+  "common_customDateTimeFormatPicker_SepTileText": "区切り文字",
+  "@common_customDateTimeFormatPicker_SepTileText": {},
+  "common_customDateTimeFormatPicker_sepDash_text": "ダッシュ (-)",
+  "@common_customDateTimeFormatPicker_sepDash_text": {},
+  "common_customDateTimeFormatPicker_sepSlash_text": "スラッシュ (/)",
+  "@common_customDateTimeFormatPicker_sepSlash_text": {},
+  "common_customDateTimeFormatPicker_sepSpace_text": "スペース",
+  "@common_customDateTimeFormatPicker_sepSpace_text": {},
+  "common_customDateTimeFormatPicker_sepDot_text": "ドット (.)",
+  "@common_customDateTimeFormatPicker_sepDot_text": {},
+  "common_customDateTimeFormatPicker_empty_text": "区切り文字なし",
+  "@common_customDateTimeFormatPicker_empty_text": {},
+  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+  "@common_customDateTimeFormatPicker_sep_formatter": {
+    "description": "split char",
+    "placeholders": {
+      "splitName": {
+        "type": "String",
+        "example": "Dash"
+      },
+      "splitChar": {
+        "type": "String",
+        "example": "/"
+      }
+    }
+  },
+  "common_customDateTimeFormatPicker_12Hour_text": "12時間制を使用",
+  "@common_customDateTimeFormatPicker_12Hour_text": {},
+  "common_customDateTimeFormatPicker_monthName_text": "月名を使用",
+  "@common_customDateTimeFormatPicker_monthName_text": {},
+  "common_customDateTimeFormatPicker_applyFreqChart_text": "頻度チャートに適用",
+  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
+  "common_customDateTimeFormatPicker_applyHeapmap_text": "カレンダーに適用",
+  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
+  "common_customDateTimeFormatPicker_cancelButton_text": "キャンセル",
+  "@common_customDateTimeFormatPicker_cancelButton_text": {},
+  "common_customDateTimeFormatPicker_confirmButton_text": "確認",
+  "@common_customDateTimeFormatPicker_confirmButton_text": {},
+  "common_errorPage_title": "おっと、クラッシュしました！",
+  "@common_errorPage_title": {},
+  "common_errorPage_copied": "クラッシュ情報をコピーしました",
+  "@common_errorPage_copied": {},
+  "common_enable_text": "有効",
+  "@common_enable_text": {},
+  "calendarPicker_clip_today": "今日",
+  "@calendarPicker_clip_today": {},
+  "calendarPicker_clip_tomorrow": "明日",
+  "@calendarPicker_clip_tomorrow": {},
+  "calendarPicker_clip_after7Days": "次の{date}",
+  "@calendarPicker_clip_after7Days": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "E"
+      }
+    }
+  },
+  "exportConfirmDialog_title_exportAll": "すべての習慣をエクスポートしますか。",
+  "@exportConfirmDialog_title_exportAll": {},
+  "exportConfirmDialog_title_exportMulti": "{number, plural, =0{現在の習慣} =1{1個の習慣} other{{number}個の習慣}}をエクスポートしますか。",
+  "@exportConfirmDialog_title_exportMulti": {
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "exportConfirmDialog_option_includeRecords": "記録を含める",
+  "@exportConfirmDialog_option_includeRecords": {},
+  "exportConfirmDialog_cancel_buttonText": "キャンセル",
+  "@exportConfirmDialog_cancel_buttonText": {},
+  "exportConfirmDialog_confirm_buttonText": "エクスポート",
+  "@exportConfirmDialog_confirm_buttonText": {},
+  "debug_logLevelTile_title": "ログレベル",
+  "@debug_logLevelTile_title": {},
+  "debug_logLevelDialog_title": "ログレベルを変更",
+  "@debug_logLevelDialog_title": {},
+  "debug_logLevel_debug": "デバッグ",
+  "@debug_logLevel_debug": {},
+  "debug_logLevel_info": "情報",
+  "@debug_logLevel_info": {},
+  "debug_logLevel_warn": "警告",
+  "@debug_logLevel_warn": {},
+  "debug_logLevel_error": "エラー",
+  "@debug_logLevel_error": {},
+  "debug_logLevel_fatal": "致命的",
+  "@debug_logLevel_fatal": {},
+  "debug_collectLogTile_title": "ログを収集中",
+  "@debug_collectLogTile_title": {},
+  "debug_collectLogTile_enable_subtitle": "タップしてログ収集を停止。",
+  "@debug_collectLogTile_enable_subtitle": {},
+  "debug_collectLogTile_disable_subtitle": "タップしてログ収集を開始。",
+  "@debug_collectLogTile_disable_subtitle": {},
+  "debug_downladDebugLogs_subject": "デバッグログをダウンロード中",
+  "@debug_downladDebugLogs_subject": {},
+  "dbeug_clearDebugLogs_complete_snackbar": "デバッグログを消去しました。",
+  "@dbeug_clearDebugLogs_complete_snackbar": {},
+  "debug_downladDebugInfo_subject": "デバッグ情報をダウンロード中",
+  "@debug_downladDebugInfo_subject": {},
+  "debug_downladDebugZip_subject": "{fileName} をダウンロード中",
+  "@debug_downladDebugZip_subject": {
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "debug.zip"
+      }
+    }
+  },
+  "debug_missingDebugLogFile_snackbar": "デバッグログが存在しません。",
+  "@debug_missingDebugLogFile_snackbar": {},
+  "debug_debuggerLogCard_title": "ログ情報",
+  "@debug_debuggerLogCard_title": {},
+  "debug_debuggerLogCard_subtitle": "ローカルデバッグログ情報が含まれます。ログ収集スイッチをオンにする必要があります。",
+  "@debug_debuggerLogCard_subtitle": {},
+  "debug_debuggerLogCard_saveButton_text": "ダウンロード",
+  "@debug_debuggerLogCard_saveButton_text": {},
+  "debug_debuggerLogCard_clearButton_text": "クリア",
+  "@debug_debuggerLogCard_clearButton_text": {},
+  "debug_debuggerInfoCard_title": "デバッグ情報",
+  "@debug_debuggerInfoCard_title": {},
+  "debug_debuggerInfoCard_subtitle": "アプリのデバッグ情報が含まれます。",
+  "@debug_debuggerInfoCard_subtitle": {},
+  "debug_debuggerInfoCard_openButton_text": "開く",
+  "@debug_debuggerInfoCard_openButton_text": {},
+  "debug_debuggerInfoCard_saveButton_text": "保存",
+  "@debug_debuggerInfoCard_saveButton_text": {},
+  "debug_debuggerInfo_notificationTitle": "アプリ情報を収集中...",
+  "@debug_debuggerInfo_notificationTitle": {},
+  "confirmDialog_confirm_text": "{type, select, save {保存} exit {終了} delete {削除} other {確認}}",
+  "@confirmDialog_confirm_text": {
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "<NormalizeConfirmDialogType>.name",
+        "example": "confirm"
+      }
+    }
+  },
+  "confirmDialog_cancel_text": "キャンセル",
+  "@confirmDialog_cancel_text": {},
+  "snackbar_undoText": "元に戻す",
+  "@snackbar_undoText": {},
+  "snackbar_dismissText": "閉じる",
+  "@snackbar_dismissText": {},
+  "contributors_tile_title": "貢献者",
+  "@contributors_tile_title": {},
+  "userAction_tap": "タップ",
+  "@userAction_tap": {},
+  "userAction_doubleTap": "ダブルタップ",
+  "@userAction_doubleTap": {},
+  "userAction_longTap": "ロングタップ",
+  "@userAction_longTap": {},
+  "channelName_habitReminder": "習慣リマインダー",
+  "@channelName_habitReminder": {},
+  "channelName_appReminder": "アプリリマインダー",
+  "@channelName_appReminder": {},
+  "channelName_appDebugger": "デバッガー",
+  "@channelName_appDebugger": {},
+  "channelName_appSyncing": "同期プロセス",
+  "@channelName_appSyncing": {},
+  "channelDesc_appSyncing": "同期の進行状況と成功した結果を表示するために使用されます",
+  "@channelDesc_appSyncing": {},
+  "channelName_appSyncFailed": "同期失敗",
+  "@channelName_appSyncFailed": {},
+  "channelDesc_appSyncFailed": "同期に失敗したときに警告するために使用されます",
+  "@channelDesc_appSyncFailed": {}
+}

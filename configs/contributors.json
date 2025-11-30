@@ -50,6 +50,11 @@
             "id": 10,
             "name": "croozer4",
             "url": "https://github.com/croozer4"
+        },
+        {
+            "id": 11,
+            "name": "shirleycrow",
+            "comment": "Japanese translation contribution"
         }
     ],
     "contributors": [ 1, 2, 3, 4, 5, 6, 7, 8, 9,
