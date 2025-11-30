@@ -95,6 +95,9 @@
     <category>Utility</category>
   </categories>
   <releases>
+    <release version="1.22.0+123-pre" date="2025-11-30">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.22.0+123-pre</url>
+    </release>
     <release version="1.22.0+122-pre" date="2025-11-28">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.22.0+122-pre</url>
     </release>

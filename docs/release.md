@@ -1,4 +1,4 @@
-# Released: v1.22.0+122-pre
+# Released: v1.22.0+123-pre
 
 **✨ New Features**
 
@@ -14,5 +14,6 @@
 
 **🧹 Others**
 
-- Fixed: Use MediaQuery.sizeOf(context) for responsive layout sizing
+- Fixed: Use `MediaQuery.sizeOf(context)` for responsive layout sizing
 - Fixed: Apply UI logic cleanup and fixes from code review feedback
+- Fixed: Ensure Today page refreshes correctly when the date changes

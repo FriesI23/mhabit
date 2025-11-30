@@ -18,8 +18,9 @@
 
 **🧹 Others**
 
-- Fixed: Use MediaQuery.sizeOf(context) for responsive layout sizing
+- Fixed: Use `MediaQuery.sizeOf(context)` for responsive layout sizing
 - Fixed: Apply UI logic cleanup and fixes from code review feedback
+- Fixed: Ensure Today page refreshes correctly when the date changes
 
 ## 1.21.1+120
 
