@@ -19,11 +19,11 @@ and keeps your data in sync across devices (currently via WebDAV, with more opti
 
 Moreover, this app completely open source.
 
-[![Get it on F-Droid][github-button]][github-myapp]
+[![Get it on Github][github-button]][github-myapp]
 [![Get it on Falthub][get-it-on-flathub]][flathub-source]
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
-
+[![Get it on PlayStore][play-button]][play-myapp]
 [![Get is on AppStore][get-on-apple]][appsotre-myapp]
 [![Get it on Testflight][testflight-button]][ios-testflight-pre-release]
 
@@ -33,7 +33,7 @@ Moreover, this app completely open source.
 
 | platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
 | ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
+| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li><li>[Play Store][play-myapp]</li></ul>                                                                          |                                                                               |
 | ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
 | macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp] <sup>(3)</sup> / [TestFlight][ios-testflight-pre-release]</li></ul>                            |                                                                               |
 | windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
@@ -153,6 +153,8 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
+[play-button]: docs/README/images/play-get-it-on.png
+[play-myapp]: https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit
 [get-it-on-altstore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore.png
 [get-it-on-sidestore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore.png
 [altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
