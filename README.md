@@ -25,7 +25,7 @@ Moreover, this app completely open source.
 [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
 
 [![Get is on AppStore][get-on-apple]][appsotre-myapp]
-<!-- [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] -->
+[![Get it on Testflight][testflight-button]][ios-testflight-pre-release]
 
 [![Get it on AltStore][get-it-on-altstore]][altstore-source]
 [![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
@@ -34,8 +34,8 @@ Moreover, this app completely open source.
 | platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
 | ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li></ul>                                                                          |                                                                               |
-| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight(Pre)][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
-| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp]  <sup>(3)</sup></li></ul>                            |                                                                               |
+| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
+| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp] <sup>(3)</sup> / [TestFlight][ios-testflight-pre-release]</li></ul>                            |                                                                               |
 | windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 | linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 
