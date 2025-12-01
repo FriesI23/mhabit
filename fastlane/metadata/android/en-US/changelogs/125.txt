@@ -1,5 +1,3 @@
-# Released: v1.22.1+125
-
 **✨ New Features**
 
 - Feature: Add Today Mode (#418)

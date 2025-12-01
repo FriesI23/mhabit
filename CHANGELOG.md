@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.22.1+124-pre
+## 1.22.1+125
 
 **✨ New Features**
 
