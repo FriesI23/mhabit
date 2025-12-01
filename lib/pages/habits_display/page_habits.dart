@@ -996,8 +996,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
           children: [
             buildEmptyImage(context),
             CustomScrollView(
-              physics: const ClampingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
+              physics: const AlwaysScrollableScrollPhysics(),
               controller: _scrollVisibilityDispatcher.controller,
               slivers: [
                 buildAppbar(context),
