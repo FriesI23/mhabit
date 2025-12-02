@@ -1,0 +1,4 @@
+# fastlane supply required
+json_key_file("fastlane/table-habit-50c879e44acb.json")
+
+package_name("io.github.friesi23.mhabit")

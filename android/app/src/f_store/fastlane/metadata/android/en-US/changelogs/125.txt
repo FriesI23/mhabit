@@ -1,0 +1,4 @@
+- Feature: Add Today Mode (#418)
+- Update Hebrew translation, thanks to sudo-py-dev's contribution on Weblate (#421)
+- Add Japanese translation, thanks to the contribution from my friend shirleycrow (#423)
+- Fixed: Apply UI logic cleanup and fixes from code review feedback (#418)
