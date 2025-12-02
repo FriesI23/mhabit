@@ -84,7 +84,13 @@
                 "name": "ulracte"
             }
         ],
-        "fr": [ 2 ],
+        "fr": [
+            2,
+            {
+                "name": "Massine Y",
+                "email": "enissam_426@hotmail.com"
+            }
+        ],
         "es": [
             {
                 "name": "Andres Blasco Arnáiz",

@@ -736,7 +736,6 @@
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_searchBar_hintText",
-    "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
     "habitDisplay_searchFilter_clearFilter",
@@ -756,7 +755,6 @@
     "appSetting_notify_titleTile",
     "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
-    "appSync_nowTile_titleText",
     "appSync_nowTile_titleText_syncing",
     "appSync_nowTile_dateFormat",
     "appSync_nowTile_text_noDate",
@@ -801,9 +799,7 @@
     "appSync_serverEditor_pathTile_titleText",
     "appSync_serverEditor_pathTile_hintText",
     "appSync_serverEditor_pathTile_errorText_emptyPath",
-    "appSync_serverEditor_usernameTile_titleText",
     "appSync_serverEditor_usernameTile_hintText",
-    "appSync_serverEditor_passwordTile_titleText",
     "appSync_serverEditor_ignoreSSLTile_titleText",
     "appSync_serverEditor_timeoutTile_titleText",
     "appSync_serverEditor_timeoutTile_hintText",
@@ -1946,14 +1942,6 @@
     "habitToday_card_skipPlusButton_label",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText"
-  ],
-
-  "uk": [
-    "habitDisplay_tab_habits_label",
-    "habitToday_image_desc",
-    "habitToday_card_subtitle_text",
-    "habitToday_card_donePlusButton_label",
-    "habitToday_card_skipPlusButton_label"
   ],
 
   "vi": [

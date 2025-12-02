@@ -410,7 +410,7 @@ class L10nFr extends L10n {
   String get habitDisplay_searchBar_hintText => 'Search habits';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'En cours';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
@@ -886,7 +886,7 @@ class L10nFr extends L10n {
   String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Synchroniser maintenant';
 
   @override
   String get appSync_nowTile_titleText_syncing => 'Syncing';
@@ -1132,13 +1132,13 @@ class L10nFr extends L10n {
   String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Nom d\'utilisateur';
 
   @override
   String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Mot de passe';
 
   @override
   String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
