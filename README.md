@@ -12,6 +12,7 @@
 ![WebDAV Supported](https://img.shields.io/badge/WebDAV-supported-brightgreen)
 
 [![Trello][app-trello-badge]][app-trello-board]
+[![Discord][app-discord-badge]][app-discord-channel]
 
 "Table Habit" is an app that helps you establish and track your own micro habit.
 It includes a complete set of growth curves and charts to help you build habits more effectively,
@@ -31,15 +32,15 @@ Moreover, this app completely open source.
 [![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
 
 
-| platform               | build | publish                                                                                                                                                                 | desc.                                                                         |
-| ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li><li>[Play Store][play-myapp]</li></ul>                                                                          |                                                                               |
-| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>~~[TestFlight][ios-testflight-pre-release]~~ <sup>(1)</sup></li></ul> |                                                                               |
-| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp] <sup>(3)</sup> / [TestFlight][ios-testflight-pre-release]</li></ul>                            |                                                                               |
-| windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                               | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
-| linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                      | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
+| platform               | build | publish                                                                                                                                                                                | desc.                                                                         |
+| ---------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li><li>[Play Store][play-myapp]</li></ul>                                                        |                                                                               |
+| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>[TestFlight][ios-testflight-pre-release] <del><sup>(1)</sup></del></li></ul>              |                                                                               |
+| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp] <sup>(3)</sup> / [TestFlight][ios-testflight-pre-release]</li></ul> |                                                                               |
+| windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                                              | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
+| linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                                     | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
 
-> 1. Public beta will be available through TestFlight once app is distributed via the App Store.
+> 1. ~~Public beta will be available through TestFlight once app is distributed via the App Store.~~
 >
 > 2. Windows & Linux versions are still in beta, some features may be limited or unstable.
 >
@@ -177,6 +178,8 @@ limitations under the License.
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release
 [app-trello-badge]: https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white
 [app-trello-board]: https://trello.com/b/ayPTUeQj/mhabit
+[app-discord-badge]: https://img.shields.io/badge/Discord-7289DA.svg?style=for-the-badge&logo=discord&logoColor=white
+[app-discord-channel]: https://discord.gg/Hxst5can
 [l10n-doc]: https://github.com/FriesI23/mhabit/wiki/L10n%EA%9E%89-Request-New-Language
 [buymeacoffee-badge]: https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 [alipay-badge]: https://img.shields.io/badge/alipay-00A1E9?style=for-the-badge&logo=alipay&logoColor=white
