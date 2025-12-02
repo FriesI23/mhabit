@@ -1,6 +1,5 @@
 app_identifier("io.github.friesi23.mhabit.store") # The bundle identifier of your app
-apple_id("shinzezhen@gmail.com") # Your Apple Developer Portal username
-
+apple_id(ENV["APPLE_ID"]) # Your Apple Developer Portal username
 itc_team_id("127043138") # App Store Connect Team ID
 team_id("LRNWK7KUZ7") # Developer Portal Team ID
 
