@@ -129,6 +129,16 @@ android {
             applicationIdSuffix '.dev'
             versionNameSuffix '-dev'
         }
+
+        f_store {
+            dimension 'default'
+            bundle {
+                dependenciesInfo {
+                    includeInApk = true
+                    includeInBundle = true
+                }
+            }
+        }
     }
 
     buildFeatures {

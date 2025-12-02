@@ -1,0 +1,59 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+default_platform(:android)
+
+platform :android do
+  desc "Clean environment"
+  lane :clean do
+    sh <<~EOS
+      cd ../..
+      .flutter/bin/flutter clean
+      .flutter/bin/flutter pub get
+    EOS
+  end
+
+  desc "Run Flutter unit tests"
+  lane :test do
+    sh "../../.flutter/bin/flutter test"
+  end
+
+  desc "Build Flutter appbundle for a specified flavor (default: f_generic)"
+  lane :build do |options|
+    flavor = options[:flavor] || "f_generic"
+    sh "../../.flutter/bin/flutter build appbundle --flavor #{flavor}"
+  end
+
+  desc "Deploy to Google Play Store"
+  lane :deploy_play_store do |options|
+    flavor = options[:flavor] || "f_store"
+    meta_path = options[:meta_path] || "app/src/#{flavor}/fastlane/metadata/android"
+    do_build = options.fetch(:build, true)
+    do_clean = options.fetch(:clean, true)
+    track = options[:track]
+
+    upload_params = {
+      metadata_path: meta_path,
+      aab: "../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
+    }
+    upload_params[:track] = track if track
+
+    clean() if do_clean
+    build(flavor: flavor) if do_build
+    upload_to_play_store(upload_params)
+  end
+end
