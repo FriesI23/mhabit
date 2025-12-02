@@ -35,3 +35,16 @@ build/
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+# fastlane specific
+**/fastlane/report.xml
+**/fastlane/.env.*
+
+# deliver temporary files
+**/fastlane/Preview.html
+
+# snapshot generated screenshots
+**/fastlane/screenshots
+
+# scan temporary files
+**/fastlane/test_output

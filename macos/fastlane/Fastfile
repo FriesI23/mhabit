@@ -1,0 +1,66 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Clean environment"
+  lane :clean do
+    sh <<~EOS
+      cd ../..
+      .flutter/bin/flutter clean
+      .flutter precache --macos
+      .flutter/bin/flutter pub get
+    EOS
+  end
+
+  desc "Run Flutter unit tests"
+  lane :test do
+    sh "../../.flutter/bin/flutter test"
+  end
+
+  desc "Build Flutter app for a specified flavor (default: f_generic)"
+  lane :build do |options|
+    flavor = options[:flavor] || "f_generic"
+    sh <<~EOS
+      HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates.
+      brew install cocoapods
+      cd ../../macos
+      bundle check || bundle install
+      bundle exec pod install --no-repo-update
+    EOS
+    sh "../../.flutter/bin/flutter build macos --flavor #{flavor} --config-only"
+  end
+
+  desc "Push a new release build to the App Store"
+  lane :deploy do |options|
+    flavor = options[:flavor] || "f_store"
+    do_build = options.fetch(:build, true)
+    do_clean = options.fetch(:clean, true)
+    pkg_path = "../build/macos/Build/Fastlane/Release-#{flavor}"
+
+    clean() if do_clean
+    build(flavor: flavor) if do_build
+    build_mac_app(
+      workspace: "Runner.xcworkspace",
+      scheme: flavor,
+      output_directory: pkg_path
+    )
+    upload_to_testflight(
+      pkg: "#{pkg_path}/mhabit.pkg",
+      uses_non_exempt_encryption: true,
+    )
+  end
+end
