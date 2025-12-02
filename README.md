@@ -72,7 +72,6 @@ For more information, please visit our [**Wiki**][wiki].
 
 | status      | progress                   | desc.                |
 | ----------- | -------------------------- | -------------------- |
-| -           | Publish to Google Play     |                      |
 | In Progress | Publish to iOS App Store   | Waiting for Review 😔 |
 | -           | Publish to Microsoft Store |                      |
 
