@@ -437,18 +437,18 @@ class L10nUk extends L10n {
   String get habitToday_appBar_title => 'Сьогодні';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'ТИ ЦЕ ЗРОБИВ';
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return 'Тримав так $days днів';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Готово+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Пропустити+';
 
   @override
   String get habitDetail_editButton_tooltip => 'Редагувати';

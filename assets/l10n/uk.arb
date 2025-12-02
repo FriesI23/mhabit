@@ -369,10 +369,33 @@
   "@habitDisplay_searchFilter_tooltips": {},
   "habitDisplay_searchFilter_clearFilter": "Очистити фільтри",
   "@habitDisplay_searchFilter_clearFilter": {},
+  "habitDisplay_tab_habits_label": "Habits",
+  "@habitDisplay_tab_habits_label": {},
   "habitDisplay_tab_today_label": "Сьогодні",
   "@habitDisplay_tab_today_label": {},
   "habitToday_appBar_title": "Сьогодні",
   "@habitToday_appBar_title": {},
+  "habitToday_image_desc": "ТИ ЦЕ ЗРОБИВ",
+  "@habitToday_image_desc": {
+    "description": "Celebratory text shown when the user completes all their habit tasks for today"
+  },
+  "habitToday_card_subtitle_text": "Тримав так {days} днів",
+  "@habitToday_card_subtitle_text": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Days since the chosen start date"
+      }
+    }
+  },
+  "habitToday_card_donePlusButton_label": "Готово+",
+  "@habitToday_card_donePlusButton_label": {
+    "description": "Button label for completing today's habit with dialog"
+  },
+  "habitToday_card_skipPlusButton_label": "Пропустити+",
+  "@habitToday_card_skipPlusButton_label": {
+    "description": "Button label for skipping today's habit with dialog"
+  },
   "habitDetail_editButton_tooltip": "Редагувати",
   "@habitDetail_editButton_tooltip": {},
   "habitDetail_editPopMenu_unarchive": "Розархівувати",
