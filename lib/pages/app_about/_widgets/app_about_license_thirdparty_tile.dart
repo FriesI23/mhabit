@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
@@ -62,7 +63,7 @@ class _AppAboutThirdPartyLicenseTileState
       leading: const SizedBox(
         height: kAppAboutListTileLeadingHeight,
         width: kAppAboutListTileLeadingWidth,
-        child: null,
+        child: Icon(MdiIcons.License),
       ),
       title: l10n != null
           ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
