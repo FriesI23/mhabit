@@ -407,7 +407,7 @@ class L10nUk extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Налагодження';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Звички пошуку';
+  String get habitDisplay_searchBar_hintText => 'Пошук звичок';
 
   @override
   String get habitDisplay_searchFilter_ongoing => 'Поточний';
@@ -428,7 +428,7 @@ class L10nUk extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'Очистити фільтри';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Звички';
 
   @override
   String get habitDisplay_tab_today_label => 'Сьогодні';
