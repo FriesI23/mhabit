@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../l10n/localizations.dart';
+import '../../../utils/app_clock.dart';
 import '../../../utils/app_sync.dart';
 import '../../../utils/xshare.dart';
 
@@ -48,7 +49,7 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
 
     Future<void> doRefreshLoop() {
       if (!mounted || completer.isCompleted) return Future.value();
-      final startT = DateTime.now().millisecondsSinceEpoch;
+      final startT = AppClock().now().millisecondsSinceEpoch;
       return (dir?.list().toList() ??
               Future<List<FileSystemEntity>?>(() => null))
           .timeout(widget.refreshInterval)
@@ -63,7 +64,7 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
             isEmpty = result;
           });
         }
-        final timeDiff = DateTime.now().millisecondsSinceEpoch - startT;
+        final timeDiff = AppClock().now().millisecondsSinceEpoch - startT;
         final dura = widget.refreshInterval - Duration(milliseconds: timeDiff);
         return dura.isNegative
             ? doRefreshLoop()

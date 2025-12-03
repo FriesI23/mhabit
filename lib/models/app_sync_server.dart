@@ -19,6 +19,7 @@ import 'package:uuid/uuid.dart';
 
 import '../common/enums.dart';
 import '../common/types.dart';
+import '../utils/app_clock.dart';
 import 'app_sync_server_form.dart';
 import 'common.dart';
 
@@ -211,7 +212,7 @@ class AppWebDavSyncServer implements AppSyncServer {
     Duration? connectTimeout,
     int? maxRetryCount,
   }) {
-    final now = DateTime.now();
+    final now = AppClock().now();
     return AppWebDavSyncServer(
         identity: identity,
         createTime: now,
@@ -390,7 +391,7 @@ class AppFakeSyncServer implements AppSyncServer {
     required String path,
     Duration? timeout,
   }) {
-    final now = DateTime.now();
+    final now = AppClock().now();
     return AppFakeSyncServer(
         identity: identity,
         name: identity,

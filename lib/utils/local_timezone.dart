@@ -20,6 +20,7 @@ import 'package:win2iana_tz_converter/win2iana_tz_converter.dart';
 
 import '../common/async.dart';
 import '../logging/helper.dart';
+import 'app_clock.dart';
 
 abstract interface class LocalTimeZone {
   TargetPlatform get platform;
@@ -89,7 +90,7 @@ final class WindowsLocaTimeZone implements LocalTimeZone {
   @override
   Future<String> getTimeZone() async =>
       TZConverter()
-          .windowsToIana(DateTime.now().timeZoneName)
+          .windowsToIana(AppClock().now().timeZoneName)
           .firstOrNull
           ?.iana ??
       '';

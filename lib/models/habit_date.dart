@@ -14,6 +14,7 @@
 
 import '../common/consts.dart';
 import '../extensions/datetime_extensions.dart';
+import '../utils/app_clock.dart';
 
 class HabitDate implements DateTime, DateTimeExtensionsABC {
   late final DateTime _date;
@@ -22,7 +23,7 @@ class HabitDate implements DateTime, DateTimeExtensionsABC {
       : _date = DateTime.utc(year, month, day);
 
   HabitDate.now() {
-    final now = DateTime.now();
+    final now = AppClock().now();
     _date = DateTime.utc(now.year, now.month, now.day);
   }
 

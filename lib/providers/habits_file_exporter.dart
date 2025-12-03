@@ -22,6 +22,7 @@ import 'package:path/path.dart' as path;
 import '../common/types.dart';
 import '../logging/helper.dart';
 import '../models/habit_export.dart';
+import '../utils/app_clock.dart';
 import '../utils/app_path_provider.dart';
 import 'habits_manager.dart';
 
@@ -33,7 +34,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
       {DateTime? dateTime,
       String? prefix = defaultExportFileNamePrefix,
       String? suffix}) {
-    dateTime = dateTime ?? DateTime.now();
+    dateTime = dateTime ?? AppClock().now();
     final dateString = DateFormat('y_MM_dd_H_m_s').format(dateTime);
     final fileStringList = [
       if (prefix != null) prefix,

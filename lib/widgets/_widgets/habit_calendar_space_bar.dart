@@ -17,6 +17,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../common/types.dart';
+import '../../utils/app_clock.dart';
 import 'data_arrow_container.dart';
 import 'data_container.dart';
 import 'habit_list_tile.dart';
@@ -51,7 +52,7 @@ class HabitCalendarSpaceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime crtDate = startDate ?? DateTime.now();
+    final DateTime crtDate = startDate ?? AppClock().now();
     int? limitItemCount;
 
     if (endDate == null) {

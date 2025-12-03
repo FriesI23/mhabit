@@ -23,6 +23,7 @@ import '../common/enums.dart';
 import '../common/types.dart';
 import '../l10n/localizations.dart';
 import '../storage/db/handlers/habit.dart';
+import '../utils/app_clock.dart';
 import 'habit_daily_goal.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
@@ -231,7 +232,7 @@ class HabitForm {
             name: '',
             type: type,
             colorType: colorType,
-            startDate: HabitStartDate.dateTime(DateTime.now()),
+            startDate: HabitStartDate.dateTime(AppClock().now()),
             frequency: HabitFrequency.daily,
             dailyGoal: HabitDailyGoalData(type: type),
             targetDays: defaultHabitTargetDays,

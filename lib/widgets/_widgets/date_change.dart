@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_date.dart';
 import '../../providers/commons.dart';
+import '../../utils/app_clock.dart';
 import '../../utils/local_timezone.dart';
 
 class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {
@@ -28,7 +29,7 @@ class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {
   bool _mounted = true;
 
   DateChangeNotifier({HabitDate? dateTime, String? timezoneName}) {
-    final now = DateTime.now();
+    final now = AppClock().now();
     _dateTime = dateTime ?? HabitDate.dateTime(now);
     _tzName = timezoneName ?? now.timeZoneName;
   }
@@ -109,7 +110,7 @@ class _DateChangeBuilder extends State<DateChangeBuilder> {
   void initState() {
     timer = Timer.periodic(widget.interval, (timer) async {
       if (!changeNotifer.mounted) return;
-      final now = DateTime.now();
+      final now = AppClock().now();
       // datetime
       final crtDate = HabitDate.dateTime(now);
       if (changeNotifer.dateTime != crtDate) changeNotifer.dateTime = crtDate;

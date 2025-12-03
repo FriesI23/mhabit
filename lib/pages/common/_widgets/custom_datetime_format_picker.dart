@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/custom_date_format.dart';
+import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
 Future<CustomDateYmdHmsConfig?> showCustomDateTimeFormatPickerDialog({
@@ -50,7 +51,7 @@ class _CustomDateTimeFormatPickerDialogState
     } else {
       _crtConfig = widget.initConfig!;
     }
-    _templateDateTime = DateTime.now();
+    _templateDateTime = AppClock().now();
     super.initState();
   }
 

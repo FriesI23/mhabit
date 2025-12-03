@@ -22,6 +22,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_tasks.dart';
+import '../../utils/app_clock.dart';
 import '../notification_channel.dart';
 import '../notification_data.dart';
 import '../notification_details.dart';
@@ -159,7 +160,7 @@ abstract class _Helper {
       case WebDavAppSyncTaskResult():
         return result.status.getStatusTextString(result.reason, l10n);
       default:
-        final now = DateTime.now();
+        final now = AppClock().now();
         if (result.isSuccessed) {
           return l10n?.appSync_nowTile_text(now.toIso8601String()) ??
               "Complete";

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../extensions/datetime_extensions.dart';
+import '../../utils/app_clock.dart';
 
 class DateContainer extends StatelessWidget {
   final DateTime? date;
@@ -29,7 +30,7 @@ class DateContainer extends StatelessWidget {
     var labelStyle = theme.textTheme.labelMedium
         ?.copyWith(color: theme.colorScheme.onSurface);
 
-    final today = DateTime.now();
+    final today = AppClock().now();
     final showDate = date ?? today;
     final content = <Widget>[];
     if (showDate.isSameDate(today)) {

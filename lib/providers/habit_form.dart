@@ -27,6 +27,7 @@ import '../models/habit_freq.dart';
 import '../models/habit_reminder.dart';
 import '../models/habit_summary.dart';
 import '../storage/db/handlers/habit.dart';
+import '../utils/app_clock.dart';
 import 'commons.dart';
 import 'habits_manager.dart';
 
@@ -210,7 +211,7 @@ class HabitFormViewModel extends ChangeNotifier
 
   Future<HabitDBCell?> _saveNewHabit() async {
     final freq = frequency.toJson();
-    final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
+    final now = AppClock().now().millisecondsSinceEpoch ~/ onSecondMS;
     final reminder = this.reminder;
     final dbCell = HabitDBCell(
         type: habitType.dbCode,
