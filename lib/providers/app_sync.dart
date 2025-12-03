@@ -41,6 +41,7 @@ import '../reminders/providers/noti_app_sync_provider.dart';
 import '../storage/db_helper_provider.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
+import '../utils/app_clock.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/async_debouncer.dart';
 import 'commons.dart';
@@ -222,7 +223,7 @@ class AppSyncViewModel
 
   Future<bool> saveWithConfigForm(AppSyncServerForm? form,
       {bool resetStatus = false, bool removable = false}) {
-    final now = DateTime.now();
+    final now = AppClock().now();
     final crtConfig = serverConfig;
     final pendingConfig = switch (form) {
       FakeSyncServerForm() => form.toConfig(
@@ -429,7 +430,7 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   AppSyncContainer.generate(
       {required this.task, required String this.filePath, this.notification})
       : id = const Uuid().v4(),
-        startTime = DateTime.now(),
+        startTime = AppClock().now(),
         loggerReplay = ReplaySubject<l.LogEvent>(),
         endedTime = null,
         result = null {
@@ -706,7 +707,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       }
       final finalTask = _task = crtTask.copyWith(
         result: await crtTask.task.result,
-        endedTime: DateTime.now(),
+        endedTime: AppClock().now(),
       );
       appLog.value.info("$runtimeType.task",
           beforeVal: crtTask,
@@ -737,7 +738,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       }
       final finalTask = _task = crtTask.copyWith(
         result: await crtTask.task.result,
-        endedTime: DateTime.now(),
+        endedTime: AppClock().now(),
       );
       appLog.value.info("$runtimeType.task",
           beforeVal: crtTask,

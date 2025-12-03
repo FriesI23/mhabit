@@ -29,6 +29,7 @@ import '../extensions/datetime_extensions.dart';
 import '../logging/helper.dart';
 import '../logging/level.dart';
 import '../theme/color.dart';
+import '../utils/app_clock.dart';
 import 'consts.dart';
 import 'types.dart';
 
@@ -276,7 +277,7 @@ Future<List<String>> cleanExpiredFiles(
   if (!await directory.exists()) return const [];
 
   final results = <String>[];
-  final now = DateTime.now();
+  final now = AppClock().now();
   await for (var entity in directory.list()) {
     if (entity is File) {
       final lastModified = await entity.lastModified();

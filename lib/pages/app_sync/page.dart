@@ -20,6 +20,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../../logging/helper.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
+import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/widgets.dart';
 import '../app_sync_server_editor/page.dart' as app_sync_server_editor;
@@ -194,7 +195,7 @@ class _DebugTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("LastRefresh: ${DateTime.now()}"),
+          Text("LastRefresh: ${AppClock().now()}"),
           Text("Enabled: ${appSync.enabled}"),
           Text("FetchInterval: ${appSync.fetchInterval}"),
           Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),

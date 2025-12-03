@@ -15,6 +15,7 @@
 import 'dart:math' as math;
 
 import '../../common/types.dart';
+import '../../utils/app_clock.dart';
 import '../habit_date.dart';
 import '../habit_form.dart';
 import '../habit_summary.dart';
@@ -124,7 +125,7 @@ class HabitScoreCalculator {
     num lastScore = crtScore;
 
     HabitRecordDate crtDate = _startDate;
-    final endDate = _endDate ?? HabitRecordDate.dateTime(DateTime.now());
+    final endDate = _endDate ?? HabitRecordDate.dateTime(AppClock().now());
 
     for (var date in _dateIter) {
       if (date > endDate) break;

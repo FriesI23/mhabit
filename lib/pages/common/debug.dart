@@ -26,6 +26,7 @@ import '../../models/habit_form.dart';
 import '../../models/habit_freq.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../storage/db_helper_provider.dart';
+import '../../utils/app_clock.dart';
 
 const _defaultSliverScrollChildCount = 10;
 
@@ -51,7 +52,7 @@ mixin HabitsDisplayViewDebug {
     if (!dbHelper.mounted) return;
 
     final tasks = <Future>[];
-    final now = DateTime.now().millisecondsSinceEpoch ~/ onSecondMS;
+    final now = AppClock().now().millisecondsSinceEpoch ~/ onSecondMS;
     final rnd = Random();
     final freq = HabitFrequency.custom().toJson();
     for (var i = 0; i < count; i++) {

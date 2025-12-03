@@ -20,6 +20,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../common/app_info.dart';
 import '../../extensions/navigator_extensions.dart';
+import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
@@ -52,7 +53,7 @@ class AppErrorPage extends StatelessWidget {
     sb.writeln(await AppInfo().generateAppDebugInfo());
     writeDivider(flag: 1);
     sb.writeln(details.exception.toString());
-    sb.writeln("Crash date: ${DateTime.now()}");
+    sb.writeln("Crash date: ${AppClock().now()}");
     writeDivider();
     sb.write(details.stack.toString());
     writeDivider(flag: 2);

@@ -41,6 +41,7 @@ import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_builder.dart';
 import '../../storage/profile_provider.dart';
 import '../../theme/color.dart';
+import '../../utils/app_clock.dart';
 import '../../widgets/widgets.dart';
 import '../app_error/entry.dart';
 import '../common/app_root_view.dart';
@@ -79,7 +80,7 @@ class AppEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    appLog.debugger.info("App Running Now", ex: [DateTime.now(), appFlavor]);
+    appLog.debugger.info("App Running Now", ex: [AppClock().now(), appFlavor]);
     return ProfileBuilder(
       handlers: _profileHandlers,
       errorBuilder: (details) => AppErrorEntry(errorDetails: details),

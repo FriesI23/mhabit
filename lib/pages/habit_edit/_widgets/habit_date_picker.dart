@@ -21,6 +21,7 @@ import '../../../models/habit_form.dart';
 import '../../../models/material_localizations.dart';
 import '../../../providers/app_first_day.dart';
 import '../../../theme/color.dart';
+import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
 Future<DateTime?> showHabitDatePickerDialog({
@@ -44,7 +45,7 @@ class HabitDatePickerDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final CustomColors? colorData = themeData.extension<CustomColors>();
-    final DateTime now = DateTime.now();
+    final DateTime now = AppClock().now();
     final firstday =
         context.select<AppFirstDayViewModel, int>((vm) => vm.firstDay);
     return Theme(

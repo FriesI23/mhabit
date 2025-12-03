@@ -23,6 +23,7 @@ import '../common/enums.dart';
 import '../common/utils.dart';
 import '../extensions/datetime_extensions.dart';
 import '../l10n/localizations.dart';
+import '../utils/app_clock.dart';
 import 'common.dart';
 import 'habit_date.dart';
 
@@ -196,7 +197,7 @@ class HabitReminder implements JsonAdaptor {
   }
 
   DateTime? getNextRemindDate({DateTime? crtDate, HabitDate? lastUntrackDate}) {
-    crtDate = crtDate ?? DateTime.now();
+    crtDate = crtDate ?? AppClock().now();
     switch (type) {
       case HabitReminderType.unknown:
         return null;

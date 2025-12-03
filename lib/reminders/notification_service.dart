@@ -29,6 +29,7 @@ import '../models/app_notify_config.dart';
 import '../models/habit_date.dart';
 import '../models/habit_reminder.dart';
 import '../reminders/notification_id_range.dart' as notifyid;
+import '../utils/app_clock.dart';
 import 'notification_channel.dart';
 import 'notification_data.dart';
 import 'notification_id_range.dart';
@@ -271,7 +272,7 @@ final class NotificationServiceImpl implements NotificationService {
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
     try {
-      final now = DateTime.now();
+      final now = AppClock().now();
       final baseDate = DateTime(
           now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
       final isNearToday = now.isAfter(baseDate) ||

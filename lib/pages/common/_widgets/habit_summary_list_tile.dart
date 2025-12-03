@@ -24,6 +24,7 @@ import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_summary.dart';
 import '../../../theme/color.dart';
+import '../../../utils/app_clock.dart';
 import '../../../widgets/widgets.dart';
 
 const kDefaultHabitSummaryListTileHeight = 64.0;
@@ -205,7 +206,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
         _getDefaultListTileColor(themeData);
     final TextTheme textTheme = themeData.textTheme;
 
-    final DateTime crtDate = widget.startDate ?? DateTime.now();
+    final DateTime crtDate = widget.startDate ?? AppClock().now();
     final int? limitItemCount = widget.endDate == null
         ? null
         : math.max(crtDate.difference(widget.endDate!).inDays, 0) + 1;
