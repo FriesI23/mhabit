@@ -21,30 +21,21 @@ and keeps your data in sync across devices (currently via WebDAV, with more opti
 Moreover, this app completely open source.
 
 [![Get it on Github][github-button]][github-myapp]
-[![Get it on Falthub][get-it-on-flathub]][flathub-source]
 [![Get it on F-Droid][fdroid-button]][fdroid-myapp]
-[![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp]
+[![Get it on Falthub][get-it-on-flathub]][flathub-source]
+
 [![Get it on PlayStore][play-button]][play-myapp]
 [![Get is on AppStore][get-on-apple]][appsotre-myapp]
-[![Get it on Testflight][testflight-button]][ios-testflight-pre-release]
 
-[![Get it on AltStore][get-it-on-altstore]][altstore-source]
-[![Get it on SideStore][get-it-on-sidestore]][sidestore-source]
+| platform               | build | publish                                                                                                                                                                                                                                                                      |
+| ---------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Android                | ✅     | [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp] <br/> [F-Droid][fdroid-myapp] / [Play Store][play-myapp] / [GitHub - apk][github-myapp]                                                                                                                    |
+| iOS                    | ✅     | [![Get it on AltStore][get-it-on-altstore]][altstore-source] [![Get it on SideStore][get-it-on-sidestore]][sidestore-source] [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] <br/> [iOS Apple Store][appsotre-myapp] / [GitHub - ipa][github-myapp] |
+| macOS                  | ✅     | [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] <br/> [Mac Apple Store][appsotre-myapp] / [HomeBrew Tap][homebrew-tap-wiki] / [GitHub - dmg][github-myapp]                                                                                          |
+| Windows <sup>(1)</sup> | ✅     | [Scoop Bucket][scoop-bucket-wiki] / [GitHub - msix][github-myapp]                                                                                                                                                                                                            |
+| Linux <sup>(1)</sup>   | ✅     | [Flathub][flathub-source] / [GitHub - flatpak][github-myapp]                                                                                                                                                                                                                 |
 
-
-| platform               | build | publish                                                                                                                                                                                | desc.                                                                         |
-| ---------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| android                | ✅     | <ul><li>[GitHub - apk][github-myapp]</li><li>[F-Droid / LzzLzzyOnDroid][fdroid-wiki]</li><li>[Play Store][play-myapp]</li></ul>                                                        |                                                                               |
-| ios                    | ✅     | <ul><li>[GitHub - ipa][github-myapp]</li><li>[AltStore / SideStore][sideloaded-wiki]</li><li>[TestFlight][ios-testflight-pre-release] <del><sup>(1)</sup></del></li></ul>              |                                                                               |
-| macos                  | ✅     | <ul><li>[GitHub - dmg][github-myapp]</li><li>[HomeBrew Tap][homebrew-tap-wiki]</li><li>[App Store][appsotre-myapp] <sup>(3)</sup> / [TestFlight][ios-testflight-pre-release]</li></ul> |                                                                               |
-| windows <sup>(2)</sup> | ✅     | <ul><li>[GitHub - msix][github-myapp]</li><li>[Scoop Bucket][scoop-bucket-wiki]</li></ul>                                                                                              | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
-| linux <sup>(2)</sup>   | ✅     | <ul><li>[GitHub - flatpak][github-myapp]</li><li>[FLathub][flathub-wiki]</li></ul>                                                                                                     | <ol type="a"><li>Scheduled habit reminders are not yet implemented.</li></ol> |
-
-> 1. ~~Public beta will be available through TestFlight once app is distributed via the App Store.~~
->
-> 2. Windows & Linux versions are still in beta, some features may be limited or unstable.
->
-> 3. App Store version is identical to the free community one — buying it is just a way to support the project and say thanks ❤️️.
+> 1. Scheduled habit reminders are not yet implemented
 
 ## Features
 
