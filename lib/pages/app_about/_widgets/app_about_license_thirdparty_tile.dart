@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown_widget/markdown_widget.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
@@ -62,7 +63,7 @@ class _AppAboutThirdPartyLicenseTileState
       leading: const SizedBox(
         height: kAppAboutListTileLeadingHeight,
         width: kAppAboutListTileLeadingWidth,
-        child: null,
+        child: Icon(MdiIcons.license),
       ),
       title: l10n != null
           ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
