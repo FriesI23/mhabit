@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
+import '../../common/app_info.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
@@ -103,6 +104,40 @@ class _AppEntry extends StatelessWidget {
 
   const _AppEntry({required this.homePage});
 
+  String? getFontFamily() {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.linux:
+        final arch = AppInfo().linuxArchitecture;
+        return switch (arch) {
+          LinuxPlatformArchitecture.aarch64 => 'Noto Sans',
+          _ => null
+        };
+      default:
+        return null;
+    }
+  }
+
+  List<String>? getFontFamilyFallbacks() {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.linux:
+        final arch = AppInfo().linuxArchitecture;
+        return switch (arch) {
+          LinuxPlatformArchitecture.aarch64 => const [
+              'Noto Color Emoji',
+              'Noto Sans CJK SC',
+              'Noto Sans CJK TC',
+              'Noto Sans CJK JP',
+              'Noto Sans CJK KR',
+              'Noto Sans Arabic',
+              'Noto Sans Hebrew',
+            ],
+          _ => null
+        };
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
@@ -117,11 +152,15 @@ class _AppEntry extends StatelessWidget {
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, appThemeArgs, child) {
             final (themeMode, themeMainColor) = appThemeArgs;
+            final fontFamily = getFontFamily();
+            final fontFamilyFallbacks = getFontFamilyFallbacks();
             return AppRootView(
               themeMode: transToMaterialThemeType(themeMode),
               themeMainColor: themeMainColor,
               language: language,
               lightThemeBuilder: () => ThemeData(
+                  fontFamily: fontFamily,
+                  fontFamilyFallback: fontFamilyFallbacks,
                   colorScheme: lightDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: Color(lightDynamic.primary.toARGB32()),
@@ -132,6 +171,8 @@ class _AppEntry extends StatelessWidget {
                   useMaterial3: true,
                   extensions: [modifedLightCustomColors]),
               darkThemeBuilder: () => ThemeData(
+                  fontFamily: fontFamily,
+                  fontFamilyFallback: fontFamilyFallbacks,
                   colorScheme: darkDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: Color(darkDynamic.primary.toARGB32()),

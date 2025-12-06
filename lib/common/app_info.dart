@@ -24,10 +24,13 @@ import 'async.dart';
 import 'consts.dart';
 import 'flavor.dart';
 
+enum LinuxPlatformArchitecture { x86_64, aarch64 }
+
 class AppInfo implements AsyncInitialization {
   static final AppInfo _singleton = AppInfo._internal();
 
   AndroidBuildVersion? _androidBuildVersion;
+  LinuxPlatformArchitecture? _linuxArchitecture;
   late String _packageName;
   late String _appName;
   late String _appVersion;
@@ -44,12 +47,19 @@ class AppInfo implements AsyncInitialization {
 
   String get appVersion => _appVersion;
 
+  LinuxPlatformArchitecture? get linuxArchitecture => _linuxArchitecture;
+
   @override
   Future<void> init() async {
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
       _androidBuildVersion = androidInfo.version;
+    } else if (Platform.isLinux) {
+      final result = await Process.run('uname', ['-m']);
+      _linuxArchitecture = result.stdout.toString().contains('aarch64')
+          ? LinuxPlatformArchitecture.aarch64
+          : LinuxPlatformArchitecture.x86_64;
     }
 
     final packageInfo = await PackageInfo.fromPlatform();
