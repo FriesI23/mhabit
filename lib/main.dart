@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding, runApp;
 
 import 'common/app_info.dart';
@@ -19,9 +21,14 @@ import 'entries/app/entry.dart';
 import 'logging/logger_manager.dart';
 import 'reminders/notification_service.dart';
 import 'utils/local_timezone.dart';
+import 'widgets/bingding.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isIOS) {
+    FixedIos26FlutterBinding.ensureInitialized();
+  } else {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
 
   await AppLoggerMananger(t: AppLoggerHandlerType.debugging).init();
   await AppInfo().init();
