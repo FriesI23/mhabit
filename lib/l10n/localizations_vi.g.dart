@@ -247,6 +247,14 @@ class L10nVi extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'Hành trình vạn dặm bắt đầu từ một bước chân';
 
   @override
+  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+
+  @override
+  String habitDisplay_notFoundImage_text_02(String keyword) {
+    return 'No matching habits for \"$keyword\"';
+  }
+
+  @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => 'Lưu trữ các thói quen đã chọn?';
 
   @override

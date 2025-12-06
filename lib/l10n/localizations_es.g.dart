@@ -247,6 +247,14 @@ class L10nEs extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'Un viaje de cientos de kilómetros empieza con un único paso';
 
   @override
+  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+
+  @override
+  String habitDisplay_notFoundImage_text_02(String keyword) {
+    return 'No matching habits for \"$keyword\"';
+  }
+
+  @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => '¿Quieres archivar los hábitos seleccionados?';
 
   @override

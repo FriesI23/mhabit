@@ -223,6 +223,19 @@
   "@habitDisplay_fab_text": {},
   "habitDisplay_emptyImage_text_01": "千里之行, 始于足下",
   "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_notFoundImage_text_01": "没有找到符合此搜索的习惯",
+  "@habitDisplay_notFoundImage_text_01": {
+    "description": "Displayed when no habits match the current search"
+  },
+  "habitDisplay_notFoundImage_text_02": "没有找到与“{keyword}”匹配的习惯",
+  "@habitDisplay_notFoundImage_text_02": {
+    "placeholders": {
+      "keyword": {
+        "type": "String",
+        "description": "Search keyword"
+      }
+    }
+  },
   "habitDisplay_archiveHabitsConfirmDialog_title": "归档选中的习惯?",
   "@habitDisplay_archiveHabitsConfirmDialog_title": {},
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "确定",

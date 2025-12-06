@@ -247,6 +247,14 @@ class L10nHe extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'גם רומא לא נבנתה ביום אחד';
 
   @override
+  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+
+  @override
+  String habitDisplay_notFoundImage_text_02(String keyword) {
+    return 'No matching habits for \"$keyword\"';
+  }
+
+  @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => 'להעביר את הארכיונים שנבחרו לארכיון?';
 
   @override

@@ -524,6 +524,18 @@ abstract class L10n {
   /// **'A journey of a thousand miles begins with a single step'**
   String get habitDisplay_emptyImage_text_01;
 
+  /// Displayed when no habits match the current search
+  ///
+  /// In en, this message translates to:
+  /// **'No matching habits found'**
+  String get habitDisplay_notFoundImage_text_01;
+
+  /// Displayed when no habits match the specified keyword
+  ///
+  /// In en, this message translates to:
+  /// **'No matching habits for \"{keyword}\"'**
+  String habitDisplay_notFoundImage_text_02(String keyword);
+
   /// No description provided for @habitDisplay_archiveHabitsConfirmDialog_title.
   ///
   /// In en, this message translates to:
