@@ -930,45 +930,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     //#region: empty image
     Widget buildEmptyImage(BuildContext context) {
-      return Selector<HabitSummaryViewModel, int>(
-        selector: (context, viewmodel) => viewmodel.currentHabitList.length,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, habitCount, child) =>
-            Selector<AppCompactUISwitcherViewModel, Tuple2<bool, double>>(
-          selector: (context, vm) => Tuple2(vm.flag, vm.appCalendarBarHeight),
-          builder: (context, value, child) => _EmptyImageWrapper(
-            habitCount: habitCount,
-            offsetHeight: -(value.item2 + kToolbarHeight),
-            changedAnimateDuration: kHabitListFutureLoadDuration,
-            child: L10nBuilder(
-              builder: (context, l10n) {
-                final theme = Theme.of(context);
-                return HabitDisplayEmptyImage(
-                  size: const Size.square(300),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
-                  descChild: l10n != null
-                      ? Text(l10n.habitDisplay_emptyImage_text_01)
-                      : null,
-                  style: HabitDisplayEmptyImageStyle(
-                    fronBoardBackgroundColor: theme.colorScheme.surface,
-                    backBoardBackgroundColor:
-                        theme.colorScheme.surfaceContainerHighest,
-                    boardStrokeColor: theme.colorScheme.outlineVariant,
-                    fronBoardTopColor: theme.colorScheme.primaryContainer,
-                    fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
-                    fronBoardOtherLineColor: theme.colorScheme.outlineVariant,
-                    fronBoardSubtitleLineColor:
-                        theme.colorScheme.outlineVariant.lighten(0.14),
-                    backgroundCirlcColor:
-                        theme.colorScheme.outlineVariant.lighten(0.16),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      );
+      return const _EmptyImage();
     }
     //#endregion
 
@@ -1282,21 +1244,71 @@ class _HabitListItem extends StatelessWidget {
   }
 }
 
-class _EmptyImageWrapper extends StatelessWidget {
-  final int habitCount;
-  final double offsetHeight;
-  final Duration changedAnimateDuration;
-  final Widget? child;
-
-  const _EmptyImageWrapper({
-    required this.habitCount,
-    this.offsetHeight = 0.0,
-    required this.changedAnimateDuration,
-    this.child,
-  });
+class _EmptyImage extends StatelessWidget {
+  const _EmptyImage();
 
   @override
   Widget build(BuildContext context) {
+    final (habitCount, isInSearchMode) =
+        context.select<HabitSummaryViewModel, (int, bool)>(
+            (vm) => (vm.currentHabitList.length, vm.isInSearchMode));
+    final (_, calBarHeight) =
+        context.select<AppCompactUISwitcherViewModel, (bool, double)>(
+            (vm) => (vm.flag, vm.appCalendarBarHeight));
+    final offsetHeight = -(calBarHeight + kToolbarHeight);
+
+    final image = L10nBuilder(
+      builder: (context, l10n) {
+        final theme = Theme.of(context);
+        const size = Size.square(300);
+        const padding = EdgeInsets.symmetric(horizontal: 100, vertical: 50);
+        final emptyImage = HabitDisplayEmptyImage(
+          size: size,
+          padding: padding,
+          style: HabitDisplayEmptyImageStyle(
+            fronBoardBackgroundColor: theme.colorScheme.surface,
+            backBoardBackgroundColor: theme.colorScheme.surfaceContainerHighest,
+            boardStrokeColor: theme.colorScheme.outlineVariant,
+            fronBoardTopColor: theme.colorScheme.primaryContainer,
+            fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
+            fronBoardOtherLineColor: theme.colorScheme.outlineVariant,
+            fronBoardSubtitleLineColor:
+                theme.colorScheme.outlineVariant.lighten(0.14),
+            backgroundCirlcColor:
+                theme.colorScheme.outlineVariant.lighten(0.16),
+          ),
+          descChild:
+              l10n != null ? Text(l10n.habitDisplay_emptyImage_text_01) : null,
+        );
+        final notFoundImage = Opacity(
+          opacity: 0.8,
+          child: NotFoundImage(
+            size: size,
+            padding: padding,
+            style: NotFoundImageStyle.inDefault.copyWith(
+              backBoardBackgroundColor:
+                  theme.colorScheme.surfaceContainerHighest,
+              backBoardPaperColor: theme.colorScheme.primaryContainer,
+              fronBoardPaperColor: theme.colorScheme.primary,
+              fronBoardPaperShadowColor: theme.colorScheme.outlineVariant,
+              magnifierHandleColor: theme.colorScheme.error,
+              magnifierStrokeColor: theme.colorScheme.error,
+            ),
+            descChild: l10n != null
+                ? Selector<HabitSummaryViewModel, String>(
+                    selector: (context, vm) => vm.searchOptions.keyword,
+                    builder: (context, keyword, child) => Text(
+                      keyword.isEmpty
+                          ? l10n.habitDisplay_notFoundImage_text_01
+                          : l10n.habitDisplay_notFoundImage_text_02(keyword),
+                    ),
+                  )
+                : null,
+          ),
+        );
+        return isInSearchMode ? notFoundImage : emptyImage;
+      },
+    );
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) => Align(
@@ -1306,8 +1318,8 @@ class _EmptyImageWrapper extends StatelessWidget {
                 maxHeight: math.max(constraints.maxHeight + offsetHeight, 0)),
             child: AnimatedOpacity(
               opacity: habitCount > 0 ? 0.0 : 1.0,
-              duration: changedAnimateDuration,
-              child: child,
+              duration: kHabitListFutureLoadDuration,
+              child: image,
             ),
           ),
         ),

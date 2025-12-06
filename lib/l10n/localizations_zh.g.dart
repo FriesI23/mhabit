@@ -247,6 +247,14 @@ class L10nZh extends L10n {
   String get habitDisplay_emptyImage_text_01 => '千里之行, 始于足下';
 
   @override
+  String get habitDisplay_notFoundImage_text_01 => '没有找到符合此搜索的习惯';
+
+  @override
+  String habitDisplay_notFoundImage_text_02(String keyword) {
+    return '没有找到与“$keyword”匹配的习惯';
+  }
+
+  @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => '归档选中的习惯?';
 
   @override

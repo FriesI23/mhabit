@@ -223,6 +223,20 @@
   "@habitDisplay_fab_text": {},
   "habitDisplay_emptyImage_text_01": "A journey of a thousand miles begins with a single step",
   "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_notFoundImage_text_01": "No matching habits found",
+  "@habitDisplay_notFoundImage_text_01": {
+    "description": "Displayed when no habits match the current search"
+  },
+  "habitDisplay_notFoundImage_text_02": "No matching habits for \"{keyword}\"",
+  "@habitDisplay_notFoundImage_text_02": {
+    "description": "Displayed when no habits match the specified keyword",
+    "placeholders": {
+      "keyword": {
+        "type": "String",
+        "description": "Search keyword"
+      }
+    }
+  },
   "habitDisplay_archiveHabitsConfirmDialog_title": "Archive Selected Habits?",
   "@habitDisplay_archiveHabitsConfirmDialog_title": {},
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "confirm",

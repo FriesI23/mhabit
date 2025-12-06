@@ -1,5 +1,7 @@
 {
   "ar": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
@@ -50,6 +52,8 @@
     "habitEdit_modify_datetime_prefix",
     "habitDisplay_fab_text",
     "habitDisplay_emptyImage_text_01",
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_archiveHabitsConfirmDialog_title",
     "habitDisplay_archiveHabitsConfirmDialog_cancel",
     "habitDisplay_archiveHabitsSuccSnackbarText",
@@ -430,6 +434,8 @@
   ],
 
   "de": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -566,6 +572,8 @@
   ],
 
   "es": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
@@ -603,6 +611,8 @@
   ],
 
   "fa": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -732,6 +742,8 @@
   ],
 
   "fr": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -889,6 +901,8 @@
     "habitEdit_reminder_cancelDialogConfirm",
     "habitEdit_reminder_cancelDialogCancel",
     "habitEdit_desc_hintText",
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_archiveHabitsConfirmDialog_confirm",
     "habitDisplay_archiveHabitsConfirmDialog_cancel",
     "habitDisplay_archiveHabitsSuccSnackbarText",
@@ -1188,6 +1202,8 @@
 
   "it": [
     "habitEdit_habitFreq_predayfreq",
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -1294,6 +1310,8 @@
   ],
 
   "ja": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
@@ -1366,6 +1384,8 @@
     "habitEdit_modify_datetime_prefix",
     "habitDisplay_fab_text",
     "habitDisplay_emptyImage_text_01",
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_archiveHabitsConfirmDialog_title",
     "habitDisplay_archiveHabitsConfirmDialog_confirm",
     "habitDisplay_archiveHabitsConfirmDialog_cancel",
@@ -1753,6 +1773,8 @@
   ],
 
   "pl": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
@@ -1774,6 +1796,8 @@
     "habitEdit_reminder_freq_monthPrefixText",
     "habitEdit_desc_hintText",
     "habitDisplay_emptyImage_text_01",
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -1913,6 +1937,8 @@
   ],
 
   "ru": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
     "habitDisplay_searchBar_hintText",
@@ -1930,6 +1956,8 @@
   ],
 
   "tr": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
@@ -1944,7 +1972,14 @@
     "experimentalFeatures_habitSearchTile_subtitleText"
   ],
 
+  "uk": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02"
+  ],
+
   "vi": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
@@ -2052,6 +2087,8 @@
   ],
 
   "zh_Hant": [
+    "habitDisplay_notFoundImage_text_01",
+    "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
