@@ -54,8 +54,21 @@ class HabitTodayListCard extends StatefulWidget {
 
 class _HabitTodayListCardState extends State<HabitTodayListCard> {
   bool? _expanded;
+  ScrollController? _scrollController;
 
   bool get _effectiveExpanded => _expanded ?? widget.expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController?.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant HabitTodayListCard oldWidget) {
@@ -64,6 +77,17 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       setState(() {
         _expanded = null;
       });
+    }
+    _tryScrollToTop();
+  }
+
+  void _tryScrollToTop() {
+    final scrollController = _scrollController;
+    if (scrollController != null &&
+        _effectiveExpanded == false &&
+        scrollController.hasClients) {
+      scrollController.animateTo(0.0,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
   }
 
@@ -160,11 +184,16 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     Widget buildScrollableListCardBody() => Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                physics: _effectiveExpanded
-                    ? null
-                    : const NeverScrollableScrollPhysics(),
-                child: Column(children: [body, extra]),
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context)
+                    .copyWith(scrollbars: _effectiveExpanded),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: _effectiveExpanded
+                      ? null
+                      : const NeverScrollableScrollPhysics(),
+                  child: Column(children: [body, extra]),
+                ),
               ),
             ),
             ExpandedSection(expand: _effectiveExpanded, child: bottomButtons),
@@ -178,6 +207,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       borderRadius: kHabitTodayCardShape.borderRadius.resolve(null),
       onTap: () => setState(() {
         _expanded = !_effectiveExpanded;
+        _tryScrollToTop();
         widget.onExpandChanged?.call(_effectiveExpanded);
       }),
       child: Stack(
