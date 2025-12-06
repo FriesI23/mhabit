@@ -236,6 +236,7 @@ class HabitsTodayViewModel extends ChangeNotifier
         .sort(_sortType, _sortDirection)
         .where((e) {
           if (!e.isActived) return false;
+          if (e.startDate > now) return false;
           if (e.getRecordByDate(now) != null) return false;
           return true;
         })
