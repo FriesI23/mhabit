@@ -103,6 +103,21 @@ class _AppEntry extends StatelessWidget {
 
   const _AppEntry({required this.homePage});
 
+  String? getFontFamily() => switch (defaultTargetPlatform) {
+        TargetPlatform.linux => 'Noto Sans',
+        _ => null,
+      };
+
+  List<String>? getFontFamilyFallbacks() => switch (defaultTargetPlatform) {
+        TargetPlatform.linux => const [
+            'Noto Color Emoji',
+            'Noto Sans Arabic',
+            'Noto Sans CJK SC',
+            'Noto Serif Hebrew',
+          ],
+        _ => null,
+      };
+
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
@@ -117,11 +132,15 @@ class _AppEntry extends StatelessWidget {
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, appThemeArgs, child) {
             final (themeMode, themeMainColor) = appThemeArgs;
+            final fontFamily = getFontFamily();
+            final fontFamilyFallbacks = getFontFamilyFallbacks();
             return AppRootView(
               themeMode: transToMaterialThemeType(themeMode),
               themeMainColor: themeMainColor,
               language: language,
               lightThemeBuilder: () => ThemeData(
+                  fontFamily: fontFamily,
+                  fontFamilyFallback: fontFamilyFallbacks,
                   colorScheme: lightDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: Color(lightDynamic.primary.toARGB32()),
@@ -132,6 +151,8 @@ class _AppEntry extends StatelessWidget {
                   useMaterial3: true,
                   extensions: [modifedLightCustomColors]),
               darkThemeBuilder: () => ThemeData(
+                  fontFamily: fontFamily,
+                  fontFamilyFallback: fontFamilyFallbacks,
                   colorScheme: darkDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: Color(darkDynamic.primary.toARGB32()),
