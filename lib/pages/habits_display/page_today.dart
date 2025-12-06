@@ -40,10 +40,12 @@ import 'extensions.dart';
 import 'widgets.dart';
 
 class TodayTabPage extends StatefulWidget {
+  final double bottomNavigationHeight;
   final ValueChanged<bool> onBottomNavVisibilityChanged;
 
   const TodayTabPage({
     super.key,
+    this.bottomNavigationHeight = 0.0,
     required this.onBottomNavVisibilityChanged,
   });
 
@@ -80,6 +82,14 @@ class TodayTabPageState extends State<TodayTabPage>
   }
 
   @override
+  void didUpdateWidget(covariant TodayTabPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.bottomNavigationHeight != widget.bottomNavigationHeight) {
+      setState(() {});
+    }
+  }
+
+  @override
   void dispose() {
     _scrollVisibilityDispatcher.dispose();
     super.dispose();
@@ -106,16 +116,27 @@ class TodayTabPageState extends State<TodayTabPage>
 
   @override
   Widget build(BuildContext context) {
+    //#region bottom placeholder
+    Widget buildBottomPlaceHolder(BuildContext context) {
+      return SliverToBoxAdapter(
+        child: FixedPagePlaceHolder(
+          minHeight: widget.bottomNavigationHeight,
+        ),
+      );
+    }
+    //#endregion
+
     super.build(context);
     const appbarHeight = kToolbarHeight;
 
     final body = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       controller: _scrollVisibilityDispatcher.controller,
-      slivers: const [
-        _Appbar(toolbarHeight: appbarHeight),
-        _HabitsGroupView(),
-        _DevelopTile(),
+      slivers: [
+        const _Appbar(toolbarHeight: appbarHeight),
+        const _HabitsGroupView(),
+        const _DevelopTile(),
+        buildBottomPlaceHolder(context)
       ],
     );
     const image = _TodayDoneImage(

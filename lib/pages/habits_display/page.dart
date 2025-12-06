@@ -142,6 +142,7 @@ class _PageState extends State<_Page> {
         if (index == _PageTabs.today.index) {
           return TodayTabPage(
             key: _todayTabKey,
+            bottomNavigationHeight: bottomNavHeight,
             onBottomNavVisibilityChanged: _handleBottomNavVisibilityChanged,
           );
         }
