@@ -104,16 +104,17 @@ class _AppEntry extends StatelessWidget {
   const _AppEntry({required this.homePage});
 
   String? getFontFamily() => switch (defaultTargetPlatform) {
-        TargetPlatform.linux => 'Noto Sans',
+        TargetPlatform.linux => 'Noto Sans FB',
         _ => null,
       };
 
   List<String>? getFontFamilyFallbacks() => switch (defaultTargetPlatform) {
         TargetPlatform.linux => const [
-            'Noto Color Emoji',
-            'Noto Sans Arabic',
-            'Noto Sans CJK SC',
-            'Noto Serif Hebrew',
+            'sans-serif',
+            'Noto Color Emoji FB',
+            'Noto Sans Arabic FB',
+            'Noto Sans CJK SC FB',
+            'Noto Sans Hebrew FB',
           ],
         _ => null,
       };

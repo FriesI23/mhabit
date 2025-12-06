@@ -214,6 +214,27 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
+linux:
+  fonts:
+    - family: Noto Color Emoji FB
+      fonts:
+        - asset: assets/linux/fonts/NotoColorEmoji-Regular.ttf
+    - family: Noto Sans FB
+      fonts:
+        - asset: assets/linux/fonts/NotoSans-Regular.ttf
+    - family: Noto Sans Arabic FB
+      fonts:
+        - asset: assets/linux/fonts/NotoSansArabic-Regular.ttf
+    - family: Noto Sans CJK SC FB
+      fonts:
+        - asset: assets/linux/fonts/NotoSansCJKjp-Regular.otf
+        - asset: assets/linux/fonts/NotoSansCJKkr-Regular.otf
+        - asset: assets/linux/fonts/NotoSansCJKsc-Regular.otf
+        - asset: assets/linux/fonts/NotoSansCJKtc-Regular.otf
+    - family: Noto Sans Hebrew FB
+      fonts:
+        - asset: assets/linux/fonts/NotoSansHebrew-Regular.ttf
+
 flutter_gen:
   output: lib/assets/
   integrations:
