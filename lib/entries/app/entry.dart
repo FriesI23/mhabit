@@ -109,7 +109,7 @@ class _AppEntry extends StatelessWidget {
       case TargetPlatform.linux:
         final arch = AppInfo().linuxArchitecture;
         return switch (arch) {
-          LinuxPlatformArchitecture.aarch64 => 'Noto Sans',
+          LinuxPlatformArchitecture.aarch64 => 'Roboto',
           _ => null
         };
       default:
@@ -123,13 +123,16 @@ class _AppEntry extends StatelessWidget {
         final arch = AppInfo().linuxArchitecture;
         return switch (arch) {
           LinuxPlatformArchitecture.aarch64 => const [
+              'Ubuntu',
+              'Cantarell',
+              'DejaVu Sans',
+              'Liberation Sans',
+              'Arial',
               'Noto Color Emoji',
               'Noto Sans CJK SC',
               'Noto Sans CJK TC',
               'Noto Sans CJK JP',
               'Noto Sans CJK KR',
-              'Noto Sans Arabic',
-              'Noto Sans Hebrew',
             ],
           _ => null
         };
