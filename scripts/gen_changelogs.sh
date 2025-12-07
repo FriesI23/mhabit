@@ -19,3 +19,12 @@ $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
 echo "Generating fastlane changelog: zh-CN"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
     -o $SCRIPT_PATH/../fastlane/metadata/android/zh-CN/changelogs
+
+echo "Generating f_store's fastlane changelog: en-US"
+$SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
+    -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/en-US/changelogs \
+    --min-version-code 125 --with-pre
+echo "Generating f_store's fastlane changelog: zh-CN"
+$SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
+    -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/zh-CN/changelogs \
+    --min-version-code 125 --with-pre

@@ -2,6 +2,20 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.22.2+128-pre
+
+- Add thirdparty license tile icon (#431)
+- Show special image for empty search results (#436)
+- Updated French translation, thank to Massine Y's contribution on Weblate (#428)
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate (#428)
+- Fixed: Exclude habits that haven’t started yet from today’s list (#435)
+- Fixed: Adjust part of UI on Today page (#434)
+- Fixed: Double tap at top edge on iPadOS 26 (#437)
+- Fixed: CJK and emoji do not display correctly on linux-arm64 (Execpt CJK rendered error in Flatpak sandbox) (#438)
+- Add fastlane on Android / iOS / macOS (#425, #426)
+- Mgrate `DateTime.now()` to `AppClock().now()` (#430)
+- Update README
+
 ## 1.22.1+125
 
 **✨ New Features**
