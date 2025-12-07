@@ -18,48 +18,48 @@
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/1.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/1.png</image>
-      <caption>Home screen</caption>
-      <caption xml:lang="zh-CN">主界面</caption>
+      <caption>Home</caption>
+      <caption xml:lang="zh-CN">主页</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/2.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/2.png</image>
-      <caption>Dark mode</caption>
-      <caption xml:lang="zh-CN">深色模式</caption>
+      <caption>Habit Detail</caption>
+      <caption xml:lang="zh-CN">习惯详情</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/3.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/3.png</image>
-      <caption>Expanded habit list</caption>
-      <caption xml:lang="zh-CN">展开习惯列表</caption>
+      <caption>Today Mode</caption>
+      <caption xml:lang="zh-CN">今日模式</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/4.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/4.png</image>
-      <caption>Habit detail screen</caption>
-      <caption xml:lang="zh-CN">习惯详细信息界面</caption>
+      <caption>Multi-select</caption>
+      <caption xml:lang="zh-CN">多选</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/5.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/5.png</image>
-      <caption>Habit heatmap</caption>
-      <caption xml:lang="zh-CN">习惯热力图</caption>
+      <caption>Habit Editing</caption>
+      <caption xml:lang="zh-CN">编辑习惯</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/6.png</image>
       <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/6.png</image>
-      <caption>Batch editing screen</caption>
-      <caption xml:lang="zh-CN">批量修改界面</caption>
+      <caption>Batch Check-in</caption>
+      <caption xml:lang="zh-CN">批量打卡</caption>
     </screenshot>
   </screenshots>
   <description>
@@ -95,6 +95,9 @@
     <category>Utility</category>
   </categories>
   <releases>
+    <release version="1.22.2+129" date="2025-12-08">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.22.2+129</url>
+    </release>
     <release version="1.22.1+125" date="2025-12-01">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.22.1+125</url>
     </release>

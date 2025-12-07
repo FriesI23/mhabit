@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.22.2+128-pre
+## 1.22.2+129
 
 - Add thirdparty license tile icon (#431)
 - Show special image for empty search results (#436)
