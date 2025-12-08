@@ -1,0 +1,10 @@
+- Add thirdparty license tile icon (#431)
+- Show special image for empty search results (#436)
+- Updated French (#428) & Ukrainian (#428) translations
+- Fixed: Exclude not-started habits from today’s list (#435)
+- Fixed: Adjust part of UI on Today page (#434)
+- Fixed: Double tap at top edge on iPadOS 26 (#437)
+- Fixed: CJK & emoji display issue on linux-arm64 (#438)
+- Add fastlane support on Android/iOS/macOS (#425, #426)
+- Migrate DateTime.now() to AppClock().now() (#430)
+- Update README
