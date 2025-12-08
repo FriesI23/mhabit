@@ -31,9 +31,9 @@
     </screenshot>
     <screenshot>
       <image>
-        https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/3.png</image>
-      <image xml:lang="zh-CN">
         https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/zh-CN/3.png</image>
+      <image xml:lang="zh-CN">
+        https://raw.githubusercontent.com/FriesI23/mhabit/3a982805f6f3f0289f2bb29d63a79c878038f4b9/flatpak/screenshots/en-US/3.png</image>
       <caption>Today Mode</caption>
       <caption xml:lang="zh-CN">今日模式</caption>
     </screenshot>
