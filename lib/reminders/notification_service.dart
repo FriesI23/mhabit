@@ -143,6 +143,16 @@ final class NotificationServiceImpl implements NotificationService {
             appUserModelId: "Github.FriesI23.TableHabit.Dev",
             guid: const Uuid().v5(appID, appName),
           );
+        // Configs Share the same value as specified in `scripts\build_msix_store.cmd`:
+        // - `appName`: `pubspec.yaml#msix_config#display_name`
+        // - `appUserModelId`: `dart run msix:create --identity-name`
+        // - 'guid': `dart run msix:create --toast-activator-clsid`
+        case appFlaborStore:
+          return const WindowsInitializationSettings(
+            appName: "Table Habit",
+            appUserModelId: "Friesi23.TableHabit",
+            guid: "b945836b-7d0d-4c60-b3fa-df184e2a9893",
+          );
         default:
           // Configs Share the same value as specified in `pubspec.yaml#msix_config`:
           // - `appName`: `msix_config#display_name`
