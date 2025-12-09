@@ -8,10 +8,6 @@ from the [Release page][github-releases].
 
 ### Google Play
 
-- Stable Version
-- Beta Version
-- Install an Update from Store
-
 Get [**Table Habit**](https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit&referrer=utm_source%3Dappwiki)
 
 ### F-Droid / LzzLzzyOnDroid
