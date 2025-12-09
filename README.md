@@ -20,20 +20,33 @@ and keeps your data in sync across devices (currently via WebDAV, with more opti
 
 Moreover, this app completely open source.
 
-[![Get it on Github][github-button]][github-myapp]
-[![Get it on F-Droid][fdroid-button]][fdroid-myapp]
-[![Get it on Falthub][get-it-on-flathub]][flathub-source]
 
-[![Get it on PlayStore][play-button]][play-myapp]
-[![Get is on AppStore][get-on-apple]][appsotre-myapp]
+[<img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg"
+  alt="Get in on Github"
+  height="80">][github-myapp]
+[<img src="https://f-droid.org/badge/get-it-on.png"
+  alt="Get it on F-Droid"
+  height="80">][fdroid-myapp]
+[<img src="docs/README/images/flathub-get-it-on.svg"
+  alt="Get it on Flathub"
+  height="80">][flathub-source]
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+  alt="Download from Google Play"
+  height="80">][play-myapp]
+[<img src="docs/README/images/apple-get-it-on.svg"
+  alt="Get from Apple Store"
+  height="80">][appsotre-myapp]
+[<img src="docs/README/images/msstore-get-it-on.svg"
+  alt="Download from Microsoft Store"
+  height="80">][msstore-myapp]
 
-| platform               | build | publish                                                                                                                                                                                                                                                                      |
-| ---------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android                | ✅     | [![Get it on LzzyOnDroid][lzzyondroid-button]][lzzyondroid-myapp] <br/> [F-Droid][fdroid-myapp] / [Play Store][play-myapp] / [GitHub - apk][github-myapp]                                                                                                                    |
-| iOS                    | ✅     | [![Get it on AltStore][get-it-on-altstore]][altstore-source] [![Get it on SideStore][get-it-on-sidestore]][sidestore-source] [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] <br/> [iOS Apple Store][appsotre-myapp] / [GitHub - ipa][github-myapp] |
-| macOS                  | ✅     | [![Get it on Testflight][testflight-button]][ios-testflight-pre-release] <br/> [Mac Apple Store][appsotre-myapp] / [HomeBrew Tap][homebrew-tap-wiki] / [GitHub - dmg][github-myapp]                                                                                          |
-| Windows <sup>(1)</sup> | ✅     | [Scoop Bucket][scoop-bucket-wiki] / [GitHub - msix][github-myapp]                                                                                                                                                                                                            |
-| Linux <sup>(1)</sup>   | ✅     | [Flathub][flathub-source] / [GitHub - flatpak][github-myapp]                                                                                                                                                                                                                 |
+| platform               | build | publish                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ---------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Android                | ✅     | [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on LzzyOnDroid" height="80">][lzzyondroid-myapp] <br/> [F-Droid][fdroid-myapp] / [Play Store][play-myapp] / [GitHub - apk][github-myapp]                                                                                                                                                                                                                                                                                                                            |
+| iOS                    | ✅     | [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore-org.png" alt="Get it on AltStore" height="80">][altstore-source] [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore-org.png" alt="Get it on SideStore" height="80">][sidestore-source] [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [iOS Apple Store][appsotre-myapp] / [GitHub - ipa][github-myapp] |
+| macOS                  | ✅     | [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [Mac Apple Store][appsotre-myapp] / [HomeBrew Tap][homebrew-tap-wiki] / [GitHub - dmg][github-myapp]                                                                                                                                                                                                                                                                                                                          |
+| Windows <sup>(1)</sup> | ✅     | [Scoop Bucket][scoop-bucket-wiki] / [GitHub - msix][github-myapp]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Linux <sup>(1)</sup>   | ✅     | [Microsoft Store][msstore-myapp] / [Flathub][flathub-source] / [GitHub - flatpak][github-myapp]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 > 1. Scheduled habit reminders are not yet implemented
 
@@ -140,22 +153,14 @@ limitations under the License.
 [display-page-tb]: docs/README/images/habit-display-page-tb.gif
 [display-op]: docs/README/images/habit-display-op.gif
 [display-op-tb]: docs/README/images/habit-display-op-tb.gif
-[fdroid-button]: docs/README/images/fdroid-get-it-on.png
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
-[lzzyondroid-button]: docs/README/images/lzzyondroid-get-it-on.png
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
-[play-button]: docs/README/images/play-get-it-on.png
 [play-myapp]: https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit
-[get-it-on-altstore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore.png
-[get-it-on-sidestore]: https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore.png
 [altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
 [sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
-[testflight-button]: docs/README/images/testflight-get-it-on.png
-[get-on-apple]: docs/README/images/apple-get-it-on.png
 [appsotre-myapp]: https://apps.apple.com/app/table-habit/id6744886469
-[github-button]: docs/README/images/github-get-it-on.png
+[msstore-myapp]: https://apps.microsoft.com/detail/9NG22PL73NGZ?referrer=appbadge&mode=direct
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest
-[get-it-on-flathub]: docs/README/images/flathub-get-it-on.png
 [flathub-source]: https://flathub.org/apps/io.github.friesi23.mhabit
 [github-relaese-badge]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml/badge.svg
