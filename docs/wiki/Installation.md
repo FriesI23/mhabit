@@ -6,6 +6,14 @@ from the [Release page][github-releases].
 
 ## Android
 
+### Google Play
+
+- Stable Version
+- Beta Version
+- Install an Update from Store
+
+Get [**Table Habit**](https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit&referrer=utm_source%3Dappwiki)
+
 ### F-Droid / LzzLzzyOnDroid
 
 - Stable Version
@@ -25,8 +33,10 @@ Beta version marked as `pre-release`.
 
 ## iOS
 
-> Store version is currently stuck in the `Waiting for Review` status for unknown reasons,
-> so only the `SideLoaded` version is available.
+### Apple Store
+
+Get [**Table Habit**](https://apps.apple.com/app/table-habit/id6744886469)
+or become a [Beta Tester](https://testflight.apple.com/join/aJ5PWqaR)
 
 ### AltStore / SideStore - Custom Source
 
@@ -56,6 +66,11 @@ Beta version marked as `pre-release`.
    select prev-downloaded `.ipa` file.
 
 ## macOS
+
+### Mac Apple Store
+
+Get [**Table Habit**](https://apps.apple.com/app/table-habit/id6744886469)
+or become a [Beta Tester](https://testflight.apple.com/join/aJ5PWqaR)
 
 ### HomeBrew - Custom Tap
 
@@ -115,6 +130,10 @@ more info see: [`Flathub - Setup`](https://flathub.org/setup)
    ```
 
 ## Windows
+
+### Microsoft Store
+
+Get [**Table Habit**](https://apps.microsoft.com/detail/9NG22PL73NGZ?referrer=appwiki&mode=direct)
 
 ### Scoop - Custom Bucket
 
