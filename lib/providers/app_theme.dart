@@ -78,7 +78,13 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
 
   //#region app theme color
   AppThemeColor get themeColor =>
-      _themeColor?.get() ?? const DynamicAppThemeColor();
+      _themeColor?.get() ??
+      switch (defaultTargetPlatform) {
+        TargetPlatform.iOS ||
+        TargetPlatform.macOS =>
+          const SystemAppThemeColor(),
+        _ => const DynamicAppThemeColor(),
+      };
 
   Future<void> setNewAppThemeColor(AppThemeColor newThemeColor) async {
     if (_themeColor?.get() != newThemeColor) {

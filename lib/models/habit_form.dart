@@ -126,6 +126,36 @@ enum HabitColorType implements EnumWithDBCode<HabitColorType> {
     }
     return withDefault;
   }
+
+  static String getColorName(HabitColorType colorType, L10n? l10n) {
+    final fallbackColorName = 'Color ${colorType.code}';
+    switch (colorType) {
+      case HabitColorType.cc1:
+        return l10n?.common_habitColorType_cc1 ?? fallbackColorName;
+      case HabitColorType.cc2:
+        return l10n?.common_habitColorType_cc2 ?? fallbackColorName;
+      case HabitColorType.cc3:
+        return l10n?.common_habitColorType_cc3 ?? fallbackColorName;
+      case HabitColorType.cc4:
+        return l10n?.common_habitColorType_cc4 ?? fallbackColorName;
+      case HabitColorType.cc5:
+        return l10n?.common_habitColorType_cc5 ?? fallbackColorName;
+      case HabitColorType.cc6:
+        return l10n?.common_habitColorType_cc6 ?? fallbackColorName;
+      case HabitColorType.cc7:
+        return l10n?.common_habitColorType_cc7 ?? fallbackColorName;
+      case HabitColorType.cc8:
+        return l10n?.common_habitColorType_cc8 ?? fallbackColorName;
+      case HabitColorType.cc9:
+        return l10n?.common_habitColorType_cc9 ?? fallbackColorName;
+      case HabitColorType.cc10:
+        return l10n?.common_habitColorType_cc10 ?? fallbackColorName;
+      // ignore: unreachable_switch_default
+      default:
+        return l10n?.common_habitColorType_default(colorType.code) ??
+            fallbackColorName;
+    }
+  }
 }
 
 @JsonEnum(valueField: 'code')

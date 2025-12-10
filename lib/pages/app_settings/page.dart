@@ -405,6 +405,7 @@ class _PageState extends State<_Page> with XShare {
                   : const Text("Display"),
             ),
           ),
+          AppSettingThemeColorTile(),
           Selector<AppFirstDayViewModel, int>(
             selector: (context, vm) => vm.firstDay,
             shouldRebuild: (previous, next) => previous != next,

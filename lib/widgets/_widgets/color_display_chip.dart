@@ -42,7 +42,7 @@ class ColorDisplayChip extends StatelessWidget {
             width: 8,
           ),
           Text(
-            colorData?.getColorName(colorType, L10n.of(context)) ?? '',
+            HabitColorType.getColorName(colorType, L10n.of(context)),
             style: TextStyle(color: colorData?.getColor(colorType)),
           ),
         ],
