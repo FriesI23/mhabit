@@ -39,6 +39,14 @@ Run Flutter unit tests
 
 Build Flutter appbundle for a specified flavor (default: f_generic)
 
+### android update_play_store
+
+```sh
+[bundle exec] fastlane android update_play_store
+```
+
+Update Information to Google Play Store
+
 ### android deploy_play_store
 
 ```sh

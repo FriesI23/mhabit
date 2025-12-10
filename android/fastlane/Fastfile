@@ -38,6 +38,28 @@ platform :android do
     sh "../../.flutter/bin/flutter build appbundle --flavor #{flavor}"
   end
 
+  desc "Update Information to Google Play Store"
+  lane :update_play_store do |options|
+    flavor = options[:flavor] || "f_store"
+    meta_path = options[:meta_path] || "app/src/#{flavor}/fastlane/metadata/android"
+    track = options[:track]
+
+    upload_params = {
+      metadata_path: meta_path,
+      skip_upload_apk: true,
+      skip_upload_aab: !(options[:aab] || false),
+      skip_upload_metadata: !(options[:metadata] || false),
+      skip_upload_changelogs: !(options[:changelog] || false),
+      skip_upload_images: !(options[:images] || false),
+      skip_upload_screenshots: !(options[:screenshots] || false)
+    }
+    unless upload_params[:skip_upload_aab]
+      upload_params[:aab] = "../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
+      upload_params[:track] = track if track
+    end
+    supply(upload_params)
+  end
+
   desc "Deploy to Google Play Store"
   lane :deploy_play_store do |options|
     flavor = options[:flavor] || "f_store"
