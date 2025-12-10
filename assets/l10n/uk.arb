@@ -223,6 +223,20 @@
   "@habitDisplay_fab_text": {},
   "habitDisplay_emptyImage_text_01": "Подорож у тисячу миль починається з одного кроку",
   "@habitDisplay_emptyImage_text_01": {},
+  "habitDisplay_notFoundImage_text_01": "Відповідних звичок не знайдено",
+  "@habitDisplay_notFoundImage_text_01": {
+    "description": "Displayed when no habits match the current search"
+  },
+  "habitDisplay_notFoundImage_text_02": "Немає відповідних звичок для \"{keyword}\"",
+  "@habitDisplay_notFoundImage_text_02": {
+    "description": "Displayed when no habits match the specified keyword",
+    "placeholders": {
+      "keyword": {
+        "type": "String",
+        "description": "Search keyword"
+      }
+    }
+  },
   "habitDisplay_archiveHabitsConfirmDialog_title": "Архівувати вибрані звички?",
   "@habitDisplay_archiveHabitsConfirmDialog_title": {},
   "habitDisplay_archiveHabitsConfirmDialog_confirm": "підтвердити",
