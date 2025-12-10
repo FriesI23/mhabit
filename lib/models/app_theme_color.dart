@@ -23,9 +23,10 @@ part 'app_theme_color.g.dart';
 
 @JsonEnum(valueField: "code")
 enum AppThemeColorType implements EnumWithDBCode {
-  primary(code: 0),
-  dynamic(code: 1),
-  internal(code: 2);
+  system(code: 1),
+  primary(code: 2),
+  dynamic(code: 3),
+  internal(code: 4);
 
   final int code;
 
@@ -47,6 +48,8 @@ abstract interface class AppThemeColor implements JsonAdaptor {
     final type = AppThemeColorType.getFromDBCode(json['type']);
 
     switch (type) {
+      case AppThemeColorType.system:
+        return SystemAppThemeColor.fromJson(json);
       case AppThemeColorType.primary:
         return PrimaryAppThemeColor.fromJson(json);
       case AppThemeColorType.dynamic:
@@ -75,6 +78,17 @@ abstract class _BaseAppThemeColor implements AppThemeColor {
 
   @override
   int get hashCode => type.hashCode;
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+final class SystemAppThemeColor extends _BaseAppThemeColor {
+  const SystemAppThemeColor() : super(type: AppThemeColorType.system);
+
+  factory SystemAppThemeColor.fromJson(JsonMap json) =>
+      _$SystemAppThemeColorFromJson(json);
+
+  @override
+  JsonMap toJson() => _$SystemAppThemeColorToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

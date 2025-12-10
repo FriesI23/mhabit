@@ -24,9 +24,11 @@ import '../../common/app_info.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
+import '../../extensions/custom_color_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_sync_tasks.dart';
+import '../../models/app_theme_color.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_debugger.dart';
@@ -140,56 +142,78 @@ class _AppEntry extends StatelessWidget {
     }
   }
 
+  Color? getThemeColor(AppThemeColor themeColor,
+      {Color? themeMainColor,
+      ColorScheme? dynamicScheme,
+      CustomColors? customColor}) {
+    switch (themeColor) {
+      case SystemAppThemeColor():
+        return null;
+      case PrimaryAppThemeColor():
+        return themeMainColor;
+      case DynamicAppThemeColor():
+        final colorData = dynamicScheme?.primary.toARGB32();
+        return colorData != null ? Color(colorData) : themeMainColor;
+      case InternalAppThemeColor():
+        final colorType = themeColor.colorType;
+        return customColor?.getColor(colorType) ?? themeMainColor;
+      default:
+        return themeMainColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final fontFamily = getFontFamily();
+    final fontFamilyFallbacks = getFontFamilyFallbacks();
     return DynamicColorBuilder(
-      builder: (lightDynamic, darkDynamic) =>
-          Selector<AppLanguageViewModel, Locale?>(
-        selector: (context, vm) => vm.languange,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, language, child) =>
-            Selector<AppThemeViewModel, (AppThemeType, Color)>(
-          selector: (context, viewmodel) =>
-              (viewmodel.themeType, viewmodel.mainColor),
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, appThemeArgs, child) {
-            final (themeMode, themeMainColor) = appThemeArgs;
-            final fontFamily = getFontFamily();
-            final fontFamilyFallbacks = getFontFamilyFallbacks();
-            return AppRootView(
-              themeMode: transToMaterialThemeType(themeMode),
-              themeMainColor: themeMainColor,
-              language: language,
-              lightThemeBuilder: () => ThemeData(
+      builder: (lightDynamic, darkDynamic) => Builder(
+        builder: (context) {
+          final language = context
+              .select<AppLanguageViewModel, Locale?>((vm) => vm.languange);
+          final (themeMode, themeColor, themeMainColor) = context
+              .select<AppThemeViewModel, (AppThemeType, AppThemeColor, Color)>(
+                  (vm) => (vm.themeType, vm.themeColor, vm.mainColor));
+          return AppRootView(
+            themeMode: transToMaterialThemeType(themeMode),
+            language: language,
+            lightThemeBuilder: () {
+              final customColor = modifedLightCustomColors;
+              final mainColor = getThemeColor(themeColor,
+                  themeMainColor: themeMainColor,
+                  dynamicScheme: lightDynamic,
+                  customColor: customColor);
+              return ThemeData(
                   fontFamily: fontFamily,
                   fontFamilyFallback: fontFamilyFallbacks,
-                  colorScheme: lightDynamic != null
+                  brightness: mainColor == null ? Brightness.light : null,
+                  colorScheme: mainColor != null
                       ? ColorScheme.fromSeed(
-                          seedColor: Color(lightDynamic.primary.toARGB32()),
-                          brightness: Brightness.light)
-                      : ColorScheme.fromSeed(
-                          seedColor: themeMainColor,
-                          brightness: Brightness.light),
+                          seedColor: mainColor, brightness: Brightness.light)
+                      : null,
                   useMaterial3: true,
-                  extensions: [modifedLightCustomColors]),
-              darkThemeBuilder: () => ThemeData(
+                  extensions: [customColor]);
+            },
+            darkThemeBuilder: () {
+              final customColor = darkCustomColors;
+              final mainColor = getThemeColor(themeColor,
+                  themeMainColor: themeMainColor,
+                  dynamicScheme: darkDynamic,
+                  customColor: customColor);
+              return ThemeData(
                   fontFamily: fontFamily,
                   fontFamilyFallback: fontFamilyFallbacks,
-                  colorScheme: darkDynamic != null
+                  brightness: mainColor == null ? Brightness.dark : null,
+                  colorScheme: mainColor != null
                       ? ColorScheme.fromSeed(
-                          seedColor: Color(darkDynamic.primary.toARGB32()),
-                          brightness: Brightness.dark)
-                      : ColorScheme.fromSeed(
-                          seedColor: themeMainColor,
-                          brightness: Brightness.dark),
+                          seedColor: mainColor, brightness: Brightness.dark)
+                      : null,
                   useMaterial3: true,
-                  extensions: [darkCustomColors]),
-              child: child,
-            );
-          },
-          child: child,
-        ),
-        child: homePage,
+                  extensions: [customColor]);
+            },
+            child: homePage,
+          );
+        },
       ),
     );
   }
