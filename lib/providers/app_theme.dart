@@ -80,9 +80,7 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   AppThemeColor get themeColor =>
       _themeColor?.get() ??
       switch (defaultTargetPlatform) {
-        TargetPlatform.iOS ||
-        TargetPlatform.macOS =>
-          const SystemAppThemeColor(),
+        TargetPlatform.iOS => const SystemAppThemeColor(),
         _ => const DynamicAppThemeColor(),
       };
 

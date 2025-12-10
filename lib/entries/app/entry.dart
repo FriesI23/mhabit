@@ -21,6 +21,7 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/app_info.dart';
+import '../../common/consts.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
@@ -150,7 +151,7 @@ class _AppEntry extends StatelessWidget {
       case SystemAppThemeColor():
         return null;
       case PrimaryAppThemeColor():
-        return themeMainColor;
+        return appDefaultThemeMainColor;
       case DynamicAppThemeColor():
         final colorData = dynamicScheme?.primary.toARGB32();
         return colorData != null ? Color(colorData) : themeMainColor;
