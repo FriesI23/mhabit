@@ -14,8 +14,11 @@
 
 export 'handlers/app_experimental_feature.dart';
 export 'handlers/app_language.dart';
+export 'handlers/app_launch_entry.dart';
+export 'handlers/app_notify_config.dart';
 export 'handlers/app_reminder.dart';
 export 'handlers/app_sync.dart';
+export 'handlers/app_theme_color.dart';
 export 'handlers/app_theme_main_color.dart';
 export 'handlers/app_theme_type.dart';
 export 'handlers/collect_logs_switcher.dart';

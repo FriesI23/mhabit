@@ -17,12 +17,14 @@ import 'dart:ui' show Color;
 import 'package:flutter/foundation.dart';
 
 import '../common/consts.dart';
+import '../models/app_theme_color.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 import '../theme/color.dart';
 
 class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   AppThemeTypeProfileHandler? _theme;
+  AppThemeColorProfileHandler? _themeColor;
   AppThemeMainColorProfileHandler? _mainColor;
   DisplayCalendartBarOccupyPrtProfileHandler? _calOccupy;
 
@@ -32,6 +34,7 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
     _theme = newProfile.getHandler<AppThemeTypeProfileHandler>();
+    _themeColor = newProfile.getHandler<AppThemeColorProfileHandler>();
     _mainColor = newProfile.getHandler<AppThemeMainColorProfileHandler>();
     _calOccupy =
         newProfile.getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
@@ -70,6 +73,18 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
         break;
     }
     await setNewthemeType(nextThemeType);
+  }
+  //#endregion
+
+  //#region app theme color
+  AppThemeColor get themeColor =>
+      _themeColor?.get() ?? const DynamicAppThemeColor();
+
+  Future<void> setNewAppThemeColor(AppThemeColor newThemeColor) async {
+    if (_themeColor?.get() != newThemeColor) {
+      await _themeColor?.set(newThemeColor);
+      notifyListeners();
+    }
   }
   //#endregion
 

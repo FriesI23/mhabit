@@ -35,12 +35,12 @@ enum HabitType implements EnumWithDBCode {
   normal(code: 1),
   negative(code: 2);
 
-  final int _code;
+  final int code;
 
-  const HabitType({required int code}) : _code = code;
+  const HabitType({required this.code});
 
   @override
-  int get dbCode => _code;
+  int get dbCode => code;
 
   static HabitType? getFromDBCode(int dbCode,
       {HabitType? withDefault = HabitType.unknown}) {
