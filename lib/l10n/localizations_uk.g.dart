@@ -247,11 +247,11 @@ class L10nUk extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'Подорож у тисячу миль починається з одного кроку';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 => 'Відповідних звичок не знайдено';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'Немає відповідних звичок для \"$keyword\"';
   }
 
   @override
