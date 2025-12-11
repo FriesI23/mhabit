@@ -69,6 +69,7 @@ platform :android do
     track = options[:track]
 
     upload_params = {
+      sync_image_upload: true,
       metadata_path: meta_path,
       aab: "../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
     }
