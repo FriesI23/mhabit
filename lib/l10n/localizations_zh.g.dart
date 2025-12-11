@@ -717,16 +717,16 @@ class L10nZh extends L10n {
   String get appSetting_appThemeColorChosenDiloag_titleText => '选择主题颜色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => '使用壁纸主色（Android 12+）。';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android => '使用壁纸主色（Android 12+）';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => '使用 GTK+ 主题的选定背景色。';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => '使用 GTK+ 主题的选定背景色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => '使用系统主题颜色。';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => '使用系统主题颜色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => '使用系统主题色或 Aero 玻璃颜色。';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => '使用系统主题色或 Aero 玻璃颜色';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '一周的第一天';

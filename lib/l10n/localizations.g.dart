@@ -1343,25 +1343,25 @@ abstract class L10n {
   /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_android.
   ///
   /// In en, this message translates to:
-  /// **'Use wallpaper\'s main color (Android 12+).'**
+  /// **'Use wallpaper\'s main color (Android 12+)'**
   String get appSetting_appThemeColorChosenDialog_subTitleText_android;
 
   /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_linux.
   ///
   /// In en, this message translates to:
-  /// **'Use GTK+ theme\'s selected background color.'**
+  /// **'Use GTK+ theme\'s selected background color'**
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux;
 
   /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_macos.
   ///
   /// In en, this message translates to:
-  /// **'Use system theme color.'**
+  /// **'Use system theme color'**
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos;
 
   /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_windows.
   ///
   /// In en, this message translates to:
-  /// **'Use system accent or window/glass color.'**
+  /// **'Use system accent or window/glass color'**
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows;
 
   /// No description provided for @appSetting_firstDayOfWeek_titleText.

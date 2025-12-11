@@ -8,6 +8,10 @@ targets:
             - lib/**/*.dart
       source_gen|combining_builder:
         enabled: true
+        options:
+          preamble: |
+            // coverage: ignore-file
+            // ignore_for_file: type=lint
 
 builders:
   proxy_generator:
