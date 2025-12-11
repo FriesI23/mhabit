@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.22.4+131-pre
+
+- Feature: Add Custom Theme Color (#447)
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate (#446)
+- Add Ukrainian F-Droid/Google description translation, thanks to Максим Горпиніч's contribution on Weblate (#446)
+- Preparing to publish on Microsoft Store (#444)
+- Add multiple language support to MSIX (#448)
+- Add `Fastlane:android:update_play_store` lane with optional params
+- Update README (#445)
+
 ## 1.22.2+129
 
 - Add thirdparty license tile icon (#431)
