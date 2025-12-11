@@ -21,7 +21,6 @@ import '../../widgets/widgets.dart';
 
 class AppRootView extends StatelessWidget {
   final ThemeMode themeMode;
-  final Color themeMainColor;
   final Locale? language;
   final Widget? child;
   final ThemeData Function()? lightThemeBuilder;
@@ -30,7 +29,6 @@ class AppRootView extends StatelessWidget {
   const AppRootView({
     super.key,
     required this.themeMode,
-    required this.themeMainColor,
     this.language,
     this.lightThemeBuilder,
     this.darkThemeBuilder,
@@ -40,7 +38,6 @@ class AppRootView extends StatelessWidget {
   const AppRootView.withDefault({
     super.key,
     this.themeMode = ThemeMode.system,
-    this.themeMainColor = appDefaultThemeMainColor,
     this.language,
     this.lightThemeBuilder,
     this.darkThemeBuilder,

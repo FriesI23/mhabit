@@ -711,6 +711,24 @@ class L10nZh extends L10n {
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
+  String get appSetting_appThemeColorTile_titleText => '主题颜色';
+
+  @override
+  String get appSetting_appThemeColorChosenDiloag_titleText => '选择主题颜色';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android => '使用壁纸主色（Android 12+）';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => '使用 GTK+ 主题的选定背景色';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => '使用系统主题颜色';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => '使用系统主题色或 Aero 玻璃颜色';
+
+  @override
   String get appSetting_firstDayOfWeek_titleText => '一周的第一天';
 
   @override
@@ -1440,6 +1458,15 @@ class L10nZh extends L10n {
   String common_habitColorType_default(int index) {
     return '颜色-$index';
   }
+
+  @override
+  String get common_appThemeColor_system => '系统';
+
+  @override
+  String get common_appThemeColor_primary => '主色';
+
+  @override
+  String get common_appThemeColor_dynamic => '动态';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text => '使用系统格式';

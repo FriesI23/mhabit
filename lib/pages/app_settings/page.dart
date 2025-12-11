@@ -118,6 +118,15 @@ class _PageState extends State<_Page> with XShare {
     context.read<AppCustomDateYmdHmsConfigViewModel>().setNewConfig(result);
   }
 
+  void _openAppThemeColorChosenDialog() async {
+    if (!mounted) return;
+    final config = context.read<AppThemeViewModel>();
+    final result = await showAppThemeColorChangerDialog(
+        context: context, selectedColor: config.themeColor);
+    if (!mounted || result == null) return;
+    context.read<AppThemeViewModel>().setNewAppThemeColor(result);
+  }
+
   void _openAppFirtDaySelectDialog(BuildContext context) async {
     if (!context.mounted) return;
     final firstday = context.read<AppFirstDayViewModel>();
@@ -405,6 +414,7 @@ class _PageState extends State<_Page> with XShare {
                   : const Text("Display"),
             ),
           ),
+          AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
           Selector<AppFirstDayViewModel, int>(
             selector: (context, vm) => vm.firstDay,
             shouldRebuild: (previous, next) => previous != next,

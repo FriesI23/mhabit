@@ -728,6 +728,24 @@ class L10nPl extends L10n {
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Zmienia działanie kliknięcia w celu otwarcia szczegółowego okna dziennych rekordów na stronie głównej.';
 
   @override
+  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+
+  @override
+  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+
+  @override
   String get appSetting_firstDayOfWeek_titleText => 'Pierwszy dzień tygodnia';
 
   @override
@@ -1469,6 +1487,15 @@ class L10nPl extends L10n {
   String common_habitColorType_default(int index) {
     return 'Kolor $index';
   }
+
+  @override
+  String get common_appThemeColor_system => 'System';
+
+  @override
+  String get common_appThemeColor_primary => 'Primary';
+
+  @override
+  String get common_appThemeColor_dynamic => 'Dynamic';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Użyj formatu systemowego';

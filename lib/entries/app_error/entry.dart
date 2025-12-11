@@ -28,7 +28,6 @@ class AppErrorEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppRootView.withDefault(
-      themeMainColor: appDefaultThemeMainColor,
       lightThemeBuilder: () => ThemeData(
           colorScheme: ColorScheme.fromSeed(
               seedColor: appDefaultThemeMainColor,

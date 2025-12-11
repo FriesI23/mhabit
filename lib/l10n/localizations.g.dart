@@ -1328,6 +1328,42 @@ abstract class L10n {
   /// **'Modify the click behavior to open the detailed popup for daily records on main page.'**
   String get appSetting_openRecordStatusDialogOpTile_subtitleText;
 
+  /// No description provided for @appSetting_appThemeColorTile_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Color'**
+  String get appSetting_appThemeColorTile_titleText;
+
+  /// No description provided for @appSetting_appThemeColorChosenDiloag_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Theme Color'**
+  String get appSetting_appThemeColorChosenDiloag_titleText;
+
+  /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_android.
+  ///
+  /// In en, this message translates to:
+  /// **'Use wallpaper\'s main color (Android 12+)'**
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android;
+
+  /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_linux.
+  ///
+  /// In en, this message translates to:
+  /// **'Use GTK+ theme\'s selected background color'**
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux;
+
+  /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_macos.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system theme color'**
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos;
+
+  /// No description provided for @appSetting_appThemeColorChosenDialog_subTitleText_windows.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system accent or window/glass color'**
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows;
+
   /// No description provided for @appSetting_firstDayOfWeek_titleText.
   ///
   /// In en, this message translates to:
@@ -2431,6 +2467,24 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Color {index}'**
   String common_habitColorType_default(int index);
+
+  /// No description provided for @common_appThemeColor_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get common_appThemeColor_system;
+
+  /// No description provided for @common_appThemeColor_primary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get common_appThemeColor_primary;
+
+  /// No description provided for @common_appThemeColor_dynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'Dynamic'**
+  String get common_appThemeColor_dynamic;
 
   /// No description provided for @common_customDateTimeFormatPicker_useSystemFormat_text.
   ///
