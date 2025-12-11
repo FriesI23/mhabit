@@ -67,6 +67,28 @@ Add your locale in `locales_config.xml` located in `android/app/src/main/res/xml
    CFBundleName = "Table Habit"; // Only for macOS
    ```
 
+## Windows
+
+1. Add supported languages in `pubspec.yaml` for MSIX:
+
+```yaml
+msix:
+  languages: en, zh-Hans, <new-language-code>
+```
+
+2. (Optional) Check <Resources> in AppxManifest.xml to ensure languages are included:
+
+```xml
+<Resources>
+    <Resource Language="en-us" />
+    <Resource Language="zh-cn" />
+    <Resource Language="zh-tw" />
+    <!-- New language is HERE -->
+</Resources>
+```
+
+> You can find the `AppxManifest.xml` file in the packaged MSIX (rename suffix `.msix` to `.zip` and extract it)
+
 <!-- refs -->
 
 [app-languages]: https://developer.android.com/guide/topics/resources/app-languages
