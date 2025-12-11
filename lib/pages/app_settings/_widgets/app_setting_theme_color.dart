@@ -50,11 +50,11 @@ class AppSettingThemeColorTile extends StatelessWidget {
   String buildSubTitleText(AppThemeColor themeColor, [L10n? l10n]) {
     switch (themeColor) {
       case SystemAppThemeColor():
-        return "System";
+        return l10n?.common_appThemeColor_system ?? "System";
       case PrimaryAppThemeColor():
-        return "Primary";
+        return l10n?.common_appThemeColor_primary ?? "Primary";
       case DynamicAppThemeColor():
-        return "Dynamic";
+        return l10n?.common_appThemeColor_dynamic ?? "Dynamic";
       case InternalAppThemeColor():
         final colorType = themeColor.colorType;
         return HabitColorType.getColorName(colorType, l10n);
@@ -72,7 +72,8 @@ class AppSettingThemeColorTile extends StatelessWidget {
         context.select<AppThemeViewModel, AppThemeColor>((vm) => vm.themeColor);
     final l10n = L10n.of(context);
     return ListTile(
-      title: Text("Theme Color"),
+      title:
+          Text(l10n?.appSetting_appThemeColorTile_titleText ?? "Theme Color"),
       subtitle: Text(buildSubTitleText(themeColor, l10n)),
       trailing: AppSettingThemeColorContainer(
           child: ColoredBox(color: Theme.of(context).colorScheme.primary)),
@@ -109,14 +110,16 @@ class AppSettingThemeColorContainer extends StatelessWidget {
 class AppSettingThemeColorChoosenDialog extends StatelessWidget {
   final AppThemeColor? selectedColor;
 
-  const AppSettingThemeColorChoosenDialog({this.selectedColor});
+  const AppSettingThemeColorChoosenDialog({super.key, this.selectedColor});
 
   @override
   Widget build(BuildContext context) {
     final debug =
         context.select<AppDeveloperViewModel, bool>((vm) => vm.isInDevelopMode);
+    final l10n = L10n.of(context);
     return SimpleDialog(
-      title: Text("Choose Theme Color"),
+      title: Text(l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
+          "Choose Theme Color"),
       children: [
         _SystemChosenOption(
             isSelected: selectedColor is SystemAppThemeColor, debug: debug),
@@ -149,11 +152,12 @@ class _SystemChosenOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
-      title: Text("System"),
+      title: Text(l10n?.common_appThemeColor_system ?? "System"),
       subtitle: debug ? Text("${Theme.of(context).colorScheme.primary}") : null,
-      leading: AppSettingThemeColorContainer(child: SizedBox.expand()),
-      trailing: isSelected ? Icon(Icons.check) : null,
+      leading: const AppSettingThemeColorContainer(child: SizedBox.expand()),
+      trailing: isSelected ? const Icon(Icons.check) : null,
       onTap: () => Navigator.of(context).pop(const SystemAppThemeColor()),
     );
   }
@@ -167,12 +171,13 @@ class _PrimaryChosenOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return ListTile(
-      title: Text("Primary"),
+      title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
       subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
-      leading: AppSettingThemeColorContainer(
+      leading: const AppSettingThemeColorContainer(
           child: ColoredBox(color: appDefaultThemeMainColor)),
-      trailing: isSelected ? Icon(Icons.check) : null,
+      trailing: isSelected ? const Icon(Icons.check) : null,
       onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
     );
   }
@@ -186,6 +191,7 @@ class _DynamicChosenOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final primaryColor = colorScheme.primary;
     final child = Container(
@@ -201,9 +207,23 @@ class _DynamicChosenOption extends StatelessWidget {
         ),
       ),
     );
+    final sb = StringBuffer();
+    if (debug) sb.writeln(primaryColor);
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android || TargetPlatform.fuchsia:
+        sb.write(
+            l10n?.appSetting_appThemeColorChosenDialog_subTitleText_android);
+      case TargetPlatform.macOS:
+        sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_macos);
+      case TargetPlatform.windows:
+        sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_linux);
+      case TargetPlatform.linux:
+        sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_linux);
+      default:
+    }
     return ListTile(
-      title: const Text("Dynamic"),
-      subtitle: debug ? Text("$primaryColor") : null,
+      title: Text(l10n?.common_appThemeColor_dynamic ?? "Dynamic"),
+      subtitle: Text(sb.toString()),
       leading: AppSettingThemeColorContainer(child: child),
       trailing: isSelected ? const Icon(Icons.check) : null,
       onTap: () => Navigator.of(context).pop(const DynamicAppThemeColor()),

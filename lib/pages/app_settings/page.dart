@@ -414,9 +414,7 @@ class _PageState extends State<_Page> with XShare {
                   : const Text("Display"),
             ),
           ),
-          AppSettingThemeColorTile(
-            onPressed: () => _openAppThemeColorChosenDialog(),
-          ),
+          AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
           Selector<AppFirstDayViewModel, int>(
             selector: (context, vm) => vm.firstDay,
             shouldRebuild: (previous, next) => previous != next,
