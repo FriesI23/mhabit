@@ -14,6 +14,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -105,6 +106,15 @@ final class NotificationServiceImpl implements NotificationService {
 
   NotificationServiceImpl() {
     _logTag = runtimeType.toString(); // capture concrete runtime type once
+  }
+
+  @protected
+  DateTime nextDailySchedule(TimeOfDay timeOfDay, DateTime now) {
+    final baseDate = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final isNearToday =
+        now.isAfter(baseDate) || now.difference(baseDate).inSeconds.abs() <= 5;
+    return isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
   }
 
   @override
@@ -287,13 +297,14 @@ final class NotificationServiceImpl implements NotificationService {
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
     try {
+      if (_appNotifyConfig
+              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+          false) {
+        return true;
+      }
+
       final now = AppClock().now();
-      final baseDate = DateTime(
-          now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
-      final isNearToday = now.isAfter(baseDate) ||
-          now.difference(baseDate).inSeconds.abs() <= 5;
-      final scheduledDate =
-          isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
+      final scheduledDate = nextDailySchedule(timeOfDay, now);
 
       final future = plugin.zonedSchedule(
         appReminderNotifyId,
@@ -481,13 +492,7 @@ final class WindowsNotificationService extends NotificationServiceImpl {
         return true;
       }
 
-      final now = AppClock().now();
-      final baseDate = DateTime(
-          now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
-      final isNearToday = now.isAfter(baseDate) ||
-          now.difference(baseDate).inSeconds.abs() <= 5;
-      final scheduledDate =
-          isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
+      final scheduledDate = nextDailySchedule(timeOfDay, AppClock().now());
 
       await cancel(id: appReminderNotifyId, timeout: timeout);
 
