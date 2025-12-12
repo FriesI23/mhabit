@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -319,10 +321,10 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily",
+      appLog.notify.debug("$logTag.regrAppReminderInDaily",
           ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -423,51 +425,324 @@ final class NotificationServiceImpl implements NotificationService {
   }
 }
 
-// TODO: Some features are missing on Linux platform
+/// Linux relies on in-process polling (plugin lacks native scheduling),
+/// keeping an ordered queue and firing notifications on each tick.
 final class LinuxNotificationService extends NotificationServiceImpl {
-  LinuxNotificationService();
+  static const _defaultMaxProcessPerTick = 16;
+  static const _tickInterval = Duration(seconds: 1);
 
-  /// Plugin doesn't support scheduling on Linux
-  ///
-  /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
-  ///
-  /// last checked plugin-version: flutter_local_notifications==19.2.0
+  LinuxNotificationService({int maxProcessPerTick = _defaultMaxProcessPerTick})
+      : _maxProcessPerTick = maxProcessPerTick;
+
+  final SplayTreeSet<_LinuxPendingNotification> _pendingQueue =
+      SplayTreeSet(_LinuxPendingNotification.compare);
+  final Map<int, _LinuxPendingNotification> _pendingById = {};
+  final int _maxProcessPerTick;
+
+  Timer? _ticker;
+
+  void _cancelPending(int id) {
+    final pending = _pendingById.remove(id);
+    if (pending != null) _pendingQueue.remove(pending);
+  }
+
+  void _ensureTicker() {
+    _ticker ??= Timer.periodic(_tickInterval, (_) => _onTick());
+  }
+
+  void _stopTickerIfIdle() {
+    if (_pendingQueue.isEmpty) {
+      _ticker?.cancel();
+      _ticker = null;
+    }
+  }
+
+  Future<void> _trigger(_LinuxPendingNotification pending) async {
+    try {
+      await plugin.show(
+        pending.data.id,
+        pending.data.title,
+        pending.data.body,
+        pending.details,
+        payload: pending.data.toPayload(),
+      );
+
+      if (pending.data.type == NotificationDataType.appReminder) {
+        final nextDate = pending.scheduledDate.add(const Duration(days: 1));
+        final nextData = NotificationData<String>(
+          id: pending.data.id,
+          title: pending.data.title,
+          body: pending.data.body,
+          type: NotificationDataType.appReminder,
+          channelId: NotificationChannelId.appReminder,
+          scheduledDate: nextDate,
+        );
+        await _scheduleOnce(
+          id: nextData.id,
+          details: pending.details,
+          scheduledDate: nextDate,
+          data: nextData,
+        );
+      }
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$logTag.show",
+          ex: ["linux ticker show failed", pending.data], error: e);
+    }
+  }
+
+  Future<bool> _scheduleOnce({
+    required int id,
+    required NotificationDetails details,
+    required DateTime scheduledDate,
+    required NotificationData data,
+  }) async {
+    final now = AppClock().now();
+    if (scheduledDate.isBefore(now)) return false;
+
+    _cancelPending(id);
+
+    final pending = _LinuxPendingNotification(
+      details: details,
+      data: data,
+      scheduledDate: scheduledDate,
+    );
+
+    _pendingById[id] = pending;
+    _pendingQueue.add(pending);
+
+    _ensureTicker();
+    return true;
+  }
+
+  void _onTick() {
+    final now = AppClock().now();
+    var processed = 0;
+    while (_pendingQueue.isNotEmpty && processed < _maxProcessPerTick) {
+      final next = _pendingQueue.first;
+      if (next.scheduledDate.isAfter(now)) break;
+
+      _pendingQueue.remove(next);
+      _pendingById.remove(next.data.id);
+      _trigger(next);
+      processed++;
+    }
+
+    _stopTickerIfIdle();
+  }
+
   @override
   Future<bool> regrAppReminderInDaily(
-          {required String title,
-          required String subtitle,
-          required TimeOfDay timeOfDay,
-          required NotificationDetails details,
-          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
-      Future.value(false);
+      {required String title,
+      required String subtitle,
+      required TimeOfDay timeOfDay,
+      required NotificationDetails details,
+      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    try {
+      if (_appNotifyConfig
+              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+          false) {
+        return true;
+      }
 
-  /// Plugin doesn't support scheduling on Linux
-  ///
-  /// - Unsupported method: [FlutterLocalNotificationsPlugin.zonedSchedule]
-  ///
-  /// last checked plugin-version: flutter_local_notifications==19.2.0
+      final scheduledDate = nextDailySchedule(timeOfDay, AppClock().now());
+
+      final data = NotificationData<String>(
+        id: appReminderNotifyId,
+        title: title,
+        body: subtitle,
+        type: NotificationDataType.appReminder,
+        channelId: NotificationChannelId.appReminder,
+      );
+
+      final ok = await _scheduleOnce(
+        id: data.id,
+        details: details,
+        scheduledDate: scheduledDate,
+        data: data,
+      );
+
+      appLog.notify.debug("$logTag.regrAppReminderInDaily",
+          ex: [data.id, title, subtitle, scheduledDate, ok]);
+      return ok;
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
+          ex: ["regr app reminder failed"], error: e);
+      return false;
+    }
+  }
+
   @override
   Future<bool> regrHabitReminder<T>(
-          {required DBID id,
-          required HabitUUID uuid,
-          required String name,
-          String? quest,
-          required HabitReminder reminder,
-          required HabitDate? lastUntrackDate,
-          required NotificationDetails details,
-          DateTime? crtDate,
-          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
-      Future.value(false);
+      {required DBID id,
+      required HabitUUID uuid,
+      required String name,
+      String? quest,
+      required HabitReminder reminder,
+      required HabitDate? lastUntrackDate,
+      required NotificationDetails details,
+      DateTime? crtDate,
+      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    try {
+      final scheduledDate = reminder.getNextRemindDate(
+          crtDate: crtDate, lastUntrackDate: lastUntrackDate);
+      if (scheduledDate == null) return false;
+
+      final data = NotificationData<T>(
+        id: id,
+        type: NotificationDataType.habitReminder,
+        title: name,
+        body: quest,
+        channelId: NotificationChannelId.habitReminder,
+        scheduledDate: scheduledDate,
+      );
+
+      final ok = await _scheduleOnce(
+        id: data.id,
+        details: details,
+        scheduledDate: scheduledDate,
+        data: data,
+      );
+
+      appLog.notify.debug("$logTag.regrHabitReminder",
+          ex: [data.id, scheduledDate, uuid, name, quest, ok]);
+      return ok;
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$logTag.regrHabitReminder",
+          ex: ["regr reminder failed"], error: e);
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> cancel({required int id, Duration? timeout}) async {
+    _cancelPending(id);
+    _stopTickerIfIdle();
+    return super.cancel(id: id, timeout: timeout);
+  }
+
+  @override
+  Future<bool> cancelAppReminder({Duration? timeout}) async {
+    _cancelPending(appReminderNotifyId);
+    _stopTickerIfIdle();
+    return super.cancelAppReminder(timeout: timeout);
+  }
+
+  @override
+  Future<bool> cancelHabitReminder(
+      {required DBID id, Duration? timeout}) async {
+    _cancelPending(id);
+    _stopTickerIfIdle();
+    return super.cancelHabitReminder(id: id, timeout: timeout);
+  }
+
+  @override
+  Future<bool> cancelAllHabitReminders({Duration? timeout}) async {
+    final toRemove = _pendingById.values
+        .where((pending) => notifyid.isValidHabitReminderId(pending.data.id))
+        .toList(growable: false);
+    for (final pending in toRemove) {
+      _pendingQueue.remove(pending);
+      _pendingById.remove(pending.data.id);
+    }
+    _stopTickerIfIdle();
+    return super.cancelAllHabitReminders(timeout: timeout);
+  }
+
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final linux = plugin.resolvePlatformSpecificImplementation<
+        LinuxFlutterLocalNotificationsPlugin>();
+    final map = await linux?.getSystemIdMap();
+    if (map == null || map.isEmpty) return const [];
+    return map.entries
+        .map((e) => ActiveNotification(
+            id: e.value, title: 'system:${e.key}', body: null, payload: null))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
+      Future.value(_pendingById.values
+          .map((p) => PendingNotificationRequest(
+                p.data.id,
+                p.data.title,
+                p.data.body,
+                p.data.toPayload(),
+              ))
+          .toList());
+}
+
+class _LinuxPendingNotification {
+  _LinuxPendingNotification({
+    required this.details,
+    required this.data,
+    required this.scheduledDate,
+  });
+
+  final NotificationDetails details;
+  final NotificationData data;
+  final DateTime scheduledDate;
+
+  static int compare(_LinuxPendingNotification a, _LinuxPendingNotification b) {
+    final dateDiff = a.scheduledDate.compareTo(b.scheduledDate);
+    if (dateDiff != 0) return dateDiff;
+    return a.data.id.compareTo(b.data.id);
+  }
 }
 
 /// Use Windows-specific plugin methods for scheduling/canceling
 /// to ensure toast activation works.
 final class WindowsNotificationService extends NotificationServiceImpl {
+  static const _appReminderTickInterval = Duration(seconds: 30);
+
   WindowsNotificationService();
+
+  Timer? _appReminderTicker;
+  bool _appReminderRescheduling = false;
+  _AppReminderRegistration? _appReminder;
 
   FlutterLocalNotificationsWindows get _windowsPlugin =>
       plugin.resolvePlatformSpecificImplementation<
           FlutterLocalNotificationsWindows>()!;
+
+  void _cancelAppReminderTicker() {
+    _appReminderTicker?.cancel();
+    _appReminderTicker = null;
+    _appReminderRescheduling = false;
+    _appReminder = null;
+  }
+
+  void _ensureAppReminderTicker() {
+    _appReminderTicker ??=
+        Timer.periodic(_appReminderTickInterval, (_) => _onAppReminderTick());
+  }
+
+  Future<void> _onAppReminderTick() async {
+    if (_appReminderRescheduling) return;
+    final reminder = _appReminder;
+    final nextTick = reminder?.nextTick;
+    if (reminder == null || nextTick == null) return;
+
+    final now = AppClock().now();
+    if (now.isBefore(nextTick)) return;
+
+    Future<void> rescheduleNextDay() async {
+      await regrAppReminderInDaily(
+        title: reminder.title,
+        subtitle: reminder.subtitle,
+        timeOfDay: reminder.timeOfDay,
+        details: reminder.details,
+        timeout: NotificationServiceImpl.defaultTimeout,
+      );
+    }
+
+    _appReminderRescheduling = true;
+    try {
+      await rescheduleNextDay();
+    } finally {
+      _appReminderRescheduling = false;
+    }
+  }
 
   /// Plugin doesn't fully support scheduling on Windows
   ///
@@ -507,10 +782,24 @@ final class WindowsNotificationService extends NotificationServiceImpl {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily",
-          ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
+      _appReminder = _AppReminderRegistration(
+        title: title,
+        subtitle: subtitle,
+        timeOfDay: timeOfDay,
+        details: details,
+        nextTick: scheduledDate.add(const Duration(minutes: 1)),
+      );
+      _ensureAppReminderTicker();
+
+      appLog.notify.debug("$logTag.regrAppReminderInDaily", ex: [
+        appReminderNotifyId,
+        title,
+        subtitle,
+        scheduledDate,
+        _appReminder?.nextTick
+      ]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -576,6 +865,29 @@ final class WindowsNotificationService extends NotificationServiceImpl {
 
     return true;
   }
+
+  @override
+  Future<bool> cancelAppReminder(
+      {Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    _cancelAppReminderTicker();
+    return super.cancelAppReminder(timeout: timeout);
+  }
+}
+
+class _AppReminderRegistration {
+  const _AppReminderRegistration({
+    required this.title,
+    required this.subtitle,
+    required this.timeOfDay,
+    required this.details,
+    this.nextTick,
+  });
+
+  final String title;
+  final String subtitle;
+  final TimeOfDay timeOfDay;
+  final NotificationDetails details;
+  final DateTime? nextTick;
 }
 
 final class FakeNotificationService implements NotificationService {
