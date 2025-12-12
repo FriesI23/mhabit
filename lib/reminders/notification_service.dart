@@ -321,10 +321,10 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily",
+      appLog.notify.debug("$logTag.regrAppReminderInDaily",
           ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -467,7 +467,6 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         payload: pending.data.toPayload(),
       );
 
-      // Re-register app reminder for next day to mimic daily match behavior.
       if (pending.data.type == NotificationDataType.appReminder) {
         final nextDate = pending.scheduledDate.add(const Duration(days: 1));
         final nextData = NotificationData<String>(
@@ -478,7 +477,7 @@ final class LinuxNotificationService extends NotificationServiceImpl {
           channelId: NotificationChannelId.appReminder,
           scheduledDate: nextDate,
         );
-        _scheduleOnce(
+        await _scheduleOnce(
           id: nextData.id,
           details: pending.details,
           scheduledDate: nextDate,
@@ -562,11 +561,11 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         data: data,
       );
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily",
+      appLog.notify.debug("$logTag.regrAppReminderInDaily",
           ex: [data.id, title, subtitle, scheduledDate, ok]);
       return ok;
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -617,12 +616,14 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   @override
   Future<bool> cancel({required int id, Duration? timeout}) async {
     _cancelPending(id);
+    _stopTickerIfIdle();
     return super.cancel(id: id, timeout: timeout);
   }
 
   @override
   Future<bool> cancelAppReminder({Duration? timeout}) async {
     _cancelPending(appReminderNotifyId);
+    _stopTickerIfIdle();
     return super.cancelAppReminder(timeout: timeout);
   }
 
@@ -630,6 +631,7 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   Future<bool> cancelHabitReminder(
       {required DBID id, Duration? timeout}) async {
     _cancelPending(id);
+    _stopTickerIfIdle();
     return super.cancelHabitReminder(id: id, timeout: timeout);
   }
 
@@ -789,7 +791,7 @@ final class WindowsNotificationService extends NotificationServiceImpl {
       );
       _ensureAppReminderTicker();
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily", ex: [
+      appLog.notify.debug("$logTag.regrAppReminderInDaily", ex: [
         appReminderNotifyId,
         title,
         subtitle,
@@ -797,7 +799,7 @@ final class WindowsNotificationService extends NotificationServiceImpl {
         _appReminder?.nextTick
       ]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regrAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -886,16 +888,6 @@ class _AppReminderRegistration {
   final TimeOfDay timeOfDay;
   final NotificationDetails details;
   final DateTime? nextTick;
-
-  _AppReminderRegistration copyWith({DateTime? nextTick}) {
-    return _AppReminderRegistration(
-      title: title,
-      subtitle: subtitle,
-      timeOfDay: timeOfDay,
-      details: details,
-      nextTick: nextTick ?? this.nextTick,
-    );
-  }
 }
 
 final class FakeNotificationService implements NotificationService {
