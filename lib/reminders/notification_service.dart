@@ -425,7 +425,8 @@ final class NotificationServiceImpl implements NotificationService {
   }
 }
 
-// TODO: Some features are missing on Linux platform
+/// Linux relies on in-process polling (plugin lacks native scheduling),
+/// keeping an ordered queue and firing notifications on each tick.
 final class LinuxNotificationService extends NotificationServiceImpl {
   static const _defaultMaxProcessPerTick = 16;
   static const _tickInterval = Duration(seconds: 1);
