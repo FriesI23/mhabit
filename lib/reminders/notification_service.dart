@@ -466,6 +466,25 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         pending.details,
         payload: pending.data.toPayload(),
       );
+
+      // Re-register app reminder for next day to mimic daily match behavior.
+      if (pending.data.type == NotificationDataType.appReminder) {
+        final nextDate = pending.scheduledDate.add(const Duration(days: 1));
+        final nextData = NotificationData<String>(
+          id: pending.data.id,
+          title: pending.data.title,
+          body: pending.data.body,
+          type: NotificationDataType.appReminder,
+          channelId: NotificationChannelId.appReminder,
+          scheduledDate: nextDate,
+        );
+        _scheduleOnce(
+          id: nextData.id,
+          details: pending.details,
+          scheduledDate: nextDate,
+          data: nextData,
+        );
+      }
     } on PlatformException catch (e) {
       appLog.notify.warn("$logTag.show",
           ex: ["linux ticker show failed", pending.data], error: e);
