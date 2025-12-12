@@ -625,6 +625,29 @@ final class LinuxNotificationService extends NotificationServiceImpl {
     _stopTickerIfIdle();
     return super.cancelAllHabitReminders(timeout: timeout);
   }
+
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final linux = plugin.resolvePlatformSpecificImplementation<
+        LinuxFlutterLocalNotificationsPlugin>();
+    final map = await linux?.getSystemIdMap();
+    if (map == null || map.isEmpty) return const [];
+    return map.entries
+        .map((e) => ActiveNotification(
+            id: e.value, title: 'system:${e.key}', body: null, payload: null))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
+      Future.value(_pendingById.values
+          .map((p) => PendingNotificationRequest(
+                p.data.id,
+                p.data.title,
+                p.data.body,
+                p.data.toPayload(),
+              ))
+          .toList());
 }
 
 class _LinuxPendingNotification {
