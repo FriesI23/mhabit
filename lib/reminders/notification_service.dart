@@ -691,11 +691,56 @@ class _LinuxPendingNotification {
 /// Use Windows-specific plugin methods for scheduling/canceling
 /// to ensure toast activation works.
 final class WindowsNotificationService extends NotificationServiceImpl {
+  static const _appReminderTickInterval = Duration(seconds: 30);
+
   WindowsNotificationService();
+
+  Timer? _appReminderTicker;
+  bool _appReminderRescheduling = false;
+  _AppReminderRegistration? _appReminder;
 
   FlutterLocalNotificationsWindows get _windowsPlugin =>
       plugin.resolvePlatformSpecificImplementation<
           FlutterLocalNotificationsWindows>()!;
+
+  void _cancelAppReminderTicker() {
+    _appReminderTicker?.cancel();
+    _appReminderTicker = null;
+    _appReminderRescheduling = false;
+    _appReminder = null;
+  }
+
+  void _ensureAppReminderTicker() {
+    _appReminderTicker ??=
+        Timer.periodic(_appReminderTickInterval, (_) => _onAppReminderTick());
+  }
+
+  Future<void> _onAppReminderTick() async {
+    if (_appReminderRescheduling) return;
+    final reminder = _appReminder;
+    final nextTick = reminder?.nextTick;
+    if (reminder == null || nextTick == null) return;
+
+    final now = AppClock().now();
+    if (now.isBefore(nextTick)) return;
+
+    Future<void> rescheduleNextDay() async {
+      await regrAppReminderInDaily(
+        title: reminder.title,
+        subtitle: reminder.subtitle,
+        timeOfDay: reminder.timeOfDay,
+        details: reminder.details,
+        timeout: NotificationServiceImpl.defaultTimeout,
+      );
+    }
+
+    _appReminderRescheduling = true;
+    try {
+      await rescheduleNextDay();
+    } finally {
+      _appReminderRescheduling = false;
+    }
+  }
 
   /// Plugin doesn't fully support scheduling on Windows
   ///
@@ -735,8 +780,22 @@ final class WindowsNotificationService extends NotificationServiceImpl {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regreAppReminderInDaily",
-          ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
+      _appReminder = _AppReminderRegistration(
+        title: title,
+        subtitle: subtitle,
+        timeOfDay: timeOfDay,
+        details: details,
+        nextTick: scheduledDate.add(const Duration(minutes: 1)),
+      );
+      _ensureAppReminderTicker();
+
+      appLog.notify.debug("$logTag.regreAppReminderInDaily", ex: [
+        appReminderNotifyId,
+        title,
+        subtitle,
+        scheduledDate,
+        _appReminder?.nextTick
+      ]);
     } on PlatformException catch (e) {
       appLog.notify.warn("$logTag.regreAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
@@ -803,6 +862,39 @@ final class WindowsNotificationService extends NotificationServiceImpl {
     }
 
     return true;
+  }
+
+  @override
+  Future<bool> cancelAppReminder(
+      {Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    _cancelAppReminderTicker();
+    return super.cancelAppReminder(timeout: timeout);
+  }
+}
+
+class _AppReminderRegistration {
+  const _AppReminderRegistration({
+    required this.title,
+    required this.subtitle,
+    required this.timeOfDay,
+    required this.details,
+    this.nextTick,
+  });
+
+  final String title;
+  final String subtitle;
+  final TimeOfDay timeOfDay;
+  final NotificationDetails details;
+  final DateTime? nextTick;
+
+  _AppReminderRegistration copyWith({DateTime? nextTick}) {
+    return _AppReminderRegistration(
+      title: title,
+      subtitle: subtitle,
+      timeOfDay: timeOfDay,
+      details: details,
+      nextTick: nextTick ?? this.nextTick,
+    );
   }
 }
 
