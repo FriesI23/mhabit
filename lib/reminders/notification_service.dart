@@ -14,6 +14,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -99,8 +100,22 @@ final class NotificationServiceImpl implements NotificationService {
   static const defaultTimeout = Duration(seconds: 2);
 
   AppNotifyConfig? _appNotifyConfig;
+  late final String _logTag;
 
-  NotificationServiceImpl();
+  String get logTag => _logTag;
+
+  NotificationServiceImpl() {
+    _logTag = runtimeType.toString(); // capture concrete runtime type once
+  }
+
+  @protected
+  DateTime nextDailySchedule(TimeOfDay timeOfDay, DateTime now) {
+    final baseDate = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final isNearToday =
+        now.isAfter(baseDate) || now.difference(baseDate).inSeconds.abs() <= 5;
+    return isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
+  }
 
   @override
   void onAppNotiConfigUpdate(AppNotifyConfig? config) =>
@@ -255,10 +270,10 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$runtimeType.show", ex: [appReminderNotifyId, data]);
+      appLog.notify.debug("$logTag.show", ex: [appReminderNotifyId, data]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$runtimeType.show",
-          ex: ["show notification failed"], error: e);
+      appLog.notify
+          .warn("$logTag.show", ex: ["show notification failed"], error: e);
       return false;
     }
     return true;
@@ -282,13 +297,14 @@ final class NotificationServiceImpl implements NotificationService {
       required NotificationDetails details,
       Duration? timeout = defaultTimeout}) async {
     try {
+      if (_appNotifyConfig
+              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+          false) {
+        return true;
+      }
+
       final now = AppClock().now();
-      final baseDate = DateTime(
-          now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
-      final isNearToday = now.isAfter(baseDate) ||
-          now.difference(baseDate).inSeconds.abs() <= 5;
-      final scheduledDate =
-          isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
+      final scheduledDate = nextDailySchedule(timeOfDay, now);
 
       final future = plugin.zonedSchedule(
         appReminderNotifyId,
@@ -303,10 +319,10 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$runtimeType.regreAppReminderInDaily",
+      appLog.notify.debug("$logTag.regreAppReminderInDaily",
           ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$runtimeType.regreAppReminderInDaily",
+      appLog.notify.warn("$logTag.regreAppReminderInDaily",
           ex: ["regr app reminder failed"], error: e);
       return false;
     }
@@ -361,10 +377,10 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$runtimeType.regrHabitReminder",
+      appLog.notify.debug("$logTag.regrHabitReminder",
           ex: [data.id, scheduledDate, uuid, name, quest, data]);
     } on PlatformException catch (e) {
-      appLog.notify.warn("$runtimeType.regrHabitReminder",
+      appLog.notify.warn("$logTag.regrHabitReminder",
           ex: ["regr reminder failed"], error: e);
       return false;
     }
@@ -444,28 +460,65 @@ final class LinuxNotificationService extends NotificationServiceImpl {
       Future.value(false);
 }
 
-// TODO: Some features are missing on Windows platform
+/// Use Windows-specific plugin methods for scheduling/canceling
+/// to ensure toast activation works.
 final class WindowsNotificationService extends NotificationServiceImpl {
   WindowsNotificationService();
 
-  /// Plugin doesn't support scheduling on Windows
+  FlutterLocalNotificationsWindows get _windowsPlugin =>
+      plugin.resolvePlatformSpecificImplementation<
+          FlutterLocalNotificationsWindows>()!;
+
+  /// Plugin doesn't fully support scheduling on Windows
+  ///
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
   /// - [id] on [FlutterLocalNotificationsPlugin.zonedSchedule] be implemented
   ///   as a tag in Windows FFI, which causes messages with same [id] can be
   ///   registered multiple times.
   ///
-  /// last checked plugin-version: flutter_local_notifications==19.2.0
+  /// Override uses Windows plugin APIs and pre-cancel to avoid duplicate tags.
   @override
   Future<bool> regrAppReminderInDaily(
-          {required String title,
-          required String subtitle,
-          required TimeOfDay timeOfDay,
-          required NotificationDetails details,
-          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
-      Future.value(false);
+      {required String title,
+      required String subtitle,
+      required TimeOfDay timeOfDay,
+      required NotificationDetails details,
+      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    try {
+      if (_appNotifyConfig
+              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+          false) {
+        return true;
+      }
 
-  /// Plugin doesn't support scheduling on Windows
+      final scheduledDate = nextDailySchedule(timeOfDay, AppClock().now());
+
+      await cancel(id: appReminderNotifyId, timeout: timeout);
+
+      final future = _windowsPlugin.zonedSchedule(
+        appReminderNotifyId,
+        title,
+        subtitle,
+        tz.TZDateTime.from(scheduledDate, tz.local),
+        details.windows,
+      );
+      timeout == null
+          ? await future
+          : await future.timeout(timeout, onTimeout: () => null);
+
+      appLog.notify.debug("$logTag.regreAppReminderInDaily",
+          ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$logTag.regreAppReminderInDaily",
+          ex: ["regr app reminder failed"], error: e);
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Plugin doesn't fully support scheduling on Windows
   ///
   /// - Unsupported option arg [matchDateTimeComponents] on
   ///   [FlutterLocalNotificationsPlugin.zonedSchedule]
@@ -473,19 +526,56 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   ///   as a tag in Windows FFI, which causes messages with same [id] can be
   ///   registered multiple times.
   ///
-  /// last checked plugin-version: flutter_local_notifications==19.2.0
+  /// Override uses Windows plugin APIs and pre-cancel to avoid duplicate tags.
   @override
   Future<bool> regrHabitReminder<T>(
-          {required DBID id,
-          required HabitUUID uuid,
-          required String name,
-          String? quest,
-          required HabitReminder reminder,
-          required HabitDate? lastUntrackDate,
-          required NotificationDetails details,
-          DateTime? crtDate,
-          Duration? timeout = NotificationServiceImpl.defaultTimeout}) =>
-      Future.value(false);
+      {required DBID id,
+      required HabitUUID uuid,
+      required String name,
+      String? quest,
+      required HabitReminder reminder,
+      required HabitDate? lastUntrackDate,
+      required NotificationDetails details,
+      DateTime? crtDate,
+      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+    try {
+      final scheduledDate = reminder.getNextRemindDate(
+          crtDate: crtDate, lastUntrackDate: lastUntrackDate);
+      if (scheduledDate == null) return false;
+
+      final data = NotificationData<T>(
+        id: id,
+        type: NotificationDataType.habitReminder,
+        title: name,
+        body: quest,
+        channelId: NotificationChannelId.habitReminder,
+        scheduledDate: scheduledDate,
+      );
+
+      await cancel(id: id, timeout: timeout);
+
+      final future = _windowsPlugin.zonedSchedule(
+        data.id,
+        data.title,
+        data.body,
+        tz.TZDateTime.from(scheduledDate, tz.local),
+        details.windows,
+        payload: data.toPayload(),
+      );
+      timeout == null
+          ? await future
+          : await future.timeout(timeout, onTimeout: () => null);
+
+      appLog.notify.debug("$logTag.regrHabitReminder",
+          ex: [data.id, scheduledDate, uuid, name, quest, data]);
+    } on PlatformException catch (e) {
+      appLog.notify.warn("$logTag.regrHabitReminder",
+          ex: ["regr reminder failed"], error: e);
+      return false;
+    }
+
+    return true;
+  }
 }
 
 final class FakeNotificationService implements NotificationService {
