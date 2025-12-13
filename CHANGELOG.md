@@ -2,9 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.22.4+131-pre
+## 1.22.5+132-pre
 
 - Feature: Add Custom Theme Color (#447)
+- Add Windows reminder support and enable repeated reminders (#450)
+- Add Linux reminder support and enable repeated reminders (#453)
+- WebDAV sync can create missing root folders recursively and show decoded paths (#454)
 - Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate (#446)
 - Add Ukrainian F-Droid/Google description translation, thanks to Максим Горпиніч's contribution on Weblate (#446)
 - Preparing to publish on Microsoft Store (#444)
