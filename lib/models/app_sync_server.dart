@@ -276,7 +276,7 @@ class AppWebDavSyncServer implements AppSyncServer {
 
   @override
   @JsonKey()
-  String get name => path.toString();
+  String get name => Uri.decodeFull(path.toString());
 
   @override
   bool isSameConfig(AppSyncServer other, {bool withoutPassword = false}) {
@@ -312,7 +312,7 @@ class AppWebDavSyncServer implements AppSyncServer {
   @override
   AppSyncServerForm toForm() => WebDavSyncServerForm(
       uuid: identity,
-      path: path.toString(),
+      path: name,
       username: username,
       password: password,
       ignoreSSL: ignoreSSL,

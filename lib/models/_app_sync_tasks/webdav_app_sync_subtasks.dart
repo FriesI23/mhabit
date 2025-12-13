@@ -400,6 +400,44 @@ class MkDirOnServerTask implements AppSyncSubTask<void> {
       });
 }
 
+class RecursiveMkDirOnServerTask implements AppSyncSubTask<void> {
+  final Uri path;
+  final WebDavStdClient client;
+  final int maxDepth;
+
+  const RecursiveMkDirOnServerTask(
+      {required this.path, required this.client, this.maxDepth = 5})
+      : assert(maxDepth > 0);
+
+  List<String> _normalizedSegments() =>
+      path.pathSegments.where((segment) => segment.isNotEmpty).toList();
+
+  Uri _segmentUri(List<String> segments, int endInclusive) {
+    final uri = path.replace(
+        pathSegments: segments.take(endInclusive + 1).toList(),
+        query: null,
+        fragment: null);
+    final normalizedPath = uri.path.endsWith('/') ? uri.path : "${uri.path}/";
+    return uri.replace(path: normalizedPath);
+  }
+
+  @override
+  Future<void> run(AppSyncContext context) async {
+    final segments = _normalizedSegments();
+    if (segments.isEmpty) return;
+    if (segments.length > maxDepth) {
+      throw StateError(
+          "WebDAV mkdir depth ${segments.length} exceeds maxDepth $maxDepth for $path");
+    }
+
+    for (var i = 0; i < segments.length; i++) {
+      if (context.isCancalling) return;
+      final segmentUri = _segmentUri(segments, i);
+      await MkDirOnServerTask(path: segmentUri, client: client).run(context);
+    }
+  }
+}
+
 class UploadDataToServerTask implements AppSyncSubTask<String?> {
   final Uri path;
   final String data;

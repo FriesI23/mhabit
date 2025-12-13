@@ -102,11 +102,13 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
           count = 0;
           return false;
         }
+        final baseUri =
+            config.path.replace(path: '', query: null, fragment: null);
         if (scheme == "Digest") {
-          client.addCredentials(config.path, realm ?? '',
+          client.addCredentials(baseUri, realm ?? '',
               HttpClientDigestCredentials(config.username, config.password));
         } else {
-          client.addCredentials(config.path, realm ?? '',
+          client.addCredentials(baseUri, realm ?? '',
               HttpClientBasicCredentials(config.username, config.password));
         }
         return true;
@@ -430,7 +432,8 @@ Proceed with caution!
               filter: (resource) =>
                   (resource..tryToRaiseError()).path.path != rootDir.path,
             )),
-        createRootDir: MkDirOnServerTask(path: rootDir, client: client),
+        createRootDir: RecursiveMkDirOnServerTask(
+            path: rootDir, client: client, maxDepth: 10),
         createHabitsDir: MkDirOnServerTask(path: habitsDir, client: client),
         createWarningFile: UploadDataToServerTask(
             path: warningFile,
