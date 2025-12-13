@@ -1,9 +1,7 @@
 - 功能：添加自定义主题颜色 (#447)
-- 添加 Windows 提醒支持并启动每日提醒 (#450)
-- 添加 Linux 提醒支持并启用重复提醒 (#453)
-- WebDAV 同步可以递归创建缺失的根文件夹并显示解码后的路径 (#454)
-- 更新乌克兰语翻译，感谢 Максим Горпиніч 在 Weblate 的贡献 (#446)
-- 添加乌克兰语 F-Droid/Google 描述翻译，感谢 Максим Горпініч 在 Weblate 的贡献 (#446)
-- 为在 Microsoft Store 上发布准备 (#444)
-- 为 MSIX 添加多语言支持 (#448)
-- 添加 `Fastlane:android:update_play_store` 任务，可使用可选参数
+- 支持 Windows 与 Linux 提醒，并可重复提醒 (#450, #453)
+- WebDAV 同步可递归创建缺失的根文件夹并显示解码路径 (#454)
+- 更新乌克兰语翻译及 F-Droid/Google 描述 (#446)
+- 准备发布至 Microsoft Store，并为 MSIX 添加多语言支持 (#444, #448)
+- 添加 `Fastlane:android:update_play_store` 流程，可选参数
+- 更新 README (#445)
