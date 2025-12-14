@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.22.5+132-pre
+## 1.22.6+133
 
 - Feature: Add Custom Theme Color (#447)
 - Add Windows reminder support and enable repeated reminders (#450)
