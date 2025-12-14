@@ -1,0 +1,7 @@
+- Feature: Add Custom Theme Color (#447)
+- Windows & Linux reminder support with repeated reminders (#450, #453)
+- WebDAV sync creates missing root folders & shows decoded paths (#454)
+- Updated Ukrainian translations & F-Droid/Google description (#446)
+- Prepare Microsoft Store publish & add multi-language support to MSIX (#444, #448)
+- Add `Fastlane:android:update_play_store` lane with optional params
+- Update README (#445)
