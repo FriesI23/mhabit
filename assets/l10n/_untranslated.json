@@ -2098,18 +2098,6 @@
     "common_appThemeColor_dynamic"
   ],
 
-  "uk": [
-    "appSetting_appThemeColorTile_titleText",
-    "appSetting_appThemeColorChosenDiloag_titleText",
-    "appSetting_appThemeColorChosenDialog_subTitleText_android",
-    "appSetting_appThemeColorChosenDialog_subTitleText_linux",
-    "appSetting_appThemeColorChosenDialog_subTitleText_macos",
-    "appSetting_appThemeColorChosenDialog_subTitleText_windows",
-    "common_appThemeColor_system",
-    "common_appThemeColor_primary",
-    "common_appThemeColor_dynamic"
-  ],
-
   "vi": [
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
