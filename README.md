@@ -92,7 +92,7 @@ please submit files to the `docs/wiki` folder and open a PR.
 Once merged, an automated CI process will sync changes to the [wiki][wiki].
 
 When contribute code to this project, please try to follow
-[this][style-guide-for-flutter] guideline.
+[this](https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md) guideline.
 
 ## Donate
 
