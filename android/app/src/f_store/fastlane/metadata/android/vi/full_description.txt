@@ -1,0 +1,14 @@
+"Table Habit" là một ứng dụng giúp bạn thiết lập và theo dõi thói quen vi mô của riêng mình. Nó bao gồm một bộ đầy đủ các đường cong và biểu đồ phát triển để giúp bạn thiết lập thói quen hiệu quả hơn.
+
+Hơn nữa, ứng dụng này hoàn toàn là mã nguồn mở và bao gồm các tính năng bên dưới:
+
+- Hệ thống tính điểm giúp phát triển các thói quen vi mô của riêng bạn.
+- Hỗ trợ cả thói quen tích cực và tiêu cực.
+- Giao diện dễ sử dụng để kiểm tra thói quen.
+- Tìm kiếm và lọc nhanh để giúp nhanh chóng tìm thấy những thói quen trong quá khứ.
+- Màu sắc khác nhau được sử dụng để phân biệt giữa các thói quen khác nhau.
+- Dễ dàng xuất và nhập thói quen bằng định dạng con người có thể đọc được (JSON).
+- Thích ứng với `Material3` và `Dynamic Color` dành cho Android 12 trở lên.
+- Thích ứng cho phong cảnh và các thiết bị màn hình lớn.
+- Hỗ trợ đồng bộ mạng với WebDAV.
+- Không có quảng cáo trong ứng dụng này.
