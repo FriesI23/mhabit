@@ -92,7 +92,7 @@ please submit files to the `docs/wiki` folder and open a PR.
 Once merged, an automated CI process will sync changes to the [wiki][wiki].
 
 When contribute code to this project, please try to follow
-[this](https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md) guideline.
+[this][style-guide-for-flutter] guideline.
 
 ## Donate
 
@@ -182,7 +182,7 @@ limitations under the License.
 [eth-addr]: https://etherscan.io/address/0x35FC877Ef0234FbeABc51ad7fC64D9c1bE161f8F
 [btc-badge]: https://img.shields.io/badge/Bitcoin-000000?style=for-the-badge&logo=bitcoin&logoColor=white
 [btc-addr]: https://blockchair.com/bitcoin/address/bc1qz2vjews2fcscmvmcm5ctv47mj6236x9p26zk49
-[style-guide-for-flutter]: https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo
+[style-guide-for-flutter]: https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md
 [weblate-badge]: https://hosted.weblate.org/widget/mhabit/app-view/svg-badge.svg
 [weblate]: https://hosted.weblate.org/projects/mhabit/
 [weblate-engage-badge]: https://hosted.weblate.org/widget/mhabit/app-view/multi-auto.svg
