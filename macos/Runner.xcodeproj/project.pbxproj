@@ -118,6 +118,9 @@
 		D91BB4D52DAE351C00E91D6C /* dev-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "dev-InfoPlist.strings"; path = "zh-Hans.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D72DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "en.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D82DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "zh-Hans.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9B660252F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9B660262F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9B660272F06A14100E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CC92EDC72580006DF01 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = "ar.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CCA2EDC72590006DF01 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = "ar.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CCB2EDC72590006DF01 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = "ar.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -422,6 +425,7 @@
 				uk,
 				vi,
 				zh,
+				hu,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
@@ -628,6 +632,7 @@
 				D9D35CF52EDC73030006DF01 /* uk */,
 				D9D35CF82EDC73090006DF01 /* vi */,
 				D9D35CFB2EDC73350006DF01 /* zh */,
+				D9B660272F06A14100E2373D /* hu */,
 			);
 			name = "store-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -654,6 +659,7 @@
 				D9D35CF32EDC73020006DF01 /* uk */,
 				D9D35CF62EDC73090006DF01 /* vi */,
 				D9D35CF92EDC73340006DF01 /* zh */,
+				D9B660252F06A14000E2373D /* hu */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -680,6 +686,7 @@
 				D9D35CF42EDC73030006DF01 /* uk */,
 				D9D35CF72EDC73090006DF01 /* vi */,
 				D9D35CFA2EDC73350006DF01 /* zh */,
+				D9B660262F06A14000E2373D /* hu */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";
