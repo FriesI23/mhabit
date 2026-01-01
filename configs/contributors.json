@@ -187,7 +187,13 @@
                 "url": "https://github.com/PavloPogonets"
             }
         ],
-        "vi": [ 4 ],
+        "vi": [
+            4,
+            {
+                "name": "Loc Huynh",
+                "email": "huynhloc.contact@gmail.com"
+            }
+        ],
         "zh": [ 1 ],
         "zh-hant": [
             {
