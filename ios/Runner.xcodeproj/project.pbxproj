@@ -66,6 +66,8 @@
 		D91BB4B12DABBEDD00E91D6C /* dev-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "dev-InfoPlist.strings"; path = "zh-Hans.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D963FEBE2DD0807500FA68EF /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = "he.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D963FEBF2DD0807800FA68EF /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = "he.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9B660282F06A19900E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		D9B660292F06A19900E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CC72EDC70800006DF01 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D35CC82EDC70810006DF01 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9D3E9AB2DCDEDB500446A23 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = "fr.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				"zh-Hans",
 				Base,
 				ja,
+				hu,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
@@ -416,6 +419,7 @@
 				D9D3E9BF2DCDEFA100446A23 /* vi */,
 				D963FEBE2DD0807500FA68EF /* he */,
 				D9D35CC72EDC70800006DF01 /* ja */,
+				D9B660282F06A19900E2373D /* hu */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -443,6 +447,7 @@
 				D9D3E9CA2DCDEFB100446A23 /* vi */,
 				D963FEBF2DD0807800FA68EF /* he */,
 				D9D35CC82EDC70810006DF01 /* ja */,
+				D9B660292F06A19900E2373D /* hu */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";
