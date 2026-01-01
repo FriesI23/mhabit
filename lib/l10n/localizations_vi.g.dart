@@ -80,7 +80,7 @@ class L10nVi extends L10n {
   String get habitEdit_frequencySelector_title => 'Chọn tần suất';
 
   @override
-  String get habitEdit_habitFreq_daily => 'Hằng ngày';
+  String get habitEdit_habitFreq_daily => 'Hàng ngày';
 
   @override
   String get habitEdit_habitFreq_perweek => '';
@@ -107,14 +107,14 @@ class L10nVi extends L10n {
   String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
 
   @override
-  String get habitEdit_habitFreq_show_daily => 'Hằng ngày';
+  String get habitEdit_habitFreq_show_daily => 'Hàng ngày';
 
   @override
   String habitEdit_habitFreq_show_perweek(int freq) {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per week',
+      other: 'At least $freq lần mỗi tuần',
       one: 'Per week',
     );
     return '$_temp0';
@@ -125,7 +125,7 @@ class L10nVi extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times per month',
+      other: 'At least $freq lần mỗi tháng',
       one: 'Per month',
     );
     return '$_temp0';
@@ -136,8 +136,8 @@ class L10nVi extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       freq,
       locale: localeName,
-      other: 'At least $freq times in every $days days',
-      one: 'In every $days days',
+      other: 'At least $freq lần trong mỗi $days ngày',
+      one: 'In every $days ngày',
     );
     return '$_temp0';
   }
@@ -154,7 +154,7 @@ class L10nVi extends L10n {
   String get habitEdit_targetDays => 'ngày';
 
   @override
-  String get habitEdit_reminder_hintText => 'Lời nhắc nhở';
+  String get habitEdit_reminder_hintText => 'Nhắc nhở';
 
   @override
   String get habitEdit_reminder_freq_weekHelpText => 'Bất kỳ ngày nào trong tuần';
@@ -184,7 +184,7 @@ class L10nVi extends L10n {
   String get habitEdit_reminder_dialogType_whenNeeded => 'Khi cần đánh dấu';
 
   @override
-  String get habitEdit_reminder_dialogType_daily => 'Hằng ngày';
+  String get habitEdit_reminder_dialogType_daily => 'Hàng ngày';
 
   @override
   String get habitEdit_reminder_dialogType_week => 'Mỗi tuần';
@@ -247,11 +247,11 @@ class L10nVi extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'Hành trình vạn dặm bắt đầu từ một bước chân';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 => 'Không tìm thấy thói quen phù hợp';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'Không thói quen phù hợp cho \"$keyword\"';
   }
 
   @override
@@ -298,7 +298,7 @@ class L10nVi extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Đã xóa thói quen: \"$name\"';
   }
 
   @override
@@ -306,14 +306,14 @@ class L10nVi extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Exported $count habits.',
+      other: 'Exported $count thói quen.',
       one: 'Exported habit.',
     );
     return '$_temp0';
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Đã xuất tất cả thói quen';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Chọn tất cả';
@@ -325,10 +325,10 @@ class L10nVi extends L10n {
   String get habitDisplay_editPopMenu_delete => 'Xóa';
 
   @override
-  String get habitDisplay_editPopMenu_clone => 'Bản mẫu';
+  String get habitDisplay_editPopMenu_clone => 'Mẫu';
 
   @override
-  String get habitDisplay_editButton_tooltip => 'Biên tập';
+  String get habitDisplay_editButton_tooltip => 'Chỉnh sửa';
 
   @override
   String get habitDisplay_archiveButton_tooltip => 'Lưu trữ';
@@ -343,7 +343,7 @@ class L10nVi extends L10n {
   String get habitDisplay_statsMenu_statSubgroupText => 'Hiện tại';
 
   @override
-  String get habitDisplay_statsMenu_completedTileText => 'Hoàn thành';
+  String get habitDisplay_statsMenu_completedTileText => 'Đã hoàn thành';
 
   @override
   String get habitDisplay_statsMenu_inProgresTileText => 'Trong tiến trình';
@@ -373,7 +373,7 @@ class L10nVi extends L10n {
   String get habitDisplay_mainMenu_showActivedTileText => 'Hiển thị đã kích hoạt';
 
   @override
-  String get habitDisplay_mainMenu_settingTileText => 'Thiết đặt';
+  String get habitDisplay_mainMenu_settingTileText => 'Cài đặt';
 
   @override
   String get habitDisplay_sort_reverseText => 'Đảo ngược';
@@ -415,28 +415,28 @@ class L10nVi extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Gỡ lỗi';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Thói quen tìm kiếm';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'Đang thực hiện';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc => 'Hiển thị các thói quen hiện đang hoạt động và đang diễn ra (không được lưu trữ hoặc xóa).';
 
   @override
-  String get habitDisplay_searchFilter_completed => 'Hoàn thành';
+  String get habitDisplay_searchFilter_completed => 'Đã hoàn thành';
 
   @override
   String get habitDisplay_searchFilter_habitType_groupTitle => 'Loại thói quen';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Hiển thị bộ lọc';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Xóa bộ lọc';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Thói quen';
 
   @override
   String get habitDisplay_tab_today_label => 'Hôm nay';
@@ -449,17 +449,17 @@ class L10nVi extends L10n {
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return 'Duy trì nó trong $days ngày';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Xong+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Bỏ qua+';
 
   @override
-  String get habitDetail_editButton_tooltip => 'Biên tập';
+  String get habitDetail_editButton_tooltip => 'Chỉnh sửa';
 
   @override
   String get habitDetail_editPopMenu_unarchive => 'Hủy lưu trữ';
@@ -474,7 +474,7 @@ class L10nVi extends L10n {
   String get habitDetail_editPopMenu_delete => 'Xóa';
 
   @override
-  String get habitDetail_editPopMenu_clone => 'Bản mẫu';
+  String get habitDetail_editPopMenu_clone => 'Mẫu';
 
   @override
   String get habitDetail_confirmDialog_confirm => 'xác nhận';
@@ -492,7 +492,7 @@ class L10nVi extends L10n {
   String get habitDetail_deleteConfirmDialog_titleText => 'Xóa thói quen?';
 
   @override
-  String get habitDetail_summary_title => 'Bản tóm tắt';
+  String get habitDetail_summary_title => 'Tóm tắt';
 
   @override
   String habitDetail_summary_body(String score, int days) {
@@ -504,7 +504,7 @@ class L10nVi extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       days,
       locale: localeName,
-      other: 'Start in $days days.',
+      other: 'Start in $days ngày.',
       one: 'Starting tomorrow.',
     );
     return '$_temp0';
@@ -567,7 +567,7 @@ class L10nVi extends L10n {
   String get habitDetail_descTargetDays_unitText => 'd';
 
   @override
-  String get habitDetail_descRecordsNum_titleText => 'Hồ sơ';
+  String get habitDetail_descRecordsNum_titleText => 'Bản ghi';
 
   @override
   String get habitDetail_scoreChart_title => 'Điểm';
@@ -618,10 +618,10 @@ class L10nVi extends L10n {
   String get habitDetail_otherSubgroup_title => 'Khác';
 
   @override
-  String get habitDetail_habitType_title => 'Kiểu';
+  String get habitDetail_habitType_title => 'Loại';
 
   @override
-  String get habitDetail_reminderTile_title => 'Lời nhắc nhở';
+  String get habitDetail_reminderTile_title => 'Nhắc nhở';
 
   @override
   String get habitDetail_freqTile_title => 'Lặp lại';
@@ -695,10 +695,10 @@ class L10nVi extends L10n {
   String get habitDetail_skipReason_saveText => 'lưu';
 
   @override
-  String get appSetting_appbar_titleText => 'Thiết đặt';
+  String get appSetting_appbar_titleText => 'Cài đặt';
 
   @override
-  String get appSetting_displaySubgroupText => 'Hiển thị';
+  String get appSetting_displaySubgroupText => 'Màn hình';
 
   @override
   String get appSetting_operationSubgroupText => 'Vận hành';
@@ -707,7 +707,7 @@ class L10nVi extends L10n {
   String get appSetting_dragCalendarByPageTile_titleText => 'Kéo lịch theo trang';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Nếu nút chuyển được bật, lịch thanh ứng dụng trên trang chủ sẽ được kéo theo trang. Theo mặc định, nút chuyển bị tắt.';
+  String get appSetting_dragCalendarByPageTile_subtitleText => 'Nếu nút chuyển đã bật, lịch thanh ứng dụng trên trang chủ sẽ được kéo theo trang. Theo mặc định, nút chuyển đã tắt.';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => 'Thay đổi trạng thái bản ghi';
@@ -722,22 +722,22 @@ class L10nVi extends L10n {
   String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Sửa đổi hành vi nhấp chuột để mở cửa sổ bật lên chi tiết cho các bản ghi hàng ngày trên trang chính.';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Màu chủ đề';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText => 'Chọn màu chủ đề';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Sử dụng màu chính của hình nền (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Sử dụng màu nền đã chọn của chủ đề GTK+';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Sử dụng màu chủ đề hệ thống';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Sử dụng điểm nhấn hệ thống hoặc màu cửa sổ/kính';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'Ngày đầu tuần';
@@ -764,20 +764,20 @@ class L10nVi extends L10n {
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
-    return 'Định dạng hiển thị ngày ($formatTemplate)';
+    return 'Định dạng màn hình ngày ($formatTemplate)';
   }
 
   @override
   String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'theo thiết đặt hệ thống';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Định dạng ngày đã định cấu hình sẽ được áp dụng cho hiển thị ngày trên trang chi tiết thói quen.';
+  String get appSetting_dateDisplayFormat_subTitleText => 'Định dạng ngày đã định cấu hình sẽ được áp dụng cho màn hình ngày trên trang chi tiết thói quen.';
 
   @override
   String get appSetting_compactUISwitcher_titleText => 'Bật giao diện người dùng nhỏ gọn trên trang thói quen';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Cho phép bảng kiểm tra thói quen hiển thị nhiều nội dung hơn nhưng một số giao diện người dùng và văn bản có thể trông nhỏ hơn.';
+  String get appSetting_compactUISwitcher_subtitleText => 'Cho phép bảng kiểm tra thói quen màn hình nhiều nội dung hơn nhưng một số giao diện người dùng và văn bản có thể trông nhỏ hơn.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText => 'Thói quen kiểm tra khu vực điều chỉnh đài phát thanh';
@@ -801,7 +801,7 @@ class L10nVi extends L10n {
   String get appSetting_export_titleText => 'Xuất';
 
   @override
-  String get appSetting_export_subtitleText => 'Đã xuất thói quen ở định dạng JSON, Tệp này có thể được nhập lại.';
+  String get appSetting_export_subtitleText => 'Đã xuất thói quen ở định dạng JSON, tệp này có thể được nhập lại.';
 
   @override
   String get appSetting_import_titleText => 'Nhập';
@@ -846,7 +846,7 @@ class L10nVi extends L10n {
   String get appSetting_resetConfigDialog_titleText => 'Đặt lại cấu hình?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'Đặt lại tất cả cấu hình về mặc định, phải khởi động lại ứng dụng để áp dụng.';
+  String get appSetting_resetConfigDialog_subtitleText => 'Đặt lại tất cả cấu hình về mặc định, phải khởi động lại áp dụng để áp dụng.';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'hủy';
@@ -891,31 +891,31 @@ class L10nVi extends L10n {
   String get appSetting_debugger_titleText => 'Thông tin gỡ lỗi';
 
   @override
-  String get appSetting_about_titleText => 'Giới thiệu';
+  String get appSetting_about_titleText => 'Giới thiệu về';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText => 'Tính năng thử nghiệm';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Đồng bộ';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Tùy chọn đồng bộ hóa';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Thông báo';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+  String get appSetting_notify_subtitleTile => 'Quản lý tùy chỉnh thông báo';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
+  String get appSetting_notify_subtitleTile_android => 'Nhấn để mở cài đặt thông báo hệ thống';
 
   @override
-  String get appSync_nowTile_titleText => 'Sync Now';
+  String get appSync_nowTile_titleText => 'Đồng bộ hóa ngay bây giờ';
 
   @override
-  String get appSync_nowTile_titleText_syncing => 'Syncing';
+  String get appSync_nowTile_titleText_syncing => 'Đang đồng bộ hóa';
 
   @override
   String appSync_nowTile_dateFormat(DateTime ymd, DateTime jms) {
@@ -928,23 +928,23 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => 'Last Sync: N/A';
+  String get appSync_nowTile_text_noDate => 'Đồng bộ hóa lần cuối: Không áp dụng';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return 'Last Sync: $dateStr';
+    return 'Đồng bộ hóa lần cuối: $dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Last Sync (Error): N/A';
+  String get appSync_nowTile_errorText_noDate => 'Đồng bộ hóa lần cuối (lỗi): Không áp dụng';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return 'Last Sync (Error): $dateStr';
+    return 'Đồng bộ hóa lần cuối (lỗi): $dateStr';
   }
 
   @override
-  String get appSync_nowTile_syncingText => 'Syncing...';
+  String get appSync_nowTile_syncingText => 'Đang đồng bộ hóa...';
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
@@ -954,26 +954,26 @@ class L10nVi extends L10n {
     );
     final String prtString = prtNumberFormat.format(prt);
 
-    return 'Syncing: $prtString';
+    return 'Đang đồng bộ hóa: $prtString';
   }
 
   @override
-  String get appSync_nowTile_cancellingText => 'Canceling...';
+  String get appSync_nowTile_cancellingText => 'Đang hủy...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Last Sync (Cancelled): N/A';
+  String get appSync_nowTile_cancelText_noDate => 'Đồng bộ hóa lần cuối (Đã hủy): Không áp dụng';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return 'Last Sync (Cancelled): $dateStr';
+    return 'Đồng bộ hóa lần cuối (Đã hủy): $dateStr';
   }
 
   @override
-  String get appSync_failedTile_titleText => 'Check Failure Logs';
+  String get appSync_failedTile_titleText => 'Kiểm tra nhật ký lỗi';
 
   @override
   String appSync_failedTile_errorText(String info) {
-    return '[Error]: $info';
+    return '[Lỗi]: $info';
   }
 
   @override
@@ -1027,25 +1027,25 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
+  String get appSync_webdav_newServerConfirmDialog_titleText => 'Vị trí mới';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Đồng bộ hóa sẽ tạo các thư mục cần thiết và tải các thói quen cục bộ lên máy chủ. Tiếp tục?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Đồng bộ hóa ngay!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
+  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Xác nhận đồng bộ hóa';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Thư mục không trống. Đồng bộ hóa sẽ hợp nhất máy chủ và thói quen cục bộ. Tiếp tục?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Xác nhận hợp nhất';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
+  String get appSync_exportAllLogsTile_titleText => 'Xuất nhật ký đồng bộ hóa không thành công';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
@@ -1110,67 +1110,67 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get appSync_syncIntervalTile_title => 'Fetch Interval';
+  String get appSync_syncIntervalTile_title => 'Khoảng thời gian tìm nạp';
 
   @override
-  String get appSync_summaryTile_title => 'Sync Server';
+  String get appSync_summaryTile_title => 'Máy chủ đồng bộ hóa';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured => 'Chưa được định cấu hình';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText => 'Tất cả nhật ký đồng bộ hóa không thành công gần đây';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText => 'Xác nhận lưu thay đổi';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText => 'Việc lưu sẽ ghi đè lên cấu hình máy chủ trước đó.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
+  String get appSync_serverEditor_exitDialog_titleText => 'Những thay đổi chưa được lưu';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText => 'Việc thoát sẽ loại bỏ tất cả các thay đổi chưa được lưu.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
+  String get appSync_serverEditor_deleteDialog_titleText => 'Xác nhận Xóa';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText => 'Việc xóa sẽ xóa cấu hình máy chủ hiện tại.';
 
   @override
-  String get appSync_serverEditor_titleText_add => 'New Sync Server';
+  String get appSync_serverEditor_titleText_add => 'Máy chủ đồng bộ hóa mới';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Modify Sync Server';
+  String get appSync_serverEditor_titleText_modify => 'Sửa đổi máy chủ đồng bộ hóa';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Advanced Configs';
+  String get appSync_serverEditor_advance_titleText => 'Cấu hình nâng cao';
 
   @override
-  String get appSync_serverEditor_pathTile_titleText => 'Path';
+  String get appSync_serverEditor_pathTile_titleText => 'Đường dẫn';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText => 'Nhập đường dẫn WebDAV hợp lệ tại đây.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Đường dẫn không được trống!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Username';
+  String get appSync_serverEditor_usernameTile_titleText => 'Tên người dùng';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText => 'Nhập tên người dùng ở đây, để trống nếu không cần thiết.';
 
   @override
-  String get appSync_serverEditor_passwordTile_titleText => 'Password';
+  String get appSync_serverEditor_passwordTile_titleText => 'Mật khẩu';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Bỏ qua chứng chỉ SSL';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText => 'Đồng bộ hóa thời gian chờ giây';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1187,7 +1187,7 @@ class L10nVi extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 's';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText => 'Số giây hết thời gian kết nối mạng';
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
@@ -1204,7 +1204,7 @@ class L10nVi extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 's';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText => 'Số lần thử lại kết nối mạng';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1214,11 +1214,11 @@ class L10nVi extends L10n {
       other: '$count',
       zero: 'Retry disabled',
     );
-    return 'Default: $_temp0';
+    return 'Mặc định: $_temp0';
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Network Sync Mode';
+  String get appSync_serverEditor_netTypeTile_titleText => 'Chế độ đồng bộ mạng';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
@@ -1234,10 +1234,10 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'Dữ liệu thấp';
 
   @override
-  String get appSync_noti_readyToSync_body => 'Preparing to sync...';
+  String get appSync_noti_readyToSync_body => 'Đang chuẩn bị đồng bộ hóa...';
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
@@ -1253,35 +1253,35 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Đồng bộ hóa ở chế độ dữ liệu thấp';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title => 'Một hoặc nhiều tính năng thử nghiệm đã bật. Hãy thận trọng khi sử dụng.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
+  String get experimentalFeatures_habitSyncTile_titleText => 'Đồng bộ đám mây thói quen';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText => 'Sau khi đã bật, tùy chọn đồng bộ hóa của ứng dụng sẽ xuất hiện trong cài đặt';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
-    return 'Experimental feature ($syncName) is disabled, but the function is still running.';
+    return 'Tính năng thử nghiệm ($syncName) đã tắt nhưng chức năng này vẫn chạy.';
   }
 
   @override
   String experimentalFeatures_warnTile_forHabitSyncText(String menuName) {
-    return 'To completely disable, long press to access \'$menuName\' and turn it off.';
+    return 'Để tắt hoàn toàn, nhấn và giữ để truy cập \'$menuName\' và tắt nó đi.';
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText => 'Tìm kiếm thói quen';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText => 'Sau khi đã bật, thanh tìm kiếm sẽ xuất hiện ở đầu màn hình Thói quen và cho phép tìm kiếm thói quen.';
 
   @override
-  String get appAbout_appbarTile_titleText => 'Giới thiệu';
+  String get appAbout_appbarTile_titleText => 'Giới thiệu về';
 
   @override
   String appAbout_versionTile_titleText(String appVersion) {
@@ -1301,7 +1301,7 @@ class L10nVi extends L10n {
   String get appAbout_contactEmailTile_titleText => 'Liên hệ với tôi';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Xin chào, tôi rất vui vì bạn đã liên hệ với tôi.\nNếu bạn đang báo cáo lỗi, vui lòng cho biết phiên bản ứng dụng và mô tả các bước để tái tạo lỗi đó.\n------------- -------------------------';
+  String get appAbout_contactEmailTile_emailBody => 'Xin chào, tôi rất vui vì bạn đã liên hệ với tôi. Nếu bạn đang báo cáo lỗi, vui lòng cho biết phiên bản ứng dụng và mô tả các bước để tái tạo lỗi đó. ------------- -------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'Giấy phép';
@@ -1313,13 +1313,13 @@ class L10nVi extends L10n {
   String get appAbout_licenseThirdPartyTile_titleText => 'Tuyên bố cấp phép của bên thứ ba';
 
   @override
-  String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
+  String get appAbout_licenseThirdPartyTile_subtitleText => 'rung chuyển';
 
   @override
-  String get appAbout_privacyTile_titleText => 'Privacy';
+  String get appAbout_privacyTile_titleText => 'Quyền riêng tư';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText => 'Truy cập chính sách quyền riêng tư trong ứng dụng này';
 
   @override
   String get appAbout_donateTile_titleText => 'Quyên tặng';
@@ -1340,7 +1340,7 @@ class L10nVi extends L10n {
   String get donateWay_alipay => 'Alipay';
 
   @override
-  String get donateWay_wechatPay => 'Wechat Pay';
+  String get donateWay_wechatPay => 'Wechat trả tiền';
 
   @override
   String get donateWay_cryptoCurrency => 'Tiền tệ điện tử';
@@ -1384,7 +1384,7 @@ class L10nVi extends L10n {
   String get batchCheckin_status_ok_text => 'Hoàn thành';
 
   @override
-  String get batchCheckin_status_double_text => 'Đạt gấp đôi!';
+  String get batchCheckin_status_double_text => 'đạt gấp đôi!';
 
   @override
   String get batchCheckin_status_zero_text => 'Chưa hoàn thành';
@@ -1424,22 +1424,22 @@ class L10nVi extends L10n {
   String get batchCheckin_save_confirmDialog_body => 'Các bản ghi hiện có sẽ bị ghi đè. Sau khi lưu, các bản ghi trước đó sẽ bị mất.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'Lưu';
+  String get batchCheckin_save_confirmDialog_confirmButton_text => 'lưu';
 
   @override
-  String get batchCheckin_save_confirmDialog_cancelButton_text => 'Hủy';
+  String get batchCheckin_save_confirmDialog_cancelButton_text => 'hủy';
 
   @override
   String get batchCheckin_close_confirmDialog_title => 'Xác nhận Quay lại';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Các thay đổi trạng thái check-in sẽ không được áp dụng trước khi được lưu.';
+  String get batchCheckin_close_confirmDialog_body => 'Các thay đổi trạng thái check-in sẽ không được áp dụng trước khi được lưu';
 
   @override
-  String get batchCheckin_close_confirmDialog_confirmButton_text => 'Thoát';
+  String get batchCheckin_close_confirmDialog_confirmButton_text => 'thoát';
 
   @override
-  String get batchCheckin_close_confirmDialog_cancelButton_text => 'Hủy';
+  String get batchCheckin_close_confirmDialog_cancelButton_text => 'hủy';
 
   @override
   String get appReminder_dailyReminder_title => '🏝 Hôm nay bạn có giữ thói quen của mình không?';
@@ -1483,13 +1483,13 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get common_appThemeColor_system => 'System';
+  String get common_appThemeColor_system => 'Hệ thống';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'Sơ đẳng';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'Năng động';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Sử dụng định dạng hệ thống';
@@ -1548,13 +1548,13 @@ class L10nVi extends L10n {
   String get common_customDateTimeFormatPicker_confirmButton_text => 'xác nhận';
 
   @override
-  String get common_errorPage_title => 'Oops, Crashed!';
+  String get common_errorPage_title => 'Rất tiếc, đã gặp sự cố!';
 
   @override
-  String get common_errorPage_copied => 'Copied crash information';
+  String get common_errorPage_copied => 'Sao chép thông tin sự cố';
 
   @override
-  String get common_enable_text => 'Enabled';
+  String get common_enable_text => 'Đã bật';
 
   @override
   String get calendarPicker_clip_today => 'Hôm nay';
@@ -1613,7 +1613,7 @@ class L10nVi extends L10n {
   String get debug_logLevel_error => 'Lỗi';
 
   @override
-  String get debug_logLevel_fatal => 'Fatal';
+  String get debug_logLevel_fatal => 'Gây tử vong';
 
   @override
   String get debug_collectLogTile_title => 'Thu thập nhật ký';
@@ -1683,16 +1683,16 @@ class L10nVi extends L10n {
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Hủy';
 
   @override
-  String get snackbar_undoText => 'HOÀN TÁC';
+  String get snackbar_undoText => 'Hoàn tác';
 
   @override
   String get snackbar_dismissText => 'MIỄN';
 
   @override
-  String get contributors_tile_title => 'Cộng tác viên';
+  String get contributors_tile_title => 'Người đóng góp';
 
   @override
   String get userAction_tap => 'Nhấn';
@@ -1704,23 +1704,23 @@ class L10nVi extends L10n {
   String get userAction_longTap => 'Lâu';
 
   @override
-  String get channelName_habitReminder => 'Habit Reminder';
+  String get channelName_habitReminder => 'Nhắc nhở thói quen';
 
   @override
-  String get channelName_appReminder => 'Prompt';
+  String get channelName_appReminder => 'Lời nhắc';
 
   @override
-  String get channelName_appDebugger => 'Debugger';
+  String get channelName_appDebugger => 'Trình gỡ lỗi';
 
   @override
-  String get channelName_appSyncing => 'Sync Process';
+  String get channelName_appSyncing => 'Quá trình đồng bộ hóa';
 
   @override
-  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+  String get channelDesc_appSyncing => 'Được sử dụng để hiển thị tiến trình đồng bộ hóa và kết quả không bị lỗi';
 
   @override
-  String get channelName_appSyncFailed => 'Sync Failed';
+  String get channelName_appSyncFailed => 'Đồng bộ hóa không thành công';
 
   @override
-  String get channelDesc_appSyncFailed => 'Used to alert when sync fails';
+  String get channelDesc_appSyncFailed => 'Dùng để cảnh báo khi đồng bộ hóa không thành công';
 }
