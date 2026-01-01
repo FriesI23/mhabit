@@ -232,6 +232,8 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isDataLoading => _effectiveLoading != null;
 
+  bool get isDataLoaded => _effectiveLoading?.isCompleted == true;
+
   Future loadData({bool listen = true}) async {
     final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
