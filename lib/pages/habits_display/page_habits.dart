@@ -1491,7 +1491,7 @@ class _LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDataLoaded =
-        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoading);
+        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoaded);
     return AnimatedOpacity(
       opacity: isDataLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),

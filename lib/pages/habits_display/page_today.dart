@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -56,6 +57,10 @@ class TodayTabPage extends StatefulWidget {
 class TodayTabPageState extends State<TodayTabPage>
     with AutomaticKeepAliveClientMixin {
   late HabitsTodayViewModel _vm;
+  AppSyncViewModel? _appSync;
+  StreamSubscription<String>? _startSyncSub;
+
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   late final double _toolbarHeight;
 
@@ -79,6 +84,15 @@ class TodayTabPageState extends State<TodayTabPage>
     if (vm != _vm) {
       _vm = vm;
     }
+
+    final sync = context.read<AppSyncViewModel>();
+    if (sync != _appSync) {
+      _startSyncSub?.cancel();
+      _appSync = sync;
+      _startSyncSub = sync.appSyncTask.startSyncEvents.listen((_) {
+        _refreshIndicatorKey.currentState?.show();
+      });
+    }
   }
 
   @override
@@ -91,6 +105,7 @@ class TodayTabPageState extends State<TodayTabPage>
 
   @override
   void dispose() {
+    _startSyncSub?.cancel();
     _scrollVisibilityDispatcher.dispose();
     super.dispose();
   }
@@ -143,6 +158,7 @@ class TodayTabPageState extends State<TodayTabPage>
         changedAnimateDuration: Duration(milliseconds: 300),
         offsetHeight: -appbarHeight);
     final page = RefreshIndicator(
+      key: _refreshIndicatorKey,
       notificationPredicate: (notification) {
         final context = notification.context;
         if (context == null) {

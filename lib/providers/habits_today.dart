@@ -200,7 +200,17 @@ class HabitsTodayViewModel extends ChangeNotifier
           .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
     }
 
-    loadingData();
+    loadingData().catchError((e, s) {
+      if (loading.isCanceled) return loadingCancelled();
+      loadingFailed(["unexpected error", e]);
+      appLog.load.error("$runtimeType.load",
+          ex: ["caught", e, loading.hashCode], stackTrace: s);
+    }).whenComplete(() {
+      if (!loading.isCompleted && !loading.isCanceled) {
+        loading.complete();
+      }
+    });
+
     return loading.operation.valueOrCancellation();
   }
 

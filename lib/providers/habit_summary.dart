@@ -232,6 +232,8 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isDataLoading => _effectiveLoading != null;
 
+  bool get isDataLoaded => _effectiveLoading?.isCompleted == true;
+
   Future loadData({bool listen = true}) async {
     final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
@@ -290,7 +292,17 @@ class HabitSummaryViewModel extends ChangeNotifier
           .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
     }
 
-    loadingData();
+    loadingData().catchError((e, s) {
+      if (loading.isCanceled) return loadingCancelled();
+      loadingFailed(["unexpected error", e]);
+      appLog.load.error("$runtimeType.load",
+          ex: ["caught", e, loading.hashCode], stackTrace: s);
+    }).whenComplete(() {
+      if (!loading.isCompleted && !loading.isCanceled) {
+        loading.complete();
+      }
+    });
+
     return loading.operation.valueOrCancellation();
   }
 
