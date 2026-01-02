@@ -245,7 +245,17 @@ class HabitDetailViewModel extends ChangeNotifier
           ex: ["loaded", loading.hashCode, listen, data]);
     }
 
-    loadingData();
+    loadingData().catchError((e, s) {
+      if (loading.isCanceled) return loadingCancelled();
+      loadingFailed(["unexpected error", e]);
+      appLog.load.error("$runtimeType.load",
+          ex: ["caught", e, loading.hashCode], stackTrace: s);
+    }).whenComplete(() {
+      if (!loading.isCompleted && !loading.isCanceled) {
+        loading.complete();
+      }
+    });
+
     return loading.operation.valueOrCancellation();
   }
 
