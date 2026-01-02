@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.22.7+134-pre
+
+- Add Hungarian translation, thank to peterczegledy's contribution on Github (#462)
+- Updated Ukrainian translation, thank to Максим Горпиніч's contribution on Weblate (#459)
+- Updated Vietnamese translation, thank to Loc Huynh’s contribution on Weblate (#467)
+- Fixed: Prevent loading from getting stuck by safely handling errors
+- Fixed: Trigger `RefreshIndicator` on sync start
+- Update README.md (#463)
+
 ## 1.22.6+133
 
 - Feature: Add Custom Theme Color (#447)
