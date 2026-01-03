@@ -21,7 +21,7 @@ platform :ios do
     sh <<~EOS
       cd ../..
       .flutter/bin/flutter clean
-      .flutter precache --macos
+      .flutter/bin/flutter precache --macos
       .flutter/bin/flutter pub get
     EOS
   end
