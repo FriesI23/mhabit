@@ -1,0 +1,7 @@
+- 新增匈牙利语翻译，感谢 peterczegledy 在 GitHub 上的贡献 (#462)
+- 更新乌克兰语翻译，感谢 Максим Горпиніч 在 Weblate 上的贡献 (#459)
+- 更新越南语翻译，感谢 Loc Huynh 在 Weblate 上的贡献 (#467)
+- 修复：通过安全处理错误，防止加载过程卡住
+- 修复：同步开始时触发 `RefreshIndicator`
+- 修复：Play Store 版本添加本地应用名称（#472）
+- 更新 README.md (#463)
