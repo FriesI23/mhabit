@@ -203,7 +203,12 @@ class _HabitsGroupView extends StatelessWidget {
   Future<void> loadData(BuildContext context) async {
     if (!context.mounted) return;
     final sync = context.read<AppSyncViewModel>();
-    if (sync.mounted) await sync.appSyncTask.processing;
+    try {
+      if (sync.mounted) await sync.appSyncTask.processing;
+    } catch (e, s) {
+      appLog.appsync
+          .error("TodayTabPage", ex: ["sync failed"], error: e, stackTrace: s);
+    }
     if (!context.mounted) return;
     final vm = context.read<HabitsTodayViewModel>();
     if (!vm.mounted || vm.isDataLoading) return;
