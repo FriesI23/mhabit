@@ -1,0 +1,1 @@
+- fixed: ensure UI refresh works correctly (#475)

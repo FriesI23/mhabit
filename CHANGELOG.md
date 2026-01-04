@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.22.9+136
+## 1.22.10+137
 
 - fixed: ensure UI refresh works correctly (#475)
 
