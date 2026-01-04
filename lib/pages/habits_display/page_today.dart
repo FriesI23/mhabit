@@ -217,9 +217,10 @@ class _HabitsGroupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<HabitsTodayViewModel, bool>(
-      selector: (context, vm) => vm.isDataLoading,
-      shouldRebuild: (previous, next) => previous != next,
+    return Selector<HabitsTodayViewModel, (bool, bool)>(
+      selector: (context, vm) =>
+          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
         builder: (context, _) => SliverPadding(

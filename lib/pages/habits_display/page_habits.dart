@@ -1125,9 +1125,10 @@ class _HabitListState extends State<_HabitList> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<HabitSummaryViewModel, bool>(
-      selector: (context, vm) => vm.isDataLoading,
-      shouldRebuild: (previous, next) => previous != next,
+    return Selector<HabitSummaryViewModel, (bool, bool)>(
+      selector: (context, vm) =>
+          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
         builder: (context, _) => AnimatedSliverList(

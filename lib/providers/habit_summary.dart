@@ -70,6 +70,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   // status
   CancelableCompleter<void>? _loading;
   bool _nextRefreshClearSnackBar = false;
+  bool _nextRefreshForceReload = false;
   bool _isCalandarExpanded = false;
   bool _isInEditMode = false;
   bool _canBeDragged = true;
@@ -167,6 +168,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (!_nextRefreshClearSnackBar && clearSnackBar) {
       _nextRefreshClearSnackBar = clearSnackBar;
     }
+    _nextRefreshForceReload = true;
     _cancelLoading();
     notifyListeners();
   }
@@ -175,6 +177,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     final tmp = _nextRefreshClearSnackBar;
     _nextRefreshClearSnackBar = false;
     return tmp;
+  }
+
+  bool consumeForceReloadFlag() {
+    final result = _nextRefreshForceReload;
+    _nextRefreshForceReload = false;
+    return result;
   }
 
   Key getHabitInsideVersion(HabitUUID uuid) {

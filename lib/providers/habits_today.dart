@@ -65,6 +65,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   List<HabitSortCache> _lastSortedDataCache = const [];
   // status
   CancelableCompleter<void>? _loading;
+  bool _nextRefreshForceReload = false;
   final LinkedHashMap<HabitUUID, bool> _expandStatus;
   // inside status
   bool _mounted = true;
@@ -102,8 +103,15 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   void requestReload() {
+    _nextRefreshForceReload = true;
     _cancelLoading();
     notifyListeners();
+  }
+
+  bool consumeForceReloadFlag() {
+    final result = _nextRefreshForceReload;
+    _nextRefreshForceReload = false;
+    return result;
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
