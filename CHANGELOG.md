@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.22.9+136
+
+- fixed: ensure UI refresh works correctly (#475)
+
 ## 1.22.8+135
 
 - Add Hungarian translation, thank to peterczegledy's contribution on Github (#462)

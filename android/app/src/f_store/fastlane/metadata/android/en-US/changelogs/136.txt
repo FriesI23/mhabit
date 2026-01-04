@@ -1,5 +1,1 @@
-# Released: 1.22.9+136
-
-**🧹 Others**
-
 - fixed: ensure UI refresh works correctly (#475)
