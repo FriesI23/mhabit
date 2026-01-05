@@ -189,37 +189,32 @@ class _HabitFrequencyPickerDialogView
         content: SingleChildScrollView(
           child: SizedBox(
             width: math.min(constraints.maxWidth, dialogMaxWidth),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _HabitFrequencyDailyTile(
-                  selectFrequencyType: selectFrequencyType,
-                  onRadioChangeCallback: onRadioChangeCallback,
-                ),
-                _HabitFrequencyPerWeekTile(
-                  selectFrequencyType: selectFrequencyType,
-                  controller: _preweekInputController,
-                  onRadioChangeCallback: onRadioChangeCallback,
-                  onInputSubmmit:
-                      onInputTextSubmit(_HabitFrequencyPickerType.perweek),
-                ),
-                _HabitFrequencyPerMonthTile(
-                  selectFrequencyType: selectFrequencyType,
-                  controller: _premonthInputController,
-                  onRadioChangeCallback: onRadioChangeCallback,
-                  onInputSubmmit:
-                      onInputTextSubmit(_HabitFrequencyPickerType.permonth),
-                ),
-                _HabitFrequencyPerDayTile(
-                  selectFrequencyType: selectFrequencyType,
-                  controllerFreq: _predayfreq01InputController,
-                  controllerDay: _predayfreq02InputController,
-                  onRadioChangeCallback: onRadioChangeCallback,
-                  onInputSubmmit:
-                      onInputTextSubmit(_HabitFrequencyPickerType.predayfreq),
-                ),
-              ],
+            child: RadioGroup(
+              groupValue: selectFrequencyType,
+              onChanged: onRadioChangeCallback,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const _HabitFrequencyDailyTile(),
+                  _HabitFrequencyPerWeekTile(
+                    controller: _preweekInputController,
+                    onInputSubmmit:
+                        onInputTextSubmit(_HabitFrequencyPickerType.perweek),
+                  ),
+                  _HabitFrequencyPerMonthTile(
+                    controller: _premonthInputController,
+                    onInputSubmmit:
+                        onInputTextSubmit(_HabitFrequencyPickerType.permonth),
+                  ),
+                  _HabitFrequencyPerDayTile(
+                    controllerFreq: _predayfreq01InputController,
+                    controllerDay: _predayfreq02InputController,
+                    onInputSubmmit:
+                        onInputTextSubmit(_HabitFrequencyPickerType.predayfreq),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -265,13 +260,7 @@ class _HabitFrequencyTextField extends StatelessWidget {
 }
 
 class _HabitFrequencyDailyTile extends StatelessWidget {
-  final _HabitFrequencyPickerType selectFrequencyType;
-  final Function(_HabitFrequencyPickerType? value)? onRadioChangeCallback;
-
-  const _HabitFrequencyDailyTile({
-    required this.selectFrequencyType,
-    this.onRadioChangeCallback,
-  });
+  const _HabitFrequencyDailyTile();
 
   @override
   Widget build(BuildContext context) {
@@ -279,27 +268,19 @@ class _HabitFrequencyDailyTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio(
-        value: _HabitFrequencyPickerType.daily,
-        groupValue: selectFrequencyType,
-        onChanged: onRadioChangeCallback,
-      ),
+      leading: const Radio(value: _HabitFrequencyPickerType.daily),
       title: l10n != null ? Text(l10n.habitEdit_habitFreq_daily) : null,
     );
   }
 }
 
 class _HabitFrequencyPerWeekTile extends StatelessWidget {
-  final _HabitFrequencyPickerType selectFrequencyType;
   final TextEditingController? controller;
   final Function(String? value)? onInputSubmmit;
-  final Function(_HabitFrequencyPickerType? value)? onRadioChangeCallback;
 
   const _HabitFrequencyPerWeekTile({
-    required this.selectFrequencyType,
     this.controller,
     this.onInputSubmmit,
-    this.onRadioChangeCallback,
   });
 
   List<Widget> _buildTitleChildren(BuildContext context) {
@@ -321,12 +302,8 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio(
-        value: _HabitFrequencyPickerType.perweek,
-        toggleable: true,
-        groupValue: selectFrequencyType,
-        onChanged: onRadioChangeCallback,
-      ),
+      leading: const Radio(
+          value: _HabitFrequencyPickerType.perweek, toggleable: true),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),
@@ -336,16 +313,12 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
 }
 
 class _HabitFrequencyPerMonthTile extends StatelessWidget {
-  final _HabitFrequencyPickerType selectFrequencyType;
   final TextEditingController? controller;
   final Function(String? value)? onInputSubmmit;
-  final Function(_HabitFrequencyPickerType? value)? onRadioChangeCallback;
 
   const _HabitFrequencyPerMonthTile({
-    required this.selectFrequencyType,
     this.controller,
     this.onInputSubmmit,
-    this.onRadioChangeCallback,
   });
 
   List<Widget> _buildTitleChildren(BuildContext context) {
@@ -367,12 +340,8 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio(
-        value: _HabitFrequencyPickerType.permonth,
-        toggleable: true,
-        groupValue: selectFrequencyType,
-        onChanged: onRadioChangeCallback,
-      ),
+      leading: const Radio(
+          value: _HabitFrequencyPickerType.permonth, toggleable: true),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),
@@ -382,18 +351,14 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
 }
 
 class _HabitFrequencyPerDayTile extends StatelessWidget {
-  final _HabitFrequencyPickerType selectFrequencyType;
   final TextEditingController? controllerFreq;
   final TextEditingController? controllerDay;
   final Function(String? value)? onInputSubmmit;
-  final Function(_HabitFrequencyPickerType? value)? onRadioChangeCallback;
 
   const _HabitFrequencyPerDayTile({
-    required this.selectFrequencyType,
     this.controllerFreq,
     this.controllerDay,
     this.onInputSubmmit,
-    this.onRadioChangeCallback,
   });
 
   List<Widget> _buildTitleChildren(BuildContext context) {
@@ -425,12 +390,8 @@ class _HabitFrequencyPerDayTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio(
-        value: _HabitFrequencyPickerType.predayfreq,
-        toggleable: true,
-        groupValue: selectFrequencyType,
-        onChanged: onRadioChangeCallback,
-      ),
+      leading: const Radio(
+          value: _HabitFrequencyPickerType.predayfreq, toggleable: true),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),

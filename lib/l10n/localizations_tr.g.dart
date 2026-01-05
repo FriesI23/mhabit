@@ -66,7 +66,8 @@ class L10nTr extends L10n {
   String get habitEdit_habitDailyGoalUnit_hintText => 'Günlük hedef birimi';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'İstenilen maksimum günlük hedef';
+  String get habitEdit_habitDailyGoalExtra_hintText =>
+      'İstenilen maksimum günlük hedef';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
@@ -74,7 +75,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maksimum günlük limit';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText =>
+      'Maksimum günlük limit';
 
   @override
   String get habitEdit_frequencySelector_title => 'Sıklık seç';
@@ -175,13 +177,15 @@ class L10nTr extends L10n {
   String get habitEdit_reminder_freq_monthSubfixText => ' her ay';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Soru, örn. Bugün egzersiz yaptın mı?';
+  String get habitEdit_reminderQuest_hintText =>
+      'Soru, örn. Bugün egzersiz yaptın mı?';
 
   @override
   String get habitEdit_reminder_dialogTitle => 'Hatırlatıcı tipi seç';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'Tamamlanması gerektiğinde';
+  String get habitEdit_reminder_dialogType_whenNeeded =>
+      'Tamamlanması gerektiğinde';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Günlük';
@@ -202,7 +206,8 @@ class L10nTr extends L10n {
   String get habitEdit_reminder_cancelDialogTitle => 'Onayla';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Bu hatırlatıcıyı silmeyi onaylıyor musunuz';
+  String get habitEdit_reminder_cancelDialogSubtitle =>
+      'Bu hatırlatıcıyı silmeyi onaylıyor musunuz';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'onayla';
@@ -244,7 +249,8 @@ class L10nTr extends L10n {
   String get habitDisplay_fab_text => 'Yeni Alışkanlık';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'Uzun bir yolculuk, ilk adımla başlar';
+  String get habitDisplay_emptyImage_text_01 =>
+      'Uzun bir yolculuk, ilk adımla başlar';
 
   @override
   String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
@@ -255,7 +261,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Seçilen Alışkanlıkları Arşivle?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title =>
+      'Seçilen Alışkanlıkları Arşivle?';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'onayla';
@@ -269,7 +276,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Seçilen Alışkanlıkları Arşivden Çıkar?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
+      'Seçilen Alışkanlıkları Arşivden Çıkar?';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'onayla';
@@ -283,7 +291,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Seçilen Alışkanlıkları Sil?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title =>
+      'Seçilen Alışkanlıkları Sil?';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'onayla';
@@ -313,7 +322,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Bütün Alışkanlıklar Dışa Aktarıldı';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText =>
+      'Bütün Alışkanlıklar Dışa Aktarıldı';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Hepsini Seç';
@@ -352,7 +362,8 @@ class L10nTr extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Arşivlendi';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'En İyi Alışkanlıklar: Son 30 Gündeki Değişiklikler';
+  String get habitDisplay_statsMenu_popularitySubgroupText =>
+      'En İyi Alışkanlıklar: Son 30 Gündeki Değişiklikler';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Açık Tema';
@@ -364,13 +375,16 @@ class L10nTr extends L10n {
   String get habitDisplay_mainMenu_followSystemTheme => 'Sistemi İzle';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Arşivlenenleri Göster';
+  String get habitDisplay_mainMenu_showArchivedTileText =>
+      'Arşivlenenleri Göster';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Tamamlananları Göster';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Tamamlananları Göster';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Aktif Olanları Göster';
+  String get habitDisplay_mainMenu_showActivedTileText =>
+      'Aktif Olanları Göster';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => 'Ayarlar';
@@ -421,13 +435,15 @@ class L10nTr extends L10n {
   String get habitDisplay_searchFilter_ongoing => 'Ongoing';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      'Shows habits that are currently active and ongoing (not archived or deleted).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Tamamlandı';
 
   @override
-  String get habitDisplay_searchFilter_habitType_groupTitle => 'Alışkanlık türü';
+  String get habitDisplay_searchFilter_habitType_groupTitle =>
+      'Alışkanlık türü';
 
   @override
   String get habitDisplay_searchFilter_tooltips => 'Show Filters';
@@ -483,10 +499,12 @@ class L10nTr extends L10n {
   String get habitDetail_confirmDialog_cancel => 'iptal et';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Alışkanlığı Arşivle?';
+  String get habitDetail_archiveConfirmDialog_titleText =>
+      'Alışkanlığı Arşivle?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Alışkanlığı Arşivden Çıkar?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Alışkanlığı Arşivden Çıkar?';
 
   @override
   String get habitDetail_deleteConfirmDialog_titleText => 'Alışkanlığı Sil?';
@@ -606,10 +624,12 @@ class L10nTr extends L10n {
   String get habitDetail_freqChartNaviBar_nowText => 'Şimdi';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Geçmiş Grafiğini Gizle';
+  String get habitDetail_freqChart_expanded_hideTooltip =>
+      'Geçmiş Grafiğini Gizle';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Geçmiş Grafiğini Göster';
+  String get habitDetail_freqChart_expanded_showTooltip =>
+      'Geçmiş Grafiğini Göster';
 
   @override
   String get habitDetail_descSubgroup_title => 'Not';
@@ -642,7 +662,8 @@ class L10nTr extends L10n {
   String get habitDetail_editHeatmapCal_valueButtonText => 'değer';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'bugüne geri dön';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
+      'bugüne geri dön';
 
   @override
   String get habitDetail_notFoundText => 'Alışkanlığı yükleme başarısız oldu';
@@ -704,46 +725,58 @@ class L10nTr extends L10n {
   String get appSetting_operationSubgroupText => 'Kullanım';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Takvimi sayfa sayfa kaydır';
+  String get appSetting_dragCalendarByPageTile_titleText =>
+      'Takvimi sayfa sayfa kaydır';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Bu özellik etkinleştirildiğinde, ana sayfadaki uygulama çubuğu takvimi sayfa sayfa kaydırılacaktır. Varsayılan olarak kapalıdır.';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      'Bu özellik etkinleştirildiğinde, ana sayfadaki uygulama çubuğu takvimi sayfa sayfa kaydırılacaktır. Varsayılan olarak kapalıdır.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Kayıt Durumunu Değiştir';
+  String get appSetting_changeRecordStatusOpTile_titleText =>
+      'Kayıt Durumunu Değiştir';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Ana sayfadaki günlük kayıtların durumunu değiştirmek için tıklama davranışını düzenleyin.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      'Ana sayfadaki günlük kayıtların durumunu değiştirmek için tıklama davranışını düzenleyin.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Detaylı Kaydı Aç';
+  String get appSetting_openRecordStatusDialogOpTile_titleText =>
+      'Detaylı Kaydı Aç';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      'Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText =>
+      'Choose Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      'Use wallpaper\'s main color (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      'Use GTK+ theme\'s selected background color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      'Use system theme color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      'Use system accent or window/glass color';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'Haftanın ilk günü';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Haftanın ilk gününü göster';
+  String get appSetting_firstDayOfWeekDialog_titleText =>
+      'Haftanın ilk gününü göster';
 
   @override
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (Varsayılan)';
@@ -754,7 +787,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Sistemi İzle';
+  String get appSetting_changeLanguage_followSystem_noLocale_text =>
+      'Sistemi İzle';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Dil';
@@ -768,22 +802,28 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'sistem ayarını izle';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      'sistem ayarını izle';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Yapılandırılan tarih formatı, alışkanlık detay sayfasındaki tarih gösterimine uygulanacaktır.';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      'Yapılandırılan tarih formatı, alışkanlık detay sayfasındaki tarih gösterimine uygulanacaktır.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Alışkanlıklar sayfasında Kompakt Kullanıcı Arayüzünü etkinleştir';
+  String get appSetting_compactUISwitcher_titleText =>
+      'Alışkanlıklar sayfasında Kompakt Kullanıcı Arayüzünü etkinleştir';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Alışkanlıklar kontrol tablosunun daha fazla içerik görüntülemesine izin verin, ancak bazı kullanıcı arayüzü ve metinler daha küçük görünebilir.';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      'Alışkanlıklar kontrol tablosunun daha fazla içerik görüntülemesine izin verin, ancak bazı kullanıcı arayüzü ve metinler daha küçük görünebilir.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Alışkanlık işaretleme alanı boyut ayarı';
+  String get appSetting_collapsed_calendar_bararea_titleText =>
+      'Alışkanlık işaretleme alanı boyut ayarı';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Alışkanlık işaretleme tablo alanında daha fazla/az alan için yüzdeyi ayarlayın.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      'Alışkanlık işaretleme tablo alanında daha fazla/az alan için yüzdeyi ayarlayın.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Varsayılan';
@@ -795,19 +835,22 @@ class L10nTr extends L10n {
   String get appSetting_dailyReminder_titleText => 'Günlük hatırlatıcı';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Yedekleme & geri yükleme';
+  String get appSetting_backupAndRestoreSubgroupText =>
+      'Yedekleme & geri yükleme';
 
   @override
   String get appSetting_export_titleText => 'Dışa aktar';
 
   @override
-  String get appSetting_export_subtitleText => 'Dışa aktarılan alışkanlıklar JSON formatındadır, bu dosya geri içe aktarılabilir.';
+  String get appSetting_export_subtitleText =>
+      'Dışa aktarılan alışkanlıklar JSON formatındadır, bu dosya geri içe aktarılabilir.';
 
   @override
   String get appSetting_import_titleText => 'İçe aktar';
 
   @override
-  String get appSetting_import_subtitleText => 'Alışkanlıkları JSON dosyadan içe aktar.';
+  String get appSetting_import_subtitleText =>
+      'Alışkanlıkları JSON dosyadan içe aktar.';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -815,7 +858,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Not: İçe aktarma, mevcut alışkanlıkları silmez.';
+  String get appSetting_importDialog_confirmSubtitle =>
+      'Not: İçe aktarma, mevcut alışkanlıkları silmez.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'onayla';
@@ -824,7 +868,8 @@ class L10nTr extends L10n {
   String get appSetting_importDialog_confirm_cancelText => 'iptal et';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return 'İçe aktarıldı $completeCount/$totalCount';
   }
 
@@ -840,13 +885,16 @@ class L10nTr extends L10n {
   String get appSetting_resetConfig_titleText => 'Yapılandırmaları sıfırla';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Tüm yapılandırmaları varsayılana sıfırla.';
+  String get appSetting_resetConfig_subtitleText =>
+      'Tüm yapılandırmaları varsayılana sıfırla.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Yapılandırmaları sıfırla?';
+  String get appSetting_resetConfigDialog_titleText =>
+      'Yapılandırmaları sıfırla?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'Tüm yapılandırmaları varsayılana sıfırla, uygulamak için uygulama yeniden başlatılmalıdır.';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      'Tüm yapılandırmaları varsayılana sıfırla, uygulamak için uygulama yeniden başlatılmalıdır.';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'iptal et';
@@ -855,7 +903,8 @@ class L10nTr extends L10n {
   String get appSetting_resetConfigDialog_confirmText => 'onayla';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'uygulama yapılandırmalarını sıfırlama başarılı';
+  String get appSetting_resetConfigSuccess_snackbarText =>
+      'uygulama yapılandırmalarını sıfırlama başarılı';
 
   @override
   String get appSetting_otherSubgroupText => 'Diğer';
@@ -870,7 +919,8 @@ class L10nTr extends L10n {
   String get appSetting_clearCacheDialog_titleText => 'Önbelleği Temizle';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'Önbellek temizlendikten sonra, bazı özel değerler varsayılan değerlere geri yüklenir.';
+  String get appSetting_clearCacheDialog_subtitleText =>
+      'Önbellek temizlendikten sonra, bazı özel değerler varsayılan değerlere geri yüklenir.';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => 'iptal et';
@@ -879,13 +929,16 @@ class L10nTr extends L10n {
   String get appSetting_clearCacheDialog_confirmText => 'onayla';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Kısmi önbellek temizlenemedi';
+  String get appSetting_clearCache_snackBar_partSuccText =>
+      'Kısmi önbellek temizlenemedi';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Önbellek başarıyla temizlendi';
+  String get appSetting_clearCache_snackBar_succText =>
+      'Önbellek başarıyla temizlendi';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Önbellek temizlenemedi';
+  String get appSetting_clearCache_snackBar_failText =>
+      'Önbellek temizlenemedi';
 
   @override
   String get appSetting_debugger_titleText => 'Hata Ayıklama Bilgisi';
@@ -894,7 +947,8 @@ class L10nTr extends L10n {
   String get appSetting_about_titleText => 'Hakkında';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Deneysel Özellikler';
+  String get appSetting_experimentalFeatureTile_titleText =>
+      'Deneysel Özellikler';
 
   @override
   String get appSetting_synSubgroupText => 'Eşleme';
@@ -909,7 +963,8 @@ class L10nTr extends L10n {
   String get appSetting_notify_subtitleTile => 'Bildirim tercihlerini düzenle';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Sistem bildirim ayarlarını açmak için dokun';
+  String get appSetting_notify_subtitleTile_android =>
+      'Sistem bildirim ayarlarını açmak için dokun';
 
   @override
   String get appSync_nowTile_titleText => 'Şimdi Eşle';
@@ -948,10 +1003,9 @@ class L10nTr extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Eşleniyor: $prtString';
@@ -961,7 +1015,8 @@ class L10nTr extends L10n {
   String get appSync_nowTile_cancellingText => 'İptal ediliyor...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Son eşleme (İptal edildi): Yok';
+  String get appSync_nowTile_cancelText_noDate =>
+      'Son eşleme (İptal edildi): Yok';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
@@ -1030,22 +1085,27 @@ class L10nTr extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => 'Yeni Konum';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Eşleme gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      'Eşleme gerekli klasörleri oluşturacak ve yerel alışkanlıkları sunucuya yükleyecek. Devam edilsin mi?';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => 'Şimdi Eşle!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Eşlemeyi Onayla';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Eşlemeyi Onayla';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Klasör boş değil. Eşleme, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      'Klasör boş değil. Eşleme, sunucu ve yerel alışkanlıkları birleştirecek. Devam edilsin mi?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Birleştirmeyi Onayla';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText =>
+      'Birleştirmeyi Onayla';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Hatalı Eşleme Kayıtlarını Dışa Aktar';
+  String get appSync_exportAllLogsTile_titleText =>
+      'Hatalı Eşleme Kayıtlarını Dışa Aktar';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
@@ -1116,61 +1176,75 @@ class L10nTr extends L10n {
   String get appSync_summaryTile_title => 'Eşleme Sunucusu';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Yapılandırılmadı';
+  String get appSync_summaryTile_subtitle_text_notConfigured =>
+      'Yapılandırılmadı';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'Tüm son başarısız eşleme kayıtları';
+  String get appSync_exportAllLogsTile_exportSubjectText =>
+      'Tüm son başarısız eşleme kayıtları';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Değişiklikleri Kaydetmeyi Onayla';
+  String get appSync_serverEditor_saveDialog_titleText =>
+      'Değişiklikleri Kaydetmeyi Onayla';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.';
+  String get appSync_serverEditor_saveDialog_subtitleText =>
+      'Kaydetme işlemi önceki sunucu yapılandırmasının üzerine yazacaktır.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Kaydedilmemiş Değişiklikler';
+  String get appSync_serverEditor_exitDialog_titleText =>
+      'Kaydedilmemiş Değişiklikler';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.';
+  String get appSync_serverEditor_exitDialog_subtitleText =>
+      'Çıkıldığında kaydedilmemiş tüm değişiklikler silinir.';
 
   @override
   String get appSync_serverEditor_deleteDialog_titleText => 'Silmeyi Onayla';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.';
+  String get appSync_serverEditor_deleteDialog_subtitleText =>
+      'Silme işlemi mevcut sunucu yapılandırmasını kaldıracaktır.';
 
   @override
   String get appSync_serverEditor_titleText_add => 'Yeni Eşleme Sunucusu';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Eşleme Sunucusunu Değiştir';
+  String get appSync_serverEditor_titleText_modify =>
+      'Eşleme Sunucusunu Değiştir';
 
   @override
-  String get appSync_serverEditor_advance_titleText => 'Gelişmiş Yapılandırmalar';
+  String get appSync_serverEditor_advance_titleText =>
+      'Gelişmiş Yapılandırmalar';
 
   @override
   String get appSync_serverEditor_pathTile_titleText => 'Yol';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Buraya geçerli bir WebDAV yolu girin.';
+  String get appSync_serverEditor_pathTile_hintText =>
+      'Buraya geçerli bir WebDAV yolu girin.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Yol boş olmamalı!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath =>
+      'Yol boş olmamalı!';
 
   @override
   String get appSync_serverEditor_usernameTile_titleText => 'Kullanıcı adı';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Buraya kullanıcı adını girin, gerekli değilse boş bırakın.';
+  String get appSync_serverEditor_usernameTile_hintText =>
+      'Buraya kullanıcı adını girin, gerekli değilse boş bırakın.';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'Parola';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'SSL sertifikasını yok say';
+  String get appSync_serverEditor_ignoreSSLTile_titleText =>
+      'SSL sertifikasını yok say';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Senkronizasyon Zaman Aşımı (Saniye)';
+  String get appSync_serverEditor_timeoutTile_titleText =>
+      'Senkronizasyon Zaman Aşımı (Saniye)';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1187,10 +1261,12 @@ class L10nTr extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 'sn';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Ağ Bağlantısı Zaman Aşımı (Saniye)';
+  String get appSync_serverEditor_connTimeoutTile_titleText =>
+      'Ağ Bağlantısı Zaman Aşımı (Saniye)';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1204,7 +1280,8 @@ class L10nTr extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 'sn';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Ağ bağlantısı yeniden deneme sayısı';
+  String get appSync_serverEditor_connRetryCountTile_titleText =>
+      'Ağ bağlantısı yeniden deneme sayısı';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1253,16 +1330,20 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Düşük veri kipinde eşle';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
+      'Düşük veri kipinde eşle';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.';
+  String get experimentalFeatures_warnginBanner_title =>
+      'Bir veya daha fazla deneysel özellik etkinleştirilir, dikkatli kullanın.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Alışkanlık bulut eşlemesi';
+  String get experimentalFeatures_habitSyncTile_titleText =>
+      'Alışkanlık bulut eşlemesi';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      'Etkinleştirildikten sonra, uygulamanın eşleme seçeneği ayarlarda görünecektir';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1278,7 +1359,8 @@ class L10nTr extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
 
   @override
   String get appAbout_appbarTile_titleText => 'Hakkında';
@@ -1301,7 +1383,8 @@ class L10nTr extends L10n {
   String get appAbout_contactEmailTile_titleText => 'Bana ulaş';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Merhaba, Bana yazdığın için memnunum.\nEğer bir hata bildiriyorsan, lütfen uygulama versiyonunu belirt ve hatayı ortaya çıkaran adımları açıkla.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'Merhaba, Bana yazdığın için memnunum.\nEğer bir hata bildiriyorsan, lütfen uygulama versiyonunu belirt ve hatayı ortaya çıkaran adımları açıkla.\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'Lisans';
@@ -1310,7 +1393,8 @@ class L10nTr extends L10n {
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Üçüncü Taraf Lisanslama Bildirimi';
+  String get appAbout_licenseThirdPartyTile_titleText =>
+      'Üçüncü Taraf Lisanslama Bildirimi';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
@@ -1319,16 +1403,19 @@ class L10nTr extends L10n {
   String get appAbout_privacyTile_titleText => 'Gizlilik';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Uygulamadaki gizlilik politikasına erişin';
+  String get appAbout_privacyTile_subTitleText =>
+      'Uygulamadaki gizlilik politikasına erişin';
 
   @override
   String get appAbout_donateTile_titleText => 'Bağış yap';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'Ben kişisel bir geliştiriciyim. Bu uygulamayı beğendiyseniz, lütfen bana bir ☕ satın alın.';
+  String get appAbout_donateTile_subTitleText =>
+      'Ben kişisel bir geliştiriciyim. Bu uygulamayı beğendiyseniz, lütfen bana bir ☕ satın alın.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1418,10 +1505,12 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Mevcut Kayıtların Üzerine Yaz';
+  String get batchCheckin_save_confirmDialog_title =>
+      'Mevcut Kayıtların Üzerine Yaz';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Kaydedildikten sonra mevcut kayıtların üzerine yazılacak, önceki kayıtlar kaybolacak.';
+  String get batchCheckin_save_confirmDialog_body =>
+      'Kaydedildikten sonra mevcut kayıtların üzerine yazılacak, önceki kayıtlar kaybolacak.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'kaydet';
@@ -1433,7 +1522,8 @@ class L10nTr extends L10n {
   String get batchCheckin_close_confirmDialog_title => 'Dönüşü Onayla';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Giriş durumu değişiklikleri kaydedilmeden uygulanmayacak';
+  String get batchCheckin_close_confirmDialog_body =>
+      'Giriş durumu değişiklikleri kaydedilmeden uygulanmayacak';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'çıkış';
@@ -1442,10 +1532,12 @@ class L10nTr extends L10n {
   String get batchCheckin_close_confirmDialog_cancelButton_text => 'iptal et';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Bugün alışkanlıklarınıza bağlı kaldınız mı?';
+  String get appReminder_dailyReminder_title =>
+      '🏝 Bugün alışkanlıklarınıza bağlı kaldınız mı?';
 
   @override
-  String get appReminder_dailyReminder_body => 'Uygulamayı açıp zamanında giriş yapmak için tıklayın.';
+  String get appReminder_dailyReminder_body =>
+      'Uygulamayı açıp zamanında giriş yapmak için tıklayın.';
 
   @override
   String get common_habitColorType_cc1 => 'Koyu leylak';
@@ -1492,7 +1584,8 @@ class L10nTr extends L10n {
   String get common_appThemeColor_dynamic => 'Dynamic';
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Sistem formatını kullan';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text =>
+      'Sistem formatını kullan';
 
   @override
   String get common_customDateTimeFormatPicker_fmtTileText => 'Tarih formatı';
@@ -1525,21 +1618,26 @@ class L10nTr extends L10n {
   String get common_customDateTimeFormatPicker_empty_text => 'Ayırıcı yok';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => '12 saatlik formatı kullan';
+  String get common_customDateTimeFormatPicker_12Hour_text =>
+      '12 saatlik formatı kullan';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Tam adı kullan';
+  String get common_customDateTimeFormatPicker_monthName_text =>
+      'Tam adı kullan';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Sıklık Grafiğine Uygula';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text =>
+      'Sıklık Grafiğine Uygula';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Takvime Uygula';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text =>
+      'Takvime Uygula';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => 'iptal et';
@@ -1571,7 +1669,8 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Bütün alışkanlıkları dışa aktar?';
+  String get exportConfirmDialog_title_exportAll =>
+      'Bütün alışkanlıkları dışa aktar?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
@@ -1619,19 +1718,24 @@ class L10nTr extends L10n {
   String get debug_collectLogTile_title => 'Kayıtlar Toplanıyor';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Kayıtları toplamayı durdurmak için dokunun.';
+  String get debug_collectLogTile_enable_subtitle =>
+      'Kayıtları toplamayı durdurmak için dokunun.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Kayıtları toplamayı başlatmak için dokunun.';
+  String get debug_collectLogTile_disable_subtitle =>
+      'Kayıtları toplamayı başlatmak için dokunun.';
 
   @override
-  String get debug_downladDebugLogs_subject => 'Hata ayıklama kayıtları indiriliyor';
+  String get debug_downladDebugLogs_subject =>
+      'Hata ayıklama kayıtları indiriliyor';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Hata ayıklama kayıtları temizlendi.';
+  String get dbeug_clearDebugLogs_complete_snackbar =>
+      'Hata ayıklama kayıtları temizlendi.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Hata ayıklama bilgisi indiriliyor';
+  String get debug_downladDebugInfo_subject =>
+      'Hata ayıklama bilgisi indiriliyor';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
@@ -1639,13 +1743,15 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Hata ayıklama günlüğü mevcut değil.';
+  String get debug_missingDebugLogFile_snackbar =>
+      'Hata ayıklama günlüğü mevcut değil.';
 
   @override
   String get debug_debuggerLogCard_title => 'Günlük Bilgileri';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Yerel hata ayıklama günlüklerini içerir, günlük toplama özelliğinin açık olması gerekir.';
+  String get debug_debuggerLogCard_subtitle =>
+      'Yerel hata ayıklama günlüklerini içerir, günlük toplama özelliğinin açık olması gerekir.';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => 'İndir';
@@ -1657,7 +1763,8 @@ class L10nTr extends L10n {
   String get debug_debuggerInfoCard_title => 'Hata Ayıklama Bilgileri';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Uygulamanın hata ayıklama bilgilerini içerir.';
+  String get debug_debuggerInfoCard_subtitle =>
+      'Uygulamanın hata ayıklama bilgilerini içerir.';
 
   @override
   String get debug_debuggerInfoCard_openButton_text => 'Aç';
@@ -1666,7 +1773,8 @@ class L10nTr extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => 'Kaydet';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Uygulama Bilgileri Toplanıyor...';
+  String get debug_debuggerInfo_notificationTitle =>
+      'Uygulama Bilgileri Toplanıyor...';
 
   @override
   String confirmDialog_confirm_text(String type) {
@@ -1716,11 +1824,13 @@ class L10nTr extends L10n {
   String get channelName_appSyncing => 'Eşitleme Süreci';
 
   @override
-  String get channelDesc_appSyncing => 'Eşitleme ilerlemesini ve başarılı sonuçları göstermek için kullanılır';
+  String get channelDesc_appSyncing =>
+      'Eşitleme ilerlemesini ve başarılı sonuçları göstermek için kullanılır';
 
   @override
   String get channelName_appSyncFailed => 'Eşitleme Başarısız';
 
   @override
-  String get channelDesc_appSyncFailed => 'Eşitleme başarısız olduğunda uyarmak için kullanılır';
+  String get channelDesc_appSyncFailed =>
+      'Eşitleme başarısız olduğunda uyarmak için kullanılır';
 }

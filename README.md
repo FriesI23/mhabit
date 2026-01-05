@@ -129,7 +129,7 @@ or modify the `.arb` files locally and request a PR to `weblate-translation` bra
 ## License
 
 ```text
-Copyright 2023-2025 Fries_I23
+Copyright 2023-2026 Fries_I23
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -165,8 +165,8 @@ limitations under the License.
 [github-relaese-badge-svg]: https://github.com/FriesI23/mhabit/actions/workflows/release-app.yml/badge.svg
 [github-release-page]: https://github.com/FriesI23/mhabit/releases
 [app-license]: https://github.com/FriesI23/mhabit/blob/main/LICENSE
-[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.29.3-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
-[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.29.3
+[flutter-badge]: https://img.shields.io/badge/_Flutter_-3.35.7-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue
+[deps-flutter-version]: https://github.com/flutter/flutter/tree/3.35.7
 [license-badge]: https://img.shields.io/github/license/FriesI23/mhabit
 [app-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit
 [app-pre-verison-bage-svg]: https://img.shields.io/github/v/release/FriesI23/mhabit?include_prereleases&label=pre-release

@@ -140,9 +140,7 @@ class _CustomDateTimeFormatPickerDialogState
       return RadioListTile<YearMonthDayFormtEnum>(
         title: Text(text),
         contentPadding: EdgeInsets.zero,
-        groupValue: _crtConfig.ymdFormat,
         value: value,
-        onChanged: _onYMDFormatChanged,
       );
     }
 
@@ -154,9 +152,7 @@ class _CustomDateTimeFormatPickerDialogState
       return RadioListTile<DateSplitCharEnum>(
         title: Text(text),
         contentPadding: EdgeInsets.zero,
-        groupValue: _crtConfig.splitChar,
         value: char,
-        onChanged: _onSplitCharChanged,
       );
     }
 
@@ -272,8 +268,18 @@ class _CustomDateTimeFormatPickerDialogState
                           l10n.common_customDateTimeFormatPicker_fmtTileText,
                         ),
                       ),
-                    for (var i in YearMonthDayFormtEnum.values)
-                      buildYMDFormatSelectListTile(context, i, l10n: l10n),
+                    RadioGroup<YearMonthDayFormtEnum>(
+                      groupValue: _crtConfig.ymdFormat,
+                      onChanged: _onYMDFormatChanged,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var i in YearMonthDayFormtEnum.values)
+                            buildYMDFormatSelectListTile(context, i,
+                                l10n: l10n),
+                        ],
+                      ),
+                    ),
                     // split char part
                     if (l10n != null)
                       GroupTitleListTile(
@@ -281,8 +287,18 @@ class _CustomDateTimeFormatPickerDialogState
                           l10n.common_customDateTimeFormatPicker_SepTileText,
                         ),
                       ),
-                    for (var i in DateSplitCharEnum.values)
-                      buildSplitCharSelectListTile(context, i, l10n: l10n),
+                    RadioGroup<DateSplitCharEnum>(
+                      groupValue: _crtConfig.splitChar,
+                      onChanged: _onSplitCharChanged,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var i in DateSplitCharEnum.values)
+                            buildSplitCharSelectListTile(context, i,
+                                l10n: l10n),
+                        ],
+                      ),
+                    ),
                     div,
                     buildUse12HoursListTile(context, l10n: l10n),
                     buildUseFullMonthNameListTile(context, l10n: l10n),

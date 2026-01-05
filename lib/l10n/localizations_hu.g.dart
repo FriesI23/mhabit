@@ -66,7 +66,8 @@ class L10nHu extends L10n {
   String get habitEdit_habitDailyGoalUnit_hintText => 'Napi célegység';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Kívánt maximális napi cél';
+  String get habitEdit_habitDailyGoalExtra_hintText =>
+      'Kívánt maximális napi cél';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
@@ -74,7 +75,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Maximális napi limit';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText =>
+      'Maximális napi limit';
 
   @override
   String get habitEdit_frequencySelector_title => 'Válassza ki a frekvenciát';
@@ -178,10 +180,12 @@ class L10nHu extends L10n {
   String get habitEdit_reminderQuest_hintText => 'Kérdés, pl.: Mozogtál ma?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Válassza ki az emlékeztető típusát';
+  String get habitEdit_reminder_dialogTitle =>
+      'Válassza ki az emlékeztető típusát';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'Mikor kell bejelentkezni';
+  String get habitEdit_reminder_dialogType_whenNeeded =>
+      'Mikor kell bejelentkezni';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Napi';
@@ -202,7 +206,8 @@ class L10nHu extends L10n {
   String get habitEdit_reminder_cancelDialogTitle => 'Megerősítés';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Megerősíti az emlékeztető eltávolítását';
+  String get habitEdit_reminder_cancelDialogSubtitle =>
+      'Megerősíti az emlékeztető eltávolítását';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'megerősítés';
@@ -244,10 +249,12 @@ class L10nHu extends L10n {
   String get habitDisplay_fab_text => 'Új szokás';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'Az ezer mérföldes utazás egyetlen lépéssel kezdődik';
+  String get habitDisplay_emptyImage_text_01 =>
+      'Az ezer mérföldes utazás egyetlen lépéssel kezdődik';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'Nem találhatók megfelelő szokások';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'Nem találhatók megfelelő szokások';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
@@ -255,7 +262,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archiválja a kiválasztott szokásokat?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title =>
+      'Archiválja a kiválasztott szokásokat?';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'megerősítés';
@@ -269,7 +277,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Visszavonja a kiválasztott szokások archiválásaát?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
+      'Visszavonja a kiválasztott szokások archiválásaát?';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'megerősítés';
@@ -283,7 +292,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Törli a kiválasztott szokásokat?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title =>
+      'Törli a kiválasztott szokásokat?';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'megerősítés';
@@ -313,7 +323,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Összes szokás exportálva';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText =>
+      'Összes szokás exportálva';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Összes kijelölése';
@@ -352,7 +363,8 @@ class L10nHu extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Archivált';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Legnépszerűbb szokások: az elmúlt 30 nap változásai';
+  String get habitDisplay_statsMenu_popularitySubgroupText =>
+      'Legnépszerűbb szokások: az elmúlt 30 nap változásai';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Világos téma';
@@ -364,13 +376,16 @@ class L10nHu extends L10n {
   String get habitDisplay_mainMenu_followSystemTheme => 'Rendszer követése';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Archiváltak megjelenítése';
+  String get habitDisplay_mainMenu_showArchivedTileText =>
+      'Archiváltak megjelenítése';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Teljesítettek megjelenítése';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Teljesítettek megjelenítése';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Aktívak megjelenítése';
+  String get habitDisplay_mainMenu_showActivedTileText =>
+      'Aktívak megjelenítése';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => 'Beállítások';
@@ -421,7 +436,8 @@ class L10nHu extends L10n {
   String get habitDisplay_searchFilter_ongoing => 'Folyamatban lévő';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Megjeleníti azokat a szokásokat, amelyek jelenleg aktívak és folyamatban vannak (nem archiváltak vagy töröltek).';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      'Megjeleníti azokat a szokásokat, amelyek jelenleg aktívak és folyamatban vannak (nem archiváltak vagy töröltek).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Teljesített';
@@ -483,10 +499,12 @@ class L10nHu extends L10n {
   String get habitDetail_confirmDialog_cancel => 'mégse';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archiválja a szokást?';
+  String get habitDetail_archiveConfirmDialog_titleText =>
+      'Archiválja a szokást?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Szokás archiválásának visszaállítása?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Szokás archiválásának visszaállítása?';
 
   @override
   String get habitDetail_deleteConfirmDialog_titleText => 'Törli a szokást?';
@@ -606,10 +624,12 @@ class L10nHu extends L10n {
   String get habitDetail_freqChartNaviBar_nowText => 'Most';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Előzmények diagram elrejtése';
+  String get habitDetail_freqChart_expanded_hideTooltip =>
+      'Előzmények diagram elrejtése';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Előzmények diagram megjelenítése';
+  String get habitDetail_freqChart_expanded_showTooltip =>
+      'Előzmények diagram megjelenítése';
 
   @override
   String get habitDetail_descSubgroup_title => 'Jegyzet';
@@ -642,7 +662,8 @@ class L10nHu extends L10n {
   String get habitDetail_editHeatmapCal_valueButtonText => 'érték';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'vissza a mai naphoz';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
+      'vissza a mai naphoz';
 
   @override
   String get habitDetail_notFoundText => 'Szokás betöltése sikertelen';
@@ -704,49 +725,62 @@ class L10nHu extends L10n {
   String get appSetting_operationSubgroupText => 'Művelet';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Naptár húzása oldalanként';
+  String get appSetting_dragCalendarByPageTile_titleText =>
+      'Naptár húzása oldalanként';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Ha a kapcsoló be van kapcsolva, a kezdőlap felső sávjában lévő naptár oldalanként húzható. Alapértelmezés szerint a kapcsoló ki van kapcsolva.';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      'Ha a kapcsoló be van kapcsolva, a kezdőlap felső sávjában lévő naptár oldalanként húzható. Alapértelmezés szerint a kapcsoló ki van kapcsolva.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Bejegyzés állapotának módosítása';
+  String get appSetting_changeRecordStatusOpTile_titleText =>
+      'Bejegyzés állapotának módosítása';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzések állapotát lehessen változtatni.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      'Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzések állapotát lehessen változtatni.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Részletes bejegyzés megnyitása';
+  String get appSetting_openRecordStatusDialogOpTile_titleText =>
+      'Részletes bejegyzés megnyitása';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzésekhez tartozó részletes felugró ablak nyíljon meg.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      'Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzésekhez tartozó részletes felugró ablak nyíljon meg.';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Téma színe';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Téma színének kiválasztása';
+  String get appSetting_appThemeColorChosenDiloag_titleText =>
+      'Téma színének kiválasztása';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'A háttérkép fő színének használata (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      'A háttérkép fő színének használata (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'A GTK+ téma kiválasztott háttérszínének használata';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      'A GTK+ téma kiválasztott háttérszínének használata';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'A rendszer téma színének használata';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      'A rendszer téma színének használata';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'A rendszer kiemelőszínének vagy ablak/üveg színének használata';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      'A rendszer kiemelőszínének vagy ablak/üveg színének használata';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'A hét első napja';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Mutassa a hét első napját';
+  String get appSetting_firstDayOfWeekDialog_titleText =>
+      'Mutassa a hét első napját';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_defaultText => ' (Alapértelmezett)';
+  String get appSetting_firstDayOfWeekDialog_defaultText =>
+      ' (Alapértelmezett)';
 
   @override
   String appSetting_changeLanguage_followSystem_text(String localeName) {
@@ -754,7 +788,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Rendszer Követése';
+  String get appSetting_changeLanguage_followSystem_noLocale_text =>
+      'Rendszer Követése';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Nyelv';
@@ -768,25 +803,32 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'rendszer követése';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      'rendszer követése';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'A beállított dátumformátum a szokás részletei oldalon jelenik meg.';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      'A beállított dátumformátum a szokás részletei oldalon jelenik meg.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Kompakt felület engedélyezése a szokások oldalán';
+  String get appSetting_compactUISwitcher_titleText =>
+      'Kompakt felület engedélyezése a szokások oldalán';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Lehetővé teszi, hogy a szokások ellenőrző táblája több tartalmat jelenítsen meg, de egyes UI elemek és szövegek kisebbnek tűnhetnek.';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      'Lehetővé teszi, hogy a szokások ellenőrző táblája több tartalmat jelenítsen meg, de egyes UI elemek és szövegek kisebbnek tűnhetnek.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Szokások ellenőrző terület rádió-beállítása';
+  String get appSetting_collapsed_calendar_bararea_titleText =>
+      'Szokások ellenőrző terület rádió-beállítása';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Állítsd a százalékos arányt a szokások ellenőrző táblájában több vagy kevesebb hely biztosításához.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      'Állítsd a százalékos arányt a szokások ellenőrző táblájában több vagy kevesebb hely biztosításához.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'Alapértelmezett';
+  String get appSetting_collapsed_calendar_bararea_defaultText =>
+      'Alapértelmezett';
 
   @override
   String get appSetting_reminderSubgroupText => 'Emlékeztető & Értesítés';
@@ -795,19 +837,22 @@ class L10nHu extends L10n {
   String get appSetting_dailyReminder_titleText => 'Napi emlékeztető';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Biztonsági mentés és visszaállítás';
+  String get appSetting_backupAndRestoreSubgroupText =>
+      'Biztonsági mentés és visszaállítás';
 
   @override
   String get appSetting_export_titleText => 'Exportálás';
 
   @override
-  String get appSetting_export_subtitleText => 'A szokások JSON formátumban exportálva. Ez a fájl visszaimportálható.';
+  String get appSetting_export_subtitleText =>
+      'A szokások JSON formátumban exportálva. Ez a fájl visszaimportálható.';
 
   @override
   String get appSetting_import_titleText => 'Importálás';
 
   @override
-  String get appSetting_import_subtitleText => 'Szokások importálása JSON fájlból';
+  String get appSetting_import_subtitleText =>
+      'Szokások importálása JSON fájlból';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -815,7 +860,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Megjegyzés: Az importálás nem törli a meglévő szokásokat.';
+  String get appSetting_importDialog_confirmSubtitle =>
+      'Megjegyzés: Az importálás nem törli a meglévő szokásokat.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'Megerősítés';
@@ -824,7 +870,8 @@ class L10nHu extends L10n {
   String get appSetting_importDialog_confirm_cancelText => 'mégse';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return 'Importálva $completeCount/$totalCount';
   }
 
@@ -840,13 +887,16 @@ class L10nHu extends L10n {
   String get appSetting_resetConfig_titleText => 'Konfiguráció visszaállítása';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Összes konfiguráció visszaállítása alapértelmezettre';
+  String get appSetting_resetConfig_subtitleText =>
+      'Összes konfiguráció visszaállítása alapértelmezettre';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Visszaállítja a konfigurációkat?';
+  String get appSetting_resetConfigDialog_titleText =>
+      'Visszaállítja a konfigurációkat?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'Az összes beállítás alapértelmezettre állítása, az alkalmazást újra kell indítani az érvényesítéshez.';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      'Az összes beállítás alapértelmezettre állítása, az alkalmazást újra kell indítani az érvényesítéshez.';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'mégse';
@@ -855,7 +905,8 @@ class L10nHu extends L10n {
   String get appSetting_resetConfigDialog_confirmText => 'megerősítés';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'reset app configs succeed';
+  String get appSetting_resetConfigSuccess_snackbarText =>
+      'reset app configs succeed';
 
   @override
   String get appSetting_otherSubgroupText => 'Egyéb';
@@ -870,7 +921,8 @@ class L10nHu extends L10n {
   String get appSetting_clearCacheDialog_titleText => 'Gyorsítótár törlése';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'A gyorsítótár törlése után néhány egyéni érték alapértelmezett értékre áll vissza.';
+  String get appSetting_clearCacheDialog_subtitleText =>
+      'A gyorsítótár törlése után néhány egyéni érték alapértelmezett értékre áll vissza.';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => 'mégse';
@@ -879,13 +931,16 @@ class L10nHu extends L10n {
   String get appSetting_clearCacheDialog_confirmText => 'megerősítés';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'A részleges gyorsítótár törlése sikertelen';
+  String get appSetting_clearCache_snackBar_partSuccText =>
+      'A részleges gyorsítótár törlése sikertelen';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Gyorsítótár sikeresen törölve';
+  String get appSetting_clearCache_snackBar_succText =>
+      'Gyorsítótár sikeresen törölve';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Gyorsítótár törlése sikeretelen';
+  String get appSetting_clearCache_snackBar_failText =>
+      'Gyorsítótár törlése sikeretelen';
 
   @override
   String get appSetting_debugger_titleText => 'Hibakeresés info';
@@ -894,7 +949,8 @@ class L10nHu extends L10n {
   String get appSetting_about_titleText => 'Névjegy';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Kísérleti beállítások';
+  String get appSetting_experimentalFeatureTile_titleText =>
+      'Kísérleti beállítások';
 
   @override
   String get appSetting_synSubgroupText => 'Szinkronizálás';
@@ -906,10 +962,12 @@ class L10nHu extends L10n {
   String get appSetting_notify_titleTile => 'Értesítések';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Értesítési beállítások kezelése';
+  String get appSetting_notify_subtitleTile =>
+      'Értesítési beállítások kezelése';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Koppints a rendszer értesítési beállításainak megnyitásához';
+  String get appSetting_notify_subtitleTile_android =>
+      'Koppints a rendszer értesítési beállításainak megnyitásához';
 
   @override
   String get appSync_nowTile_titleText => 'Szinkronizálás most';
@@ -936,7 +994,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Utolsó szinkronizálás (Hiba): N/A';
+  String get appSync_nowTile_errorText_noDate =>
+      'Utolsó szinkronizálás (Hiba): N/A';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
@@ -948,10 +1007,9 @@ class L10nHu extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Szinkronizálás: $prtString';
@@ -961,7 +1019,8 @@ class L10nHu extends L10n {
   String get appSync_nowTile_cancellingText => 'Mégsem...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Utolsó szinkronizálás (Törölve): N/A';
+  String get appSync_nowTile_cancelText_noDate =>
+      'Utolsó szinkronizálás (Törölve): N/A';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
@@ -1030,22 +1089,28 @@ class L10nHu extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => 'Új hely';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'A szinkron létrehozza a szükséges könyvtárakat és feltölti a helyi szokásokat a szerverre. Folytatod?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      'A szinkron létrehozza a szükséges könyvtárakat és feltölti a helyi szokásokat a szerverre. Folytatod?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Szinkron most!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText =>
+      'Szinkron most!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Szinkron megerősítése';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Szinkron megerősítése';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'A könyvtár nem üres. A szinkron összevonja a szerver és a helyi szokásokat. Folytatod?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      'A könyvtár nem üres. A szinkron összevonja a szerver és a helyi szokásokat. Folytatod?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Összevonás megerősítése';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText =>
+      'Összevonás megerősítése';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Sikertelen szinkron naplók exportálása';
+  String get appSync_exportAllLogsTile_titleText =>
+      'Sikertelen szinkron naplók exportálása';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
@@ -1116,34 +1181,43 @@ class L10nHu extends L10n {
   String get appSync_summaryTile_title => 'Szinkron szerver';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Nincs beállítva';
+  String get appSync_summaryTile_subtitle_text_notConfigured =>
+      'Nincs beállítva';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'Minden legutóbbi sikertelen szinkron napló';
+  String get appSync_exportAllLogsTile_exportSubjectText =>
+      'Minden legutóbbi sikertelen szinkron napló';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Módosítások mentésének megerősítése';
+  String get appSync_serverEditor_saveDialog_titleText =>
+      'Módosítások mentésének megerősítése';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'A mentés felülírja az előző szerverkonfigurációt.';
+  String get appSync_serverEditor_saveDialog_subtitleText =>
+      'A mentés felülírja az előző szerverkonfigurációt.';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Mentetlen módosítások';
+  String get appSync_serverEditor_exitDialog_titleText =>
+      'Mentetlen módosítások';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Kilépéskor minden mentetlen módosítás elvész.';
+  String get appSync_serverEditor_exitDialog_subtitleText =>
+      'Kilépéskor minden mentetlen módosítás elvész.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Törlés megerősítése';
+  String get appSync_serverEditor_deleteDialog_titleText =>
+      'Törlés megerősítése';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'A törlés eltávolítja az aktuális szerverkonfigurációt.';
+  String get appSync_serverEditor_deleteDialog_subtitleText =>
+      'A törlés eltávolítja az aktuális szerverkonfigurációt.';
 
   @override
   String get appSync_serverEditor_titleText_add => 'Új szinkron szerver';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Szinkron szerver módosítása';
+  String get appSync_serverEditor_titleText_modify =>
+      'Szinkron szerver módosítása';
 
   @override
   String get appSync_serverEditor_advance_titleText => 'Speciális beállítások';
@@ -1152,25 +1226,30 @@ class L10nHu extends L10n {
   String get appSync_serverEditor_pathTile_titleText => 'Elérési út';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Írd be ide az érvényes WebDAV elérési utat.';
+  String get appSync_serverEditor_pathTile_hintText =>
+      'Írd be ide az érvényes WebDAV elérési utat.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Az elérési út nem lehet üres!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath =>
+      'Az elérési út nem lehet üres!';
 
   @override
   String get appSync_serverEditor_usernameTile_titleText => 'Felhasználónév';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Add meg a felhasználónevet, hagyd üresen, ha nem szükséges.';
+  String get appSync_serverEditor_usernameTile_hintText =>
+      'Add meg a felhasználónevet, hagyd üresen, ha nem szükséges.';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'Jelszó';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'SSL tanúsítvány figyelmen kívül hagyása';
+  String get appSync_serverEditor_ignoreSSLTile_titleText =>
+      'SSL tanúsítvány figyelmen kívül hagyása';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Szinkron időkorlát (másodperc)';
+  String get appSync_serverEditor_timeoutTile_titleText =>
+      'Szinkron időkorlát (másodperc)';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1187,10 +1266,12 @@ class L10nHu extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 'mp';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Hálózati kapcsolat időkorlát (mp)';
+  String get appSync_serverEditor_connTimeoutTile_titleText =>
+      'Hálózati kapcsolat időkorlát (mp)';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1204,7 +1285,8 @@ class L10nHu extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 'mp';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Hálózati újrapróbálkozások száma';
+  String get appSync_serverEditor_connRetryCountTile_titleText =>
+      'Hálózati újrapróbálkozások száma';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1218,7 +1300,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Hálózati szinkron mód';
+  String get appSync_serverEditor_netTypeTile_titleText =>
+      'Hálózati szinkron mód';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
@@ -1234,7 +1317,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'Alacsony adatforgalom';
+  String get appSync_serverEditor_netTypeTile_lowDataText =>
+      'Alacsony adatforgalom';
 
   @override
   String get appSync_noti_readyToSync_body => 'Szinkron előkészítése...';
@@ -1253,16 +1337,20 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Szinkron alacsony adatforgalom módban';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
+      'Szinkron alacsony adatforgalom módban';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'Egy vagy több kísérleti funkció engedélyezve, használatukkal óvatosan.';
+  String get experimentalFeatures_warnginBanner_title =>
+      'Egy vagy több kísérleti funkció engedélyezve, használatukkal óvatosan.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Szokások felhő szinkron';
+  String get experimentalFeatures_habitSyncTile_titleText =>
+      'Szokások felhő szinkron';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Engedélyezés után a szinkron opció megjelenik a beállításokban';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      'Engedélyezés után a szinkron opció megjelenik a beállításokban';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1278,7 +1366,8 @@ class L10nHu extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => 'Szokás keresés';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Engedélyezés után a Szokások képernyő tetején keresősáv jelenik meg, ahol szokások kereshetők.';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      'Engedélyezés után a Szokások képernyő tetején keresősáv jelenik meg, ahol szokások kereshetők.';
 
   @override
   String get appAbout_appbarTile_titleText => 'Névjegy';
@@ -1301,7 +1390,8 @@ class L10nHu extends L10n {
   String get appAbout_contactEmailTile_titleText => 'Kapcsolatfelvétel';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Szia, örülök, hogy megkerestél.\nHa hibát jelzel, kérlek add meg az alkalmazás verzióját és írd le a reprodukálás lépéseit.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'Szia, örülök, hogy megkerestél.\nHa hibát jelzel, kérlek add meg az alkalmazás verzióját és írd le a reprodukálás lépéseit.\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'Licenc';
@@ -1310,7 +1400,8 @@ class L10nHu extends L10n {
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Harmadik fél licenc nyilatkozat';
+  String get appAbout_licenseThirdPartyTile_titleText =>
+      'Harmadik fél licenc nyilatkozat';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
@@ -1319,16 +1410,19 @@ class L10nHu extends L10n {
   String get appAbout_privacyTile_titleText => 'Adatvédelem';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Az alkalmazásban elérheted az adatvédelmi szabályzatot';
+  String get appAbout_privacyTile_subTitleText =>
+      'Az alkalmazásban elérheted az adatvédelmi szabályzatot';
 
   @override
   String get appAbout_donateTile_titleText => 'Adományozás';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'Személyes fejlesztő vagyok. Ha tetszik az alkalmazás, vegyél nekem egy ☕-t.';
+  String get appAbout_donateTile_subTitleText =>
+      'Személyes fejlesztő vagyok. Ha tetszik az alkalmazás, vegyél nekem egy ☕-t.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1418,10 +1512,12 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Meglévő bejegyzések felülírása';
+  String get batchCheckin_save_confirmDialog_title =>
+      'Meglévő bejegyzések felülírása';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'A meglévő bejegyzések felülíródnak. Mentés után az előző bejegyzések elvesznek.';
+  String get batchCheckin_save_confirmDialog_body =>
+      'A meglévő bejegyzések felülíródnak. Mentés után az előző bejegyzések elvesznek.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'mentés';
@@ -1433,7 +1529,8 @@ class L10nHu extends L10n {
   String get batchCheckin_close_confirmDialog_title => 'Kilépés megerősítése';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'A bejelentkezés állapotváltozásai nem kerülnek mentésre.';
+  String get batchCheckin_close_confirmDialog_body =>
+      'A bejelentkezés állapotváltozásai nem kerülnek mentésre.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'kilépés';
@@ -1442,10 +1539,12 @@ class L10nHu extends L10n {
   String get batchCheckin_close_confirmDialog_cancelButton_text => 'mégse';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Ma betartottad a szokásaidat?';
+  String get appReminder_dailyReminder_title =>
+      '🏝 Ma betartottad a szokásaidat?';
 
   @override
-  String get appReminder_dailyReminder_body => 'Kattints a belépéshez és időben jelöld a teljesítést.';
+  String get appReminder_dailyReminder_body =>
+      'Kattints a belépéshez és időben jelöld a teljesítést.';
 
   @override
   String get common_habitColorType_cc1 => 'Mélykáprázat lila';
@@ -1492,7 +1591,8 @@ class L10nHu extends L10n {
   String get common_appThemeColor_dynamic => 'Dinamikus';
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Rendszer formátum használata';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text =>
+      'Rendszer formátum használata';
 
   @override
   String get common_customDateTimeFormatPicker_fmtTileText => 'Dátum formátum';
@@ -1525,27 +1625,33 @@ class L10nHu extends L10n {
   String get common_customDateTimeFormatPicker_empty_text => 'Nincs elválasztó';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => '12 órás formátum használata';
+  String get common_customDateTimeFormatPicker_12Hour_text =>
+      '12 órás formátum használata';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Teljes hónapnév használata';
+  String get common_customDateTimeFormatPicker_monthName_text =>
+      'Teljes hónapnév használata';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Alkalmazás a gyakorisági diagramhoz';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text =>
+      'Alkalmazás a gyakorisági diagramhoz';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Alkalmazás a naptárhoz';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text =>
+      'Alkalmazás a naptárhoz';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => 'mégse';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'megerősítés';
+  String get common_customDateTimeFormatPicker_confirmButton_text =>
+      'megerősítés';
 
   @override
   String get common_errorPage_title => 'Hoppá, összeomlott!';
@@ -1571,7 +1677,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Minden szokás exportálása?';
+  String get exportConfirmDialog_title_exportAll =>
+      'Minden szokás exportálása?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
@@ -1586,7 +1693,8 @@ class L10nHu extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_option_includeRecords => 'bejegyzésekkel együtt';
+  String get exportConfirmDialog_option_includeRecords =>
+      'bejegyzésekkel együtt';
 
   @override
   String get exportConfirmDialog_cancel_buttonText => 'mégse';
@@ -1619,10 +1727,12 @@ class L10nHu extends L10n {
   String get debug_collectLogTile_title => 'Naplók gyűjtése';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Koppints a naplózás leállításához.';
+  String get debug_collectLogTile_enable_subtitle =>
+      'Koppints a naplózás leállításához.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Koppints a naplózás elindításához.';
+  String get debug_collectLogTile_disable_subtitle =>
+      'Koppints a naplózás elindításához.';
 
   @override
   String get debug_downladDebugLogs_subject => 'Naplók letöltése';
@@ -1645,7 +1755,8 @@ class L10nHu extends L10n {
   String get debug_debuggerLogCard_title => 'Napló információk';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Tartalmazza a helyi naplóadatokat, a gyűjtéshez a kapcsolót be kell kapcsolni.';
+  String get debug_debuggerLogCard_subtitle =>
+      'Tartalmazza a helyi naplóadatokat, a gyűjtéshez a kapcsolót be kell kapcsolni.';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => 'Letöltés';
@@ -1657,7 +1768,8 @@ class L10nHu extends L10n {
   String get debug_debuggerInfoCard_title => 'Debug információk';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Tartalmazza az alkalmazás hibakeresési adatait.';
+  String get debug_debuggerInfoCard_subtitle =>
+      'Tartalmazza az alkalmazás hibakeresési adatait.';
 
   @override
   String get debug_debuggerInfoCard_openButton_text => 'Megnyitás';
@@ -1666,7 +1778,8 @@ class L10nHu extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => 'Mentés';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Alkalmazás információinak gyűjtése...';
+  String get debug_debuggerInfo_notificationTitle =>
+      'Alkalmazás információinak gyűjtése...';
 
   @override
   String confirmDialog_confirm_text(String type) {
@@ -1716,7 +1829,8 @@ class L10nHu extends L10n {
   String get channelName_appSyncing => 'Szinkron folyamat';
 
   @override
-  String get channelDesc_appSyncing => 'A szinkron állapotának és nem sikertelen eredmények megjelenítésére szolgál';
+  String get channelDesc_appSyncing =>
+      'A szinkron állapotának és nem sikertelen eredmények megjelenítésére szolgál';
 
   @override
   String get channelName_appSyncFailed => 'Szinkron sikertelen';

@@ -118,11 +118,7 @@ class _HabitReminderTypePickerDialog
       return RadioListTile<HabitReminderType>(
         title: Text(HabitReminder.getReminderTypeTextByType(type, l10n: l10n)),
         value: type,
-        groupValue: _crtType,
         contentPadding: EdgeInsets.zero,
-        onChanged: (value) => setState(() {
-          _crtType = value ?? _crtType;
-        }),
       );
     }
 
@@ -185,16 +181,22 @@ class _HabitReminderTypePickerDialog
     return AlertDialog(
       scrollable: true,
       title: Text(l10n?.habitEdit_reminder_dialogTitle ?? ''),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildRadioListTile(context, HabitReminderType.whenNeeded),
-          buildRadioListTile(context, HabitReminderType.day),
-          buildRadioListTile(context, HabitReminderType.week),
-          buildWeekSelectorWrap(context),
-          buildRadioListTile(context, HabitReminderType.month),
-          buildMonthSelectorWrap(context),
-        ],
+      content: RadioGroup<HabitReminderType>(
+        groupValue: _crtType,
+        onChanged: (value) => setState(() {
+          _crtType = value ?? _crtType;
+        }),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildRadioListTile(context, HabitReminderType.whenNeeded),
+            buildRadioListTile(context, HabitReminderType.day),
+            buildRadioListTile(context, HabitReminderType.week),
+            buildWeekSelectorWrap(context),
+            buildRadioListTile(context, HabitReminderType.month),
+            buildMonthSelectorWrap(context),
+          ],
+        ),
       ),
       actions: [
         TextButton(

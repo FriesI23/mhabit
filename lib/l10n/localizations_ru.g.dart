@@ -66,7 +66,8 @@ class L10nRu extends L10n {
   String get habitEdit_habitDailyGoalUnit_hintText => 'Единицы дневной цель';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Желаемый максимум дневная цель';
+  String get habitEdit_habitDailyGoalExtra_hintText =>
+      'Желаемый максимум дневная цель';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
@@ -74,7 +75,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Максимальный дневной предел';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText =>
+      'Максимальный дневной предел';
 
   @override
   String get habitEdit_frequencySelector_title => 'Выберете частоту';
@@ -175,13 +177,15 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_monthSubfixText => ' в любой месяц';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Вопрос, н.п. Вы занимались сегодня?';
+  String get habitEdit_reminderQuest_hintText =>
+      'Вопрос, н.п. Вы занимались сегодня?';
 
   @override
   String get habitEdit_reminder_dialogTitle => 'Выберете тип напоминания';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'Когда нужно чекиниться';
+  String get habitEdit_reminder_dialogType_whenNeeded =>
+      'Когда нужно чекиниться';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Ежедневно';
@@ -202,7 +206,8 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_cancelDialogTitle => 'Подтвердить';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Вы уверены, что хотите удалить это напоминание';
+  String get habitEdit_reminder_cancelDialogSubtitle =>
+      'Вы уверены, что хотите удалить это напоминание';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'подтвердить';
@@ -244,7 +249,8 @@ class L10nRu extends L10n {
   String get habitDisplay_fab_text => 'Новая Привычка';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'Путешествие в тысячу миль начинается с первого шага';
+  String get habitDisplay_emptyImage_text_01 =>
+      'Путешествие в тысячу миль начинается с первого шага';
 
   @override
   String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
@@ -255,7 +261,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Архивировать выбранные привычки?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title =>
+      'Архивировать выбранные привычки?';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'подтвердить';
@@ -269,7 +276,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Разархивировать выбранные привычки?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
+      'Разархивировать выбранные привычки?';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'подтвердить';
@@ -283,7 +291,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Удалить выбранные привычки?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title =>
+      'Удалить выбранные привычки?';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'подтвердить';
@@ -313,7 +322,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText =>
+      'Exported All Habits';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Выбрать всё';
@@ -352,7 +362,8 @@ class L10nRu extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Архивировано';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Топ привычек: изменения за последние 30 дней';
+  String get habitDisplay_statsMenu_popularitySubgroupText =>
+      'Топ привычек: изменения за последние 30 дней';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Светлая тема';
@@ -364,10 +375,12 @@ class L10nRu extends L10n {
   String get habitDisplay_mainMenu_followSystemTheme => 'Как в системе';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Показать Архивированные';
+  String get habitDisplay_mainMenu_showArchivedTileText =>
+      'Показать Архивированные';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Показать Завершённые';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Показать Завершённые';
 
   @override
   String get habitDisplay_mainMenu_showActivedTileText => 'Показать Активные';
@@ -421,7 +434,8 @@ class L10nRu extends L10n {
   String get habitDisplay_searchFilter_ongoing => 'Ongoing';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      'Shows habits that are currently active and ongoing (not archived or deleted).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Завершённые';
@@ -483,10 +497,12 @@ class L10nRu extends L10n {
   String get habitDetail_confirmDialog_cancel => 'отмена';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Архивировать Привычку?';
+  String get habitDetail_archiveConfirmDialog_titleText =>
+      'Архивировать Привычку?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Разархивировать Привычку?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Разархивировать Привычку?';
 
   @override
   String get habitDetail_deleteConfirmDialog_titleText => 'Удалить Привычку?';
@@ -606,10 +622,12 @@ class L10nRu extends L10n {
   String get habitDetail_freqChartNaviBar_nowText => 'Сейчас';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Спрятать историческую диаграмму';
+  String get habitDetail_freqChart_expanded_hideTooltip =>
+      'Спрятать историческую диаграмму';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Показать историческую диаграмму';
+  String get habitDetail_freqChart_expanded_showTooltip =>
+      'Показать историческую диаграмму';
 
   @override
   String get habitDetail_descSubgroup_title => 'Редактор';
@@ -642,7 +660,8 @@ class L10nRu extends L10n {
   String get habitDetail_editHeatmapCal_valueButtonText => 'value';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'назад к сегодня';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
+      'назад к сегодня';
 
   @override
   String get habitDetail_notFoundText => 'Загрузка привычки не удалась';
@@ -686,7 +705,8 @@ class L10nRu extends L10n {
   String get habitDetail_skipReason_title => 'Причина пропуска';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Напишите что нибудь здесь...';
+  String get habitDetail_skipReason_bodyHelpText =>
+      'Напишите что нибудь здесь...';
 
   @override
   String get habitDetail_skipReason_cancelText => 'отмена';
@@ -704,46 +724,58 @@ class L10nRu extends L10n {
   String get appSetting_operationSubgroupText => 'Операция';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Перетаскивать календарь по странице';
+  String get appSetting_dragCalendarByPageTile_titleText =>
+      'Перетаскивать календарь по странице';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Если переключатель включен, календарь панели приложений на домашней странице будет перетаскиваться по странице. По умолчанию переключатель отключен.';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      'Если переключатель включен, календарь панели приложений на домашней странице будет перетаскиваться по странице. По умолчанию переключатель отключен.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Изменить статус записи';
+  String get appSetting_changeRecordStatusOpTile_titleText =>
+      'Изменить статус записи';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Измените поведение клика, чтобы изменить статус ежедневных записей на главной странице.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      'Измените поведение клика, чтобы изменить статус ежедневных записей на главной странице.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Открыть подробную запись';
+  String get appSetting_openRecordStatusDialogOpTile_titleText =>
+      'Открыть подробную запись';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Измените поведение клика, чтобы открыть подробное всплывающее окно для ежедневных записей на главной странице.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      'Измените поведение клика, чтобы открыть подробное всплывающее окно для ежедневных записей на главной странице.';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText =>
+      'Choose Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      'Use wallpaper\'s main color (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      'Use GTK+ theme\'s selected background color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      'Use system theme color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      'Use system accent or window/glass color';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'Первый день недели';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Показывать первый день недели';
+  String get appSetting_firstDayOfWeekDialog_titleText =>
+      'Показывать первый день недели';
 
   @override
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (По умолчанию)';
@@ -754,7 +786,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Как в системе';
+  String get appSetting_changeLanguage_followSystem_noLocale_text =>
+      'Как в системе';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Язык';
@@ -768,25 +801,32 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'как в системе';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      'как в системе';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Настроенный формат даты будет применен к отображению даты на странице «Подробности привычки».';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      'Настроенный формат даты будет применен к отображению даты на странице «Подробности привычки».';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Включить компактный интерфейс на странице привычек';
+  String get appSetting_compactUISwitcher_titleText =>
+      'Включить компактный интерфейс на странице привычек';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Разрешить привычки проверить таблицу для отображения большего количества контента, но некоторые пользовательские и текст могут показаться меньше.';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      'Разрешить привычки проверить таблицу для отображения большего количества контента, но некоторые пользовательские и текст могут показаться меньше.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Habits check area radio adjustment';
+  String get appSetting_collapsed_calendar_bararea_titleText =>
+      'Habits check area radio adjustment';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Adjust percentage for more/less space in habits check table area.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      'Adjust percentage for more/less space in habits check table area.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_defaultText => 'По умолчанию';
+  String get appSetting_collapsed_calendar_bararea_defaultText =>
+      'По умолчанию';
 
   @override
   String get appSetting_reminderSubgroupText => 'Напоминание и оповещение';
@@ -795,13 +835,15 @@ class L10nRu extends L10n {
   String get appSetting_dailyReminder_titleText => 'Ежедневное напоминание';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Резервное копирование и восстановление';
+  String get appSetting_backupAndRestoreSubgroupText =>
+      'Резервное копирование и восстановление';
 
   @override
   String get appSetting_export_titleText => 'Экспорт';
 
   @override
-  String get appSetting_export_subtitleText => 'Привычки экспортируются в формате JSON. Этот файл можно импортировать назад.';
+  String get appSetting_export_subtitleText =>
+      'Привычки экспортируются в формате JSON. Этот файл можно импортировать назад.';
 
   @override
   String get appSetting_import_titleText => 'Импорт';
@@ -815,7 +857,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Примечание: импорт не удаляет существующие привычки.';
+  String get appSetting_importDialog_confirmSubtitle =>
+      'Примечание: импорт не удаляет существующие привычки.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'подтвердить';
@@ -824,7 +867,8 @@ class L10nRu extends L10n {
   String get appSetting_importDialog_confirm_cancelText => 'отмена';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return 'Импортировано $completeCount/$totalCount';
   }
 
@@ -840,13 +884,15 @@ class L10nRu extends L10n {
   String get appSetting_resetConfig_titleText => 'Сбросить настройки';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Сбросить все настройки к значениям по умолчанию.';
+  String get appSetting_resetConfig_subtitleText =>
+      'Сбросить все настройки к значениям по умолчанию.';
 
   @override
   String get appSetting_resetConfigDialog_titleText => 'Сбросить настройки?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'После сброса нужно будет перезапустить приложение.';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      'После сброса нужно будет перезапустить приложение.';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'отмена';
@@ -855,7 +901,8 @@ class L10nRu extends L10n {
   String get appSetting_resetConfigDialog_confirmText => 'подтвердить';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'настройки приложения сброшены';
+  String get appSetting_resetConfigSuccess_snackbarText =>
+      'настройки приложения сброшены';
 
   @override
   String get appSetting_otherSubgroupText => 'Другие';
@@ -870,7 +917,8 @@ class L10nRu extends L10n {
   String get appSetting_clearCacheDialog_titleText => 'Очистить кеш';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'После очистки кэша некоторые пользовательские значения будут восстановлены по умолчанию.';
+  String get appSetting_clearCacheDialog_subtitleText =>
+      'После очистки кэша некоторые пользовательские значения будут восстановлены по умолчанию.';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => 'отмена';
@@ -879,13 +927,15 @@ class L10nRu extends L10n {
   String get appSetting_clearCacheDialog_confirmText => 'подтвердить';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Не удалось частично очистить кэш';
+  String get appSetting_clearCache_snackBar_partSuccText =>
+      'Не удалось частично очистить кэш';
 
   @override
   String get appSetting_clearCache_snackBar_succText => 'Кэш очищен';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Не удалось очистить кэш';
+  String get appSetting_clearCache_snackBar_failText =>
+      'Не удалось очистить кэш';
 
   @override
   String get appSetting_debugger_titleText => 'Отладочная информация';
@@ -894,7 +944,8 @@ class L10nRu extends L10n {
   String get appSetting_about_titleText => 'О приложении';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Экспериментальные возможности';
+  String get appSetting_experimentalFeatureTile_titleText =>
+      'Экспериментальные возможности';
 
   @override
   String get appSetting_synSubgroupText => 'Синхронизировать';
@@ -909,7 +960,8 @@ class L10nRu extends L10n {
   String get appSetting_notify_subtitleTile => 'Настройка оповещения';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Нажмите, чтобы открыть настройки системных оповещений';
+  String get appSetting_notify_subtitleTile_android =>
+      'Нажмите, чтобы открыть настройки системных оповещений';
 
   @override
   String get appSync_nowTile_titleText => 'Синхронизировать сейчас';
@@ -936,7 +988,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => 'Последняя синхронизация (ошибка): не было';
+  String get appSync_nowTile_errorText_noDate =>
+      'Последняя синхронизация (ошибка): не было';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
@@ -948,10 +1001,9 @@ class L10nRu extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Синхронизирую: $prtString';
@@ -961,7 +1013,8 @@ class L10nRu extends L10n {
   String get appSync_nowTile_cancellingText => 'Отменяется...';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => 'Последняя синхронизация (отменена): не было';
+  String get appSync_nowTile_cancelText_noDate =>
+      'Последняя синхронизация (отменена): не было';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
@@ -1027,25 +1080,32 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_titleText => 'Новое местоположение';
+  String get appSync_webdav_newServerConfirmDialog_titleText =>
+      'Новое местоположение';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Синхронизация создаст необходимые папки и загрузит локальные привычки на сервер. Продолжать?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      'Синхронизация создаст необходимые папки и загрузит локальные привычки на сервер. Продолжать?';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_confirmText => 'Синхронизировать сейчас!';
+  String get appSync_webdav_newServerConfirmDialog_confirmText =>
+      'Синхронизировать сейчас!';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_titleText => 'Подтвердите синхронизацию';
+  String get appSync_webdav_oldServerConfirmDialog_titleText =>
+      'Подтвердите синхронизацию';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Папка не пустая. Синхронизация объединит локальные привычки с теми что со сервера. Продолжить?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      'Папка не пустая. Синхронизация объединит локальные привычки с теми что со сервера. Продолжить?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Подтверждение слияния';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText =>
+      'Подтверждение слияния';
 
   @override
-  String get appSync_exportAllLogsTile_titleText => 'Экспорт журналов неудачной синхронизации';
+  String get appSync_exportAllLogsTile_titleText =>
+      'Экспорт журналов неудачной синхронизации';
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
@@ -1119,31 +1179,39 @@ class L10nRu extends L10n {
   String get appSync_summaryTile_subtitle_text_notConfigured => 'Не настроено';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'Все последние ошибки синхронизации';
+  String get appSync_exportAllLogsTile_exportSubjectText =>
+      'Все последние ошибки синхронизации';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Подтвердить сохранение изменений';
+  String get appSync_serverEditor_saveDialog_titleText =>
+      'Подтвердить сохранение изменений';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Сохранение перетрёт предыдущие настройки сервера';
+  String get appSync_serverEditor_saveDialog_subtitleText =>
+      'Сохранение перетрёт предыдущие настройки сервера';
 
   @override
-  String get appSync_serverEditor_exitDialog_titleText => 'Несохранённые изменения';
+  String get appSync_serverEditor_exitDialog_titleText =>
+      'Несохранённые изменения';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Выход отбросит все несохранённые изменения.';
+  String get appSync_serverEditor_exitDialog_subtitleText =>
+      'Выход отбросит все несохранённые изменения.';
 
   @override
-  String get appSync_serverEditor_deleteDialog_titleText => 'Подтвердить удаление';
+  String get appSync_serverEditor_deleteDialog_titleText =>
+      'Подтвердить удаление';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Удаление удаляет текущую конфигурацию сервера.';
+  String get appSync_serverEditor_deleteDialog_subtitleText =>
+      'Удаление удаляет текущую конфигурацию сервера.';
 
   @override
   String get appSync_serverEditor_titleText_add => 'Новый сервер синхронизации';
 
   @override
-  String get appSync_serverEditor_titleText_modify => 'Изменить сервер синхронизации';
+  String get appSync_serverEditor_titleText_modify =>
+      'Изменить сервер синхронизации';
 
   @override
   String get appSync_serverEditor_advance_titleText => 'Расширенные настройки';
@@ -1152,25 +1220,30 @@ class L10nRu extends L10n {
   String get appSync_serverEditor_pathTile_titleText => 'Путь';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Введите правильный путь WebDAV.';
+  String get appSync_serverEditor_pathTile_hintText =>
+      'Введите правильный путь WebDAV.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Путь не должен быть пустым!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath =>
+      'Путь не должен быть пустым!';
 
   @override
   String get appSync_serverEditor_usernameTile_titleText => 'Имя пользователя';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Введите имя пользователя, если оно не требуется, оставьте его пустым.';
+  String get appSync_serverEditor_usernameTile_hintText =>
+      'Введите имя пользователя, если оно не требуется, оставьте его пустым.';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'Пароль';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Игнорировать проблемы с TLS сертификатом';
+  String get appSync_serverEditor_ignoreSSLTile_titleText =>
+      'Игнорировать проблемы с TLS сертификатом';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Время ожидания синхронизации';
+  String get appSync_serverEditor_timeoutTile_titleText =>
+      'Время ожидания синхронизации';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1187,10 +1260,12 @@ class L10nRu extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Тайм-аут сетевого соединения, в секундах';
+  String get appSync_serverEditor_connTimeoutTile_titleText =>
+      'Тайм-аут сетевого соединения, в секундах';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1204,7 +1279,8 @@ class L10nRu extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 'с';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Количество повторных попыток подключения к сети';
+  String get appSync_serverEditor_connRetryCountTile_titleText =>
+      'Количество повторных попыток подключения к сети';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1218,7 +1294,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_titleText => 'Режим сетевой синхронизации';
+  String get appSync_serverEditor_netTypeTile_titleText =>
+      'Режим сетевой синхронизации';
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
@@ -1234,7 +1311,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'Низкое потребление данных';
+  String get appSync_serverEditor_netTypeTile_lowDataText =>
+      'Низкое потребление данных';
 
   @override
   String get appSync_noti_readyToSync_body => 'Подготовка к синхронизации...';
@@ -1253,16 +1331,20 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Синхронизация в режиме низких данных';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
+      'Синхронизация в режиме низких данных';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'Включено одну или несколько экспериментальных возможностей. Используйте с осторожностью.';
+  String get experimentalFeatures_warnginBanner_title =>
+      'Включено одну или несколько экспериментальных возможностей. Используйте с осторожностью.';
 
   @override
-  String get experimentalFeatures_habitSyncTile_titleText => 'Синхронизация привычек с облаком';
+  String get experimentalFeatures_habitSyncTile_titleText =>
+      'Синхронизация привычек с облаком';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'После включения, опция синхронизации приложения появится в настройках';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      'После включения, опция синхронизации приложения появится в настройках';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1278,7 +1360,8 @@ class L10nRu extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
 
   @override
   String get appAbout_appbarTile_titleText => 'О приложении';
@@ -1301,7 +1384,8 @@ class L10nRu extends L10n {
   String get appAbout_contactEmailTile_titleText => 'Написать мне';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'Hi, I\'m glad you reached out to me.\nIf you\'re reporting a bug, please indicate the app version and describe the steps to reproduce it.\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'Лицензия';
@@ -1310,7 +1394,8 @@ class L10nRu extends L10n {
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Third Party Licensing Statement';
+  String get appAbout_licenseThirdPartyTile_titleText =>
+      'Third Party Licensing Statement';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
@@ -1319,16 +1404,19 @@ class L10nRu extends L10n {
   String get appAbout_privacyTile_titleText => 'Конфиденциальность';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Ознакомьтесь с политикой конфиденциальности в этом приложении';
+  String get appAbout_privacyTile_subTitleText =>
+      'Ознакомьтесь с политикой конфиденциальности в этом приложении';
 
   @override
   String get appAbout_donateTile_titleText => 'Пожертвовать';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'Я индивидуальный разработчик. Если вам нравится это приложение, купите мне ☕.';
+  String get appAbout_donateTile_subTitleText =>
+      'Я индивидуальный разработчик. Если вам нравится это приложение, купите мне ☕.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1418,10 +1506,12 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Overwrite Existing Records';
+  String get batchCheckin_save_confirmDialog_title =>
+      'Overwrite Existing Records';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Existing records will be overwritten After saving, previous records will be lost.';
+  String get batchCheckin_save_confirmDialog_body =>
+      'Existing records will be overwritten After saving, previous records will be lost.';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => 'сохранить';
@@ -1433,7 +1523,8 @@ class L10nRu extends L10n {
   String get batchCheckin_close_confirmDialog_title => 'Confirm Return';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Check-in Status Changes won\'t be applied before saved';
+  String get batchCheckin_close_confirmDialog_body =>
+      'Check-in Status Changes won\'t be applied before saved';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'выход';
@@ -1442,10 +1533,12 @@ class L10nRu extends L10n {
   String get batchCheckin_close_confirmDialog_cancelButton_text => 'отмена';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Вы сегодня придерживались своих привычек?';
+  String get appReminder_dailyReminder_title =>
+      '🏝 Вы сегодня придерживались своих привычек?';
 
   @override
-  String get appReminder_dailyReminder_body => 'Нажмите чтобы войти в приложение и вписаться вовремя.';
+  String get appReminder_dailyReminder_body =>
+      'Нажмите чтобы войти в приложение и вписаться вовремя.';
 
   @override
   String get common_habitColorType_cc1 => 'Deep lilac';
@@ -1492,7 +1585,8 @@ class L10nRu extends L10n {
   String get common_appThemeColor_dynamic => 'Dynamic';
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Использовать системный формат';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text =>
+      'Использовать системный формат';
 
   @override
   String get common_customDateTimeFormatPicker_fmtTileText => 'Формат даты';
@@ -1525,27 +1619,33 @@ class L10nRu extends L10n {
   String get common_customDateTimeFormatPicker_empty_text => 'Без разделителя';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => 'Использовать 12ти часовой формат';
+  String get common_customDateTimeFormatPicker_12Hour_text =>
+      'Использовать 12ти часовой формат';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Использовать полное название';
+  String get common_customDateTimeFormatPicker_monthName_text =>
+      'Использовать полное название';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Применить для Диаграммы Частоты';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text =>
+      'Применить для Диаграммы Частоты';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Применить для Календаря';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text =>
+      'Применить для Календаря';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => 'отмена';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'подтвердить';
+  String get common_customDateTimeFormatPicker_confirmButton_text =>
+      'подтвердить';
 
   @override
   String get common_errorPage_title => 'Упс, засбоило!';
@@ -1571,7 +1671,8 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Экспортировать все привычки?';
+  String get exportConfirmDialog_title_exportAll =>
+      'Экспортировать все привычки?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
@@ -1619,10 +1720,12 @@ class L10nRu extends L10n {
   String get debug_collectLogTile_title => 'Сбор журналов';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Нажмите, чтобы остановить сбор журнала.';
+  String get debug_collectLogTile_enable_subtitle =>
+      'Нажмите, чтобы остановить сбор журнала.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Нажмите для начала сбора журнала.';
+  String get debug_collectLogTile_disable_subtitle =>
+      'Нажмите для начала сбора журнала.';
 
   @override
   String get debug_downladDebugLogs_subject => 'Скачать отладочные журналы';
@@ -1631,7 +1734,8 @@ class L10nRu extends L10n {
   String get dbeug_clearDebugLogs_complete_snackbar => 'Журнал отладки очищен.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Скачивается отладочная информация';
+  String get debug_downladDebugInfo_subject =>
+      'Скачивается отладочная информация';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
@@ -1639,13 +1743,15 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get debug_missingDebugLogFile_snackbar => 'Журнал отладки не существует.';
+  String get debug_missingDebugLogFile_snackbar =>
+      'Журнал отладки не существует.';
 
   @override
   String get debug_debuggerLogCard_title => 'Отладочная информация';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Включая информацию о локальном отладочном журнале, необходимо открыть переключатель сбора журнала.';
+  String get debug_debuggerLogCard_subtitle =>
+      'Включая информацию о локальном отладочном журнале, необходимо открыть переключатель сбора журнала.';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => 'Скачать';
@@ -1657,7 +1763,8 @@ class L10nRu extends L10n {
   String get debug_debuggerInfoCard_title => 'Отладочная информация';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Включает информацию об отладке приложения.';
+  String get debug_debuggerInfoCard_subtitle =>
+      'Включает информацию об отладке приложения.';
 
   @override
   String get debug_debuggerInfoCard_openButton_text => 'Открыть';
@@ -1666,7 +1773,8 @@ class L10nRu extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => 'Сохранить';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Сбор информации приложения...';
+  String get debug_debuggerInfo_notificationTitle =>
+      'Сбор информации приложения...';
 
   @override
   String confirmDialog_confirm_text(String type) {
@@ -1716,11 +1824,13 @@ class L10nRu extends L10n {
   String get channelName_appSyncing => 'Процесс синхронизации';
 
   @override
-  String get channelDesc_appSyncing => 'Используется для отображения прогресса синхронизации и успешных результатов';
+  String get channelDesc_appSyncing =>
+      'Используется для отображения прогресса синхронизации и успешных результатов';
 
   @override
   String get channelName_appSyncFailed => 'Синхронизация не удалась';
 
   @override
-  String get channelDesc_appSyncFailed => 'Используется для оповещения когда сихнронизация не удалась';
+  String get channelDesc_appSyncFailed =>
+      'Используется для оповещения когда сихнронизация не удалась';
 }

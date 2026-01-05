@@ -81,8 +81,6 @@ class _HabitDisplaySortTypePickerDialog
           (sortType) => _SortTypeRadioListTile(
             sortType: sortType,
             sortDirection: crtShowDirecitonWithDefault,
-            crtSortType: crtSortType,
-            onChanged: _onRadioTapChanged,
           ),
         );
 
@@ -97,7 +95,16 @@ class _HabitDisplaySortTypePickerDialog
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ...buildSortTypeRadioListTiles(context),
+          RadioGroup<HabitDisplaySortType>(
+            groupValue: crtSortType,
+            onChanged: _onRadioTapChanged,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ...buildSortTypeRadioListTiles(context),
+              ],
+            ),
+          ),
           const Divider(),
           CheckboxListTile(
             title: L10nBuilder(
@@ -148,14 +155,10 @@ class _HabitDisplaySortTypePickerDialog
 class _SortTypeRadioListTile extends StatelessWidget {
   final HabitDisplaySortType sortType;
   final HabitDisplaySortDirection sortDirection;
-  final HabitDisplaySortType? crtSortType;
-  final ValueChanged<HabitDisplaySortType?>? onChanged;
 
   const _SortTypeRadioListTile({
     required this.sortType,
     required this.sortDirection,
-    this.crtSortType,
-    this.onChanged,
   });
 
   @override
@@ -169,8 +172,6 @@ class _SortTypeRadioListTile extends StatelessWidget {
         HabitsSortViewModel.getSortIcon(sortType, sortDirection),
       ),
       value: sortType,
-      groupValue: crtSortType,
-      onChanged: onChanged,
     );
   }
 }

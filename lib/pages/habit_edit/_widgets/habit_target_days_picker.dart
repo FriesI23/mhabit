@@ -159,26 +159,26 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
             ? Text(l10n?.habitEdit_targetDays_dialogTitle ?? '')
             : null,
         content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(width: 300),
-              for (var days in _HabitTargetDaysType.values)
-                if (days != _HabitTargetDaysType.daysCustom)
-                  _HabitSpecificTargetDaysTile(
-                    value: days,
-                    groupValue: selectTargetDaysType,
-                    onRadioChanged: _onRadioChangeCallback,
-                  ),
-              _HabitCustomTargetDaysTile(
-                groupValue: selectTargetDaysType,
-                inputController: _inputController,
-                onRadioChanged: _onRadioChangeCallback,
-                onCustomTargetDaysChanged: _onCustomTargetDaysInputChanged,
-                onCustomTargetDaysSubmitted: _onCustomTargetDaysSubmitted,
-              ),
-            ],
+          child: RadioGroup(
+            groupValue: selectTargetDaysType,
+            onChanged: _onRadioChangeCallback,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 300),
+                for (var days in _HabitTargetDaysType.values)
+                  if (days != _HabitTargetDaysType.daysCustom)
+                    _HabitSpecificTargetDaysTile(
+                      value: days,
+                    ),
+                _HabitCustomTargetDaysTile(
+                  inputController: _inputController,
+                  onCustomTargetDaysChanged: _onCustomTargetDaysInputChanged,
+                  onCustomTargetDaysSubmitted: _onCustomTargetDaysSubmitted,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -188,13 +188,9 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
 
 class _HabitSpecificTargetDaysTile extends StatelessWidget {
   final _HabitTargetDaysType value;
-  final _HabitTargetDaysType? groupValue;
-  final ValueChanged<_HabitTargetDaysType?>? onRadioChanged;
 
   const _HabitSpecificTargetDaysTile({
     required this.value,
-    this.groupValue,
-    this.onRadioChanged,
   });
 
   String _getTargetDayText(int targetDays, L10n? l10n) {
@@ -208,27 +204,19 @@ class _HabitSpecificTargetDaysTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio<_HabitTargetDaysType>(
-        value: value,
-        groupValue: groupValue,
-        onChanged: onRadioChanged,
-      ),
+      leading: Radio<_HabitTargetDaysType>(value: value),
       title: Text(_getTargetDayText(value.days!, l10n)),
     );
   }
 }
 
 class _HabitCustomTargetDaysTile extends StatelessWidget {
-  final _HabitTargetDaysType? groupValue;
   final TextEditingController? inputController;
-  final ValueChanged<_HabitTargetDaysType?>? onRadioChanged;
   final ValueChanged<String?>? onCustomTargetDaysChanged;
   final ValueChanged<String?>? onCustomTargetDaysSubmitted;
 
   const _HabitCustomTargetDaysTile({
-    this.groupValue,
     this.inputController,
-    this.onRadioChanged,
     this.onCustomTargetDaysChanged,
     this.onCustomTargetDaysSubmitted,
   });
@@ -245,12 +233,8 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
-      leading: Radio<_HabitTargetDaysType>(
-        value: _HabitTargetDaysType.daysCustom,
-        toggleable: true,
-        groupValue: groupValue,
-        onChanged: onRadioChanged,
-      ),
+      leading: const Radio<_HabitTargetDaysType>(
+          value: _HabitTargetDaysType.daysCustom, toggleable: true),
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

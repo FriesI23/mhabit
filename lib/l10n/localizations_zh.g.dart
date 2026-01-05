@@ -415,7 +415,8 @@ class L10nZh extends L10n {
   String get habitDisplay_searchFilter_ongoing => '激活中';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => '显示当前活跃且正在进行的习惯（未归档或删除）。';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      '显示当前活跃且正在进行的习惯（未归档或删除）。';
 
   @override
   String get habitDisplay_searchFilter_completed => '已完成';
@@ -696,19 +697,22 @@ class L10nZh extends L10n {
   String get appSetting_dragCalendarByPageTile_titleText => '按页拖动日历';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => '如果启用开关，则主页上的应用栏日历将逐页拖动。默认情况下，该开关处于禁用状态。';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      '如果启用开关，则主页上的应用栏日历将逐页拖动。默认情况下，该开关处于禁用状态。';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => '修改记录状态';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改主页面上每日记录的状态的点击行为。';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      '修改主页面上每日记录的状态的点击行为。';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => '打开详细记录';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改主页面上打开每日记录详情弹窗的点击行为。';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
   String get appSetting_appThemeColorTile_titleText => '主题颜色';
@@ -717,16 +721,20 @@ class L10nZh extends L10n {
   String get appSetting_appThemeColorChosenDiloag_titleText => '选择主题颜色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => '使用壁纸主色（Android 12+）';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      '使用壁纸主色（Android 12+）';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => '使用 GTK+ 主题的选定背景色';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      '使用 GTK+ 主题的选定背景色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => '使用系统主题颜色';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      '使用系统主题颜色';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => '使用系统主题色或 Aero 玻璃颜色';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      '使用系统主题色或 Aero 玻璃颜色';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '一周的第一天';
@@ -757,22 +765,26 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => '跟随系统设置';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      '跟随系统设置';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => '配置的日期格式将应用于习惯详情页面的日期显示。';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      '配置的日期格式将应用于习惯详情页面的日期显示。';
 
   @override
   String get appSetting_compactUISwitcher_titleText => '习惯页中启用紧凑型UI';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => '允许习惯检查表格显示更多内容，但部分用户界面和文字可能会变小。';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      '允许习惯检查表格显示更多内容，但部分用户界面和文字可能会变小。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText => '习惯打卡区域占比调整';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => '调整百分比以获取更多/更少的习惯打卡区域。';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      '调整百分比以获取更多/更少的习惯打卡区域。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => '默认: 0';
@@ -813,7 +825,8 @@ class L10nZh extends L10n {
   String get appSetting_importDialog_confirm_cancelText => '取消';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return '已导入 $completeCount/$totalCount';
   }
 
@@ -835,7 +848,8 @@ class L10nZh extends L10n {
   String get appSetting_resetConfigDialog_titleText => '重置配置？';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => '将所有配置重置为默认值，必须重新启动应用程序才能生效。';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      '将所有配置重置为默认值，必须重新启动应用程序才能生效。';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => '取消';
@@ -937,10 +951,9 @@ class L10nZh extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return '同步中：$prtString';
@@ -1019,7 +1032,8 @@ class L10nZh extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => '新位置';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => '同步将创建必要目录，并上传本地习惯数据到服务器。确定要继续吗？';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      '同步将创建必要目录，并上传本地习惯数据到服务器。确定要继续吗？';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => '立即同步！';
@@ -1028,7 +1042,8 @@ class L10nZh extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_titleText => '确认同步';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => '配置路径的目录不为空，继续同步将会合并服务器上的习惯数据与本地数据。确定要继续吗？';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      '配置路径的目录不为空，继续同步将会合并服务器上的习惯数据与本地数据。确定要继续吗？';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_confirmText => '确认合并';
@@ -1179,7 +1194,8 @@ class L10nZh extends L10n {
   String get appSync_serverEditor_connTimeoutTile_titleText => '网络连接超时时间（秒）';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1251,7 +1267,8 @@ class L10nZh extends L10n {
   String get experimentalFeatures_habitSyncTile_titleText => '习惯云同步';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => '启用后，应用的同步选项将出现在设置中';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      '启用后，应用的同步选项将出现在设置中';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1267,7 +1284,8 @@ class L10nZh extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => '习惯搜索';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => '启用后，Habits 界面顶部将出现一个搜索栏，用于搜索习惯。';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      '启用后，Habits 界面顶部将出现一个搜索栏，用于搜索习惯。';
 
   @override
   String get appAbout_appbarTile_titleText => '关于';
@@ -1290,7 +1308,8 @@ class L10nZh extends L10n {
   String get appAbout_contactEmailTile_titleText => '联系我';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Hi, 很高兴你能够联系我。\n如果反馈BUG需要注明版本并阐述复现流程\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'Hi, 很高兴你能够联系我。\n如果反馈BUG需要注明版本并阐述复现流程\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => '开源许可';
@@ -1314,10 +1333,12 @@ class L10nZh extends L10n {
   String get appAbout_donateTile_titleText => '捐赠';
 
   @override
-  String get appAbout_donateTile_subTitleText => '我是一名个人开发者，如果你觉得这个应用好用，请帮我买一杯☕';
+  String get appAbout_donateTile_subTitleText =>
+      '我是一名个人开发者，如果你觉得这个应用好用，请帮我买一杯☕';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1502,7 +1523,8 @@ class L10nZh extends L10n {
   String get common_customDateTimeFormatPicker_empty_text => '无分隔符';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1703,7 +1725,7 @@ class L10nZh extends L10n {
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class L10nZhHant extends L10nZh {
-  L10nZhHant(): super('zh_Hant');
+  L10nZhHant() : super('zh_Hant');
 
   @override
   String get localeScriptName => '繁體中文';
@@ -2362,19 +2384,22 @@ class L10nZhHant extends L10nZh {
   String get appSetting_dragCalendarByPageTile_titleText => '以頁面為單位拖曳行事曆';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => '如果開啟此開關，首頁的應用程式列行事曆將以頁面為單位進行拖曳。預設為關閉。';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      '如果開啟此開關，首頁的應用程式列行事曆將以頁面為單位進行拖曳。預設為關閉。';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => '變更記錄狀態';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => '修改點選行為以變更主頁面上每日記錄的狀態。';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      '修改點選行為以變更主頁面上每日記錄的狀態。';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => '開啟詳細記錄';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '每週的第一天';
@@ -2405,22 +2430,26 @@ class L10nZhHant extends L10nZh {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => '依照系統設定';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      '依照系統設定';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => '設定的日期格式將套用於習慣詳細頁面的日期顯示。';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      '設定的日期格式將套用於習慣詳細頁面的日期顯示。';
 
   @override
   String get appSetting_compactUISwitcher_titleText => '在習慣頁面啟用精簡 UI';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => '允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      '允許習慣打卡表格顯示更多內容，但某些 UI 和文字可能會變小。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText => '習慣打卡區域比例調整';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => '調整百分比以在習慣打卡表格區域取得更多或更少空間。';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      '調整百分比以在習慣打卡表格區域取得更多或更少空間。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => '預設';
@@ -2461,7 +2490,8 @@ class L10nZhHant extends L10nZh {
   String get appSetting_importDialog_confirm_cancelText => '取消';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return '已匯入 $completeCount/$totalCount';
   }
 
@@ -2483,7 +2513,8 @@ class L10nZhHant extends L10nZh {
   String get appSetting_resetConfigDialog_titleText => '重設設定？';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => '將所有設定重設為預設值，必須重新啟動應用程式才能套用。';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      '將所有設定重設為預設值，必須重新啟動應用程式才能套用。';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => '取消';
@@ -2551,7 +2582,8 @@ class L10nZhHant extends L10nZh {
   String get appAbout_contactEmailTile_titleText => '聯絡我';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => '您好，很高興您與我聯繫。\n如果您要回報錯誤，請提供應用程式版本和重現步驟。\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      '您好，很高興您與我聯繫。\n如果您要回報錯誤，請提供應用程式版本和重現步驟。\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => '授權';
@@ -2569,10 +2601,12 @@ class L10nZhHant extends L10nZh {
   String get appAbout_donateTile_titleText => '贊助';
 
   @override
-  String get appAbout_donateTile_subTitleText => '我是一位獨立開發者。如果您喜歡這個應用程式，可以考慮贊助我一杯 ☕。';
+  String get appAbout_donateTile_subTitleText =>
+      '我是一位獨立開發者。如果您喜歡這個應用程式，可以考慮贊助我一杯 ☕。';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'PayPal';
@@ -2760,7 +2794,8 @@ class L10nZhHant extends L10nZh {
   String get common_customDateTimeFormatPicker_empty_text => '無分隔符號';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName：「$splitChar」';
   }
 
