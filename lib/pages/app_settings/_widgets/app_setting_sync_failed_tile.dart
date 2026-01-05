@@ -27,7 +27,7 @@ import '../../../utils/xshare.dart';
 import '../../../widgets/widgets.dart';
 
 class AppSettingSyncFailedTile extends StatefulWidget {
-  final ExpansionTileController? controller;
+  final ExpansibleController? controller;
 
   const AppSettingSyncFailedTile({super.key, this.controller});
 
@@ -37,7 +37,7 @@ class AppSettingSyncFailedTile extends StatefulWidget {
 
 class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
     with AutomaticKeepAliveClientMixin, XShare {
-  late ExpansionTileController controller;
+  late ExpansibleController controller;
   late bool lastExpanded;
   late bool isExpanded;
 
@@ -52,7 +52,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
 
   @override
   void initState() {
-    controller = widget.controller ?? ExpansionTileController();
+    controller = widget.controller ?? ExpansibleController();
     lastExpanded = isExpanded =
         context.read<AppSyncViewModel>().appSyncTask.task?.result?.withError ==
             true;
