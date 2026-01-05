@@ -11,12 +11,13 @@ part of 'notification_details.dart';
 // **************************************************************************
 
 abstract class _$NotificationDetailsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// NotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   NotificationDetails call({
     AndroidNotificationDetails? android,
     DarwinNotificationDetails? iOS,
@@ -26,20 +27,21 @@ abstract class _$NotificationDetailsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfNotificationDetails.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfNotificationDetails.copyWith(...)`.
 class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
   const _$NotificationDetailsCWProxyImpl(this._value);
 
   final NotificationDetails _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// NotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   NotificationDetails call({
     Object? android = const $CopyWithPlaceholder(),
     Object? iOS = const $CopyWithPlaceholder(),
@@ -73,19 +75,21 @@ class _$NotificationDetailsCWProxyImpl implements _$NotificationDetailsCWProxy {
 }
 
 extension $NotificationDetailsCopyWith on NotificationDetails {
-  /// Returns a callable class that can be used as follows: `instanceOfNotificationDetails.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfNotificationDetails.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$NotificationDetailsCWProxy get copyWith =>
       _$NotificationDetailsCWProxyImpl(this);
 }
 
 abstract class _$AndroidNotificationDetailsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AndroidNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AndroidNotificationDetails call({
     String channelId,
     String channelName,
@@ -138,7 +142,8 @@ abstract class _$AndroidNotificationDetailsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAndroidNotificationDetails.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfAndroidNotificationDetails.copyWith(...)`.
 class _$AndroidNotificationDetailsCWProxyImpl
     implements _$AndroidNotificationDetailsCWProxy {
   const _$AndroidNotificationDetailsCWProxyImpl(this._value);
@@ -146,13 +151,13 @@ class _$AndroidNotificationDetailsCWProxyImpl
   final AndroidNotificationDetails _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AndroidNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AndroidNotificationDetails call({
     Object? channelId = const $CopyWithPlaceholder(),
     Object? channelName = const $CopyWithPlaceholder(),
@@ -204,11 +209,11 @@ class _$AndroidNotificationDetailsCWProxyImpl
     Object? audioAttributesUsage = const $CopyWithPlaceholder(),
   }) {
     return AndroidNotificationDetails(
-      channelId == const $CopyWithPlaceholder()
+      channelId == const $CopyWithPlaceholder() || channelId == null
           ? _value.channelId
           // ignore: cast_nullable_to_non_nullable
           : channelId as String,
-      channelName == const $CopyWithPlaceholder()
+      channelName == const $CopyWithPlaceholder() || channelName == null
           ? _value.channelName
           // ignore: cast_nullable_to_non_nullable
           : channelName as String,
@@ -220,15 +225,18 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.icon
           // ignore: cast_nullable_to_non_nullable
           : icon as String?,
-      importance: importance == const $CopyWithPlaceholder()
+      importance:
+          importance == const $CopyWithPlaceholder() || importance == null
           ? _value.importance
           // ignore: cast_nullable_to_non_nullable
           : importance as Importance,
-      channelBypassDnd: channelBypassDnd == const $CopyWithPlaceholder()
+      channelBypassDnd:
+          channelBypassDnd == const $CopyWithPlaceholder() ||
+              channelBypassDnd == null
           ? _value.channelBypassDnd
           // ignore: cast_nullable_to_non_nullable
           : channelBypassDnd as bool,
-      priority: priority == const $CopyWithPlaceholder()
+      priority: priority == const $CopyWithPlaceholder() || priority == null
           ? _value.priority
           // ignore: cast_nullable_to_non_nullable
           : priority as Priority,
@@ -236,7 +244,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.styleInformation
           // ignore: cast_nullable_to_non_nullable
           : styleInformation as StyleInformation?,
-      playSound: playSound == const $CopyWithPlaceholder()
+      playSound: playSound == const $CopyWithPlaceholder() || playSound == null
           ? _value.playSound
           // ignore: cast_nullable_to_non_nullable
           : playSound as bool,
@@ -244,7 +252,9 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.sound
           // ignore: cast_nullable_to_non_nullable
           : sound as AndroidNotificationSound?,
-      enableVibration: enableVibration == const $CopyWithPlaceholder()
+      enableVibration:
+          enableVibration == const $CopyWithPlaceholder() ||
+              enableVibration == null
           ? _value.enableVibration
           // ignore: cast_nullable_to_non_nullable
           : enableVibration as bool,
@@ -256,23 +266,28 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.groupKey
           // ignore: cast_nullable_to_non_nullable
           : groupKey as String?,
-      setAsGroupSummary: setAsGroupSummary == const $CopyWithPlaceholder()
+      setAsGroupSummary:
+          setAsGroupSummary == const $CopyWithPlaceholder() ||
+              setAsGroupSummary == null
           ? _value.setAsGroupSummary
           // ignore: cast_nullable_to_non_nullable
           : setAsGroupSummary as bool,
-      groupAlertBehavior: groupAlertBehavior == const $CopyWithPlaceholder()
+      groupAlertBehavior:
+          groupAlertBehavior == const $CopyWithPlaceholder() ||
+              groupAlertBehavior == null
           ? _value.groupAlertBehavior
           // ignore: cast_nullable_to_non_nullable
           : groupAlertBehavior as GroupAlertBehavior,
-      autoCancel: autoCancel == const $CopyWithPlaceholder()
+      autoCancel:
+          autoCancel == const $CopyWithPlaceholder() || autoCancel == null
           ? _value.autoCancel
           // ignore: cast_nullable_to_non_nullable
           : autoCancel as bool,
-      ongoing: ongoing == const $CopyWithPlaceholder()
+      ongoing: ongoing == const $CopyWithPlaceholder() || ongoing == null
           ? _value.ongoing
           // ignore: cast_nullable_to_non_nullable
           : ongoing as bool,
-      silent: silent == const $CopyWithPlaceholder()
+      silent: silent == const $CopyWithPlaceholder() || silent == null
           ? _value.silent
           // ignore: cast_nullable_to_non_nullable
           : silent as bool,
@@ -284,11 +299,12 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.largeIcon
           // ignore: cast_nullable_to_non_nullable
           : largeIcon as AndroidBitmap<Object>?,
-      onlyAlertOnce: onlyAlertOnce == const $CopyWithPlaceholder()
+      onlyAlertOnce:
+          onlyAlertOnce == const $CopyWithPlaceholder() || onlyAlertOnce == null
           ? _value.onlyAlertOnce
           // ignore: cast_nullable_to_non_nullable
           : onlyAlertOnce as bool,
-      showWhen: showWhen == const $CopyWithPlaceholder()
+      showWhen: showWhen == const $CopyWithPlaceholder() || showWhen == null
           ? _value.showWhen
           // ignore: cast_nullable_to_non_nullable
           : showWhen as bool,
@@ -296,39 +312,50 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.when
           // ignore: cast_nullable_to_non_nullable
           : when as int?,
-      usesChronometer: usesChronometer == const $CopyWithPlaceholder()
+      usesChronometer:
+          usesChronometer == const $CopyWithPlaceholder() ||
+              usesChronometer == null
           ? _value.usesChronometer
           // ignore: cast_nullable_to_non_nullable
           : usesChronometer as bool,
-      chronometerCountDown: chronometerCountDown == const $CopyWithPlaceholder()
+      chronometerCountDown:
+          chronometerCountDown == const $CopyWithPlaceholder() ||
+              chronometerCountDown == null
           ? _value.chronometerCountDown
           // ignore: cast_nullable_to_non_nullable
           : chronometerCountDown as bool,
-      channelShowBadge: channelShowBadge == const $CopyWithPlaceholder()
+      channelShowBadge:
+          channelShowBadge == const $CopyWithPlaceholder() ||
+              channelShowBadge == null
           ? _value.channelShowBadge
           // ignore: cast_nullable_to_non_nullable
           : channelShowBadge as bool,
-      showProgress: showProgress == const $CopyWithPlaceholder()
+      showProgress:
+          showProgress == const $CopyWithPlaceholder() || showProgress == null
           ? _value.showProgress
           // ignore: cast_nullable_to_non_nullable
           : showProgress as bool,
-      maxProgress: maxProgress == const $CopyWithPlaceholder()
+      maxProgress:
+          maxProgress == const $CopyWithPlaceholder() || maxProgress == null
           ? _value.maxProgress
           // ignore: cast_nullable_to_non_nullable
           : maxProgress as int,
-      progress: progress == const $CopyWithPlaceholder()
+      progress: progress == const $CopyWithPlaceholder() || progress == null
           ? _value.progress
           // ignore: cast_nullable_to_non_nullable
           : progress as int,
-      indeterminate: indeterminate == const $CopyWithPlaceholder()
+      indeterminate:
+          indeterminate == const $CopyWithPlaceholder() || indeterminate == null
           ? _value.indeterminate
           // ignore: cast_nullable_to_non_nullable
           : indeterminate as bool,
-      channelAction: channelAction == const $CopyWithPlaceholder()
+      channelAction:
+          channelAction == const $CopyWithPlaceholder() || channelAction == null
           ? _value.channelAction
           // ignore: cast_nullable_to_non_nullable
           : channelAction as AndroidNotificationChannelAction,
-      enableLights: enableLights == const $CopyWithPlaceholder()
+      enableLights:
+          enableLights == const $CopyWithPlaceholder() || enableLights == null
           ? _value.enableLights
           // ignore: cast_nullable_to_non_nullable
           : enableLights as bool,
@@ -360,7 +387,9 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.category
           // ignore: cast_nullable_to_non_nullable
           : category as AndroidNotificationCategory?,
-      fullScreenIntent: fullScreenIntent == const $CopyWithPlaceholder()
+      fullScreenIntent:
+          fullScreenIntent == const $CopyWithPlaceholder() ||
+              fullScreenIntent == null
           ? _value.fullScreenIntent
           // ignore: cast_nullable_to_non_nullable
           : fullScreenIntent as bool,
@@ -384,7 +413,7 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<AndroidNotificationAction>?,
-      colorized: colorized == const $CopyWithPlaceholder()
+      colorized: colorized == const $CopyWithPlaceholder() || colorized == null
           ? _value.colorized
           // ignore: cast_nullable_to_non_nullable
           : colorized as bool,
@@ -392,7 +421,9 @@ class _$AndroidNotificationDetailsCWProxyImpl
           ? _value.number
           // ignore: cast_nullable_to_non_nullable
           : number as int?,
-      audioAttributesUsage: audioAttributesUsage == const $CopyWithPlaceholder()
+      audioAttributesUsage:
+          audioAttributesUsage == const $CopyWithPlaceholder() ||
+              audioAttributesUsage == null
           ? _value.audioAttributesUsage
           // ignore: cast_nullable_to_non_nullable
           : audioAttributesUsage as AudioAttributesUsage,
@@ -401,19 +432,21 @@ class _$AndroidNotificationDetailsCWProxyImpl
 }
 
 extension $AndroidNotificationDetailsCopyWith on AndroidNotificationDetails {
-  /// Returns a callable class that can be used as follows: `instanceOfAndroidNotificationDetails.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfAndroidNotificationDetails.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$AndroidNotificationDetailsCWProxy get copyWith =>
       _$AndroidNotificationDetailsCWProxyImpl(this);
 }
 
 abstract class _$DarwinNotificationDetailsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// DarwinNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   DarwinNotificationDetails call({
     bool? presentAlert,
     bool? presentBadge,
@@ -431,7 +464,8 @@ abstract class _$DarwinNotificationDetailsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfDarwinNotificationDetails.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfDarwinNotificationDetails.copyWith(...)`.
 class _$DarwinNotificationDetailsCWProxyImpl
     implements _$DarwinNotificationDetailsCWProxy {
   const _$DarwinNotificationDetailsCWProxyImpl(this._value);
@@ -439,13 +473,13 @@ class _$DarwinNotificationDetailsCWProxyImpl
   final DarwinNotificationDetails _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// DarwinNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   DarwinNotificationDetails call({
     Object? presentAlert = const $CopyWithPlaceholder(),
     Object? presentBadge = const $CopyWithPlaceholder(),
@@ -519,19 +553,21 @@ class _$DarwinNotificationDetailsCWProxyImpl
 }
 
 extension $DarwinNotificationDetailsCopyWith on DarwinNotificationDetails {
-  /// Returns a callable class that can be used as follows: `instanceOfDarwinNotificationDetails.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfDarwinNotificationDetails.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$DarwinNotificationDetailsCWProxy get copyWith =>
       _$DarwinNotificationDetailsCWProxyImpl(this);
 }
 
 abstract class _$LinuxNotificationDetailsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// LinuxNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   LinuxNotificationDetails call({
     LinuxNotificationIcon? icon,
     LinuxNotificationSound? sound,
@@ -548,7 +584,8 @@ abstract class _$LinuxNotificationDetailsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfLinuxNotificationDetails.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfLinuxNotificationDetails.copyWith(...)`.
 class _$LinuxNotificationDetailsCWProxyImpl
     implements _$LinuxNotificationDetailsCWProxy {
   const _$LinuxNotificationDetailsCWProxyImpl(this._value);
@@ -556,13 +593,13 @@ class _$LinuxNotificationDetailsCWProxyImpl
   final LinuxNotificationDetails _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// LinuxNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   LinuxNotificationDetails call({
     Object? icon = const $CopyWithPlaceholder(),
     Object? sound = const $CopyWithPlaceholder(),
@@ -594,19 +631,20 @@ class _$LinuxNotificationDetailsCWProxyImpl
           ? _value.urgency
           // ignore: cast_nullable_to_non_nullable
           : urgency as LinuxNotificationUrgency?,
-      timeout: timeout == const $CopyWithPlaceholder()
+      timeout: timeout == const $CopyWithPlaceholder() || timeout == null
           ? _value.timeout
           // ignore: cast_nullable_to_non_nullable
           : timeout as LinuxNotificationTimeout,
-      resident: resident == const $CopyWithPlaceholder()
+      resident: resident == const $CopyWithPlaceholder() || resident == null
           ? _value.resident
           // ignore: cast_nullable_to_non_nullable
           : resident as bool,
-      suppressSound: suppressSound == const $CopyWithPlaceholder()
+      suppressSound:
+          suppressSound == const $CopyWithPlaceholder() || suppressSound == null
           ? _value.suppressSound
           // ignore: cast_nullable_to_non_nullable
           : suppressSound as bool,
-      transient: transient == const $CopyWithPlaceholder()
+      transient: transient == const $CopyWithPlaceholder() || transient == null
           ? _value.transient
           // ignore: cast_nullable_to_non_nullable
           : transient as bool,
@@ -618,11 +656,13 @@ class _$LinuxNotificationDetailsCWProxyImpl
           ? _value.defaultActionName
           // ignore: cast_nullable_to_non_nullable
           : defaultActionName as String?,
-      actions: actions == const $CopyWithPlaceholder()
+      actions: actions == const $CopyWithPlaceholder() || actions == null
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<LinuxNotificationAction>,
-      actionKeyAsIconName: actionKeyAsIconName == const $CopyWithPlaceholder()
+      actionKeyAsIconName:
+          actionKeyAsIconName == const $CopyWithPlaceholder() ||
+              actionKeyAsIconName == null
           ? _value.actionKeyAsIconName
           // ignore: cast_nullable_to_non_nullable
           : actionKeyAsIconName as bool,
@@ -631,19 +671,21 @@ class _$LinuxNotificationDetailsCWProxyImpl
 }
 
 extension $LinuxNotificationDetailsCopyWith on LinuxNotificationDetails {
-  /// Returns a callable class that can be used as follows: `instanceOfLinuxNotificationDetails.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfLinuxNotificationDetails.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$LinuxNotificationDetailsCWProxy get copyWith =>
       _$LinuxNotificationDetailsCWProxyImpl(this);
 }
 
 abstract class _$WindowsNotificationDetailsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WindowsNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WindowsNotificationDetails call({
     List<WindowsAction> actions,
     List<WindowsInput> inputs,
@@ -660,7 +702,8 @@ abstract class _$WindowsNotificationDetailsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfWindowsNotificationDetails.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfWindowsNotificationDetails.copyWith(...)`.
 class _$WindowsNotificationDetailsCWProxyImpl
     implements _$WindowsNotificationDetailsCWProxy {
   const _$WindowsNotificationDetailsCWProxyImpl(this._value);
@@ -668,13 +711,13 @@ class _$WindowsNotificationDetailsCWProxyImpl
   final WindowsNotificationDetails _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WindowsNotificationDetails(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WindowsNotificationDetails call({
     Object? actions = const $CopyWithPlaceholder(),
     Object? inputs = const $CopyWithPlaceholder(),
@@ -690,27 +733,28 @@ class _$WindowsNotificationDetailsCWProxyImpl
     Object? subtitle = const $CopyWithPlaceholder(),
   }) {
     return WindowsNotificationDetails(
-      actions: actions == const $CopyWithPlaceholder()
+      actions: actions == const $CopyWithPlaceholder() || actions == null
           ? _value.actions
           // ignore: cast_nullable_to_non_nullable
           : actions as List<WindowsAction>,
-      inputs: inputs == const $CopyWithPlaceholder()
+      inputs: inputs == const $CopyWithPlaceholder() || inputs == null
           ? _value.inputs
           // ignore: cast_nullable_to_non_nullable
           : inputs as List<WindowsInput>,
-      images: images == const $CopyWithPlaceholder()
+      images: images == const $CopyWithPlaceholder() || images == null
           ? _value.images
           // ignore: cast_nullable_to_non_nullable
           : images as List<WindowsImage>,
-      rows: rows == const $CopyWithPlaceholder()
+      rows: rows == const $CopyWithPlaceholder() || rows == null
           ? _value.rows
           // ignore: cast_nullable_to_non_nullable
           : rows as List<WindowsRow>,
-      progressBars: progressBars == const $CopyWithPlaceholder()
+      progressBars:
+          progressBars == const $CopyWithPlaceholder() || progressBars == null
           ? _value.progressBars
           // ignore: cast_nullable_to_non_nullable
           : progressBars as List<WindowsProgressBar>,
-      bindings: bindings == const $CopyWithPlaceholder()
+      bindings: bindings == const $CopyWithPlaceholder() || bindings == null
           ? _value.bindings
           // ignore: cast_nullable_to_non_nullable
           : bindings as Map<String, String>,
@@ -743,7 +787,8 @@ class _$WindowsNotificationDetailsCWProxyImpl
 }
 
 extension $WindowsNotificationDetailsCopyWith on WindowsNotificationDetails {
-  /// Returns a callable class that can be used as follows: `instanceOfWindowsNotificationDetails.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfWindowsNotificationDetails.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$WindowsNotificationDetailsCWProxy get copyWith =>
       _$WindowsNotificationDetailsCWProxyImpl(this);

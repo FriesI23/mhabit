@@ -11,12 +11,13 @@ part of 'habit_export.dart';
 // **************************************************************************
 
 abstract class _$RecordExportDataCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RecordExportData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RecordExportData call({
     int? recordDate,
     int? recordType,
@@ -27,20 +28,21 @@ abstract class _$RecordExportDataCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRecordExportData.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfRecordExportData.copyWith(...)`.
 class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
   const _$RecordExportDataCWProxyImpl(this._value);
 
   final RecordExportData _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// RecordExportData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   RecordExportData call({
     Object? recordDate = const $CopyWithPlaceholder(),
     Object? recordType = const $CopyWithPlaceholder(),
@@ -79,18 +81,20 @@ class _$RecordExportDataCWProxyImpl implements _$RecordExportDataCWProxy {
 }
 
 extension $RecordExportDataCopyWith on RecordExportData {
-  /// Returns a callable class that can be used as follows: `instanceOfRecordExportData.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfRecordExportData.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$RecordExportDataCWProxy get copyWith => _$RecordExportDataCWProxyImpl(this);
 }
 
 abstract class _$HabitExportDataCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitExportData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitExportData call({
     int? createT,
     int? modifyT,
@@ -112,20 +116,21 @@ abstract class _$HabitExportDataCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitExportData.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitExportData.copyWith(...)`.
 class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
   const _$HabitExportDataCWProxyImpl(this._value);
 
   final HabitExportData _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitExportData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitExportData call({
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),
@@ -210,7 +215,7 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
           ? _value.targetDays
           // ignore: cast_nullable_to_non_nullable
           : targetDays as int?,
-      records: records == const $CopyWithPlaceholder()
+      records: records == const $CopyWithPlaceholder() || records == null
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
           : records as List<RecordExportData>,
@@ -219,7 +224,8 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
 }
 
 extension $HabitExportDataCopyWith on HabitExportData {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitExportData.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitExportData.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitExportDataCWProxy get copyWith => _$HabitExportDataCWProxyImpl(this);
 }
@@ -240,12 +246,12 @@ RecordExportData _$RecordExportDataFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$RecordExportDataToJson(RecordExportData instance) =>
     <String, dynamic>{
-      if (instance.recordDate case final value?) 'record_date': value,
-      if (instance.recordType case final value?) 'record_type': value,
-      if (instance.recordValue case final value?) 'record_value': value,
-      if (instance.createT case final value?) 'create_t': value,
-      if (instance.modifyT case final value?) 'modify_t': value,
-      if (instance.reason case final value?) 'reason': value,
+      'record_date': ?instance.recordDate,
+      'record_type': ?instance.recordType,
+      'record_value': ?instance.recordValue,
+      'create_t': ?instance.createT,
+      'modify_t': ?instance.modifyT,
+      'reason': ?instance.reason,
     };
 
 HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
@@ -266,7 +272,8 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
       reminderQuest: json['reminder_quest'] as String?,
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
-      records: (json['records'] as List<dynamic>?)
+      records:
+          (json['records'] as List<dynamic>?)
               ?.map(RecordExportData.fromJson)
               .toList() ??
           const [],
@@ -274,21 +281,21 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$HabitExportDataToJson(HabitExportData instance) =>
     <String, dynamic>{
-      if (instance.createT case final value?) 'create_t': value,
-      if (instance.modifyT case final value?) 'modify_t': value,
-      if (instance.type case final value?) 'type': value,
-      if (instance.status case final value?) 'status': value,
-      if (instance.name case final value?) 'name': value,
-      if (instance.desc case final value?) 'desc': value,
-      if (instance.color case final value?) 'color': value,
-      if (instance.dailyGoal case final value?) 'daily_goal': value,
-      if (instance.dailyGoalUnit case final value?) 'daily_goal_unit': value,
-      if (instance.dailyGoalExtra case final value?) 'daily_goal_extra': value,
-      if (instance.freqType case final value?) 'freq_type': value,
-      if (instance.freqCustom case final value?) 'freq_custom': value,
-      if (instance.reminder case final value?) 'reminder': value,
-      if (instance.reminderQuest case final value?) 'reminder_quest': value,
-      if (instance.startDate case final value?) 'start_date': value,
-      if (instance.targetDays case final value?) 'target_days': value,
+      'create_t': ?instance.createT,
+      'modify_t': ?instance.modifyT,
+      'type': ?instance.type,
+      'status': ?instance.status,
+      'name': ?instance.name,
+      'desc': ?instance.desc,
+      'color': ?instance.color,
+      'daily_goal': ?instance.dailyGoal,
+      'daily_goal_unit': ?instance.dailyGoalUnit,
+      'daily_goal_extra': ?instance.dailyGoalExtra,
+      'freq_type': ?instance.freqType,
+      'freq_custom': ?instance.freqCustom,
+      'reminder': ?instance.reminder,
+      'reminder_quest': ?instance.reminderQuest,
+      'start_date': ?instance.startDate,
+      'target_days': ?instance.targetDays,
       'records': HabitExportData._recordsToJson(instance.records),
     };

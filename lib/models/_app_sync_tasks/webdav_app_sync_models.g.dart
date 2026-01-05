@@ -11,27 +11,29 @@ part of 'webdav_app_sync_models.dart';
 // **************************************************************************
 
 abstract class _$WebDavSyncRecordDataCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncRecordData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncRecordData call({
     int? recordDate,
     int? recordType,
     num? recordValue,
     int? createT,
     int? modifyT,
-    String? uuid,
-    String? parentUUID,
+    HabitRecordUUID? uuid,
+    HabitUUID? parentUUID,
     String? reason,
     String? sessionId,
     int? dirty,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfWebDavSyncRecordData.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfWebDavSyncRecordData.copyWith(...)`.
 class _$WebDavSyncRecordDataCWProxyImpl
     implements _$WebDavSyncRecordDataCWProxy {
   const _$WebDavSyncRecordDataCWProxyImpl(this._value);
@@ -39,13 +41,13 @@ class _$WebDavSyncRecordDataCWProxyImpl
   final WebDavSyncRecordData _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncRecordData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncRecordData call({
     Object? recordDate = const $CopyWithPlaceholder(),
     Object? recordType = const $CopyWithPlaceholder(),
@@ -82,11 +84,11 @@ class _$WebDavSyncRecordDataCWProxyImpl
       uuid: uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
-          : uuid as String?,
+          : uuid as HabitRecordUUID?,
       parentUUID: parentUUID == const $CopyWithPlaceholder()
           ? _value.parentUUID
           // ignore: cast_nullable_to_non_nullable
-          : parentUUID as String?,
+          : parentUUID as HabitUUID?,
       reason: reason == const $CopyWithPlaceholder()
           ? _value.reason
           // ignore: cast_nullable_to_non_nullable
@@ -104,19 +106,21 @@ class _$WebDavSyncRecordDataCWProxyImpl
 }
 
 extension $WebDavSyncRecordDataCopyWith on WebDavSyncRecordData {
-  /// Returns a callable class that can be used as follows: `instanceOfWebDavSyncRecordData.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfWebDavSyncRecordData.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$WebDavSyncRecordDataCWProxy get copyWith =>
       _$WebDavSyncRecordDataCWProxyImpl(this);
 }
 
 abstract class _$WebDavSyncHabitDataCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncHabitData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncHabitData call({
     String? uuid,
     int? createT,
@@ -135,29 +139,30 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     String? reminderQuest,
     int? startDate,
     int? targetDays,
-    num? sortPostion,
+    HabitSortPostion? sortPostion,
     String? sessionId,
-    Map<String, WebDavSyncRecordData> records,
+    Map<HabitRecordUUID, WebDavSyncRecordData> records,
     String? etag,
     int? dirty,
     int? dirtyTotal,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfWebDavSyncHabitData.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfWebDavSyncHabitData.copyWith(...)`.
 class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
   const _$WebDavSyncHabitDataCWProxyImpl(this._value);
 
   final WebDavSyncHabitData _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncHabitData(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncHabitData call({
     Object? uuid = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),
@@ -255,15 +260,15 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
       sortPostion: sortPostion == const $CopyWithPlaceholder()
           ? _value.sortPostion
           // ignore: cast_nullable_to_non_nullable
-          : sortPostion as num?,
+          : sortPostion as HabitSortPostion?,
       sessionId: sessionId == const $CopyWithPlaceholder()
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
           : sessionId as String?,
-      records: records == const $CopyWithPlaceholder()
+      records: records == const $CopyWithPlaceholder() || records == null
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
-          : records as Map<String, WebDavSyncRecordData>,
+          : records as Map<HabitRecordUUID, WebDavSyncRecordData>,
       etag: etag == const $CopyWithPlaceholder()
           ? _value.etag
           // ignore: cast_nullable_to_non_nullable
@@ -281,7 +286,8 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
 }
 
 extension $WebDavSyncHabitDataCopyWith on WebDavSyncHabitData {
-  /// Returns a callable class that can be used as follows: `instanceOfWebDavSyncHabitData.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfWebDavSyncHabitData.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$WebDavSyncHabitDataCWProxy get copyWith =>
       _$WebDavSyncHabitDataCWProxyImpl(this);
@@ -292,32 +298,32 @@ extension $WebDavSyncHabitDataCopyWith on WebDavSyncHabitData {
 // **************************************************************************
 
 WebDavSyncRecordData _$WebDavSyncRecordDataFromJson(
-        Map<String, dynamic> json) =>
-    WebDavSyncRecordData(
-      recordDate: (json['record_date'] as num?)?.toInt(),
-      recordType: (json['record_type'] as num?)?.toInt(),
-      recordValue: json['record_value'] as num?,
-      createT: (json['create_t'] as num?)?.toInt(),
-      modifyT: (json['modify_t'] as num?)?.toInt(),
-      uuid: json['uuid'] as String?,
-      parentUUID: json['parent_uuid'] as String?,
-      reason: json['reason'] as String?,
-      sessionId: json['sessionId'] as String?,
-    );
+  Map<String, dynamic> json,
+) => WebDavSyncRecordData(
+  recordDate: (json['record_date'] as num?)?.toInt(),
+  recordType: (json['record_type'] as num?)?.toInt(),
+  recordValue: json['record_value'] as num?,
+  createT: (json['create_t'] as num?)?.toInt(),
+  modifyT: (json['modify_t'] as num?)?.toInt(),
+  uuid: json['uuid'] as String?,
+  parentUUID: json['parent_uuid'] as String?,
+  reason: json['reason'] as String?,
+  sessionId: json['sessionId'] as String?,
+);
 
 Map<String, dynamic> _$WebDavSyncRecordDataToJson(
-        WebDavSyncRecordData instance) =>
-    <String, dynamic>{
-      'record_date': instance.recordDate,
-      'record_type': instance.recordType,
-      'record_value': instance.recordValue,
-      'create_t': instance.createT,
-      'modify_t': instance.modifyT,
-      'uuid': instance.uuid,
-      'parent_uuid': instance.parentUUID,
-      'reason': instance.reason,
-      'sessionId': instance.sessionId,
-    };
+  WebDavSyncRecordData instance,
+) => <String, dynamic>{
+  'record_date': instance.recordDate,
+  'record_type': instance.recordType,
+  'record_value': instance.recordValue,
+  'create_t': instance.createT,
+  'modify_t': instance.modifyT,
+  'uuid': instance.uuid,
+  'parent_uuid': instance.parentUUID,
+  'reason': instance.reason,
+  'sessionId': instance.sessionId,
+};
 
 WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
     WebDavSyncHabitData(
@@ -346,29 +352,29 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$WebDavSyncHabitDataToJson(
-        WebDavSyncHabitData instance) =>
-    <String, dynamic>{
-      'uuid': instance.uuid,
-      'create_t': instance.createT,
-      'modify_t': instance.modifyT,
-      'type': instance.type,
-      'status': instance.status,
-      'name': instance.name,
-      'desc': instance.desc,
-      'color': instance.color,
-      'daily_goal': instance.dailyGoal,
-      'daily_goal_unit': instance.dailyGoalUnit,
-      'daily_goal_extra': instance.dailyGoalExtra,
-      'freq_type': instance.freqType,
-      'freq_custom': instance.freqCustom,
-      'reminder': instance.reminder,
-      'reminder_quest': instance.reminderQuest,
-      'start_date': instance.startDate,
-      'target_days': instance.targetDays,
-      'sort_position': instance.sortPostion,
-      'sessionId': instance.sessionId,
-      'records': WebDavSyncHabitData._recordsToJson(instance.records),
-    };
+  WebDavSyncHabitData instance,
+) => <String, dynamic>{
+  'uuid': instance.uuid,
+  'create_t': instance.createT,
+  'modify_t': instance.modifyT,
+  'type': instance.type,
+  'status': instance.status,
+  'name': instance.name,
+  'desc': instance.desc,
+  'color': instance.color,
+  'daily_goal': instance.dailyGoal,
+  'daily_goal_unit': instance.dailyGoalUnit,
+  'daily_goal_extra': instance.dailyGoalExtra,
+  'freq_type': instance.freqType,
+  'freq_custom': instance.freqCustom,
+  'reminder': instance.reminder,
+  'reminder_quest': instance.reminderQuest,
+  'start_date': instance.startDate,
+  'target_days': instance.targetDays,
+  'sort_position': instance.sortPostion,
+  'sessionId': instance.sessionId,
+  'records': WebDavSyncHabitData._recordsToJson(instance.records),
+};
 
 // **************************************************************************
 // ProxyGenerator
@@ -381,8 +387,11 @@ class _$HttpClientForWebDavProxy implements HttpClient {
 
   @override
   Future<HttpClientRequest> open(
-          String method, String host, int port, String path) =>
-      _base.open(method, host, port, path);
+    String method,
+    String host,
+    int port,
+    String path,
+  ) => _base.open(method, host, port, path);
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) =>
@@ -432,13 +441,18 @@ class _$HttpClientForWebDavProxy implements HttpClient {
 
   @override
   void addCredentials(
-          Uri url, String realm, HttpClientCredentials credentials) =>
-      _base.addCredentials(url, realm, credentials);
+    Uri url,
+    String realm,
+    HttpClientCredentials credentials,
+  ) => _base.addCredentials(url, realm, credentials);
 
   @override
-  void addProxyCredentials(String host, int port, String realm,
-          HttpClientCredentials credentials) =>
-      _base.addProxyCredentials(host, port, realm, credentials);
+  void addProxyCredentials(
+    String host,
+    int port,
+    String realm,
+    HttpClientCredentials credentials,
+  ) => _base.addProxyCredentials(host, port, realm, credentials);
 
   @override
   void close({bool force = false}) => _base.close(force: force);
@@ -485,21 +499,21 @@ class _$HttpClientForWebDavProxy implements HttpClient {
 
   @override
   set connectionFactory(
-          Future<ConnectionTask<Socket>> Function(Uri, String?, int?)? value) =>
-      _base.connectionFactory = value;
+    Future<ConnectionTask<Socket>> Function(Uri, String?, int?)? value,
+  ) => _base.connectionFactory = value;
 
   @override
   set findProxy(String Function(Uri)? value) => _base.findProxy = value;
 
   @override
   set authenticateProxy(
-          Future<bool> Function(String, int, String, String?)? value) =>
-      _base.authenticateProxy = value;
+    Future<bool> Function(String, int, String, String?)? value,
+  ) => _base.authenticateProxy = value;
 
   @override
   set badCertificateCallback(
-          bool Function(X509Certificate, String, int)? value) =>
-      _base.badCertificateCallback = value;
+    bool Function(X509Certificate, String, int)? value,
+  ) => _base.badCertificateCallback = value;
 
   @override
   set keyLog(dynamic Function(String)? value) => _base.keyLog = value;

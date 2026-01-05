@@ -23,23 +23,13 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
-  _FakeDateTime_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDateTime_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAppSyncServer_1 extends _i1.SmartFake implements _i2.AppSyncServer {
-  _FakeAppSyncServer_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAppSyncServer_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AppSyncServer].
@@ -51,52 +41,52 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
   }
 
   @override
-  String get name => (super.noSuchMethod(
-        Invocation.getter(#name),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#name),
-        ),
-      ) as String);
+  String get name =>
+      (super.noSuchMethod(
+            Invocation.getter(#name),
+            returnValue: _i3.dummyValue<String>(this, Invocation.getter(#name)),
+          )
+          as String);
 
   @override
-  String get identity => (super.noSuchMethod(
-        Invocation.getter(#identity),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#identity),
-        ),
-      ) as String);
+  String get identity =>
+      (super.noSuchMethod(
+            Invocation.getter(#identity),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#identity),
+            ),
+          )
+          as String);
 
   @override
-  DateTime get createTime => (super.noSuchMethod(
-        Invocation.getter(#createTime),
-        returnValue: _FakeDateTime_0(
-          this,
-          Invocation.getter(#createTime),
-        ),
-      ) as DateTime);
+  DateTime get createTime =>
+      (super.noSuchMethod(
+            Invocation.getter(#createTime),
+            returnValue: _FakeDateTime_0(this, Invocation.getter(#createTime)),
+          )
+          as DateTime);
 
   @override
-  DateTime get modifyTime => (super.noSuchMethod(
-        Invocation.getter(#modifyTime),
-        returnValue: _FakeDateTime_0(
-          this,
-          Invocation.getter(#modifyTime),
-        ),
-      ) as DateTime);
+  DateTime get modifyTime =>
+      (super.noSuchMethod(
+            Invocation.getter(#modifyTime),
+            returnValue: _FakeDateTime_0(this, Invocation.getter(#modifyTime)),
+          )
+          as DateTime);
 
   @override
-  _i2.AppSyncServerType get type => (super.noSuchMethod(
-        Invocation.getter(#type),
-        returnValue: _i2.AppSyncServerType.unknown,
-      ) as _i2.AppSyncServerType);
+  _i2.AppSyncServerType get type =>
+      (super.noSuchMethod(
+            Invocation.getter(#type),
+            returnValue: _i2.AppSyncServerType.unknown,
+          )
+          as _i2.AppSyncServerType);
 
   @override
-  bool get configed => (super.noSuchMethod(
-        Invocation.getter(#configed),
-        returnValue: false,
-      ) as bool);
+  bool get configed =>
+      (super.noSuchMethod(Invocation.getter(#configed), returnValue: false)
+          as bool);
 
   @override
   bool isSameConfig(
@@ -104,13 +94,14 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
     bool? withoutPassword = false,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #isSameConfig,
-          [other],
-          {#withoutPassword: withoutPassword},
-        ),
-        returnValue: false,
-      ) as bool);
+            Invocation.method(
+              #isSameConfig,
+              [other],
+              {#withoutPassword: withoutPassword},
+            ),
+            returnValue: false,
+          )
+          as bool);
 
   @override
   bool isSameServer(
@@ -118,67 +109,53 @@ class MockAppSyncServer extends _i1.Mock implements _i2.AppSyncServer {
     bool? withoutPassword = false,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #isSameServer,
-          [other],
-          {#withoutPassword: withoutPassword},
-        ),
-        returnValue: false,
-      ) as bool);
+            Invocation.method(
+              #isSameServer,
+              [other],
+              {#withoutPassword: withoutPassword},
+            ),
+            returnValue: false,
+          )
+          as bool);
 
   @override
-  _i2.AppSyncServer copy({String? password}) => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-          {#password: password},
-        ),
-        returnValue: _FakeAppSyncServer_1(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-            {#password: password},
-          ),
-        ),
-      ) as _i2.AppSyncServer);
+  _i2.AppSyncServer copy({String? password}) =>
+      (super.noSuchMethod(
+            Invocation.method(#copy, [], {#password: password}),
+            returnValue: _FakeAppSyncServer_1(
+              this,
+              Invocation.method(#copy, [], {#password: password}),
+            ),
+          )
+          as _i2.AppSyncServer);
 
   @override
-  _i4.AppSyncServerForm toForm() => (super.noSuchMethod(
-        Invocation.method(
-          #toForm,
-          [],
-        ),
-        returnValue: _i3.dummyValue<_i4.AppSyncServerForm>(
-          this,
-          Invocation.method(
-            #toForm,
-            [],
-          ),
-        ),
-      ) as _i4.AppSyncServerForm);
+  _i4.AppSyncServerForm toForm() =>
+      (super.noSuchMethod(
+            Invocation.method(#toForm, []),
+            returnValue: _i3.dummyValue<_i4.AppSyncServerForm>(
+              this,
+              Invocation.method(#toForm, []),
+            ),
+          )
+          as _i4.AppSyncServerForm);
 
   @override
-  String toDebugString() => (super.noSuchMethod(
-        Invocation.method(
-          #toDebugString,
-          [],
-        ),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #toDebugString,
-            [],
-          ),
-        ),
-      ) as String);
+  String toDebugString() =>
+      (super.noSuchMethod(
+            Invocation.method(#toDebugString, []),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.method(#toDebugString, []),
+            ),
+          )
+          as String);
 
   @override
-  Map<String, dynamic> toJson() => (super.noSuchMethod(
-        Invocation.method(
-          #toJson,
-          [],
-        ),
-        returnValue: <String, dynamic>{},
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (super.noSuchMethod(
+            Invocation.method(#toJson, []),
+            returnValue: <String, dynamic>{},
+          )
+          as Map<String, dynamic>);
 }

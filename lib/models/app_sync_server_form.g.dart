@@ -11,36 +11,34 @@ part of 'app_sync_server_form.dart';
 // **************************************************************************
 
 abstract class _$FakeSyncServerFormCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// FakeSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
-  FakeSyncServerForm call({
-    String uuid,
-  });
+  /// ```
+  FakeSyncServerForm call({String uuid});
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfFakeSyncServerForm.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfFakeSyncServerForm.copyWith(...)`.
 class _$FakeSyncServerFormCWProxyImpl implements _$FakeSyncServerFormCWProxy {
   const _$FakeSyncServerFormCWProxyImpl(this._value);
 
   final FakeSyncServerForm _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// FakeSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
-  FakeSyncServerForm call({
-    Object? uuid = const $CopyWithPlaceholder(),
-  }) {
+  /// ```
+  FakeSyncServerForm call({Object? uuid = const $CopyWithPlaceholder()}) {
     return FakeSyncServerForm(
-      uuid: uuid == const $CopyWithPlaceholder()
+      uuid: uuid == const $CopyWithPlaceholder() || uuid == null
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
           : uuid as String,
@@ -49,19 +47,21 @@ class _$FakeSyncServerFormCWProxyImpl implements _$FakeSyncServerFormCWProxy {
 }
 
 extension $FakeSyncServerFormCopyWith on FakeSyncServerForm {
-  /// Returns a callable class that can be used as follows: `instanceOfFakeSyncServerForm.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfFakeSyncServerForm.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$FakeSyncServerFormCWProxy get copyWith =>
       _$FakeSyncServerFormCWProxyImpl(this);
 }
 
 abstract class _$WebDavSyncServerFormCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncServerForm call({
     String uuid,
     String? path,
@@ -76,7 +76,8 @@ abstract class _$WebDavSyncServerFormCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfWebDavSyncServerForm.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfWebDavSyncServerForm.copyWith(...)`.
 class _$WebDavSyncServerFormCWProxyImpl
     implements _$WebDavSyncServerFormCWProxy {
   const _$WebDavSyncServerFormCWProxyImpl(this._value);
@@ -84,13 +85,13 @@ class _$WebDavSyncServerFormCWProxyImpl
   final WebDavSyncServerForm _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// WebDavSyncServerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   WebDavSyncServerForm call({
     Object? uuid = const $CopyWithPlaceholder(),
     Object? path = const $CopyWithPlaceholder(),
@@ -104,7 +105,7 @@ class _$WebDavSyncServerFormCWProxyImpl
     Object? syncInLowData = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncServerForm(
-      uuid: uuid == const $CopyWithPlaceholder()
+      uuid: uuid == const $CopyWithPlaceholder() || uuid == null
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
           : uuid as String,
@@ -149,7 +150,8 @@ class _$WebDavSyncServerFormCWProxyImpl
 }
 
 extension $WebDavSyncServerFormCopyWith on WebDavSyncServerForm {
-  /// Returns a callable class that can be used as follows: `instanceOfWebDavSyncServerForm.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfWebDavSyncServerForm.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$WebDavSyncServerFormCWProxy get copyWith =>
       _$WebDavSyncServerFormCWProxyImpl(this);

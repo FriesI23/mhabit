@@ -22,7 +22,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.22.10+137
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -60,7 +60,7 @@ dependencies:
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
   package_info_plus: ^9.0.0
-  copy_with_extension: ^6.0.0
+  copy_with_extension: ^9.1.1
   json_annotation: ^4.9.0
   win2iana_tz_converter: ^0.1.3
   open_file: ^3.5.10
@@ -124,7 +124,7 @@ dev_dependencies:
 
   # Code Generation
   build_runner: ^2.3.3
-  copy_with_extension_gen: ^6.0.0
+  copy_with_extension_gen: ^9.1.1
   icon_font_generator:
     # Can't extract file from a c URI
     # see here: https://github.com/ScerIO/icon_font_generator/pull/20
@@ -134,7 +134,7 @@ dev_dependencies:
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1
-  source_gen: ^2.0.0
+  source_gen: ^3.1.0
 
   # Utilities
   package_rename: ^1.2.0

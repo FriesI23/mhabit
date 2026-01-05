@@ -19,6 +19,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
@@ -67,7 +68,7 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 
   @override
   Future<String> generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) async {
+      Element2 element, ConstantReader annotation, BuildStep buildStep) async {
     final targetClass = annotation.read('targetClass').typeValue;
     final useAnnotatedName = annotation.read('useAnnotatedName').boolValue;
 
@@ -77,7 +78,7 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 
     final targetClassName = targetClass.getDisplayString();
     final baseClassName =
-        useAnnotatedName ? element.name : targetClass.getDisplayString();
+        useAnnotatedName ? element.name3 : targetClass.getDisplayString();
 
     final buffer = StringBuffer();
     buffer.writeln(

@@ -16,6 +16,4 @@ AppNotifyConfig _$AppNotifyConfigFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$AppNotifyConfigToJson(AppNotifyConfig instance) =>
-    <String, dynamic>{
-      'channels': channelsToJson(instance.channels),
-    };
+    <String, dynamic>{'channels': channelsToJson(instance.channels)};
