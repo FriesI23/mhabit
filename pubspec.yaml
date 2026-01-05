@@ -59,7 +59,7 @@ dependencies:
   flutter_timezone: ^4.0.0
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
-  package_info_plus: ^8.0.2
+  package_info_plus: ^9.0.0
   copy_with_extension: ^6.0.0
   json_annotation: ^4.9.0
   win2iana_tz_converter: ^0.1.3
