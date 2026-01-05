@@ -79,7 +79,8 @@ import 'localizations_zh.g.dart';
 /// be consistent with the languages listed in the L10n.supportedLocales
 /// property.
 abstract class L10n {
-  L10n(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  L10n(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -99,7 +100,8 @@ abstract class L10n {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -1526,7 +1528,8 @@ abstract class L10n {
   ///
   /// In en, this message translates to:
   /// **'Imported {completeCount}/{totalCount}'**
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount);
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount);
 
   /// No description provided for @appSetting_importDialog_completeTitle.
   ///
@@ -2012,7 +2015,8 @@ abstract class L10n {
   ///
   /// In en, this message translates to:
   /// **'Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}'**
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit);
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit);
 
   /// No description provided for @appSync_serverEditor_connTimeoutTile_unitText.
   ///
@@ -2558,7 +2562,8 @@ abstract class L10n {
   ///
   /// In en, this message translates to:
   /// **'{splitName}: \"{splitChar}\"'**
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar);
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar);
 
   /// No description provided for @common_customDateTimeFormatPicker_12Hour_text.
   ///
@@ -2906,51 +2911,90 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'cs', 'de', 'en', 'es', 'fa', 'fr', 'he', 'hu', 'it', 'ja', 'nb', 'pl', 'pt', 'ru', 'tr', 'uk', 'vi', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'ar',
+        'cs',
+        'de',
+        'en',
+        'es',
+        'fa',
+        'fr',
+        'he',
+        'hu',
+        'it',
+        'ja',
+        'nb',
+        'pl',
+        'pt',
+        'ru',
+        'tr',
+        'uk',
+        'vi',
+        'zh'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
 }
 
 L10n lookupL10n(Locale locale) {
-
   // Lookup logic when language+script codes are specified.
   switch (locale.languageCode) {
-    case 'zh': {
-  switch (locale.scriptCode) {
-    case 'Hant': return L10nZhHant();
-   }
-  break;
-   }
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hant':
+            return L10nZhHant();
+        }
+        break;
+      }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar': return L10nAr();
-    case 'cs': return L10nCs();
-    case 'de': return L10nDe();
-    case 'en': return L10nEn();
-    case 'es': return L10nEs();
-    case 'fa': return L10nFa();
-    case 'fr': return L10nFr();
-    case 'he': return L10nHe();
-    case 'hu': return L10nHu();
-    case 'it': return L10nIt();
-    case 'ja': return L10nJa();
-    case 'nb': return L10nNb();
-    case 'pl': return L10nPl();
-    case 'pt': return L10nPt();
-    case 'ru': return L10nRu();
-    case 'tr': return L10nTr();
-    case 'uk': return L10nUk();
-    case 'vi': return L10nVi();
-    case 'zh': return L10nZh();
+    case 'ar':
+      return L10nAr();
+    case 'cs':
+      return L10nCs();
+    case 'de':
+      return L10nDe();
+    case 'en':
+      return L10nEn();
+    case 'es':
+      return L10nEs();
+    case 'fa':
+      return L10nFa();
+    case 'fr':
+      return L10nFr();
+    case 'he':
+      return L10nHe();
+    case 'hu':
+      return L10nHu();
+    case 'it':
+      return L10nIt();
+    case 'ja':
+      return L10nJa();
+    case 'nb':
+      return L10nNb();
+    case 'pl':
+      return L10nPl();
+    case 'pt':
+      return L10nPt();
+    case 'ru':
+      return L10nRu();
+    case 'tr':
+      return L10nTr();
+    case 'uk':
+      return L10nUk();
+    case 'vi':
+      return L10nVi();
+    case 'zh':
+      return L10nZh();
   }
 
   throw FlutterError(
-    'L10n.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'L10n.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

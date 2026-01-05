@@ -255,7 +255,8 @@ class L10nJa extends L10n {
   }
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => '選択した習慣をアーカイブしますか。';
+  String get habitDisplay_archiveHabitsConfirmDialog_title =>
+      '選択した習慣をアーカイブしますか。';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => '確認';
@@ -269,7 +270,8 @@ class L10nJa extends L10n {
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => '選択した習慣のアーカイブを解除しますか。';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
+      '選択した習慣のアーカイブを解除しますか。';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => '確認';
@@ -352,7 +354,8 @@ class L10nJa extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'アーカイブ済み';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'トップ習慣: 過去30日間の変化';
+  String get habitDisplay_statsMenu_popularitySubgroupText =>
+      'トップ習慣: 過去30日間の変化';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'ライトテーマ';
@@ -421,7 +424,8 @@ class L10nJa extends L10n {
   String get habitDisplay_searchFilter_ongoing => '進行中';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => '現在アクティブで進行中の習慣を表示します（アーカイブ済みや削除済みを除く）。';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      '現在アクティブで進行中の習慣を表示します（アーカイブ済みや削除済みを除く）。';
 
   @override
   String get habitDisplay_searchFilter_completed => '完了';
@@ -707,37 +711,45 @@ class L10nJa extends L10n {
   String get appSetting_dragCalendarByPageTile_titleText => 'カレンダーをページごとにドラッグ';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'スイッチを有効にすると、ホーム画面のアプリバーのカレンダーがページごとにドラッグされます。デフォルトでは無効です。';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      'スイッチを有効にすると、ホーム画面のアプリバーのカレンダーがページごとにドラッグされます。デフォルトでは無効です。';
 
   @override
   String get appSetting_changeRecordStatusOpTile_titleText => '記録ステータスの変更';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'メインページでの毎日の記録ステータスを変更するクリック動作を変更します。';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      'メインページでの毎日の記録ステータスを変更するクリック動作を変更します。';
 
   @override
   String get appSetting_openRecordStatusDialogOpTile_titleText => '詳細記録を開く';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'メインページで毎日の記録の詳細ポップアップを開くクリック動作を変更します。';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      'メインページで毎日の記録の詳細ポップアップを開くクリック動作を変更します。';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText =>
+      'Choose Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      'Use wallpaper\'s main color (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      'Use GTK+ theme\'s selected background color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      'Use system theme color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      'Use system accent or window/glass color';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => '週の開始日';
@@ -768,22 +780,26 @@ class L10nJa extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'システム設定に従う';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      'システム設定に従う';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => '設定された日付形式は、習慣詳細ページの日付表示に適用されます。';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      '設定された日付形式は、習慣詳細ページの日付表示に適用されます。';
 
   @override
   String get appSetting_compactUISwitcher_titleText => '習慣ページでコンパクト表示を有効にする';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => '習慣チェックテーブルにより多くのコンテンツを表示できるようにしますが、一部のUIやテキストが小さく表示される場合があります。';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      '習慣チェックテーブルにより多くのコンテンツを表示できるようにしますが、一部のUIやテキストが小さく表示される場合があります。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText => '習慣チェック領域の表示比率';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => '習慣チェック領域の表示サイズを調整します。';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      '習慣チェック領域の表示サイズを調整します。';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => 'デフォルト';
@@ -801,7 +817,8 @@ class L10nJa extends L10n {
   String get appSetting_export_titleText => 'エクスポート';
 
   @override
-  String get appSetting_export_subtitleText => '習慣をJSON形式でエクスポートします。このファイルはインポート可能です。';
+  String get appSetting_export_subtitleText =>
+      '習慣をJSON形式でエクスポートします。このファイルはインポート可能です。';
 
   @override
   String get appSetting_import_titleText => 'インポート';
@@ -815,7 +832,8 @@ class L10nJa extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => '注: インポートは既存の習慣を削除しません。';
+  String get appSetting_importDialog_confirmSubtitle =>
+      '注: インポートは既存の習慣を削除しません。';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => '確認';
@@ -824,7 +842,8 @@ class L10nJa extends L10n {
   String get appSetting_importDialog_confirm_cancelText => 'キャンセル';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return '$completeCount/$totalCount をインポートしました';
   }
 
@@ -846,7 +865,8 @@ class L10nJa extends L10n {
   String get appSetting_resetConfigDialog_titleText => '設定をリセットしますか。';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'すべての設定をデフォルトにリセットします。適用するにはアプリを再起動する必要があります。';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      'すべての設定をデフォルトにリセットします。適用するにはアプリを再起動する必要があります。';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'キャンセル';
@@ -870,7 +890,8 @@ class L10nJa extends L10n {
   String get appSetting_clearCacheDialog_titleText => 'キャッシュをクリア';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'キャッシュをクリアすると、一部のカスタム値はデフォルトに戻ります。';
+  String get appSetting_clearCacheDialog_subtitleText =>
+      'キャッシュをクリアすると、一部のカスタム値はデフォルトに戻ります。';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => 'キャンセル';
@@ -879,7 +900,8 @@ class L10nJa extends L10n {
   String get appSetting_clearCacheDialog_confirmText => '確認';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => '部分的なキャッシュのクリアに失敗しました';
+  String get appSetting_clearCache_snackBar_partSuccText =>
+      '部分的なキャッシュのクリアに失敗しました';
 
   @override
   String get appSetting_clearCache_snackBar_succText => 'キャッシュのクリアに成功しました';
@@ -948,10 +970,9 @@ class L10nJa extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return '同期中: $prtString';
@@ -1030,7 +1051,8 @@ class L10nJa extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => '新しい保存先';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => '同期には必要なディレクトリの作成と、サーバーへのローカル習慣データのアップロードが必要です。続行しますか。';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      '同期には必要なディレクトリの作成と、サーバーへのローカル習慣データのアップロードが必要です。続行しますか。';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => '今すぐ同期！';
@@ -1039,7 +1061,8 @@ class L10nJa extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_titleText => '同期の確認';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'ディレクトリが空ではありません。同期するとサーバーとローカルの習慣がマージされます。続行しますか。';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      'ディレクトリが空ではありません。同期するとサーバーとローカルの習慣がマージされます。続行しますか。';
 
   @override
   String get appSync_webdav_oldServerConfirmDialog_confirmText => 'マージを確認';
@@ -1125,19 +1148,22 @@ class L10nJa extends L10n {
   String get appSync_serverEditor_saveDialog_titleText => '変更を保存';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => '保存すると、以前のサーバー設定が上書きされます。';
+  String get appSync_serverEditor_saveDialog_subtitleText =>
+      '保存すると、以前のサーバー設定が上書きされます。';
 
   @override
   String get appSync_serverEditor_exitDialog_titleText => '未保存の変更';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => '終了すると、未保存の変更はすべて破棄されます。';
+  String get appSync_serverEditor_exitDialog_subtitleText =>
+      '終了すると、未保存の変更はすべて破棄されます。';
 
   @override
   String get appSync_serverEditor_deleteDialog_titleText => '削除を確認';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => '削除すると、現在のサーバー設定が削除されます。';
+  String get appSync_serverEditor_deleteDialog_subtitleText =>
+      '削除すると、現在のサーバー設定が削除されます。';
 
   @override
   String get appSync_serverEditor_titleText_add => '新しい同期サーバー';
@@ -1152,16 +1178,19 @@ class L10nJa extends L10n {
   String get appSync_serverEditor_pathTile_titleText => 'パス';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => '有効なWebDAVパスをここに入力してください。';
+  String get appSync_serverEditor_pathTile_hintText =>
+      '有効なWebDAVパスをここに入力してください。';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'パスを空にすることはできません！';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath =>
+      'パスを空にすることはできません！';
 
   @override
   String get appSync_serverEditor_usernameTile_titleText => 'ユーザー名';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'ユーザー名を入力してください（不要な場合は空欄）。';
+  String get appSync_serverEditor_usernameTile_hintText =>
+      'ユーザー名を入力してください（不要な場合は空欄）。';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'パスワード';
@@ -1187,10 +1216,12 @@ class L10nJa extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => '秒';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'ネットワーク接続タイムアウト（秒）';
+  String get appSync_serverEditor_connTimeoutTile_titleText =>
+      'ネットワーク接続タイムアウト（秒）';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1204,7 +1235,8 @@ class L10nJa extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => '秒';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'ネットワーク接続再試行回数';
+  String get appSync_serverEditor_connRetryCountTile_titleText =>
+      'ネットワーク接続再試行回数';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1256,13 +1288,15 @@ class L10nJa extends L10n {
   String get appSync_serverEditor_netTypeTile_lowDataTooltip => '省データモードでの同期';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => '1つ以上の実験的な機能が有効になっています。注意して使用してください。';
+  String get experimentalFeatures_warnginBanner_title =>
+      '1つ以上の実験的な機能が有効になっています。注意して使用してください。';
 
   @override
   String get experimentalFeatures_habitSyncTile_titleText => '習慣クラウド同期';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => '有効にすると、設定にアプリの同期オプションが表示されます';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      '有効にすると、設定にアプリの同期オプションが表示されます';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1278,7 +1312,8 @@ class L10nJa extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => '習慣検索';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => '有効にすると、習慣画面の上部に検索バーが表示され、習慣を検索できるようになります。';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      '有効にすると、習慣画面の上部に検索バーが表示され、習慣を検索できるようになります。';
 
   @override
   String get appAbout_appbarTile_titleText => 'アプリについて';
@@ -1301,7 +1336,8 @@ class L10nJa extends L10n {
   String get appAbout_contactEmailTile_titleText => 'お問い合わせ';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'ご連絡ありがとうございます。\nバグを報告する場合は、アプリのバージョンを示し、再現手順を説明してください。\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'ご連絡ありがとうございます。\nバグを報告する場合は、アプリのバージョンを示し、再現手順を説明してください。\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'ライセンス';
@@ -1325,10 +1361,12 @@ class L10nJa extends L10n {
   String get appAbout_donateTile_titleText => '寄付';
 
   @override
-  String get appAbout_donateTile_subTitleText => '私は個人の開発者です。もしこのアプリを気に入っていただけたら、コーヒーを一杯ご馳走してください ☕';
+  String get appAbout_donateTile_subTitleText =>
+      '私は個人の開発者です。もしこのアプリを気に入っていただけたら、コーヒーを一杯ご馳走してください ☕';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1421,7 +1459,8 @@ class L10nJa extends L10n {
   String get batchCheckin_save_confirmDialog_title => '既存の記録を上書き';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => '既存の記録は上書きされます。保存後、以前の記録は失われます。';
+  String get batchCheckin_save_confirmDialog_body =>
+      '既存の記録は上書きされます。保存後、以前の記録は失われます。';
 
   @override
   String get batchCheckin_save_confirmDialog_confirmButton_text => '保存';
@@ -1433,7 +1472,8 @@ class L10nJa extends L10n {
   String get batchCheckin_close_confirmDialog_title => '戻る確認';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'チェックインステータスの変更は保存されずに破棄されます。';
+  String get batchCheckin_close_confirmDialog_body =>
+      'チェックインステータスの変更は保存されずに破棄されます。';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => '終了';
@@ -1492,7 +1532,8 @@ class L10nJa extends L10n {
   String get common_appThemeColor_dynamic => 'Dynamic';
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'システム形式を使用';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text =>
+      'システム形式を使用';
 
   @override
   String get common_customDateTimeFormatPicker_fmtTileText => '日付形式';
@@ -1525,7 +1566,8 @@ class L10nJa extends L10n {
   String get common_customDateTimeFormatPicker_empty_text => '区切り文字なし';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1536,7 +1578,8 @@ class L10nJa extends L10n {
   String get common_customDateTimeFormatPicker_monthName_text => '月名を使用';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => '頻度チャートに適用';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text =>
+      '頻度チャートに適用';
 
   @override
   String get common_customDateTimeFormatPicker_applyHeapmap_text => 'カレンダーに適用';
@@ -1645,7 +1688,8 @@ class L10nJa extends L10n {
   String get debug_debuggerLogCard_title => 'ログ情報';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'ローカルデバッグログ情報が含まれます。ログ収集スイッチをオンにする必要があります。';
+  String get debug_debuggerLogCard_subtitle =>
+      'ローカルデバッグログ情報が含まれます。ログ収集スイッチをオンにする必要があります。';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => 'ダウンロード';

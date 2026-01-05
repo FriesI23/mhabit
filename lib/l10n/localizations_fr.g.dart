@@ -63,10 +63,12 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Unité de l’objectif journalier';
+  String get habitEdit_habitDailyGoalUnit_hintText =>
+      'Unité de l’objectif journalier';
 
   @override
-  String get habitEdit_habitDailyGoalExtra_hintText => 'Objectif journalier maximum souhaité';
+  String get habitEdit_habitDailyGoalExtra_hintText =>
+      'Objectif journalier maximum souhaité';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
@@ -74,7 +76,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalExtra_negativeHintText => 'Limite journalière maximale';
+  String get habitEdit_habitDailyGoalExtra_negativeHintText =>
+      'Limite journalière maximale';
 
   @override
   String get habitEdit_frequencySelector_title => 'Sélectionner une fréquence';
@@ -148,7 +151,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => 'Sélectionner le nombre de jours ciblé';
+  String get habitEdit_targetDays_dialogTitle =>
+      'Sélectionner le nombre de jours ciblé';
 
   @override
   String get habitEdit_targetDays => 'jours';
@@ -157,7 +161,8 @@ class L10nFr extends L10n {
   String get habitEdit_reminder_hintText => 'Rappel';
 
   @override
-  String get habitEdit_reminder_freq_weekHelpText => 'Tous les jours de la semaine';
+  String get habitEdit_reminder_freq_weekHelpText =>
+      'Tous les jours de la semaine';
 
   @override
   String get habitEdit_reminder_freq_weekPrefixText => '';
@@ -175,13 +180,15 @@ class L10nFr extends L10n {
   String get habitEdit_reminder_freq_monthSubfixText => ' de chaque mois';
 
   @override
-  String get habitEdit_reminderQuest_hintText => 'Question. Par exemple: avez-vous fait de l’exercice aujourd’hui ?';
+  String get habitEdit_reminderQuest_hintText =>
+      'Question. Par exemple: avez-vous fait de l’exercice aujourd’hui ?';
 
   @override
   String get habitEdit_reminder_dialogTitle => 'Choisir un type de rappel';
 
   @override
-  String get habitEdit_reminder_dialogType_whenNeeded => 'Lorsque c’est nécessaire';
+  String get habitEdit_reminder_dialogType_whenNeeded =>
+      'Lorsque c’est nécessaire';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Journalier';
@@ -202,7 +209,8 @@ class L10nFr extends L10n {
   String get habitEdit_reminder_cancelDialogTitle => 'Confirmer';
 
   @override
-  String get habitEdit_reminder_cancelDialogSubtitle => 'Confirmez-vous la suppression de ce rappel ?';
+  String get habitEdit_reminder_cancelDialogSubtitle =>
+      'Confirmez-vous la suppression de ce rappel ?';
 
   @override
   String get habitEdit_reminder_cancelDialogConfirm => 'Confirmer';
@@ -244,7 +252,8 @@ class L10nFr extends L10n {
   String get habitDisplay_fab_text => 'Nouvelle habitude';
 
   @override
-  String get habitDisplay_emptyImage_text_01 => 'Un voyage de mille lieux commence par un pas';
+  String get habitDisplay_emptyImage_text_01 =>
+      'Un voyage de mille lieux commence par un pas';
 
   @override
   String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
@@ -255,7 +264,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitDisplay_archiveHabitsConfirmDialog_title => 'Archiver les habitudes sélectionnées ?';
+  String get habitDisplay_archiveHabitsConfirmDialog_title =>
+      'Archiver les habitudes sélectionnées ?';
 
   @override
   String get habitDisplay_archiveHabitsConfirmDialog_confirm => 'Confirmer';
@@ -269,7 +279,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitDisplay_unarchiveHabitsConfirmDialog_title => 'Désarchiver les habitudes sélectionnées ?';
+  String get habitDisplay_unarchiveHabitsConfirmDialog_title =>
+      'Désarchiver les habitudes sélectionnées ?';
 
   @override
   String get habitDisplay_unarchiveHabitsConfirmDialog_confirm => 'Confirmer';
@@ -283,7 +294,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitDisplay_deleteHabitsConfirmDialog_title => 'Supprimer les habitudes sélectionnées ?';
+  String get habitDisplay_deleteHabitsConfirmDialog_title =>
+      'Supprimer les habitudes sélectionnées ?';
 
   @override
   String get habitDisplay_deleteHabitsConfirmDialog_confirm => 'Confirmer';
@@ -313,7 +325,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get habitDisplay_exportAllHabitsSuccSnackbarText => 'Exported All Habits';
+  String get habitDisplay_exportAllHabitsSuccSnackbarText =>
+      'Exported All Habits';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Tout sélectionner';
@@ -352,7 +365,8 @@ class L10nFr extends L10n {
   String get habitDisplay_statsMenu_archivedTileText => 'Archivées';
 
   @override
-  String get habitDisplay_statsMenu_popularitySubgroupText => 'Podium des habitudes: 30 derniers jours';
+  String get habitDisplay_statsMenu_popularitySubgroupText =>
+      'Podium des habitudes: 30 derniers jours';
 
   @override
   String get habitDisplay_mainMenu_lightTheme => 'Thème clair';
@@ -364,13 +378,16 @@ class L10nFr extends L10n {
   String get habitDisplay_mainMenu_followSystemTheme => 'Suivre le système';
 
   @override
-  String get habitDisplay_mainMenu_showArchivedTileText => 'Afficher les archivées';
+  String get habitDisplay_mainMenu_showArchivedTileText =>
+      'Afficher les archivées';
 
   @override
-  String get habitDisplay_mainMenu_showCompletedTileText => 'Afficher les complétées';
+  String get habitDisplay_mainMenu_showCompletedTileText =>
+      'Afficher les complétées';
 
   @override
-  String get habitDisplay_mainMenu_showActivedTileText => 'Afficher les actives';
+  String get habitDisplay_mainMenu_showActivedTileText =>
+      'Afficher les actives';
 
   @override
   String get habitDisplay_mainMenu_settingTileText => 'Paramètres';
@@ -421,13 +438,15 @@ class L10nFr extends L10n {
   String get habitDisplay_searchFilter_ongoing => 'En cours';
 
   @override
-  String get habitDisplay_searchFilter_ongoing_desc => 'Shows habits that are currently active and ongoing (not archived or deleted).';
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      'Shows habits that are currently active and ongoing (not archived or deleted).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Complétées';
 
   @override
-  String get habitDisplay_searchFilter_habitType_groupTitle => 'Type d’habitude';
+  String get habitDisplay_searchFilter_habitType_groupTitle =>
+      'Type d’habitude';
 
   @override
   String get habitDisplay_searchFilter_tooltips => 'Show Filters';
@@ -483,13 +502,16 @@ class L10nFr extends L10n {
   String get habitDetail_confirmDialog_cancel => 'Annuler';
 
   @override
-  String get habitDetail_archiveConfirmDialog_titleText => 'Archiver l’habitude ?';
+  String get habitDetail_archiveConfirmDialog_titleText =>
+      'Archiver l’habitude ?';
 
   @override
-  String get habitDetail_unarchiveConfirmDialog_titleText => 'Désarchiver l’habitude ?';
+  String get habitDetail_unarchiveConfirmDialog_titleText =>
+      'Désarchiver l’habitude ?';
 
   @override
-  String get habitDetail_deleteConfirmDialog_titleText => 'Supprimer l’habitude ?';
+  String get habitDetail_deleteConfirmDialog_titleText =>
+      'Supprimer l’habitude ?';
 
   @override
   String get habitDetail_summary_title => 'Résumé';
@@ -606,10 +628,12 @@ class L10nFr extends L10n {
   String get habitDetail_freqChartNaviBar_nowText => 'Maintenant';
 
   @override
-  String get habitDetail_freqChart_expanded_hideTooltip => 'Masquer le graphe d’historique';
+  String get habitDetail_freqChart_expanded_hideTooltip =>
+      'Masquer le graphe d’historique';
 
   @override
-  String get habitDetail_freqChart_expanded_showTooltip => 'Afficher le graphe d’historique';
+  String get habitDetail_freqChart_expanded_showTooltip =>
+      'Afficher le graphe d’historique';
 
   @override
   String get habitDetail_descSubgroup_title => 'Mémo';
@@ -642,7 +666,8 @@ class L10nFr extends L10n {
   String get habitDetail_editHeatmapCal_valueButtonText => 'valeur';
 
   @override
-  String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'revenir à aujourd’hui';
+  String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
+      'revenir à aujourd’hui';
 
   @override
   String get habitDetail_notFoundText => 'Échec du chargement de l’habitude';
@@ -686,7 +711,8 @@ class L10nFr extends L10n {
   String get habitDetail_skipReason_title => 'Raison pour avoir ignoré';
 
   @override
-  String get habitDetail_skipReason_bodyHelpText => 'Écrivez quelque chose ici…';
+  String get habitDetail_skipReason_bodyHelpText =>
+      'Écrivez quelque chose ici…';
 
   @override
   String get habitDetail_skipReason_cancelText => 'Annuler';
@@ -704,46 +730,59 @@ class L10nFr extends L10n {
   String get appSetting_operationSubgroupText => 'Opération';
 
   @override
-  String get appSetting_dragCalendarByPageTile_titleText => 'Défilement du calendrier page par page';
+  String get appSetting_dragCalendarByPageTile_titleText =>
+      'Défilement du calendrier page par page';
 
   @override
-  String get appSetting_dragCalendarByPageTile_subtitleText => 'Si ce bouton est activé, le calendrier présent sur la barre d’application de la page d’accueil défilera page par page. Par défaut, le bouton est désactivé.';
+  String get appSetting_dragCalendarByPageTile_subtitleText =>
+      'Si ce bouton est activé, le calendrier présent sur la barre d’application de la page d’accueil défilera page par page. Par défaut, le bouton est désactivé.';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_titleText => 'Modifier le statut de l’entrée';
+  String get appSetting_changeRecordStatusOpTile_titleText =>
+      'Modifier le statut de l’entrée';
 
   @override
-  String get appSetting_changeRecordStatusOpTile_subtitleText => 'Modifier le type de clic permettant de changer le statut des entrées journalières sur la page principale.';
+  String get appSetting_changeRecordStatusOpTile_subtitleText =>
+      'Modifier le type de clic permettant de changer le statut des entrées journalières sur la page principale.';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_titleText => 'Ouvrir le détail de l’entrée';
+  String get appSetting_openRecordStatusDialogOpTile_titleText =>
+      'Ouvrir le détail de l’entrée';
 
   @override
-  String get appSetting_openRecordStatusDialogOpTile_subtitleText => 'Modifier le type de clic permettant d’ouvrir la boîte de dialgue détaillée des entrées journalières sur la page principale.';
+  String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
+      'Modifier le type de clic permettant d’ouvrir la boîte de dialgue détaillée des entrées journalières sur la page principale.';
 
   @override
   String get appSetting_appThemeColorTile_titleText => 'Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText => 'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText =>
+      'Choose Theme Color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_android => 'Use wallpaper\'s main color (Android 12+)';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      'Use wallpaper\'s main color (Android 12+)';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_linux => 'Use GTK+ theme\'s selected background color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      'Use GTK+ theme\'s selected background color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_macos => 'Use system theme color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      'Use system theme color';
 
   @override
-  String get appSetting_appThemeColorChosenDialog_subTitleText_windows => 'Use system accent or window/glass color';
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      'Use system accent or window/glass color';
 
   @override
-  String get appSetting_firstDayOfWeek_titleText => 'Premier jour de la semaine';
+  String get appSetting_firstDayOfWeek_titleText =>
+      'Premier jour de la semaine';
 
   @override
-  String get appSetting_firstDayOfWeekDialog_titleText => 'Afficher le premier jour de la semaine';
+  String get appSetting_firstDayOfWeekDialog_titleText =>
+      'Afficher le premier jour de la semaine';
 
   @override
   String get appSetting_firstDayOfWeekDialog_defaultText => ' (par défaut)';
@@ -754,7 +793,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSetting_changeLanguage_followSystem_noLocale_text => 'Follow System';
+  String get appSetting_changeLanguage_followSystem_noLocale_text =>
+      'Follow System';
 
   @override
   String get appSetting_changeLanguageTile_titleText => 'Language';
@@ -768,22 +808,28 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText => 'suivre le paramétrage du système';
+  String get appSetting_dateDisplayFormat_titleTemplate_followSystemText =>
+      'suivre le paramétrage du système';
 
   @override
-  String get appSetting_dateDisplayFormat_subTitleText => 'Le format configuré sera appliqué à l’affichage des dates sur le détail de l’habitude.';
+  String get appSetting_dateDisplayFormat_subTitleText =>
+      'Le format configuré sera appliqué à l’affichage des dates sur le détail de l’habitude.';
 
   @override
-  String get appSetting_compactUISwitcher_titleText => 'Activer l’interface compacte sur la page des habitudes';
+  String get appSetting_compactUISwitcher_titleText =>
+      'Activer l’interface compacte sur la page des habitudes';
 
   @override
-  String get appSetting_compactUISwitcher_subtitleText => 'Permet au tableau des habitudes d’afficher plus de contenu. Certains éléments et textes apparaitront plus petits.';
+  String get appSetting_compactUISwitcher_subtitleText =>
+      'Permet au tableau des habitudes d’afficher plus de contenu. Certains éléments et textes apparaitront plus petits.';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_titleText => 'Ajustement de la zone de validation des habitudes';
+  String get appSetting_collapsed_calendar_bararea_titleText =>
+      'Ajustement de la zone de validation des habitudes';
 
   @override
-  String get appSetting_collapsed_calendar_bararea_subtitleText => 'Ajuster le pourcentage pour avoir plus ou moins d’espace dans la zone de validation des habitudes.';
+  String get appSetting_collapsed_calendar_bararea_subtitleText =>
+      'Ajuster le pourcentage pour avoir plus ou moins d’espace dans la zone de validation des habitudes.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_defaultText => 'Défaut';
@@ -795,19 +841,22 @@ class L10nFr extends L10n {
   String get appSetting_dailyReminder_titleText => 'Rappel journalier';
 
   @override
-  String get appSetting_backupAndRestoreSubgroupText => 'Sauvegarder et restaurer';
+  String get appSetting_backupAndRestoreSubgroupText =>
+      'Sauvegarder et restaurer';
 
   @override
   String get appSetting_export_titleText => 'Exporter';
 
   @override
-  String get appSetting_export_subtitleText => 'Exporter les habitudes au format JSON. Ce fichier peut être importé.';
+  String get appSetting_export_subtitleText =>
+      'Exporter les habitudes au format JSON. Ce fichier peut être importé.';
 
   @override
   String get appSetting_import_titleText => 'Importer';
 
   @override
-  String get appSetting_import_subtitleText => 'Importer les habitudes à partir d’un fichier au format JSON.';
+  String get appSetting_import_subtitleText =>
+      'Importer les habitudes à partir d’un fichier au format JSON.';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
@@ -815,7 +864,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSetting_importDialog_confirmSubtitle => 'Note: l’import ne supprime pas les habitudes existantes.';
+  String get appSetting_importDialog_confirmSubtitle =>
+      'Note: l’import ne supprime pas les habitudes existantes.';
 
   @override
   String get appSetting_importDialog_confirm_confirmText => 'Confirmer';
@@ -824,7 +874,8 @@ class L10nFr extends L10n {
   String get appSetting_importDialog_confirm_cancelText => 'Annuler';
 
   @override
-  String appSetting_importDialog_importingTitle(int completeCount, int totalCount) {
+  String appSetting_importDialog_importingTitle(
+      int completeCount, int totalCount) {
     return '$completeCount/$totalCount importées';
   }
 
@@ -837,16 +888,20 @@ class L10nFr extends L10n {
   String get appSetting_importDialog_complete_closeLabel => 'Fermer';
 
   @override
-  String get appSetting_resetConfig_titleText => 'Réinitialiser la configuration';
+  String get appSetting_resetConfig_titleText =>
+      'Réinitialiser la configuration';
 
   @override
-  String get appSetting_resetConfig_subtitleText => 'Réinitialiser la configuration aux valeurs par défaut.';
+  String get appSetting_resetConfig_subtitleText =>
+      'Réinitialiser la configuration aux valeurs par défaut.';
 
   @override
-  String get appSetting_resetConfigDialog_titleText => 'Réinitialiser la configuration ?';
+  String get appSetting_resetConfigDialog_titleText =>
+      'Réinitialiser la configuration ?';
 
   @override
-  String get appSetting_resetConfigDialog_subtitleText => 'La configuration sera réinitialisée aux valeurs par défaut. Vous devrez redémarrer l’application pour que ce soit appliqué.';
+  String get appSetting_resetConfigDialog_subtitleText =>
+      'La configuration sera réinitialisée aux valeurs par défaut. Vous devrez redémarrer l’application pour que ce soit appliqué.';
 
   @override
   String get appSetting_resetConfigDialog_cancelText => 'Annuler';
@@ -855,7 +910,8 @@ class L10nFr extends L10n {
   String get appSetting_resetConfigDialog_confirmText => 'Confirmer';
 
   @override
-  String get appSetting_resetConfigSuccess_snackbarText => 'Réinitialisation de la configuration réussie';
+  String get appSetting_resetConfigSuccess_snackbarText =>
+      'Réinitialisation de la configuration réussie';
 
   @override
   String get appSetting_otherSubgroupText => 'Autre';
@@ -870,7 +926,8 @@ class L10nFr extends L10n {
   String get appSetting_clearCacheDialog_titleText => 'Vider le cache';
 
   @override
-  String get appSetting_clearCacheDialog_subtitleText => 'Après avoir vidé le cache, certaines valeurs personnelles seront réinitialisées aux valeurs par défaut.';
+  String get appSetting_clearCacheDialog_subtitleText =>
+      'Après avoir vidé le cache, certaines valeurs personnelles seront réinitialisées aux valeurs par défaut.';
 
   @override
   String get appSetting_clearCacheDialog_cancelText => 'Annuler';
@@ -879,13 +936,16 @@ class L10nFr extends L10n {
   String get appSetting_clearCacheDialog_confirmText => 'Confirmer';
 
   @override
-  String get appSetting_clearCache_snackBar_partSuccText => 'Échec du vidage partiel du cache';
+  String get appSetting_clearCache_snackBar_partSuccText =>
+      'Échec du vidage partiel du cache';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Cache vidé avec succès';
+  String get appSetting_clearCache_snackBar_succText =>
+      'Cache vidé avec succès';
 
   @override
-  String get appSetting_clearCache_snackBar_failText => 'Échec du vidage du cache';
+  String get appSetting_clearCache_snackBar_failText =>
+      'Échec du vidage du cache';
 
   @override
   String get appSetting_debugger_titleText => 'Debug Info';
@@ -894,7 +954,8 @@ class L10nFr extends L10n {
   String get appSetting_about_titleText => 'À propos';
 
   @override
-  String get appSetting_experimentalFeatureTile_titleText => 'Experimental Features';
+  String get appSetting_experimentalFeatureTile_titleText =>
+      'Experimental Features';
 
   @override
   String get appSetting_synSubgroupText => 'Sync';
@@ -906,10 +967,12 @@ class L10nFr extends L10n {
   String get appSetting_notify_titleTile => 'Notifications';
 
   @override
-  String get appSetting_notify_subtitleTile => 'Manage notification preferences';
+  String get appSetting_notify_subtitleTile =>
+      'Manage notification preferences';
 
   @override
-  String get appSetting_notify_subtitleTile_android => 'Tap to open system notification settings';
+  String get appSetting_notify_subtitleTile_android =>
+      'Tap to open system notification settings';
 
   @override
   String get appSync_nowTile_titleText => 'Synchroniser maintenant';
@@ -948,10 +1011,9 @@ class L10nFr extends L10n {
 
   @override
   String appSync_nowTile_syncingText_withPrt(num prt) {
-    final intl.NumberFormat prtNumberFormat = intl.NumberFormat.decimalPercentPattern(
-      locale: localeName,
-      decimalDigits: 2
-    );
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+            locale: localeName, decimalDigits: 2);
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Syncing: $prtString';
@@ -1030,7 +1092,8 @@ class L10nFr extends L10n {
   String get appSync_webdav_newServerConfirmDialog_titleText => 'New Location';
 
   @override
-  String get appSync_webdav_newServerConfirmDialog_subtitleText => 'Syncing will create necessary directories and upload local habits to the server. Continue?';
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      'Syncing will create necessary directories and upload local habits to the server. Continue?';
 
   @override
   String get appSync_webdav_newServerConfirmDialog_confirmText => 'Sync Now!';
@@ -1039,10 +1102,12 @@ class L10nFr extends L10n {
   String get appSync_webdav_oldServerConfirmDialog_titleText => 'Confirm Sync';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_subtitleText => 'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
+  String get appSync_webdav_oldServerConfirmDialog_subtitleText =>
+      'Directory isn\'t empty. Syncing will merge server and local habits. Continue?';
 
   @override
-  String get appSync_webdav_oldServerConfirmDialog_confirmText => 'Confirm Merge';
+  String get appSync_webdav_oldServerConfirmDialog_confirmText =>
+      'Confirm Merge';
 
   @override
   String get appSync_exportAllLogsTile_titleText => 'Export Failed Sync Logs';
@@ -1116,28 +1181,34 @@ class L10nFr extends L10n {
   String get appSync_summaryTile_title => 'Sync Server';
 
   @override
-  String get appSync_summaryTile_subtitle_text_notConfigured => 'Not Configured';
+  String get appSync_summaryTile_subtitle_text_notConfigured =>
+      'Not Configured';
 
   @override
-  String get appSync_exportAllLogsTile_exportSubjectText => 'All recent failed sync logs';
+  String get appSync_exportAllLogsTile_exportSubjectText =>
+      'All recent failed sync logs';
 
   @override
-  String get appSync_serverEditor_saveDialog_titleText => 'Confirm Save Changes';
+  String get appSync_serverEditor_saveDialog_titleText =>
+      'Confirm Save Changes';
 
   @override
-  String get appSync_serverEditor_saveDialog_subtitleText => 'Saving will overwrite previous server configuration.';
+  String get appSync_serverEditor_saveDialog_subtitleText =>
+      'Saving will overwrite previous server configuration.';
 
   @override
   String get appSync_serverEditor_exitDialog_titleText => 'Unsaved Changes';
 
   @override
-  String get appSync_serverEditor_exitDialog_subtitleText => 'Exiting will discard all unsaved changes.';
+  String get appSync_serverEditor_exitDialog_subtitleText =>
+      'Exiting will discard all unsaved changes.';
 
   @override
   String get appSync_serverEditor_deleteDialog_titleText => 'Confirm Delete';
 
   @override
-  String get appSync_serverEditor_deleteDialog_subtitleText => 'Deleting will remove current server config.';
+  String get appSync_serverEditor_deleteDialog_subtitleText =>
+      'Deleting will remove current server config.';
 
   @override
   String get appSync_serverEditor_titleText_add => 'New Sync Server';
@@ -1152,25 +1223,31 @@ class L10nFr extends L10n {
   String get appSync_serverEditor_pathTile_titleText => 'Path';
 
   @override
-  String get appSync_serverEditor_pathTile_hintText => 'Enter a valid WebDAV path here.';
+  String get appSync_serverEditor_pathTile_hintText =>
+      'Enter a valid WebDAV path here.';
 
   @override
-  String get appSync_serverEditor_pathTile_errorText_emptyPath => 'Path shouldn\'t be empty!';
+  String get appSync_serverEditor_pathTile_errorText_emptyPath =>
+      'Path shouldn\'t be empty!';
 
   @override
-  String get appSync_serverEditor_usernameTile_titleText => 'Nom d\'utilisateur';
+  String get appSync_serverEditor_usernameTile_titleText =>
+      'Nom d\'utilisateur';
 
   @override
-  String get appSync_serverEditor_usernameTile_hintText => 'Enter username here, leave empty if not required.';
+  String get appSync_serverEditor_usernameTile_hintText =>
+      'Enter username here, leave empty if not required.';
 
   @override
   String get appSync_serverEditor_passwordTile_titleText => 'Mot de passe';
 
   @override
-  String get appSync_serverEditor_ignoreSSLTile_titleText => 'Ignore SSL Certificate';
+  String get appSync_serverEditor_ignoreSSLTile_titleText =>
+      'Ignore SSL Certificate';
 
   @override
-  String get appSync_serverEditor_timeoutTile_titleText => 'Sync Timeout Seconds';
+  String get appSync_serverEditor_timeoutTile_titleText =>
+      'Sync Timeout Seconds';
 
   @override
   String appSync_serverEditor_timeoutTile_hintText(int seconds, String unit) {
@@ -1187,10 +1264,12 @@ class L10nFr extends L10n {
   String get appSync_serverEditor_timeoutTile_unitText => 's';
 
   @override
-  String get appSync_serverEditor_connTimeoutTile_titleText => 'Network Connection Timeout Seconds';
+  String get appSync_serverEditor_connTimeoutTile_titleText =>
+      'Network Connection Timeout Seconds';
 
   @override
-  String appSync_serverEditor_connTimeoutTile_hintText(int seconds, String unit) {
+  String appSync_serverEditor_connTimeoutTile_hintText(
+      int seconds, String unit) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1204,7 +1283,8 @@ class L10nFr extends L10n {
   String get appSync_serverEditor_connTimeoutTile_unitText => 's';
 
   @override
-  String get appSync_serverEditor_connRetryCountTile_titleText => 'Network Connection Retry Count';
+  String get appSync_serverEditor_connRetryCountTile_titleText =>
+      'Network Connection Retry Count';
 
   @override
   String appSync_serverEditor_connRetryCountTile_hintText(int count) {
@@ -1253,16 +1333,19 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataTooltip => 'Sync in Low Data Mode';
+  String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
+      'Sync in Low Data Mode';
 
   @override
-  String get experimentalFeatures_warnginBanner_title => 'One or more experimental features are enabled, Use with caution.';
+  String get experimentalFeatures_warnginBanner_title =>
+      'One or more experimental features are enabled, Use with caution.';
 
   @override
   String get experimentalFeatures_habitSyncTile_titleText => 'Habit Cloud Sync';
 
   @override
-  String get experimentalFeatures_habitSyncTile_subtitleText => 'Once enabled, the app\'s sync option will appear in settings';
+  String get experimentalFeatures_habitSyncTile_subtitleText =>
+      'Once enabled, the app\'s sync option will appear in settings';
 
   @override
   String experimentalFeatures_warnTile_titleText(String syncName) {
@@ -1278,7 +1361,8 @@ class L10nFr extends L10n {
   String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
 
   @override
-  String get experimentalFeatures_habitSearchTile_subtitleText => 'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+  String get experimentalFeatures_habitSearchTile_subtitleText =>
+      'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
 
   @override
   String get appAbout_appbarTile_titleText => 'À propos';
@@ -1301,7 +1385,8 @@ class L10nFr extends L10n {
   String get appAbout_contactEmailTile_titleText => 'Me contacter';
 
   @override
-  String get appAbout_contactEmailTile_emailBody => 'Salut, je suis content que vous me contactiez.\nSi vous voulez remonter une anomalie, merci d’indiquer la version de l’application et de décrire les étapes pour la reproduire.\n--------------------------------------';
+  String get appAbout_contactEmailTile_emailBody =>
+      'Salut, je suis content que vous me contactiez.\nSi vous voulez remonter une anomalie, merci d’indiquer la version de l’application et de décrire les étapes pour la reproduire.\n--------------------------------------';
 
   @override
   String get appAbout_licenseTile_titleText => 'Licence';
@@ -1310,7 +1395,8 @@ class L10nFr extends L10n {
   String get appAbout_licenseTile_subtitleText => 'Apache License, Version 2.0';
 
   @override
-  String get appAbout_licenseThirdPartyTile_titleText => 'Déclaration des licences pour les tierces parties';
+  String get appAbout_licenseThirdPartyTile_titleText =>
+      'Déclaration des licences pour les tierces parties';
 
   @override
   String get appAbout_licenseThirdPartyTile_subtitleText => 'flutter';
@@ -1319,16 +1405,19 @@ class L10nFr extends L10n {
   String get appAbout_privacyTile_titleText => 'Privacy';
 
   @override
-  String get appAbout_privacyTile_subTitleText => 'Access the privacy policy in this app';
+  String get appAbout_privacyTile_subTitleText =>
+      'Access the privacy policy in this app';
 
   @override
   String get appAbout_donateTile_titleText => 'Don';
 
   @override
-  String get appAbout_donateTile_subTitleText => 'Je suis un développeur particulier. Si vous aimez cette application, offrez-moi un ☕.';
+  String get appAbout_donateTile_subTitleText =>
+      'Je suis un développeur particulier. Si vous aimez cette application, offrez-moi un ☕.';
 
   @override
-  String get appAbout_donateTile_ways => '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'Paypal';
@@ -1418,13 +1507,16 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get batchCheckin_save_confirmDialog_title => 'Écraser les enregistrements existants';
+  String get batchCheckin_save_confirmDialog_title =>
+      'Écraser les enregistrements existants';
 
   @override
-  String get batchCheckin_save_confirmDialog_body => 'Les enregistrements existants seront écrasés. Après l\'enregistrement, les enregistrements précédents seront perdus.';
+  String get batchCheckin_save_confirmDialog_body =>
+      'Les enregistrements existants seront écrasés. Après l\'enregistrement, les enregistrements précédents seront perdus.';
 
   @override
-  String get batchCheckin_save_confirmDialog_confirmButton_text => 'Enregistrer';
+  String get batchCheckin_save_confirmDialog_confirmButton_text =>
+      'Enregistrer';
 
   @override
   String get batchCheckin_save_confirmDialog_cancelButton_text => 'Annuler';
@@ -1433,7 +1525,8 @@ class L10nFr extends L10n {
   String get batchCheckin_close_confirmDialog_title => 'Confirmer le retour';
 
   @override
-  String get batchCheckin_close_confirmDialog_body => 'Les changements d\'état de validation ne seront pas appliqués avant d\'être enregistrés.';
+  String get batchCheckin_close_confirmDialog_body =>
+      'Les changements d\'état de validation ne seront pas appliqués avant d\'être enregistrés.';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'Quitter';
@@ -1442,10 +1535,12 @@ class L10nFr extends L10n {
   String get batchCheckin_close_confirmDialog_cancelButton_text => 'Annuler';
 
   @override
-  String get appReminder_dailyReminder_title => '🏝 Avez-vous gardé vos habitudes, aujourd’hui ?';
+  String get appReminder_dailyReminder_title =>
+      '🏝 Avez-vous gardé vos habitudes, aujourd’hui ?';
 
   @override
-  String get appReminder_dailyReminder_body => 'click to enter app and punch in on time.';
+  String get appReminder_dailyReminder_body =>
+      'click to enter app and punch in on time.';
 
   @override
   String get common_habitColorType_cc1 => 'Lilas profond';
@@ -1492,7 +1587,8 @@ class L10nFr extends L10n {
   String get common_appThemeColor_dynamic => 'Dynamic';
 
   @override
-  String get common_customDateTimeFormatPicker_useSystemFormat_text => 'Utiliser le format du système';
+  String get common_customDateTimeFormatPicker_useSystemFormat_text =>
+      'Utiliser le format du système';
 
   @override
   String get common_customDateTimeFormatPicker_fmtTileText => 'Format de date';
@@ -1522,30 +1618,37 @@ class L10nFr extends L10n {
   String get common_customDateTimeFormatPicker_sepDot_text => 'Point';
 
   @override
-  String get common_customDateTimeFormatPicker_empty_text => 'Pas de séparateur';
+  String get common_customDateTimeFormatPicker_empty_text =>
+      'Pas de séparateur';
 
   @override
-  String common_customDateTimeFormatPicker_sep_formatter(String splitName, String splitChar) {
+  String common_customDateTimeFormatPicker_sep_formatter(
+      String splitName, String splitChar) {
     return '$splitName: \"$splitChar\"';
   }
 
   @override
-  String get common_customDateTimeFormatPicker_12Hour_text => 'Utiliser le système horaire sur 12 heures';
+  String get common_customDateTimeFormatPicker_12Hour_text =>
+      'Utiliser le système horaire sur 12 heures';
 
   @override
-  String get common_customDateTimeFormatPicker_monthName_text => 'Utiliser les noms complets';
+  String get common_customDateTimeFormatPicker_monthName_text =>
+      'Utiliser les noms complets';
 
   @override
-  String get common_customDateTimeFormatPicker_applyFreqChart_text => 'Appliquer pour le tableau des fréquences';
+  String get common_customDateTimeFormatPicker_applyFreqChart_text =>
+      'Appliquer pour le tableau des fréquences';
 
   @override
-  String get common_customDateTimeFormatPicker_applyHeapmap_text => 'Appliquer pour le calendrier';
+  String get common_customDateTimeFormatPicker_applyHeapmap_text =>
+      'Appliquer pour le calendrier';
 
   @override
   String get common_customDateTimeFormatPicker_cancelButton_text => 'Annuler';
 
   @override
-  String get common_customDateTimeFormatPicker_confirmButton_text => 'Confirmer';
+  String get common_customDateTimeFormatPicker_confirmButton_text =>
+      'Confirmer';
 
   @override
   String get common_errorPage_title => 'Oops, Crashed!';
@@ -1571,7 +1674,8 @@ class L10nFr extends L10n {
   }
 
   @override
-  String get exportConfirmDialog_title_exportAll => 'Exporter toutes les habitudes ?';
+  String get exportConfirmDialog_title_exportAll =>
+      'Exporter toutes les habitudes ?';
 
   @override
   String exportConfirmDialog_title_exportMulti(int number) {
@@ -1619,19 +1723,23 @@ class L10nFr extends L10n {
   String get debug_collectLogTile_title => 'Collecting Logs';
 
   @override
-  String get debug_collectLogTile_enable_subtitle => 'Tap to stop logging collection.';
+  String get debug_collectLogTile_enable_subtitle =>
+      'Tap to stop logging collection.';
 
   @override
-  String get debug_collectLogTile_disable_subtitle => 'Tap to start logging collection.';
+  String get debug_collectLogTile_disable_subtitle =>
+      'Tap to start logging collection.';
 
   @override
   String get debug_downladDebugLogs_subject => 'Downloading debugging logs';
 
   @override
-  String get dbeug_clearDebugLogs_complete_snackbar => 'Debugging logs Cleared.';
+  String get dbeug_clearDebugLogs_complete_snackbar =>
+      'Debugging logs Cleared.';
 
   @override
-  String get debug_downladDebugInfo_subject => 'Downloading debugging information';
+  String get debug_downladDebugInfo_subject =>
+      'Downloading debugging information';
 
   @override
   String debug_downladDebugZip_subject(String fileName) {
@@ -1645,7 +1753,8 @@ class L10nFr extends L10n {
   String get debug_debuggerLogCard_title => 'Logging Information';
 
   @override
-  String get debug_debuggerLogCard_subtitle => 'Includes local debugging log information, need to turn on the log collection switcher.';
+  String get debug_debuggerLogCard_subtitle =>
+      'Includes local debugging log information, need to turn on the log collection switcher.';
 
   @override
   String get debug_debuggerLogCard_saveButton_text => 'Download';
@@ -1657,7 +1766,8 @@ class L10nFr extends L10n {
   String get debug_debuggerInfoCard_title => 'Debugging Information';
 
   @override
-  String get debug_debuggerInfoCard_subtitle => 'Includes app\'s debugging information.';
+  String get debug_debuggerInfoCard_subtitle =>
+      'Includes app\'s debugging information.';
 
   @override
   String get debug_debuggerInfoCard_openButton_text => 'Open';
@@ -1666,7 +1776,8 @@ class L10nFr extends L10n {
   String get debug_debuggerInfoCard_saveButton_text => 'Save';
 
   @override
-  String get debug_debuggerInfo_notificationTitle => 'Collecting App\'s Info...';
+  String get debug_debuggerInfo_notificationTitle =>
+      'Collecting App\'s Info...';
 
   @override
   String confirmDialog_confirm_text(String type) {
@@ -1716,7 +1827,8 @@ class L10nFr extends L10n {
   String get channelName_appSyncing => 'Sync Process';
 
   @override
-  String get channelDesc_appSyncing => 'Used to show sync progress and non-failure results';
+  String get channelDesc_appSyncing =>
+      'Used to show sync progress and non-failure results';
 
   @override
   String get channelName_appSyncFailed => 'Sync Failed';
