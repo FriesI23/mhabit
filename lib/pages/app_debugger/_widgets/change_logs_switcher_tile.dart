@@ -47,7 +47,7 @@ class ChangeLogsSwitcherTile extends StatelessWidget {
           return null;
         },
       ),
-      activeColor: theme.colorScheme.error,
+      activeThumbColor: theme.colorScheme.error,
       value: value,
       onChanged: onChanged,
     );
