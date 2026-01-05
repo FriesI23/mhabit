@@ -78,7 +78,8 @@ abstract class CurrentTimeZoneBasic implements LocalTimeZone {
   const CurrentTimeZoneBasic();
 
   @override
-  Future<String> getTimeZone() async => FlutterTimezone.getLocalTimezone();
+  Future<String> getTimeZone() async =>
+      FlutterTimezone.getLocalTimezone().then((result) => result.identifier);
 }
 
 final class WindowsLocaTimeZone implements LocalTimeZone {
