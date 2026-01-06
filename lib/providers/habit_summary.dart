@@ -120,6 +120,8 @@ class HabitSummaryViewModel extends ChangeNotifier
 
   bool get isCalendarExpanded => _isCalandarExpanded;
 
+  bool get canPop => !isInEditMode && !isInSearchMode && !isCalendarExpanded;
+
   void toggleCalendarStatus({bool listen = true}) => isCalendarExpanded
       ? collapseCalendar(listen: listen)
       : expandCalendar(listen: listen);
