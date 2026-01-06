@@ -59,7 +59,7 @@ abstract interface class DBHelper implements AsyncInitialization {
 }
 
 class _DBHelper implements DBHelper {
-  static const Set<TargetPlatform> useffiPlafroms = {
+  static const Set<TargetPlatform> useffiPlatforms = {
     TargetPlatform.linux,
     TargetPlatform.windows,
   };
@@ -200,7 +200,7 @@ class _DBHelper implements DBHelper {
 
   @override
   Future init({bool reinit = false}) async {
-    if (!reinit && useffiPlafroms.contains(defaultTargetPlatform)) {
+    if (!reinit && useffiPlatforms.contains(defaultTargetPlatform)) {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
