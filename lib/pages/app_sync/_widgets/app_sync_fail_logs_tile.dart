@@ -29,10 +29,11 @@ class AppSyncFailLogsTile extends StatefulWidget {
   final String? path;
   final Duration refreshInterval;
 
-  const AppSyncFailLogsTile(
-      {super.key,
-      required this.path,
-      this.refreshInterval = const Duration(seconds: 10)});
+  const AppSyncFailLogsTile({
+    super.key,
+    required this.path,
+    this.refreshInterval = const Duration(seconds: 10),
+  });
 
   @override
   State<AppSyncFailLogsTile> createState() => _AppSyncFailLogsTile();
@@ -55,21 +56,23 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
           .timeout(widget.refreshInterval)
           .then<bool?>((value) => value?.isEmpty)
           .onError<TimeoutException>((e, s) {
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-        return isEmpty;
-      }).then((result) {
-        if (!mounted || completer.isCompleted) return Future.value();
-        if (result != isEmpty) {
-          setState(() {
-            isEmpty = result;
+            if (kDebugMode) Error.throwWithStackTrace(e, s);
+            return isEmpty;
+          })
+          .then((result) {
+            if (!mounted || completer.isCompleted) return Future.value();
+            if (result != isEmpty) {
+              setState(() {
+                isEmpty = result;
+              });
+            }
+            final timeDiff = AppClock().now().millisecondsSinceEpoch - startT;
+            final dura =
+                widget.refreshInterval - Duration(milliseconds: timeDiff);
+            return dura.isNegative
+                ? doRefreshLoop()
+                : Future.delayed(dura).then((_) => doRefreshLoop());
           });
-        }
-        final timeDiff = AppClock().now().millisecondsSinceEpoch - startT;
-        final dura = widget.refreshInterval - Duration(milliseconds: timeDiff);
-        return dura.isNegative
-            ? doRefreshLoop()
-            : Future.delayed(dura).then((_) => doRefreshLoop());
-      });
     }
 
     doRefreshLoop();
@@ -98,9 +101,12 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
   void _onTilePressed() async {
     final zipFilePath = await generateZippedSyncFailedLogs();
     if (!mounted) return;
-    trySaveFiles([XFile(zipFilePath)], defaultTargetPlatform,
-        subject: L10n.of(context)?.appSync_exportAllLogsTile_exportSubjectText,
-        context: context);
+    trySaveFiles(
+      [XFile(zipFilePath)],
+      defaultTargetPlatform,
+      subject: L10n.of(context)?.appSync_exportAllLogsTile_exportSubjectText,
+      context: context,
+    );
   }
 
   @override
@@ -109,11 +115,14 @@ class _AppSyncFailLogsTile extends State<AppSyncFailLogsTile> with XShare {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: ListTile(
-        title: Text(l10n?.appSync_exportAllLogsTile_titleText ??
-            "Export Failed Sync Logs"),
+        title: Text(
+          l10n?.appSync_exportAllLogsTile_titleText ??
+              "Export Failed Sync Logs",
+        ),
         subtitle: l10n != null
             ? Text(
-                l10n.appSync_exportAllLogsTile_subtitleText(isEmpty.toString()))
+                l10n.appSync_exportAllLogsTile_subtitleText(isEmpty.toString()),
+              )
             : null,
         onTap: _onTilePressed,
         enabled: enabled,

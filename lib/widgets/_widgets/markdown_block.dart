@@ -36,48 +36,54 @@ class ColorfulMarkdownBlock extends StatelessWidget {
   MarkdownConfig _getConfig(BuildContext context) {
     final themeData = Theme.of(context);
     final isDark = themeData.brightness == Brightness.dark;
-    final config =
-        isDark ? MarkdownConfig.darkConfig : MarkdownConfig.defaultConfig;
+    final config = isDark
+        ? MarkdownConfig.darkConfig
+        : MarkdownConfig.defaultConfig;
 
-    return config.copy(configs: [
-      isDark ? PreConfig.darkConfig : const PreConfig(),
-      BlockquoteConfig(
-        sideColor: themeData.colorScheme.primary.withValues(alpha: 0.5),
-        textColor: themeData.colorScheme.onSurface.withValues(alpha: 0.8),
-      ),
-      LinkConfig(
-        style: TextStyle(
+    return config.copy(
+      configs: [
+        isDark ? PreConfig.darkConfig : const PreConfig(),
+        BlockquoteConfig(
+          sideColor: themeData.colorScheme.primary.withValues(alpha: 0.5),
+          textColor: themeData.colorScheme.onSurface.withValues(alpha: 0.8),
+        ),
+        LinkConfig(
+          style: TextStyle(
             color: themeData.colorScheme.primary,
-            decoration: TextDecoration.underline),
-        onTap: (href) => launchExternalUrl(Uri.parse(href)),
-      ),
-      // ImgConfig(
-      //   builder: (url, attributes) => const SizedBox(),
-      // ),
-      CheckBoxConfig(
-        builder: (checked) => IconTheme(
-            data: themeData.iconTheme
-                .copyWith(color: themeData.colorScheme.primary),
-            child: MCheckBox(checked: checked)),
-      ),
-    ]);
+            decoration: TextDecoration.underline,
+          ),
+          onTap: (href) => launchExternalUrl(Uri.parse(href)),
+        ),
+        // ImgConfig(
+        //   builder: (url, attributes) => const SizedBox(),
+        // ),
+        CheckBoxConfig(
+          builder: (checked) => IconTheme(
+            data: themeData.iconTheme.copyWith(
+              color: themeData.colorScheme.primary,
+            ),
+            child: MCheckBox(checked: checked),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) => ThemeWithCustomColors(
-        colorType: colorType,
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: textScaler),
-          child: Builder(
-            // Use Builder to apply colorful theme
-            builder: (context) => MarkdownBlock(
-              data: data,
-              selectable: selectable,
-              config: _getConfig(context),
-            ),
-          ),
+    colorType: colorType,
+    child: MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+      child: Builder(
+        // Use Builder to apply colorful theme
+        builder: (context) => MarkdownBlock(
+          data: data,
+          selectable: selectable,
+          config: _getConfig(context),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class ThematicMarkdownBlock extends StatelessWidget {
@@ -95,8 +101,9 @@ class ThematicMarkdownBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final config =
-        isDark ? MarkdownConfig.darkConfig : MarkdownConfig.defaultConfig;
+    final config = isDark
+        ? MarkdownConfig.darkConfig
+        : MarkdownConfig.defaultConfig;
     return MarkdownBlock(
       data: data,
       selectable: selectable,

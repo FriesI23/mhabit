@@ -36,9 +36,9 @@ class HabitDailyStatusContainer extends StatelessWidget {
   final HabitDailyRecordForm habitDailyRecordForm;
   final void Function(HabitRecordDate date, HabitRecordStatus crt)? onPressed;
   final void Function(HabitRecordDate date, HabitRecordStatus crt)?
-      onLongPressed;
+  onLongPressed;
   final void Function(HabitRecordDate date, HabitRecordStatus crt)?
-      onDoublePressed;
+  onDoublePressed;
   final bool enabled;
   final bool isAutoComplated;
 
@@ -117,61 +117,68 @@ class HabitDailyStatusIcon extends StatelessWidget {
     final defaultColor = _getDefaultDailyStatusColor(theme);
 
     Widget withAutoMarkStatus() => Icon(
-          kRecordAutoMarkStatusIcon,
-          color: listTileColor?.dailyStatusTheme?.autoMark ??
-              globalColor?.autoMark ??
-              defaultColor.autoMark,
-        );
+      kRecordAutoMarkStatusIcon,
+      color:
+          listTileColor?.dailyStatusTheme?.autoMark ??
+          globalColor?.autoMark ??
+          defaultColor.autoMark,
+    );
 
     Widget withUnknownStatus() => Icon(
-          kRecordUnknownStatusIcon,
-          color: listTileColor?.dailyStatusTheme?.unknown ??
-              globalColor?.unknown ??
-              defaultColor.unknown,
-        );
+      kRecordUnknownStatusIcon,
+      color:
+          listTileColor?.dailyStatusTheme?.unknown ??
+          globalColor?.unknown ??
+          defaultColor.unknown,
+    );
 
     Widget withSkipStatus() => Icon(
-          kRecordSkipStatusIcon,
-          color: listTileColor?.dailyStatusTheme?.skip ??
-              globalColor?.skip ??
-              defaultColor.skip,
-        );
+      kRecordSkipStatusIcon,
+      color:
+          listTileColor?.dailyStatusTheme?.skip ??
+          globalColor?.skip ??
+          defaultColor.skip,
+    );
 
     Widget withDoneAndOkStatus() => Icon(
-          kRecordDoneStatusIcon,
-          color: listTileColor?.dailyStatusTheme?.doneAndOk ??
-              globalColor?.doneAndOk ??
-              defaultColor.doneAndOk,
-        );
+      kRecordDoneStatusIcon,
+      color:
+          listTileColor?.dailyStatusTheme?.doneAndOk ??
+          globalColor?.doneAndOk ??
+          defaultColor.doneAndOk,
+    );
 
     Widget withDoneAndZeroStatus() => Icon(
-          kRecordZeroStatusIcon,
-          color: listTileColor?.dailyStatusTheme?.doneAndZero ??
-              globalColor?.doneAndZero ??
-              defaultColor.doneAndZero,
-        );
+      kRecordZeroStatusIcon,
+      color:
+          listTileColor?.dailyStatusTheme?.doneAndZero ??
+          globalColor?.doneAndZero ??
+          defaultColor.doneAndZero,
+    );
 
     Widget withDoneAndGoodjobStatus() => Text(
-          NumberFormat.compact(
-                  locale: Localizations.localeOf(context).toLanguageTag())
-              .format(habitDailyRecordForm.value),
-          style: TextStyle(
-            color: listTileColor?.dailyStatusTheme?.doneAndGoodjob ??
-                globalColor?.doneAndGoodjob ??
-                defaultColor.doneAndGoodjob,
-          ),
-        );
+      NumberFormat.compact(
+        locale: Localizations.localeOf(context).toLanguageTag(),
+      ).format(habitDailyRecordForm.value),
+      style: TextStyle(
+        color:
+            listTileColor?.dailyStatusTheme?.doneAndGoodjob ??
+            globalColor?.doneAndGoodjob ??
+            defaultColor.doneAndGoodjob,
+      ),
+    );
 
     Widget withDoneAndTryhardStatus() => Text(
-          NumberFormat.compact(
-                  locale: Localizations.localeOf(context).toLanguageTag())
-              .format(habitDailyRecordForm.value),
-          style: TextStyle(
-            color: listTileColor?.dailyStatusTheme?.doneAndTryhard ??
-                globalColor?.doneAndTryhard ??
-                defaultColor.doneAndTryhard,
-          ),
-        );
+      NumberFormat.compact(
+        locale: Localizations.localeOf(context).toLanguageTag(),
+      ).format(habitDailyRecordForm.value),
+      style: TextStyle(
+        color:
+            listTileColor?.dailyStatusTheme?.doneAndTryhard ??
+            globalColor?.doneAndTryhard ??
+            defaultColor.doneAndTryhard,
+      ),
+    );
 
     switch (habitDailyStatus) {
       case HabitRecordStatus.unknown:
@@ -196,7 +203,8 @@ class HabitDailyStatusIcon extends StatelessWidget {
   }
 
   HabitSummaryDailyStatusColor _getDefaultDailyStatusColor(
-      ThemeData themeData) {
+    ThemeData themeData,
+  ) {
     final CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryDailyStatusColor(
       autoMark: colorData?.getColor(colorType),

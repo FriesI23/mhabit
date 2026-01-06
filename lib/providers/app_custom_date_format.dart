@@ -35,8 +35,11 @@ class AppCustomDateYmdHmsConfigViewModel extends ChangeNotifier
       _dataFmt?.get() ?? const CustomDateYmdHmsConfig.withDefault();
 
   Future<void> setNewConfig(CustomDateYmdHmsConfig newConfig) async {
-    appLog.value.info("$runtimeType.setNewConfig",
-        beforeVal: config, afterVal: newConfig);
+    appLog.value.info(
+      "$runtimeType.setNewConfig",
+      beforeVal: config,
+      afterVal: newConfig,
+    );
     await _dataFmt?.set(newConfig);
     notifyListeners();
   }

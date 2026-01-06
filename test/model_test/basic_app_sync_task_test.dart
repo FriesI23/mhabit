@@ -21,9 +21,7 @@ import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 
-@GenerateMocks([
-  AppSyncServer,
-])
+@GenerateMocks([AppSyncServer])
 import 'basic_app_sync_task_test.mocks.dart';
 
 void main() {
@@ -62,46 +60,50 @@ void main() {
       expect(task.status, AppSyncTaskStatus.completed);
     });
 
-    test('Cancelling a running task should transition to cancelling state',
-        () async {
-      final result = BasicAppSyncTaskResult.cancelled();
-      final task = BasicAppSyncTask(
-        config: mockServer,
-        onExec: (task) async {
-          await Future.delayed(Duration(milliseconds: 200));
-          if (task.isCancalling) return result;
-          return BasicAppSyncTaskResult.success();
-        },
-      );
-      task.run();
-      await Future.delayed(Duration(milliseconds: 100));
-      task.cancel();
-      expect(task.status, AppSyncTaskStatus.cancelling);
-      expect(task.result, completion(result));
-    });
+    test(
+      'Cancelling a running task should transition to cancelling state',
+      () async {
+        final result = BasicAppSyncTaskResult.cancelled();
+        final task = BasicAppSyncTask(
+          config: mockServer,
+          onExec: (task) async {
+            await Future.delayed(Duration(milliseconds: 200));
+            if (task.isCancalling) return result;
+            return BasicAppSyncTaskResult.success();
+          },
+        );
+        task.run();
+        await Future.delayed(Duration(milliseconds: 100));
+        task.cancel();
+        expect(task.status, AppSyncTaskStatus.cancelling);
+        expect(task.result, completion(result));
+      },
+    );
 
-    test('Task should return cancelled status if cancelled before completion',
-        () async {
-      final task = BasicAppSyncTask(
-        config: mockServer,
-        onExec: (task) async {
-          await Future.delayed(Duration(milliseconds: 200));
-          if (task.isCancalling) {
-            return BasicAppSyncTaskResult.cancelled();
-          }
-          return BasicAppSyncTaskResult.success();
-        },
-      );
-      task.run();
-      await Future.delayed(Duration(milliseconds: 100));
-      await task.cancel();
-      final result = await task.result;
-      expect(result.isCancelled, isTrue);
-      expect(result.isSuccessed, isFalse);
-      expect(result.isTimeout, isFalse);
-      expect(result.withError, isFalse);
-      expect(task.status, AppSyncTaskStatus.cancelled);
-    });
+    test(
+      'Task should return cancelled status if cancelled before completion',
+      () async {
+        final task = BasicAppSyncTask(
+          config: mockServer,
+          onExec: (task) async {
+            await Future.delayed(Duration(milliseconds: 200));
+            if (task.isCancalling) {
+              return BasicAppSyncTaskResult.cancelled();
+            }
+            return BasicAppSyncTaskResult.success();
+          },
+        );
+        task.run();
+        await Future.delayed(Duration(milliseconds: 100));
+        await task.cancel();
+        final result = await task.result;
+        expect(result.isCancelled, isTrue);
+        expect(result.isSuccessed, isFalse);
+        expect(result.isTimeout, isFalse);
+        expect(result.withError, isFalse);
+        expect(task.status, AppSyncTaskStatus.cancelled);
+      },
+    );
 
     test('Task should timeout and return timeout status', () async {
       final task = BasicAppSyncTask(

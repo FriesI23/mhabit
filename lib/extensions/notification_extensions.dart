@@ -17,7 +17,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 extension AndroidFlutterLocalNotificationsPluginExtension
     on AndroidFlutterLocalNotificationsPlugin {
   Future<void> createNotificationChannelByDetail(
-      AndroidNotificationDetails details) {
+    AndroidNotificationDetails details,
+  ) {
     final channel = AndroidNotificationChannel(
       details.channelId,
       details.channelName,

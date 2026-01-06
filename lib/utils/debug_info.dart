@@ -31,14 +31,16 @@ Future<String> generateZippedDebugInfo() async {
   final pathProvider = AppPathProvider();
   final debugLogFile = File(await pathProvider.getAppDebugLogFilePath());
   final debugInfoFile = await File(await pathProvider.getAppDebugInfoFilePath())
-      .writeAsString(await AppInfo().generateAppDebugInfo(),
-          mode: FileMode.writeOnly);
+      .writeAsString(
+        await AppInfo().generateAppDebugInfo(),
+        mode: FileMode.writeOnly,
+      );
   final zipPath = path.join(path.dirname(debugInfoFile.path), debuggerZipFile);
   final encoder = ZipFileEncoder()..create(zipPath);
   await Future.wait([
-    debugLogFile
-        .exists()
-        .then((value) => value ? encoder.addFile(debugLogFile) : null),
+    debugLogFile.exists().then(
+      (value) => value ? encoder.addFile(debugLogFile) : null,
+    ),
     encoder.addFile(debugInfoFile),
   ]).then((_) => encoder.close());
   return zipPath;

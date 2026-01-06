@@ -16,9 +16,7 @@ import '../models/cache.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 
-enum _InputFillCacheKey {
-  habitEditTargetDays,
-}
+enum _InputFillCacheKey { habitEditTargetDays }
 
 class AppCachesViewModel with ProfileHandlerLoadedMixin {
   AppCacheDelegate? _inputFill;
@@ -40,8 +38,10 @@ class AppCachesViewModel with ProfileHandlerLoadedMixin {
   Future<bool> updateHabitEditTargetDaysInputFill(int? newTargetDays) async {
     bool rst = false;
     await _inputFill?.updateCache<int>(
-        _InputFillCacheKey.habitEditTargetDays.name, newTargetDays,
-        onUpdated: (result, oldValue) => rst = result);
+      _InputFillCacheKey.habitEditTargetDays.name,
+      newTargetDays,
+      onUpdated: (result, oldValue) => rst = result,
+    );
     return rst;
   }
 

@@ -88,10 +88,12 @@ class TodayDoneImage extends StatelessWidget {
     Widget buildDescChild(BuildContext context) {
       if (textTheme.headlineSmall != null) {
         return DefaultTextStyle(
-            textAlign: TextAlign.center,
-            style: textTheme.headlineSmall!
-                .copyWith(color: theme.colorScheme.outline),
-            child: descChild!);
+          textAlign: TextAlign.center,
+          style: textTheme.headlineSmall!.copyWith(
+            color: theme.colorScheme.outline,
+          ),
+          child: descChild!,
+        );
       }
       return descChild!;
     }
@@ -111,8 +113,8 @@ class TodayDoneImage extends StatelessWidget {
                 svgTemplateFormat: {
                   _Key.laserColor:
                       (style?.laserColor ?? _defaultStyle.laserColor).toHex(),
-                  _Key.sunColor:
-                      (style?.sunColor ?? _defaultStyle.sunColor).toHex(),
+                  _Key.sunColor: (style?.sunColor ?? _defaultStyle.sunColor)
+                      .toHex(),
                   _Key.horizonColor:
                       (style?.horizonColor ?? _defaultStyle.horizonColor)
                           .toHex(),

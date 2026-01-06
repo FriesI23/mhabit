@@ -15,6 +15,7 @@
 import 'package:flutter/services.dart';
 
 class TextFormatterCustom {
-  static final decimalr2 =
-      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
+  static final decimalr2 = FilteringTextInputFormatter.allow(
+    RegExp(r'^\d+\.?\d{0,2}'),
+  );
 }

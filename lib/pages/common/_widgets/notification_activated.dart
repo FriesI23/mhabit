@@ -52,8 +52,10 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       if (androidInfo.version.sdkInt < 23) {
-        debugPrint('"getActiveNotifications" is available '
-            'only for Android 6.0 or newer');
+        debugPrint(
+          '"getActiveNotifications" is available '
+          'only for Android 6.0 or newer',
+        );
         return;
       }
     }
@@ -65,8 +67,10 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
       if (fullVersion.isNotEmpty) {
         final int? version = int.tryParse(fullVersion[0]);
         if (version != null && version < 10) {
-          debugPrint('"getActiveNotifications" is available '
-              'only for iOS 10.0 or newer');
+          debugPrint(
+            '"getActiveNotifications" is available '
+            'only for iOS 10.0 or newer',
+          );
           return;
         }
       }
@@ -75,9 +79,11 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
     try {
       actives = await NotificationService().getActiveNotifications();
     } on PlatformException catch (error) {
-      debugPrint('Error calling "getActiveNotifications"\n'
-          'code: ${error.code}\n'
-          'message: ${error.message}');
+      debugPrint(
+        'Error calling "getActiveNotifications"\n'
+        'code: ${error.code}\n'
+        'message: ${error.message}',
+      );
       return;
     }
   }

@@ -84,7 +84,9 @@ class _ExpandedSectionState extends State<ExpandedSection>
       axisAlignment: 1.0,
       sizeFactor: animation,
       child: FocusTraversalGroup(
-          descendantsAreFocusable: widget.expand, child: widget.child),
+        descendantsAreFocusable: widget.expand,
+        child: widget.child,
+      ),
     );
   }
 }

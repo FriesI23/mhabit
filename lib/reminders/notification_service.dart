@@ -51,37 +51,40 @@ abstract interface class NotificationService implements AsyncInitialization {
 
   Future<List<PendingNotificationRequest>> pendingNotificationRequests();
 
-  Future<bool> show(
-      {required int id,
-      required String title,
-      String? body,
-      String? extra,
-      required NotificationDataType type,
-      required NotificationChannelId channelId,
-      required NotificationDetails details,
-      Duration? timeout});
+  Future<bool> show({
+    required int id,
+    required String title,
+    String? body,
+    String? extra,
+    required NotificationDataType type,
+    required NotificationChannelId channelId,
+    required NotificationDetails details,
+    Duration? timeout,
+  });
 
   Future<bool> cancel({required int id, Duration? timeout});
 
-  Future<bool> regrAppReminderInDaily(
-      {required String title,
-      required String subtitle,
-      required TimeOfDay timeOfDay,
-      required NotificationDetails details,
-      Duration? timeout});
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout,
+  });
 
   Future<bool> cancelAppReminder({Duration? timeout});
 
-  Future<bool> regrHabitReminder<T>(
-      {required DBID id,
-      required HabitUUID uuid,
-      required String name,
-      String? quest,
-      required HabitReminder reminder,
-      required HabitDate? lastUntrackDate,
-      required NotificationDetails details,
-      DateTime? crtDate,
-      Duration? timeout});
+  Future<bool> regrHabitReminder<T>({
+    required DBID id,
+    required HabitUUID uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout,
+  });
 
   Future<bool> cancelHabitReminder({required DBID id, Duration? timeout});
 
@@ -113,7 +116,12 @@ final class NotificationServiceImpl implements NotificationService {
   @protected
   DateTime nextDailySchedule(TimeOfDay timeOfDay, DateTime now) {
     final baseDate = DateTime(
-        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+      now.year,
+      now.month,
+      now.day,
+      timeOfDay.hour,
+      timeOfDay.minute,
+    );
     final isNearToday =
         now.isAfter(baseDate) || now.difference(baseDate).inSeconds.abs() <= 5;
     return isNearToday ? baseDate.add(const Duration(days: 1)) : baseDate;
@@ -142,13 +150,15 @@ final class NotificationServiceImpl implements NotificationService {
 
     // iOS & macOS setting
     const darwinSettings = DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestSoundPermission: false,
-        requestBadgePermission: false);
+      requestAlertPermission: false,
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+    );
 
     // linux setting
-    const linuxSettings =
-        LinuxInitializationSettings(defaultActionName: "Open notification");
+    const linuxSettings = LinuxInitializationSettings(
+      defaultActionName: "Open notification",
+    );
 
     // Windows setting
     WindowsInitializationSettings buildWindowsSettings() {
@@ -205,21 +215,15 @@ final class NotificationServiceImpl implements NotificationService {
     if (Platform.isIOS) {
       return plugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: false,
-            badge: true,
-            sound: true,
-          );
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: false, badge: true, sound: true);
     } else if (Platform.isMacOS) {
       return plugin
           .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: false,
-            badge: true,
-            sound: true,
-          );
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: false, badge: true, sound: true);
     } else if (Platform.isAndroid) {
       return await _requestAndroidPermissions();
     } else {
@@ -231,7 +235,8 @@ final class NotificationServiceImpl implements NotificationService {
     if (!Platform.isAndroid) return false;
     final notifyPermissionRequestResult = await plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
     if (notifyPermissionRequestResult != true) return false;
 
@@ -239,15 +244,16 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> show(
-      {required int id,
-      required String title,
-      String? body,
-      String? extra,
-      required NotificationDataType type,
-      required NotificationChannelId channelId,
-      required NotificationDetails details,
-      Duration? timeout = defaultTimeout}) async {
+  Future<bool> show({
+    required int id,
+    required String title,
+    String? body,
+    String? extra,
+    required NotificationDataType type,
+    required NotificationChannelId channelId,
+    required NotificationDetails details,
+    Duration? timeout = defaultTimeout,
+  }) async {
     if (_appNotifyConfig?.isChannelEnabled(channelId) == false) return true;
 
     final data = NotificationData<String>(
@@ -274,16 +280,21 @@ final class NotificationServiceImpl implements NotificationService {
 
       appLog.notify.debug("$logTag.show", ex: [appReminderNotifyId, data]);
     } on PlatformException catch (e) {
-      appLog.notify
-          .warn("$logTag.show", ex: ["show notification failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.show",
+        ex: ["show notification failed"],
+        error: e,
+      );
       return false;
     }
     return true;
   }
 
   @override
-  Future<bool> cancel(
-      {required int id, Duration? timeout = defaultTimeout}) async {
+  Future<bool> cancel({
+    required int id,
+    Duration? timeout = defaultTimeout,
+  }) async {
     final future = plugin.cancel(id);
     timeout == null
         ? await future
@@ -292,15 +303,17 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> regrAppReminderInDaily(
-      {required String title,
-      required String subtitle,
-      required TimeOfDay timeOfDay,
-      required NotificationDetails details,
-      Duration? timeout = defaultTimeout}) async {
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout = defaultTimeout,
+  }) async {
     try {
-      if (_appNotifyConfig
-              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+      if (_appNotifyConfig?.isChannelEnabled(
+            NotificationChannelId.appReminder,
+          ) ==
           false) {
         return true;
       }
@@ -321,11 +334,16 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regrAppReminderInDaily",
-          ex: [appReminderNotifyId, title, subtitle, scheduledDate]);
+      appLog.notify.debug(
+        "$logTag.regrAppReminderInDaily",
+        ex: [appReminderNotifyId, title, subtitle, scheduledDate],
+      );
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrAppReminderInDaily",
-          ex: ["regr app reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrAppReminderInDaily",
+        ex: ["regr app reminder failed"],
+        error: e,
+      );
       return false;
     }
 
@@ -342,19 +360,22 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> regrHabitReminder<T>(
-      {required DBID id,
-      required HabitUUID uuid,
-      required String name,
-      String? quest,
-      required HabitReminder reminder,
-      required HabitDate? lastUntrackDate,
-      required NotificationDetails details,
-      DateTime? crtDate,
-      Duration? timeout = defaultTimeout}) async {
+  Future<bool> regrHabitReminder<T>({
+    required DBID id,
+    required HabitUUID uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout = defaultTimeout,
+  }) async {
     try {
       final scheduledDate = reminder.getNextRemindDate(
-          crtDate: crtDate, lastUntrackDate: lastUntrackDate);
+        crtDate: crtDate,
+        lastUntrackDate: lastUntrackDate,
+      );
       if (scheduledDate == null) return false;
 
       final data = NotificationData<T>(
@@ -379,11 +400,16 @@ final class NotificationServiceImpl implements NotificationService {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regrHabitReminder",
-          ex: [data.id, scheduledDate, uuid, name, quest, data]);
+      appLog.notify.debug(
+        "$logTag.regrHabitReminder",
+        ex: [data.id, scheduledDate, uuid, name, quest, data],
+      );
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrHabitReminder",
-          ex: ["regr reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrHabitReminder",
+        ex: ["regr reminder failed"],
+        error: e,
+      );
       return false;
     }
 
@@ -391,8 +417,10 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> cancelHabitReminder(
-      {required DBID id, Duration? timeout = defaultTimeout}) async {
+  Future<bool> cancelHabitReminder({
+    required DBID id,
+    Duration? timeout = defaultTimeout,
+  }) async {
     final future = plugin.cancel(id);
     timeout == null
         ? await future
@@ -401,8 +429,9 @@ final class NotificationServiceImpl implements NotificationService {
   }
 
   @override
-  Future<bool> cancelAllHabitReminders(
-      {Duration? timeout = defaultTimeout}) async {
+  Future<bool> cancelAllHabitReminders({
+    Duration? timeout = defaultTimeout,
+  }) async {
     final futureList = <Future>[];
     for (var pendingReqeust in await plugin.pendingNotificationRequests()) {
       if (notifyid.isValidHabitReminderId(pendingReqeust.id)) {
@@ -417,11 +446,14 @@ final class NotificationServiceImpl implements NotificationService {
 
   @override
   Future<void> createAllChannels(NotificationAndroidChannelData data) async {
-    final androidPlugin = plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     if (androidPlugin == null) return;
     await Future.wait(
-        data.channels.map(androidPlugin.createNotificationChannelByDetail));
+      data.channels.map(androidPlugin.createNotificationChannelByDetail),
+    );
   }
 }
 
@@ -432,10 +464,11 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   static const _tickInterval = Duration(seconds: 1);
 
   LinuxNotificationService({int maxProcessPerTick = _defaultMaxProcessPerTick})
-      : _maxProcessPerTick = maxProcessPerTick;
+    : _maxProcessPerTick = maxProcessPerTick;
 
-  final SplayTreeSet<_LinuxPendingNotification> _pendingQueue =
-      SplayTreeSet(_LinuxPendingNotification.compare);
+  final SplayTreeSet<_LinuxPendingNotification> _pendingQueue = SplayTreeSet(
+    _LinuxPendingNotification.compare,
+  );
   final Map<int, _LinuxPendingNotification> _pendingById = {};
   final int _maxProcessPerTick;
 
@@ -485,8 +518,11 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         );
       }
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.show",
-          ex: ["linux ticker show failed", pending.data], error: e);
+      appLog.notify.warn(
+        "$logTag.show",
+        ex: ["linux ticker show failed", pending.data],
+        error: e,
+      );
     }
   }
 
@@ -531,15 +567,17 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   }
 
   @override
-  Future<bool> regrAppReminderInDaily(
-      {required String title,
-      required String subtitle,
-      required TimeOfDay timeOfDay,
-      required NotificationDetails details,
-      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout = NotificationServiceImpl.defaultTimeout,
+  }) async {
     try {
-      if (_appNotifyConfig
-              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+      if (_appNotifyConfig?.isChannelEnabled(
+            NotificationChannelId.appReminder,
+          ) ==
           false) {
         return true;
       }
@@ -561,30 +599,38 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         data: data,
       );
 
-      appLog.notify.debug("$logTag.regrAppReminderInDaily",
-          ex: [data.id, title, subtitle, scheduledDate, ok]);
+      appLog.notify.debug(
+        "$logTag.regrAppReminderInDaily",
+        ex: [data.id, title, subtitle, scheduledDate, ok],
+      );
       return ok;
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrAppReminderInDaily",
-          ex: ["regr app reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrAppReminderInDaily",
+        ex: ["regr app reminder failed"],
+        error: e,
+      );
       return false;
     }
   }
 
   @override
-  Future<bool> regrHabitReminder<T>(
-      {required DBID id,
-      required HabitUUID uuid,
-      required String name,
-      String? quest,
-      required HabitReminder reminder,
-      required HabitDate? lastUntrackDate,
-      required NotificationDetails details,
-      DateTime? crtDate,
-      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+  Future<bool> regrHabitReminder<T>({
+    required DBID id,
+    required HabitUUID uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout = NotificationServiceImpl.defaultTimeout,
+  }) async {
     try {
       final scheduledDate = reminder.getNextRemindDate(
-          crtDate: crtDate, lastUntrackDate: lastUntrackDate);
+        crtDate: crtDate,
+        lastUntrackDate: lastUntrackDate,
+      );
       if (scheduledDate == null) return false;
 
       final data = NotificationData<T>(
@@ -603,12 +649,17 @@ final class LinuxNotificationService extends NotificationServiceImpl {
         data: data,
       );
 
-      appLog.notify.debug("$logTag.regrHabitReminder",
-          ex: [data.id, scheduledDate, uuid, name, quest, ok]);
+      appLog.notify.debug(
+        "$logTag.regrHabitReminder",
+        ex: [data.id, scheduledDate, uuid, name, quest, ok],
+      );
       return ok;
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrHabitReminder",
-          ex: ["regr reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrHabitReminder",
+        ex: ["regr reminder failed"],
+        error: e,
+      );
       return false;
     }
   }
@@ -628,8 +679,10 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   }
 
   @override
-  Future<bool> cancelHabitReminder(
-      {required DBID id, Duration? timeout}) async {
+  Future<bool> cancelHabitReminder({
+    required DBID id,
+    Duration? timeout,
+  }) async {
     _cancelPending(id);
     _stopTickerIfIdle();
     return super.cancelHabitReminder(id: id, timeout: timeout);
@@ -650,26 +703,38 @@ final class LinuxNotificationService extends NotificationServiceImpl {
 
   @override
   Future<List<ActiveNotification>> getActiveNotifications() async {
-    final linux = plugin.resolvePlatformSpecificImplementation<
-        LinuxFlutterLocalNotificationsPlugin>();
+    final linux = plugin
+        .resolvePlatformSpecificImplementation<
+          LinuxFlutterLocalNotificationsPlugin
+        >();
     final map = await linux?.getSystemIdMap();
     if (map == null || map.isEmpty) return const [];
     return map.entries
-        .map((e) => ActiveNotification(
-            id: e.value, title: 'system:${e.key}', body: null, payload: null))
+        .map(
+          (e) => ActiveNotification(
+            id: e.value,
+            title: 'system:${e.key}',
+            body: null,
+            payload: null,
+          ),
+        )
         .toList(growable: false);
   }
 
   @override
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
-      Future.value(_pendingById.values
-          .map((p) => PendingNotificationRequest(
+      Future.value(
+        _pendingById.values
+            .map(
+              (p) => PendingNotificationRequest(
                 p.data.id,
                 p.data.title,
                 p.data.body,
                 p.data.toPayload(),
-              ))
-          .toList());
+              ),
+            )
+            .toList(),
+      );
 }
 
 class _LinuxPendingNotification {
@@ -701,9 +766,10 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   bool _appReminderRescheduling = false;
   _AppReminderRegistration? _appReminder;
 
-  FlutterLocalNotificationsWindows get _windowsPlugin =>
-      plugin.resolvePlatformSpecificImplementation<
-          FlutterLocalNotificationsWindows>()!;
+  FlutterLocalNotificationsWindows get _windowsPlugin => plugin
+      .resolvePlatformSpecificImplementation<
+        FlutterLocalNotificationsWindows
+      >()!;
 
   void _cancelAppReminderTicker() {
     _appReminderTicker?.cancel();
@@ -713,8 +779,10 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   }
 
   void _ensureAppReminderTicker() {
-    _appReminderTicker ??=
-        Timer.periodic(_appReminderTickInterval, (_) => _onAppReminderTick());
+    _appReminderTicker ??= Timer.periodic(
+      _appReminderTickInterval,
+      (_) => _onAppReminderTick(),
+    );
   }
 
   Future<void> _onAppReminderTick() async {
@@ -754,15 +822,17 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   ///
   /// Override uses Windows plugin APIs and pre-cancel to avoid duplicate tags.
   @override
-  Future<bool> regrAppReminderInDaily(
-      {required String title,
-      required String subtitle,
-      required TimeOfDay timeOfDay,
-      required NotificationDetails details,
-      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout = NotificationServiceImpl.defaultTimeout,
+  }) async {
     try {
-      if (_appNotifyConfig
-              ?.isChannelEnabled(NotificationChannelId.appReminder) ==
+      if (_appNotifyConfig?.isChannelEnabled(
+            NotificationChannelId.appReminder,
+          ) ==
           false) {
         return true;
       }
@@ -791,16 +861,22 @@ final class WindowsNotificationService extends NotificationServiceImpl {
       );
       _ensureAppReminderTicker();
 
-      appLog.notify.debug("$logTag.regrAppReminderInDaily", ex: [
-        appReminderNotifyId,
-        title,
-        subtitle,
-        scheduledDate,
-        _appReminder?.nextTick
-      ]);
+      appLog.notify.debug(
+        "$logTag.regrAppReminderInDaily",
+        ex: [
+          appReminderNotifyId,
+          title,
+          subtitle,
+          scheduledDate,
+          _appReminder?.nextTick,
+        ],
+      );
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrAppReminderInDaily",
-          ex: ["regr app reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrAppReminderInDaily",
+        ex: ["regr app reminder failed"],
+        error: e,
+      );
       return false;
     }
 
@@ -817,19 +893,22 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   ///
   /// Override uses Windows plugin APIs and pre-cancel to avoid duplicate tags.
   @override
-  Future<bool> regrHabitReminder<T>(
-      {required DBID id,
-      required HabitUUID uuid,
-      required String name,
-      String? quest,
-      required HabitReminder reminder,
-      required HabitDate? lastUntrackDate,
-      required NotificationDetails details,
-      DateTime? crtDate,
-      Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+  Future<bool> regrHabitReminder<T>({
+    required DBID id,
+    required HabitUUID uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout = NotificationServiceImpl.defaultTimeout,
+  }) async {
     try {
       final scheduledDate = reminder.getNextRemindDate(
-          crtDate: crtDate, lastUntrackDate: lastUntrackDate);
+        crtDate: crtDate,
+        lastUntrackDate: lastUntrackDate,
+      );
       if (scheduledDate == null) return false;
 
       final data = NotificationData<T>(
@@ -855,11 +934,16 @@ final class WindowsNotificationService extends NotificationServiceImpl {
           ? await future
           : await future.timeout(timeout, onTimeout: () => null);
 
-      appLog.notify.debug("$logTag.regrHabitReminder",
-          ex: [data.id, scheduledDate, uuid, name, quest, data]);
+      appLog.notify.debug(
+        "$logTag.regrHabitReminder",
+        ex: [data.id, scheduledDate, uuid, name, quest, data],
+      );
     } on PlatformException catch (e) {
-      appLog.notify.warn("$logTag.regrHabitReminder",
-          ex: ["regr reminder failed"], error: e);
+      appLog.notify.warn(
+        "$logTag.regrHabitReminder",
+        ex: ["regr reminder failed"],
+        error: e,
+      );
       return false;
     }
 
@@ -867,8 +951,9 @@ final class WindowsNotificationService extends NotificationServiceImpl {
   }
 
   @override
-  Future<bool> cancelAppReminder(
-      {Duration? timeout = NotificationServiceImpl.defaultTimeout}) async {
+  Future<bool> cancelAppReminder({
+    Duration? timeout = NotificationServiceImpl.defaultTimeout,
+  }) async {
     _cancelAppReminderTicker();
     return super.cancelAppReminder(timeout: timeout);
   }
@@ -911,16 +996,16 @@ final class FakeNotificationService implements NotificationService {
   Future<bool?> requestPermissions() => Future.value(false);
 
   @override
-  Future<bool> show(
-          {required int id,
-          required String title,
-          String? body,
-          String? extra,
-          required NotificationDataType type,
-          required NotificationChannelId channelId,
-          required NotificationDetails details,
-          Duration? timeout}) =>
-      Future.value(false);
+  Future<bool> show({
+    required int id,
+    required String title,
+    String? body,
+    String? extra,
+    required NotificationDataType type,
+    required NotificationChannelId channelId,
+    required NotificationDetails details,
+    Duration? timeout,
+  }) => Future.value(false);
 
   @override
   Future<bool> cancel({required int id, Duration? timeout}) =>
@@ -938,26 +1023,26 @@ final class FakeNotificationService implements NotificationService {
       Future.value(false);
 
   @override
-  Future<bool> regrHabitReminder<T>(
-          {required DBID id,
-          required HabitUUID uuid,
-          required String name,
-          String? quest,
-          required HabitReminder reminder,
-          required HabitDate? lastUntrackDate,
-          required NotificationDetails details,
-          DateTime? crtDate,
-          Duration? timeout}) =>
-      Future.value(false);
+  Future<bool> regrHabitReminder<T>({
+    required DBID id,
+    required HabitUUID uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout,
+  }) => Future.value(false);
 
   @override
-  Future<bool> regrAppReminderInDaily(
-          {required String title,
-          required String subtitle,
-          required TimeOfDay timeOfDay,
-          required NotificationDetails details,
-          Duration? timeout}) =>
-      Future.value(false);
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout,
+  }) => Future.value(false);
 
   @override
   Future<void> createAllChannels(NotificationAndroidChannelData data) =>

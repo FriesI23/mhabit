@@ -28,8 +28,8 @@ class AppExperimentalFeatureViewModel extends ChangeNotifier
     super.updateProfile(newProfile);
     _handlers
       ..clear()
-      ..[HabitSearchExperimentalFeature] =
-          profile.getHandler<HabitSearchExperimentalFeature>();
+      ..[HabitSearchExperimentalFeature] = profile
+          .getHandler<HabitSearchExperimentalFeature>();
   }
 
   Iterable<AppExperimentalFeature> get allFeatures => _handlers.values.nonNulls;

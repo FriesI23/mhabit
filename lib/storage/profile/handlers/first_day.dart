@@ -18,7 +18,7 @@ import '../profile_helper.dart';
 final class FirstDayProfileHandler
     extends ProfileHelperCovertToIntHandler<int> {
   const FirstDayProfileHandler(super.pref)
-      : super(codec: const SameTypeCodec());
+    : super(codec: const SameTypeCodec());
 
   @override
   String get key => "firstDay";

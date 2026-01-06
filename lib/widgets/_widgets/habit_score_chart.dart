@@ -53,8 +53,8 @@ class HabitScoreChart extends StatelessWidget {
     required this.combine,
     required this.colorMap,
     required this.data,
-  })  : assert(colorMap.containsKey(HabitHeatMapColorMapDefine.complate)),
-        assert(leftTipsSpace >= 0);
+  }) : assert(colorMap.containsKey(HabitHeatMapColorMapDefine.complate)),
+       assert(leftTipsSpace >= 0);
 
   Color get mainColor => colorMap[HabitHeatMapColorMapDefine.complate]!;
 
@@ -89,7 +89,10 @@ class HabitScoreChart extends StatelessWidget {
   }
 
   TouchedSpotIndicatorData? _buildTouchedSpotData(
-      BuildContext context, LineChartBarData barData, int spotIndexes) {
+    BuildContext context,
+    LineChartBarData barData,
+    int spotIndexes,
+  ) {
     final ThemeData theme = Theme.of(context);
 
     return TouchedSpotIndicatorData(
@@ -108,7 +111,10 @@ class HabitScoreChart extends StatelessWidget {
   }
 
   Widget _buildBottomTitleCell(
-      BuildContext context, HabitDate date, double value) {
+    BuildContext context,
+    HabitDate date,
+    double value,
+  ) {
     Widget buildFirstTitle({L10n? l10n}) {
       switch (combine) {
         case HabitDetailScoreChartCombine.daily:
@@ -259,13 +265,15 @@ class HabitScoreChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextScaler textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     appLog.build.debug(context);
     final double maxX = (data.length - 1).toDouble();
-    final double initMinX =
-        limit != null ? maxX * math.max((1 - limit! / data.length), 0) : 0;
+    final double initMinX = limit != null
+        ? maxX * math.max((1 - limit! / data.length), 0)
+        : 0;
 
     final titlesData = FlTitlesData(
       topTitles: const AxisTitles(),
@@ -292,7 +300,8 @@ class HabitScoreChart extends StatelessWidget {
     final lineTouchData = LineTouchData(
       getTouchedSpotIndicator: (barData, spotIndexes) => spotIndexes
           .map(
-              (spotIndex) => _buildTouchedSpotData(context, barData, spotIndex))
+            (spotIndex) => _buildTouchedSpotData(context, barData, spotIndex),
+          )
           .toList(),
       touchTooltipData: LineTouchTooltipData(
         getTooltipColor: (group) => Colors.transparent,
@@ -303,9 +312,7 @@ class HabitScoreChart extends StatelessWidget {
           final sp = touchedSpots[0];
           final result = LineTooltipItem(
             sp.y.toStringAsFixed(2),
-            TextStyle(
-              color: sp.bar.gradient?.colors[0] ?? sp.bar.color,
-            ),
+            TextStyle(color: sp.bar.gradient?.colors[0] ?? sp.bar.color),
           );
           return [result];
         },

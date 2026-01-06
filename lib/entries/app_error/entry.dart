@@ -29,21 +29,26 @@ class AppErrorEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppRootView.withDefault(
       lightThemeBuilder: () => ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: appDefaultThemeMainColor,
-              brightness: Brightness.light),
-          useMaterial3: true,
-          extensions: [modifedLightCustomColors]),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: appDefaultThemeMainColor,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        extensions: [modifedLightCustomColors],
+      ),
       darkThemeBuilder: () => ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: appDefaultThemeMainColor, brightness: Brightness.dark),
-          useMaterial3: true,
-          extensions: [darkCustomColors]),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: appDefaultThemeMainColor,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        extensions: [darkCustomColors],
+      ),
       child: app_error.AppErrorPage(
         details: errorDetails,
         showCloseBtn: switch (defaultTargetPlatform) {
           TargetPlatform.android => true,
-          _ => false
+          _ => false,
         },
       ),
     );

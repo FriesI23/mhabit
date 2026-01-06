@@ -199,19 +199,22 @@ class _HabitFrequencyPickerDialogView
                   const _HabitFrequencyDailyTile(),
                   _HabitFrequencyPerWeekTile(
                     controller: _preweekInputController,
-                    onInputSubmmit:
-                        onInputTextSubmit(_HabitFrequencyPickerType.perweek),
+                    onInputSubmmit: onInputTextSubmit(
+                      _HabitFrequencyPickerType.perweek,
+                    ),
                   ),
                   _HabitFrequencyPerMonthTile(
                     controller: _premonthInputController,
-                    onInputSubmmit:
-                        onInputTextSubmit(_HabitFrequencyPickerType.permonth),
+                    onInputSubmmit: onInputTextSubmit(
+                      _HabitFrequencyPickerType.permonth,
+                    ),
                   ),
                   _HabitFrequencyPerDayTile(
                     controllerFreq: _predayfreq01InputController,
                     controllerDay: _predayfreq02InputController,
-                    onInputSubmmit:
-                        onInputTextSubmit(_HabitFrequencyPickerType.predayfreq),
+                    onInputSubmmit: onInputTextSubmit(
+                      _HabitFrequencyPickerType.predayfreq,
+                    ),
                   ),
                 ],
               ),
@@ -227,17 +230,15 @@ class _HabitFrequencyTextField extends StatelessWidget {
   final TextEditingController? controller;
   final Function(String? value)? onInputSubmmit;
 
-  const _HabitFrequencyTextField({
-    this.controller,
-    this.onInputSubmmit,
-  });
+  const _HabitFrequencyTextField({this.controller, this.onInputSubmmit});
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final textTheme = themeData.textTheme;
-    final textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     return SizedBox(
       height: textScaler.scale(_kDefaultHabitFreqTextFieldHeight),
@@ -247,10 +248,12 @@ class _HabitFrequencyTextField extends StatelessWidget {
         textAlign: TextAlign.center,
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(
-            decimal: false, signed: false),
+          decimal: false,
+          signed: false,
+        ),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(maxFrequencyValue.toString().length)
+          LengthLimitingTextInputFormatter(maxFrequencyValue.toString().length),
         ],
         style: textTheme.bodyLarge,
         onSubmitted: onInputSubmmit,
@@ -278,10 +281,7 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
   final TextEditingController? controller;
   final Function(String? value)? onInputSubmmit;
 
-  const _HabitFrequencyPerWeekTile({
-    this.controller,
-    this.onInputSubmmit,
-  });
+  const _HabitFrequencyPerWeekTile({this.controller, this.onInputSubmmit});
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
@@ -303,7 +303,9 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
       leading: const Radio(
-          value: _HabitFrequencyPickerType.perweek, toggleable: true),
+        value: _HabitFrequencyPickerType.perweek,
+        toggleable: true,
+      ),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),
@@ -316,10 +318,7 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
   final TextEditingController? controller;
   final Function(String? value)? onInputSubmmit;
 
-  const _HabitFrequencyPerMonthTile({
-    this.controller,
-    this.onInputSubmmit,
-  });
+  const _HabitFrequencyPerMonthTile({this.controller, this.onInputSubmmit});
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
@@ -341,7 +340,9 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
       leading: const Radio(
-          value: _HabitFrequencyPickerType.permonth, toggleable: true),
+        value: _HabitFrequencyPickerType.permonth,
+        toggleable: true,
+      ),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),
@@ -363,8 +364,10 @@ class _HabitFrequencyPerDayTile extends StatelessWidget {
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
-    final reversed = int.tryParse(
-            l10n?.habitEdit_habitFreq_predayfreq_reverse_flag ?? '0') ??
+    final reversed =
+        int.tryParse(
+          l10n?.habitEdit_habitFreq_predayfreq_reverse_flag ?? '0',
+        ) ??
         0;
     final results = [
       if (l10n != null && l10n.habitEdit_habitFreq_predayfreq.isNotEmpty)
@@ -391,7 +394,9 @@ class _HabitFrequencyPerDayTile extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
       leading: const Radio(
-          value: _HabitFrequencyPickerType.predayfreq, toggleable: true),
+        value: _HabitFrequencyPickerType.predayfreq,
+        toggleable: true,
+      ),
       title: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: _buildTitleChildren(context),

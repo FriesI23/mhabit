@@ -80,13 +80,17 @@ class AppSyncViewModel
   AppSyncViewModel() {
     appSyncTask = AppSyncTaskDispatcher(this);
     appSyncTask.addListener(notifyListeners);
-    _delayedSyncTrigger = CascadingAsyncDebouncer(action: () async {
-      if (!mounted) return;
-      appLog.appsync.debug("AppSyncViewModel.onSyncTriggerred",
-          ex: [_delayedSyncTrigger]);
-      await startSync();
-      await appSyncTask.task?.task.result;
-    });
+    _delayedSyncTrigger = CascadingAsyncDebouncer(
+      action: () async {
+        if (!mounted) return;
+        appLog.appsync.debug(
+          "AppSyncViewModel.onSyncTriggerred",
+          ex: [_delayedSyncTrigger],
+        );
+        await startSync();
+        await appSyncTask.task?.task.result;
+      },
+    );
     _lifecycleListener = AppLifecycleListener(
       onPause: () {
         _appPauseStopwatch?.stop();
@@ -100,15 +104,19 @@ class AppSyncViewModel
           stopwatch.stop();
           stopDuration = stopwatch.elapsed;
           _appPauseStopwatch = null;
-          appLog.appsync.debug("AppSyncViewModel",
-              ex: ["App Resumed from Paused", stopDuration]);
+          appLog.appsync.debug(
+            "AppSyncViewModel",
+            ex: ["App Resumed from Paused", stopDuration],
+          );
         }
         // re-sync
         final interval = _interval?.get()?.t;
         if (interval != null && stopDuration != null) {
           final window = Duration(microseconds: interval.inMicroseconds ~/ 2);
-          appLog.appsync.debug("AppSyncViewModel",
-              ex: ["Try re-sync after resumed", stopDuration, window]);
+          appLog.appsync.debug(
+            "AppSyncViewModel",
+            ex: ["Try re-sync after resumed", stopDuration, window],
+          );
           if (stopDuration > window) {
             delayedStartTaskOnce(delay: kAppSyncDelayDuration3);
           }
@@ -142,15 +150,24 @@ class AppSyncViewModel
     // clear failed sync logs
     if (!_clearLogsOnStartup) {
       _clearLogsOnStartup = true;
-      cleanExpiredSyncFailedLogs().then((results) {
-        if (results.isNotEmpty) {
-          appLog.appsync.info("clear logs on startup", ex: [hashCode, results]);
-        }
-      }).catchError((e, s) {
-        appLog.appsync.warn("clear logs on startup failed",
-            ex: [hashCode], error: e, stackTrace: s);
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-      });
+      cleanExpiredSyncFailedLogs()
+          .then((results) {
+            if (results.isNotEmpty) {
+              appLog.appsync.info(
+                "clear logs on startup",
+                ex: [hashCode, results],
+              );
+            }
+          })
+          .catchError((e, s) {
+            appLog.appsync.warn(
+              "clear logs on startup failed",
+              ex: [hashCode],
+              error: e,
+              stackTrace: s,
+            );
+            if (kDebugMode) Error.throwWithStackTrace(e, s);
+          });
     }
   }
 
@@ -170,8 +187,10 @@ class AppSyncViewModel
   AppSyncFetchInterval get fetchInterval =>
       _interval?.get() ?? defaultAppSyncFetchInterval;
 
-  Future<void> setFetchInterval(AppSyncFetchInterval value,
-      {bool listen = true}) async {
+  Future<void> setFetchInterval(
+    AppSyncFetchInterval value, {
+    bool listen = true,
+  }) async {
     if (_interval?.get() != value) {
       await _interval?.set(value);
       regrPeriodicSync();
@@ -216,24 +235,30 @@ class AppSyncViewModel
       config != null ? _serverConfig?.set(config) : _serverConfig?.remove();
 
   Future<bool> _removeOldPassword(
-          AppSyncServer? oldConfig, AppSyncServer? newConfig) =>
-      (oldConfig?.identity != newConfig?.identity && oldConfig != null)
-          ? writePassword(identity: oldConfig.identity, value: null)
-          : Future.value(true);
+    AppSyncServer? oldConfig,
+    AppSyncServer? newConfig,
+  ) => (oldConfig?.identity != newConfig?.identity && oldConfig != null)
+      ? writePassword(identity: oldConfig.identity, value: null)
+      : Future.value(true);
 
-  Future<bool> saveWithConfigForm(AppSyncServerForm? form,
-      {bool resetStatus = false, bool removable = false}) {
+  Future<bool> saveWithConfigForm(
+    AppSyncServerForm? form, {
+    bool resetStatus = false,
+    bool removable = false,
+  }) {
     final now = AppClock().now();
     final crtConfig = serverConfig;
     final pendingConfig = switch (form) {
       FakeSyncServerForm() => form.toConfig(
-          createTime: crtConfig?.createTime ?? now,
-          modifyTime: crtConfig?.modifyTime ?? now,
-          configed: crtConfig?.configed ?? false),
+        createTime: crtConfig?.createTime ?? now,
+        modifyTime: crtConfig?.modifyTime ?? now,
+        configed: crtConfig?.configed ?? false,
+      ),
       WebDavSyncServerForm() => form.toConfig(
-          createTime: crtConfig?.createTime ?? now,
-          modifyTime: crtConfig?.modifyTime ?? now,
-          configed: crtConfig?.configed ?? false),
+        createTime: crtConfig?.createTime ?? now,
+        modifyTime: crtConfig?.modifyTime ?? now,
+        configed: crtConfig?.configed ?? false,
+      ),
       null => null,
     };
     if (pendingConfig == null && !removable) return Future.value(false);
@@ -241,52 +266,66 @@ class AppSyncViewModel
     final isSameServer = switch ((crtConfig, pendingConfig)) {
       (null, null) => true,
       (null, _) || (_, null) => false,
-      (_, _) => crtConfig!.isSameServer(pendingConfig!, withoutPassword: true)
+      (_, _) => crtConfig!.isSameServer(pendingConfig!, withoutPassword: true),
     };
-    appLog.appsync.info("saveWithConfigForm",
-        ex: [resetStatus, removable, crtConfig, pendingConfig]);
-    appLog.appsync.debug("saveWithConfigForm.verbose", ex: [
-      isSameServer,
-      form?.toDebugString,
-      crtConfig?.toDebugString,
-      pendingConfig?.toDebugString
-    ]);
+    appLog.appsync.info(
+      "saveWithConfigForm",
+      ex: [resetStatus, removable, crtConfig, pendingConfig],
+    );
+    appLog.appsync.debug(
+      "saveWithConfigForm.verbose",
+      ex: [
+        isSameServer,
+        form?.toDebugString,
+        crtConfig?.toDebugString,
+        pendingConfig?.toDebugString,
+      ],
+    );
 
     AppSyncServer? buildConfig({bool withPwd = false}) =>
         (!isSameServer || resetStatus)
-            ? switch (form) {
-                FakeSyncServerForm() => form
-                    .copyWith(
-                        uuid: isSameServer
-                            ? form.uuid
-                            : AppSyncServer.genNewIdentity())
-                    .toConfig(
-                        createTime: pendingConfig?.createTime ?? now,
-                        modifyTime: pendingConfig?.modifyTime ?? now,
-                        configed: false),
-                WebDavSyncServerForm() => form
-                    .copyWith(
-                        uuid: isSameServer
-                            ? form.uuid
-                            : AppSyncServer.genNewIdentity(),
-                        password: withPwd ? form.password : '')
-                    .toConfig(
-                        createTime: pendingConfig?.createTime ?? now,
-                        modifyTime: pendingConfig?.modifyTime ?? now,
-                        configed: false),
-                null => null,
-              }
-            : pendingConfig?.copy(password: withPwd ? null : '');
+        ? switch (form) {
+            FakeSyncServerForm() =>
+              form
+                  .copyWith(
+                    uuid: isSameServer
+                        ? form.uuid
+                        : AppSyncServer.genNewIdentity(),
+                  )
+                  .toConfig(
+                    createTime: pendingConfig?.createTime ?? now,
+                    modifyTime: pendingConfig?.modifyTime ?? now,
+                    configed: false,
+                  ),
+            WebDavSyncServerForm() =>
+              form
+                  .copyWith(
+                    uuid: isSameServer
+                        ? form.uuid
+                        : AppSyncServer.genNewIdentity(),
+                    password: withPwd ? form.password : '',
+                  )
+                  .toConfig(
+                    createTime: pendingConfig?.createTime ?? now,
+                    modifyTime: pendingConfig?.modifyTime ?? now,
+                    configed: false,
+                  ),
+            null => null,
+          }
+        : pendingConfig?.copy(password: withPwd ? null : '');
 
     Future<bool> postSaveWebDavServer(AppWebDavSyncServer newConfig) async {
       assert(pendingConfig is AppWebDavSyncServer);
       if (pendingConfig is! AppWebDavSyncServer) return true;
-      final result = await writePassword(
-              identity: newConfig.identity, value: pendingConfig.password)
-          .then((result) async {
-        if (result) return result;
-        return await _setOrRemoveConfig(buildConfig(withPwd: true)) ?? false;
-      });
+      final result =
+          await writePassword(
+            identity: newConfig.identity,
+            value: pendingConfig.password,
+          ).then((result) async {
+            if (result) return result;
+            return await _setOrRemoveConfig(buildConfig(withPwd: true)) ??
+                false;
+          });
       return result;
     }
 
@@ -294,8 +333,10 @@ class AppSyncViewModel
       final oldConfig = crtConfig;
       final deidentifiedNewConfig = buildConfig();
       if (await _setOrRemoveConfig(deidentifiedNewConfig) != true) return false;
-      final removeOldPasswordTask =
-          _removeOldPassword(oldConfig, deidentifiedNewConfig);
+      final removeOldPasswordTask = _removeOldPassword(
+        oldConfig,
+        deidentifiedNewConfig,
+      );
       final Future<bool>? postTask;
       switch (deidentifiedNewConfig) {
         case AppWebDavSyncServer():
@@ -303,9 +344,10 @@ class AppSyncViewModel
         default:
           postTask = null;
       }
-      return Future.wait(
-              [removeOldPasswordTask, if (postTask != null) postTask])
-          .then((results) => results.every((e) => e));
+      return Future.wait([
+        removeOldPasswordTask,
+        if (postTask != null) postTask,
+      ]).then((results) => results.every((e) => e));
     }
 
     return doSave().then((value) {
@@ -318,8 +360,10 @@ class AppSyncViewModel
       appSyncTask.shouldSync().then((result) {
         if (!result) {
           final config = _serverConfig?.get();
-          appLog.appsync.info("$runtimeType.startSync",
-              ex: ["cant't sync now", config?.toDebugString]);
+          appLog.appsync.info(
+            "$runtimeType.startSync",
+            ex: ["cant't sync now", config?.toDebugString],
+          );
           return null;
         }
         return appSyncTask.startSync(initWait: initWait);
@@ -334,24 +378,32 @@ class AppSyncViewModel
     if (interval == null || interval.t == null) {
       final oldTimer = _autoSyncTimer?..cancel();
       _autoSyncTimer = null;
-      appLog.appsync.info("regrPeriodicSync",
-          ex: ["disabled", fireDelay, interval, oldTimer?.interval]);
+      appLog.appsync.info(
+        "regrPeriodicSync",
+        ex: ["disabled", fireDelay, interval, oldTimer?.interval],
+      );
     } else if (_autoSyncTimer?.interval != interval) {
       void onPeriodicSyncTriggered(Timer timer) async {
         if (!mounted) return;
         final config = _serverConfig?.get();
-        appLog.appsync.debug("[${timer.tick}] [${timer.hashCode}] Auto sync",
-            ex: [timer.isActive, interval, () => config?.toDebugString()]);
+        appLog.appsync.debug(
+          "[${timer.tick}] [${timer.hashCode}] Auto sync",
+          ex: [timer.isActive, interval, () => config?.toDebugString()],
+        );
         if (!enabled || !(await appSyncTask.shouldSync())) return;
         if (!mounted) return;
         await appSyncTask.startSync();
       }
 
       final oldTimer = _autoSyncTimer?..cancel();
-      final timer = _autoSyncTimer =
-          AppSyncPeriodicTimer(interval, onPeriodicSyncTriggered);
-      appLog.appsync.info("regrPeriodicSync",
-          ex: ["update", fireDelay, interval, oldTimer?.interval]);
+      final timer = _autoSyncTimer = AppSyncPeriodicTimer(
+        interval,
+        onPeriodicSyncTriggered,
+      );
+      appLog.appsync.info(
+        "regrPeriodicSync",
+        ex: ["update", fireDelay, interval, oldTimer?.interval],
+      );
       if (fireDelay != null) {
         Future.delayed(fireDelay, () => onPeriodicSyncTriggered(timer));
       }
@@ -364,8 +416,10 @@ class AppSyncViewModel
         _interval?.get()?.t != null)) {
       return;
     }
-    appLog.appsync.debug("AppSyncViewModel.delayedStartTaskOnce",
-        ex: [delay, _delayedSyncTrigger]);
+    appLog.appsync.debug(
+      "AppSyncViewModel.delayedStartTaskOnce",
+      ex: [delay, _delayedSyncTrigger],
+    );
     _delayedSyncTrigger.exec(delay: delay);
   }
 }
@@ -399,41 +453,45 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   num? percentage;
   ReplayAppLoggerStreamer? loggerStreamer;
 
-  AppSyncContainer(
-      {required this.id,
-      required this.task,
-      this.startTime,
-      this.endedTime,
-      this.result,
-      this.loggerReplay,
-      this.filePath,
-      this.notification,
-      void Function(l.LogEvent)? logEventCallback}) {
+  AppSyncContainer({
+    required this.id,
+    required this.task,
+    this.startTime,
+    this.endedTime,
+    this.result,
+    this.loggerReplay,
+    this.filePath,
+    this.notification,
+    void Function(l.LogEvent)? logEventCallback,
+  }) {
     final loggerReplay = this.loggerReplay;
     this.logEventCallback =
         logEventCallback ?? (event) => loggerReplay?.add(event);
   }
 
-  AppSyncContainer._copyWith(
-      {required this.id,
-      required this.task,
-      this.startTime,
-      this.endedTime,
-      this.result,
-      this.loggerReplay,
-      this.filePath,
-      this.percentage,
-      this.loggerStreamer,
-      this.notification,
-      required this.logEventCallback});
+  AppSyncContainer._copyWith({
+    required this.id,
+    required this.task,
+    this.startTime,
+    this.endedTime,
+    this.result,
+    this.loggerReplay,
+    this.filePath,
+    this.percentage,
+    this.loggerStreamer,
+    this.notification,
+    required this.logEventCallback,
+  });
 
-  AppSyncContainer.generate(
-      {required this.task, required String this.filePath, this.notification})
-      : id = const Uuid().v4(),
-        startTime = AppClock().now(),
-        loggerReplay = ReplaySubject<l.LogEvent>(),
-        endedTime = null,
-        result = null {
+  AppSyncContainer.generate({
+    required this.task,
+    required String this.filePath,
+    this.notification,
+  }) : id = const Uuid().v4(),
+       startTime = AppClock().now(),
+       loggerReplay = ReplaySubject<l.LogEvent>(),
+       endedTime = null,
+       result = null {
     final loggerReplay = this.loggerReplay!;
     logEventCallback = loggerReplay.add;
   }
@@ -459,9 +517,10 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
         loggerStreamer == null &&
         result?.isSuccessed != true) {
       final sr = loggerStreamer = ReplayAppLoggerStreamer.buildAppSyncFailed(
-          replaySubject: loggerReplay,
-          filePath: filePath,
-          sessionId: task.sessionId);
+        replaySubject: loggerReplay,
+        filePath: filePath,
+        sessionId: task.sessionId,
+      );
       sr.init().then((_) {
         if (!sr.isComplete) sr.run();
       });
@@ -469,7 +528,8 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
   }
 
   @override
-  String toString() => "AppSyncContainer<$T>(id=$id, "
+  String toString() =>
+      "AppSyncContainer<$T>(id=$id, "
       "task=<${task.sessionId}>$task, startT=$startTime, endedT=$endedTime, "
       "reuslt=$result, loggerReplay=$loggerReplay, filePath=$filePath, "
       "logEventCallback=${logEventCallback.hashCode}"
@@ -484,9 +544,9 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
   AppSyncContainer? _task;
 
   AppSyncTaskDispatcher(this._root)
-      : _task = null,
-        _confirmEventController = StreamController.broadcast(),
-        _startSyncEventController = StreamController.broadcast() {
+    : _task = null,
+      _confirmEventController = StreamController.broadcast(),
+      _startSyncEventController = StreamController.broadcast() {
     addListener(() {
       final task = _task;
       if (task != null) {
@@ -526,11 +586,14 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
     }
   }
 
-  Future<AppSyncTask> buildNewTask(AppSyncServer config,
-      [Duration? initWait]) async {
+  Future<AppSyncTask> buildNewTask(
+    AppSyncServer config, [
+    Duration? initWait,
+  ]) async {
     AppSyncTask buildDefaultTask() => BasicAppSyncTask(
-        config: config,
-        onExec: (task) => Future.value(const BasicAppSyncTaskResult.error()));
+      config: config,
+      onExec: (task) => Future.value(const BasicAppSyncTaskResult.error()),
+    );
 
     Future<bool> requestWebDavUserConfirm(WebDavConfigTaskChecklist checklist) {
       final event = AppSyncNeedConfirmEvent(checklist);
@@ -543,48 +606,54 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         final rand = math.Random();
         final sessionId = (rand.nextInt(10000) + 99999).toString();
         return BasicAppSyncTask(
-            sessionId: sessionId,
-            config: config,
-            onExec: (task) async {
-              const loopCount = 10;
-              appLog.appsynctask.debug(task, ex: ["Start, looping $loopCount"]);
-              await Future.delayed(const Duration(seconds: 1));
-              for (var i = 0; i < loopCount; i++) {
-                if (task.isCancalling) {
-                  await Future.delayed(const Duration(seconds: 1));
-                  appLog.appsynctask.debug(task, ex: ["loop $i -> canceled"]);
-                  return const BasicAppSyncTaskResult.cancelled();
-                }
-                if (task == _task?.task) changePercentage(prt: i / loopCount);
-                final delayed = Duration(milliseconds: rand.nextInt(500) + 500);
-                appLog.appsynctask.debug(task, ex: [
-                  "loop $i -> running,",
-                  "delayed for ${delayed.inMilliseconds}ms"
-                ]);
-                await Future.delayed(delayed);
+          sessionId: sessionId,
+          config: config,
+          onExec: (task) async {
+            const loopCount = 10;
+            appLog.appsynctask.debug(task, ex: ["Start, looping $loopCount"]);
+            await Future.delayed(const Duration(seconds: 1));
+            for (var i = 0; i < loopCount; i++) {
+              if (task.isCancalling) {
+                await Future.delayed(const Duration(seconds: 1));
+                appLog.appsynctask.debug(task, ex: ["loop $i -> canceled"]);
+                return const BasicAppSyncTaskResult.cancelled();
               }
-              if (task == _task?.task) changePercentage(prt: 1);
-              await Future.delayed(const Duration(milliseconds: 600));
-              if (task == _task?.task) changePercentage(prt: null);
-              await Future.delayed(const Duration(seconds: 1));
-              appLog.appsynctask.debug(task, ex: ['Done']);
-              return const BasicAppSyncTaskResult.success();
-            });
+              if (task == _task?.task) changePercentage(prt: i / loopCount);
+              final delayed = Duration(milliseconds: rand.nextInt(500) + 500);
+              appLog.appsynctask.debug(
+                task,
+                ex: [
+                  "loop $i -> running,",
+                  "delayed for ${delayed.inMilliseconds}ms",
+                ],
+              );
+              await Future.delayed(delayed);
+            }
+            if (task == _task?.task) changePercentage(prt: 1);
+            await Future.delayed(const Duration(milliseconds: 600));
+            if (task == _task?.task) changePercentage(prt: null);
+            await Future.delayed(const Duration(seconds: 1));
+            appLog.appsynctask.debug(task, ex: ['Done']);
+            return const BasicAppSyncTaskResult.success();
+          },
+        );
 
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            final password =
-                await _root.readPassword(identity: config.identity);
+            final password = await _root.readPassword(
+              identity: config.identity,
+            );
             final sessionId = WebDavAppSyncTask.genSessionId();
             final isFirstSync = !config.configed;
             return WebDavAppSyncTask(
               sessionId: sessionId,
               config: config.copyWith(
-                  password: password ?? config.password,
-                  timeout: isFirstSync
-                      ? (config.timeout ?? defaultAppSyncTimeout) * 10
-                      : config.timeout),
+                password: password ?? config.password,
+                timeout: isFirstSync
+                    ? (config.timeout ?? defaultAppSyncTimeout) * 10
+                    : config.timeout,
+              ),
               syncDBHelper: _root.syncDBHelper,
               initWait: initWait,
               progressController: WebDavProgressController(
@@ -637,11 +706,13 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       case AppSyncServerType.webdav:
         switch (config) {
           case AppWebDavSyncServer():
-            return shouldSyncInWebDav(config)
-                .then((result) => result && basicCheck());
+            return shouldSyncInWebDav(
+              config,
+            ).then((result) => result && basicCheck());
           default:
             throw UnimplementedError(
-                "<${config.runtimeType}> isn't support yet, got $config");
+              "<${config.runtimeType}> isn't support yet, got $config",
+            );
         }
     }
   }
@@ -649,19 +720,26 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
   Future<bool> shouldSyncInWebDav(AppWebDavSyncServer config) =>
       Future.wait<bool>([
         if (!config.syncInLowData)
-          const DataSaver()
-              .checkMode()
-              .then((mode) => mode == DataSaverMode.disabled),
-        Connectivity().checkConnectivity().then((results) => results
-            .map((e) => switch (e) {
+          const DataSaver().checkMode().then(
+            (mode) => mode == DataSaverMode.disabled,
+          ),
+        Connectivity().checkConnectivity().then(
+          (results) => results
+              .map(
+                (e) => switch (e) {
                   ConnectivityResult.none => false,
-                  ConnectivityResult.wifi => config.syncMobileNetworks
-                      .contains(AppSyncServerMobileNetwork.wifi),
-                  ConnectivityResult.mobile => config.syncMobileNetworks
-                      .contains(AppSyncServerMobileNetwork.mobile),
+                  ConnectivityResult.wifi => config.syncMobileNetworks.contains(
+                    AppSyncServerMobileNetwork.wifi,
+                  ),
+                  ConnectivityResult.mobile =>
+                    config.syncMobileNetworks.contains(
+                      AppSyncServerMobileNetwork.mobile,
+                    ),
                   _ => true,
-                })
-            .any((e) => e)),
+                },
+              )
+              .any((e) => e),
+        ),
       ]).then((results) => results.every((e) => e));
 
   Future<void> startSync({Duration? initWait}) async {
@@ -672,14 +750,17 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         ? await buildNewTask(config, initWait).then(
             (task) => AppPathProvider()
                 .getSyncFailedLogFilePath(task.sessionId)
-                .then((filePath) => AppSyncContainer.generate(
-                      task: task,
-                      filePath: filePath,
-                      notification: NotiAppSyncProvider.generate(
-                          data: _root.channelData,
-                          l10n: _root._l10n?.target,
-                          type: config.type),
-                    )),
+                .then(
+                  (filePath) => AppSyncContainer.generate(
+                    task: task,
+                    filePath: filePath,
+                    notification: NotiAppSyncProvider.generate(
+                      data: _root.channelData,
+                      l10n: _root._l10n?.target,
+                      type: config.type,
+                    ),
+                  ),
+                ),
           )
         : null;
 
@@ -709,12 +790,14 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         result: await crtTask.task.result,
         endedTime: AppClock().now(),
       );
-      appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask,
-          afterVal: finalTask,
-          ex: ['completed'],
-          error: finalTask.result?.error.error,
-          stackTrace: finalTask.result?.error.trace);
+      appLog.value.info(
+        "$runtimeType.task",
+        beforeVal: crtTask,
+        afterVal: finalTask,
+        ex: ['completed'],
+        error: finalTask.result?.error.error,
+        stackTrace: finalTask.result?.error.trace,
+      );
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()
@@ -740,12 +823,14 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         result: await crtTask.task.result,
         endedTime: AppClock().now(),
       );
-      appLog.value.info("$runtimeType.task",
-          beforeVal: crtTask,
-          afterVal: finalTask,
-          ex: ['cancelled'],
-          error: finalTask.result?.error.error,
-          stackTrace: finalTask.result?.error.trace);
+      appLog.value.info(
+        "$runtimeType.task",
+        beforeVal: crtTask,
+        afterVal: finalTask,
+        ex: ['cancelled'],
+        error: finalTask.result?.error.error,
+        stackTrace: finalTask.result?.error.trace,
+      );
       notifyListeners();
       finalTask
         ..recordSyncFailureLog()

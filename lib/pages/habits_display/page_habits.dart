@@ -68,10 +68,7 @@ import 'widgets.dart';
 class HabitsTabPage extends StatefulWidget {
   final ValueChanged<bool> onBottomNavVisibilityChanged;
 
-  const HabitsTabPage({
-    super.key,
-    required this.onBottomNavVisibilityChanged,
-  });
+  const HabitsTabPage({super.key, required this.onBottomNavVisibilityChanged});
 
   @override
   HabitsTabPageState createState() => HabitsTabPageState();
@@ -85,8 +82,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
   late final double _toolbarHeight;
 
-  static const Duration _bottomNavAnimationDuration =
-      Duration(milliseconds: 250);
+  static const Duration _bottomNavAnimationDuration = Duration(
+    milliseconds: 250,
+  );
 
   late final VerticalScrollVisibilityDispatcher _scrollVisibilityDispatcher;
 
@@ -101,12 +99,14 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _vm = context.read<HabitSummaryViewModel>();
     _uiSwitcher = context.read<AppCompactUISwitcherViewModel>();
     // events
-    _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent
-        .listen(_onScrollCalendarToStartEventNotified);
+    _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent.listen(
+      _onScrollCalendarToStartEventNotified,
+    );
     // scroll controllers
     _horizonalScrollControllerGroup = LinkedScrollControllerGroup();
-    _horizonalScrollControllerGroup
-        .addOffsetChangedListener(_onHorizonalOffsetChanged);
+    _horizonalScrollControllerGroup.addOffsetChangedListener(
+      _onHorizonalOffsetChanged,
+    );
     final vm = context.read<AppExperimentalFeatureViewModel>();
     _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
@@ -122,8 +122,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (vm != _vm) {
       _vm = vm;
       _scrollCalendarToStartSub.cancel();
-      _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent
-          .listen(_onScrollCalendarToStartEventNotified);
+      _scrollCalendarToStartSub = _vm.scrollCalendarToStartEvent.listen(
+        _onScrollCalendarToStartEventNotified,
+      );
     }
     final uiSwitcher = context.read<AppCompactUISwitcherViewModel>();
     if (uiSwitcher != _uiSwitcher) {
@@ -163,34 +164,44 @@ class HabitsTabPageState extends State<HabitsTabPage>
       _horizonalScrolling?.complete();
     }
     final completer = _horizonalScrolling = Completer.sync();
-    _resetHorizonalScrollController(scrollDuration).catchError((e, s) {
-      if (!completer.isCompleted) completer.completeError(e, s);
-    }).whenComplete(() {
-      if (completer.isCompleted) return;
-      completer.complete();
-      _lastHorizonalScrollOffset = _horizonalScrollControllerGroup.offset;
-    });
+    _resetHorizonalScrollController(scrollDuration)
+        .catchError((e, s) {
+          if (!completer.isCompleted) completer.completeError(e, s);
+        })
+        .whenComplete(() {
+          if (completer.isCompleted) return;
+          completer.complete();
+          _lastHorizonalScrollOffset = _horizonalScrollControllerGroup.offset;
+        });
   }
 
   Future<void> _resetHorizonalScrollController(Duration? scrollDuration) async {
-    appLog.build.debug(context,
-        ex: ["reset HorizonalScrollController", scrollDuration]);
+    appLog.build.debug(
+      context,
+      ex: ["reset HorizonalScrollController", scrollDuration],
+    );
     if (scrollDuration == Duration.zero) {
       _horizonalScrollControllerGroup.jumpTo(0);
     } else {
-      return _horizonalScrollControllerGroup.animateTo(0,
-          duration: scrollDuration ?? const Duration(milliseconds: 500),
-          curve: Curves.fastOutSlowIn);
+      return _horizonalScrollControllerGroup.animateTo(
+        0,
+        duration: scrollDuration ?? const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn,
+      );
     }
   }
 
-  void _onHabitStatusChangeConfirmed(List<HabitStatusChangedRecord> recordList,
-      {bool shouldSyncOnce = true}) {
+  void _onHabitStatusChangeConfirmed(
+    List<HabitStatusChangedRecord> recordList, {
+    bool shouldSyncOnce = true,
+  }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitsChangeStatus(recordList,
-        msg: "habit_display._onHabitStatusChangeConfirmed",
-        source: AppEventPageSource.habitDisplay);
+    context.read<AppEventViewModel>().pushHabitsChangeStatus(
+      recordList,
+      msg: "habit_display._onHabitStatusChangeConfirmed",
+      source: AppEventPageSource.habitDisplay,
+    );
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
@@ -200,14 +211,21 @@ class HabitsTabPageState extends State<HabitsTabPage>
     }
   }
 
-  void _onRecordChangeConfirmed(HabitUUID uuid, HabitSummaryRecord record,
-      {String? reason, bool shouldSyncOnce = true}) {
+  void _onRecordChangeConfirmed(
+    HabitUUID uuid,
+    HabitSummaryRecord record, {
+    String? reason,
+    bool shouldSyncOnce = true,
+  }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(uuid, record,
-        reason: reason,
-        msg: "habit_display._onRecordChangeConfirmed",
-        source: AppEventPageSource.habitDisplay);
+    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+      uuid,
+      record,
+      reason: reason,
+      msg: "habit_display._onRecordChangeConfirmed",
+      source: AppEventPageSource.habitDisplay,
+    );
     // try sync once
     if (shouldSyncOnce) {
       final sync = context.maybeRead<AppSyncViewModel>();
@@ -261,7 +279,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
             ? Text(
-                l10n.habitDisplay_archiveHabitsSuccSnackbarText(archivedCount))
+                l10n.habitDisplay_archiveHabitsSuccSnackbarText(archivedCount),
+              )
             : const Text('Archived habits'),
       ),
       showDuration: kAppUndoDialogShowDuration,
@@ -311,8 +330,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
       context,
       content: L10nBuilder(
         builder: (context, l10n) => l10n != null
-            ? Text(l10n
-                .habitDisplay_unarchiveHabitsSuccSnackbarText(archivedCount))
+            ? Text(
+                l10n.habitDisplay_unarchiveHabitsSuccSnackbarText(
+                  archivedCount,
+                ),
+              )
             : const Text('Unarchived habits'),
       ),
       showDuration: kAppUndoDialogShowDuration,
@@ -416,9 +438,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
 
     if (!mounted || result == null) return;
-    context
-        .read<HabitsSortViewModel>()
-        .setNewSortMode(sortType: result.item1, sortDirection: result.item2);
+    context.read<HabitsSortViewModel>().setNewSortMode(
+      sortType: result.item1,
+      sortDirection: result.item2,
+    );
   }
 
   void _openHabitRecordResonModifierDialog(
@@ -507,10 +530,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     HabitRecordStatus crt,
   ) async {
     if (!mounted) return;
-    context
-        .read<HabitSummaryViewModel>()
-        .changeRecordStatus(puuid, date)
-        .then((record) {
+    context.read<HabitSummaryViewModel>().changeRecordStatus(puuid, date).then((
+      record,
+    ) {
       if (!mounted || record == null) return;
       _onRecordChangeConfirmed(puuid, record);
     });
@@ -540,9 +562,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     if (!context.mounted || filePath == null) return;
     context.read<HabitSummaryViewModel>().exitEditMode();
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
-            text: "Export Select Habits", context: context)
-        .then((result) {
+    trySaveFiles(
+      [XFile(filePath)],
+      defaultTargetPlatform,
+      text: "Export Select Habits",
+      context: context,
+    ).then((result) {
       context = this.context;
       if (!(result && context.mounted)) return;
       final count = habitUUIDList.length;
@@ -578,8 +603,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
       try {
         await syncvm.startSync(initWait: kAppSyncDelayDuration2);
       } catch (e, s) {
-        appLog.appsync.fatal("start sync failed",
-            ex: [syncvm.appSyncTask.task], error: e, stackTrace: s);
+        appLog.appsync.fatal(
+          "start sync failed",
+          ex: [syncvm.appSyncTask.task],
+          error: e,
+          stackTrace: s,
+        );
         if (kDebugMode) Error.throwWithStackTrace(e, s);
       }
     }
@@ -616,8 +645,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
       if (!mounted) return false;
     }
 
-    final result =
-        await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
+    final result = await habit_edit.naviToHabitEidtPage(
+      context: context,
+      initForm: form,
+    );
 
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
@@ -629,12 +660,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }
 
   Future<void> _onAppbarEditActionPressed() async => _enterHabitEditPage(
-        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
-          dbCell,
-          editMode: HabitDisplayEditMode.edit,
-          editParams: HabitDisplayEditParams.fromDBCell(dbCell),
-        ),
-      );
+    formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+      dbCell,
+      editMode: HabitDisplayEditMode.edit,
+      editParams: HabitDisplayEditParams.fromDBCell(dbCell),
+    ),
+  );
 
   void _onAppbarUnArchiveActionPressed() =>
       _openHabitUnArchiveConfirmDialog(context);
@@ -651,15 +682,15 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
 
   void _onAppbarCloneActionPressed() => _enterHabitEditPage(
-        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
-          dbCell.copyWith(
-            name: '',
-            desc: '',
-            startDate: HabitStartDate.now().epochDay,
-          ),
-          editMode: HabitDisplayEditMode.create,
-        ),
-      );
+    formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+      dbCell.copyWith(
+        name: '',
+        desc: '',
+        startDate: HabitStartDate.now().epochDay,
+      ),
+      editMode: HabitDisplayEditMode.create,
+    ),
+  );
 
   void _onAppbarLeftButtonPressed(bool lastStatus) {
     if (!mounted) return;
@@ -708,14 +739,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
-        context.read<AppEventViewModel>().push(const ReloadDataEvent(
-              msg: "habit_display._onHabitListReorderComplete",
-              trace: {
-                AppEventPageSource.habitDisplay: {
-                  AppEventFunctionSource.habitChanged
-                }
+        context.read<AppEventViewModel>().push(
+          const ReloadDataEvent(
+            msg: "habit_display._onHabitListReorderComplete",
+            trace: {
+              AppEventPageSource.habitDisplay: {
+                AppEventFunctionSource.habitChanged,
               },
-            ));
+            },
+          ),
+        );
         final appSync = context.maybeRead<AppSyncViewModel>();
         if (appSync == null || !appSync.mounted) return;
         appSync.delayedStartTaskOnce();
@@ -761,9 +794,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
             context,
             content: L10nBuilder(
               builder: (context, l10n) => Text(
-                  l10n?.habitDisplay_deleteSingleHabitSuccSnackbarText(
-                          habitName) ??
-                      'Deleted: $habitName'),
+                l10n?.habitDisplay_deleteSingleHabitSuccSnackbarText(
+                      habitName,
+                    ) ??
+                    'Deleted: $habitName',
+              ),
             ),
             showDuration: kAppUndoDialogShowDuration,
             onPressed: () => _revertHabitsStatus(result.recordList ?? []),
@@ -908,8 +943,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<AppEventViewModel>().push(const ReloadDataEvent(
-                    msg: "habit_display.debugAddMultiTempHabit"));
+                context.read<AppEventViewModel>().push(
+                  const ReloadDataEvent(
+                    msg: "habit_display.debugAddMultiTempHabit",
+                  ),
+                );
               },
             ),
           ),
@@ -988,9 +1026,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     return AnimatedPadding(
       duration: _bottomNavAnimationDuration,
       curve: Curves.easeOut,
-      padding: EdgeInsets.only(
-        bottom: bottomNavVisible ? bottomNavHeight : 0,
-      ),
+      padding: EdgeInsets.only(bottom: bottomNavVisible ? bottomNavHeight : 0),
       child: AnimatedSlide(
         duration: _bottomNavAnimationDuration,
         curve: Curves.easeOut,
@@ -1110,8 +1146,12 @@ class _HabitListState extends State<_HabitList> {
     try {
       if (sync.mounted) await sync.appSyncTask.processing;
     } catch (e, s) {
-      appLog.appsync
-          .error("HabitsTabPage", ex: ["sync failed"], error: e, stackTrace: s);
+      appLog.appsync.error(
+        "HabitsTabPage",
+        ex: ["sync failed"],
+        error: e,
+        stackTrace: s,
+      );
     }
     if (!(mounted && _vm.mounted)) return;
     if (!_vm.isDataLoading) {
@@ -1134,13 +1174,14 @@ class _HabitListState extends State<_HabitList> {
         builder: (context, _) => AnimatedSliverList(
           controller: _dispatcher.controller,
           delegate: AnimatedSliverChildBuilderDelegate(
-              (context, index, data) => _dispatcher.builder(
-                  context, _vm.currentHabitList, index, data),
-              _vm.currentHabitList.length,
-              animator: kHabitContentListAnimator,
-              addAnimatedElevation: kCommonEvalation,
-              morphDuration: kEditModeChangeAnimateDuration,
-              reorderModel: widget.reorderModel),
+            (context, index, data) =>
+                _dispatcher.builder(context, _vm.currentHabitList, index, data),
+            _vm.currentHabitList.length,
+            animator: kHabitContentListAnimator,
+            addAnimatedElevation: kCommonEvalation,
+            morphDuration: kEditModeChangeAnimateDuration,
+            reorderModel: widget.reorderModel,
+          ),
         ),
       ),
     );
@@ -1153,7 +1194,8 @@ class _HabitListItemMeasurer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = context.select<AppCompactUISwitcherViewModel, double>(
-        (vm) => vm.appHabitDisplayListTileHeight);
+      (vm) => vm.appHabitDisplayListTileHeight,
+    );
     return SizedBox(height: height);
   }
 }
@@ -1198,32 +1240,42 @@ class _HabitListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final crtDate = DateChangeProvider.of(context).dateTime;
-    final (isExtended, data, endedDate, isSelected, isInEditMode, _) =
-        context
-            .select<HabitSummaryViewModel,
-                    (bool, HabitSummaryData?, HabitDate?, bool, bool, Key)>(
-                (vm) => (
-                      vm.isCalendarExpanded,
-                      vm.getHabit(uuid),
-                      vm.earliestSummaryDataStartDate?.startDate,
-                      vm.isHabitSelected(uuid),
-                      vm.isInEditMode,
-                      vm.getHabitInsideVersion(uuid),
-                    ));
-    final occupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
-    final (useCompactUI, height) =
-        context.select<AppCompactUISwitcherViewModel, (bool, double)>(
-            (vm) => (vm.flag, vm.appHabitDisplayListTileHeight));
-    final (changeRecordStatusAction, openRecordStatusDialogAction) =
-        context.select<HabitRecordOpConfigViewModel, (UserAction, UserAction)>(
-            (vm) => (vm.changeRecordStatus, vm.openRecordStatusDialog));
-    final actionResolver = _HabitListItemRecordCallbackResolver(this,
-        changeRecordStatusAction: changeRecordStatusAction,
-        openRecordStatusDialogAction: openRecordStatusDialogAction);
+    final (isExtended, data, endedDate, isSelected, isInEditMode, _) = context
+        .select<
+          HabitSummaryViewModel,
+          (bool, HabitSummaryData?, HabitDate?, bool, bool, Key)
+        >(
+          (vm) => (
+            vm.isCalendarExpanded,
+            vm.getHabit(uuid),
+            vm.earliestSummaryDataStartDate?.startDate,
+            vm.isHabitSelected(uuid),
+            vm.isInEditMode,
+            vm.getHabitInsideVersion(uuid),
+          ),
+        );
+    final occupyPrt = context.select<AppThemeViewModel, int>(
+      (vm) => vm.displayPageOccupyPrt,
+    );
+    final (useCompactUI, height) = context
+        .select<AppCompactUISwitcherViewModel, (bool, double)>(
+          (vm) => (vm.flag, vm.appHabitDisplayListTileHeight),
+        );
+    final (changeRecordStatusAction, openRecordStatusDialogAction) = context
+        .select<HabitRecordOpConfigViewModel, (UserAction, UserAction)>(
+          (vm) => (vm.changeRecordStatus, vm.openRecordStatusDialog),
+        );
+    final actionResolver = _HabitListItemRecordCallbackResolver(
+      this,
+      changeRecordStatusAction: changeRecordStatusAction,
+      openRecordStatusDialogAction: openRecordStatusDialogAction,
+    );
     if (data == null) {
-      appLog.build
-          .warn(context, ex: ["data not found", uuid], name: "_HabitListItem");
+      appLog.build.warn(
+        context,
+        ex: ["data not found", uuid],
+        name: "_HabitListItem",
+      );
       return const SizedBox.shrink();
     }
 
@@ -1255,12 +1307,14 @@ class _EmptyImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (habitCount, isInSearchMode) =
-        context.select<HabitSummaryViewModel, (int, bool)>(
-            (vm) => (vm.currentHabitList.length, vm.isInSearchMode));
-    final (_, calBarHeight) =
-        context.select<AppCompactUISwitcherViewModel, (bool, double)>(
-            (vm) => (vm.flag, vm.appCalendarBarHeight));
+    final (habitCount, isInSearchMode) = context
+        .select<HabitSummaryViewModel, (int, bool)>(
+          (vm) => (vm.currentHabitList.length, vm.isInSearchMode),
+        );
+    final (_, calBarHeight) = context
+        .select<AppCompactUISwitcherViewModel, (bool, double)>(
+          (vm) => (vm.flag, vm.appCalendarBarHeight),
+        );
     final offsetHeight = -(calBarHeight + kToolbarHeight);
 
     final image = L10nBuilder(
@@ -1278,13 +1332,15 @@ class _EmptyImage extends StatelessWidget {
             fronBoardTopColor: theme.colorScheme.primaryContainer,
             fronBoardFirstLineColor: theme.colorScheme.primaryContainer,
             fronBoardOtherLineColor: theme.colorScheme.outlineVariant,
-            fronBoardSubtitleLineColor:
-                theme.colorScheme.outlineVariant.lighten(0.14),
-            backgroundCirlcColor:
-                theme.colorScheme.outlineVariant.lighten(0.16),
+            fronBoardSubtitleLineColor: theme.colorScheme.outlineVariant
+                .lighten(0.14),
+            backgroundCirlcColor: theme.colorScheme.outlineVariant.lighten(
+              0.16,
+            ),
           ),
-          descChild:
-              l10n != null ? Text(l10n.habitDisplay_emptyImage_text_01) : null,
+          descChild: l10n != null
+              ? Text(l10n.habitDisplay_emptyImage_text_01)
+              : null,
         );
         final notFoundImage = Opacity(
           opacity: 0.8,
@@ -1321,7 +1377,8 @@ class _EmptyImage extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: ConstrainedBox(
             constraints: constraints.copyWith(
-                maxHeight: math.max(constraints.maxHeight + offsetHeight, 0)),
+              maxHeight: math.max(constraints.maxHeight + offsetHeight, 0),
+            ),
             child: AnimatedOpacity(
               opacity: habitCount > 0 ? 0.0 : 1.0,
               duration: kHabitListFutureLoadDuration,
@@ -1339,31 +1396,34 @@ class _FAB extends StatelessWidget {
   final ClosedCallback<HabitDBCell>? onClosed;
   final void Function(VoidCallback action)? editModeOnPressed;
 
-  const _FAB({
-    this.onPressed,
-    this.onClosed,
-    this.editModeOnPressed,
-  });
+  const _FAB({this.onPressed, this.onClosed, this.editModeOnPressed});
 
-  Widget _buildFAB(BuildContext context,
-      {required bool isAppbarPinned, required bool isInEditMode}) {
+  Widget _buildFAB(
+    BuildContext context, {
+    required bool isAppbarPinned,
+    required bool isInEditMode,
+  }) {
     Widget iconBuidler(BuildContext context) => AnimatedCrossFade(
-        firstChild: const Icon(Icons.add),
-        secondChild: const Icon(Icons.calendar_view_day_rounded),
-        crossFadeState:
-            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-        duration: kFABModeChangeDuration);
+      firstChild: const Icon(Icons.add),
+      secondChild: const Icon(Icons.calendar_view_day_rounded),
+      crossFadeState: isInEditMode
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
+      duration: kFABModeChangeDuration,
+    );
 
     Widget labelBuilder(BuildContext context) => AnimatedCrossFade(
-        firstChild: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.habitDisplay_fab_text)
-              : const Text('New Habit'),
-        ),
-        secondChild: const SizedBox(),
-        crossFadeState:
-            isInEditMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-        duration: kFABModeChangeDuration);
+      firstChild: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.habitDisplay_fab_text)
+            : const Text('New Habit'),
+      ),
+      secondChild: const SizedBox(),
+      crossFadeState: isInEditMode
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
+      duration: kFABModeChangeDuration,
+    );
 
     final selectedUUIDList = context
         .read<HabitSummaryViewModel>()
@@ -1374,7 +1434,8 @@ class _FAB extends StatelessWidget {
 
     Widget habitsStatusChangerPageBuilder(BuildContext context) =>
         habits_status_changer.HabitsStatusChangerPage(
-            uuidList: selectedUUIDList);
+          uuidList: selectedUUIDList,
+        );
 
     return HabitDisplayFAB<Object?>(
       closeBuilder: (context, action) {
@@ -1405,11 +1466,17 @@ class _FAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Selector<HabitSummaryViewModel, Tuple3<bool, bool, int>>(
-        selector: (context, viewmodel) => Tuple3(viewmodel.isAppbarPinned,
-            viewmodel.isInEditMode, viewmodel.selectedHabitsCount),
+        selector: (context, viewmodel) => Tuple3(
+          viewmodel.isAppbarPinned,
+          viewmodel.isInEditMode,
+          viewmodel.selectedHabitsCount,
+        ),
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, value, child) => _buildFAB(context,
-            isAppbarPinned: value.item1, isInEditMode: value.item2),
+        builder: (context, value, child) => _buildFAB(
+          context,
+          isAppbarPinned: value.item1,
+          isInEditMode: value.item2,
+        ),
       );
 }
 
@@ -1427,35 +1494,45 @@ class _CalendarBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state =
-        context.select<HabitSummaryViewModel, HabitSummaryStatusCache>(
-            (vm) => vm.currentState);
-    final displayPageOccupyPrt =
-        context.select<AppThemeViewModel, int>((vm) => vm.displayPageOccupyPrt);
+    final state = context
+        .select<HabitSummaryViewModel, HabitSummaryStatusCache>(
+          (vm) => vm.currentState,
+        );
+    final displayPageOccupyPrt = context.select<AppThemeViewModel, int>(
+      (vm) => vm.displayPageOccupyPrt,
+    );
     final earliestStartDate = context.select<HabitSummaryViewModel, DateTime?>(
-        (vm) => vm.earliestSummaryDataStartDate?.startDate);
-    final (appCalendarBarHeight, appCalendarBarItemPadding) =
-        context.select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
-            (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding));
-    final scrollBehavior = context.select<HabitsRecordScrollBehaviorViewModel,
-        HabitsRecordScrollBehavior>((vm) => vm.scrollBehavior);
-    appLog.build.debug(context,
-        ex: [
-          state,
-          displayPageOccupyPrt,
-          earliestStartDate,
-          appCalendarBarHeight,
-          appCalendarBarItemPadding
-        ],
-        name: "HabitDisplay.calendarBar");
+      (vm) => vm.earliestSummaryDataStartDate?.startDate,
+    );
+    final (appCalendarBarHeight, appCalendarBarItemPadding) = context
+        .select<AppCompactUISwitcherViewModel, (double, EdgeInsets)>(
+          (vm) => (vm.appCalendarBarHeight, vm.appCalendarBarItemPadding),
+        );
+    final scrollBehavior = context
+        .select<
+          HabitsRecordScrollBehaviorViewModel,
+          HabitsRecordScrollBehavior
+        >((vm) => vm.scrollBehavior);
+    appLog.build.debug(
+      context,
+      ex: [
+        state,
+        displayPageOccupyPrt,
+        earliestStartDate,
+        appCalendarBarHeight,
+        appCalendarBarItemPadding,
+      ],
+      name: "HabitDisplay.calendarBar",
+    );
     final scrolledUnderElevation = state.isInEditMode ? 0.0 : kCommonEvalation;
-    final backgroundColor =
-        state.isInEditMode ? Theme.of(context).colorScheme.surface : null;
+    final backgroundColor = state.isInEditMode
+        ? Theme.of(context).colorScheme.surface
+        : null;
 
     ScrollPhysics? buildScrollPhysics(double itemSize, double length) {
       return switch (scrollBehavior) {
         HabitsRecordScrollBehavior.page => const PageScrollPhysics(),
-        _ => null
+        _ => null,
       };
     }
 
@@ -1496,8 +1573,9 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDataLoaded =
-        context.select<HabitSummaryViewModel, bool>((vm) => vm.isDataLoaded);
+    final isDataLoaded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.isDataLoaded,
+    );
     return AnimatedOpacity(
       opacity: isDataLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),

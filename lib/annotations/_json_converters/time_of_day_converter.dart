@@ -21,10 +21,7 @@ class TimeOfDayConverter
 
   @override
   TimeOfDay fromJson(Map<String, dynamic> json) {
-    return TimeOfDay(
-      hour: json['hour'] as int,
-      minute: json['minute'] as int,
-    );
+    return TimeOfDay(hour: json['hour'] as int, minute: json['minute'] as int);
   }
 
   @override

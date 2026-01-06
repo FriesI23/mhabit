@@ -28,8 +28,11 @@ class ContributorTile extends StatelessWidget {
   final Contributors contributors;
   final Widget? Function(Locale? l)? leadingBuilder;
 
-  const ContributorTile(
-      {super.key, required this.contributors, this.leadingBuilder});
+  const ContributorTile({
+    super.key,
+    required this.contributors,
+    this.leadingBuilder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,9 @@ class ContributorTile extends StatelessWidget {
         "@${info.name}",
         style: url != null
             ? const TextStyle(
-                decoration: TextDecoration.underline, color: Colors.blue)
+                decoration: TextDecoration.underline,
+                color: Colors.blue,
+              )
             : null,
       );
       final child = url != null
@@ -48,9 +53,11 @@ class ContributorTile extends StatelessWidget {
                 if (await canLaunchUrl(url)) {
                   await launchExternalUrl(url);
                 } else {
-                  appLog.network.error("$this",
-                      ex: ["failed to open url", info],
-                      stackTrace: LoggerStackTrace.from(StackTrace.current));
+                  appLog.network.error(
+                    "$this",
+                    ex: ["failed to open url", info],
+                    stackTrace: LoggerStackTrace.from(StackTrace.current),
+                  );
                 }
               },
               child: textWidget,
@@ -86,10 +93,15 @@ class ContributorTile extends StatelessWidget {
       Widget buildTitle(BuildContext context) {
         try {
           return GroupTitleListTile(
-              title: Text(lookupL10n(locale.toLocale()).localeScriptName));
+            title: Text(lookupL10n(locale.toLocale()).localeScriptName),
+          );
         } on FlutterError catch (e) {
-          appLog.l10n.warn(context,
-              widget: this, ex: ["lockup l10n failed", locale], error: e);
+          appLog.l10n.warn(
+            context,
+            widget: this,
+            ex: ["lockup l10n failed", locale],
+            error: e,
+          );
           return GroupTitleListTile(title: Text(locale.toString()));
         }
       }

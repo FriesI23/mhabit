@@ -63,29 +63,30 @@ class RecordDBCell with DBCell {
   @JsonKey(name: RecordDBCellKey.reason)
   final String? reason;
 
-  RecordDBCell(
-      {this.id,
-      this.parentId,
-      this.recordDate,
-      this.recordType,
-      this.recordValue,
-      this.createT,
-      this.modifyT,
-      this.uuid,
-      this.parentUUID,
-      this.reason});
+  RecordDBCell({
+    this.id,
+    this.parentId,
+    this.recordDate,
+    this.recordType,
+    this.recordValue,
+    this.createT,
+    this.modifyT,
+    this.uuid,
+    this.parentUUID,
+    this.reason,
+  });
 
-  RecordDBCell.build(
-      {required this.parentId,
-      required this.parentUUID,
-      required this.recordDate,
-      required this.recordType,
-      required this.recordValue,
-      this.createT,
-      this.modifyT,
-      this.uuid,
-      this.reason})
-      : id = null;
+  RecordDBCell.build({
+    required this.parentId,
+    required this.parentUUID,
+    required this.recordDate,
+    required this.recordType,
+    required this.recordValue,
+    this.createT,
+    this.modifyT,
+    this.uuid,
+    this.reason,
+  }) : id = null;
 
   factory RecordDBCell.fromJson(Map<String, Object?> cell) =>
       _$RecordDBCellFromJson(cell);
@@ -111,17 +112,27 @@ class RecordDBHelper extends DBHelperHandler {
   }
 
   Future<int> _insertNewRecordTransaction(
-      RecordDBCell record, Transaction txn) async {
-    final result = await txn.insert(table, record.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    RecordDBCell record,
+    Transaction txn,
+  ) async {
+    final result = await txn.insert(
+      table,
+      record.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
     if (result > 0) {
       await Future.wait([
-        txn.insert(syncTable, SyncDBCell.genFromRecord(record).toJson(),
-            conflictAlgorithm: ConflictAlgorithm.rollback),
+        txn.insert(
+          syncTable,
+          SyncDBCell.genFromRecord(record).toJson(),
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
         txn.rawUpdate(
-            CustomSql.increaseHabitSyncTotalDirtySql(
-                conflictAlgorithm: ConflictAlgorithm.rollback),
-            [record.parentUUID]),
+          CustomSql.increaseHabitSyncTotalDirtySql(
+            conflictAlgorithm: ConflictAlgorithm.rollback,
+          ),
+          [record.parentUUID],
+        ),
       ]);
     }
     return result;
@@ -133,13 +144,17 @@ class RecordDBHelper extends DBHelperHandler {
       for (var record in records) {
         tasks.add(
           db
-              .query(table,
-                  where: "${RecordDBCellKey.uuid} = ?",
-                  whereArgs: [record.uuid],
-                  limit: 1)
-              .then((result) => result.isEmpty
-                  ? _insertNewRecordTransaction(record, db)
-                  : _updateRecordTransaction(record, db)),
+              .query(
+                table,
+                where: "${RecordDBCellKey.uuid} = ?",
+                whereArgs: [record.uuid],
+                limit: 1,
+              )
+              .then(
+                (result) => result.isEmpty
+                    ? _insertNewRecordTransaction(record, db)
+                    : _updateRecordTransaction(record, db),
+              ),
         );
       }
 
@@ -154,19 +169,29 @@ class RecordDBHelper extends DBHelperHandler {
   }
 
   Future<int> _updateRecordTransaction(
-      RecordDBCell record, Transaction txn) async {
-    final result = await txn.update(table, record.toJson(),
-        where: '${RecordDBCellKey.uuid} = ?', whereArgs: [record.uuid]);
+    RecordDBCell record,
+    Transaction txn,
+  ) async {
+    final result = await txn.update(
+      table,
+      record.toJson(),
+      where: '${RecordDBCellKey.uuid} = ?',
+      whereArgs: [record.uuid],
+    );
     if (result > 0) {
       await Future.wait([
         txn.rawUpdate(
-            CustomSql.increaseRecordSyncDirtySql(
-                conflictAlgorithm: ConflictAlgorithm.rollback),
-            [record.uuid]),
+          CustomSql.increaseRecordSyncDirtySql(
+            conflictAlgorithm: ConflictAlgorithm.rollback,
+          ),
+          [record.uuid],
+        ),
         txn.rawUpdate(
-            CustomSql.increaseHabitSyncTotalDirtySql(
-                conflictAlgorithm: ConflictAlgorithm.rollback),
-            [record.parentUUID]),
+          CustomSql.increaseHabitSyncTotalDirtySql(
+            conflictAlgorithm: ConflictAlgorithm.rollback,
+          ),
+          [record.parentUUID],
+        ),
       ]);
     }
     return result;
@@ -181,7 +206,8 @@ class RecordDBHelper extends DBHelperHandler {
   ];
 
   Future<Iterable<RecordDBCell>> loadRecords(HabitUUID uuid) async {
-    final sql = """
+    final sql =
+        """
 SELECT ${_loadRecordDataColumns.map((e) => '$table.$e').join(', ')}
 FROM $table
 JOIN $habitTable
@@ -197,8 +223,11 @@ WHERE $table.${RecordDBCellKey.recordDate}
   }
 
   Future<RecordDBCell?> loadSingleRecord(HabitRecordUUID uuid) async {
-    final results = await db
-        .query(table, where: "${RecordDBCellKey.uuid} = ?", whereArgs: [uuid]);
+    final results = await db.query(
+      table,
+      where: "${RecordDBCellKey.uuid} = ?",
+      whereArgs: [uuid],
+    );
     return results.isEmpty ? null : RecordDBCell.fromJson(results.first);
   }
 
@@ -207,11 +236,12 @@ WHERE $table.${RecordDBCellKey.recordDate}
     RecordDBCellKey.uuid,
     RecordDBCellKey.recordDate,
     RecordDBCellKey.recordType,
-    RecordDBCellKey.recordValue
+    RecordDBCellKey.recordValue,
   ];
 
-  Future<Iterable<RecordDBCell>> loadAllRecords(
-      {List<HabitUUID>? uuidFilter}) async {
+  Future<Iterable<RecordDBCell>> loadAllRecords({
+    List<HabitUUID>? uuidFilter,
+  }) async {
     if (uuidFilter != null) {
       return _loadRecords(uuidFilter);
     }
@@ -224,22 +254,29 @@ WHERE $table.${RecordDBCellKey.recordDate}
   }
 
   Future<Iterable<RecordDBCell>> _loadRecords(List<HabitUUID> uuidList) async {
-    final results = await db.query(table,
-        where: "${RecordDBCellKey.parentUUID} "
-            "IN (${uuidList.map((e) => '?').join(', ')}) ",
-        whereArgs: uuidList,
-        columns: _loadAllRecordDataColumns);
+    final results = await db.query(
+      table,
+      where:
+          "${RecordDBCellKey.parentUUID} "
+          "IN (${uuidList.map((e) => '?').join(', ')}) ",
+      whereArgs: uuidList,
+      columns: _loadAllRecordDataColumns,
+    );
     return results.map(RecordDBCell.fromJson);
   }
 
   Future<Iterable<RecordDBCell>> loadRecordsExportData(
-      List<HabitUUID> uuidList) async {
+    List<HabitUUID> uuidList,
+  ) async {
     if (uuidList.isEmpty) return const [];
 
-    final results = await db.query(table,
-        where: "${RecordDBCellKey.parentUUID} "
-            "IN (${uuidList.map((e) => '?').join(', ')})",
-        whereArgs: uuidList);
+    final results = await db.query(
+      table,
+      where:
+          "${RecordDBCellKey.parentUUID} "
+          "IN (${uuidList.map((e) => '?').join(', ')})",
+      whereArgs: uuidList,
+    );
     return results.map(RecordDBCell.fromJson);
   }
 

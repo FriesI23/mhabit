@@ -85,12 +85,11 @@ class AppLoggerConsoleReleasePrinter<T extends AppLoggerMessage>
     final T? message = event.message;
 
     String getMsg({bool? addTime}) => [
-          "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]"
-              " [${prefixMap[event.level]}]",
-          if (addTime ?? this.addTime) _errorPrinter.getTime(event.time),
-          if (message != null)
-            message.toLogPrinterMessage().nonNulls.join(" | "),
-        ].join(" - ");
+      "[app:${message?.type.name ?? ''}:${Isolate.current.debugName}]"
+          " [${prefixMap[event.level]}]",
+      if (addTime ?? this.addTime) _errorPrinter.getTime(event.time),
+      if (message != null) message.toLogPrinterMessage().nonNulls.join(" | "),
+    ].join(" - ");
 
     if (event.level.value >= l.Level.error.value || event.error != null) {
       return _errorPrinter.log(event.copyWith(message: getMsg(addTime: true)));

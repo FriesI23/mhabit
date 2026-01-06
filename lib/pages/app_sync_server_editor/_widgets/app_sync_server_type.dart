@@ -24,11 +24,7 @@ class AppSyncServerTypeMenu extends StatelessWidget {
   final double? width;
   final EdgeInsetsGeometry? contentPadding;
 
-  const AppSyncServerTypeMenu({
-    super.key,
-    this.width,
-    this.contentPadding,
-  });
+  const AppSyncServerTypeMenu({super.key, this.width, this.contentPadding});
 
   String getName(AppSyncServerType type, {bool isCurrent = false, L10n? l10n}) {
     if (l10n != null) {
@@ -56,12 +52,17 @@ class AppSyncServerTypeMenu extends StatelessWidget {
         initialSelection: vm.type,
         dropdownMenuEntries: AppSyncServerType.values
             .where((e) => e != AppSyncServerType.unknown)
-            .where((e) =>
-                e != AppSyncServerType.fake ||
-                (kDebugMode || vm.type == AppSyncServerType.fake))
-            .map((e) => DropdownMenuEntry(
+            .where(
+              (e) =>
+                  e != AppSyncServerType.fake ||
+                  (kDebugMode || vm.type == AppSyncServerType.fake),
+            )
+            .map(
+              (e) => DropdownMenuEntry(
                 value: e,
-                label: getName(e, l10n: l10n, isCurrent: e == vm.type)))
+                label: getName(e, l10n: l10n, isCurrent: e == vm.type),
+              ),
+            )
             .toList(),
         onSelected: (value) =>
             context.read<AppSyncServerFormViewModel>().type = value!,

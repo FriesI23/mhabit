@@ -16,17 +16,15 @@ import 'package:flutter/material.dart';
 
 import '../../logging/helper.dart';
 
-enum ScrollingFABType {
-  small,
-  large,
-}
+enum ScrollingFABType { small, large }
 
 const kDefaultScrollingFABElevation = 6.0;
 
 const kDefaultSrollingFABIconPadding = EdgeInsets.only(right: 4);
 
 const kDefaultScrollingFABShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(16.0)));
+  borderRadius: BorderRadius.all(Radius.circular(16.0)),
+);
 
 BoxConstraints? getDefaultScrollingFABSizeConstraints(ScrollingFABType type) {
   switch (type) {
@@ -68,9 +66,9 @@ class ScrollingFAB extends StatelessWidget {
     this.elevation,
     required this.onPressed,
     required ScrollingFABType type,
-  })  : child = icon,
-        _extendedLabel = label,
-        _type = type;
+  }) : child = icon,
+       _extendedLabel = label,
+       _type = type;
 
   const ScrollingFAB.small({
     super.key,
@@ -82,9 +80,9 @@ class ScrollingFAB extends StatelessWidget {
     this.labelSpaceBetween,
     this.elevation,
     required this.onPressed,
-  })  : child = icon,
-        _extendedLabel = label,
-        _type = ScrollingFABType.small;
+  }) : child = icon,
+       _extendedLabel = label,
+       _type = ScrollingFABType.small;
 
   const ScrollingFAB.large({
     super.key,
@@ -96,9 +94,9 @@ class ScrollingFAB extends StatelessWidget {
     this.labelSpaceBetween,
     this.elevation,
     required this.onPressed,
-  })  : child = icon,
-        _extendedLabel = label,
-        _type = ScrollingFABType.large;
+  }) : child = icon,
+       _extendedLabel = label,
+       _type = ScrollingFABType.large;
 
   BoxConstraints? getExtendedSizeConstraints(BuildContext context) {
     return size != null
@@ -147,7 +145,7 @@ class ScrollingFAB extends StatelessWidget {
               : Row(
                   children: [
                     Padding(padding: getIconPadding(context), child: child),
-                    _extendedLabel
+                    _extendedLabel,
                   ],
                 ),
         ),

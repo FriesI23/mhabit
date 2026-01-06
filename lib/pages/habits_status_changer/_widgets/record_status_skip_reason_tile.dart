@@ -21,8 +21,11 @@ class RecordStatusSkipReasonTile extends StatelessWidget {
   final TextEditingController inputController;
   final ValueChanged<String>? onChanged;
 
-  const RecordStatusSkipReasonTile(
-      {super.key, required this.inputController, this.onChanged});
+  const RecordStatusSkipReasonTile({
+    super.key,
+    required this.inputController,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -64,7 +64,8 @@ class HabitEditAppBar extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           hintText: l10n?.habitEdit_habitName_hintText,
           hintStyle: TextStyle(
-              color: colorData?.getColor(colorType)?.withValues(alpha: 0.64)),
+            color: colorData?.getColor(colorType)?.withValues(alpha: 0.64),
+          ),
           border: InputBorder.none,
         ),
         style: textTheme.headlineMedium?.copyWith(
@@ -95,8 +96,9 @@ class HabitEditAppBar extends StatelessWidget {
       ),
       automaticallyImplyLeading: false,
       leading: PageBackButton(
-        reason:
-            showInFullscreenDialog ? PageBackReason.close : PageBackReason.back,
+        reason: showInFullscreenDialog
+            ? PageBackReason.close
+            : PageBackReason.back,
         color: colorData?.getColor(colorType),
       ),
       actions: [

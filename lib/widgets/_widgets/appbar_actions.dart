@@ -14,10 +14,7 @@
 
 import 'package:flutter/material.dart';
 
-enum AppbarActionShowStatus {
-  button,
-  popupitem,
-}
+enum AppbarActionShowStatus { button, popupitem }
 
 abstract class AppbarActionItemConfig<T> {
   final T type;

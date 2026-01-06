@@ -39,8 +39,9 @@ class AppAboutVersionTile extends StatefulWidget {
 class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
   void onLongPressed() async {
     final text = await rootBundle.loadString(
-        L10n.of(context)?.appAbout_versionTile_changeLogPath ??
-            widget.changeLogPath);
+      L10n.of(context)?.appAbout_versionTile_changeLogPath ??
+          widget.changeLogPath,
+    );
     if (!mounted) return;
     await showDialog(
       context: context,
@@ -63,7 +64,9 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
     final l10n = L10n.of(context);
     final colorFilter = widget.isMonoLogo
         ? ColorFilter.mode(
-            Theme.of(context).colorScheme.primary, BlendMode.srcIn)
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          )
         : null;
     return ListTile(
       leading: SvgTemplateImage(
@@ -74,8 +77,9 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
       ),
       title: Text(l10n?.appName ?? AppInfo().appName),
       subtitle: Text(
-          l10n?.appAbout_versionTile_titleText(AppInfo().appVersion) ??
-              "Version: ${AppInfo().appVersion}"),
+        l10n?.appAbout_versionTile_titleText(AppInfo().appVersion) ??
+            "Version: ${AppInfo().appVersion}",
+      ),
       onLongPress: onLongPressed,
     );
   }

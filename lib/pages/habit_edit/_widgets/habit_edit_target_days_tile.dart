@@ -32,10 +32,7 @@ class HabitEditTargetDaysTile extends StatelessWidget {
     final l10n = L10n.of(context);
 
     return ListTile(
-      leading: Icon(
-        Icons.flag_outlined,
-        color: themeDate.colorScheme.outline,
-      ),
+      leading: Icon(Icons.flag_outlined, color: themeDate.colorScheme.outline),
       title: l10n != null
           ? Text(l10n.habitEdit_targetDays_title(targetDays))
           : null,

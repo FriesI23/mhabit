@@ -74,18 +74,20 @@ class HabitDetailFreqChartData {
     num autoComplateTotalValue = 0,
     num complateTotalValue = 0,
     num overfulfilTotalValue = 0,
-  })  : _partiallyCompleted = partiallyCompleted,
-        _autoComplate = autoComplate,
-        _complate = complate,
-        _overfulfil = overfulfil,
-        _partiallyCompletedTotalValue = partiallyCompletedTotalValue,
-        _autoComplateTotalValue = autoComplateTotalValue,
-        _complateTotalValue = complateTotalValue,
-        _overfulfilTotalValue = overfulfilTotalValue,
-        assert(partiallyCompleted >= 0 &&
-            autoComplate >= 0 &&
-            complate >= 0 &&
-            overfulfil >= 0);
+  }) : _partiallyCompleted = partiallyCompleted,
+       _autoComplate = autoComplate,
+       _complate = complate,
+       _overfulfil = overfulfil,
+       _partiallyCompletedTotalValue = partiallyCompletedTotalValue,
+       _autoComplateTotalValue = autoComplateTotalValue,
+       _complateTotalValue = complateTotalValue,
+       _overfulfilTotalValue = overfulfilTotalValue,
+       assert(
+         partiallyCompleted >= 0 &&
+             autoComplate >= 0 &&
+             complate >= 0 &&
+             overfulfil >= 0,
+       );
 
   int get partiallyCompleted => _partiallyCompleted;
 
@@ -187,7 +189,8 @@ class HabitDetailFreqChartData {
   }
 
   @override
-  String toString() => 'HabitDetailFreqChartData('
+  String toString() =>
+      'HabitDetailFreqChartData('
       'pavo=$_partiallyCompleted|$_autoComplate|$_complate|$_overfulfil,'
       'pv=$_partiallyCompletedTotalValue,'
       'av=$_autoComplateTotalValue,'
@@ -199,10 +202,7 @@ class HabitDetailScoreChartDate {
   num totalScore;
   int count;
 
-  HabitDetailScoreChartDate({
-    this.totalScore = 0.0,
-    this.count = 0,
-  });
+  HabitDetailScoreChartDate({this.totalScore = 0.0, this.count = 0});
 
   num get avgScore => count == 0 ? totalScore : totalScore / count;
 

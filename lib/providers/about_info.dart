@@ -43,16 +43,16 @@ class AboutInfo {
   });
 
   const AboutInfo.empty()
-      : sourceCodeUrl = '',
-        issueTrackerUrl = '',
-        contactEmail = '',
-        donateBuyMeACoffeeToken = '',
-        donatePaypalToken = '',
-        donateCryptoBTCAddr = '',
-        donateCryptoETHAddr = '',
-        donateCryptoBNBAddr = '',
-        donateCryptoAVAXAddr = '',
-        donateCryptoFTMAddr = '';
+    : sourceCodeUrl = '',
+      issueTrackerUrl = '',
+      contactEmail = '',
+      donateBuyMeACoffeeToken = '',
+      donatePaypalToken = '',
+      donateCryptoBTCAddr = '',
+      donateCryptoETHAddr = '',
+      donateCryptoBNBAddr = '',
+      donateCryptoAVAXAddr = '',
+      donateCryptoFTMAddr = '';
 
   factory AboutInfo.fromJson(Map<String, dynamic> json) =>
       _$AboutInfoFromJson(json);

@@ -20,8 +20,10 @@ import '../profile_helper.dart';
 
 class AppThemeColorProfileHandler
     extends ProfileHelperCovertToJsonHandler<AppThemeColor?> {
-  const AppThemeColorProfileHandler(super.pref,
-      {super.codec = const AppThemeColorProfileCodec()});
+  const AppThemeColorProfileHandler(
+    super.pref, {
+    super.codec = const AppThemeColorProfileCodec(),
+  });
 
   @override
   String get key => 'appThemeColor';

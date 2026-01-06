@@ -53,15 +53,19 @@ int getHabitReminderId(int id, {bool fallback = true}) {
     return id;
   } else {
     if (!fallback) {
-      throw NotificationIdOutOfDefinedRange(id,
-          type: NotificationDataType.habitReminder);
+      throw NotificationIdOutOfDefinedRange(
+        id,
+        type: NotificationDataType.habitReminder,
+      );
     }
     const reserveRange =
         maxHabitReminderReserveNotifyId - minHabitReminderReserveNotifyId + 1;
     final reserverId = (id % reserveRange) + minHabitReminderReserveNotifyId;
-    appLog.notify.warn("getHabitReminderId.fallback",
-        ex: [id, reserverId],
-        stackTrace: LoggerStackTrace.from(StackTrace.current));
+    appLog.notify.warn(
+      "getHabitReminderId.fallback",
+      ex: [id, reserverId],
+      stackTrace: LoggerStackTrace.from(StackTrace.current),
+    );
     return reserverId;
   }
 }
@@ -80,17 +84,21 @@ int getRandomDebugId() {
 
 int getSyncId(int id) {
   if (!isValidSyncId(id)) {
-    throw NotificationIdOutOfDefinedRange(id,
-        type: NotificationDataType.appSync);
+    throw NotificationIdOutOfDefinedRange(
+      id,
+      type: NotificationDataType.appSync,
+    );
   }
   return id;
 }
 
 int getRandomSyncId([int? seed]) {
-  final evenStart =
-      minSyncNotifyId.isEven ? minSyncNotifyId : minSyncNotifyId + 1;
-  final evenEnd =
-      maxSyncNotifyId.isEven ? maxSyncNotifyId : maxSyncNotifyId - 1;
+  final evenStart = minSyncNotifyId.isEven
+      ? minSyncNotifyId
+      : minSyncNotifyId + 1;
+  final evenEnd = maxSyncNotifyId.isEven
+      ? maxSyncNotifyId
+      : maxSyncNotifyId - 1;
   final count = ((evenEnd - evenStart) ~/ 2) + 1;
   return evenStart + Random(seed).nextInt(count) * 2;
 }

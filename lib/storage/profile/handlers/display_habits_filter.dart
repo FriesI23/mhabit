@@ -21,7 +21,7 @@ import '../profile_helper.dart';
 final class DisplayHabitsFilterProfileHandler
     extends ProfileHelperCovertToJsonHandler<HabitsDisplayFilter> {
   const DisplayHabitsFilterProfileHandler(super.pref)
-      : super(codec: const DisplayHabitsFilterCodec());
+    : super(codec: const DisplayHabitsFilterCodec());
 
   @override
   String get key => "habitDisplayFilter";

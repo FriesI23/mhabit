@@ -39,7 +39,7 @@ extension NumExtension on num {
     return isInteger(this)
         ? toStringAsFixed(0)
         : fixedDigit != null
-            ? toStringAsFixed(fixedDigit)
-            : toString();
+        ? toStringAsFixed(fixedDigit)
+        : toString();
   }
 }

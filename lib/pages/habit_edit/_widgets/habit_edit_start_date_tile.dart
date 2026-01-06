@@ -30,7 +30,9 @@ class HabitEditStartDateTile extends StatelessWidget {
   });
 
   DateFormat _getDateFormat(BuildContext context) => DateFormat(
-      fullDateFormat, Localizations.localeOf(context).toLanguageTag());
+    fullDateFormat,
+    Localizations.localeOf(context).toLanguageTag(),
+  );
 
   @override
   Widget build(BuildContext context) {

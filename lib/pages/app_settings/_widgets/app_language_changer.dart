@@ -24,9 +24,8 @@ Future<AppLanguageChangerDialogResult?> showAppLanguageChangerDialog({
 }) async {
   return showDialog<AppLanguageChangerDialogResult>(
     context: context,
-    builder: (context) => AppLanguageChangerDialog(
-      selectedLocale: selectedLocale,
-    ),
+    builder: (context) =>
+        AppLanguageChangerDialog(selectedLocale: selectedLocale),
   );
 }
 
@@ -56,32 +55,40 @@ class AppLanguageChangerDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               l10n != null
-                  ? Text(systemLocaleScriptName.isEmpty
-                      ? l10n
-                          .appSetting_changeLanguage_followSystem_noLocale_text
-                      : l10n.appSetting_changeLanguage_followSystem_text(
-                          systemLocaleScriptName))
-                  : Text(systemLocaleScriptName.isEmpty
-                      ? "Follow System"
-                      : "Follow System ($systemLocaleScriptName)"),
+                  ? Text(
+                      systemLocaleScriptName.isEmpty
+                          ? l10n.appSetting_changeLanguage_followSystem_noLocale_text
+                          : l10n.appSetting_changeLanguage_followSystem_text(
+                              systemLocaleScriptName,
+                            ),
+                    )
+                  : Text(
+                      systemLocaleScriptName.isEmpty
+                          ? "Follow System"
+                          : "Follow System ($systemLocaleScriptName)",
+                    ),
               if (selectedLocale == null) const Icon(Icons.check),
             ],
           ),
-        )
+        ),
       ];
-      for (var locale in appSupportedLocales
-          .sorted((a, b) => a.toString().compareTo(b.toString()))) {
-        result.add(SimpleDialogOption(
-          onPressed: () => Navigator.of(context)
-              .pop(AppLanguageChangerDialogResult(choosenLanguage: locale)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(lookupL10n(locale).localeScriptName),
-              if (selectedLocale == locale) const Icon(Icons.check),
-            ],
+      for (var locale in appSupportedLocales.sorted(
+        (a, b) => a.toString().compareTo(b.toString()),
+      )) {
+        result.add(
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(
+              context,
+            ).pop(AppLanguageChangerDialogResult(choosenLanguage: locale)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(lookupL10n(locale).localeScriptName),
+                if (selectedLocale == locale) const Icon(Icons.check),
+              ],
+            ),
           ),
-        ));
+        );
       }
       return result;
     }

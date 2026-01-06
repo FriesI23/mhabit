@@ -135,10 +135,14 @@ class _HabitRecordCustomNumberPickerDialog
     final newValue = currentValue + 1;
     _inputController.text = newValue.toSimpleString(fixedDigit: 2);
     _inputController.selection = TextSelection(
-        baseOffset: _inputController.text.length,
-        extentOffset: _inputController.text.length);
-    _result = onDailyGoalTextInputChanged(newValue,
-        controller: _inputController, allowInputZero: true);
+      baseOffset: _inputController.text.length,
+      extentOffset: _inputController.text.length,
+    );
+    _result = onDailyGoalTextInputChanged(
+      newValue,
+      controller: _inputController,
+      allowInputZero: true,
+    );
 
     if (_isButtonNeedRebuild(currentValue, _result!)) {
       setState(() {});
@@ -159,10 +163,14 @@ class _HabitRecordCustomNumberPickerDialog
     }
     _inputController.text = newValue.toSimpleString(fixedDigit: 2);
     _inputController.selection = TextSelection(
-        baseOffset: _inputController.text.length,
-        extentOffset: _inputController.text.length);
-    _result = onDailyGoalTextInputChanged(newValue,
-        controller: _inputController, allowInputZero: true);
+      baseOffset: _inputController.text.length,
+      extentOffset: _inputController.text.length,
+    );
+    _result = onDailyGoalTextInputChanged(
+      newValue,
+      controller: _inputController,
+      allowInputZero: true,
+    );
 
     if (_isButtonNeedRebuild(currentValue, _result!)) {
       setState(() {});
@@ -170,12 +178,17 @@ class _HabitRecordCustomNumberPickerDialog
   }
 
   void _onTextFieldValueChanged(String value) {
-    final newDailyGoal = num.tryParse(value) ??
-        HabitDailyGoalContainer(type: widget.recordForm.habitType)
-            .defaultDailyGoal;
+    final newDailyGoal =
+        num.tryParse(value) ??
+        HabitDailyGoalContainer(
+          type: widget.recordForm.habitType,
+        ).defaultDailyGoal;
     final currentValue = _result;
-    _result = onDailyGoalTextInputChanged(newDailyGoal,
-        controller: _inputController, allowInputZero: true);
+    _result = onDailyGoalTextInputChanged(
+      newDailyGoal,
+      controller: _inputController,
+      allowInputZero: true,
+    );
 
     if (currentValue != null && _isButtonNeedRebuild(currentValue, _result!)) {
       setState(() {});
@@ -204,7 +217,8 @@ class _HabitRecordCustomNumberPickerDialog
         targetValue: widget.recordForm.targetValue,
         recordTargetExtraValue: widget.recordTargetExtraValue,
         width: math.min(constraints.maxWidth, dialogMaxWidth),
-        showCurrentValChip: complateStatus != HabitDailyComplateStatus.ok &&
+        showCurrentValChip:
+            complateStatus != HabitDailyComplateStatus.ok &&
             complateStatus != HabitDailyComplateStatus.zero,
         showExtraValChip: widget.recordTargetExtraValue != null,
         onNormalValChipTapped: _onChipValueChanged,
@@ -226,9 +240,11 @@ class _HabitRecordCustomNumberPickerDialog
             widget.recordTargetExtraValue ?? widget.recordForm.targetValue,
         recordTargetExtraValue: widget.recordForm.targetValue,
         width: math.min(constraints.maxWidth, dialogMaxWidth),
-        showCurrentValChip: complateStatus != HabitDailyComplateStatus.ok &&
+        showCurrentValChip:
+            complateStatus != HabitDailyComplateStatus.ok &&
             complateStatus != HabitDailyComplateStatus.zero,
-        showExtraValChip: widget.recordTargetExtraValue != null &&
+        showExtraValChip:
+            widget.recordTargetExtraValue != null &&
             widget.recordTargetExtraValue! != widget.recordForm.targetValue,
         showZeroValChip: false,
         showNormalValChip: true,
@@ -249,58 +265,60 @@ class _HabitRecordCustomNumberPickerDialog
       }
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return AlertDialog(
-        scrollable: true,
-        title: l10n != null
-            ? Text(l10n.habitDetail_changeGoal_title)
-            : const Text("Change goal"),
-        insetPadding: kExpanedDailogInsetPadding,
-        contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildChipList(context, constraints),
-            _HabitRecordTextField(
-              habitType: widget.recordForm.habitType,
-              recordDate: widget.recordDate,
-              inputController: _inputController,
-              increaseButtonEnabled: _isTextFieldIncreaseButtonEnabled(),
-              decreaseButtonEnabled: _isTextFieldDecreaseButtonEnabled(),
-              onIncreaseButtonPressed: _onTextFieldIncreaseButtonPressed,
-              onDecreaseButtonPressed: _onTextFieldDecreaseButtonPressed,
-              onValueChanged: _onTextFieldValueChanged,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 12),
-              child: OverflowBar(
-                spacing: 8.0,
-                alignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: l10n != null
-                        ? Text(l10n.habitDetail_changeGoal_cancelText)
-                        : const Text('cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, _result);
-                    },
-                    child: l10n != null
-                        ? Text(l10n.habitDetail_changeGoal_saveText)
-                        : const Text('save'),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AlertDialog(
+          scrollable: true,
+          title: l10n != null
+              ? Text(l10n.habitDetail_changeGoal_title)
+              : const Text("Change goal"),
+          insetPadding: kExpanedDailogInsetPadding,
+          contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              buildChipList(context, constraints),
+              _HabitRecordTextField(
+                habitType: widget.recordForm.habitType,
+                recordDate: widget.recordDate,
+                inputController: _inputController,
+                increaseButtonEnabled: _isTextFieldIncreaseButtonEnabled(),
+                decreaseButtonEnabled: _isTextFieldDecreaseButtonEnabled(),
+                onIncreaseButtonPressed: _onTextFieldIncreaseButtonPressed,
+                onDecreaseButtonPressed: _onTextFieldDecreaseButtonPressed,
+                onValueChanged: _onTextFieldValueChanged,
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 12),
+                child: OverflowBar(
+                  spacing: 8.0,
+                  alignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: l10n != null
+                          ? Text(l10n.habitDetail_changeGoal_cancelText)
+                          : const Text('cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, _result);
+                      },
+                      child: l10n != null
+                          ? Text(l10n.habitDetail_changeGoal_saveText)
+                          : const Text('save'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -337,8 +355,9 @@ class _HabitRecordTextField extends StatelessWidget {
     final textTheme = themeData.textTheme;
     final l10n = L10n.of(context);
 
-    final TextScaler textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     final increaseButton = _NumberStepButton(
       onUpdate: onIncreaseButtonPressed,
@@ -378,24 +397,31 @@ class _HabitRecordTextField extends StatelessWidget {
       ),
     );
 
-    final defaultDailyGoal =
-        HabitDailyGoalContainer(type: habitType).defaultDailyGoal;
+    final defaultDailyGoal = HabitDailyGoalContainer(
+      type: habitType,
+    ).defaultDailyGoal;
     final textField = TextField(
       controller: inputController,
       decoration: InputDecoration(
-          hintText: l10n?.habitDetail_changeGoal_helpText(
-                  defaultDailyGoal.toSimpleString()) ??
-              "Daily goal, "
-                  "default: ${defaultDailyGoal.toSimpleString()}",
-          hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
-          helperText: recordDate != null
-              ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
-              : null,
-          counterText: "${NumberFormat().format(minHabitDailyGoal)}"
-              " ~ "
-              "${NumberFormat().format(maxHabitdailyGoal)}"),
-      keyboardType:
-          const TextInputType.numberWithOptions(decimal: true, signed: false),
+        hintText:
+            l10n?.habitDetail_changeGoal_helpText(
+              defaultDailyGoal.toSimpleString(),
+            ) ??
+            "Daily goal, "
+                "default: ${defaultDailyGoal.toSimpleString()}",
+        hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
+        helperText: recordDate != null
+            ? DateFormat.yMMMd(l10n?.localeName).format(recordDate!)
+            : null,
+        counterText:
+            "${NumberFormat().format(minHabitDailyGoal)}"
+            " ~ "
+            "${NumberFormat().format(maxHabitdailyGoal)}",
+      ),
+      keyboardType: const TextInputType.numberWithOptions(
+        decimal: true,
+        signed: false,
+      ),
       inputFormatters: [TextFormatterCustom.decimalr2],
       style: textTheme.bodyLarge,
       onChanged: onValueChanged,
@@ -415,7 +441,7 @@ class _HabitRecordTextField extends StatelessWidget {
               Expanded(child: decreaseButton),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -432,16 +458,18 @@ class _NumberStepButton extends StatefulWidget {
   final ShapeBorder? shape = null;
   final Widget child;
 
-  const _NumberStepButton(
-      {this.onUpdate,
-      this.minDelay = const Duration(milliseconds: 60),
-      this.initialDelay = const Duration(milliseconds: 1000),
-      // this.delaySteps = 2,
-      this.borderRadius,
-      // this.shape,
-      required this.child})
-      : assert(minDelay <= initialDelay,
-            "The minimum delay cannot be larger than the initial delay");
+  const _NumberStepButton({
+    this.onUpdate,
+    this.minDelay = const Duration(milliseconds: 60),
+    this.initialDelay = const Duration(milliseconds: 1000),
+    // this.delaySteps = 2,
+    this.borderRadius,
+    // this.shape,
+    required this.child,
+  }) : assert(
+         minDelay <= initialDelay,
+         "The minimum delay cannot be larger than the initial delay",
+       );
 
   @override
   _NumberStepButtonState createState() => _NumberStepButtonState();
@@ -480,7 +508,7 @@ class _NumberStepButtonState extends State<_NumberStepButton> {
 
     final step =
         (widget.initialDelay - widget.minDelay).inMilliseconds.toDouble() /
-            widget.delaySteps;
+        widget.delaySteps;
     var delay = widget.initialDelay.inMilliseconds.toDouble();
 
     while (true) {
@@ -535,9 +563,12 @@ class _NormalHabitRecordChipList extends StatelessWidget {
     final l10n = L10n.of(context);
     final Widget normalValChip = ActionChip(
       avatar: const FittedBox(child: Icon(MdiIcons.checkCircle)),
-      label: Text(l10n?.habitDetail_changeGoal_doneChipText(
-              targetValue.toSimpleString()) ??
-          "Done: ${targetValue.toSimpleString()}"),
+      label: Text(
+        l10n?.habitDetail_changeGoal_doneChipText(
+              targetValue.toSimpleString(),
+            ) ??
+            "Done: ${targetValue.toSimpleString()}",
+      ),
       onPressed: onNormalValChipTapped != null
           ? () => onNormalValChipTapped!(targetValue)
           : null,
@@ -558,9 +589,12 @@ class _NormalHabitRecordChipList extends StatelessWidget {
       if (recordTargetExtraValue == null) return null;
       return ActionChip(
         avatar: const FittedBox(child: Icon(MdiIcons.checkUnderlineCircle)),
-        label: Text(l10n?.habitDetail_changeGoal_extraChipText(
-                recordTargetExtraValue!.toSimpleString()) ??
-            "Extra: ${recordTargetExtraValue!.toSimpleString()}"),
+        label: Text(
+          l10n?.habitDetail_changeGoal_extraChipText(
+                recordTargetExtraValue!.toSimpleString(),
+              ) ??
+              "Extra: ${recordTargetExtraValue!.toSimpleString()}",
+        ),
         onPressed: onExtraValChipTapped != null
             ? () => onExtraValChipTapped!(recordTargetExtraValue)
             : null,
@@ -569,9 +603,12 @@ class _NormalHabitRecordChipList extends StatelessWidget {
 
     Widget buildLastValChip() {
       return ActionChip(
-        label: Text(l10n?.habitDetail_changeGoal_currentChipText(
-                value.toSimpleString()) ??
-            "Current: ${value.toSimpleString()}"),
+        label: Text(
+          l10n?.habitDetail_changeGoal_currentChipText(
+                value.toSimpleString(),
+              ) ??
+              "Current: ${value.toSimpleString()}",
+        ),
         onPressed: onCurrentValChipTapped != null
             ? () => onCurrentValChipTapped!(value)
             : null,

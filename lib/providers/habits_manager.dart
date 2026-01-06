@@ -42,7 +42,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
   }) async {
     await habitDBHelper.updateSelectedHabitStatus(
-        action.data.map((e) => e.uuid).toList(), action.status);
+      action.data.map((e) => e.uuid).toList(),
+      action.status,
+    );
     final result = action.resolve();
     if (extraResolver is Future) {
       await Future.wait(result.map((e) async => extraResolver?.call(e)));
@@ -57,15 +59,21 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
     required ChangeRecordStatusAction<HabitDate> preAction,
     ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-            List<ChangeRecordStatusResult> results)?
-        postActionBuilder,
+      List<ChangeRecordStatusResult> results,
+    )?
+    postActionBuilder,
     FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
   }) async {
     final preResults = preAction.resolve();
     if (preResults.length == 1) {
       final data = preAction.data;
-      await saveHabitRecordToDB(data.id, data.uuid, preResults.first.data,
-          isNew: preResults.first.isNew, withReason: preResults.first.reason);
+      await saveHabitRecordToDB(
+        data.id,
+        data.uuid,
+        preResults.first.data,
+        isNew: preResults.first.isNew,
+        withReason: preResults.first.reason,
+      );
     } else {
       await saveMultiHabitRecordToDB(preResults);
     }
@@ -84,8 +92,12 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   //#region write to db
   Future<RecordDBCell> saveHabitRecordToDB(
-      DBID parentId, HabitUUID parentUUID, HabitSummaryRecord record,
-      {bool isNew = false, String? withReason}) async {
+    DBID parentId,
+    HabitUUID parentUUID,
+    HabitSummaryRecord record, {
+    bool isNew = false,
+    String? withReason,
+  }) async {
     final int dbid;
     final RecordDBCell dbCell;
     if (isNew) {
@@ -114,39 +126,50 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   }
 
   Future<void> saveMultiHabitRecordToDB(
-          Iterable<ChangeRecordStatusResult> records) =>
-      recordDBHelper.insertOrUpdateMultiRecords(
-          records.map((record) => RecordDBCell.build(
-                parentId: record.habit.id,
-                parentUUID: record.habit.uuid,
-                uuid: record.data.uuid,
-                recordDate: record.data.date.epochDay,
-                recordType: record.data.status.dbCode,
-                recordValue: record.data.value,
-                reason: record.reason,
-              )));
+    Iterable<ChangeRecordStatusResult> records,
+  ) => recordDBHelper.insertOrUpdateMultiRecords(
+    records.map(
+      (record) => RecordDBCell.build(
+        parentId: record.habit.id,
+        parentUUID: record.habit.uuid,
+        uuid: record.data.uuid,
+        recordDate: record.data.date.epochDay,
+        recordType: record.data.status.dbCode,
+        recordValue: record.data.value,
+        reason: record.reason,
+      ),
+    ),
+  );
 
-  Future<HabitDBCell?> saveNewHabitToDB(HabitDBCell cell,
-      {bool returnResult = false}) async {
+  Future<HabitDBCell?> saveNewHabitToDB(
+    HabitDBCell cell, {
+    bool returnResult = false,
+  }) async {
     final dbid = await habitDBHelper.insertNewHabit(cell);
-    final result =
-        returnResult ? await habitDBHelper.queryHabitByDBID(dbid) : null;
+    final result = returnResult
+        ? await habitDBHelper.queryHabitByDBID(dbid)
+        : null;
     return result;
   }
 
-  Future<HabitDBCell?> updateExistHabitToDB(HabitDBCell cell,
-      {bool withReminder = true, bool returnResult = false}) async {
+  Future<HabitDBCell?> updateExistHabitToDB(
+    HabitDBCell cell, {
+    bool withReminder = true,
+    bool returnResult = false,
+  }) async {
     assert(cell.uuid != null);
     final habitUUID = cell.uuid;
     if (habitUUID == null) return null;
-    final count = await habitDBHelper.updateExistHabit(cell,
-        includeNullKeys: withReminder
-            ? const [
-                HabitDBCellKey.remindCustom,
-                HabitDBCellKey.remindQuestion,
-                HabitDBCellKey.dailyGoalExtra,
-              ]
-            : const []);
+    final count = await habitDBHelper.updateExistHabit(
+      cell,
+      includeNullKeys: withReminder
+          ? const [
+              HabitDBCellKey.remindCustom,
+              HabitDBCellKey.remindQuestion,
+              HabitDBCellKey.dailyGoalExtra,
+            ]
+          : const [],
+    );
     final result = (count > 0 && returnResult)
         ? await habitDBHelper.queryHabitByUUID(habitUUID)
         : null;
@@ -156,21 +179,27 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   //#region load from db
   Future<String?> loadHabitRecordReason(
-      HabitSummaryData data, HabitRecordDate date) async {
+    HabitSummaryData data,
+    HabitRecordDate date,
+  ) async {
     final recordUUID = data.getRecordByDate(date)?.uuid;
     if (recordUUID == null) return null;
     final rcd = await recordDBHelper.loadSingleRecord(recordUUID);
     return rcd?.reason ?? '';
   }
 
-  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData(
-      {HabitSummaryDataCollection? initedCollection,
-      List<String>? habitsColmns,
-      List<HabitUUID>? habitUUIDs}) async {
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
     final habitLoadTask = habitDBHelper.loadHabitAboutDataCollection(
-        uuidFilter: habitUUIDs, columns: habitsColmns);
-    final recordLoadTask =
-        recordDBHelper.loadAllRecords(uuidFilter: habitUUIDs);
+      uuidFilter: habitUUIDs,
+      columns: habitsColmns,
+    );
+    final recordLoadTask = recordDBHelper.loadAllRecords(
+      uuidFilter: habitUUIDs,
+    );
     final habitLoaded = await habitLoadTask;
     final recordLoaded = await recordLoadTask;
     if (initedCollection != null) {
@@ -178,7 +207,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
         ..initDataFromDBQueuryResult(habitLoaded, recordLoaded);
     } else {
       return HabitSummaryDataCollection.fromDBQueryResult(
-          habitLoaded, recordLoaded);
+        habitLoaded,
+        recordLoaded,
+      );
     }
   }
 
@@ -202,7 +233,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     required num increaseStep,
     required int decimalPlaces,
   }) async {
-    final posList = habits.map((e) => e.sortPostion).makeUniqueAndIncreasing(
+    final posList = habits
+        .map((e) => e.sortPostion)
+        .makeUniqueAndIncreasing(
           increaseStep,
           isSorted: false,
           decimalPlaces: decimalPlaces,
@@ -223,7 +256,9 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
     if (changedUUIDs.isNotEmpty) {
       await habitDBHelper.updateSelectedHabitsSortPostion(
-          changedUUIDs, changedPositions);
+        changedUUIDs,
+        changedPositions,
+      );
     }
 
     return changedUUIDs;
@@ -233,14 +268,14 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     final reminderId = getHabitReminderId(data.id);
 
     Future<bool> regr() => NotificationService().regrHabitReminder(
-          id: reminderId,
-          uuid: data.uuid,
-          name: data.name,
-          quest: data.reminderQuest,
-          reminder: data.reminder!,
-          lastUntrackDate: data.getFirstUnTrackedDate(),
-          details: channelData.habitReminder,
-        );
+      id: reminderId,
+      uuid: data.uuid,
+      name: data.name,
+      quest: data.reminderQuest,
+      reminder: data.reminder!,
+      lastUntrackDate: data.getFirstUnTrackedDate(),
+      details: channelData.habitReminder,
+    );
 
     Future<bool> unregr() =>
         NotificationService().cancelHabitReminder(id: reminderId);
@@ -253,8 +288,11 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
           await unregr();
       }
     } on Exception catch (e) {
-      appLog.notify.error("HabitsManager._regrHabitReminder",
-          ex: ["catch err when try regr reminder"], error: e);
+      appLog.notify.error(
+        "HabitsManager._regrHabitReminder",
+        ex: ["catch err when try regr reminder"],
+        error: e,
+      );
     }
   }
 

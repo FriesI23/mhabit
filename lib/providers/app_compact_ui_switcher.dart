@@ -35,8 +35,11 @@ class AppCompactUISwitcherViewModel extends ChangeNotifier
 
   Future<void> setFlag(bool newFlag) async {
     if (_compactUI?.get() != newFlag) {
-      appLog.value
-          .info("$runtimeType.flag", beforeVal: flag, afterVal: newFlag);
+      appLog.value.info(
+        "$runtimeType.flag",
+        beforeVal: flag,
+        afterVal: newFlag,
+      );
       await _compactUI?.set(newFlag);
       notifyListeners();
     }

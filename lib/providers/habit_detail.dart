@@ -140,12 +140,14 @@ class HabitDetailViewModel extends ChangeNotifier
     _habitDetailData?.data.reCalculateAutoComplateRecords(
       firstDay: firstday,
       onScoreChange: (fromDate, toDate, fromScore, toScore) {
-        _habitScoreChangedDateColl.addEntries(HabitScoreChangedProtoData(
-          fromDate: fromDate,
-          toDate: toDate,
-          fromScore: fromScore,
-          toScore: toScore,
-        ).expandToDate());
+        _habitScoreChangedDateColl.addEntries(
+          HabitScoreChangedProtoData(
+            fromDate: fromDate,
+            toDate: toDate,
+            fromScore: fromScore,
+            toScore: toScore,
+          ).expandToDate(),
+        );
       },
     );
     if (habitDetailData != null) {
@@ -174,8 +176,10 @@ class HabitDetailViewModel extends ChangeNotifier
 
     void onCancelled() {
       if (_loading == loading) _loading = null;
-      appLog.load.info("$runtimeType._cancelLoading",
-          ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType._cancelLoading",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
@@ -197,33 +201,43 @@ class HabitDetailViewModel extends ChangeNotifier
   Future<void> loadData(HabitUUID uuid, {bool listen = true}) async {
     final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
-      appLog.load.warn("$runtimeType.load",
-          ex: ["data already loaded", uuid, crtLoading.isCompleted]);
+      appLog.load.warn(
+        "$runtimeType.load",
+        ex: ["data already loaded", uuid, crtLoading.isCompleted],
+      );
       return crtLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
-      appLog.load.error("$runtimeType.load",
-          ex: [...errmsg, loading.hashCode],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.load.error(
+        "$runtimeType.load",
+        ex: [...errmsg, loading.hashCode],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
       if (!loading.isCompleted) {
         loading.completeError(
-            FlutterError(errmsg.join(" ")), StackTrace.current);
+          FlutterError(errmsg.join(" ")),
+          StackTrace.current,
+        );
       }
     }
 
     void loadingCancelled() {
-      appLog.load
-          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType.load",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     Future<void> loadingData() async {
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loading data", loading.hashCode, listen],
+      );
 
       // init habit
       final data = await habitsManager.loadHabitDetailData(uuid);
@@ -241,20 +255,27 @@ class HabitDetailViewModel extends ChangeNotifier
       if (listen) {
         notifyListeners();
       }
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loaded", loading.hashCode, listen, data]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loaded", loading.hashCode, listen, data],
+      );
     }
 
-    loadingData().catchError((e, s) {
-      if (loading.isCanceled) return loadingCancelled();
-      loadingFailed(["unexpected error", e]);
-      appLog.load.error("$runtimeType.load",
-          ex: ["caught", e, loading.hashCode], stackTrace: s);
-    }).whenComplete(() {
-      if (!loading.isCompleted && !loading.isCanceled) {
-        loading.complete();
-      }
-    });
+    loadingData()
+        .catchError((e, s) {
+          if (loading.isCanceled) return loadingCancelled();
+          loadingFailed(["unexpected error", e]);
+          appLog.load.error(
+            "$runtimeType.load",
+            ex: ["caught", e, loading.hashCode],
+            stackTrace: s,
+          );
+        })
+        .whenComplete(() {
+          if (!loading.isCompleted && !loading.isCanceled) {
+            loading.complete();
+          }
+        });
 
     return loading.operation.valueOrCancellation();
   }
@@ -288,8 +309,10 @@ class HabitDetailViewModel extends ChangeNotifier
   //#region freq chart
   HabitDetailFreqChartCombine get freqChartCombine => _freqChartCombine;
 
-  void updateFreqChartCombine(HabitDetailFreqChartCombine newCombine,
-      {bool listen = true}) {
+  void updateFreqChartCombine(
+    HabitDetailFreqChartCombine newCombine, {
+    bool listen = true,
+  }) {
     if (newCombine != _freqChartCombine) {
       _freqChartCombine = newCombine;
       if (listen) notifyListeners();
@@ -298,17 +321,21 @@ class HabitDetailViewModel extends ChangeNotifier
 
   Map<HabitDate, HabitDetailFreqChartData> getRecordFreqChartDatas() =>
       habitDetailData != null
-          ? FreqChartCalculator(habitDetailData!,
-                  firstday: firstday, combine: freqChartCombine)
-              .calculate()
-          : const {};
+      ? FreqChartCalculator(
+          habitDetailData!,
+          firstday: firstday,
+          combine: freqChartCombine,
+        ).calculate()
+      : const {};
   //#endregion
 
   //#region score chart
   HabitDetailScoreChartCombine get scoreChartCombine => _scoreChartCombine;
 
-  void updateScoreChartCombine(HabitDetailScoreChartCombine newCombine,
-      {bool listen = true}) {
+  void updateScoreChartCombine(
+    HabitDetailScoreChartCombine newCombine, {
+    bool listen = true,
+  }) {
     if (newCombine != _scoreChartCombine) {
       _scoreChartCombine = newCombine;
       if (listen) notifyListeners();
@@ -317,17 +344,20 @@ class HabitDetailViewModel extends ChangeNotifier
 
   Map<HabitDate, HabitDetailScoreChartDate> getRecordScoreChartDatas() =>
       habitDetailData != null
-          ? ScoreChartCalculator(habitDetailData!,
-                  firstday: firstday,
-                  combine: scoreChartCombine,
-                  scoreOverride: (date) => _habitScoreChangedDateColl[date])
-              .calculate()
-          : const {};
+      ? ScoreChartCalculator(
+          habitDetailData!,
+          firstday: firstday,
+          combine: scoreChartCombine,
+          scoreOverride: (date) => _habitScoreChangedDateColl[date],
+        ).calculate()
+      : const {};
   //#endregion
 
   //#region actions
-  Future<HabitSummaryRecord?> changeRecordStatus(HabitRecordDate date,
-      {bool listen = true}) async {
+  Future<HabitSummaryRecord?> changeRecordStatus(
+    HabitRecordDate date, {
+    bool listen = true,
+  }) async {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
@@ -339,10 +369,12 @@ class HabitDetailViewModel extends ChangeNotifier
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitDetail.changeRecordStatus",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitDetail.changeRecordStatus",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics();
     _updateHabitReminder();
@@ -351,27 +383,32 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   Future<HabitSummaryRecord?> changeRecordReason(
-      HabitRecordDate date, String newReason,
-      {bool listen = true}) async {
+    HabitRecordDate date,
+    String newReason, {
+    bool listen = true,
+  }) async {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data,
-          reason: newReason,
-          status: HabitRecordStatus.skip,
-          dateList: [date]),
+        data: data,
+        reason: newReason,
+        status: HabitRecordStatus.skip,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitDetail.changeRecordReason",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitDetail.changeRecordReason",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics();
     _updateHabitReminder();
@@ -380,24 +417,31 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
-      HabitRecordDate date, HabitDailyGoal newValue,
-      {bool listen = true}) async {
+    HabitRecordDate date,
+    HabitDailyGoal newValue, {
+    bool listen = true,
+  }) async {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data, goal: newValue, dateList: [date]),
+        data: data,
+        goal: newValue,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitDetail.changeRecordValue",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitDetail.changeRecordValue",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics();
     _updateHabitReminder();
@@ -406,31 +450,38 @@ class HabitDetailViewModel extends ChangeNotifier
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
-      HabitStatus newStatus) async {
+    HabitStatus newStatus,
+  ) async {
     final habitDetailData = this.habitDetailData;
     if (habitDetailData == null) return null;
 
     final results = await habitsManager.changeHabitStatus(
-        action: ChangeMultiHabitStatusAction([habitDetailData.data],
-            status: newStatus),
-        extraResolver: (result) async {
-          final t1 = _updateHabitReminder();
-          _updateHabitAutoCompleteStatistics();
-          await t1;
-        });
+      action: ChangeMultiHabitStatusAction([
+        habitDetailData.data,
+      ], status: newStatus),
+      extraResolver: (result) async {
+        final t1 = _updateHabitReminder();
+        _updateHabitAutoCompleteStatistics();
+        await t1;
+      },
+    );
 
     if (results.isEmpty || !mounted) return null;
     final result = results.first;
     return HabitStatusChangedRecord(
-        habitUUID: result.data.uuid,
-        newStatus: result.data.status,
-        orgStatus: result.orgStatus);
+      habitUUID: result.data.uuid,
+      newStatus: result.data.status,
+      orgStatus: result.orgStatus,
+    );
   }
 
-  Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
-      {bool listen = true}) async {
-    appLog.habit.info("$runtimeType.onConfirmToArchiveHabit",
-        ex: [listen, habitDetailData?.data]);
+  Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit({
+    bool listen = true,
+  }) async {
+    appLog.habit.info(
+      "$runtimeType.onConfirmToArchiveHabit",
+      ex: [listen, habitDetailData?.data],
+    );
     if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
@@ -439,10 +490,13 @@ class HabitDetailViewModel extends ChangeNotifier
     return result;
   }
 
-  Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit(
-      {bool listen = true}) async {
-    appLog.habit.info("$runtimeType.onConfirmToUnarchiveHabit",
-        ex: [listen, habitDetailData?.data]);
+  Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit({
+    bool listen = true,
+  }) async {
+    appLog.habit.info(
+      "$runtimeType.onConfirmToUnarchiveHabit",
+      ex: [listen, habitDetailData?.data],
+    );
     if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
@@ -451,10 +505,13 @@ class HabitDetailViewModel extends ChangeNotifier
     return result;
   }
 
-  Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit(
-      {bool listen = false}) async {
-    appLog.habit.info("$runtimeType.onConfirmToDeleteHabit",
-        ex: [listen, habitDetailData?.data]);
+  Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit({
+    bool listen = false,
+  }) async {
+    appLog.habit.info(
+      "$runtimeType.onConfirmToDeleteHabit",
+      ex: [listen, habitDetailData?.data],
+    );
     if (habitDetailData?.data.status == HabitStatus.deleted) {
       return null;
     }
@@ -565,9 +622,11 @@ class FreqChartCalculator {
   final HabitDetailFreqChartCombine combine;
   final int firstday;
 
-  const FreqChartCalculator(HabitDetailData data,
-      {required this.firstday, required this.combine})
-      : _data = data;
+  const FreqChartCalculator(
+    HabitDetailData data, {
+    required this.firstday,
+    required this.combine,
+  }) : _data = data;
 
   Map<HabitDate, HabitDetailFreqChartData> calculate() {
     final Map<HabitDate, HabitDetailFreqChartData> result = {};
@@ -600,14 +659,15 @@ class FreqChartCalculator {
           ),
         ifAbsent: () => HabitDetailFreqChartData()
           ..increasedOnly(
-              partiallyCompleted: partiallyCompleted,
-              autoComplate: autoComplate,
-              complate: complate,
-              overfulfil: overfulfil,
-              partiallyCompletedTotalValue: partiallyCompletedTotalValue,
-              autoComplateTotalValue: autoComplateTotalValue,
-              complateTotalValue: complateTotalValue,
-              overfulfilTotalValue: overfulfilTotalValue),
+            partiallyCompleted: partiallyCompleted,
+            autoComplate: autoComplate,
+            complate: complate,
+            overfulfil: overfulfil,
+            partiallyCompletedTotalValue: partiallyCompletedTotalValue,
+            autoComplateTotalValue: autoComplateTotalValue,
+            complateTotalValue: complateTotalValue,
+            overfulfilTotalValue: overfulfilTotalValue,
+          ),
       );
     }
 
@@ -632,19 +692,27 @@ class FreqChartCalculator {
               tryAddToResult(record.date, autoComplate: isAutoComplete ? 1 : 0);
               break;
             case HabitDailyComplateStatus.ok:
-              tryAddToResult(record.date,
-                  complate: 1, complateTotalValue: useVal);
+              tryAddToResult(
+                record.date,
+                complate: 1,
+                complateTotalValue: useVal,
+              );
               break;
             case HabitDailyComplateStatus.goodjob:
-              tryAddToResult(record.date,
-                  overfulfil: 1, overfulfilTotalValue: useVal);
+              tryAddToResult(
+                record.date,
+                overfulfil: 1,
+                overfulfilTotalValue: useVal,
+              );
               break;
             case HabitDailyComplateStatus.tryhard:
-              tryAddToResult(record.date,
-                  autoComplate: isAutoComplete ? 1 : 0,
-                  autoComplateTotalValue: isAutoComplete ? useVal : 0,
-                  partiallyCompleted: isAutoComplete ? 0 : 1,
-                  partiallyCompletedTotalValue: isAutoComplete ? 0 : useVal);
+              tryAddToResult(
+                record.date,
+                autoComplate: isAutoComplete ? 1 : 0,
+                autoComplateTotalValue: isAutoComplete ? useVal : 0,
+                partiallyCompleted: isAutoComplete ? 0 : 1,
+                partiallyCompletedTotalValue: isAutoComplete ? 0 : useVal,
+              );
               break;
           }
           break;
@@ -671,9 +739,12 @@ class ScoreChartCalculator {
   final int firstday;
   final num? Function(HabitDate date)? scoreOverride;
 
-  const ScoreChartCalculator(HabitDetailData data,
-      {required this.firstday, required this.combine, this.scoreOverride})
-      : _data = data;
+  const ScoreChartCalculator(
+    HabitDetailData data, {
+    required this.firstday,
+    required this.combine,
+    this.scoreOverride,
+  }) : _data = data;
 
   Map<HabitDate, HabitDetailScoreChartDate> calculate() {
     final Map<HabitDate, HabitDetailScoreChartDate> result = {};

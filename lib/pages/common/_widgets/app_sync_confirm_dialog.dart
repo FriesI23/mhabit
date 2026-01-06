@@ -25,8 +25,9 @@ class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
     final l10n = L10n.of(context);
     return AlertDialog(
       icon: const Icon(MdiIcons.folderMultiplePlusOutline),
-      title: Text(l10n?.appSync_webdav_newServerConfirmDialog_titleText ??
-          "New Location"),
+      title: Text(
+        l10n?.appSync_webdav_newServerConfirmDialog_titleText ?? "New Location",
+      ),
       content: l10n != null
           ? Text(l10n.appSync_webdav_newServerConfirmDialog_subtitleText)
           : null,
@@ -37,9 +38,11 @@ class AppSyncWebDavNewServerConfirmDialog extends StatelessWidget {
         ),
         FilledButton.tonal(
           onPressed: () => Navigator.pop(context, true),
-          child: Text(l10n?.appSync_webdav_newServerConfirmDialog_confirmText ??
-              "continue"),
-        )
+          child: Text(
+            l10n?.appSync_webdav_newServerConfirmDialog_confirmText ??
+                "continue",
+          ),
+        ),
       ],
     );
   }
@@ -54,8 +57,9 @@ class AppSyncWebDavOldServerConfirmDialog extends StatelessWidget {
     final l10n = L10n.of(context);
     return AlertDialog(
       icon: const Icon(MdiIcons.folderAlertOutline),
-      title: Text(l10n?.appSync_webdav_oldServerConfirmDialog_titleText ??
-          "Confirm Sync"),
+      title: Text(
+        l10n?.appSync_webdav_oldServerConfirmDialog_titleText ?? "Confirm Sync",
+      ),
       content: l10n != null
           ? Text(l10n.appSync_webdav_oldServerConfirmDialog_subtitleText)
           : null,
@@ -66,12 +70,15 @@ class AppSyncWebDavOldServerConfirmDialog extends StatelessWidget {
         ),
         FilledButton(
           style: FilledButton.styleFrom(
-              backgroundColor: theme.colorScheme.error,
-              foregroundColor: theme.colorScheme.errorContainer),
+            backgroundColor: theme.colorScheme.error,
+            foregroundColor: theme.colorScheme.errorContainer,
+          ),
           onPressed: () => Navigator.pop(context, true),
-          child: Text(l10n?.appSync_webdav_oldServerConfirmDialog_confirmText ??
-              "continue"),
-        )
+          child: Text(
+            l10n?.appSync_webdav_oldServerConfirmDialog_confirmText ??
+                "continue",
+          ),
+        ),
       ],
     );
   }

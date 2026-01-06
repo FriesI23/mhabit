@@ -47,33 +47,34 @@ class RecordExportData implements JsonAdaptor {
   @JsonKey(name: RecordExportDataKey.reason)
   final String? reason;
 
-  const RecordExportData(
-      {this.recordDate,
-      this.recordType,
-      this.recordValue,
-      this.createT,
-      this.modifyT,
-      this.reason});
+  const RecordExportData({
+    this.recordDate,
+    this.recordType,
+    this.recordValue,
+    this.createT,
+    this.modifyT,
+    this.reason,
+  });
 
   RecordExportData.fromHabitDBCell(RecordDBCell cell)
-      : recordDate = cell.recordDate,
-        recordType = cell.recordType,
-        recordValue = cell.recordValue,
-        createT = cell.createT,
-        modifyT = cell.modifyT,
-        reason = cell.reason;
+    : recordDate = cell.recordDate,
+      recordType = cell.recordType,
+      recordValue = cell.recordValue,
+      createT = cell.createT,
+      modifyT = cell.modifyT,
+      reason = cell.reason;
 
   factory RecordExportData.fromJson(dynamic json) =>
       _$RecordExportDataFromJson(json);
 
   RecordDBCell toRecordDBCell() => RecordDBCell(
-        recordDate: recordDate,
-        recordType: recordType,
-        recordValue: recordValue,
-        createT: createT,
-        modifyT: modifyT,
-        reason: reason,
-      );
+    recordDate: recordDate,
+    recordType: recordType,
+    recordValue: recordValue,
+    createT: createT,
+    modifyT: modifyT,
+    reason: reason,
+  );
 
   @override
   Map<String, dynamic> toJson() => _$RecordExportDataToJson(this);
@@ -138,64 +139,65 @@ class HabitExportData implements JsonAdaptor {
   @JsonKey(name: HabitExportDataKey.records, toJson: _recordsToJson)
   final List<RecordExportData> records;
 
-  const HabitExportData(
-      {this.createT,
-      this.modifyT,
-      this.type,
-      this.status,
-      this.name,
-      this.desc,
-      this.color,
-      this.dailyGoal,
-      this.dailyGoalUnit,
-      this.dailyGoalExtra,
-      this.freqType,
-      this.freqCustom,
-      this.reminder,
-      this.reminderQuest,
-      this.startDate,
-      this.targetDays,
-      this.records = const []});
+  const HabitExportData({
+    this.createT,
+    this.modifyT,
+    this.type,
+    this.status,
+    this.name,
+    this.desc,
+    this.color,
+    this.dailyGoal,
+    this.dailyGoalUnit,
+    this.dailyGoalExtra,
+    this.freqType,
+    this.freqCustom,
+    this.reminder,
+    this.reminderQuest,
+    this.startDate,
+    this.targetDays,
+    this.records = const [],
+  });
 
   HabitExportData.fromHabitDBCell(HabitDBCell cell, {this.records = const []})
-      : createT = cell.createT,
-        modifyT = cell.modifyT,
-        type = cell.type,
-        status = cell.status,
-        name = cell.name,
-        desc = cell.desc,
-        color = cell.color,
-        dailyGoal = cell.dailyGoal,
-        dailyGoalUnit = cell.dailyGoalUnit,
-        dailyGoalExtra = cell.dailyGoalExtra,
-        freqType = cell.freqType,
-        freqCustom = cell.freqCustom,
-        reminder = cell.remindCustom,
-        reminderQuest = cell.remindQuestion,
-        startDate = cell.startDate,
-        targetDays = cell.targetDays;
+    : createT = cell.createT,
+      modifyT = cell.modifyT,
+      type = cell.type,
+      status = cell.status,
+      name = cell.name,
+      desc = cell.desc,
+      color = cell.color,
+      dailyGoal = cell.dailyGoal,
+      dailyGoalUnit = cell.dailyGoalUnit,
+      dailyGoalExtra = cell.dailyGoalExtra,
+      freqType = cell.freqType,
+      freqCustom = cell.freqCustom,
+      reminder = cell.remindCustom,
+      reminderQuest = cell.remindQuestion,
+      startDate = cell.startDate,
+      targetDays = cell.targetDays;
 
   factory HabitExportData.fromJson(dynamic json) =>
       _$HabitExportDataFromJson(json);
 
   HabitDBCell toHabitDBCell() => HabitDBCell(
-        createT: createT,
-        modifyT: modifyT,
-        type: type,
-        status: status,
-        name: name,
-        desc: desc,
-        color: color,
-        dailyGoal: dailyGoal,
-        dailyGoalUnit: dailyGoalUnit,
-        dailyGoalExtra: dailyGoalExtra,
-        freqType: freqType,
-        freqCustom: freqCustom,
-        remindCustom: reminder,
-        remindQuestion: reminderQuest,
-        startDate: startDate,
-        targetDays: targetDays,
-      );
+    createT: createT,
+    modifyT: modifyT,
+    type: type,
+    status: status,
+    name: name,
+    desc: desc,
+    color: color,
+    dailyGoal: dailyGoal,
+    dailyGoalUnit: dailyGoalUnit,
+    dailyGoalExtra: dailyGoalExtra,
+    freqType: freqType,
+    freqCustom: freqCustom,
+    remindCustom: reminder,
+    remindQuestion: reminderQuest,
+    startDate: startDate,
+    targetDays: targetDays,
+  );
 
   @override
   Map<String, dynamic> toJson() => _$HabitExportDataToJson(this);
@@ -204,7 +206,8 @@ class HabitExportData implements JsonAdaptor {
       records.map((e) => e.toRecordDBCell());
 
   static List<Map<String, dynamic>> _recordsToJson(
-      List<RecordExportData> records) {
+    List<RecordExportData> records,
+  ) {
     return records.map((e) => e.toJson()).toList();
   }
 }
@@ -212,8 +215,11 @@ class HabitExportData implements JsonAdaptor {
 abstract class HabitExporter {
   Future<Iterable<HabitExportData>> exportData({bool withRecords = true});
 
-  factory HabitExporter(HabitDBHelper helper, RecordDBHelper recordDBHelper,
-      {List<HabitUUID>? uuidList}) {
+  factory HabitExporter(
+    HabitDBHelper helper,
+    RecordDBHelper recordDBHelper, {
+    List<HabitUUID>? uuidList,
+  }) {
     if (uuidList != null) {
       return HabitExporterImpl(helper, recordDBHelper, uuidList: uuidList);
     }
@@ -223,7 +229,9 @@ abstract class HabitExporter {
 
 mixin HabitExporterMixin {
   Map<DBID, HabitExportData> buildExportDataMap(
-      Iterable<HabitDBCell> habits, Iterable<RecordDBCell> records) {
+    Iterable<HabitDBCell> habits,
+    Iterable<RecordDBCell> records,
+  ) {
     final results = <DBID, HabitExportData>{};
 
     for (var cell in habits) {
@@ -247,12 +255,16 @@ class HabitExporterImpl with HabitExporterMixin implements HabitExporter {
   final HabitDBHelper helper;
   final RecordDBHelper recordDBHelper;
 
-  const HabitExporterImpl(this.helper, this.recordDBHelper,
-      {this.uuidList = const []});
+  const HabitExporterImpl(
+    this.helper,
+    this.recordDBHelper, {
+    this.uuidList = const [],
+  });
 
   @override
-  Future<Iterable<HabitExportData>> exportData(
-      {bool withRecords = true}) async {
+  Future<Iterable<HabitExportData>> exportData({
+    bool withRecords = true,
+  }) async {
     final loadHabitsTask = helper.loadHabitsExportData(uuidList);
     final loadRecordsTask = withRecords
         ? recordDBHelper.loadRecordsExportData(uuidList)
@@ -270,8 +282,9 @@ class HabitExportAll with HabitExporterMixin implements HabitExporter {
   const HabitExportAll(this.helper, this.recordDBHelper);
 
   @override
-  Future<Iterable<HabitExportData>> exportData(
-      {bool withRecords = true}) async {
+  Future<Iterable<HabitExportData>> exportData({
+    bool withRecords = true,
+  }) async {
     final loadHabitsTask = helper.loadAllHabitExportData();
     final loadRecordsTask = withRecords
         ? recordDBHelper.loadAllRecordsExportData()

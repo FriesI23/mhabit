@@ -25,16 +25,18 @@ class AppThemeSwitchButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = MediaQuery.platformBrightnessOf(context);
-    final themeType =
-        context.select<AppThemeViewModel, AppThemeType>((vm) => vm.themeType);
+    final themeType = context.select<AppThemeViewModel, AppThemeType>(
+      (vm) => vm.themeType,
+    );
     final icon = switch (themeType) {
       AppThemeType.light => const Icon(Icons.light_mode_rounded),
       AppThemeType.dark => const Icon(Icons.dark_mode_rounded),
-      _ => const Icon(MdiIcons.themeLightDark)
+      _ => const Icon(MdiIcons.themeLightDark),
     };
     return IconButton(
-        onPressed: () =>
-            context.read<AppThemeViewModel>().onTapChangeThemeType(brightness),
-        icon: icon);
+      onPressed: () =>
+          context.read<AppThemeViewModel>().onTapChangeThemeType(brightness),
+      icon: icon,
+    );
   }
 }

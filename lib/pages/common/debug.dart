@@ -31,23 +31,22 @@ import '../../utils/app_clock.dart';
 const _defaultSliverScrollChildCount = 10;
 
 SliverChildDelegate debugBuildSliverScrollDelegate({int? childCount}) {
-  return SliverChildBuilderDelegate(
-    (context, index) {
-      return Container(
-        color: index.isOdd ? Colors.white : Colors.black12,
-        height: 100.0,
-        child: Center(
-          child: Text('$index', textScaler: const TextScaler.linear(5)),
-        ),
-      );
-    },
-    childCount: childCount ?? _defaultSliverScrollChildCount,
-  );
+  return SliverChildBuilderDelegate((context, index) {
+    return Container(
+      color: index.isOdd ? Colors.white : Colors.black12,
+      height: 100.0,
+      child: Center(
+        child: Text('$index', textScaler: const TextScaler.linear(5)),
+      ),
+    );
+  }, childCount: childCount ?? _defaultSliverScrollChildCount);
 }
 
 mixin HabitsDisplayViewDebug {
-  Future<void> debugAddMultiTempHabit(BuildContext context,
-      {int count = 10}) async {
+  Future<void> debugAddMultiTempHabit(
+    BuildContext context, {
+    int count = 10,
+  }) async {
     final dbHelper = context.read<DBHelperViewModel>();
     if (!dbHelper.mounted) return;
 
@@ -65,7 +64,8 @@ mixin HabitsDisplayViewDebug {
         name: meta.name,
         desc: meta.desc,
         color: HabitColorType
-            .values[rnd.nextInt(HabitColorType.values.length)].dbCode,
+            .values[rnd.nextInt(HabitColorType.values.length)]
+            .dbCode,
         dailyGoal: meta.goal,
         dailyGoalUnit: meta.goalUnit,
         freqType: freq["type"],

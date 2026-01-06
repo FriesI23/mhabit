@@ -78,8 +78,10 @@ class AppInfo implements AsyncInitialization {
       /// >   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top], );
       ///
       /// NOTE: Please note this change when `flutter_native_splash` version changes.
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+      );
     }
   }
 
@@ -99,8 +101,11 @@ final class _AppDebugInfoBuilder {
     this.devicePlugin = devicePlugin ?? DeviceInfoPlugin();
   }
 
-  void _buildInfoByMap(StringBuffer buffer, Map<String, dynamic> data,
-      {int intent = 0}) {
+  void _buildInfoByMap(
+    StringBuffer buffer,
+    Map<String, dynamic> data, {
+    int intent = 0,
+  }) {
     void appendToBuffer(StringBuffer buffer, String key, dynamic value) {
       for (var i = 0; i < intent; i++) {
         buffer.write(" ");
@@ -114,8 +119,9 @@ final class _AppDebugInfoBuilder {
   }
 
   Future<void> _buildDeviceInfo(StringBuffer buffer, {int intent = 0}) =>
-      devicePlugin.deviceInfo
-          .then((value) => _buildInfoByMap(buffer, value.data, intent: intent));
+      devicePlugin.deviceInfo.then(
+        (value) => _buildInfoByMap(buffer, value.data, intent: intent),
+      );
 
   Future<void> _buildPackageInfo(StringBuffer buffer, {int intent = 0}) =>
       PackageInfo.fromPlatform().then((value) {
@@ -140,9 +146,11 @@ final class _AppDebugInfoBuilder {
       pathProvider
           .getExportHabitsDirPath()
           .onError((error, stackTrace) => error.toString())
-          .then((value) => MapEntry("Export Habits<Directory>", value))
-    ]).then((value) =>
-        _buildInfoByMap(buffer, Map.fromEntries(value), intent: intent));
+          .then((value) => MapEntry("Export Habits<Directory>", value)),
+    ]).then(
+      (value) =>
+          _buildInfoByMap(buffer, Map.fromEntries(value), intent: intent),
+    );
   }
 
   Future<String> build() async {
@@ -156,8 +164,10 @@ final class _AppDebugInfoBuilder {
     buffer.writeln("│");
     buffer.writeln("├─ Package Info: ─────────────────────────────────────");
     await _buildPackageInfo(buffer, intent: 4);
-    buffer.writeln("    BuildMode: debug=$kDebugMode, profile=$kProfileMode, "
-        "release=$kReleaseMode | isWeb=$kIsWeb");
+    buffer.writeln(
+      "    BuildMode: debug=$kDebugMode, profile=$kProfileMode, "
+      "release=$kReleaseMode | isWeb=$kIsWeb",
+    );
     buffer.writeln("    TargetPlatform: $defaultTargetPlatform");
     buffer.writeln("├─ Package Info Ended ────────────────────────────────");
     buffer.writeln("│");

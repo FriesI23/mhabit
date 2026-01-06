@@ -37,20 +37,22 @@ final class FakeSyncServerForm extends AppSyncServerForm {
   final Map<String, String> data = const {};
 
   FakeSyncServerForm({required super.uuid})
-      : super(type: AppSyncServerType.fake);
+    : super(type: AppSyncServerType.fake);
 
-  AppFakeSyncServer toConfig(
-          {required DateTime createTime,
-          required DateTime modifyTime,
-          required bool configed}) =>
-      AppFakeSyncServer.fromForm(this,
-          createTime: createTime,
-          modifyTime: modifyTime,
-          timeout: data.containsKey("timeout")
-              ? Duration(seconds: int.parse(data["timeout"]!))
-              : null,
-          data: data,
-          configed: configed);
+  AppFakeSyncServer toConfig({
+    required DateTime createTime,
+    required DateTime modifyTime,
+    required bool configed,
+  }) => AppFakeSyncServer.fromForm(
+    this,
+    createTime: createTime,
+    modifyTime: modifyTime,
+    timeout: data.containsKey("timeout")
+        ? Duration(seconds: int.parse(data["timeout"]!))
+        : null,
+    data: data,
+    configed: configed,
+  );
 
   @override
   bool canSave() => true;
@@ -98,12 +100,16 @@ final class WebDavSyncServerForm extends AppSyncServerForm {
   @override
   bool canSave() => (path ?? '').isNotEmpty;
 
-  AppWebDavSyncServer toConfig(
-          {required DateTime createTime,
-          required DateTime modifyTime,
-          required bool configed}) =>
-      AppWebDavSyncServer.fromForm(this,
-          createTime: createTime, modifyTime: modifyTime, configed: configed);
+  AppWebDavSyncServer toConfig({
+    required DateTime createTime,
+    required DateTime modifyTime,
+    required bool configed,
+  }) => AppWebDavSyncServer.fromForm(
+    this,
+    createTime: createTime,
+    modifyTime: modifyTime,
+    configed: configed,
+  );
 
   @override
   WebDavSyncServerForm copy() => copyWith();
@@ -125,7 +131,8 @@ final class WebDavSyncServerForm extends AppSyncServerForm {
   }
 
   @override
-  String toString() => 'AppSyncServerForm[$uuid](path=$path,'
+  String toString() =>
+      'AppSyncServerForm[$uuid](path=$path,'
       'username=$username,'
       'password=${List.generate(password?.length ?? 0, (_) => "*").join()}'
       ')';

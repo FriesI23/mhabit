@@ -65,24 +65,32 @@ class AppErrorPage extends StatelessWidget {
     writeDivider();
     final file = File(await AppPathProvider().getAppDebugLogFilePath());
     sb.writeAll(
-        await file
-            .exists()
-            .then((value) =>
-                value ? file.readAsLines() : Future.value(const <String>[]))
-            .then((value) => value.length <= lastLogLines
+      await file
+          .exists()
+          .then(
+            (value) =>
+                value ? file.readAsLines() : Future.value(const <String>[]),
+          )
+          .then(
+            (value) => value.length <= lastLogLines
                 ? value
-                : value.sublist(value.length - lastLogLines)),
-        '\n');
+                : value.sublist(value.length - lastLogLines),
+          ),
+      '\n',
+    );
     sb.writeln();
     writeDivider(flag: 2);
 
     Clipboard.setData(ClipboardData(text: sb.toString())).then((value) {
       if (!context.mounted) return;
-      final snackBar = buildSnackBarWithDismiss(context,
-          content: L10nBuilder(
-              builder: (context, l10n) =>
-                  Text(l10n?.common_errorPage_copied ?? 'Copied')),
-          duration: const Duration(seconds: 1));
+      final snackBar = buildSnackBarWithDismiss(
+        context,
+        content: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.common_errorPage_copied ?? 'Copied'),
+        ),
+        duration: const Duration(seconds: 1),
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
   }
@@ -99,8 +107,9 @@ class AppErrorPage extends StatelessWidget {
           SliverAppBar(
             title: L10nBuilder(
               builder: (context, l10n) => Text(
-                  l10n?.common_errorPage_title ?? "Unhandled Exception",
-                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                l10n?.common_errorPage_title ?? "Unhandled Exception",
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
             leading: Visibility(
               visible: showCloseBtn,
@@ -116,15 +125,17 @@ class AppErrorPage extends StatelessWidget {
           ),
           SliverPinnedHeader(
             child: ColoredBox(
-                color: Theme.of(context).colorScheme.surface,
-                child: ListTile(title: Text(details.exception.toString()))),
+              color: Theme.of(context).colorScheme.surface,
+              child: ListTile(title: Text(details.exception.toString())),
+            ),
           ),
           const SliverToBoxAdapter(child: Divider()),
           SliverToBoxAdapter(
-              child: ListTile(
-            subtitle: Text(details.stack.toString()),
-            isThreeLine: true,
-          )),
+            child: ListTile(
+              subtitle: Text(details.stack.toString()),
+              isThreeLine: true,
+            ),
+          ),
           const SliverToBoxAdapter(child: SizedBox(height: 200)),
         ],
       ),

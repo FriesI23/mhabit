@@ -18,7 +18,8 @@ import 'package:intl/locale.dart' as intl_locale;
 
 extension IntlLocaleExtension on intl_locale.Locale {
   Locale toLocale() => Locale.fromSubtags(
-      languageCode: languageCode,
-      scriptCode: scriptCode,
-      countryCode: countryCode);
+    languageCode: languageCode,
+    scriptCode: scriptCode,
+    countryCode: countryCode,
+  );
 }

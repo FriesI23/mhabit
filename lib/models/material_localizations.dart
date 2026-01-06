@@ -24,17 +24,20 @@ class MaterialLocalizatiosProxy extends _$MaterialLocalizationsProxy {
 
   MaterialLocalizatiosProxy(super._base, {int? firstDayOfWeekIndex}) {
     if (firstDayOfWeekIndex != null) {
-      assert(firstDayOfWeekIndex >= 0 &&
-          firstDayOfWeekIndex < narrowWeekdays.length);
+      assert(
+        firstDayOfWeekIndex >= 0 && firstDayOfWeekIndex < narrowWeekdays.length,
+      );
     }
-    _customFirstDayOfWeekIndex =
-        firstDayOfWeekIndex?.clamp(0, narrowWeekdays.length - 1);
+    _customFirstDayOfWeekIndex = firstDayOfWeekIndex?.clamp(
+      0,
+      narrowWeekdays.length - 1,
+    );
   }
 
   static LocalizationsDelegate<MaterialLocalizations> delegateProxyOf(
-          LocalizationsDelegate<MaterialLocalizations> delegate,
-          {Map<String, dynamic>? overrides}) =>
-      _MaterialLocalizatiosProxyDelegate(delegate, overrides ?? {});
+    LocalizationsDelegate<MaterialLocalizations> delegate, {
+    Map<String, dynamic>? overrides,
+  }) => _MaterialLocalizatiosProxyDelegate(delegate, overrides ?? {});
 
   @override
   int get firstDayOfWeekIndex =>
@@ -53,9 +56,14 @@ class _MaterialLocalizatiosProxyDelegate
   bool isSupported(Locale locale) => base.isSupported(locale);
 
   @override
-  Future<MaterialLocalizations> load(Locale locale) =>
-      base.load(locale).then((value) => MaterialLocalizatiosProxy(value,
-          firstDayOfWeekIndex: overrides['firstDayOfWeekIndex']));
+  Future<MaterialLocalizations> load(Locale locale) => base
+      .load(locale)
+      .then(
+        (value) => MaterialLocalizatiosProxy(
+          value,
+          firstDayOfWeekIndex: overrides['firstDayOfWeekIndex'],
+        ),
+      );
 
   @override
   bool shouldReload(_MaterialLocalizatiosProxyDelegate old) =>

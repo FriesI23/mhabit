@@ -21,8 +21,12 @@ class HabitStatusChangerAppbar extends StatelessWidget {
   final Widget? bottomWidget;
   final VoidCallback? onCloseButtonPressed;
 
-  const HabitStatusChangerAppbar(
-      {super.key, this.title, this.bottomWidget, this.onCloseButtonPressed});
+  const HabitStatusChangerAppbar({
+    super.key,
+    this.title,
+    this.bottomWidget,
+    this.onCloseButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,8 @@ class HabitStatusChangerAppbar extends StatelessWidget {
       bottom: bottomWidget != null
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: bottomWidget!)
+              child: bottomWidget!,
+            )
           : null,
       automaticallyImplyLeading: false,
       pinned: true,

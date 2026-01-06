@@ -31,12 +31,11 @@ class AppSyncServerNetworkTypeTile extends StatelessWidget {
     return ListTile(
       isThreeLine: true,
       leading: const Icon(MdiIcons.accessPointNetwork),
-      title: Text(l10n?.appSync_serverEditor_netTypeTile_titleText ??
-          "Synchronous Networking"),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 6.0),
-        child: child,
+      title: Text(
+        l10n?.appSync_serverEditor_netTypeTile_titleText ??
+            "Synchronous Networking",
       ),
+      subtitle: Padding(padding: const EdgeInsets.only(top: 6.0), child: child),
     );
   }
 }
@@ -46,10 +45,11 @@ class _NetworkTypeChip extends StatelessWidget {
   final Iterable<AppSyncServerMobileNetwork> syncMobileNetworks;
   final ValueChanged<bool>? onSelected;
 
-  const _NetworkTypeChip(
-      {required this.type,
-      this.syncMobileNetworks = const [],
-      this.onSelected});
+  const _NetworkTypeChip({
+    required this.type,
+    this.syncMobileNetworks = const [],
+    this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,40 +57,41 @@ class _NetworkTypeChip extends StatelessWidget {
 
     final l10n = L10n.of(context);
     final title = l10n?.appSync_networkType_text(type.name);
-    final tooltips =
-        l10n?.appSync_serverEditor_netTypeTile_typeTooltip(type.name);
+    final tooltips = l10n?.appSync_serverEditor_netTypeTile_typeTooltip(
+      type.name,
+    );
     final theme = Theme.of(context);
     return switch (type) {
       AppSyncServerMobileNetwork.mobile => FilterChip(
-          label: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(MdiIcons.signal, size: 20.0),
-              Text(title ?? 'Mobile'),
-            ],
-          ),
-          selectedColor: theme.brightness == Brightness.dark
-              ? Colors.green
-              : Colors.lightGreen,
-          selected: syncMobileNetworks.contains(type),
-          onSelected: onSelected,
-          tooltip: tooltips,
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(MdiIcons.signal, size: 20.0),
+            Text(title ?? 'Mobile'),
+          ],
         ),
+        selectedColor: theme.brightness == Brightness.dark
+            ? Colors.green
+            : Colors.lightGreen,
+        selected: syncMobileNetworks.contains(type),
+        onSelected: onSelected,
+        tooltip: tooltips,
+      ),
       AppSyncServerMobileNetwork.wifi => FilterChip(
-          label: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(MdiIcons.signalVariant, size: 20.0),
-              Text(title ?? "Wifi"),
-            ],
-          ),
-          selectedColor: theme.brightness == Brightness.dark
-              ? Colors.blue
-              : Colors.lightBlue,
-          selected: syncMobileNetworks.contains(type),
-          onSelected: onSelected,
-          tooltip: tooltips,
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(MdiIcons.signalVariant, size: 20.0),
+            Text(title ?? "Wifi"),
+          ],
         ),
+        selectedColor: theme.brightness == Brightness.dark
+            ? Colors.blue
+            : Colors.lightBlue,
+        selected: syncMobileNetworks.contains(type),
+        onSelected: onSelected,
+        tooltip: tooltips,
+      ),
       _ => throw UnimplementedError(),
     };
   }
@@ -114,8 +115,9 @@ class _LowDataModeChip extends StatelessWidget {
           Text(l10n?.appSync_serverEditor_netTypeTile_lowDataText ?? "LowData"),
         ],
       ),
-      selectedColor:
-          theme.brightness == Brightness.dark ? Colors.grey : Colors.grey,
+      selectedColor: theme.brightness == Brightness.dark
+          ? Colors.grey
+          : Colors.grey,
       selected: syncInLowData,
       onSelected: onSelected,
       tooltip: l10n?.appSync_serverEditor_netTypeTile_lowDataTooltip,
@@ -127,9 +129,10 @@ class AppWebDavSyncServerNetworkTypeTile extends StatelessWidget {
   const AppWebDavSyncServerNetworkTypeTile({super.key});
 
   Widget _buildNetworkTypeChip(
-      BuildContext context,
-      AppSyncServerMobileNetwork type,
-      Set<AppSyncServerMobileNetwork> syncMobileNetworks) {
+    BuildContext context,
+    AppSyncServerMobileNetwork type,
+    Set<AppSyncServerMobileNetwork> syncMobileNetworks,
+  ) {
     return _NetworkTypeChip(
       type: type,
       syncMobileNetworks: syncMobileNetworks,
@@ -160,25 +163,29 @@ class AppWebDavSyncServerNetworkTypeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     context.select<AppSyncServerFormViewModel, bool>((vm) => vm.webdav != null);
     return AppSyncServerNetworkTypeTile(
-      child: Selector<AppSyncServerFormViewModel,
-          ({Iterable<AppSyncServerMobileNetwork>? networks, bool? lowData})>(
-        selector: (context, vm) => (
-          networks: vm.webdav?.syncMobileNetworks,
-          lowData: vm.webdav?.syncInLowData
-        ),
-        builder: (context, value, child) {
-          final networks = value.networks?.toSet() ?? {};
-          return Wrap(
-            spacing: 8.0,
-            runSpacing: 12.0,
-            children: [
-              ...AppSyncServerMobileNetwork.allowed.map(
-                  (type) => _buildNetworkTypeChip(context, type, networks)),
-              _buildLowDataModeChip(context, value.lowData),
-            ],
-          );
-        },
-      ),
+      child:
+          Selector<
+            AppSyncServerFormViewModel,
+            ({Iterable<AppSyncServerMobileNetwork>? networks, bool? lowData})
+          >(
+            selector: (context, vm) => (
+              networks: vm.webdav?.syncMobileNetworks,
+              lowData: vm.webdav?.syncInLowData,
+            ),
+            builder: (context, value, child) {
+              final networks = value.networks?.toSet() ?? {};
+              return Wrap(
+                spacing: 8.0,
+                runSpacing: 12.0,
+                children: [
+                  ...AppSyncServerMobileNetwork.allowed.map(
+                    (type) => _buildNetworkTypeChip(context, type, networks),
+                  ),
+                  _buildLowDataModeChip(context, value.lowData),
+                ],
+              );
+            },
+          ),
     );
   }
 }

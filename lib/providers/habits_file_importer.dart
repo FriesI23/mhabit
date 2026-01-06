@@ -50,18 +50,21 @@ class HabitFileImporterViewModel extends ChangeNotifier
     var completeCount = 0, failedCount = 0;
     final allCount = futures.length;
     for (var future in futures) {
-      future.then((_) {
-        completeCount += 1;
-      }).catchError((e, s) {
-        failedCount += 1;
-      }).whenComplete(() {
-        whenloadHabit?.call(completeCount, failedCount, allCount);
-        final totalCount = completeCount + failedCount;
-        if (totalCount >= allCount) {
-          completer.complete(totalCount);
-          onAllFutureComplated(completeCount, failedCount, allCount);
-        }
-      });
+      future
+          .then((_) {
+            completeCount += 1;
+          })
+          .catchError((e, s) {
+            failedCount += 1;
+          })
+          .whenComplete(() {
+            whenloadHabit?.call(completeCount, failedCount, allCount);
+            final totalCount = completeCount + failedCount;
+            if (totalCount >= allCount) {
+              completer.complete(totalCount);
+              onAllFutureComplated(completeCount, failedCount, allCount);
+            }
+          });
     }
     return completer.future;
   }

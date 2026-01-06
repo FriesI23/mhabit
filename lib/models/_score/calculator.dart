@@ -39,27 +39,37 @@ class HabitScoreCalculator {
     required Iterable<HabitDate> iterable,
     required bool Function(HabitDate) isAutoComplated,
     required HabitSummaryRecord? Function(HabitDate) getHabitRecord,
-  })  : _getHabitRecord = getHabitRecord,
-        _isAutoComplated = isAutoComplated,
-        _iterable = iterable,
-        _endDate = endDate,
-        _startDate = startDate,
-        _habitScore = habitScore;
+  }) : _getHabitRecord = getHabitRecord,
+       _isAutoComplated = isAutoComplated,
+       _iterable = iterable,
+       _endDate = endDate,
+       _startDate = startDate,
+       _habitScore = habitScore;
 
   Iterable<HabitDate> get _dateIter => _iterable;
 
   num calcEachScoreBetweenRecordDate(
-      HabitDate crtDate, HabitDate lastDate, num lastScore) {
+    HabitDate crtDate,
+    HabitDate lastDate,
+    num lastScore,
+  ) {
     final duringDays = math.max(0, crtDate.epochDay - lastDate.epochDay);
     return _habitScore.getNewScore(
-        lastScore, duringDays * _habitScore.calcDecreasedPrt());
+      lastScore,
+      duringDays * _habitScore.calcDecreasedPrt(),
+    );
   }
 
   num calcScoreAfterLastRecordToEnd(
-      HabitDate crtDate, HabitDate endDate, num lastScore) {
+    HabitDate crtDate,
+    HabitDate endDate,
+    num lastScore,
+  ) {
     final lastDuringDays = math.max(0, endDate.epochDay - crtDate.epochDay + 1);
     return _habitScore.getNewScore(
-        lastScore, lastDuringDays * _habitScore.calcDecreasedPrt());
+      lastScore,
+      lastDuringDays * _habitScore.calcDecreasedPrt(),
+    );
   }
 
   num calcIncreaseDaysBetweenRecordDate({
@@ -73,9 +83,7 @@ class HabitScoreCalculator {
         value: record.value,
       );
     } else {
-      return _habitScore.calcIncreasedDay(
-        autoCompleted: isAutoCompleted,
-      );
+      return _habitScore.calcIncreasedDay(autoCompleted: isAutoCompleted);
     }
   }
 
@@ -90,9 +98,7 @@ class HabitScoreCalculator {
         value: record.value,
       );
     } else {
-      return _habitScore.calcDecreasedPrt(
-        autoCompleted: isAutoCompleted,
-      );
+      return _habitScore.calcDecreasedPrt(autoCompleted: isAutoCompleted);
     }
   }
 
@@ -152,9 +158,13 @@ class HabitScoreCalculator {
       final autoComplated = _isAutoComplated(date);
       final record = _getHabitRecord(date);
       final increaseDays = calcIncreaseDaysBetweenRecordDate(
-          record: record, isAutoCompleted: autoComplated);
+        record: record,
+        isAutoCompleted: autoComplated,
+      );
       final decreasePrt = calcDecreasePrtBetweenRecordDate(
-          record: record, isAutoCompleted: autoComplated);
+        record: record,
+        isAutoCompleted: autoComplated,
+      );
       // step 2.2: Update current score with calculated decrease percentage
       lastScore = crtScore;
       crtScore = _habitScore.getNewScore(crtScore, decreasePrt);
@@ -209,13 +219,14 @@ class ArchivedHabitScoreCalculator extends HabitScoreCalculator {
   ];
   late final Iterable<HabitDate> _archivedDateIter;
 
-  ArchivedHabitScoreCalculator(
-      {required super.habitScore,
-      required super.startDate,
-      super.endDate,
-      required super.iterable,
-      required super.isAutoComplated,
-      required super.getHabitRecord}) {
+  ArchivedHabitScoreCalculator({
+    required super.habitScore,
+    required super.startDate,
+    super.endDate,
+    required super.iterable,
+    required super.isAutoComplated,
+    required super.getHabitRecord,
+  }) {
     _initArchivedDateIter();
   }
 
@@ -236,7 +247,10 @@ class ArchivedHabitScoreCalculator extends HabitScoreCalculator {
 
   @override
   num calcScoreAfterLastRecordToEnd(
-      HabitDate crtDate, HabitDate endDate, num lastScore) {
+    HabitDate crtDate,
+    HabitDate endDate,
+    num lastScore,
+  ) {
     return lastScore;
   }
 }

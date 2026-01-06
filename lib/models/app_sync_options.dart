@@ -40,8 +40,10 @@ enum AppSyncFetchInterval implements EnumWithDBCode {
     };
   }
 
-  static AppSyncFetchInterval? getFromDBCode(int dbCode,
-      {AppSyncFetchInterval? withDefault = AppSyncFetchInterval.manual}) {
+  static AppSyncFetchInterval? getFromDBCode(
+    int dbCode, {
+    AppSyncFetchInterval? withDefault = AppSyncFetchInterval.manual,
+  }) {
     for (var value in AppSyncFetchInterval.values) {
       if (value.dbCode == dbCode) return value;
     }

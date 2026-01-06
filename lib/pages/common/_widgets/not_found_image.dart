@@ -84,10 +84,12 @@ class NotFoundImage extends StatelessWidget {
     Widget buildDescChild(BuildContext context) {
       if (textTheme.headlineSmall != null) {
         return DefaultTextStyle(
-            textAlign: TextAlign.center,
-            style: textTheme.headlineSmall!
-                .copyWith(color: theme.colorScheme.outline),
-            child: descChild!);
+          textAlign: TextAlign.center,
+          style: textTheme.headlineSmall!.copyWith(
+            color: theme.colorScheme.outline,
+          ),
+          child: descChild!,
+        );
       }
       return descChild!;
     }
@@ -109,22 +111,26 @@ class NotFoundImage extends StatelessWidget {
                       (style?.backBoardBackgroundColor ??
                               _defaultStyle.backBoardBackgroundColor)
                           .toHex(),
-                  _Key.backBoardPaperColor: (style?.backBoardPaperColor ??
-                          _defaultStyle.backBoardPaperColor)
-                      .toHex(),
-                  _Key.fronBoardPaperColor: (style?.fronBoardPaperColor ??
-                          _defaultStyle.fronBoardPaperColor)
-                      .toHex(),
+                  _Key.backBoardPaperColor:
+                      (style?.backBoardPaperColor ??
+                              _defaultStyle.backBoardPaperColor)
+                          .toHex(),
+                  _Key.fronBoardPaperColor:
+                      (style?.fronBoardPaperColor ??
+                              _defaultStyle.fronBoardPaperColor)
+                          .toHex(),
                   _Key.fronBoardPaperShadowColor:
                       (style?.fronBoardPaperShadowColor ??
                               _defaultStyle.fronBoardPaperShadowColor)
                           .toHex(),
-                  _Key.magnifierHandleColor: (style?.magnifierHandleColor ??
-                          _defaultStyle.magnifierHandleColor)
-                      .toHex(),
-                  _Key.magnifierStrokeColor: (style?.magnifierStrokeColor ??
-                          _defaultStyle.magnifierStrokeColor)
-                      .toHex(),
+                  _Key.magnifierHandleColor:
+                      (style?.magnifierHandleColor ??
+                              _defaultStyle.magnifierHandleColor)
+                          .toHex(),
+                  _Key.magnifierStrokeColor:
+                      (style?.magnifierStrokeColor ??
+                              _defaultStyle.magnifierStrokeColor)
+                          .toHex(),
                 },
               ),
               if (descChild != null) buildDescChild(context),

@@ -122,8 +122,12 @@ class TodayTabPageState extends State<TodayTabPage>
         await syncvm.startSync(initWait: kAppSyncDelayDuration2);
         await syncvm.appSyncTask.processing;
       } catch (e, s) {
-        appLog.appsync.fatal("start sync failed",
-            ex: [syncvm.appSyncTask.task], error: e, stackTrace: s);
+        appLog.appsync.fatal(
+          "start sync failed",
+          ex: [syncvm.appSyncTask.task],
+          error: e,
+          stackTrace: s,
+        );
         if (kDebugMode) Error.throwWithStackTrace(e, s);
       }
     }
@@ -134,9 +138,7 @@ class TodayTabPageState extends State<TodayTabPage>
     //#region bottom placeholder
     Widget buildBottomPlaceHolder(BuildContext context) {
       return SliverToBoxAdapter(
-        child: FixedPagePlaceHolder(
-          minHeight: widget.bottomNavigationHeight,
-        ),
+        child: FixedPagePlaceHolder(minHeight: widget.bottomNavigationHeight),
       );
     }
     //#endregion
@@ -151,12 +153,13 @@ class TodayTabPageState extends State<TodayTabPage>
         const _Appbar(toolbarHeight: appbarHeight),
         const _HabitsGroupView(),
         const _DevelopTile(),
-        buildBottomPlaceHolder(context)
+        buildBottomPlaceHolder(context),
       ],
     );
     const image = _TodayDoneImage(
-        changedAnimateDuration: Duration(milliseconds: 300),
-        offsetHeight: -appbarHeight);
+      changedAnimateDuration: Duration(milliseconds: 300),
+      offsetHeight: -appbarHeight,
+    );
     final page = RefreshIndicator(
       key: _refreshIndicatorKey,
       notificationPredicate: (notification) {
@@ -206,8 +209,12 @@ class _HabitsGroupView extends StatelessWidget {
     try {
       if (sync.mounted) await sync.appSyncTask.processing;
     } catch (e, s) {
-      appLog.appsync
-          .error("TodayTabPage", ex: ["sync failed"], error: e, stackTrace: s);
+      appLog.appsync.error(
+        "TodayTabPage",
+        ex: ["sync failed"],
+        error: e,
+        stackTrace: s,
+      );
     }
     if (!context.mounted) return;
     final vm = context.read<HabitsTodayViewModel>();
@@ -277,13 +284,19 @@ class _HabitsTodayController {
     _onChanged?.call();
   }
 
-  void _onRecordChangeConfirmed(HabitUUID uuid, HabitSummaryRecord record,
-      {String? reason}) {
+  void _onRecordChangeConfirmed(
+    HabitUUID uuid,
+    HabitSummaryRecord record, {
+    String? reason,
+  }) {
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(uuid, record,
-        reason: reason,
-        msg: "habit_today._onRecordChangeConfirmed",
-        source: AppEventPageSource.habitToday);
+    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+      uuid,
+      record,
+      reason: reason,
+      msg: "habit_today._onRecordChangeConfirmed",
+      source: AppEventPageSource.habitToday,
+    );
     // try sync once
     final sync = context.maybeRead<AppSyncViewModel>();
     if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
@@ -300,9 +313,9 @@ class _HabitsTodayController {
   void onDual(HabitUUID uuid) {
     final habit = _vm.getHabit(uuid);
     if (habit == null) return;
-    _vm
-        .changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal)
-        .then((record) {
+    _vm.changeRecordValue(uuid, habit.dailyGoalExtra ?? habit.dailyGoal).then((
+      record,
+    ) {
       if (record != null) _onRecordChangeConfirmed(uuid, record);
     });
   }
@@ -380,8 +393,9 @@ class _HabitGrid extends StatefulWidget {
 }
 
 class _HabitGridState extends State<_HabitGrid> {
-  late final _HabitsTodayController _controller =
-      _HabitsTodayController(context);
+  late final _HabitsTodayController _controller = _HabitsTodayController(
+    context,
+  );
 
   @override
   void initState() {
@@ -423,8 +437,8 @@ class _HabitGridState extends State<_HabitGrid> {
           return Selector<HabitsTodayViewModel, bool>(
             key: ValueKey(item.uuid),
             selector: (context, vm) {
-              final (lastExpandUuid, lastExpandStatus) =
-                  vm.getLastHabitExpandStatus(onlySucc: true);
+              final (lastExpandUuid, lastExpandStatus) = vm
+                  .getLastHabitExpandStatus(onlySucc: true);
               return uuid == lastExpandUuid && lastExpandStatus == true;
             },
             builder: (context, value, child) {
@@ -449,9 +463,10 @@ class _HabitGridState extends State<_HabitGrid> {
         }
       },
       sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: width,
-          mainAxisExtent: height,
-          childAspectRatio: height / width),
+        maxCrossAxisExtent: width,
+        mainAxisExtent: height,
+        childAspectRatio: height / width,
+      ),
     );
   }
 }
@@ -465,27 +480,30 @@ class _HabitGridItem extends StatelessWidget {
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const _HabitGridItem(
-      {required this.uuid,
-      required this.date,
-      this.height,
-      required this.selected,
-      this.onExpandChanged,
-      this.onMainPressed,
-      this.buttonCallbacked});
+  const _HabitGridItem({
+    required this.uuid,
+    required this.date,
+    this.height,
+    required this.selected,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  });
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
-        (vm) => vm.getHabit(uuid));
+      (vm) => vm.getHabit(uuid),
+    );
     if (data == null) return const SizedBox.shrink();
     final card = HabitTodayCard.grid(
-        data: data,
-        date: date,
-        selected: selected,
-        onExpandChanged: onExpandChanged,
-        onMainPressed: onMainPressed,
-        buttonCallbacked: buttonCallbacked);
+      data: data,
+      date: date,
+      selected: selected,
+      onExpandChanged: onExpandChanged,
+      onMainPressed: onMainPressed,
+      buttonCallbacked: buttonCallbacked,
+    );
     if (height != null) return SizedBox(height: height, child: card);
     return card;
   }
@@ -499,8 +517,9 @@ class _HabitList extends StatefulWidget {
 }
 
 class _HabitListState extends State<_HabitList> {
-  late final _HabitsTodayController _controller =
-      _HabitsTodayController(context);
+  late final _HabitsTodayController _controller = _HabitsTodayController(
+    context,
+  );
 
   @override
   void initState() {
@@ -571,18 +590,20 @@ class _HabitListItem extends StatelessWidget {
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const _HabitListItem(
-      {required this.uuid,
-      required this.date,
-      required this.selected,
-      this.onExpandChanged,
-      this.onMainPressed,
-      this.buttonCallbacked});
+  const _HabitListItem({
+    required this.uuid,
+    required this.date,
+    required this.selected,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  });
 
   @override
   Widget build(BuildContext context) {
     final data = context.select<HabitsTodayViewModel, HabitSummaryData?>(
-        (vm) => vm.getHabit(uuid));
+      (vm) => vm.getHabit(uuid),
+    );
     if (data == null) return const SizedBox.shrink();
     return HabitTodayCard(
       data: data,
@@ -640,10 +661,12 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDataLoaded =
-        context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
-    final habitCount = context
-        .select<HabitsTodayViewModel, int>((vm) => vm.currentHabitList.length);
+    final isDataLoaded = context.select<HabitsTodayViewModel, bool>(
+      (vm) => vm.isDataLoaded,
+    );
+    final habitCount = context.select<HabitsTodayViewModel, int>(
+      (vm) => vm.currentHabitList.length,
+    );
 
     bool shouldShowImage() => isDataLoaded && habitCount <= 0;
 
@@ -651,8 +674,9 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       size: const Size.square(300),
       padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
       descChild: L10nBuilder(
-          builder: (context, l10n) =>
-              Text(l10n?.habitToday_image_desc ?? "YOU MADE IT")),
+        builder: (context, l10n) =>
+            Text(l10n?.habitToday_image_desc ?? "YOU MADE IT"),
+      ),
       style: _adaptedStyle,
     );
 
@@ -662,8 +686,11 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
           alignment: Alignment.bottomCenter,
           child: ConstrainedBox(
             constraints: constraints.copyWith(
-                maxHeight:
-                    math.max(constraints.maxHeight + widget.offsetHeight, 0)),
+              maxHeight: math.max(
+                constraints.maxHeight + widget.offsetHeight,
+                0,
+              ),
+            ),
             child: AnimatedOpacity(
               opacity: shouldShowImage() ? 1.0 : 0.0,
               duration: widget.changedAnimateDuration,
@@ -681,13 +708,16 @@ class _DevelopTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayDebugMenu = context
-        .select<AppDeveloperViewModel, bool>((vm) => vm.displayDebugMenu);
+    final displayDebugMenu = context.select<AppDeveloperViewModel, bool>(
+      (vm) => vm.displayDebugMenu,
+    );
     final vm = context.watch<HabitsTodayViewModel>();
     final body = SliverToBoxAdapter(
       child: ExpansionTile(
-        title: Text(L10n.of(context)?.habitDisplay_debug_debugSubgroup_title ??
-            'Developer'),
+        title: Text(
+          L10n.of(context)?.habitDisplay_debug_debugSubgroup_title ??
+              'Developer',
+        ),
         children: [
           ListTile(
             title: const Text("Debug Info"),
@@ -695,16 +725,13 @@ class _DevelopTile extends StatelessWidget {
             leading: const Icon(Icons.warning),
             iconColor: Colors.red,
             isThreeLine: true,
-          )
+          ),
         ],
       ),
     );
     return SliverVisibility(
       visible: displayDebugMenu,
-      sliver: EnhancedSafeArea.edgeToEdgeSafe(
-        withSliver: true,
-        child: body,
-      ),
+      sliver: EnhancedSafeArea.edgeToEdgeSafe(withSliver: true, child: body),
     );
   }
 }

@@ -30,13 +30,14 @@ class AppSyncServerPasswordField extends StatefulWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerPasswordField(
-      {super.key,
-      this.contentPadding,
-      this.loading = false,
-      this.enabled = true,
-      required this.controller,
-      this.onChanged});
+  const AppSyncServerPasswordField({
+    super.key,
+    this.contentPadding,
+    this.loading = false,
+    this.enabled = true,
+    required this.controller,
+    this.onChanged,
+  });
 
   @override
   State<AppSyncServerPasswordField> createState() =>
@@ -54,13 +55,16 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
 
   @override
   void initState() {
-    appLog.build.debug(context, ex: [
-      "init[$_debugId]",
-      widget.enabled,
-      widget.loading,
-      widget.controller,
-      widget.contentPadding
-    ]);
+    appLog.build.debug(
+      context,
+      ex: [
+        "init[$_debugId]",
+        widget.enabled,
+        widget.loading,
+        widget.controller,
+        widget.contentPadding,
+      ],
+    );
     showPassword = false;
     _focusNode = FocusNode();
     super.initState();
@@ -68,21 +72,26 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && !showPassword) {
         final controller = widget.controller;
-        controller.selection =
-            TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+        controller.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: controller.text.length,
+        );
       }
     });
   }
 
   @override
   void dispose() {
-    appLog.build.debug(context, ex: [
-      "dispose[$_debugId]",
-      widget.enabled,
-      widget.loading,
-      widget.controller,
-      widget.contentPadding
-    ]);
+    appLog.build.debug(
+      context,
+      ex: [
+        "dispose[$_debugId]",
+        widget.enabled,
+        widget.loading,
+        widget.controller,
+        widget.contentPadding,
+      ],
+    );
     super.dispose();
     _focusNode.dispose();
   }
@@ -94,10 +103,11 @@ class _AppSyncServerPasswordField extends State<AppSyncServerPasswordField> {
     return ListTile(
       contentPadding: widget.contentPadding,
       trailing: IconButton(
-          onPressed: () => setState(() => showPassword = !showPassword),
-          icon: showPassword
-              ? const Icon(Icons.visibility_off)
-              : const Icon(Icons.visibility)),
+        onPressed: () => setState(() => showPassword = !showPassword),
+        icon: showPassword
+            ? const Icon(Icons.visibility_off)
+            : const Icon(Icons.visibility),
+      ),
       title: TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -121,22 +131,34 @@ class AppWebDavSyncServerPasswordTile extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String?>? onChanged;
 
-  const AppWebDavSyncServerPasswordTile(
-      {super.key, required this.controller, this.onChanged});
+  const AppWebDavSyncServerPasswordTile({
+    super.key,
+    required this.controller,
+    this.onChanged,
+  });
 
-  Widget _buildSnapshotWidget(BuildContext context,
-      AsyncSnapshot<(String, String?)> snapshot, String identity) {
+  Widget _buildSnapshotWidget(
+    BuildContext context,
+    AsyncSnapshot<(String, String?)> snapshot,
+    String identity,
+  ) {
     if (snapshot.hasError || (snapshot.isDone && !snapshot.hasData)) {
       if (kDebugMode) {
         throw Error.throwWithStackTrace(snapshot.error!, snapshot.stackTrace!);
       }
       return AppSyncServerPasswordField(
-          controller: controller, enabled: false, loading: false);
+        controller: controller,
+        enabled: false,
+        loading: false,
+      );
     }
     if (snapshot.isDone) {
       if (snapshot.data?.$1 != identity) {
         return AppSyncServerPasswordField(
-            controller: controller, loading: false, enabled: false);
+          controller: controller,
+          loading: false,
+          enabled: false,
+        );
       }
       return AppSyncServerPasswordField(
         controller: controller..text = snapshot.data?.$2 ?? "",
@@ -149,13 +171,17 @@ class AppWebDavSyncServerPasswordTile extends StatelessWidget {
       );
     }
     return AppSyncServerPasswordField(
-        controller: controller, enabled: false, loading: !snapshot.isDone);
+      controller: controller,
+      enabled: false,
+      loading: !snapshot.isDone,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final identity =
-        context.select<AppSyncServerFormViewModel, String>((vm) => vm.identity);
+    final identity = context.select<AppSyncServerFormViewModel, String>(
+      (vm) => vm.identity,
+    );
     final vm = context.read<AppSyncServerFormViewModel>();
     return FutureBuilder<(String, String?)>(
       future: vm.webdav?.readPassword(useCache: true),
@@ -166,8 +192,9 @@ class AppWebDavSyncServerPasswordTile extends StatelessWidget {
             opacity: (snapshot.isDone || vm.pwdLoaded) ? 0 : 1,
             duration: const Duration(milliseconds: 300),
             child: const Padding(
-                padding: kListTileContentPadding,
-                child: LinearProgressIndicator()),
+              padding: kListTileContentPadding,
+              child: LinearProgressIndicator(),
+            ),
           ),
           _buildSnapshotWidget(context, snapshot, identity),
         ],

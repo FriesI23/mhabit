@@ -36,8 +36,8 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
     _theme = newProfile.getHandler<AppThemeTypeProfileHandler>();
     _themeColor = newProfile.getHandler<AppThemeColorProfileHandler>();
     _mainColor = newProfile.getHandler<AppThemeMainColorProfileHandler>();
-    _calOccupy =
-        newProfile.getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
+    _calOccupy = newProfile
+        .getHandler<DisplayCalendartBarOccupyPrtProfileHandler>();
   }
 
   //#region app theme
@@ -106,5 +106,6 @@ class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
       notifyListeners();
     }
   }
+
   //#endregion
 }

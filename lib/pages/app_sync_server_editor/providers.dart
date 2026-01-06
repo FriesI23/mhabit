@@ -28,15 +28,15 @@ class PageProviders extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) =>
-                AppSyncServerFormViewModel(initServerConfig: initServerConfig),
-          ),
-          ViewModelProxyProvider<AppSyncViewModel, AppSyncServerFormViewModel>(
-              update: (context, value, previous) =>
-                  previous..attachParent(value)),
-        ],
-        child: child,
-      );
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) =>
+            AppSyncServerFormViewModel(initServerConfig: initServerConfig),
+      ),
+      ViewModelProxyProvider<AppSyncViewModel, AppSyncServerFormViewModel>(
+        update: (context, value, previous) => previous..attachParent(value),
+      ),
+    ],
+    child: child,
+  );
 }

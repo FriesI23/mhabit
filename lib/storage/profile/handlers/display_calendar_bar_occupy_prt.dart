@@ -18,7 +18,7 @@ import '../profile_helper.dart';
 final class DisplayCalendartBarOccupyPrtProfileHandler
     extends ProfileHelperCovertToIntHandler<int> {
   const DisplayCalendartBarOccupyPrtProfileHandler(super.pref)
-      : super(codec: const SameTypeCodec());
+    : super(codec: const SameTypeCodec());
 
   @override
   String get key => "displayCalendarBarOccupyPrt";

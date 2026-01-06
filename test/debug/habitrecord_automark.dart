@@ -28,8 +28,12 @@ void main() {
   // functionTest();
 }
 
-void cusomFreqPerformanceTest(
-    {int preRecordNum = 365, dataNum = 1, days = 99, freq = 3}) {
+void cusomFreqPerformanceTest({
+  int preRecordNum = 365,
+  dataNum = 1,
+  days = 99,
+  freq = 3,
+}) {
   final rng = Random();
   var crtDate = HabitStartDate(2022, 1, 1);
   final dataList = <HabitSummaryData>[];
@@ -56,12 +60,14 @@ void cusomFreqPerformanceTest(
     for (var i = 0; i < preRecordNum; i++) {
       final nextDayOffset = rng.nextInt(2);
       crtDate = crtDate.addDays(nextDayOffset);
-      data.addRecord(HabitSummaryRecord.generate(
-        crtDate,
-        status: HabitRecordStatus.done,
-        value: rng.nextInt(20),
-        parentUUID: data.uuid,
-      ));
+      data.addRecord(
+        HabitSummaryRecord.generate(
+          crtDate,
+          status: HabitRecordStatus.done,
+          value: rng.nextInt(20),
+          parentUUID: data.uuid,
+        ),
+      );
     }
   }
 
@@ -74,8 +80,9 @@ void cusomFreqPerformanceTest(
     final count = stopwatch.elapsed;
     debugPrint('data $data recalc executed in $count ms');
     dl.add(count.inMicroseconds);
-    final sortedData =
-        data.debugGetAutoMarkedRecordsCopy().sorted((a, b) => a.compareTo(b));
+    final sortedData = data.debugGetAutoMarkedRecordsCopy().sorted(
+      (a, b) => a.compareTo(b),
+    );
     debugPrint('dateCount: ${sortedData.length}');
     debugPrint('--------------------------------------------');
     stopwatch.reset();
@@ -105,12 +112,14 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
 
   for (var i = 0; i < preRecordNum; i++) {
     crtDate = crtDate.addDays(1);
-    data.addRecord(HabitSummaryRecord.generate(
-      crtDate,
-      status: HabitRecordStatus.done,
-      value: rng.nextInt(20),
-      parentUUID: data.uuid,
-    ));
+    data.addRecord(
+      HabitSummaryRecord.generate(
+        crtDate,
+        status: HabitRecordStatus.done,
+        value: rng.nextInt(20),
+        parentUUID: data.uuid,
+      ),
+    );
   }
 
   final dl = <int>[];
@@ -121,8 +130,9 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
   final count = stopwatch.elapsed;
   debugPrint('data $data recalc executed in $count ms');
   dl.add(count.inMicroseconds);
-  final sortedData =
-      data.debugGetAutoMarkedRecordsCopy().sorted((a, b) => a.compareTo(b));
+  final sortedData = data.debugGetAutoMarkedRecordsCopy().sorted(
+    (a, b) => a.compareTo(b),
+  );
   debugPrint('dateCount: ${sortedData.length}');
   debugPrint('--------------------------------------------');
   stopwatch.reset();
@@ -147,73 +157,95 @@ void functionTest() {
     sortPostion: 1.0,
     createTime: DateTime.now(),
   );
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 4),
-    status: HabitRecordStatus.done,
-    value: 10.0,
-    parentUUID: data.uuid,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 5),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 6),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 8),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 16),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 17),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 18),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2022, 1, 22),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 4),
+      status: HabitRecordStatus.done,
+      value: 10.0,
+      parentUUID: data.uuid,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 5),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 6),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 8),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 16),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 17),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 18),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2022, 1, 22),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
 
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2023, 1, 1),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2024, 1, 1),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
-  data.addRecord(HabitSummaryRecord.generate(
-    HabitStartDate(2025, 1, 1),
-    status: HabitRecordStatus.done,
-    parentUUID: data.uuid,
-    value: 10.0,
-  ));
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2023, 1, 1),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2024, 1, 1),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
+  data.addRecord(
+    HabitSummaryRecord.generate(
+      HabitStartDate(2025, 1, 1),
+      status: HabitRecordStatus.done,
+      parentUUID: data.uuid,
+      value: 10.0,
+    ),
+  );
 
   final Stopwatch stopwatch = Stopwatch()..start();
   data.reCalculateAutoComplateRecords(firstDay: DateTime.monday);

@@ -24,8 +24,10 @@ class RecordStatusChangeTile extends StatefulWidget {
   final RecordStatusChangerStatus? initStatus;
   final Set<RecordStatusChangerStatus> allowedStatus;
   final void Function(
-          RecordStatusChangerStatus? os, RecordStatusChangerStatus? ns)?
-      onSelectedNewStatus;
+    RecordStatusChangerStatus? os,
+    RecordStatusChangerStatus? ns,
+  )?
+  onSelectedNewStatus;
 
   const RecordStatusChangeTile({
     super.key,
@@ -53,8 +55,9 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
     super.didUpdateWidget(oldWdiget);
   }
 
-  Set<RecordStatusChangerStatus> get currentSelection =>
-      {if (selectStatus != null) selectStatus!};
+  Set<RecordStatusChangerStatus> get currentSelection => {
+    if (selectStatus != null) selectStatus!,
+  };
 
   void _onSelectionChanged(Set<RecordStatusChangerStatus> newSelection) {
     if (currentSelection == newSelection) return;
@@ -85,30 +88,38 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
       required RecordStatusChangerStatus status,
       Widget? label,
       Widget? icon,
-    }) =>
-        ButtonSegment(
-            value: status,
-            label: label,
-            icon: icon,
-            tooltip: _getTooltipByStatus(status, L10n.of(context)),
-            enabled: widget.allowedStatus.contains(status));
+    }) => ButtonSegment(
+      value: status,
+      label: label,
+      icon: icon,
+      tooltip: _getTooltipByStatus(status, L10n.of(context)),
+      enabled: widget.allowedStatus.contains(status),
+    );
 
     appLog.build.debug(context);
     return ListTile(
       title: SegmentedButton<RecordStatusChangerStatus>(
         segments: [
-          buildButtonSegment(context,
-              status: RecordStatusChangerStatus.skip,
-              icon: const Icon(kRecordSkipStatusIcon)),
-          buildButtonSegment(context,
-              status: RecordStatusChangerStatus.ok,
-              icon: const Icon(kRecordDoneStatusIcon)),
-          buildButtonSegment(context,
-              status: RecordStatusChangerStatus.dual,
-              icon: const Icon(MdiIcons.checkAll)),
-          buildButtonSegment(context,
-              status: RecordStatusChangerStatus.zero,
-              icon: const Icon(kRecordZeroStatusIcon)),
+          buildButtonSegment(
+            context,
+            status: RecordStatusChangerStatus.skip,
+            icon: const Icon(kRecordSkipStatusIcon),
+          ),
+          buildButtonSegment(
+            context,
+            status: RecordStatusChangerStatus.ok,
+            icon: const Icon(kRecordDoneStatusIcon),
+          ),
+          buildButtonSegment(
+            context,
+            status: RecordStatusChangerStatus.dual,
+            icon: const Icon(MdiIcons.checkAll),
+          ),
+          buildButtonSegment(
+            context,
+            status: RecordStatusChangerStatus.zero,
+            icon: const Icon(kRecordZeroStatusIcon),
+          ),
         ],
         selected: currentSelection,
         onSelectionChanged: _onSelectionChanged,

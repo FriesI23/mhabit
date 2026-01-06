@@ -42,22 +42,26 @@ class HabitHeatmap extends StatelessWidget {
     BuildContext context,
     DateTime protoDate,
     String defaultFormat,
-  )? heatmapWeekLabelValueBuilder;
+  )?
+  heatmapWeekLabelValueBuilder;
   final Widget? Function(
     BuildContext context,
     DateTime date,
     String defaultFormat,
-  )? heatmapMonthLabelItemBuilder;
+  )?
+  heatmapMonthLabelItemBuilder;
   final Widget? Function(
     BuildContext context,
     Widget Function(
       BuildContext, {
       Widget? Function(BuildContext context, int? dateDay)? valueBuilder,
-    }) childBuilder,
+    })
+    childBuilder,
     int columnIndex,
     int rowIndex,
     DateTime date,
-  )? heatmapCellBuilder;
+  )?
+  heatmapCellBuilder;
 
   const HabitHeatmap({
     super.key,
@@ -108,13 +112,15 @@ class HabitHeatmap extends StatelessWidget {
       ),
       colorTipLeftHelper: Text(
         colorTipLeftHelperText,
-        style: textTheme.labelSmall
-            ?.copyWith(color: themeData.colorScheme.outline),
+        style: textTheme.labelSmall?.copyWith(
+          color: themeData.colorScheme.outline,
+        ),
       ),
       colorTipRightHelper: Text(
         colorTipRightHelperText,
-        style: textTheme.labelSmall
-            ?.copyWith(color: themeData.colorScheme.outline),
+        style: textTheme.labelSmall?.copyWith(
+          color: themeData.colorScheme.outline,
+        ),
       ),
       weekLabelValueBuilder: heatmapWeekLabelValueBuilder,
       monthLabelItemBuilder: heatmapMonthLabelItemBuilder,
@@ -136,7 +142,7 @@ class HabitHeatmap extends StatelessWidget {
               if (descRecordsNumWidget != null)
                 Expanded(child: descRecordsNumWidget!),
             ],
-          )
+          ),
         ],
       );
     }
@@ -188,7 +194,7 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
               .withValues(alpha: 0.5),
       HabitHeatMapColorMapDefine.complate:
           (colorData?.getColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.primary),
+          themeData.colorScheme.primary),
       HabitHeatMapColorMapDefine.overfulfil:
           (colorData?.getColor(viewmodel.habitColorType!) ??
                   themeData.colorScheme.primary)
@@ -203,19 +209,19 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
     return {
       HabitHeatMapColorMapDefine.uncomplate:
           colorData?.getColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.primary,
+          themeData.colorScheme.primary,
       HabitHeatMapColorMapDefine.partiallyCompleted:
           colorData?.getColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.primary,
+          themeData.colorScheme.primary,
       HabitHeatMapColorMapDefine.autoComplate:
           colorData?.getOnColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.onPrimary,
+          themeData.colorScheme.onPrimary,
       HabitHeatMapColorMapDefine.complate:
           colorData?.getOnColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.onPrimary,
+          themeData.colorScheme.onPrimary,
       HabitHeatMapColorMapDefine.overfulfil:
           colorData?.getOnColor(viewmodel.habitColorType!) ??
-              themeData.colorScheme.onPrimary,
+          themeData.colorScheme.onPrimary,
     };
   }
 }

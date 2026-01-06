@@ -30,7 +30,7 @@ abstract class ProfileHelperConvertHandler<S, T>
   final Codec<S, T> _codec;
 
   const ProfileHelperConvertHandler({required Codec<S, T> codec})
-      : _codec = codec;
+    : _codec = codec;
 
   @override
   Future<bool> set(S value) => setMethod.call(key, _codec.encode(value));
@@ -49,9 +49,10 @@ abstract class ProfileHelperCovertToIntHandler<T>
     extends ProfileHelperConvertHandler<T, int> {
   final SharedPreferences _pref;
 
-  const ProfileHelperCovertToIntHandler(SharedPreferences pref,
-      {required super.codec})
-      : _pref = pref;
+  const ProfileHelperCovertToIntHandler(
+    SharedPreferences pref, {
+    required super.codec,
+  }) : _pref = pref;
 
   @override
   int? Function(String key) get getMethod => _pref.getInt;
@@ -67,9 +68,10 @@ abstract class ProfileHelperCovertToBoolHandler<T>
     extends ProfileHelperConvertHandler<T, bool> {
   final SharedPreferences _pref;
 
-  const ProfileHelperCovertToBoolHandler(SharedPreferences pref,
-      {required super.codec})
-      : _pref = pref;
+  const ProfileHelperCovertToBoolHandler(
+    SharedPreferences pref, {
+    required super.codec,
+  }) : _pref = pref;
 
   @override
   bool? Function(String key) get getMethod => _pref.getBool;
@@ -85,9 +87,10 @@ abstract class ProfileHelperCovertToJsonHandler<T>
     extends ProfileHelperConvertHandler<T, JsonMap> {
   final SharedPreferences _pref;
 
-  const ProfileHelperCovertToJsonHandler(SharedPreferences pref,
-      {required super.codec})
-      : _pref = pref;
+  const ProfileHelperCovertToJsonHandler(
+    SharedPreferences pref, {
+    required super.codec,
+  }) : _pref = pref;
 
   JsonMap? _getMethod(String key) {
     final source = _pref.getString(key);

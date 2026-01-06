@@ -45,8 +45,9 @@ class HabitEditDailyGoalTile extends StatelessWidget {
       case HabitType.normal:
         return l10n?.habitEdit_habitDailyGoal_hintText(defualtHabitDailyGoal);
       case HabitType.negative:
-        return l10n
-            ?.habitEdit_habitDailyGoal_negativeHintText(defualtHabitDailyGoal);
+        return l10n?.habitEdit_habitDailyGoal_negativeHintText(
+          defualtHabitDailyGoal,
+        );
     }
   }
 
@@ -68,8 +69,10 @@ class HabitEditDailyGoalTile extends StatelessWidget {
           border: InputBorder.none,
           errorText: errorHint,
         ),
-        keyboardType:
-            const TextInputType.numberWithOptions(decimal: true, signed: false),
+        keyboardType: const TextInputType.numberWithOptions(
+          decimal: true,
+          signed: false,
+        ),
         inputFormatters: [TextFormatterCustom.decimalr2],
         style: textTheme.bodyLarge,
         onChanged: onChanged,

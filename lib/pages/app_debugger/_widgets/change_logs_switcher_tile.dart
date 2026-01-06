@@ -20,8 +20,11 @@ class ChangeLogsSwitcherTile extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
 
-  const ChangeLogsSwitcherTile(
-      {super.key, required this.value, this.onChanged});
+  const ChangeLogsSwitcherTile({
+    super.key,
+    required this.value,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +35,18 @@ class ChangeLogsSwitcherTile extends StatelessWidget {
           ? Text(l10n.debug_collectLogTile_title)
           : const Text("Collect logs"),
       subtitle: l10n != null
-          ? Text(value
-              ? l10n.debug_collectLogTile_enable_subtitle
-              : l10n.debug_collectLogTile_disable_subtitle)
+          ? Text(
+              value
+                  ? l10n.debug_collectLogTile_enable_subtitle
+                  : l10n.debug_collectLogTile_disable_subtitle,
+            )
           : null,
-      thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
-        (states) {
-          if (states.contains(WidgetState.selected)) {
-            return Icon(
-              Icons.pause,
-              color: theme.colorScheme.onError,
-            );
-          }
-          return null;
-        },
-      ),
+      thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Icon(Icons.pause, color: theme.colorScheme.onError);
+        }
+        return null;
+      }),
       activeThumbColor: theme.colorScheme.error,
       value: value,
       onChanged: onChanged,

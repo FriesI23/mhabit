@@ -27,7 +27,8 @@ String buildConflictAlgorithm(ConflictAlgorithm conflictAlgorithm) =>
     };
 
 class CustomSql {
-  static const String autoUpdateRecordsModifyTimeTrigger = """
+  static const String autoUpdateRecordsModifyTimeTrigger =
+      """
 CREATE TRIGGER auto_update_mh_records_modify_t
 AFTER UPDATE ON ${TableName.records}
 BEGIN
@@ -36,7 +37,8 @@ BEGIN
   WHERE uuid = NEW.uuid;
 END""";
 
-  static const String autoUpdateHabitsModifyTimeTrigger = """
+  static const String autoUpdateHabitsModifyTimeTrigger =
+      """
 CREATE TRIGGER auto_update_mh_habits_modify_t
 AFTER UPDATE ON ${TableName.habits}
 BEGIN
@@ -50,7 +52,8 @@ END
 DROP TRIGGER IF EXISTS auto_insert_mh_habits_sort_position;
 """;
 
-  static const String autoAddSortPostionWhenAddNewHabit = """
+  static const String autoAddSortPostionWhenAddNewHabit =
+      """
 CREATE TRIGGER auto_insert_mh_habits_sort_position
 AFTER INSERT ON ${TableName.habits}
 BEGIN
@@ -60,7 +63,8 @@ BEGIN
 END
 """;
 
-  static const String autoUpdateSyncModifyTimeTrigger = """
+  static const String autoUpdateSyncModifyTimeTrigger =
+      """
 CREATE TRIGGER auto_update_mh_sync_modify_t
 AFTER UPDATE ON ${TableName.sync}
 BEGIN
@@ -71,8 +75,9 @@ END
 """;
 
   /// required arguments: [recordUUID]
-  static String increaseRecordSyncDirtySql(
-      {ConflictAlgorithm? conflictAlgorithm}) {
+  static String increaseRecordSyncDirtySql({
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
     final sql = StringBuffer();
     sql.write("UPDATE");
     if (conflictAlgorithm != null) {
@@ -89,8 +94,9 @@ END
   }
 
   /// required arguments: [habitUUID]
-  static String increaseHabitSyncDirtySql(
-      {ConflictAlgorithm? conflictAlgorithm}) {
+  static String increaseHabitSyncDirtySql({
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
     final sql = StringBuffer();
     sql.write("UPDATE");
     if (conflictAlgorithm != null) {
@@ -100,8 +106,10 @@ END
     }
     sql
       ..write(" ${TableName.sync}")
-      ..write(" SET ${SyncDbCellKey.dirtyTotal} "
-          "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
       ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
       ..write(" WHERE ${SyncDbCellKey.habitUUID} = ?");
 
@@ -109,8 +117,10 @@ END
   }
 
   /// required arguments: [habitUUIDList]
-  static String increaseMultiHabitsSyncDirtySql(
-      {required int count, ConflictAlgorithm? conflictAlgorithm}) {
+  static String increaseMultiHabitsSyncDirtySql({
+    required int count,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
     final sql = StringBuffer();
     sql.write("UPDATE");
     if (conflictAlgorithm != null) {
@@ -120,8 +130,10 @@ END
     }
     sql
       ..write(" ${TableName.sync}")
-      ..write(" SET ${SyncDbCellKey.dirtyTotal} "
-          "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
       ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
       ..write(" WHERE ${SyncDbCellKey.habitUUID}")
       ..write(" IN (${List.generate(count, (index) => '?').join(', ')})");
@@ -130,8 +142,9 @@ END
   }
 
   /// required arguments: [habitUUID]
-  static String increaseHabitSyncTotalDirtySql(
-      {ConflictAlgorithm? conflictAlgorithm}) {
+  static String increaseHabitSyncTotalDirtySql({
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
     final sql = StringBuffer();
     sql.write("UPDATE");
     if (conflictAlgorithm != null) {
@@ -141,8 +154,10 @@ END
     }
     sql
       ..write(" ${TableName.sync}")
-      ..write(" SET ${SyncDbCellKey.dirtyTotal} "
-          "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
       ..write(" WHERE ${SyncDbCellKey.habitUUID} = ?");
 
     return sql.toString();

@@ -18,10 +18,11 @@ class PinnedAppbarScrollController extends ScrollController {
   final double? _toolbarHeight;
   final ValueChanged<bool>? onAppbarStatusChanged;
 
-  PinnedAppbarScrollController(
-      {double? toolbarHeight, this.onAppbarStatusChanged})
-      : _toolbarHeight = toolbarHeight,
-        super();
+  PinnedAppbarScrollController({
+    double? toolbarHeight,
+    this.onAppbarStatusChanged,
+  }) : _toolbarHeight = toolbarHeight,
+       super();
 
   double get toolbarHeight => _toolbarHeight ?? kToolbarHeight;
 

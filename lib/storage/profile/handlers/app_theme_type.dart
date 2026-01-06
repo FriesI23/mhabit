@@ -22,8 +22,10 @@ final class AppThemeTypeProfileHandler
   @override
   String get key => "themeType";
 
-  const AppThemeTypeProfileHandler(super.pref,
-      {super.codec = const AppThemeTypeProfileCodec()});
+  const AppThemeTypeProfileHandler(
+    super.pref, {
+    super.codec = const AppThemeTypeProfileCodec(),
+  });
 }
 
 final class AppThemeTypeProfileCodec extends Codec<AppThemeType, int> {

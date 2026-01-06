@@ -25,9 +25,9 @@ class HabitDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget buildDiv(BuildContext context) => Divider(
-          color: Theme.of(context).colorScheme.outlineOpacity16,
-          height: height,
-        );
+      color: Theme.of(context).colorScheme.outlineOpacity16,
+      height: height,
+    );
 
     return withSliver
         ? SliverToBoxAdapter(child: buildDiv(context))

@@ -33,8 +33,9 @@ class HabitDetailFAB extends StatelessWidget {
     Color? iconColor = themeData.colorScheme.onSecondaryContainer;
     backgroundColor =
         (colorType != null ? colorData?.getColorContainer(colorType!) : null) ??
-            backgroundColor;
-    iconColor = (colorType != null
+        backgroundColor;
+    iconColor =
+        (colorType != null
             ? colorData?.getColorOnContainer(colorType!)
             : null) ??
         iconColor;

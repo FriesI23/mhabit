@@ -19,31 +19,34 @@ import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_options.dart';
 import '../../../providers/app_sync.dart';
 
-Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog(
-        {required BuildContext context, AppSyncFetchInterval? select}) =>
-    showDialog(
-      context: context,
-      builder: (context) => AppSyncFetchIntervalSwitchDialog(select: select),
-    );
+Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog({
+  required BuildContext context,
+  AppSyncFetchInterval? select,
+}) => showDialog(
+  context: context,
+  builder: (context) => AppSyncFetchIntervalSwitchDialog(select: select),
+);
 
 class AppSyncFetchIntervalSwitchDialog extends StatelessWidget {
   final AppSyncFetchInterval? select;
 
   const AppSyncFetchIntervalSwitchDialog({super.key, required this.select});
 
-  Widget _buildOption(BuildContext context, AppSyncFetchInterval interval,
-          [L10n? l10n]) =>
-      SimpleDialogOption(
-        key: ValueKey(interval.index),
-        onPressed: () => Navigator.of(context).pop(interval),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(interval.getShowText(l10n)),
-            if (select == interval) const Icon(Icons.check),
-          ],
-        ),
-      );
+  Widget _buildOption(
+    BuildContext context,
+    AppSyncFetchInterval interval, [
+    L10n? l10n,
+  ]) => SimpleDialogOption(
+    key: ValueKey(interval.index),
+    onPressed: () => Navigator.of(context).pop(interval),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(interval.getShowText(l10n)),
+        if (select == interval) const Icon(Icons.check),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {

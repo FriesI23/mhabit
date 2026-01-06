@@ -20,11 +20,7 @@ class HabitDetailTileList extends StatelessWidget {
   final Widget? title;
   final List<Widget>? contentChildren;
 
-  const HabitDetailTileList({
-    super.key,
-    this.title,
-    this.contentChildren,
-  });
+  const HabitDetailTileList({super.key, this.title, this.contentChildren});
 
   @override
   Widget build(BuildContext context) {

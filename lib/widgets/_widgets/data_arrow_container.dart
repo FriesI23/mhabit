@@ -18,8 +18,12 @@ class DateArrowContainer extends StatelessWidget {
   final double? width;
   final EdgeInsetsGeometry? padding;
   final Widget button;
-  const DateArrowContainer(
-      {super.key, this.width, this.padding, required this.button});
+  const DateArrowContainer({
+    super.key,
+    this.width,
+    this.padding,
+    required this.button,
+  });
 
   @override
   Widget build(BuildContext context) {

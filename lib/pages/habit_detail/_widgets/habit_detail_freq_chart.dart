@@ -37,7 +37,9 @@ class _HabitDetailFreqChartTitle extends StatelessWidget {
   });
 
   String getCombineString(
-      BuildContext context, HabitDetailFreqChartCombine combine) {
+    BuildContext context,
+    HabitDetailFreqChartCombine combine,
+  ) {
     switch (combine) {
       case HabitDetailFreqChartCombine.monthly:
         return L10n.of(context)?.habitDetail_freqChartCombine_monthlyText ??
@@ -57,10 +59,12 @@ class _HabitDetailFreqChartTitle extends StatelessWidget {
       return PopupMenuButton<HabitDetailFreqChartCombine>(
         icon: Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Row(children: [
-            Text(getCombineString(context, chartCombine)),
-            const Icon(Icons.arrow_drop_down),
-          ]),
+          child: Row(
+            children: [
+              Text(getCombineString(context, chartCombine)),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
         ),
         padding: EdgeInsets.zero,
         initialValue: chartCombine,
@@ -304,7 +308,8 @@ class _HabitDetailFreqChartInLargeScreen extends StatelessWidget {
         constraints: BoxConstraints.tightFor(height: titleHeight),
         child: L10nBuilder(
           builder: (context, l10n) => _HabitDetailFreqChartTitle(
-            title: l10n?.habitDetail_freqChart_combinedTitle ??
+            title:
+                l10n?.habitDetail_freqChart_combinedTitle ??
                 "Frequency & History",
             chartCombine: chartCombine,
             onPopMenuSelected: onPopMenuSelected,
@@ -363,16 +368,32 @@ class HabitDetailFreqChart extends StatelessWidget {
   final bool isLargeScreen;
   final bool isChartExpanded;
   final List<MapEntry<HabitDate, HabitDetailFreqChartData>> Function(
-      HabitDate firstDate, HabitDate lastDate, int limit) getData;
+    HabitDate firstDate,
+    HabitDate lastDate,
+    int limit,
+  )
+  getData;
   final void Function(HabitDetailFreqChartCombine combine)? onPopMenuSelected;
   final HabitDetailFreqChartBuilder? countChartBuilder;
   final HabitDetailFreqChartBuilder? valueChartBuilder;
 
   final int offset;
-  final Widget? Function(BuildContext context, HabitDate firstDate,
-      HabitDate lastDate, bool isToday, bool isLast)? getLeftDateHelper;
-  final Widget? Function(BuildContext context, HabitDate firstDate,
-      HabitDate lastDate, bool isToday, bool isLast)? getRightDateHelper;
+  final Widget? Function(
+    BuildContext context,
+    HabitDate firstDate,
+    HabitDate lastDate,
+    bool isToday,
+    bool isLast,
+  )?
+  getLeftDateHelper;
+  final Widget? Function(
+    BuildContext context,
+    HabitDate firstDate,
+    HabitDate lastDate,
+    bool isToday,
+    bool isLast,
+  )?
+  getRightDateHelper;
   final VoidCallback? onLeftButtonPressed;
   final VoidCallback? onRightButtonPressed;
   final ValueChanged<bool>? onExpandIconPressed;
@@ -407,30 +428,36 @@ class HabitDetailFreqChart extends StatelessWidget {
   double get cellWidth => barWidth * 4 + barSpaceBetween * 3;
 
   ValueKey<String> getCountChartKey(HabitDate firstDate, HabitDate lastDate) {
-    return ValueKey<String>("countChart"
-        "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
-        "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
-        "|${chartCombine.index}");
+    return ValueKey<String>(
+      "countChart"
+      "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
+      "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
+      "|${chartCombine.index}",
+    );
   }
 
   ValueKey<String> getValueChartKey(HabitDate firstDate, HabitDate lastDate) {
-    return ValueKey<String>("valueChart"
-        "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
-        "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
-        "|${chartCombine.index}");
+    return ValueKey<String>(
+      "valueChart"
+      "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
+      "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
+      "|${chartCombine.index}",
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextScaler textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     final eachSize = textScaler.scale(this.eachSize);
     final limit = math.max(1, allowWidth ~/ math.max(eachSize, cellWidth));
     final firstDate = getFirstDate(limit);
     final lastDate = getLastDate(limit);
-    final titleHeight =
-        textScaler.clamp(minScaleFactor: 1.0).scale(this.titleHeight);
+    final titleHeight = textScaler
+        .clamp(minScaleFactor: 1.0)
+        .scale(this.titleHeight);
 
     final isToday = offset == 0;
     final isLast = lastDate.isBefore(habitStartDate);
@@ -445,9 +472,19 @@ class HabitDetailFreqChart extends StatelessWidget {
           isToday: isToday,
           isLast: isLast,
           leftDateHelper: getLeftDateHelper?.call(
-              context, firstDate, lastDate, isToday, isLast),
+            context,
+            firstDate,
+            lastDate,
+            isToday,
+            isLast,
+          ),
           rightDateHelper: getRightDateHelper?.call(
-              context, firstDate, lastDate, isToday, isLast),
+            context,
+            firstDate,
+            lastDate,
+            isToday,
+            isLast,
+          ),
           countChartWidget: countChartBuilder?.call(
             context,
             data,
@@ -482,9 +519,19 @@ class HabitDetailFreqChart extends StatelessWidget {
           isLast: isLast,
           isChartExpanded: isChartExpanded,
           leftDateHelper: getLeftDateHelper?.call(
-              context, firstDate, lastDate, isToday, isLast),
+            context,
+            firstDate,
+            lastDate,
+            isToday,
+            isLast,
+          ),
           rightDateHelper: getRightDateHelper?.call(
-              context, firstDate, lastDate, isToday, isLast),
+            context,
+            firstDate,
+            lastDate,
+            isToday,
+            isLast,
+          ),
           countChartWidget: countChartBuilder?.call(
             context,
             data,

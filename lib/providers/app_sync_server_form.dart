@@ -115,8 +115,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == path) return;
     final oldValue = path;
     form.path = value;
-    appLog.value
-        .info('$runtimeType.path', beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.path',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
@@ -125,8 +128,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == username) return;
     final oldValue = username;
     form.username = value;
-    appLog.value
-        .info('$runtimeType.username', beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.username',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
@@ -135,8 +141,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == password) return;
     final oldValue = password;
     form.password = value;
-    appLog.value
-        .info('$runtimeType.password', beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.password',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
@@ -145,8 +154,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == ignoreSSL) return;
     final oldValue = ignoreSSL;
     form.ignoreSSL = value;
-    appLog.value
-        .info('$runtimeType.ignoreSSL', beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.ignoreSSL',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
@@ -156,8 +168,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == timeout) return;
     final oldValue = timeout;
     form.timeout = value;
-    appLog.value.info('$runtimeType.timeout',
-        beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    appLog.value.info(
+      '$runtimeType.timeout',
+      beforeVal: oldValue?.inSeconds,
+      afterVal: value?.inSeconds,
+    );
     notifyListeners();
   }
 
@@ -167,8 +182,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == connectTimeout) return;
     final oldValue = connectTimeout;
     form.connectTimeout = value;
-    appLog.value.info('$runtimeType.connectTimeout',
-        beforeVal: oldValue?.inSeconds, afterVal: value?.inSeconds);
+    appLog.value.info(
+      '$runtimeType.connectTimeout',
+      beforeVal: oldValue?.inSeconds,
+      afterVal: value?.inSeconds,
+    );
     notifyListeners();
   }
 
@@ -178,8 +196,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == connectRetryCount) return;
     final oldValue = connectRetryCount;
     form.connectRetryCount = value;
-    appLog.value.info('$runtimeType.connectRetryCount',
-        beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.connectRetryCount',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
@@ -190,8 +211,11 @@ final class WebDavSyncServerFromHandler implements _Handler {
     final oldValue = form.syncMobileNetworks;
     if (newValue == oldValue) return;
     form.syncMobileNetworks = newValue;
-    appLog.value.info('$runtimeType.syncMobileNetworks',
-        beforeVal: oldValue, afterVal: newValue);
+    appLog.value.info(
+      '$runtimeType.syncMobileNetworks',
+      beforeVal: oldValue,
+      afterVal: newValue,
+    );
     notifyListeners();
   }
 
@@ -200,13 +224,18 @@ final class WebDavSyncServerFromHandler implements _Handler {
     if (value == syncInLowData) return;
     final oldValue = syncInLowData;
     form.syncInLowData = value;
-    appLog.value.info('$runtimeType.syncInLowData',
-        beforeVal: oldValue, afterVal: value);
+    appLog.value.info(
+      '$runtimeType.syncInLowData',
+      beforeVal: oldValue,
+      afterVal: value,
+    );
     notifyListeners();
   }
 
-  Future<(String, String?)> readPassword(
-      {Duration timeout = const Duration(seconds: 1), bool useCache = false}) {
+  Future<(String, String?)> readPassword({
+    Duration timeout = const Duration(seconds: 1),
+    bool useCache = false,
+  }) {
     final crtCompleter = root._pwdCompleter;
     if (crtCompleter != null) return crtCompleter.future;
     if (useCache && root._pwdLoaded) {
@@ -225,11 +254,15 @@ final class WebDavSyncServerFromHandler implements _Handler {
           }
           return value;
         })
-        .then((value) => completer.isCompleted
-            ? null
-            : completer.complete((identity, value)))
-        .catchError((e, s) =>
-            completer.isCompleted ? null : completer.completeError(e, s))
+        .then(
+          (value) => completer.isCompleted
+              ? null
+              : completer.complete((identity, value)),
+        )
+        .catchError(
+          (e, s) =>
+              completer.isCompleted ? null : completer.completeError(e, s),
+        )
         .whenComplete(() {
           if (completer == root._pwdCompleter) root._pwdCompleter = null;
         });

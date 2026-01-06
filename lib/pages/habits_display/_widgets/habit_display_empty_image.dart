@@ -93,10 +93,12 @@ class HabitDisplayEmptyImage extends StatelessWidget {
     Widget buildDescChild(BuildContext context) {
       if (textTheme.headlineSmall != null) {
         return DefaultTextStyle(
-            textAlign: TextAlign.center,
-            style: textTheme.headlineSmall!
-                .copyWith(color: theme.colorScheme.outline),
-            child: descChild!);
+          textAlign: TextAlign.center,
+          style: textTheme.headlineSmall!.copyWith(
+            color: theme.colorScheme.outline,
+          ),
+          child: descChild!,
+        );
       }
       return descChild!;
     }
@@ -122,12 +124,14 @@ class HabitDisplayEmptyImage extends StatelessWidget {
                       (style?.fronBoardBackgroundColor ??
                               _defaultStyle.fronBoardBackgroundColor)
                           .toHex(),
-                  _Key.boardStrokeColor: (style?.boardStrokeColor ??
-                          _defaultStyle.boardStrokeColor)
-                      .toHex(),
-                  _Key.fronBoardTopColor: (style?.fronBoardTopColor ??
-                          _defaultStyle.fronBoardTopColor)
-                      .toHex(),
+                  _Key.boardStrokeColor:
+                      (style?.boardStrokeColor ??
+                              _defaultStyle.boardStrokeColor)
+                          .toHex(),
+                  _Key.fronBoardTopColor:
+                      (style?.fronBoardTopColor ??
+                              _defaultStyle.fronBoardTopColor)
+                          .toHex(),
                   _Key.fronBoardFirstLineColor:
                       (style?.fronBoardFirstLineColor ??
                               _defaultStyle.fronBoardFirstLineColor)
@@ -140,9 +144,10 @@ class HabitDisplayEmptyImage extends StatelessWidget {
                       (style?.fronBoardSubtitleLineColor ??
                               _defaultStyle.fronBoardSubtitleLineColor)
                           .toHex(),
-                  _Key.backgroundCirlcColor: (style?.backgroundCirlcColor ??
-                          _defaultStyle.backgroundCirlcColor)
-                      .toHex(),
+                  _Key.backgroundCirlcColor:
+                      (style?.backgroundCirlcColor ??
+                              _defaultStyle.backgroundCirlcColor)
+                          .toHex(),
                 },
               ),
               if (descChild != null) buildDescChild(context),

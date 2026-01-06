@@ -43,13 +43,14 @@ class ChangeRecordStatusResult {
     required this.habit,
     required this.data,
     this.reason,
-  })  : added = false,
-        origin = null;
+  }) : added = false,
+       origin = null;
 
   bool get isNew => origin == null;
 
   @override
-  String toString() => 'ChangeRecordStatusResult('
+  String toString() =>
+      'ChangeRecordStatusResult('
       'origin=$origin,data=$data,'
       'reason=$reason,added=$added'
       ')';
@@ -137,8 +138,9 @@ final class AutoChangeRecordStatusAction
       case HabitRecordStatus.unknown:
       case HabitRecordStatus.skip:
         record = orgRecord.copyWith(
-            status: HabitRecordStatus.done,
-            value: valued ? orgRecord.value : data.habitOkValue);
+          status: HabitRecordStatus.done,
+          value: valued ? orgRecord.value : data.habitOkValue,
+        );
         break;
       case HabitRecordStatus.done:
         if (valued) {
@@ -155,7 +157,10 @@ final class AutoChangeRecordStatusAction
     }
 
     return ChangeRecordStatusResult(
-        habit: data, origin: isNew ? null : orgRecord, data: record);
+      habit: data,
+      origin: isNew ? null : orgRecord,
+      data: record,
+    );
   }
 }
 
@@ -198,13 +203,16 @@ final class ChangeMultiRecordStatusAction
     }
 
     final newGoal = goal?.clamp(minHabitDailyGoal, maxHabitdailyGoal);
-    record =
-        orgRecord.copyWith(value: newGoal ?? orgRecord.value, status: status);
+    record = orgRecord.copyWith(
+      value: newGoal ?? orgRecord.value,
+      status: status,
+    );
 
     return ChangeRecordStatusResult(
-        habit: data,
-        origin: isNew ? null : orgRecord,
-        data: record,
-        reason: reason);
+      habit: data,
+      origin: isNew ? null : orgRecord,
+      data: record,
+      reason: reason,
+    );
   }
 }

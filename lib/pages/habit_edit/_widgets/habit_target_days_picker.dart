@@ -24,8 +24,10 @@ class HabitTargetDaysPickerResult {
   final int targetDays;
   final bool isCustomDaysType;
 
-  const HabitTargetDaysPickerResult(this.targetDays,
-      {this.isCustomDaysType = false});
+  const HabitTargetDaysPickerResult(
+    this.targetDays, {
+    this.isCustomDaysType = false,
+  });
 }
 
 Future<HabitTargetDaysPickerResult?> showHabitTargetDaysPickerDialog({
@@ -96,8 +98,9 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
   @override
   void initState() {
     super.initState();
-    selectTargetDaysType =
-        _HabitTargetDaysType.getTargetDaysType(widget.targetDays);
+    selectTargetDaysType = _HabitTargetDaysType.getTargetDaysType(
+      widget.targetDays,
+    );
     // overwrite the last filled-in number saved in global cache
     if (selectTargetDaysType != _HabitTargetDaysType.daysCustom) {
       customTargetDays = widget.initialCustomTargetDays != null
@@ -128,8 +131,10 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
     // recompute the final value and type here.
     final resultDay = _validateTargetDays(currentTargetDay);
     final resultDayType = _HabitTargetDaysType.getTargetDaysType(resultDay);
-    final result = HabitTargetDaysPickerResult(resultDay,
-        isCustomDaysType: resultDayType == _HabitTargetDaysType.daysCustom);
+    final result = HabitTargetDaysPickerResult(
+      resultDay,
+      isCustomDaysType: resultDayType == _HabitTargetDaysType.daysCustom,
+    );
     Navigator.pop(context, result);
   }
 
@@ -149,8 +154,10 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    appLog.build.debug(context,
-        ex: [selectTargetDaysType, customTargetDays, currentTargetDay]);
+    appLog.build.debug(
+      context,
+      ex: [selectTargetDaysType, customTargetDays, currentTargetDay],
+    );
 
     final l10n = L10n.of(context);
     return LayoutBuilder(
@@ -169,9 +176,7 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
                 const SizedBox(width: 300),
                 for (var days in _HabitTargetDaysType.values)
                   if (days != _HabitTargetDaysType.daysCustom)
-                    _HabitSpecificTargetDaysTile(
-                      value: days,
-                    ),
+                    _HabitSpecificTargetDaysTile(value: days),
                 _HabitCustomTargetDaysTile(
                   inputController: _inputController,
                   onCustomTargetDaysChanged: _onCustomTargetDaysInputChanged,
@@ -189,9 +194,7 @@ class _HabitTargetDaysDialogView extends State<HabitTargetDaysPickerDialog> {
 class _HabitSpecificTargetDaysTile extends StatelessWidget {
   final _HabitTargetDaysType value;
 
-  const _HabitSpecificTargetDaysTile({
-    required this.value,
-  });
+  const _HabitSpecificTargetDaysTile({required this.value});
 
   String _getTargetDayText(int targetDays, L10n? l10n) {
     return [targetDays, l10n?.habitEdit_targetDays ?? ''].join(" ");
@@ -223,8 +226,9 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     final themeData = Theme.of(context);
     final textTheme = themeData.textTheme;
@@ -234,7 +238,9 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.zero,
       leading: const Radio<_HabitTargetDaysType>(
-          value: _HabitTargetDaysType.daysCustom, toggleable: true),
+        value: _HabitTargetDaysType.daysCustom,
+        toggleable: true,
+      ),
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -247,11 +253,14 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 controller: inputController,
                 keyboardType: const TextInputType.numberWithOptions(
-                    decimal: false, signed: false),
+                  decimal: false,
+                  signed: false,
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(
-                      maxHabitTargetDays.toString().length)
+                    maxHabitTargetDays.toString().length,
+                  ),
                 ],
                 style: textTheme.bodyLarge,
                 onChanged: onCustomTargetDaysChanged,
@@ -260,10 +269,7 @@ class _HabitCustomTargetDaysTile extends StatelessWidget {
             ),
           ),
           if (l10n != null && l10n.habitEdit_targetDays.isNotEmpty)
-            Expanded(
-              flex: 3,
-              child: Text(l10n.habitEdit_targetDays),
-            ),
+            Expanded(flex: 3, child: Text(l10n.habitEdit_targetDays)),
         ],
       ),
     );

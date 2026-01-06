@@ -35,18 +35,24 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
   static const _tableMinScrollMaxWidth = 1000.0;
 
   TableConfig _buildTableConfig() => TableConfig(
-        wrapper: (child) => SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Builder(
-            builder: (context) => ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth: clampDouble(MediaQuery.sizeOf(context).width,
-                            _tableMinScrollMinWidth, _tableMinScrollMaxWidth) -
-                        200),
-                child: child),
+    wrapper: (child) => SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Builder(
+        builder: (context) => ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth:
+                clampDouble(
+                  MediaQuery.sizeOf(context).width,
+                  _tableMinScrollMinWidth,
+                  _tableMinScrollMaxWidth,
+                ) -
+                200,
           ),
+          child: child,
         ),
-      );
+      ),
+    ),
+  );
 
   void _onPressed() async {
     final text = await rootBundle.loadString(widget.privacyPath);
@@ -60,9 +66,8 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
             scrollDirection: Axis.vertical,
             child: ThematicMarkdownBlock(
               data: text,
-              configBuilder: (config) => config.copy(configs: [
-                _buildTableConfig(),
-              ]),
+              configBuilder: (config) =>
+                  config.copy(configs: [_buildTableConfig()]),
             ),
           ),
         ),
@@ -83,8 +88,9 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
       title: l10n != null
           ? Text(l10n.appAbout_privacyTile_titleText)
           : const Text("Privacy"),
-      subtitle:
-          l10n != null ? Text(l10n.appAbout_privacyTile_subTitleText) : null,
+      subtitle: l10n != null
+          ? Text(l10n.appAbout_privacyTile_subTitleText)
+          : null,
       onTap: _onPressed,
     );
   }

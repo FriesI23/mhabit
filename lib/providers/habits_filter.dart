@@ -34,11 +34,16 @@ class HabitsFilterViewModel extends ChangeNotifier
   HabitsDisplayFilter get habitsDisplayFilter =>
       _filter?.get() ?? const HabitsDisplayFilter.withDefault();
 
-  Future<void> setNewHabitsDisplayFilter(HabitsDisplayFilter? newFilter,
-      {bool listen = true}) async {
+  Future<void> setNewHabitsDisplayFilter(
+    HabitsDisplayFilter? newFilter, {
+    bool listen = true,
+  }) async {
     if (_filter?.get() != newFilter) {
-      appLog.value.info("$runtimeType.setNewHabitsDisplayFilter",
-          beforeVal: habitsDisplayFilter, afterVal: newFilter);
+      appLog.value.info(
+        "$runtimeType.setNewHabitsDisplayFilter",
+        beforeVal: habitsDisplayFilter,
+        afterVal: newFilter,
+      );
       await _filter?.set(newFilter ?? const HabitsDisplayFilter.withDefault());
       if (listen) notifyListeners();
     }

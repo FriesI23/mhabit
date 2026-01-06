@@ -52,18 +52,13 @@ class HabitSummaryRecord {
   final HabitRecordStatus status;
   final HabitDailyGoal value;
 
-  const HabitSummaryRecord(
-    this.uuid,
-    this.date,
-    this.status,
-    this.value,
-  );
+  const HabitSummaryRecord(this.uuid, this.date, this.status, this.value);
 
   HabitSummaryRecord.fromDBQueryCell(RecordDBCell cell)
-      : uuid = cell.uuid!,
-        date = HabitRecordDate.fromEpochDay(cell.recordDate!),
-        status = HabitRecordStatus.getFromDBCode(cell.recordType!)!,
-        value = cell.recordValue!;
+    : uuid = cell.uuid!,
+      date = HabitRecordDate.fromEpochDay(cell.recordDate!),
+      status = HabitRecordStatus.getFromDBCode(cell.recordType!)!,
+      value = cell.recordValue!;
 
   HabitSummaryRecord.generate(
     this.date, {
@@ -71,9 +66,12 @@ class HabitSummaryRecord {
     this.value = 0.0,
     required HabitUUID? parentUUID,
     HabitRecordUUID? uuid,
-  }) : uuid = uuid ??
-            genRecordUUID(
-                parentUUID!, const EpochHabitDateConverter().toJson(date));
+  }) : uuid =
+           uuid ??
+           genRecordUUID(
+             parentUUID!,
+             const EpochHabitDateConverter().toJson(date),
+           );
 
   @override
   String toString() {
@@ -126,9 +124,11 @@ mixin _HabitSummaryDataRecordsMixin {
     return true;
   }
 
-  bool addAllRecords(Iterable<HabitSummaryRecord> records,
-      {HabitReocrdAddRepeatedBehaviour behaviour =
-          HabitReocrdAddRepeatedBehaviour.failed}) {
+  bool addAllRecords(
+    Iterable<HabitSummaryRecord> records, {
+    HabitReocrdAddRepeatedBehaviour behaviour =
+        HabitReocrdAddRepeatedBehaviour.failed,
+  }) {
     final tmpList = <HabitSummaryRecord>[];
     for (final r in records) {
       if (_recordMap.containsKey(r.uuid) ||
@@ -177,8 +177,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   DateTime createTime;
 
   num _progress = 0.0;
-  final SplayTreeSet<HabitRecordDate> _autoMarkedRecords =
-      SplayTreeSet((a, b) => a.compareTo(b));
+  final SplayTreeSet<HabitRecordDate> _autoMarkedRecords = SplayTreeSet(
+    (a, b) => a.compareTo(b),
+  );
 
   HabitSummaryData({
     required this.id,
@@ -200,26 +201,29 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   });
 
   HabitSummaryData.fromDBQueryCell(HabitDBCell cell)
-      : id = cell.id!,
-        uuid = cell.uuid!,
-        type = HabitType.getFromDBCode(cell.type!)!,
-        name = cell.name!,
-        desc = cell.desc ?? '',
-        colorType = HabitColorType.getFromDBCode(cell.color!)!,
-        dailyGoal = cell.dailyGoal!,
-        dailyGoalExtra = cell.dailyGoalExtra,
-        targetDays = cell.targetDays!,
-        frequency = HabitFrequency.fromJson(
-            {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)}),
-        startDate = HabitStartDate.fromEpochDay(cell.startDate!),
-        status = HabitStatus.getFromDBCode(cell.status!)!,
-        reminder = cell.remindCustom != null
-            ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
-            : null,
-        reminderQuest = cell.remindQuestion,
-        sortPostion = cell.sortPosition!,
-        createTime =
-            DateTime.fromMillisecondsSinceEpoch(cell.createT! * onSecondMS);
+    : id = cell.id!,
+      uuid = cell.uuid!,
+      type = HabitType.getFromDBCode(cell.type!)!,
+      name = cell.name!,
+      desc = cell.desc ?? '',
+      colorType = HabitColorType.getFromDBCode(cell.color!)!,
+      dailyGoal = cell.dailyGoal!,
+      dailyGoalExtra = cell.dailyGoalExtra,
+      targetDays = cell.targetDays!,
+      frequency = HabitFrequency.fromJson({
+        "type": cell.freqType,
+        "args": jsonDecode(cell.freqCustom!),
+      }),
+      startDate = HabitStartDate.fromEpochDay(cell.startDate!),
+      status = HabitStatus.getFromDBCode(cell.status!)!,
+      reminder = cell.remindCustom != null
+          ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
+          : null,
+      reminderQuest = cell.remindQuestion,
+      sortPostion = cell.sortPosition!,
+      createTime = DateTime.fromMillisecondsSinceEpoch(
+        cell.createT! * onSecondMS,
+      );
 
   num get progress => _progress.isFinite ? _progress : -1.0;
 
@@ -273,8 +277,9 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
     if (!frequency.isDaily) {
       switch (frequency.type) {
         case HabitFrequencyType.weekly:
-          _autoMarkedRecords
-              .addAll(_calculateAutoComplateRecordsWeekly(firstDay));
+          _autoMarkedRecords.addAll(
+            _calculateAutoComplateRecordsWeekly(firstDay),
+          );
           break;
         case HabitFrequencyType.monthly:
           _autoMarkedRecords.addAll(_calculateAutoComplateRecordsMonthly());
@@ -300,17 +305,17 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   HabitScoreCalculator getCalculator() {
     HabitScore createHabitScore() => HabitScore.getImp(
-          type: type,
-          targetDays: targetDays,
-          dailyGoal: dailyGoal,
-          dailGoalExtra: dailyGoalExtra,
-        );
+      type: type,
+      targetDays: targetDays,
+      dailyGoal: dailyGoal,
+      dailGoalExtra: dailyGoalExtra,
+    );
 
     Iterable<HabitDate> createIterable() => combineIterables(
-          _autoMarkedRecords,
-          _recordDateCacheMap.keys,
-          compare: (a, b) => a.compareTo(b),
-        );
+      _autoMarkedRecords,
+      _recordDateCacheMap.keys,
+      compare: (a, b) => a.compareTo(b),
+    );
 
     if (isArchived) {
       return ArchivedHabitScoreCalculator(
@@ -406,7 +411,8 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   }
 
   Iterable<HabitRecordDate> _calculateAutoComplateRecordsWeekly(
-      int firstDay) sync* {
+    int firstDay,
+  ) sync* {
     assert(frequency.type == HabitFrequencyType.weekly);
 
     final yearWeekRecordMap = <HabitRecordDate, int>{};
@@ -524,7 +530,7 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
           ? [
               ...iterable.take(5),
               '... [ignore ${iterable.length - 10} records] ...',
-              ...iterable.skip(iterable.length - 5)
+              ...iterable.skip(iterable.length - 5),
             ].join("|")
           : iterable.join("|");
     }
@@ -542,12 +548,16 @@ class HabitSummaryDataCollection {
   HabitSummaryDataCollection();
 
   HabitSummaryDataCollection.fromDBQueryResult(
-      Iterable<HabitDBCell> result, Iterable<RecordDBCell> recordResult) {
+    Iterable<HabitDBCell> result,
+    Iterable<RecordDBCell> recordResult,
+  ) {
     initDataFromDBQueuryResult(result, recordResult);
   }
 
   void initDataFromDBQueuryResult(
-      Iterable<HabitDBCell> result, Iterable<RecordDBCell> recordResult) {
+    Iterable<HabitDBCell> result,
+    Iterable<RecordDBCell> recordResult,
+  ) {
     _dataMap.clear();
     for (final cell in result) {
       final data = HabitSummaryData.fromDBQueryCell(cell);
@@ -593,8 +603,10 @@ class HabitSummaryDataCollection {
   HabitSummaryData? removeHabitByUUID(HabitUUID uuid) => _dataMap.remove(uuid);
 
   //#region: sort
-  List<HabitSummaryData> _sortDataBy(HabitDisplaySortDirection sortDirecton,
-      int Function(HabitSummaryData a, HabitSummaryData b) compareble) {
+  List<HabitSummaryData> _sortDataBy(
+    HabitDisplaySortDirection sortDirecton,
+    int Function(HabitSummaryData a, HabitSummaryData b) compareble,
+  ) {
     final List<HabitSummaryData> result;
     switch (sortDirecton) {
       case HabitDisplaySortDirection.asc:
@@ -602,14 +614,16 @@ class HabitSummaryDataCollection {
         break;
       case HabitDisplaySortDirection.desc:
         result = List.from(
-            _dataMap.values.toList()..sort((a, b) => compareble(b, a)));
+          _dataMap.values.toList()..sort((a, b) => compareble(b, a)),
+        );
         break;
     }
     return result;
   }
 
   List<HabitSummaryData> sortDataByName(
-      HabitDisplaySortDirection sortDirecton) {
+    HabitDisplaySortDirection sortDirecton,
+  ) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
       final r1 = a.name.compareTo(b.name);
       if (r1 != 0) {
@@ -623,7 +637,8 @@ class HabitSummaryDataCollection {
   }
 
   List<HabitSummaryData> sortDataByColorType(
-      HabitDisplaySortDirection sortDirecton) {
+    HabitDisplaySortDirection sortDirecton,
+  ) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
       final r1 = a.colorType.dbCode.compareTo(b.colorType.dbCode);
       if (r1 != 0) {
@@ -637,7 +652,8 @@ class HabitSummaryDataCollection {
   }
 
   List<HabitSummaryData> sortDataByProgress(
-      HabitDisplaySortDirection sortDirecton) {
+    HabitDisplaySortDirection sortDirecton,
+  ) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
       final r1 = b.progress.compareTo(a.progress);
       if (r1 != 0) {
@@ -651,7 +667,8 @@ class HabitSummaryDataCollection {
   }
 
   List<HabitSummaryData> sortDataByStartT(
-      HabitDisplaySortDirection sortDirecton) {
+    HabitDisplaySortDirection sortDirecton,
+  ) {
     int compareble(HabitSummaryData a, HabitSummaryData b) {
       return a.startDate.compareTo(b.startDate);
     }
@@ -660,7 +677,8 @@ class HabitSummaryDataCollection {
   }
 
   List<HabitSummaryData> sortDataBySatus(
-      HabitDisplaySortDirection sortDirecton) {
+    HabitDisplaySortDirection sortDirecton,
+  ) {
     int statusCoparable(HabitSummaryData a, HabitSummaryData b) {
       if (a.status == HabitStatus.activated &&
           b.status != HabitStatus.activated) {
@@ -688,21 +706,22 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sortDataByManual() {
     final List<HabitSummaryData> result;
     result = List.from(
-      _dataMap.values.toList()
-        ..sort((a, b) {
-          final r1 = a.sortPostion.compareTo(b.sortPostion);
-          if (r1 != 0) {
-            return r1;
-          } else {
-            return a.createTime.compareTo(b.createTime);
-          }
-        }),
+      _dataMap.values.toList()..sort((a, b) {
+        final r1 = a.sortPostion.compareTo(b.sortPostion);
+        if (r1 != 0) {
+          return r1;
+        } else {
+          return a.createTime.compareTo(b.createTime);
+        }
+      }),
     );
     return result;
   }
 
   List<HabitSummaryData> sort(
-      HabitDisplaySortType sortType, HabitDisplaySortDirection sortDirection) {
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+  ) {
     switch (sortType) {
       case HabitDisplaySortType.manual:
         return sortDataByManual();
@@ -741,8 +760,8 @@ class HabitSummaryDataSortCache
   final WeakReference<HabitSummaryData> _data;
 
   HabitSummaryDataSortCache({required HabitSummaryData data})
-      : uuid = data.uuid,
-        _data = WeakReference(data);
+    : uuid = data.uuid,
+      _data = WeakReference(data);
 
   HabitSummaryData? get data => _data.target;
 

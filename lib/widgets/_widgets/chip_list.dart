@@ -16,8 +16,10 @@ import 'package:flutter/material.dart';
 
 class ChipList extends StatelessWidget {
   static const double _defaultChipContentHeight = 56.0;
-  static const EdgeInsets _defualtChipContentPadding =
-      EdgeInsets.only(left: 24, right: 12);
+  static const EdgeInsets _defualtChipContentPadding = EdgeInsets.only(
+    left: 24,
+    right: 12,
+  );
 
   final double? height;
   final double? width;
@@ -40,12 +42,13 @@ class ChipList extends StatelessWidget {
       height: height ?? _defaultChipContentHeight,
       width: width,
       child: ListView.separated(
-          shrinkWrap: true,
-          scrollDirection: direction,
-          padding: padding ?? _defualtChipContentPadding,
-          itemBuilder: (context, index) => children[index],
-          separatorBuilder: (context, index) => const SizedBox(width: 10),
-          itemCount: children.length),
+        shrinkWrap: true,
+        scrollDirection: direction,
+        padding: padding ?? _defualtChipContentPadding,
+        itemBuilder: (context, index) => children[index],
+        separatorBuilder: (context, index) => const SizedBox(width: 10),
+        itemCount: children.length,
+      ),
     );
   }
 }

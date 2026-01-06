@@ -25,8 +25,9 @@ String buildSyncFailedLogFilePath(String dirPath, [String? sessionId]) =>
     path.join(
       dirPath,
       sanitizeFileName(
-          "$appSyncFailedLogFilePrefix${sessionId != null ? '-$sessionId' : ''}"
-          "$appSyncFailedLogFileSuffix"),
+        "$appSyncFailedLogFilePrefix${sessionId != null ? '-$sessionId' : ''}"
+        "$appSyncFailedLogFileSuffix",
+      ),
     );
 
 Future<String> generateZippedSyncFailedLogs() async {
@@ -36,9 +37,11 @@ Future<String> generateZippedSyncFailedLogs() async {
   final zipPath = path.join(tempDir.path, appSyncFailedZipFile);
   final encoder = ZipFileEncoder()..create(zipPath);
   await encoder
-      .addDirectory(syncFailedDir,
-          filter: (entity, progress) =>
-              entity is File ? ZipFileOperation.include : ZipFileOperation.skip)
+      .addDirectory(
+        syncFailedDir,
+        filter: (entity, progress) =>
+            entity is File ? ZipFileOperation.include : ZipFileOperation.skip,
+      )
       .then((_) => encoder.close());
   return zipPath;
 }

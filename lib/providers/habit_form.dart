@@ -40,7 +40,7 @@ class HabitFormViewModel extends ChangeNotifier
   final HabitForm _form;
 
   HabitFormViewModel({HabitForm? initForm})
-      : _form = initForm ?? HabitForm.empty();
+    : _form = initForm ?? HabitForm.empty();
 
   @override
   void dispose() {
@@ -67,8 +67,11 @@ class HabitFormViewModel extends ChangeNotifier
 
   HabitType get habitType => _form.type;
   set habitType(HabitType newHabitType) {
-    appLog.value.debug("$runtimeType.habitType",
-        beforeVal: _form.type, afterVal: newHabitType);
+    appLog.value.debug(
+      "$runtimeType.habitType",
+      beforeVal: _form.type,
+      afterVal: newHabitType,
+    );
     _form.type = newHabitType;
     _form.dailyGoal = _form.dailyGoal.transform(type: _form.type);
     notifyListeners();
@@ -76,8 +79,11 @@ class HabitFormViewModel extends ChangeNotifier
 
   HabitColorType get colorType => _form.colorType;
   set colorType(HabitColorType newColorType) {
-    appLog.value.debug("$runtimeType.colorType",
-        beforeVal: _form.colorType, afterVal: newColorType);
+    appLog.value.debug(
+      "$runtimeType.colorType",
+      beforeVal: _form.colorType,
+      afterVal: newColorType,
+    );
     _form.colorType = newColorType;
     notifyListeners();
   }
@@ -88,30 +94,36 @@ class HabitFormViewModel extends ChangeNotifier
 
   num get dailyGoalValue => _form.dailyGoal.dailyGoal;
   set dailyGoalValue(num newDailyGoal) {
-    appLog.value.debug("$runtimeType.dailyGoal",
-        beforeVal: _form.dailyGoal.dailyGoal,
-        afterVal: newDailyGoal,
-        ex: [_form.dailyGoal.type]);
+    appLog.value.debug(
+      "$runtimeType.dailyGoal",
+      beforeVal: _form.dailyGoal.dailyGoal,
+      afterVal: newDailyGoal,
+      ex: [_form.dailyGoal.type],
+    );
     _form.dailyGoal.dailyGoal = newDailyGoal;
     notifyListeners();
   }
 
   String get dailyGoalUnit => _form.dailyGoal.dailyGoalUnit;
   set dailyGoalUnit(String newDailyGoalUnit) {
-    appLog.value.debug("$runtimeType.dailyGoalUnit",
-        beforeVal: _form.dailyGoal.dailyGoalUnit,
-        afterVal: newDailyGoalUnit,
-        ex: [_form.dailyGoal.type]);
+    appLog.value.debug(
+      "$runtimeType.dailyGoalUnit",
+      beforeVal: _form.dailyGoal.dailyGoalUnit,
+      afterVal: newDailyGoalUnit,
+      ex: [_form.dailyGoal.type],
+    );
     _form.dailyGoal.dailyGoalUnit = newDailyGoalUnit;
     notifyListeners();
   }
 
   num? get dailyGoalExtra => _form.dailyGoal.dailyGoalExtra;
   set dailyGoalExtra(num? newDailyGoalExtra) {
-    appLog.value.debug("$runtimeType.dailyGoalExtra",
-        beforeVal: _form.dailyGoal.dailyGoalExtra,
-        afterVal: newDailyGoalExtra,
-        ex: [_form.dailyGoal.type]);
+    appLog.value.debug(
+      "$runtimeType.dailyGoalExtra",
+      beforeVal: _form.dailyGoal.dailyGoalExtra,
+      afterVal: newDailyGoalExtra,
+      ex: [_form.dailyGoal.type],
+    );
     _form.dailyGoal.dailyGoalExtra = newDailyGoalExtra;
     notifyListeners();
   }
@@ -123,48 +135,66 @@ class HabitFormViewModel extends ChangeNotifier
 
   HabitFrequency get frequency => _form.frequency;
   set frequency(HabitFrequency newHabitFrequency) {
-    appLog.value.debug("$runtimeType.frequency",
-        beforeVal: _form.frequency, afterVal: newHabitFrequency);
+    appLog.value.debug(
+      "$runtimeType.frequency",
+      beforeVal: _form.frequency,
+      afterVal: newHabitFrequency,
+    );
     _form.frequency = newHabitFrequency;
     notifyListeners();
   }
 
   HabitStartDate get startDate => _form.startDate;
   set startDate(HabitStartDate newDate) {
-    appLog.value.debug("$runtimeType.startDate",
-        beforeVal: _form.startDate, afterVal: newDate);
+    appLog.value.debug(
+      "$runtimeType.startDate",
+      beforeVal: _form.startDate,
+      afterVal: newDate,
+    );
     _form.startDate = newDate;
     notifyListeners();
   }
 
   int get targetDays => _form.targetDays;
   set targetDays(int newTargetDays) {
-    appLog.value.debug("$runtimeType.targetDays",
-        beforeVal: _form.targetDays, afterVal: newTargetDays);
+    appLog.value.debug(
+      "$runtimeType.targetDays",
+      beforeVal: _form.targetDays,
+      afterVal: newTargetDays,
+    );
     _form.targetDays = newTargetDays;
     notifyListeners();
   }
 
   String get desc => _form.desc ?? "";
   set desc(String newDesc) {
-    appLog.value
-        .debug("$runtimeType.desc", beforeVal: _form.desc, afterVal: newDesc);
+    appLog.value.debug(
+      "$runtimeType.desc",
+      beforeVal: _form.desc,
+      afterVal: newDesc,
+    );
     _form.desc = newDesc;
     notifyListeners();
   }
 
   HabitReminder? get reminder => _form.reminder;
   set reminder(HabitReminder? newReminder) {
-    appLog.value.debug("$runtimeType.reminder",
-        beforeVal: _form.reminder, afterVal: newReminder);
+    appLog.value.debug(
+      "$runtimeType.reminder",
+      beforeVal: _form.reminder,
+      afterVal: newReminder,
+    );
     _form.reminder = newReminder;
     notifyListeners();
   }
 
   String? get reminderQuest => _form.reminderQuest;
   set reminderQuest(String? newQuest) {
-    appLog.value.debug("$runtimeType.reminderQuest",
-        beforeVal: _form.reminderQuest, afterVal: newQuest);
+    appLog.value.debug(
+      "$runtimeType.reminderQuest",
+      beforeVal: _form.reminderQuest,
+      afterVal: newQuest,
+    );
     _form.reminderQuest = newQuest;
     notifyListeners();
   }
@@ -195,13 +225,15 @@ class HabitFormViewModel extends ChangeNotifier
 
   Future<HabitDBCell?> saveHabit() async {
     if (!canSaveHabit()) {
-      appLog.habit.warn("$runtimeType.saveHabit",
-          ex: ["Habit unsaved", _form.editMode, name]);
+      appLog.habit.warn(
+        "$runtimeType.saveHabit",
+        ex: ["Habit unsaved", _form.editMode, name],
+      );
       return null;
     }
     final cell = switch (_form.editMode) {
       HabitDisplayEditMode.create => await _saveNewHabit(),
-      HabitDisplayEditMode.edit => await _saveExistHabit()
+      HabitDisplayEditMode.edit => await _saveExistHabit(),
     };
     if (!mounted || cell == null) return cell;
     final habit = HabitSummaryData.fromDBQueryCell(cell);
@@ -214,24 +246,25 @@ class HabitFormViewModel extends ChangeNotifier
     final now = AppClock().now().millisecondsSinceEpoch ~/ onSecondMS;
     final reminder = this.reminder;
     final dbCell = HabitDBCell(
-        type: habitType.dbCode,
-        uuid: genHabitUUID(),
-        status: HabitStatus.activated.dbCode,
-        name: name,
-        desc: desc,
-        color: colorType.dbCode,
-        dailyGoal: dailyGoalValue,
-        dailyGoalUnit: dailyGoalUnit,
-        dailyGoalExtra: dailyGoalExtra,
-        freqType: freq["type"],
-        freqCustom: jsonEncode(freq["args"]),
-        startDate: startDate.epochDay,
-        targetDays: targetDays,
-        remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
-        remindQuestion: reminder != null ? reminderQuest : null,
-        sortPosition: double.infinity,
-        createT: now,
-        modifyT: now);
+      type: habitType.dbCode,
+      uuid: genHabitUUID(),
+      status: HabitStatus.activated.dbCode,
+      name: name,
+      desc: desc,
+      color: colorType.dbCode,
+      dailyGoal: dailyGoalValue,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+      freqType: freq["type"],
+      freqCustom: jsonEncode(freq["args"]),
+      startDate: startDate.epochDay,
+      targetDays: targetDays,
+      remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
+      remindQuestion: reminder != null ? reminderQuest : null,
+      sortPosition: double.infinity,
+      createT: now,
+      modifyT: now,
+    );
     return habitsManager.saveNewHabitToDB(dbCell, returnResult: true);
   }
 

@@ -21,20 +21,42 @@ abstract interface class AppSyncTaskLogger {
   LoggerType get type;
   AppTextLogger get parentLogger;
 
-  void debug(AppSyncContext task,
-      {Iterable? ex, Object? error, StackTrace? stackTrace});
-  void info(AppSyncContext task,
-      {Iterable? ex, Object? error, StackTrace? stackTrace});
-  void warn(AppSyncContext task,
-      {Iterable? ex, Object? error, StackTrace? stackTrace});
-  void error(AppSyncContext task,
-      {Iterable? ex, Object? error, StackTrace? stackTrace});
-  void fatal(AppSyncContext task,
-      {Iterable? ex, Object? error, StackTrace? stackTrace});
+  void debug(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  });
+  void info(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  });
+  void warn(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  });
+  void error(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  });
+  void fatal(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  });
 
-  factory AppSyncTaskLogger(AppLoggerMananger m, LoggerType t,
-          {AppTextLogger? parentLogger}) =>
-      _AppSyncTaskLogger(m, t, parentLogger ?? AppTextLogger(m, t));
+  factory AppSyncTaskLogger(
+    AppLoggerMananger m,
+    LoggerType t, {
+    AppTextLogger? parentLogger,
+  }) => _AppSyncTaskLogger(m, t, parentLogger ?? AppTextLogger(m, t));
 }
 
 class _AppSyncTaskLogger implements AppSyncTaskLogger {
@@ -50,32 +72,67 @@ class _AppSyncTaskLogger implements AppSyncTaskLogger {
       "[${task.sessionId}][${task.runtimeType}][${task.status.name}]";
 
   @override
-  void debug(AppSyncContext task,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      parentLogger.debug(buildMsg(task),
-          ex: ex, error: error, stackTrace: stackTrace);
+  void debug(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => parentLogger.debug(
+    buildMsg(task),
+    ex: ex,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   @override
-  void info(AppSyncContext task,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      parentLogger.info(buildMsg(task),
-          ex: ex, error: error, stackTrace: stackTrace);
+  void info(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => parentLogger.info(
+    buildMsg(task),
+    ex: ex,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   @override
-  void warn(AppSyncContext task,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      parentLogger.warn(buildMsg(task),
-          ex: ex, error: error, stackTrace: stackTrace);
+  void warn(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => parentLogger.warn(
+    buildMsg(task),
+    ex: ex,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   @override
-  void error(AppSyncContext task,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      parentLogger.error(buildMsg(task),
-          ex: ex, error: error, stackTrace: stackTrace);
+  void error(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => parentLogger.error(
+    buildMsg(task),
+    ex: ex,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   @override
-  void fatal(AppSyncContext task,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      parentLogger.fatal(buildMsg(task),
-          ex: ex, error: error, stackTrace: stackTrace);
+  void fatal(
+    AppSyncContext task, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => parentLogger.fatal(
+    buildMsg(task),
+    ex: ex,
+    error: error,
+    stackTrace: stackTrace,
+  );
 }

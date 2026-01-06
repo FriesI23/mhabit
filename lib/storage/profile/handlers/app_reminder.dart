@@ -21,7 +21,7 @@ import '../profile_helper.dart';
 final class AppReminderProfileHandler
     extends ProfileHelperCovertToJsonHandler<AppReminderConfig> {
   const AppReminderProfileHandler(super.pref)
-      : super(codec: const AppReminderCodec());
+    : super(codec: const AppReminderCodec());
 
   @override
   String get key => "appReminder";

@@ -20,7 +20,7 @@ import '../profile_helper.dart';
 final class DisplayCalendarScrollModeProfileHandler
     extends ProfileHelperCovertToIntHandler<HabitsRecordScrollBehavior> {
   const DisplayCalendarScrollModeProfileHandler(super.pref)
-      : super(codec: const DisplayCalendarScrollModeCodec());
+    : super(codec: const DisplayCalendarScrollModeCodec());
 
   @override
   String get key => "habitsRecordScrollBehavior";
@@ -42,8 +42,10 @@ final class _Decoder extends Converter<int, HabitsRecordScrollBehavior> {
 
   @override
   HabitsRecordScrollBehavior convert(int input) =>
-      HabitsRecordScrollBehavior.getFromDBCode(input,
-          withDefault: HabitsRecordScrollBehavior.unknown)!;
+      HabitsRecordScrollBehavior.getFromDBCode(
+        input,
+        withDefault: HabitsRecordScrollBehavior.unknown,
+      )!;
 }
 
 final class _Encoder extends Converter<HabitsRecordScrollBehavior, int> {

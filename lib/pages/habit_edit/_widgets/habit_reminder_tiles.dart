@@ -79,8 +79,8 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
         title: widget.reminder != null
             ? Text(widget.reminder!.time.format(context))
             : l10n != null
-                ? Text(l10n.habitEdit_reminder_hintText)
-                : const Text('Reminder'),
+            ? Text(l10n.habitEdit_reminder_hintText)
+            : const Text('Reminder'),
         textColor: widget.reminder != null
             ? null
             : Theme.of(context).colorScheme.outlineOpacity64,
@@ -106,9 +106,10 @@ class _HabitReminderTiles extends State<HabitReminderTiles> {
         title: TextField(
           controller: _questTextController,
           decoration: InputDecoration(
-              hintText: l10n?.habitEdit_reminderQuest_hintText,
-              hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
-              border: InputBorder.none),
+            hintText: l10n?.habitEdit_reminderQuest_hintText,
+            hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
+            border: InputBorder.none,
+          ),
           keyboardType: TextInputType.text,
           inputFormatters: [
             FilteringTextInputFormatter.singleLineFormatter,

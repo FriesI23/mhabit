@@ -63,15 +63,19 @@ void main() {
       final provider = getMockViewModel();
       expect(provider.frequency, HabitFrequency.daily);
       provider.addListener(() async {
-        expect(provider.frequency,
-            const HabitFrequency(type: HabitFrequencyType.monthly, freq: 10));
+        expect(
+          provider.frequency,
+          const HabitFrequency(type: HabitFrequencyType.monthly, freq: 10),
+        );
       });
       provider.frequency = const HabitFrequency.monthly(freq: 10);
     });
     test('dailyStartDate', () {
       final provider = getMockViewModel();
       expect(
-          provider.startDate == HabitStartDate.dateTime(DateTime.now()), true);
+        provider.startDate == HabitStartDate.dateTime(DateTime.now()),
+        true,
+      );
       final newDate = HabitStartDate.dateTime(DateTime(2020, 1, 20));
       provider.addListener(() async {
         expect(provider.startDate == newDate, true);
@@ -97,8 +101,11 @@ void main() {
   });
   group("HabitFrequency", () {
     test("Constructor", () {
-      const obj =
-          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 2);
+      const obj = HabitFrequency(
+        type: HabitFrequencyType.custom,
+        freq: 1,
+        days: 2,
+      );
       expect(obj.freq, 1);
       expect(obj.days, 2);
       expect(obj.type, HabitFrequencyType.custom);
@@ -126,12 +133,21 @@ void main() {
       expect(obj.type, HabitFrequencyType.monthly);
     });
     test("==override", () {
-      const obj1 =
-          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 2);
-      const obj2 =
-          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 2);
-      const obj3 =
-          HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 3);
+      const obj1 = HabitFrequency(
+        type: HabitFrequencyType.custom,
+        freq: 1,
+        days: 2,
+      );
+      const obj2 = HabitFrequency(
+        type: HabitFrequencyType.custom,
+        freq: 1,
+        days: 2,
+      );
+      const obj3 = HabitFrequency(
+        type: HabitFrequencyType.custom,
+        freq: 1,
+        days: 3,
+      );
       // hashcode
       expect(obj1.hashCode, obj2.hashCode);
       // ==
@@ -145,29 +161,38 @@ void main() {
       const obj6 = HabitFrequency.monthly(freq: 2);
       // hascode
       expect(
-          obj4.hashCode,
-          const HabitFrequency(type: HabitFrequencyType.monthly, freq: 1)
-              .hashCode);
+        obj4.hashCode,
+        const HabitFrequency(
+          type: HabitFrequencyType.monthly,
+          freq: 1,
+        ).hashCode,
+      );
       // ==
       expect(obj4 == obj5, false);
       expect(obj5 == obj6, false);
       expect(obj4 == obj6, false);
       expect(
-          obj4 ==
-              const HabitFrequency(type: HabitFrequencyType.monthly, freq: 1),
-          true);
+        obj4 == const HabitFrequency(type: HabitFrequencyType.monthly, freq: 1),
+        true,
+      );
     });
     test('toString', () {
       expect(const HabitFrequency.weekly().toString(), "Per week");
-      expect(const HabitFrequency.weekly(freq: 3).toString(),
-          "At least 3 times per week");
+      expect(
+        const HabitFrequency.weekly(freq: 3).toString(),
+        "At least 3 times per week",
+      );
       expect(const HabitFrequency.monthly().toString(), "Per month");
-      expect(const HabitFrequency.monthly(freq: 3).toString(),
-          "At least 3 times per month");
+      expect(
+        const HabitFrequency.monthly(freq: 3).toString(),
+        "At least 3 times per month",
+      );
       expect(HabitFrequency.custom().toString(), "Daily");
       expect(HabitFrequency.custom(days: 3).toString(), "In every 3 days");
-      expect(HabitFrequency.custom(freq: 2, days: 3).toString(),
-          "At least 2 times in every 3 days");
+      expect(
+        HabitFrequency.custom(freq: 2, days: 3).toString(),
+        "At least 2 times in every 3 days",
+      );
     });
     test('toMap:monthly', () {
       const obj2 = HabitFrequency.monthly(freq: 3);
@@ -228,8 +253,10 @@ void main() {
         "type": HabitFrequencyType.unknown.dbCode,
         "args": [1],
       };
-      expect(() => HabitFrequency.fromJson(data1),
-          throwsA(isA<UnknownHabitFrequencyError>()));
+      expect(
+        () => HabitFrequency.fromJson(data1),
+        throwsA(isA<UnknownHabitFrequencyError>()),
+      );
     });
   });
 }

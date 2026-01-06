@@ -18,5 +18,6 @@ const kAppAboutListTileLeadingHeight = 56.0;
 
 const kAppAboutListTileLeadingWidth = kAppAboutListTileLeadingHeight;
 
-const kAppAboutListTileLeadingSize =
-    Size.square(kAppAboutListTileLeadingHeight);
+const kAppAboutListTileLeadingSize = Size.square(
+  kAppAboutListTileLeadingHeight,
+);

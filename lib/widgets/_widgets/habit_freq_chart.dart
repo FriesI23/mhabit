@@ -27,8 +27,9 @@ import '../../models/habit_detail_chart.dart';
 
 const kHabitFreqChartBarWidth = 16.0;
 const kHabitFreqChartEachSize = 42.0;
-const kHabitFreqChartTopRadius =
-    BorderRadius.vertical(top: Radius.circular(2.0));
+const kHabitFreqChartTopRadius = BorderRadius.vertical(
+  top: Radius.circular(2.0),
+);
 
 enum HabitFreqChartDisplayMethod { count, value }
 
@@ -188,7 +189,10 @@ class HabitFreqChart extends StatelessWidget {
   }
 
   Widget _buildBottomTitleCell(
-      BuildContext context, HabitDate date, double value) {
+    BuildContext context,
+    HabitDate date,
+    double value,
+  ) {
     List<Widget> children;
     final l10n = L10n.of(context);
     switch (combine) {
@@ -222,13 +226,17 @@ class HabitFreqChart extends StatelessWidget {
         ];
         if (value == 0 || date.isFirstWeekOfYear) {
           children.add(
-            Text(DateFormat('y', l10n?.localeName).format(date),
-                style: bottomTipsTextStyle),
+            Text(
+              DateFormat('y', l10n?.localeName).format(date),
+              style: bottomTipsTextStyle,
+            ),
           );
         } else if (date.isFirstWeekOfMonth) {
           children.add(
-            Text(DateFormat('MMM', l10n?.localeName).format(date),
-                style: bottomTipsTextStyle),
+            Text(
+              DateFormat('MMM', l10n?.localeName).format(date),
+              style: bottomTipsTextStyle,
+            ),
           );
         }
         break;
@@ -318,7 +326,8 @@ class HabitFreqChart extends StatelessWidget {
                     return BarTooltipItem(
                       NumberFormat.compact().format(value),
                       TextStyle(
-                          color: colorMap[HabitHeatMapColorMapDefine.complate]),
+                        color: colorMap[HabitHeatMapColorMapDefine.complate],
+                      ),
                     );
                   },
                 ),

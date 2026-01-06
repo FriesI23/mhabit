@@ -46,7 +46,11 @@ class HabitSummaryListTile extends StatefulWidget {
   final EdgeInsets? itemPadding;
   final int? collapsePrt;
   final Widget Function(
-      BuildContext context, Widget cell, HabitRecordDate date)? cellBuilder;
+    BuildContext context,
+    Widget cell,
+    HabitRecordDate date,
+  )?
+  cellBuilder;
   final HabitListTilePhysicsBuilder? scrollPhysicsBuilder;
   final ScrollController? verticalScrollController;
   final LinkedScrollControllerGroup? horizonalScrollControllerGroup;
@@ -74,8 +78,8 @@ class HabitSummaryListTile extends StatefulWidget {
     this.onCellPressed,
     this.onCellLongPressed,
     this.onCellDoublePressed,
-  })  : _titlePadding = titlePadding,
-        _height = height;
+  }) : _titlePadding = titlePadding,
+       _height = height;
 
   @override
   State<StatefulWidget> createState() => _HabitSummaryListTile();
@@ -87,8 +91,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   @override
   void initState() {
     super.initState();
-    _horizonalScrollController =
-        widget.horizonalScrollControllerGroup?.addAndGet();
+    _horizonalScrollController = widget.horizonalScrollControllerGroup
+        ?.addAndGet();
   }
 
   @override
@@ -111,12 +115,15 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
 
   HabitSummaryData get data => widget.data;
 
-  TextScaler getTextScaler(BuildContext context) =>
-      MediaQuery.textScalerOf(context)
-          .clamp(maxScaleFactor: kMaxHabitSummaryListTileTextScale);
+  TextScaler getTextScaler(BuildContext context) => MediaQuery.textScalerOf(
+    context,
+  ).clamp(maxScaleFactor: kMaxHabitSummaryListTileTextScale);
 
-  Widget _buildProgressCircle(BuildContext context,
-      {Color? color, Color? backgroundColor}) {
+  Widget _buildProgressCircle(
+    BuildContext context, {
+    Color? color,
+    Color? backgroundColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: HabitProgressIndicator(
@@ -131,8 +138,12 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     );
   }
 
-  Widget _buildTitle(BuildContext context,
-      {Color? color, required TextStyle textStyle, required bool isExtended}) {
+  Widget _buildTitle(
+    BuildContext context, {
+    Color? color,
+    required TextStyle textStyle,
+    required bool isExtended,
+  }) {
     return Flexible(
       child: Padding(
         padding: titlePadding,
@@ -153,9 +164,14 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   }
 
   Widget? _buildCellItem(
-      BuildContext context, int index, double realHeight, DateTime crtDate) {
-    final showDate =
-        HabitRecordDate.dateTime(crtDate.subtract(Duration(days: index)));
+    BuildContext context,
+    int index,
+    double realHeight,
+    DateTime crtDate,
+  ) {
+    final showDate = HabitRecordDate.dateTime(
+      crtDate.subtract(Duration(days: index)),
+    );
     final record = data.getRecordByDate(showDate);
     final isAutoComplated = data.isRecordAutoComplated(showDate);
 
@@ -169,19 +185,20 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
         targetValue: data.dailyGoal,
         extraTargetValue: data.dailyGoalExtra,
       ),
-      habitDailyStatus:
-          record != null ? record.status : HabitRecordStatus.unknown,
+      habitDailyStatus: record != null
+          ? record.status
+          : HabitRecordStatus.unknown,
       onPressed: widget.onCellPressed != null
           ? (date, crt) =>
-              widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
+                widget.onCellPressed!(data.uuid, record?.uuid, date, crt)
           : null,
       onLongPressed: widget.onCellLongPressed != null
           ? (date, crt) =>
-              widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
+                widget.onCellLongPressed!(data.uuid, record?.uuid, date, crt)
           : null,
       onDoublePressed: widget.onCellDoublePressed != null
           ? (date, crt) =>
-              widget.onCellDoublePressed!(data.uuid, record?.uuid, date, crt)
+                widget.onCellDoublePressed!(data.uuid, record?.uuid, date, crt)
           : null,
       enabled: showDate >= data.startDate,
       isAutoComplated: isAutoComplated,
@@ -200,8 +217,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
-    final HabitSummaryListTileColor? themeColor =
-        themeData.extension<HabitSummaryListTileColor>();
+    final HabitSummaryListTileColor? themeColor = themeData
+        .extension<HabitSummaryListTileColor>();
     final HabitSummaryListTileColor defaultThemeColor =
         _getDefaultListTileColor(themeData);
     final TextTheme textTheme = themeData.textTheme;
@@ -227,9 +244,11 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           children: [
             _buildProgressCircle(
               context,
-              color: themeColor?.progressCircleColor ??
+              color:
+                  themeColor?.progressCircleColor ??
                   defaultThemeColor.progressCircleColor,
-              backgroundColor: themeColor?.progressCircleBGColor ??
+              backgroundColor:
+                  themeColor?.progressCircleBGColor ??
                   defaultThemeColor.progressCircleBGColor,
             ),
             _buildTitle(
@@ -261,8 +280,8 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
           _buildCellItem(context, index, realHeight, crtDate),
       backgroundColor: widget.isSelected
           ? widget.selectColor ??
-              themeColor?.selectedColor ??
-              defaultThemeColor.selectedColor
+                themeColor?.selectedColor ??
+                defaultThemeColor.selectedColor
           : null,
       height: getTextScaler(context).scale(height),
       itemHeight: height,

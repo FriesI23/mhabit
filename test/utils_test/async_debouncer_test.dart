@@ -47,14 +47,16 @@ void main() {
       expect(records, ['executed']);
     });
 
-    test('exec called multiple times only executes once if not running',
-        () async {
-      debouncer.exec(delay: Duration(milliseconds: 50));
-      debouncer.exec(delay: Duration(milliseconds: 10));
-      debouncer.exec(delay: Duration(milliseconds: 20));
-      await Future.delayed(Duration(milliseconds: 60));
-      expect(records, ['executed']);
-    });
+    test(
+      'exec called multiple times only executes once if not running',
+      () async {
+        debouncer.exec(delay: Duration(milliseconds: 50));
+        debouncer.exec(delay: Duration(milliseconds: 10));
+        debouncer.exec(delay: Duration(milliseconds: 20));
+        await Future.delayed(Duration(milliseconds: 60));
+        expect(records, ['executed']);
+      },
+    );
 
     test('exec while executing queues the next one', () async {
       debouncer.exec(delay: Duration(milliseconds: 10));

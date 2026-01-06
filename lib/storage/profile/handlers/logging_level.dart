@@ -22,8 +22,10 @@ class LoggingLevelProfileHandler
   @override
   String get key => "loggingLevel";
 
-  const LoggingLevelProfileHandler(super.pref,
-      {super.codec = const LoggingLevelProfileCodec()});
+  const LoggingLevelProfileHandler(
+    super.pref, {
+    super.codec = const LoggingLevelProfileCodec(),
+  });
 }
 
 final class LoggingLevelProfileCodec extends Codec<LogLevel?, int> {

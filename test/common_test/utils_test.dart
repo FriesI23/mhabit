@@ -26,8 +26,11 @@ void main() {
         ..addAll(list1)
         ..addAll(list2);
       list3.sort();
-      combineIterables(list1, list2, compare: (a, b) => a.compareTo(b))
-          .forEachIndexed((index, element) {
+      combineIterables(
+        list1,
+        list2,
+        compare: (a, b) => a.compareTo(b),
+      ).forEachIndexed((index, element) {
         assert(element == list3[index], true);
       });
     });

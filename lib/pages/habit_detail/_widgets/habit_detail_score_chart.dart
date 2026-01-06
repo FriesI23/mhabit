@@ -34,7 +34,9 @@ class _HabitDetailScoreChartTitle extends StatelessWidget {
   });
 
   String getCombineString(
-      BuildContext context, HabitDetailScoreChartCombine combine) {
+    BuildContext context,
+    HabitDetailScoreChartCombine combine,
+  ) {
     switch (combine) {
       case HabitDetailScoreChartCombine.monthly:
         return L10n.of(context)?.habitDetail_scoreChartCombine_monthlyText ??
@@ -57,49 +59,60 @@ class _HabitDetailScoreChartTitle extends StatelessWidget {
       return PopupMenuButton<HabitDetailScoreChartCombine>(
         icon: Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Row(children: [
-            Text(getCombineString(context, chartCombine)),
-            const Icon(Icons.arrow_drop_down),
-          ]),
+          child: Row(
+            children: [
+              Text(getCombineString(context, chartCombine)),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
         ),
         padding: EdgeInsets.zero,
         initialValue: chartCombine,
         onSelected: onPopMenuSelected,
         itemBuilder: (context) =>
             <PopupMenuEntry<HabitDetailScoreChartCombine>>[
-          CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
-            padding: const EdgeInsets.symmetric(horizontal: 1.0),
-            checked: chartCombine == HabitDetailScoreChartCombine.daily,
-            value: HabitDetailScoreChartCombine.daily,
-            child: Text(
-              getCombineString(context, HabitDetailScoreChartCombine.daily),
-            ),
-          ),
-          CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
-            padding: const EdgeInsets.symmetric(horizontal: 1.0),
-            checked: chartCombine == HabitDetailScoreChartCombine.weekly,
-            value: HabitDetailScoreChartCombine.weekly,
-            child: Text(
-              getCombineString(context, HabitDetailScoreChartCombine.weekly),
-            ),
-          ),
-          CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
-            padding: const EdgeInsets.symmetric(horizontal: 1.0),
-            checked: chartCombine == HabitDetailScoreChartCombine.monthly,
-            value: HabitDetailScoreChartCombine.monthly,
-            child: Text(
-              getCombineString(context, HabitDetailScoreChartCombine.monthly),
-            ),
-          ),
-          CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
-            padding: const EdgeInsets.symmetric(horizontal: 1.0),
-            checked: chartCombine == HabitDetailScoreChartCombine.yearly,
-            value: HabitDetailScoreChartCombine.yearly,
-            child: Text(
-              getCombineString(context, HabitDetailScoreChartCombine.yearly),
-            ),
-          ),
-        ],
+              CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
+                padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                checked: chartCombine == HabitDetailScoreChartCombine.daily,
+                value: HabitDetailScoreChartCombine.daily,
+                child: Text(
+                  getCombineString(context, HabitDetailScoreChartCombine.daily),
+                ),
+              ),
+              CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
+                padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                checked: chartCombine == HabitDetailScoreChartCombine.weekly,
+                value: HabitDetailScoreChartCombine.weekly,
+                child: Text(
+                  getCombineString(
+                    context,
+                    HabitDetailScoreChartCombine.weekly,
+                  ),
+                ),
+              ),
+              CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
+                padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                checked: chartCombine == HabitDetailScoreChartCombine.monthly,
+                value: HabitDetailScoreChartCombine.monthly,
+                child: Text(
+                  getCombineString(
+                    context,
+                    HabitDetailScoreChartCombine.monthly,
+                  ),
+                ),
+              ),
+              CheckedPopupMenuItem<HabitDetailScoreChartCombine>(
+                padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                checked: chartCombine == HabitDetailScoreChartCombine.yearly,
+                value: HabitDetailScoreChartCombine.yearly,
+                child: Text(
+                  getCombineString(
+                    context,
+                    HabitDetailScoreChartCombine.yearly,
+                  ),
+                ),
+              ),
+            ],
       );
     }
 
@@ -121,7 +134,10 @@ class HabitDetailScoreChart extends StatelessWidget {
   final HabitDate startDate;
   final HabitDetailScoreChartCombine chartCombine;
   final List<MapEntry<HabitDate, HabitDetailScoreChartDate>> Function(
-      HabitDate firstDate, HabitDate lastDate) getData;
+    HabitDate firstDate,
+    HabitDate lastDate,
+  )
+  getData;
   final void Function(HabitDetailScoreChartCombine combine)? onPopMenuSelected;
   final HabitDetailScoreChartBuilder? chartBuilder;
 
@@ -144,22 +160,26 @@ class HabitDetailScoreChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final TextScaler textScaler =
-        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(maxScaleFactor: 1.3);
 
     final eachSize = textScaler.scale(this.eachSize);
     final limit = math.max(1, allowWidth ~/ eachSize);
-    final titleHeight =
-        textScaler.clamp(minScaleFactor: 1.0).scale(this.titleHeight);
+    final titleHeight = textScaler
+        .clamp(minScaleFactor: 1.0)
+        .scale(this.titleHeight);
 
     final firstDate = getFirstDate(limit);
     var lastDate = getLastDate(limit);
     lastDate = lastDate.isBefore(startDate) ? lastDate : startDate;
 
-    final chartKey = ValueKey<String>("scoreChart"
-        "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
-        "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
-        "|${chartCombine.index}");
+    final chartKey = ValueKey<String>(
+      "scoreChart"
+      "|${firstDate.year}-${firstDate.month}-${firstDate.day}"
+      "|${lastDate.year}-${lastDate.month}-${lastDate.day}"
+      "|${chartCombine.index}",
+    );
 
     return Padding(
       padding: padding,

@@ -81,54 +81,56 @@ class _HabitRecordReasonModifierDialog
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return AlertDialog(
-        scrollable: true,
-        title: l10n != null
-            ? Text(l10n.habitDetail_skipReason_title)
-            : const Text("Skip reason"),
-        insetPadding: kExpanedDailogInsetPadding,
-        contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            HabitRecordReasonField(
-              chipHeight: 56,
-              chipWidth: math.min(constraints.maxWidth, dialogMaxWidth),
-              recordDate: widget.recordDate,
-              chipTextList: widget.chipTextList,
-              inputController: _inputController,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 12),
-              child: OverflowBar(
-                spacing: 8.0,
-                alignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: l10n != null
-                        ? Text(l10n.habitDetail_skipReason_cancelText)
-                        : const Text('cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, _inputController.text);
-                    },
-                    child: l10n != null
-                        ? Text(l10n.habitDetail_skipReason_saveText)
-                        : const Text('save'),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AlertDialog(
+          scrollable: true,
+          title: l10n != null
+              ? Text(l10n.habitDetail_skipReason_title)
+              : const Text("Skip reason"),
+          insetPadding: kExpanedDailogInsetPadding,
+          contentPadding: const EdgeInsets.only(left: 24.0, right: 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              HabitRecordReasonField(
+                chipHeight: 56,
+                chipWidth: math.min(constraints.maxWidth, dialogMaxWidth),
+                recordDate: widget.recordDate,
+                chipTextList: widget.chipTextList,
+                inputController: _inputController,
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 12),
+                child: OverflowBar(
+                  spacing: 8.0,
+                  alignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: l10n != null
+                          ? Text(l10n.habitDetail_skipReason_cancelText)
+                          : const Text('cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, _inputController.text);
+                      },
+                      child: l10n != null
+                          ? Text(l10n.habitDetail_skipReason_saveText)
+                          : const Text('save'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -161,11 +163,15 @@ class HabitRecordReasonField extends StatelessWidget {
           cursorPosition = inputController.text.length;
         }
         final oldText = inputController.text;
-        final newText =
-            oldText.replaceRange(cursorPosition, cursorPosition, emoji);
+        final newText = oldText.replaceRange(
+          cursorPosition,
+          cursorPosition,
+          emoji,
+        );
         inputController.text = newText;
         inputController.selection = TextSelection.fromPosition(
-            TextPosition(offset: cursorPosition + emoji.length));
+          TextPosition(offset: cursorPosition + emoji.length),
+        );
         onChanged?.call(inputController.text);
       },
     );
@@ -189,7 +195,8 @@ class HabitRecordReasonField extends StatelessWidget {
           controller: inputController,
           maxLength: maxRecordReasonTextLenth,
           decoration: InputDecoration(
-            hintText: l10n?.habitDetail_skipReason_bodyHelpText ??
+            hintText:
+                l10n?.habitDetail_skipReason_bodyHelpText ??
                 "Write something here...",
             hintStyle: TextStyle(color: themeData.colorScheme.outlineOpacity64),
             helperText: recordDate != null

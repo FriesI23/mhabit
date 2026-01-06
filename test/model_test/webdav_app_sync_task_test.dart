@@ -32,14 +32,15 @@ import 'package:mockito/mockito.dart';
 ])
 @GenerateNiceMocks([
   MockSpec<AppSyncSubTask<WebDavAppSyncTaskResult>>(
-      as: #MockAppSyncSubTaskWithResult),
+    as: #MockAppSyncSubTaskWithResult,
+  ),
 ])
 import 'webdav_app_sync_task_test.mocks.dart';
 
 void testWebdavAppSyncTaskMainBody() =>
     group("test WebdavAppSyncTaskMainBody", () {
       late AppSyncSubTask<List<WebDavResourceContainer>>
-          fetchHabitsFromServerTask;
+      fetchHabitsFromServerTask;
       late AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
       late WebDavSyncHabitInfoMerger syncInfoMerger;
       late WebDavAppSyncTaskExecutor task;
@@ -62,8 +63,9 @@ void testWebdavAppSyncTaskMainBody() =>
           syncInfoMergerBuilder: (context) => syncInfoMerger,
           singleHabitSyncTaskBuilder: (cell) {
             final task = MockAppSyncSubTaskWithResult();
-            when(task.run(any))
-                .thenAnswer((_) async => WebDavAppSyncTaskResult.success());
+            when(
+              task.run(any),
+            ).thenAnswer((_) async => WebDavAppSyncTaskResult.success());
             singleHabitTasks.add(task);
             return task;
           },
@@ -71,34 +73,45 @@ void testWebdavAppSyncTaskMainBody() =>
 
         final serverResult = [
           WebDavResourceContainer(
-              path: Uri.parse("/a/habit-x1.json"), etag: 'xxx1'),
+            path: Uri.parse("/a/habit-x1.json"),
+            etag: 'xxx1',
+          ),
           WebDavResourceContainer(
-              path: Uri.parse("/a/habit-x2.json"), etag: 'xxx2'),
+            path: Uri.parse("/a/habit-x2.json"),
+            etag: 'xxx2',
+          ),
           WebDavResourceContainer(
-              path: Uri.parse("/a/habit-x3.json"), etag: 'xxx3'),
+            path: Uri.parse("/a/habit-x3.json"),
+            etag: 'xxx3',
+          ),
         ];
-        when(fetchHabitsFromServerTask.run(task))
-            .thenAnswer((inv) async => serverResult);
+        when(
+          fetchHabitsFromServerTask.run(task),
+        ).thenAnswer((inv) async => serverResult);
 
         final localResult = <SyncDBCell>[
           SyncDBCell(habitUUID: 'z1'),
           SyncDBCell(habitUUID: 'z2', lastMark: 'zzz2'),
         ];
-        when(queryHabitsFromDbTask.run(task))
-            .thenAnswer((inv) async => localResult);
+        when(
+          queryHabitsFromDbTask.run(task),
+        ).thenAnswer((inv) async => localResult);
 
         final mergeResult = <WebDavAppSyncHabitInfo>[
           WebDavAppSyncHabitInfo(
-              configUUID: 'yy1',
-              uuid: 'xx1',
-              status: WebDavAppSyncInfoStatus.both),
+            configUUID: 'yy1',
+            uuid: 'xx1',
+            status: WebDavAppSyncInfoStatus.both,
+          ),
           WebDavAppSyncHabitInfo(
-              configUUID: 'yy1',
-              uuid: 'xx2',
-              status: WebDavAppSyncInfoStatus.server),
+            configUUID: 'yy1',
+            uuid: 'xx2',
+            status: WebDavAppSyncInfoStatus.server,
+          ),
         ];
-        when(syncInfoMerger.convert((local: localResult, server: serverResult)))
-            .thenReturn(mergeResult);
+        when(
+          syncInfoMerger.convert((local: localResult, server: serverResult)),
+        ).thenReturn(mergeResult);
 
         final result = await task.run();
 
@@ -106,8 +119,9 @@ void testWebdavAppSyncTaskMainBody() =>
         verify(config.timeout).called(1);
         verify(fetchHabitsFromServerTask.run(task)).called(1);
         verify(queryHabitsFromDbTask.run(task)).called(1);
-        verify(syncInfoMerger
-            .convert((local: localResult, server: serverResult))).called(1);
+        verify(
+          syncInfoMerger.convert((local: localResult, server: serverResult)),
+        ).called(1);
         for (var singleHabitTask in singleHabitTasks) {
           verify(singleHabitTask.run(task)).called(1);
         }

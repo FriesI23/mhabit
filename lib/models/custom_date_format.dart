@@ -77,19 +77,21 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     this.useLeadingZero = false,
     this.applyFreqChart,
     this.applyHeatmapCal,
-  }) : assert(ymdFormat == YearMonthDayFormtEnum.dayMonthYear ||
-            ymdFormat == YearMonthDayFormtEnum.monthDayYear ||
-            ymdFormat == YearMonthDayFormtEnum.yearMonthDay);
+  }) : assert(
+         ymdFormat == YearMonthDayFormtEnum.dayMonthYear ||
+             ymdFormat == YearMonthDayFormtEnum.monthDayYear ||
+             ymdFormat == YearMonthDayFormtEnum.yearMonthDay,
+       );
 
   const CustomDateYmdHmsConfig.withDefault()
-      : ymdFormat = YearMonthDayFormtEnum.yearMonthDay,
-        splitChar = DateSplitCharEnum.slash,
-        twelveHoursOn = false,
-        useMonthWithName = false,
-        useSystemFormat = true,
-        useLeadingZero = false,
-        applyFreqChart = false,
-        applyHeatmapCal = false;
+    : ymdFormat = YearMonthDayFormtEnum.yearMonthDay,
+      splitChar = DateSplitCharEnum.slash,
+      twelveHoursOn = false,
+      useMonthWithName = false,
+      useSystemFormat = true,
+      useLeadingZero = false,
+      applyFreqChart = false,
+      applyHeatmapCal = false;
 
   factory CustomDateYmdHmsConfig.fromJson(dynamic json) =>
       _$CustomDateYmdHmsConfigFromJson(json);
@@ -120,11 +122,11 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
   DateFormat _getYMDHMSFormatterWithConfig(String? locale) {
     final ymdPattern = _getYMDFormatterWithConfig(locale).pattern;
     final hmsPattern = DateFormat(
-            twelveHoursOn
-                ? DateFormat.HOUR_MINUTE_SECOND
-                : DateFormat.HOUR24_MINUTE_SECOND,
-            locale)
-        .pattern;
+      twelveHoursOn
+          ? DateFormat.HOUR_MINUTE_SECOND
+          : DateFormat.HOUR24_MINUTE_SECOND,
+      locale,
+    ).pattern;
     return DateFormat([ymdPattern, hmsPattern].join(" "), locale);
   }
 
@@ -192,11 +194,15 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     switch (ymdFormat) {
       case YearMonthDayFormtEnum.yearMonthDay:
         return DateFormat(
-            [formatYear, formatMonth].join(splitChar.char), locale);
+          [formatYear, formatMonth].join(splitChar.char),
+          locale,
+        );
       case YearMonthDayFormtEnum.monthDayYear:
       case YearMonthDayFormtEnum.dayMonthYear:
         return DateFormat(
-            [formatMonth, formatYear].join(splitChar.char), locale);
+          [formatMonth, formatYear].join(splitChar.char),
+          locale,
+        );
     }
   }
 
@@ -231,25 +237,29 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
         return l10n != null
             ? l10n.common_customDateTimeFormatPicker_sep_formatter(
                 l10n.common_customDateTimeFormatPicker_sepDash_text,
-                splitChar.char)
+                splitChar.char,
+              )
             : splitChar.char;
       case DateSplitCharEnum.slash:
         return l10n != null
             ? l10n.common_customDateTimeFormatPicker_sep_formatter(
                 l10n.common_customDateTimeFormatPicker_sepSlash_text,
-                splitChar.char)
+                splitChar.char,
+              )
             : splitChar.char;
       case DateSplitCharEnum.space:
         return l10n != null
             ? l10n.common_customDateTimeFormatPicker_sep_formatter(
                 l10n.common_customDateTimeFormatPicker_sepSpace_text,
-                splitChar.char)
+                splitChar.char,
+              )
             : splitChar.char;
       case DateSplitCharEnum.dot:
         return l10n != null
             ? l10n.common_customDateTimeFormatPicker_sep_formatter(
                 l10n.common_customDateTimeFormatPicker_sepDot_text,
-                splitChar.char)
+                splitChar.char,
+              )
             : splitChar.char;
       case DateSplitCharEnum.empty:
         return l10n != null

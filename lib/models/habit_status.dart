@@ -20,10 +20,11 @@ class HabitStatusChangedRecord {
   final HabitStatus newStatus;
   final HabitStatus orgStatus;
 
-  const HabitStatusChangedRecord(
-      {required this.habitUUID,
-      required this.newStatus,
-      required this.orgStatus});
+  const HabitStatusChangedRecord({
+    required this.habitUUID,
+    required this.newStatus,
+    required this.orgStatus,
+  });
 
   @override
   String toString() =>

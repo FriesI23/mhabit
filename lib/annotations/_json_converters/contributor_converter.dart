@@ -26,8 +26,10 @@ class ContributorCollectionConverter
   Iterable<ContributorInfo> buildDefinedContributors(Iterable rawData) =>
       rawData.whereType<Map<String, dynamic>>().map(ContributorInfo.fromJson);
 
-  Iterable<ContributorInfo> buildContributors(Iterable rawData,
-      [Map<int, ContributorInfo> definedContributors = const {}]) sync* {
+  Iterable<ContributorInfo> buildContributors(
+    Iterable rawData, [
+    Map<int, ContributorInfo> definedContributors = const {},
+  ]) sync* {
     for (var d in rawData) {
       switch (d) {
         case int():
@@ -46,25 +48,30 @@ class ContributorCollectionConverter
     final rawDefinedContributors = json["_contributor"];
     final definedContributors =
         rawDefinedContributors != null && rawDefinedContributors is List
-            ? Map<int, ContributorInfo>.fromIterable(
-                buildDefinedContributors(rawDefinedContributors),
-                key: (e) => (e as ContributorInfo).id!)
-            : const <int, ContributorInfo>{};
+        ? Map<int, ContributorInfo>.fromIterable(
+            buildDefinedContributors(rawDefinedContributors),
+            key: (e) => (e as ContributorInfo).id!,
+          )
+        : const <int, ContributorInfo>{};
 
     List<ContributorInfo> contributorListbuilder(dynamic rawData) =>
         rawData != null && rawData is List
-            ? List<ContributorInfo>.unmodifiable(
-                buildContributors(rawData, definedContributors))
-            : const <ContributorInfo>[];
+        ? List<ContributorInfo>.unmodifiable(
+            buildContributors(rawData, definedContributors),
+          )
+        : const <ContributorInfo>[];
 
     SplayTreeMap<Locale, List<ContributorInfo>> translationsMapBuilder(
-        dynamic rawData) {
+      dynamic rawData,
+    ) {
       final translations = SplayTreeMap<Locale, List<ContributorInfo>>(
-          (a, b) => a.toLanguageTag().compareTo(b.toLanguageTag()));
-      for (var entry in (rawData != null && rawData is Map<String, dynamic>
-              ? rawData
-              : const <String, dynamic>{})
-          .entries) {
+        (a, b) => a.toLanguageTag().compareTo(b.toLanguageTag()),
+      );
+      for (var entry
+          in (rawData != null && rawData is Map<String, dynamic>
+                  ? rawData
+                  : const <String, dynamic>{})
+              .entries) {
         final locale = Locale.tryParse(entry.key);
         if (locale == null) continue;
         final transList = contributorListbuilder(entry.value);

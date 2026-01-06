@@ -107,7 +107,9 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
             sortType: widget.sortType,
             sortDirection: widget.sortDirection,
             onPressed: () => _naviPopWithOp(
-                context, HabitDisplayMainMenuDialogOpr.showSortMenu),
+              context,
+              HabitDisplayMainMenuDialogOpr.showSortMenu,
+            ),
           ),
           const Divider(),
           _HabitsDisplayFilterListView(
@@ -119,7 +121,9 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
           const Divider(),
           _SettingListTile(
             onPressed: () => _naviPopWithOp(
-                context, HabitDisplayMainMenuDialogOpr.openSettings),
+              context,
+              HabitDisplayMainMenuDialogOpr.openSettings,
+            ),
           ),
         ],
       ),
@@ -186,8 +190,11 @@ class _SortTypeListTile extends StatelessWidget {
       iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
       leading: Icon(HabitsSortViewModel.getSortIcon(sortType, sortDirection)),
       title: Text(
-        HabitsSortViewModel.getSortTitle(sortType, sortDirection,
-            l10n: L10n.of(context)),
+        HabitsSortViewModel.getSortTitle(
+          sortType,
+          sortDirection,
+          l10n: L10n.of(context),
+        ),
       ),
       trailing: const Icon(Icons.arrow_right_outlined),
       onTap: onPressed,
@@ -215,13 +222,15 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               ? Text(l10n.habitDisplay_statsMenu_archivedTileText)
               : const Text("Show Archived"),
           secondary: const Icon(Icons.inventory_2_outlined),
-          enabled: habitsDisplayFilter.copyWith(allowArchivedHabits: false) !=
+          enabled:
+              habitsDisplayFilter.copyWith(allowArchivedHabits: false) !=
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowArchivedHabits,
           onChanged: (value) {
             final newFilter = habitsDisplayFilter.copyWith(
-                allowArchivedHabits:
-                    value ?? habitsDisplayFilter.allowArchivedHabits);
+              allowArchivedHabits:
+                  value ?? habitsDisplayFilter.allowArchivedHabits,
+            );
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }
@@ -232,13 +241,15 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
               : const Text("Show Actived"),
           secondary: const Icon(HabitProgressIcons.progress_50percent),
-          enabled: habitsDisplayFilter.copyWith(allowInProgressHabits: false) !=
+          enabled:
+              habitsDisplayFilter.copyWith(allowInProgressHabits: false) !=
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowInProgressHabits,
           onChanged: (value) {
             final newFilter = habitsDisplayFilter.copyWith(
-                allowInProgressHabits:
-                    value ?? habitsDisplayFilter.allowInProgressHabits);
+              allowInProgressHabits:
+                  value ?? habitsDisplayFilter.allowInProgressHabits,
+            );
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }
@@ -249,13 +260,15 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
               ? Text(l10n.habitDisplay_statsMenu_completedTileText)
               : const Text("Show Completed"),
           secondary: const Icon(HabitProgressIcons.progress_100percent),
-          enabled: habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
+          enabled:
+              habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
               HabitsDisplayFilter.allFalse,
           value: habitsDisplayFilter.allowCompleteHabits,
           onChanged: (value) {
             final newFilter = habitsDisplayFilter.copyWith(
-                allowCompleteHabits:
-                    value ?? habitsDisplayFilter.allowCompleteHabits);
+              allowCompleteHabits:
+                  value ?? habitsDisplayFilter.allowCompleteHabits,
+            );
             if (newFilter != HabitsDisplayFilter.allFalse) {
               onFetchNewDisplayFilter?.call(newFilter);
             }

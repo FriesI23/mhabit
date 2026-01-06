@@ -41,8 +41,8 @@ class AppDebuggerViewModel
   @override
   void updateProfile(ProfileViewModel newProfile) {
     super.updateProfile(newProfile);
-    _collectLogsSwitcher =
-        newProfile.getHandler<CollectLogswitcherProfileHandler>();
+    _collectLogsSwitcher = newProfile
+        .getHandler<CollectLogswitcherProfileHandler>();
     _loggingLevel = newProfile.getHandler<LoggingLevelProfileHandler>();
     isCollectLogs
         ? kAppLogLevel = _loggingLevel?.get() ?? kAppLogLevel
@@ -77,20 +77,24 @@ class AppDebuggerViewModel
   Future<bool>? _syncLoggingLevelToProfile(LogLevel? newLevel) =>
       newLevel != null ? _loggingLevel?.set(newLevel) : _loggingLevel?.remove();
 
-  void _updateLoggerProcesser() => appLog.changeLoggerByType(isCollectLogs
-      ? AppLoggerHandlerType.debugging
-      : AppLoggerHandlerType.normal);
+  void _updateLoggerProcesser() => appLog.changeLoggerByType(
+    isCollectLogs
+        ? AppLoggerHandlerType.debugging
+        : AppLoggerHandlerType.normal,
+  );
 
   void processDebuggingNotification([L10n? l10n]) {
     if (isCollectLogs) {
       NotificationService().show(
-          id: appDebuggerNotifyId,
-          title: l10n?.debug_debuggerInfo_notificationTitle ??
-              "Collecting App's Info...",
-          // body: "Tap to view details.",
-          type: NotificationDataType.appDebugger,
-          channelId: NotificationChannelId.appDebugger,
-          details: channelData.appDebugger);
+        id: appDebuggerNotifyId,
+        title:
+            l10n?.debug_debuggerInfo_notificationTitle ??
+            "Collecting App's Info...",
+        // body: "Tap to view details.",
+        type: NotificationDataType.appDebugger,
+        channelId: NotificationChannelId.appDebugger,
+        details: channelData.appDebugger,
+      );
     } else {
       NotificationService().cancel(id: appDebuggerNotifyId);
     }

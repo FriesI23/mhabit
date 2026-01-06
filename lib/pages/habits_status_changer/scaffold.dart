@@ -49,35 +49,38 @@ class PageScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: LayoutBuilder(builder: (context, constraints) {
-        final splittedLayout = useSplittedLayout(constraints);
-        return Row(
-          children: [
-            Container(
-              constraints: BoxConstraints.tightFor(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final splittedLayout = useSplittedLayout(constraints);
+          return Row(
+            children: [
+              Container(
+                constraints: BoxConstraints.tightFor(
                   width: splittedLayout
                       ? calMainFrameworkWidth(constraints)
-                      : constraints.maxWidth),
-              child: _MainSection(
-                appbar: appbar,
-                content: content,
-                habitTitle: habitTitle,
-                habitsContent: splittedLayout ? null : habitsContent,
-                debugContent: debugContent,
-                controller: mainController,
-              ),
-            ),
-            if (splittedLayout)
-              Expanded(
-                child: _DescSection(
+                      : constraints.maxWidth,
+                ),
+                child: _MainSection(
+                  appbar: appbar,
+                  content: content,
                   habitTitle: habitTitle,
-                  habitsContent: habitsContent,
-                  controller: rightController,
+                  habitsContent: splittedLayout ? null : habitsContent,
+                  debugContent: debugContent,
+                  controller: mainController,
                 ),
               ),
-          ],
-        );
-      }),
+              if (splittedLayout)
+                Expanded(
+                  child: _DescSection(
+                    habitTitle: habitTitle,
+                    habitsContent: habitsContent,
+                    controller: rightController,
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -110,7 +113,7 @@ class _MainSection extends StatelessWidget {
           ...[
             habitTitle,
             const SliverPinnedHeader(child: Divider(height: 1)),
-            habitsContent!
+            habitsContent!,
           ].nonNulls,
         if (debugContent != null) debugContent!,
       ],
@@ -134,10 +137,7 @@ class _DescSection extends StatelessWidget {
     return SafeArea(
       child: CustomScrollView(
         controller: controller,
-        slivers: [
-          if (habitTitle != null) habitTitle!,
-          habitsContent,
-        ],
+        slivers: [if (habitTitle != null) habitTitle!, habitsContent],
       ),
     );
   }

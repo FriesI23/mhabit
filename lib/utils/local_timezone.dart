@@ -67,10 +67,14 @@ final class LocalTimeZoneManager implements LocalTimeZone, AsyncInitialization {
 
   Future<void> updateTimeZone() async {
     final String timeZoneName = await getTimeZone();
-    appLog.value.debug("updateTimeZone",
-        beforeVal: tz.local.name, afterVal: timeZoneName);
+    appLog.value.debug(
+      "updateTimeZone",
+      beforeVal: tz.local.name,
+      afterVal: timeZoneName,
+    );
     tz.setLocalLocation(
-        timeZoneName.isNotEmpty ? tz.getLocation(timeZoneName) : tz.UTC);
+      timeZoneName.isNotEmpty ? tz.getLocation(timeZoneName) : tz.UTC,
+    );
   }
 }
 

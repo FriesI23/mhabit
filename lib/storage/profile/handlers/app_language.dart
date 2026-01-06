@@ -20,8 +20,10 @@ import '../profile_helper.dart';
 
 class AppLanguageProfileHanlder
     extends ProfileHelperCovertToJsonHandler<Locale> {
-  AppLanguageProfileHanlder(super.pref,
-      {super.codec = const AppLanguageProfileCodec()});
+  AppLanguageProfileHanlder(
+    super.pref, {
+    super.codec = const AppLanguageProfileCodec(),
+  });
 
   @override
   String get key => "appLocale";
@@ -42,10 +44,10 @@ final class _Decoder extends Converter<JsonMap, Locale> {
 
   @override
   Locale convert(JsonMap input) => Locale.fromSubtags(
-        languageCode: input["lc"],
-        countryCode: input["cc"],
-        scriptCode: input["sc"],
-      );
+    languageCode: input["lc"],
+    countryCode: input["cc"],
+    scriptCode: input["sc"],
+  );
 }
 
 final class _Encoder extends Converter<Locale, JsonMap> {
@@ -53,8 +55,8 @@ final class _Encoder extends Converter<Locale, JsonMap> {
 
   @override
   JsonMap convert(Locale input) => {
-        "lc": input.languageCode,
-        "cc": input.countryCode,
-        "sc": input.scriptCode,
-      };
+    "lc": input.languageCode,
+    "cc": input.countryCode,
+    "sc": input.scriptCode,
+  };
 }

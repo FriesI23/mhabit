@@ -111,12 +111,12 @@ class HabitSummaryViewModel extends ChangeNotifier
       _scrollCalendarToStartController.stream;
 
   HabitSummaryStatusCache get currentState => HabitSummaryStatusCache(
-        isAppbarPinned: isAppbarPinned,
-        reloadHashcode: _effectiveLoading.hashCode,
-        isClandarExpanded: isCalendarExpanded,
-        isInEditMode: isInEditMode,
-        isInSearchMode: isInSearchMode,
-      );
+    isAppbarPinned: isAppbarPinned,
+    reloadHashcode: _effectiveLoading.hashCode,
+    isClandarExpanded: isCalendarExpanded,
+    isInEditMode: isInEditMode,
+    isInSearchMode: isInSearchMode,
+  );
 
   bool get isCalendarExpanded => _isCalandarExpanded;
 
@@ -207,7 +207,11 @@ class HabitSummaryViewModel extends ChangeNotifier
           toScore: toScore,
         ).expandToDate()) {
           _last30daysProgressChangeData.addStatistic(
-              data, now, entry.key, entry.value);
+            data,
+            now,
+            entry.key,
+            entry.value,
+          );
         }
       },
     );
@@ -220,8 +224,10 @@ class HabitSummaryViewModel extends ChangeNotifier
 
     void onCancelled() {
       if (_loading == loading) _loading = null;
-      appLog.load.info("$runtimeType._cancelLoading",
-          ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType._cancelLoading",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
@@ -245,37 +251,48 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future loadData({bool listen = true}) async {
     final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
-      appLog.load.warn("$runtimeType.loadData",
-          ex: ["data already loaded", crtLoading.isCompleted]);
+      appLog.load.warn(
+        "$runtimeType.loadData",
+        ex: ["data already loaded", crtLoading.isCompleted],
+      );
       return crtLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
-      appLog.load.error("$runtimeType.load",
-          ex: [...errmsg, loading.hashCode],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.load.error(
+        "$runtimeType.load",
+        ex: [...errmsg, loading.hashCode],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
       if (!loading.isCompleted) {
         loading.completeError(
-            FlutterError(errmsg.join(" ")), StackTrace.current);
+          FlutterError(errmsg.join(" ")),
+          StackTrace.current,
+        );
       }
     }
 
     void loadingCancelled() {
-      appLog.load
-          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType.load",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     Future<void> loadingData() async {
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loading data", loading.hashCode, listen],
+      );
 
       // init habits
       await habitsManager.loadHabitSummaryCollectionData(
-          initedCollection: _data);
+        initedCollection: _data,
+      );
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
@@ -296,20 +313,27 @@ class HabitSummaryViewModel extends ChangeNotifier
       if (listen) {
         notifyListeners();
       }
-      appLog.load
-          .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loaded", loading.hashCode, listen],
+      );
     }
 
-    loadingData().catchError((e, s) {
-      if (loading.isCanceled) return loadingCancelled();
-      loadingFailed(["unexpected error", e]);
-      appLog.load.error("$runtimeType.load",
-          ex: ["caught", e, loading.hashCode], stackTrace: s);
-    }).whenComplete(() {
-      if (!loading.isCompleted && !loading.isCanceled) {
-        loading.complete();
-      }
-    });
+    loadingData()
+        .catchError((e, s) {
+          if (loading.isCanceled) return loadingCancelled();
+          loadingFailed(["unexpected error", e]);
+          appLog.load.error(
+            "$runtimeType.load",
+            ex: ["caught", e, loading.hashCode],
+            stackTrace: s,
+          );
+        })
+        .whenComplete(() {
+          if (!loading.isCompleted && !loading.isCanceled) {
+            loading.complete();
+          }
+        });
 
     return loading.operation.valueOrCancellation();
   }
@@ -319,12 +343,15 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<String?> loadRecordReason(
-          HabitSummaryData data, HabitRecordDate date) =>
-      habitsManager.loadHabitRecordReason(data, date);
+    HabitSummaryData data,
+    HabitRecordDate date,
+  ) => habitsManager.loadHabitRecordReason(data, date);
 
   Future<HabitDBCell?> loadSelectedHabitDetail() async {
-    final selectedData = getSelectedHabitsData()
-        .firstWhere((element) => element != null, orElse: () => null);
+    final selectedData = getSelectedHabitsData().firstWhere(
+      (element) => element != null,
+      orElse: () => null,
+    );
     if (selectedData == null) return null;
     return habitsManager.loadHabitDetail(selectedData.uuid);
   }
@@ -342,8 +369,10 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: edit mode
   bool get isInEditMode => _isInEditMode;
 
-  void switchToEditMode(
-      {bool clearAllSelected = true, bool listen = true}) async {
+  void switchToEditMode({
+    bool clearAllSelected = true,
+    bool listen = true,
+  }) async {
     _canBeDragged = false;
     _isInEditMode = true;
     if (clearAllSelected) clearAllSelectHabits();
@@ -387,8 +416,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     if (listen) notifyListeners();
   }
 
-  void _onSeachOptionsChanged(HabitDisplaySearchOptions newOptions,
-      {required bool listen}) {
+  void _onSeachOptionsChanged(
+    HabitDisplaySearchOptions newOptions, {
+    required bool listen,
+  }) {
     final lastKeyword = _searchController.options.keyword;
     final result = _searchController.updateOptions(newOptions);
     if (!result && newOptions.isNotEmpty) return;
@@ -404,42 +435,53 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void onSeachKeywordChanged(String text, {bool listen = true}) =>
-      _onSeachOptionsChanged(_searchController.options.copyWith(keyword: text),
-          listen: listen);
+      _onSeachOptionsChanged(
+        _searchController.options.copyWith(keyword: text),
+        listen: listen,
+      );
 
   void onSearchOngoingChanged(bool value, {bool listen = true}) =>
       _onSeachOptionsChanged(
-          _searchController.options.copyWith(activated: value),
-          listen: listen);
+        _searchController.options.copyWith(activated: value),
+        listen: listen,
+      );
 
   void onSearchCompletedChanged(bool value, {bool listen = true}) =>
       _onSeachOptionsChanged(
-          _searchController.options.copyWith(completed: value),
-          listen: listen);
+        _searchController.options.copyWith(completed: value),
+        listen: listen,
+      );
 
-  void onSearchHabitTypeChanged(HabitType type, bool value,
-          {bool listen = true}) =>
-      _onSeachOptionsChanged(
-          _searchController.options.copyWith(
-            types: value
-                ? {..._searchController.options.types, type}
-                : ({..._searchController.options.types}..remove(type)),
-          ),
-          listen: listen);
+  void onSearchHabitTypeChanged(
+    HabitType type,
+    bool value, {
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    _searchController.options.copyWith(
+      types: value
+          ? {..._searchController.options.types, type}
+          : ({..._searchController.options.types}..remove(type)),
+    ),
+    listen: listen,
+  );
 
   void onClearSearchFilter({bool clearKeyboard = false, bool listen = true}) =>
       _onSeachOptionsChanged(
-          clearKeyboard
-              ? const HabitDisplaySearchOptions.empty()
-              : HabitDisplaySearchOptions(
-                  keyword: _searchController.options.keyword),
-          listen: listen);
+        clearKeyboard
+            ? const HabitDisplaySearchOptions.empty()
+            : HabitDisplaySearchOptions(
+                keyword: _searchController.options.keyword,
+              ),
+        listen: listen,
+      );
 
-  void onSearchFilterChanged(HabitDisplaySearchOptions options,
-          {bool listen = true}) =>
-      _onSeachOptionsChanged(
-          options.copyWith(keyword: _searchController.options.keyword),
-          listen: listen);
+  void onSearchFilterChanged(
+    HabitDisplaySearchOptions options, {
+    bool listen = true,
+  }) => _onSeachOptionsChanged(
+    options.copyWith(keyword: _searchController.options.keyword),
+    listen: listen,
+  );
   //#endregion
 
   //#region statistics
@@ -477,10 +519,13 @@ class HabitSummaryViewModel extends ChangeNotifier
   List<HabitSortCache> get currentHabitList =>
       _sortableCache.lastSortedDataCache;
 
-  void updateSortOptions(HabitDisplaySortType sortType,
-          HabitDisplaySortDirection sortDirection) =>
-      _sortableCache = _sortableCache.copyWith(
-          sortDirection: sortDirection, sortType: sortType);
+  void updateSortOptions(
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+  ) => _sortableCache = _sortableCache.copyWith(
+    sortDirection: sortDirection,
+    sortType: sortType,
+  );
 
   void updateHabitDisplayFilter(HabitsDisplayFilter newFilter) =>
       _sortableCache = _sortableCache.copyWith(filter: newFilter);
@@ -495,20 +540,32 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   void _resortData() {
-    _replaceSortbaleCache(isInSearchMode
-        ? _sortableCache.copyWithData(_data,
-            searchOptions: searchOptions, filter: HabitsDisplayFilter.allTrue)
-        : _sortableCache.copyWithData(_data));
+    _replaceSortbaleCache(
+      isInSearchMode
+          ? _sortableCache.copyWithData(
+              _data,
+              searchOptions: searchOptions,
+              filter: HabitsDisplayFilter.allTrue,
+            )
+          : _sortableCache.copyWithData(_data),
+    );
   }
 
   void _replaceSortbaleCache(_HabitsSortableCache newSortbaleCache) {
-    if (identical(newSortbaleCache.lastSortedDataCache,
-        _sortableCache.lastSortedDataCache)) {
-      appLog.load.warn("$runtimeType._replaceSortbaleCache",
-          ex: ["fixed cache", newSortbaleCache, _sortableCache]);
+    if (identical(
+      newSortbaleCache.lastSortedDataCache,
+      _sortableCache.lastSortedDataCache,
+    )) {
+      appLog.load.warn(
+        "$runtimeType._replaceSortbaleCache",
+        ex: ["fixed cache", newSortbaleCache, _sortableCache],
+      );
       newSortbaleCache = newSortbaleCache.copyWith(
-          lastSortedDataCache:
-              List.of(newSortbaleCache.lastSortedDataCache, growable: false));
+        lastSortedDataCache: List.of(
+          newSortbaleCache.lastSortedDataCache,
+          growable: false,
+        ),
+      );
     }
     _sortableCache = newSortbaleCache;
   }
@@ -538,7 +595,9 @@ class HabitSummaryViewModel extends ChangeNotifier
       }
     }
     return HabitSummarySelectedStatistic(
-        activated: activatedNum, archived: archivedNum);
+      activated: activatedNum,
+      archived: archivedNum,
+    );
   }
 
   bool isHabitSelected(HabitUUID uuid) => _selectorData.isSelected(uuid);
@@ -587,33 +646,42 @@ class HabitSummaryViewModel extends ChangeNotifier
     _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
       if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
       if (event.isInTrace(AppEventPageSource.habitEdit)) {
-        appLog.habit
-            .debug("HabitSummary.skipped", ex: ["app event triggered", event]);
+        appLog.habit.debug(
+          "HabitSummary.skipped",
+          ex: ["app event triggered", event],
+        );
         return;
       }
       appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
       if (event.exiEditMode) exitEditMode();
       requestReload(clearSnackBar: event.clearSnackBar);
     });
-    _habitStatusChangedSub =
-        newAppEvent.on<HabitStatusChangedEvent>().listen((event) {
+    _habitStatusChangedSub = newAppEvent.on<HabitStatusChangedEvent>().listen((
+      event,
+    ) {
       if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
       appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
       requestReload(clearSnackBar: false);
     });
-    _habitRecordStatusChangedSub =
-        newAppEvent.on<HabitRecordsChangedEvents>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
-      appLog.habit.debug("HabitSummary", ex: ["app event triggered", event]);
-      requestReload(clearSnackBar: false);
-    });
+    _habitRecordStatusChangedSub = newAppEvent
+        .on<HabitRecordsChangedEvents>()
+        .listen((event) {
+          if (event.isInTrace(AppEventPageSource.habitDisplay)) return;
+          appLog.habit.debug(
+            "HabitSummary",
+            ex: ["app event triggered", event],
+          );
+          requestReload(clearSnackBar: false);
+        });
   }
   //#endregion
 
   //#region actions
   Future<HabitSummaryRecord?> changeRecordStatus(
-      HabitUUID habitUUID, HabitRecordDate date,
-      {bool listen = true}) async {
+    HabitUUID habitUUID,
+    HabitRecordDate date, {
+    bool listen = true,
+  }) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
@@ -625,10 +693,12 @@ class HabitSummaryViewModel extends ChangeNotifier
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitSummary.changeRecordStatus",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitSummary.changeRecordStatus",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
@@ -637,24 +707,32 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
-      HabitUUID habitUUID, HabitRecordDate date, HabitDailyGoal newValue,
-      {bool listen = true}) async {
+    HabitUUID habitUUID,
+    HabitRecordDate date,
+    HabitDailyGoal newValue, {
+    bool listen = true,
+  }) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data, goal: newValue, dateList: [date]),
+        data: data,
+        goal: newValue,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitSummary.changeRecordValue",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitSummary.changeRecordValue",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
@@ -663,27 +741,33 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<HabitSummaryRecord?> changeRecordReason(
-      HabitUUID habitUUID, HabitRecordDate date, String newReason,
-      {bool listen = true}) async {
+    HabitUUID habitUUID,
+    HabitRecordDate date,
+    String newReason, {
+    bool listen = true,
+  }) async {
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data,
-          reason: newReason,
-          status: HabitRecordStatus.skip,
-          dateList: [date]),
+        data: data,
+        reason: newReason,
+        status: HabitRecordStatus.skip,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitSummary.changeRecordReason",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitSummary.changeRecordReason",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
@@ -705,8 +789,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       decimalPlaces: sortPositionConflictDecimalPlaces,
     );
 
-    appLog.habit.debug("HabitSummary._writeChangedSortPositionToDB",
-        ex: [changedUUIDs]);
+    appLog.habit.debug(
+      "HabitSummary._writeChangedSortPositionToDB",
+      ex: [changedUUIDs],
+    );
   }
 
   Future<void> onHabitReorderComplate(int index, int dropIndex) {
@@ -715,27 +801,36 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
-      List<HabitUUID> uuidList, HabitStatus newStatus) async {
-    appLog.habit
-        .debug("$runtimeType.changeHabitsStatus", ex: [uuidList, newStatus]);
+    List<HabitUUID> uuidList,
+    HabitStatus newStatus,
+  ) async {
+    appLog.habit.debug(
+      "$runtimeType.changeHabitsStatus",
+      ex: [uuidList, newStatus],
+    );
     final dataList = uuidList.map(getHabit).nonNulls.toList();
     final results = await habitsManager.changeHabitStatus(
-        action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
-        extraResolver: (result) async {
-          final t1 = _updateHabitReminder(result.data);
-          _updateHabitAutoCompleteStatistics(result.data);
-          await t1;
-        });
+      action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
+      extraResolver: (result) async {
+        final t1 = _updateHabitReminder(result.data);
+        _updateHabitAutoCompleteStatistics(result.data);
+        await t1;
+      },
+    );
     return results
-        .map((e) => HabitStatusChangedRecord(
+        .map(
+          (e) => HabitStatusChangedRecord(
             habitUUID: e.data.uuid,
             newStatus: e.data.status,
-            orgStatus: e.orgStatus))
+            orgStatus: e.orgStatus,
+          ),
+        )
         .toList();
   }
 
   Future<void> revertHabitsStatus(
-      List<HabitStatusChangedRecord> recordList) async {
+    List<HabitStatusChangedRecord> recordList,
+  ) async {
     appLog.habit.info("$runtimeType.revertHabitsStatus", ex: [recordList]);
     final recordMap = <HabitStatus, List<HabitUUID>>{};
     for (var record in recordList) {
@@ -745,8 +840,10 @@ class HabitSummaryViewModel extends ChangeNotifier
       recordMap[record.orgStatus]!.add(record.habitUUID);
     }
 
-    appLog.habit.debug("$runtimeType.revertHabitsStatus do",
-        ex: [recordList, recordMap]);
+    appLog.habit.debug(
+      "$runtimeType.revertHabitsStatus do",
+      ex: [recordList, recordMap],
+    );
     for (var r in recordMap.entries) {
       await _changeHabitsStatus(r.value, r.key);
     }
@@ -763,15 +860,19 @@ class HabitSummaryViewModel extends ChangeNotifier
         .toList();
 
     if (realNeedArchivedUUID.isEmpty) {
-      appLog.value.warn("$runtimeType.archivedSelectedHabits",
-          beforeVal: _selectorData,
-          afterVal: realNeedArchivedUUID,
-          ex: ["real need archived habit uuid not found"]);
+      appLog.value.warn(
+        "$runtimeType.archivedSelectedHabits",
+        beforeVal: _selectorData,
+        afterVal: realNeedArchivedUUID,
+        ex: ["real need archived habit uuid not found"],
+      );
       return null;
     }
 
-    final result =
-        await _changeHabitsStatus(realNeedArchivedUUID, HabitStatus.archived);
+    final result = await _changeHabitsStatus(
+      realNeedArchivedUUID,
+      HabitStatus.archived,
+    );
 
     resortData(listen: false);
     exitEditMode();
@@ -787,15 +888,19 @@ class HabitSummaryViewModel extends ChangeNotifier
         .toList();
 
     if (realNeedUnarchivedUUID.isEmpty) {
-      appLog.value.warn("$runtimeType.unarchivedSelectedHabits",
-          beforeVal: _selectorData,
-          afterVal: realNeedUnarchivedUUID,
-          ex: ["real need unarchived habit uuid not found"]);
+      appLog.value.warn(
+        "$runtimeType.unarchivedSelectedHabits",
+        beforeVal: _selectorData,
+        afterVal: realNeedUnarchivedUUID,
+        ex: ["real need unarchived habit uuid not found"],
+      );
       return null;
     }
 
     final result = await _changeHabitsStatus(
-        realNeedUnarchivedUUID, HabitStatus.activated);
+      realNeedUnarchivedUUID,
+      HabitStatus.activated,
+    );
 
     resortData(listen: false);
     exitEditMode();
@@ -811,15 +916,19 @@ class HabitSummaryViewModel extends ChangeNotifier
         .toList();
 
     if (realNeedDeletedUUID.isEmpty) {
-      appLog.value.warn("$runtimeType.deleteSelectedHabits",
-          beforeVal: _selectorData,
-          afterVal: realNeedDeletedUUID,
-          ex: ["real need deleted habit uuid not found"]);
+      appLog.value.warn(
+        "$runtimeType.deleteSelectedHabits",
+        beforeVal: _selectorData,
+        afterVal: realNeedDeletedUUID,
+        ex: ["real need deleted habit uuid not found"],
+      );
       return null;
     }
 
-    final result =
-        await _changeHabitsStatus(realNeedDeletedUUID, HabitStatus.deleted);
+    final result = await _changeHabitsStatus(
+      realNeedDeletedUUID,
+      HabitStatus.deleted,
+    );
 
     resortData(listen: false);
     exitEditMode();
@@ -832,6 +941,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     assert(kDebugMode, true);
     return _data.toString();
   }
+
   //#endregion
 }
 
@@ -842,11 +952,12 @@ class _HabitsSortableCache {
   final HabitsDisplayFilter filter;
   final List<HabitSortCache> lastSortedDataCache;
 
-  const _HabitsSortableCache(
-      {required this.sortType,
-      required this.sortDirection,
-      required this.filter,
-      this.lastSortedDataCache = const []});
+  const _HabitsSortableCache({
+    required this.sortType,
+    required this.sortDirection,
+    required this.filter,
+    this.lastSortedDataCache = const [],
+  });
 
   HabitSortCache? getSortCache(int index) {
     if (index < 0 || index >= lastSortedDataCache.length) {
@@ -856,8 +967,11 @@ class _HabitsSortableCache {
     }
   }
 
-  _HabitsSortableCache copyWithData(HabitSummaryDataCollection data,
-      {HabitDisplaySearchOptions? searchOptions, HabitsDisplayFilter? filter}) {
+  _HabitsSortableCache copyWithData(
+    HabitSummaryDataCollection data, {
+    HabitDisplaySearchOptions? searchOptions,
+    HabitsDisplayFilter? filter,
+  }) {
     var sorted = data
         .sort(sortType, sortDirection)
         .where((filter ?? this.filter).getDisplayFilterFunction());
@@ -867,11 +981,13 @@ class _HabitsSortableCache {
           .split(' ')
           .whereNot((e) => e.isEmpty);
       sorted = sorted.where(
-          (e) => searchOptions.filter(e, caps: true, keywords: keywords));
+        (e) => searchOptions.filter(e, caps: true, keywords: keywords),
+      );
     }
     return copyWith(
-      lastSortedDataCache:
-          sorted.map((e) => HabitSummaryDataSortCache(data: e)).toList(),
+      lastSortedDataCache: sorted
+          .map((e) => HabitSummaryDataSortCache(data: e))
+          .toList(),
     );
   }
 
@@ -909,7 +1025,7 @@ class _HabitSummarySearchController {
   HabitDisplaySearchOptions _options;
 
   _HabitSummarySearchController()
-      : _options = const HabitDisplaySearchOptions.empty();
+    : _options = const HabitDisplaySearchOptions.empty();
 
   bool get enabled => _active;
 
@@ -945,7 +1061,9 @@ final class HabitDetailAdapter implements ProviderMounted {
   }
 
   Future<HabitStatusChangedRecord?> _changeHabitsStatus(
-      HabitUUID habitUUID, HabitStatus status) async {
+    HabitUUID habitUUID,
+    HabitStatus status,
+  ) async {
     final root = _fetchRoot();
     if (root == null) return null;
     final habit = root.getHabit(habitUUID);
@@ -956,23 +1074,32 @@ final class HabitDetailAdapter implements ProviderMounted {
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToArchiveHabit(
-      HabitUUID habitUUID) async {
-    appLog.habit.info("HabitDetailAdapter.onConfirmToArchiveHabit",
-        ex: [_root, habitUUID]);
+    HabitUUID habitUUID,
+  ) async {
+    appLog.habit.info(
+      "HabitDetailAdapter.onConfirmToArchiveHabit",
+      ex: [_root, habitUUID],
+    );
     return _changeHabitsStatus(habitUUID, HabitStatus.archived);
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToUnarchiveHabit(
-      HabitUUID habitUUID) async {
-    appLog.habit.info("HabitDetailAdapter.onConfirmToUnarchiveHabit",
-        ex: [_root, habitUUID]);
+    HabitUUID habitUUID,
+  ) async {
+    appLog.habit.info(
+      "HabitDetailAdapter.onConfirmToUnarchiveHabit",
+      ex: [_root, habitUUID],
+    );
     return _changeHabitsStatus(habitUUID, HabitStatus.activated);
   }
 
   Future<HabitStatusChangedRecord?> onConfirmToDeleteHabit(
-      HabitUUID habitUUID) async {
-    appLog.habit.info("HabitDetailAdapter.onConfirmToDeleteHabit",
-        ex: [_root, habitUUID]);
+    HabitUUID habitUUID,
+  ) async {
+    appLog.habit.info(
+      "HabitDetailAdapter.onConfirmToDeleteHabit",
+      ex: [_root, habitUUID],
+    );
     return _changeHabitsStatus(habitUUID, HabitStatus.deleted);
   }
 

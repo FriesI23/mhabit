@@ -49,8 +49,9 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
-  static const Duration _bottomNavAnimationDuration =
-      Duration(milliseconds: 250);
+  static const Duration _bottomNavAnimationDuration = Duration(
+    milliseconds: 250,
+  );
 
   int _currentTabIndex = 0;
   bool _isBottomNavVisible = true;
@@ -123,8 +124,10 @@ class _PageState extends State<_Page> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final uiLayoutType =
-        computeLayoutType(width: size.width, height: size.height);
+    final uiLayoutType = computeLayoutType(
+      width: size.width,
+      height: size.height,
+    );
     final isWideLayout = uiLayoutType == UiLayoutType.l;
     final bottomNavHeight = isWideLayout ? kBottomNavigationBarHeight : 80.0;
 
@@ -163,32 +166,34 @@ class _PageState extends State<_Page> {
       },
     );
 
-    final naviBarBody = L10nBuilder(builder: (context, l10n) {
-      final destinations = [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home),
-          label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
-        ),
-        NavigationDestination(
-          icon: const Icon(MdiIcons.calendarTodayOutline),
-          selectedIcon: const Icon(MdiIcons.calendarToday),
-          label: l10n?.habitDisplay_tab_today_label ?? 'Today',
-        ),
-      ];
-      return NavigationBar(
-        height: bottomNavHeight,
-        selectedIndex: _currentTabIndex,
-        labelBehavior: isWideLayout
-            ? NavigationDestinationLabelBehavior.alwaysHide
-            : NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: destinations,
-        onDestinationSelected: (index) => setState(() {
-          _pageController.jumpToPage(index);
-          _isBottomNavVisible = true;
-        }),
-      );
-    });
+    final naviBarBody = L10nBuilder(
+      builder: (context, l10n) {
+        final destinations = [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n?.habitDisplay_tab_habits_label ?? 'Habits',
+          ),
+          NavigationDestination(
+            icon: const Icon(MdiIcons.calendarTodayOutline),
+            selectedIcon: const Icon(MdiIcons.calendarToday),
+            label: l10n?.habitDisplay_tab_today_label ?? 'Today',
+          ),
+        ];
+        return NavigationBar(
+          height: bottomNavHeight,
+          selectedIndex: _currentTabIndex,
+          labelBehavior: isWideLayout
+              ? NavigationDestinationLabelBehavior.alwaysHide
+              : NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: destinations,
+          onDestinationSelected: (index) => setState(() {
+            _pageController.jumpToPage(index);
+            _isBottomNavVisible = true;
+          }),
+        );
+      },
+    );
 
     final bottomNavigationBar = AnimatedSlide(
       duration: _bottomNavAnimationDuration,
@@ -216,7 +221,10 @@ class _PageState extends State<_Page> {
         Align(
           alignment: Alignment.bottomCenter,
           child: MediaQuery.removePadding(
-              context: context, removeTop: true, child: bottomNavigationBar),
+            context: context,
+            removeTop: true,
+            child: bottomNavigationBar,
+          ),
         ),
       ],
     );
@@ -232,12 +240,17 @@ class _PageState extends State<_Page> {
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Actions(actions: {
-            DismissIntent: CallbackAction(onInvoke: (intent) {
-              _handleDismissIntent();
-              return null;
-            })
-          }, child: body),
+          body: Actions(
+            actions: {
+              DismissIntent: CallbackAction(
+                onInvoke: (intent) {
+                  _handleDismissIntent();
+                  return null;
+                },
+              ),
+            },
+            child: body,
+          ),
           floatingActionButton: _buildFloatingActionButton(bottomNavHeight),
         ),
       ),

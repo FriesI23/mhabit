@@ -33,12 +33,12 @@ class PageProviders extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-        providers: [
-          FutureProvider<AboutInfo>(
-            create: (_) async => loadAboutInfoData(),
-            initialData: const AboutInfo.empty(),
-          ),
-        ],
-        child: child,
-      );
+    providers: [
+      FutureProvider<AboutInfo>(
+        create: (_) async => loadAboutInfoData(),
+        initialData: const AboutInfo.empty(),
+      ),
+    ],
+    child: child,
+  );
 }

@@ -51,7 +51,7 @@ void main() {
         84.44,
         93.24,
         97.8,
-        100.0
+        100.0,
       ];
       const days = 10;
       final interv = Tuple2(
@@ -133,7 +133,7 @@ void main() {
         63,
         64,
         65,
-        66
+        66,
       ];
       final ylist = <num>[];
       final cylist = [
@@ -203,7 +203,7 @@ void main() {
         99.2,
         99.5,
         99.76,
-        100.0
+        100.0,
       ];
       const days = 66;
       final interv = Tuple2(
@@ -234,7 +234,7 @@ void main() {
         84.44,
         93.24,
         97.8,
-        100.0
+        100.0,
       ];
       const days = 10;
       final interv = Tuple2(

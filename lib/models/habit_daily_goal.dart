@@ -29,17 +29,17 @@ abstract interface class HabitDailyGoalContainer {
 
   HabitDailyGoalData transform({required HabitType type});
 
-  factory HabitDailyGoalContainer(
-          {required HabitType type,
-          HabitDailyGoal? dailyGoal,
-          String? dailyGoalUnit,
-          HabitDailyGoal? dailyGoalExtra}) =>
-      HabitDailyGoalData(
-        type: type,
-        dailyGoal: dailyGoal,
-        dailyGoalUnit: dailyGoalUnit,
-        dailyGoalExtra: dailyGoalExtra,
-      );
+  factory HabitDailyGoalContainer({
+    required HabitType type,
+    HabitDailyGoal? dailyGoal,
+    String? dailyGoalUnit,
+    HabitDailyGoal? dailyGoalExtra,
+  }) => HabitDailyGoalData(
+    type: type,
+    dailyGoal: dailyGoal,
+    dailyGoalUnit: dailyGoalUnit,
+    dailyGoalExtra: dailyGoalExtra,
+  );
 }
 
 abstract interface class HabitDailyGoalData implements HabitDailyGoalContainer {
@@ -47,22 +47,24 @@ abstract interface class HabitDailyGoalData implements HabitDailyGoalContainer {
   set dailyGoalUnit(String value);
   set dailyGoalExtra(HabitDailyGoal? value);
 
-  factory HabitDailyGoalData(
-          {required HabitType type,
-          HabitDailyGoal? dailyGoal,
-          String? dailyGoalUnit,
-          HabitDailyGoal? dailyGoalExtra}) =>
-      switch (type) {
-        HabitType.normal => PositiveHabitDailyGoalData(
-            dailyGoal: dailyGoal,
-            dailyGoalUnit: dailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra),
-        HabitType.negative => NegativeHabitDailyGoalData(
-            dailyGoal: dailyGoal,
-            dailyGoalUnit: dailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra),
-        _ => throw UnsupportedError("Unsupport habit type: $type"),
-      };
+  factory HabitDailyGoalData({
+    required HabitType type,
+    HabitDailyGoal? dailyGoal,
+    String? dailyGoalUnit,
+    HabitDailyGoal? dailyGoalExtra,
+  }) => switch (type) {
+    HabitType.normal => PositiveHabitDailyGoalData(
+      dailyGoal: dailyGoal,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+    ),
+    HabitType.negative => NegativeHabitDailyGoalData(
+      dailyGoal: dailyGoal,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+    ),
+    _ => throw UnsupportedError("Unsupport habit type: $type"),
+  };
 }
 
 abstract class _BaseHabitDailyGoalData implements HabitDailyGoalData {
@@ -73,25 +75,26 @@ abstract class _BaseHabitDailyGoalData implements HabitDailyGoalData {
   @override
   HabitDailyGoal? dailyGoalExtra;
 
-  _BaseHabitDailyGoalData(
-      {required this.dailyGoal,
-      required this.dailyGoalUnit,
-      this.dailyGoalExtra});
+  _BaseHabitDailyGoalData({
+    required this.dailyGoal,
+    required this.dailyGoalUnit,
+    this.dailyGoalExtra,
+  });
 
   @override
   HabitDailyGoalData transform({required HabitType type}) => switch (type) {
-        HabitType.normal => PositiveHabitDailyGoalData(
-            dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
-            dailyGoalUnit: dailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra,
-          ),
-        HabitType.negative => NegativeHabitDailyGoalData(
-            dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
-            dailyGoalUnit: dailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra,
-          ),
-        _ => throw UnsupportedError("Unsupport habit type: $type"),
-      };
+    HabitType.normal => PositiveHabitDailyGoalData(
+      dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+    ),
+    HabitType.negative => NegativeHabitDailyGoalData(
+      dailyGoal: dailyGoal != defaultDailyGoal ? dailyGoal : null,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+    ),
+    _ => throw UnsupportedError("Unsupport habit type: $type"),
+  };
 }
 
 final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
@@ -103,19 +106,21 @@ final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
   @override
   HabitDailyGoal defaultDailyGoal = _defaultGoal;
 
-  PositiveHabitDailyGoalData._(
-      {required super.dailyGoal,
-      required super.dailyGoalUnit,
-      super.dailyGoalExtra});
+  PositiveHabitDailyGoalData._({
+    required super.dailyGoal,
+    required super.dailyGoalUnit,
+    super.dailyGoalExtra,
+  });
 
   PositiveHabitDailyGoalData({
     HabitDailyGoal? dailyGoal,
     String? dailyGoalUnit,
     HabitDailyGoal? dailyGoalExtra,
   }) : this._(
-            dailyGoal: dailyGoal ?? _defaultGoal,
-            dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra);
+         dailyGoal: dailyGoal ?? _defaultGoal,
+         dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
+         dailyGoalExtra: dailyGoalExtra,
+       );
 
   @override
   bool isGoalValid() {
@@ -141,12 +146,13 @@ final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
 
   @override
   HabitDailyGoalData transform({required HabitType type}) => switch (type) {
-        final newType when newType == this.type => this,
-        _ => super.transform(type: type),
-      };
+    final newType when newType == this.type => this,
+    _ => super.transform(type: type),
+  };
 
   @override
-  String toString() => "PositiveHabitDailyGoalData(dailyGoal=$dailyGoal,"
+  String toString() =>
+      "PositiveHabitDailyGoalData(dailyGoal=$dailyGoal,"
       "dailyGoalUnit=$dailyGoalUnit,dailyGoalExtra=$dailyGoalExtra"
       ")";
 }
@@ -160,19 +166,21 @@ final class NegativeHabitDailyGoalData extends _BaseHabitDailyGoalData
   @override
   HabitDailyGoal defaultDailyGoal = _defaultGoal;
 
-  NegativeHabitDailyGoalData._(
-      {required super.dailyGoal,
-      required super.dailyGoalUnit,
-      super.dailyGoalExtra});
+  NegativeHabitDailyGoalData._({
+    required super.dailyGoal,
+    required super.dailyGoalUnit,
+    super.dailyGoalExtra,
+  });
 
   NegativeHabitDailyGoalData({
     HabitDailyGoal? dailyGoal,
     String? dailyGoalUnit,
     HabitDailyGoal? dailyGoalExtra,
   }) : this._(
-            dailyGoal: dailyGoal ?? _defaultGoal,
-            dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
-            dailyGoalExtra: dailyGoalExtra);
+         dailyGoal: dailyGoal ?? _defaultGoal,
+         dailyGoalUnit: dailyGoalUnit ?? defaultHabitDailyGoalUnit,
+         dailyGoalExtra: dailyGoalExtra,
+       );
 
   @override
   bool isGoalValid() {
@@ -198,12 +206,13 @@ final class NegativeHabitDailyGoalData extends _BaseHabitDailyGoalData
 
   @override
   HabitDailyGoalData transform({required HabitType type}) => switch (type) {
-        final newType when newType == this.type => this,
-        _ => super.transform(type: type),
-      };
+    final newType when newType == this.type => this,
+    _ => super.transform(type: type),
+  };
 
   @override
-  String toString() => "NegativeHabitDailyGoalData(dailyGoal=$dailyGoal,"
+  String toString() =>
+      "NegativeHabitDailyGoalData(dailyGoal=$dailyGoal,"
       "dailyGoalUnit=$dailyGoalUnit,dailyGoalExtra=$dailyGoalExtra"
       ")";
 }

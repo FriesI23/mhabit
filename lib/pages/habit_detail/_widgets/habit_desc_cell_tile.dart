@@ -33,8 +33,9 @@ class HabitDescCellTile extends StatelessWidget {
     Widget builListTile(BuildContext context) {
       final themeData = Theme.of(context);
       final textTheme = themeData.textTheme;
-      final titleStyle = textTheme.bodySmall
-          ?.copyWith(color: themeData.colorScheme.onSurfaceVariant);
+      final titleStyle = textTheme.bodySmall?.copyWith(
+        color: themeData.colorScheme.onSurfaceVariant,
+      );
       return ListTile(
         title: Center(
           child: Text(

@@ -26,7 +26,8 @@ class AppUiLayoutBuilder extends StatelessWidget {
     BuildContext context,
     UiLayoutType layoutType,
     Widget? child,
-  ) builder;
+  )
+  builder;
 
   final bool _useSize;
 

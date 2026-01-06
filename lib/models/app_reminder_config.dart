@@ -43,8 +43,9 @@ class AppReminderConfig implements JsonAdaptor {
     type: AppReminderConfigType.daily,
     timeOfDay: TimeOfDay(hour: 21, minute: 30),
   );
-  static const dailyNight =
-      AppReminderConfig.daily(timeOfDay: TimeOfDay(hour: 21, minute: 30));
+  static const dailyNight = AppReminderConfig.daily(
+    timeOfDay: TimeOfDay(hour: 21, minute: 30),
+  );
 
   final bool enabled;
   final AppReminderConfigType type;
@@ -58,8 +59,8 @@ class AppReminderConfig implements JsonAdaptor {
   });
 
   const AppReminderConfig.daily({required this.timeOfDay})
-      : enabled = true,
-        type = AppReminderConfigType.daily;
+    : enabled = true,
+      type = AppReminderConfigType.daily;
 
   factory AppReminderConfig.fromJson(Map<String, dynamic> json) =>
       _$AppReminderConfigFromJson(json);

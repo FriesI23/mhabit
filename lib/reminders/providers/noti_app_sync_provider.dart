@@ -44,62 +44,78 @@ abstract interface class NotiAppSyncProvider {
     NotificationService? service,
     Duration? delayed,
     L10n? l10n,
-  }) =>
-      switch (defaultTargetPlatform) {
-        TargetPlatform.android => AndroidNotiAppSyncProvider(
-            syncId: syncId!,
-            syncedId: syncFailedId!,
-            type: type!,
-            data: data!,
-            service: service!,
-            l10n: l10n),
-        TargetPlatform.iOS || TargetPlatform.macOS => DrawinNotiAppSyncProvider(
-            syncId: syncId!,
-            syncedId: syncFailedId!,
-            type: type!,
-            data: data!,
-            service: service!,
-            delayed: delayed,
-            l10n: l10n),
-        TargetPlatform.windows => WindowsNotiAppSyncProvider(
-            syncId: syncId!,
-            syncedId: syncFailedId!,
-            type: type!,
-            data: data!,
-            service: service!,
-            l10n: l10n),
-        TargetPlatform.linux => LinuxNotiAppSyncProvider(
-            syncId: syncId!,
-            syncedId: syncFailedId!,
-            type: type!,
-            data: data!,
-            service: service!,
-            delayed: delayed,
-            l10n: l10n),
-        _ => syncId != null
-            ? FakeNotiAppSyncProvider(syncId: syncId)
-            : const FakeNotiAppSyncProvider()
-      };
+  }) => switch (defaultTargetPlatform) {
+    TargetPlatform.android => AndroidNotiAppSyncProvider(
+      syncId: syncId!,
+      syncedId: syncFailedId!,
+      type: type!,
+      data: data!,
+      service: service!,
+      l10n: l10n,
+    ),
+    TargetPlatform.iOS || TargetPlatform.macOS => DrawinNotiAppSyncProvider(
+      syncId: syncId!,
+      syncedId: syncFailedId!,
+      type: type!,
+      data: data!,
+      service: service!,
+      delayed: delayed,
+      l10n: l10n,
+    ),
+    TargetPlatform.windows => WindowsNotiAppSyncProvider(
+      syncId: syncId!,
+      syncedId: syncFailedId!,
+      type: type!,
+      data: data!,
+      service: service!,
+      l10n: l10n,
+    ),
+    TargetPlatform.linux => LinuxNotiAppSyncProvider(
+      syncId: syncId!,
+      syncedId: syncFailedId!,
+      type: type!,
+      data: data!,
+      service: service!,
+      delayed: delayed,
+      l10n: l10n,
+    ),
+    _ =>
+      syncId != null
+          ? FakeNotiAppSyncProvider(syncId: syncId)
+          : const FakeNotiAppSyncProvider(),
+  };
 
   factory NotiAppSyncProvider.generate({
     required AppSyncServerType type,
     required NotificationChannelData data,
     Duration? delayed = const Duration(seconds: 2),
     L10n? l10n,
-  }) =>
-      switch (defaultTargetPlatform) {
-        TargetPlatform.android => AndroidNotiAppSyncProvider.generate(
-            data: data, type: type, l10n: l10n),
-        TargetPlatform.iOS ||
-        TargetPlatform.macOS =>
-          DrawinNotiAppSyncProvider.generate(
-              type: type, data: data, delayed: delayed, l10n: l10n),
-        TargetPlatform.windows => WindowsNotiAppSyncProvider.generate(
-            type: type, data: data, l10n: l10n),
-        TargetPlatform.linux => LinuxNotiAppSyncProvider.generate(
-            type: type, data: data, delayed: delayed, l10n: l10n),
-        _ => FakeNotiAppSyncProvider.generate()
-      };
+  }) => switch (defaultTargetPlatform) {
+    TargetPlatform.android => AndroidNotiAppSyncProvider.generate(
+      data: data,
+      type: type,
+      l10n: l10n,
+    ),
+    TargetPlatform.iOS ||
+    TargetPlatform.macOS => DrawinNotiAppSyncProvider.generate(
+      type: type,
+      data: data,
+      delayed: delayed,
+      l10n: l10n,
+    ),
+    TargetPlatform.windows => WindowsNotiAppSyncProvider.generate(
+      type: type,
+      data: data,
+      l10n: l10n,
+    ),
+    TargetPlatform.linux => LinuxNotiAppSyncProvider.generate(
+      type: type,
+      data: data,
+      delayed: delayed,
+      l10n: l10n,
+    ),
+    _ => FakeNotiAppSyncProvider.generate(),
+  };
 }
 
 class _NotiThrottle {
@@ -111,9 +127,9 @@ class _NotiThrottle {
 
   bool regr(String identity, {required Duration delay}) {
     if (isThrottled(identity)) return false;
-    _trottleMap[identity] = Future.delayed(delay).whenComplete(
-      () => _trottleMap.remove(identity),
-    );
+    _trottleMap[identity] = Future.delayed(
+      delay,
+    ).whenComplete(() => _trottleMap.remove(identity));
     return true;
   }
 
@@ -141,11 +157,15 @@ abstract class _Helper {
   }
 
   static String buildSyncTitle(
-      AppSyncNotiTitleEnum titleType, AppSyncServerType type,
-      [L10n? l10n]) {
+    AppSyncNotiTitleEnum titleType,
+    AppSyncServerType type, [
+    L10n? l10n,
+  ]) {
     if (l10n != null) {
-      return l10n.appSync_noti_syncing_title(titleType.name,
-          l10n.appSync_syncServerType_text(type.name, false.toString()));
+      return l10n.appSync_noti_syncing_title(
+        titleType.name,
+        l10n.appSync_syncServerType_text(type.name, false.toString()),
+      );
     } else {
       return switch (titleType) {
         AppSyncNotiTitleEnum.syncing => "Syncing",
@@ -205,15 +225,19 @@ final class FakeNotiAppSyncProvider implements NotiAppSyncProvider {
 
   @override
   Future<bool> syncComplete({AppSyncTaskResult? result}) async {
-    appLog.appsync
-        .debug("_FakeNotiAppSyncProvider[$pfx].syncComplete", ex: [result]);
+    appLog.appsync.debug(
+      "_FakeNotiAppSyncProvider[$pfx].syncComplete",
+      ex: [result],
+    );
     return false;
   }
 
   @override
   Future<bool> syncing({num? percentage}) async {
-    appLog.appsync
-        .debug("_FakeNotiAppSyncProvider[$pfx].syncing", ex: [percentage]);
+    appLog.appsync.debug(
+      "_FakeNotiAppSyncProvider[$pfx].syncing",
+      ex: [percentage],
+    );
     return false;
   }
 }
@@ -233,41 +257,44 @@ abstract class BaseNotiAppSyncProvider implements NotiAppSyncProvider {
     required this.service,
   });
 
-  Future<bool> _show(
-          {required int id,
-          required String title,
-          String? body,
-          required NotificationChannelId channelId,
-          required NotificationDetails details}) =>
-      service.show(
-          id: id,
-          title: title,
-          body: body,
-          type: NotificationDataType.appSync,
-          channelId: channelId,
-          details: details);
+  Future<bool> _show({
+    required int id,
+    required String title,
+    String? body,
+    required NotificationChannelId channelId,
+    required NotificationDetails details,
+  }) => service.show(
+    id: id,
+    title: title,
+    body: body,
+    type: NotificationDataType.appSync,
+    channelId: channelId,
+    details: details,
+  );
 
-  Future<bool> showAppSyncing(
-          {required String title,
-          String? body,
-          NotificationDetails? details}) =>
-      _show(
-          id: syncId,
-          title: title,
-          body: body,
-          channelId: NotificationChannelId.appSyncing,
-          details: details ?? data.appSyncing);
+  Future<bool> showAppSyncing({
+    required String title,
+    String? body,
+    NotificationDetails? details,
+  }) => _show(
+    id: syncId,
+    title: title,
+    body: body,
+    channelId: NotificationChannelId.appSyncing,
+    details: details ?? data.appSyncing,
+  );
 
-  Future<bool> showAppSyncFailed(
-          {required String title,
-          String? body,
-          NotificationDetails? details}) =>
-      _show(
-          id: syncedId,
-          title: title,
-          body: body,
-          channelId: NotificationChannelId.appSyncFailed,
-          details: details ?? data.appSyncFailed);
+  Future<bool> showAppSyncFailed({
+    required String title,
+    String? body,
+    NotificationDetails? details,
+  }) => _show(
+    id: syncedId,
+    title: title,
+    body: body,
+    channelId: NotificationChannelId.appSyncFailed,
+    details: details ?? data.appSyncFailed,
+  );
 }
 
 final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
@@ -289,14 +316,14 @@ final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required NotificationChannelData data,
     NotificationService? service,
     L10n? l10n,
-  }) =>
-      AndroidNotiAppSyncProvider(
-          syncId: _Helper.buildSyncId(syncId),
-          syncedId: _Helper.buildSyncedId(syncedId, type),
-          type: type,
-          data: data,
-          service: service ?? NotificationService(),
-          l10n: l10n);
+  }) => AndroidNotiAppSyncProvider(
+    syncId: _Helper.buildSyncId(syncId),
+    syncedId: _Helper.buildSyncedId(syncedId, type),
+    type: type,
+    data: data,
+    service: service ?? NotificationService(),
+    l10n: l10n,
+  );
 
   String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
       _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
@@ -313,19 +340,23 @@ final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     NotificationDetails buildDetails() {
       if (percentage == null) {
         return data.appSyncing.copyWith(
-            android: data.appSyncing.android?.copyWith(
-                onlyAlertOnce: true,
-                channelShowBadge: false,
-                showProgress: true,
-                indeterminate: true));
+          android: data.appSyncing.android?.copyWith(
+            onlyAlertOnce: true,
+            channelShowBadge: false,
+            showProgress: true,
+            indeterminate: true,
+          ),
+        );
       } else {
         return data.appSyncing.copyWith(
-            android: data.appSyncing.android?.copyWith(
-                onlyAlertOnce: true,
-                channelShowBadge: false,
-                showProgress: true,
-                progress: (percentage * 100).ceil(),
-                maxProgress: 100));
+          android: data.appSyncing.android?.copyWith(
+            onlyAlertOnce: true,
+            channelShowBadge: false,
+            showProgress: true,
+            progress: (percentage * 100).ceil(),
+            maxProgress: 100,
+          ),
+        );
       }
     }
 
@@ -343,9 +374,11 @@ final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     if (result.isCancelled) {
       final title = _buildTitle(AppSyncNotiTitleEnum.synced, _l10n);
       final details = data.appSyncing.copyWith(
-          android: data.appSyncing.android?.copyWith(
-              importance: Importance.defaultImportance,
-              priority: Priority.defaultPriority));
+        android: data.appSyncing.android?.copyWith(
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+        ),
+      );
       task = showAppSyncing(title: title, body: body, details: details);
     } else if (!result.isSuccessed) {
       final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
@@ -360,8 +393,10 @@ final class AndroidNotiAppSyncProvider extends BaseNotiAppSyncProvider {
             )
           : null;
       final details = data.appSyncFailed.copyWith(
-          android: data.appSyncFailed.android
-              ?.copyWith(styleInformation: sytleInformation));
+        android: data.appSyncFailed.android?.copyWith(
+          styleInformation: sytleInformation,
+        ),
+      );
       task = showAppSyncFailed(title: title, body: body, details: details);
     } else {
       task = Future.value(true);
@@ -398,15 +433,15 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     NotificationService? service,
     Duration? delayed,
     L10n? l10n,
-  }) =>
-      DrawinNotiAppSyncProvider(
-          syncId: _Helper.buildSyncId(syncId),
-          syncedId: _Helper.buildSyncedId(syncFailedId, type),
-          type: type,
-          data: data,
-          service: service ?? NotificationService(),
-          l10n: l10n,
-          delayed: delayed);
+  }) => DrawinNotiAppSyncProvider(
+    syncId: _Helper.buildSyncId(syncId),
+    syncedId: _Helper.buildSyncedId(syncFailedId, type),
+    type: type,
+    data: data,
+    service: service ?? NotificationService(),
+    l10n: l10n,
+    delayed: delayed,
+  );
 
   String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
       _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
@@ -429,15 +464,16 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       } else {
         final subtitle = _Helper.buildSyncingBody(percentage, _l10n);
         return data.appSyncing.copyWith(
-            iOS: data.appSyncing.iOS?.copyWith(subtitle: subtitle),
-            macOS: data.appSyncing.macOS?.copyWith(subtitle: subtitle));
+          iOS: data.appSyncing.iOS?.copyWith(subtitle: subtitle),
+          macOS: data.appSyncing.macOS?.copyWith(subtitle: subtitle),
+        );
       }
     }
 
     final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
     final body = switch (defaultTargetPlatform) {
       TargetPlatform.iOS => _Helper.buildSyncingBody(null, _l10n),
-      _ => _Helper.buildSyncingBody(percentage, _l10n)
+      _ => _Helper.buildSyncingBody(percentage, _l10n),
     };
     return showAppSyncing(title: title, body: body, details: buildDetails());
   }
@@ -451,18 +487,22 @@ final class DrawinNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       final title = _buildTitle(AppSyncNotiTitleEnum.synced, _l10n);
       final body = _Helper.buildSyncResultBody(result, _l10n);
       final details = data.appSyncing.copyWith(
-          iOS: data.appSyncing.iOS
-              ?.copyWith(interruptionLevel: InterruptionLevel.active),
-          macOS: data.appSyncing.macOS
-              ?.copyWith(interruptionLevel: InterruptionLevel.active));
+        iOS: data.appSyncing.iOS?.copyWith(
+          interruptionLevel: InterruptionLevel.active,
+        ),
+        macOS: data.appSyncing.macOS?.copyWith(
+          interruptionLevel: InterruptionLevel.active,
+        ),
+      );
       task = showAppSyncing(title: title, body: body, details: details);
     } else if (!result.isSuccessed) {
       final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
       final error = result.error.error?.toString();
       final subtitle = _Helper.buildSyncResultBody(result, _l10n);
       final details = data.appSyncFailed.copyWith(
-          iOS: data.appSyncFailed.iOS?.copyWith(subtitle: subtitle),
-          macOS: data.appSyncFailed.macOS?.copyWith(subtitle: subtitle));
+        iOS: data.appSyncFailed.iOS?.copyWith(subtitle: subtitle),
+        macOS: data.appSyncFailed.macOS?.copyWith(subtitle: subtitle),
+      );
       final body = error != null
           ? _l10n?.appSync_failedTile_errorText(error) ?? error
           : null;
@@ -495,14 +535,14 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     required NotificationChannelData data,
     NotificationService? service,
     L10n? l10n,
-  }) =>
-      WindowsNotiAppSyncProvider(
-          syncId: _Helper.buildSyncId(syncId),
-          syncedId: _Helper.buildSyncedId(syncedId, type),
-          type: type,
-          data: data,
-          service: service ?? NotificationService(),
-          l10n: l10n);
+  }) => WindowsNotiAppSyncProvider(
+    syncId: _Helper.buildSyncId(syncId),
+    syncedId: _Helper.buildSyncedId(syncedId, type),
+    type: type,
+    data: data,
+    service: service ?? NotificationService(),
+    l10n: l10n,
+  );
 
   String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
       _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
@@ -521,17 +561,20 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       crtBar.value = percentage?.toDouble();
       service.plugin
           .resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
+            FlutterLocalNotificationsWindows
+          >()
           ?.updateProgressBar(notificationId: syncId, progressBar: crtBar);
       return Future.value(true);
     }
     final syncingProgressId = "$syncId-syncing";
     final newBar = _syncingProgressBar = WindowsProgressBar(
-        id: syncingProgressId,
-        status: _Helper.buildSyncingBody(null, _l10n),
-        value: percentage?.toDouble());
+      id: syncingProgressId,
+      status: _Helper.buildSyncingBody(null, _l10n),
+      value: percentage?.toDouble(),
+    );
     final details = data.appSyncing.copyWith(
-        windows: data.appSyncing.windows?.copyWith(progressBars: [newBar]));
+      windows: data.appSyncing.windows?.copyWith(progressBars: [newBar]),
+    );
     final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
     return showAppSyncing(title: title, details: details);
   }
@@ -560,20 +603,24 @@ final class WindowsNotiAppSyncProvider extends BaseNotiAppSyncProvider {
             : lines;
         rows = [
           WindowsRow([
-            WindowsColumn(displayLines
-                .map((e) => WindowsNotificationText(text: e))
-                .toList())
-          ])
+            WindowsColumn(
+              displayLines
+                  .map((e) => WindowsNotificationText(text: e))
+                  .toList(),
+            ),
+          ]),
         ];
       } else {
         rows = null;
       }
       final details = data.appSyncFailed.copyWith(
-          windows: data.appSyncFailed.windows?.copyWith(
-              subtitle: error != null
-                  ? _l10n?.appSync_failedTile_errorText(error) ?? error
-                  : null,
-              rows: rows ?? data.appSyncFailed.windows?.rows ?? const []));
+        windows: data.appSyncFailed.windows?.copyWith(
+          subtitle: error != null
+              ? _l10n?.appSync_failedTile_errorText(error) ?? error
+              : null,
+          rows: rows ?? data.appSyncFailed.windows?.rows ?? const [],
+        ),
+      );
       task = showAppSyncFailed(title: title, body: body, details: details);
     } else {
       task = Future.value(true);
@@ -610,15 +657,15 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     NotificationService? service,
     Duration? delayed,
     L10n? l10n,
-  }) =>
-      LinuxNotiAppSyncProvider(
-          syncId: _Helper.buildSyncId(syncId),
-          syncedId: _Helper.buildSyncedId(syncFailedId, type),
-          type: type,
-          data: data,
-          service: service ?? NotificationService(),
-          l10n: l10n,
-          delayed: delayed);
+  }) => LinuxNotiAppSyncProvider(
+    syncId: _Helper.buildSyncId(syncId),
+    syncedId: _Helper.buildSyncedId(syncFailedId, type),
+    type: type,
+    data: data,
+    service: service ?? NotificationService(),
+    l10n: l10n,
+    delayed: delayed,
+  );
 
   String _buildTitle(AppSyncNotiTitleEnum titleType, [L10n? l10n]) =>
       _Helper.buildSyncTitle(titleType, type, l10n ?? _l10n);
@@ -628,8 +675,10 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     if (_throttle?.isThrottled(_syncTrKey) == true) return Future.value(false);
     _throttle?.regr(_syncTrKey, delay: delayed ?? Duration.zero);
     final details = data.appSyncing.copyWith(
-        linux: data.appSyncing.linux
-            ?.copyWith(category: LinuxNotificationCategory.network));
+      linux: data.appSyncing.linux?.copyWith(
+        category: LinuxNotificationCategory.network,
+      ),
+    );
     final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
     final body = _Helper.buildReadyToSyncBody(_l10n);
     return showAppSyncing(title: title, body: body, details: details);
@@ -640,8 +689,11 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
     if (_throttle?.isThrottled(_syncTrKey) == true) return Future.value(false);
     _throttle?.regr(_syncTrKey, delay: delayed ?? Duration.zero);
     final details = data.appSyncing.copyWith(
-        linux: data.appSyncing.linux?.copyWith(
-            category: LinuxNotificationCategory.transfer, transient: true));
+      linux: data.appSyncing.linux?.copyWith(
+        category: LinuxNotificationCategory.transfer,
+        transient: true,
+      ),
+    );
     final title = _buildTitle(AppSyncNotiTitleEnum.syncing, _l10n);
     final body = _Helper.buildSyncingBody(percentage, _l10n);
     return showAppSyncing(title: title, body: body, details: details);
@@ -657,21 +709,27 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
       final title = _buildTitle(AppSyncNotiTitleEnum.synced, _l10n);
       final body = _Helper.buildSyncResultBody(result, _l10n);
       final details = data.appSyncing.copyWith(
-          linux: data.appSyncing.linux?.copyWith(
-              category: LinuxNotificationCategory.transferComplete,
-              urgency: LinuxNotificationUrgency.normal));
+        linux: data.appSyncing.linux?.copyWith(
+          category: LinuxNotificationCategory.transferComplete,
+          urgency: LinuxNotificationUrgency.normal,
+        ),
+      );
       task = showAppSyncing(title: title, body: body, details: details);
     } else if (!result.isSuccessed) {
       final title = _buildTitle(AppSyncNotiTitleEnum.failed, _l10n);
       final error = result.error.error?.toString();
       final details = data.appSyncFailed.copyWith(
-          linux: data.appSyncFailed.linux
-              ?.copyWith(category: LinuxNotificationCategory.transferError));
+        linux: data.appSyncFailed.linux?.copyWith(
+          category: LinuxNotificationCategory.transferError,
+        ),
+      );
       final body = StringBuffer();
       body.writeln(_Helper.buildSyncResultBody(result, _l10n));
-      body.writeln(error != null
-          ? _l10n?.appSync_failedTile_errorText(error) ?? error
-          : null);
+      body.writeln(
+        error != null
+            ? _l10n?.appSync_failedTile_errorText(error) ?? error
+            : null,
+      );
       final trace = result.error.trace?.toString();
       if (trace != null) {
         final lines = const LineSplitter().convert(trace);
@@ -684,7 +742,10 @@ final class LinuxNotiAppSyncProvider extends BaseNotiAppSyncProvider {
         }
       }
       task = showAppSyncFailed(
-          title: title, body: body.toString(), details: details);
+        title: title,
+        body: body.toString(),
+        details: details,
+      );
     } else {
       task = Future.value(true);
     }

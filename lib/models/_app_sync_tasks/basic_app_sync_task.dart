@@ -25,33 +25,35 @@ class BasicAppSyncTaskResult implements AppSyncTaskResult {
   @override
   final ({Object? error, StackTrace? trace}) error;
 
-  const BasicAppSyncTaskResult._(
-      {required this.status, Object? error, StackTrace? trace})
-      : error = (error: error, trace: trace);
+  const BasicAppSyncTaskResult._({
+    required this.status,
+    Object? error,
+    StackTrace? trace,
+  }) : error = (error: error, trace: trace);
 
   const BasicAppSyncTaskResult.success()
-      : this._(status: BasicAppSyncTaskResultStatus.success);
+    : this._(status: BasicAppSyncTaskResultStatus.success);
 
   const BasicAppSyncTaskResult.cancelled({Object? error, StackTrace? trace})
-      : this._(
-          status: BasicAppSyncTaskResultStatus.cancelled,
-          error: error,
-          trace: trace,
-        );
+    : this._(
+        status: BasicAppSyncTaskResultStatus.cancelled,
+        error: error,
+        trace: trace,
+      );
 
   const BasicAppSyncTaskResult.timeout({Object? error, StackTrace? trace})
-      : this._(
-          status: BasicAppSyncTaskResultStatus.timeout,
-          error: error,
-          trace: trace,
-        );
+    : this._(
+        status: BasicAppSyncTaskResultStatus.timeout,
+        error: error,
+        trace: trace,
+      );
 
   const BasicAppSyncTaskResult.error({Object? error, StackTrace? trace})
-      : this._(
-          status: BasicAppSyncTaskResultStatus.error,
-          error: error,
-          trace: trace,
-        );
+    : this._(
+        status: BasicAppSyncTaskResultStatus.error,
+        error: error,
+        trace: trace,
+      );
 
   @override
   bool get isCancelled => status == BasicAppSyncTaskResultStatus.cancelled;
@@ -74,21 +76,22 @@ class BasicAppSyncTask extends AppSyncTaskFramework<AppSyncTaskResult> {
   final String sessionId;
 
   Future<AppSyncTaskResult> Function(AppSyncTask<AppSyncTaskResult> task)?
-      onExec;
+  onExec;
 
-  BasicAppSyncTask(
-      {required this.config,
-      required this.onExec,
-      this.sessionId = 'fake-session-id',
-      super.timeout = Duration.zero});
+  BasicAppSyncTask({
+    required this.config,
+    required this.onExec,
+    this.sessionId = 'fake-session-id',
+    super.timeout = Duration.zero,
+  });
 
   @override
-  Future<AppSyncTaskResult> error([Object? e, StackTrace? s]) =>
-      Future.sync(() => switch (e) {
-            TimeoutException() =>
-              BasicAppSyncTaskResult.timeout(error: e, trace: s),
-            _ => BasicAppSyncTaskResult.error(error: e, trace: s),
-          });
+  Future<AppSyncTaskResult> error([Object? e, StackTrace? s]) => Future.sync(
+    () => switch (e) {
+      TimeoutException() => BasicAppSyncTaskResult.timeout(error: e, trace: s),
+      _ => BasicAppSyncTaskResult.error(error: e, trace: s),
+    },
+  );
 
   @override
   Future<AppSyncTaskResult> exec() {

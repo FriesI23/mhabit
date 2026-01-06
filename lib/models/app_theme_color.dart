@@ -80,34 +80,34 @@ abstract class _BaseAppThemeColor implements AppThemeColor {
   int get hashCode => type.hashCode;
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 final class SystemAppThemeColor extends _BaseAppThemeColor {
   const SystemAppThemeColor() : super(type: AppThemeColorType.system);
 
   factory SystemAppThemeColor.fromJson(JsonMap json) =>
-      _$SystemAppThemeColorFromJson(json);
+      const SystemAppThemeColor();
 
   @override
   JsonMap toJson() => _$SystemAppThemeColorToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 final class PrimaryAppThemeColor extends _BaseAppThemeColor {
   const PrimaryAppThemeColor() : super(type: AppThemeColorType.primary);
 
   factory PrimaryAppThemeColor.fromJson(JsonMap json) =>
-      _$PrimaryAppThemeColorFromJson(json);
+      const PrimaryAppThemeColor();
 
   @override
   JsonMap toJson() => _$PrimaryAppThemeColorToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 final class DynamicAppThemeColor extends _BaseAppThemeColor {
   const DynamicAppThemeColor() : super(type: AppThemeColorType.dynamic);
 
   factory DynamicAppThemeColor.fromJson(JsonMap json) =>
-      _$DynamicAppThemeColorFromJson(json);
+      const DynamicAppThemeColor();
 
   @override
   JsonMap toJson() => _$DynamicAppThemeColorToJson(this);
@@ -118,7 +118,7 @@ final class InternalAppThemeColor extends _BaseAppThemeColor {
   final HabitColorType colorType;
 
   const InternalAppThemeColor({required this.colorType})
-      : super(type: AppThemeColorType.internal);
+    : super(type: AppThemeColorType.internal);
 
   factory InternalAppThemeColor.fromJson(JsonMap json) =>
       _$InternalAppThemeColorFromJson(json);

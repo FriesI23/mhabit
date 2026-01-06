@@ -43,21 +43,22 @@ class ThemeWithCustomColors extends StatelessWidget {
 
     return Theme(
       data: themeData.copyWith(
-          colorScheme: themeData.colorScheme.copyWith(
-        primary: colorType != null && overwritePrimaryColor
-            ? colorData?.getColor(colorType!)
-            : null,
-        onPrimary: colorType != null && overwriteOnPrimaryColor
-            ? colorData?.getOnColor(colorType!)
-            : null,
-        primaryContainer: colorType != null && overwritePrimaryContainerColor
-            ? colorData?.getColorContainer(colorType!)
-            : null,
-        onPrimaryContainer:
-            colorType != null && overwriteOnPrimaryContainerColor
-                ? colorData?.getColorOnContainer(colorType!)
-                : null,
-      )),
+        colorScheme: themeData.colorScheme.copyWith(
+          primary: colorType != null && overwritePrimaryColor
+              ? colorData?.getColor(colorType!)
+              : null,
+          onPrimary: colorType != null && overwriteOnPrimaryColor
+              ? colorData?.getOnColor(colorType!)
+              : null,
+          primaryContainer: colorType != null && overwritePrimaryContainerColor
+              ? colorData?.getColorContainer(colorType!)
+              : null,
+          onPrimaryContainer:
+              colorType != null && overwriteOnPrimaryContainerColor
+              ? colorData?.getColorOnContainer(colorType!)
+              : null,
+        ),
+      ),
       child: child,
     );
   }

@@ -43,7 +43,9 @@ class MagnetScrollPhysics extends ScrollPhysics {
 
   @override
   Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+    ScrollMetrics position,
+    double velocity,
+  ) {
     // Scenario 1:
     // If we're out of range and not headed back in range, defer to the parent
     // ballistics, which should put us back in range at the scrollable's boundary.
@@ -54,8 +56,10 @@ class MagnetScrollPhysics extends ScrollPhysics {
 
     // Create a test simulation to see where it would have ballistically fallen
     // naturally without settling onto items.
-    final Simulation? testFrictionSimulation =
-        super.createBallisticSimulation(position, velocity);
+    final Simulation? testFrictionSimulation = super.createBallisticSimulation(
+      position,
+      velocity,
+    );
 
     // Scenario 2:
     // If it was going to end up past the scroll extent, defer back to the
@@ -132,6 +136,5 @@ class MagnetScrollPhysics extends ScrollPhysics {
     double offset,
     double minScrollExtent,
     double maxScrollExtent,
-  ) =>
-      math.min(math.max(offset, minScrollExtent), maxScrollExtent);
+  ) => math.min(math.max(offset, minScrollExtent), maxScrollExtent);
 }

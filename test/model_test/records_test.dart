@@ -18,21 +18,23 @@ import 'package:mhabit/storage/db/handlers/record.dart';
 void main() {
   group("RecordDBCell", () {
     final record1 = RecordDBCell(
-        id: 1,
-        parentId: 1,
-        recordDate: 1,
-        recordType: 1,
-        recordValue: 1.2,
-        createT: 1,
-        modifyT: 1,
-        uuid: 'xxx');
+      id: 1,
+      parentId: 1,
+      recordDate: 1,
+      recordType: 1,
+      recordValue: 1.2,
+      createT: 1,
+      modifyT: 1,
+      uuid: 'xxx',
+    );
     final record2 = RecordDBCell(
-        parentId: 1,
-        recordDate: 1,
-        recordValue: 1.2,
-        createT: 1,
-        modifyT: 1,
-        uuid: 'xxx');
+      parentId: 1,
+      recordDate: 1,
+      recordValue: 1.2,
+      createT: 1,
+      modifyT: 1,
+      uuid: 'xxx',
+    );
     test("toMap", () {
       final result1 = record1.toJson();
       expect(result1[RecordDBCellKey.parentId], 1);

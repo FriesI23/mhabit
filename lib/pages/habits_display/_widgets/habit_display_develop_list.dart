@@ -94,15 +94,14 @@ class _HabitDisplayDevelopSliverList
     return SliverToBoxAdapter(
       child: Theme(
         data: Theme.of(context).copyWith(
-            dividerColor: Theme.of(context).colorScheme.outlineOpacity16),
+          dividerColor: Theme.of(context).colorScheme.outlineOpacity16,
+        ),
         child: ExpansionTile(
           initiallyExpanded: true,
           title: Text(
             L10n.of(context)?.habitDisplay_debug_debugSubgroup_title ??
                 'Developer',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.outline),
           ),
           children: [
             _buildDebugHabitsButton(context, 1),

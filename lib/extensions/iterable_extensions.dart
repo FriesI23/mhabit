@@ -15,8 +15,11 @@
 import 'dart:math' as math;
 
 extension SortPostionRankExtension on Iterable<num> {
-  List<num> makeUniqueAndIncreasing(num increment,
-      {bool isSorted = true, int? decimalPlaces}) {
+  List<num> makeUniqueAndIncreasing(
+    num increment, {
+    bool isSorted = true,
+    int? decimalPlaces,
+  }) {
     if (increment <= 0) {
       throw ArgumentError("should > 0, got $increment", "increment");
     }

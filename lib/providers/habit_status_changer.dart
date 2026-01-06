@@ -73,7 +73,7 @@ class HabitStatusChangerViewModel
   int _firstday = defaultFirstDay;
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
-      : _selectedUUIDList = uuidList {
+    : _selectedUUIDList = uuidList {
     _form = HabitStatusChangerForm(selectDate: HabitDate.now());
   }
 
@@ -87,8 +87,10 @@ class HabitStatusChangerViewModel
       loading.operation.cancel();
     }
     if (_loading == loading) _loading = null;
-    appLog.load.info("$runtimeType._cancelLoading",
-        ex: ['cancelled', loading.hashCode]);
+    appLog.load.info(
+      "$runtimeType._cancelLoading",
+      ex: ['cancelled', loading.hashCode],
+    );
   }
 
   CancelableCompleter<void>? get _effectiveLoading {
@@ -101,44 +103,58 @@ class HabitStatusChangerViewModel
   Future loadData({bool listen = true}) async {
     final currentLoading = _effectiveLoading;
     if (currentLoading != null) {
-      appLog.load.warn("$runtimeType.loadData",
-          ex: ["data is currently loading", currentLoading.isCompleted]);
+      appLog.load.warn(
+        "$runtimeType.loadData",
+        ex: ["data is currently loading", currentLoading.isCompleted],
+      );
       return currentLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
-      appLog.load.error("$runtimeType.load",
-          ex: [...errmsg, loading.hashCode],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.load.error(
+        "$runtimeType.load",
+        ex: [...errmsg, loading.hashCode],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
       if (!loading.isCompleted) {
         loading.completeError(
-            FlutterError(errmsg.join(" ")), StackTrace.current);
+          FlutterError(errmsg.join(" ")),
+          StackTrace.current,
+        );
       }
     }
 
     void loadingCancelled() {
-      appLog.load
-          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType.load",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     Future<void> loadingData() async {
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loading data", loading.hashCode, listen],
+      );
 
       // init habits
       final collection = await habitsManager.loadHabitSummaryCollectionData(
-          habitUUIDs: _selectedUUIDList);
+        habitUUIDs: _selectedUUIDList,
+      );
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
 
-      _habitDataController.replaceData(collection
-        ..forEach((_, habit) =>
-            habit.reCalculateAutoComplateRecords(firstDay: firstday)));
+      _habitDataController.replaceData(
+        collection..forEach(
+          (_, habit) =>
+              habit.reCalculateAutoComplateRecords(firstDay: firstday),
+        ),
+      );
       _updateCurrentHabitList();
       _updateForm(_form, withDefaultChangerStatus: true);
 
@@ -148,20 +164,27 @@ class HabitStatusChangerViewModel
       if (listen) {
         notifyListeners();
       }
-      appLog.load
-          .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loaded", loading.hashCode, listen],
+      );
     }
 
-    loadingData().catchError((e, s) {
-      if (loading.isCanceled) return loadingCancelled();
-      loadingFailed(["unexpected error", e]);
-      appLog.load.error("$runtimeType.load",
-          ex: ["caught", e, loading.hashCode], stackTrace: s);
-    }).whenComplete(() {
-      if (!loading.isCompleted && !loading.isCanceled) {
-        loading.complete();
-      }
-    });
+    loadingData()
+        .catchError((e, s) {
+          if (loading.isCanceled) return loadingCancelled();
+          loadingFailed(["unexpected error", e]);
+          appLog.load.error(
+            "$runtimeType.load",
+            ex: ["caught", e, loading.hashCode],
+            stackTrace: s,
+          );
+        })
+        .whenComplete(() {
+          if (!loading.isCompleted && !loading.isCanceled) {
+            loading.complete();
+          }
+        });
 
     return loading.operation.valueOrCancellation();
   }
@@ -199,19 +222,22 @@ class HabitStatusChangerViewModel
         _form.selectStatus != getDefaultChangerStatus(_form);
   }
 
-  Iterable<HabitSummaryRecord> get selectDateRecords =>
-      _habitDataController.habits
-          .map((e) => e.getRecordByDate(_form.selectDate))
-          .nonNulls
-          .where((e) => e.status != HabitRecordStatus.unknown);
+  Iterable<HabitSummaryRecord> get selectDateRecords => _habitDataController
+      .habits
+      .map((e) => e.getRecordByDate(_form.selectDate))
+      .nonNulls
+      .where((e) => e.status != HabitRecordStatus.unknown);
 
   HabitDate get selectDate => _form.selectDate;
 
   String get skipReason => _form.skipReason ?? '';
   set skipReason(String value) {
     if (value == skipReason) return;
-    appLog.value.debug("HabitStatusChangerViewModel.startDate",
-        beforeVal: _form.skipReason, afterVal: value);
+    appLog.value.debug(
+      "HabitStatusChangerViewModel.startDate",
+      beforeVal: _form.skipReason,
+      afterVal: value,
+    );
     _form.skipReason = value;
     _isSkipReasonEdited = true;
     notifyListeners();
@@ -231,8 +257,10 @@ class HabitStatusChangerViewModel
     if (listen) notifyListeners();
   }
 
-  void _updateForm(HabitStatusChangerForm newForm,
-      {bool withDefaultChangerStatus = false}) {
+  void _updateForm(
+    HabitStatusChangerForm newForm, {
+    bool withDefaultChangerStatus = false,
+  }) {
     _form = withDefaultChangerStatus
         ? newForm.copyWith(selectStatus: getDefaultChangerStatus(newForm))
         : newForm;
@@ -242,17 +270,20 @@ class HabitStatusChangerViewModel
   RecordStatusChangerStatus? get selectStatus => _form.selectStatus;
 
   Set<RecordStatusChangerStatus> get selectDateAllowedStatus {
-    Set<RecordStatusChangerStatus> statusColl =
-        Set.from(RecordStatusChangerStatus.values);
+    Set<RecordStatusChangerStatus> statusColl = Set.from(
+      RecordStatusChangerStatus.values,
+    );
     for (var d in _habitDataController.habits) {
       switch (d.type) {
         case HabitType.normal:
-          statusColl =
-              statusColl.intersection(RecordStatusChangerStatus.normalStatus);
+          statusColl = statusColl.intersection(
+            RecordStatusChangerStatus.normalStatus,
+          );
           break;
         case HabitType.negative:
-          statusColl =
-              statusColl.intersection(RecordStatusChangerStatus.negativeStatus);
+          statusColl = statusColl.intersection(
+            RecordStatusChangerStatus.negativeStatus,
+          );
           break;
         case HabitType.unknown:
           continue;
@@ -262,15 +293,18 @@ class HabitStatusChangerViewModel
   }
 
   RecordStatusChangerStatus? getDefaultChangerStatus(
-          HabitStatusChangerForm form) =>
-      _habitDataController.habitCount <= 0
-          ? null
-          : _habitDataController.habits
-              .map((e) => form.convertStatusFromHabit(e))
-              .reduce((value, element) => value == element ? value : null);
+    HabitStatusChangerForm form,
+  ) => _habitDataController.habitCount <= 0
+      ? null
+      : _habitDataController.habits
+            .map((e) => form.convertStatusFromHabit(e))
+            .reduce((value, element) => value == element ? value : null);
 
-  void updateSelectStatus(RecordStatusChangerStatus? newStatus,
-      {ValueChanged? onStatusChanged, bool listen = true}) {
+  void updateSelectStatus(
+    RecordStatusChangerStatus? newStatus, {
+    ValueChanged? onStatusChanged,
+    bool listen = true,
+  }) {
     if (newStatus == selectStatus) return;
     _updateForm(_form.copyWith(selectStatus: newStatus));
     onStatusChanged?.call(selectStatus);
@@ -291,12 +325,15 @@ class HabitStatusChangerViewModel
           return record != null ? (record: record, habit: e) : null;
         })
         .nonNulls
-        .map((e) => ChangeRecordStatusResult.record(
+        .map(
+          (e) => ChangeRecordStatusResult.record(
             habit: e.habit,
             data: e.record,
             reason: selectStatus == RecordStatusChangerStatus.skip
                 ? skipReason
-                : null));
+                : null,
+          ),
+        );
     await habitsManager.saveMultiHabitRecordToDB(records);
     if (!mounted) return 0;
 
@@ -310,8 +347,10 @@ class HabitStatusChangerViewModel
     final newList = _habitDataController.habits
         .map((e) => HabitSummaryDataSortCache(data: e))
         .toList(growable: false);
-    appLog.load.info("_updateCurrentHabitList",
-        ex: [_currentHabitList.hashCode, newList.hashCode]);
+    appLog.load.info(
+      "_updateCurrentHabitList",
+      ex: [_currentHabitList.hashCode, newList.hashCode],
+    );
     _currentHabitList = newList;
   }
 
@@ -354,39 +393,51 @@ final class HabitStatusChangerForm {
     final uuid = data.getRecordByDate(selectDate)?.uuid;
     switch (selectStatus) {
       case RecordStatusChangerStatus.skip:
-        return HabitSummaryRecord.generate(selectDate,
-            parentUUID: data.uuid, status: HabitRecordStatus.skip, uuid: uuid);
+        return HabitSummaryRecord.generate(
+          selectDate,
+          parentUUID: data.uuid,
+          status: HabitRecordStatus.skip,
+          uuid: uuid,
+        );
       case RecordStatusChangerStatus.ok:
-        return HabitSummaryRecord.generate(selectDate,
-            status: HabitRecordStatus.done,
-            value: data.habitOkValue,
-            parentUUID: data.uuid,
-            uuid: uuid);
+        return HabitSummaryRecord.generate(
+          selectDate,
+          status: HabitRecordStatus.done,
+          value: data.habitOkValue,
+          parentUUID: data.uuid,
+          uuid: uuid,
+        );
       case RecordStatusChangerStatus.dual:
         switch (data.type) {
           case HabitType.normal:
-            return HabitSummaryRecord.generate(selectDate,
-                status: HabitRecordStatus.done,
-                value: data.dailyGoalExtra != null
-                    ? math.max(data.dailyGoalExtra!, data.habitOkValue * 2)
-                    : data.habitOkValue * 2,
-                parentUUID: data.uuid,
-                uuid: uuid);
+            return HabitSummaryRecord.generate(
+              selectDate,
+              status: HabitRecordStatus.done,
+              value: data.dailyGoalExtra != null
+                  ? math.max(data.dailyGoalExtra!, data.habitOkValue * 2)
+                  : data.habitOkValue * 2,
+              parentUUID: data.uuid,
+              uuid: uuid,
+            );
           case HabitType.negative:
-            return HabitSummaryRecord.generate(selectDate,
-                status: HabitRecordStatus.done,
-                value: data.dailyGoal,
-                parentUUID: data.uuid,
-                uuid: uuid);
+            return HabitSummaryRecord.generate(
+              selectDate,
+              status: HabitRecordStatus.done,
+              value: data.dailyGoal,
+              parentUUID: data.uuid,
+              uuid: uuid,
+            );
           case HabitType.unknown:
             return null;
         }
       case RecordStatusChangerStatus.zero:
-        return HabitSummaryRecord.generate(selectDate,
-            status: HabitRecordStatus.done,
-            value: 0,
-            parentUUID: data.uuid,
-            uuid: uuid);
+        return HabitSummaryRecord.generate(
+          selectDate,
+          status: HabitRecordStatus.done,
+          value: 0,
+          parentUUID: data.uuid,
+          uuid: uuid,
+        );
       case null:
         return null;
     }
@@ -400,10 +451,11 @@ final class HabitStatusChangerForm {
         return null;
       case HabitRecordStatus.done:
         final recordForm = HabitDailyRecordForm.getImp(
-            type: data.type,
-            value: record!.value,
-            targetValue: data.dailyGoal,
-            extraTargetValue: data.dailyGoalExtra);
+          type: data.type,
+          value: record!.value,
+          targetValue: data.dailyGoal,
+          extraTargetValue: data.dailyGoalExtra,
+        );
         switch (recordForm.complateStatus) {
           case HabitDailyComplateStatus.zero:
             return RecordStatusChangerStatus.zero;

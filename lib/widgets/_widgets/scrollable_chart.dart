@@ -141,8 +141,9 @@ class _ScrollableChartState extends State<ScrollableChart>
     _animateStartDistance = _lastDistance;
 
     final v0 = details.velocity.pixelsPerSecond.dx;
-    final duration =
-        math.sqrt(2 * (v0 * v0) / (2 * widget.scrollStopCoefficient * g) / g);
+    final duration = math.sqrt(
+      2 * (v0 * v0) / (2 * widget.scrollStopCoefficient * g) / g,
+    );
     _controller
       ..duration = Duration(milliseconds: duration.toInt())
       ..forward();
