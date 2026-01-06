@@ -98,7 +98,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
   final VoidCallback? onArchive;
   final VoidCallback? onSelectAll;
   final VoidCallback? onClone;
-  final VoidCallback? onExportAll;
+  final void Function(BuildContext context)? onExportAll;
   final VoidCallback? onDelete;
 
   const SliverEditTopAppBarAction({
@@ -119,6 +119,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
         .select<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
           (vm) => vm.selectStatistic,
         );
+    final onExportAll = this.onExportAll;
     return AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
       buttonSwitchAnimateDuration: kEditModeAppbarAnimateDuration,
       actionConfigs: [
@@ -148,7 +149,7 @@ class SliverEditTopAppBarAction extends StatelessWidget {
         ),
         EditModeActionItemConfig.exportall(
           text: l10n?.habitDisplay_editPopMenu_export ?? "Export",
-          callback: onExportAll,
+          callback: onExportAll != null ? () => onExportAll(context) : null,
         ),
         EditModeActionItemConfig.delete(
           text: l10n?.habitDisplay_editPopMenu_delete ?? 'Delete',

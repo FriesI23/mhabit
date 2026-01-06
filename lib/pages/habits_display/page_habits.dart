@@ -676,7 +676,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   void _onAppbarSelectAllActionPressed() =>
       context.read<HabitSummaryViewModel>().selectAllHabit();
 
-  void _onAppbarExportAllActionPressed() =>
+  void _onAppbarExportAllActionPressed(BuildContext context) =>
       _exportSelectedHabitsAndShared(context);
 
   void _onAppbarDeleteActionPressed() => _openHabitDeleteConfirmDialog(context);
