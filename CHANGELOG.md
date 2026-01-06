@@ -4,11 +4,12 @@
 
 ## 1.23.0+138-pre
 
-- Flutter 3.35.7 / Dart 3.4 toolchain with API migrations
+- Flutter 3.35.7 / Dart toolchain with API migrations
 - Android: AGP 8.12.3 with Kotlin/Gradle tuning
 - iOS/macOS: project sync to new toolchain
 - Dependency updates (share_plus, app_settings, fl_chart, package_info_plus, flutter_timezone, copy_with_extension, source_gen, flutter_lints, intl)
 - Code formatting and maintenance cleanup
+- Fixed: Export dialog position on iPadOS
 
 ## 1.22.10+137
 
