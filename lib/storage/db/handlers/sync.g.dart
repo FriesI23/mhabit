@@ -11,18 +11,19 @@ part of 'sync.dart';
 // **************************************************************************
 
 abstract class _$SyncDBCellCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// SyncDBCell(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   SyncDBCell call({
-    int? id,
+    DBID? id,
     int? createT,
     int? modifyT,
-    String? habitUUID,
-    String? recordUUID,
+    HabitUUID? habitUUID,
+    HabitUUID? recordUUID,
     int? dirty,
     int? dirtyTotal,
     String? lastConfigUUID,
@@ -32,20 +33,21 @@ abstract class _$SyncDBCellCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSyncDBCell.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfSyncDBCell.copyWith(...)`.
 class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
   const _$SyncDBCellCWProxyImpl(this._value);
 
   final SyncDBCell _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// SyncDBCell(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   SyncDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),
@@ -63,7 +65,7 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
       id: id == const $CopyWithPlaceholder()
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
-          : id as int?,
+          : id as DBID?,
       createT: createT == const $CopyWithPlaceholder()
           ? _value.createT
           // ignore: cast_nullable_to_non_nullable
@@ -75,11 +77,11 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
       habitUUID: habitUUID == const $CopyWithPlaceholder()
           ? _value.habitUUID
           // ignore: cast_nullable_to_non_nullable
-          : habitUUID as String?,
+          : habitUUID as HabitUUID?,
       recordUUID: recordUUID == const $CopyWithPlaceholder()
           ? _value.recordUUID
           // ignore: cast_nullable_to_non_nullable
-          : recordUUID as String?,
+          : recordUUID as HabitUUID?,
       dirty: dirty == const $CopyWithPlaceholder()
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
@@ -109,7 +111,8 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
 }
 
 extension $SyncDBCellCopyWith on SyncDBCell {
-  /// Returns a callable class that can be used as follows: `instanceOfSyncDBCell.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfSyncDBCell.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$SyncDBCellCWProxy get copyWith => _$SyncDBCellCWProxyImpl(this);
 }
@@ -119,30 +122,30 @@ extension $SyncDBCellCopyWith on SyncDBCell {
 // **************************************************************************
 
 SyncDBCell _$SyncDBCellFromJson(Map<String, dynamic> json) => SyncDBCell(
-      id: (json['id_'] as num?)?.toInt(),
-      createT: (json['create_t'] as num?)?.toInt(),
-      modifyT: (json['modify_t'] as num?)?.toInt(),
-      habitUUID: json['habit_uuid'] as String?,
-      recordUUID: json['record_uuid'] as String?,
-      dirty: (json['dirty'] as num?)?.toInt(),
-      dirtyTotal: (json['dirty_total'] as num?)?.toInt(),
-      lastConfigUUID: json['last_config_uuid'] as String?,
-      lastSesionUUID: json['last_session_uuid'] as String?,
-      lastMark: json['last_mark'] as String?,
-      lastMark2: json['last_mark_2'] as String?,
-    );
+  id: (json['id_'] as num?)?.toInt(),
+  createT: (json['create_t'] as num?)?.toInt(),
+  modifyT: (json['modify_t'] as num?)?.toInt(),
+  habitUUID: json['habit_uuid'] as String?,
+  recordUUID: json['record_uuid'] as String?,
+  dirty: (json['dirty'] as num?)?.toInt(),
+  dirtyTotal: (json['dirty_total'] as num?)?.toInt(),
+  lastConfigUUID: json['last_config_uuid'] as String?,
+  lastSesionUUID: json['last_session_uuid'] as String?,
+  lastMark: json['last_mark'] as String?,
+  lastMark2: json['last_mark_2'] as String?,
+);
 
 Map<String, dynamic> _$SyncDBCellToJson(SyncDBCell instance) =>
     <String, dynamic>{
-      if (instance.id case final value?) 'id_': value,
-      if (instance.createT case final value?) 'create_t': value,
-      if (instance.modifyT case final value?) 'modify_t': value,
-      if (instance.habitUUID case final value?) 'habit_uuid': value,
-      if (instance.recordUUID case final value?) 'record_uuid': value,
-      if (instance.dirty case final value?) 'dirty': value,
-      if (instance.dirtyTotal case final value?) 'dirty_total': value,
-      if (instance.lastConfigUUID case final value?) 'last_config_uuid': value,
-      if (instance.lastSesionUUID case final value?) 'last_session_uuid': value,
-      if (instance.lastMark case final value?) 'last_mark': value,
-      if (instance.lastMark2 case final value?) 'last_mark_2': value,
+      'id_': ?instance.id,
+      'create_t': ?instance.createT,
+      'modify_t': ?instance.modifyT,
+      'habit_uuid': ?instance.habitUUID,
+      'record_uuid': ?instance.recordUUID,
+      'dirty': ?instance.dirty,
+      'dirty_total': ?instance.dirtyTotal,
+      'last_config_uuid': ?instance.lastConfigUUID,
+      'last_session_uuid': ?instance.lastSesionUUID,
+      'last_mark': ?instance.lastMark,
+      'last_mark_2': ?instance.lastMark2,
     };

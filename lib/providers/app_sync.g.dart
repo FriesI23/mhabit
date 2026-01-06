@@ -10,8 +10,10 @@ part of 'app_sync.dart';
 // CopyWithGenerator
 // **************************************************************************
 
-abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
-    R extends AppSyncTaskResult> {
+abstract class _$AppSyncContainerCWProxy<
+  T extends AppSyncTask<R>,
+  R extends AppSyncTaskResult
+> {
   AppSyncContainer<T, R> id(String id);
 
   AppSyncContainer<T, R> task(T task);
@@ -29,19 +31,22 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
   AppSyncContainer<T, R> percentage(num? percentage);
 
   AppSyncContainer<T, R> loggerStreamer(
-      ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer);
+    ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer,
+  );
 
   AppSyncContainer<T, R> notification(NotiAppSyncProvider? notification);
 
   AppSyncContainer<T, R> logEventCallback(
-      void Function(LogEvent) logEventCallback);
+    void Function(LogEvent) logEventCallback,
+  );
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppSyncContainer<T,R>(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T,R>(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AppSyncContainer<T,R>(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AppSyncContainer<T, R> call({
     String id,
     T task,
@@ -57,63 +62,67 @@ abstract class _$AppSyncContainerCWProxy<T extends AppSyncTask<R>,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppSyncContainer.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAppSyncContainer.copyWith.fieldName(...)`
-class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
-    R extends AppSyncTaskResult> implements _$AppSyncContainerCWProxy<T, R> {
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfAppSyncContainer.copyWith(...)` or call `instanceOfAppSyncContainer.copyWith.fieldName(value)` for a single field.
+class _$AppSyncContainerCWProxyImpl<
+  T extends AppSyncTask<R>,
+  R extends AppSyncTaskResult
+>
+    implements _$AppSyncContainerCWProxy<T, R> {
   const _$AppSyncContainerCWProxyImpl(this._value);
 
   final AppSyncContainer<T, R> _value;
 
   @override
-  AppSyncContainer<T, R> id(String id) => this(id: id);
+  AppSyncContainer<T, R> id(String id) => call(id: id);
 
   @override
-  AppSyncContainer<T, R> task(T task) => this(task: task);
+  AppSyncContainer<T, R> task(T task) => call(task: task);
 
   @override
   AppSyncContainer<T, R> startTime(DateTime? startTime) =>
-      this(startTime: startTime);
+      call(startTime: startTime);
 
   @override
   AppSyncContainer<T, R> endedTime(DateTime? endedTime) =>
-      this(endedTime: endedTime);
+      call(endedTime: endedTime);
 
   @override
-  AppSyncContainer<T, R> result(R? result) => this(result: result);
+  AppSyncContainer<T, R> result(R? result) => call(result: result);
 
   @override
   AppSyncContainer<T, R> loggerReplay(ReplaySubject<LogEvent>? loggerReplay) =>
-      this(loggerReplay: loggerReplay);
+      call(loggerReplay: loggerReplay);
 
   @override
-  AppSyncContainer<T, R> filePath(String? filePath) => this(filePath: filePath);
+  AppSyncContainer<T, R> filePath(String? filePath) => call(filePath: filePath);
 
   @override
   AppSyncContainer<T, R> percentage(num? percentage) =>
-      this(percentage: percentage);
+      call(percentage: percentage);
 
   @override
   AppSyncContainer<T, R> loggerStreamer(
-          ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer) =>
-      this(loggerStreamer: loggerStreamer);
+    ReplayAppLoggerStreamer<AppLoggerMessage>? loggerStreamer,
+  ) => call(loggerStreamer: loggerStreamer);
 
   @override
   AppSyncContainer<T, R> notification(NotiAppSyncProvider? notification) =>
-      this(notification: notification);
+      call(notification: notification);
 
   @override
   AppSyncContainer<T, R> logEventCallback(
-          void Function(LogEvent) logEventCallback) =>
-      this(logEventCallback: logEventCallback);
+    void Function(LogEvent) logEventCallback,
+  ) => call(logEventCallback: logEventCallback);
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppSyncContainer<T,R>(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T,R>(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// AppSyncContainer<T,R>(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   AppSyncContainer<T, R> call({
     Object? id = const $CopyWithPlaceholder(),
     Object? task = const $CopyWithPlaceholder(),
@@ -128,11 +137,11 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
     Object? logEventCallback = const $CopyWithPlaceholder(),
   }) {
     return AppSyncContainer<T, R>._copyWith(
-      id: id == const $CopyWithPlaceholder()
+      id: id == const $CopyWithPlaceholder() || id == null
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
           : id as String,
-      task: task == const $CopyWithPlaceholder()
+      task: task == const $CopyWithPlaceholder() || task == null
           ? _value.task
           // ignore: cast_nullable_to_non_nullable
           : task as T,
@@ -168,7 +177,9 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
           ? _value.notification
           // ignore: cast_nullable_to_non_nullable
           : notification as NotiAppSyncProvider?,
-      logEventCallback: logEventCallback == const $CopyWithPlaceholder()
+      logEventCallback:
+          logEventCallback == const $CopyWithPlaceholder() ||
+              logEventCallback == null
           ? _value.logEventCallback
           // ignore: cast_nullable_to_non_nullable
           : logEventCallback as void Function(LogEvent),
@@ -176,9 +187,13 @@ class _$AppSyncContainerCWProxyImpl<T extends AppSyncTask<R>,
   }
 }
 
-extension $AppSyncContainerCopyWith<T extends AppSyncTask<R>,
-    R extends AppSyncTaskResult> on AppSyncContainer<T, R> {
-  /// Returns a callable class that can be used as follows: `instanceOfAppSyncContainer.copyWith(...)` or like so:`instanceOfAppSyncContainer.copyWith.fieldName(...)`.
+extension $AppSyncContainerCopyWith<
+  T extends AppSyncTask<R>,
+  R extends AppSyncTaskResult
+>
+    on AppSyncContainer<T, R> {
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfAppSyncContainer.copyWith(...)` or `instanceOfAppSyncContainer.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$AppSyncContainerCWProxy<T, R> get copyWith =>
       _$AppSyncContainerCWProxyImpl<T, R>(this);

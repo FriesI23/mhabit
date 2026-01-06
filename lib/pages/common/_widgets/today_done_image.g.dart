@@ -11,12 +11,13 @@ part of 'today_done_image.dart';
 // **************************************************************************
 
 abstract class _$TodayDoneImageStyleCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TodayDoneImageStyle(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TodayDoneImageStyle call({
     Color laserColor,
     Color sunColor,
@@ -24,35 +25,38 @@ abstract class _$TodayDoneImageStyleCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTodayDoneImageStyle.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfTodayDoneImageStyle.copyWith(...)`.
 class _$TodayDoneImageStyleCWProxyImpl implements _$TodayDoneImageStyleCWProxy {
   const _$TodayDoneImageStyleCWProxyImpl(this._value);
 
   final TodayDoneImageStyle _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// TodayDoneImageStyle(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   TodayDoneImageStyle call({
     Object? laserColor = const $CopyWithPlaceholder(),
     Object? sunColor = const $CopyWithPlaceholder(),
     Object? horizonColor = const $CopyWithPlaceholder(),
   }) {
     return TodayDoneImageStyle(
-      laserColor: laserColor == const $CopyWithPlaceholder()
+      laserColor:
+          laserColor == const $CopyWithPlaceholder() || laserColor == null
           ? _value.laserColor
           // ignore: cast_nullable_to_non_nullable
           : laserColor as Color,
-      sunColor: sunColor == const $CopyWithPlaceholder()
+      sunColor: sunColor == const $CopyWithPlaceholder() || sunColor == null
           ? _value.sunColor
           // ignore: cast_nullable_to_non_nullable
           : sunColor as Color,
-      horizonColor: horizonColor == const $CopyWithPlaceholder()
+      horizonColor:
+          horizonColor == const $CopyWithPlaceholder() || horizonColor == null
           ? _value.horizonColor
           // ignore: cast_nullable_to_non_nullable
           : horizonColor as Color,
@@ -61,7 +65,8 @@ class _$TodayDoneImageStyleCWProxyImpl implements _$TodayDoneImageStyleCWProxy {
 }
 
 extension $TodayDoneImageStyleCopyWith on TodayDoneImageStyle {
-  /// Returns a callable class that can be used as follows: `instanceOfTodayDoneImageStyle.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfTodayDoneImageStyle.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$TodayDoneImageStyleCWProxy get copyWith =>
       _$TodayDoneImageStyleCWProxyImpl(this);

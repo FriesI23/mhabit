@@ -856,7 +856,9 @@ class L10nAr extends L10n {
 
   @override
   String appSetting_importDialog_importingTitle(
-      int completeCount, int totalCount) {
+    int completeCount,
+    int totalCount,
+  ) {
     return 'تم الاستيراد $completeCount/$totalCount';
   }
 
@@ -990,7 +992,9 @@ class L10nAr extends L10n {
   String appSync_nowTile_syncingText_withPrt(num prt) {
     final intl.NumberFormat prtNumberFormat =
         intl.NumberFormat.decimalPercentPattern(
-            locale: localeName, decimalDigits: 2);
+          locale: localeName,
+          decimalDigits: 2,
+        );
     final String prtString = prtNumberFormat.format(prt);
 
     return 'جاري المزامنة: $prtString';
@@ -1023,46 +1027,37 @@ class L10nAr extends L10n {
 
   @override
   String appSync_webdav_resultStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'مكتمل',
-        'cancelled': 'ملغى',
-        'failed': 'فشل',
-        'multi': 'حالات متعددة',
-        'other': 'حالة غير معروفة',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'مكتمل',
+      'cancelled': 'ملغى',
+      'failed': 'فشل',
+      'multi': 'حالات متعددة',
+      'other': 'حالة غير معروفة',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'مكتمل بسبب $reason',
-        'cancelled': 'ملغى بسبب $reason',
-        'failed': 'فشل بسبب $reason',
-        'multi': 'حالات متعددة بسبب $reason',
-        'other': 'حالة غير معروفة',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'مكتمل بسبب $reason',
+      'cancelled': 'ملغى بسبب $reason',
+      'failed': 'فشل بسبب $reason',
+      'multi': 'حالات متعددة بسبب $reason',
+      'other': 'حالة غير معروفة',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultReason(String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      reason,
-      {
-        'error': 'خطأ',
-        'userAction': 'يتطلب إجراء من المستخدم',
-        'missingHabitUuid': 'معرف العادة مفقود',
-        'empty': 'بيانات فارغة',
-        'other': 'سبب غير معروف',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'error': 'خطأ',
+      'userAction': 'يتطلب إجراء من المستخدم',
+      'missingHabitUuid': 'معرف العادة مفقود',
+      'empty': 'بيانات فارغة',
+      'other': 'سبب غير معروف',
+    });
     return '$_temp0';
   }
 
@@ -1094,63 +1089,48 @@ class L10nAr extends L10n {
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'لم يتم العثور على سجلات',
-        'false': 'انقر للتصدير',
-        'other': 'جاري التحميل...',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'لم يتم العثور على سجلات',
+      'false': 'انقر للتصدير',
+      'other': 'جاري التحميل...',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isCurrent,
-      {
-        'true': 'الحالي: ',
-        'other': '',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      name,
-      {
-        'webdav': 'WebDAV',
-        'fake': 'وهمي (للتصحيح فقط)',
-        'other': 'غير معروف ($name)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isCurrent, {
+      'true': 'الحالي: ',
+      'other': '',
+    });
+    String _temp1 = intl.Intl.selectLogic(name, {
+      'webdav': 'WebDAV',
+      'fake': 'وهمي (للتصحيح فقط)',
+      'other': 'غير معروف ($name)',
+    });
     return '$_temp0$_temp1';
   }
 
   @override
   String appSync_networkType_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'شبكة الجوال',
-        'wifi': 'واي فاي',
-        'other': 'غير معروف',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'شبكة الجوال',
+      'wifi': 'واي فاي',
+      'other': 'غير معروف',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncInterval_text(String name) {
-    String _temp0 = intl.Intl.selectLogic(
-      name,
-      {
-        'manual': 'يدوي',
-        'minute5': '5 دقائق',
-        'minute15': '15 دقيقة',
-        'minute30': '30 دقيقة',
-        'hour1': '1 ساعة',
-        'other': 'غير معروف',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(name, {
+      'manual': 'يدوي',
+      'minute5': '5 دقائق',
+      'minute15': '15 دقيقة',
+      'minute30': '30 دقيقة',
+      'hour1': '1 ساعة',
+      'other': 'غير معروف',
+    });
     return '$_temp0';
   }
 
@@ -1245,7 +1225,9 @@ class L10nAr extends L10n {
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(
-      int seconds, String unit) {
+    int seconds,
+    String unit,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1278,14 +1260,11 @@ class L10nAr extends L10n {
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'مزامنة عبر شبكة الجوال',
-        'wifi': 'مزامنة عبر واي فاي',
-        'other': 'غير معروف',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'مزامنة عبر شبكة الجوال',
+      'wifi': 'مزامنة عبر واي فاي',
+      'other': 'غير معروف',
+    });
     return '$_temp0';
   }
 
@@ -1297,14 +1276,11 @@ class L10nAr extends L10n {
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      synced,
-      {
-        'synced': 'مزامنة ($type)',
-        'failed': 'فشلت المزامنة ($type)',
-        'other': 'مزامنة ($type)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(synced, {
+      'synced': 'مزامنة ($type)',
+      'failed': 'فشلت المزامنة ($type)',
+      'other': 'مزامنة ($type)',
+    });
     return '$_temp0';
   }
 
@@ -1589,7 +1565,9 @@ class L10nAr extends L10n {
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
-      String splitName, String splitChar) {
+    String splitName,
+    String splitChar,
+  ) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1739,15 +1717,12 @@ class L10nAr extends L10n {
 
   @override
   String confirmDialog_confirm_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'save': 'حفظ',
-        'exit': 'خروج',
-        'delete': 'حذف',
-        'other': 'تأكيد',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'save': 'حفظ',
+      'exit': 'خروج',
+      'delete': 'حذف',
+      'other': 'تأكيد',
+    });
     return '$_temp0';
   }
 

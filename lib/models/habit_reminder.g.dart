@@ -11,48 +11,46 @@ part of 'habit_reminder.dart';
 // **************************************************************************
 
 abstract class _$HabitReminderCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitReminder(...).copyWith(id: 12, name: "My name")
-  /// ````
-  HabitReminder call({
-    HabitReminderType type,
-    List<int> extra,
-    TimeOfDay time,
-  });
+  /// ```
+  HabitReminder call({HabitReminderType type, List<int> extra, TimeOfDay time});
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitReminder.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitReminder.copyWith(...)`.
 class _$HabitReminderCWProxyImpl implements _$HabitReminderCWProxy {
   const _$HabitReminderCWProxyImpl(this._value);
 
   final HabitReminder _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitReminder(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitReminder call({
     Object? type = const $CopyWithPlaceholder(),
     Object? extra = const $CopyWithPlaceholder(),
     Object? time = const $CopyWithPlaceholder(),
   }) {
     return HabitReminder(
-      type: type == const $CopyWithPlaceholder()
+      type: type == const $CopyWithPlaceholder() || type == null
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
           : type as HabitReminderType,
-      extra: extra == const $CopyWithPlaceholder()
+      extra: extra == const $CopyWithPlaceholder() || extra == null
           ? _value.extra
           // ignore: cast_nullable_to_non_nullable
           : extra as List<int>,
-      time: time == const $CopyWithPlaceholder()
+      time: time == const $CopyWithPlaceholder() || time == null
           ? _value.time
           // ignore: cast_nullable_to_non_nullable
           : time as TimeOfDay,
@@ -61,7 +59,8 @@ class _$HabitReminderCWProxyImpl implements _$HabitReminderCWProxy {
 }
 
 extension $HabitReminderCopyWith on HabitReminder {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitReminder.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitReminder.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitReminderCWProxy get copyWith => _$HabitReminderCWProxyImpl(this);
 }
@@ -76,8 +75,9 @@ HabitReminder _$HabitReminderFromJson(Map<String, dynamic> json) =>
       extra: (json['extra'] as List<dynamic>)
           .map((e) => (e as num).toInt())
           .toList(),
-      time: const TimeOfDayConverter()
-          .fromJson(json['time'] as Map<String, dynamic>),
+      time: const TimeOfDayConverter().fromJson(
+        json['time'] as Map<String, dynamic>,
+      ),
     );
 
 Map<String, dynamic> _$HabitReminderToJson(HabitReminder instance) =>

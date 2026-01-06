@@ -873,7 +873,9 @@ class L10nPl extends L10n {
 
   @override
   String appSetting_importDialog_importingTitle(
-      int completeCount, int totalCount) {
+    int completeCount,
+    int totalCount,
+  ) {
     return 'Importowano $completeCount/$totalCount';
   }
 
@@ -1012,7 +1014,9 @@ class L10nPl extends L10n {
   String appSync_nowTile_syncingText_withPrt(num prt) {
     final intl.NumberFormat prtNumberFormat =
         intl.NumberFormat.decimalPercentPattern(
-            locale: localeName, decimalDigits: 2);
+          locale: localeName,
+          decimalDigits: 2,
+        );
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Trwa synchronizacja: $prtString';
@@ -1045,46 +1049,37 @@ class L10nPl extends L10n {
 
   @override
   String appSync_webdav_resultStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'Zakończono',
-        'cancelled': 'Anulowano',
-        'failed': 'Nie powiodło się',
-        'multi': 'Wiele statusów',
-        'other': 'Nieznany status',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'Zakończono',
+      'cancelled': 'Anulowano',
+      'failed': 'Nie powiodło się',
+      'multi': 'Wiele statusów',
+      'other': 'Nieznany status',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'Zakończono: $reason',
-        'cancelled': 'Anulowano: $reason',
-        'failed': 'Nie powiodło się: $reason',
-        'multi': 'Wiele statusów: $reason',
-        'other': 'Nieznany status',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'Zakończono: $reason',
+      'cancelled': 'Anulowano: $reason',
+      'failed': 'Nie powiodło się: $reason',
+      'multi': 'Wiele statusów: $reason',
+      'other': 'Nieznany status',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultReason(String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      reason,
-      {
-        'error': 'Błąd',
-        'userAction': 'Wymagana akcja użytkownika',
-        'missingHabitUuid': 'Brak UUID nawyku',
-        'empty': 'Puste dane',
-        'other': 'Nieznany powód',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'error': 'Błąd',
+      'userAction': 'Wymagana akcja użytkownika',
+      'missingHabitUuid': 'Brak UUID nawyku',
+      'empty': 'Puste dane',
+      'other': 'Nieznany powód',
+    });
     return '$_temp0';
   }
 
@@ -1118,63 +1113,48 @@ class L10nPl extends L10n {
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'Brak logów',
-        'false': 'Dotknij, aby wyeksportować',
-        'other': 'Ładowanie...',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'Brak logów',
+      'false': 'Dotknij, aby wyeksportować',
+      'other': 'Ładowanie...',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isCurrent,
-      {
-        'true': 'Bieżący: ',
-        'other': '',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      name,
-      {
-        'webdav': 'WebDAV',
-        'fake': 'Fałszywy (tylko dla debugera)',
-        'other': 'Nieznany ($name)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isCurrent, {
+      'true': 'Bieżący: ',
+      'other': '',
+    });
+    String _temp1 = intl.Intl.selectLogic(name, {
+      'webdav': 'WebDAV',
+      'fake': 'Fałszywy (tylko dla debugera)',
+      'other': 'Nieznany ($name)',
+    });
     return '$_temp0$_temp1';
   }
 
   @override
   String appSync_networkType_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'Sieć komórkowa',
-        'wifi': 'Wifi',
-        'other': 'Nieznana',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'Sieć komórkowa',
+      'wifi': 'Wifi',
+      'other': 'Nieznana',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncInterval_text(String name) {
-    String _temp0 = intl.Intl.selectLogic(
-      name,
-      {
-        'manual': 'Ręcznie',
-        'minute5': '5 Minutes',
-        'minute15': '15 minut',
-        'minute30': '30 minut',
-        'hour1': '1 godzina',
-        'other': 'Nieznany',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(name, {
+      'manual': 'Ręcznie',
+      'minute5': '5 Minutes',
+      'minute15': '15 minut',
+      'minute30': '30 minut',
+      'hour1': '1 godzina',
+      'other': 'Nieznany',
+    });
     return '$_temp0';
   }
 
@@ -1275,7 +1255,9 @@ class L10nPl extends L10n {
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(
-      int seconds, String unit) {
+    int seconds,
+    String unit,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1309,14 +1291,11 @@ class L10nPl extends L10n {
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'Synchronizacja przez sieć komórkową',
-        'wifi': 'Synchronizacja przez Wifi',
-        'other': 'Nieznany',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'Synchronizacja przez sieć komórkową',
+      'wifi': 'Synchronizacja przez Wifi',
+      'other': 'Nieznany',
+    });
     return '$_temp0';
   }
 
@@ -1330,14 +1309,11 @@ class L10nPl extends L10n {
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      synced,
-      {
-        'synced': 'Zsynchronizowano ($type)',
-        'failed': 'Błąd synchronizacji ($type)',
-        'other': 'Synchronizacja ($type)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(synced, {
+      'synced': 'Zsynchronizowano ($type)',
+      'failed': 'Błąd synchronizacji ($type)',
+      'other': 'Synchronizacja ($type)',
+    });
     return '$_temp0';
   }
 
@@ -1632,7 +1608,9 @@ class L10nPl extends L10n {
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
-      String splitName, String splitChar) {
+    String splitName,
+    String splitChar,
+  ) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1791,15 +1769,12 @@ class L10nPl extends L10n {
 
   @override
   String confirmDialog_confirm_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'save': 'Zapisz',
-        'exit': 'Wyjdź',
-        'delete': 'Usuń',
-        'other': 'Potwierdź',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'save': 'Zapisz',
+      'exit': 'Wyjdź',
+      'delete': 'Usuń',
+      'other': 'Potwierdź',
+    });
     return '$_temp0';
   }
 

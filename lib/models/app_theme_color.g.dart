@@ -14,10 +14,8 @@ SystemAppThemeColor _$SystemAppThemeColorFromJson(Map<String, dynamic> json) =>
     SystemAppThemeColor();
 
 Map<String, dynamic> _$SystemAppThemeColorToJson(
-        SystemAppThemeColor instance) =>
-    <String, dynamic>{
-      'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-    };
+  SystemAppThemeColor instance,
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 const _$AppThemeColorTypeEnumMap = {
   AppThemeColorType.system: 1,
@@ -27,37 +25,33 @@ const _$AppThemeColorTypeEnumMap = {
 };
 
 PrimaryAppThemeColor _$PrimaryAppThemeColorFromJson(
-        Map<String, dynamic> json) =>
-    PrimaryAppThemeColor();
+  Map<String, dynamic> json,
+) => PrimaryAppThemeColor();
 
 Map<String, dynamic> _$PrimaryAppThemeColorToJson(
-        PrimaryAppThemeColor instance) =>
-    <String, dynamic>{
-      'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-    };
+  PrimaryAppThemeColor instance,
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 DynamicAppThemeColor _$DynamicAppThemeColorFromJson(
-        Map<String, dynamic> json) =>
-    DynamicAppThemeColor();
+  Map<String, dynamic> json,
+) => DynamicAppThemeColor();
 
 Map<String, dynamic> _$DynamicAppThemeColorToJson(
-        DynamicAppThemeColor instance) =>
-    <String, dynamic>{
-      'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-    };
+  DynamicAppThemeColor instance,
+) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
 
 InternalAppThemeColor _$InternalAppThemeColorFromJson(
-        Map<String, dynamic> json) =>
-    InternalAppThemeColor(
-      colorType: $enumDecode(_$HabitColorTypeEnumMap, json['color_type']),
-    );
+  Map<String, dynamic> json,
+) => InternalAppThemeColor(
+  colorType: $enumDecode(_$HabitColorTypeEnumMap, json['color_type']),
+);
 
 Map<String, dynamic> _$InternalAppThemeColorToJson(
-        InternalAppThemeColor instance) =>
-    <String, dynamic>{
-      'type': _$AppThemeColorTypeEnumMap[instance.type]!,
-      'color_type': _$HabitColorTypeEnumMap[instance.colorType]!,
-    };
+  InternalAppThemeColor instance,
+) => <String, dynamic>{
+  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
+  'color_type': _$HabitColorTypeEnumMap[instance.colorType]!,
+};
 
 const _$HabitColorTypeEnumMap = {
   HabitColorType.cc1: 1,

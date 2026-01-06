@@ -24,10 +24,17 @@ class _$MaterialLocalizationsProxy implements MaterialLocalizations {
       _base.licensesPackageDetailText(licenseCount);
 
   @override
-  String pageRowsInfoTitle(int firstRow, int lastRow, int rowCount,
-          bool rowCountIsApproximate) =>
-      _base.pageRowsInfoTitle(
-          firstRow, lastRow, rowCount, rowCountIsApproximate);
+  String pageRowsInfoTitle(
+    int firstRow,
+    int lastRow,
+    int rowCount,
+    bool rowCountIsApproximate,
+  ) => _base.pageRowsInfoTitle(
+    firstRow,
+    lastRow,
+    rowCount,
+    rowCountIsApproximate,
+  );
 
   @override
   String tabLabel({required int tabIndex, required int tabCount}) =>
@@ -49,18 +56,23 @@ class _$MaterialLocalizationsProxy implements MaterialLocalizations {
   String formatDecimal(int number) => _base.formatDecimal(number);
 
   @override
-  String formatHour(TimeOfDay timeOfDay,
-          {bool alwaysUse24HourFormat = false}) =>
+  String formatHour(
+    TimeOfDay timeOfDay, {
+    bool alwaysUse24HourFormat = false,
+  }) =>
       _base.formatHour(timeOfDay, alwaysUse24HourFormat: alwaysUse24HourFormat);
 
   @override
   String formatMinute(TimeOfDay timeOfDay) => _base.formatMinute(timeOfDay);
 
   @override
-  String formatTimeOfDay(TimeOfDay timeOfDay,
-          {bool alwaysUse24HourFormat = false}) =>
-      _base.formatTimeOfDay(timeOfDay,
-          alwaysUse24HourFormat: alwaysUse24HourFormat);
+  String formatTimeOfDay(
+    TimeOfDay timeOfDay, {
+    bool alwaysUse24HourFormat = false,
+  }) => _base.formatTimeOfDay(
+    timeOfDay,
+    alwaysUse24HourFormat: alwaysUse24HourFormat,
+  );
 
   @override
   String formatYear(DateTime date) => _base.formatYear(date);
@@ -328,32 +340,38 @@ class _$MaterialLocalizationsProxy implements MaterialLocalizations {
 
   @override
   @Deprecated(
-      "Use the reorderItemToStart from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemToStart from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemToStart => _base.reorderItemToStart;
 
   @override
   @Deprecated(
-      "Use the reorderItemToEnd from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemToEnd from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemToEnd => _base.reorderItemToEnd;
 
   @override
   @Deprecated(
-      "Use the reorderItemUp from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemUp from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemUp => _base.reorderItemUp;
 
   @override
   @Deprecated(
-      "Use the reorderItemDown from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemDown from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemDown => _base.reorderItemDown;
 
   @override
   @Deprecated(
-      "Use the reorderItemLeft from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemLeft from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemLeft => _base.reorderItemLeft;
 
   @override
   @Deprecated(
-      "Use the reorderItemRight from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.")
+    "Use the reorderItemRight from WidgetsLocalizations instead. This feature was deprecated after v3.10.0-2.0.pre.",
+  )
   String get reorderItemRight => _base.reorderItemRight;
 
   @override

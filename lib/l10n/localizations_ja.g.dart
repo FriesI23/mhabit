@@ -843,7 +843,9 @@ class L10nJa extends L10n {
 
   @override
   String appSetting_importDialog_importingTitle(
-      int completeCount, int totalCount) {
+    int completeCount,
+    int totalCount,
+  ) {
     return '$completeCount/$totalCount をインポートしました';
   }
 
@@ -972,7 +974,9 @@ class L10nJa extends L10n {
   String appSync_nowTile_syncingText_withPrt(num prt) {
     final intl.NumberFormat prtNumberFormat =
         intl.NumberFormat.decimalPercentPattern(
-            locale: localeName, decimalDigits: 2);
+          locale: localeName,
+          decimalDigits: 2,
+        );
     final String prtString = prtNumberFormat.format(prt);
 
     return '同期中: $prtString';
@@ -1004,46 +1008,37 @@ class L10nJa extends L10n {
 
   @override
   String appSync_webdav_resultStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': '完了',
-        'cancelled': 'キャンセル',
-        'failed': '失敗',
-        'multi': '複数のステータス',
-        'other': '不明なステータス',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': '完了',
+      'cancelled': 'キャンセル',
+      'failed': '失敗',
+      'multi': '複数のステータス',
+      'other': '不明なステータス',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': '完了: $reason',
-        'cancelled': 'キャンセル: $reason',
-        'failed': '失敗: $reason',
-        'multi': '複数のステータス: $reason',
-        'other': '不明なステータス',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': '完了: $reason',
+      'cancelled': 'キャンセル: $reason',
+      'failed': '失敗: $reason',
+      'multi': '複数のステータス: $reason',
+      'other': '不明なステータス',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultReason(String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      reason,
-      {
-        'error': 'エラー',
-        'userAction': 'ユーザー操作が必要',
-        'missingHabitUuid': '習慣のUUIDが欠落',
-        'empty': '空のデータ',
-        'other': '不明な理由',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'error': 'エラー',
+      'userAction': 'ユーザー操作が必要',
+      'missingHabitUuid': '習慣のUUIDが欠落',
+      'empty': '空のデータ',
+      'other': '不明な理由',
+    });
     return '$_temp0';
   }
 
@@ -1072,63 +1067,48 @@ class L10nJa extends L10n {
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'ログが見つかりません',
-        'false': 'タップしてエクスポート',
-        'other': '読み込み中...',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'ログが見つかりません',
+      'false': 'タップしてエクスポート',
+      'other': '読み込み中...',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isCurrent,
-      {
-        'true': '現在: ',
-        'other': '',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      name,
-      {
-        'webdav': 'WebDAV',
-        'fake': 'Fake (デバッグ用のみ)',
-        'other': '不明 ($name)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isCurrent, {
+      'true': '現在: ',
+      'other': '',
+    });
+    String _temp1 = intl.Intl.selectLogic(name, {
+      'webdav': 'WebDAV',
+      'fake': 'Fake (デバッグ用のみ)',
+      'other': '不明 ($name)',
+    });
     return '$_temp0$_temp1';
   }
 
   @override
   String appSync_networkType_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'モバイル通信',
-        'wifi': 'Wi-Fi',
-        'other': '不明',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'モバイル通信',
+      'wifi': 'Wi-Fi',
+      'other': '不明',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncInterval_text(String name) {
-    String _temp0 = intl.Intl.selectLogic(
-      name,
-      {
-        'manual': '手動',
-        'minute5': '5分',
-        'minute15': '15分',
-        'minute30': '30分',
-        'hour1': '1時間',
-        'other': '不明',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(name, {
+      'manual': '手動',
+      'minute5': '5分',
+      'minute15': '15分',
+      'minute30': '30分',
+      'hour1': '1時間',
+      'other': '不明',
+    });
     return '$_temp0';
   }
 
@@ -1221,7 +1201,9 @@ class L10nJa extends L10n {
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(
-      int seconds, String unit) {
+    int seconds,
+    String unit,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1254,14 +1236,11 @@ class L10nJa extends L10n {
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'モバイル通信で同期',
-        'wifi': 'Wi-Fiで同期',
-        'other': '不明',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'モバイル通信で同期',
+      'wifi': 'Wi-Fiで同期',
+      'other': '不明',
+    });
     return '$_temp0';
   }
 
@@ -1273,14 +1252,11 @@ class L10nJa extends L10n {
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      synced,
-      {
-        'synced': '同期完了 ($type)',
-        'failed': '同期失敗 ($type)',
-        'other': '同期中 ($type)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(synced, {
+      'synced': '同期完了 ($type)',
+      'failed': '同期失敗 ($type)',
+      'other': '同期中 ($type)',
+    });
     return '$_temp0';
   }
 
@@ -1567,7 +1543,9 @@ class L10nJa extends L10n {
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
-      String splitName, String splitChar) {
+    String splitName,
+    String splitChar,
+  ) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1714,15 +1692,12 @@ class L10nJa extends L10n {
 
   @override
   String confirmDialog_confirm_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'save': '保存',
-        'exit': '終了',
-        'delete': '削除',
-        'other': '確認',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'save': '保存',
+      'exit': '終了',
+      'delete': '削除',
+      'other': '確認',
+    });
     return '$_temp0';
   }
 

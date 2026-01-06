@@ -11,12 +11,13 @@ part of 'habit_status_changer.dart';
 // **************************************************************************
 
 abstract class _$HabitStatusChangerFormCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitStatusChangerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitStatusChangerForm call({
     HabitDate selectDate,
     RecordStatusChangerStatus? selectStatus,
@@ -24,7 +25,8 @@ abstract class _$HabitStatusChangerFormCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitStatusChangerForm.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitStatusChangerForm.copyWith(...)`.
 class _$HabitStatusChangerFormCWProxyImpl
     implements _$HabitStatusChangerFormCWProxy {
   const _$HabitStatusChangerFormCWProxyImpl(this._value);
@@ -32,20 +34,21 @@ class _$HabitStatusChangerFormCWProxyImpl
   final HabitStatusChangerForm _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitStatusChangerForm(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitStatusChangerForm call({
     Object? selectDate = const $CopyWithPlaceholder(),
     Object? selectStatus = const $CopyWithPlaceholder(),
     Object? skipReason = const $CopyWithPlaceholder(),
   }) {
     return HabitStatusChangerForm(
-      selectDate: selectDate == const $CopyWithPlaceholder()
+      selectDate:
+          selectDate == const $CopyWithPlaceholder() || selectDate == null
           ? _value.selectDate
           // ignore: cast_nullable_to_non_nullable
           : selectDate as HabitDate,
@@ -62,7 +65,8 @@ class _$HabitStatusChangerFormCWProxyImpl
 }
 
 extension $HabitStatusChangerFormCopyWith on HabitStatusChangerForm {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitStatusChangerForm.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitStatusChangerForm.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitStatusChangerFormCWProxy get copyWith =>
       _$HabitStatusChangerFormCWProxyImpl(this);

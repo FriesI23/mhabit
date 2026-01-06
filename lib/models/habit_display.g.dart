@@ -17,12 +17,13 @@ abstract class _$HabitsDisplayFilterCWProxy {
 
   HabitsDisplayFilter allowCompleteHabits(bool allowCompleteHabits);
 
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HabitsDisplayFilter(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitsDisplayFilter call({
     bool allowInProgressHabits,
     bool allowArchivedHabits,
@@ -30,7 +31,8 @@ abstract class _$HabitsDisplayFilterCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitsDisplayFilter.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfHabitsDisplayFilter.copyWith.fieldName(...)`
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitsDisplayFilter.copyWith(...)` or call `instanceOfHabitsDisplayFilter.copyWith.fieldName(value)` for a single field.
 class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   const _$HabitsDisplayFilterCWProxyImpl(this._value);
 
@@ -38,24 +40,24 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
 
   @override
   HabitsDisplayFilter allowInProgressHabits(bool allowInProgressHabits) =>
-      this(allowInProgressHabits: allowInProgressHabits);
+      call(allowInProgressHabits: allowInProgressHabits);
 
   @override
   HabitsDisplayFilter allowArchivedHabits(bool allowArchivedHabits) =>
-      this(allowArchivedHabits: allowArchivedHabits);
+      call(allowArchivedHabits: allowArchivedHabits);
 
   @override
   HabitsDisplayFilter allowCompleteHabits(bool allowCompleteHabits) =>
-      this(allowCompleteHabits: allowCompleteHabits);
+      call(allowCompleteHabits: allowCompleteHabits);
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HabitsDisplayFilter(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `HabitsDisplayFilter(...).copyWith.fieldName(value)`.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitsDisplayFilter(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitsDisplayFilter call({
     Object? allowInProgressHabits = const $CopyWithPlaceholder(),
     Object? allowArchivedHabits = const $CopyWithPlaceholder(),
@@ -63,15 +65,20 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
   }) {
     return HabitsDisplayFilter(
       allowInProgressHabits:
-          allowInProgressHabits == const $CopyWithPlaceholder()
-              ? _value.allowInProgressHabits
-              // ignore: cast_nullable_to_non_nullable
-              : allowInProgressHabits as bool,
-      allowArchivedHabits: allowArchivedHabits == const $CopyWithPlaceholder()
+          allowInProgressHabits == const $CopyWithPlaceholder() ||
+              allowInProgressHabits == null
+          ? _value.allowInProgressHabits
+          // ignore: cast_nullable_to_non_nullable
+          : allowInProgressHabits as bool,
+      allowArchivedHabits:
+          allowArchivedHabits == const $CopyWithPlaceholder() ||
+              allowArchivedHabits == null
           ? _value.allowArchivedHabits
           // ignore: cast_nullable_to_non_nullable
           : allowArchivedHabits as bool,
-      allowCompleteHabits: allowCompleteHabits == const $CopyWithPlaceholder()
+      allowCompleteHabits:
+          allowCompleteHabits == const $CopyWithPlaceholder() ||
+              allowCompleteHabits == null
           ? _value.allowCompleteHabits
           // ignore: cast_nullable_to_non_nullable
           : allowCompleteHabits as bool,
@@ -80,26 +87,29 @@ class _$HabitsDisplayFilterCWProxyImpl implements _$HabitsDisplayFilterCWProxy {
 }
 
 extension $HabitsDisplayFilterCopyWith on HabitsDisplayFilter {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitsDisplayFilter.copyWith(...)` or like so:`instanceOfHabitsDisplayFilter.copyWith.fieldName(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitsDisplayFilter.copyWith(...)` or `instanceOfHabitsDisplayFilter.copyWith.fieldName(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitsDisplayFilterCWProxy get copyWith =>
       _$HabitsDisplayFilterCWProxyImpl(this);
 }
 
 abstract class _$HabitDisplayOpConfigCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDisplayOpConfig call({
     UserAction changeRecordStatus,
     UserAction openRecordStatusDialog,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitDisplayOpConfig.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitDisplayOpConfig.copyWith(...)`.
 class _$HabitDisplayOpConfigCWProxyImpl
     implements _$HabitDisplayOpConfigCWProxy {
   const _$HabitDisplayOpConfigCWProxyImpl(this._value);
@@ -107,45 +117,50 @@ class _$HabitDisplayOpConfigCWProxyImpl
   final HabitDisplayOpConfig _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDisplayOpConfig(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDisplayOpConfig call({
     Object? changeRecordStatus = const $CopyWithPlaceholder(),
     Object? openRecordStatusDialog = const $CopyWithPlaceholder(),
   }) {
     return HabitDisplayOpConfig(
-      changeRecordStatus: changeRecordStatus == const $CopyWithPlaceholder()
+      changeRecordStatus:
+          changeRecordStatus == const $CopyWithPlaceholder() ||
+              changeRecordStatus == null
           ? _value.changeRecordStatus
           // ignore: cast_nullable_to_non_nullable
           : changeRecordStatus as UserAction,
       openRecordStatusDialog:
-          openRecordStatusDialog == const $CopyWithPlaceholder()
-              ? _value.openRecordStatusDialog
-              // ignore: cast_nullable_to_non_nullable
-              : openRecordStatusDialog as UserAction,
+          openRecordStatusDialog == const $CopyWithPlaceholder() ||
+              openRecordStatusDialog == null
+          ? _value.openRecordStatusDialog
+          // ignore: cast_nullable_to_non_nullable
+          : openRecordStatusDialog as UserAction,
     );
   }
 }
 
 extension $HabitDisplayOpConfigCopyWith on HabitDisplayOpConfig {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitDisplayOpConfig.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitDisplayOpConfig.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitDisplayOpConfigCWProxy get copyWith =>
       _$HabitDisplayOpConfigCWProxyImpl(this);
 }
 
 abstract class _$HabitDisplaySearchOptionsCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDisplaySearchOptions(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDisplaySearchOptions call({
     String keyword,
     bool activated,
@@ -154,7 +169,8 @@ abstract class _$HabitDisplaySearchOptionsCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
 class _$HabitDisplaySearchOptionsCWProxyImpl
     implements _$HabitDisplaySearchOptionsCWProxy {
   const _$HabitDisplaySearchOptionsCWProxyImpl(this._value);
@@ -162,13 +178,13 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
   final HabitDisplaySearchOptions _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDisplaySearchOptions(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDisplaySearchOptions call({
     Object? keyword = const $CopyWithPlaceholder(),
     Object? activated = const $CopyWithPlaceholder(),
@@ -176,19 +192,19 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
     Object? types = const $CopyWithPlaceholder(),
   }) {
     return HabitDisplaySearchOptions(
-      keyword: keyword == const $CopyWithPlaceholder()
+      keyword: keyword == const $CopyWithPlaceholder() || keyword == null
           ? _value.keyword
           // ignore: cast_nullable_to_non_nullable
           : keyword as String,
-      activated: activated == const $CopyWithPlaceholder()
+      activated: activated == const $CopyWithPlaceholder() || activated == null
           ? _value.activated
           // ignore: cast_nullable_to_non_nullable
           : activated as bool,
-      completed: completed == const $CopyWithPlaceholder()
+      completed: completed == const $CopyWithPlaceholder() || completed == null
           ? _value.completed
           // ignore: cast_nullable_to_non_nullable
           : completed as bool,
-      types: types == const $CopyWithPlaceholder()
+      types: types == const $CopyWithPlaceholder() || types == null
           ? _value.types
           // ignore: cast_nullable_to_non_nullable
           : types as Set<HabitType>,
@@ -197,7 +213,8 @@ class _$HabitDisplaySearchOptionsCWProxyImpl
 }
 
 extension $HabitDisplaySearchOptionsCopyWith on HabitDisplaySearchOptions {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitDisplaySearchOptions.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitDisplaySearchOptionsCWProxy get copyWith =>
       _$HabitDisplaySearchOptionsCWProxyImpl(this);
@@ -215,29 +232,33 @@ HabitsDisplayFilter _$HabitsDisplayFilterFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$HabitsDisplayFilterToJson(
-        HabitsDisplayFilter instance) =>
-    <String, dynamic>{
-      'allowActivedHabits': instance.allowInProgressHabits,
-      'allowArchivedHabits': instance.allowArchivedHabits,
-      'allowCompleteHabits': instance.allowCompleteHabits,
-    };
+  HabitsDisplayFilter instance,
+) => <String, dynamic>{
+  'allowActivedHabits': instance.allowInProgressHabits,
+  'allowArchivedHabits': instance.allowArchivedHabits,
+  'allowCompleteHabits': instance.allowCompleteHabits,
+};
 
 HabitDisplayOpConfig _$HabitDisplayOpConfigFromJson(
-        Map<String, dynamic> json) =>
-    HabitDisplayOpConfig(
-      changeRecordStatus:
-          $enumDecode(_$UserActionEnumMap, json['change_record_status']),
-      openRecordStatusDialog:
-          $enumDecode(_$UserActionEnumMap, json['open_record_status_dialog']),
-    );
+  Map<String, dynamic> json,
+) => HabitDisplayOpConfig(
+  changeRecordStatus: $enumDecode(
+    _$UserActionEnumMap,
+    json['change_record_status'],
+  ),
+  openRecordStatusDialog: $enumDecode(
+    _$UserActionEnumMap,
+    json['open_record_status_dialog'],
+  ),
+);
 
 Map<String, dynamic> _$HabitDisplayOpConfigToJson(
-        HabitDisplayOpConfig instance) =>
-    <String, dynamic>{
-      'change_record_status': _$UserActionEnumMap[instance.changeRecordStatus]!,
-      'open_record_status_dialog':
-          _$UserActionEnumMap[instance.openRecordStatusDialog]!,
-    };
+  HabitDisplayOpConfig instance,
+) => <String, dynamic>{
+  'change_record_status': _$UserActionEnumMap[instance.changeRecordStatus]!,
+  'open_record_status_dialog':
+      _$UserActionEnumMap[instance.openRecordStatusDialog]!,
+};
 
 const _$UserActionEnumMap = {
   UserAction.nothing: 'nothing',

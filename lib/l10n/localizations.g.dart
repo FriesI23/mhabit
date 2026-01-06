@@ -80,7 +80,7 @@ import 'localizations_zh.g.dart';
 /// property.
 abstract class L10n {
   L10n(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -102,11 +102,11 @@ abstract class L10n {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -129,7 +129,7 @@ abstract class L10n {
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
   /// The human-readable name of the language used for the locale.
@@ -1529,7 +1529,9 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Imported {completeCount}/{totalCount}'**
   String appSetting_importDialog_importingTitle(
-      int completeCount, int totalCount);
+    int completeCount,
+    int totalCount,
+  );
 
   /// No description provided for @appSetting_importDialog_completeTitle.
   ///
@@ -2016,7 +2018,9 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Default: {seconds, plural, =0 {Infinite} other {{seconds}{unit}}}'**
   String appSync_serverEditor_connTimeoutTile_hintText(
-      int seconds, String unit);
+    int seconds,
+    String unit,
+  );
 
   /// No description provided for @appSync_serverEditor_connTimeoutTile_unitText.
   ///
@@ -2563,7 +2567,9 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'{splitName}: \"{splitChar}\"'**
   String common_customDateTimeFormatPicker_sep_formatter(
-      String splitName, String splitChar);
+    String splitName,
+    String splitChar,
+  );
 
   /// No description provided for @common_customDateTimeFormatPicker_12Hour_text.
   ///
@@ -2912,26 +2918,26 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
 
   @override
   bool isSupported(Locale locale) => <String>[
-        'ar',
-        'cs',
-        'de',
-        'en',
-        'es',
-        'fa',
-        'fr',
-        'he',
-        'hu',
-        'it',
-        'ja',
-        'nb',
-        'pl',
-        'pt',
-        'ru',
-        'tr',
-        'uk',
-        'vi',
-        'zh'
-      ].contains(locale.languageCode);
+    'ar',
+    'cs',
+    'de',
+    'en',
+    'es',
+    'fa',
+    'fr',
+    'he',
+    'hu',
+    'it',
+    'ja',
+    'nb',
+    'pl',
+    'pt',
+    'ru',
+    'tr',
+    'uk',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -2993,8 +2999,9 @@ L10n lookupL10n(Locale locale) {
   }
 
   throw FlutterError(
-      'L10n.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'L10n.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

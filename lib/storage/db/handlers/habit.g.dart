@@ -11,18 +11,19 @@ part of 'habit.dart';
 // **************************************************************************
 
 abstract class _$HabitDBCellCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDBCell(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDBCell call({
-    int? id,
+    DBID? id,
     int? type,
     int? createT,
     int? modifyT,
-    String? uuid,
+    HabitUUID? uuid,
     int? status,
     String? name,
     String? desc,
@@ -36,24 +37,25 @@ abstract class _$HabitDBCellCWProxy {
     int? targetDays,
     String? remindCustom,
     String? remindQuestion,
-    num? sortPosition,
+    HabitSortPostion? sortPosition,
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfHabitDBCell.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfHabitDBCell.copyWith(...)`.
 class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
   const _$HabitDBCellCWProxyImpl(this._value);
 
   final HabitDBCell _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// HabitDBCell(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   HabitDBCell call({
     Object? id = const $CopyWithPlaceholder(),
     Object? type = const $CopyWithPlaceholder(),
@@ -79,7 +81,7 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
       id: id == const $CopyWithPlaceholder()
           ? _value.id
           // ignore: cast_nullable_to_non_nullable
-          : id as int?,
+          : id as DBID?,
       type: type == const $CopyWithPlaceholder()
           ? _value.type
           // ignore: cast_nullable_to_non_nullable
@@ -95,7 +97,7 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
       uuid: uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
-          : uuid as String?,
+          : uuid as HabitUUID?,
       status: status == const $CopyWithPlaceholder()
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
@@ -151,13 +153,14 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
       sortPosition: sortPosition == const $CopyWithPlaceholder()
           ? _value.sortPosition
           // ignore: cast_nullable_to_non_nullable
-          : sortPosition as num?,
+          : sortPosition as HabitSortPostion?,
     );
   }
 }
 
 extension $HabitDBCellCopyWith on HabitDBCell {
-  /// Returns a callable class that can be used as follows: `instanceOfHabitDBCell.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfHabitDBCell.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$HabitDBCellCWProxy get copyWith => _$HabitDBCellCWProxyImpl(this);
 }
@@ -167,46 +170,46 @@ extension $HabitDBCellCopyWith on HabitDBCell {
 // **************************************************************************
 
 HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
-      id: (json['id_'] as num?)?.toInt(),
-      type: (json['type_'] as num?)?.toInt(),
-      createT: (json['create_t'] as num?)?.toInt(),
-      modifyT: (json['modify_t'] as num?)?.toInt(),
-      uuid: json['uuid'] as String?,
-      status: (json['status'] as num?)?.toInt(),
-      name: json['name'] as String?,
-      desc: json['desc'] as String?,
-      color: (json['color'] as num?)?.toInt(),
-      dailyGoal: json['daily_goal'] as num?,
-      dailyGoalUnit: json['daily_goal_unit'] as String?,
-      dailyGoalExtra: json['daily_goal_extra'] as num?,
-      freqType: (json['freq_type'] as num?)?.toInt(),
-      freqCustom: json['freq_custom'] as String?,
-      startDate: (json['start_date'] as num?)?.toInt(),
-      targetDays: (json['target_days'] as num?)?.toInt(),
-      remindCustom: json['remind_cutsom'] as String?,
-      remindQuestion: json['remind_question'] as String?,
-      sortPosition: json['sort_position'] as num?,
-    );
+  id: (json['id_'] as num?)?.toInt(),
+  type: (json['type_'] as num?)?.toInt(),
+  createT: (json['create_t'] as num?)?.toInt(),
+  modifyT: (json['modify_t'] as num?)?.toInt(),
+  uuid: json['uuid'] as String?,
+  status: (json['status'] as num?)?.toInt(),
+  name: json['name'] as String?,
+  desc: json['desc'] as String?,
+  color: (json['color'] as num?)?.toInt(),
+  dailyGoal: json['daily_goal'] as num?,
+  dailyGoalUnit: json['daily_goal_unit'] as String?,
+  dailyGoalExtra: json['daily_goal_extra'] as num?,
+  freqType: (json['freq_type'] as num?)?.toInt(),
+  freqCustom: json['freq_custom'] as String?,
+  startDate: (json['start_date'] as num?)?.toInt(),
+  targetDays: (json['target_days'] as num?)?.toInt(),
+  remindCustom: json['remind_cutsom'] as String?,
+  remindQuestion: json['remind_question'] as String?,
+  sortPosition: json['sort_position'] as num?,
+);
 
 Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) =>
     <String, dynamic>{
-      if (instance.id case final value?) 'id_': value,
-      if (instance.type case final value?) 'type_': value,
-      if (instance.createT case final value?) 'create_t': value,
-      if (instance.modifyT case final value?) 'modify_t': value,
-      if (instance.uuid case final value?) 'uuid': value,
-      if (instance.status case final value?) 'status': value,
-      if (instance.name case final value?) 'name': value,
-      if (instance.desc case final value?) 'desc': value,
-      if (instance.color case final value?) 'color': value,
-      if (instance.dailyGoal case final value?) 'daily_goal': value,
-      if (instance.dailyGoalUnit case final value?) 'daily_goal_unit': value,
-      if (instance.dailyGoalExtra case final value?) 'daily_goal_extra': value,
-      if (instance.freqType case final value?) 'freq_type': value,
-      if (instance.freqCustom case final value?) 'freq_custom': value,
-      if (instance.startDate case final value?) 'start_date': value,
-      if (instance.targetDays case final value?) 'target_days': value,
-      if (instance.remindCustom case final value?) 'remind_cutsom': value,
-      if (instance.remindQuestion case final value?) 'remind_question': value,
-      if (instance.sortPosition case final value?) 'sort_position': value,
+      'id_': ?instance.id,
+      'type_': ?instance.type,
+      'create_t': ?instance.createT,
+      'modify_t': ?instance.modifyT,
+      'uuid': ?instance.uuid,
+      'status': ?instance.status,
+      'name': ?instance.name,
+      'desc': ?instance.desc,
+      'color': ?instance.color,
+      'daily_goal': ?instance.dailyGoal,
+      'daily_goal_unit': ?instance.dailyGoalUnit,
+      'daily_goal_extra': ?instance.dailyGoalExtra,
+      'freq_type': ?instance.freqType,
+      'freq_custom': ?instance.freqCustom,
+      'start_date': ?instance.startDate,
+      'target_days': ?instance.targetDays,
+      'remind_cutsom': ?instance.remindCustom,
+      'remind_question': ?instance.remindQuestion,
+      'sort_position': ?instance.sortPosition,
     };

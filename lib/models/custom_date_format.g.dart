@@ -11,12 +11,13 @@ part of 'custom_date_format.dart';
 // **************************************************************************
 
 abstract class _$CustomDateYmdHmsConfigCWProxy {
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// CustomDateYmdHmsConfig(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   CustomDateYmdHmsConfig call({
     YearMonthDayFormtEnum ymdFormat,
     DateSplitCharEnum splitChar,
@@ -29,7 +30,8 @@ abstract class _$CustomDateYmdHmsConfigCWProxy {
   });
 }
 
-/// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCustomDateYmdHmsConfig.copyWith(...)`.
+/// Callable proxy for `copyWith` functionality.
+/// Use as `instanceOfCustomDateYmdHmsConfig.copyWith(...)`.
 class _$CustomDateYmdHmsConfigCWProxyImpl
     implements _$CustomDateYmdHmsConfigCWProxy {
   const _$CustomDateYmdHmsConfigCWProxyImpl(this._value);
@@ -37,13 +39,13 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
   final CustomDateYmdHmsConfig _value;
 
   @override
-
-  /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored.
+  /// Creates a new instance with the provided field values.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored.
   ///
-  /// Usage
+  /// Example:
   /// ```dart
   /// CustomDateYmdHmsConfig(...).copyWith(id: 12, name: "My name")
-  /// ````
+  /// ```
   CustomDateYmdHmsConfig call({
     Object? ymdFormat = const $CopyWithPlaceholder(),
     Object? splitChar = const $CopyWithPlaceholder(),
@@ -55,27 +57,34 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
     Object? applyHeatmapCal = const $CopyWithPlaceholder(),
   }) {
     return CustomDateYmdHmsConfig(
-      ymdFormat: ymdFormat == const $CopyWithPlaceholder()
+      ymdFormat: ymdFormat == const $CopyWithPlaceholder() || ymdFormat == null
           ? _value.ymdFormat
           // ignore: cast_nullable_to_non_nullable
           : ymdFormat as YearMonthDayFormtEnum,
-      splitChar: splitChar == const $CopyWithPlaceholder()
+      splitChar: splitChar == const $CopyWithPlaceholder() || splitChar == null
           ? _value.splitChar
           // ignore: cast_nullable_to_non_nullable
           : splitChar as DateSplitCharEnum,
-      twelveHoursOn: twelveHoursOn == const $CopyWithPlaceholder()
+      twelveHoursOn:
+          twelveHoursOn == const $CopyWithPlaceholder() || twelveHoursOn == null
           ? _value.twelveHoursOn
           // ignore: cast_nullable_to_non_nullable
           : twelveHoursOn as bool,
-      useMonthWithName: useMonthWithName == const $CopyWithPlaceholder()
+      useMonthWithName:
+          useMonthWithName == const $CopyWithPlaceholder() ||
+              useMonthWithName == null
           ? _value.useMonthWithName
           // ignore: cast_nullable_to_non_nullable
           : useMonthWithName as bool,
-      useSystemFormat: useSystemFormat == const $CopyWithPlaceholder()
+      useSystemFormat:
+          useSystemFormat == const $CopyWithPlaceholder() ||
+              useSystemFormat == null
           ? _value.useSystemFormat
           // ignore: cast_nullable_to_non_nullable
           : useSystemFormat as bool,
-      useLeadingZero: useLeadingZero == const $CopyWithPlaceholder()
+      useLeadingZero:
+          useLeadingZero == const $CopyWithPlaceholder() ||
+              useLeadingZero == null
           ? _value.useLeadingZero
           // ignore: cast_nullable_to_non_nullable
           : useLeadingZero as bool,
@@ -92,7 +101,8 @@ class _$CustomDateYmdHmsConfigCWProxyImpl
 }
 
 extension $CustomDateYmdHmsConfigCopyWith on CustomDateYmdHmsConfig {
-  /// Returns a callable class that can be used as follows: `instanceOfCustomDateYmdHmsConfig.copyWith(...)`.
+  /// Returns a callable class used to build a new instance with modified fields.
+  /// Example: `instanceOfCustomDateYmdHmsConfig.copyWith(...)`.
   // ignore: library_private_types_in_public_api
   _$CustomDateYmdHmsConfigCWProxy get copyWith =>
       _$CustomDateYmdHmsConfigCWProxyImpl(this);
@@ -103,30 +113,30 @@ extension $CustomDateYmdHmsConfigCopyWith on CustomDateYmdHmsConfig {
 // **************************************************************************
 
 CustomDateYmdHmsConfig _$CustomDateYmdHmsConfigFromJson(
-        Map<String, dynamic> json) =>
-    CustomDateYmdHmsConfig(
-      ymdFormat: $enumDecode(_$YearMonthDayFormtEnumEnumMap, json['ymdFormat']),
-      splitChar: $enumDecode(_$DateSplitCharEnumEnumMap, json['splitChar']),
-      twelveHoursOn: json['twelveHoursOn'] as bool,
-      useMonthWithName: json['useMonthWithName'] as bool? ?? false,
-      useSystemFormat: json['useSystemFormat'] as bool? ?? true,
-      useLeadingZero: json['useLeadingZero'] as bool? ?? false,
-      applyFreqChart: json['applyFreqChart'] as bool?,
-      applyHeatmapCal: json['applyHeatmapCal'] as bool?,
-    );
+  Map<String, dynamic> json,
+) => CustomDateYmdHmsConfig(
+  ymdFormat: $enumDecode(_$YearMonthDayFormtEnumEnumMap, json['ymdFormat']),
+  splitChar: $enumDecode(_$DateSplitCharEnumEnumMap, json['splitChar']),
+  twelveHoursOn: json['twelveHoursOn'] as bool,
+  useMonthWithName: json['useMonthWithName'] as bool? ?? false,
+  useSystemFormat: json['useSystemFormat'] as bool? ?? true,
+  useLeadingZero: json['useLeadingZero'] as bool? ?? false,
+  applyFreqChart: json['applyFreqChart'] as bool?,
+  applyHeatmapCal: json['applyHeatmapCal'] as bool?,
+);
 
 Map<String, dynamic> _$CustomDateYmdHmsConfigToJson(
-        CustomDateYmdHmsConfig instance) =>
-    <String, dynamic>{
-      'ymdFormat': _$YearMonthDayFormtEnumEnumMap[instance.ymdFormat]!,
-      'splitChar': _$DateSplitCharEnumEnumMap[instance.splitChar]!,
-      'twelveHoursOn': instance.twelveHoursOn,
-      'useMonthWithName': instance.useMonthWithName,
-      'useSystemFormat': instance.useSystemFormat,
-      'useLeadingZero': instance.useLeadingZero,
-      'applyFreqChart': instance.applyFreqChart,
-      'applyHeatmapCal': instance.applyHeatmapCal,
-    };
+  CustomDateYmdHmsConfig instance,
+) => <String, dynamic>{
+  'ymdFormat': _$YearMonthDayFormtEnumEnumMap[instance.ymdFormat]!,
+  'splitChar': _$DateSplitCharEnumEnumMap[instance.splitChar]!,
+  'twelveHoursOn': instance.twelveHoursOn,
+  'useMonthWithName': instance.useMonthWithName,
+  'useSystemFormat': instance.useSystemFormat,
+  'useLeadingZero': instance.useLeadingZero,
+  'applyFreqChart': instance.applyFreqChart,
+  'applyHeatmapCal': instance.applyHeatmapCal,
+};
 
 const _$YearMonthDayFormtEnumEnumMap = {
   YearMonthDayFormtEnum.yearMonthDay: 1,

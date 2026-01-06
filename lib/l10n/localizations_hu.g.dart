@@ -871,7 +871,9 @@ class L10nHu extends L10n {
 
   @override
   String appSetting_importDialog_importingTitle(
-      int completeCount, int totalCount) {
+    int completeCount,
+    int totalCount,
+  ) {
     return 'Importálva $completeCount/$totalCount';
   }
 
@@ -1009,7 +1011,9 @@ class L10nHu extends L10n {
   String appSync_nowTile_syncingText_withPrt(num prt) {
     final intl.NumberFormat prtNumberFormat =
         intl.NumberFormat.decimalPercentPattern(
-            locale: localeName, decimalDigits: 2);
+          locale: localeName,
+          decimalDigits: 2,
+        );
     final String prtString = prtNumberFormat.format(prt);
 
     return 'Szinkronizálás: $prtString';
@@ -1042,46 +1046,37 @@ class L10nHu extends L10n {
 
   @override
   String appSync_webdav_resultStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'Befejezve',
-        'cancelled': 'Mégsem',
-        'failed': 'Sikertelen',
-        'multi': 'Többszörös állapotok',
-        'other': 'Ismeretlen állapot',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'Befejezve',
+      'cancelled': 'Mégsem',
+      'failed': 'Sikertelen',
+      'multi': 'Többszörös állapotok',
+      'other': 'Ismeretlen állapot',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultStatus_withReason(String status, String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      status,
-      {
-        'success': 'Befejezve ($reason miatt)',
-        'cancelled': 'Mégsem ($reason miatt)',
-        'failed': 'Sikertelen ($reason miatt)',
-        'multi': 'Többszörös állapotok ($reason miatt)',
-        'other': 'Ismeretlen állapot',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'success': 'Befejezve ($reason miatt)',
+      'cancelled': 'Mégsem ($reason miatt)',
+      'failed': 'Sikertelen ($reason miatt)',
+      'multi': 'Többszörös állapotok ($reason miatt)',
+      'other': 'Ismeretlen állapot',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_webdav_resultReason(String reason) {
-    String _temp0 = intl.Intl.selectLogic(
-      reason,
-      {
-        'error': 'Hiba',
-        'userAction': 'Felhasználói művelet szükséges',
-        'missingHabitUuid': 'Hiányzó szokás UUID',
-        'empty': 'Üres adat',
-        'other': 'Ismeretlen ok',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'error': 'Hiba',
+      'userAction': 'Felhasználói művelet szükséges',
+      'missingHabitUuid': 'Hiányzó szokás UUID',
+      'empty': 'Üres adat',
+      'other': 'Ismeretlen ok',
+    });
     return '$_temp0';
   }
 
@@ -1114,63 +1109,48 @@ class L10nHu extends L10n {
 
   @override
   String appSync_exportAllLogsTile_subtitleText(String isEmpty) {
-    String _temp0 = intl.Intl.selectLogic(
-      isEmpty,
-      {
-        'true': 'Nincs napló',
-        'false': 'Koppints az exportáláshoz',
-        'other': 'betöltés...',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isEmpty, {
+      'true': 'Nincs napló',
+      'false': 'Koppints az exportáláshoz',
+      'other': 'betöltés...',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncServerType_text(String name, String isCurrent) {
-    String _temp0 = intl.Intl.selectLogic(
-      isCurrent,
-      {
-        'true': 'Aktuális: ',
-        'other': '',
-      },
-    );
-    String _temp1 = intl.Intl.selectLogic(
-      name,
-      {
-        'webdav': 'WebDAV',
-        'fake': 'Fake (Csak hibakereséshez)',
-        'other': 'Ismeretlen ($name)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(isCurrent, {
+      'true': 'Aktuális: ',
+      'other': '',
+    });
+    String _temp1 = intl.Intl.selectLogic(name, {
+      'webdav': 'WebDAV',
+      'fake': 'Fake (Csak hibakereséshez)',
+      'other': 'Ismeretlen ($name)',
+    });
     return '$_temp0$_temp1';
   }
 
   @override
   String appSync_networkType_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'Mobil',
-        'wifi': 'Wi-Fi',
-        'other': 'Ismeretlen',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'Mobil',
+      'wifi': 'Wi-Fi',
+      'other': 'Ismeretlen',
+    });
     return '$_temp0';
   }
 
   @override
   String appSync_syncInterval_text(String name) {
-    String _temp0 = intl.Intl.selectLogic(
-      name,
-      {
-        'manual': 'Kézi',
-        'minute5': '5 perc',
-        'minute15': '15 perc',
-        'minute30': '30 perc',
-        'hour1': '1 óra',
-        'other': 'Ismeretlen',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(name, {
+      'manual': 'Kézi',
+      'minute5': '5 perc',
+      'minute15': '15 perc',
+      'minute30': '30 perc',
+      'hour1': '1 óra',
+      'other': 'Ismeretlen',
+    });
     return '$_temp0';
   }
 
@@ -1271,7 +1251,9 @@ class L10nHu extends L10n {
 
   @override
   String appSync_serverEditor_connTimeoutTile_hintText(
-      int seconds, String unit) {
+    int seconds,
+    String unit,
+  ) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
@@ -1305,14 +1287,11 @@ class L10nHu extends L10n {
 
   @override
   String appSync_serverEditor_netTypeTile_typeTooltip(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'mobile': 'Szinkron mobilhálózaton',
-        'wifi': 'Szinkron Wi-Fi-n',
-        'other': 'Ismeretlen',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'mobile': 'Szinkron mobilhálózaton',
+      'wifi': 'Szinkron Wi-Fi-n',
+      'other': 'Ismeretlen',
+    });
     return '$_temp0';
   }
 
@@ -1325,14 +1304,11 @@ class L10nHu extends L10n {
 
   @override
   String appSync_noti_syncing_title(String synced, String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      synced,
-      {
-        'synced': 'Szinkron kész ($type)',
-        'failed': 'Szinkron sikertelen ($type)',
-        'other': 'Szinkron folyamatban ($type)',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(synced, {
+      'synced': 'Szinkron kész ($type)',
+      'failed': 'Szinkron sikertelen ($type)',
+      'other': 'Szinkron folyamatban ($type)',
+    });
     return '$_temp0';
   }
 
@@ -1626,7 +1602,9 @@ class L10nHu extends L10n {
 
   @override
   String common_customDateTimeFormatPicker_sep_formatter(
-      String splitName, String splitChar) {
+    String splitName,
+    String splitChar,
+  ) {
     return '$splitName: \"$splitChar\"';
   }
 
@@ -1783,15 +1761,12 @@ class L10nHu extends L10n {
 
   @override
   String confirmDialog_confirm_text(String type) {
-    String _temp0 = intl.Intl.selectLogic(
-      type,
-      {
-        'save': 'Mentés',
-        'exit': 'Kilépés',
-        'delete': 'Törlés',
-        'other': 'Megerősítés',
-      },
-    );
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'save': 'Mentés',
+      'exit': 'Kilépés',
+      'delete': 'Törlés',
+      'other': 'Megerősítés',
+    });
     return '$_temp0';
   }
 
