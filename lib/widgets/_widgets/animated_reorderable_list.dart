@@ -14,5 +14,5 @@
 
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 
-typedef SliverReorderableAnimatedList<E extends Object>
-    = ReorderableAnimatedListImpl<E>;
+typedef SliverReorderableAnimatedList<E extends Object> =
+    ReorderableAnimatedListImpl<E>;

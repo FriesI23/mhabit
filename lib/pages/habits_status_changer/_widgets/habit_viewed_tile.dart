@@ -48,9 +48,11 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                  color: colorData?.getColorContainer(data.colorType) ??
-                      themeData.colorScheme.primaryContainer,
-                  width: 6.0),
+                color:
+                    colorData?.getColorContainer(data.colorType) ??
+                    themeData.colorScheme.primaryContainer,
+                width: 6.0,
+              ),
             ),
           ),
           child: cell,

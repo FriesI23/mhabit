@@ -19,10 +19,11 @@ import '../../../models/habit_form.dart';
 import '../../../models/habit_reminder.dart';
 import '../../../widgets/widgets.dart';
 
-Future<HabitReminder?> showHabitReminderTypePickerDialog(
-    {required BuildContext context,
-    required HabitReminder reminder,
-    HabitColorType? colorType}) async {
+Future<HabitReminder?> showHabitReminderTypePickerDialog({
+  required BuildContext context,
+  required HabitReminder reminder,
+  HabitColorType? colorType,
+}) async {
   return showDialog<HabitReminder>(
     context: context,
     builder: (context) => HabitReminderTypePickerDialog(

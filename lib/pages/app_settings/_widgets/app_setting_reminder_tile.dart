@@ -57,7 +57,8 @@ class _AppSettingReminderTileState extends State<AppSettingReminderTile> {
       onTap: () async {
         final result = await showTimePicker(
           context: context,
-          initialTime: widget.config.timeOfDay ??
+          initialTime:
+              widget.config.timeOfDay ??
               AppReminderConfig.dailyNight.timeOfDay!,
         );
         if (!mounted || result == null) return;

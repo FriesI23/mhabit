@@ -30,8 +30,9 @@ class PageBackButton extends StatelessWidget {
     this.onPressed,
   });
 
-  void _onPressedCallback(BuildContext context) => dismissAllToolTips()
-      .then((_) => context.mounted ? Navigator.maybePop(context) : false);
+  void _onPressedCallback(BuildContext context) => dismissAllToolTips().then(
+    (_) => context.mounted ? Navigator.maybePop(context) : false,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +40,16 @@ class PageBackButton extends StatelessWidget {
       case PageBackReason.back:
         return Center(
           child: BackButton(
-              onPressed: onPressed ?? () => _onPressedCallback(context),
-              color: color),
+            onPressed: onPressed ?? () => _onPressedCallback(context),
+            color: color,
+          ),
         );
       case PageBackReason.close:
         return Center(
           child: CloseButton(
-              onPressed: onPressed ?? () => _onPressedCallback(context),
-              color: color),
+            onPressed: onPressed ?? () => _onPressedCallback(context),
+            color: color,
+          ),
         );
     }
   }

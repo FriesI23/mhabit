@@ -24,8 +24,8 @@ import '../logging/helper.dart';
 import '../providers/commons.dart';
 import 'profile/profile_helper.dart';
 
-typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> = T Function(
-    SharedPreferences pref);
+typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> =
+    T Function(SharedPreferences pref);
 
 class ProfileViewModel extends ChangeNotifier
     implements ProviderMounted, AsyncInitialization {
@@ -39,50 +39,71 @@ class ProfileViewModel extends ChangeNotifier
   bool _loaded = false;
 
   ProfileViewModel(Iterable<ProfileHandlerBuilder> builders)
-      : _handlerBuilders = builders;
+    : _handlerBuilders = builders;
 
-  CancelableCompleter<bool?> doInit(
-      {required bool reinit, Duration timeout = const Duration(seconds: 5)}) {
+  CancelableCompleter<bool?> doInit({
+    required bool reinit,
+    Duration timeout = const Duration(seconds: 5),
+  }) {
     final completer = CancelableCompleter<bool>();
     (reinit
             ? _loaded
-                ? _pref.reload()
-                : Future.value()
+                  ? _pref.reload()
+                  : Future.value()
             : SharedPreferences.getInstance().then((inst) async {
                 _pref = inst;
                 _loaded = true;
                 if (kDebugMode && debugClearSharedPrefWhenStart) {
-                  appLog.profile
-                      .info("$runtimeType.init", ex: ["clear preferences"]);
+                  appLog.profile.info(
+                    "$runtimeType.init",
+                    ex: ["clear preferences"],
+                  );
                   await clear();
                 }
               }))
         .timeout(timeout)
         .onError(Future.error)
         .then((_) {
-      if (completer.isCanceled == true) return;
-      final handlerKeyColl = <String, Type>{};
-      _handlers
-        ..clear()
-        ..addAll(
-          Map.fromEntries(_handlerBuilders.map((e) => e.call(_pref)).where((e) {
-            if (handlerKeyColl.containsKey(e.key)) {
-              appLog.profile.error("$runtimeType.init",
-                  ex: ["load handler failed", e, e.key, handlerKeyColl[e.key]]);
-              if (kDebugMode) throw FlutterError("load handler failed: $e");
-              return false;
-            }
-            handlerKeyColl[e.key] = e.runtimeType;
-            return true;
-          }).map((e) => MapEntry(e.runtimeType, e))),
-        );
-      completer.complete(true);
-    }).onError((e, s) {
-      if (!completer.isCompleted) {
-        e != null ? completer.completeError(e, s) : completer.complete(false);
-      }
-      if (e != null) return Future.error(e, s);
-    });
+          if (completer.isCanceled == true) return;
+          final handlerKeyColl = <String, Type>{};
+          _handlers
+            ..clear()
+            ..addAll(
+              Map.fromEntries(
+                _handlerBuilders
+                    .map((e) => e.call(_pref))
+                    .where((e) {
+                      if (handlerKeyColl.containsKey(e.key)) {
+                        appLog.profile.error(
+                          "$runtimeType.init",
+                          ex: [
+                            "load handler failed",
+                            e,
+                            e.key,
+                            handlerKeyColl[e.key],
+                          ],
+                        );
+                        if (kDebugMode) {
+                          throw FlutterError("load handler failed: $e");
+                        }
+                        return false;
+                      }
+                      handlerKeyColl[e.key] = e.runtimeType;
+                      return true;
+                    })
+                    .map((e) => MapEntry(e.runtimeType, e)),
+              ),
+            );
+          completer.complete(true);
+        })
+        .onError((e, s) {
+          if (!completer.isCompleted) {
+            e != null
+                ? completer.completeError(e, s)
+                : completer.complete(false);
+          }
+          if (e != null) return Future.error(e, s);
+        });
     return completer;
   }
 

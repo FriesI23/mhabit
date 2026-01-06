@@ -28,9 +28,11 @@ enum HabitsRecordScrollBehavior implements EnumWithDBCode {
   @override
   int get dbCode => _code;
 
-  static HabitsRecordScrollBehavior? getFromDBCode(int dbCode,
-      {HabitsRecordScrollBehavior? withDefault =
-          HabitsRecordScrollBehavior.unknown}) {
+  static HabitsRecordScrollBehavior? getFromDBCode(
+    int dbCode, {
+    HabitsRecordScrollBehavior? withDefault =
+        HabitsRecordScrollBehavior.unknown,
+  }) {
     for (var value in HabitsRecordScrollBehavior.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -46,7 +48,8 @@ enum DonateWay {
   cryptoCurrencyAll;
 
   static final _name2EnumMap = Map<String, DonateWay>.fromEntries(
-      DonateWay.values.map((e) => MapEntry(e.name, e)));
+    DonateWay.values.map((e) => MapEntry(e.name, e)),
+  );
 
   static DonateWay? getDonateWayByName(String name, {String? prefix = "@"}) {
     if (prefix != null) name = name.replaceFirst(prefix, '');
@@ -67,8 +70,10 @@ enum UserAction implements EnumWithDBCode {
   @override
   int get dbCode => _code;
 
-  static UserAction? getFromDBCode(int dbCode,
-      {UserAction? withDefault = UserAction.nothing}) {
+  static UserAction? getFromDBCode(
+    int dbCode, {
+    UserAction? withDefault = UserAction.nothing,
+  }) {
     for (var value in UserAction.values) {
       if (value.dbCode == dbCode) return value;
     }

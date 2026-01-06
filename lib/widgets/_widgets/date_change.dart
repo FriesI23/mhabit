@@ -38,8 +38,11 @@ class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {
 
   set dateTime(HabitDate dateTime) {
     if (dateTime != _dateTime) {
-      appLog.value.info("$runtimeType.dateTime",
-          beforeVal: _dateTime, afterVal: dateTime);
+      appLog.value.info(
+        "$runtimeType.dateTime",
+        beforeVal: _dateTime,
+        afterVal: dateTime,
+      );
       _dateTime = dateTime;
       notifyListeners();
     }
@@ -49,8 +52,11 @@ class DateChangeNotifier extends ChangeNotifier implements ProviderMounted {
 
   set tzName(String tzName) {
     if (tzName != _tzName) {
-      appLog.value
-          .info("$runtimeType.tzName", beforeVal: _tzName, afterVal: tzName);
+      appLog.value.info(
+        "$runtimeType.tzName",
+        beforeVal: _tzName,
+        afterVal: tzName,
+      );
       _tzName = tzName;
       notifyListeners();
     }

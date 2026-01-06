@@ -45,8 +45,10 @@ enum HabitDisplaySortType implements EnumWithDBCode {
   @override
   int get dbCode => _code;
 
-  static HabitDisplaySortType? getFromDBCode(int dbCode,
-      {HabitDisplaySortType? withDefault = HabitDisplaySortType.manual}) {
+  static HabitDisplaySortType? getFromDBCode(
+    int dbCode, {
+    HabitDisplaySortType? withDefault = HabitDisplaySortType.manual,
+  }) {
     for (var value in HabitDisplaySortType.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -54,13 +56,13 @@ enum HabitDisplaySortType implements EnumWithDBCode {
   }
 
   static Iterable<HabitDisplaySortType> get menuOrderedList => const [
-        HabitDisplaySortType.name,
-        HabitDisplaySortType.colorType,
-        HabitDisplaySortType.status,
-        HabitDisplaySortType.progress,
-        HabitDisplaySortType.startT,
-        HabitDisplaySortType.manual,
-      ];
+    HabitDisplaySortType.name,
+    HabitDisplaySortType.colorType,
+    HabitDisplaySortType.status,
+    HabitDisplaySortType.progress,
+    HabitDisplaySortType.startT,
+    HabitDisplaySortType.manual,
+  ];
 }
 
 enum HabitDisplaySortDirection implements EnumWithDBCode {
@@ -74,9 +76,10 @@ enum HabitDisplaySortDirection implements EnumWithDBCode {
   @override
   int get dbCode => _code;
 
-  static HabitDisplaySortDirection? getFromDBCode(int dbCode,
-      {HabitDisplaySortDirection? withDefault =
-          HabitDisplaySortDirection.asc}) {
+  static HabitDisplaySortDirection? getFromDBCode(
+    int dbCode, {
+    HabitDisplaySortDirection? withDefault = HabitDisplaySortDirection.asc,
+  }) {
     for (var value in HabitDisplaySortDirection.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -98,11 +101,13 @@ class HabitDisplayEditParams {
   });
 
   HabitDisplayEditParams.fromDBCell(HabitDBCell dbCell)
-      : uuid = dbCell.uuid!,
-        createT =
-            DateTime.fromMillisecondsSinceEpoch(dbCell.createT! * onSecondMS),
-        modifyT =
-            DateTime.fromMillisecondsSinceEpoch(dbCell.modifyT! * onSecondMS);
+    : uuid = dbCell.uuid!,
+      createT = DateTime.fromMillisecondsSinceEpoch(
+        dbCell.createT! * onSecondMS,
+      ),
+      modifyT = DateTime.fromMillisecondsSinceEpoch(
+        dbCell.modifyT! * onSecondMS,
+      );
 
   @override
   String toString() {
@@ -141,9 +146,9 @@ class HabitsDisplayFilter {
   });
 
   const HabitsDisplayFilter.withDefault()
-      : allowInProgressHabits = _defaultAllowInProgressHabits,
-        allowArchivedHabits = _defualtAllowArchivedHabits,
-        allowCompleteHabits = _defaultAllowCompleteHabits;
+    : allowInProgressHabits = _defaultAllowInProgressHabits,
+      allowArchivedHabits = _defualtAllowArchivedHabits,
+      allowCompleteHabits = _defaultAllowCompleteHabits;
 
   factory HabitsDisplayFilter.fromJson(JsonMap data) =>
       _$HabitsDisplayFilterFromJson(data);
@@ -199,8 +204,8 @@ class HabitDisplayOpConfig implements JsonAdaptor {
   });
 
   const HabitDisplayOpConfig.withDefault()
-      : changeRecordStatus = UserAction.tap,
-        openRecordStatusDialog = UserAction.longTap;
+    : changeRecordStatus = UserAction.tap,
+      openRecordStatusDialog = UserAction.longTap;
 
   factory HabitDisplayOpConfig.fromJson(Map<String, dynamic> json) =>
       _$HabitDisplayOpConfigFromJson(json);
@@ -236,8 +241,11 @@ class HabitDisplaySearchOptions {
 
   bool get isNotEmpty => !isEmpty;
 
-  bool filter(HabitSummaryData data,
-      {Iterable<String>? keywords, bool caps = false}) {
+  bool filter(
+    HabitSummaryData data, {
+    Iterable<String>? keywords,
+    bool caps = false,
+  }) {
     final kws = keywords ?? [keyword];
     final name = caps ? data.name.toUpperCase() : data.name;
     if (kws.isNotEmpty && kws.any((kw) => !name.contains(kw))) return false;

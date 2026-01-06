@@ -43,9 +43,7 @@ abstract interface class AppPathProvider {
 
   factory AppPathProvider() => AppPathProvider.v2();
 
-  static Iterable<AppPathProvider> olderProviders() => [
-        AppPathProvider.v1(),
-      ];
+  static Iterable<AppPathProvider> olderProviders() => [AppPathProvider.v1()];
 }
 
 class _PreviousAppPathProviderStub implements AppPathProvider {
@@ -79,8 +77,9 @@ final class _AppPathProviderImpl extends _PreviousAppPathProviderStub
   const _AppPathProviderImpl();
 
   @override
-  Future<String> getAppDebugInfoFilePath() => getTemporaryDirectory()
-      .then((value) => buildDebugInfoFilePath(value.path));
+  Future<String> getAppDebugInfoFilePath() => getTemporaryDirectory().then(
+    (value) => buildDebugInfoFilePath(value.path),
+  );
 
   @override
   Future<String> getAppDebugLogFilePath() => getApplicationDocumentsDirectory()
@@ -112,9 +111,9 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
 
   @override
   Future<String> getDatabaseDirPath() => switch (defaultTargetPlatform) {
-        TargetPlatform.android => getDatabasesPath(),
-        _ => getApplicationSupportDirectory().then((value) => value.path),
-      };
+    TargetPlatform.android => getDatabasesPath(),
+    _ => getApplicationSupportDirectory().then((value) => value.path),
+  };
 
   @override
   Future<String> getExportHabitsDirPath() =>
@@ -123,8 +122,9 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
   @override
   Future<Directory> getSyncFailLogDir() =>
       getApplicationCacheDirectory().then((value) async {
-        final dir =
-            Directory.fromUri(value.uri.resolve(appSyncFailedLogDirSubPath));
+        final dir = Directory.fromUri(
+          value.uri.resolve(appSyncFailedLogDirSubPath),
+        );
         final path = dir.absolute.path;
         if (createdPaths.contains(path)) return dir;
         if (await dir.exists()) {
@@ -137,6 +137,7 @@ final class _AppPathProviderV2Impl implements AppPathProvider {
 
   @override
   Future<String> getSyncFailedLogFilePath([String? sessionId]) =>
-      getSyncFailLogDir()
-          .then((value) => buildSyncFailedLogFilePath(value.path, sessionId));
+      getSyncFailLogDir().then(
+        (value) => buildSyncFailedLogFilePath(value.path, sessionId),
+      );
 }

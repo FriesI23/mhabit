@@ -43,14 +43,18 @@ class AppLanguageViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
     final languange = this.languange;
     if (languange == null) {
       return l10n?.appSetting_changeLanguage_followSystem_text(
-              l10n.localeScriptName) ??
+            l10n.localeScriptName,
+          ) ??
           "Follow System";
     }
     try {
       return lookupL10n(languange).localeScriptName;
     } on FlutterError catch (e) {
-      appLog.debugger.warn("$runtimeType.getAppLanguageText",
-          ex: [l10n, fallbackText, languange], error: e);
+      appLog.debugger.warn(
+        "$runtimeType.getAppLanguageText",
+        ex: [l10n, fallbackText, languange],
+        error: e,
+      );
       return l10n?.localeScriptName ?? fallbackText;
     }
   }

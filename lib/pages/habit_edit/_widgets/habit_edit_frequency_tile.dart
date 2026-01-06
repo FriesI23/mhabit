@@ -20,7 +20,7 @@ import '../../../models/habit_freq.dart';
 class HabitEditFrequencyTile extends StatelessWidget {
   final HabitFrequency frequency;
   final void Function(BuildContext context, HabitFrequency frequency)?
-      onPressed;
+  onPressed;
 
   const HabitEditFrequencyTile({
     super.key,
@@ -34,12 +34,10 @@ class HabitEditFrequencyTile extends StatelessWidget {
     final l10n = L10n.of(context);
 
     return ListTile(
-      leading: Icon(
-        Icons.repeat,
-        color: themeData.colorScheme.outline,
-      ),
+      leading: Icon(Icons.repeat, color: themeData.colorScheme.outline),
       title: Text(
-          l10n != null ? frequency.toLocalString(l10n) : frequency.toString()),
+        l10n != null ? frequency.toLocalString(l10n) : frequency.toString(),
+      ),
       onTap: () => onPressed?.call(context, frequency),
     );
   }

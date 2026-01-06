@@ -34,13 +34,12 @@ class ColorDisplayChip extends StatelessWidget {
           Container(
             width: 42,
             decoration: BoxDecoration(
-                color: colorData?.getColor(colorType),
-                shape: BoxShape.rectangle,
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
+              color: colorData?.getColor(colorType),
+              shape: BoxShape.rectangle,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
           ),
-          const SizedBox(
-            width: 8,
-          ),
+          const SizedBox(width: 8),
           Text(
             HabitColorType.getColorName(colorType, L10n.of(context)),
             style: TextStyle(color: colorData?.getColor(colorType)),

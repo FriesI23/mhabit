@@ -20,8 +20,10 @@ import '../profile_helper.dart';
 
 class AppNotifyConfigProfileHandler
     extends ProfileHelperCovertToJsonHandler<AppNotifyConfig> {
-  AppNotifyConfigProfileHandler(super.pref,
-      {super.codec = const AppNotifyConfigProfileCodec()});
+  AppNotifyConfigProfileHandler(
+    super.pref, {
+    super.codec = const AppNotifyConfigProfileCodec(),
+  });
 
   @override
   String get key => "appNotifyConfig";

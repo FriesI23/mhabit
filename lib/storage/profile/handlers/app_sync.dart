@@ -31,7 +31,7 @@ class AppSyncSwitchHandler extends ProfileHelperCovertToBoolHandler<bool> {
 class AppSyncFetchIntervalHandler
     extends ProfileHelperCovertToIntHandler<AppSyncFetchInterval> {
   AppSyncFetchIntervalHandler(super.pref)
-      : super(codec: const AppSyncFetchIntervalCodec());
+    : super(codec: const AppSyncFetchIntervalCodec());
 
   @override
   String get key => 'syncFetchInterval';
@@ -62,15 +62,18 @@ final class _AppSyncFetchIntervalDecoder
   const _AppSyncFetchIntervalDecoder();
 
   @override
-  AppSyncFetchInterval convert(int input) =>
-      AppSyncFetchInterval.getFromDBCode(input,
-          withDefault: defaultAppSyncFetchInterval)!;
+  AppSyncFetchInterval convert(int input) => AppSyncFetchInterval.getFromDBCode(
+    input,
+    withDefault: defaultAppSyncFetchInterval,
+  )!;
 }
 
 class AppSyncServerConfigHandler
     extends ProfileHelperCovertToJsonHandler<AppSyncServer?> {
-  const AppSyncServerConfigHandler(super.pref,
-      {super.codec = const AppSyncServerConfigCodec()});
+  const AppSyncServerConfigHandler(
+    super.pref, {
+    super.codec = const AppSyncServerConfigCodec(),
+  });
 
   @override
   String get key => 'syncServer';

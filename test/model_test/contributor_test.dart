@@ -20,18 +20,18 @@ import 'package:mhabit/annotations/json_annotations.dart';
 import 'package:mhabit/models/contributor.dart';
 
 void testContributorInfo() => group("test ContributorInfo", () {
-      test("init", () {
-        const contributor = ContributorInfo(id: 1, name: "John Doe");
-        expect(contributor.id, 1);
-        expect(contributor.name, "John Doe");
-      });
-      test("fromJson", () {
-        final json = {'id': 1, 'name': 'Jane Smith'};
-        final contributor = ContributorInfo.fromJson(json);
-        expect(contributor.id, 1);
-        expect(contributor.name, 'Jane Smith');
-      });
-    });
+  test("init", () {
+    const contributor = ContributorInfo(id: 1, name: "John Doe");
+    expect(contributor.id, 1);
+    expect(contributor.name, "John Doe");
+  });
+  test("fromJson", () {
+    final json = {'id': 1, 'name': 'Jane Smith'};
+    final contributor = ContributorInfo.fromJson(json);
+    expect(contributor.id, 1);
+    expect(contributor.name, 'Jane Smith');
+  });
+});
 
 void testContributorCollectionConverter() =>
     group("test ContributorCollectionConverter", () {
@@ -148,7 +148,7 @@ void testContributorCollectionConverter() =>
     });
 
 void testContributors() => group("test Contributors", () {
-      final json = jsonDecode("""{
+  final json = jsonDecode("""{
   "contributors": [
     {"name": "Jane Smith"},
     {"name": "John Doe"}
@@ -167,41 +167,42 @@ void testContributors() => group("test Contributors", () {
     "de": []
   }
 }""");
-      final c = Contributors.fromJson(json);
+  final c = Contributors.fromJson(json);
 
-      test("locales", () {
-        expect(
-            c.locales.toList(),
-            equals([
-              Locale.fromSubtags(languageCode: "en"),
-              Locale.fromSubtags(languageCode: "fr", countryCode: "FR"),
-              Locale.fromSubtags(languageCode: "zh"),
-            ]));
-      });
+  test("locales", () {
+    expect(
+      c.locales.toList(),
+      equals([
+        Locale.fromSubtags(languageCode: "en"),
+        Locale.fromSubtags(languageCode: "fr", countryCode: "FR"),
+        Locale.fromSubtags(languageCode: "zh"),
+      ]),
+    );
+  });
 
-      test("getTranslations", () {
-        final r = c.getTranslations(Locale.fromSubtags(languageCode: "en"));
-        expect(r, isNotNull);
-        expect(r, isNotEmpty);
-        expect(r!.first.name, "John Doe");
-      });
+  test("getTranslations", () {
+    final r = c.getTranslations(Locale.fromSubtags(languageCode: "en"));
+    expect(r, isNotNull);
+    expect(r, isNotEmpty);
+    expect(r!.first.name, "John Doe");
+  });
 
-      test("getTranslations not found", () {
-        for (var l in [
-          Locale.fromSubtags(languageCode: "en", countryCode: "US"),
-          Locale.fromSubtags(languageCode: "de"),
-          Locale.fromSubtags(languageCode: "fa"),
-        ]) {
-          expect(c.getTranslations(l), isNull);
-        }
-      });
+  test("getTranslations not found", () {
+    for (var l in [
+      Locale.fromSubtags(languageCode: "en", countryCode: "US"),
+      Locale.fromSubtags(languageCode: "de"),
+      Locale.fromSubtags(languageCode: "fa"),
+    ]) {
+      expect(c.getTranslations(l), isNull);
+    }
+  });
 
-      test("getContributors", () {
-        final r = c.getContributors().toList();
-        expect(r[0].name, "Jane Smith");
-        expect(r[1].name, "John Doe");
-      });
-    });
+  test("getContributors", () {
+    final r = c.getContributors().toList();
+    expect(r[0].name, "Jane Smith");
+    expect(r[1].name, "John Doe");
+  });
+});
 
 void main() async {
   testContributorInfo();

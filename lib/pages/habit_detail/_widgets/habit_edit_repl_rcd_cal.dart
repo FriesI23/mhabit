@@ -45,9 +45,7 @@ Future<void> showHabitEditReplacementRecordCalendarDialog({
   return showDialog(
     context: context,
     builder: (context) => MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: detail),
-      ],
+      providers: [ChangeNotifierProvider.value(value: detail)],
       child: HabitEditReplacementRecordCalendarDialog(
         defaultColorType: habitColorType,
         firstday: firstday,
@@ -98,8 +96,11 @@ class _HabitEditReplacementRecordCalendarDialog
     }
   }
 
-  void _onRecordChangeConfirmed(HabitSummaryRecord record,
-      {String? reason, bool shouldSyncOnce = true}) {
+  void _onRecordChangeConfirmed(
+    HabitSummaryRecord record, {
+    String? reason,
+    bool shouldSyncOnce = true,
+  }) {
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
@@ -108,18 +109,20 @@ class _HabitEditReplacementRecordCalendarDialog
     }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
-      context.read<AppEventViewModel>().push(HabitRecordsChangedEvents(
-            msg: "habit_detail.calendar._onRecordChangeConfirmed",
-            uuidList: [habitUUID],
-            dateList: [record.date],
-            status: record.status,
-            reason: reason,
-            trace: const {
-              AppEventPageSource.habitDetail: {
-                AppEventFunctionSource.recordChanged
-              }
+      context.read<AppEventViewModel>().push(
+        HabitRecordsChangedEvents(
+          msg: "habit_detail.calendar._onRecordChangeConfirmed",
+          uuidList: [habitUUID],
+          dateList: [record.date],
+          status: record.status,
+          reason: reason,
+          trace: const {
+            AppEventPageSource.habitDetail: {
+              AppEventFunctionSource.recordChanged,
             },
-          ));
+          },
+        ),
+      );
     }
   }
 
@@ -207,7 +210,8 @@ class _HabitEditReplacementRecordCalendarDialog
 
     final configvm = context.read<AppCustomDateYmdHmsConfigViewModel>();
 
-    final valueColor = (widget.defaultColorType != null
+    final valueColor =
+        (widget.defaultColorType != null
             ? colorData?.getColor(widget.defaultColorType!)
             : null) ??
         themeData.colorScheme.primary;
@@ -255,8 +259,9 @@ class _HabitEditReplacementRecordCalendarDialog
             configvm.config
                 .getYMFormatterForHeatmapCal(l10n?.localeName)
                 .format(date),
-            style: textTheme.labelLarge
-                ?.copyWith(color: themeData.colorScheme.outline),
+            style: textTheme.labelLarge?.copyWith(
+              color: themeData.colorScheme.outline,
+            ),
           ),
         );
       },
@@ -285,8 +290,10 @@ class _HabitEditReplacementRecordCalendarDialog
                         );
                         break;
                       case HabitRecordStatus.skip:
-                        valueWidget =
-                            Icon(Icons.remove_outlined, color: valueColor);
+                        valueWidget = Icon(
+                          Icons.remove_outlined,
+                          color: valueColor,
+                        );
                         break;
                       default:
                         break;
@@ -322,7 +329,8 @@ class _HabitEditReplacementRecordCalendarDialog
             builder: (context, l10n) => Text(
               l10n?.habitDetail_editHeatmapCal_dateButtonText ?? "Date",
               style: TextStyle(
-                  color: _showDailyGoalValue != false ? valueColor : null),
+                color: _showDailyGoalValue != false ? valueColor : null,
+              ),
             ),
           ),
           icon: const Icon(Icons.calendar_today_outlined),
@@ -333,7 +341,8 @@ class _HabitEditReplacementRecordCalendarDialog
             builder: (context, l10n) => Text(
               l10n?.habitDetail_editHeatmapCal_valueButtonText ?? "Value",
               style: TextStyle(
-                  color: _showDailyGoalValue != true ? valueColor : null),
+                color: _showDailyGoalValue != true ? valueColor : null,
+              ),
             ),
           ),
           icon: const Icon(Icons.pending_actions_outlined),
@@ -347,13 +356,17 @@ class _HabitEditReplacementRecordCalendarDialog
 
     final scrollToStartButton = L10nBuilder(
       builder: (context, l10n) => IconButton(
-        tooltip: l10n?.habitDetail_editHeatmapCal_backToToday_tooltipText ??
+        tooltip:
+            l10n?.habitDetail_editHeatmapCal_backToToday_tooltipText ??
             "back to today",
         icon: const Icon(Icons.event_repeat_outlined),
         visualDensity: VisualDensity.compact,
         onPressed: () {
-          _heatmapScrollController.animateTo(0,
-              duration: const Duration(seconds: 1), curve: Curves.easeOutQuart);
+          _heatmapScrollController.animateTo(
+            0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.easeOutQuart,
+          );
         },
       ),
     );
@@ -370,10 +383,7 @@ class _HabitEditReplacementRecordCalendarDialog
             padding: const EdgeInsets.only(top: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                scrollToStartButton,
-                segmentedButton,
-              ],
+              children: [scrollToStartButton, segmentedButton],
             ),
           ),
         ],

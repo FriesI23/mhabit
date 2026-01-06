@@ -46,7 +46,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
   @override
   Widget build(BuildContext context) {
     final enabled = context.select<AppSyncViewModel, bool>(
-        (vm) => vm.enabled && vm.serverConfig != null);
+      (vm) => vm.enabled && vm.serverConfig != null,
+    );
 
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
@@ -60,66 +61,72 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
           },
         );
 
-    Widget buildSubtitle(BuildContext context) =>
-        Selector<AppSyncViewModel, (AppSyncTaskStatus?, bool)>(
-          selector: (context, vm) => (
-            vm.appSyncTask.task?.task.status,
-            vm.appSyncTask.task?.result != null
-          ),
-          shouldRebuild: (previous, next) => previous != next,
-          builder: (context, _, child) {
-            final l10n = L10n.of(context);
-            final lastSyncTask =
-                context.read<AppSyncViewModel>().appSyncTask.task;
+    Widget buildSubtitle(
+      BuildContext context,
+    ) => Selector<AppSyncViewModel, (AppSyncTaskStatus?, bool)>(
+      selector: (context, vm) => (
+        vm.appSyncTask.task?.task.status,
+        vm.appSyncTask.task?.result != null,
+      ),
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, _, child) {
+        final l10n = L10n.of(context);
+        final lastSyncTask = context.read<AppSyncViewModel>().appSyncTask.task;
 
-            final lastEndedTime = lastSyncTask?.endedTime;
-            final lastEndedTimeStr = lastEndedTime != null
-                ? (l10n?.appSync_nowTile_dateFormat(
-                        lastEndedTime, lastEndedTime) ??
-                    DateFormat.yMd(l10n?.localeName)
-                        .add_jms()
-                        .format(lastEndedTime))
-                : null;
+        final lastEndedTime = lastSyncTask?.endedTime;
+        final lastEndedTimeStr = lastEndedTime != null
+            ? (l10n?.appSync_nowTile_dateFormat(lastEndedTime, lastEndedTime) ??
+                  DateFormat.yMd(
+                    l10n?.localeName,
+                  ).add_jms().format(lastEndedTime))
+            : null;
 
-            Widget buildLastSyncText() => Text(l10n != null
-                ? (lastEndedTimeStr != null
+        Widget buildLastSyncText() => Text(
+          l10n != null
+              ? (lastEndedTimeStr != null
                     ? l10n.appSync_nowTile_text(lastEndedTimeStr)
                     : l10n.appSync_nowTile_text_noDate)
-                : "Last Sync: $lastEndedTimeStr");
+              : "Last Sync: $lastEndedTimeStr",
+        );
 
-            if (lastSyncTask == null) return buildLastSyncText();
-            switch (lastSyncTask.task.status) {
-              case AppSyncTaskStatus.idle:
-              case AppSyncTaskStatus.completed:
-                if (lastSyncTask.result?.isSuccessed != true) {
-                  return Text(l10n != null
-                      ? (lastEndedTimeStr != null
+        if (lastSyncTask == null) return buildLastSyncText();
+        switch (lastSyncTask.task.status) {
+          case AppSyncTaskStatus.idle:
+          case AppSyncTaskStatus.completed:
+            if (lastSyncTask.result?.isSuccessed != true) {
+              return Text(
+                l10n != null
+                    ? (lastEndedTimeStr != null
                           ? l10n.appSync_nowTile_errorText(lastEndedTimeStr)
                           : l10n.appSync_nowTile_errorText_noDate)
-                      : "Last Sync (Error): $lastEndedTimeStr");
-                }
-                return buildLastSyncText();
-              case AppSyncTaskStatus.running:
-                return Selector<AppSyncViewModel, num?>(
-                  selector: (context, vm) => vm.appSyncTask.task?.percentage,
-                  builder: (context, value, child) => value != null
-                      ? Text(l10n != null
+                    : "Last Sync (Error): $lastEndedTimeStr",
+              );
+            }
+            return buildLastSyncText();
+          case AppSyncTaskStatus.running:
+            return Selector<AppSyncViewModel, num?>(
+              selector: (context, vm) => vm.appSyncTask.task?.percentage,
+              builder: (context, value, child) => value != null
+                  ? Text(
+                      l10n != null
                           ? l10n.appSync_nowTile_syncingText_withPrt(value)
-                          : "Syncing: ${(value * 100).toStringAsFixed(2)}%")
-                      : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing..."),
-                );
-              case AppSyncTaskStatus.cancelling:
-                return Text(
-                    l10n?.appSync_nowTile_cancellingText ?? "Canceling...");
-              case AppSyncTaskStatus.cancelled:
-                return Text(l10n != null
-                    ? (lastEndedTimeStr != null
+                          : "Syncing: ${(value * 100).toStringAsFixed(2)}%",
+                    )
+                  : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing..."),
+            );
+          case AppSyncTaskStatus.cancelling:
+            return Text(l10n?.appSync_nowTile_cancellingText ?? "Canceling...");
+          case AppSyncTaskStatus.cancelled:
+            return Text(
+              l10n != null
+                  ? (lastEndedTimeStr != null
                         ? l10n.appSync_nowTile_cancelText(lastEndedTimeStr)
                         : l10n.appSync_nowTile_cancelText_noDate)
-                    : "Last Sync (Cancelled): $lastEndedTimeStr");
-            }
-          },
-        );
+                  : "Last Sync (Cancelled): $lastEndedTimeStr",
+            );
+        }
+      },
+    );
 
     Widget buildTrailing(BuildContext context) =>
         Selector<AppSyncViewModel, AppSyncTaskStatus?>(
@@ -129,19 +136,18 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
             duration: const Duration(milliseconds: 300),
             child: switch (value) {
               AppSyncTaskStatus.running ||
-              AppSyncTaskStatus.cancelling =>
-                IconButton(
-                  key: const ValueKey(1),
-                  onPressed: value == AppSyncTaskStatus.running
-                      ? _onCancelButtonPressed
-                      : null,
-                  icon: const Icon(MdiIcons.close),
-                ),
+              AppSyncTaskStatus.cancelling => IconButton(
+                key: const ValueKey(1),
+                onPressed: value == AppSyncTaskStatus.running
+                    ? _onCancelButtonPressed
+                    : null,
+                icon: const Icon(MdiIcons.close),
+              ),
               _ => IconButton(
-                  key: const ValueKey(2),
-                  onPressed: enabled ? _onStartButtonPressed : null,
-                  icon: const Icon(MdiIcons.syncIcon),
-                ),
+                key: const ValueKey(2),
+                onPressed: enabled ? _onStartButtonPressed : null,
+                icon: const Icon(MdiIcons.syncIcon),
+              ),
             },
           ),
         );
@@ -164,10 +170,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
       title: buildTitle(context),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildSubtitle(context),
-          buildIndicator(context),
-        ],
+        children: [buildSubtitle(context), buildIndicator(context)],
       ),
       trailing: buildTrailing(context),
     );

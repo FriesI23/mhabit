@@ -26,25 +26,25 @@ import '../../../widgets/widgets.dart';
 Future<HabitDisplaySearchOptions?> showSearchFilterBottomSheet({
   required BuildContext context,
   HabitDisplaySearchOptions? options,
-}) =>
-    showModalBottomSheet<HabitDisplaySearchOptions>(
-      context: context,
-      enableDrag: false,
-      showDragHandle: true,
-      useSafeArea: true,
-      isScrollControlled: true,
-      builder: (context) => SearchFilterBottomSheet(
-        options: options,
-        keepOptions: true,
-      ),
-    );
+}) => showModalBottomSheet<HabitDisplaySearchOptions>(
+  context: context,
+  enableDrag: false,
+  showDragHandle: true,
+  useSafeArea: true,
+  isScrollControlled: true,
+  builder: (context) =>
+      SearchFilterBottomSheet(options: options, keepOptions: true),
+);
 
 class SearchFilterIcon extends StatelessWidget {
   final double opacity;
   final bool filtered;
 
-  const SearchFilterIcon(
-      {super.key, required this.filtered, this.opacity = 1.0});
+  const SearchFilterIcon({
+    super.key,
+    required this.filtered,
+    this.opacity = 1.0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +79,10 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
     const div = PopupMenuDivider();
     final typeChanged = this.typeChanged;
     final l10n = L10n.of(context);
-    final options =
-        context.select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-            (vm) => vm.searchOptions);
+    final options = context
+        .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
+          (vm) => vm.searchOptions,
+        );
     return MenuAnchor(
       builder: (context, controller, child) => IconButton(
         icon: SearchFilterIcon(
@@ -110,9 +111,14 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
         ),
         div,
         GroupTitleListTile(
-            title: Text(l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
-                "Habit Type")),
-        ...HabitType.values.whereNot((e) => e == HabitType.unknown).map(
+          title: Text(
+            l10n?.habitDisplay_searchFilter_habitType_groupTitle ??
+                "Habit Type",
+          ),
+        ),
+        ...HabitType.values
+            .whereNot((e) => e == HabitType.unknown)
+            .map(
               (e) => CheckboxListTile(
                 value: options.types.contains(e),
                 controlAffinity: ListTileControlAffinity.leading,
@@ -127,12 +133,13 @@ class SearchFilterPopupMenuButton extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.filter_alt_off_outlined),
             title: Text(
-                l10n?.habitDisplay_searchFilter_clearFilter ?? "Clear Filters"),
+              l10n?.habitDisplay_searchFilter_clearFilter ?? "Clear Filters",
+            ),
             iconColor: Theme.of(context).colorScheme.error,
             textColor: Theme.of(context).colorScheme.error,
             onTap: onClearFilterPressed,
           ),
-        ]
+        ],
       ],
     );
   }
@@ -146,9 +153,10 @@ class SearchFilterIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final options =
-        context.select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
-            (vm) => vm.searchOptions);
+    final options = context
+        .select<HabitSummaryViewModel, HabitDisplaySearchOptions>(
+          (vm) => vm.searchOptions,
+        );
     return IconButton(
       tooltip: l10n?.habitDisplay_searchFilter_tooltips,
       icon: SearchFilterIcon(filtered: !options.isFilterEmpty),
@@ -214,8 +222,9 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
 
   void _onHabitTypeChanged(HabitType type, bool? value) {
     if (value == null) return;
-    final newTypes =
-        value ? {..._options.types, type} : ({..._options.types}..remove(type));
+    final newTypes = value
+        ? {..._options.types, type}
+        : ({..._options.types}..remove(type));
     setState(() {
       _options = _options.copyWith(types: newTypes);
     });
@@ -254,8 +263,9 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                         controlAffinity: ListTileControlAffinity.leading,
                         visualDensity: VisualDensity.compact,
                         onChanged: _onOngoingChanged,
-                        title: Text(l10n?.habitDisplay_searchFilter_ongoing ??
-                            "Ongoing"),
+                        title: Text(
+                          l10n?.habitDisplay_searchFilter_ongoing ?? "Ongoing",
+                        ),
                       ),
                     ),
                     CheckboxListTile(
@@ -263,8 +273,10 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                       controlAffinity: ListTileControlAffinity.leading,
                       visualDensity: VisualDensity.compact,
                       onChanged: _onCompletedChanged,
-                      title: Text(l10n?.habitDisplay_searchFilter_completed ??
-                          "Completed"),
+                      title: Text(
+                        l10n?.habitDisplay_searchFilter_completed ??
+                            "Completed",
+                      ),
                     ),
                     const HabitDivider(),
                     const GroupTitleListTile(
@@ -286,31 +298,39 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 ),
               ),
             ),
-            AppUiLayoutBuilder(builder: (context, uiLayout, child) {
-              final filtered =
-                  this.filtered || !widget.initOptions.isFilterEmpty;
+            AppUiLayoutBuilder(
+              builder: (context, uiLayout, child) {
+                final filtered =
+                    this.filtered || !widget.initOptions.isFilterEmpty;
 
-              final saveButton = ListTile(
-                minVerticalPadding: 0.0,
-                title: FilledButton(
+                final saveButton = ListTile(
+                  minVerticalPadding: 0.0,
+                  title: FilledButton(
                     onPressed: canSave ? _doSave : null,
-                    child: Text(l10n?.confirmDialog_confirm_text(
-                            NormalizeConfirmDialogType.save.name) ??
-                        "Save")),
-              );
+                    child: Text(
+                      l10n?.confirmDialog_confirm_text(
+                            NormalizeConfirmDialogType.save.name,
+                          ) ??
+                          "Save",
+                    ),
+                  ),
+                );
 
-              final clearButton = ListTile(
-                enabled: filtered,
-                minVerticalPadding: 0.0,
-                title: TextButton.icon(
+                final clearButton = ListTile(
+                  enabled: filtered,
+                  minVerticalPadding: 0.0,
+                  title: TextButton.icon(
                     onPressed: filtered ? _doClearFilter : null,
-                    label: Text(l10n?.habitDisplay_searchFilter_clearFilter ??
-                        "Clear Filters"),
-                    icon: const Icon(Icons.filter_alt_off_outlined)),
-              );
+                    label: Text(
+                      l10n?.habitDisplay_searchFilter_clearFilter ??
+                          "Clear Filters",
+                    ),
+                    icon: const Icon(Icons.filter_alt_off_outlined),
+                  ),
+                );
 
-              return switch (uiLayout) {
-                UiLayoutType.s => ExpandedSection(
+                return switch (uiLayout) {
+                  UiLayoutType.s => ExpandedSection(
                     expand: filtered || canSave,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -321,21 +341,24 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                       ],
                     ),
                   ),
-                UiLayoutType.l => ExpandedSection(
+                  UiLayoutType.l => ExpandedSection(
                     expand: filtered || canSave,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const HabitDivider(),
                         Row(
-                            children: [saveButton, clearButton]
-                                .map((e) => Expanded(child: e))
-                                .toList()),
+                          children: [
+                            saveButton,
+                            clearButton,
+                          ].map((e) => Expanded(child: e)).toList(),
+                        ),
                       ],
                     ),
                   ),
-              };
-            }),
+                };
+              },
+            ),
           ],
         ),
       ),

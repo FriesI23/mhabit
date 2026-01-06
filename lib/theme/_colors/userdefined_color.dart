@@ -61,14 +61,22 @@ class HabitSummaryListTileColor
 
   @override
   HabitSummaryListTileColor lerp(
-      covariant ThemeExtension<HabitSummaryListTileColor>? other, double t) {
+    covariant ThemeExtension<HabitSummaryListTileColor>? other,
+    double t,
+  ) {
     if (other is! HabitSummaryListTileColor) return this;
     return HabitSummaryListTileColor(
       titleColor: Color.lerp(titleColor, other.titleColor, t),
-      progressCircleColor:
-          Color.lerp(progressCircleColor, other.progressCircleColor, t),
-      progressCircleBGColor:
-          Color.lerp(progressCircleBGColor, other.progressCircleBGColor, t),
+      progressCircleColor: Color.lerp(
+        progressCircleColor,
+        other.progressCircleColor,
+        t,
+      ),
+      progressCircleBGColor: Color.lerp(
+        progressCircleBGColor,
+        other.progressCircleBGColor,
+        t,
+      ),
       selectedColor: Color.lerp(selectedColor, other.selectedColor, t),
       dailyStatusTheme: dailyStatusTheme?.lerp(other.dailyStatusTheme, t),
     );
@@ -128,7 +136,9 @@ class HabitSummaryDailyStatusColor
 
   @override
   HabitSummaryDailyStatusColor lerp(
-      covariant ThemeExtension<HabitSummaryDailyStatusColor>? other, double t) {
+    covariant ThemeExtension<HabitSummaryDailyStatusColor>? other,
+    double t,
+  ) {
     if (other is! HabitSummaryDailyStatusColor) return this;
     return HabitSummaryDailyStatusColor(
       autoMark: Color.lerp(autoMark, other.autoMark, t),

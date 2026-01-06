@@ -90,36 +90,37 @@ class AppSettingDisplayRecordOperationTile extends StatelessWidget {
         selected: selected,
         onSelectionChanged: onSelected != null
             ? (selectedSet) => onSelected!(
-                selectedSet.isNotEmpty ? selectedSet.first : UserAction.nothing)
+                selectedSet.isNotEmpty ? selectedSet.first : UserAction.nothing,
+              )
             : null,
         style: const ButtonStyle(visualDensity: VisualDensity(vertical: -2)),
       );
     }
 
     Widget buildNormalSubtitle(BuildContext context, [L10n? l10n]) => Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (subtitle != null) ...[
-              ConstrainedBox(
-                  constraints:
-                      const BoxConstraints.tightFor(width: double.infinity),
-                  child: subtitle),
-              const SizedBox(height: 8.0)
-            ],
-            buildSegmentedTile(context, l10n),
-          ],
-        );
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (subtitle != null) ...[
+          ConstrainedBox(
+            constraints: const BoxConstraints.tightFor(width: double.infinity),
+            child: subtitle,
+          ),
+          const SizedBox(height: 8.0),
+        ],
+        buildSegmentedTile(context, l10n),
+      ],
+    );
 
     Widget buildBigViewSubtitle(BuildContext context, [L10n? l10n]) => Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (subtitle != null) ...[
-              Flexible(flex: 5, child: subtitle!),
-              const Spacer(flex: 1),
-            ],
-            buildSegmentedTile(context, l10n),
-          ],
-        );
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (subtitle != null) ...[
+          Flexible(flex: 5, child: subtitle!),
+          const Spacer(flex: 1),
+        ],
+        buildSegmentedTile(context, l10n),
+      ],
+    );
 
     return L10nBuilder(
       builder: (context, l10n) => ListTile(

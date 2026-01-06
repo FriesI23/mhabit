@@ -26,22 +26,20 @@ class DebuggerInfoCard extends StatelessWidget {
   const DebuggerInfoCard({super.key, this.onOpenPressed, this.onSavePressed});
 
   Widget _buildOpenButton(BuildContext context, [L10n? l10n]) => TextButton(
-        onPressed: onOpenPressed != null ? () => onOpenPressed!(context) : null,
-        child: Text(
-          l10n?.debug_debuggerInfoCard_openButton_text ?? 'Open',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
-        ),
-      );
+    onPressed: onOpenPressed != null ? () => onOpenPressed!(context) : null,
+    child: Text(
+      l10n?.debug_debuggerInfoCard_openButton_text ?? 'Open',
+      style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+    ),
+  );
 
   Widget _buildSaveButton(BuildContext context, [L10n? l10n]) => TextButton(
-        onPressed: onSavePressed != null ? () => onSavePressed!(context) : null,
-        child: Text(
-          l10n?.debug_debuggerInfoCard_saveButton_text ?? 'Save',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
-        ),
-      );
+    onPressed: onSavePressed != null ? () => onSavePressed!(context) : null,
+    child: Text(
+      l10n?.debug_debuggerInfoCard_saveButton_text ?? 'Save',
+      style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +67,9 @@ class DebuggerInfoCard extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.adb_outlined),
-              title:
-                  l10n != null ? Text(l10n.debug_debuggerInfoCard_title) : null,
+              title: l10n != null
+                  ? Text(l10n.debug_debuggerInfoCard_title)
+                  : null,
               subtitle: l10n != null
                   ? Text(l10n.debug_debuggerInfoCard_subtitle)
                   : null,

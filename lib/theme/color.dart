@@ -32,8 +32,10 @@ enum AppThemeType implements EnumWithDBCode {
   @override
   int get dbCode => _code;
 
-  static AppThemeType? getFromDBCode(int dbCode,
-      {AppThemeType? withDefault = AppThemeType.unknown}) {
+  static AppThemeType? getFromDBCode(
+    int dbCode, {
+    AppThemeType? withDefault = AppThemeType.unknown,
+  }) {
     for (var value in AppThemeType.values) {
       if (value.dbCode == dbCode) return value;
     }

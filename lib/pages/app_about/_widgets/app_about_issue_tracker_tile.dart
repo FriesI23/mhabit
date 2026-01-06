@@ -40,9 +40,11 @@ class _AppAboutIssueTrackerTileState extends State<AppAboutIssueTrackerTile> {
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
-      appLog.network.error("$widget.onPressed",
-          ex: ["failed to open issue tracker url", url],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.network.error(
+        "$widget.onPressed",
+        ex: ["failed to open issue tracker url", url],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
     }
   }
 

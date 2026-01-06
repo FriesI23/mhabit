@@ -44,15 +44,17 @@ class ConfirmButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FilledButton.tonal(
-              onPressed: realConfirmCallback,
-              child: l10n != null
-                  ? Text(l10n.batchCheckin_save_button_text)
-                  : const Text("Save")),
+            onPressed: realConfirmCallback,
+            child: l10n != null
+                ? Text(l10n.batchCheckin_save_button_text)
+                : const Text("Save"),
+          ),
           TextButton(
-              onPressed: realCancelCallback,
-              child: l10n != null
-                  ? Text(l10n.batchCheckin_reset_button_text)
-                  : const Text("Reset")),
+            onPressed: realCancelCallback,
+            child: l10n != null
+                ? Text(l10n.batchCheckin_reset_button_text)
+                : const Text("Reset"),
+          ),
         ],
       ),
     );

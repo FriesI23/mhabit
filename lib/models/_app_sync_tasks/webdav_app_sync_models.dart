@@ -71,12 +71,12 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
   bool _includeDirtyMark;
   WebDavAppSyncInfoStatus _status;
 
-  _WebDavAppSyncCellInfo(
-      {required this.configUUID,
-      required bool isDirty,
-      required WebDavAppSyncInfoStatus status})
-      : _includeDirtyMark = isDirty,
-        _status = status;
+  _WebDavAppSyncCellInfo({
+    required this.configUUID,
+    required bool isDirty,
+    required WebDavAppSyncInfoStatus status,
+  }) : _includeDirtyMark = isDirty,
+       _status = status;
 
   @override
   WebDavAppSyncInfoStatus get status => _status;
@@ -92,18 +92,18 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
 
   @override
   bool get isNeedDownload => switch (status) {
-        WebDavAppSyncInfoStatus.server => true,
-        WebDavAppSyncInfoStatus.local => false,
-        WebDavAppSyncInfoStatus.both => eTagFromLocal != eTagFromServer,
-      };
+    WebDavAppSyncInfoStatus.server => true,
+    WebDavAppSyncInfoStatus.local => false,
+    WebDavAppSyncInfoStatus.both => eTagFromLocal != eTagFromServer,
+  };
 
   @override
   bool get isNeedUpload => switch (status) {
-        WebDavAppSyncInfoStatus.server => false,
-        WebDavAppSyncInfoStatus.local => true,
-        WebDavAppSyncInfoStatus.both =>
-          includeDirtyMark || configUUID != lastConfgUUID,
-      };
+    WebDavAppSyncInfoStatus.server => false,
+    WebDavAppSyncInfoStatus.local => true,
+    WebDavAppSyncInfoStatus.both =>
+      includeDirtyMark || configUUID != lastConfgUUID,
+  };
 }
 
 class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
@@ -117,7 +117,8 @@ class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
   });
 
   @override
-  String toString() => "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
+  String toString() =>
+      "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
       "sEtag=<$eTagFromServer>, cEtag=<$eTagFromLocal>, "
       "configId=$configUUID, lastConfigId=$lastConfgUUID, "
       "spath=$serverPath"
@@ -128,21 +129,22 @@ class WebDavResourceContainer {
   final Uri path;
   final String? etag;
 
-  const WebDavResourceContainer({
-    required this.path,
-    this.etag,
-  });
+  const WebDavResourceContainer({required this.path, this.etag});
 
-  factory WebDavResourceContainer.fromResource(WebDavStdResource resource,
-      {Uri? overridePath}) {
+  factory WebDavResourceContainer.fromResource(
+    WebDavStdResource resource, {
+    Uri? overridePath,
+  }) {
     assert(resource.error == null);
 
     void checkProp(WebDavResourceProp prop) {
       if (prop.error != null) throw prop.error!;
       if (prop.status != HttpStatus.ok) {
-        throw WebDavStdResError("Resouce ${resource.path}'s "
-            "${prop.namespace}:${prop.name} status error, "
-            "prop=${prop.toDebugString()}");
+        throw WebDavStdResError(
+          "Resouce ${resource.path}'s "
+          "${prop.namespace}:${prop.name} status error, "
+          "prop=${prop.toDebugString()}",
+        );
       }
     }
 
@@ -175,16 +177,19 @@ abstract interface class WebDavConfigTaskChecklist {
   bool get needCreateWarningFile;
   bool get isEmptyDir;
 
-  factory WebDavConfigTaskChecklist.dirChecker(
-          {required bool needCreateHabitsDir,
-          required bool needCreateWarningFile}) =>
-      switch ((needCreateHabitsDir, needCreateWarningFile)) {
-        (true, true) => const WebDavConfigTaskChecklistDirImpl(
-            needCreateHabitsDir: true, needCreateWarningFile: true),
-        (_, _) => WebDavConfigTaskChecklistDirImpl(
-            needCreateHabitsDir: needCreateHabitsDir,
-            needCreateWarningFile: needCreateWarningFile)
-      };
+  factory WebDavConfigTaskChecklist.dirChecker({
+    required bool needCreateHabitsDir,
+    required bool needCreateWarningFile,
+  }) => switch ((needCreateHabitsDir, needCreateWarningFile)) {
+    (true, true) => const WebDavConfigTaskChecklistDirImpl(
+      needCreateHabitsDir: true,
+      needCreateWarningFile: true,
+    ),
+    (_, _) => WebDavConfigTaskChecklistDirImpl(
+      needCreateHabitsDir: needCreateHabitsDir,
+      needCreateWarningFile: needCreateWarningFile,
+    ),
+  };
 }
 
 final class WebDavConfigTaskChecklistDirImpl
@@ -195,14 +200,17 @@ final class WebDavConfigTaskChecklistDirImpl
   @override
   final bool needCreateWarningFile;
 
-  const WebDavConfigTaskChecklistDirImpl(
-      {required this.needCreateHabitsDir, required this.needCreateWarningFile});
+  const WebDavConfigTaskChecklistDirImpl({
+    required this.needCreateHabitsDir,
+    required this.needCreateWarningFile,
+  });
 
   @override
   bool get isEmptyDir => needCreateHabitsDir && needCreateWarningFile;
 
   @override
-  String toString() => 'WebDavConfigTaskChecklistDirImpl('
+  String toString() =>
+      'WebDavConfigTaskChecklistDirImpl('
       'needCreateHabitsDir=$needCreateHabitsDir, '
       'needCreateReadme=$needCreateWarningFile'
       ')';
@@ -224,9 +232,10 @@ class WebDavSyncRecordKey {
 /// More model design refs:
 /// [Server/Record](docs/webdav_sync_design.md#server)
 @JsonSerializable(
-    fieldRename: FieldRename.snake,
-    includeIfNull: true,
-    ignoreUnannotated: true)
+  fieldRename: FieldRename.snake,
+  includeIfNull: true,
+  ignoreUnannotated: true,
+)
 @CopyWith(skipFields: true)
 class WebDavSyncRecordData implements JsonAdaptor {
   static const _convertType = 'record_';
@@ -265,45 +274,51 @@ class WebDavSyncRecordData implements JsonAdaptor {
     this.dirty,
   });
 
-  WebDavSyncRecordData.fromRecordDBCell(RecordDBCell cell,
-      {this.dirty, this.sessionId})
-      : recordDate = cell.recordDate,
-        recordType = cell.recordType,
-        recordValue = cell.recordValue,
-        createT = cell.createT,
-        modifyT = cell.modifyT,
-        uuid = cell.uuid,
-        parentUUID = cell.parentUUID,
-        reason = cell.reason;
+  WebDavSyncRecordData.fromRecordDBCell(
+    RecordDBCell cell, {
+    this.dirty,
+    this.sessionId,
+  }) : recordDate = cell.recordDate,
+       recordType = cell.recordType,
+       recordValue = cell.recordValue,
+       createT = cell.createT,
+       modifyT = cell.modifyT,
+       uuid = cell.uuid,
+       parentUUID = cell.parentUUID,
+       reason = cell.reason;
 
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
-    assert(json.isNotEmpty
-        ? json[WebDavSyncHabitKey.convertType] == _convertType
-        : true);
+    assert(
+      json.isNotEmpty
+          ? json[WebDavSyncHabitKey.convertType] == _convertType
+          : true,
+    );
     return _$WebDavSyncRecordDataFromJson(json);
   }
 
   RecordDBCell toRecordDBCell() => RecordDBCell(
-        recordDate: recordDate,
-        recordType: recordType,
-        recordValue: recordValue,
-        createT: createT,
-        modifyT: modifyT,
-        uuid: uuid,
-        parentUUID: parentUUID,
-        reason: reason,
-      );
+    recordDate: recordDate,
+    recordType: recordType,
+    recordValue: recordValue,
+    createT: createT,
+    modifyT: modifyT,
+    uuid: uuid,
+    parentUUID: parentUUID,
+    reason: reason,
+  );
 
   @override
-  JsonMap toJson() => _$WebDavSyncRecordDataToJson(this)
-    ..[WebDavSyncRecordKey.convertType] = _convertType;
+  JsonMap toJson() =>
+      _$WebDavSyncRecordDataToJson(this)
+        ..[WebDavSyncRecordKey.convertType] = _convertType;
 
   SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
-      recordUUID: uuid,
-      dirty: dirty ?? 0,
-      lastMark: sessionId,
-      lastConfigUUID: configId,
-      lastSesionUUID: sessionId);
+    recordUUID: uuid,
+    dirty: dirty ?? 0,
+    lastMark: sessionId,
+    lastConfigUUID: configId,
+    lastSesionUUID: sessionId,
+  );
 
   void validated() {
     if (recordDate != null) {
@@ -347,9 +362,10 @@ class WebDavSyncHabitKey {
 /// More model design refs:
 /// [Server/Habit](docs/webdav_sync_design.md#server)
 @JsonSerializable(
-    fieldRename: FieldRename.snake,
-    includeIfNull: true,
-    ignoreUnannotated: true)
+  fieldRename: FieldRename.snake,
+  includeIfNull: true,
+  ignoreUnannotated: true,
+)
 @CopyWith(skipFields: true)
 class WebDavSyncHabitData implements JsonAdaptor {
   static const _convertType = 'habit_';
@@ -393,9 +409,10 @@ class WebDavSyncHabitData implements JsonAdaptor {
   @JsonKey(name: WebDavSyncHabitKey.sessionId)
   final String? sessionId;
   @JsonKey(
-      name: WebDavSyncHabitKey.records,
-      toJson: _recordsToJson,
-      fromJson: _recordsFromJson)
+    name: WebDavSyncHabitKey.records,
+    toJson: _recordsToJson,
+    fromJson: _recordsFromJson,
+  )
   final Map<HabitRecordUUID, WebDavSyncRecordData> records;
 
   final String? etag;
@@ -403,17 +420,20 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? dirtyTotal;
 
   static List<List> _recordsToJson(
-          Map<HabitRecordUUID, WebDavSyncRecordData> records) =>
-      const NormalizingListConverter()
-          .toJson(records.values.map((e) => e.toJson()));
+    Map<HabitRecordUUID, WebDavSyncRecordData> records,
+  ) => const NormalizingListConverter().toJson(
+    records.values.map((e) => e.toJson()),
+  );
 
   static Map<HabitRecordUUID, WebDavSyncRecordData> _recordsFromJson(
-          List json) =>
-      Map.fromEntries(const NormalizingListConverter()
-          .fromJson(json.map((e) => e as List).toList())
-          .map((e) => WebDavSyncRecordData.fromJson(Map.of(e)))
-          .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
-          .nonNulls);
+    List json,
+  ) => Map.fromEntries(
+    const NormalizingListConverter()
+        .fromJson(json.map((e) => e as List).toList())
+        .map((e) => WebDavSyncRecordData.fromJson(Map.of(e)))
+        .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
+        .nonNulls,
+  );
 
   const WebDavSyncHabitData({
     this.uuid,
@@ -441,71 +461,76 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.dirtyTotal,
   });
 
-  WebDavSyncHabitData.fromHabitDBCell(HabitDBCell cell,
-      {this.etag,
-      this.dirty,
-      this.dirtyTotal,
-      this.sessionId,
-      this.records = const {}})
-      : uuid = cell.uuid,
-        createT = cell.createT,
-        modifyT = cell.modifyT,
-        type = cell.type,
-        status = cell.status,
-        name = cell.name,
-        desc = cell.desc,
-        color = cell.color,
-        dailyGoal = cell.dailyGoal,
-        dailyGoalUnit = cell.dailyGoalUnit,
-        dailyGoalExtra = cell.dailyGoalExtra,
-        freqType = cell.freqType,
-        freqCustom = cell.freqCustom,
-        reminder = cell.remindCustom,
-        reminderQuest = cell.remindQuestion,
-        startDate = cell.startDate,
-        targetDays = cell.targetDays,
-        sortPostion = cell.sortPosition;
+  WebDavSyncHabitData.fromHabitDBCell(
+    HabitDBCell cell, {
+    this.etag,
+    this.dirty,
+    this.dirtyTotal,
+    this.sessionId,
+    this.records = const {},
+  }) : uuid = cell.uuid,
+       createT = cell.createT,
+       modifyT = cell.modifyT,
+       type = cell.type,
+       status = cell.status,
+       name = cell.name,
+       desc = cell.desc,
+       color = cell.color,
+       dailyGoal = cell.dailyGoal,
+       dailyGoalUnit = cell.dailyGoalUnit,
+       dailyGoalExtra = cell.dailyGoalExtra,
+       freqType = cell.freqType,
+       freqCustom = cell.freqCustom,
+       reminder = cell.remindCustom,
+       reminderQuest = cell.remindQuestion,
+       startDate = cell.startDate,
+       targetDays = cell.targetDays,
+       sortPostion = cell.sortPosition;
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
-    assert(json.isNotEmpty
-        ? json[WebDavSyncHabitKey.convertType] == _convertType
-        : true);
+    assert(
+      json.isNotEmpty
+          ? json[WebDavSyncHabitKey.convertType] == _convertType
+          : true,
+    );
     return _$WebDavSyncHabitDataFromJson(json);
   }
 
   HabitDBCell toHabitDBCell() => HabitDBCell(
-        uuid: uuid,
-        createT: createT,
-        modifyT: modifyT,
-        type: type,
-        status: status,
-        name: name,
-        desc: desc,
-        color: color,
-        dailyGoal: dailyGoal,
-        dailyGoalUnit: dailyGoalUnit,
-        dailyGoalExtra: dailyGoalExtra,
-        freqType: freqType,
-        freqCustom: freqCustom,
-        remindCustom: reminder,
-        remindQuestion: reminderQuest,
-        startDate: startDate,
-        targetDays: targetDays,
-        sortPosition: sortPostion,
-      );
+    uuid: uuid,
+    createT: createT,
+    modifyT: modifyT,
+    type: type,
+    status: status,
+    name: name,
+    desc: desc,
+    color: color,
+    dailyGoal: dailyGoal,
+    dailyGoalUnit: dailyGoalUnit,
+    dailyGoalExtra: dailyGoalExtra,
+    freqType: freqType,
+    freqCustom: freqCustom,
+    remindCustom: reminder,
+    remindQuestion: reminderQuest,
+    startDate: startDate,
+    targetDays: targetDays,
+    sortPosition: sortPostion,
+  );
 
   @override
-  JsonMap toJson() => _$WebDavSyncHabitDataToJson(this)
-    ..[WebDavSyncHabitKey.convertType] = _convertType;
+  JsonMap toJson() =>
+      _$WebDavSyncHabitDataToJson(this)
+        ..[WebDavSyncHabitKey.convertType] = _convertType;
 
   SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
-      habitUUID: uuid,
-      dirty: dirty ?? 0,
-      dirtyTotal: dirtyTotal ?? 0,
-      lastMark: sessionId,
-      lastMark2: etag,
-      lastConfigUUID: configId,
-      lastSesionUUID: sessionId);
+    habitUUID: uuid,
+    dirty: dirty ?? 0,
+    dirtyTotal: dirtyTotal ?? 0,
+    lastMark: sessionId,
+    lastMark2: etag,
+    lastConfigUUID: configId,
+    lastSesionUUID: sessionId,
+  );
 
   void validate() {
     if (type != null && HabitType.getFromDBCode(type!) == HabitType.unknown) {
@@ -516,8 +541,10 @@ class WebDavSyncHabitData implements JsonAdaptor {
       throw TypeError();
     }
     if (freqType != null) {
-      HabitFrequency.fromJson(
-          {"type": freqType!, "args": jsonDecode(freqCustom!)});
+      HabitFrequency.fromJson({
+        "type": freqType!,
+        "args": jsonDecode(freqCustom!),
+      });
     }
     if (startDate != null) {
       HabitStartDate.fromEpochDay(startDate!);
@@ -535,11 +562,12 @@ class WebDavSyncHabitData implements JsonAdaptor {
   }
 
   @override
-  String toString() => "WebDavSyncHabitData${toJson()
-    ..['etag'] = etag
-    ..['dirty'] = dirty
-    ..['dirtyTotal'] = dirtyTotal
-    ..['records'] = '...(length=${records.length})'}";
+  String toString() =>
+      "WebDavSyncHabitData${toJson()
+        ..['etag'] = etag
+        ..['dirty'] = dirty
+        ..['dirtyTotal'] = dirtyTotal
+        ..['records'] = '...(length=${records.length})'}";
 }
 
 class WebDavAppSyncPathBuilder {
@@ -549,18 +577,23 @@ class WebDavAppSyncPathBuilder {
   final Uri warningFile;
 
   static Uri _buildPath(Uri root, String path, {bool isDir = false}) {
-    return root.replace(pathSegments: [
-      ...root.pathSegments.where((e) => e.isNotEmpty),
-      path,
-      if (isDir) ''
-    ]);
+    return root.replace(
+      pathSegments: [
+        ...root.pathSegments.where((e) => e.isNotEmpty),
+        path,
+        if (isDir) '',
+      ],
+    );
   }
 
   WebDavAppSyncPathBuilder(Uri root)
-      : root = _buildPath(root, '', isDir: true),
-        habitsDir = _buildPath(root, 'habits', isDir: true),
-        warningFile = _buildPath(root, '!!!_WARNING_DO_NOT_MODIFY_BY_HAND_!!!',
-            isDir: false);
+    : root = _buildPath(root, '', isDir: true),
+      habitsDir = _buildPath(root, 'habits', isDir: true),
+      warningFile = _buildPath(
+        root,
+        '!!!_WARNING_DO_NOT_MODIFY_BY_HAND_!!!',
+        isDir: false,
+      );
 
   WebDavAppSyncHabitPathBuilder habit(HabitUUID uuid) =>
       WebDavAppSyncHabitPathBuilder(uuid, habitsDir);
@@ -573,14 +606,16 @@ class WebDavAppSyncHabitPathBuilder {
   final Uri habitFile;
 
   static Uri _buildHabitFile(Uri base, HabitUUID uuid) {
-    return base.replace(pathSegments: [
-      ...base.pathSegments.where((e) => e.isNotEmpty),
-      'habit-$uuid.json'
-    ]);
+    return base.replace(
+      pathSegments: [
+        ...base.pathSegments.where((e) => e.isNotEmpty),
+        'habit-$uuid.json',
+      ],
+    );
   }
 
   WebDavAppSyncHabitPathBuilder(this.uuid, this.habitsDir)
-      : habitFile = _buildHabitFile(habitsDir, uuid);
+    : habitFile = _buildHabitFile(habitsDir, uuid);
 }
 
 @Proxy(HttpClient, useAnnotatedName: true)
@@ -602,18 +637,30 @@ class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
   Future<HttpClientRequest> openUrl(String method, Uri url) {
     final connectRetryOptions = this.connectRetryOptions;
     if (connectRetryOptions == null) {
-      return super.openUrl(method, url).then((request) =>
-          HttpClientRequestWebDav(request, context,
-              connectRetryOptions: connectRetryOptions));
+      return super
+          .openUrl(method, url)
+          .then(
+            (request) => HttpClientRequestWebDav(
+              request,
+              context,
+              connectRetryOptions: connectRetryOptions,
+            ),
+          );
     }
 
     final warningRetryCount = connectRetryOptions.maxAttempts ~/ 2;
     var crtRetryCount = 0;
     var needRetry = true;
     return connectRetryOptions.retry(
-      () => super.openUrl(method, url).then((request) =>
-          HttpClientRequestWebDav(request, context,
-              connectRetryOptions: connectRetryOptions)),
+      () => super
+          .openUrl(method, url)
+          .then(
+            (request) => HttpClientRequestWebDav(
+              request,
+              context,
+              connectRetryOptions: connectRetryOptions,
+            ),
+          ),
       retryIf: (e) =>
           needRetry && (e is SocketException || e is TimeoutException),
       onRetry: (e) {
@@ -623,11 +670,16 @@ class HttpClientForWebDav extends _$HttpClientForWebDavProxy {
         }
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
-          appLog.network.warn("HttpClientForWebDav.openUrl",
-              ex: ["retry", crtRetryCount, method, url], error: e);
+          appLog.network.warn(
+            "HttpClientForWebDav.openUrl",
+            ex: ["retry", crtRetryCount, method, url],
+            error: e,
+          );
         } else {
-          appLog.network.info("HttpClientForWebDav.openUrl",
-              ex: ["retry", crtRetryCount, method, url, e]);
+          appLog.network.info(
+            "HttpClientForWebDav.openUrl",
+            ex: ["retry", crtRetryCount, method, url, e],
+          );
         }
       },
     );
@@ -640,8 +692,11 @@ class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
 
   WeakReference<AppSyncTask>? _context;
 
-  HttpClientRequestWebDav(super.base, AppSyncTask? context,
-      {this.connectRetryOptions}) {
+  HttpClientRequestWebDav(
+    super.base,
+    AppSyncTask? context, {
+    this.connectRetryOptions,
+  }) {
     this.context = context;
   }
 
@@ -668,11 +723,16 @@ class HttpClientRequestWebDav extends _$HttpClientRequestWebDavProxy {
         }
         crtRetryCount += 1;
         if (crtRetryCount >= warningRetryCount) {
-          appLog.network.warn("HttpClientRequestWebDav.close",
-              ex: ["retry", crtRetryCount, method, uri, headers], error: e);
+          appLog.network.warn(
+            "HttpClientRequestWebDav.close",
+            ex: ["retry", crtRetryCount, method, uri, headers],
+            error: e,
+          );
         } else {
-          appLog.network.info("HttpClientRequestWebDav.close",
-              ex: ["retry", crtRetryCount, method, uri, headers, e]);
+          appLog.network.info(
+            "HttpClientRequestWebDav.close",
+            ex: ["retry", crtRetryCount, method, uri, headers, e],
+          );
         }
       },
     );
@@ -686,8 +746,7 @@ abstract interface class WebDavProgressController {
 
   factory WebDavProgressController({
     void Function(num? percentage)? onPercentageChanged,
-  }) =>
-      WebDavProgressControllerImpl(onPercentageChanged: onPercentageChanged);
+  }) => WebDavProgressControllerImpl(onPercentageChanged: onPercentageChanged);
 }
 
 final class WebDavProgressControllerImpl implements WebDavProgressController {
@@ -711,8 +770,9 @@ final class WebDavProgressControllerImpl implements WebDavProgressController {
   @override
   bool initHabitProgress(Iterable<HabitUUID> habits, {bool override = false}) {
     if (habitProgress != null && !override) return false;
-    final entries =
-        habits.map((e) => MapEntry(e, ProgressPercentChanger())).toList();
+    final entries = habits
+        .map((e) => MapEntry(e, ProgressPercentChanger()))
+        .toList();
     habitProgressMap
       ..clear()
       ..addEntries(entries);

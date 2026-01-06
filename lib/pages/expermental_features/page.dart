@@ -23,9 +23,7 @@ import '../../widgets/widgets.dart';
 
 Future<void> naviToExperimentalFeaturesPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const ExpermentalFeaturesPage(),
-    ),
+    MaterialPageRoute(builder: (context) => const ExpermentalFeaturesPage()),
   );
 }
 
@@ -79,48 +77,55 @@ final class _PageState extends State<_Page> {
     final l10n = L10n.of(context);
 
     List<Widget> buildHabitSearchWidgets(BuildContext context) => [
-          Selector<AppExperimentalFeatureViewModel, bool>(
-            selector: (context, vm) => vm.habitSearch,
-            builder: (context, value, child) => SwitchListTile(
-                title: Text(
-                    l10n?.experimentalFeatures_habitSearchTile_titleText ??
-                        "Habit Search"),
-                subtitle: l10n != null
-                    ? Text(
-                        l10n.experimentalFeatures_habitSearchTile_subtitleText)
-                    : null,
-                value: value,
-                onChanged: (value) async {
-                  await vm?.setHabitSearch(value);
-                  if (vm?.habitSearch == true) {
-                    setState(() => showWarningBanner = true);
-                  }
-                }),
+      Selector<AppExperimentalFeatureViewModel, bool>(
+        selector: (context, vm) => vm.habitSearch,
+        builder: (context, value, child) => SwitchListTile(
+          title: Text(
+            l10n?.experimentalFeatures_habitSearchTile_titleText ??
+                "Habit Search",
           ),
-        ];
+          subtitle: l10n != null
+              ? Text(l10n.experimentalFeatures_habitSearchTile_subtitleText)
+              : null,
+          value: value,
+          onChanged: (value) async {
+            await vm?.setHabitSearch(value);
+            if (vm?.habitSearch == true) {
+              setState(() => showWarningBanner = true);
+            }
+          },
+        ),
+      ),
+    ];
 
     return Scaffold(
       appBar: AppBar(
-          leading: const PageBackButton(reason: PageBackReason.back),
-          title: Text(l10n?.appSetting_experimentalFeatureTile_titleText ??
-              "Experimental Features")),
+        leading: const PageBackButton(reason: PageBackReason.back),
+        title: Text(
+          l10n?.appSetting_experimentalFeatureTile_titleText ??
+              "Experimental Features",
+        ),
+      ),
       body: ListView(
         children: [
           ExpandedSection(
             expand: showWarningBanner,
             child: MaterialBanner(
-                forceActionsBelow: true,
-                leading: const Icon(Icons.warning_amber_outlined),
-                content: Text(l10n?.experimentalFeatures_warnginBanner_title ??
-                    "Experimental features are enabled."),
-                actions: [
-                  TextButton(
-                      onPressed: () =>
-                          setState(() => showWarningBanner = false),
-                      child: Text(l10n?.snackbar_dismissText ?? "DISMISS")),
-                ]),
+              forceActionsBelow: true,
+              leading: const Icon(Icons.warning_amber_outlined),
+              content: Text(
+                l10n?.experimentalFeatures_warnginBanner_title ??
+                    "Experimental features are enabled.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => setState(() => showWarningBanner = false),
+                  child: Text(l10n?.snackbar_dismissText ?? "DISMISS"),
+                ),
+              ],
+            ),
           ),
-          if (vm != null) ...buildHabitSearchWidgets(context)
+          if (vm != null) ...buildHabitSearchWidgets(context),
         ],
       ),
     );

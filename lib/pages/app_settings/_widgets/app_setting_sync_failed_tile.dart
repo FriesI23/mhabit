@@ -55,7 +55,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
     controller = widget.controller ?? ExpansibleController();
     lastExpanded = isExpanded =
         context.read<AppSyncViewModel>().appSyncTask.task?.result?.withError ==
-            true;
+        true;
     super.initState();
   }
 
@@ -63,7 +63,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
   void didChangeDependencies() {
     lastExpanded =
         context.read<AppSyncViewModel>().appSyncTask.task?.result?.withError ==
-            true;
+        true;
     super.didChangeDependencies();
   }
 
@@ -72,24 +72,37 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
 
   void _onExportButtonPressed() {
     if (_onPressedFuture != null) return;
-    final sessionId =
-        context.read<AppSyncViewModel>().appSyncTask.task?.task.sessionId;
+    final sessionId = context
+        .read<AppSyncViewModel>()
+        .appSyncTask
+        .task
+        ?.task
+        .sessionId;
     if (sessionId == null) return;
 
     Future<void> doSave(String sessionId) async {
       if (!mounted) return;
       final path = await AppPathProvider().getSyncFailedLogFilePath(sessionId);
       if (!mounted) return;
-      final result = await trySaveFiles([XFile(path)], defaultTargetPlatform,
-          context: context);
+      final result = await trySaveFiles(
+        [XFile(path)],
+        defaultTargetPlatform,
+        context: context,
+      );
       appLog.appsync.info("export failed log", ex: [sessionId, path, result]);
     }
 
-    _onPressedFuture = doSave(sessionId).catchError((e, s) {
-      appLog.appsync.warn("export failed log, got error",
-          ex: [sessionId], error: e, stackTrace: s);
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-    }).whenComplete(() => _onPressedFuture = null);
+    _onPressedFuture = doSave(sessionId)
+        .catchError((e, s) {
+          appLog.appsync.warn(
+            "export failed log, got error",
+            ex: [sessionId],
+            error: e,
+            stackTrace: s,
+          );
+          if (kDebugMode) Error.throwWithStackTrace(e, s);
+        })
+        .whenComplete(() => _onPressedFuture = null);
   }
 
   @override
@@ -97,29 +110,33 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
     super.build(context);
 
     List<Widget> buildWebDavErrorInfos(
-            BuildContext context, WebDavAppSyncTaskResult result) =>
-        [_WebDavFailedDetailTile(result: result)];
+      BuildContext context,
+      WebDavAppSyncTaskResult result,
+    ) => [_WebDavFailedDetailTile(result: result)];
 
     List<Widget> buildBasicErrorInfos(
-            BuildContext context, AppSyncTaskResult result) =>
-        [
-          Padding(
-            padding: kListTileContentPadding,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                L10nBuilder(
-                    builder: (context, l10n) => Text(
-                        l10n?.appSync_failedTile_errorText(
-                                result.error.error.toString()) ??
-                            "Error: ${result.error.error}")),
-                if (result.error.trace != null)
-                  Text(result.error.trace.toString()),
-              ],
+      BuildContext context,
+      AppSyncTaskResult result,
+    ) => [
+      Padding(
+        padding: kListTileContentPadding,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            L10nBuilder(
+              builder: (context, l10n) => Text(
+                l10n?.appSync_failedTile_errorText(
+                      result.error.error.toString(),
+                    ) ??
+                    "Error: ${result.error.error}",
+              ),
             ),
-          )
-        ];
+            if (result.error.trace != null) Text(result.error.trace.toString()),
+          ],
+        ),
+      ),
+    ];
 
     return Selector<AppSyncViewModel, AppSyncTaskResult?>(
       selector: (context, vm) => vm.appSyncTask.task?.result,
@@ -137,11 +154,14 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
           onExpansionChanged: (value) {},
           expandedAlignment: Alignment.centerLeft,
           title: L10nBuilder(
-              builder: (context, l10n) => Text(
-                  l10n?.appSync_failedTile_titleText ?? "Check failure logs")),
+            builder: (context, l10n) => Text(
+              l10n?.appSync_failedTile_titleText ?? "Check failure logs",
+            ),
+          ),
           trailing: IconButton(
-              onPressed: _onExportButtonPressed,
-              icon: const Icon(MdiIcons.fileExportOutline)),
+            onPressed: _onExportButtonPressed,
+            icon: const Icon(MdiIcons.fileExportOutline),
+          ),
           children: switch (value) {
             WebDavAppSyncTaskResult() => buildWebDavErrorInfos(context, value),
             AppSyncTaskResult() => buildBasicErrorInfos(context, value),
@@ -158,28 +178,34 @@ class _WebDavFailedDetailTile extends StatelessWidget {
 
   const _WebDavFailedDetailTile({required this.result});
 
-  Widget _buildErrSubtitle(BuildContext context,
-          [Object? error, StackTrace? trace]) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          L10nBuilder(
-              builder: (context, l10n) => Text(
-                  l10n?.appSync_failedTile_errorText(error.toString()) ??
-                      "$error")),
-          if (trace != null) ...[
-            const Divider(),
-            Text("$trace"),
-          ]
-        ],
-      );
+  Widget _buildErrSubtitle(
+    BuildContext context, [
+    Object? error,
+    StackTrace? trace,
+  ]) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      L10nBuilder(
+        builder: (context, l10n) => Text(
+          l10n?.appSync_failedTile_errorText(error.toString()) ?? "$error",
+        ),
+      ),
+      if (trace != null) ...[const Divider(), Text("$trace")],
+    ],
+  );
 
   Widget _buildFailedTile(
-      BuildContext context, WebDavAppSyncTaskResult result) {
+    BuildContext context,
+    WebDavAppSyncTaskResult result,
+  ) {
     Widget buildTitle(BuildContext context) => L10nBuilder(
-          builder: (context, l10n) => Text(WebDavAppSyncTaskResultStatus.failed
-              .getStatusTextString(result.reason, l10n)),
-        );
+      builder: (context, l10n) => Text(
+        WebDavAppSyncTaskResultStatus.failed.getStatusTextString(
+          result.reason,
+          l10n,
+        ),
+      ),
+    );
 
     return ListTile(
       dense: true,
@@ -198,18 +224,24 @@ class _WebDavFailedDetailTile extends StatelessWidget {
       return const SizedBox();
     }
 
-    final counter = <({
-      WebDavAppSyncTaskResultStatus status,
-      WebDavAppSyncTaskResultSubStatus? reason,
-      bool withError,
-    }),
-        int>{};
+    final counter =
+        <
+          ({
+            WebDavAppSyncTaskResultStatus status,
+            WebDavAppSyncTaskResultSubStatus? reason,
+            bool withError,
+          }),
+          int
+        >{};
 
-    final errors = <({
-      WebDavAppSyncTaskResultStatus status,
-      WebDavAppSyncTaskResultSubStatus? reason
-    }),
-        List<({Object? error, StackTrace? trace})>>{};
+    final errors =
+        <
+          ({
+            WebDavAppSyncTaskResultStatus status,
+            WebDavAppSyncTaskResultSubStatus? reason,
+          }),
+          List<({Object? error, StackTrace? trace})>
+        >{};
     for (var entry in result.habitResults.entries) {
       final key = (
         status: entry.value.status,
@@ -218,14 +250,18 @@ class _WebDavFailedDetailTile extends StatelessWidget {
       );
       counter[key] = (counter[key] ?? 0) + 1;
       if (key.withError) {
-        errors.putIfAbsent(
-            (status: entry.value.status, reason: entry.value.reason),
-            () => []).add(entry.value.error);
+        errors
+            .putIfAbsent((
+              status: entry.value.status,
+              reason: entry.value.reason,
+            ), () => [])
+            .add(entry.value.error);
       }
     }
 
-    final filteredHabits =
-        result.habitResults.entries.where((e) => !e.value.isSuccessed).toList();
+    final filteredHabits = result.habitResults.entries
+        .where((e) => !e.value.isSuccessed)
+        .toList();
     if (filteredHabits.isEmpty) return const SizedBox();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,10 +270,11 @@ class _WebDavFailedDetailTile extends StatelessWidget {
             final errorIter =
                 errors[(status: e.key.status, reason: e.key.reason)]
                     ?.mapIndexed(
-              (i, e) => Padding(
-                  padding: kListTileContentPadding,
-                  child: Text("[$i] ${e.error}")),
-            );
+                      (i, e) => Padding(
+                        padding: kListTileContentPadding,
+                        child: Text("[$i] ${e.error}"),
+                      ),
+                    );
             return ExpansionTile(
               dense: true,
               showTrailingIcon: errorIter != null,
@@ -245,13 +282,15 @@ class _WebDavFailedDetailTile extends StatelessWidget {
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               expandedAlignment: Alignment.centerLeft,
               title: L10nBuilder(
-                  builder: (context, l10n) => Text(l10n
-                          ?.appSync_failedTile_webdavMulti_counterText(
-                              e.key.status
-                                  .getStatusTextString(e.key.reason, l10n),
-                              e.value) ??
+                builder: (context, l10n) => Text(
+                  l10n?.appSync_failedTile_webdavMulti_counterText(
+                        e.key.status.getStatusTextString(e.key.reason, l10n),
+                        e.value,
+                      ) ??
                       "${e.key.status.getStatusTextString(e.key.reason, l10n)}: "
-                          "${e.value}")),
+                          "${e.value}",
+                ),
+              ),
               children: errorIter?.toList() ?? const [],
             );
           })
@@ -264,7 +303,7 @@ class _WebDavFailedDetailTile extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (result.status) {
       case WebDavAppSyncTaskResultStatus.success ||
-            WebDavAppSyncTaskResultStatus.cancelled:
+          WebDavAppSyncTaskResultStatus.cancelled:
         return const SizedBox();
       case WebDavAppSyncTaskResultStatus.failed:
         return _buildFailedTile(context, result);

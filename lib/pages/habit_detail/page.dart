@@ -78,16 +78,18 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
 
 extension _AppEventViewModelExtension on AppEventViewModel {
   void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
-    push(HabitStatusChangedEvent(
-      msg: msg,
-      uuidList: [result.habitUUID],
-      status: result.newStatus,
-      trace: {
-        AppEventPageSource.habitDetail: const {
-          AppEventFunctionSource.habitChanged
-        }
-      },
-    ));
+    push(
+      HabitStatusChangedEvent(
+        msg: msg,
+        uuidList: [result.habitUUID],
+        status: result.newStatus,
+        trace: {
+          AppEventPageSource.habitDetail: const {
+            AppEventFunctionSource.habitChanged,
+          },
+        },
+      ),
+    );
   }
 }
 
@@ -107,7 +109,8 @@ class HabitDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageProviders(
-        child: _Page(habitUUID: habitUUID, colorType: colorType));
+      child: _Page(habitUUID: habitUUID, colorType: colorType),
+    );
   }
 }
 
@@ -160,20 +163,24 @@ class _PageState extends State<_Page>
     final dbcell = await _vm.loadCurrentHabitDetail();
     if (dbcell == null || !mounted) return false;
     final form = formBuilder(dbcell);
-    final result =
-        await habit_edit.naviToHabitEidtPage(context: context, initForm: form);
+    final result = await habit_edit.naviToHabitEidtPage(
+      context: context,
+      initForm: form,
+    );
     if (result == null) return false;
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
     if (_summary?.mounted != true) {
-      context.read<AppEventViewModel>().push(const ReloadDataEvent(
-            msg: "habit_detail._enterHabitEditPage",
-            trace: {
-              AppEventPageSource.habitDetail: {
-                AppEventFunctionSource.habitChanged
-              }
+      context.read<AppEventViewModel>().push(
+        const ReloadDataEvent(
+          msg: "habit_detail._enterHabitEditPage",
+          trace: {
+            AppEventPageSource.habitDetail: {
+              AppEventFunctionSource.habitChanged,
             },
-          ));
+          },
+        ),
+      );
     } else {
       _summary!.onHabitDataChanged();
       if (mounted && form.editMode == HabitDisplayEditMode.create) {
@@ -186,23 +193,23 @@ class _PageState extends State<_Page>
   }
 
   void _onAppbarEditActionPressed() async => _enterHabitEditPage(
-        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
-          dbCell,
-          editMode: HabitDisplayEditMode.edit,
-          editParams: HabitDisplayEditParams.fromDBCell(dbCell),
-        ),
-      );
+    formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+      dbCell,
+      editMode: HabitDisplayEditMode.edit,
+      editParams: HabitDisplayEditParams.fromDBCell(dbCell),
+    ),
+  );
 
   void _onAppbarCloneActionPressed() => _enterHabitEditPage(
-        formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
-          dbCell.copyWith(
-            name: '',
-            desc: '',
-            startDate: HabitStartDate.now().epochDay,
-          ),
-          editMode: HabitDisplayEditMode.create,
-        ),
-      );
+    formBuilder: (dbCell) => HabitForm.fromHabitDBCell(
+      dbCell.copyWith(
+        name: '',
+        desc: '',
+        startDate: HabitStartDate.now().epochDay,
+      ),
+      editMode: HabitDisplayEditMode.create,
+    ),
+  );
 
   void _openRetryButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
@@ -225,19 +232,24 @@ class _PageState extends State<_Page>
     if (_vm.getInsideVersion() == oldVersion) return;
     if (_summary?.mounted != true) {
       context.read<AppEventViewModel>().push(
-            const ReloadDataEvent(msg: "habit_detail._openEditDialog", trace: {
-              AppEventPageSource.habitDetail: {
-                AppEventFunctionSource.recordChanged
-              }
-            }),
-          );
+        const ReloadDataEvent(
+          msg: "habit_detail._openEditDialog",
+          trace: {
+            AppEventPageSource.habitDetail: {
+              AppEventFunctionSource.recordChanged,
+            },
+          },
+        ),
+      );
     } else {
       _summary!.onHabitDataChanged();
     }
   }
 
   Future<bool?> _openHabitOpConfirmDialog(
-      BuildContext context, Widget title) async {
+    BuildContext context,
+    Widget title,
+  ) async {
     return showConfirmDialog(
       context: context,
       title: title,
@@ -280,8 +292,10 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToArchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(result,
-          msg: "habit_detail._openHabitArchiveConfirmDialog");
+      context.read<AppEventViewModel>().pushHabitChangeStatus(
+        result,
+        msg: "habit_detail._openHabitArchiveConfirmDialog",
+      );
     } else {
       final habitUUID = _vm.habitUUID;
       if (habitUUID == null) return;
@@ -307,8 +321,10 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToUnarchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(result,
-          msg: "habit_detail._openHabitUnarchiveConfirmDialog");
+      context.read<AppEventViewModel>().pushHabitChangeStatus(
+        result,
+        msg: "habit_detail._openHabitUnarchiveConfirmDialog",
+      );
     } else {
       final habitUUID = _vm.habitUUID;
       if (habitUUID == null) return;
@@ -336,8 +352,10 @@ class _PageState extends State<_Page>
       if (_summary?.mounted != true) {
         final changedRecord = await _vm.onConfirmToDeleteHabit();
         if (changedRecord == null || !mounted) return null;
-        context.read<AppEventViewModel>().pushHabitChangeStatus(changedRecord,
-            msg: "habit_detail._openHabitDeleteConfirmDialog");
+        context.read<AppEventViewModel>().pushHabitChangeStatus(
+          changedRecord,
+          msg: "habit_detail._openHabitDeleteConfirmDialog",
+        );
         return changedRecord;
       } else {
         final habitUUID = _vm.habitUUID;
@@ -376,9 +394,12 @@ class _PageState extends State<_Page>
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,
     );
     if (!context.mounted || filePath == null) return;
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
-            context: context, text: 'Export Habit')
-        .then((result) {
+    trySaveFiles(
+      [XFile(filePath)],
+      defaultTargetPlatform,
+      context: context,
+      text: 'Export Habit',
+    ).then((result) {
       context = this.context;
       if (!(result && context.mounted)) return;
       final snackBar = buildSnackBarWithDismiss(
@@ -402,8 +423,10 @@ class _PageState extends State<_Page>
       builder: (context) {
         final viewmodel = context.read<HabitDetailViewModel>();
         return ListTile(
-          leading:
-              Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+          leading: Icon(
+            Icons.error,
+            color: Theme.of(context).colorScheme.error,
+          ),
           isThreeLine: true,
           title: const Text('DEBUG'),
           subtitle: Column(
@@ -422,9 +445,7 @@ class _PageState extends State<_Page>
 
   Widget _buildScrollablePlaceHolder(BuildContext context) {
     assert(kDebugMode);
-    return SliverList(
-      delegate: debugBuildSliverScrollDelegate(childCount: 0),
-    );
+    return SliverList(delegate: debugBuildSliverScrollDelegate(childCount: 0));
   }
 
   @visibleForTesting
@@ -442,7 +463,9 @@ class _PageState extends State<_Page>
 
     Widget buildAppbar(BuildContext context) {
       Widget buildAppbarAction(
-          BuildContext context, HabitColorType? colorType) {
+        BuildContext context,
+        HabitColorType? colorType,
+      ) {
         return Selector<HabitDetailViewModel, bool>(
           selector: (context, viewmodel) => viewmodel.isHabitArchived,
           shouldRebuild: (previous, next) => previous != next,
@@ -453,32 +476,39 @@ class _PageState extends State<_Page>
             final color = colorType != null
                 ? colorData?.getColor(colorType)
                 : Colors.transparent;
-            return AppBarActions<DetailAppbarActionItemConfig,
-                DetailAppbarActionItemCell>(
+            return AppBarActions<
+              DetailAppbarActionItemConfig,
+              DetailAppbarActionItemCell
+            >(
               popupMenuButtonIcon: Icon(Icons.adaptive.more, color: color),
               actionConfigs: [
                 DetailAppbarActionItemConfig.edit(
-                    text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
-                    color: color,
-                    callback: _onAppbarEditActionPressed),
+                  text: l10n?.habitDetail_editButton_tooltip ?? "Edit Habit",
+                  color: color,
+                  callback: _onAppbarEditActionPressed,
+                ),
                 DetailAppbarActionItemConfig.unarchive(
-                    visible: isArchived,
-                    text:
-                        l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
-                    callback: _openHabitUnarchiveConfirmDialog),
+                  visible: isArchived,
+                  text: l10n?.habitDetail_editPopMenu_unarchive ?? "Unarchive",
+                  callback: _openHabitUnarchiveConfirmDialog,
+                ),
                 DetailAppbarActionItemConfig.archive(
-                    visible: !isArchived,
-                    text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
-                    callback: _openHabitArchiveConfirmDialog),
+                  visible: !isArchived,
+                  text: l10n?.habitDetail_editPopMenu_archive ?? "Archive",
+                  callback: _openHabitArchiveConfirmDialog,
+                ),
                 DetailAppbarActionItemConfig.clone(
-                    text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
-                    callback: _onAppbarCloneActionPressed),
+                  text: l10n?.habitDetail_editPopMenu_clone ?? "Clone",
+                  callback: _onAppbarCloneActionPressed,
+                ),
                 DetailAppbarActionItemConfig.export(
-                    text: l10n?.habitDetail_editPopMenu_export ?? "Export",
-                    callback: () => _exportHabitAndShared(context)),
+                  text: l10n?.habitDetail_editPopMenu_export ?? "Export",
+                  callback: () => _exportHabitAndShared(context),
+                ),
                 DetailAppbarActionItemConfig.delete(
-                    text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
-                    callback: _openHabitDeleteConfirmDialog),
+                  text: l10n?.habitDetail_editPopMenu_delete ?? "Delete",
+                  callback: _openHabitDeleteConfirmDialog,
+                ),
               ],
             );
           },
@@ -512,8 +542,11 @@ class _PageState extends State<_Page>
         builder: (context, _, child) {
           final viewmodel = context.read<HabitDetailViewModel>();
           final durningDays = viewmodel.duringFromStartDate.inDays;
-          appLog.build.debug(context,
-              ex: [viewmodel.habitProgress], name: "$widget.SummaryList");
+          appLog.build.debug(
+            context,
+            ex: [viewmodel.habitProgress],
+            name: "$widget.SummaryList",
+          );
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(
               habitProgress: viewmodel.habitProgress,
@@ -525,11 +558,14 @@ class _PageState extends State<_Page>
                   ? Text(l10n.habitDetail_summary_title)
                   : const Text("Summary"),
               subtitle: l10n != null
-                  ? Text(durningDays >= 0
-                      ? l10n.habitDetail_summary_body(
-                          viewmodel.habitProgress.toStringAsFixed(2),
-                          durningDays)
-                      : l10n.habitDetail_summary_preBody(durningDays.abs()))
+                  ? Text(
+                      durningDays >= 0
+                          ? l10n.habitDetail_summary_body(
+                              viewmodel.habitProgress.toStringAsFixed(2),
+                              durningDays,
+                            )
+                          : l10n.habitDetail_summary_preBody(durningDays.abs()),
+                    )
                   : null,
             ),
           );
@@ -559,14 +595,16 @@ class _PageState extends State<_Page>
               TextSpan(
                 text: l10n?.habitDetail_descDailyGoal_unitEmptyText,
                 style: const TextStyle(fontStyle: FontStyle.italic),
-              )
+              ),
             ],
           );
         }
 
         return HabitDescCellTile(
-          titleText: l10n?.habitDetail_descDailyGoal_titleText(
-                  viewmodel.habitType?.dbCode ?? 0) ??
+          titleText:
+              l10n?.habitDetail_descDailyGoal_titleText(
+                viewmodel.habitType?.dbCode ?? 0,
+              ) ??
               "Goal",
           subtitleText: viewmodel.habitOkValue?.toSimpleString() ?? '',
           tooltipText: isUnitExist
@@ -578,10 +616,13 @@ class _PageState extends State<_Page>
 
       Widget buildDescTargetDaysTile(BuildContext context, L10n? l10n) {
         return HabitDescCellTile(
-          titleText: l10n?.habitDetail_descTargetDays_titleText(
-                  viewmodel.habitType?.dbCode ?? 0) ??
+          titleText:
+              l10n?.habitDetail_descTargetDays_titleText(
+                viewmodel.habitType?.dbCode ?? 0,
+              ) ??
               "Days",
-          subtitleText: "${viewmodel.habitTargetDays!}"
+          subtitleText:
+              "${viewmodel.habitTargetDays!}"
               "${l10n?.habitDetail_descTargetDays_unitText ?? ''}",
         );
       }
@@ -591,7 +632,8 @@ class _PageState extends State<_Page>
           selector: (context, viewmodel) => viewmodel.getInsideVersion(),
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => HabitDescCellTile(
-            titleText: L10n.of(context)?.habitDetail_descRecordsNum_titleText ??
+            titleText:
+                L10n.of(context)?.habitDetail_descRecordsNum_titleText ??
                 'Records',
             subtitleText: "${viewmodel.habitRecordsTotalNum}",
           ),
@@ -615,11 +657,15 @@ class _PageState extends State<_Page>
             colorMap: buildHeatmapColorMap(context),
             valueColorMap: buildHeatmapValueColorMap(context),
             selectedMap: viewmodel.heatmapDateToColorMap,
-            colorTipLeftHelperText: l10n?.habitDetail_heatmap_leftHelpText(
-                    viewmodel.habitType?.dbCode ?? 0) ??
+            colorTipLeftHelperText:
+                l10n?.habitDetail_heatmap_leftHelpText(
+                  viewmodel.habitType?.dbCode ?? 0,
+                ) ??
                 "",
-            colorTipRightHelperText: l10n?.habitDetail_heatmap_rightHelpText(
-                    viewmodel.habitType?.dbCode ?? 0) ??
+            colorTipRightHelperText:
+                l10n?.habitDetail_heatmap_rightHelpText(
+                  viewmodel.habitType?.dbCode ?? 0,
+                ) ??
                 "",
             heatmapWeekLabelValueBuilder: (context, protoDate, defaultFormat) {
               final ThemeData themeData = Theme.of(context);
@@ -635,19 +681,20 @@ class _PageState extends State<_Page>
               final TextTheme textTheme = themeData.textTheme;
               return Text(
                 DateFormat(defaultFormat, localeString).format(date),
-                style: textTheme.labelSmall
-                    ?.copyWith(color: themeData.colorScheme.outline),
+                style: textTheme.labelSmall?.copyWith(
+                  color: themeData.colorScheme.outline,
+                ),
               );
             },
             heatmapCellBuilder:
                 (context, childBuilder, columnIndex, rowIndex, date) {
-              return Selector<HabitDetailViewModel, HabitHeatmapCellStatus>(
-                selector: (context, vm) =>
-                    vm.getHabitHeatmapCellStatus(HabitDate.dateTime(date)),
-                shouldRebuild: (previous, next) => previous != next,
-                builder: (context, value, _) => childBuilder(context),
-              );
-            },
+                  return Selector<HabitDetailViewModel, HabitHeatmapCellStatus>(
+                    selector: (context, vm) =>
+                        vm.getHabitHeatmapCellStatus(HabitDate.dateTime(date)),
+                    shouldRebuild: (previous, next) => previous != next,
+                    builder: (context, value, _) => childBuilder(context),
+                  );
+                },
           );
         },
       );
@@ -672,10 +719,12 @@ class _PageState extends State<_Page>
           eachSize: eachSize,
           limit: limit,
           combine: chartvm.chartCombine,
-          bottomTipsTextStyle: textTheme.labelSmall
-              ?.copyWith(color: themeData.colorScheme.outline),
-          leftTipsTextStyle: textTheme.labelSmall
-              ?.copyWith(color: themeData.colorScheme.outline),
+          bottomTipsTextStyle: textTheme.labelSmall?.copyWith(
+            color: themeData.colorScheme.outline,
+          ),
+          leftTipsTextStyle: textTheme.labelSmall?.copyWith(
+            color: themeData.colorScheme.outline,
+          ),
           colorMap: buildHeatmapColorMap(context),
           data: data,
         );
@@ -686,10 +735,10 @@ class _PageState extends State<_Page>
           switchOutCurve: Curves.easeInOut,
           transitionBuilder: direction != null
               ? (child, animation) => SlideTransitionX(
-                    direction: direction,
-                    position: animation,
-                    child: child,
-                  )
+                  direction: direction,
+                  position: animation,
+                  child: child,
+                )
               : AnimatedSwitcher.defaultTransitionBuilder,
           child: chart,
         );
@@ -717,10 +766,10 @@ class _PageState extends State<_Page>
               ),
               getData: (firstDate, lastDate) =>
                   chartvm.getCurrentOffsetChartData(
-                initDate: now,
-                firstDate: firstDate,
-                lastDate: lastDate,
-              ),
+                    initDate: now,
+                    firstDate: firstDate,
+                    lastDate: lastDate,
+                  ),
               chartCombine: chartvm.chartCombine,
               onPopMenuSelected: (combine) {
                 if (!mounted) return;
@@ -757,8 +806,9 @@ class _PageState extends State<_Page>
           barWidth: barWidth,
           colorMap: buildHeatmapColorMap(context),
           combine: chartvm.chartCombine,
-          bottomTipsTextStyle: textTheme.labelSmall
-              ?.copyWith(color: themeData.colorScheme.outline),
+          bottomTipsTextStyle: textTheme.labelSmall?.copyWith(
+            color: themeData.colorScheme.outline,
+          ),
           data: data,
           displayMethod: displayMethod,
         );
@@ -769,17 +819,19 @@ class _PageState extends State<_Page>
           switchOutCurve: Curves.easeInOut,
           transitionBuilder: animatedDirection != null
               ? (child, animation) => SlideTransitionX(
-                    direction: animatedDirection,
-                    position: animation,
-                    child: child,
-                  )
+                  direction: animatedDirection,
+                  position: animation,
+                  child: child,
+                )
               : AnimatedSwitcher.defaultTransitionBuilder,
           child: chart,
         );
       }
 
-      return Consumer2<HabitDetailFreqChartViewModel,
-          AppCustomDateYmdHmsConfigViewModel>(
+      return Consumer2<
+        HabitDetailFreqChartViewModel,
+        AppCustomDateYmdHmsConfigViewModel
+      >(
         builder: (context, chartvm, configvm, child) => LayoutBuilder(
           builder: (context, constraints) {
             final viewmodel = context.read<HabitDetailViewModel>();
@@ -811,83 +863,109 @@ class _PageState extends State<_Page>
               isChartExpanded: chartvm.isChartExpanded,
               getData: (firstDate, lastDate, limit) =>
                   chartvm.getCurrentOffsetChartData(
-                limit: limit,
-                initDate: now,
-                firstDate: firstDate,
-                lastDate: lastDate,
-              ),
+                    limit: limit,
+                    initDate: now,
+                    firstDate: firstDate,
+                    lastDate: lastDate,
+                  ),
               onPopMenuSelected: (combine) {
                 if (!mounted) return;
                 final viewmodel = context.read<HabitDetailViewModel>();
                 if (!viewmodel.mounted) return;
                 viewmodel.updateFreqChartCombine(combine);
               },
-              countChartBuilder: (context, data, eachSize, barWidth,
-                      barSpaceBetween, displayMethod, chartKey) =>
-                  buildChart(
-                context,
-                data,
-                eachSize: eachSize,
-                barWidth: barWidth,
-                barSpaceBetween: barSpaceBetween,
-                chartKey: chartKey,
-                displayMethod: displayMethod,
-                animatedDirection: animatedDirection,
-              ),
-              valueChartBuilder: (context, data, eachSize, barWidth,
-                      barSpaceBetween, displayMethod, chartKey) =>
-                  buildChart(
-                context,
-                data,
-                eachSize: eachSize,
-                barWidth: barWidth,
-                barSpaceBetween: barSpaceBetween,
-                chartKey: chartKey,
-                displayMethod: displayMethod,
-                animatedDirection: animatedDirection,
-              ),
+              countChartBuilder:
+                  (
+                    context,
+                    data,
+                    eachSize,
+                    barWidth,
+                    barSpaceBetween,
+                    displayMethod,
+                    chartKey,
+                  ) => buildChart(
+                    context,
+                    data,
+                    eachSize: eachSize,
+                    barWidth: barWidth,
+                    barSpaceBetween: barSpaceBetween,
+                    chartKey: chartKey,
+                    displayMethod: displayMethod,
+                    animatedDirection: animatedDirection,
+                  ),
+              valueChartBuilder:
+                  (
+                    context,
+                    data,
+                    eachSize,
+                    barWidth,
+                    barSpaceBetween,
+                    displayMethod,
+                    chartKey,
+                  ) => buildChart(
+                    context,
+                    data,
+                    eachSize: eachSize,
+                    barWidth: barWidth,
+                    barSpaceBetween: barSpaceBetween,
+                    chartKey: chartKey,
+                    displayMethod: displayMethod,
+                    animatedDirection: animatedDirection,
+                  ),
               offset: chartvm.offset,
               getLeftDateHelper:
                   (context, firstDate, lastDate, isToday, isLast) {
-                final l10n = L10n.of(context);
-                switch (chartvm.chartCombine) {
-                  case HabitDetailFreqChartCombine.monthly:
-                    return Text(configvm.config
-                        .getYMFormatterForFreqChart(l10n?.localeName)
-                        .format(lastDate));
-                  case HabitDetailFreqChartCombine.yearly:
-                    return Text(configvm.config
-                        .getYFormatterForFreqChart(l10n?.localeName)
-                        .format(lastDate));
-                  case HabitDetailFreqChartCombine.weekly:
-                    return Text(configvm.config
-                        .getYMDFormatterForFreqChart(l10n?.localeName)
-                        .format(lastDate));
-                }
-              },
+                    final l10n = L10n.of(context);
+                    switch (chartvm.chartCombine) {
+                      case HabitDetailFreqChartCombine.monthly:
+                        return Text(
+                          configvm.config
+                              .getYMFormatterForFreqChart(l10n?.localeName)
+                              .format(lastDate),
+                        );
+                      case HabitDetailFreqChartCombine.yearly:
+                        return Text(
+                          configvm.config
+                              .getYFormatterForFreqChart(l10n?.localeName)
+                              .format(lastDate),
+                        );
+                      case HabitDetailFreqChartCombine.weekly:
+                        return Text(
+                          configvm.config
+                              .getYMDFormatterForFreqChart(l10n?.localeName)
+                              .format(lastDate),
+                        );
+                    }
+                  },
               getRightDateHelper:
                   (context, firstDate, lastDate, isToday, isLast) {
-                final l10n = L10n.of(context);
-                if (isToday) {
-                  return l10n != null
-                      ? Text(l10n.habitDetail_freqChartNaviBar_nowText)
-                      : const Text("Now");
-                }
-                switch (chartvm.chartCombine) {
-                  case HabitDetailFreqChartCombine.monthly:
-                    return Text(configvm.config
-                        .getYMFormatterForFreqChart(l10n?.localeName)
-                        .format(firstDate));
-                  case HabitDetailFreqChartCombine.yearly:
-                    return Text(configvm.config
-                        .getYFormatterForFreqChart(l10n?.localeName)
-                        .format(firstDate));
-                  case HabitDetailFreqChartCombine.weekly:
-                    return Text(configvm.config
-                        .getYMDFormatterForFreqChart(l10n?.localeName)
-                        .format(firstDate));
-                }
-              },
+                    final l10n = L10n.of(context);
+                    if (isToday) {
+                      return l10n != null
+                          ? Text(l10n.habitDetail_freqChartNaviBar_nowText)
+                          : const Text("Now");
+                    }
+                    switch (chartvm.chartCombine) {
+                      case HabitDetailFreqChartCombine.monthly:
+                        return Text(
+                          configvm.config
+                              .getYMFormatterForFreqChart(l10n?.localeName)
+                              .format(firstDate),
+                        );
+                      case HabitDetailFreqChartCombine.yearly:
+                        return Text(
+                          configvm.config
+                              .getYFormatterForFreqChart(l10n?.localeName)
+                              .format(firstDate),
+                        );
+                      case HabitDetailFreqChartCombine.weekly:
+                        return Text(
+                          configvm.config
+                              .getYMDFormatterForFreqChart(l10n?.localeName)
+                              .format(firstDate),
+                        );
+                    }
+                  },
               onLeftButtonPressed: () {
                 if (!mounted) return;
                 context.read<HabitDetailFreqChartViewModel>().offset += 1;
@@ -951,7 +1029,8 @@ class _PageState extends State<_Page>
                   hasScrollBody: false,
                   child: PageLoadingIndicator(
                     size: const Size.square(
-                        kHabitDetailLoadingCircleIndicatorSize),
+                      kHabitDetailLoadingCircleIndicatorSize,
+                    ),
                     colorType: viewmodel.habitColorType,
                   ),
                 );
@@ -964,14 +1043,18 @@ class _PageState extends State<_Page>
                       return NotFoundImage(
                         size: const Size.square(300),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 100, vertical: 50),
+                          horizontal: 100,
+                          vertical: 50,
+                        ),
                         style: NotFoundImageStyle.inDefault.copyWith(
-                          backBoardBackgroundColor:
-                              theme.colorScheme.outlineVariant.lighten(0.16),
+                          backBoardBackgroundColor: theme
+                              .colorScheme
+                              .outlineVariant
+                              .lighten(0.16),
                           backBoardPaperColor:
                               theme.colorScheme.primaryContainer,
-                          fronBoardPaperColor:
-                              theme.colorScheme.primary.lighten(0.16),
+                          fronBoardPaperColor: theme.colorScheme.primary
+                              .lighten(0.16),
                           fronBoardPaperShadowColor:
                               theme.colorScheme.outlineVariant,
                           magnifierHandleColor:
@@ -1063,7 +1146,8 @@ class _OtherInfo extends StatelessWidget {
 
     return HabitDetailTileList(
       title: HabitDetailChartTitle(
-          title: l10n?.habitDetail_otherSubgroup_title ?? "Others"),
+        title: l10n?.habitDetail_otherSubgroup_title ?? "Others",
+      ),
       contentChildren: [
         if (viewmodel.habitType != null)
           HabitOtherInfoTile(
@@ -1079,9 +1163,11 @@ class _OtherInfo extends StatelessWidget {
             title: l10n != null
                 ? Text(l10n.habitDetail_reminderTile_title)
                 : const Text("Reminder"),
-            subTitle: Text(viewmodel.habitDetailData?.data.reminder
-                    ?.getReminderTypeHelperText(l10n) ??
-                ''),
+            subTitle: Text(
+              viewmodel.habitDetailData?.data.reminder
+                      ?.getReminderTypeHelperText(l10n) ??
+                  '',
+            ),
             leading: const Icon(Icons.notifications_outlined),
           ),
         // frequency
@@ -1090,9 +1176,13 @@ class _OtherInfo extends StatelessWidget {
             title: l10n != null
                 ? Text(l10n.habitDetail_freqTile_title)
                 : const Text("Frequency"),
-            subTitle: Text(l10n != null
-                ? viewmodel.habitDetailData!.data.frequency.toLocalString(l10n)
-                : viewmodel.habitDetailData!.data.frequency.toString()),
+            subTitle: Text(
+              l10n != null
+                  ? viewmodel.habitDetailData!.data.frequency.toLocalString(
+                      l10n,
+                    )
+                  : viewmodel.habitDetailData!.data.frequency.toString(),
+            ),
             leading: const Icon(Icons.repeat_outlined),
           ),
         // start date
@@ -1102,9 +1192,11 @@ class _OtherInfo extends StatelessWidget {
             title: l10n != null
                 ? Text(l10n.habitDetail_startDateTile_title)
                 : const Text("Start Date"),
-            subTitle: Text(config
-                .getYMDFormatter(l10n?.localeName)
-                .format(viewmodel.habitStartDate)),
+            subTitle: Text(
+              config
+                  .getYMDFormatter(l10n?.localeName)
+                  .format(viewmodel.habitStartDate),
+            ),
             leading: const Icon(Icons.schedule_outlined),
           ),
         ),
@@ -1116,9 +1208,11 @@ class _OtherInfo extends StatelessWidget {
               title: l10n != null
                   ? Text(l10n.habitDetail_createDateTile_title)
                   : const Text("Created"),
-              subTitle: Text(config
-                  .getFormatter(l10n?.localeName)
-                  .format(viewmodel.habitDetailData!.createT)),
+              subTitle: Text(
+                config
+                    .getFormatter(l10n?.localeName)
+                    .format(viewmodel.habitDetailData!.createT),
+              ),
               leading: const Icon(HabitCalIcons.calendar_create),
             ),
           ),
@@ -1130,9 +1224,11 @@ class _OtherInfo extends StatelessWidget {
               title: l10n != null
                   ? Text(l10n.habitDetail_modifyDateTile_title)
                   : const Text("Modified"),
-              subTitle: Text(config
-                  .getFormatter(l10n?.localeName)
-                  .format(viewmodel.habitDetailData!.modifyT)),
+              subTitle: Text(
+                config
+                    .getFormatter(l10n?.localeName)
+                    .format(viewmodel.habitDetailData!.modifyT),
+              ),
               leading: const Icon(HabitCalIcons.calendar_modify),
               padding: const EdgeInsets.only(bottom: 6.0),
             ),

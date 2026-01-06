@@ -24,16 +24,18 @@ class AppSyncServerPathTile extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerPathTile(
-      {super.key,
-      this.contentPadding,
-      required this.controller,
-      this.onChanged});
+  const AppSyncServerPathTile({
+    super.key,
+    this.contentPadding,
+    required this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final canSave =
-        context.select<AppSyncServerFormViewModel, bool>((vm) => vm.canSave);
+    final canSave = context.select<AppSyncServerFormViewModel, bool>(
+      (vm) => vm.canSave,
+    );
     final l10n = L10n.of(context);
     return ListTile(
       contentPadding: contentPadding,
@@ -45,7 +47,7 @@ class AppSyncServerPathTile extends StatelessWidget {
           hintText: l10n?.appSync_serverEditor_pathTile_hintText,
           errorText: (!canSave && controller.text.isEmpty)
               ? l10n?.appSync_serverEditor_pathTile_errorText_emptyPath ??
-                  "Path shouldn't be empty!"
+                    "Path shouldn't be empty!"
               : null,
         ),
         keyboardType: TextInputType.url,
@@ -59,8 +61,11 @@ class AppWebDavSyncServerPathTile extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String?>? onChanged;
 
-  const AppWebDavSyncServerPathTile(
-      {super.key, required this.controller, this.onChanged});
+  const AppWebDavSyncServerPathTile({
+    super.key,
+    required this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

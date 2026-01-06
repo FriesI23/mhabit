@@ -44,8 +44,11 @@ ThemeMode transToMaterialThemeType(AppThemeType themeType) {
   }
 }
 
-Iterable<T> combineIterables<T>(Iterable<T> first, Iterable<T> second,
-    {required int Function(T a, T b) compare}) sync* {
+Iterable<T> combineIterables<T>(
+  Iterable<T> first,
+  Iterable<T> second, {
+  required int Function(T a, T b) compare,
+}) sync* {
   final firstIterator = first.iterator;
   final secondIterator = second.iterator;
 
@@ -78,10 +81,10 @@ Iterable<T> combineIterables<T>(Iterable<T> first, Iterable<T> second,
 
 Size calcTextSize(String text, TextStyle? style) {
   final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      maxLines: 1,
-      textDirection: TextDirection.ltr)
-    ..layout(minWidth: 0, maxWidth: double.infinity);
+    text: TextSpan(text: text, style: style),
+    maxLines: 1,
+    textDirection: TextDirection.ltr,
+  )..layout(minWidth: 0, maxWidth: double.infinity);
   return textPainter.size;
 }
 
@@ -94,9 +97,9 @@ class TemplateString {
   int totalComponents;
 
   TemplateString(String template)
-      : fixedComponents = <String>[],
-        genericComponents = <int, String>{},
-        totalComponents = 0 {
+    : fixedComponents = <String>[],
+      genericComponents = <int, String>{},
+      totalComponents = 0 {
     final List<String> components = template.split('{');
 
     for (String component in components) {
@@ -179,8 +182,9 @@ Iterable<Tuple2<int, int>> getContinuousRanges(List<int> input) sync* {
 
 String? encodeUrlQueryParameters(Map<String, String> params) {
   return params.entries
-      .map((e) =>
-          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .map(
+        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+      )
       .join('&');
 }
 
@@ -189,7 +193,9 @@ Future<bool> launchExternalUrl(Uri url) async {
 }
 
 int normalizeAppCalendarBarOccupyPrt(int prt) => math.max(
-    math.min(prt, appCalendarBarMaxOccupyPrt), appCalendarBarMinOccupyPrt);
+  math.min(prt, appCalendarBarMaxOccupyPrt),
+  appCalendarBarMinOccupyPrt,
+);
 
 T clamp<T extends Comparable<T>>(T value, {T? min, T? max}) {
   if (min != null && value.compareTo(min) < 0) {
@@ -231,15 +237,19 @@ T stampDateTime<T extends DateTime>(T t, {required T max, required T min}) {
 
 Future<bool> dismissAllToolTips() async {
   final result = Tooltip.dismissAllToolTips();
-  await Future.delayed(result
-      ? const Duration(milliseconds: 150) * timeDilation
-      : Duration.zero);
+  await Future.delayed(
+    result ? const Duration(milliseconds: 150) * timeDilation : Duration.zero,
+  );
   return result;
 }
 
 final _invalidChars = RegExp(r'[<>:"/\\|?*\x00-\x1F]');
-String sanitizeFileName(String name,
-    {RegExp? invalidChars, String replacement = "_", int limit = 255}) {
+String sanitizeFileName(
+  String name, {
+  RegExp? invalidChars,
+  String replacement = "_",
+  int limit = 255,
+}) {
   invalidChars = invalidChars ?? _invalidChars;
   const reservedNames = {
     "CON",
@@ -263,7 +273,7 @@ String sanitizeFileName(String name,
     "LPT6",
     "LPT7",
     "LPT8",
-    "LPT9"
+    "LPT9",
   };
 
   String safeName = name.replaceAll(invalidChars, replacement).trim();
@@ -273,7 +283,9 @@ String sanitizeFileName(String name,
 }
 
 Future<List<String>> cleanExpiredFiles(
-    Directory directory, Duration maxAge) async {
+  Directory directory,
+  Duration maxAge,
+) async {
   if (!await directory.exists()) return const [];
 
   final results = <String>[];
@@ -285,13 +297,17 @@ Future<List<String>> cleanExpiredFiles(
         try {
           await entity.delete();
           results.add(entity.path);
-          appLog.debugger.debug("cleanExpiredFiles",
-              ex: ["Deleted", entity.path, maxAge, directory]);
+          appLog.debugger.debug(
+            "cleanExpiredFiles",
+            ex: ["Deleted", entity.path, maxAge, directory],
+          );
         } catch (e, s) {
-          appLog.debugger.error("cleanExpiredFiles",
-              ex: ["Delete Failed", entity.path, maxAge, directory],
-              error: e,
-              stackTrace: s);
+          appLog.debugger.error(
+            "cleanExpiredFiles",
+            ex: ["Delete Failed", entity.path, maxAge, directory],
+            error: e,
+            stackTrace: s,
+          );
           if (kDebugMode) Error.throwWithStackTrace(e, s);
         }
       }

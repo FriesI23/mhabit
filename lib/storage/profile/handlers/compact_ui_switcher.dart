@@ -18,7 +18,7 @@ import '../profile_helper.dart';
 class CompactUISwitcherProfileHandler
     extends ProfileHelperCovertToBoolHandler<bool> {
   const CompactUISwitcherProfileHandler(super.pref)
-      : super(codec: const SameTypeCodec());
+    : super(codec: const SameTypeCodec());
 
   @override
   String get key => "compactUISwitcher";

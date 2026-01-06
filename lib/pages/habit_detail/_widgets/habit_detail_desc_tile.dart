@@ -29,17 +29,21 @@ class HabitDetailDescTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final viewmodel = context.read<HabitDetailViewModel>();
-    final TextScaler textScaler = MediaQuery.textScalerOf(context)
-        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final TextScaler textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
     final descMinHeight = textScaler.scale(kHabitDetailFreqChartTitleHeight);
 
     return HabitDetailTileList(
       title: HabitDetailChartTitle(
-          title: l10n?.habitDetail_descSubgroup_title ?? "Desc"),
+        title: l10n?.habitDetail_descSubgroup_title ?? "Desc",
+      ),
       contentChildren: [
         ConstrainedBox(
           constraints: BoxConstraints(
-              minHeight: descMinHeight, minWidth: double.infinity),
+            minHeight: descMinHeight,
+            minWidth: double.infinity,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ColorfulMarkdownBlock(

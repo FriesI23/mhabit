@@ -67,12 +67,14 @@ class HabitEditDailyGoalExtraTile extends StatelessWidget {
           errorText: isValid || dailyGoal == null
               ? null
               : l10n?.habitEdit_habitDailyGoalExtra_errorText(dailyGoal!) ??
-                  "invalid value, must be empty or >= $dailyGoal",
+                    "invalid value, must be empty or >= $dailyGoal",
           suffixIcon: isValid ? null : const Icon(Icons.error_outline),
           suffixIconConstraints: const BoxConstraints.tightFor(height: 0.0),
         ),
-        keyboardType:
-            const TextInputType.numberWithOptions(decimal: true, signed: false),
+        keyboardType: const TextInputType.numberWithOptions(
+          decimal: true,
+          signed: false,
+        ),
         inputFormatters: [TextFormatterCustom.decimalr2],
         style: textTheme.bodyLarge,
         onChanged: onChanged,

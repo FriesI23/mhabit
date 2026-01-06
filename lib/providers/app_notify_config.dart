@@ -26,8 +26,10 @@ import 'commons.dart';
 abstract interface class AppNotifyConfigViewModel
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
-  FutureOr<void> updateNotifyConfig(AppNotifyConfig newConfig,
-      {bool listen = true});
+  FutureOr<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  });
 
   factory AppNotifyConfigViewModel() {
     /// Android uses system notification channels to manage notifications.
@@ -70,8 +72,10 @@ final class AppNotifyConfigViewModelImpl
   AppNotifyConfig get notifyConfig => _config?.get() ?? const AppNotifyConfig();
 
   @override
-  Future<void> updateNotifyConfig(AppNotifyConfig newConfig,
-      {bool listen = true}) async {
+  Future<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  }) async {
     if (_config?.get() != newConfig) {
       await _config?.set(newConfig);
       if (listen) notifyListeners();
@@ -100,7 +104,8 @@ final class AppNotifyConfigViewModelAndroidImpl
   bool get mounted => _mounted;
 
   @override
-  Future<void> updateNotifyConfig(AppNotifyConfig newConfig,
-          {bool listen = true}) =>
-      Future.value();
+  Future<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  }) => Future.value();
 }

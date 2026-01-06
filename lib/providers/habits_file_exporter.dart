@@ -30,10 +30,11 @@ class HabitFileExporterViewModel extends ChangeNotifier
     with HabitsManagerLoadedMixin {
   static const defaultExportFileNamePrefix = "export-habits";
 
-  String _getExportDataFileName(
-      {DateTime? dateTime,
-      String? prefix = defaultExportFileNamePrefix,
-      String? suffix}) {
+  String _getExportDataFileName({
+    DateTime? dateTime,
+    String? prefix = defaultExportFileNamePrefix,
+    String? suffix,
+  }) {
     dateTime = dateTime ?? AppClock().now();
     final dateString = DateFormat('y_MM_dd_H_m_s').format(dateTime);
     final fileStringList = [
@@ -50,8 +51,9 @@ class HabitFileExporterViewModel extends ChangeNotifier
           .then((value) => File(path.join(value, fileName)).writeAsString(data))
           .then((value) => value.path);
 
-  Map<String, Object?> formatExportJsonData(
-      {Iterable<HabitExportData>? habits}) {
+  Map<String, Object?> formatExportJsonData({
+    Iterable<HabitExportData>? habits,
+  }) {
     final result = <String, Object?>{};
     if (habits != null) {
       final habitsData = <Map<String, Object?>>[];
@@ -63,10 +65,14 @@ class HabitFileExporterViewModel extends ChangeNotifier
     return result;
   }
 
-  Future<String?> exportHabitData(HabitUUID habitUUID,
-      {withRecords = true, bool listen = true}) async {
-    final result = await habitsManager.getExporter(
-        uuidList: [habitUUID]).exportData(withRecords: withRecords);
+  Future<String?> exportHabitData(
+    HabitUUID habitUUID, {
+    withRecords = true,
+    bool listen = true,
+  }) async {
+    final result = await habitsManager
+        .getExporter(uuidList: [habitUUID])
+        .exportData(withRecords: withRecords);
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -74,15 +80,20 @@ class HabitFileExporterViewModel extends ChangeNotifier
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
 
-    appLog.export
-        .info("$runtimeType.exportHabitData", ex: [fileName, jsonData]);
+    appLog.export.info(
+      "$runtimeType.exportHabitData",
+      ex: [fileName, jsonData],
+    );
 
     if (listen) notifyListeners();
     return filePath;
   }
 
-  Future<String?> exportMultiHabitsData(List<HabitUUID> uuidList,
-      {withRecords = true, bool listen = true}) async {
+  Future<String?> exportMultiHabitsData(
+    List<HabitUUID> uuidList, {
+    withRecords = true,
+    bool listen = true,
+  }) async {
     final result = await habitsManager
         .getExporter(uuidList: uuidList)
         .exportData(withRecords: withRecords);
@@ -93,27 +104,34 @@ class HabitFileExporterViewModel extends ChangeNotifier
     final fileName = _getExportDataFileName();
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
 
-    appLog.export
-        .info("$runtimeType.exportMultiHabitsData", ex: [fileName, jsonData]);
+    appLog.export.info(
+      "$runtimeType.exportMultiHabitsData",
+      ex: [fileName, jsonData],
+    );
 
     if (listen) notifyListeners();
     return filePath;
   }
 
-  Future<String?> exportAllHabitsData(
-      {withRecords = true, bool listen = true}) async {
+  Future<String?> exportAllHabitsData({
+    bool withRecords = true,
+    bool listen = true,
+  }) async {
     Iterable<HabitExportData> habitExportData;
 
-    habitExportData =
-        await habitsManager.getExporter().exportData(withRecords: withRecords);
+    habitExportData = await habitsManager.getExporter().exportData(
+      withRecords: withRecords,
+    );
 
     final data = formatExportJsonData(habits: habitExportData);
     final jsonData = jsonEncode(data);
     final fileName = _getExportDataFileName(prefix: "export-all");
     final filePath = await _writeDataToTmpDir(fileName, jsonData);
 
-    appLog.export
-        .info("$runtimeType.exportAllHabitsData", ex: [fileName, jsonData]);
+    appLog.export.info(
+      "$runtimeType.exportAllHabitsData",
+      ex: [fileName, jsonData],
+    );
 
     if (listen) notifyListeners();
     return filePath;

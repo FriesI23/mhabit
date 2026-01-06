@@ -17,8 +17,9 @@ import 'package:flutter/material.dart';
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
 
-Future<bool?> showAppSettingClearCacheDialog(
-    {required BuildContext context}) async {
+Future<bool?> showAppSettingClearCacheDialog({
+  required BuildContext context,
+}) async {
   return showDialog<bool>(
     context: context,
     builder: (context) => const AppSettingClearCacheDialog(),
@@ -36,10 +37,12 @@ class AppSettingClearCacheDialog extends StatelessWidget {
       subtitle: l10n != null
           ? Text(l10n.appSetting_clearCacheDialog_subtitleText)
           : null,
-      cancelText:
-          Text(l10n?.appSetting_clearCacheDialog_cancelText ?? "Cancel"),
-      confirmText:
-          Text(l10n?.appSetting_clearCacheDialog_confirmText ?? "Confirm"),
+      cancelText: Text(
+        l10n?.appSetting_clearCacheDialog_cancelText ?? "Cancel",
+      ),
+      confirmText: Text(
+        l10n?.appSetting_clearCacheDialog_confirmText ?? "Confirm",
+      ),
     );
   }
 }

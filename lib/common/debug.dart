@@ -78,7 +78,8 @@ const _debugHabitMetaList = [
   DebugHabitMeta(
     name: "Stand up and stretch",
     goal: 1,
-    desc: "Stand up and stretch your body "
+    desc:
+        "Stand up and stretch your body "
         "to improve circulation and flexibility.",
   ),
   DebugHabitMeta(
@@ -96,7 +97,8 @@ const _debugHabitMetaList = [
   DebugHabitMeta(
     name: "Eat a piece of fruit",
     goal: 1,
-    desc: "Eat a piece of fruit to provide your body "
+    desc:
+        "Eat a piece of fruit to provide your body "
         "with essential vitamins and nutrients.",
     goalUnit: "piece",
   ),
@@ -114,7 +116,8 @@ const _debugHabitMetaList = [
   DebugHabitMeta(
     name: "Clean up one small area",
     goal: 1,
-    desc: "Clean up one small area "
+    desc:
+        "Clean up one small area "
         "to create a more organized and stress-free environment.",
     goalUnit: "area",
   ),
@@ -145,13 +148,15 @@ const _debugHabitMetaList = [
   DebugHabitMeta(
     name: "Write down 1 thing you're grateful for",
     goal: 1,
-    desc: "Take a moment to reflect on something in your life "
+    desc:
+        "Take a moment to reflect on something in your life "
         "that you're thankful for, and write it down",
     goalUnit: "things",
   ),
 ];
 
 DebugHabitMeta debugGetRandomHabitMeta(Random? rnd) {
-  return _debugHabitMetaList[
-      (rnd ?? Random()).nextInt(_debugHabitMetaList.length)];
+  return _debugHabitMetaList[(rnd ?? Random()).nextInt(
+    _debugHabitMetaList.length,
+  )];
 }

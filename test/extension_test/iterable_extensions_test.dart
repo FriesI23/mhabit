@@ -25,8 +25,10 @@ void testSortPostionRankExtension() =>
       });
       test('makeUniqueAndIncreasing with increment <= 0', () {
         for (var value in [0, -0.1, -10, -999]) {
-          expect(() => <num>[].makeUniqueAndIncreasing(value),
-              throwsA(TypeMatcher<ArgumentError>()));
+          expect(
+            () => <num>[].makeUniqueAndIncreasing(value),
+            throwsA(TypeMatcher<ArgumentError>()),
+          );
         }
       });
       test("makeUniqueAndIncreasing", () {
@@ -34,18 +36,16 @@ void testSortPostionRankExtension() =>
 
         void doTest() {
           for (var value in cases) {
-            expect(value.input.makeUniqueAndIncreasing(value.increment),
-                equals(value.expect, 9999),
-                reason: "case failed: $value");
+            expect(
+              value.input.makeUniqueAndIncreasing(value.increment),
+              equals(value.expect, 9999),
+              reason: "case failed: $value",
+            );
           }
         }
 
         cases.addAll([
-          (
-            input: [1, 1, 1, 1],
-            increment: 1,
-            expect: [1, 2, 3, 4],
-          ),
+          (input: [1, 1, 1, 1], increment: 1, expect: [1, 2, 3, 4]),
           (
             input: [100, 100, 100, 100],
             increment: 50,
@@ -56,26 +56,14 @@ void testSortPostionRankExtension() =>
             increment: 0.05,
             expect: [0.1, 0.15, 0.2, 0.25],
           ),
-          (
-            input: [2, 2, 3, 3, 4, 4],
-            increment: 1,
-            expect: [2, 3, 4, 5, 6, 7],
-          ),
-          (
-            input: [1, 2, 3, 4, 4],
-            increment: 0.5,
-            expect: [1, 2, 3, 4, 4.5],
-          ),
+          (input: [2, 2, 3, 3, 4, 4], increment: 1, expect: [2, 3, 4, 5, 6, 7]),
+          (input: [1, 2, 3, 4, 4], increment: 0.5, expect: [1, 2, 3, 4, 4.5]),
           (
             input: [10, 10, 11, 11, 12, 12],
             increment: 1,
             expect: [10, 11, 12, 13, 14, 15],
           ),
-          (
-            input: [5, 5, 5, 6],
-            increment: 2,
-            expect: [5, 7, 9, 11],
-          ),
+          (input: [5, 5, 5, 6], increment: 2, expect: [5, 7, 9, 11]),
           (
             input: [1, 1.5, 1.5, 2, 2],
             increment: 0.2,
@@ -86,15 +74,11 @@ void testSortPostionRankExtension() =>
             increment: 0.5,
             expect: [50, 50.5, 51, 51.5, 52],
           ),
-          (
-            input: [0, 0, 0, 0],
-            increment: 0.1,
-            expect: [0, 0.1, 0.2, 0.3],
-          ),
+          (input: [0, 0, 0, 0], increment: 0.1, expect: [0, 0.1, 0.2, 0.3]),
           (
             input: [1, 1.99999, 1.99999, 2, 3, 4],
             increment: 0.00001,
-            expect: [1, 1.99999, 2, 2.00001, 3, 4]
+            expect: [1, 1.99999, 2, 2.00001, 3, 4],
           ),
         ]);
         doTest();
@@ -106,29 +90,24 @@ void testSortPostionRankExtension() =>
         void doTest() {
           for (var value in cases) {
             expect(
-                value.input
-                    .makeUniqueAndIncreasing(value.increment, isSorted: false),
-                equals(value.expect, 9999),
-                reason: "case failed: $value");
+              value.input.makeUniqueAndIncreasing(
+                value.increment,
+                isSorted: false,
+              ),
+              equals(value.expect, 9999),
+              reason: "case failed: $value",
+            );
           }
         }
 
         cases.addAll([
-          (
-            input: [2, 4, 4, 3, 3, 2],
-            increment: 1,
-            expect: [2, 3, 4, 5, 6, 7],
-          ),
+          (input: [2, 4, 4, 3, 3, 2], increment: 1, expect: [2, 3, 4, 5, 6, 7]),
           (
             input: [10, 10, 11, 11, 12, 12],
             increment: 1,
             expect: [10, 11, 12, 13, 14, 15],
           ),
-          (
-            input: [5, 6, 5, 5],
-            increment: 2,
-            expect: [5, 7, 9, 11],
-          ),
+          (input: [5, 6, 5, 5], increment: 2, expect: [5, 7, 9, 11]),
           (
             input: [2, 1.5, 2, 1, 1.5],
             increment: 0.2,
@@ -139,20 +118,26 @@ void testSortPostionRankExtension() =>
       });
 
       test("makeUniqueAndIncreasing with custom decimal places", () {
-        final cases = <({
-          List<num> input,
-          num increment,
-          List<num> expect,
-          int decimalPlaces
-        })>[];
+        final cases =
+            <
+              ({
+                List<num> input,
+                num increment,
+                List<num> expect,
+                int decimalPlaces,
+              })
+            >[];
 
         void doTest() {
           for (var value in cases) {
             expect(
-                value.input.makeUniqueAndIncreasing(value.increment,
-                    decimalPlaces: value.decimalPlaces),
-                equals(value.expect, 9999),
-                reason: "case failed: $value");
+              value.input.makeUniqueAndIncreasing(
+                value.increment,
+                decimalPlaces: value.decimalPlaces,
+              ),
+              equals(value.expect, 9999),
+              reason: "case failed: $value",
+            );
           }
         }
 

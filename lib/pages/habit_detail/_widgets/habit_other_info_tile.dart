@@ -36,8 +36,9 @@ class HabitOtherInfoTile extends StatelessWidget {
 
     if (title != null && textTheme.bodySmall != null) {
       titleWidget = DefaultTextStyle(
-        style: textTheme.bodySmall!
-            .copyWith(color: themeData.colorScheme.onSurfaceVariant),
+        style: textTheme.bodySmall!.copyWith(
+          color: themeData.colorScheme.onSurfaceVariant,
+        ),
         child: title!,
       );
     }

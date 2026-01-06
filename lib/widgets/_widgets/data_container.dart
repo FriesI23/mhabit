@@ -27,8 +27,9 @@ class DateContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    var labelStyle = theme.textTheme.labelMedium
-        ?.copyWith(color: theme.colorScheme.onSurface);
+    var labelStyle = theme.textTheme.labelMedium?.copyWith(
+      color: theme.colorScheme.onSurface,
+    );
 
     final today = AppClock().now();
     final showDate = date ?? today;
@@ -40,8 +41,10 @@ class DateContainer extends StatelessWidget {
     }
     final localeString = Localizations.localeOf(context).toLanguageTag();
     content.addAll([
-      Text(DateFormat("MM/dd", localeString).format(showDate),
-          style: labelStyle),
+      Text(
+        DateFormat("MM/dd", localeString).format(showDate),
+        style: labelStyle,
+      ),
       Text(DateFormat("E", localeString).format(showDate), style: labelStyle),
     ]);
     return Container(

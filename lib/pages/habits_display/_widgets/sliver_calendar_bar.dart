@@ -66,8 +66,8 @@ class _SliverCalendarBar extends State<SliverCalendarBar> {
   @override
   void initState() {
     super.initState();
-    _horizonalScrollController =
-        widget.horizonalScrollControllerGroup?.addAndGet();
+    _horizonalScrollController = widget.horizonalScrollControllerGroup
+        ?.addAndGet();
   }
 
   @override
@@ -124,10 +124,7 @@ class _SliverClanedarBarExpandButton extends StatelessWidget {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
     return Transform.rotate(
       angle: isRTL ? -math.pi / 2 : math.pi / 2,
-      child: ExpandIcon(
-        onPressed: onPressed,
-        isExpanded: isExpanded,
-      ),
+      child: ExpandIcon(onPressed: onPressed, isExpanded: isExpanded),
     );
   }
 }

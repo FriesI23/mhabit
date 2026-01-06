@@ -46,8 +46,9 @@ class HabitDatePickerDialog extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final CustomColors? colorData = themeData.extension<CustomColors>();
     final DateTime now = AppClock().now();
-    final firstday =
-        context.select<AppFirstDayViewModel, int>((vm) => vm.firstDay);
+    final firstday = context.select<AppFirstDayViewModel, int>(
+      (vm) => vm.firstDay,
+    );
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(
@@ -61,19 +62,25 @@ class HabitDatePickerDialog extends StatelessWidget {
       child: Localizations.override(
         context: context,
         delegates: appLocalizationsDelegates
-            .map((e) => e is LocalizationsDelegate<MaterialLocalizations>
-                ? MaterialLocalizatiosProxy.delegateProxyOf(e,
-                    overrides: {'firstDayOfWeekIndex': firstday % 7})
-                : e)
+            .map(
+              (e) => e is LocalizationsDelegate<MaterialLocalizations>
+                  ? MaterialLocalizatiosProxy.delegateProxyOf(
+                      e,
+                      overrides: {'firstDayOfWeekIndex': firstday % 7},
+                    )
+                  : e,
+            )
             .toList(),
         child: HabitDatetimePickerDialog(
           currentDateTime: now,
           currentDate: now,
           initialDate: date,
           firstDate: DateTime.fromMillisecondsSinceEpoch(
-              minHabitMillisecondsSinceEpoch),
+            minHabitMillisecondsSinceEpoch,
+          ),
           lastDate: DateTime.fromMillisecondsSinceEpoch(
-              maxHabitMillisecondsSinceEpoch),
+            maxHabitMillisecondsSinceEpoch,
+          ),
           initialEntryMode: DatePickerEntryMode.calendarOnly,
         ),
       ),

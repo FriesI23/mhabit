@@ -41,13 +41,14 @@ class HabitEditDailyGoalUnitTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration.collapsed(
-            hintText: l10n?.habitEdit_habitDailyGoalUnit_hintText,
-            hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
-            border: InputBorder.none),
+          hintText: l10n?.habitEdit_habitDailyGoalUnit_hintText,
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
+          border: InputBorder.none,
+        ),
         keyboardType: TextInputType.text,
         inputFormatters: [
           FilteringTextInputFormatter.singleLineFormatter,
-          LengthLimitingTextInputFormatter(maxHabitDailyGoalUnitLength)
+          LengthLimitingTextInputFormatter(maxHabitDailyGoalUnitLength),
         ],
         style: textTheme.bodyLarge,
         onChanged: onChanged,

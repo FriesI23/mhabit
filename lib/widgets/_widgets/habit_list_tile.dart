@@ -34,7 +34,7 @@ class HabitListTile extends StatelessWidget {
   final int minItemCoun;
   final bool useDefaultItemCount;
   final Widget? Function(BuildContext context, int index, double realHeight)
-      itemBuilder;
+  itemBuilder;
   final double? height;
   final double? itemHeight;
   final Color? backgroundColor;
@@ -63,15 +63,20 @@ class HabitListTile extends StatelessWidget {
   }) : assert(sizePrt >= 0 && sizePrt < 1);
 
   static int calcLimitItemCount(
-          double maxWidth, double maxHeight, double sizePrt,
-          {int minCount = 1}) =>
-      math.max(minCount, maxWidth * sizePrt ~/ maxHeight);
+    double maxWidth,
+    double maxHeight,
+    double sizePrt, {
+    int minCount = 1,
+  }) => math.max(minCount, maxWidth * sizePrt ~/ maxHeight);
 
   static double calcLimitItemSize(double maxHeight, int count) =>
       maxHeight * count;
 
   ScrollPhysics _defaultScrollPhysicsBuilder(
-      BuildContext context, itemSize, double length) {
+    BuildContext context,
+    itemSize,
+    double length,
+  ) {
     return MagnetScrollPhysics(
       itemSize: itemSize,
       metrics: FixedScrollMetrics(
@@ -97,14 +102,18 @@ class HabitListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
 
-    Widget rightBuilder(BuildContext context, int? itemCount,
-        double limitItemSize, double height) {
+    Widget rightBuilder(
+      BuildContext context,
+      int? itemCount,
+      double limitItemSize,
+      double height,
+    ) {
       const overlayPhysics = BouncingScrollPhysics();
       final physics = canScroll
           ? (scrollPhysicsBuilder ??
-                  (size, length) =>
-                      _defaultScrollPhysicsBuilder(context, size, length))
-              .call(height, limitItemSize)
+                    (size, length) =>
+                        _defaultScrollPhysicsBuilder(context, size, length))
+                .call(height, limitItemSize)
           : const NeverScrollableScrollPhysics();
       return AnimatedContainer(
         duration: const Duration(milliseconds: 300),
@@ -127,8 +136,11 @@ class HabitListTile extends StatelessWidget {
     Widget tileBuilder(BuildContext context, BoxConstraints constraints) {
       final height = _itemHeight ?? constraints.maxHeight;
       final int limitItemCount = calcLimitItemCount(
-          constraints.maxWidth, height, sizePrt,
-          minCount: minItemCoun);
+        constraints.maxWidth,
+        height,
+        sizePrt,
+        minCount: minItemCoun,
+      );
 
       final double limitItemSize = calcLimitItemSize(height, limitItemCount);
 
@@ -163,9 +175,10 @@ class HabitListTile extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints.expand(
-                  width: stackAutoWrap
-                      ? constraints.maxWidth - limitItemSize
-                      : null),
+                width: stackAutoWrap
+                    ? constraints.maxWidth - limitItemSize
+                    : null,
+              ),
               child: stackedChild,
             ),
             rowWidget,
@@ -185,9 +198,7 @@ class HabitListTile extends StatelessWidget {
           type: MaterialType.transparency,
           color: themeData.colorScheme.surface,
           surfaceTintColor: themeData.colorScheme.surfaceTint,
-          child: LayoutBuilder(
-            builder: tileBuilder,
-          ),
+          child: LayoutBuilder(builder: tileBuilder),
         ),
       ),
     );

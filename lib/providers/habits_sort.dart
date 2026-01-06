@@ -40,14 +40,20 @@ class HabitsSortViewModel extends ChangeNotifier
   HabitDisplaySortDirection get sortDirection =>
       _sortMode?.sortDirection ?? HabitDisplaySortDirection.asc;
 
-  Future<void> setNewSortMode(
-      {HabitDisplaySortType? sortType,
-      HabitDisplaySortDirection? sortDirection}) async {
+  Future<void> setNewSortMode({
+    HabitDisplaySortType? sortType,
+    HabitDisplaySortDirection? sortDirection,
+  }) async {
     final Tuple2<HabitDisplaySortType, HabitDisplaySortDirection> newSortMode =
-        Tuple2((sortType != null) ? sortType : this.sortType,
-            (sortDirection != null) ? sortDirection : this.sortDirection);
-    appLog.value.info("$runtimeType.setNewSortMode",
-        beforeVal: [this.sortType, this.sortDirection], afterVal: newSortMode);
+        Tuple2(
+          (sortType != null) ? sortType : this.sortType,
+          (sortDirection != null) ? sortDirection : this.sortDirection,
+        );
+    appLog.value.info(
+      "$runtimeType.setNewSortMode",
+      beforeVal: [this.sortType, this.sortDirection],
+      afterVal: newSortMode,
+    );
     await _sortMode?.set(newSortMode);
     notifyListeners();
   }
@@ -57,8 +63,10 @@ class HabitsSortViewModel extends ChangeNotifier
   }
 
   static String getSortTitle(
-      HabitDisplaySortType sortType, HabitDisplaySortDirection? sortDirection,
-      {L10n? l10n}) {
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection? sortDirection, {
+    L10n? l10n,
+  }) {
     final String sortTitle, sortDirectionName;
     if (sortDirection == null) {
       sortDirectionName = '';
@@ -114,7 +122,9 @@ class HabitsSortViewModel extends ChangeNotifier
   }
 
   static IconData getSortIcon(
-      HabitDisplaySortType sortType, HabitDisplaySortDirection sortDirection) {
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+  ) {
     switch (sortType) {
       case HabitDisplaySortType.manual:
         return HabitSortIcons.sort;

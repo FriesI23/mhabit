@@ -29,21 +29,21 @@ class PageProviders extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider<HabitStatusChangerViewModel>(
-              create: (context) =>
-                  HabitStatusChangerViewModel(uuidList: uuidList)),
-          ViewModelProxyProvider<HabitsManager, HabitStatusChangerViewModel>(
-              update: (context, value, previous) =>
-                  previous..updateHabitManager(value)),
-          ViewModelProxyProvider<AppFirstDayViewModel,
-                  HabitStatusChangerViewModel>(
-              update: (context, value, previous) =>
-                  previous..updateFirstday(value.firstDay),
-              post: (t, value, vm) => value.firstDay != vm.firstday
-                  ? vm.requestReloadData()
-                  : null),
-        ],
-        child: child,
-      );
+    providers: [
+      ChangeNotifierProvider<HabitStatusChangerViewModel>(
+        create: (context) => HabitStatusChangerViewModel(uuidList: uuidList),
+      ),
+      ViewModelProxyProvider<HabitsManager, HabitStatusChangerViewModel>(
+        update: (context, value, previous) =>
+            previous..updateHabitManager(value),
+      ),
+      ViewModelProxyProvider<AppFirstDayViewModel, HabitStatusChangerViewModel>(
+        update: (context, value, previous) =>
+            previous..updateFirstday(value.firstDay),
+        post: (t, value, vm) =>
+            value.firstDay != vm.firstday ? vm.requestReloadData() : null,
+      ),
+    ],
+    child: child,
+  );
 }

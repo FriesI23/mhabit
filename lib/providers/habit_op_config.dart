@@ -39,16 +39,19 @@ class HabitRecordOpConfigViewModel extends ChangeNotifier
   UserAction get openRecordStatusDialog => _opData.openRecordStatusDialog;
 
   HabitDisplayOpConfig _generateExchangeActionsConfig() => _opData.copyWith(
-        changeRecordStatus: openRecordStatusDialog,
-        openRecordStatusDialog: changeRecordStatus,
-      );
+    changeRecordStatus: openRecordStatusDialog,
+    openRecordStatusDialog: changeRecordStatus,
+  );
 
   void setChangeRecordStatusAction(UserAction newAction) async {
     final newOpConfig = newAction == openRecordStatusDialog
         ? _generateExchangeActionsConfig()
         : _opData.copyWith(changeRecordStatus: newAction);
-    appLog.value.info("$runtimeType.setChangeRecordStatusAction",
-        beforeVal: _opData, afterVal: newOpConfig);
+    appLog.value.info(
+      "$runtimeType.setChangeRecordStatusAction",
+      beforeVal: _opData,
+      afterVal: newOpConfig,
+    );
     await _op?.set(newOpConfig);
     notifyListeners();
   }
@@ -57,8 +60,11 @@ class HabitRecordOpConfigViewModel extends ChangeNotifier
     final newOpConfig = newAction == changeRecordStatus
         ? _generateExchangeActionsConfig()
         : _opData.copyWith(openRecordStatusDialog: newAction);
-    appLog.value.info("$runtimeType.setOpenRecordStatusDialogAction",
-        beforeVal: _opData, afterVal: newOpConfig);
+    appLog.value.info(
+      "$runtimeType.setOpenRecordStatusDialogAction",
+      beforeVal: _opData,
+      afterVal: newOpConfig,
+    );
     await _op?.set(newOpConfig);
     notifyListeners();
   }

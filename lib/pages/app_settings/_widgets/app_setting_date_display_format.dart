@@ -36,8 +36,9 @@ class AppSettingDateDisplayFormatListTile extends StatelessWidget {
             : config.getFormatter(l10n?.localeName).pattern;
         return ListTile(
           title: Text(
-              l10n?.appSetting_dateDisplayFormat_titleText(patternText ?? '') ??
-                  "Date display format ($patternText)"),
+            l10n?.appSetting_dateDisplayFormat_titleText(patternText ?? '') ??
+                "Date display format ($patternText)",
+          ),
           subtitle: l10n != null
               ? Text(l10n.appSetting_dateDisplayFormat_subTitleText)
               : null,

@@ -91,24 +91,28 @@ class HabitReminder implements JsonAdaptor {
     31,
   ];
 
-  static const dailyMidnight =
-      HabitReminder.daily(time: TimeOfDay(hour: 0, minute: 0));
+  static const dailyMidnight = HabitReminder.daily(
+    time: TimeOfDay(hour: 0, minute: 0),
+  );
 
   final HabitReminderType type;
   @TimeOfDayConverter()
   final TimeOfDay time;
   final List<int> extra;
 
-  const HabitReminder(
-      {required this.type, required this.extra, required this.time});
+  const HabitReminder({
+    required this.type,
+    required this.extra,
+    required this.time,
+  });
 
   const HabitReminder.daily({required this.time})
-      : type = HabitReminderType.day,
-        extra = const [];
+    : type = HabitReminderType.day,
+      extra = const [];
 
   const HabitReminder.whenNeeded({required this.time})
-      : type = HabitReminderType.whenNeeded,
-        extra = const [];
+    : type = HabitReminderType.whenNeeded,
+      extra = const [];
 
   factory HabitReminder.weekly({required TimeOfDay time, List<int>? extra}) {
     if (extra != null) assert(!extra.any((e) => e <= 0 || e > 7));
@@ -164,12 +168,13 @@ class HabitReminder implements JsonAdaptor {
             l10n.habitEdit_reminder_freq_monthPrefixText,
             getContinuousRanges(extra.sorted((a, b) => a.compareTo(b)))
                 .map((e) {
-              if (e.item1 == e.item2) {
-                return e.item1.toString();
-              } else {
-                return "${e.item1}-${e.item2}";
-              }
-            }).join(', '),
+                  if (e.item1 == e.item2) {
+                    return e.item1.toString();
+                  } else {
+                    return "${e.item1}-${e.item2}";
+                  }
+                })
+                .join(', '),
             l10n.habitEdit_reminder_freq_monthSubfixText,
           ].join();
         }
@@ -179,8 +184,10 @@ class HabitReminder implements JsonAdaptor {
   String getReminderTypeText(L10n? l10n) =>
       getReminderTypeTextByType(type, l10n: l10n);
 
-  static String getReminderTypeTextByType(HabitReminderType type,
-      {L10n? l10n}) {
+  static String getReminderTypeTextByType(
+    HabitReminderType type, {
+    L10n? l10n,
+  }) {
     if (l10n == null) return '';
     switch (type) {
       case HabitReminderType.whenNeeded:
@@ -213,13 +220,25 @@ class HabitReminder implements JsonAdaptor {
   }
 
   DateTime? _getNextRemindDateWithNeeded(
-      DateTime crtDate, HabitDate? lastUntrackDate) {
+    DateTime crtDate,
+    HabitDate? lastUntrackDate,
+  ) {
     if (kDebugMode) assert(lastUntrackDate != null);
     if (lastUntrackDate == null) return null;
-    final lastUntrackRemindDate = DateTime(lastUntrackDate.year,
-        lastUntrackDate.month, lastUntrackDate.day, time.hour, time.minute);
+    final lastUntrackRemindDate = DateTime(
+      lastUntrackDate.year,
+      lastUntrackDate.month,
+      lastUntrackDate.day,
+      time.hour,
+      time.minute,
+    );
     final crtRemindDate = DateTime(
-        crtDate.year, crtDate.month, crtDate.day, time.hour, time.minute);
+      crtDate.year,
+      crtDate.month,
+      crtDate.day,
+      time.hour,
+      time.minute,
+    );
     final nextRemindDate = lastUntrackRemindDate > crtRemindDate
         ? lastUntrackRemindDate
         : crtRemindDate;
@@ -230,7 +249,12 @@ class HabitReminder implements JsonAdaptor {
 
   DateTime? _getNextRemindDateByDay(DateTime crtDate) {
     final crtRemindDate = DateTime(
-        crtDate.year, crtDate.month, crtDate.day, time.hour, time.minute);
+      crtDate.year,
+      crtDate.month,
+      crtDate.day,
+      time.hour,
+      time.minute,
+    );
     return crtRemindDate <= crtDate
         ? crtRemindDate.add(const Duration(days: 1))
         : crtRemindDate;
@@ -241,14 +265,20 @@ class HabitReminder implements JsonAdaptor {
     if (extra.isEmpty) return result;
 
     final crtRemindDate = DateTime(
-        crtDate.year, crtDate.month, crtDate.day, time.hour, time.minute);
+      crtDate.year,
+      crtDate.month,
+      crtDate.day,
+      time.hour,
+      time.minute,
+    );
     for (var wd in extra) {
       final DateTime nextDate;
       if (wd != crtDate.weekday) {
         nextDate = crtRemindDate.next(wd);
       } else {
-        nextDate =
-            crtRemindDate <= crtDate ? crtRemindDate.next(wd) : crtRemindDate;
+        nextDate = crtRemindDate <= crtDate
+            ? crtRemindDate.next(wd)
+            : crtRemindDate;
       }
       if (result == null ||
           result.difference(crtDate).abs() >
@@ -265,7 +295,12 @@ class HabitReminder implements JsonAdaptor {
     if (extra.isEmpty) return result;
 
     final crtRemindDate = DateTime(
-        crtDate.year, crtDate.month, crtDate.day, time.hour, time.minute);
+      crtDate.year,
+      crtDate.month,
+      crtDate.day,
+      time.hour,
+      time.minute,
+    );
     for (var d in extra) {
       final DateTime nextDate;
       if (d < crtDate.day) {

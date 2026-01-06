@@ -32,78 +32,86 @@ class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
 
   Iterable<SingleChildWidget> _buildPageViewModel() => [
-        ChangeNotifierProvider<HabitSummaryViewModel>(
-            create: (context) => HabitSummaryViewModel()),
-        ViewModelProxyProvider<HabitsManager, HabitSummaryViewModel>(
-            update: (context, value, previous) =>
-                previous..updateHabitManager(value)),
-        ViewModelProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
-            update: (context, value, previous) =>
-                previous..updateAppEvent(value)),
-        ViewModelProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
-            update: (context, value, previous) =>
-                previous..updateAppSync(value)),
-        ViewModelProxyProvider2<HabitsSortViewModel, HabitsFilterViewModel,
-                HabitSummaryViewModel>(
-            update: (context, sortOptions, habitDisplayFilter, previous) =>
-                previous
-                  ..updateSortOptions(
-                      sortOptions.sortType, sortOptions.sortDirection)
-                  ..updateHabitDisplayFilter(
-                      habitDisplayFilter.habitsDisplayFilter),
-            post: (t, _, __, vm) => vm.resortData()),
-        ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(
-            update: (context, value, previous) =>
-                previous..updateFirstday(value.firstDay),
-            post: (t, value, vm) =>
-                value.firstDay != vm.firstday ? vm.requestReload() : null),
-        ViewModelProxyProvider<NotificationChannelData, HabitSummaryViewModel>(
-            update: (context, value, previous) =>
-                previous..setNotificationChannelData(value)),
-      ];
+    ChangeNotifierProvider<HabitSummaryViewModel>(
+      create: (context) => HabitSummaryViewModel(),
+    ),
+    ViewModelProxyProvider<HabitsManager, HabitSummaryViewModel>(
+      update: (context, value, previous) => previous..updateHabitManager(value),
+    ),
+    ViewModelProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
+      update: (context, value, previous) => previous..updateAppEvent(value),
+    ),
+    ViewModelProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+      update: (context, value, previous) => previous..updateAppSync(value),
+    ),
+    ViewModelProxyProvider2<
+      HabitsSortViewModel,
+      HabitsFilterViewModel,
+      HabitSummaryViewModel
+    >(
+      update: (context, sortOptions, habitDisplayFilter, previous) => previous
+        ..updateSortOptions(sortOptions.sortType, sortOptions.sortDirection)
+        ..updateHabitDisplayFilter(habitDisplayFilter.habitsDisplayFilter),
+      post: (t, _, _, vm) => vm.resortData(),
+    ),
+    ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(
+      update: (context, value, previous) =>
+          previous..updateFirstday(value.firstDay),
+      post: (t, value, vm) =>
+          value.firstDay != vm.firstday ? vm.requestReload() : null,
+    ),
+    ViewModelProxyProvider<NotificationChannelData, HabitSummaryViewModel>(
+      update: (context, value, previous) =>
+          previous..setNotificationChannelData(value),
+    ),
+  ];
 
   Iterable<SingleChildWidget> _buildTodayViewModel() => [
-        ChangeNotifierProvider<HabitsTodayViewModel>(
-            create: (context) => HabitsTodayViewModel()),
-        ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
-            update: (context, value, previous) =>
-                previous..updateHabitManager(value)),
-        ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
-            update: (context, value, previous) =>
-                previous..updateAppEvent(value)),
-        ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
-            update: (context, value, previous) =>
-                previous..updateAppSync(value)),
-        ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
-            update: (context, sortOptions, previous) => previous
-              ..updateSortOptions(
-                  sortOptions.sortType, sortOptions.sortDirection),
-            post: (t, _, vm) => vm.resortData()),
-        ViewModelProxyProvider<AppFirstDayViewModel, HabitsTodayViewModel>(
-            update: (context, value, previous) =>
-                previous..updateFirstday(value.firstDay),
-            post: (t, value, vm) =>
-                value.firstDay != vm.firstday ? vm.requestReload() : null),
-      ];
+    ChangeNotifierProvider<HabitsTodayViewModel>(
+      create: (context) => HabitsTodayViewModel(),
+    ),
+    ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
+      update: (context, value, previous) => previous..updateHabitManager(value),
+    ),
+    ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
+      update: (context, value, previous) => previous..updateAppEvent(value),
+    ),
+    ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
+      update: (context, value, previous) => previous..updateAppSync(value),
+    ),
+    ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
+      update: (context, sortOptions, previous) => previous
+        ..updateSortOptions(sortOptions.sortType, sortOptions.sortDirection),
+      post: (t, _, vm) => vm.resortData(),
+    ),
+    ViewModelProxyProvider<AppFirstDayViewModel, HabitsTodayViewModel>(
+      update: (context, value, previous) =>
+          previous..updateFirstday(value.firstDay),
+      post: (t, value, vm) =>
+          value.firstDay != vm.firstday ? vm.requestReload() : null,
+    ),
+  ];
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-        providers: [
-          ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
-              create: (context) => HabitsSortViewModel(),
-              update: (context, profile, previous) =>
-                  previous..updateProfile(profile)),
-          ViewModelProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
-              create: (context) => HabitsFilterViewModel(),
-              update: (context, profile, previous) =>
-                  previous..updateProfile(profile)),
-          ..._buildPageViewModel(),
-          ..._buildTodayViewModel(),
-        ],
-        builder: (context, child) {
-          context.read<HabitSummaryViewModel>().loadData();
-          return child!;
-        },
-        child: child,
-      );
+    providers: [
+      ViewModelProxyProvider<ProfileViewModel, HabitsSortViewModel>(
+        create: (context) => HabitsSortViewModel(),
+        update: (context, profile, previous) =>
+            previous..updateProfile(profile),
+      ),
+      ViewModelProxyProvider<ProfileViewModel, HabitsFilterViewModel>(
+        create: (context) => HabitsFilterViewModel(),
+        update: (context, profile, previous) =>
+            previous..updateProfile(profile),
+      ),
+      ..._buildPageViewModel(),
+      ..._buildTodayViewModel(),
+    ],
+    builder: (context, child) {
+      context.read<HabitSummaryViewModel>().loadData();
+      return child!;
+    },
+    child: child,
+  );
 }

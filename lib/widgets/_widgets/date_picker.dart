@@ -80,16 +80,13 @@ class HabitDatetimePickerDialog extends DatePickerDialog {
 //#region copy from flutter 3.35.7
 class _DatePickerDialogState extends State<DatePickerDialog>
     with RestorationMixin, HabitDatePickerMixin {
-  late final RestorableDateTimeN _selectedDate =
-      RestorableDateTimeN(widget.initialDate);
+  late final RestorableDateTimeN _selectedDate = RestorableDateTimeN(
+    widget.initialDate,
+  );
   late final _RestorableDatePickerEntryMode _entryMode =
-      _RestorableDatePickerEntryMode(
-    widget.initialEntryMode,
-  );
+      _RestorableDatePickerEntryMode(widget.initialEntryMode);
   final _RestorableAutovalidateMode _autovalidateMode =
-      _RestorableAutovalidateMode(
-    AutovalidateMode.disabled,
-  );
+      _RestorableAutovalidateMode(AutovalidateMode.disabled);
 
   @override
   void initState() {
@@ -134,8 +131,10 @@ class _DatePickerDialogState extends State<DatePickerDialog>
     final DateTime baseDateTime = widget is HabitDatetimePickerDialog
         ? (widget as HabitDatetimePickerDialog).currentDateTime
         : widget.currentDate;
-    final DateTime mergedDate =
-        mergeDateToCurrent(baseDateTime, _selectedDate.value);
+    final DateTime mergedDate = mergeDateToCurrent(
+      baseDateTime,
+      _selectedDate.value,
+    );
     Navigator.pop(context, mergedDate);
     // --- HABIT CUSTOM END: merge picked date with current time ---
   }
@@ -195,8 +194,8 @@ class _DatePickerDialogState extends State<DatePickerDialog>
     };
   }
 
-  static const Map<ShortcutActivator, Intent> _formShortcutMap =
-      <ShortcutActivator, Intent>{
+  static const Map<ShortcutActivator, Intent>
+  _formShortcutMap = <ShortcutActivator, Intent>{
     // Pressing enter on the field will move focus to the next field or control.
     SingleActivator(LogicalKeyboardKey.enter): NextFocusIntent(),
   };
@@ -205,8 +204,9 @@ class _DatePickerDialogState extends State<DatePickerDialog>
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final bool useMaterial3 = theme.useMaterial3;
-    final MaterialLocalizations localizations =
-        MaterialLocalizations.of(context);
+    final MaterialLocalizations localizations = MaterialLocalizations.of(
+      context,
+    );
     final Orientation orientation = MediaQuery.orientationOf(context);
     final bool isLandscapeOrientation = orientation == Orientation.landscape;
     final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
@@ -252,7 +252,8 @@ class _DatePickerDialogState extends State<DatePickerDialog>
               spacing: 8,
               children: <Widget>[
                 TextButton(
-                  style: datePickerTheme.cancelButtonStyle ??
+                  style:
+                      datePickerTheme.cancelButtonStyle ??
                       defaults.cancelButtonStyle,
                   onPressed: _handleCancel,
                   child: Text(
@@ -263,11 +264,13 @@ class _DatePickerDialogState extends State<DatePickerDialog>
                   ),
                 ),
                 TextButton(
-                  style: datePickerTheme.confirmButtonStyle ??
+                  style:
+                      datePickerTheme.confirmButtonStyle ??
                       defaults.confirmButtonStyle,
                   onPressed: _handleOk,
-                  child:
-                      Text(widget.confirmText ?? localizations.okButtonLabel),
+                  child: Text(
+                    widget.confirmText ?? localizations.okButtonLabel,
+                  ),
                 ),
               ],
             ),
@@ -339,7 +342,8 @@ class _DatePickerDialogState extends State<DatePickerDialog>
       case DatePickerEntryMode.calendar:
         picker = calendarDatePicker();
         entryModeButton = IconButton(
-          icon: widget.switchToInputEntryModeIcon ??
+          icon:
+              widget.switchToInputEntryModeIcon ??
               Icon(useMaterial3 ? Icons.edit_outlined : Icons.edit),
           color: headerForegroundColor,
           tooltip: localizations.inputDateModeButtonLabel,
@@ -353,7 +357,8 @@ class _DatePickerDialogState extends State<DatePickerDialog>
       case DatePickerEntryMode.input:
         picker = inputDatePicker();
         entryModeButton = IconButton(
-          icon: widget.switchToCalendarEntryModeIcon ??
+          icon:
+              widget.switchToCalendarEntryModeIcon ??
               const Icon(Icons.calendar_today),
           color: headerForegroundColor,
           tooltip: localizations.calendarModeButtonLabel,
@@ -366,14 +371,17 @@ class _DatePickerDialogState extends State<DatePickerDialog>
     }
 
     final Widget header = _DatePickerHeader(
-      helpText: widget.helpText ??
+      helpText:
+          widget.helpText ??
           (useMaterial3
               ? localizations.datePickerHelpText
               : localizations.datePickerHelpText.toUpperCase()),
       titleText: _selectedDate.value == null
           ? ''
-          : widget.calendarDelegate
-              .formatMediumDate(_selectedDate.value!, localizations),
+          : widget.calendarDelegate.formatMediumDate(
+              _selectedDate.value!,
+              localizations,
+            ),
       titleStyle: headlineStyle,
       orientation: orientation,
       isShort: orientation == Orientation.landscape,
@@ -417,14 +425,15 @@ class _DatePickerDialogState extends State<DatePickerDialog>
                   : _inputPortraitDialogSizeM2;
               // Make sure the portrait dialog can fit the contents comfortably when
               // resized from the landscape dialog.
-              final bool isFullyPortrait = constraints.maxHeight >=
+              final bool isFullyPortrait =
+                  constraints.maxHeight >=
                   math.min(dialogSize.height, portraitDialogSize.height);
 
               switch (orientation) {
                 case Orientation.portrait:
                   final bool isInputMode =
                       _entryMode.value == DatePickerEntryMode.inputOnly ||
-                          _entryMode.value == DatePickerEntryMode.input;
+                      _entryMode.value == DatePickerEntryMode.input;
                   // When the portrait dialog does not fit vertically, hide the header when the entry mode
                   // is input, or hide the picker when the entry mode is not input.
                   final bool showHeader = isFullyPortrait || !isInputMode;
@@ -459,7 +468,7 @@ class _DatePickerDialogState extends State<DatePickerDialog>
                         ),
                         // --- HABIT CUSTOM END: date shortcut chips ---
                         Expanded(child: picker),
-                        actions
+                        actions,
                       ],
                     ],
                   );
@@ -476,7 +485,9 @@ class _DatePickerDialogState extends State<DatePickerDialog>
                       header,
                       if (useMaterial3)
                         VerticalDivider(
-                            width: 0, color: datePickerTheme.dividerColor),
+                          width: 0,
+                          color: datePickerTheme.dividerColor,
+                        ),
                       Flexible(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -518,7 +529,7 @@ class _DatePickerDialogState extends State<DatePickerDialog>
 class _RestorableDatePickerEntryMode
     extends RestorableValue<DatePickerEntryMode> {
   _RestorableDatePickerEntryMode(DatePickerEntryMode defaultValue)
-      : _defaultValue = defaultValue;
+    : _defaultValue = defaultValue;
 
   final DatePickerEntryMode _defaultValue;
 
@@ -544,7 +555,7 @@ class _RestorableDatePickerEntryMode
 // This serializes each entry as a unique `int` value.
 class _RestorableAutovalidateMode extends RestorableValue<AutovalidateMode> {
   _RestorableAutovalidateMode(AutovalidateMode defaultValue)
-      : _defaultValue = defaultValue;
+    : _defaultValue = defaultValue;
 
   final AutovalidateMode _defaultValue;
 
@@ -628,28 +639,29 @@ class _DatePickerHeader extends StatelessWidget {
     final Color? foregroundColor =
         datePickerTheme.headerForegroundColor ?? defaults.headerForegroundColor;
     final TextStyle? helpStyle =
-        (datePickerTheme.headerHelpStyle ?? defaults.headerHelpStyle)
-            ?.copyWith(color: foregroundColor);
+        (datePickerTheme.headerHelpStyle ?? defaults.headerHelpStyle)?.copyWith(
+          color: foregroundColor,
+        );
     final double currentScale =
         MediaQuery.textScalerOf(context).scale(_fontSizeToScale) /
-            _fontSizeToScale;
+        _fontSizeToScale;
     final double maxHeaderTextScaleFactor = math.min(
       currentScale,
       entryModeButton != null
           ? _kMaxHeaderWithEntryTextScaleFactor
           : _kMaxHeaderTextScaleFactor,
     );
-    final double textScaleFactor = MediaQuery.textScalerOf(
-          context,
-        )
+    final double textScaleFactor =
+        MediaQuery.textScalerOf(context)
             .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
             .scale(_fontSizeToScale) /
         _fontSizeToScale;
     final double scaledFontSize = MediaQuery.textScalerOf(
       context,
     ).scale(titleStyle?.fontSize ?? 32);
-    final double headerScaleFactor =
-        textScaleFactor > 1 ? textScaleFactor : 1.0;
+    final double headerScaleFactor = textScaleFactor > 1
+        ? textScaleFactor
+        : 1.0;
 
     final Text help = Text(
       helpText,
@@ -672,15 +684,17 @@ class _DatePickerHeader extends StatelessWidget {
       maxLines: orientation == Orientation.portrait
           ? (scaledFontSize > 70 ? 2 : 1)
           : scaledFontSize > 40
-              ? 3
-              : 2,
+          ? 3
+          : 2,
       overflow: TextOverflow.ellipsis,
-      textScaler: MediaQuery.textScalerOf(context)
-          .clamp(maxScaleFactor: textScaleFactor),
+      textScaler: MediaQuery.textScalerOf(
+        context,
+      ).clamp(maxScaleFactor: textScaleFactor),
     );
 
-    final double fontScaleAdjustedHeaderHeight =
-        headerScaleFactor > 1.3 ? headerScaleFactor - 0.2 : 1.0;
+    final double fontScaleAdjustedHeaderHeight = headerScaleFactor > 1.3
+        ? headerScaleFactor - 0.2
+        : 1.0;
 
     switch (orientation) {
       case Orientation.portrait:
@@ -693,7 +707,10 @@ class _DatePickerHeader extends StatelessWidget {
               color: backgroundColor,
               child: Padding(
                 padding: const EdgeInsetsDirectional.only(
-                    start: 24, end: 12, bottom: 12),
+                  start: 24,
+                  end: 12,
+                  bottom: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -726,14 +743,16 @@ class _DatePickerHeader extends StatelessWidget {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: _headerPaddingLandscape),
+                      horizontal: _headerPaddingLandscape,
+                    ),
                     child: help,
                   ),
                   SizedBox(height: isShort ? 16 : 56),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: _headerPaddingLandscape),
+                        horizontal: _headerPaddingLandscape,
+                      ),
                       child: title,
                     ),
                   ),
@@ -744,7 +763,10 @@ class _DatePickerHeader extends StatelessWidget {
                           // from https://m3.material.io/components/date-pickers/specs#c16c142b-4706-47f3-9400-3cde654b9aa8.
                           // Update this value to use tokens when available.
                           ? const EdgeInsetsDirectional.only(
-                              start: 8.0, end: 4.0, bottom: 6.0)
+                              start: 8.0,
+                              end: 4.0,
+                              bottom: 6.0,
+                            )
                           : const EdgeInsets.symmetric(horizontal: 4),
                       child: Semantics(container: true, child: entryModeButton),
                     ),
@@ -756,4 +778,5 @@ class _DatePickerHeader extends StatelessWidget {
     }
   }
 }
+
 //#endregion

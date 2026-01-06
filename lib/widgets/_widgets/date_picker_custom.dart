@@ -21,13 +21,17 @@ import '../../extensions/textscale_extensions.dart';
 import '../../l10n/localizations.dart';
 import 'chip_list.dart';
 
-const VisualDensity habitCalendarChipVisualDensity =
-    VisualDensity(horizontal: -4, vertical: -4);
+const VisualDensity habitCalendarChipVisualDensity = VisualDensity(
+  horizontal: -4,
+  vertical: -4,
+);
 
 class DatePickerChipContent extends StatelessWidget {
   static const double _datePickerChipContentHeight = 56.0;
-  static const EdgeInsets _datePickerChipContentPadding =
-      EdgeInsets.only(left: 24, right: 12);
+  static const EdgeInsets _datePickerChipContentPadding = EdgeInsets.only(
+    left: 24,
+    right: 12,
+  );
 
   final Widget? todayDateChip;
   final Widget? tomorrowDateChip;
@@ -111,8 +115,9 @@ mixin HabitDatePickerMixin<T extends StatefulWidget> on State<T> {
     final bool isTodaySelected = selectedDate == today;
     final Widget todayChip = ChoiceChip(
       iconTheme: IconThemeData(color: colorScheme.primary),
-      avatar:
-          isTodaySelected ? null : const FittedBox(child: Icon(Icons.event)),
+      avatar: isTodaySelected
+          ? null
+          : const FittedBox(child: Icon(Icons.event)),
       label: l10n != null
           ? Text(l10n.calendarPicker_clip_today)
           : const Text('Today'),
@@ -159,8 +164,9 @@ mixin HabitDatePickerMixin<T extends StatefulWidget> on State<T> {
             : const FittedBox(child: Icon(Icons.calendar_today)),
         label: Text(
           DateFormat(
-                  'MMM d, y', Localizations.localeOf(context).toLanguageTag())
-              .format(customDate),
+            'MMM d, y',
+            Localizations.localeOf(context).toLanguageTag(),
+          ).format(customDate),
         ),
         selected: isOtherDateSelected,
         visualDensity: habitCalendarChipVisualDensity,

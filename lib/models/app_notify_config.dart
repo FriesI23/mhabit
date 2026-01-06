@@ -24,13 +24,15 @@ part 'app_notify_config.g.dart';
 
 JsonMap channelsToJson(Map<NotificationChannelId, bool> channels) =>
     Map.fromEntries(
-        channels.entries.map((e) => MapEntry(e.key.id.toString(), e.value)));
+      channels.entries.map((e) => MapEntry(e.key.id.toString(), e.value)),
+    );
 
 Map<NotificationChannelId, bool> channelsFromJson(JsonMap input) {
   final result = <NotificationChannelId, bool>{};
   for (final MapEntry(key: key, value: value as bool) in input.entries) {
-    final channelId = NotificationChannelId.values
-        .firstWhereOrNull((id) => id.id == int.tryParse(key));
+    final channelId = NotificationChannelId.values.firstWhereOrNull(
+      (id) => id.id == int.tryParse(key),
+    );
     if (channelId == null) continue;
     result[channelId] = value;
   }
@@ -42,20 +44,21 @@ class AppNotifyConfig implements JsonAdaptor {
   final Map<NotificationChannelId, bool> _channels;
 
   const AppNotifyConfig({Map<NotificationChannelId, bool>? channels})
-      : _channels = channels ?? const {};
+    : _channels = channels ?? const {};
 
   AppNotifyConfig._({required Map<NotificationChannelId, bool> channels})
-      : _channels = channels;
+    : _channels = channels;
 
   factory AppNotifyConfig.fromJson(JsonMap json) =>
       _$AppNotifyConfigFromJson(json);
 
   @JsonKey(
-      name: "channels",
-      includeFromJson: true,
-      includeToJson: true,
-      toJson: channelsToJson,
-      fromJson: channelsFromJson)
+    name: "channels",
+    includeFromJson: true,
+    includeToJson: true,
+    toJson: channelsToJson,
+    fromJson: channelsFromJson,
+  )
   @visibleForTesting
   Map<NotificationChannelId, bool> get channels => _channels;
 

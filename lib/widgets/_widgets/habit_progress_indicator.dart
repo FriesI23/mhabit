@@ -31,20 +31,20 @@ class HabitProgressIndicator extends StatefulWidget {
   final bool isDeleted;
   final bool showDeletedIcon;
 
-  const HabitProgressIndicator(
-      {super.key,
-      required this.value,
-      this.color,
-      this.backgroundColor,
-      this.strokeWidth,
-      this.duration = const Duration(milliseconds: 300),
-      this.isComplated = false,
-      this.showComplatedIcon = true,
-      this.isArchived = false,
-      this.showArchivedIcon = true,
-      this.isDeleted = false,
-      this.showDeletedIcon = true})
-      : assert(!(isArchived && isDeleted));
+  const HabitProgressIndicator({
+    super.key,
+    required this.value,
+    this.color,
+    this.backgroundColor,
+    this.strokeWidth,
+    this.duration = const Duration(milliseconds: 300),
+    this.isComplated = false,
+    this.showComplatedIcon = true,
+    this.isArchived = false,
+    this.showArchivedIcon = true,
+    this.isDeleted = false,
+    this.showDeletedIcon = true,
+  }) : assert(!(isArchived && isDeleted));
 
   @override
   State<StatefulWidget> createState() => _HabitProgressIndicator();
@@ -78,16 +78,23 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
     super.initState();
     // progress
     _controller = AnimationController(
-        value: widget.value, vsync: this, duration: widget.duration);
-    _animation =
-        Tween(begin: widget.value, end: widget.value).animate(_controller);
+      value: widget.value,
+      vsync: this,
+      duration: widget.duration,
+    );
+    _animation = Tween(
+      begin: widget.value,
+      end: widget.value,
+    ).animate(_controller);
     // checker
     _checkController = AnimationController(
-        value: widget.isComplated ? 1.0 : 0.0,
-        vsync: this,
-        duration: widget.duration);
+      value: widget.isComplated ? 1.0 : 0.0,
+      vsync: this,
+      duration: widget.duration,
+    );
     _checkAnimation = Tween(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _checkController, curve: Curves.easeInOutCirc));
+      CurvedAnimation(parent: _checkController, curve: Curves.easeInOutCirc),
+    );
   }
 
   @override
@@ -121,11 +128,7 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
     return Container(
       padding: EdgeInsets.all(size / 5),
       child: FittedBox(
-        child: Icon(
-          MdiIcons.archiveOutline,
-          size: size,
-          color: widget.color,
-        ),
+        child: Icon(MdiIcons.archiveOutline, size: size, color: widget.color),
       ),
     );
   }
@@ -134,11 +137,7 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
     return Container(
       padding: EdgeInsets.all(size / 5),
       child: FittedBox(
-        child: Icon(
-          MdiIcons.deleteVariant,
-          size: size,
-          color: widget.color,
-        ),
+        child: Icon(MdiIcons.deleteVariant, size: size, color: widget.color),
       ),
     );
   }
@@ -178,34 +177,39 @@ class _HabitProgressIndicator extends State<HabitProgressIndicator>
 
       final indicator = CircularProgressIndicator(
         backgroundColor: widget.backgroundColor,
-        valueColor:
-            AlwaysStoppedAnimation<Color>(widget.color ?? colorScheme.primary),
+        valueColor: AlwaysStoppedAnimation<Color>(
+          widget.color ?? colorScheme.primary,
+        ),
         strokeWidth: widget.strokeWidth ?? 4.0,
         value: _animation.value,
       );
 
-      return Stack(alignment: Alignment.center, children: [
-        SizedBox(
-          height: constraints.maxHeight,
-          width: constraints.maxHeight,
-          child: indicator,
-        ),
-        Visibility(
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            height: constraints.maxHeight,
+            width: constraints.maxHeight,
+            child: indicator,
+          ),
+          Visibility(
             visible: widget.isComplated && widget.showComplatedIcon,
-            child: _buildAnimatedCheck(context, constraints.maxHeight)),
-        AnimatedOpacity(
-          opacity: getAnimatedArchiveOpcaticy(),
-          duration: widget.duration,
-          curve: Curves.easeInOutCirc,
-          child: _buildArchiveFlag(context, constraints.maxHeight),
-        ),
-        AnimatedOpacity(
-          opacity: getAnimatedDeleteOpcaticy(),
-          duration: widget.duration,
-          curve: Curves.easeInOutCirc,
-          child: _buildDeleteFlag(context, constraints.maxHeight),
-        ),
-      ]);
+            child: _buildAnimatedCheck(context, constraints.maxHeight),
+          ),
+          AnimatedOpacity(
+            opacity: getAnimatedArchiveOpcaticy(),
+            duration: widget.duration,
+            curve: Curves.easeInOutCirc,
+            child: _buildArchiveFlag(context, constraints.maxHeight),
+          ),
+          AnimatedOpacity(
+            opacity: getAnimatedDeleteOpcaticy(),
+            duration: widget.duration,
+            curve: Curves.easeInOutCirc,
+            child: _buildDeleteFlag(context, constraints.maxHeight),
+          ),
+        ],
+      );
     }
 
     return AnimatedBuilder(

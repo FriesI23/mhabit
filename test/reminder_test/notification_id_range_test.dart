@@ -36,13 +36,18 @@ void main() {
       seen.add(getRandomSyncId());
     }
 
-    final evenStart =
-        minSyncNotifyId.isEven ? minSyncNotifyId : minSyncNotifyId + 1;
-    final evenEnd =
-        maxSyncNotifyId.isEven ? maxSyncNotifyId : maxSyncNotifyId - 1;
+    final evenStart = minSyncNotifyId.isEven
+        ? minSyncNotifyId
+        : minSyncNotifyId + 1;
+    final evenEnd = maxSyncNotifyId.isEven
+        ? maxSyncNotifyId
+        : maxSyncNotifyId - 1;
 
-    expect(seen.contains(evenStart), isTrue,
-        reason: 'Did not generate evenStart');
+    expect(
+      seen.contains(evenStart),
+      isTrue,
+      reason: 'Did not generate evenStart',
+    );
     expect(seen.contains(evenEnd), isTrue, reason: 'Did not generate evenEnd');
   });
 }

@@ -44,26 +44,34 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
     this.startMessage,
     this.errorMessage,
     this.completeMessage,
-  })  : _replaySubject = replaySubject,
-        _completer = Completer();
+  }) : _replaySubject = replaySubject,
+       _completer = Completer();
 
-  static ReplayAppLoggerStreamer<AppLoggerMessage> buildAppSyncFailed(
-      {required ReplaySubject<l.LogEvent> replaySubject,
-      required String filePath,
-      String? sessionId}) {
+  static ReplayAppLoggerStreamer<AppLoggerMessage> buildAppSyncFailed({
+    required ReplaySubject<l.LogEvent> replaySubject,
+    required String filePath,
+    String? sessionId,
+  }) {
     return ReplayAppLoggerStreamer(
-        replaySubject: replaySubject,
-        printer: const AppLoggerConsoleReleasePrinter(addTime: true),
-        outputer: l.AdvancedFileOutput(path: filePath, maxFileSizeKB: -1),
-        startMessage: AppTextLoggerMessage(LoggerType.appsync,
-            message: "----- START TASK [${sessionId ?? 'unknown'}] -----",
-            forceLogging: true),
-        completeMessage: AppTextLoggerMessage(LoggerType.appsync,
-            message: "----- COMPLETE TASK [${sessionId ?? 'unknown'}] -----",
-            forceLogging: true),
-        errorMessage: AppTextLoggerMessage(LoggerType.appsync,
-            message: "----- FOUND ERROR [${sessionId ?? 'unknown'}] -----",
-            forceLogging: true));
+      replaySubject: replaySubject,
+      printer: const AppLoggerConsoleReleasePrinter(addTime: true),
+      outputer: l.AdvancedFileOutput(path: filePath, maxFileSizeKB: -1),
+      startMessage: AppTextLoggerMessage(
+        LoggerType.appsync,
+        message: "----- START TASK [${sessionId ?? 'unknown'}] -----",
+        forceLogging: true,
+      ),
+      completeMessage: AppTextLoggerMessage(
+        LoggerType.appsync,
+        message: "----- COMPLETE TASK [${sessionId ?? 'unknown'}] -----",
+        forceLogging: true,
+      ),
+      errorMessage: AppTextLoggerMessage(
+        LoggerType.appsync,
+        message: "----- FOUND ERROR [${sessionId ?? 'unknown'}] -----",
+        forceLogging: true,
+      ),
+    );
   }
 
   bool get isComplete => _completer.isCompleted;
@@ -72,13 +80,15 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
     if (_init != null) _init!.future;
 
     final init = _init = Completer();
-    Future.wait([printer.init(), outputer.init()]).catchError((e, s) {
-      if (!init.isCompleted) init.completeError(e, s);
-      if (init == _init) _init = null;
-      return const [];
-    }).whenComplete(() {
-      if (!init.isCompleted) init.complete();
-    });
+    Future.wait([printer.init(), outputer.init()])
+        .catchError((e, s) {
+          if (!init.isCompleted) init.completeError(e, s);
+          if (init == _init) _init = null;
+          return const [];
+        })
+        .whenComplete(() {
+          if (!init.isCompleted) init.complete();
+        });
     return init.future;
   }
 
@@ -88,9 +98,14 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
     _count -= 1;
     _subscription = _replaySubject
         .startWith(l.LogEvent(l.Level.info, startMessage))
-        .listen(onData, onDone: onDone, onError: (e, s) {
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-    }, cancelOnError: kDebugMode);
+        .listen(
+          onData,
+          onDone: onDone,
+          onError: (e, s) {
+            if (kDebugMode) Error.throwWithStackTrace(e, s);
+          },
+          cancelOnError: kDebugMode,
+        );
 
     return _completer.future;
   }
@@ -112,8 +127,14 @@ class ReplayAppLoggerStreamer<T extends AppLoggerMessage> {
     try {
       if (_count >= _replaySubject.values.length) {
         for (var es in _replaySubject.errorAndStackTraces) {
-          handleData(l.LogEvent(l.Level.info, errorMessage,
-              error: es.error, stackTrace: es.stackTrace));
+          handleData(
+            l.LogEvent(
+              l.Level.info,
+              errorMessage,
+              error: es.error,
+              stackTrace: es.stackTrace,
+            ),
+          );
         }
         onComplete();
       }

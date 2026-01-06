@@ -46,8 +46,8 @@ class EnhancedSafeArea extends StatelessWidget {
     bool? maintainBottomViewPadding,
     this.withSliver = false,
     required this.child,
-  })  : minimum = minimum ?? EdgeInsets.zero,
-        maintainBottomViewPadding = maintainBottomViewPadding ?? false;
+  }) : minimum = minimum ?? EdgeInsets.zero,
+       maintainBottomViewPadding = maintainBottomViewPadding ?? false;
 
   const EnhancedSafeArea.only({
     super.key,
@@ -59,12 +59,12 @@ class EnhancedSafeArea extends StatelessWidget {
     bool? maintainBottomViewPadding,
     this.withSliver = false,
     required this.child,
-  })  : left = left ?? false,
-        right = right ?? false,
-        top = top ?? false,
-        bottom = bottom ?? false,
-        minimum = minimum ?? EdgeInsets.zero,
-        maintainBottomViewPadding = maintainBottomViewPadding ?? false;
+  }) : left = left ?? false,
+       right = right ?? false,
+       top = top ?? false,
+       bottom = bottom ?? false,
+       minimum = minimum ?? EdgeInsets.zero,
+       maintainBottomViewPadding = maintainBottomViewPadding ?? false;
 
   const EnhancedSafeArea.symmetric({
     super.key,
@@ -74,12 +74,12 @@ class EnhancedSafeArea extends StatelessWidget {
     bool? maintainBottomViewPadding,
     this.withSliver = false,
     required this.child,
-  })  : left = horizontal ?? false,
-        right = horizontal ?? false,
-        top = vertical ?? false,
-        bottom = vertical ?? false,
-        minimum = minimum ?? EdgeInsets.zero,
-        maintainBottomViewPadding = maintainBottomViewPadding ?? false;
+  }) : left = horizontal ?? false,
+       right = horizontal ?? false,
+       top = vertical ?? false,
+       bottom = vertical ?? false,
+       minimum = minimum ?? EdgeInsets.zero,
+       maintainBottomViewPadding = maintainBottomViewPadding ?? false;
 
   const EnhancedSafeArea.edgeToEdgeSafe({
     super.key,
@@ -87,12 +87,12 @@ class EnhancedSafeArea extends StatelessWidget {
     bool? maintainBottomViewPadding,
     this.withSliver = false,
     required this.child,
-  })  : left = true,
-        right = true,
-        top = false,
-        bottom = false,
-        minimum = minimum ?? EdgeInsets.zero,
-        maintainBottomViewPadding = maintainBottomViewPadding ?? false;
+  }) : left = true,
+       right = true,
+       top = false,
+       bottom = false,
+       minimum = minimum ?? EdgeInsets.zero,
+       maintainBottomViewPadding = maintainBottomViewPadding ?? false;
 
   @override
   Widget build(BuildContext context) {

@@ -29,17 +29,21 @@ class AppTextLoggerMessage implements AppLoggerMessage {
   @override
   final bool forceLogging;
 
-  const AppTextLoggerMessage(this.type,
-      {this.message, this.extraInfo, this.forceLogging = false});
+  const AppTextLoggerMessage(
+    this.type, {
+    this.message,
+    this.extraInfo,
+    this.forceLogging = false,
+  });
 
   @override
   Iterable<String?> toLogPrinterMessage() => [
-        if (message != null) message,
-        if (extraInfo != null)
-          ...extraInfo!
-              .where((e) => e != null)
-              .map((e) => (e is Function ? e.call() : e).toString()),
-      ];
+    if (message != null) message,
+    if (extraInfo != null)
+      ...extraInfo!
+          .where((e) => e != null)
+          .map((e) => (e is Function ? e.call() : e).toString()),
+  ];
 }
 
 abstract interface class AppTextLogger {
@@ -64,8 +68,13 @@ class _AppTextLogger implements AppTextLogger {
 
   const _AppTextLogger(this.manager, this.type);
 
-  void _log(l.Level level, String msg,
-      {Iterable? ex, Object? error, StackTrace? stackTrace}) {
+  void _log(
+    l.Level level,
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     try {
       manager.logger.log(
         level,
@@ -75,55 +84,88 @@ class _AppTextLogger implements AppTextLogger {
       );
     } on Exception catch (e) {
       if (kDebugMode) rethrow;
-      log("catch exception while logging",
-          level: l.Level.fatal.value, error: e, stackTrace: StackTrace.current);
+      log(
+        "catch exception while logging",
+        level: l.Level.fatal.value,
+        error: e,
+        stackTrace: StackTrace.current,
+      );
     }
   }
 
   @override
-  void debug(String msg,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      _log(l.Level.debug, msg, ex: ex, error: error, stackTrace: stackTrace);
+  void debug(
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(l.Level.debug, msg, ex: ex, error: error, stackTrace: stackTrace);
 
   @override
-  void info(String msg,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      _log(l.Level.info, msg, ex: ex, error: error, stackTrace: stackTrace);
+  void info(
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(l.Level.info, msg, ex: ex, error: error, stackTrace: stackTrace);
 
   @override
-  void warn(String msg,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
+  void warn(
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) =>
       _log(l.Level.warning, msg, ex: ex, error: error, stackTrace: stackTrace);
 
   @override
-  void error(String msg,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      _log(l.Level.error, msg, ex: ex, error: error, stackTrace: stackTrace);
+  void error(
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(l.Level.error, msg, ex: ex, error: error, stackTrace: stackTrace);
 
   @override
-  void fatal(String msg,
-          {Iterable? ex, Object? error, StackTrace? stackTrace}) =>
-      _log(l.Level.fatal, msg, ex: ex, error: error, stackTrace: stackTrace);
+  void fatal(
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(l.Level.fatal, msg, ex: ex, error: error, stackTrace: stackTrace);
 }
 
 final class _DebuggerAppTextLogger extends _AppTextLogger {
   const _DebuggerAppTextLogger(super.manager, super.type);
 
   @override
-  void _log(l.Level level, String msg,
-      {Iterable? ex, Object? error, StackTrace? stackTrace}) {
+  void _log(
+    l.Level level,
+    String msg, {
+    Iterable? ex,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     try {
       manager.logger.log(
         level,
-        AppTextLoggerMessage(type,
-            message: msg, extraInfo: ex, forceLogging: true),
+        AppTextLoggerMessage(
+          type,
+          message: msg,
+          extraInfo: ex,
+          forceLogging: true,
+        ),
         error: error,
         stackTrace: stackTrace,
       );
     } on Exception catch (e) {
       if (kDebugMode) rethrow;
-      log("catch exception while logging",
-          level: l.Level.fatal.value, error: e, stackTrace: StackTrace.current);
+      log(
+        "catch exception while logging",
+        level: l.Level.fatal.value,
+        error: e,
+        stackTrace: StackTrace.current,
+      );
     }
   }
 }

@@ -37,8 +37,12 @@ class AppFirstDayViewModel extends ChangeNotifier
   Future<void> setNewFirstDay(int newFirstDay) async {
     if (_firstDay?.get() != newFirstDay) {
       final stdNewFirstDay = standardizeFirstDay(newFirstDay);
-      appLog.value.info("$runtimeType.setNewFirstDay",
-          beforeVal: firstDay, afterVal: newFirstDay, ex: [stdNewFirstDay]);
+      appLog.value.info(
+        "$runtimeType.setNewFirstDay",
+        beforeVal: firstDay,
+        afterVal: newFirstDay,
+        ex: [stdNewFirstDay],
+      );
       await _firstDay?.set(stdNewFirstDay);
       notifyListeners();
     }

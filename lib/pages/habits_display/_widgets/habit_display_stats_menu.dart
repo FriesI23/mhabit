@@ -34,9 +34,8 @@ Future<void> showHabitDisplayStatsMenuDialog({
     builder: (context) => ChangeNotifierProvider.value(
       value: summary,
       builder: (context, child) => Consumer<HabitSummaryViewModel>(
-        builder: (context, value, child) => HabitDisplayStatsMenuDialog(
-          statisticsData: value.statisticsData,
-        ),
+        builder: (context, value, child) =>
+            HabitDisplayStatsMenuDialog(statisticsData: value.statisticsData),
       ),
     ),
   );
@@ -94,14 +93,20 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
   Icon? _getMostPopularityIconByIndex(int index) {
     switch (index) {
       case 0:
-        return const Icon(HabitProgressIcons.numeric_1_circle_outline,
-            color: HTMLColor.goldenrod);
+        return const Icon(
+          HabitProgressIcons.numeric_1_circle_outline,
+          color: HTMLColor.goldenrod,
+        );
       case 1:
-        return const Icon(HabitProgressIcons.numeric_2_circle_outline,
-            color: HTMLColor.gray);
+        return const Icon(
+          HabitProgressIcons.numeric_2_circle_outline,
+          color: HTMLColor.gray,
+        );
       case 2:
-        return const Icon(HabitProgressIcons.numeric_3_circle_outline,
-            color: HTMLColor.brown);
+        return const Icon(
+          HabitProgressIcons.numeric_3_circle_outline,
+          color: HTMLColor.brown,
+        );
       default:
         return null;
     }
@@ -122,8 +127,8 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
       final symbol = changed > 0
           ? "+"
           : changed < 0
-              ? "-"
-              : "";
+          ? "-"
+          : "";
       children.add(
         ListTile(
           title: Text(habit.name),

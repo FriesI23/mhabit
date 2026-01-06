@@ -40,8 +40,10 @@ Future<void> onDebuggerNotificationTapped() async {
   final context = navigatorKey.currentContext;
   if (context == null) return;
   final currentRouteName = currentRouteObserver.routeName;
-  appLog.debugger.info("onDebuggerNotificationTapped: navi",
-      ex: [AppDebuggerPage.routerName, currentRouteName]);
+  appLog.debugger.info(
+    "onDebuggerNotificationTapped: navi",
+    ex: [AppDebuggerPage.routerName, currentRouteName],
+  );
   if (currentRouteName != AppDebuggerPage.routerName) {
     naviToAppDebuggerPage(context: context);
   }
@@ -89,9 +91,9 @@ class _PageState extends State<_Page> with XShare {
     if (!mounted) return;
     await context.read<AppDebuggerViewModel>().setCollectLogsSatus(newStatus);
     if (!mounted) return;
-    context
-        .read<AppDebuggerViewModel>()
-        .processDebuggingNotification(L10n.of(context));
+    context.read<AppDebuggerViewModel>().processDebuggingNotification(
+      L10n.of(context),
+    );
   }
 
   void _onDownloadLogButtonPressed(BuildContext context) async {
@@ -100,8 +102,12 @@ class _PageState extends State<_Page> with XShare {
     if (!context.mounted) return;
     if (!fileExist) return _showDebugLogFileDismissSnackbar();
     final subject = L10n.of(context)?.debug_downladDebugLogs_subject;
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform,
-        context: context, subject: subject);
+    trySaveFiles(
+      [XFile(filePath)],
+      defaultTargetPlatform,
+      context: context,
+      subject: subject,
+    );
   }
 
   void _onClearLogButtongPressed(BuildContext context) async {
@@ -113,12 +119,14 @@ class _PageState extends State<_Page> with XShare {
     await fileObj.delete();
     AppLoggerMananger.reloadDebuggingLogger(filePath: filePath);
     if (!context.mounted) return;
-    final snackbar = buildSnackBarWithDismiss(context,
-        content: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.dbeug_clearDebugLogs_complete_snackbar)
-              : const Text("Debug log cleared"),
-        ));
+    final snackbar = buildSnackBarWithDismiss(
+      context,
+      content: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.dbeug_clearDebugLogs_complete_snackbar)
+            : const Text("Debug log cleared"),
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
@@ -142,20 +150,27 @@ class _PageState extends State<_Page> with XShare {
   void _onFABPressed(BuildContext context) async {
     final zipFilePath = await generateZippedDebugInfo();
     if (!context.mounted) return;
-    final subject =
-        L10n.of(context)?.debug_downladDebugZip_subject(debuggerZipFile);
-    trySaveFiles([XFile(zipFilePath)], defaultTargetPlatform,
-        context: context, subject: subject);
+    final subject = L10n.of(
+      context,
+    )?.debug_downladDebugZip_subject(debuggerZipFile);
+    trySaveFiles(
+      [XFile(zipFilePath)],
+      defaultTargetPlatform,
+      context: context,
+      subject: subject,
+    );
   }
 
   void _showDebugLogFileDismissSnackbar() {
     if (!mounted) return;
-    final snackbar = buildSnackBarWithDismiss(context,
-        content: L10nBuilder(
-          builder: (context, l10n) => l10n != null
-              ? Text(l10n.debug_missingDebugLogFile_snackbar)
-              : const Text("Log file missing"),
-        ));
+    final snackbar = buildSnackBarWithDismiss(
+      context,
+      content: L10nBuilder(
+        builder: (context, l10n) => l10n != null
+            ? Text(l10n.debug_missingDebugLogFile_snackbar)
+            : const Text("Log file missing"),
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
@@ -166,12 +181,14 @@ class _PageState extends State<_Page> with XShare {
         leading: const PageBackButton(),
         automaticallyImplyLeading: false,
       ),
-      floatingActionButton: Builder(builder: (context) {
-        return FloatingActionButton(
-          child: const Icon(Icons.share),
-          onPressed: () => _onFABPressed(context),
-        );
-      }),
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            child: const Icon(Icons.share),
+            onPressed: () => _onFABPressed(context),
+          );
+        },
+      ),
       body: ListView(
         children: [
           Selector<AppDebuggerViewModel, bool>(
@@ -225,10 +242,7 @@ class _Sperator extends StatelessWidget {
     return const Row(
       children: [
         Spacer(),
-        Flexible(
-          flex: 10,
-          child: Divider(),
-        ),
+        Flexible(flex: 10, child: Divider()),
         Spacer(),
       ],
     );

@@ -9,9 +9,7 @@ targets:
       source_gen|combining_builder:
         enabled: true
         options:
-          preamble: |
-            // coverage: ignore-file
-            // ignore_for_file: type=lint
+          preamble: "// coverage: ignore-file"
 
 builders:
   proxy_generator:

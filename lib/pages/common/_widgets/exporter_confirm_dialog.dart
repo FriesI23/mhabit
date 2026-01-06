@@ -30,10 +30,7 @@ Future<ExporterConfirmResultType?> showExporterConfirmDialog({
   );
 }
 
-enum ExporterConfirmResultType {
-  basic,
-  withRecords,
-}
+enum ExporterConfirmResultType { basic, withRecords }
 
 class ExporterConfirmDialog extends StatefulWidget {
   final int exportHabitsNumber;
@@ -58,11 +55,15 @@ class _ExporterConfirmDialogState extends State<ExporterConfirmDialog> {
       final l10n = L10n.of(context);
       if (widget.exportAll) {
         return Text(
-            l10n?.exportConfirmDialog_title_exportAll ?? "Export all habits?");
+          l10n?.exportConfirmDialog_title_exportAll ?? "Export all habits?",
+        );
       } else {
-        return Text(l10n?.exportConfirmDialog_title_exportMulti(
-                widget.exportHabitsNumber) ??
-            "Export habits?");
+        return Text(
+          l10n?.exportConfirmDialog_title_exportMulti(
+                widget.exportHabitsNumber,
+              ) ??
+              "Export habits?",
+        );
       }
     }
 
@@ -101,7 +102,7 @@ class _ExporterConfirmDialogState extends State<ExporterConfirmDialog> {
           child: l10n != null
               ? Text(l10n.exportConfirmDialog_confirm_buttonText)
               : const Text("export"),
-        )
+        ),
       ],
     );
   }

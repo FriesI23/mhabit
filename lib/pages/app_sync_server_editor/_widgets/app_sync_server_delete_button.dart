@@ -32,17 +32,20 @@ class AppSyncServerDeleteButton extends StatelessWidget {
   });
 
   const AppSyncServerDeleteButton.normal({super.key, this.onPressed})
-      : style = AppSyncServerDeleteButtonStyle.normal;
+    : style = AppSyncServerDeleteButtonStyle.normal;
 
   const AppSyncServerDeleteButton.fullscreen({super.key, this.onPressed})
-      : style = AppSyncServerDeleteButtonStyle.fullsreen;
+    : style = AppSyncServerDeleteButtonStyle.fullsreen;
 
   TextButtonThemeData buildTextButtonTheme(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.colorScheme.error;
     final iconColor = WidgetStatePropertyAll(color);
-    final buttonStyle = theme.textButtonTheme.style
-            ?.copyWith(iconColor: iconColor, foregroundColor: iconColor) ??
+    final buttonStyle =
+        theme.textButtonTheme.style?.copyWith(
+          iconColor: iconColor,
+          foregroundColor: iconColor,
+        ) ??
         ButtonStyle(iconColor: iconColor, foregroundColor: iconColor);
     return TextButtonThemeData(style: buttonStyle);
   }
@@ -51,23 +54,29 @@ class AppSyncServerDeleteButton extends StatelessWidget {
     final theme = Theme.of(context);
     final color = theme.colorScheme.error;
     final iconColorStat = WidgetStatePropertyAll(color);
-    final sideStat =
-        WidgetStatePropertyAll(BorderSide(width: 0.8, color: color));
-    final buttonStyle = theme.outlinedButtonTheme.style?.copyWith(
-            iconColor: iconColorStat,
-            foregroundColor: iconColorStat,
-            side: sideStat) ??
+    final sideStat = WidgetStatePropertyAll(
+      BorderSide(width: 0.8, color: color),
+    );
+    final buttonStyle =
+        theme.outlinedButtonTheme.style?.copyWith(
+          iconColor: iconColorStat,
+          foregroundColor: iconColorStat,
+          side: sideStat,
+        ) ??
         ButtonStyle(
-            iconColor: iconColorStat,
-            foregroundColor: iconColorStat,
-            side: sideStat);
+          iconColor: iconColorStat,
+          foregroundColor: iconColorStat,
+          side: sideStat,
+        );
     return OutlinedButtonThemeData(style: buttonStyle);
   }
 
-  Widget _buildDeleteText(BuildContext context) =>
-      Text(L10n.of(context)?.confirmDialog_confirm_text(
-              NormalizeConfirmDialogType.delete.name) ??
-          'delete');
+  Widget _buildDeleteText(BuildContext context) => Text(
+    L10n.of(
+          context,
+        )?.confirmDialog_confirm_text(NormalizeConfirmDialogType.delete.name) ??
+        'delete',
+  );
 
   Widget _buildNormlButton(BuildContext context, bool canDelete) =>
       TextButtonTheme(
@@ -92,15 +101,20 @@ class AppSyncServerDeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canDelete =
-        context.select<AppSyncViewModel, bool>((vm) => vm.serverConfig != null);
+    final canDelete = context.select<AppSyncViewModel, bool>(
+      (vm) => vm.serverConfig != null,
+    );
     return Visibility(
       visible: canDelete,
       child: switch (style) {
-        AppSyncServerDeleteButtonStyle.normal =>
-          _buildNormlButton(context, canDelete),
-        AppSyncServerDeleteButtonStyle.fullsreen =>
-          _buildFullscreenButton(context, canDelete),
+        AppSyncServerDeleteButtonStyle.normal => _buildNormlButton(
+          context,
+          canDelete,
+        ),
+        AppSyncServerDeleteButtonStyle.fullsreen => _buildFullscreenButton(
+          context,
+          canDelete,
+        ),
       },
     );
   }

@@ -23,18 +23,16 @@ import '../../../providers/app_sync.dart';
 class AppSyncSummaryTile extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const AppSyncSummaryTile({
-    super.key,
-    this.onPressed,
-  });
+  const AppSyncSummaryTile({super.key, this.onPressed});
 
   IconData getSubTitleLeading(
-          BuildContext context, AppSyncServer? serverConfig) =>
-      switch (serverConfig?.type) {
-        AppSyncServerType.webdav => MdiIcons.cloudOutline,
-        AppSyncServerType.unknown => MdiIcons.cloudQuestionOutline,
-        _ => MdiIcons.cloudAlertOutline,
-      };
+    BuildContext context,
+    AppSyncServer? serverConfig,
+  ) => switch (serverConfig?.type) {
+    AppSyncServerType.webdav => MdiIcons.cloudOutline,
+    AppSyncServerType.unknown => MdiIcons.cloudQuestionOutline,
+    _ => MdiIcons.cloudAlertOutline,
+  };
 
   IconData? getTrailing(BuildContext context, AppSyncServer? serverConfig) =>
       switch (serverConfig?.type) {
@@ -44,8 +42,9 @@ class AppSyncSummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final serverConfig = context
-        .select<AppSyncViewModel, AppSyncServer?>((vm) => vm.serverConfig);
+    final serverConfig = context.select<AppSyncViewModel, AppSyncServer?>(
+      (vm) => vm.serverConfig,
+    );
     final l10n = L10n.of(context);
     final trailingData = getTrailing(context, serverConfig);
     final subtileLeading = getSubTitleLeading(context, serverConfig);
@@ -56,19 +55,27 @@ class AppSyncSummaryTile extends StatelessWidget {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  Icon(subtileLeading),
-                  const SizedBox(width: 4),
-                  Text(l10n?.appSync_syncServerType_text(
-                          serverConfig.type.name, '') ??
-                      serverConfig.type.name)
-                ]),
+                Row(
+                  children: [
+                    Icon(subtileLeading),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n?.appSync_syncServerType_text(
+                            serverConfig.type.name,
+                            '',
+                          ) ??
+                          serverConfig.type.name,
+                    ),
+                  ],
+                ),
                 const SizedBox(width: 4),
-                Text(serverConfig.name)
+                Text(serverConfig.name),
               ],
             )
-          : Text(l10n?.appSync_summaryTile_subtitle_text_notConfigured ??
-              "Not Configured."),
+          : Text(
+              l10n?.appSync_summaryTile_subtitle_text_notConfigured ??
+                  "Not Configured.",
+            ),
       onTap: onPressed,
     );
   }

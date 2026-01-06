@@ -25,7 +25,9 @@ abstract class BaseTextEditingControllerWidget extends StatefulWidget {
 }
 
 abstract class BaseTextEditingControllerWidgetState<
-    S extends BaseTextEditingControllerWidget> extends State<S> {
+  S extends BaseTextEditingControllerWidget
+>
+    extends State<S> {
   late TextEditingController controller;
   bool _controllerInitialized = false;
 
@@ -69,7 +71,8 @@ class SingleTextFormInputField<T> extends BaseTextEditingControllerWidget {
     BuildContext context,
     TextEditingController controller,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final String Function(T vm) valueBuilder;
   final Widget? child;
 

@@ -34,22 +34,25 @@ class DBHelperViewModel extends ChangeNotifier
 
   DBHelperViewModel() : local = DBHelper();
 
-  CancelableCompleter<bool?> doInit(
-      {required bool reinit,
-      Duration timeout = kDebugMode
-          ? const Duration(seconds: 600)
-          : const Duration(seconds: 60)}) {
+  CancelableCompleter<bool?> doInit({
+    required bool reinit,
+    Duration timeout = kDebugMode
+        ? const Duration(seconds: 600)
+        : const Duration(seconds: 60),
+  }) {
     final completer = CancelableCompleter<bool>();
     local
         .init(reinit: reinit)
         .timeout(timeout)
         .then((_) => completer.complete(true))
         .onError((e, s) {
-      if (!completer.isCompleted) {
-        e != null ? completer.completeError(e, s) : completer.complete(false);
-      }
-      if (e != null) return Future.error(e, s);
-    });
+          if (!completer.isCompleted) {
+            e != null
+                ? completer.completeError(e, s)
+                : completer.complete(false);
+          }
+          if (e != null) return Future.error(e, s);
+        });
     return completer;
   }
 

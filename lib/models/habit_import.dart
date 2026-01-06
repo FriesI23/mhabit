@@ -25,34 +25,44 @@ class HabitImport {
 
   final Iterable<Object?> _jsonData;
 
-  const HabitImport(this.helper, this.recordDBHelper,
-      {Iterable<Object?> data = const []})
-      : _jsonData = data;
+  const HabitImport(
+    this.helper,
+    this.recordDBHelper, {
+    Iterable<Object?> data = const [],
+  }) : _jsonData = data;
 
   int get habitsCount => _jsonData.length;
 
-  Future<void> _importHabitData(HabitExportData habitExportData,
-      {bool withRecords = true}) async {
+  Future<void> _importHabitData(
+    HabitExportData habitExportData, {
+    bool withRecords = true,
+  }) async {
     final habitUUID = genHabitUUID();
     var habitDBCell = habitExportData.toHabitDBCell();
     habitDBCell = habitDBCell.copyWith(
-        uuid: habitUUID, type: habitDBCell.type ?? defaultHabitType.dbCode);
+      uuid: habitUUID,
+      type: habitDBCell.type ?? defaultHabitType.dbCode,
+    );
     final dbid = await helper.insertNewHabit(habitDBCell);
     if (withRecords) {
       await recordDBHelper.insertOrUpdateMultiRecords(
         habitExportData.getRecordDBCells().map(
-              (e) => e.copyWith(
-                parentId: dbid,
-                parentUUID: habitDBCell.uuid,
-                uuid: genRecordUUID(habitUUID, e.recordDate),
-              ),
-            ),
+          (e) => e.copyWith(
+            parentId: dbid,
+            parentUUID: habitDBCell.uuid,
+            uuid: genRecordUUID(habitUUID, e.recordDate),
+          ),
+        ),
       );
-      appLog.import.info("$runtimeType._importHabitData",
-          ex: ["with records", dbid, habitDBCell]);
+      appLog.import.info(
+        "$runtimeType._importHabitData",
+        ex: ["with records", dbid, habitDBCell],
+      );
     } else {
-      appLog.import.info("$runtimeType._importHabitData",
-          ex: ["without records", dbid, habitDBCell]);
+      appLog.import.info(
+        "$runtimeType._importHabitData",
+        ex: ["without records", dbid, habitDBCell],
+      );
     }
   }
 

@@ -33,33 +33,41 @@ typedef HabitStartDate = HabitDate;
 
 typedef HabitExportJsonData = String;
 
-typedef OnScoreChangeCallback = void Function(
-    HabitDate fromDate, HabitDate toDate, num fromScore, num toScore);
+typedef OnScoreChangeCallback =
+    void Function(
+      HabitDate fromDate,
+      HabitDate toDate,
+      num fromScore,
+      num toScore,
+    );
 
-typedef HabitDetailScoreChartBuilder = Widget Function(
-  BuildContext context,
-  List<MapEntry<HabitDate, HabitDetailScoreChartDate>> data,
-  double eachSize,
-  int? limit,
-  ValueKey<String>? chartKey,
-);
+typedef HabitDetailScoreChartBuilder =
+    Widget Function(
+      BuildContext context,
+      List<MapEntry<HabitDate, HabitDetailScoreChartDate>> data,
+      double eachSize,
+      int? limit,
+      ValueKey<String>? chartKey,
+    );
 
-typedef HabitDetailFreqChartBuilder = Widget Function(
-  BuildContext context,
-  List<MapEntry<HabitDate, HabitDetailFreqChartData>> data,
-  double eachSize,
-  double barWidth,
-  double barSpaceBetween,
-  HabitFreqChartDisplayMethod displayMethod,
-  ValueKey<String>? chartKey,
-);
+typedef HabitDetailFreqChartBuilder =
+    Widget Function(
+      BuildContext context,
+      List<MapEntry<HabitDate, HabitDetailFreqChartData>> data,
+      double eachSize,
+      double barWidth,
+      double barSpaceBetween,
+      HabitFreqChartDisplayMethod displayMethod,
+      ValueKey<String>? chartKey,
+    );
 
-typedef OnHabitSummaryPressCallback = void Function(
-  HabitUUID parentUUID,
-  HabitRecordUUID? uuid,
-  HabitRecordDate date,
-  HabitRecordStatus crt,
-);
+typedef OnHabitSummaryPressCallback =
+    void Function(
+      HabitUUID parentUUID,
+      HabitRecordUUID? uuid,
+      HabitRecordDate date,
+      HabitRecordStatus crt,
+    );
 
-typedef HabitListTilePhysicsBuilder = ScrollPhysics? Function(
-    double itemSize, double length);
+typedef HabitListTilePhysicsBuilder =
+    ScrollPhysics? Function(double itemSize, double length);

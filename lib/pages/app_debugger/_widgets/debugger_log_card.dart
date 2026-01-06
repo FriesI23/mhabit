@@ -40,8 +40,9 @@ class DebuggerLogCard extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.article_outlined),
-              title:
-                  l10n != null ? Text(l10n.debug_debuggerLogCard_title) : null,
+              title: l10n != null
+                  ? Text(l10n.debug_debuggerLogCard_title)
+                  : null,
               subtitle: l10n != null
                   ? Text(l10n.debug_debuggerLogCard_subtitle)
                   : null,
@@ -49,32 +50,40 @@ class DebuggerLogCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Builder(builder: (context) {
-                  return TextButton(
-                    onPressed: onDownloadPressed != null
-                        ? () => onDownloadPressed!(context)
-                        : null,
-                    child: Text(
-                      l10n?.debug_debuggerLogCard_saveButton_text ?? 'Downlaod',
-                      style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer),
-                    ),
-                  );
-                }),
+                Builder(
+                  builder: (context) {
+                    return TextButton(
+                      onPressed: onDownloadPressed != null
+                          ? () => onDownloadPressed!(context)
+                          : null,
+                      child: Text(
+                        l10n?.debug_debuggerLogCard_saveButton_text ??
+                            'Downlaod',
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(width: 8),
-                Builder(builder: (context) {
-                  return TextButton(
-                    onPressed: onClearPressed != null
-                        ? () => onClearPressed!(context)
-                        : null,
-                    child: Text(
-                      l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
-                  );
-                }),
+                Builder(
+                  builder: (context) {
+                    return TextButton(
+                      onPressed: onClearPressed != null
+                          ? () => onClearPressed!(context)
+                          : null,
+                      child: Text(
+                        l10n?.debug_debuggerLogCard_clearButton_text ?? 'Clear',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(width: 8),
               ],
             ),

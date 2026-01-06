@@ -26,9 +26,7 @@ class SafedSliverList extends StatelessWidget {
   Widget build(BuildContext context) {
     return EnhancedSafeArea.edgeToEdgeSafe(
       withSliver: true,
-      child: SliverList(
-        delegate: SliverChildListDelegate(children),
-      ),
+      child: SliverList(delegate: SliverChildListDelegate(children)),
     );
   }
 }
@@ -47,10 +45,7 @@ class SafedMultiSliver extends StatelessWidget {
   Widget build(BuildContext context) {
     return EnhancedSafeArea.edgeToEdgeSafe(
       withSliver: true,
-      child: MultiSliver(
-        pushPinnedChildren: false,
-        children: children,
-      ),
+      child: MultiSliver(pushPinnedChildren: false, children: children),
     );
   }
 }

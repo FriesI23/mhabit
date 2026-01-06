@@ -55,38 +55,44 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
     Duration? configConfirmTimeout = const Duration(seconds: 60),
     this.progressController,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
-        onNeedConfirmCallback,
+    onNeedConfirmCallback,
     this.onConfigTaskComplete,
   }) : super(timeout: config.timeout ?? defaultAppSyncTimeout) {
     _sessionId = sessionId ?? genSessionId();
     _configTask = WebDavAppSyncConfigTask.build(
-        sessionId: _sessionId,
-        config: config,
-        confirmTimeout: configConfirmTimeout,
-        onNeedConfirmCallback: onNeedConfirmCallback);
+      sessionId: _sessionId,
+      config: config,
+      confirmTimeout: configConfirmTimeout,
+      onNeedConfirmCallback: onNeedConfirmCallback,
+    );
     _syncTask = WebDavAppSyncTaskExecutor.build(
-        sessionId: _sessionId,
-        config: config,
-        syncDBHelper: syncDBHelper,
-        progressController: progressController);
+      sessionId: _sessionId,
+      config: config,
+      syncDBHelper: syncDBHelper,
+      progressController: progressController,
+    );
   }
 
   static String genSessionId() {
     final random = math.Random();
     return List.generate(
-        8, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+      8,
+      (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+    ).join();
   }
 
   static WebDavStdClient buildWebDavClient(AppWebDavSyncServer config) {
     final connectRetryCount =
         config.connectRetryCount ?? defaultAppSyncConnectRetryCount;
     final httpClient = HttpClientForWebDav(
-        connectRetryOptions: connectRetryCount != null
-            ? RetryOptions(
-                maxAttempts: connectRetryCount,
-                maxDelay:
-                    (config.connectTimeout ?? defaultAppSyncConnectTimeout) * 3)
-            : null);
+      connectRetryOptions: connectRetryCount != null
+          ? RetryOptions(
+              maxAttempts: connectRetryCount,
+              maxDelay:
+                  (config.connectTimeout ?? defaultAppSyncConnectTimeout) * 3,
+            )
+          : null,
+    );
     if (config.ignoreSSL) {
       httpClient.badCertificateCallback = (cert, host, port) => true;
     }
@@ -102,14 +108,23 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
           count = 0;
           return false;
         }
-        final baseUri =
-            config.path.replace(path: '', query: null, fragment: null);
+        final baseUri = config.path.replace(
+          path: '',
+          query: null,
+          fragment: null,
+        );
         if (scheme == "Digest") {
-          client.addCredentials(baseUri, realm ?? '',
-              HttpClientDigestCredentials(config.username, config.password));
+          client.addCredentials(
+            baseUri,
+            realm ?? '',
+            HttpClientDigestCredentials(config.username, config.password),
+          );
         } else {
-          client.addCredentials(baseUri, realm ?? '',
-              HttpClientBasicCredentials(config.username, config.password));
+          client.addCredentials(
+            baseUri,
+            realm ?? '',
+            HttpClientBasicCredentials(config.username, config.password),
+          );
         }
         return true;
       });
@@ -130,14 +145,15 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   }
 
   List<
-      ({
-        AppSyncTask<WebDavAppSyncTaskResult> task,
-        void Function(WebDavAppSyncTaskResult result)? onComplete,
-      })> buildTaskConfigs() => [
-        if (!config.configed)
-          (task: _configTask, onComplete: onConfigTaskComplete),
-        (task: _syncTask, onComplete: null),
-      ];
+    ({
+      AppSyncTask<WebDavAppSyncTaskResult> task,
+      void Function(WebDavAppSyncTaskResult result)? onComplete,
+    })
+  >
+  buildTaskConfigs() => [
+    if (!config.configed) (task: _configTask, onComplete: onConfigTaskComplete),
+    (task: _syncTask, onComplete: null),
+  ];
 
   @override
   Future<WebDavAppSyncTaskResult> exec() async {
@@ -146,7 +162,8 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
       await Future.delayed(initWait);
       if (isCancalling) {
         return const WebDavAppSyncTaskResult.cancelled(
-            reason: WebDavAppSyncTaskResultSubStatus.userAction);
+          reason: WebDavAppSyncTaskResultSubStatus.userAction,
+        );
       }
     }
     final taskConfigs = buildTaskConfigs();
@@ -163,22 +180,27 @@ class WebDavAppSyncTask extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
   }
 
   Future<WebDavAppSyncTaskResult> doExecTask(
-      AppSyncTask<WebDavAppSyncTaskResult> task) {
+    AppSyncTask<WebDavAppSyncTaskResult> task,
+  ) {
     final future = task.run();
     appLog.appsynctask.info(task, ex: ['started', config]);
     return future.then((result) {
       if (result.isSuccessed || result.isCancelled) {
         appLog.appsynctask.info(task, ex: ['completed', result, config]);
       } else if (result.withError) {
-        appLog.appsynctask.info(task,
-            ex: ['comeplte with error', result, config],
-            error: result.error.error,
-            stackTrace: result.error.trace);
+        appLog.appsynctask.info(
+          task,
+          ex: ['comeplte with error', result, config],
+          error: result.error.error,
+          stackTrace: result.error.trace,
+        );
       } else {
-        appLog.appsynctask.info(task,
-            ex: ['comeplted', result, config],
-            error: result.error.error,
-            stackTrace: result.error.trace);
+        appLog.appsynctask.info(
+          task,
+          ex: ['comeplted', result, config],
+          error: result.error.error,
+          stackTrace: result.error.trace,
+        );
       }
       return result;
     });
@@ -205,13 +227,15 @@ class WebDavAppSyncTaskExecutor
 
   final WebDavProgressController? progressController;
   final AppSyncSubTask<List<WebDavResourceContainer>>
-      fetchHabitsMetaFromServerTask;
+  fetchHabitsMetaFromServerTask;
   final AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
   final WebDavSyncHabitInfoMerger Function(AppSyncContext context)
-      syncInfoMergerBuilder;
+  syncInfoMergerBuilder;
 
   final AppSyncSubTask<WebDavAppSyncTaskResult> Function(
-      WebDavAppSyncHabitInfo cell) singleHabitSyncTaskBuilder;
+    WebDavAppSyncHabitInfo cell,
+  )
+  singleHabitSyncTaskBuilder;
 
   late final WeakReference<WebDavStdClient>? _client;
 
@@ -247,7 +271,9 @@ class WebDavAppSyncTaskExecutor
       timeout: timeout ?? Duration.zero,
       progressController: progressController,
       fetchHabitsMetaFromServerTask: FetchMetaFromServerTask.habits(
-          WebDavAppSyncPathBuilder(config.path).habitsDir, client),
+        WebDavAppSyncPathBuilder(config.path).habitsDir,
+        client,
+      ),
       queryHabitsFromDbTask: QueryHabitsFromDBTask(helper: syncDBHelper),
       syncInfoMergerBuilder: SyncHabitsInfoMergerImpl.new,
       singleHabitSyncTaskBuilder: (cell) => SingleHabitSyncTask(
@@ -255,31 +281,37 @@ class WebDavAppSyncTaskExecutor
         cell: cell,
         serverToLocalTask: (context, config, cell) =>
             SingleHabitSyncTask.downloadTask(
-          context: context,
-          fetchHabitDataTask:
-              FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
-                  path: cell.serverPath!,
-                  client: client,
-                  etag: cell.eTagFromServer),
-          writeToDbTaskBuilder: (cell) =>
-              WriteToDBTask(data: cell, helper: syncDBHelper),
-        ),
+              context: context,
+              fetchHabitDataTask:
+                  FetchDataFromServerTask.fetchHabitDataFromServerBuilder(
+                    path: cell.serverPath!,
+                    client: client,
+                    etag: cell.eTagFromServer,
+                  ),
+              writeToDbTaskBuilder: (cell) =>
+                  WriteToDBTask(data: cell, helper: syncDBHelper),
+            ),
         localToServerTask: (context, config, cell) =>
             SingleHabitSyncTask.uploadTask(
-          context: context,
-          loadFromDBTask: LoadFromDBTask(helper: syncDBHelper, uuid: cell.uuid),
-          uploadHabitToServerTaskBuilder: (data) => UploadHabitToServerTask(
-            root: config.path,
-            data: data,
-            helper: syncDBHelper,
-            uploadTaskBuilder: (path, data, [etag]) => UploadDataToServerTask(
-                path: path,
+              context: context,
+              loadFromDBTask: LoadFromDBTask(
+                helper: syncDBHelper,
+                uuid: cell.uuid,
+              ),
+              uploadHabitToServerTaskBuilder: (data) => UploadHabitToServerTask(
+                root: config.path,
                 data: data,
-                etag: etag,
-                contentType: ContentType.json,
-                client: client),
-          ),
-        ),
+                helper: syncDBHelper,
+                uploadTaskBuilder: (path, data, [etag]) =>
+                    UploadDataToServerTask(
+                      path: path,
+                      data: data,
+                      etag: etag,
+                      contentType: ContentType.json,
+                      client: client,
+                    ),
+              ),
+            ),
       ),
     );
 
@@ -290,8 +322,12 @@ class WebDavAppSyncTaskExecutor
 
   @override
   Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
-    appLog.appsynctask
-        .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    appLog.appsynctask.error(
+      this,
+      ex: ['un-catched error'],
+      error: e,
+      stackTrace: s,
+    );
     cancel();
     Error.throwWithStackTrace(e, s);
   }
@@ -309,40 +345,60 @@ class WebDavAppSyncTaskExecutor
     final localHabitsFuture = queryHabitsFromDbTask.run(this);
 
     final serverHabits = await serverHabitsMetaFuture;
-    appLog.appsynctask.debug(this,
-        ex: ['fetch habits form server completed', serverHabits.length]);
+    appLog.appsynctask.debug(
+      this,
+      ex: ['fetch habits form server completed', serverHabits.length],
+    );
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
     final localHabits = await localHabitsFuture;
-    appLog.appsynctask.debug(this,
-        ex: ['fetch babits form local completed', localHabits.length]);
+    appLog.appsynctask.debug(
+      this,
+      ex: ['fetch babits form local completed', localHabits.length],
+    );
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final mergedResult = syncInfoMergerBuilder(this)
-        .convert((local: localHabits, server: serverHabits));
-    appLog.appsynctask
-        .debug(this, ex: ["merge habits completed", mergedResult.length]);
+    final mergedResult = syncInfoMergerBuilder(
+      this,
+    ).convert((local: localHabits, server: serverHabits));
+    appLog.appsynctask.debug(
+      this,
+      ex: ["merge habits completed", mergedResult.length],
+    );
 
-    progressController?.initHabitProgress(mergedResult.map((e) => e.uuid),
-        override: true);
+    progressController?.initHabitProgress(
+      mergedResult.map((e) => e.uuid),
+      override: true,
+    );
 
     final resultMap = <WebDavAppSyncHabitInfo, WebDavAppSyncTaskResult>{};
-    final pool = Pool(mergedResult.length.clamp(1, 5),
-        timeout: config.timeout ?? defaultAppSyncTimeout);
-    await Future.wait(mergedResult.map(
-      (cell) => pool
-          .withResource(() async {
-            if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
-            return singleHabitSyncTaskBuilder(cell).run(this);
-          })
-          .onError((e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s))
-          .then((result) => resultMap.putIfAbsent(cell, () => result))
-          .whenComplete(() => progressController?.onHabitComplete(cell.uuid)),
-    )).whenComplete(() => progressController?.clearHabitProgress());
-    appLog.appsynctask.debug(this, ex: [
-      "habits sync completed",
-      () => resultMap.entries.map((e) => "${e.key}: ${e.value}").join('\n')
-    ]);
+    final pool = Pool(
+      mergedResult.length.clamp(1, 5),
+      timeout: config.timeout ?? defaultAppSyncTimeout,
+    );
+    await Future.wait(
+      mergedResult.map(
+        (cell) => pool
+            .withResource(() async {
+              if (isCancalling) {
+                return const WebDavAppSyncTaskResult.cancelled();
+              }
+              return singleHabitSyncTaskBuilder(cell).run(this);
+            })
+            .onError(
+              (e, s) => WebDavAppSyncTaskResult.error(error: e, trace: s),
+            )
+            .then((result) => resultMap.putIfAbsent(cell, () => result))
+            .whenComplete(() => progressController?.onHabitComplete(cell.uuid)),
+      ),
+    ).whenComplete(() => progressController?.clearHabitProgress());
+    appLog.appsynctask.debug(
+      this,
+      ex: [
+        "habits sync completed",
+        () => resultMap.entries.map((e) => "${e.key}: ${e.value}").join('\n'),
+      ],
+    );
 
     if (kDebugMode) {
       resultMap.forEach((k, v) {
@@ -356,7 +412,8 @@ class WebDavAppSyncTaskExecutor
 
 class WebDavAppSyncConfigTask
     extends AppSyncTaskFramework<WebDavAppSyncTaskResult> {
-  static const warningFileData = """⚠ WARNING ⚠
+  static const warningFileData =
+      """⚠ WARNING ⚠
 
 This directory is managed by an automatic WebDAV sync process of $appName.
 Do NOT manually modify, delete, or add files/folders in this directory
@@ -379,7 +436,7 @@ Proceed with caution!
   final AppSyncSubTask createWarningFile;
 
   final FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
-      onNeedConfirmCallback;
+  onNeedConfirmCallback;
 
   late final WeakReference<WebDavStdClient>? _client;
 
@@ -405,7 +462,7 @@ Proceed with caution!
     Duration? timeout,
     Duration? confirmTimeout,
     FutureOr<bool> Function(WebDavConfigTaskChecklist checklist)?
-        onNeedConfirmCallback,
+    onNeedConfirmCallback,
   }) {
     final client =
         overwriteClient ?? WebDavAppSyncTask.buildWebDavClient(config);
@@ -416,30 +473,36 @@ Proceed with caution!
     final warningFile = rootPathBuilder.warningFile;
 
     final task = WebDavAppSyncConfigTask(
-        sessionId: sessionId,
-        config: config,
-        client: overwriteClient == null ? client : null,
-        timeout: timeout ?? Duration.zero,
-        confirmTimeout: timeout ?? Duration.zero,
-        onNeedConfirmCallback: onNeedConfirmCallback,
-        checkRootDirTask: CheckRootDirTask(
-            expectedHabitsPath: habitsDir,
-            expectedReadmePath: warningFile,
-            fetchRootDirTask: FetchMetaFromServerTask(
-              path: rootDir,
-              client: client,
-              depth: Depth.members,
-              filter: (resource) =>
-                  (resource..tryToRaiseError()).path.path != rootDir.path,
-            )),
-        createRootDir: RecursiveMkDirOnServerTask(
-            path: rootDir, client: client, maxDepth: 10),
-        createHabitsDir: MkDirOnServerTask(path: habitsDir, client: client),
-        createWarningFile: UploadDataToServerTask(
-            path: warningFile,
-            data: warningFileData,
-            contentType: ContentType.text,
-            client: client));
+      sessionId: sessionId,
+      config: config,
+      client: overwriteClient == null ? client : null,
+      timeout: timeout ?? Duration.zero,
+      confirmTimeout: timeout ?? Duration.zero,
+      onNeedConfirmCallback: onNeedConfirmCallback,
+      checkRootDirTask: CheckRootDirTask(
+        expectedHabitsPath: habitsDir,
+        expectedReadmePath: warningFile,
+        fetchRootDirTask: FetchMetaFromServerTask(
+          path: rootDir,
+          client: client,
+          depth: Depth.members,
+          filter: (resource) =>
+              (resource..tryToRaiseError()).path.path != rootDir.path,
+        ),
+      ),
+      createRootDir: RecursiveMkDirOnServerTask(
+        path: rootDir,
+        client: client,
+        maxDepth: 10,
+      ),
+      createHabitsDir: MkDirOnServerTask(path: habitsDir, client: client),
+      createWarningFile: UploadDataToServerTask(
+        path: warningFile,
+        data: warningFileData,
+        contentType: ContentType.text,
+        client: client,
+      ),
+    );
 
     final httpClient = client.client;
     if (httpClient is HttpClientForWebDav) httpClient.context = task;
@@ -448,8 +511,12 @@ Proceed with caution!
 
   @override
   Future<WebDavAppSyncTaskResult> error(Object e, StackTrace s) {
-    appLog.appsynctask
-        .error(this, ex: ['un-catched error'], error: e, stackTrace: s);
+    appLog.appsynctask.error(
+      this,
+      ex: ['un-catched error'],
+      error: e,
+      stackTrace: s,
+    );
     cancel();
     Error.throwWithStackTrace(e, s);
   }
@@ -467,15 +534,18 @@ Proceed with caution!
     final checkResult = await checkRootDirTask
         .run(this)
         .onError<HttpStatusException>((e, s) async {
-      if (e.status != HttpStatus.notFound) Error.throwWithStackTrace(e, s);
-      needCreatRoot = true;
-      return WebDavConfigTaskChecklist.dirChecker(
-          needCreateHabitsDir: true, needCreateWarningFile: true);
-    });
+          if (e.status != HttpStatus.notFound) Error.throwWithStackTrace(e, s);
+          needCreatRoot = true;
+          return WebDavConfigTaskChecklist.dirChecker(
+            needCreateHabitsDir: true,
+            needCreateWarningFile: true,
+          );
+        });
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
 
-    final confirmedFuture =
-        Future.value(onNeedConfirmCallback?.call(checkResult) ?? true);
+    final confirmedFuture = Future.value(
+      onNeedConfirmCallback?.call(checkResult) ?? true,
+    );
     final confirmed = await (timeout != Duration.zero
         ? confirmedFuture.timeout(timeout, onTimeout: () => false)
         : confirmedFuture);
@@ -483,13 +553,14 @@ Proceed with caution!
     if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
     if (!confirmed) {
       return const WebDavAppSyncTaskResult.failed(
-          reason: WebDavAppSyncTaskResultSubStatus.userAction);
+        reason: WebDavAppSyncTaskResultSubStatus.userAction,
+      );
     }
 
     if (needCreatRoot) await createRootDir.run(this);
     await Future.wait([
       if (checkResult.needCreateHabitsDir) createHabitsDir.run(this),
-      if (checkResult.needCreateWarningFile) createWarningFile.run(this)
+      if (checkResult.needCreateWarningFile) createWarningFile.run(this),
     ]);
     return const WebDavAppSyncTaskResult.success();
   }

@@ -30,9 +30,7 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
     context: context,
     barrierDismissible: false,
     builder: (context) => MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: importer),
-      ],
+      providers: [ChangeNotifierProvider.value(value: importer)],
       child: AppSettingImportHabitsConfirmDialog(
         data: habitsData,
         habitCount: habitCount,
@@ -45,8 +43,11 @@ class AppSettingImportHabitsConfirmDialog extends StatefulWidget {
   final Iterable<Object?> data;
   final int habitCount;
 
-  const AppSettingImportHabitsConfirmDialog(
-      {super.key, required this.data, this.habitCount = 0});
+  const AppSettingImportHabitsConfirmDialog({
+    super.key,
+    required this.data,
+    this.habitCount = 0,
+  });
 
   @override
   State<StatefulWidget> createState() => _AppSettingImportHabitsConfirmDialog();
@@ -77,13 +78,15 @@ class _AppSettingImportHabitsConfirmDialog
 
   void _whenAllHabitsLoad(int count, int failed, int total) {
     if (!mounted) return;
-    context.read<AppEventViewModel>().push(const ReloadDataEvent(
-          msg: "appt_settings.import._whenAllHabitsLoad",
-          clearSnackBar: true,
-          trace: {
-            AppEventPageSource.appSetting: {AppEventFunctionSource.habitImport}
-          },
-        ));
+    context.read<AppEventViewModel>().push(
+      const ReloadDataEvent(
+        msg: "appt_settings.import._whenAllHabitsLoad",
+        clearSnackBar: true,
+        trace: {
+          AppEventPageSource.appSetting: {AppEventFunctionSource.habitImport},
+        },
+      ),
+    );
     setState(() {
       _completed = true;
     });
@@ -118,7 +121,9 @@ class _AppSettingImportHabitsConfirmDialog
       } else if (_confirmed) {
         return Text(
           l10n?.appSetting_importDialog_importingTitle(
-                  currentCount, totalCount) ??
+                currentCount,
+                totalCount,
+              ) ??
               "Imported $completeCount/$failedCount/$totalCount",
         );
       } else {
@@ -140,8 +145,9 @@ class _AppSettingImportHabitsConfirmDialog
             value: totalCount > 0 ? currentCount / totalCount : null,
           ),
         ),
-        crossFadeState:
-            !_confirmed ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+        crossFadeState: !_confirmed
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
       ),
       actionsAlignment: _completed ? MainAxisAlignment.center : null,
       actions: [
@@ -155,8 +161,9 @@ class _AppSettingImportHabitsConfirmDialog
           ),
         if (!_completed)
           TextButton(
-            onPressed:
-                !_confirmed ? () => Navigator.of(context).maybePop() : null,
+            onPressed: !_confirmed
+                ? () => Navigator.of(context).maybePop()
+                : null,
             child: l10n != null
                 ? Text(l10n.appSetting_importDialog_confirm_cancelText)
                 : const Text('cancel'),
@@ -167,7 +174,7 @@ class _AppSettingImportHabitsConfirmDialog
             child: l10n != null
                 ? Text(l10n.appSetting_importDialog_confirm_confirmText)
                 : const Text('confirm'),
-          )
+          ),
       ],
     );
   }

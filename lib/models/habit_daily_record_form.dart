@@ -39,7 +39,10 @@ abstract class HabitDailyRecordForm {
         return NormalHabitDailyRecordForm(value, targetValue);
       case HabitType.negative:
         return NegativeHabitDailyRecordForm(
-            value, targetValue, extraTargetValue ?? targetValue);
+          value,
+          targetValue,
+          extraTargetValue ?? targetValue,
+        );
     }
   }
 

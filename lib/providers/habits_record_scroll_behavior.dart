@@ -37,8 +37,11 @@ class HabitsRecordScrollBehaviorViewModel extends ChangeNotifier
 
   Future<void> setScrollBehavior(HabitsRecordScrollBehavior newBehavior) async {
     if (_scroll?.get() != newBehavior) {
-      appLog.value.info("$runtimeType.setScrollBehavior",
-          beforeVal: scrollBehavior, afterVal: newBehavior);
+      appLog.value.info(
+        "$runtimeType.setScrollBehavior",
+        beforeVal: scrollBehavior,
+        afterVal: newBehavior,
+      );
       await _scroll?.set(newBehavior);
       notifyListeners();
     }

@@ -22,8 +22,11 @@ import '../l10n/localizations.dart';
 import 'habit_form.dart';
 
 class HabitFrequency {
-  static const daily =
-      HabitFrequency(type: HabitFrequencyType.custom, freq: 1, days: 1);
+  static const daily = HabitFrequency(
+    type: HabitFrequencyType.custom,
+    freq: 1,
+    days: 1,
+  );
 
   final HabitFrequencyType type;
   final int freq;
@@ -32,19 +35,20 @@ class HabitFrequency {
   const HabitFrequency({required this.type, required this.freq, this.days = 0});
 
   const HabitFrequency.weekly({this.freq = 1})
-      : type = HabitFrequencyType.weekly,
-        days = 0;
+    : type = HabitFrequencyType.weekly,
+      days = 0;
 
   const HabitFrequency.monthly({this.freq = 1})
-      : type = HabitFrequencyType.monthly,
-        days = 0;
+    : type = HabitFrequencyType.monthly,
+      days = 0;
 
   factory HabitFrequency.custom({int days = 1, int freq = 1}) => days == freq
       ? daily
       : HabitFrequency(
           type: HabitFrequencyType.custom,
           freq: math.min(freq, days),
-          days: math.max(freq, days));
+          days: math.max(freq, days),
+        );
 
   bool get isDaily {
     switch (type) {
@@ -68,7 +72,10 @@ class HabitFrequency {
         return HabitFrequency.monthly(freq: data["args"][0]);
       case HabitFrequencyType.custom:
         return HabitFrequency(
-            type: type, freq: data["args"][0], days: data["args"][1]);
+          type: type,
+          freq: data["args"][0],
+          days: data["args"][1],
+        );
       default:
         throw UnknownHabitFrequencyError();
     }

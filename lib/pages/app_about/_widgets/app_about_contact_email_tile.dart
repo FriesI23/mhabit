@@ -47,9 +47,11 @@ class _AppAboutContactEmailTileState extends State<AppAboutContactEmailTile> {
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
-      appLog.network.error("$widget.onPressed",
-          ex: ["Failed to open content email url", url],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.network.error(
+        "$widget.onPressed",
+        ex: ["Failed to open content email url", url],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
     }
   }
 

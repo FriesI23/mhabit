@@ -69,25 +69,24 @@ class _NotificationPendingRequestsDialog
               const Divider(),
               if (pendingRequests.isEmpty) const Text('No pending requests'),
               if (pendingRequests.isNotEmpty)
-                ...List.generate(
-                  math.max(pendingRequests.length * 2 - 1, 0),
-                  (index) {
-                    if (index.isOdd) {
-                      return const Divider();
-                    } else {
-                      final notification = pendingRequests[index ~/ 2];
-                      return ListTile(
-                        isThreeLine: true,
-                        title: Text(notification.title ?? ''),
-                        subtitle: Text(
-                          "id: ${notification.id}\n"
-                          "body: ${notification.body ?? ''}\n"
-                          "payload: ${notification.payload ?? ''}",
-                        ),
-                      );
-                    }
-                  },
-                ),
+                ...List.generate(math.max(pendingRequests.length * 2 - 1, 0), (
+                  index,
+                ) {
+                  if (index.isOdd) {
+                    return const Divider();
+                  } else {
+                    final notification = pendingRequests[index ~/ 2];
+                    return ListTile(
+                      isThreeLine: true,
+                      title: Text(notification.title ?? ''),
+                      subtitle: Text(
+                        "id: ${notification.id}\n"
+                        "body: ${notification.body ?? ''}\n"
+                        "payload: ${notification.payload ?? ''}",
+                      ),
+                    );
+                  }
+                }),
             ],
           ),
           actions: const [CloseButton()],

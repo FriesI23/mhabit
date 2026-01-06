@@ -21,7 +21,7 @@ enum AppEventPageSource {
   habitToday,
   habitDetail,
   habitEdit,
-  habitStatusChanger
+  habitStatusChanger,
 }
 
 enum AppEventFunctionSource {
@@ -29,7 +29,7 @@ enum AppEventFunctionSource {
   databaseCleared,
   habitCreated,
   habitChanged,
-  recordChanged
+  recordChanged,
 }
 
 abstract interface class AppEvent {
@@ -43,7 +43,9 @@ abstract class AppEventBase implements AppEvent {
   const AppEventBase({this.trace = const {}});
 
   AppEventBase extendSource(
-      AppEventPageSource page, AppEventFunctionSource function);
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  );
 
   bool isInTrace(AppEventPageSource page, [AppEventFunctionSource? function]) {
     final functions = trace[page];
@@ -52,11 +54,13 @@ abstract class AppEventBase implements AppEvent {
   }
 
   bool isAllInTrace(
-          Iterable<(AppEventPageSource, AppEventFunctionSource?)> sources) =>
-      sources.every((entry) => isInTrace(entry.$1, entry.$2));
+    Iterable<(AppEventPageSource, AppEventFunctionSource?)> sources,
+  ) => sources.every((entry) => isInTrace(entry.$1, entry.$2));
 
   Map<AppEventPageSource, Set<AppEventFunctionSource>> buildNewTrace(
-      AppEventPageSource page, AppEventFunctionSource function) {
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) {
     return {
       ...trace,
       page: {if (trace.containsKey(page)) ...trace[page]!, function},
@@ -78,13 +82,14 @@ final class ReloadDataEvent extends AppEventBase {
 
   @override
   ReloadDataEvent extendSource(
-          AppEventPageSource page, AppEventFunctionSource function) =>
-      ReloadDataEvent(
-        msg: msg,
-        exiEditMode: exiEditMode,
-        clearSnackBar: clearSnackBar,
-        trace: buildNewTrace(page, function),
-      );
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) => ReloadDataEvent(
+    msg: msg,
+    exiEditMode: exiEditMode,
+    clearSnackBar: clearSnackBar,
+    trace: buildNewTrace(page, function),
+  );
 
   @override
   String toString() {
@@ -115,13 +120,14 @@ final class HabitStatusChangedEvent extends AppEventBase {
 
   @override
   HabitStatusChangedEvent extendSource(
-          AppEventPageSource page, AppEventFunctionSource function) =>
-      HabitStatusChangedEvent(
-        msg: msg,
-        uuidList: uuidList,
-        status: status,
-        trace: buildNewTrace(page, function),
-      );
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) => HabitStatusChangedEvent(
+    msg: msg,
+    uuidList: uuidList,
+    status: status,
+    trace: buildNewTrace(page, function),
+  );
 
   @override
   String toString() {
@@ -156,15 +162,16 @@ final class HabitRecordsChangedEvents extends AppEventBase {
 
   @override
   HabitRecordsChangedEvents extendSource(
-          AppEventPageSource page, AppEventFunctionSource function) =>
-      HabitRecordsChangedEvents(
-        msg: msg,
-        uuidList: uuidList,
-        dateList: dateList,
-        status: status,
-        reason: reason,
-        trace: buildNewTrace(page, function),
-      );
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) => HabitRecordsChangedEvents(
+    msg: msg,
+    uuidList: uuidList,
+    dateList: dateList,
+    status: status,
+    reason: reason,
+    trace: buildNewTrace(page, function),
+  );
 
   @override
   String toString() {

@@ -18,7 +18,7 @@ import 'app_experimental_feature.dart';
 /// Enabled Switch: \<version\> > 1.19.0+109
 class HabitSearchExperimentalFeature extends AppExperimentalFeatureBool<bool> {
   HabitSearchExperimentalFeature(super.pref)
-      : super(codec: const SameTypeCodec());
+    : super(codec: const SameTypeCodec());
 
   @override
   String get expKey => "search";

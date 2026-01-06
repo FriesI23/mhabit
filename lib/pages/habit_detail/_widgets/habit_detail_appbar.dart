@@ -45,9 +45,11 @@ class HabitDetailAppBar extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: title != null
             ? titleFont != null
-                ? DefaultTextStyle(
-                    style: titleFont.copyWith(color: color), child: title!)
-                : title
+                  ? DefaultTextStyle(
+                      style: titleFont.copyWith(color: color),
+                      child: title!,
+                    )
+                  : title
             : null,
       ),
       leading: PageBackButton(reason: PageBackReason.back, color: color),

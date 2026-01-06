@@ -45,34 +45,37 @@ class ProfileBuilder extends SingleChildStatelessWidget {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) =>
-      ChangeNotifierProvider(
-        create: (context) => ProfileViewModel(handlers)..init(),
-        lazy: false,
-        child: child,
-        builder: (context, child) => FutureBuilder(
-          future: _loadingHelper(context),
-          builder: (context, snapshot) {
-            if (snapshot.hasError ||
-                (snapshot.hasData && snapshot.data == false)) {
-              final error =
-                  snapshot.error ?? FlutterError("profile build failed");
-              final stackTrace = snapshot.stackTrace ?? StackTrace.current;
-              if (errorBuilder != null) {
-                return errorBuilder!(FlutterErrorDetails(
-                    exception: error,
-                    stack: stackTrace,
-                    library: "profile_builder"));
-              } else {
-                Error.throwWithStackTrace(error, stackTrace);
-              }
-            } else if (snapshot.isDone) {
-              return builder(context, child);
-            } else {
-              return loadingBuilder?.call(context, child) ??
-                  const SizedBox.shrink();
-            }
-          },
-        ),
-      );
+  Widget buildWithChild(
+    BuildContext context,
+    Widget? child,
+  ) => ChangeNotifierProvider(
+    create: (context) => ProfileViewModel(handlers)..init(),
+    lazy: false,
+    child: child,
+    builder: (context, child) => FutureBuilder(
+      future: _loadingHelper(context),
+      builder: (context, snapshot) {
+        if (snapshot.hasError || (snapshot.hasData && snapshot.data == false)) {
+          final error = snapshot.error ?? FlutterError("profile build failed");
+          final stackTrace = snapshot.stackTrace ?? StackTrace.current;
+          if (errorBuilder != null) {
+            return errorBuilder!(
+              FlutterErrorDetails(
+                exception: error,
+                stack: stackTrace,
+                library: "profile_builder",
+              ),
+            );
+          } else {
+            Error.throwWithStackTrace(error, stackTrace);
+          }
+        } else if (snapshot.isDone) {
+          return builder(context, child);
+        } else {
+          return loadingBuilder?.call(context, child) ??
+              const SizedBox.shrink();
+        }
+      },
+    ),
+  );
 }

@@ -38,8 +38,10 @@ class AppSyncServerIgnoreSSLTile extends StatelessWidget {
       child: CheckboxListTile.adaptive(
         secondary: const Icon(MdiIcons.lockOffOutline),
         contentPadding: contentPadding,
-        title: Text(l10n?.appSync_serverEditor_ignoreSSLTile_titleText ??
-            "Ignore SSL Certificate"),
+        title: Text(
+          l10n?.appSync_serverEditor_ignoreSSLTile_titleText ??
+              "Ignore SSL Certificate",
+        ),
         value: value,
         onChanged: onChanged,
       ),

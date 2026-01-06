@@ -42,8 +42,10 @@ enum HabitType implements EnumWithDBCode {
   @override
   int get dbCode => code;
 
-  static HabitType? getFromDBCode(int dbCode,
-      {HabitType? withDefault = HabitType.unknown}) {
+  static HabitType? getFromDBCode(
+    int dbCode, {
+    HabitType? withDefault = HabitType.unknown,
+  }) {
     for (var value in HabitType.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -90,8 +92,10 @@ enum HabitStatus implements EnumWithDBCode<HabitStatus> {
   @override
   int get dbCode => code;
 
-  static HabitStatus? getFromDBCode(int dbCode,
-      {HabitStatus? withDefault = HabitStatus.unknown}) {
+  static HabitStatus? getFromDBCode(
+    int dbCode, {
+    HabitStatus? withDefault = HabitStatus.unknown,
+  }) {
     for (var value in HabitStatus.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -119,8 +123,10 @@ enum HabitColorType implements EnumWithDBCode<HabitColorType> {
   @override
   int get dbCode => code;
 
-  static HabitColorType? getFromDBCode(int dbCode,
-      {HabitColorType? withDefault = HabitColorType.cc1}) {
+  static HabitColorType? getFromDBCode(
+    int dbCode, {
+    HabitColorType? withDefault = HabitColorType.cc1,
+  }) {
     for (var value in HabitColorType.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -172,8 +178,10 @@ enum HabitFrequencyType implements EnumWithDBCode<HabitRecordStatus> {
   @override
   int get dbCode => code;
 
-  static HabitFrequencyType? getFromDBCode(int dbCode,
-      {HabitFrequencyType? withDefault = HabitFrequencyType.unknown}) {
+  static HabitFrequencyType? getFromDBCode(
+    int dbCode, {
+    HabitFrequencyType? withDefault = HabitFrequencyType.unknown,
+  }) {
     for (var value in HabitFrequencyType.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -194,8 +202,10 @@ enum HabitRecordStatus implements EnumWithDBCode<HabitRecordStatus> {
   @override
   int get dbCode => code;
 
-  static HabitRecordStatus? getFromDBCode(int dbCode,
-      {HabitRecordStatus? withDefault = HabitRecordStatus.unknown}) {
+  static HabitRecordStatus? getFromDBCode(
+    int dbCode, {
+    HabitRecordStatus? withDefault = HabitRecordStatus.unknown,
+  }) {
     for (var value in HabitRecordStatus.values) {
       if (value.dbCode == dbCode) return value;
     }
@@ -203,13 +213,7 @@ enum HabitRecordStatus implements EnumWithDBCode<HabitRecordStatus> {
   }
 }
 
-enum HabitDailyComplateStatus {
-  zero,
-  ok,
-  goodjob,
-  tryhard,
-  noeffect,
-}
+enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard, noeffect }
 
 class HabitForm {
   String name;
@@ -259,50 +263,59 @@ class HabitForm {
     HabitType type = defaultHabitType,
     HabitColorType colorType = defaultHabitColorType,
   }) : this(
-            name: '',
-            type: type,
-            colorType: colorType,
-            startDate: HabitStartDate.dateTime(AppClock().now()),
-            frequency: HabitFrequency.daily,
-            dailyGoal: HabitDailyGoalData(type: type),
-            targetDays: defaultHabitTargetDays,
-            desc: '');
+         name: '',
+         type: type,
+         colorType: colorType,
+         startDate: HabitStartDate.dateTime(AppClock().now()),
+         frequency: HabitFrequency.daily,
+         dailyGoal: HabitDailyGoalData(type: type),
+         targetDays: defaultHabitTargetDays,
+         desc: '',
+       );
 
-  factory HabitForm.fromHabitDBCell(HabitDBCell cell,
-      {required HabitDisplayEditMode editMode,
-      HabitDisplayEditParams? editParams}) {
-    assert(cell.name != null &&
-        cell.type != null &&
-        cell.color != null &&
-        cell.freqCustom != null &&
-        cell.startDate != null);
+  factory HabitForm.fromHabitDBCell(
+    HabitDBCell cell, {
+    required HabitDisplayEditMode editMode,
+    HabitDisplayEditParams? editParams,
+  }) {
+    assert(
+      cell.name != null &&
+          cell.type != null &&
+          cell.color != null &&
+          cell.freqCustom != null &&
+          cell.startDate != null,
+    );
     final name = cell.name!;
     final type = HabitType.getFromDBCode(cell.type!)!;
     final dailyGoal = HabitDailyGoalData(
-        type: type,
-        dailyGoal: cell.dailyGoal,
-        dailyGoalUnit: cell.dailyGoalUnit,
-        dailyGoalExtra: cell.dailyGoalExtra);
-    final frequency = HabitFrequency.fromJson(
-        {"type": cell.freqType, "args": jsonDecode(cell.freqCustom!)});
+      type: type,
+      dailyGoal: cell.dailyGoal,
+      dailyGoalUnit: cell.dailyGoalUnit,
+      dailyGoalExtra: cell.dailyGoalExtra,
+    );
+    final frequency = HabitFrequency.fromJson({
+      "type": cell.freqType,
+      "args": jsonDecode(cell.freqCustom!),
+    });
     final startDate = HabitStartDate.fromEpochDay(cell.startDate!);
     final targetDays = cell.targetDays!;
     final reminder = cell.remindCustom != null
         ? HabitReminder.fromJson(jsonDecode(cell.remindCustom!))
         : null;
     return HabitForm._fromHabitDBCell(
-        name: name,
-        type: type,
-        colorType: HabitColorType.getFromDBCode(cell.color!)!,
-        dailyGoal: dailyGoal,
-        frequency: frequency,
-        startDate: startDate,
-        targetDays: targetDays,
-        desc: cell.desc,
-        reminder: reminder,
-        reminderQuest: cell.remindQuestion,
-        editMode: editMode,
-        editParams: editParams);
+      name: name,
+      type: type,
+      colorType: HabitColorType.getFromDBCode(cell.color!)!,
+      dailyGoal: dailyGoal,
+      frequency: frequency,
+      startDate: startDate,
+      targetDays: targetDays,
+      desc: cell.desc,
+      reminder: reminder,
+      reminderQuest: cell.remindQuestion,
+      editMode: editMode,
+      editParams: editParams,
+    );
   }
 
   @override

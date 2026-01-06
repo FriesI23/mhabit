@@ -22,10 +22,7 @@ import '../../../widgets/widgets.dart';
 class AppSyncServerSaveButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const AppSyncServerSaveButton({
-    super.key,
-    this.onPressed,
-  });
+  const AppSyncServerSaveButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) =>
@@ -34,9 +31,12 @@ class AppSyncServerSaveButton extends StatelessWidget {
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, value, child) => TextButton(
           onPressed: value ? onPressed : null,
-          child: Text(L10n.of(context)?.confirmDialog_confirm_text(
-                  NormalizeConfirmDialogType.save.name) ??
-              "save"),
+          child: Text(
+            L10n.of(context)?.confirmDialog_confirm_text(
+                  NormalizeConfirmDialogType.save.name,
+                ) ??
+                "save",
+          ),
         ),
       );
 }

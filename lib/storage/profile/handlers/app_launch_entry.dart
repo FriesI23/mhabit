@@ -22,8 +22,10 @@ final class AppLaunchEntryProfileHandler
   @override
   String get key => "appLaunchEntry";
 
-  const AppLaunchEntryProfileHandler(super.pref,
-      {super.codec = const AppLaunchEntryProfileCodec()});
+  const AppLaunchEntryProfileHandler(
+    super.pref, {
+    super.codec = const AppLaunchEntryProfileCodec(),
+  });
 }
 
 final class AppLaunchEntryProfileCodec extends Codec<AppEntrys, int> {

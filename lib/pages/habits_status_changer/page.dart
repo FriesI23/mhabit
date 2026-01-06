@@ -51,15 +51,14 @@ class HabitsStatusChangerPage extends StatelessWidget {
   const HabitsStatusChangerPage({super.key, required this.uuidList});
 
   @override
-  Widget build(BuildContext context) => PageProviders(
-        uuidList: uuidList,
-        child: const _Page(),
-      );
+  Widget build(BuildContext context) =>
+      PageProviders(uuidList: uuidList, child: const _Page());
 }
 
 class _Page extends StatefulWidget {
-  static const Duration mainScrollAnimatedDuration =
-      Duration(milliseconds: 300);
+  static const Duration mainScrollAnimatedDuration = Duration(
+    milliseconds: 300,
+  );
   static const Curve mainScrollAnimatedCurve = Curves.fastOutSlowIn;
 
   const _Page();
@@ -103,15 +102,19 @@ class _PageState extends State<_Page> {
   }
 
   void _onSelectedStatusChanged(
-      RecordStatusChangerStatus? od, RecordStatusChangerStatus? nd) {
+    RecordStatusChangerStatus? od,
+    RecordStatusChangerStatus? nd,
+  ) {
     if (!(mounted && _vm.mounted)) return;
     _vm.updateSelectStatus(
       nd,
       onStatusChanged: (status) {
         if (status == RecordStatusChangerStatus.skip) {
-          _mainScrollController.animateTo(0,
-              duration: _Page.mainScrollAnimatedDuration,
-              curve: _Page.mainScrollAnimatedCurve);
+          _mainScrollController.animateTo(
+            0,
+            duration: _Page.mainScrollAnimatedDuration,
+            curve: _Page.mainScrollAnimatedCurve,
+          );
         }
       },
     );
@@ -120,26 +123,31 @@ class _PageState extends State<_Page> {
   void _onConfirmButtonpressed() async {
     if (!(mounted && _vm.mounted)) return;
     if (_vm.selectDateRecords.isNotEmpty) {
-      final result = (await showConfirmDialog(
+      final result =
+          (await showConfirmDialog(
             context: context,
             titleBuilder: (context) => L10nBuilder(
-                builder: (context, l10n) => l10n != null
-                    ? Text(l10n.batchCheckin_save_confirmDialog_title)
-                    : const Text("Overwrite Existing Records")),
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.batchCheckin_save_confirmDialog_title)
+                  : const Text("Overwrite Existing Records"),
+            ),
             subtitleBuilder: (context) => L10nBuilder(
-                builder: (context, l10n) => l10n != null
-                    ? Text(l10n.batchCheckin_save_confirmDialog_body)
-                    : const SizedBox()),
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.batchCheckin_save_confirmDialog_body)
+                  : const SizedBox(),
+            ),
             confirmTextBuilder: (context) => L10nBuilder(
-                builder: (context, l10n) => l10n != null
-                    ? Text(
-                        l10n.batchCheckin_save_confirmDialog_confirmButton_text)
-                    : const Text("save")),
+              builder: (context, l10n) => l10n != null
+                  ? Text(
+                      l10n.batchCheckin_save_confirmDialog_confirmButton_text,
+                    )
+                  : const Text("save"),
+            ),
             cancelText: L10nBuilder(
-                builder: (context, l10n) => l10n != null
-                    ? Text(
-                        l10n.batchCheckin_save_confirmDialog_cancelButton_text)
-                    : const Text("cancel")),
+              builder: (context, l10n) => l10n != null
+                  ? Text(l10n.batchCheckin_save_confirmDialog_cancelButton_text)
+                  : const Text("cancel"),
+            ),
           )) ??
           false;
       if (!(mounted && _vm.mounted && result)) return;
@@ -153,22 +161,28 @@ class _PageState extends State<_Page> {
       appSync.delayedStartTaskOnce();
     }
 
-    final snackBar = buildSnackBarWithDismiss(context,
-        content: L10nBuilder(
-            builder: (context, l10n) => Text(
-                l10n?.batchCheckin_completed_snackbar_text(changedCount) ??
-                    "Changed: $changedCount")));
+    final snackBar = buildSnackBarWithDismiss(
+      context,
+      content: L10nBuilder(
+        builder: (context, l10n) => Text(
+          l10n?.batchCheckin_completed_snackbar_text(changedCount) ??
+              "Changed: $changedCount",
+        ),
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(const ReloadDataEvent(
-          msg: "habit_status_changer._onConfirmButtonpressed",
-          exiEditMode: true,
-          trace: {
-            AppEventPageSource.habitStatusChanger: {
-              AppEventFunctionSource.recordChanged
-            }
+    context.read<AppEventViewModel>().push(
+      const ReloadDataEvent(
+        msg: "habit_status_changer._onConfirmButtonpressed",
+        exiEditMode: true,
+        trace: {
+          AppEventPageSource.habitStatusChanger: {
+            AppEventFunctionSource.recordChanged,
           },
-        ));
+        },
+      ),
+    );
   }
 
   void _onResetButtonPressed() {
@@ -176,46 +190,57 @@ class _PageState extends State<_Page> {
     _vm.resetStatusForm();
   }
 
-  Future<void> _onClosePageButtonPressed<T>(
-      {bool defaultConfirmResult = false, T? result}) async {
+  Future<void> _onClosePageButtonPressed<T>({
+    bool defaultConfirmResult = false,
+    T? result,
+  }) async {
     if (!(mounted && _vm.mounted)) return;
     final savedResult = _vm.canSave
         ? (await showConfirmDialog(
-              context: context,
-              titleBuilder: (context) => L10nBuilder(
+                context: context,
+                titleBuilder: (context) => L10nBuilder(
                   builder: (context, l10n) => l10n != null
                       ? Text(l10n.batchCheckin_close_confirmDialog_title)
-                      : const Text("Unsaved Check-in Status")),
-              subtitleBuilder: (context) => L10nBuilder(
+                      : const Text("Unsaved Check-in Status"),
+                ),
+                subtitleBuilder: (context) => L10nBuilder(
                   builder: (context, l10n) => l10n != null
                       ? Text(l10n.batchCheckin_close_confirmDialog_body)
-                      : const SizedBox()),
-              confirmTextBuilder: (context) => L10nBuilder(
+                      : const SizedBox(),
+                ),
+                confirmTextBuilder: (context) => L10nBuilder(
                   builder: (context, l10n) => l10n != null
-                      ? Text(l10n
-                          .batchCheckin_close_confirmDialog_confirmButton_text)
-                      : const Text("exit")),
-              cancelText: L10nBuilder(
+                      ? Text(
+                          l10n.batchCheckin_close_confirmDialog_confirmButton_text,
+                        )
+                      : const Text("exit"),
+                ),
+                cancelText: L10nBuilder(
                   builder: (context, l10n) => l10n != null
-                      ? Text(l10n
-                          .batchCheckin_close_confirmDialog_cancelButton_text)
-                      : const Text("cancel")),
-            ) ??
-            defaultConfirmResult)
+                      ? Text(
+                          l10n.batchCheckin_close_confirmDialog_cancelButton_text,
+                        )
+                      : const Text("cancel"),
+                ),
+              ) ??
+              defaultConfirmResult)
         : true;
     if (!mounted) return;
 
     if (savedResult) {
       dismissAllToolTips().then(
-          (_) => mounted ? Navigator.of(context).popOrExit(result) : false);
+        (_) => mounted ? Navigator.of(context).popOrExit(result) : false,
+      );
     }
   }
 
   Widget _buildDebugInfo(BuildContext context) =>
       Consumer<HabitStatusChangerViewModel>(
         builder: (context, value, child) => ListTile(
-          leading:
-              Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+          leading: Icon(
+            Icons.error,
+            color: Theme.of(context).colorScheme.error,
+          ),
           isThreeLine: true,
           title: const Text('DEBUG'),
           subtitle: Column(
@@ -299,11 +324,11 @@ class _PageState extends State<_Page> {
     }
 
     Widget buildDivider(BuildContext context) => Builder(
-          builder: (context) => ColoredBox(
-            color: Theme.of(context).colorScheme.surface,
-            child: const Divider(height: 1),
-          ),
-        );
+      builder: (context) => ColoredBox(
+        color: Theme.of(context).colorScheme.surface,
+        child: const Divider(height: 1),
+      ),
+    );
 
     final div = buildDivider(context);
     return PopScope(
@@ -311,7 +336,9 @@ class _PageState extends State<_Page> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         await _onClosePageButtonPressed(
-            defaultConfirmResult: true, result: result);
+          defaultConfirmResult: true,
+          result: result,
+        );
       },
       child: PageScaffold(
         appbar: HabitStatusChangerAppbar(
@@ -421,7 +448,8 @@ class _HabitListState extends State<_HabitList> {
             children: [
               SliverAnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
-                opacity: snapshot.connectionState == ConnectionState.waiting &&
+                opacity:
+                    snapshot.connectionState == ConnectionState.waiting &&
                         _vm.currentHabitCount == 0
                     ? 1.0
                     : 0.0,
@@ -435,7 +463,11 @@ class _HabitListState extends State<_HabitList> {
                 controller: _dispatcher.controller,
                 delegate: AnimatedSliverChildBuilderDelegate(
                   (context, index, data) => _dispatcher.builder(
-                      context, _dispatcher.currentList, index, data),
+                    context,
+                    _dispatcher.currentList,
+                    index,
+                    data,
+                  ),
                   _dispatcher.currentList.length,
                   addLongPressReorderable: false,
                 ),
@@ -454,7 +486,8 @@ class _HabitListItemMeasurer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = context.select<AppCompactUISwitcherViewModel, double>(
-        (vm) => vm.appHabitDisplayListTileHeight);
+      (vm) => vm.appHabitDisplayListTileHeight,
+    );
     return SizedBox(height: height);
   }
 }
@@ -468,7 +501,8 @@ class _HabitListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final (data, selectDate) = context
         .select<HabitStatusChangerViewModel, (HabitSummaryData?, HabitDate)>(
-            (vm) => (vm.fetchHabit(uuid), vm.selectDate));
+          (vm) => (vm.fetchHabit(uuid), vm.selectDate),
+        );
     if (data == null) return const SizedBox.shrink();
     return HabitSpecialDateViewedTile(data: data, date: selectDate);
   }
@@ -479,9 +513,10 @@ class _SkipStatusReasonField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectStatus =
-        context.select<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
-            (vm) => vm.selectStatus);
+    final selectStatus = context
+        .select<HabitStatusChangerViewModel, RecordStatusChangerStatus?>(
+          (vm) => vm.selectStatus,
+        );
     return ExpandedSection(
       duration: _Page.mainScrollAnimatedDuration,
       curve: _Page.mainScrollAnimatedCurve,

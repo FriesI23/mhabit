@@ -29,32 +29,39 @@ class HabitScoreStub implements HabitScore {
   final HabitScore _super;
 
   num Function(
-          bool autoCompleted, HabitRecordStatus status, HabitDailyGoal? value)?
-      hookCalcDecreasedPrt;
+    bool autoCompleted,
+    HabitRecordStatus status,
+    HabitDailyGoal? value,
+  )?
+  hookCalcDecreasedPrt;
   num Function(num y)? hookCalcHabitGrowCurveDay;
   num Function(num x)? hookCalcHabitGrowCurveValue;
   num Function(
-          bool autoCompleted, HabitRecordStatus status, HabitDailyGoal? value)?
-      hookCalcIncreasedDay;
+    bool autoCompleted,
+    HabitRecordStatus status,
+    HabitDailyGoal? value,
+  )?
+  hookCalcIncreasedDay;
   num Function(num days, num offset, num targetDays)? hookGetNewDays;
   num Function(num score, num offset)? hookGetNewScore;
 
-  HabitScoreStub(
-      {this.dailGoalExtra,
-      required this.dailyGoal,
-      required this.habitType,
-      required this.targetDays,
-      this.hookCalcDecreasedPrt,
-      this.hookCalcHabitGrowCurveDay,
-      this.hookCalcHabitGrowCurveValue,
-      this.hookCalcIncreasedDay,
-      this.hookGetNewDays,
-      this.hookGetNewScore})
-      : _super = HabitScore.getImp(
-            type: habitType,
-            targetDays: targetDays,
-            dailyGoal: dailyGoal,
-            dailGoalExtra: dailGoalExtra);
+  HabitScoreStub({
+    this.dailGoalExtra,
+    required this.dailyGoal,
+    required this.habitType,
+    required this.targetDays,
+    this.hookCalcDecreasedPrt,
+    this.hookCalcHabitGrowCurveDay,
+    this.hookCalcHabitGrowCurveValue,
+    this.hookCalcIncreasedDay,
+    this.hookGetNewDays,
+    this.hookGetNewScore,
+  }) : _super = HabitScore.getImp(
+         type: habitType,
+         targetDays: targetDays,
+         dailyGoal: dailyGoal,
+         dailGoalExtra: dailGoalExtra,
+       );
 
   HabitScoreStub.easeTest({
     this.dailyGoal = 1.0,
@@ -67,14 +74,20 @@ class HabitScoreStub implements HabitScore {
     this.hookGetNewDays,
     this.hookGetNewScore,
   }) : _super = HabitScore.getImp(
-            type: habitType, targetDays: targetDays, dailyGoal: dailyGoal) {
-    hookCalcDecreasedPrt = hookCalcDecreasedPrt ??
+         type: habitType,
+         targetDays: targetDays,
+         dailyGoal: dailyGoal,
+       ) {
+    hookCalcDecreasedPrt =
+        hookCalcDecreasedPrt ??
         (p0, p1, p2) => throw AssertionError("Not Expect");
     hookCalcHabitGrowCurveDay =
         hookCalcHabitGrowCurveDay ?? (p0) => throw AssertionError("Not Expect");
-    hookCalcHabitGrowCurveValue = hookCalcHabitGrowCurveValue ??
+    hookCalcHabitGrowCurveValue =
+        hookCalcHabitGrowCurveValue ??
         (p0) => throw AssertionError("Not Expect");
-    hookCalcIncreasedDay = hookCalcIncreasedDay ??
+    hookCalcIncreasedDay =
+        hookCalcIncreasedDay ??
         (p0, p1, p2) => throw AssertionError("Not Expect");
     hookGetNewDays =
         hookGetNewDays ?? (p0, p1, p2) => throw AssertionError("Not Expect");
@@ -83,13 +96,17 @@ class HabitScoreStub implements HabitScore {
   }
 
   @override
-  num calcDecreasedPrt(
-      {bool autoCompleted = false,
-      HabitRecordStatus status = HabitRecordStatus.unknown,
-      HabitDailyGoal? value}) {
+  num calcDecreasedPrt({
+    bool autoCompleted = false,
+    HabitRecordStatus status = HabitRecordStatus.unknown,
+    HabitDailyGoal? value,
+  }) {
     return hookCalcDecreasedPrt?.call(autoCompleted, status, value) ??
         _super.calcDecreasedPrt(
-            autoCompleted: autoCompleted, status: status, value: value);
+          autoCompleted: autoCompleted,
+          status: status,
+          value: value,
+        );
   }
 
   @override
@@ -105,13 +122,17 @@ class HabitScoreStub implements HabitScore {
   }
 
   @override
-  num calcIncreasedDay(
-      {bool autoCompleted = false,
-      HabitRecordStatus status = HabitRecordStatus.unknown,
-      HabitDailyGoal? value}) {
+  num calcIncreasedDay({
+    bool autoCompleted = false,
+    HabitRecordStatus status = HabitRecordStatus.unknown,
+    HabitDailyGoal? value,
+  }) {
     return hookCalcIncreasedDay?.call(autoCompleted, status, value) ??
         _super.calcIncreasedDay(
-            autoCompleted: autoCompleted, status: status, value: value);
+          autoCompleted: autoCompleted,
+          status: status,
+          value: value,
+        );
   }
 
   @override

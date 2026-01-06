@@ -33,7 +33,8 @@ class FixedPagePlaceHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.sizeOf(context).height;
-    final widgetHeight = max(screenHeight * perentage, minHeight ?? 0.0) +
+    final widgetHeight =
+        max(screenHeight * perentage, minHeight ?? 0.0) +
         (fixedButtonNaviHeight
             ? MediaQuery.paddingOf(context).bottom
             : 0.0); // Adjust this factor as needed

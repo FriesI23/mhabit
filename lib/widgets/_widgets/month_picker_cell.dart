@@ -61,7 +61,8 @@ class MonthPickerCell extends StatelessWidget {
     if (selected) {
       return selectedStyle ??
           theme.textTheme.labelSmall?.copyWith(
-            color: (colorType != null
+            color:
+                (colorType != null
                     ? colorData?.getOnColor(colorType!)
                     : null) ??
                 theme.colorScheme.onPrimary,
@@ -71,7 +72,7 @@ class MonthPickerCell extends StatelessWidget {
           theme.textTheme.labelSmall?.copyWith(
             color:
                 (colorType != null ? colorData?.getColor(colorType!) : null) ??
-                    theme.colorScheme.primary,
+                theme.colorScheme.primary,
           );
     }
   }

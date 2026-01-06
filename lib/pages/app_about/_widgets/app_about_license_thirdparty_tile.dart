@@ -44,10 +44,13 @@ class _AppAboutThirdPartyLicenseTileState
               primary: true,
               child: ThematicMarkdownBlock(
                 data: licenseText,
-                configBuilder: (config) => config.copy(configs: [
-                  LinkConfig(
-                      onTap: (href) => launchExternalUrl(Uri.parse(href))),
-                ]),
+                configBuilder: (config) => config.copy(
+                  configs: [
+                    LinkConfig(
+                      onTap: (href) => launchExternalUrl(Uri.parse(href)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -25,9 +25,10 @@ class AppSyncServerFormInputField extends BaseTextEditingControllerWidget {
     AppSyncServerType type,
     TextEditingController controller,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final String Function(AppSyncServerType type, AppSyncServerFormViewModel vm)
-      valueBuilder;
+  valueBuilder;
 
   const AppSyncServerFormInputField({
     super.key,

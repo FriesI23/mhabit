@@ -21,8 +21,8 @@ import '../../../models/habit_display.dart';
 import '../../../providers/habits_sort.dart';
 import '../../../widgets/widgets.dart';
 
-typedef SortMenuOption
-    = Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>;
+typedef SortMenuOption =
+    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>;
 
 Future<SortMenuOption?> showHabitDisplaySortTypePickerDialog({
   required BuildContext context,
@@ -100,9 +100,7 @@ class _HabitDisplaySortTypePickerDialog
             onChanged: _onRadioTapChanged,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                ...buildSortTypeRadioListTiles(context),
-              ],
+              children: [...buildSortTypeRadioListTiles(context)],
             ),
           ),
           const Divider(),
@@ -146,7 +144,7 @@ class _HabitDisplaySortTypePickerDialog
                 ? Text(l10n.habitDisplay_sortTypeDialog_confirm)
                 : const Text('confirm'),
           ),
-        )
+        ),
       ],
     );
   }
@@ -165,12 +163,13 @@ class _SortTypeRadioListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return RadioListTile<HabitDisplaySortType>(
       title: Text(
-        HabitsSortViewModel.getSortTitle(sortType, null,
-            l10n: L10n.of(context)),
+        HabitsSortViewModel.getSortTitle(
+          sortType,
+          null,
+          l10n: L10n.of(context),
+        ),
       ),
-      secondary: Icon(
-        HabitsSortViewModel.getSortIcon(sortType, sortDirection),
-      ),
+      secondary: Icon(HabitsSortViewModel.getSortIcon(sortType, sortDirection)),
       value: sortType,
     );
   }

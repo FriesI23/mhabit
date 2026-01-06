@@ -18,13 +18,7 @@ import 'package:flutter/material.dart';
 import '../../extensions/color_extensions.dart';
 import '../../theme/color.dart';
 
-enum CryptoDonateButtonType {
-  btc,
-  eth,
-  bnb,
-  avax,
-  ftm,
-}
+enum CryptoDonateButtonType { btc, eth, bnb, avax, ftm }
 
 class CryptoDonateButton extends StatelessWidget {
   final CryptoDonateButtonType cryptoType;
@@ -57,14 +51,14 @@ class CryptoDonateButton extends StatelessWidget {
 
   ButtonStyle? getButtonStyle() {
     ButtonStyle buildStyle(WidgetStatePropertyAll<Color> color) => ButtonStyle(
-          backgroundColor: color,
-          iconColor: const WidgetStatePropertyAll(Colors.white),
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) => states.contains(WidgetState.pressed)
-                ? color.value.darken(0.1)
-                : null,
-          ),
-        );
+      backgroundColor: color,
+      iconColor: const WidgetStatePropertyAll(Colors.white),
+      overlayColor: WidgetStateProperty.resolveWith<Color?>(
+        (states) => states.contains(WidgetState.pressed)
+            ? color.value.darken(0.1)
+            : null,
+      ),
+    );
 
     switch (cryptoType) {
       case CryptoDonateButtonType.btc:

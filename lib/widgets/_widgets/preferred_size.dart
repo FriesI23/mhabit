@@ -17,9 +17,14 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart' as widgets;
 
 class PreferredSize extends widgets.PreferredSize {
-  static const zero =
-      PreferredSize(preferredSize: Size.zero, child: widgets.SizedBox.shrink());
+  static const zero = PreferredSize(
+    preferredSize: Size.zero,
+    child: widgets.SizedBox.shrink(),
+  );
 
-  const PreferredSize(
-      {super.key, required super.preferredSize, required super.child});
+  const PreferredSize({
+    super.key,
+    required super.preferredSize,
+    required super.child,
+  });
 }

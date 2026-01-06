@@ -39,9 +39,11 @@ class _AppAboutSourceCodeTileState extends State<AppAboutSourceCodeTile> {
     if (await canLaunchUrl(url)) {
       await launchExternalUrl(url);
     } else {
-      appLog.network.error("$widget.onPressed",
-          ex: ["failed to open source code url", url],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.network.error(
+        "$widget.onPressed",
+        ex: ["failed to open source code url", url],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
     }
   }
 

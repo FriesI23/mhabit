@@ -28,11 +28,9 @@ import '../common/widgets.dart';
 import 'widgets.dart';
 
 Future<void> naviToAppAboutPage({required BuildContext context}) async {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const AppAboutPage(),
-    ),
-  );
+  return Navigator.of(
+    context,
+  ).push<void>(MaterialPageRoute(builder: (context) => const AppAboutPage()));
 }
 
 class AppAboutPage extends StatelessWidget {
@@ -88,18 +86,23 @@ class _PageState extends State<_Page> {
         future: loadData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            appLog.build.error(context,
-                widget: widget,
-                ex: ["contributor content load failed"],
-                error: snapshot.error);
+            appLog.build.error(
+              context,
+              widget: widget,
+              ex: ["contributor content load failed"],
+              error: snapshot.error,
+            );
             return const SizedBox();
           }
           if (snapshot.hasData) {
-            return Column(mainAxisSize: MainAxisSize.min, children: [
-              const SizedBox(height: 50),
-              const Divider(),
-              ContributorTile(contributors: snapshot.data!),
-            ]);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 50),
+                const Divider(),
+                ContributorTile(contributors: snapshot.data!),
+              ],
+            );
           }
           return const SizedBox();
         },
@@ -127,9 +130,7 @@ class _PageState extends State<_Page> {
           const AppAboutContactEmailTile(),
           const AppAboutLicenseTile(),
           const AppAboutThirdPartyLicenseTile(),
-          const AppAboutPrivacyTile(
-            privacyPath: Assets.privacy,
-          ),
+          const AppAboutPrivacyTile(privacyPath: Assets.privacy),
           if (!AppInfo().shouldHideDonate())
             AppAboutDonateTile(onPressed: _onDonateTilePressed),
           buildAppAboutContributorTile(context),

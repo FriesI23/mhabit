@@ -127,8 +127,10 @@ class HabitsTodayViewModel extends ChangeNotifier
 
     void onCancelled() {
       if (_loading == loading) _loading = null;
-      appLog.load.info("$runtimeType._cancelLoading",
-          ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType._cancelLoading",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
@@ -152,38 +154,49 @@ class HabitsTodayViewModel extends ChangeNotifier
   Future loadData({bool listen = true}) async {
     final crtLoading = _effectiveLoading;
     if (crtLoading != null) {
-      appLog.load.warn("$runtimeType.loadData",
-          ex: ["data already loaded", crtLoading.isCompleted]);
+      appLog.load.warn(
+        "$runtimeType.loadData",
+        ex: ["data already loaded", crtLoading.isCompleted],
+      );
       return crtLoading.operation.valueOrCancellation();
     }
 
     final loading = _loading = CancelableCompleter<void>();
 
     void loadingFailed(List errmsg) {
-      appLog.load.error("$runtimeType.load",
-          ex: [...errmsg, loading.hashCode],
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.load.error(
+        "$runtimeType.load",
+        ex: [...errmsg, loading.hashCode],
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
       if (!loading.isCompleted) {
         loading.completeError(
-            FlutterError(errmsg.join(" ")), StackTrace.current);
+          FlutterError(errmsg.join(" ")),
+          StackTrace.current,
+        );
       }
     }
 
     void loadingCancelled() {
-      appLog.load
-          .info("$runtimeType.load", ex: ['cancelled', loading.hashCode]);
+      appLog.load.info(
+        "$runtimeType.load",
+        ex: ['cancelled', loading.hashCode],
+      );
     }
 
     Future<void> loadingData() async {
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug("$runtimeType.load",
-          ex: ["loading data", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loading data", loading.hashCode, listen],
+      );
 
       // init habits
       await habitsManager.loadHabitSummaryCollectionData(
-          initedCollection: _data,
-          habitsColmns: _loadHabitDataCollectionColumns);
+        initedCollection: _data,
+        habitsColmns: _loadHabitDataCollectionColumns,
+      );
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
@@ -204,20 +217,27 @@ class HabitsTodayViewModel extends ChangeNotifier
       if (listen) {
         notifyListeners();
       }
-      appLog.load
-          .debug("$runtimeType.load", ex: ["loaded", loading.hashCode, listen]);
+      appLog.load.debug(
+        "$runtimeType.load",
+        ex: ["loaded", loading.hashCode, listen],
+      );
     }
 
-    loadingData().catchError((e, s) {
-      if (loading.isCanceled) return loadingCancelled();
-      loadingFailed(["unexpected error", e]);
-      appLog.load.error("$runtimeType.load",
-          ex: ["caught", e, loading.hashCode], stackTrace: s);
-    }).whenComplete(() {
-      if (!loading.isCompleted && !loading.isCanceled) {
-        loading.complete();
-      }
-    });
+    loadingData()
+        .catchError((e, s) {
+          if (loading.isCanceled) return loadingCancelled();
+          loadingFailed(["unexpected error", e]);
+          appLog.load.error(
+            "$runtimeType.load",
+            ex: ["caught", e, loading.hashCode],
+            stackTrace: s,
+          );
+        })
+        .whenComplete(() {
+          if (!loading.isCompleted && !loading.isCanceled) {
+            loading.complete();
+          }
+        });
 
     return loading.operation.valueOrCancellation();
   }
@@ -227,15 +247,18 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   Future<String?> loadRecordReason(
-          HabitSummaryData data, HabitRecordDate date) =>
-      habitsManager.loadHabitRecordReason(data, date);
+    HabitSummaryData data,
+    HabitRecordDate date,
+  ) => habitsManager.loadHabitRecordReason(data, date);
   //#endregion
 
   //#region sortbale habits list
   List<HabitSortCache> get currentHabitList => _lastSortedDataCache;
 
   void updateSortOptions(
-      HabitDisplaySortType sortType, HabitDisplaySortDirection sortDirection) {
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+  ) {
     _sortType = sortType;
     _sortDirection = _sortDirection;
   }
@@ -265,8 +288,10 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   void _replaceSortbaleCache(List<HabitSortCache> cache) {
     if (identical(cache, _lastSortedDataCache)) {
-      appLog.load.warn("$runtimeType._replaceSortbaleCache",
-          ex: ["fixed cache", cache, _lastSortedDataCache]);
+      appLog.load.warn(
+        "$runtimeType._replaceSortbaleCache",
+        ex: ["fixed cache", cache, _lastSortedDataCache],
+      );
       cache = List.of(cache, growable: false);
     }
     _lastSortedDataCache = cache;
@@ -294,30 +319,37 @@ class HabitsTodayViewModel extends ChangeNotifier
       appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
       requestReload();
     });
-    _habitStatusChangedSub =
-        newAppEvent.on<HabitStatusChangedEvent>().listen((event) {
+    _habitStatusChangedSub = newAppEvent.on<HabitStatusChangedEvent>().listen((
+      event,
+    ) {
       if (event.isInTrace(AppEventPageSource.habitToday)) return;
       appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
       requestReload();
     });
-    _habitRecordStatusChangedSub =
-        newAppEvent.on<HabitRecordsChangedEvents>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.habitToday)) return;
-      final now = HabitDate.now();
-      if (!event.dateList.contains(now)) return;
-      final allHabitCheckedIn = event.uuidList
-          .map((e) => getHabit(e)?.getRecordByDate(now))
-          .every((e) => e != null);
-      if (allHabitCheckedIn) return;
-      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-      requestReload();
-    });
+    _habitRecordStatusChangedSub = newAppEvent
+        .on<HabitRecordsChangedEvents>()
+        .listen((event) {
+          if (event.isInTrace(AppEventPageSource.habitToday)) return;
+          final now = HabitDate.now();
+          if (!event.dateList.contains(now)) return;
+          final allHabitCheckedIn = event.uuidList
+              .map((e) => getHabit(e)?.getRecordByDate(now))
+              .every((e) => e != null);
+          if (allHabitCheckedIn) return;
+          appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
+          requestReload();
+        });
   }
   //#endregion
 
   //#region expand
-  void updateHabitExpandStatus(HabitUUID uuid, bool newStatus,
-      {bool force = false, bool exclusive = false, bool listen = true}) {
+  void updateHabitExpandStatus(
+    HabitUUID uuid,
+    bool newStatus, {
+    bool force = false,
+    bool exclusive = false,
+    bool listen = true,
+  }) {
     if (newStatus == _expandStatus[uuid] && !force) return;
     if (exclusive) _expandStatus.clear();
     _expandStatus.remove(uuid);
@@ -333,8 +365,13 @@ class HabitsTodayViewModel extends ChangeNotifier
     } else {
       status = true;
     }
-    updateHabitExpandStatus(uuid, status,
-        force: true, exclusive: true, listen: listen);
+    updateHabitExpandStatus(
+      uuid,
+      status,
+      force: true,
+      exclusive: true,
+      listen: listen,
+    );
   }
 
   (HabitUUID?, bool?) getLastHabitExpandStatus({bool onlySucc = false}) {
@@ -350,28 +387,34 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#endregion
 
   //#region actions
-  Future<HabitSummaryRecord?> changeRecordStatus(HabitUUID uuid,
-      {String? reason, bool listen = true}) async {
+  Future<HabitSummaryRecord?> changeRecordStatus(
+    HabitUUID uuid, {
+    String? reason,
+    bool listen = true,
+  }) async {
     final data = getHabit(uuid);
     if (data == null) return null;
 
     final date = HabitDate.now();
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data,
-          status: HabitRecordStatus.skip,
-          reason: reason,
-          dateList: [date]),
+        data: data,
+        status: HabitRecordStatus.skip,
+        reason: reason,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitDetail.changeRecordStatus",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitDetail.changeRecordStatus",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
@@ -381,25 +424,32 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   Future<HabitSummaryRecord?> changeRecordValue(
-      HabitUUID uuid, HabitDailyGoal newValue,
-      {bool listen = true}) async {
+    HabitUUID uuid,
+    HabitDailyGoal newValue, {
+    bool listen = true,
+  }) async {
     final data = getHabit(uuid);
     if (data == null) return null;
 
     final date = HabitDate.now();
     final results = await habitsManager.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
-          data: data, goal: newValue, dateList: [date]),
+        data: data,
+        goal: newValue,
+        dateList: [date],
+      ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
 
-    appLog.value.info("HabitsToday.changeRecordValue",
-        beforeVal: result.origin,
-        afterVal: result.data,
-        ex: ["rst=$result", data.id, data.progress]);
+    appLog.value.info(
+      "HabitsToday.changeRecordValue",
+      beforeVal: result.origin,
+      afterVal: result.data,
+      ex: ["rst=$result", data.id, data.progress],
+    );
 
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);

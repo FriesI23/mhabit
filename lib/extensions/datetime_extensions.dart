@@ -77,21 +77,24 @@ extension DateTimeExtended on DateTime {
 
   DateTime getLastDayOfWeekWithStartDay(int firstDay) {
     return add(
-        Duration(days: DateTime.daysPerWeek - weekDayWithStartDay(firstDay)));
+      Duration(days: DateTime.daysPerWeek - weekDayWithStartDay(firstDay)),
+    );
   }
 }
 
 extension DateTimeWeekday on DateTime {
   DateTime next(int day) {
     return copyWith(
-      day: this.day +
+      day:
+          this.day +
           (day == weekday ? 7 : (day - weekday) % DateTime.daysPerWeek),
     );
   }
 
   DateTime previous(int day) {
     return copyWith(
-      day: this.day -
+      day:
+          this.day -
           (day == weekday ? 7 : (weekday - day) % DateTime.daysPerWeek),
     );
   }

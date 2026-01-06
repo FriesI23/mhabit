@@ -66,7 +66,8 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     _parentVersion = parentVersion;
     _chartCombine = chartCombine;
     _data = SplayTreeMap(
-        reversedData ? (a, b) => b.compareTo(a) : (a, b) => a.compareTo(b));
+      reversedData ? (a, b) => b.compareTo(a) : (a, b) => a.compareTo(b),
+    );
     if (iter != null) _data.addEntries(iter);
     _reversedData = reversedData;
     if (firstday != null) updateFirstday(firstday);
@@ -86,26 +87,42 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     return tmp;
   }
 
-  HabitDate getCurrentChartLastDate(
-          HabitDate? initDate, int limit) =>
+  HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) =>
       _reversedData
-          ? scoreChartHelp.getFirstDate(initDate ?? HabitDate.now(), offset,
-              limit, firstday, chartCombine: chartCombine)
-          : scoreChartHelp.getLastDate(initDate ?? HabitDate.now(), offset,
-              limit, firstday,
-              chartCombine: chartCombine);
+      ? scoreChartHelp.getFirstDate(
+          initDate ?? HabitDate.now(),
+          offset,
+          limit,
+          firstday,
+          chartCombine: chartCombine,
+        )
+      : scoreChartHelp.getLastDate(
+          initDate ?? HabitDate.now(),
+          offset,
+          limit,
+          firstday,
+          chartCombine: chartCombine,
+        );
 
   HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
       _reversedData
-          ? scoreChartHelp.getLastDate(
-              initDate ?? HabitDate.now(), offset, limit, firstday,
-              chartCombine: chartCombine)
-          : scoreChartHelp.getFirstDate(
-              initDate ?? HabitDate.now(), offset, limit, firstday,
-              chartCombine: chartCombine);
+      ? scoreChartHelp.getLastDate(
+          initDate ?? HabitDate.now(),
+          offset,
+          limit,
+          firstday,
+          chartCombine: chartCombine,
+        )
+      : scoreChartHelp.getFirstDate(
+          initDate ?? HabitDate.now(),
+          offset,
+          limit,
+          firstday,
+          chartCombine: chartCombine,
+        );
 
   List<MapEntry<HabitDate, HabitDetailScoreChartDate>>
-      getCurrentOffsetChartData({
+  getCurrentOffsetChartData({
     HabitDate? initDate,
     HabitDate? firstDate,
     HabitDate? lastDate,
@@ -118,12 +135,14 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     firstDate ??= getCurrentChartFirstDate(initDate, limit!);
     lastDate ??= getCurrentChartLastDate(initDate, limit!);
 
-    final existMap = Map.fromEntries(filterWithDateRange(
-      firstDate: firstDate,
-      lastDate: lastDate,
-      data: _data.entries,
-      reversed: _reversedData,
-    ));
+    final existMap = Map.fromEntries(
+      filterWithDateRange(
+        firstDate: firstDate,
+        lastDate: lastDate,
+        data: _data.entries,
+        reversed: _reversedData,
+      ),
+    );
     return scoreChartHelp
         .fetchDataByOffset(
           firstDate,

@@ -23,11 +23,7 @@ Future<AppSettingConfirmClearDBOp?> showAppSettingConfirmClearDBDiloag({
   );
 }
 
-enum AppSettingConfirmClearDBOp {
-  cancel,
-  confirm,
-  confirmWithExport,
-}
+enum AppSettingConfirmClearDBOp { cancel, confirm, confirmWithExport }
 
 class AppSettingConfirmClearDBDiloag extends StatefulWidget {
   const AppSettingConfirmClearDBDiloag({super.key});
@@ -54,14 +50,17 @@ class _AppSettingConfirmClearDBDiloag
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.maybeOf(context)
-              ?.maybePop(AppSettingConfirmClearDBOp.cancel),
+          onPressed: () => Navigator.maybeOf(
+            context,
+          )?.maybePop(AppSettingConfirmClearDBOp.cancel),
           child: const Text("cancel"),
         ),
         TextButton(
-          onPressed: () => Navigator.maybeOf(context)?.maybePop(checked
-              ? AppSettingConfirmClearDBOp.confirmWithExport
-              : AppSettingConfirmClearDBOp.confirm),
+          onPressed: () => Navigator.maybeOf(context)?.maybePop(
+            checked
+                ? AppSettingConfirmClearDBOp.confirmWithExport
+                : AppSettingConfirmClearDBOp.confirm,
+          ),
           child: const Text("confirm"),
         ),
       ],

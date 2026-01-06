@@ -20,35 +20,50 @@ import '../../models/habit_summary.dart';
 import '../../providers/app_event.dart';
 
 extension AppEventViewModelExtension on AppEventViewModel {
-  void pushHabitsChangeStatus(List<HabitStatusChangedRecord> recordList,
-      {String? msg, AppEventPageSource? source}) {
-    recordList.fold<Map<HabitStatus, List<HabitUUID>>>({}, (acc, r) {
-      (acc[r.newStatus] ??= []).add(r.habitUUID);
-      return acc;
-    }).forEach((status, uuids) {
-      push(HabitStatusChangedEvent(
-        msg: msg,
-        uuidList: uuids,
-        status: status,
-        trace: {
-          if (source != null)
-            source: const {AppEventFunctionSource.habitChanged}
-        },
-      ));
-    });
+  void pushHabitsChangeStatus(
+    List<HabitStatusChangedRecord> recordList, {
+    String? msg,
+    AppEventPageSource? source,
+  }) {
+    recordList
+        .fold<Map<HabitStatus, List<HabitUUID>>>({}, (acc, r) {
+          (acc[r.newStatus] ??= []).add(r.habitUUID);
+          return acc;
+        })
+        .forEach((status, uuids) {
+          push(
+            HabitStatusChangedEvent(
+              msg: msg,
+              uuidList: uuids,
+              status: status,
+              trace: {
+                if (source != null)
+                  source: const {AppEventFunctionSource.habitChanged},
+              },
+            ),
+          );
+        });
   }
 
-  void pushHabitRecordChangeStatus(HabitUUID uuid, HabitSummaryRecord record,
-      {String? reason, String? msg, AppEventPageSource? source}) {
-    push(HabitRecordsChangedEvents(
-      msg: msg,
-      uuidList: [uuid],
-      dateList: [record.date],
-      status: record.status,
-      reason: reason,
-      trace: {
-        if (source != null) source: const {AppEventFunctionSource.recordChanged}
-      },
-    ));
+  void pushHabitRecordChangeStatus(
+    HabitUUID uuid,
+    HabitSummaryRecord record, {
+    String? reason,
+    String? msg,
+    AppEventPageSource? source,
+  }) {
+    push(
+      HabitRecordsChangedEvents(
+        msg: msg,
+        uuidList: [uuid],
+        dateList: [record.date],
+        status: record.status,
+        reason: reason,
+        trace: {
+          if (source != null)
+            source: const {AppEventFunctionSource.recordChanged},
+        },
+      ),
+    );
   }
 }

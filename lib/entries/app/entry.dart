@@ -92,8 +92,9 @@ class AppEntry extends StatelessWidget {
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
           builder: (context) => const AppProviders(
-            child:
-                _AppEntry(homePage: _AppPostInit(child: HabitsDisplayPage())),
+            child: _AppEntry(
+              homePage: _AppPostInit(child: HabitsDisplayPage()),
+            ),
           ),
         ),
       ),
@@ -112,7 +113,7 @@ class _AppEntry extends StatelessWidget {
         final arch = AppInfo().linuxArchitecture;
         return switch (arch) {
           LinuxPlatformArchitecture.aarch64 => 'Roboto',
-          _ => null
+          _ => null,
         };
       default:
         return null;
@@ -125,28 +126,30 @@ class _AppEntry extends StatelessWidget {
         final arch = AppInfo().linuxArchitecture;
         return switch (arch) {
           LinuxPlatformArchitecture.aarch64 => const [
-              'Ubuntu',
-              'Cantarell',
-              'DejaVu Sans',
-              'Liberation Sans',
-              'Arial',
-              'Noto Color Emoji',
-              'Noto Sans CJK SC',
-              'Noto Sans CJK TC',
-              'Noto Sans CJK JP',
-              'Noto Sans CJK KR',
-            ],
-          _ => null
+            'Ubuntu',
+            'Cantarell',
+            'DejaVu Sans',
+            'Liberation Sans',
+            'Arial',
+            'Noto Color Emoji',
+            'Noto Sans CJK SC',
+            'Noto Sans CJK TC',
+            'Noto Sans CJK JP',
+            'Noto Sans CJK KR',
+          ],
+          _ => null,
         };
       default:
         return null;
     }
   }
 
-  Color? getThemeColor(AppThemeColor themeColor,
-      {Color? themeMainColor,
-      ColorScheme? dynamicScheme,
-      CustomColors? customColor}) {
+  Color? getThemeColor(
+    AppThemeColor themeColor, {
+    Color? themeMainColor,
+    ColorScheme? dynamicScheme,
+    CustomColors? customColor,
+  }) {
     switch (themeColor) {
       case SystemAppThemeColor():
         return null;
@@ -170,47 +173,59 @@ class _AppEntry extends StatelessWidget {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) => Builder(
         builder: (context) {
-          final language = context
-              .select<AppLanguageViewModel, Locale?>((vm) => vm.languange);
+          final language = context.select<AppLanguageViewModel, Locale?>(
+            (vm) => vm.languange,
+          );
           final (themeMode, themeColor, themeMainColor) = context
               .select<AppThemeViewModel, (AppThemeType, AppThemeColor, Color)>(
-                  (vm) => (vm.themeType, vm.themeColor, vm.mainColor));
+                (vm) => (vm.themeType, vm.themeColor, vm.mainColor),
+              );
           return AppRootView(
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             lightThemeBuilder: () {
               final customColor = modifedLightCustomColors;
-              final mainColor = getThemeColor(themeColor,
-                  themeMainColor: themeMainColor,
-                  dynamicScheme: lightDynamic,
-                  customColor: customColor);
+              final mainColor = getThemeColor(
+                themeColor,
+                themeMainColor: themeMainColor,
+                dynamicScheme: lightDynamic,
+                customColor: customColor,
+              );
               return ThemeData(
-                  fontFamily: fontFamily,
-                  fontFamilyFallback: fontFamilyFallbacks,
-                  brightness: mainColor == null ? Brightness.light : null,
-                  colorScheme: mainColor != null
-                      ? ColorScheme.fromSeed(
-                          seedColor: mainColor, brightness: Brightness.light)
-                      : null,
-                  useMaterial3: true,
-                  extensions: [customColor]);
+                fontFamily: fontFamily,
+                fontFamilyFallback: fontFamilyFallbacks,
+                brightness: mainColor == null ? Brightness.light : null,
+                colorScheme: mainColor != null
+                    ? ColorScheme.fromSeed(
+                        seedColor: mainColor,
+                        brightness: Brightness.light,
+                      )
+                    : null,
+                useMaterial3: true,
+                extensions: [customColor],
+              );
             },
             darkThemeBuilder: () {
               final customColor = darkCustomColors;
-              final mainColor = getThemeColor(themeColor,
-                  themeMainColor: themeMainColor,
-                  dynamicScheme: darkDynamic,
-                  customColor: customColor);
+              final mainColor = getThemeColor(
+                themeColor,
+                themeMainColor: themeMainColor,
+                dynamicScheme: darkDynamic,
+                customColor: customColor,
+              );
               return ThemeData(
-                  fontFamily: fontFamily,
-                  fontFamilyFallback: fontFamilyFallbacks,
-                  brightness: mainColor == null ? Brightness.dark : null,
-                  colorScheme: mainColor != null
-                      ? ColorScheme.fromSeed(
-                          seedColor: mainColor, brightness: Brightness.dark)
-                      : null,
-                  useMaterial3: true,
-                  extensions: [customColor]);
+                fontFamily: fontFamily,
+                fontFamilyFallback: fontFamilyFallbacks,
+                brightness: mainColor == null ? Brightness.dark : null,
+                colorScheme: mainColor != null
+                    ? ColorScheme.fromSeed(
+                        seedColor: mainColor,
+                        brightness: Brightness.dark,
+                      )
+                    : null,
+                useMaterial3: true,
+                extensions: [customColor],
+              );
             },
             child: homePage,
           );
@@ -249,16 +264,20 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
         .maybeRead<AppSyncViewModel>()
         ?.appSyncTask
         .confirmEvents
-        .listen((event) => switch (event) {
-              AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() =>
-                _onWebDavAppSyncUserConfirmNeedCheck(event.checklist)
-                    .then(event.complete),
-              _ => kDebugMode ? debugPrint("Unhandled event: $event") : null
-            });
+        .listen(
+          (event) => switch (event) {
+            AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() =>
+              _onWebDavAppSyncUserConfirmNeedCheck(
+                event.checklist,
+              ).then(event.complete),
+            _ => kDebugMode ? debugPrint("Unhandled event: $event") : null,
+          },
+        );
   }
 
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
-      WebDavConfigTaskChecklist checklist) {
+    WebDavConfigTaskChecklist checklist,
+  ) {
     return showDialog<bool>(
       context: context,
       builder: (context) => checklist.isEmptyDir
@@ -283,9 +302,9 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
   void onPostInitHandled(BuildContext context) {
     final l10n = L10n.of(context);
     appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
-    context
-        .maybeRead<AppDebuggerViewModel>()
-        ?.processDebuggingNotification(l10n);
+    context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
+      l10n,
+    );
     context.maybeRead<AppReminderViewModel>()?.processAppReminder(l10n);
     _onL10nUpdate(L10n.of(context));
     inited = true;

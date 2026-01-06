@@ -22,9 +22,7 @@ import '../../widgets/widgets.dart';
 
 Future<void> naviToNotifyConfigPage({required BuildContext context}) {
   return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const AppNotifyConfigPage(),
-    ),
+    MaterialPageRoute(builder: (context) => const AppNotifyConfigPage()),
   );
 }
 
@@ -45,7 +43,7 @@ class AppNotifyConfigView extends StatefulWidget {
 class _AppNotifyConfigView extends State<AppNotifyConfigView> {
   static const List<NotificationChannelId> _availableIds = [
     NotificationChannelId.appSyncing,
-    NotificationChannelId.appSyncFailed
+    NotificationChannelId.appSyncFailed,
   ];
   _AppNotifyConfigView();
 
@@ -55,8 +53,9 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
       appBar: AppBar(
         leading: const PageBackButton(reason: PageBackReason.back),
         title: L10nBuilder(
-            builder: (context, l10n) =>
-                Text(l10n?.appSetting_notify_titleTile ?? "Notifications")),
+          builder: (context, l10n) =>
+              Text(l10n?.appSetting_notify_titleTile ?? "Notifications"),
+        ),
       ),
       body: ListView.builder(
         itemCount: _availableIds.length,
@@ -67,10 +66,12 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
                 vm.notifyConfig.isChannelEnabled(channelId),
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, value, child) {
-              final channelName =
-                  channelId.getL10nChannelName(L10n.of(context));
-              final channelDesc =
-                  channelId.getL10nChannelDesc(L10n.of(context));
+              final channelName = channelId.getL10nChannelName(
+                L10n.of(context),
+              );
+              final channelDesc = channelId.getL10nChannelDesc(
+                L10n.of(context),
+              );
               return SwitchListTile.adaptive(
                 title: Text(channelName),
                 subtitle: channelDesc != null ? Text(channelDesc) : null,
@@ -79,7 +80,8 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
                   final config = context.read<AppNotifyConfigViewModel>();
                   if (!config.mounted) return;
                   config.updateNotifyConfig(
-                      config.notifyConfig.copyWith({channelId: value}));
+                    config.notifyConfig.copyWith({channelId: value}),
+                  );
                 },
               );
             },

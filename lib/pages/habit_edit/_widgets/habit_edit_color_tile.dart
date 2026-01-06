@@ -20,7 +20,7 @@ import '../../../widgets/widgets.dart';
 class HabitEditColorTile extends StatelessWidget {
   final HabitColorType colorType;
   final void Function(BuildContext context, HabitColorType colorType)?
-      onPressed;
+  onPressed;
 
   const HabitEditColorTile({
     super.key,

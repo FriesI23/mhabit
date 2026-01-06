@@ -20,13 +20,17 @@ import 'package:tuple/tuple.dart';
 import '../../../models/habit_display.dart';
 import '../profile_helper.dart';
 
-final class DisplaySortModeProfileHandler extends ProfileHelperConvertHandler<
-    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>, List> {
+final class DisplaySortModeProfileHandler
+    extends
+        ProfileHelperConvertHandler<
+          Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>,
+          List
+        > {
   final SharedPreferences _pref;
 
   const DisplaySortModeProfileHandler(SharedPreferences pref)
-      : _pref = pref,
-        super(codec: const DisplaySortModeCodec());
+    : _pref = pref,
+      super(codec: const DisplaySortModeCodec());
 
   @override
   String get key => "habitSortMode";
@@ -52,42 +56,51 @@ final class DisplaySortModeProfileHandler extends ProfileHelperConvertHandler<
   Future<bool> remove() => _pref.remove(key);
 }
 
-final class DisplaySortModeCodec extends Codec<
-    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>, List> {
+final class DisplaySortModeCodec
+    extends
+        Codec<Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>, List> {
   const DisplaySortModeCodec();
 
   @override
   Converter<List, Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>>
-      get decoder => const _Decoder();
+  get decoder => const _Decoder();
 
   @override
   Converter<Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>, List>
-      get encoder => const _Encoder();
+  get encoder => const _Encoder();
 }
 
-final class _Decoder extends Converter<List,
-    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>> {
+final class _Decoder
+    extends
+        Converter<
+          List,
+          Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>
+        > {
   const _Decoder();
 
   @override
   Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?> convert(
-          List input) =>
-      Tuple2(
-        ((input[0] as int?) != null)
-            ? HabitDisplaySortType.getFromDBCode(input[0])
-            : null,
-        ((input[1] as int?) != null)
-            ? HabitDisplaySortDirection.getFromDBCode(input[1])
-            : null,
-      );
+    List input,
+  ) => Tuple2(
+    ((input[0] as int?) != null)
+        ? HabitDisplaySortType.getFromDBCode(input[0])
+        : null,
+    ((input[1] as int?) != null)
+        ? HabitDisplaySortDirection.getFromDBCode(input[1])
+        : null,
+  );
 }
 
-final class _Encoder extends Converter<
-    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>, List> {
+final class _Encoder
+    extends
+        Converter<
+          Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?>,
+          List
+        > {
   const _Encoder();
 
   @override
   List convert(
-          Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?> input) =>
-      [input.item1?.dbCode, input.item2?.dbCode];
+    Tuple2<HabitDisplaySortType?, HabitDisplaySortDirection?> input,
+  ) => [input.item1?.dbCode, input.item2?.dbCode];
 }

@@ -21,7 +21,8 @@ import '../../../theme/color.dart';
 import 'habit_today_list_card.dart';
 
 const kHabitTodayCardShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12.0)));
+  borderRadius: BorderRadius.all(Radius.circular(12.0)),
+);
 
 class HabitTodayCard extends StatelessWidget {
   final HabitSummaryData data;
@@ -59,18 +60,21 @@ class HabitTodayCard extends StatelessWidget {
     final colorData = themeData.extension<CustomColors>();
     return Theme(
       data: themeData.copyWith(
-          colorScheme: themeData.colorScheme
-              .copyWith(primary: colorData?.getColor(data.colorType))),
+        colorScheme: themeData.colorScheme.copyWith(
+          primary: colorData?.getColor(data.colorType),
+        ),
+      ),
       child: HabitTodayListCard(
-          data: data,
-          date: date,
-          expanded: selected,
-          canScroll: _isGridView,
-          showProgessInfo: _isGridView,
-          showDescInfo: _isGridView,
-          onExpandChanged: onExpandChanged,
-          onMainPressed: onMainPressed,
-          buttonCallbacked: buttonCallbacked),
+        data: data,
+        date: date,
+        expanded: selected,
+        canScroll: _isGridView,
+        showProgessInfo: _isGridView,
+        showDescInfo: _isGridView,
+        onExpandChanged: onExpandChanged,
+        onMainPressed: onMainPressed,
+        buttonCallbacked: buttonCallbacked,
+      ),
     );
   }
 }

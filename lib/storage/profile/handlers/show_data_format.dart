@@ -22,7 +22,7 @@ import '../profile_helper.dart';
 final class ShowDateFormatProfileHandler
     extends ProfileHelperCovertToJsonHandler<CustomDateYmdHmsConfig> {
   const ShowDateFormatProfileHandler(super.pref)
-      : super(codec: const ShowDateFormatCodec());
+    : super(codec: const ShowDateFormatCodec());
 
   @override
   String get key => "customDateYmdHmsConfig";
@@ -46,8 +46,11 @@ final class _Decoder extends Converter<JsonMap, CustomDateYmdHmsConfig> {
     try {
       return CustomDateYmdHmsConfig.fromJson(input);
     } catch (e) {
-      appLog.load.warn("ShowDateFormatCodec.$runtimeType",
-          ex: ["format err"], error: e);
+      appLog.load.warn(
+        "ShowDateFormatCodec.$runtimeType",
+        ex: ["format err"],
+        error: e,
+      );
       return const CustomDateYmdHmsConfig.withDefault();
     }
   }

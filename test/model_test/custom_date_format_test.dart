@@ -55,8 +55,10 @@ void main() {
       );
 
       // Fixed `\u202f` for DateFormat pattern in new intl version
-      final patternWithRegex = 'M/d/yyyy h:mm:ss a'
-          .replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
+      final patternWithRegex = 'M/d/yyyy h:mm:ss a'.replaceAllMapped(
+        RegExp(r'\s'),
+        (match) => r'\s',
+      );
       final formatter = config.getFormatter('en_US');
       expect(formatter.pattern, matches(patternWithRegex));
     });
@@ -70,8 +72,10 @@ void main() {
       );
 
       // Fixed `\u202f` for DateFormat pattern in new intl version
-      final patternWithRegex =
-          'd M yyyy HH:mm:ss'.replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
+      final patternWithRegex = 'd M yyyy HH:mm:ss'.replaceAllMapped(
+        RegExp(r'\s'),
+        (match) => r'\s',
+      );
       final formatter = config.getFormatter('en_US');
       expect(formatter.pattern, matches(patternWithRegex));
     });
@@ -86,8 +90,10 @@ void main() {
       );
 
       // Fixed `\u202f` for DateFormat pattern in new intl version
-      final patternWithRegex =
-          'd LLL y h:mm:ss a'.replaceAllMapped(RegExp(r'\s'), (match) => r'\s');
+      final patternWithRegex = 'd LLL y h:mm:ss a'.replaceAllMapped(
+        RegExp(r'\s'),
+        (match) => r'\s',
+      );
       final formatter = config.getFormatter('en_US');
       expect(formatter.pattern, matches(patternWithRegex));
     });

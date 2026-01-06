@@ -42,10 +42,7 @@ Future<AppThemeColor?> showAppThemeColorChangerDialog({
 class AppSettingThemeColorTile extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const AppSettingThemeColorTile({
-    super.key,
-    this.onPressed,
-  });
+  const AppSettingThemeColorTile({super.key, this.onPressed});
 
   String buildSubTitleText(AppThemeColor themeColor, [L10n? l10n]) {
     switch (themeColor) {
@@ -68,15 +65,18 @@ class AppSettingThemeColorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor =
-        context.select<AppThemeViewModel, AppThemeColor>((vm) => vm.themeColor);
+    final themeColor = context.select<AppThemeViewModel, AppThemeColor>(
+      (vm) => vm.themeColor,
+    );
     final l10n = L10n.of(context);
     return ListTile(
-      title:
-          Text(l10n?.appSetting_appThemeColorTile_titleText ?? "Theme Color"),
+      title: Text(
+        l10n?.appSetting_appThemeColorTile_titleText ?? "Theme Color",
+      ),
       subtitle: Text(buildSubTitleText(themeColor, l10n)),
       trailing: AppSettingThemeColorContainer(
-          child: ColoredBox(color: Theme.of(context).colorScheme.primary)),
+        child: ColoredBox(color: Theme.of(context).colorScheme.primary),
+      ),
       onTap: onPressed,
     );
   }
@@ -100,9 +100,7 @@ class AppSettingThemeColorContainer extends StatelessWidget {
       width: size,
       height: size,
       padding: padding,
-      child: ClipOval(
-        child: child,
-      ),
+      child: ClipOval(child: child),
     );
   }
 }
@@ -114,20 +112,29 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final debug =
-        context.select<AppDeveloperViewModel, bool>((vm) => vm.isInDevelopMode);
+    final debug = context.select<AppDeveloperViewModel, bool>(
+      (vm) => vm.isInDevelopMode,
+    );
     final l10n = L10n.of(context);
     return SimpleDialog(
-      title: Text(l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
-          "Choose Theme Color"),
+      title: Text(
+        l10n?.appSetting_appThemeColorChosenDiloag_titleText ??
+            "Choose Theme Color",
+      ),
       children: [
         _SystemChosenOption(
-            isSelected: selectedColor is SystemAppThemeColor, debug: debug),
+          isSelected: selectedColor is SystemAppThemeColor,
+          debug: debug,
+        ),
         _PrimaryChosenOption(
-            isSelected: selectedColor is PrimaryAppThemeColor, debug: debug),
+          isSelected: selectedColor is PrimaryAppThemeColor,
+          debug: debug,
+        ),
         if (!Platform.isIOS)
           _DynamicChosenOption(
-              isSelected: selectedColor is DynamicAppThemeColor, debug: debug),
+            isSelected: selectedColor is DynamicAppThemeColor,
+            debug: debug,
+          ),
         ...HabitColorType.values.map((e) {
           bool isSelected(AppThemeColor? themeColor) {
             if (themeColor is! InternalAppThemeColor) return false;
@@ -135,10 +142,11 @@ class AppSettingThemeColorChoosenDialog extends StatelessWidget {
           }
 
           return _InternalChosenOption(
-              colorType: e,
-              isSelected: isSelected(selectedColor),
-              debug: debug);
-        })
+            colorType: e,
+            isSelected: isSelected(selectedColor),
+            debug: debug,
+          );
+        }),
       ],
     );
   }
@@ -176,7 +184,8 @@ class _PrimaryChosenOption extends StatelessWidget {
       title: Text(l10n?.common_appThemeColor_primary ?? "Primary"),
       subtitle: debug ? Text("$appDefaultThemeMainColor") : null,
       leading: const AppSettingThemeColorContainer(
-          child: ColoredBox(color: appDefaultThemeMainColor)),
+        child: ColoredBox(color: appDefaultThemeMainColor),
+      ),
       trailing: isSelected ? const Icon(Icons.check) : null,
       onTap: () => Navigator.of(context).pop(const PrimaryAppThemeColor()),
     );
@@ -202,7 +211,7 @@ class _DynamicChosenOption extends StatelessWidget {
             primaryColor,
             Colors.yellow.withValues(alpha: 0.8).harmonizeWith(primaryColor),
             Colors.blue.withValues(alpha: 0.8).harmonizeWith(primaryColor),
-            primaryColor
+            primaryColor,
           ],
         ),
       ),
@@ -212,7 +221,8 @@ class _DynamicChosenOption extends StatelessWidget {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android || TargetPlatform.fuchsia:
         sb.write(
-            l10n?.appSetting_appThemeColorChosenDialog_subTitleText_android);
+          l10n?.appSetting_appThemeColorChosenDialog_subTitleText_android,
+        );
       case TargetPlatform.macOS:
         sb.write(l10n?.appSetting_appThemeColorChosenDialog_subTitleText_macos);
       case TargetPlatform.windows:
@@ -236,22 +246,28 @@ class _InternalChosenOption extends StatelessWidget {
   final bool isSelected;
   final bool debug;
 
-  const _InternalChosenOption(
-      {required this.colorType, required this.isSelected, this.debug = false});
+  const _InternalChosenOption({
+    required this.colorType,
+    required this.isSelected,
+    this.debug = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final color =
-        Theme.of(context).extension<CustomColors>()?.getColor(colorType);
+    final color = Theme.of(
+      context,
+    ).extension<CustomColors>()?.getColor(colorType);
     return ListTile(
       title: Text(HabitColorType.getColorName(colorType, l10n)),
       subtitle: debug ? Text("$color") : null,
       leading: AppSettingThemeColorContainer(
-          child: ColoredBox(color: color ?? Colors.transparent)),
+        child: ColoredBox(color: color ?? Colors.transparent),
+      ),
       trailing: isSelected ? const Icon(Icons.check) : null,
-      onTap: () => Navigator.of(context)
-          .pop(InternalAppThemeColor(colorType: colorType)),
+      onTap: () => Navigator.of(
+        context,
+      ).pop(InternalAppThemeColor(colorType: colorType)),
     );
   }
 }

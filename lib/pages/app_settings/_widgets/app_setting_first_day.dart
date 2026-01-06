@@ -25,9 +25,8 @@ Future<int?> showAppSettingFirstDaySelectDialog({
 }) async {
   return showDialog<int>(
     context: context,
-    builder: (context) => AppSettingFirstDaySelectDialog(
-      initFirstday: firstDay,
-    ),
+    builder: (context) =>
+        AppSettingFirstDaySelectDialog(initFirstday: firstDay),
   );
 }
 
@@ -48,8 +47,11 @@ class AppSettingFirstDayTile extends StatelessWidget {
       title: l10n != null
           ? Text(l10n.appSetting_firstDayOfWeek_titleText)
           : const Text("First day of week"),
-      subtitle: Text(DateFormat.EEEE(l10n?.localeName)
-          .format(getProtoDateWithFirstDay(firstDay))),
+      subtitle: Text(
+        DateFormat.EEEE(
+          l10n?.localeName,
+        ).format(getProtoDateWithFirstDay(firstDay)),
+      ),
       onTap: onPressed,
     );
   }
@@ -60,10 +62,14 @@ class AppSettingFirstDaySelectDialog extends StatelessWidget {
 
   const AppSettingFirstDaySelectDialog({super.key, this.initFirstday});
 
-  Widget _buildSimpleDialogOption(BuildContext context, int firstday,
-      {L10n? l10n}) {
-    var text = DateFormat.EEEE(l10n?.localeName)
-        .format(getProtoDateWithFirstDay(firstday));
+  Widget _buildSimpleDialogOption(
+    BuildContext context,
+    int firstday, {
+    L10n? l10n,
+  }) {
+    var text = DateFormat.EEEE(
+      l10n?.localeName,
+    ).format(getProtoDateWithFirstDay(firstday));
     if (firstday == defaultFirstDay) {
       text +=
           (l10n?.appSetting_firstDayOfWeekDialog_defaultText ?? " (Default)");

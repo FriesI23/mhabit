@@ -48,7 +48,7 @@ class BasicProgressPercentChanger implements ProgressPercentChanger {
   num _percentage = defaultPercentage;
 
   BasicProgressPercentChanger({this.initprt, this.flex = 1})
-      : assert(flex > 0) {
+    : assert(flex > 0) {
     final initprt = this.initprt;
     if (initprt != null && initprt >= 0) _percentage = initprt;
   }
@@ -79,7 +79,7 @@ class MergedProgressPercent implements ProgressPercent {
   final List<ProgressPercent> children;
 
   MergedProgressPercent({required this.children, this.flex = 1})
-      : assert(flex > 0);
+    : assert(flex > 0);
 
   @override
   num get percentage {
@@ -89,7 +89,9 @@ class MergedProgressPercent implements ProgressPercent {
     if (totalFlex <= 0) return 0;
 
     return children.fold(
-        0, (sum, child) => sum + child.percentage * (child.flex / totalFlex));
+      0,
+      (sum, child) => sum + child.percentage * (child.flex / totalFlex),
+    );
   }
 
   @override

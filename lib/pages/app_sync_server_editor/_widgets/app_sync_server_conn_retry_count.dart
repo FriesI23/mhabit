@@ -27,8 +27,12 @@ class AppSyncServerConnRetryCountTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerConnRetryCountTile(
-      {super.key, this.contentPadding, this.controller, this.onChanged});
+  const AppSyncServerConnRetryCountTile({
+    super.key,
+    this.contentPadding,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +43,18 @@ class AppSyncServerConnRetryCountTile extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           icon: const Icon(MdiIcons.timelineClockOutline),
-          labelText: l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
+          labelText:
+              l10n?.appSync_serverEditor_connRetryCountTile_titleText ??
               'Network Connection Retry Count',
           hintText: l10n?.appSync_serverEditor_connRetryCountTile_hintText(
-              defaultAppSyncConnectRetryCount ?? 0),
+            defaultAppSyncConnectRetryCount ?? 0,
+          ),
         ),
         keyboardType: const TextInputType.numberWithOptions(
-            signed: false, decimal: false),
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-        ],
+          signed: false,
+          decimal: false,
+        ),
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: onChanged,
       ),
     );
@@ -59,8 +65,11 @@ class AppWebDavSyncServerConnRetryCountTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<int?>? onChanged;
 
-  const AppWebDavSyncServerConnRetryCountTile(
-      {super.key, this.controller, this.onChanged});
+  const AppWebDavSyncServerConnRetryCountTile({
+    super.key,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

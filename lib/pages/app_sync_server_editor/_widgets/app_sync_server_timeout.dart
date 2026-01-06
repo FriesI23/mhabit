@@ -28,12 +28,13 @@ class AppSyncServerTimeoutTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerTimeoutTile(
-      {super.key,
-      this.contentPadding,
-      this.inputFormatters,
-      this.controller,
-      this.onChanged});
+  const AppSyncServerTimeoutTile({
+    super.key,
+    this.contentPadding,
+    this.inputFormatters,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +45,22 @@ class AppSyncServerTimeoutTile extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           icon: const Icon(MdiIcons.timerOutline),
-          labelText: l10n?.appSync_serverEditor_timeoutTile_titleText ??
+          labelText:
+              l10n?.appSync_serverEditor_timeoutTile_titleText ??
               'Sync Timeout Seconds',
           hintText: l10n?.appSync_serverEditor_timeoutTile_hintText(
-              defaultAppSyncTimeout.inSeconds,
-              l10n.appSync_serverEditor_timeoutTile_unitText),
+            defaultAppSyncTimeout.inSeconds,
+            l10n.appSync_serverEditor_timeoutTile_unitText,
+          ),
           suffixText: l10n?.appSync_serverEditor_timeoutTile_unitText,
         ),
         keyboardType: const TextInputType.numberWithOptions(
-            signed: false, decimal: false),
+          signed: false,
+          decimal: false,
+        ),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          ...?inputFormatters
+          ...?inputFormatters,
         ],
         onChanged: onChanged,
       ),
@@ -69,8 +74,11 @@ class AppWebDavSyncServerTimeoutTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<Duration?>? onChanged;
 
-  const AppWebDavSyncServerTimeoutTile(
-      {super.key, this.controller, this.onChanged});
+  const AppWebDavSyncServerTimeoutTile({
+    super.key,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,14 +86,18 @@ class AppWebDavSyncServerTimeoutTile extends StatelessWidget {
       controller: controller,
       inputFormatters: [
         LengthLimitingTextInputFormatter(
-            kAllowdMaxTimeoutSecond.toString().length),
+          kAllowdMaxTimeoutSecond.toString().length,
+        ),
       ],
       onChanged: (value) {
         final vm = context.read<AppSyncServerFormViewModel>();
         if (!vm.mounted || vm.webdav == null) return;
         if (value.isNotEmpty) {
-          final realSecond = clampInt(num.parse(value).toInt(),
-              min: 0, max: kAllowdMaxTimeoutSecond);
+          final realSecond = clampInt(
+            num.parse(value).toInt(),
+            min: 0,
+            max: kAllowdMaxTimeoutSecond,
+          );
           final realTimeout = Duration(seconds: realSecond).abs();
           vm.webdav?.timeout = realTimeout;
         } else {

@@ -18,8 +18,11 @@ import '../storage/profile/profile_helper.dart';
 
 abstract interface class Cache<K> {
   T? getCache<T>(K key);
-  Future<void> updateCache<T>(K key, T? value,
-      {void Function(bool, T?)? onUpdated});
+  Future<void> updateCache<T>(
+    K key,
+    T? value, {
+    void Function(bool, T?)? onUpdated,
+  });
   Future<void> removeCache<T>(K key, {void Function(bool, T?)? onRemoved});
   Future<void> clear({void Function(bool)? onClear});
   Future<void> reload({void Function(bool)? onReload});
@@ -32,9 +35,7 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
   final WeakReference<T> _handler;
   bool _dirty = false;
 
-  AppCacheDelegate({
-    required T handler,
-  }) : _handler = WeakReference(handler);
+  AppCacheDelegate({required T handler}) : _handler = WeakReference(handler);
 
   @override
   Future<void> clear({void Function(bool)? onClear}) async {
@@ -64,8 +65,10 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
   }
 
   @override
-  Future<void> removeCache<V>(String key,
-      {void Function(bool result, V? removeValue)? onRemoved}) async {
+  Future<void> removeCache<V>(
+    String key, {
+    void Function(bool result, V? removeValue)? onRemoved,
+  }) async {
     appLog.cache.debug("$runtimeType.removeCache", ex: [key, this]);
     if (_handler.target == null) onRemoved?.call(false, null);
     final V? oldValue = _cache.remove(key);
@@ -76,8 +79,11 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
   }
 
   @override
-  Future<void> updateCache<V>(String key, V? value,
-      {void Function(bool result, V? oldValue)? onUpdated}) async {
+  Future<void> updateCache<V>(
+    String key,
+    V? value, {
+    void Function(bool result, V? oldValue)? onUpdated,
+  }) async {
     appLog.cache.debug("$runtimeType.updateCache", ex: [key, value, this]);
     if (_handler.target == null) onUpdated?.call(false, null);
     final V? oldValue = _cache[key];

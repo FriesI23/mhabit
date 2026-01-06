@@ -24,8 +24,10 @@ enum AppEntrys implements EnumWithDBCode {
 
   const AppEntrys(this.dbCode);
 
-  static AppEntrys? getFromDBCode(int dbCode,
-      {AppEntrys? withDefault = AppEntrys.undefined}) {
+  static AppEntrys? getFromDBCode(
+    int dbCode, {
+    AppEntrys? withDefault = AppEntrys.undefined,
+  }) {
     for (var value in AppEntrys.values) {
       if (value.dbCode == dbCode) return value;
     }

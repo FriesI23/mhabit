@@ -36,17 +36,18 @@ class HabitTodayListCard extends StatefulWidget {
   final VoidCallback? onMainPressed;
   final HabitTodayListCardButtonCallbacks? buttonCallbacked;
 
-  const HabitTodayListCard(
-      {super.key,
-      required this.data,
-      required this.date,
-      required this.expanded,
-      required this.canScroll,
-      this.showProgessInfo,
-      this.showDescInfo,
-      this.onExpandChanged,
-      this.onMainPressed,
-      this.buttonCallbacked});
+  const HabitTodayListCard({
+    super.key,
+    required this.data,
+    required this.date,
+    required this.expanded,
+    required this.canScroll,
+    this.showProgessInfo,
+    this.showDescInfo,
+    this.onExpandChanged,
+    this.onMainPressed,
+    this.buttonCallbacked,
+  });
 
   @override
   State<HabitTodayListCard> createState() => _HabitTodayListCardState();
@@ -86,13 +87,17 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     if (scrollController != null &&
         _effectiveExpanded == false &&
         scrollController.hasClients) {
-      scrollController.animateTo(0.0,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
   Text getKeepDaysText(int days, [L10n? l10n]) => Text(
-      l10n?.habitToday_card_subtitle_text(days) ?? "Kept it up for $days days");
+    l10n?.habitToday_card_subtitle_text(days) ?? "Kept it up for $days days",
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -103,23 +108,25 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     final record = data.getRecordByDate(widget.date);
     final color = colorData?.getColor(data.colorType);
     final trailing = IconButton.filled(
-        onPressed: widget.onMainPressed ?? () {},
-        style: IconButton.styleFrom(
-            backgroundColor: colorData?.getColorContainer(data.colorType),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                  color: color ?? Colors.transparent, width: 1), // 边框
-            )),
-        icon: HabitDailyStatusIcon(
-          colorType: data.colorType,
-          habitDailyStatus: HabitRecordStatus.done,
-          habitDailyRecordForm: HabitDailyRecordForm.getImp(
-              type: data.type,
-              value: record?.value ?? data.dailyGoal,
-              targetValue: data.dailyGoal,
-              extraTargetValue: data.dailyGoalExtra),
-        ));
+      onPressed: widget.onMainPressed ?? () {},
+      style: IconButton.styleFrom(
+        backgroundColor: colorData?.getColorContainer(data.colorType),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: color ?? Colors.transparent, width: 1), // 边框
+        ),
+      ),
+      icon: HabitDailyStatusIcon(
+        colorType: data.colorType,
+        habitDailyStatus: HabitRecordStatus.done,
+        habitDailyRecordForm: HabitDailyRecordForm.getImp(
+          type: data.type,
+          value: record?.value ?? data.dailyGoal,
+          targetValue: data.dailyGoal,
+          extraTargetValue: data.dailyGoalExtra,
+        ),
+      ),
+    );
 
     final body = MediaQuery.removePadding(
       context: context,
@@ -143,8 +150,9 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
               ),
             ),
             SizedBox(
-                width: double.infinity,
-                child: getKeepDaysText(data.duringFromStartDate.inDays, l10n)),
+              width: double.infinity,
+              child: getKeepDaysText(data.duringFromStartDate.inDays, l10n),
+            ),
           ],
         ),
       ),
@@ -158,8 +166,9 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
       onValueWithPressed: widget.buttonCallbacked?.onValueWithPressed,
     );
 
-    final textScaler = MediaQuery.textScalerOf(context)
-        .clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
+    final textScaler = MediaQuery.textScalerOf(
+      context,
+    ).clamp(minScaleFactor: 1.0, maxScaleFactor: 1.3);
     final extra = ExpandedSection(
       expand: _effectiveExpanded || widget.showDescInfo == true,
       child: Padding(
@@ -169,10 +178,11 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
           children: [
             const Divider(),
             ColorfulMarkdownBlock(
-                data: data.desc,
-                selectable: false,
-                colorType: data.colorType,
-                textScaler: textScaler),
+              data: data.desc,
+              selectable: false,
+              colorType: data.colorType,
+              textScaler: textScaler,
+            ),
             if (!widget.canScroll) bottomButtons,
           ],
         ),
@@ -182,26 +192,28 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     Widget buildListCardBody() => Column(children: [body, extra]);
 
     Widget buildScrollableListCardBody() => Column(
-          children: [
-            Expanded(
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context)
-                    .copyWith(scrollbars: _effectiveExpanded),
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: _effectiveExpanded
-                      ? null
-                      : const NeverScrollableScrollPhysics(),
-                  child: Column(children: [body, extra]),
-                ),
-              ),
+      children: [
+        Expanded(
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(
+              context,
+            ).copyWith(scrollbars: _effectiveExpanded),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: _effectiveExpanded
+                  ? null
+                  : const NeverScrollableScrollPhysics(),
+              child: Column(children: [body, extra]),
             ),
-            ExpandedSection(expand: _effectiveExpanded, child: bottomButtons),
-          ],
-        );
+          ),
+        ),
+        ExpandedSection(expand: _effectiveExpanded, child: bottomButtons),
+      ],
+    );
 
-    final cardBodyContent =
-        widget.canScroll ? buildScrollableListCardBody() : buildListCardBody();
+    final cardBodyContent = widget.canScroll
+        ? buildScrollableListCardBody()
+        : buildListCardBody();
 
     final cardBody = InkWell(
       borderRadius: kHabitTodayCardShape.borderRadius.resolve(null),
@@ -263,15 +275,19 @@ class _HabitTodayListCardButtonGroup extends StatelessWidget {
       if (extraGoal != null)
         TextButton(onPressed: onDualPressed, child: Text(extraGoal.toString())),
       TextButton(
-          onPressed: onSkipPressed, child: const Icon(MdiIcons.minusThick)),
+        onPressed: onSkipPressed,
+        child: const Icon(MdiIcons.minusThick),
+      ),
       TextButton.icon(
-          onPressed: onValueWithPressed,
-          icon: const Icon(MdiIcons.checkboxMarkedOutline),
-          label: Text(l10n?.habitToday_card_donePlusButton_label ?? "Done +")),
+        onPressed: onValueWithPressed,
+        icon: const Icon(MdiIcons.checkboxMarkedOutline),
+        label: Text(l10n?.habitToday_card_donePlusButton_label ?? "Done +"),
+      ),
       TextButton.icon(
-          onPressed: onSkipWithPressed,
-          icon: const Icon(MdiIcons.minusBoxOutline),
-          label: Text(l10n?.habitToday_card_skipPlusButton_label ?? "Skip +")),
+        onPressed: onSkipWithPressed,
+        icon: const Icon(MdiIcons.minusBoxOutline),
+        label: Text(l10n?.habitToday_card_skipPlusButton_label ?? "Skip +"),
+      ),
     ];
 
     return SingleChildScrollView(

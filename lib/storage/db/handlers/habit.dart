@@ -92,26 +92,27 @@ class HabitDBCell with DBCell {
   @JsonKey(name: HabitDBCellKey.sortPosition)
   final HabitSortPostion? sortPosition;
 
-  const HabitDBCell(
-      {this.id,
-      this.type,
-      this.createT,
-      this.modifyT,
-      this.uuid,
-      this.status,
-      this.name,
-      this.desc,
-      this.color,
-      this.dailyGoal,
-      this.dailyGoalUnit,
-      this.dailyGoalExtra,
-      this.freqType,
-      this.freqCustom,
-      this.startDate,
-      this.targetDays,
-      this.remindCustom,
-      this.remindQuestion,
-      this.sortPosition});
+  const HabitDBCell({
+    this.id,
+    this.type,
+    this.createT,
+    this.modifyT,
+    this.uuid,
+    this.status,
+    this.name,
+    this.desc,
+    this.color,
+    this.dailyGoal,
+    this.dailyGoalUnit,
+    this.dailyGoalExtra,
+    this.freqType,
+    this.freqCustom,
+    this.startDate,
+    this.targetDays,
+    this.remindCustom,
+    this.remindQuestion,
+    this.sortPosition,
+  });
 
   factory HabitDBCell.fromJson(Map<String, Object?> cell) =>
       _$HabitDBCellFromJson(cell);
@@ -134,15 +135,20 @@ class HabitDBHelper extends DBHelperHandler {
     return db.transaction((db) async {
       final result = await db.insert(table, habit.toJson());
       if (result > 0) {
-        await db.insert(syncTable, SyncDBCell.genFromHabit(habit).toJson(),
-            conflictAlgorithm: ConflictAlgorithm.rollback);
+        await db.insert(
+          syncTable,
+          SyncDBCell.genFromHabit(habit).toJson(),
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        );
       }
       return result;
     });
   }
 
-  Future<int> updateExistHabit(HabitDBCell habit,
-      {List includeNullKeys = const []}) async {
+  Future<int> updateExistHabit(
+    HabitDBCell habit, {
+    List includeNullKeys = const [],
+  }) async {
     assert(habit.uuid != null);
 
     final habitUUID = habit.uuid!;
@@ -152,51 +158,71 @@ class HabitDBHelper extends DBHelperHandler {
     }
 
     return db.transaction((db) async {
-      final result = await db.update(table, dbMap,
-          where: "${HabitDBCellKey.uuid} = ?", whereArgs: [habitUUID]);
+      final result = await db.update(
+        table,
+        dbMap,
+        where: "${HabitDBCellKey.uuid} = ?",
+        whereArgs: [habitUUID],
+      );
       await db.rawUpdate(
-          CustomSql.increaseHabitSyncDirtySql(
-              conflictAlgorithm: ConflictAlgorithm.rollback),
-          [habitUUID]);
+        CustomSql.increaseHabitSyncDirtySql(
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
+        [habitUUID],
+      );
       return result;
     });
   }
 
   Future<void> updateSelectedHabitsSortPostion(
-      List<HabitUUID> uuidList, List<num> posList) async {
+    List<HabitUUID> uuidList,
+    List<num> posList,
+  ) async {
     assert(uuidList.length == posList.length, true);
 
     db.transaction((db) async {
       final batch = db.batch();
       uuidList.forEachIndexed((index, uuid) {
-        batch.update(table, {HabitDBCellKey.sortPosition: posList[index]},
-            where: "${HabitDBCellKey.uuid} = ?",
-            whereArgs: [uuid],
-            conflictAlgorithm: ConflictAlgorithm.rollback);
+        batch.update(
+          table,
+          {HabitDBCellKey.sortPosition: posList[index]},
+          where: "${HabitDBCellKey.uuid} = ?",
+          whereArgs: [uuid],
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        );
       });
       batch.rawUpdate(
-          CustomSql.increaseMultiHabitsSyncDirtySql(
-              count: uuidList.length,
-              conflictAlgorithm: ConflictAlgorithm.rollback),
-          uuidList);
+        CustomSql.increaseMultiHabitsSyncDirtySql(
+          count: uuidList.length,
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
+        uuidList,
+      );
       await batch.commit();
     }, exclusive: true);
   }
 
   Future<int> updateSelectedHabitStatus(
-      List<HabitUUID> uuidList, HabitStatus newStatus) {
+    List<HabitUUID> uuidList,
+    HabitStatus newStatus,
+  ) {
     return db.transaction((db) async {
-      final result =
-          await db.update(table, {HabitDBCellKey.status: newStatus.dbCode},
-              where: "${HabitDBCellKey.uuid} "
-                  "IN (${uuidList.map((e) => '?').join(', ')})",
-              whereArgs: uuidList);
+      final result = await db.update(
+        table,
+        {HabitDBCellKey.status: newStatus.dbCode},
+        where:
+            "${HabitDBCellKey.uuid} "
+            "IN (${uuidList.map((e) => '?').join(', ')})",
+        whereArgs: uuidList,
+      );
       if (result > 0) {
         await db.rawUpdate(
-            CustomSql.increaseMultiHabitsSyncDirtySql(
-                count: uuidList.length,
-                conflictAlgorithm: ConflictAlgorithm.rollback),
-            uuidList);
+          CustomSql.increaseMultiHabitsSyncDirtySql(
+            count: uuidList.length,
+            conflictAlgorithm: ConflictAlgorithm.rollback,
+          ),
+          uuidList,
+        );
       }
       return result;
     });
@@ -204,15 +230,23 @@ class HabitDBHelper extends DBHelperHandler {
 
   Future<HabitDBCell?> queryHabitByDBID(DBID dbid) {
     return db
-        .query(table,
-            where: "${HabitDBCellKey.id} = ?", whereArgs: [dbid], limit: 1)
+        .query(
+          table,
+          where: "${HabitDBCellKey.id} = ?",
+          whereArgs: [dbid],
+          limit: 1,
+        )
         .then((value) => value.isEmpty ? null : HabitDBCell.fromJson(value[0]));
   }
 
   Future<HabitDBCell?> queryHabitByUUID(HabitUUID uuid) {
     return db
-        .query(table,
-            where: "${HabitDBCellKey.uuid} = ?", whereArgs: [uuid], limit: 1)
+        .query(
+          table,
+          where: "${HabitDBCellKey.uuid} = ?",
+          whereArgs: [uuid],
+          limit: 1,
+        )
         .then((value) => value.isEmpty ? null : HabitDBCell.fromJson(value[0]));
   }
 
@@ -239,11 +273,13 @@ class HabitDBHelper extends DBHelperHandler {
   ];
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) async {
-    final results = await db.query(table,
-        columns: _loadHabitDetailColums,
-        where: "${HabitDBCellKey.uuid} = ?",
-        whereArgs: [uuid],
-        limit: 1);
+    final results = await db.query(
+      table,
+      columns: _loadHabitDetailColums,
+      where: "${HabitDBCellKey.uuid} = ?",
+      whereArgs: [uuid],
+      limit: 1,
+    );
     return results.isEmpty ? null : HabitDBCell.fromJson(results[0]);
   }
 
@@ -266,18 +302,21 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.createT,
   ];
 
-  Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection(
-      {List<HabitUUID>? uuidFilter, List<String>? columns}) async {
+  Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection({
+    List<HabitUUID>? uuidFilter,
+    List<String>? columns,
+  }) async {
     final statusList = loadedHabitStatus.map((e) => e.dbCode).toList();
 
     final whereClauses = [
-      "${HabitDBCellKey.status} IN (${statusList.map((e) => '?').join(', ')})"
+      "${HabitDBCellKey.status} IN (${statusList.map((e) => '?').join(', ')})",
     ];
     final whereArgs = <dynamic>[...statusList];
 
     if (uuidFilter != null && uuidFilter.isNotEmpty) {
       whereClauses.add(
-          "${HabitDBCellKey.uuid} IN (${uuidFilter.map((e) => '?').join(', ')})");
+        "${HabitDBCellKey.uuid} IN (${uuidFilter.map((e) => '?').join(', ')})",
+      );
       whereArgs.addAll(uuidFilter);
     }
 
@@ -292,14 +331,18 @@ class HabitDBHelper extends DBHelperHandler {
   }
 
   Future<Iterable<HabitDBCell>> loadHabitsExportData(
-      List<HabitUUID> uuidList) async {
+    List<HabitUUID> uuidList,
+  ) async {
     if (uuidList.isEmpty) return const [];
 
-    final results = await db.query(table,
-        where: "${HabitDBCellKey.uuid} "
-            "IN (${uuidList.map((e) => '?').join(', ')}) ",
-        whereArgs: uuidList,
-        orderBy: HabitDBCellKey.sortPosition);
+    final results = await db.query(
+      table,
+      where:
+          "${HabitDBCellKey.uuid} "
+          "IN (${uuidList.map((e) => '?').join(', ')}) ",
+      whereArgs: uuidList,
+      orderBy: HabitDBCellKey.sortPosition,
+    );
     return results.map(HabitDBCell.fromJson);
   }
 

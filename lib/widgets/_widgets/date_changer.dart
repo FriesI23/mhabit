@@ -31,10 +31,7 @@ class DateChanger extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => DateChangeNotifier(),
-      child: DateChangeBuilder(
-        interval: interval,
-        builder: builder,
-      ),
+      child: DateChangeBuilder(interval: interval, builder: builder),
     );
   }
 }

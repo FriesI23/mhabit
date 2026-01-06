@@ -115,9 +115,10 @@ class SliverEditTopAppBarAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final stat =
-        context.select<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
-            (vm) => vm.selectStatistic);
+    final stat = context
+        .select<HabitSummaryViewModel, HabitSummarySelectedStatistic>(
+          (vm) => vm.selectStatistic,
+        );
     return AppBarActions<EditModeActionItemConfig, EditModeActionItemCell>(
       buttonSwitchAnimateDuration: kEditModeAppbarAnimateDuration,
       actionConfigs: [
@@ -199,7 +200,7 @@ class _ViewAppBar extends StatelessWidget {
           onPressed: onMenuButtonPressed,
           icon: const Icon(Icons.settings_outlined),
           tooltip: l10n?.habitDisplay_settingButton_tooltip,
-        )
+        ),
       ],
     );
   }

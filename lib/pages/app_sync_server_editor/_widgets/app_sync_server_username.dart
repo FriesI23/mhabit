@@ -24,8 +24,12 @@ class AppSyncServerUsernameTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const AppSyncServerUsernameTile(
-      {super.key, this.contentPadding, this.controller, this.onChanged});
+  const AppSyncServerUsernameTile({
+    super.key,
+    this.contentPadding,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +55,11 @@ class AppWebDavSyncServerUsernameTile extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String?>? onChanged;
 
-  const AppWebDavSyncServerUsernameTile(
-      {super.key, this.controller, this.onChanged});
+  const AppWebDavSyncServerUsernameTile({
+    super.key,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

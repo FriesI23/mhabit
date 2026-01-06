@@ -19,8 +19,11 @@ class HabitDateRangeCalculator {
   final int offset;
   final int limit;
 
-  const HabitDateRangeCalculator(
-      {required this.date, required this.offset, required this.limit});
+  const HabitDateRangeCalculator({
+    required this.date,
+    required this.offset,
+    required this.limit,
+  });
 
   HabitDate lastDateMonthly() =>
       date.copyWith(month: date.month - offset * limit);
@@ -43,8 +46,12 @@ class HabitDateRangeCalculator {
   HabitDate firstDateDaily() => date.subtractDays((offset + 1) * limit + 1);
 }
 
-bool isOutOfDateRange(HabitDate date, HabitDate firstDate, HabitDate lastDate,
-    {bool reversedDate = false}) {
+bool isOutOfDateRange(
+  HabitDate date,
+  HabitDate firstDate,
+  HabitDate lastDate, {
+  bool reversedDate = false,
+}) {
   if (reversedDate) {
     return date.isAfter(firstDate) || date.isBefore(lastDate);
   } else {
@@ -52,9 +59,12 @@ bool isOutOfDateRange(HabitDate date, HabitDate firstDate, HabitDate lastDate,
   }
 }
 
-bool isInDateRange(HabitDate date, HabitDate firstDate, HabitDate lastDate,
-        {bool reversedDate = false}) =>
-    !isOutOfDateRange(date, firstDate, lastDate, reversedDate: reversedDate);
+bool isInDateRange(
+  HabitDate date,
+  HabitDate firstDate,
+  HabitDate lastDate, {
+  bool reversedDate = false,
+}) => !isOutOfDateRange(date, firstDate, lastDate, reversedDate: reversedDate);
 
 Iterable<MapEntry<HabitDate, T>> filterWithDateRange<T>({
   required HabitDate firstDate,

@@ -59,8 +59,8 @@ class _SearchBar extends StatefulWidget {
   final double? height;
 
   const _SearchBar({super.key, this.height})
-      : focusNode = null,
-        controller = null;
+    : focusNode = null,
+      controller = null;
 
   @override
   State<_SearchBar> createState() => _SearchBarState();
@@ -222,7 +222,9 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
   void _openSearchFilterBottonSheet() async {
     final result = await showSearchFilterBottomSheet(
-        context: context, options: _vm.searchOptions);
+      context: context,
+      options: _vm.searchOptions,
+    );
     if (!mounted || result == null) return;
     _vm.onSearchFilterChanged(result);
   }
@@ -259,8 +261,8 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) {
-    final settings =
-        context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+    final settings = context
+        .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
     final current = settings?.isScrolledUnder ?? false;
     if (_scrolledUnder != current) {
       _scrolledUnder = current;
@@ -270,29 +272,30 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
     }
 
     Widget buildSearchFilter() => Builder(
-          builder: (context) {
-            final size = MediaQuery.sizeOf(context);
-            final uiLayout = switch (defaultTargetPlatform) {
-              TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
-                  width: size.width,
-                  height: size.height,
-                  ignoreHeight: false,
-                  largeScreenHeight: 600),
-              _ => UiLayoutType.l,
-            };
-            return switch (uiLayout) {
-              UiLayoutType.l => SearchFilterPopupMenuButton(
-                  ongoingChanged: _onOngingFilterChanged,
-                  completedChanged: _onCompletedFilterChanged,
-                  typeChanged: _onTypeFilterChanged,
-                  onClearFilterPressed: _onClearFilterPressed,
-                ),
-              UiLayoutType.s => SearchFilterIconButton(
-                  onPreesed: _openSearchFilterBottonSheet,
-                ),
-            };
-          },
-        );
+      builder: (context) {
+        final size = MediaQuery.sizeOf(context);
+        final uiLayout = switch (defaultTargetPlatform) {
+          TargetPlatform.android || TargetPlatform.iOS => computeLayoutType(
+            width: size.width,
+            height: size.height,
+            ignoreHeight: false,
+            largeScreenHeight: 600,
+          ),
+          _ => UiLayoutType.l,
+        };
+        return switch (uiLayout) {
+          UiLayoutType.l => SearchFilterPopupMenuButton(
+            ongoingChanged: _onOngingFilterChanged,
+            completedChanged: _onCompletedFilterChanged,
+            typeChanged: _onTypeFilterChanged,
+            onClearFilterPressed: _onClearFilterPressed,
+          ),
+          UiLayoutType.s => SearchFilterIconButton(
+            onPreesed: _openSearchFilterBottonSheet,
+          ),
+        };
+      },
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -306,9 +309,11 @@ class _SearchBarState extends State<_SearchBar> with RestorationMixin {
           textInputAction: TextInputAction.search,
           overlayColor: getLightOverlayColor(colors),
           backgroundColor: _scrolledUnder
-              ? WidgetStatePropertyAll(brightness == Brightness.dark
-                  ? colors.surfaceContainer
-                  : colors.surfaceContainerLowest)
+              ? WidgetStatePropertyAll(
+                  brightness == Brightness.dark
+                      ? colors.surfaceContainer
+                      : colors.surfaceContainerLowest,
+                )
               : null,
           elevation: const WidgetStatePropertyAll(0.0),
           constraints: calcSearchBarConstraints(constraints),
@@ -364,45 +369,48 @@ class _AppBar extends StatelessWidget {
     return SliverLayoutBuilder(
       builder: (context, constraints) {
         final uiLayout = computeLayoutType(
-            width: constraints.crossAxisExtent,
-            height: constraints.viewportMainAxisExtent);
+          width: constraints.crossAxisExtent,
+          height: constraints.viewportMainAxisExtent,
+        );
         return switch (uiLayout) {
           UiLayoutType.s => SliverAppBar(
-              key: sliverAppBarKey,
-              floating: true,
-              snap: true,
-              pinned: true,
-              centerTitle: false,
-              toolbarHeight: height ?? kToolbarHeight,
-              scrolledUnderElevation: scrolledUnderElevation,
-              shadowColor: shawdowColor,
-              title: searchBar,
-              actionsPadding: kSearchAppBarActionPadding,
-              bottom: bottom,
-              actions: [infoButton, menuButton],
-            ),
+            key: sliverAppBarKey,
+            floating: true,
+            snap: true,
+            pinned: true,
+            centerTitle: false,
+            toolbarHeight: height ?? kToolbarHeight,
+            scrolledUnderElevation: scrolledUnderElevation,
+            shadowColor: shawdowColor,
+            title: searchBar,
+            actionsPadding: kSearchAppBarActionPadding,
+            bottom: bottom,
+            actions: [infoButton, menuButton],
+          ),
           UiLayoutType.l => SliverAppBar(
-              key: sliverAppBarKey,
-              floating: true,
-              snap: true,
-              pinned: true,
-              centerTitle: false,
-              toolbarHeight: height ?? kToolbarHeight,
-              scrolledUnderElevation: scrolledUnderElevation,
-              shadowColor: shawdowColor,
-              leading: infoButton,
-              title: Text(l10n?.appName ?? appName),
-              actionsPadding: kSearchAppBarActionPadding,
-              bottom: bottom,
-              actions: [
-                if (searchBar != null)
-                  ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                          width: _SearchBar.kSearchFullWidthLimit),
-                      child: searchBar),
-                menuButton
-              ],
-            ),
+            key: sliverAppBarKey,
+            floating: true,
+            snap: true,
+            pinned: true,
+            centerTitle: false,
+            toolbarHeight: height ?? kToolbarHeight,
+            scrolledUnderElevation: scrolledUnderElevation,
+            shadowColor: shawdowColor,
+            leading: infoButton,
+            title: Text(l10n?.appName ?? appName),
+            actionsPadding: kSearchAppBarActionPadding,
+            bottom: bottom,
+            actions: [
+              if (searchBar != null)
+                ConstrainedBox(
+                  constraints: const BoxConstraints.tightFor(
+                    width: _SearchBar.kSearchFullWidthLimit,
+                  ),
+                  child: searchBar,
+                ),
+              menuButton,
+            ],
+          ),
         };
       },
     );
@@ -422,22 +430,24 @@ class _SearchIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isInSearchMode =
-        context.select<HabitSummaryViewModel, bool>((vm) => vm.isInSearchMode);
+    final isInSearchMode = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.isInSearchMode,
+    );
     return AnimatedCrossFade(
-        firstChild: IconButton(
-          key: const ValueKey(1),
-          onPressed: onCloseButtonPressed,
-          icon: const Icon(Icons.close),
-        ),
-        secondChild: IconButton(
-          key: const ValueKey(2),
-          onPressed: onSearchButtonPressed,
-          icon: const Icon(Icons.search_outlined),
-        ),
-        crossFadeState: isInSearchMode
-            ? CrossFadeState.showFirst
-            : CrossFadeState.showSecond,
-        duration: animateDuration);
+      firstChild: IconButton(
+        key: const ValueKey(1),
+        onPressed: onCloseButtonPressed,
+        icon: const Icon(Icons.close),
+      ),
+      secondChild: IconButton(
+        key: const ValueKey(2),
+        onPressed: onSearchButtonPressed,
+        icon: const Icon(Icons.search_outlined),
+      ),
+      crossFadeState: isInSearchMode
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
+      duration: animateDuration,
+    );
   }
 }

@@ -19,19 +19,28 @@ import '../common/exceptions.dart';
 
 extension WebDavResourceExtention on WebDavStdResource {
   WebDavStdResourceProp<String>? get getetag =>
-      find(WebDavElementNames.getetag, namespace: kDavNamespaceUrlStr)
-          .firstOrNull as WebDavStdResourceProp<String>?;
+      find(
+            WebDavElementNames.getetag,
+            namespace: kDavNamespaceUrlStr,
+          ).firstOrNull
+          as WebDavStdResourceProp<String>?;
 
   WebDavStdResourceProp<ResourceTypes> get resourcetype =>
-      find(WebDavElementNames.resourcetype, namespace: kDavNamespaceUrlStr)
-          .first as WebDavStdResourceProp<ResourceTypes>;
+      find(
+            WebDavElementNames.resourcetype,
+            namespace: kDavNamespaceUrlStr,
+          ).first
+          as WebDavStdResourceProp<ResourceTypes>;
 
   bool get isCollection => resourcetype.value?.isCollection ?? false;
 
   void tryToRaiseError({bool raiseError = true, bool raiseStatus = true}) {
     if (raiseStatus && status > 300) {
-      throw HttpStatusException("Http request failed, status=$status", status,
-          uri: path);
+      throw HttpStatusException(
+        "Http request failed, status=$status",
+        status,
+        uri: path,
+      );
     }
     if (raiseError) {
       final error = this.error;

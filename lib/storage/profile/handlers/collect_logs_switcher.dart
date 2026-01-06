@@ -18,7 +18,7 @@ import '../profile_helper.dart';
 class CollectLogswitcherProfileHandler
     extends ProfileHelperCovertToBoolHandler<bool> {
   const CollectLogswitcherProfileHandler(super.pref)
-      : super(codec: const SameTypeCodec());
+    : super(codec: const SameTypeCodec());
 
   @override
   String get key => "collectLogsSwitcher";

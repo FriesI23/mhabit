@@ -20,7 +20,7 @@ class HabitDate implements DateTime, DateTimeExtensionsABC {
   late final DateTime _date;
 
   HabitDate(int year, [int month = 1, int day = 1])
-      : _date = DateTime.utc(year, month, day);
+    : _date = DateTime.utc(year, month, day);
 
   HabitDate.now() {
     final now = AppClock().now();
@@ -28,12 +28,13 @@ class HabitDate implements DateTime, DateTimeExtensionsABC {
   }
 
   HabitDate.fromEpochDay(int epochDay)
-      : _date = DateTime.fromMillisecondsSinceEpoch(
-            epochDay * oneDayMilliseconds,
-            isUtc: true);
+    : _date = DateTime.fromMillisecondsSinceEpoch(
+        epochDay * oneDayMilliseconds,
+        isUtc: true,
+      );
 
   HabitDate.dateTime(DateTime dateTime)
-      : _date = DateTime.utc(dateTime.year, dateTime.month, dateTime.day);
+    : _date = DateTime.utc(dateTime.year, dateTime.month, dateTime.day);
 
   @override
   HabitDate add(Duration duration) {
@@ -176,13 +177,10 @@ class HabitDate implements DateTime, DateTimeExtensionsABC {
   @override
   bool isSameDate(DateTime other) => _date.isSameDate(other);
 
-  HabitDate copyWith({
-    int? year,
-    int? month,
-    int? day,
-  }) {
+  HabitDate copyWith({int? year, int? month, int? day}) {
     return HabitDate.dateTime(
-        _date.copyWith(year: year, month: month, day: day));
+      _date.copyWith(year: year, month: month, day: day),
+    );
   }
 
   @override

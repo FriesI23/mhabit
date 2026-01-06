@@ -26,8 +26,9 @@ HabitDailyGoal onDailyGoalTextInputChanged(
   if (newDailyGoal >= maxValue) {
     controller.text = maxValue.toString();
     controller.selection = TextSelection(
-        baseOffset: controller.text.length,
-        extentOffset: controller.text.length);
+      baseOffset: controller.text.length,
+      extentOffset: controller.text.length,
+    );
     newDailyGoal = maxValue;
   } else if (newDailyGoal < minHabitDailyGoal) {
     controller.text = '';

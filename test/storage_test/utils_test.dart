@@ -31,11 +31,7 @@ void main() {
     });
 
     test('Test case 1: No duplicates', () {
-      final input = {
-        'a': 'x',
-        'b': 'y',
-        'c': 'z',
-      };
+      final input = {'a': 'x', 'b': 'y', 'c': 'z'};
 
       final result = processDuplicatedMap(input);
       expect(
@@ -50,11 +46,7 @@ void main() {
     });
 
     test('Test case 2: Duplicate values', () {
-      final input = {
-        'a': 'x',
-        'b': 'x',
-        'c': 'y',
-      };
+      final input = {'a': 'x', 'b': 'x', 'c': 'y'};
 
       final result = processDuplicatedMap(input);
       expect(
@@ -65,19 +57,13 @@ void main() {
         isTrue,
       );
       expect(
-        uuidListEquality.equals(result.deleteList, [
-          MapEntry('b', 'x'),
-        ]),
+        uuidListEquality.equals(result.deleteList, [MapEntry('b', 'x')]),
         isTrue,
       );
     });
 
     test('Test case 3: Value is also a key', () {
-      final input = {
-        'a': 'x',
-        'b': 'a',
-        'c': 'y',
-      };
+      final input = {'a': 'x', 'b': 'a', 'c': 'y'};
 
       final result = processDuplicatedMap(input);
       expect(
@@ -92,12 +78,7 @@ void main() {
     });
 
     test('Test case 4: Value duplicates and key conflict', () {
-      final input = {
-        'a': 'b',
-        'b': 'x',
-        'c': 'x',
-        'd': 'a',
-      };
+      final input = {'a': 'b', 'b': 'x', 'c': 'x', 'd': 'a'};
 
       final result = processDuplicatedMap(input);
       expect(
@@ -109,9 +90,7 @@ void main() {
         isTrue,
       );
       expect(
-        uuidListEquality.equals(result.deleteList, [
-          MapEntry('c', 'x'),
-        ]),
+        uuidListEquality.equals(result.deleteList, [MapEntry('c', 'x')]),
         isTrue,
       );
     });

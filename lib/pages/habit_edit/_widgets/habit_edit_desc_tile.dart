@@ -39,9 +39,10 @@ class HabitEditDescTile extends StatelessWidget {
       title: TextField(
         controller: controller,
         decoration: InputDecoration.collapsed(
-            hintText: l10n?.habitEdit_desc_hintText,
-            hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
-            border: InputBorder.none),
+          hintText: l10n?.habitEdit_desc_hintText,
+          hintStyle: TextStyle(color: colorScheme.outlineOpacity64),
+          border: InputBorder.none,
+        ),
         keyboardType: TextInputType.multiline,
         maxLines: null,
         style: textTheme.bodyLarge,

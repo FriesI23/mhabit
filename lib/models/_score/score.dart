@@ -87,8 +87,8 @@ class NormalHabitScore implements HabitScore {
     required this.targetDays,
     required this.dailyGoal,
     this.dailGoalExtra,
-  })  : _prtZero = -100 / targetDays,
-        _prtPartial = -100 / targetDays / 2 {
+  }) : _prtZero = -100 / targetDays,
+       _prtPartial = -100 / targetDays / 2 {
     _interval = Tuple2(
       habitGrowCurve(x: 0, days: targetDays),
       habitGrowCurve(x: targetDays, days: targetDays),
@@ -109,8 +109,11 @@ class NormalHabitScore implements HabitScore {
   num get prtNormal => 0.0;
 
   @visibleForTesting
-  num debugCalcRealScoreExtra(HabitDailyGoal value, HabitDailyGoal targetValue,
-      HabitDailyGoal? targetExtendedValue) {
+  num debugCalcRealScoreExtra(
+    HabitDailyGoal value,
+    HabitDailyGoal targetValue,
+    HabitDailyGoal? targetExtendedValue,
+  ) {
     return _calcRealScoreExtra(
       value,
       targetValue: targetValue,
@@ -118,14 +121,18 @@ class NormalHabitScore implements HabitScore {
     );
   }
 
-  num _calcRealScoreExtra(HabitDailyGoal value,
-      {HabitDailyGoal? targetValue, HabitDailyGoal? targetExtendedValue}) {
+  num _calcRealScoreExtra(
+    HabitDailyGoal value, {
+    HabitDailyGoal? targetValue,
+    HabitDailyGoal? targetExtendedValue,
+  }) {
     targetValue = targetValue ?? dailyGoal;
     targetExtendedValue = targetExtendedValue ?? dailGoalExtra;
     final scoreExtendedPrt = targetExtendedValue != null
         ? math.max(targetExtendedValue / targetValue, 1)
         : scoreExtraMax;
-    final result = (scoreExtraMax - 1) /
+    final result =
+        (scoreExtraMax - 1) /
             (scoreExtendedPrt - 1) *
             (math.max(value / targetValue, 1) - 1) +
         1;
@@ -251,9 +258,9 @@ class NegativeHabitScore implements HabitScore {
     required this.targetDays,
     required this.dailyGoal,
     this.dailGoalExtra,
-  })  : _prtNoEffect = 0,
-        _prtZero = -100 / targetDays,
-        _prtPartial = -100 / targetDays / 2 {
+  }) : _prtNoEffect = 0,
+       _prtZero = -100 / targetDays,
+       _prtPartial = -100 / targetDays / 2 {
     _interval = Tuple2(
       habitGrowCurve(x: 0, days: targetDays),
       habitGrowCurve(x: targetDays, days: targetDays),
@@ -275,8 +282,11 @@ class NegativeHabitScore implements HabitScore {
   num get prtNormal => 0.0;
 
   @visibleForTesting
-  num debugCalcRealScoreExtra(HabitDailyGoal value, HabitDailyGoal targetValue,
-      HabitDailyGoal? targetExtendedValue) {
+  num debugCalcRealScoreExtra(
+    HabitDailyGoal value,
+    HabitDailyGoal targetValue,
+    HabitDailyGoal? targetExtendedValue,
+  ) {
     return _calcRealScoreExtra(
       value,
       targetValue: targetValue,
@@ -284,8 +294,11 @@ class NegativeHabitScore implements HabitScore {
     );
   }
 
-  num _calcRealScoreExtra(HabitDailyGoal value,
-      {HabitDailyGoal? targetValue, HabitDailyGoal? targetExtendedValue}) {
+  num _calcRealScoreExtra(
+    HabitDailyGoal value, {
+    HabitDailyGoal? targetValue,
+    HabitDailyGoal? targetExtendedValue,
+  }) {
     targetValue = targetValue ?? dailyGoal;
     targetExtendedValue = targetExtendedValue ?? dailGoalExtra ?? targetValue;
     if (value < targetValue) {

@@ -22,10 +22,7 @@ class ChangeHabitStatusResult {
   final HabitSummaryData data;
   final HabitStatus orgStatus;
 
-  const ChangeHabitStatusResult({
-    required this.data,
-    required this.orgStatus,
-  });
+  const ChangeHabitStatusResult({required this.data, required this.orgStatus});
 }
 
 abstract interface class ChangeHabitStatusAction

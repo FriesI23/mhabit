@@ -46,12 +46,14 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
 
   for (var i = 0; i < preRecordNum; i++) {
     crtDate = crtDate.addDays(1);
-    data.addRecord(HabitSummaryRecord.generate(
-      crtDate,
-      status: HabitRecordStatus.done,
-      value: rng.nextInt(20),
-      parentUUID: data.uuid,
-    ));
+    data.addRecord(
+      HabitSummaryRecord.generate(
+        crtDate,
+        status: HabitRecordStatus.done,
+        value: rng.nextInt(20),
+        parentUUID: data.uuid,
+      ),
+    );
   }
 
   final Stopwatch stopwatch = Stopwatch();

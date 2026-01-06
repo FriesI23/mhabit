@@ -1,8 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // coverage: ignore-file
-// ignore_for_file: type=lint
-
 
 part of 'app_theme_color.dart';
 
@@ -10,12 +8,12 @@ part of 'app_theme_color.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SystemAppThemeColor _$SystemAppThemeColorFromJson(Map<String, dynamic> json) =>
-    SystemAppThemeColor();
-
 Map<String, dynamic> _$SystemAppThemeColorToJson(
   SystemAppThemeColor instance,
-) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
+) => <String, dynamic>{
+  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
+  'hash_code': instance.hashCode,
+};
 
 const _$AppThemeColorTypeEnumMap = {
   AppThemeColorType.system: 1,
@@ -24,21 +22,19 @@ const _$AppThemeColorTypeEnumMap = {
   AppThemeColorType.internal: 4,
 };
 
-PrimaryAppThemeColor _$PrimaryAppThemeColorFromJson(
-  Map<String, dynamic> json,
-) => PrimaryAppThemeColor();
-
 Map<String, dynamic> _$PrimaryAppThemeColorToJson(
   PrimaryAppThemeColor instance,
-) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
-
-DynamicAppThemeColor _$DynamicAppThemeColorFromJson(
-  Map<String, dynamic> json,
-) => DynamicAppThemeColor();
+) => <String, dynamic>{
+  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
+  'hash_code': instance.hashCode,
+};
 
 Map<String, dynamic> _$DynamicAppThemeColorToJson(
   DynamicAppThemeColor instance,
-) => <String, dynamic>{'type': _$AppThemeColorTypeEnumMap[instance.type]!};
+) => <String, dynamic>{
+  'type': _$AppThemeColorTypeEnumMap[instance.type]!,
+  'hash_code': instance.hashCode,
+};
 
 InternalAppThemeColor _$InternalAppThemeColorFromJson(
   Map<String, dynamic> json,

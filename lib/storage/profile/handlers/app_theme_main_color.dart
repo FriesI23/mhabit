@@ -20,7 +20,7 @@ import '../profile_helper.dart';
 final class AppThemeMainColorProfileHandler
     extends ProfileHelperCovertToIntHandler<Color> {
   const AppThemeMainColorProfileHandler(super.pref)
-      : super(codec: const AppThemeMainColorProfileCodes());
+    : super(codec: const AppThemeMainColorProfileCodes());
 
   @override
   String get key => "sysThemeMainColor";

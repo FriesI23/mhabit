@@ -22,14 +22,18 @@ class AppSyncPeriodicTimer implements Timer {
   final Timer _timer;
 
   AppSyncPeriodicTimer._(Timer timer, {required this.interval})
-      : _timer = timer;
+    : _timer = timer;
 
   factory AppSyncPeriodicTimer(
-      AppSyncFetchInterval interval, void Function(Timer timer) callback) {
+    AppSyncFetchInterval interval,
+    void Function(Timer timer) callback,
+  ) {
     assert(interval != AppSyncFetchInterval.manual);
     assert(interval.t != null);
-    return AppSyncPeriodicTimer._(Timer.periodic(interval.t!, callback),
-        interval: interval);
+    return AppSyncPeriodicTimer._(
+      Timer.periodic(interval.t!, callback),
+      interval: interval,
+    );
   }
 
   @override

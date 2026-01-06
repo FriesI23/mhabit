@@ -28,80 +28,72 @@ enum DetailAppbarActionItemCell {
 
 class DetailAppbarActionItemConfig
     extends AppbarActionItemConfig<DetailAppbarActionItemCell> {
-  DetailAppbarActionItemConfig(
-      {required super.type,
-      required super.status,
-      super.visible = true,
-      required super.icon,
-      required super.text,
-      super.color,
-      super.callback});
+  DetailAppbarActionItemConfig({
+    required super.type,
+    required super.status,
+    super.visible = true,
+    required super.icon,
+    required super.text,
+    super.color,
+    super.callback,
+  });
 
-  const DetailAppbarActionItemConfig.unarchive(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.unarchive,
-          icon: Icons.unarchive_rounded,
-        );
+  const DetailAppbarActionItemConfig.unarchive({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(
+         type: DetailAppbarActionItemCell.unarchive,
+         icon: Icons.unarchive_rounded,
+       );
 
-  const DetailAppbarActionItemConfig.edit(
-      {super.status = AppbarActionShowStatus.button,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.edit,
-          icon: Icons.edit_rounded,
-        );
+  const DetailAppbarActionItemConfig.edit({
+    super.status = AppbarActionShowStatus.button,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(type: DetailAppbarActionItemCell.edit, icon: Icons.edit_rounded);
 
-  const DetailAppbarActionItemConfig.archive(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.archive,
-          icon: Icons.archive_outlined,
-        );
+  const DetailAppbarActionItemConfig.archive({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(
+         type: DetailAppbarActionItemCell.archive,
+         icon: Icons.archive_outlined,
+       );
 
-  const DetailAppbarActionItemConfig.delete(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.delete,
-          icon: Icons.delete_outline,
-        );
+  const DetailAppbarActionItemConfig.delete({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(
+         type: DetailAppbarActionItemCell.delete,
+         icon: Icons.delete_outline,
+       );
 
-  const DetailAppbarActionItemConfig.export(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.export,
-          icon: MdiIcons.export,
-        );
+  const DetailAppbarActionItemConfig.export({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(type: DetailAppbarActionItemCell.export, icon: MdiIcons.export);
 
-  const DetailAppbarActionItemConfig.clone(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.color,
-      super.callback})
-      : super(
-          type: DetailAppbarActionItemCell.clone,
-          icon: Icons.copy_rounded,
-        );
+  const DetailAppbarActionItemConfig.clone({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.color,
+    super.callback,
+  }) : super(type: DetailAppbarActionItemCell.clone, icon: Icons.copy_rounded);
 
   @override
   bool shouldShow(AppbarActionShowStatus s) {

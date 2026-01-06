@@ -51,10 +51,8 @@ Future<HabitDBCell?> naviToHabitEidtPage({
   return Navigator.of(context).push<HabitDBCell>(
     MaterialPageRoute(
       fullscreenDialog: naviWithFullscreenDialog ?? true,
-      builder: (context) => HabitEditPage(
-        initForm: initForm,
-        showInFullscreenDialog: false,
-      ),
+      builder: (context) =>
+          HabitEditPage(initForm: initForm, showInFullscreenDialog: false),
     ),
   );
 }
@@ -79,10 +77,12 @@ class HabitEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageProviders(
+      initForm: initForm,
+      child: _Page(
         initForm: initForm,
-        child: _Page(
-            initForm: initForm,
-            showInFullscreenDialog: showInFullscreenDialog));
+        showInFullscreenDialog: showInFullscreenDialog,
+      ),
+    );
   }
 }
 
@@ -90,10 +90,7 @@ class _Page extends StatefulWidget {
   final HabitForm? initForm;
   final bool showInFullscreenDialog;
 
-  const _Page({
-    this.initForm,
-    this.showInFullscreenDialog = false,
-  });
+  const _Page({this.initForm, this.showInFullscreenDialog = false});
 
   @override
   State<StatefulWidget> createState() => _PageState();
@@ -112,9 +109,9 @@ class _PageState extends State<_Page> {
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
     super.initState();
-    _verticalScrollController =
-        PinnedAppbarScrollController(onAppbarStatusChanged: _changeAppbarStatus)
-          ..addChangeAppbarStatusListener();
+    _verticalScrollController = PinnedAppbarScrollController(
+      onAppbarStatusChanged: _changeAppbarStatus,
+    )..addChangeAppbarStatusListener();
   }
 
   @override
@@ -125,9 +122,13 @@ class _PageState extends State<_Page> {
   }
 
   void _openColorPickerDialog(
-      BuildContext context, HabitColorType colorType) async {
+    BuildContext context,
+    HabitColorType colorType,
+  ) async {
     final result = await showHabitColorPickerDialog(
-        context: context, colorType: colorType);
+      context: context,
+      colorType: colorType,
+    );
     if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().colorType = result;
   }
@@ -135,49 +136,64 @@ class _PageState extends State<_Page> {
   void _openHabitTypePickerDialog() async {
     if (!mounted) return;
     final result = await showHabitTypSelectDialog(
-        context: context,
-        habitType: context.read<HabitFormViewModel>().habitType);
+      context: context,
+      habitType: context.read<HabitFormViewModel>().habitType,
+    );
     if (result == null || !mounted) return;
     context.read<HabitFormViewModel>().habitType = result;
   }
 
   void _openFrequencyPickerDialog(
-      BuildContext context, HabitFrequency frequency) async {
+    BuildContext context,
+    HabitFrequency frequency,
+  ) async {
     final result = await showHabitFrequencyPickerDialog(
-        context: context, frequency: frequency);
+      context: context,
+      frequency: frequency,
+    );
     appLog.navi.info("$runtimeType._openFrequencyPickerDialog", ex: [result]);
     if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().frequency = result;
   }
 
-  void _openDatePickerDialog(BuildContext context, DateTime startDate,
-      HabitColorType colorType) async {
+  void _openDatePickerDialog(
+    BuildContext context,
+    DateTime startDate,
+    HabitColorType colorType,
+  ) async {
     final result = await showHabitDatePickerDialog(
-        context: context, date: startDate, colorType: colorType);
+      context: context,
+      date: startDate,
+      colorType: colorType,
+    );
     appLog.navi.info("$runtimeType._openDatePickerDialog", ex: [result]);
     if (result == null || !context.mounted) return;
-    context.read<HabitFormViewModel>().startDate =
-        HabitStartDate.dateTime(result);
+    context.read<HabitFormViewModel>().startDate = HabitStartDate.dateTime(
+      result,
+    );
   }
 
   void _openTargetDaysPickerDialog(BuildContext context, int targetDays) async {
     final result = await showHabitTargetDaysPickerDialog(
       context: context,
       targetDays: targetDays,
-      initialCustomTargetDays:
-          context.read<AppCachesViewModel>().habitEditTargetDaysInputFill,
+      initialCustomTargetDays: context
+          .read<AppCachesViewModel>()
+          .habitEditTargetDaysInputFill,
     );
     if (result == null || !context.mounted) return;
     context.read<HabitFormViewModel>().targetDays = result.targetDays;
     if (result.isCustomDaysType) {
-      context
-          .read<AppCachesViewModel>()
-          .updateHabitEditTargetDaysInputFill(result.targetDays);
+      context.read<AppCachesViewModel>().updateHabitEditTargetDaysInputFill(
+        result.targetDays,
+      );
     }
   }
 
   void _openReminderTypePickerDialog(
-      BuildContext context, HabitReminder? reminder) async {
+    BuildContext context,
+    HabitReminder? reminder,
+  ) async {
     if (!mounted) return;
     final colorType = context.read<HabitFormViewModel>().colorType;
     final result = await showHabitReminderTypePickerDialog(
@@ -193,15 +209,20 @@ class _PageState extends State<_Page> {
   }
 
   void _openTimerPickerDialog(
-      BuildContext context, HabitReminder? reminder) async {
+    BuildContext context,
+    HabitReminder? reminder,
+  ) async {
     await NotificationService().requestPermissions();
     if (!context.mounted) return;
-    final result =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final result = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
     if (!context.mounted || result == null) return;
-    final newReminder = (context.read<HabitFormViewModel>().reminder ??
-            HabitReminder.dailyMidnight)
-        .copyWith(time: result);
+    final newReminder =
+        (context.read<HabitFormViewModel>().reminder ??
+                HabitReminder.dailyMidnight)
+            .copyWith(time: result);
     context.read<HabitFormViewModel>().reminder = newReminder;
   }
 
@@ -248,23 +269,19 @@ class _PageState extends State<_Page> {
     if (mounted && result != null) {
       // fire event
       context.read<AppEventViewModel>().push(switch (formvm.editMode) {
-            HabitDisplayEditMode.create => const ReloadDataEvent(
-                msg: "habit_edit._onSaveButtonPressed.create",
-                trace: {
-                  AppEventPageSource.habitEdit: {
-                    AppEventFunctionSource.habitCreated
-                  }
-                },
-              ),
-            HabitDisplayEditMode.edit => const ReloadDataEvent(
-                msg: "habit_edit._onSaveButtonPressed.edit",
-                trace: {
-                  AppEventPageSource.habitEdit: {
-                    AppEventFunctionSource.habitChanged
-                  }
-                },
-              ),
-          });
+        HabitDisplayEditMode.create => const ReloadDataEvent(
+          msg: "habit_edit._onSaveButtonPressed.create",
+          trace: {
+            AppEventPageSource.habitEdit: {AppEventFunctionSource.habitCreated},
+          },
+        ),
+        HabitDisplayEditMode.edit => const ReloadDataEvent(
+          msg: "habit_edit._onSaveButtonPressed.edit",
+          trace: {
+            AppEventPageSource.habitEdit: {AppEventFunctionSource.habitChanged},
+          },
+        ),
+      });
       // try sync once
       final appSync = context.maybeRead<AppSyncViewModel>();
       if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
@@ -314,8 +331,11 @@ class _PageState extends State<_Page> {
         selector: (context, formViewModel) => formViewModel.colorType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, colorType, child) {
-          appLog.build
-              .debug(context, ex: [colorType], name: "$widget.ColorField");
+          appLog.build.debug(
+            context,
+            ex: [colorType],
+            name: "$widget.ColorField",
+          );
           return HabitEditColorTile(
             colorType: colorType,
             onPressed: _openColorPickerDialog,
@@ -329,8 +349,11 @@ class _PageState extends State<_Page> {
         selector: (context, formViewModel) => formViewModel.habitType,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, habitType, child) {
-          appLog.build
-              .debug(context, ex: [habitType], name: "$widget.HabitTypeField");
+          appLog.build.debug(
+            context,
+            ex: [habitType],
+            name: "$widget.HabitTypeField",
+          );
           return HabitEditHabitTypeTile(
             habitType: habitType,
             onPressed: _openHabitTypePickerDialog,
@@ -344,8 +367,11 @@ class _PageState extends State<_Page> {
         selector: (context, formViewModel) => formViewModel.frequency,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, frequency, child) {
-          appLog.build
-              .debug(context, ex: [frequency], name: "$widget.FrequencyField");
+          appLog.build.debug(
+            context,
+            ex: [frequency],
+            name: "$widget.FrequencyField",
+          );
           return HabitEditFrequencyTile(
             frequency: frequency,
             onPressed: _openFrequencyPickerDialog,
@@ -355,14 +381,19 @@ class _PageState extends State<_Page> {
     }
 
     Widget buildStartDateField(BuildContext context) {
-      return Selector<HabitFormViewModel,
-          Tuple2<HabitStartDate, HabitColorType>>(
+      return Selector<
+        HabitFormViewModel,
+        Tuple2<HabitStartDate, HabitColorType>
+      >(
         selector: (context, formViewModel) =>
             Tuple2(formViewModel.startDate, formViewModel.colorType),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
-          appLog.build
-              .debug(context, ex: [data], name: "$widget.StartDateField");
+          appLog.build.debug(
+            context,
+            ex: [data],
+            name: "$widget.StartDateField",
+          );
           final startDate = data.item1;
           final colorType = data.item2;
           return HabitEditStartDateTile(
@@ -378,8 +409,11 @@ class _PageState extends State<_Page> {
       return Selector<HabitFormViewModel, int>(
         selector: (context, formViewModel) => formViewModel.targetDays,
         builder: (context, targetDays, child) {
-          appLog.build.debug(context,
-              ex: [targetDays], name: "$widget.TargetDaysField");
+          appLog.build.debug(
+            context,
+            ex: [targetDays],
+            name: "$widget.TargetDaysField",
+          );
           return HabitEditTargetDaysTile(
             targetDays: targetDays,
             onPressed: _openTargetDaysPickerDialog,
@@ -424,8 +458,9 @@ class _PageState extends State<_Page> {
           controller: _verticalScrollController,
           slivers: [
             _Appbar(
-                showInFullscreenDialog: widget.showInFullscreenDialog,
-                onSaveButtonPressed: _onSaveButtonPressed),
+              showInFullscreenDialog: widget.showInFullscreenDialog,
+              onSaveButtonPressed: _onSaveButtonPressed,
+            ),
             _HabitEditSliverList(
               children: [
                 buildColorField(context),
@@ -475,9 +510,7 @@ class _HabitEditSliverList extends StatelessWidget {
   Widget build(BuildContext context) {
     return EnhancedSafeArea.edgeToEdgeSafe(
       withSliver: true,
-      child: SliverList(
-        delegate: SliverChildListDelegate(children),
-      ),
+      child: SliverList(delegate: SliverChildListDelegate(children)),
     );
   }
 }
@@ -486,8 +519,10 @@ final class _Appbar extends StatelessWidget {
   final bool showInFullscreenDialog;
   final VoidCallback? onSaveButtonPressed;
 
-  const _Appbar(
-      {required this.showInFullscreenDialog, this.onSaveButtonPressed});
+  const _Appbar({
+    required this.showInFullscreenDialog,
+    this.onSaveButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -496,15 +531,14 @@ final class _Appbar extends StatelessWidget {
       builder: (context, controller, child) {
         final (name, colorType, pinned, canSave) = context
             .select<HabitFormViewModel, (String, HabitColorType, bool, bool)>(
-                (vm) => (
-                      vm.name,
-                      vm.colorType,
-                      vm.isAppbarPinned,
-                      vm.canSaveHabit()
-                    ));
-        appLog.build.debug(context,
-            ex: [name, colorType, pinned, canSave],
-            name: "HabitEditPage.Appbar");
+              (vm) =>
+                  (vm.name, vm.colorType, vm.isAppbarPinned, vm.canSaveHabit()),
+            );
+        appLog.build.debug(
+          context,
+          ex: [name, colorType, pinned, canSave],
+          name: "HabitEditPage.Appbar",
+        );
         return HabitEditAppBar(
           name: name,
           colorType: colorType,
@@ -528,8 +562,11 @@ final class _Appbar extends StatelessWidget {
 final class _DailyGoalField extends StatelessWidget {
   const _DailyGoalField();
 
-  String? getTileErrorHint(HabitType type, HabitDailyGoal dailyGoal,
-      [L10n? l10n]) {
+  String? getTileErrorHint(
+    HabitType type,
+    HabitDailyGoal dailyGoal, [
+    L10n? l10n,
+  ]) {
     switch (type) {
       case HabitType.unknown:
       case HabitType.normal:
@@ -542,11 +579,13 @@ final class _DailyGoalField extends StatelessWidget {
         }
       case HabitType.negative:
         if (dailyGoal < minHabitDailyGoal) {
-          return l10n
-              ?.habitEdit_habitDailyGoal_negativeErrorText01(minHabitDailyGoal);
+          return l10n?.habitEdit_habitDailyGoal_negativeErrorText01(
+            minHabitDailyGoal,
+          );
         } else if (dailyGoal > maxHabitdailyGoal) {
-          return l10n
-              ?.habitEdit_habitDailyGoal_negativeErrorText02(minHabitDailyGoal);
+          return l10n?.habitEdit_habitDailyGoal_negativeErrorText02(
+            minHabitDailyGoal,
+          );
         } else {
           return null;
         }
@@ -556,20 +595,25 @@ final class _DailyGoalField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    final habitType =
-        context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
+    final habitType = context.select<HabitFormViewModel, HabitType>(
+      (vm) => vm.habitType,
+    );
     return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.dailyGoal.normalizedGoal.toSimpleString(),
       builder: (context, controller, child) {
         final (dailyGoal, defaultDailyGoal, isDailyGoalValid) = context
             .select<HabitFormViewModel, (HabitDailyGoal, HabitDailyGoal, bool)>(
-                (vm) => (
-                      vm.dailyGoalValue,
-                      vm.dailyGoal.defaultDailyGoal,
-                      vm.isDailyGoalValueValid
-                    ));
-        appLog.build.debug(context,
-            ex: [habitType, dailyGoal], name: "HabitEditPage.DailyGoalField");
+              (vm) => (
+                vm.dailyGoalValue,
+                vm.dailyGoal.defaultDailyGoal,
+                vm.isDailyGoalValueValid,
+              ),
+            );
+        appLog.build.debug(
+          context,
+          ex: [habitType, dailyGoal],
+          name: "HabitEditPage.DailyGoalField",
+        );
         return HabitEditDailyGoalTile(
           errorHint: isDailyGoalValid
               ? null
@@ -584,8 +628,9 @@ final class _DailyGoalField extends StatelessWidget {
                 HabitDailyGoal.tryParse(value) ?? vm.dailyGoal.defaultDailyGoal;
             vm.dailyGoalValue = onDailyGoalTextInputChanged(
               HabitDailyGoalContainer(
-                      type: vm.habitType, dailyGoal: newDailyGoal)
-                  .normalizedGoal,
+                type: vm.habitType,
+                dailyGoal: newDailyGoal,
+              ).normalizedGoal,
               controller: controller,
               allowInputZero: vm.allowZeroDailyGoal(),
             );
@@ -608,19 +653,23 @@ final class _DailyGoalExtraField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final habitType =
-        context.select<HabitFormViewModel, HabitType>((vm) => vm.habitType);
+    final habitType = context.select<HabitFormViewModel, HabitType>(
+      (vm) => vm.habitType,
+    );
     return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.dailyGoalExtra?.toSimpleString() ?? '',
       builder: (context, controller, child) {
-        final (dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) =
-            context.select<HabitFormViewModel,
-                    (HabitDailyGoal?, HabitDailyGoal, bool)>(
-                (vm) => (
-                      vm.dailyGoalExtra,
-                      vm.dailyGoalValue,
-                      vm.isDailyGoalExtraValueValid
-                    ));
+        final (dailyGoalExtra, dailyGoal, isDailyGoalExtraValid) = context
+            .select<
+              HabitFormViewModel,
+              (HabitDailyGoal?, HabitDailyGoal, bool)
+            >(
+              (vm) => (
+                vm.dailyGoalExtra,
+                vm.dailyGoalValue,
+                vm.isDailyGoalExtraValueValid,
+              ),
+            );
         return HabitEditDailyGoalExtraTile(
           isValid: isDailyGoalExtraValid,
           habitType: habitType,
@@ -642,8 +691,9 @@ final class _DailyGoalExtraField extends StatelessWidget {
           onSubmitted: (value) {
             final vm = context.read<HabitFormViewModel>();
             if (!vm.mounted) return;
-            controller.text =
-                vm.dailyGoalExtra != null ? vm.dailyGoalExtra.toString() : '';
+            controller.text = vm.dailyGoalExtra != null
+                ? vm.dailyGoalExtra.toString()
+                : '';
           },
         );
       },

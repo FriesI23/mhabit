@@ -65,15 +65,17 @@ class _CustomDateTimeFormatPickerDialogState
 
   void _onYMDFormatChanged(YearMonthDayFormtEnum? newFormat) {
     setState(() {
-      _crtConfig =
-          _crtConfig.copyWith(ymdFormat: newFormat ?? _crtConfig.ymdFormat);
+      _crtConfig = _crtConfig.copyWith(
+        ymdFormat: newFormat ?? _crtConfig.ymdFormat,
+      );
     });
   }
 
   void _onSplitCharChanged(DateSplitCharEnum? newChar) {
     setState(() {
-      _crtConfig =
-          _crtConfig.copyWith(splitChar: newChar ?? _crtConfig.splitChar);
+      _crtConfig = _crtConfig.copyWith(
+        splitChar: newChar ?? _crtConfig.splitChar,
+      );
     });
   }
 
@@ -114,9 +116,9 @@ class _CustomDateTimeFormatPickerDialogState
     Widget buildTitle(BuildContext context, {L10n? l10n}) {
       final formatter = _crtConfig.getFormatter(l10n?.localeName);
       return SizedBox(
-        height: MediaQuery.textScalerOf(context)
-            .clamp(maxScaleFactor: 1.3)
-            .scale(40.0),
+        height: MediaQuery.textScalerOf(
+          context,
+        ).clamp(maxScaleFactor: 1.3).scale(40.0),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 100),
           child: FittedBox(
@@ -132,8 +134,10 @@ class _CustomDateTimeFormatPickerDialogState
     }
 
     Widget buildYMDFormatSelectListTile(
-        BuildContext context, YearMonthDayFormtEnum value,
-        {L10n? l10n}) {
+      BuildContext context,
+      YearMonthDayFormtEnum value, {
+      L10n? l10n,
+    }) {
       final text = _crtConfig
           .copyWith(ymdFormat: value)
           .getYearMonthDayDisplayText(l10n);
@@ -145,10 +149,13 @@ class _CustomDateTimeFormatPickerDialogState
     }
 
     Widget buildSplitCharSelectListTile(
-        BuildContext context, DateSplitCharEnum char,
-        {L10n? l10n}) {
-      final text =
-          _crtConfig.copyWith(splitChar: char).getSplitCharDisplayText(l10n);
+      BuildContext context,
+      DateSplitCharEnum char, {
+      L10n? l10n,
+    }) {
+      final text = _crtConfig
+          .copyWith(splitChar: char)
+          .getSplitCharDisplayText(l10n);
       return RadioListTile<DateSplitCharEnum>(
         title: Text(text),
         contentPadding: EdgeInsets.zero,
@@ -249,9 +256,7 @@ class _CustomDateTimeFormatPickerDialogState
             maxWidth: double.infinity,
             minWidth: 400,
           ),
-          child: Center(
-            child: buildTitle(context, l10n: l10n),
-          ),
+          child: Center(child: buildTitle(context, l10n: l10n)),
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -275,8 +280,11 @@ class _CustomDateTimeFormatPickerDialogState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (var i in YearMonthDayFormtEnum.values)
-                            buildYMDFormatSelectListTile(context, i,
-                                l10n: l10n),
+                            buildYMDFormatSelectListTile(
+                              context,
+                              i,
+                              l10n: l10n,
+                            ),
                         ],
                       ),
                     ),
@@ -294,8 +302,11 @@ class _CustomDateTimeFormatPickerDialogState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (var i in DateSplitCharEnum.values)
-                            buildSplitCharSelectListTile(context, i,
-                                l10n: l10n),
+                            buildSplitCharSelectListTile(
+                              context,
+                              i,
+                              l10n: l10n,
+                            ),
                         ],
                       ),
                     ),

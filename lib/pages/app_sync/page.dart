@@ -27,11 +27,9 @@ import '../app_sync_server_editor/page.dart' as app_sync_server_editor;
 import 'widgets.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const AppSyncPage(),
-    ),
-  );
+  return Navigator.of(
+    context,
+  ).push<void>(MaterialPageRoute(builder: (context) => const AppSyncPage()));
 }
 
 final class AppSyncPage extends StatelessWidget {
@@ -63,10 +61,14 @@ final class _PageState extends State<_Page> {
 
   void _onServerConfigPressed() async {
     final config = context.read<AppSyncViewModel>().serverConfig;
-    appLog.build
-        .debug(context, ex: ["onServerConfigPressed", config?.toDebugString()]);
+    appLog.build.debug(
+      context,
+      ex: ["onServerConfigPressed", config?.toDebugString()],
+    );
     final result = await app_sync_server_editor.naviToAppSyncServerEditorDialog(
-        context: context, serverConfig: config);
+      context: context,
+      serverConfig: config,
+    );
     if (!mounted) return;
     appLog.build.debug(context, ex: ["onServerConfigPressed", "Done", result]);
     if (result == null) return;
@@ -76,15 +78,19 @@ final class _PageState extends State<_Page> {
             .read<AppSyncViewModel>()
             .saveWithConfigForm(result.form);
         if (!mounted) return;
-        appLog.build.info(context,
-            ex: ["onServerConfigPressed", "Saved[$saveResult]", result]);
+        appLog.build.info(
+          context,
+          ex: ["onServerConfigPressed", "Saved[$saveResult]", result],
+        );
       case app_sync_server_editor.AppSyncServerEditorResultOp.delete:
         final saveResult = await context
             .read<AppSyncViewModel>()
             .saveWithConfigForm(null, removable: true);
         if (!mounted) return;
-        appLog.build.info(context,
-            ex: ["onServerConfigPressed", "Deleted[$saveResult]", result]);
+        appLog.build.info(
+          context,
+          ex: ["onServerConfigPressed", "Deleted[$saveResult]", result],
+        );
     }
   }
 
@@ -92,11 +98,15 @@ final class _PageState extends State<_Page> {
     final interval = context.read<AppSyncViewModel>().fetchInterval;
     appLog.build.debug(context, ex: ["onServerFetchIntervalPressed", interval]);
     final result = await showAppSyncFetchIntervalSwitchDialog(
-        context: context, select: interval);
+      context: context,
+      select: interval,
+    );
     if (!mounted || result == null) return;
     context.read<AppSyncViewModel>().setFetchInterval(result);
-    appLog.build
-        .debug(context, ex: ["onServerFetchIntervalPressed", "Done", result]);
+    appLog.build.debug(
+      context,
+      ex: ["onServerFetchIntervalPressed", "Done", result],
+    );
   }
 
   @override
@@ -107,49 +117,52 @@ final class _PageState extends State<_Page> {
           SliverAppBar(
             leading: const PageBackButton(reason: PageBackReason.back),
             title: L10nBuilder(
-                builder: (context, l10n) =>
-                    Text(l10n?.appSetting_syncOption_titleText ?? "Sync")),
+              builder: (context, l10n) =>
+                  Text(l10n?.appSetting_syncOption_titleText ?? "Sync"),
+            ),
             pinned: true,
           ),
           SliverPinnedHeader(
-              child: Selector<AppSyncViewModel, bool>(
-            selector: (ctx, v) => v.enabled,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => ColoredBox(
-              color: Theme.of(context).colorScheme.surface,
-              child: SwitchListTile.adaptive(
-                title: L10nBuilder(
+            child: Selector<AppSyncViewModel, bool>(
+              selector: (ctx, v) => v.enabled,
+              shouldRebuild: (previous, next) => previous != next,
+              builder: (context, value, child) => ColoredBox(
+                color: Theme.of(context).colorScheme.surface,
+                child: SwitchListTile.adaptive(
+                  title: L10nBuilder(
                     builder: (context, l10n) =>
-                        Text(l10n?.common_enable_text ?? "Enable")),
-                value: value,
-                onChanged: (value) =>
-                    context.read<AppSyncViewModel>().setSyncSwitch(value),
+                        Text(l10n?.common_enable_text ?? "Enable"),
+                  ),
+                  value: value,
+                  onChanged: (value) =>
+                      context.read<AppSyncViewModel>().setSyncSwitch(value),
+                ),
               ),
             ),
-          )),
+          ),
           Selector<AppSyncViewModel, bool>(
             selector: (ctx, v) => v.enabled,
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, value, child) => SliverToBoxAdapter(
-                child: _AppSyncConfigSubgroup(
-              enabled: value,
-              onConfigPressed: _onServerConfigPressed,
-              onFetchIntervalPressed: _onServerFetchIntervalPressed,
-            )),
-          ),
-          SliverList.list(children: [
-            const Divider(),
-            FutureBuilder(
-              future: AppPathProvider().getSyncFailLogDir(),
-              builder: (context, snapshot) =>
-                  AppSyncFailLogsTile(path: snapshot.data?.path),
+              child: _AppSyncConfigSubgroup(
+                enabled: value,
+                onConfigPressed: _onServerConfigPressed,
+                onFetchIntervalPressed: _onServerFetchIntervalPressed,
+              ),
             ),
-          ]),
-          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
-            SliverList.list(children: [
+          ),
+          SliverList.list(
+            children: [
               const Divider(),
-              const _DebugTile(),
-            ]),
+              FutureBuilder(
+                future: AppPathProvider().getSyncFailLogDir(),
+                builder: (context, snapshot) =>
+                    AppSyncFailLogsTile(path: snapshot.data?.path),
+              ),
+            ],
+          ),
+          if (context.read<AppDeveloperViewModel>().isInDevelopMode)
+            SliverList.list(children: [const Divider(), const _DebugTile()]),
         ],
       ),
     );

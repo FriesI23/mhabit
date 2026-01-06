@@ -34,12 +34,14 @@ class AppLoggerConsoleOutput<T extends AppLoggerMessage>
   void output(l.OutputEvent event) {
     final T? message = event.origin.message;
     for (var msg in event.lines) {
-      log(msg,
-          level: event.level.value,
-          time: event.origin.time,
-          name: "app:${message?.type.name ?? ''}:${Isolate.current.debugName}",
-          error: event.origin.error,
-          stackTrace: event.origin.stackTrace);
+      log(
+        msg,
+        level: event.level.value,
+        time: event.origin.time,
+        name: "app:${message?.type.name ?? ''}:${Isolate.current.debugName}",
+        error: event.origin.error,
+        stackTrace: event.origin.stackTrace,
+      );
     }
   }
 }

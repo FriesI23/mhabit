@@ -41,8 +41,12 @@ class AppReminderViewModel extends ChangeNotifier
   Future<void> switchOff({L10n? l10n}) async {
     final reminder = this.reminder;
     if (reminder.enabled) {
-      appLog.value.info("$runtimeType.switchOff",
-          beforeVal: reminder.enabled, afterVal: false, ex: [l10n]);
+      appLog.value.info(
+        "$runtimeType.switchOff",
+        beforeVal: reminder.enabled,
+        afterVal: false,
+        ex: [l10n],
+      );
       await _rmd?.set(reminder.copyWith(enabled: false));
       if (!await _handleChangeReminder(l10n)) notifyListeners();
     }
@@ -51,8 +55,12 @@ class AppReminderViewModel extends ChangeNotifier
   Future<void> switchOn({L10n? l10n}) async {
     final reminder = this.reminder;
     if (!reminder.enabled) {
-      appLog.value.info("$runtimeType.switchOn",
-          beforeVal: reminder.enabled, afterVal: true, ex: [l10n]);
+      appLog.value.info(
+        "$runtimeType.switchOn",
+        beforeVal: reminder.enabled,
+        afterVal: true,
+        ex: [l10n],
+      );
       await _rmd?.set(reminder.copyWith(enabled: true));
       if (!await _handleChangeReminder(l10n)) notifyListeners();
     }
@@ -60,11 +68,17 @@ class AppReminderViewModel extends ChangeNotifier
 
   Future<void> switchToDaily({TimeOfDay? timeOfDay, L10n? l10n}) async {
     final reminder = this.reminder;
-    final newReminder = AppReminderConfig.dailyNight
-        .copyWith(timeOfDay: timeOfDay, enabled: reminder.enabled);
+    final newReminder = AppReminderConfig.dailyNight.copyWith(
+      timeOfDay: timeOfDay,
+      enabled: reminder.enabled,
+    );
     if (newReminder != reminder) {
-      appLog.value.info("$runtimeType.switchToDaily",
-          beforeVal: reminder, afterVal: newReminder, ex: [timeOfDay, l10n]);
+      appLog.value.info(
+        "$runtimeType.switchToDaily",
+        beforeVal: reminder,
+        afterVal: newReminder,
+        ex: [timeOfDay, l10n],
+      );
       await _rmd?.set(newReminder);
       if (!await _handleChangeReminder(l10n)) notifyListeners();
     }
@@ -72,8 +86,12 @@ class AppReminderViewModel extends ChangeNotifier
 
   Future<bool> _handleChangeReminder(L10n? l10n) async {
     if ((await processAppReminder(l10n)) != true) {
-      appLog.value.info("$runtimeType._handleChangeReminder",
-          beforeVal: reminder.enabled, afterVal: false, ex: [l10n]);
+      appLog.value.info(
+        "$runtimeType._handleChangeReminder",
+        beforeVal: reminder.enabled,
+        afterVal: false,
+        ex: [l10n],
+      );
       await _rmd?.set(reminder.copyWith(enabled: false));
       notifyListeners();
       return true;

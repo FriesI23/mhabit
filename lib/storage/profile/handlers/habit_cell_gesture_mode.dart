@@ -21,7 +21,7 @@ import '../profile_helper.dart';
 final class HabitCellGestureModeProfileHandler
     extends ProfileHelperCovertToJsonHandler<HabitDisplayOpConfig> {
   HabitCellGestureModeProfileHandler(super.pref)
-      : super(codec: const HabitCellGestureModeCodec());
+    : super(codec: const HabitCellGestureModeCodec());
 
   @override
   String get key => "displayOpConfig";

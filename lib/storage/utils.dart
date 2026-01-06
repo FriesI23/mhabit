@@ -24,8 +24,9 @@ Future<String> getSqlFromFile(String filepath) async {
 
 ({
   List<MapEntry<String, String>> updateList,
-  List<MapEntry<String, String>> deleteList
-}) processDuplicatedMap(Map<String, String> uuidMap) {
+  List<MapEntry<String, String>> deleteList,
+})
+processDuplicatedMap(Map<String, String> uuidMap) {
   final seenValues = <String>{};
   final deleteList = <MapEntry<String, String>>[];
   final tempList = <MapEntry<String, String>>[];

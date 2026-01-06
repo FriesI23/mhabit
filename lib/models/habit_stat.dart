@@ -95,18 +95,24 @@ class HabitLast30DaysProgressChangeData {
   void genSortedCache({bool force = false}) {
     if (!(_dirty || force)) return;
     _sortedCache.clear();
-    _sortedCache.addAll(_cacheData.values.sorted((a, b) {
-      int r;
-      r = b.changed.compareTo(a.changed);
-      if (r != 0) return r;
-      r = b.lastEndedRecordDate.compareTo(a.lastEndedRecordDate);
-      return r;
-    }));
+    _sortedCache.addAll(
+      _cacheData.values.sorted((a, b) {
+        int r;
+        r = b.changed.compareTo(a.changed);
+        if (r != 0) return r;
+        r = b.lastEndedRecordDate.compareTo(a.lastEndedRecordDate);
+        return r;
+      }),
+    );
     _dirty = false;
   }
 
   void addStatistic(
-      HabitSummaryData data, HabitDate initDate, HabitDate date, num score) {
+    HabitSummaryData data,
+    HabitDate initDate,
+    HabitDate date,
+    num score,
+  ) {
     final firstDate = initDate.subtractDays(30);
     if (date < firstDate || date > initDate) return;
     _dirty = true;
@@ -173,5 +179,8 @@ class HabitSummaryStatisticsData {
 
   @override
   int get hashCode => hash3(
-      currentArchivedCount, currentComplatedCount, currentInProgressCount);
+    currentArchivedCount,
+    currentComplatedCount,
+    currentInProgressCount,
+  );
 }

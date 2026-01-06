@@ -28,14 +28,15 @@ class PageProviders extends SingleChildStatelessWidget {
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => HabitFormViewModel(initForm: initForm),
-          ),
-          ViewModelProxyProvider<HabitsManager, HabitFormViewModel>(
-              update: (context, value, previous) =>
-                  previous..updateHabitManager(value)),
-        ],
-        child: child,
-      );
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => HabitFormViewModel(initForm: initForm),
+      ),
+      ViewModelProxyProvider<HabitsManager, HabitFormViewModel>(
+        update: (context, value, previous) =>
+            previous..updateHabitManager(value),
+      ),
+    ],
+    child: child,
+  );
 }

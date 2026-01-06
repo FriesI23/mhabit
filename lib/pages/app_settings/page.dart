@@ -59,11 +59,9 @@ import '../expermental_features/page.dart' as exp_feature;
 import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({required BuildContext context}) async {
-  return Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (context) => const AppSettingPage(),
-    ),
-  );
+  return Navigator.of(
+    context,
+  ).push<void>(MaterialPageRoute(builder: (context) => const AppSettingPage()));
 }
 
 /// Depend Providers
@@ -112,7 +110,9 @@ class _PageState extends State<_Page> with XShare {
     if (!context.mounted) return;
     final config = context.read<AppCustomDateYmdHmsConfigViewModel>();
     final result = await showCustomDateTimeFormatPickerDialog(
-        context: context, config: config.config);
+      context: context,
+      config: config.config,
+    );
 
     if (!context.mounted || result == null) return;
     context.read<AppCustomDateYmdHmsConfigViewModel>().setNewConfig(result);
@@ -122,7 +122,9 @@ class _PageState extends State<_Page> with XShare {
     if (!mounted) return;
     final config = context.read<AppThemeViewModel>();
     final result = await showAppThemeColorChangerDialog(
-        context: context, selectedColor: config.themeColor);
+      context: context,
+      selectedColor: config.themeColor,
+    );
     if (!mounted || result == null) return;
     context.read<AppThemeViewModel>().setNewAppThemeColor(result);
   }
@@ -131,7 +133,9 @@ class _PageState extends State<_Page> with XShare {
     if (!context.mounted) return;
     final firstday = context.read<AppFirstDayViewModel>();
     final result = await showAppSettingFirstDaySelectDialog(
-        context: context, firstDay: firstday.firstDay);
+      context: context,
+      firstDay: firstday.firstDay,
+    );
 
     if (!context.mounted || result == null) return;
     final firtdayvm = context.read<AppFirstDayViewModel>();
@@ -142,7 +146,9 @@ class _PageState extends State<_Page> with XShare {
     if (!context.mounted) return;
     final currentLocale = context.read<AppLanguageViewModel>().languange;
     final result = await showAppLanguageChangerDialog(
-        context: context, selectedLocale: currentLocale);
+      context: context,
+      selectedLocale: currentLocale,
+    );
 
     if (!context.mounted || result == null) return;
     context.read<AppLanguageViewModel>().switchLanguage(result.choosenLanguage);
@@ -165,19 +171,22 @@ class _PageState extends State<_Page> with XShare {
       }
     }
 
-    final snackBar = buildSnackBarWithDismiss(context, content: L10nBuilder(
-      builder: (context, l10n) {
-        final String? snackBarText;
-        if (hasSuss && hasFail) {
-          snackBarText = l10n?.appSetting_clearCache_snackBar_partSuccText;
-        } else if (!hasFail) {
-          snackBarText = l10n?.appSetting_clearCache_snackBar_succText;
-        } else {
-          snackBarText = l10n?.appSetting_clearCache_snackBar_failText;
-        }
-        return Text(snackBarText ?? "Clear cache done");
-      },
-    ));
+    final snackBar = buildSnackBarWithDismiss(
+      context,
+      content: L10nBuilder(
+        builder: (context, l10n) {
+          final String? snackBarText;
+          if (hasSuss && hasFail) {
+            snackBarText = l10n?.appSetting_clearCache_snackBar_partSuccText;
+          } else if (!hasFail) {
+            snackBarText = l10n?.appSetting_clearCache_snackBar_succText;
+          } else {
+            snackBarText = l10n?.appSetting_clearCache_snackBar_failText;
+          }
+          return Text(snackBarText ?? "Clear cache done");
+        },
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
@@ -186,9 +195,9 @@ class _PageState extends State<_Page> with XShare {
     final newBehavior = value
         ? HabitsRecordScrollBehavior.page
         : defaultHabitsRecordScrollBehavior;
-    context
-        .read<HabitsRecordScrollBehaviorViewModel>()
-        .setScrollBehavior(newBehavior);
+    context.read<HabitsRecordScrollBehaviorViewModel>().setScrollBehavior(
+      newBehavior,
+    );
   }
 
   void _onCompactTileChanged(bool value) {
@@ -198,9 +207,9 @@ class _PageState extends State<_Page> with XShare {
 
   void _onChangeRecordStatusSelected(UserAction action) {
     if (!mounted) return;
-    context
-        .read<HabitRecordOpConfigViewModel>()
-        .setChangeRecordStatusAction(action);
+    context.read<HabitRecordOpConfigViewModel>().setChangeRecordStatusAction(
+      action,
+    );
   }
 
   void _onOpenRecordStatusDialogSelected(UserAction action) {
@@ -224,8 +233,11 @@ class _PageState extends State<_Page> with XShare {
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
     if (!context.mounted || filePath == null) return;
-    trySaveFiles([XFile(filePath)], defaultTargetPlatform, context: context)
-        .then((result) {
+    trySaveFiles(
+      [XFile(filePath)],
+      defaultTargetPlatform,
+      context: context,
+    ).then((result) {
       if (!(result && context.mounted)) return;
       final snackBar = buildSnackBarWithDismiss(
         context,
@@ -245,10 +257,12 @@ class _PageState extends State<_Page> with XShare {
   void _onImportAllTilePressed() async {
     if (!mounted) return;
     final XFile? file = await openFile().catchError((e, s) {
-      appLog.load.error("$widget._onImportAllTilePressed",
-          ex: ["Can't open file picker"],
-          error: e,
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
+      appLog.load.error(
+        "$widget._onImportAllTilePressed",
+        ex: ["Can't open file picker"],
+        error: e,
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
       return null;
     });
 
@@ -262,12 +276,14 @@ class _PageState extends State<_Page> with XShare {
         .then((bytes) => utf8.decode(bytes))
         .timeout(const Duration(seconds: 10))
         .catchError((e, s) {
-      appLog.load.error("$widget._onImportAllTilePressed",
-          ex: ["Can't read file", file],
-          error: e,
-          stackTrace: LoggerStackTrace.from(StackTrace.current));
-      return '';
-    });
+          appLog.load.error(
+            "$widget._onImportAllTilePressed",
+            ex: ["Can't read file", file],
+            error: e,
+            stackTrace: LoggerStackTrace.from(StackTrace.current),
+          );
+          return '';
+        });
 
     if (!mounted || rawJsonData.isEmpty) return;
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);
@@ -315,7 +331,7 @@ class _PageState extends State<_Page> with XShare {
     if (!mounted || result == null || !result) return;
     await Future.wait([
       context.read<ProfileViewModel>().clear(),
-      NotificationService().cancelAppReminder()
+      NotificationService().cancelAppReminder(),
     ]);
 
     if (!mounted) return;
@@ -345,8 +361,10 @@ class _PageState extends State<_Page> with XShare {
 
   void _onExportDBTilePressed(BuildContext context) async {
     if (!context.mounted) return;
-    final dbPath =
-        path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
+    final dbPath = path.join(
+      await AppPathProvider().getDatabaseDirPath(),
+      appDBName,
+    );
     if (!context.mounted) return;
     trySaveFiles([XFile(dbPath)], defaultTargetPlatform, context: context);
   }
@@ -363,13 +381,16 @@ class _PageState extends State<_Page> with XShare {
         final filePath = await context
             .read<HabitFileExporterViewModel>()
             .exportAllHabitsData();
-        final dbPath =
-            path.join(await AppPathProvider().getDatabaseDirPath(), appDBName);
+        final dbPath = path.join(
+          await AppPathProvider().getDatabaseDirPath(),
+          appDBName,
+        );
         if (!context.mounted) return;
-        final result = await trySaveFiles([
-          if (filePath != null) XFile(filePath),
-          XFile(dbPath)
-        ], defaultTargetPlatform, context: context);
+        final result = await trySaveFiles(
+          [if (filePath != null) XFile(filePath), XFile(dbPath)],
+          defaultTargetPlatform,
+          context: context,
+        );
         if (result) {
           break;
         } else {
@@ -390,130 +411,133 @@ class _PageState extends State<_Page> with XShare {
     await context.read<DBHelperViewModel>().reload();
     await NotificationService().cancelAllHabitReminders();
     if (!context.mounted) return;
-    final snackBar = buildSnackBarWithDismiss(context,
-        content: const Text("clear database success"));
+    final snackBar = buildSnackBarWithDismiss(
+      context,
+      content: const Text("clear database success"),
+    );
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(const ReloadDataEvent(
-          msg: "app_settings._onClearDBTilePressed",
-          trace: {
-            AppEventPageSource.appSetting: {
-              AppEventFunctionSource.databaseCleared
-            }
+    context.read<AppEventViewModel>().push(
+      const ReloadDataEvent(
+        msg: "app_settings._onClearDBTilePressed",
+        trace: {
+          AppEventPageSource.appSetting: {
+            AppEventFunctionSource.databaseCleared,
           },
-        ));
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     Iterable<Widget> buildDisplaySubGroup(BuildContext context) => [
-          GroupTitleListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_displaySubgroupText)
-                  : const Text("Display"),
-            ),
-          ),
-          AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
-          Selector<AppFirstDayViewModel, int>(
-            selector: (context, vm) => vm.firstDay,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, firstDay, child) => AppSettingFirstDayTile(
-              firstDay: firstDay,
-              onPressed: () => _openAppFirtDaySelectDialog(context),
-            ),
-          ),
-          Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
-            selector: (context, vm) => vm.config,
-            shouldRebuild: (previous, next) => true,
-            builder: (context, config, child) =>
-                AppSettingDateDisplayFormatListTile(
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_displaySubgroupText)
+              : const Text("Display"),
+        ),
+      ),
+      AppSettingThemeColorTile(onPressed: _openAppThemeColorChosenDialog),
+      Selector<AppFirstDayViewModel, int>(
+        selector: (context, vm) => vm.firstDay,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, firstDay, child) => AppSettingFirstDayTile(
+          firstDay: firstDay,
+          onPressed: () => _openAppFirtDaySelectDialog(context),
+        ),
+      ),
+      Selector<AppCustomDateYmdHmsConfigViewModel, CustomDateYmdHmsConfig>(
+        selector: (context, vm) => vm.config,
+        shouldRebuild: (previous, next) => true,
+        builder: (context, config, child) =>
+            AppSettingDateDisplayFormatListTile(
               config: config,
               onPressed: () => _openCustomDateTimeFormatPickerDialog(context),
             ),
+      ),
+      Selector<AppThemeViewModel, int>(
+        selector: (context, vm) => vm.displayPageOccupyPrt,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
+          currentPercentage: occupyPrt,
+          lessPercentage: normalizeAppCalendarBarOccupyPrt(
+            appCalendarBarDefualtOccupyPrt - 20,
           ),
-          Selector<AppThemeViewModel, int>(
-            selector: (context, vm) => vm.displayPageOccupyPrt,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, occupyPrt, child) => AppSettingCalbarOccupyTile(
-              currentPercentage: occupyPrt,
-              lessPercentage: normalizeAppCalendarBarOccupyPrt(
-                  appCalendarBarDefualtOccupyPrt - 20),
-              morePercentage: normalizeAppCalendarBarOccupyPrt(
-                  appCalendarBarDefualtOccupyPrt + 20),
-              normalPercentage: appCalendarBarDefualtOccupyPrt,
-              onSelectionChanged: (value) {
-                context
-                    .read<AppThemeViewModel>()
-                    .setNewDisplayPageOccupyPrt(value);
-              },
+          morePercentage: normalizeAppCalendarBarOccupyPrt(
+            appCalendarBarDefualtOccupyPrt + 20,
+          ),
+          normalPercentage: appCalendarBarDefualtOccupyPrt,
+          onSelectionChanged: (value) {
+            context.read<AppThemeViewModel>().setNewDisplayPageOccupyPrt(value);
+          },
+        ),
+      ),
+      Selector<AppCompactUISwitcherViewModel, bool>(
+        selector: (context, vm) => vm.flag,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, flag, child) => L10nBuilder(
+          builder: (context, l10n) => SwitchListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_compactUISwitcher_titleText)
+                : const Text("Drag calendar by page"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_compactUISwitcher_subtitleText)
+                : null,
+            onChanged: _onCompactTileChanged,
+            value: flag,
+          ),
+        ),
+      ),
+      Selector<AppLanguageViewModel, Locale?>(
+        selector: (context, vm) => vm.languange,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => ListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_changeLanguageTile_titleText)
+                : const Text("Language"),
+            subtitle: Text(
+              context.read<AppLanguageViewModel>().getAppLanguageText(l10n),
             ),
+            onTap: () => _onAppLanguageTilePressed(context),
           ),
-          Selector<AppCompactUISwitcherViewModel, bool>(
-            selector: (context, vm) => vm.flag,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, flag, child) => L10nBuilder(
-              builder: (context, l10n) => SwitchListTile(
-                title: l10n != null
-                    ? Text(l10n.appSetting_compactUISwitcher_titleText)
-                    : const Text("Drag calendar by page"),
-                subtitle: l10n != null
-                    ? Text(l10n.appSetting_compactUISwitcher_subtitleText)
-                    : null,
-                onChanged: _onCompactTileChanged,
-                value: flag,
-              ),
-            ),
-          ),
-          Selector<AppLanguageViewModel, Locale?>(
-            selector: (context, vm) => vm.languange,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => L10nBuilder(
-              builder: (context, l10n) => ListTile(
-                title: l10n != null
-                    ? Text(l10n.appSetting_changeLanguageTile_titleText)
-                    : const Text("Language"),
-                subtitle: Text(context
-                    .read<AppLanguageViewModel>()
-                    .getAppLanguageText(l10n)),
-                onTap: () => _onAppLanguageTilePressed(context),
-              ),
-            ),
-          ),
-        ];
+        ),
+      ),
+    ];
 
     Iterable<Widget> buildOperationSubGroup(BuildContext context) => [
-          GroupTitleListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_operationSubgroupText)
-                  : const Text("Operation"),
-            ),
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_operationSubgroupText)
+              : const Text("Operation"),
+        ),
+      ),
+      Selector<HabitsRecordScrollBehaviorViewModel, HabitsRecordScrollBehavior>(
+        selector: (context, vm) => vm.scrollBehavior,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, scrollBehavior, child) => L10nBuilder(
+          builder: (context, l10n) => SwitchListTile(
+            title: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
+                : const Text("Drag calendar by page"),
+            subtitle: l10n != null
+                ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
+                : null,
+            onChanged: _onDrageCalendarByPageTileChanged,
+            value: scrollBehavior == HabitsRecordScrollBehavior.page,
           ),
-          Selector<HabitsRecordScrollBehaviorViewModel,
-              HabitsRecordScrollBehavior>(
-            selector: (context, vm) => vm.scrollBehavior,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, scrollBehavior, child) => L10nBuilder(
-              builder: (context, l10n) => SwitchListTile(
-                title: l10n != null
-                    ? Text(l10n.appSetting_dragCalendarByPageTile_titleText)
-                    : const Text("Drag calendar by page"),
-                subtitle: l10n != null
-                    ? Text(l10n.appSetting_dragCalendarByPageTile_subtitleText)
-                    : null,
-                onChanged: _onDrageCalendarByPageTileChanged,
-                value: scrollBehavior == HabitsRecordScrollBehavior.page,
-              ),
-            ),
-          ),
-          Selector<HabitRecordOpConfigViewModel, UserAction>(
-            selector: (context, vm) => vm.changeRecordStatus,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => L10nBuilder(
-              builder: (context, l10n) => LayoutBuilder(
-                builder: (context, constraints) =>
-                    AppSettingDisplayRecordOperationTile(
+        ),
+      ),
+      Selector<HabitRecordOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.changeRecordStatus,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) =>
+                AppSettingDisplayRecordOperationTile(
                   isLargeScreen:
                       constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
                   inputAction: value,
@@ -522,179 +546,184 @@ class _PageState extends State<_Page> with XShare {
                       : null,
                   subtitle: l10n != null
                       ? Text(
-                          l10n.appSetting_changeRecordStatusOpTile_subtitleText)
+                          l10n.appSetting_changeRecordStatusOpTile_subtitleText,
+                        )
                       : null,
                   onSelected: _onChangeRecordStatusSelected,
                 ),
-              ),
+          ),
+        ),
+      ),
+      Selector<HabitRecordOpConfigViewModel, UserAction>(
+        selector: (context, vm) => vm.openRecordStatusDialog,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) => AppSettingDisplayRecordOperationTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              inputAction: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_openRecordStatusDialogOpTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(
+                      l10n.appSetting_openRecordStatusDialogOpTile_subtitleText,
+                    )
+                  : null,
+              onSelected: _onOpenRecordStatusDialogSelected,
             ),
           ),
-          Selector<HabitRecordOpConfigViewModel, UserAction>(
-            selector: (context, vm) => vm.openRecordStatusDialog,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => L10nBuilder(
-              builder: (context, l10n) => LayoutBuilder(
-                builder: (context, constraints) =>
-                    AppSettingDisplayRecordOperationTile(
-                  isLargeScreen:
-                      constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
-                  inputAction: value,
-                  title: l10n != null
-                      ? Text(l10n
-                          .appSetting_openRecordStatusDialogOpTile_titleText)
-                      : null,
-                  subtitle: l10n != null
-                      ? Text(l10n
-                          .appSetting_openRecordStatusDialogOpTile_subtitleText)
-                      : null,
-                  onSelected: _onOpenRecordStatusDialogSelected,
-                ),
-              ),
-            ),
-          ),
-        ];
+        ),
+      ),
+    ];
 
     Iterable<Widget> buildReminderSubGroup(BuildContext context) => [
-          GroupTitleListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_reminderSubgroupText)
-                  : const Text("Reminder"),
-            ),
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_reminderSubgroupText)
+              : const Text("Reminder"),
+        ),
+      ),
+      Selector<AppReminderViewModel, AppReminderConfig>(
+        selector: (context, vm) => vm.reminder,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, reminder, child) => L10nBuilder(
+          builder: (context, l10n) => AppSettingReminderTile(
+            config: reminder,
+            onSwitchButtonChanged: (value) => value
+                ? context.read<AppReminderViewModel>().switchOn(l10n: l10n)
+                : context.read<AppReminderViewModel>().switchOff(l10n: l10n),
+            onTimePicked: (value) => context
+                .read<AppReminderViewModel>()
+                .switchToDaily(timeOfDay: value, l10n: l10n),
           ),
-          Selector<AppReminderViewModel, AppReminderConfig>(
-            selector: (context, vm) => vm.reminder,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, reminder, child) => L10nBuilder(
-              builder: (context, l10n) => AppSettingReminderTile(
-                config: reminder,
-                onSwitchButtonChanged: (value) => value
-                    ? context.read<AppReminderViewModel>().switchOn(l10n: l10n)
-                    : context
-                        .read<AppReminderViewModel>()
-                        .switchOff(l10n: l10n),
-                onTimePicked: (value) => context
-                    .read<AppReminderViewModel>()
-                    .switchToDaily(timeOfDay: value, l10n: l10n),
-              ),
-            ),
-          ),
-          const AppSettingNotifyTile(),
-        ];
+        ),
+      ),
+      const AppSettingNotifyTile(),
+    ];
 
     Iterable<Widget> buildBackupAndRestoreSubGroup(BuildContext context) => [
-          GroupTitleListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_backupAndRestoreSubgroupText)
-                  : const Text("Backup & restore"),
-            ),
-          ),
-          L10nBuilder(
-            builder: (context, l10n) => ListTile(
-              title: l10n != null
-                  ? Text(l10n.appSetting_export_titleText)
-                  : const Text("Export"),
-              subtitle: l10n != null
-                  ? Text(l10n.appSetting_export_subtitleText)
-                  : const Text("Exported habits as JSON format, "
-                      "This file can be import back"),
-              onTap: () => _onExportAllTilePressed(context),
-            ),
-          ),
-          L10nBuilder(
-            builder: (context, l10n) => ListTile(
-              title: l10n != null
-                  ? Text(l10n.appSetting_import_titleText)
-                  : const Text("Import"),
-              subtitle: l10n != null
-                  ? Text(l10n.appSetting_import_subtitleText)
-                  : const Text("Import habits from json file"),
-              onTap: _onImportAllTilePressed,
-            ),
-          ),
-          L10nBuilder(
-            builder: (context, l10n) => ListTile(
-              title: l10n != null
-                  ? Text(l10n.appSetting_resetConfig_titleText)
-                  : const Text("Reset configs"),
-              subtitle: l10n != null
-                  ? Text(l10n.appSetting_resetConfig_subtitleText)
-                  : const Text("Reset all configs to default"),
-              onTap: _onResetConfigsTilePressed,
-            ),
-          ),
-        ];
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_backupAndRestoreSubgroupText)
+              : const Text("Backup & restore"),
+        ),
+      ),
+      L10nBuilder(
+        builder: (context, l10n) => ListTile(
+          title: l10n != null
+              ? Text(l10n.appSetting_export_titleText)
+              : const Text("Export"),
+          subtitle: l10n != null
+              ? Text(l10n.appSetting_export_subtitleText)
+              : const Text(
+                  "Exported habits as JSON format, "
+                  "This file can be import back",
+                ),
+          onTap: () => _onExportAllTilePressed(context),
+        ),
+      ),
+      L10nBuilder(
+        builder: (context, l10n) => ListTile(
+          title: l10n != null
+              ? Text(l10n.appSetting_import_titleText)
+              : const Text("Import"),
+          subtitle: l10n != null
+              ? Text(l10n.appSetting_import_subtitleText)
+              : const Text("Import habits from json file"),
+          onTap: _onImportAllTilePressed,
+        ),
+      ),
+      L10nBuilder(
+        builder: (context, l10n) => ListTile(
+          title: l10n != null
+              ? Text(l10n.appSetting_resetConfig_titleText)
+              : const Text("Reset configs"),
+          subtitle: l10n != null
+              ? Text(l10n.appSetting_resetConfig_subtitleText)
+              : const Text("Reset all configs to default"),
+          onTap: _onResetConfigsTilePressed,
+        ),
+      ),
+    ];
 
     Iterable<Widget> buildOthersSubGroup(BuildContext context) => [
-          GroupTitleListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_otherSubgroupText)
-                  : const Text("Others"),
-            ),
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_otherSubgroupText)
+              : const Text("Others"),
+        ),
+      ),
+      ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => Text(
+            l10n?.appSetting_experimentalFeatureTile_titleText ??
+                "Experimental Features",
           ),
-          ListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => Text(
-                  l10n?.appSetting_experimentalFeatureTile_titleText ??
-                      "Experimental Features"),
-            ),
-            onTap: () =>
-                exp_feature.naviToExperimentalFeaturesPage(context: context),
+        ),
+        onTap: () =>
+            exp_feature.naviToExperimentalFeaturesPage(context: context),
+      ),
+      Selector<AppDeveloperViewModel, bool>(
+        selector: (context, vm) => vm.isInDevelopMode,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => SwitchListTile(
+          title: L10nBuilder(
+            builder: (context, l10n) => l10n != null
+                ? Text(l10n.appSetting_developMode_titleText)
+                : const Text("Develop mode"),
           ),
-          Selector<AppDeveloperViewModel, bool>(
-            selector: (context, vm) => vm.isInDevelopMode,
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, value, child) => SwitchListTile(
-              title: L10nBuilder(
-                builder: (context, l10n) => l10n != null
-                    ? Text(l10n.appSetting_developMode_titleText)
-                    : const Text("Develop mode"),
-              ),
-              onChanged: _onDevelopModeSwitchTilePressed,
-              value: value,
-            ),
-          ),
-          ListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_clearCache_titleText)
-                  : const Text("Clear Cache"),
-            ),
-            onTap: () => _openClearAppCacheDialog(context),
-          ),
-          ListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_debugger_titleText)
-                  : const Text("Debugger"),
-            ),
-            onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
-          ),
-          ListTile(
-            title: L10nBuilder(
-              builder: (context, l10n) => l10n != null
-                  ? Text(l10n.appSetting_about_titleText)
-                  : const Text("About"),
-            ),
-            onTap: () => app_about.naviToAppAboutPage(context: context),
-          ),
-        ];
+          onChanged: _onDevelopModeSwitchTilePressed,
+          value: value,
+        ),
+      ),
+      ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_clearCache_titleText)
+              : const Text("Clear Cache"),
+        ),
+        onTap: () => _openClearAppCacheDialog(context),
+      ),
+      ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_debugger_titleText)
+              : const Text("Debugger"),
+        ),
+        onTap: () => app_debugger.naviToAppDebuggerPage(context: context),
+      ),
+      ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.appSetting_about_titleText)
+              : const Text("About"),
+        ),
+        onTap: () => app_about.naviToAppAboutPage(context: context),
+      ),
+    ];
 
     Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
-          GroupTitleListTile(
-              title: L10nBuilder(
-                  builder: (context, l10n) =>
-                      Text(l10n?.appSetting_synSubgroupText ?? "Sync"))),
-          const AppSyncNowTile(),
-          const AppSettingSyncFailedTile(),
-          ListTile(
-              title: L10nBuilder(
-                  builder: (context, l10n) => Text(
-                      l10n?.appSetting_syncOption_titleText ?? "Sync Option")),
-              onTap: () => app_sync.naviToAppSyncPage(context: context)),
-        ];
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.appSetting_synSubgroupText ?? "Sync"),
+        ),
+      ),
+      const AppSyncNowTile(),
+      const AppSettingSyncFailedTile(),
+      ListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) =>
+              Text(l10n?.appSetting_syncOption_titleText ?? "Sync Option"),
+        ),
+        onTap: () => app_sync.naviToAppSyncPage(context: context),
+      ),
+    ];
 
     Widget buildDevelopSubGroup(BuildContext context) =>
         Selector<AppDeveloperViewModel, Tuple2<bool, bool>>(
@@ -711,15 +740,15 @@ class _PageState extends State<_Page> with XShare {
         );
 
     Widget buildChinaIPC(BuildContext context) => Builder(
-          builder: (context) {
-            final locale = Localizations.localeOf(context);
-            final isInMainlandChina =
-                locale.languageCode == 'zh' && locale.scriptCode == null;
-            return appFlavor == appFlaborStore && isInMainlandChina
-                ? const ICPFillingNumberTile()
-                : const SizedBox();
-          },
-        );
+      builder: (context) {
+        final locale = Localizations.localeOf(context);
+        final isInMainlandChina =
+            locale.languageCode == 'zh' && locale.scriptCode == null;
+        return appFlavor == appFlaborStore && isInMainlandChina
+            ? const ICPFillingNumberTile()
+            : const SizedBox();
+      },
+    );
 
     return ColorfulNavibar(
       child: Scaffold(

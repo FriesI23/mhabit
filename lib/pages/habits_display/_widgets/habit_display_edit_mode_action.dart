@@ -38,75 +38,60 @@ class EditModeActionItemConfig
     super.callback,
   });
 
-  const EditModeActionItemConfig.edit(
-      {super.status = AppbarActionShowStatus.button,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.edit,
-          icon: Icons.edit_rounded,
-        );
+  const EditModeActionItemConfig.edit({
+    super.status = AppbarActionShowStatus.button,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(type: EditModeActionItemCell.edit, icon: Icons.edit_rounded);
 
-  const EditModeActionItemConfig.archive(
-      {super.status = AppbarActionShowStatus.button,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.archive,
-          icon: Icons.archive_outlined,
-        );
+  const EditModeActionItemConfig.archive({
+    super.status = AppbarActionShowStatus.button,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(
+         type: EditModeActionItemCell.archive,
+         icon: Icons.archive_outlined,
+       );
 
-  const EditModeActionItemConfig.unarchive(
-      {super.status = AppbarActionShowStatus.button,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.unarchive,
-          icon: Icons.unarchive_rounded,
-        );
+  const EditModeActionItemConfig.unarchive({
+    super.status = AppbarActionShowStatus.button,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(
+         type: EditModeActionItemCell.unarchive,
+         icon: Icons.unarchive_rounded,
+       );
 
-  const EditModeActionItemConfig.delete(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.delete,
-          icon: MdiIcons.delete,
-        );
+  const EditModeActionItemConfig.delete({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(type: EditModeActionItemCell.delete, icon: MdiIcons.delete);
 
-  const EditModeActionItemConfig.selectall(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.selectall,
-          icon: MdiIcons.selectAll,
-        );
+  const EditModeActionItemConfig.selectall({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(type: EditModeActionItemCell.selectall, icon: MdiIcons.selectAll);
 
-  const EditModeActionItemConfig.exportall(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.exportall,
-          icon: MdiIcons.export,
-        );
+  const EditModeActionItemConfig.exportall({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(type: EditModeActionItemCell.exportall, icon: MdiIcons.export);
 
-  const EditModeActionItemConfig.clone(
-      {super.status = AppbarActionShowStatus.popupitem,
-      super.visible = true,
-      super.text = '',
-      super.callback})
-      : super(
-          type: EditModeActionItemCell.clone,
-          icon: Icons.copy_rounded,
-        );
+  const EditModeActionItemConfig.clone({
+    super.status = AppbarActionShowStatus.popupitem,
+    super.visible = true,
+    super.text = '',
+    super.callback,
+  }) : super(type: EditModeActionItemCell.clone, icon: Icons.copy_rounded);
 
   @override
   bool shouldShow(AppbarActionShowStatus s) {
