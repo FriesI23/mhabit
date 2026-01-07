@@ -1,12 +1,13 @@
 # 更新日志
 
-## 1.23.0+138-pre
+## 1.23.1+140-pre
 
-- 升级 Flutter 3.35.7 / Dart，并迁移相关 API
-- Android：升级 AGP 到 8.12.3，同时调整 Kotlin/Gradle
-- iOS/macOS：工程同步到新工具链
-- 依赖更新（share_plus、app_settings、fl_chart、package_info_plus、flutter_timezone、copy_with_extension、source_gen、flutter_lints、intl）
-- 代码格式化和清理
+- 功能：Android 14+ 启用预测返回手势（#483）
+- 升级 Flutter 3.35.7 / Dart，并迁移相关 API (#479)
+- Android：升级 AGP 到 8.12.3，同时调整 Kotlin/Gradle (#479)
+- iOS/macOS：工程同步到新工具链 (#479)
+- 依赖更新 (#479)
+- 代码格式化和清理 (#479)
 - 修复：iPadOS 上导出弹窗位置异常
 
 ## 1.22.10+137
