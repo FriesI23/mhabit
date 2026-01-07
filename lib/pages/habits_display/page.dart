@@ -14,11 +14,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../common/utils.dart';
 import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../models/app_entry.dart';
+import '../../providers/habit_summary.dart';
 import '../../storage/profile/handlers/app_launch_entry.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/widgets.dart';
@@ -112,6 +114,14 @@ class _PageState extends State<_Page> {
       if (state != null) {
         return await state.onWillPop();
       }
+    }
+    return true;
+  }
+
+  bool _canPop(bool canPop) {
+    if (_currentTabIndex == _PageTabs.display.index) {
+      final state = _habitsTabKey.currentState;
+      if (state != null) return canPop;
     }
     return true;
   }
@@ -229,30 +239,37 @@ class _PageState extends State<_Page> {
       ],
     );
 
-    return ColorfulNavibar(
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) async {
-          if (didPop) return;
-          if (await _handleWillPop() && context.mounted) {
-            Navigator.of(context).popOrExit(result);
-          }
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Actions(
-            actions: {
-              DismissIntent: CallbackAction(
-                onInvoke: (intent) {
-                  _handleDismissIntent();
-                  return null;
-                },
-              ),
+    final scaffold = Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Actions(
+        actions: {
+          DismissIntent: CallbackAction(
+            onInvoke: (intent) {
+              _handleDismissIntent();
+              return null;
             },
-            child: body,
           ),
-          floatingActionButton: _buildFloatingActionButton(bottomNavHeight),
+        },
+        child: body,
+      ),
+      floatingActionButton: _buildFloatingActionButton(bottomNavHeight),
+    );
+
+    return ColorfulNavibar(
+      child: Selector<HabitSummaryViewModel, bool>(
+        selector: (context, vm) => vm.canPop,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, canPop, child) => PopScope(
+          canPop: _canPop(canPop),
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            if (await _handleWillPop() && context.mounted) {
+              Navigator.of(context).popOrExit(result);
+            }
+          },
+          child: child!,
         ),
+        child: scaffold,
       ),
     );
   }

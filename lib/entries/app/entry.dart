@@ -170,6 +170,14 @@ class _AppEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontFamily = getFontFamily();
     final fontFamilyFallbacks = getFontFamilyFallbacks();
+    final pageTransitionsTheme = PageTransitionsTheme(
+      builders: {
+        ...const PageTransitionsTheme().builders,
+        if (AppInfo().shouldEnablePredictBackPage())
+          TargetPlatform.android:
+              const CustomPredictiveBackPageTransitionsBuilder(),
+      },
+    );
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) => Builder(
         builder: (context) {
@@ -194,6 +202,7 @@ class _AppEntry extends StatelessWidget {
               return ThemeData(
                 fontFamily: fontFamily,
                 fontFamilyFallback: fontFamilyFallbacks,
+                pageTransitionsTheme: pageTransitionsTheme,
                 brightness: mainColor == null ? Brightness.light : null,
                 colorScheme: mainColor != null
                     ? ColorScheme.fromSeed(
@@ -216,6 +225,7 @@ class _AppEntry extends StatelessWidget {
               return ThemeData(
                 fontFamily: fontFamily,
                 fontFamilyFallback: fontFamilyFallbacks,
+                pageTransitionsTheme: pageTransitionsTheme,
                 brightness: mainColor == null ? Brightness.dark : null,
                 colorScheme: mainColor != null
                     ? ColorScheme.fromSeed(

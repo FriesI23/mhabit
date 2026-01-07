@@ -89,6 +89,11 @@ class AppInfo implements AsyncInitialization {
     return Platform.isAndroid && _androidBuildVersion!.sdkInt >= 29;
   }
 
+  /// [Flutter / Supporting predictive back](https://docs.flutter.dev/release/breaking-changes/android-predictive-back#supporting-predictive-back)
+  bool shouldEnablePredictBackPage() {
+    return Platform.isAndroid && _androidBuildVersion!.sdkInt >= 34;
+  }
+
   bool shouldHideDonate() => appFlavor == appFlaborStore && Platform.isIOS;
 
   Future<String> generateAppDebugInfo() => _AppDebugInfoBuilder().build();
