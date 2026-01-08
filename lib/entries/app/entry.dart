@@ -166,6 +166,36 @@ class _AppEntry extends StatelessWidget {
     }
   }
 
+  ColorScheme? getSystemLightColor() => switch (defaultTargetPlatform) {
+    TargetPlatform.android ||
+    TargetPlatform.iOS ||
+    TargetPlatform.macOS => ColorScheme.fromSeed(
+      seedColor: appDefaultThemeMainColor,
+      brightness: Brightness.light,
+      surface: Colors.white,
+    ),
+    _ => null,
+  };
+
+  ColorScheme? getSystemDarkColor() => switch (defaultTargetPlatform) {
+    TargetPlatform.android => ColorScheme.fromSeed(
+      seedColor: appDefaultThemeMainColor,
+      brightness: Brightness.dark,
+      surface: const Color(0xFF0F0F0F),
+    ),
+    TargetPlatform.iOS => ColorScheme.fromSeed(
+      seedColor: appDefaultThemeMainColor,
+      brightness: Brightness.dark,
+      surface: Colors.black,
+    ),
+    TargetPlatform.macOS => ColorScheme.fromSeed(
+      seedColor: appDefaultThemeMainColor,
+      brightness: Brightness.dark,
+      surface: const Color(0xFF1E1E1E),
+    ),
+    _ => null,
+  };
+
   @override
   Widget build(BuildContext context) {
     final fontFamily = getFontFamily();
@@ -209,7 +239,7 @@ class _AppEntry extends StatelessWidget {
                         seedColor: mainColor,
                         brightness: Brightness.light,
                       )
-                    : null,
+                    : getSystemLightColor(),
                 useMaterial3: true,
                 extensions: [customColor],
               );
@@ -232,7 +262,7 @@ class _AppEntry extends StatelessWidget {
                         seedColor: mainColor,
                         brightness: Brightness.dark,
                       )
-                    : null,
+                    : getSystemDarkColor(),
                 useMaterial3: true,
                 extensions: [customColor],
               );
