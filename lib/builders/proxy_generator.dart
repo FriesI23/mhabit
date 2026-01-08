@@ -13,12 +13,9 @@
 // limitations under the License.
 
 // ignore_for_file: depend_on_referenced_packages
-// FIXME: analyzer >= 8.0.0 will use new APIs. Keeping compatibility here.
-// ignore_for_file: deprecated_member_use
 
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
@@ -28,30 +25,30 @@ import 'package:source_gen/source_gen.dart';
 import '../annotations/proxy_annotation.dart';
 
 class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
-  static String getMethodSignature(MethodElement method) {
-    final name = method.name;
+  static String getMethodSignature(MethodElement2 method) {
+    final name = method.name3;
     final returnType = method.returnType.getDisplayString();
 
-    final requiredPostionParams = method.parameters
+    final requiredPostionParams = method.formalParameters
         .where((param) => param.isRequiredPositional)
-        .map((param) => '${param.type.getDisplayString()} ${param.name}')
+        .map((param) => '${param.type.getDisplayString()} ${param.name3}')
         .toList();
 
-    final optionalPostionParams = method.parameters
+    final optionalPostionParams = method.formalParameters
         .where((param) => param.isOptionalPositional)
         .map(
           (param) =>
-              '${param.type.getDisplayString()} ${param.name}'
+              '${param.type.getDisplayString()} ${param.name3}'
               '${param.hasDefaultValue ? " = ${param.defaultValueCode}" : ""}',
         )
         .toList();
 
-    final namedParams = method.parameters
+    final namedParams = method.formalParameters
         .where((param) => param.isNamed)
         .map(
           (param) =>
               '${param.isRequired ? "required " : ""}'
-              '${param.type.getDisplayString()} ${param.name}'
+              '${param.type.getDisplayString()} ${param.name3}'
               '${param.hasDefaultValue ? " = ${param.defaultValueCode}" : ""}',
         )
         .toList();
@@ -104,9 +101,12 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
     buffer.writeln('  _\$${baseClassName}Proxy(this._base);');
     buffer.writeln('');
 
-    void tryToGenDeprecatedFlag(Element element, {int intent = 0}) {
-      final deprecatedFlag = element.metadata.firstWhereOrNull(
-        (annotation) => annotation.isDeprecated,
+    void tryToGenDeprecatedFlag(Element2 element, {int intent = 0}) {
+      if (element is! Annotatable) return;
+      final md = (element as Annotatable).metadata2;
+      if (!md.hasDeprecated) return;
+      final deprecatedFlag = md.annotations.firstWhereOrNull(
+        (a) => a.isDeprecated,
       );
       final data = deprecatedFlag
           ?.computeConstantValue()
@@ -122,28 +122,29 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
 
     final generatedMethods = <String>{};
     for (var method in [
-      targetClass.element.methods,
-      targetClass.allSupertypes.map((t) => t.methods).expand((e) => e),
+      targetClass.element3.methods2,
+      targetClass.allSupertypes.map((t) => t.methods2).expand((e) => e),
     ].expand((e) => e)) {
       if (!method.isPublic ||
           method.isStatic ||
           method.isOperator ||
-          generatedMethods.contains(method.name)) {
+          generatedMethods.contains(method.name3)) {
         continue;
       }
 
-      generatedMethods.add(method.name);
+      final methodName = method.name3;
+      if (methodName != null) generatedMethods.add(methodName);
 
       String generateMethodCall() {
-        final methodName = method.name;
+        final methodName = method.name3;
 
         final positionalParams = <String>[];
         final namedParams = <String>[];
-        for (var param in method.parameters) {
-          final paramName = param.name;
+        for (var param in method.formalParameters) {
+          final paramName = param.name3;
           if (param.isNamed) {
             namedParams.add('$paramName: $paramName');
-          } else {
+          } else if (paramName != null) {
             positionalParams.add(paramName);
           }
         }
@@ -160,44 +161,49 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
     }
 
     final skipBuildFields = <String>{};
-    for (var accessor in targetClass.element.accessors) {
-      if (accessor.isStatic) continue;
-      if (accessor.isGetter) {
-        buffer.writeln('  @override');
-        tryToGenDeprecatedFlag(accessor, intent: 2);
-        buffer.writeln(
-          '  '
-          '${accessor.returnType.getDisplayString()} '
-          'get ${accessor.name} '
-          '=> _base.${accessor.name};',
-        );
-        buffer.writeln('');
-        skipBuildFields.add(accessor.name);
-      }
-      if (accessor.isSetter) {
-        final accessorName = accessor.name.replaceFirst('=', '');
-        buffer.writeln('  @override');
-        tryToGenDeprecatedFlag(accessor, intent: 2);
-        buffer.writeln(
-          '  '
-          'set $accessorName'
-          '(${accessor.parameters.first.type.getDisplayString()} value) '
-          '=> _base.$accessorName = value;',
-        );
-        buffer.writeln('');
-        skipBuildFields.add(accessorName);
-      }
+    // getters
+    for (var getter in targetClass.element3.getters2) {
+      if (getter.isStatic) continue;
+      final getterName = getter.name3;
+      if (getterName == null) continue;
+      buffer.writeln('  @override');
+      tryToGenDeprecatedFlag(getter, intent: 2);
+      buffer.writeln(
+        '  '
+        '${getter.returnType.getDisplayString()} '
+        'get $getterName '
+        '=> _base.$getterName;',
+      );
+      buffer.writeln('');
+      skipBuildFields.add(getterName);
+    }
+    // setters
+    for (var setter in targetClass.element3.setters2) {
+      if (setter.isStatic) continue;
+      final setterNameWithEquals = setter.name3;
+      if (setterNameWithEquals == null) continue;
+      final setterName = setterNameWithEquals.replaceFirst('=', '');
+      buffer.writeln('  @override');
+      tryToGenDeprecatedFlag(setter, intent: 2);
+      buffer.writeln(
+        '  '
+        'set $setterName'
+        '(${setter.formalParameters.first.type.getDisplayString()} value) '
+        '=> _base.$setterName = value;',
+      );
+      buffer.writeln('');
+      skipBuildFields.add(setterName);
     }
 
-    for (var field in targetClass.element.fields) {
-      if (field.isStatic || skipBuildFields.contains(field.name)) continue;
+    for (var field in targetClass.element3.fields2) {
+      if (field.isStatic || skipBuildFields.contains(field.name3)) continue;
       buffer.writeln('  @override');
       tryToGenDeprecatedFlag(field, intent: 2);
       buffer.writeln(
         '  '
         '${field.type.getDisplayString()} '
-        'get ${field.name} '
-        '=> _base.${field.name};',
+        'get ${field.name3} '
+        '=> _base.${field.name3};',
       );
       buffer.writeln('');
       if (!field.isFinal) {
@@ -205,9 +211,9 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
         tryToGenDeprecatedFlag(field, intent: 2);
         buffer.writeln(
           '  '
-          'set ${field.name}'
+          'set ${field.name3}'
           '(${field.type.getDisplayString()} value) '
-          '=> _base.${field.name} = value;',
+          '=> _base.${field.name3} = value;',
         );
         buffer.writeln('');
       }

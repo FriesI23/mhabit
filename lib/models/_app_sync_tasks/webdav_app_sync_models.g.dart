@@ -465,28 +465,28 @@ class _$HttpClientForWebDavProxy implements HttpClient {
   Duration get idleTimeout => _base.idleTimeout;
 
   @override
-  set idleTimeout(Duration value) => _base.idleTimeout = value;
-
-  @override
   Duration? get connectionTimeout => _base.connectionTimeout;
-
-  @override
-  set connectionTimeout(Duration? value) => _base.connectionTimeout = value;
 
   @override
   int? get maxConnectionsPerHost => _base.maxConnectionsPerHost;
 
   @override
-  set maxConnectionsPerHost(int? value) => _base.maxConnectionsPerHost = value;
-
-  @override
   bool get autoUncompress => _base.autoUncompress;
 
   @override
-  set autoUncompress(bool value) => _base.autoUncompress = value;
+  String? get userAgent => _base.userAgent;
 
   @override
-  String? get userAgent => _base.userAgent;
+  set idleTimeout(Duration value) => _base.idleTimeout = value;
+
+  @override
+  set connectionTimeout(Duration? value) => _base.connectionTimeout = value;
+
+  @override
+  set maxConnectionsPerHost(int? value) => _base.maxConnectionsPerHost = value;
+
+  @override
+  set autoUncompress(bool value) => _base.autoUncompress = value;
 
   @override
   set userAgent(String? value) => _base.userAgent = value;
@@ -566,31 +566,16 @@ class _$HttpClientRequestWebDavProxy implements HttpClientRequest {
   bool get persistentConnection => _base.persistentConnection;
 
   @override
-  set persistentConnection(bool value) => _base.persistentConnection = value;
-
-  @override
   bool get followRedirects => _base.followRedirects;
-
-  @override
-  set followRedirects(bool value) => _base.followRedirects = value;
 
   @override
   int get maxRedirects => _base.maxRedirects;
 
   @override
-  set maxRedirects(int value) => _base.maxRedirects = value;
-
-  @override
   int get contentLength => _base.contentLength;
 
   @override
-  set contentLength(int value) => _base.contentLength = value;
-
-  @override
   bool get bufferOutput => _base.bufferOutput;
-
-  @override
-  set bufferOutput(bool value) => _base.bufferOutput = value;
 
   @override
   String get method => _base.method;
@@ -609,4 +594,19 @@ class _$HttpClientRequestWebDavProxy implements HttpClientRequest {
 
   @override
   HttpConnectionInfo? get connectionInfo => _base.connectionInfo;
+
+  @override
+  set persistentConnection(bool value) => _base.persistentConnection = value;
+
+  @override
+  set followRedirects(bool value) => _base.followRedirects = value;
+
+  @override
+  set maxRedirects(int value) => _base.maxRedirects = value;
+
+  @override
+  set contentLength(int value) => _base.contentLength = value;
+
+  @override
+  set bufferOutput(bool value) => _base.bufferOutput = value;
 }
