@@ -2,10 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.1+140-pre
+## 1.23.2+141-pre
 
-- Fixed: Export dialog position on iPadOS
 - Feature: Enable predictive back on Android 14+ (#483)
+- Feature: apply platform-specific colors for system theme (#487)
+- Fixed: Export dialog position on iPadOS
 - Flutter 3.35.7 / Dart toolchain with API migrations (#479)
 - Android: AGP 8.12.3 with Kotlin/Gradle tuning (#479)
 - iOS/macOS: project sync to new toolchain (#479)
