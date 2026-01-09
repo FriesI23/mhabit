@@ -1,8 +1,9 @@
-# Released: 1.23.1+140-pre
+# Released: 1.23.2+141-pre
 
 **✨ New Features**
 
 - Feature: Enable predictive back on Android 14+ (#483)
+- Feature: apply platform-specific colors for system theme (#487)
 
 **🧹 Others**
 
