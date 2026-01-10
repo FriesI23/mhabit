@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.2+141-pre
+## 1.23.3+142
 
 - Feature: Enable predictive back on Android 14+ (#483)
 - Feature: apply platform-specific colors for system theme (#487)
@@ -12,6 +12,7 @@
 - iOS/macOS: project sync to new toolchain (#479)
 - Dependency updates (#479)
 - Code formatting and maintenance cleanup (#479)
+- Update feedback Email address
 
 ## 1.22.10+137
 
