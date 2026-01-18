@@ -21,13 +21,13 @@ class L10nRu extends L10n {
   String get habitEdit_habitName_hintText => 'Название привычки ...';
 
   @override
-  String get habitEdit_colorPicker_title => 'Выберете цвет';
+  String get habitEdit_colorPicker_title => 'Выберите цвет';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'Тип привычки';
 
   @override
-  String get habitEdit_habitType_positiveText => 'Хорошая';
+  String get habitEdit_habitType_positiveText => 'Полезная';
 
   @override
   String get habitEdit_habitType_negativeText => 'Вредная';
@@ -63,15 +63,15 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitEdit_habitDailyGoalUnit_hintText => 'Единицы дневной цель';
+  String get habitEdit_habitDailyGoalUnit_hintText => 'Единицы дневной цели';
 
   @override
   String get habitEdit_habitDailyGoalExtra_hintText =>
-      'Желаемый максимум дневная цель';
+      'Желаемый максимум дневной цели';
 
   @override
   String habitEdit_habitDailyGoalExtra_errorText(num dailyGoal) {
-    return 'invalid value, must be empty or ≥ $dailyGoal';
+    return 'некоректное значение, должно быть пустым или ≥ $dailyGoal';
   }
 
   @override
@@ -79,7 +79,7 @@ class L10nRu extends L10n {
       'Максимальный дневной предел';
 
   @override
-  String get habitEdit_frequencySelector_title => 'Выберете частоту';
+  String get habitEdit_frequencySelector_title => 'Выберите частоту';
 
   @override
   String get habitEdit_habitFreq_daily => 'Ежедневно';
@@ -94,7 +94,7 @@ class L10nRu extends L10n {
   String get habitEdit_habitFreq_permonth => 'Каждый месяц';
 
   @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'раз в месяц';
+  String get habitEdit_habitFreq_permonth_ex01 => 'раз(а) в месяц';
 
   @override
   String get habitEdit_habitFreq_predayfreq => 'Каждый день';
@@ -117,7 +117,7 @@ class L10nRu extends L10n {
       freq,
       locale: localeName,
       other: 'Хотя бы $freq раз в неделю',
-      one: 'В неделю',
+      one: 'Еженедельно',
     );
     return '$_temp0';
   }
@@ -128,7 +128,7 @@ class L10nRu extends L10n {
       freq,
       locale: localeName,
       other: 'Хотя бы $freq раз в месяц',
-      one: 'В месяц',
+      one: 'Ежемесячно',
     );
     return '$_temp0';
   }
@@ -150,7 +150,7 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get habitEdit_targetDays_dialogTitle => 'Выберете целевых дней';
+  String get habitEdit_targetDays_dialogTitle => 'Выберите целевые дни';
 
   @override
   String get habitEdit_targetDays => 'дней';
@@ -162,30 +162,30 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Любой день недели';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'Каждую неделю';
+  String get habitEdit_reminder_freq_weekPrefixText => 'Каждую неделю в';
 
   @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' в любую неделю';
+  String get habitEdit_reminder_freq_weekSubfixText => ' ';
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Любой день месяца';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => 'Каждый месяц';
+  String get habitEdit_reminder_freq_monthPrefixText => 'Каждый месяц в';
 
   @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' в любой месяц';
+  String get habitEdit_reminder_freq_monthSubfixText => ' дни';
 
   @override
   String get habitEdit_reminderQuest_hintText =>
-      'Вопрос, н.п. Вы занимались сегодня?';
+      'Вопрос, напр., Вы занимались сегодня?';
 
   @override
-  String get habitEdit_reminder_dialogTitle => 'Выберете тип напоминания';
+  String get habitEdit_reminder_dialogTitle => 'Выберите тип напоминания';
 
   @override
   String get habitEdit_reminder_dialogType_whenNeeded =>
-      'Когда нужно чекиниться';
+      'Когда нужно проверить';
 
   @override
   String get habitEdit_reminder_dialogType_daily => 'Ежедневно';
@@ -250,7 +250,7 @@ class L10nRu extends L10n {
 
   @override
   String get habitDisplay_emptyImage_text_01 =>
-      'Путешествие в тысячу миль начинается с первого шага';
+      'Путешествие в тысячу миль начинается с одного шага';
 
   @override
   String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
@@ -272,7 +272,7 @@ class L10nRu extends L10n {
 
   @override
   String habitDisplay_archiveHabitsSuccSnackbarText(int count) {
-    return 'Архивировать $count привычек';
+    return 'Архивировано $count привычек';
   }
 
   @override
@@ -359,7 +359,7 @@ class L10nRu extends L10n {
   String get habitDisplay_statsMenu_inProgresTileText => 'В прогрессе';
 
   @override
-  String get habitDisplay_statsMenu_archivedTileText => 'Архивировано';
+  String get habitDisplay_statsMenu_archivedTileText => 'Архивированные';
 
   @override
   String get habitDisplay_statsMenu_popularitySubgroupText =>
@@ -404,10 +404,10 @@ class L10nRu extends L10n {
   String get habitDisplay_sortType_name => 'По Названию';
 
   @override
-  String get habitDisplay_sortType_colorType => 'По цвету';
+  String get habitDisplay_sortType_colorType => 'По Цвету';
 
   @override
-  String get habitDisplay_sortType_progress => 'По Рейту';
+  String get habitDisplay_sortType_progress => 'По Частоте';
 
   @override
   String get habitDisplay_sortType_startT => 'По Дате Начала';
@@ -422,7 +422,7 @@ class L10nRu extends L10n {
   String get habitDisplay_sortTypeDialog_confirm => 'подтвердить';
 
   @override
-  String get habitDisplay_sortTypeDialog_cancel => 'отменить';
+  String get habitDisplay_sortTypeDialog_cancel => 'отмена';
 
   @override
   String get habitDisplay_debug_debugSubgroup_title => '🛠 Отладка';
@@ -512,7 +512,7 @@ class L10nRu extends L10n {
 
   @override
   String habitDetail_summary_body(String score, int days) {
-    return 'Текущее достижение $score, и уже прошло $days дней со времени начала.';
+    return 'Текущая оценка - $score, и уже прошло $days дней со времени начала.';
   }
 
   @override
@@ -586,7 +586,7 @@ class L10nRu extends L10n {
   String get habitDetail_descRecordsNum_titleText => 'Записей';
 
   @override
-  String get habitDetail_scoreChart_title => 'Достижения';
+  String get habitDetail_scoreChart_title => 'Оценка';
 
   @override
   String get habitDetail_scoreChartCombine_dailyText => 'День';
@@ -630,7 +630,7 @@ class L10nRu extends L10n {
       'Показать историческую диаграмму';
 
   @override
-  String get habitDetail_descSubgroup_title => 'Редактор';
+  String get habitDetail_descSubgroup_title => 'Заметка';
 
   @override
   String get habitDetail_otherSubgroup_title => 'Другое';
@@ -654,10 +654,10 @@ class L10nRu extends L10n {
   String get habitDetail_modifyDateTile_title => 'Изменено';
 
   @override
-  String get habitDetail_editHeatmapCal_dateButtonText => 'date';
+  String get habitDetail_editHeatmapCal_dateButtonText => 'дата';
 
   @override
-  String get habitDetail_editHeatmapCal_valueButtonText => 'value';
+  String get habitDetail_editHeatmapCal_valueButtonText => 'значение';
 
   @override
   String get habitDetail_editHeatmapCal_backToToday_tooltipText =>
@@ -706,7 +706,7 @@ class L10nRu extends L10n {
 
   @override
   String get habitDetail_skipReason_bodyHelpText =>
-      'Напишите что нибудь здесь...';
+      'Напишите здесь что-нибудь...';
 
   @override
   String get habitDetail_skipReason_cancelText => 'отмена';
@@ -752,11 +752,11 @@ class L10nRu extends L10n {
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'Выберите Цвет Темы';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'Использовать основной цвет обоев (Android 12+)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
@@ -814,7 +814,7 @@ class L10nRu extends L10n {
 
   @override
   String get appSetting_compactUISwitcher_subtitleText =>
-      'Разрешить привычки проверить таблицу для отображения большего количества контента, но некоторые пользовательские и текст могут показаться меньше.';
+      'Позволяет показывать больше контента в таблице привычек, но некоторые элементы интерфейса и текст могут оказаться меньше.';
 
   @override
   String get appSetting_collapsed_calendar_bararea_titleText =>
@@ -829,7 +829,7 @@ class L10nRu extends L10n {
       'По умолчанию';
 
   @override
-  String get appSetting_reminderSubgroupText => 'Напоминание и оповещение';
+  String get appSetting_reminderSubgroupText => 'Напоминание и уведомление';
 
   @override
   String get appSetting_dailyReminder_titleText => 'Ежедневное напоминание';
@@ -843,7 +843,7 @@ class L10nRu extends L10n {
 
   @override
   String get appSetting_export_subtitleText =>
-      'Привычки экспортируются в формате JSON. Этот файл можно импортировать назад.';
+      'Привычки экспортируются в формате JSON. Этот файл можно импортировать обратно.';
 
   @override
   String get appSetting_import_titleText => 'Импорт';
@@ -853,7 +853,7 @@ class L10nRu extends L10n {
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {
-    return 'Подтвердите импорт $count привычек?';
+    return 'Подтвердить импорт $count привычек?';
   }
 
   @override
@@ -933,7 +933,7 @@ class L10nRu extends L10n {
       'Не удалось частично очистить кэш';
 
   @override
-  String get appSetting_clearCache_snackBar_succText => 'Кэш очищен';
+  String get appSetting_clearCache_snackBar_succText => 'Кэш успешно очищен';
 
   @override
   String get appSetting_clearCache_snackBar_failText =>
@@ -1398,7 +1398,7 @@ class L10nRu extends L10n {
   String get donateWay_paypal => 'Paypal';
 
   @override
-  String get donateWay_buyMeACoffee => 'Buy me a coffee';
+  String get donateWay_buyMeACoffee => 'Купить мне кофе';
 
   @override
   String get donateWay_alipay => 'Alipay';
@@ -1407,7 +1407,7 @@ class L10nRu extends L10n {
   String get donateWay_wechatPay => 'Wechat Pay';
 
   @override
-  String get donateWay_cryptoCurrency => 'Crypto Currencies';
+  String get donateWay_cryptoCurrency => 'Криптовалюты';
 
   @override
   String get donateWay_cryptoCurrency_BTC => 'BTC';
@@ -1517,34 +1517,34 @@ class L10nRu extends L10n {
       'Нажмите чтобы войти в приложение и вписаться вовремя.';
 
   @override
-  String get common_habitColorType_cc1 => 'Deep lilac';
+  String get common_habitColorType_cc1 => 'Глубокий сиреневый';
 
   @override
-  String get common_habitColorType_cc2 => 'Red';
+  String get common_habitColorType_cc2 => 'Красный';
 
   @override
-  String get common_habitColorType_cc3 => 'Purple';
+  String get common_habitColorType_cc3 => 'Фиолетовый';
 
   @override
-  String get common_habitColorType_cc4 => 'Royal blue';
+  String get common_habitColorType_cc4 => 'Королевский синий';
 
   @override
-  String get common_habitColorType_cc5 => 'Dark cyan';
+  String get common_habitColorType_cc5 => 'Тёмно-голубой';
 
   @override
-  String get common_habitColorType_cc6 => 'Green';
+  String get common_habitColorType_cc6 => 'Зелёный';
 
   @override
-  String get common_habitColorType_cc7 => 'Amber';
+  String get common_habitColorType_cc7 => 'Янтарный';
 
   @override
-  String get common_habitColorType_cc8 => 'Orange';
+  String get common_habitColorType_cc8 => 'Оранжевый';
 
   @override
-  String get common_habitColorType_cc9 => 'Lime green';
+  String get common_habitColorType_cc9 => 'Зелёный лайм';
 
   @override
-  String get common_habitColorType_cc10 => 'Dark orchid';
+  String get common_habitColorType_cc10 => 'Тёмная орхидея';
 
   @override
   String common_habitColorType_default(int index) {
@@ -1552,13 +1552,13 @@ class L10nRu extends L10n {
   }
 
   @override
-  String get common_appThemeColor_system => 'System';
+  String get common_appThemeColor_system => 'Системный';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'Основной';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'Динамический';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text =>
@@ -1574,7 +1574,7 @@ class L10nRu extends L10n {
   String get common_customDateTimeFormatPicker_mdy_text => 'Месяц День Год';
 
   @override
-  String get common_customDateTimeFormatPicker_dmy_text => 'День Month Год';
+  String get common_customDateTimeFormatPicker_dmy_text => 'День Месяц Год';
 
   @override
   String get common_customDateTimeFormatPicker_SepTileText => 'Разделитель';
@@ -1657,11 +1657,11 @@ class L10nRu extends L10n {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: '$number habits',
-      one: '1 habit',
-      zero: 'current habit',
+      other: '$number привычек',
+      one: '1 привычку',
+      zero: 'эту привычку',
     );
-    return 'Экспорт $_temp0?';
+    return 'Экспортировать $_temp0?';
   }
 
   @override
@@ -1671,7 +1671,7 @@ class L10nRu extends L10n {
   String get exportConfirmDialog_cancel_buttonText => 'отмена';
 
   @override
-  String get exportConfirmDialog_confirm_buttonText => 'export';
+  String get exportConfirmDialog_confirm_buttonText => 'экспорт';
 
   @override
   String get debug_logLevelTile_title => 'Уровень журнала';
@@ -1778,13 +1778,13 @@ class L10nRu extends L10n {
   String get contributors_tile_title => 'Авторы';
 
   @override
-  String get userAction_tap => 'Tap';
+  String get userAction_tap => 'Нажатие';
 
   @override
-  String get userAction_doubleTap => 'Double';
+  String get userAction_doubleTap => 'Двойное';
 
   @override
-  String get userAction_longTap => 'Long';
+  String get userAction_longTap => 'Долгое';
 
   @override
   String get channelName_habitReminder => 'Напоминание о привычках';

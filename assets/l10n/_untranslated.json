@@ -2060,16 +2060,11 @@
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
     "appSetting_appThemeColorTile_titleText",
-    "appSetting_appThemeColorChosenDiloag_titleText",
-    "appSetting_appThemeColorChosenDialog_subTitleText_android",
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "experimentalFeatures_habitSearchTile_titleText",
-    "experimentalFeatures_habitSearchTile_subtitleText",
-    "common_appThemeColor_system",
-    "common_appThemeColor_primary",
-    "common_appThemeColor_dynamic"
+    "experimentalFeatures_habitSearchTile_subtitleText"
   ],
 
   "tr": [
