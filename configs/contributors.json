@@ -205,7 +205,13 @@
                 "email": "huynhloc.contact@gmail.com"
             }
         ],
-        "zh": [ 1 ],
+        "zh": [
+            1,
+            {
+                "name": "ADAIBLOG",
+                "email": "adaigeek@outlook.com"
+            }
+        ],
         "zh-hant": [
             {
                 "name": "PeterDaveHello",
