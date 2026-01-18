@@ -303,7 +303,13 @@ class L10nZh extends L10n {
 
   @override
   String habitDisplay_exportHabitsSuccSnackbarText(int count) {
-    return '已导出 $count 个习惯';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已导出 $count 个习惯。',
+      one: '已导出习惯。',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -412,7 +418,7 @@ class L10nZh extends L10n {
   String get habitDisplay_searchBar_hintText => '搜索习惯';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => '激活中';
+  String get habitDisplay_searchFilter_ongoing => '进行中';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
@@ -434,10 +440,10 @@ class L10nZh extends L10n {
   String get habitDisplay_tab_habits_label => '习惯';
 
   @override
-  String get habitDisplay_tab_today_label => '今日';
+  String get habitDisplay_tab_today_label => '今天';
 
   @override
-  String get habitToday_appBar_title => '今日';
+  String get habitToday_appBar_title => '今天';
 
   @override
   String get habitToday_image_desc => '今日达成！';
@@ -722,7 +728,7 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      '使用壁纸主色（Android 12+）';
+      '使用壁纸主色（安卓 12 及以上）';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
@@ -933,19 +939,19 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get appSync_nowTile_text_noDate => '上次同步：未知';
+  String get appSync_nowTile_text_noDate => '最后一次同步：未知';
 
   @override
   String appSync_nowTile_text(String dateStr) {
-    return '上次同步：$dateStr';
+    return '最后一次同步：$dateStr';
   }
 
   @override
-  String get appSync_nowTile_errorText_noDate => '上次同步（错误）：未知';
+  String get appSync_nowTile_errorText_noDate => '最后一次同步（错误）：未知';
 
   @override
   String appSync_nowTile_errorText(String dateStr) {
-    return '上次同步（错误）：$dateStr';
+    return '最后一次同步（错误）：$dateStr';
   }
 
   @override
@@ -967,11 +973,11 @@ class L10nZh extends L10n {
   String get appSync_nowTile_cancellingText => '取消中……';
 
   @override
-  String get appSync_nowTile_cancelText_noDate => '上次同步（已取消）：未知';
+  String get appSync_nowTile_cancelText_noDate => '最后一次同步（已取消）：未知';
 
   @override
   String appSync_nowTile_cancelText(String dateStr) {
-    return '上次同步（已取消）：$dateStr';
+    return '最后一次同步（已取消）：$dateStr';
   }
 
   @override
@@ -984,7 +990,7 @@ class L10nZh extends L10n {
 
   @override
   String appSync_failedTile_webdavMulti_counterText(String reason, int count) {
-    return '$reason，数量：$count';
+    return '$reason：$count';
   }
 
   @override

@@ -179,6 +179,10 @@
             {
                 "name": "Bora Atıc",
                 "email": "boratici.acc@gmail.com"
+            },
+            {
+                "name": "Rudoy Artyom",
+                "email": "rudoyartyom@proton.me"
             }
         ],
         "uk": [
@@ -201,7 +205,13 @@
                 "email": "huynhloc.contact@gmail.com"
             }
         ],
-        "zh": [ 1 ],
+        "zh": [
+            1,
+            {
+                "name": "ADAIBLOG",
+                "email": "adaigeek@outlook.com"
+            }
+        ],
         "zh-hant": [
             {
                 "name": "PeterDaveHello",

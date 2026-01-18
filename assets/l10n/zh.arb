@@ -290,7 +290,7 @@
       }
     }
   },
-  "habitDisplay_exportHabitsSuccSnackbarText": "已导出 {count} 个习惯",
+  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {已导出习惯。} other {已导出 {count} 个习惯。}}",
   "@habitDisplay_exportHabitsSuccSnackbarText": {
     "placeholders": {
       "count": {
@@ -370,7 +370,7 @@
   "@habitDisplay_debug_debugSubgroup_title": {},
   "habitDisplay_searchBar_hintText": "搜索习惯",
   "@habitDisplay_searchBar_hintText": {},
-  "habitDisplay_searchFilter_ongoing": "激活中",
+  "habitDisplay_searchFilter_ongoing": "进行中",
   "@habitDisplay_searchFilter_ongoing": {},
   "habitDisplay_searchFilter_ongoing_desc": "显示当前活跃且正在进行的习惯（未归档或删除）。",
   "@habitDisplay_searchFilter_ongoing_desc": {},
@@ -384,9 +384,9 @@
   "@habitDisplay_searchFilter_clearFilter": {},
   "habitDisplay_tab_habits_label": "习惯",
   "@habitDisplay_tab_habits_label": {},
-  "habitDisplay_tab_today_label": "今日",
+  "habitDisplay_tab_today_label": "今天",
   "@habitDisplay_tab_today_label": {},
-  "habitToday_appBar_title": "今日",
+  "habitToday_appBar_title": "今天",
   "@habitToday_appBar_title": {},
   "habitToday_image_desc": "今日达成！",
   "@habitToday_image_desc": {
@@ -634,7 +634,7 @@
   "@appSetting_appThemeColorTile_titleText": {},
   "appSetting_appThemeColorChosenDiloag_titleText": "选择主题颜色",
   "@appSetting_appThemeColorChosenDiloag_titleText": {},
-  "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用壁纸主色（Android 12+）",
+  "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用壁纸主色（安卓 12 及以上）",
   "@appSetting_appThemeColorChosenDialog_subTitleText_android": {},
   "appSetting_appThemeColorChosenDialog_subTitleText_linux": "使用 GTK+ 主题的选定背景色",
   "@appSetting_appThemeColorChosenDialog_subTitleText_linux": {},
@@ -808,9 +808,9 @@
       }
     }
   },
-  "appSync_nowTile_text_noDate": "上次同步：未知",
+  "appSync_nowTile_text_noDate": "最后一次同步：未知",
   "@appSync_nowTile_text_noDate": {},
-  "appSync_nowTile_text": "上次同步：{dateStr}",
+  "appSync_nowTile_text": "最后一次同步：{dateStr}",
   "@appSync_nowTile_text": {
     "placeholders": {
       "dateStr": {
@@ -819,9 +819,9 @@
       }
     }
   },
-  "appSync_nowTile_errorText_noDate": "上次同步（错误）：未知",
+  "appSync_nowTile_errorText_noDate": "最后一次同步（错误）：未知",
   "@appSync_nowTile_errorText_noDate": {},
-  "appSync_nowTile_errorText": "上次同步（错误）：{dateStr}",
+  "appSync_nowTile_errorText": "最后一次同步（错误）：{dateStr}",
   "@appSync_nowTile_errorText": {
     "placeholders": {
       "dateStr": {
@@ -847,9 +847,9 @@
   },
   "appSync_nowTile_cancellingText": "取消中……",
   "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "上次同步（已取消）：未知",
+  "appSync_nowTile_cancelText_noDate": "最后一次同步（已取消）：未知",
   "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_cancelText": "上次同步（已取消）：{dateStr}",
+  "appSync_nowTile_cancelText": "最后一次同步（已取消）：{dateStr}",
   "@appSync_nowTile_cancelText": {
     "placeholders": {
       "dateStr": {
@@ -869,7 +869,7 @@
       }
     }
   },
-  "appSync_failedTile_webdavMulti_counterText": "{reason}，数量：{count}",
+  "appSync_failedTile_webdavMulti_counterText": "{reason}：{count}",
   "@appSync_failedTile_webdavMulti_counterText": {
     "placeholders": {
       "reason": {
