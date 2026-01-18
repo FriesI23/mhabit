@@ -728,7 +728,7 @@ class L10nZh extends L10n {
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      '使用壁纸主色（安卓 12+）';
+      '使用壁纸主色（安卓 12 及以上）';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
@@ -990,7 +990,7 @@ class L10nZh extends L10n {
 
   @override
   String appSync_failedTile_webdavMulti_counterText(String reason, int count) {
-    return '$reason: $count';
+    return '$reason：$count';
   }
 
   @override
