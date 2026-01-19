@@ -88,10 +88,8 @@ class L10nAr extends L10n {
       'في الأسبوع %%time%% مرة في الأسبوع';
 
   @override
-  String get habitEdit_habitFreq_permonth => 'في الشهر';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'مرة في الشهر';
+  String get habitEdit_habitFreq_permonth_text =>
+      'في الشهر %%time%% مرة في الشهر';
 
   @override
   String get habitEdit_habitFreq_predayfreq => 'في كل عدد من الأيام';

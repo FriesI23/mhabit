@@ -88,10 +88,7 @@ class L10nHu extends L10n {
   String get habitEdit_habitFreq_perweek_text => '%%time%% alkalommal hetente';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'alkalommal havonta';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% alkalommal havonta';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';

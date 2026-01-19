@@ -86,10 +86,7 @@ class L10nZh extends L10n {
   String get habitEdit_habitFreq_perweek_text => '每周完成%%time%%次';
 
   @override
-  String get habitEdit_habitFreq_permonth => '每月完成';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => '次';
+  String get habitEdit_habitFreq_permonth_text => '每月完成%%time%%次';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '次';
@@ -1783,10 +1780,7 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_habitFreq_perweek_text => '%%time%%次／週';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => '次／月';
+  String get habitEdit_habitFreq_permonth_text => '%%time%%次／月';
 
   @override
   String get habitEdit_habitFreq_predayfreq => '';
