@@ -101,16 +101,8 @@
   "@habitEdit_habitFreq_perweek_text": {},
   "habitEdit_habitFreq_permonth_text": "%%time%% mal pro Monat",
   "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "mal in",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "Tagen",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "Wenn auf 1 gestellt, wird die Liste umgekehrt."
-  },
+  "habitEdit_habitFreq_predayfreq_text": "%%time%% mal in %%day%% Tagen",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Täglich",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Pro Woche} other{Mindestens {freq}mal pro Woche}}",

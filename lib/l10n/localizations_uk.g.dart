@@ -92,16 +92,8 @@ class L10nUk extends L10n {
   String get habitEdit_habitFreq_permonth_text => 'i %%time%% разів за місяць';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => 'І';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'разів за';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'днів';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      'І %%time%% разів за %%day%% днів';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Щоденно';

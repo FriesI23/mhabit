@@ -101,16 +101,8 @@
   "@habitEdit_habitFreq_perweek_text": {},
   "habitEdit_habitFreq_permonth_text": "%%time%%次／月",
   "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "次／",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "天",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "如果設定為 1，顯示的小工具列表將會反轉。"
-  },
+  "habitEdit_habitFreq_predayfreq_text": "%%time%%次／%%day%%天",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "每日",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{每週} other{每週至少 {freq} 次}}",

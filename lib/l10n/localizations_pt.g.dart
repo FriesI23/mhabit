@@ -92,16 +92,8 @@ class L10nPt extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% Vezes por mês';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'Dias';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% Vezes a cada %%day%% Dias';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Diariamente';

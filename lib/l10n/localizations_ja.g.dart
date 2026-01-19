@@ -89,16 +89,7 @@ class L10nJa extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%%回／月';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => '回';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => '日あたり';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text => '%%time%%回%%day%%日あたり';
 
   @override
   String get habitEdit_habitFreq_show_daily => '毎日';

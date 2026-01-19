@@ -101,16 +101,8 @@
   "@habitEdit_habitFreq_perweek_text": {},
   "habitEdit_habitFreq_permonth_text": "Каждый месяц %%time%% раз(а) в месяц",
   "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq": "Каждый день",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "раз в",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "дней",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "Если установить на 1, отображение виджета списка будет обратным."
-  },
+  "habitEdit_habitFreq_predayfreq_text": "Каждый день %%time%% раз в %%day%% дней",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Ежедневно",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Еженедельно} other{Хотя бы {freq} раз в неделю}}",

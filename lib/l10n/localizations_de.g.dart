@@ -91,16 +91,8 @@ class L10nDe extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% mal pro Monat';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'mal in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'Tagen';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% mal in %%day%% Tagen';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Täglich';

@@ -91,16 +91,8 @@ class L10nEs extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% veces al mes';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => ' ';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'veces en';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'días';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% veces en %%day%% días';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Diariamente';

@@ -94,16 +94,8 @@ class L10nPl extends L10n {
       'Miesięcznie %%time%% razy w miesiącu';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => 'W określonym okresie';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'razy w ciągu';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'dni';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      'W określonym okresie %%time%% razy w ciągu %%day%% dni';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Codziennie';

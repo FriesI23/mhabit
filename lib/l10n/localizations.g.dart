@@ -264,29 +264,11 @@ abstract class L10n {
   /// **'%%time%% times per month'**
   String get habitEdit_habitFreq_permonth_text;
 
-  /// No description provided for @habitEdit_habitFreq_predayfreq.
+  /// No description provided for @habitEdit_habitFreq_predayfreq_text.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_habitFreq_predayfreq;
-
-  /// No description provided for @habitEdit_habitFreq_predayfreq_ex01.
-  ///
-  /// In en, this message translates to:
-  /// **'times in'**
-  String get habitEdit_habitFreq_predayfreq_ex01;
-
-  /// No description provided for @habitEdit_habitFreq_predayfreq_ex02.
-  ///
-  /// In en, this message translates to:
-  /// **'days'**
-  String get habitEdit_habitFreq_predayfreq_ex02;
-
-  /// If set to 1, the display widget list will be reversed.
-  ///
-  /// In en, this message translates to:
-  /// **'0'**
-  String get habitEdit_habitFreq_predayfreq_reverse_flag;
+  /// **'%%time%% times in %%day%% days'**
+  String get habitEdit_habitFreq_predayfreq_text;
 
   /// No description provided for @habitEdit_habitFreq_show_daily.
   ///

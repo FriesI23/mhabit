@@ -91,16 +91,8 @@ class L10nTr extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% kez ayda';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'gün';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'günde';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% gün %%day%% günde';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Günlük';

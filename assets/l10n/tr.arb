@@ -101,16 +101,8 @@
   "@habitEdit_habitFreq_perweek_text": {},
   "habitEdit_habitFreq_permonth_text": "%%time%% kez ayda",
   "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq": "",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "gün",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "günde",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
-  },
+  "habitEdit_habitFreq_predayfreq_text": "%%time%% gün %%day%% günde",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Günlük",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Haftada bir} other{Haftada en az {freq} kez}}",

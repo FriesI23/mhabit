@@ -101,14 +101,8 @@
   "@habitEdit_habitFreq_perweek_text": {},
   "habitEdit_habitFreq_permonth_text": "%%time%% volte al mese",
   "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "volte in",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "giorni",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
-  },
+  "habitEdit_habitFreq_predayfreq_text": "%%time%% volte in %%day%% giorni",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Ogni Giorno",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{A settimana} other{Almeno {freq} volte a settimana}}",

@@ -91,16 +91,8 @@ class L10nFa extends L10n {
   String get habitEdit_habitFreq_permonth_text => 'ماهیانه %%time%% بار در ماه';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => 'تناوب‌روزها';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'بار در';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'روز';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '۰';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      'تناوب‌روزها %%time%% بار در %%day%% روز';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'روزانه';

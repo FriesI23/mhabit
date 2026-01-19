@@ -91,16 +91,8 @@ class L10nCs extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% times per month';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% times in %%day%% days';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Denní';

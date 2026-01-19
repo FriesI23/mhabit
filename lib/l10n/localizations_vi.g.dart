@@ -92,16 +92,8 @@ class L10nVi extends L10n {
   String get habitEdit_habitFreq_permonth_text => '%%time%% số lần mỗi tháng';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'số lần mỗi';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'ngày';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% số lần mỗi %%day%% ngày';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Hàng ngày';

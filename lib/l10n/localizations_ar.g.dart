@@ -92,16 +92,8 @@ class L10nAr extends L10n {
       'في الشهر %%time%% مرة في الشهر';
 
   @override
-  String get habitEdit_habitFreq_predayfreq => 'في كل عدد من الأيام';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'مرات في';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'أيام';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% مرات في %%day%% أيام';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'يومياً';
