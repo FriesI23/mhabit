@@ -153,16 +153,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "每日(按周)",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "每周",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": "",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "每周{days}",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "逗号分隔的星期列表，用于每周提醒句子。",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "一, 三"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "每日(按月)",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "每月",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": "日",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "每月{days}日",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "逗号分隔的日期列表，用于每月提醒句子。",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "提一个问题, 比如\"今天完成作业了么?\"",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "提醒频率",

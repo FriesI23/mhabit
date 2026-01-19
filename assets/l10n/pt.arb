@@ -140,12 +140,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "Qualquer dia da semana",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " em cada semana",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "{days} em cada semana",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "Comma-separated day list used in the weekly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "Mon, Tue"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "Qualquer dia do mês",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " em cada mês",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "{days} em cada mês",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "Comma-separated day list used in the monthly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "Questão, p.ex. Você se exercitou hoje?",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "Escolher o tipo de lembrete",

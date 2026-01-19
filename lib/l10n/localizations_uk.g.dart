@@ -149,19 +149,17 @@ class L10nUk extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Будь-який день тижня';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'і';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' кожного тижня';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return 'і $days кожного тижня';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Будь-який день місяця';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => 'I';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' в кожному місяці';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return 'I $days в кожному місяці';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

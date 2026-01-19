@@ -150,20 +150,18 @@ class L10nVi extends L10n {
       'Bất kỳ ngày nào trong tuần';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' vào mỗi tuần';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days vào mỗi tuần';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText =>
       'Bất kỳ ngày nào trong tháng';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' vào mỗi tháng';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days vào mỗi tháng';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

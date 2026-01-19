@@ -324,17 +324,11 @@ abstract class L10n {
   /// **'Any day of week'**
   String get habitEdit_reminder_freq_weekHelpText;
 
-  /// No description provided for @habitEdit_reminder_freq_weekPrefixText.
+  /// Comma-separated day list used in the weekly reminder sentence.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_reminder_freq_weekPrefixText;
-
-  /// No description provided for @habitEdit_reminder_freq_weekSubfixText.
-  ///
-  /// In en, this message translates to:
-  /// **' in every week'**
-  String get habitEdit_reminder_freq_weekSubfixText;
+  /// **'{days} in every week'**
+  String habitEdit_reminder_freq_week_text(String days);
 
   /// No description provided for @habitEdit_reminder_freq_monthHelpText.
   ///
@@ -342,17 +336,11 @@ abstract class L10n {
   /// **'Any day of month'**
   String get habitEdit_reminder_freq_monthHelpText;
 
-  /// No description provided for @habitEdit_reminder_freq_monthPrefixText.
+  /// Comma-separated day list used in the monthly reminder sentence.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_reminder_freq_monthPrefixText;
-
-  /// No description provided for @habitEdit_reminder_freq_monthSubfixText.
-  ///
-  /// In en, this message translates to:
-  /// **' in every month'**
-  String get habitEdit_reminder_freq_monthSubfixText;
+  /// **'{days} in every month'**
+  String habitEdit_reminder_freq_month_text(String days);
 
   /// No description provided for @habitEdit_reminderQuest_hintText.
   ///

@@ -151,32 +151,27 @@ class HabitReminder implements JsonAdaptor {
         if (extra.length >= weeklyExtraAll.length) {
           return l10n.habitEdit_reminder_freq_weekHelpText;
         } else {
-          return [
-            l10n.habitEdit_reminder_freq_weekPrefixText,
-            extra
-                .sorted((a, b) => a.compareTo(b))
-                .map((e) => l10n.getHabitEditReminderWeekDayText(e))
-                .join(', '),
-            l10n.habitEdit_reminder_freq_weekSubfixText,
-          ].join();
+          final days = extra
+              .sorted((a, b) => a.compareTo(b))
+              .map((e) => l10n.getHabitEditReminderWeekDayText(e))
+              .join(', ');
+          return l10n.habitEdit_reminder_freq_week_text(days);
         }
       case HabitReminderType.month:
         if (extra.length >= monthlyExtraAll.length) {
           return l10n.habitEdit_reminder_freq_monthHelpText;
         } else {
-          return [
-            l10n.habitEdit_reminder_freq_monthPrefixText,
-            getContinuousRanges(extra.sorted((a, b) => a.compareTo(b)))
-                .map((e) {
-                  if (e.item1 == e.item2) {
-                    return e.item1.toString();
-                  } else {
-                    return "${e.item1}-${e.item2}";
-                  }
-                })
-                .join(', '),
-            l10n.habitEdit_reminder_freq_monthSubfixText,
-          ].join();
+          final days =
+              getContinuousRanges(extra.sorted((a, b) => a.compareTo(b)))
+                  .map((e) {
+                    if (e.item1 == e.item2) {
+                      return e.item1.toString();
+                    } else {
+                      return "${e.item1}-${e.item2}";
+                    }
+                  })
+                  .join(', ');
+          return l10n.habitEdit_reminder_freq_month_text(days);
         }
     }
   }

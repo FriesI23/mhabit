@@ -148,19 +148,17 @@ class L10nTr extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Haftanın her günü';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' her hafta';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days her hafta';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Ayın her günü';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' her ay';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days her ay';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

@@ -149,19 +149,17 @@ class L10nPt extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Qualquer dia da semana';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' em cada semana';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days em cada semana';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Qualquer dia do mês';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' em cada mês';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days em cada mês';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

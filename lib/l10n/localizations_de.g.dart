@@ -148,19 +148,17 @@ class L10nDe extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Jeden Tag der Woche';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in jeder Woche';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days in jeder Woche';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Jeder Tag des Monats';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' jeden Monat';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days jeden Monat';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

@@ -148,19 +148,17 @@ class L10nFa extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'هر روز هفته';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' هفته‌ای';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days هفته‌ای';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'هر روز ماه';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' ماهانه';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days ماهانه';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

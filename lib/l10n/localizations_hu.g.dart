@@ -148,19 +148,17 @@ class L10nHu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'A hét bármely napja';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' minden héten';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days minden héten';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'A hónap bármely napja';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' minden hónapban';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days minden hónapban';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => 'Kérdés, pl.: Mozogtál ma?';

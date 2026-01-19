@@ -145,19 +145,17 @@ class L10nZh extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => '每日(按周)';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '每周';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => '';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '每周$days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => '每日(按月)';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '每月';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => '日';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '每月$days日';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => '提一个问题, 比如\"今天完成作业了么?\"';
@@ -1830,19 +1828,17 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_reminder_freq_weekHelpText => '每週的任一天';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '每週';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => '';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '每週$days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => '每月的任一天';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '每月';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => '';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '每月$days';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => '問題，例如：你今天運動了嗎？';

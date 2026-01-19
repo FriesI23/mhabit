@@ -150,19 +150,17 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Любой день недели';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'Каждую неделю в';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' ';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return 'Каждую неделю в $days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Любой день месяца';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => 'Каждый месяц в';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' дни';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return 'Каждый месяц в $days дни';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

@@ -145,19 +145,17 @@ class L10nJa extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => '特定の曜日に繰り返し';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' 毎週';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days 毎週';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => '特定の日に繰り返し';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' 毎月';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days 毎月';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => '質問例: 今日は運動しましたか。';

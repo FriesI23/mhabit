@@ -148,19 +148,17 @@ class L10nHe extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'כל יום בשבוע';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' בכל שבוע';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days בכל שבוע';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'כל יום בחודש';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' בכל חודש';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days בכל חודש';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => 'שאלה, למשל: עשית היום כושר?';
