@@ -260,7 +260,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     HabitDisplaySortDirection sortDirection,
   ) {
     _sortType = sortType;
-    _sortDirection = _sortDirection;
+    _sortDirection = sortDirection;
   }
 
   HabitSortCache? getHabitBySortId(int index) => _lastSortedDataCache[index];
@@ -284,6 +284,7 @@ class HabitsTodayViewModel extends ChangeNotifier
         .map((e) => HabitSummaryDataSortCache(data: e))
         .toList();
     _replaceSortbaleCache(newData);
+    _pruneExpandStatus(newData);
   }
 
   void _replaceSortbaleCache(List<HabitSortCache> cache) {
@@ -384,6 +385,23 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   bool? getHabitExpandStatus(HabitUUID uuid) => _expandStatus[uuid];
+
+  bool _pruneExpandStatus(Iterable<HabitSortCache> cache) {
+    final allow = cache
+        .whereType<HabitSummaryDataSortCache>()
+        .map((e) => e.uuid)
+        .toSet();
+    var changed = false;
+    _expandStatus.removeWhere((uuid, _) {
+      final removed = !allow.contains(uuid);
+      changed = changed || removed;
+      return removed;
+    });
+    return changed;
+  }
+
+  bool _removeHabitExpandStatus(HabitUUID uuid) =>
+      _expandStatus.remove(uuid) != null;
   //#endregion
 
   //#region actions
@@ -419,6 +437,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
     _resortData();
+    _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();
     return result.data;
   }
@@ -454,6 +473,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     _updateHabitAutoCompleteStatistics(data);
     _updateHabitReminder(data);
     _resortData();
+    _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();
     return result.data;
   }
