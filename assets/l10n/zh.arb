@@ -502,7 +502,7 @@
       }
     }
   },
-  "habitDetail_descTargetDays_unitText": "",
+  "habitDetail_descTargetDays_unitText": "天",
   "@habitDetail_descTargetDays_unitText": {},
   "habitDetail_descRecordsNum_titleText": "记录总数",
   "@habitDetail_descRecordsNum_titleText": {},

@@ -543,7 +543,7 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get habitDetail_descTargetDays_unitText => '';
+  String get habitDetail_descTargetDays_unitText => '天';
 
   @override
   String get habitDetail_descRecordsNum_titleText => '记录总数';
