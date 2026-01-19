@@ -86,10 +86,8 @@ class L10nPl extends L10n {
   String get habitEdit_habitFreq_daily => 'Codziennie';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'Tygodniowo';
-
-  @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'razy w tygodniu';
+  String get habitEdit_habitFreq_perweek_text =>
+      'Tygodniowo %%time%% razy w tygodniu';
 
   @override
   String get habitEdit_habitFreq_permonth => 'Miesięcznie';

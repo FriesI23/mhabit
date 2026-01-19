@@ -85,10 +85,8 @@ class L10nRu extends L10n {
   String get habitEdit_habitFreq_daily => 'Ежедневно';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'Каждую неделю';
-
-  @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'раз в неделю';
+  String get habitEdit_habitFreq_perweek_text =>
+      'Каждую неделю %%time%% раз в неделю';
 
   @override
   String get habitEdit_habitFreq_permonth => 'Каждый месяц';

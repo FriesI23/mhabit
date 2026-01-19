@@ -85,10 +85,7 @@ class L10nCs extends L10n {
   String get habitEdit_habitFreq_daily => 'Denní';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
-
-  @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'za týden';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% za týden';
 
   @override
   String get habitEdit_habitFreq_permonth => '';

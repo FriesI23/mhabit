@@ -85,10 +85,7 @@ class L10nHe extends L10n {
   String get habitEdit_habitFreq_daily => 'יומית';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
-
-  @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'פעמים בשבוע';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% פעמים בשבוע';
 
   @override
   String get habitEdit_habitFreq_permonth => '';

@@ -252,17 +252,11 @@ abstract class L10n {
   /// **'Daily'**
   String get habitEdit_habitFreq_daily;
 
-  /// No description provided for @habitEdit_habitFreq_perweek.
+  /// No description provided for @habitEdit_habitFreq_perweek_text.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_habitFreq_perweek;
-
-  /// No description provided for @habitEdit_habitFreq_perweek_ex01.
-  ///
-  /// In en, this message translates to:
-  /// **'times per week'**
-  String get habitEdit_habitFreq_perweek_ex01;
+  /// **'%%time%% times per week'**
+  String get habitEdit_habitFreq_perweek_text;
 
   /// No description provided for @habitEdit_habitFreq_permonth.
   ///

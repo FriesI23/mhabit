@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../common/consts.dart';
+import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../models/habit_form.dart';
@@ -285,16 +286,19 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
-    return [
-      if (l10n != null && l10n.habitEdit_habitFreq_perweek.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_perweek),
-      _HabitFrequencyTextField(
-        controller: controller,
-        onInputSubmmit: onInputSubmmit,
-      ),
-      if (l10n != null && l10n.habitEdit_habitFreq_perweek_ex01.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_perweek_ex01),
-    ];
+    final text = l10n?.habitEdit_habitFreq_perweek_text;
+    if (text == null) return const [];
+    return splitByTokens(text, const ["%%time%%"])
+        .map(
+          (e) => switch (e) {
+            "%%time%%" => _HabitFrequencyTextField(
+              controller: controller,
+              onInputSubmmit: onInputSubmmit,
+            ),
+            _ => Text(e),
+          },
+        )
+        .toList();
   }
 
   @override

@@ -350,3 +350,22 @@ UiLayoutType computeLayoutType({
     return (isWidthLarger && isHeightLarger) ? UiLayoutType.l : UiLayoutType.s;
   }
 }
+
+List<String> splitByTokens(String input, List<String> tokens) {
+  if (tokens.isEmpty) return [input];
+  final escaped = tokens.map(RegExp.escape).join('|');
+  final reg = RegExp('($escaped)');
+  final result = <String>[];
+  int last = 0;
+  for (final m in reg.allMatches(input)) {
+    if (m.start > last) {
+      result.add(input.substring(last, m.start));
+    }
+    result.add(m.group(0)!);
+    last = m.end;
+  }
+  if (last < input.length) {
+    result.add(input.substring(last));
+  }
+  return result;
+}

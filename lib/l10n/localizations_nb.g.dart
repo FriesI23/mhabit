@@ -85,10 +85,7 @@ class L10nNb extends L10n {
   String get habitEdit_habitFreq_daily => 'Daily';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
-
-  @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'times per week';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% times per week';
 
   @override
   String get habitEdit_habitFreq_permonth => '';

@@ -26,7 +26,6 @@
     "habitEdit_habitDailyGoal_negativeErrorText02",
     "habitEdit_habitDailyGoalUnit_hintText",
     "habitEdit_habitDailyGoalExtra_errorText",
-    "habitEdit_habitFreq_perweek",
     "habitEdit_habitFreq_permonth",
     "habitEdit_habitFreq_permonth_ex01",
     "habitEdit_habitFreq_predayfreq",
@@ -937,7 +936,6 @@
     "habitEdit_habitDailyGoalExtra_hintText",
     "habitEdit_habitDailyGoalExtra_errorText",
     "habitEdit_habitDailyGoalExtra_negativeHintText",
-    "habitEdit_habitFreq_perweek",
     "habitEdit_habitFreq_permonth",
     "habitEdit_habitFreq_predayfreq",
     "habitEdit_habitFreq_predayfreq_ex01",
@@ -1419,8 +1417,7 @@
     "habitEdit_habitDailyGoalExtra_negativeHintText",
     "habitEdit_frequencySelector_title",
     "habitEdit_habitFreq_daily",
-    "habitEdit_habitFreq_perweek",
-    "habitEdit_habitFreq_perweek_ex01",
+    "habitEdit_habitFreq_perweek_text",
     "habitEdit_habitFreq_permonth",
     "habitEdit_habitFreq_permonth_ex01",
     "habitEdit_habitFreq_predayfreq",
@@ -1886,7 +1883,6 @@
   ],
 
   "pt": [
-    "habitEdit_habitFreq_perweek",
     "habitEdit_habitFreq_permonth",
     "habitEdit_habitFreq_predayfreq",
     "habitEdit_habitFreq_predayfreq_ex01",
