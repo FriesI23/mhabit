@@ -85,28 +85,14 @@ class L10nFa extends L10n {
   String get habitEdit_habitFreq_daily => 'روزانه';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'هفتگی';
+  String get habitEdit_habitFreq_perweek_text => 'هفتگی %%time%% بار در هفته';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'بار در هفته';
+  String get habitEdit_habitFreq_permonth_text => 'ماهیانه %%time%% بار در ماه';
 
   @override
-  String get habitEdit_habitFreq_permonth => 'ماهیانه';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'بار در ماه';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => 'تناوب‌روزها';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'بار در';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'روز';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '۰';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      'تناوب‌روزها %%time%% بار در %%day%% روز';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'روزانه';
@@ -162,19 +148,17 @@ class L10nFa extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'هر روز هفته';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' هفته‌ای';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days هفته‌ای';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'هر روز ماه';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' ماهانه';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days ماهانه';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

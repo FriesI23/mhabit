@@ -84,28 +84,16 @@ class L10nAr extends L10n {
   String get habitEdit_habitFreq_daily => 'يومياً';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'في الأسبوع';
+  String get habitEdit_habitFreq_perweek_text =>
+      'في الأسبوع %%time%% مرة في الأسبوع';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'مرة في الأسبوع';
+  String get habitEdit_habitFreq_permonth_text =>
+      'في الشهر %%time%% مرة في الشهر';
 
   @override
-  String get habitEdit_habitFreq_permonth => 'في الشهر';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'مرة في الشهر';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => 'في كل عدد من الأيام';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'مرات في';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'أيام';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% مرات في %%day%% أيام';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'يومياً';
@@ -161,19 +149,17 @@ class L10nAr extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'أي يوم في الأسبوع';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'كل أسبوع';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' •في كل أسبوع';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return 'كل أسبوع $days •في كل أسبوع';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'أي يوم في الشهر';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => 'كل شهر';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' •في كل شهر';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return 'كل شهر $days •في كل شهر';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => 'سؤال، مثلاً: هل تمرنت اليوم؟';

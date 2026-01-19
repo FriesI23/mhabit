@@ -85,28 +85,14 @@ class L10nCs extends L10n {
   String get habitEdit_habitFreq_daily => 'Denní';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% za týden';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'za týden';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% times per month';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'times per month';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'days';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% times in %%day%% days';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Denní';
@@ -162,19 +148,17 @@ class L10nCs extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Any day of week';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in every week';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days in every week';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Kterýkoli den v měsíci';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' in every month';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days in every month';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

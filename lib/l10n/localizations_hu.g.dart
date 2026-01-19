@@ -85,28 +85,14 @@ class L10nHu extends L10n {
   String get habitEdit_habitFreq_daily => 'Napi';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% alkalommal hetente';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'alkalommal hetente';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% alkalommal havonta';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'alkalommal havonta';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'alkalommal';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'nap alatt';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% alkalommal %%day%% nap alatt';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Napi';
@@ -162,19 +148,17 @@ class L10nHu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'A hét bármely napja';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' minden héten';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days minden héten';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'A hónap bármely napja';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' minden hónapban';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days minden hónapban';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => 'Kérdés, pl.: Mozogtál ma?';

@@ -85,28 +85,14 @@ class L10nHe extends L10n {
   String get habitEdit_habitFreq_daily => 'יומית';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% פעמים בשבוע';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'פעמים בשבוע';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% פעמים בחודש';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'פעמים בחודש';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'times in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'ימים';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% פעמים ב %%day%% ימים';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'יומית';
@@ -162,19 +148,17 @@ class L10nHe extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'כל יום בשבוע';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' בכל שבוע';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days בכל שבוע';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'כל יום בחודש';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' בכל חודש';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days בכל חודש';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => 'שאלה, למשל: עשית היום כושר?';

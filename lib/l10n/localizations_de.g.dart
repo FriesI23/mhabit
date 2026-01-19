@@ -85,28 +85,14 @@ class L10nDe extends L10n {
   String get habitEdit_habitFreq_daily => 'Täglich';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% mal pro Woche';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'mal pro Woche';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% mal pro Monat';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'mal pro Monat';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'mal in';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'Tagen';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% mal in %%day%% Tagen';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Täglich';
@@ -162,19 +148,17 @@ class L10nDe extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Jeden Tag der Woche';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' in jeder Woche';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days in jeder Woche';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Jeder Tag des Monats';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' jeden Monat';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days jeden Monat';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

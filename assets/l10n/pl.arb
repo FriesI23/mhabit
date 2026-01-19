@@ -97,24 +97,12 @@
   "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitFreq_daily": "Codziennie",
   "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek": "Tygodniowo",
-  "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_habitFreq_perweek_ex01": "razy w tygodniu",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth": "Miesięcznie",
-  "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_permonth_ex01": "razy w miesiącu",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq": "W określonym okresie",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "razy w ciągu",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "dni",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "Jeśli ustawiono na 1, kolejność elementów na liście zostanie odwrócona."
-  },
+  "habitEdit_habitFreq_perweek_text": "Tygodniowo %%time%% razy w tygodniu",
+  "@habitEdit_habitFreq_perweek_text": {},
+  "habitEdit_habitFreq_permonth_text": "Miesięcznie %%time%% razy w miesiącu",
+  "@habitEdit_habitFreq_permonth_text": {},
+  "habitEdit_habitFreq_predayfreq_text": "W określonym okresie %%time%% razy w ciągu %%day%% dni",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Codziennie",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Raz w tygodniu} other{Przynajmniej {freq} razy w tygodniu}}",
@@ -165,16 +153,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "Dowolny dzień tygodnia",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " w każdym tygodniu",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "{days} w każdym tygodniu",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "Comma-separated day list used in the weekly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "Mon, Tue"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "Dowolny dzień miesiąca",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " w każdym miesiącu",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "{days} w każdym miesiącu",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "Comma-separated day list used in the monthly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "Pytanie, np. Czy ćwiczyłeś dzisiaj?",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "Wybierz typ przypomnienia",

@@ -85,28 +85,14 @@ class L10nTr extends L10n {
   String get habitEdit_habitFreq_daily => 'Günlük';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% kez haftada';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'kez haftada';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% kez ayda';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'kez ayda';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'gün';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'günde';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% gün %%day%% günde';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Günlük';
@@ -162,19 +148,17 @@ class L10nTr extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Haftanın her günü';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' her hafta';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days her hafta';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Ayın her günü';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' her ay';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days her ay';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

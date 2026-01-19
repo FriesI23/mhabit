@@ -85,28 +85,16 @@ class L10nRu extends L10n {
   String get habitEdit_habitFreq_daily => 'Ежедневно';
 
   @override
-  String get habitEdit_habitFreq_perweek => 'Каждую неделю';
+  String get habitEdit_habitFreq_perweek_text =>
+      'Каждую неделю %%time%% раз в неделю';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'раз в неделю';
+  String get habitEdit_habitFreq_permonth_text =>
+      'Каждый месяц %%time%% раз(а) в месяц';
 
   @override
-  String get habitEdit_habitFreq_permonth => 'Каждый месяц';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'раз(а) в месяц';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => 'Каждый день';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'раз в';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'дней';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      'Каждый день %%time%% раз в %%day%% дней';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Ежедневно';
@@ -162,19 +150,17 @@ class L10nRu extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => 'Любой день недели';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => 'Каждую неделю в';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' ';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return 'Каждую неделю в $days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => 'Любой день месяца';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => 'Каждый месяц в';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' дни';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return 'Каждый месяц в $days дни';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

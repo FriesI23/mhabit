@@ -86,28 +86,14 @@ class L10nVi extends L10n {
   String get habitEdit_habitFreq_daily => 'Hàng ngày';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% số lần mỗi tuần';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => 'số lần mỗi tuần';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% số lần mỗi tháng';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => 'số lần mỗi tháng';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => 'số lần mỗi';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => 'ngày';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text =>
+      '%%time%% số lần mỗi %%day%% ngày';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'Hàng ngày';
@@ -164,20 +150,18 @@ class L10nVi extends L10n {
       'Bất kỳ ngày nào trong tuần';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => ' vào mỗi tuần';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '$days vào mỗi tuần';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText =>
       'Bất kỳ ngày nào trong tháng';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => ' vào mỗi tháng';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '$days vào mỗi tháng';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText =>

@@ -83,28 +83,13 @@ class L10nZh extends L10n {
   String get habitEdit_habitFreq_daily => '每日';
 
   @override
-  String get habitEdit_habitFreq_perweek => '每周完成';
+  String get habitEdit_habitFreq_perweek_text => '每周完成%%time%%次';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => '次';
+  String get habitEdit_habitFreq_permonth_text => '每月完成%%time%%次';
 
   @override
-  String get habitEdit_habitFreq_permonth => '每月完成';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => '次';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '次';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => '天内完成';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => '每';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '1';
+  String get habitEdit_habitFreq_predayfreq_text => '每%%day%%天内完成%%time%%次';
 
   @override
   String get habitEdit_habitFreq_show_daily => '每日';
@@ -160,19 +145,17 @@ class L10nZh extends L10n {
   String get habitEdit_reminder_freq_weekHelpText => '每日(按周)';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '每周';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => '';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '每周$days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => '每日(按月)';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '每月';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => '日';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '每月$days日';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => '提一个问题, 比如\"今天完成作业了么?\"';
@@ -560,7 +543,7 @@ class L10nZh extends L10n {
   }
 
   @override
-  String get habitDetail_descTargetDays_unitText => '';
+  String get habitDetail_descTargetDays_unitText => '天';
 
   @override
   String get habitDetail_descRecordsNum_titleText => '记录总数';
@@ -1783,28 +1766,13 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_habitFreq_daily => '每日';
 
   @override
-  String get habitEdit_habitFreq_perweek => '';
+  String get habitEdit_habitFreq_perweek_text => '%%time%%次／週';
 
   @override
-  String get habitEdit_habitFreq_perweek_ex01 => '次／週';
+  String get habitEdit_habitFreq_permonth_text => '%%time%%次／月';
 
   @override
-  String get habitEdit_habitFreq_permonth => '';
-
-  @override
-  String get habitEdit_habitFreq_permonth_ex01 => '次／月';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq => '';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex01 => '次／';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_ex02 => '天';
-
-  @override
-  String get habitEdit_habitFreq_predayfreq_reverse_flag => '0';
+  String get habitEdit_habitFreq_predayfreq_text => '%%time%%次／%%day%%天';
 
   @override
   String get habitEdit_habitFreq_show_daily => '每日';
@@ -1860,19 +1828,17 @@ class L10nZhHant extends L10nZh {
   String get habitEdit_reminder_freq_weekHelpText => '每週的任一天';
 
   @override
-  String get habitEdit_reminder_freq_weekPrefixText => '每週';
-
-  @override
-  String get habitEdit_reminder_freq_weekSubfixText => '';
+  String habitEdit_reminder_freq_week_text(String days) {
+    return '每週$days';
+  }
 
   @override
   String get habitEdit_reminder_freq_monthHelpText => '每月的任一天';
 
   @override
-  String get habitEdit_reminder_freq_monthPrefixText => '每月';
-
-  @override
-  String get habitEdit_reminder_freq_monthSubfixText => '';
+  String habitEdit_reminder_freq_month_text(String days) {
+    return '每月$days';
+  }
 
   @override
   String get habitEdit_reminderQuest_hintText => '問題，例如：你今天運動了嗎？';

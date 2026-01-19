@@ -97,24 +97,12 @@
   "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitFreq_daily": "Ежедневно",
   "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek": "Каждую неделю",
-  "@habitEdit_habitFreq_perweek": {},
-  "habitEdit_habitFreq_perweek_ex01": "раз в неделю",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth": "Каждый месяц",
-  "@habitEdit_habitFreq_permonth": {},
-  "habitEdit_habitFreq_permonth_ex01": "раз(а) в месяц",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq": "Каждый день",
-  "@habitEdit_habitFreq_predayfreq": {},
-  "habitEdit_habitFreq_predayfreq_ex01": "раз в",
-  "@habitEdit_habitFreq_predayfreq_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "дней",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "Если установить на 1, отображение виджета списка будет обратным."
-  },
+  "habitEdit_habitFreq_perweek_text": "Каждую неделю %%time%% раз в неделю",
+  "@habitEdit_habitFreq_perweek_text": {},
+  "habitEdit_habitFreq_permonth_text": "Каждый месяц %%time%% раз(а) в месяц",
+  "@habitEdit_habitFreq_permonth_text": {},
+  "habitEdit_habitFreq_predayfreq_text": "Каждый день %%time%% раз в %%day%% дней",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Ежедневно",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Еженедельно} other{Хотя бы {freq} раз в неделю}}",
@@ -165,16 +153,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "Любой день недели",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekPrefixText": "Каждую неделю в",
-  "@habitEdit_reminder_freq_weekPrefixText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " ",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "Каждую неделю в {days}",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "Comma-separated day list used in the weekly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "Mon, Tue"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "Любой день месяца",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthPrefixText": "Каждый месяц в",
-  "@habitEdit_reminder_freq_monthPrefixText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " дни",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "Каждый месяц в {days} дни",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "Comma-separated day list used in the monthly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "Вопрос, напр., Вы занимались сегодня?",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "Выберите тип напоминания",

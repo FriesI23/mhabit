@@ -44,12 +44,12 @@
   "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitFreq_daily": "יומית",
   "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek_ex01": "פעמים בשבוע",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth_ex01": "פעמים בחודש",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "ימים",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
+  "habitEdit_habitFreq_perweek_text": "%%time%% פעמים בשבוע",
+  "@habitEdit_habitFreq_perweek_text": {},
+  "habitEdit_habitFreq_permonth_text": "%%time%% פעמים בחודש",
+  "@habitEdit_habitFreq_permonth_text": {},
+  "habitEdit_habitFreq_predayfreq_text": "%%time%% פעמים ב %%day%% ימים",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "יומית",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_targetDays_title": "{targetDays} ימים",
@@ -67,12 +67,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "כל יום בשבוע",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " בכל שבוע",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "{days} בכל שבוע",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "Comma-separated day list used in the weekly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "Mon, Tue"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "כל יום בחודש",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " בכל חודש",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "{days} בכל חודש",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "Comma-separated day list used in the monthly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "שאלה, למשל: עשית היום כושר?",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogType_daily": "יומית",

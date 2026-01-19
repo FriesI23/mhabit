@@ -97,16 +97,12 @@
   "@habitEdit_frequencySelector_title": {},
   "habitEdit_habitFreq_daily": "Diariamente",
   "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek_ex01": "Vezes por semana",
-  "@habitEdit_habitFreq_perweek_ex01": {},
-  "habitEdit_habitFreq_permonth_ex01": "Vezes por mês",
-  "@habitEdit_habitFreq_permonth_ex01": {},
-  "habitEdit_habitFreq_predayfreq_ex02": "Dias",
-  "@habitEdit_habitFreq_predayfreq_ex02": {},
-  "habitEdit_habitFreq_predayfreq_reverse_flag": "0",
-  "@habitEdit_habitFreq_predayfreq_reverse_flag": {
-    "description": "If set to 1, the display widget list will be reversed."
-  },
+  "habitEdit_habitFreq_perweek_text": "%%time%% Vezes por semana",
+  "@habitEdit_habitFreq_perweek_text": {},
+  "habitEdit_habitFreq_permonth_text": "%%time%% Vezes por mês",
+  "@habitEdit_habitFreq_permonth_text": {},
+  "habitEdit_habitFreq_predayfreq_text": "%%time%% Vezes a cada %%day%% Dias",
+  "@habitEdit_habitFreq_predayfreq_text": {},
   "habitEdit_habitFreq_show_daily": "Diariamente",
   "@habitEdit_habitFreq_show_daily": {},
   "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Por semana} other{Pelo menos {freq} vezes por semana}}",
@@ -144,12 +140,28 @@
   "@habitEdit_reminder_hintText": {},
   "habitEdit_reminder_freq_weekHelpText": "Qualquer dia da semana",
   "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_weekSubfixText": " em cada semana",
-  "@habitEdit_reminder_freq_weekSubfixText": {},
+  "habitEdit_reminder_freq_week_text": "{days} em cada semana",
+  "@habitEdit_reminder_freq_week_text": {
+    "description": "Comma-separated day list used in the weekly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "Mon, Tue"
+      }
+    }
+  },
   "habitEdit_reminder_freq_monthHelpText": "Qualquer dia do mês",
   "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_monthSubfixText": " em cada mês",
-  "@habitEdit_reminder_freq_monthSubfixText": {},
+  "habitEdit_reminder_freq_month_text": "{days} em cada mês",
+  "@habitEdit_reminder_freq_month_text": {
+    "description": "Comma-separated day list used in the monthly reminder sentence.",
+    "placeholders": {
+      "days": {
+        "type": "String",
+        "example": "5, 20"
+      }
+    }
+  },
   "habitEdit_reminderQuest_hintText": "Questão, p.ex. Você se exercitou hoje?",
   "@habitEdit_reminderQuest_hintText": {},
   "habitEdit_reminder_dialogTitle": "Escolher o tipo de lembrete",

@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../common/consts.dart';
+import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../models/habit_form.dart';
@@ -285,16 +286,19 @@ class _HabitFrequencyPerWeekTile extends StatelessWidget {
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
-    return [
-      if (l10n != null && l10n.habitEdit_habitFreq_perweek.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_perweek),
-      _HabitFrequencyTextField(
-        controller: controller,
-        onInputSubmmit: onInputSubmmit,
-      ),
-      if (l10n != null && l10n.habitEdit_habitFreq_perweek_ex01.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_perweek_ex01),
-    ];
+    final text = l10n?.habitEdit_habitFreq_perweek_text;
+    if (text == null) return const [];
+    return splitByTokens(text, const ["%%time%%"])
+        .map(
+          (e) => switch (e) {
+            "%%time%%" => _HabitFrequencyTextField(
+              controller: controller,
+              onInputSubmmit: onInputSubmmit,
+            ),
+            _ => Text(e),
+          },
+        )
+        .toList();
   }
 
   @override
@@ -322,16 +326,19 @@ class _HabitFrequencyPerMonthTile extends StatelessWidget {
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
-    return [
-      if (l10n != null && l10n.habitEdit_habitFreq_permonth.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_permonth),
-      _HabitFrequencyTextField(
-        controller: controller,
-        onInputSubmmit: onInputSubmmit,
-      ),
-      if (l10n != null && l10n.habitEdit_habitFreq_permonth_ex01.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_permonth_ex01),
-    ];
+    final text = l10n?.habitEdit_habitFreq_permonth_text;
+    if (text == null) return const [];
+    return splitByTokens(text, const ["%%time%%"])
+        .map(
+          (e) => switch (e) {
+            "%%time%%" => _HabitFrequencyTextField(
+              controller: controller,
+              onInputSubmmit: onInputSubmmit,
+            ),
+            _ => Text(e),
+          },
+        )
+        .toList();
   }
 
   @override
@@ -364,28 +371,29 @@ class _HabitFrequencyPerDayTile extends StatelessWidget {
 
   List<Widget> _buildTitleChildren(BuildContext context) {
     final l10n = L10n.of(context);
-    final reversed =
-        int.tryParse(
-          l10n?.habitEdit_habitFreq_predayfreq_reverse_flag ?? '0',
-        ) ??
-        0;
-    final results = [
-      if (l10n != null && l10n.habitEdit_habitFreq_predayfreq.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_predayfreq),
-      _HabitFrequencyTextField(
-        controller: controllerFreq,
-        onInputSubmmit: onInputSubmmit,
-      ),
-      if (l10n != null && l10n.habitEdit_habitFreq_predayfreq_ex01.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_predayfreq_ex01),
-      _HabitFrequencyTextField(
-        controller: controllerDay,
-        onInputSubmmit: onInputSubmmit,
-      ),
-      if (l10n != null && l10n.habitEdit_habitFreq_predayfreq_ex02.isNotEmpty)
-        Text(l10n.habitEdit_habitFreq_predayfreq_ex02),
-    ];
-    return reversed >= 1 ? results.reversed.toList() : results;
+    final fallback = lookupL10n(const Locale('en'));
+
+    final resolvedText = () {
+      final candidate = l10n?.habitEdit_habitFreq_predayfreq_text;
+      if (candidate != null && candidate.isNotEmpty) return candidate;
+      return fallback.habitEdit_habitFreq_predayfreq_text;
+    }();
+
+    return splitByTokens(resolvedText, const ["%%time%%", "%%day%%"])
+        .map(
+          (e) => switch (e) {
+            "%%time%%" => _HabitFrequencyTextField(
+              controller: controllerFreq,
+              onInputSubmmit: onInputSubmmit,
+            ),
+            "%%day%%" => _HabitFrequencyTextField(
+              controller: controllerDay,
+              onInputSubmmit: onInputSubmmit,
+            ),
+            _ => Text(e),
+          },
+        )
+        .toList();
   }
 
   @override

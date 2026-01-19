@@ -252,53 +252,23 @@ abstract class L10n {
   /// **'Daily'**
   String get habitEdit_habitFreq_daily;
 
-  /// No description provided for @habitEdit_habitFreq_perweek.
+  /// No description provided for @habitEdit_habitFreq_perweek_text.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_habitFreq_perweek;
+  /// **'%%time%% times per week'**
+  String get habitEdit_habitFreq_perweek_text;
 
-  /// No description provided for @habitEdit_habitFreq_perweek_ex01.
+  /// No description provided for @habitEdit_habitFreq_permonth_text.
   ///
   /// In en, this message translates to:
-  /// **'times per week'**
-  String get habitEdit_habitFreq_perweek_ex01;
+  /// **'%%time%% times per month'**
+  String get habitEdit_habitFreq_permonth_text;
 
-  /// No description provided for @habitEdit_habitFreq_permonth.
+  /// No description provided for @habitEdit_habitFreq_predayfreq_text.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_habitFreq_permonth;
-
-  /// No description provided for @habitEdit_habitFreq_permonth_ex01.
-  ///
-  /// In en, this message translates to:
-  /// **'times per month'**
-  String get habitEdit_habitFreq_permonth_ex01;
-
-  /// No description provided for @habitEdit_habitFreq_predayfreq.
-  ///
-  /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_habitFreq_predayfreq;
-
-  /// No description provided for @habitEdit_habitFreq_predayfreq_ex01.
-  ///
-  /// In en, this message translates to:
-  /// **'times in'**
-  String get habitEdit_habitFreq_predayfreq_ex01;
-
-  /// No description provided for @habitEdit_habitFreq_predayfreq_ex02.
-  ///
-  /// In en, this message translates to:
-  /// **'days'**
-  String get habitEdit_habitFreq_predayfreq_ex02;
-
-  /// If set to 1, the display widget list will be reversed.
-  ///
-  /// In en, this message translates to:
-  /// **'0'**
-  String get habitEdit_habitFreq_predayfreq_reverse_flag;
+  /// **'%%time%% times in %%day%% days'**
+  String get habitEdit_habitFreq_predayfreq_text;
 
   /// No description provided for @habitEdit_habitFreq_show_daily.
   ///
@@ -354,17 +324,11 @@ abstract class L10n {
   /// **'Any day of week'**
   String get habitEdit_reminder_freq_weekHelpText;
 
-  /// No description provided for @habitEdit_reminder_freq_weekPrefixText.
+  /// Comma-separated day list used in the weekly reminder sentence.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_reminder_freq_weekPrefixText;
-
-  /// No description provided for @habitEdit_reminder_freq_weekSubfixText.
-  ///
-  /// In en, this message translates to:
-  /// **' in every week'**
-  String get habitEdit_reminder_freq_weekSubfixText;
+  /// **'{days} in every week'**
+  String habitEdit_reminder_freq_week_text(String days);
 
   /// No description provided for @habitEdit_reminder_freq_monthHelpText.
   ///
@@ -372,17 +336,11 @@ abstract class L10n {
   /// **'Any day of month'**
   String get habitEdit_reminder_freq_monthHelpText;
 
-  /// No description provided for @habitEdit_reminder_freq_monthPrefixText.
+  /// Comma-separated day list used in the monthly reminder sentence.
   ///
   /// In en, this message translates to:
-  /// **''**
-  String get habitEdit_reminder_freq_monthPrefixText;
-
-  /// No description provided for @habitEdit_reminder_freq_monthSubfixText.
-  ///
-  /// In en, this message translates to:
-  /// **' in every month'**
-  String get habitEdit_reminder_freq_monthSubfixText;
+  /// **'{days} in every month'**
+  String habitEdit_reminder_freq_month_text(String days);
 
   /// No description provided for @habitEdit_reminderQuest_hintText.
   ///
