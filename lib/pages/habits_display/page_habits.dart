@@ -1302,20 +1302,47 @@ class _HabitListItem extends StatelessWidget {
   }
 }
 
-class _EmptyImage extends StatelessWidget {
+enum EmptyImageMode { normal, search }
+
+class _EmptyImage extends StatefulWidget {
   const _EmptyImage();
 
   @override
+  State<_EmptyImage> createState() => _EmptyImageState();
+}
+
+class _EmptyImageState extends State<_EmptyImage> {
+  bool _initialEmptyConsumed = false;
+  EmptyImageMode? _mode;
+
+  @override
   Widget build(BuildContext context) {
-    final (habitCount, isInSearchMode) = context
-        .select<HabitSummaryViewModel, (int, bool)>(
-          (vm) => (vm.currentHabitList.length, vm.isInSearchMode),
+    final (habitCount, isInSearchMode, isDataLoaded) = context
+        .select<HabitSummaryViewModel, (int, bool, bool)>(
+          (vm) =>
+              (vm.currentHabitList.length, vm.isInSearchMode, vm.isDataLoaded),
         );
     final (_, calBarHeight) = context
         .select<AppCompactUISwitcherViewModel, (bool, double)>(
           (vm) => (vm.flag, vm.appCalendarBarHeight),
         );
     final offsetHeight = -(calBarHeight + kToolbarHeight);
+
+    final crtMode = isInSearchMode
+        ? EmptyImageMode.search
+        : EmptyImageMode.normal;
+    final changeDuration = crtMode != _mode && habitCount > 0
+        ? Duration.zero
+        : kHabitListFutureLoadDuration;
+    _mode = crtMode;
+
+    bool shouldShowImage() {
+      if (!_initialEmptyConsumed) {
+        _initialEmptyConsumed = true;
+        return false;
+      }
+      return habitCount <= 0;
+    }
 
     final image = L10nBuilder(
       builder: (context, l10n) {
@@ -1368,7 +1395,13 @@ class _EmptyImage extends StatelessWidget {
                 : null,
           ),
         );
-        return isInSearchMode ? notFoundImage : emptyImage;
+        return AnimatedSwitcher(
+          duration: changeDuration,
+          child: switch (_mode) {
+            EmptyImageMode.search => notFoundImage,
+            _ => emptyImage,
+          },
+        );
       },
     );
     return SafeArea(
@@ -1380,8 +1413,8 @@ class _EmptyImage extends StatelessWidget {
               maxHeight: math.max(constraints.maxHeight + offsetHeight, 0),
             ),
             child: AnimatedOpacity(
-              opacity: habitCount > 0 ? 0.0 : 1.0,
-              duration: kHabitListFutureLoadDuration,
+              opacity: shouldShowImage() ? 1.0 : 0.0,
+              duration: changeDuration,
               child: image,
             ),
           ),

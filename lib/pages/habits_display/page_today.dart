@@ -632,6 +632,7 @@ class _TodayDoneImage extends StatefulWidget {
 class _TodayDoneImageState extends State<_TodayDoneImage> {
   Brightness? _lastBrightness;
   Color? _lastPrimary;
+  bool _initialEmptyConsumed = false;
   late TodayDoneImageStyle _adaptedStyle;
 
   @override
@@ -668,7 +669,13 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       (vm) => vm.currentHabitList.length,
     );
 
-    bool shouldShowImage() => isDataLoaded && habitCount <= 0;
+    bool shouldShowImage() {
+      if (!_initialEmptyConsumed) {
+        _initialEmptyConsumed = true;
+        return isDataLoaded;
+      }
+      return habitCount <= 0;
+    }
 
     final image = TodayDoneImage(
       size: const Size.square(300),
