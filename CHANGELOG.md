@@ -2,13 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.4+143-pre
+## 1.23.5+144-pre
 
 - Updated Chinese (Simplified Han script) translation, thank to ADAIBLOG's contribution on Weblate (#490)
 - Updated Russian translation, thank to Rudoy Artyom's contribution on Weblate (#490)
 - Refine reminder frequency localization using tokenized week/month/day templates (#491)
 - Add missing target-day unit in zh(SC) (#491)
-- Reset expanded cards after toggling record state on Habits Today (#492)
+- Fixed: Reset expanded cards after toggling record state on Habits Today (#492)
+- Fixed: prevent empty state image flashing on initial load (#494)
 - Remove unused empty video metadata
 
 ## 1.23.3+142
