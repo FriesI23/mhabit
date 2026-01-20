@@ -1302,20 +1302,61 @@ class _HabitListItem extends StatelessWidget {
   }
 }
 
-class _EmptyImage extends StatelessWidget {
+enum EmptyImageMode { normal, search }
+
+class _EmptyImage extends StatefulWidget {
   const _EmptyImage();
 
   @override
+  State<_EmptyImage> createState() => _EmptyImageState();
+}
+
+class _EmptyImageState extends State<_EmptyImage> {
+  bool _initialEmptyConsumed = false;
+  EmptyImageMode? _lastMode;
+  late EmptyImageMode _mode;
+  late HabitSummaryViewModel _vm;
+
+  @override
+  void initState() {
+    super.initState();
+    _vm = context.read<HabitSummaryViewModel>();
+    _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitSummaryViewModel>();
+    if (_vm != vm) {
+      _vm = vm;
+    }
+    _lastMode = _mode;
+    _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
+
+    final isDataLoaded = _vm.isDataLoaded;
+    if (!_initialEmptyConsumed && isDataLoaded) {
+      _initialEmptyConsumed = true;
+      return;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final (habitCount, isInSearchMode) = context
-        .select<HabitSummaryViewModel, (int, bool)>(
-          (vm) => (vm.currentHabitList.length, vm.isInSearchMode),
+    final (habitCount, _, _) = context
+        .select<HabitSummaryViewModel, (int, bool, bool)>(
+          (vm) =>
+              (vm.currentHabitList.length, vm.isInSearchMode, vm.isDataLoaded),
         );
     final (_, calBarHeight) = context
         .select<AppCompactUISwitcherViewModel, (bool, double)>(
           (vm) => (vm.flag, vm.appCalendarBarHeight),
         );
     final offsetHeight = -(calBarHeight + kToolbarHeight);
+    final changeDuration = _lastMode != _mode && habitCount > 0
+        ? Duration.zero
+        : kHabitListFutureLoadDuration;
+    final shouldShowImage = !_initialEmptyConsumed ? false : habitCount <= 0;
 
     final image = L10nBuilder(
       builder: (context, l10n) {
@@ -1323,6 +1364,7 @@ class _EmptyImage extends StatelessWidget {
         const size = Size.square(300);
         const padding = EdgeInsets.symmetric(horizontal: 100, vertical: 50);
         final emptyImage = HabitDisplayEmptyImage(
+          key: const ValueKey("empty-image"),
           size: size,
           padding: padding,
           style: HabitDisplayEmptyImageStyle(
@@ -1343,6 +1385,7 @@ class _EmptyImage extends StatelessWidget {
               : null,
         );
         final notFoundImage = Opacity(
+          key: const ValueKey("not-found-image"),
           opacity: 0.8,
           child: NotFoundImage(
             size: size,
@@ -1368,7 +1411,13 @@ class _EmptyImage extends StatelessWidget {
                 : null,
           ),
         );
-        return isInSearchMode ? notFoundImage : emptyImage;
+        return AnimatedSwitcher(
+          duration: changeDuration,
+          child: switch (_mode) {
+            EmptyImageMode.search => notFoundImage,
+            _ => emptyImage,
+          },
+        );
       },
     );
     return SafeArea(
@@ -1380,8 +1429,8 @@ class _EmptyImage extends StatelessWidget {
               maxHeight: math.max(constraints.maxHeight + offsetHeight, 0),
             ),
             child: AnimatedOpacity(
-              opacity: habitCount > 0 ? 0.0 : 1.0,
-              duration: kHabitListFutureLoadDuration,
+              opacity: shouldShowImage ? 1.0 : 0.0,
+              duration: changeDuration,
               child: image,
             ),
           ),
