@@ -679,9 +679,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDataLoaded = context.select<HabitsTodayViewModel, bool>(
-      (vm) => vm.isDataLoaded,
-    );
+    context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
     final habitCount = context.select<HabitsTodayViewModel, int>(
       (vm) => vm.currentHabitList.length,
     );
@@ -696,9 +694,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       style: _adaptedStyle,
     );
 
-    final shouldShowImage = !_initialEmptyConsumed
-        ? isDataLoaded
-        : habitCount <= 0;
+    final shouldShowImage = !_initialEmptyConsumed ? false : habitCount <= 0;
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) => Align(

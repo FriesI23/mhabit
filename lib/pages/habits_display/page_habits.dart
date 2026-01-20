@@ -1364,6 +1364,7 @@ class _EmptyImageState extends State<_EmptyImage> {
         const size = Size.square(300);
         const padding = EdgeInsets.symmetric(horizontal: 100, vertical: 50);
         final emptyImage = HabitDisplayEmptyImage(
+          key: const ValueKey("empty-image"),
           size: size,
           padding: padding,
           style: HabitDisplayEmptyImageStyle(
@@ -1384,6 +1385,7 @@ class _EmptyImageState extends State<_EmptyImage> {
               : null,
         );
         final notFoundImage = Opacity(
+          key: const ValueKey("not-found-image"),
           opacity: 0.8,
           child: NotFoundImage(
             size: size,
