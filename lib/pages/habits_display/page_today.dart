@@ -633,19 +633,36 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
   Brightness? _lastBrightness;
   Color? _lastPrimary;
   bool _initialEmptyConsumed = false;
+  late HabitsTodayViewModel _vm;
   late TodayDoneImageStyle _adaptedStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    _vm = context.read<HabitsTodayViewModel>();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final vm = context.read<HabitsTodayViewModel>();
+    if (_vm != vm) {
+      _vm = vm;
+    }
+
     final themeData = Theme.of(context);
     final brightness = themeData.brightness;
     final primary = themeData.colorScheme.primary;
-
     if (_lastBrightness != brightness || _lastPrimary != primary) {
       _lastBrightness = brightness;
       _lastPrimary = primary;
       _adaptedStyle = _adaptStyle(TodayDoneImageStyle.inDefault, themeData);
+    }
+
+    final isDataLoaded = _vm.isDataLoaded;
+    if (!_initialEmptyConsumed && isDataLoaded) {
+      _initialEmptyConsumed = true;
+      return;
     }
   }
 
@@ -669,14 +686,6 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       (vm) => vm.currentHabitList.length,
     );
 
-    bool shouldShowImage() {
-      if (!_initialEmptyConsumed) {
-        _initialEmptyConsumed = true;
-        return isDataLoaded;
-      }
-      return habitCount <= 0;
-    }
-
     final image = TodayDoneImage(
       size: const Size.square(300),
       padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 50),
@@ -687,6 +696,9 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       style: _adaptedStyle,
     );
 
+    final shouldShowImage = !_initialEmptyConsumed
+        ? isDataLoaded
+        : habitCount <= 0;
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) => Align(
@@ -699,7 +711,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
               ),
             ),
             child: AnimatedOpacity(
-              opacity: shouldShowImage() ? 1.0 : 0.0,
+              opacity: shouldShowImage ? 1.0 : 0.0,
               duration: widget.changedAnimateDuration,
               child: image,
             ),

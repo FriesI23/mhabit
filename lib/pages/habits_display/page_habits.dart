@@ -1313,11 +1313,37 @@ class _EmptyImage extends StatefulWidget {
 
 class _EmptyImageState extends State<_EmptyImage> {
   bool _initialEmptyConsumed = false;
-  EmptyImageMode? _mode;
+  EmptyImageMode? _lastMode;
+  late EmptyImageMode _mode;
+  late HabitSummaryViewModel _vm;
+
+  @override
+  void initState() {
+    super.initState();
+    _vm = context.read<HabitSummaryViewModel>();
+    _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final vm = context.read<HabitSummaryViewModel>();
+    if (_vm != vm) {
+      _vm = vm;
+    }
+    _lastMode = _mode;
+    _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
+
+    final isDataLoaded = _vm.isDataLoaded;
+    if (!_initialEmptyConsumed && isDataLoaded) {
+      _initialEmptyConsumed = true;
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (habitCount, isInSearchMode, isDataLoaded) = context
+    final (habitCount, _, _) = context
         .select<HabitSummaryViewModel, (int, bool, bool)>(
           (vm) =>
               (vm.currentHabitList.length, vm.isInSearchMode, vm.isDataLoaded),
@@ -1327,22 +1353,10 @@ class _EmptyImageState extends State<_EmptyImage> {
           (vm) => (vm.flag, vm.appCalendarBarHeight),
         );
     final offsetHeight = -(calBarHeight + kToolbarHeight);
-
-    final crtMode = isInSearchMode
-        ? EmptyImageMode.search
-        : EmptyImageMode.normal;
-    final changeDuration = crtMode != _mode && habitCount > 0
+    final changeDuration = _lastMode != _mode && habitCount > 0
         ? Duration.zero
         : kHabitListFutureLoadDuration;
-    _mode = crtMode;
-
-    bool shouldShowImage() {
-      if (!_initialEmptyConsumed) {
-        _initialEmptyConsumed = true;
-        return false;
-      }
-      return habitCount <= 0;
-    }
+    final shouldShowImage = !_initialEmptyConsumed ? false : habitCount <= 0;
 
     final image = L10nBuilder(
       builder: (context, l10n) {
@@ -1413,7 +1427,7 @@ class _EmptyImageState extends State<_EmptyImage> {
               maxHeight: math.max(constraints.maxHeight + offsetHeight, 0),
             ),
             child: AnimatedOpacity(
-              opacity: shouldShowImage() ? 1.0 : 0.0,
+              opacity: shouldShowImage ? 1.0 : 0.0,
               duration: changeDuration,
               child: image,
             ),
