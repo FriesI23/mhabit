@@ -1,1460 +1,1080 @@
 {
-  "@@locale": "hu",
-  "localeScriptName": "Hungarian",
-  "@localeScriptName": {
-    "description": "A területi beállításhoz használt nyelv ember által olvasható neve."
-  },
-  "appName": "Table Habit",
-  "@appName": {},
-  "habitEdit_saveButton_text": "Mentés",
-  "@habitEdit_saveButton_text": {},
-  "habitEdit_habitName_hintText": "Szokás neve ...",
-  "@habitEdit_habitName_hintText": {},
-  "habitEdit_colorPicker_title": "Válassz színt",
-  "@habitEdit_colorPicker_title": {},
-  "habitEdit_habitTypeDialog_title": "Szokás típusa",
-  "@habitEdit_habitTypeDialog_title": {},
-  "habitEdit_habitType_positiveText": "Pozitív",
-  "@habitEdit_habitType_positiveText": {},
-  "habitEdit_habitType_negativeText": "Negatív",
-  "@habitEdit_habitType_negativeText": {},
-  "habitEdit_habitDailyGoal_hintText": "Napi cél, alapértelmezett {number}",
-  "@habitEdit_habitDailyGoal_hintText": {
-    "description": "alapértelmezett szokás napi cél",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeHintText": "Minimális napi küszöbérték, alapértelmezett {number}",
-  "@habitEdit_habitDailyGoal_negativeHintText": {
-    "description": "alapértelmezett napi cél a negatív szokáshoz",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText01": "napi cél > {number}",
-  "@habitEdit_habitDailyGoal_errorText01": {
-    "description": "a napi célhoz szükséges minimális szokásszám",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_errorText02": "napi cél ≤ {number}",
-  "@habitEdit_habitDailyGoal_errorText02": {
-    "description": "a napi szokáscél maximális száma",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText01": "napi cél ≥ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText01": {
-    "description": "a negatív szokások napi céljának minimális száma",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoal_negativeErrorText02": "napi cél ≤ {number}",
-  "@habitEdit_habitDailyGoal_negativeErrorText02": {
-    "description": "a negatív szokások napi céljának maximális száma",
-    "placeholders": {
-      "number": {
-        "type": "num",
-        "example": "0"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalUnit_hintText": "Napi célegység",
-  "@habitEdit_habitDailyGoalUnit_hintText": {},
-  "habitEdit_habitDailyGoalExtra_hintText": "Kívánt maximális napi cél",
-  "@habitEdit_habitDailyGoalExtra_hintText": {},
-  "habitEdit_habitDailyGoalExtra_errorText": "érvénytelen érték, üresnek kell lennie, vagy ≥ {dailyGoal}",
-  "@habitEdit_habitDailyGoalExtra_errorText": {
-    "placeholders": {
-      "dailyGoal": {
-        "type": "num",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximális napi limit",
-  "@habitEdit_habitDailyGoalExtra_negativeHintText": {},
-  "habitEdit_frequencySelector_title": "Válassza ki a frekvenciát",
-  "@habitEdit_frequencySelector_title": {},
-  "habitEdit_habitFreq_daily": "Napi",
-  "@habitEdit_habitFreq_daily": {},
-  "habitEdit_habitFreq_perweek_text": "%%time%% alkalommal hetente",
-  "@habitEdit_habitFreq_perweek_text": {},
-  "habitEdit_habitFreq_permonth_text": "%%time%% alkalommal havonta",
-  "@habitEdit_habitFreq_permonth_text": {},
-  "habitEdit_habitFreq_predayfreq_text": "%%time%% alkalommal %%day%% nap alatt",
-  "@habitEdit_habitFreq_predayfreq_text": {},
-  "habitEdit_habitFreq_show_daily": "Napi",
-  "@habitEdit_habitFreq_show_daily": {},
-  "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{At least {freq} times per week}}",
-  "@habitEdit_habitFreq_show_perweek": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Per month} other{At least {freq} times per month}}",
-  "@habitEdit_habitFreq_show_permonth": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{In every {days} days} other{At least {freq} times in every {days} days}}",
-  "@habitEdit_habitFreq_show_perdayfreq": {
-    "placeholders": {
-      "freq": {
-        "type": "int",
-        "example": "1"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_title": "{targetDays} days",
-  "@habitEdit_targetDays_title": {
-    "placeholders": {
-      "targetDays": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitEdit_targetDays_dialogTitle": "Válassza a Célnapok",
-  "@habitEdit_targetDays_dialogTitle": {},
-  "habitEdit_targetDays": "nap",
-  "@habitEdit_targetDays": {},
-  "habitEdit_reminder_hintText": "Emlékeztető",
-  "@habitEdit_reminder_hintText": {},
-  "habitEdit_reminder_freq_weekHelpText": "A hét bármely napja",
-  "@habitEdit_reminder_freq_weekHelpText": {},
-  "habitEdit_reminder_freq_week_text": "{days} minden héten",
-  "@habitEdit_reminder_freq_week_text": {
-    "description": "Comma-separated day list used in the weekly reminder sentence.",
-    "placeholders": {
-      "days": {
-        "type": "String",
-        "example": "Mon, Tue"
-      }
-    }
-  },
-  "habitEdit_reminder_freq_monthHelpText": "A hónap bármely napja",
-  "@habitEdit_reminder_freq_monthHelpText": {},
-  "habitEdit_reminder_freq_month_text": "{days} minden hónapban",
-  "@habitEdit_reminder_freq_month_text": {
-    "description": "Comma-separated day list used in the monthly reminder sentence.",
-    "placeholders": {
-      "days": {
-        "type": "String",
-        "example": "5, 20"
-      }
-    }
-  },
-  "habitEdit_reminderQuest_hintText": "Kérdés, pl.: Mozogtál ma?",
-  "@habitEdit_reminderQuest_hintText": {},
-  "habitEdit_reminder_dialogTitle": "Válassza ki az emlékeztető típusát",
-  "@habitEdit_reminder_dialogTitle": {},
-  "habitEdit_reminder_dialogType_whenNeeded": "Mikor kell bejelentkezni",
-  "@habitEdit_reminder_dialogType_whenNeeded": {},
-  "habitEdit_reminder_dialogType_daily": "Napi",
-  "@habitEdit_reminder_dialogType_daily": {},
-  "habitEdit_reminder_dialogType_week": "Hetente",
-  "@habitEdit_reminder_dialogType_week": {},
-  "habitEdit_reminder_dialogType_month": "Havonta",
-  "@habitEdit_reminder_dialogType_month": {},
-  "habitEdit_reminder_dialogConfirm": "megerősítés",
-  "@habitEdit_reminder_dialogConfirm": {},
-  "habitEdit_reminder_dialogCancel": "mégse",
-  "@habitEdit_reminder_dialogCancel": {},
-  "habitEdit_reminder_cancelDialogTitle": "Megerősítés",
-  "@habitEdit_reminder_cancelDialogTitle": {},
-  "habitEdit_reminder_cancelDialogSubtitle": "Megerősíti az emlékeztető eltávolítását",
-  "@habitEdit_reminder_cancelDialogSubtitle": {},
-  "habitEdit_reminder_cancelDialogConfirm": "megerősítés",
-  "@habitEdit_reminder_cancelDialogConfirm": {},
-  "habitEdit_reminder_cancelDialogCancel": "mégse",
-  "@habitEdit_reminder_cancelDialogCancel": {},
-  "habitEdit_reminder_weekdayText_monday": "Hétfő",
-  "@habitEdit_reminder_weekdayText_monday": {},
-  "habitEdit_reminder_weekdayText_tuesday": "Kedd",
-  "@habitEdit_reminder_weekdayText_tuesday": {},
-  "habitEdit_reminder_weekdayText_wednesday": "Szerda",
-  "@habitEdit_reminder_weekdayText_wednesday": {},
-  "habitEdit_reminder_weekdayText_thursday": "Csütörtök",
-  "@habitEdit_reminder_weekdayText_thursday": {},
-  "habitEdit_reminder_weekdayText_friday": "Péntek",
-  "@habitEdit_reminder_weekdayText_friday": {},
-  "habitEdit_reminder_weekdayText_saturday": "Szombat",
-  "@habitEdit_reminder_weekdayText_saturday": {},
-  "habitEdit_reminder_weekdayText_sunday": "Vasárnap",
-  "@habitEdit_reminder_weekdayText_sunday": {},
-  "habitEdit_desc_hintText": "Feljegyzés, támogatja a Markdownt",
-  "@habitEdit_desc_hintText": {},
-  "habitEdit_create_datetime_prefix": "Létrehozva: ",
-  "@habitEdit_create_datetime_prefix": {},
-  "habitEdit_modify_datetime_prefix": "Módosítva: ",
-  "@habitEdit_modify_datetime_prefix": {},
-  "habitDisplay_fab_text": "Új szokás",
-  "@habitDisplay_fab_text": {},
-  "habitDisplay_emptyImage_text_01": "Az ezer mérföldes utazás egyetlen lépéssel kezdődik",
-  "@habitDisplay_emptyImage_text_01": {},
-  "habitDisplay_notFoundImage_text_01": "Nem találhatók megfelelő szokások",
-  "@habitDisplay_notFoundImage_text_01": {
-    "description": "Akkor jelenik meg, ha egyetlen szokás sem felel meg az aktuális keresésnek"
-  },
-  "habitDisplay_notFoundImage_text_02": "Nincsenek megfelelő szokások a \"{keyword}\" számára",
-  "@habitDisplay_notFoundImage_text_02": {
-    "description": "Akkor jelenik meg, ha egyetlen szokás sem felel meg a megadott kulcsszónak",
-    "placeholders": {
-      "keyword": {
-        "type": "String",
-        "description": "Keresési kulcsszó"
-      }
-    }
-  },
-  "habitDisplay_archiveHabitsConfirmDialog_title": "Archiválja a kiválasztott szokásokat?",
-  "@habitDisplay_archiveHabitsConfirmDialog_title": {},
-  "habitDisplay_archiveHabitsConfirmDialog_confirm": "megerősítés",
-  "@habitDisplay_archiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_archiveHabitsConfirmDialog_cancel": "mégse",
-  "@habitDisplay_archiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_archiveHabitsSuccSnackbarText": "{count} szokás archiválva",
-  "@habitDisplay_archiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_unarchiveHabitsConfirmDialog_title": "Visszavonja a kiválasztott szokások archiválásaát?",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_title": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "megerősítés",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_confirm": {},
-  "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "mégse",
-  "@habitDisplay_unarchiveHabitsConfirmDialog_cancel": {},
-  "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} szokás archiválésa visszavonva",
-  "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteHabitsConfirmDialog_title": "Törli a kiválasztott szokásokat?",
-  "@habitDisplay_deleteHabitsConfirmDialog_title": {},
-  "habitDisplay_deleteHabitsConfirmDialog_confirm": "megerősítés",
-  "@habitDisplay_deleteHabitsConfirmDialog_confirm": {},
-  "habitDisplay_deleteHabitsConfirmDialog_cancel": "mégse",
-  "@habitDisplay_deleteHabitsConfirmDialog_cancel": {},
-  "habitDisplay_deleteHabitsSuccSnackbarText": "{count} szokás törölve",
-  "@habitDisplay_deleteHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDisplay_deleteSingleHabitSuccSnackbarText": "Törölt szokás: \"{name}\"",
-  "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "Szokás neve."
-      }
-    }
-  },
-  "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Szokás exportálva.} other {{count} szokás exportálva.}}",
-  "@habitDisplay_exportHabitsSuccSnackbarText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "description": "Exportált szokások száma",
-        "example": "3"
-      }
-    }
-  },
-  "habitDisplay_exportAllHabitsSuccSnackbarText": "Összes szokás exportálva",
-  "@habitDisplay_exportAllHabitsSuccSnackbarText": {},
-  "habitDisplay_editPopMenu_selectAll": "Összes kijelölése",
-  "@habitDisplay_editPopMenu_selectAll": {},
-  "habitDisplay_editPopMenu_export": "Exportálás",
-  "@habitDisplay_editPopMenu_export": {},
-  "habitDisplay_editPopMenu_delete": "Törlés",
-  "@habitDisplay_editPopMenu_delete": {},
-  "habitDisplay_editPopMenu_clone": "Sablon",
-  "@habitDisplay_editPopMenu_clone": {},
-  "habitDisplay_editButton_tooltip": "Szerkesztés",
-  "@habitDisplay_editButton_tooltip": {},
-  "habitDisplay_archiveButton_tooltip": "Archiválás",
-  "@habitDisplay_archiveButton_tooltip": {},
-  "habitDisplay_unarchiveButton_tooltip": "Archiválás visszavonása",
-  "@habitDisplay_unarchiveButton_tooltip": {},
-  "habitDisplay_settingButton_tooltip": "Beállítások",
-  "@habitDisplay_settingButton_tooltip": {},
-  "habitDisplay_statsMenu_statSubgroupText": "Aktuális",
-  "@habitDisplay_statsMenu_statSubgroupText": {},
-  "habitDisplay_statsMenu_completedTileText": "Teljesített",
-  "@habitDisplay_statsMenu_completedTileText": {},
-  "habitDisplay_statsMenu_inProgresTileText": "Folyamatban lévő",
-  "@habitDisplay_statsMenu_inProgresTileText": {},
-  "habitDisplay_statsMenu_archivedTileText": "Archivált",
-  "@habitDisplay_statsMenu_archivedTileText": {},
-  "habitDisplay_statsMenu_popularitySubgroupText": "Legnépszerűbb szokások: az elmúlt 30 nap változásai",
-  "@habitDisplay_statsMenu_popularitySubgroupText": {},
-  "habitDisplay_mainMenu_lightTheme": "Világos téma",
-  "@habitDisplay_mainMenu_lightTheme": {},
-  "habitDisplay_mainMenu_darkTheme": "Sötét téma",
-  "@habitDisplay_mainMenu_darkTheme": {},
-  "habitDisplay_mainMenu_followSystemTheme": "Rendszer követése",
-  "@habitDisplay_mainMenu_followSystemTheme": {},
-  "habitDisplay_mainMenu_showArchivedTileText": "Archiváltak megjelenítése",
-  "@habitDisplay_mainMenu_showArchivedTileText": {},
-  "habitDisplay_mainMenu_showCompletedTileText": "Teljesítettek megjelenítése",
-  "@habitDisplay_mainMenu_showCompletedTileText": {},
-  "habitDisplay_mainMenu_showActivedTileText": "Aktívak megjelenítése",
-  "@habitDisplay_mainMenu_showActivedTileText": {},
-  "habitDisplay_mainMenu_settingTileText": "Beállítások",
-  "@habitDisplay_mainMenu_settingTileText": {},
-  "habitDisplay_sort_reverseText": "Fordított",
-  "@habitDisplay_sort_reverseText": {},
-  "habitDisplay_sortDirection_asc": "(Növ.)",
-  "@habitDisplay_sortDirection_asc": {},
-  "habitDisplay_sortDirection_Desc": "(Csök.)",
-  "@habitDisplay_sortDirection_Desc": {},
-  "habitDisplay_sortType_manual": "Saját sorrend",
-  "@habitDisplay_sortType_manual": {},
-  "habitDisplay_sortType_name": "Név",
-  "@habitDisplay_sortType_name": {},
-  "habitDisplay_sortType_colorType": "Szín",
-  "@habitDisplay_sortType_colorType": {},
-  "habitDisplay_sortType_progress": "Sűrűség",
-  "@habitDisplay_sortType_progress": {},
-  "habitDisplay_sortType_startT": "Kezdő dátum lapján",
-  "@habitDisplay_sortType_startT": {},
-  "habitDisplay_sortType_status": "Állapot",
-  "@habitDisplay_sortType_status": {},
-  "habitDisplay_sortTypeDialog_title": "Rendezés",
-  "@habitDisplay_sortTypeDialog_title": {},
-  "habitDisplay_sortTypeDialog_confirm": "megerősítés",
-  "@habitDisplay_sortTypeDialog_confirm": {},
-  "habitDisplay_sortTypeDialog_cancel": "mégse",
-  "@habitDisplay_sortTypeDialog_cancel": {},
-  "habitDisplay_debug_debugSubgroup_title": "🛠️Hibakeresés",
-  "@habitDisplay_debug_debugSubgroup_title": {},
-  "habitDisplay_searchBar_hintText": "Szokás keresése",
-  "@habitDisplay_searchBar_hintText": {},
-  "habitDisplay_searchFilter_ongoing": "Folyamatban lévő",
-  "@habitDisplay_searchFilter_ongoing": {},
-  "habitDisplay_searchFilter_ongoing_desc": "Megjeleníti azokat a szokásokat, amelyek jelenleg aktívak és folyamatban vannak (nem archiváltak vagy töröltek).",
-  "@habitDisplay_searchFilter_ongoing_desc": {},
-  "habitDisplay_searchFilter_completed": "Teljesített",
-  "@habitDisplay_searchFilter_completed": {},
-  "habitDisplay_searchFilter_habitType_groupTitle": "Szokás típusa",
-  "@habitDisplay_searchFilter_habitType_groupTitle": {},
-  "habitDisplay_searchFilter_tooltips": "Szűrők megjelenítése",
-  "@habitDisplay_searchFilter_tooltips": {},
-  "habitDisplay_searchFilter_clearFilter": "Szűrők törlése",
-  "@habitDisplay_searchFilter_clearFilter": {},
-  "habitDisplay_tab_habits_label": "Szokások",
-  "@habitDisplay_tab_habits_label": {},
-  "habitDisplay_tab_today_label": "Ma",
-  "@habitDisplay_tab_today_label": {},
-  "habitToday_appBar_title": "Ma",
-  "@habitToday_appBar_title": {},
-  "habitToday_image_desc": "MEGCSINÁLTAD!",
-  "@habitToday_image_desc": {
-    "description": "Ünneplő szöveg, amely akkor jelenik meg, amikor a felhasználó ma minden szokását teljesítette."
-  },
-  "habitToday_card_subtitle_text": "Kitartottál mellette {days} napig",
-  "@habitToday_card_subtitle_text": {
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "description": "Napok a kiválasztott kezdő dátum óta"
-      }
-    }
-  },
-  "habitToday_card_donePlusButton_label": "Kész+",
-  "@habitToday_card_donePlusButton_label": {
-    "description": "Gomb felirata a mai szokás teljesítéséhez (párbeszédablakkal)"
-  },
-  "habitToday_card_skipPlusButton_label": "Kihagyás+",
-  "@habitToday_card_skipPlusButton_label": {
-    "description": "Gomb felirata a mai szokás kihagyásához (párbeszédablakkal)"
-  },
-  "habitDetail_editButton_tooltip": "Szerkesztés",
-  "@habitDetail_editButton_tooltip": {},
-  "habitDetail_editPopMenu_unarchive": "Archiválás visszavonása",
-  "@habitDetail_editPopMenu_unarchive": {},
-  "habitDetail_editPopMenu_archive": "Archiválás",
-  "@habitDetail_editPopMenu_archive": {},
-  "habitDetail_editPopMenu_export": "Exportálás",
-  "@habitDetail_editPopMenu_export": {},
-  "habitDetail_editPopMenu_delete": "Törlés",
-  "@habitDetail_editPopMenu_delete": {},
-  "habitDetail_editPopMenu_clone": "Sablon",
-  "@habitDetail_editPopMenu_clone": {},
-  "habitDetail_confirmDialog_confirm": "megerősítés",
-  "@habitDetail_confirmDialog_confirm": {},
-  "habitDetail_confirmDialog_cancel": "mégse",
-  "@habitDetail_confirmDialog_cancel": {},
-  "habitDetail_archiveConfirmDialog_titleText": "Archiválja a szokást?",
-  "@habitDetail_archiveConfirmDialog_titleText": {},
-  "habitDetail_unarchiveConfirmDialog_titleText": "Szokás archiválásának visszaállítása?",
-  "@habitDetail_unarchiveConfirmDialog_titleText": {},
-  "habitDetail_deleteConfirmDialog_titleText": "Törli a szokást?",
-  "@habitDetail_deleteConfirmDialog_titleText": {},
-  "habitDetail_summary_title": "Összegzés",
-  "@habitDetail_summary_title": {},
-  "habitDetail_summary_body": "A jelenlegi értékelés {score}, és {days} nap telt el a kezdés óta.",
-  "@habitDetail_summary_body": {
-    "placeholders": {
-      "score": {
-        "type": "String",
-        "example": "0.0"
-      },
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_summary_preBody": "{days, plural, =1{Holnaptól kezdődik.} other{{days} nap múlva kezdődik.}}",
-  "@habitDetail_summary_preBody": {
-    "placeholders": {
-      "days": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{NEM TELJESÍTETT} =2{ALACSONY SZINT} other{}}",
-  "@habitDetail_heatmap_leftHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{TÚLTELJESÍTETT} =2{TÖKÉLETES} other{}}",
-  "@habitDetail_heatmap_rightHelpText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Küszöb} other{Cél}}",
-  "@habitDetail_descDailyGoal_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitText": "Mértékegység: {unit}",
-  "@habitDetail_descDailyGoal_unitText": {
-    "placeholders": {
-      "unit": {
-        "type": "String",
-        "example": "M/S"
-      }
-    }
-  },
-  "habitDetail_descDailyGoal_unitEmptyText": "null",
-  "@habitDetail_descDailyGoal_unitEmptyText": {},
-  "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Napok}}",
-  "@habitDetail_descTargetDays_titleText": {
-    "placeholders": {
-      "habitType": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "habitDetail_descTargetDays_unitText": "nap",
-  "@habitDetail_descTargetDays_unitText": {},
-  "habitDetail_descRecordsNum_titleText": "Értékek",
-  "@habitDetail_descRecordsNum_titleText": {},
-  "habitDetail_scoreChart_title": "Értékelés",
-  "@habitDetail_scoreChart_title": {},
-  "habitDetail_scoreChartCombine_dailyText": "Nap",
-  "@habitDetail_scoreChartCombine_dailyText": {},
-  "habitDetail_scoreChartCombine_weeklyText": "Hét",
-  "@habitDetail_scoreChartCombine_weeklyText": {},
-  "habitDetail_scoreChartCombine_monthlyText": "Hónap",
-  "@habitDetail_scoreChartCombine_monthlyText": {},
-  "habitDetail_scoreChartCombine_yearlyText": "Év",
-  "@habitDetail_scoreChartCombine_yearlyText": {},
-  "habitDetail_freqChart_freqTitle": "Sűrűség",
-  "@habitDetail_freqChart_freqTitle": {},
-  "habitDetail_freqChart_historyTitle": "Előzmény",
-  "@habitDetail_freqChart_historyTitle": {},
-  "habitDetail_freqChart_combinedTitle": "Sűrűség & Előzmény",
-  "@habitDetail_freqChart_combinedTitle": {},
-  "habitDetail_freqChartCombine_weeklyText": "Hét",
-  "@habitDetail_freqChartCombine_weeklyText": {},
-  "habitDetail_freqChartCombine_monthlyText": "Hónap",
-  "@habitDetail_freqChartCombine_monthlyText": {},
-  "habitDetail_freqChartCombine_yearlyText": "Év",
-  "@habitDetail_freqChartCombine_yearlyText": {},
-  "habitDetail_freqChartNaviBar_nowText": "Most",
-  "@habitDetail_freqChartNaviBar_nowText": {},
-  "habitDetail_freqChart_expanded_hideTooltip": "Előzmények diagram elrejtése",
-  "@habitDetail_freqChart_expanded_hideTooltip": {},
-  "habitDetail_freqChart_expanded_showTooltip": "Előzmények diagram megjelenítése",
-  "@habitDetail_freqChart_expanded_showTooltip": {},
-  "habitDetail_descSubgroup_title": "Jegyzet",
-  "@habitDetail_descSubgroup_title": {},
-  "habitDetail_otherSubgroup_title": "Más",
-  "@habitDetail_otherSubgroup_title": {},
-  "habitDetail_habitType_title": "Típus",
-  "@habitDetail_habitType_title": {},
-  "habitDetail_reminderTile_title": "Emlékeztető",
-  "@habitDetail_reminderTile_title": {},
-  "habitDetail_freqTile_title": "Ismétlés",
-  "@habitDetail_freqTile_title": {},
-  "habitDetail_startDateTile_title": "Kezdő dátum",
-  "@habitDetail_startDateTile_title": {},
-  "habitDetail_createDateTile_title": "Létrehozva",
-  "@habitDetail_createDateTile_title": {},
-  "habitDetail_modifyDateTile_title": "Módosítva",
-  "@habitDetail_modifyDateTile_title": {},
-  "habitDetail_editHeatmapCal_dateButtonText": "dátum",
-  "@habitDetail_editHeatmapCal_dateButtonText": {},
-  "habitDetail_editHeatmapCal_valueButtonText": "érték",
-  "@habitDetail_editHeatmapCal_valueButtonText": {},
-  "habitDetail_editHeatmapCal_backToToday_tooltipText": "vissza a mai naphoz",
-  "@habitDetail_editHeatmapCal_backToToday_tooltipText": {},
-  "habitDetail_notFoundText": "Szokás betöltése sikertelen",
-  "@habitDetail_notFoundText": {},
-  "habitDetail_notFoundRetryText": "Próbáld újra",
-  "@habitDetail_notFoundRetryText": {},
-  "habitDetail_changeGoal_title": "Cél változtatása",
-  "@habitDetail_changeGoal_title": {},
-  "habitDetail_changeGoal_currentChipText": "jelenlegi: {goal}",
-  "@habitDetail_changeGoal_currentChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_doneChipText": "kész: {goal}",
-  "@habitDetail_changeGoal_doneChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_undoneChipText": "nem teljesített",
-  "@habitDetail_changeGoal_undoneChipText": {},
-  "habitDetail_changeGoal_extraChipText": "{goal}",
-  "@habitDetail_changeGoal_extraChipText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_helpText": "Napi cél, alapértelmezett: {goal}",
-  "@habitDetail_changeGoal_helpText": {
-    "placeholders": {
-      "goal": {
-        "type": "String",
-        "example": "1.5"
-      }
-    }
-  },
-  "habitDetail_changeGoal_cancelText": "mégse",
-  "@habitDetail_changeGoal_cancelText": {},
-  "habitDetail_changeGoal_saveText": "mentés",
-  "@habitDetail_changeGoal_saveText": {},
-  "habitDetail_skipReason_title": "Kihagyás oka",
-  "@habitDetail_skipReason_title": {},
-  "habitDetail_skipReason_bodyHelpText": "Írj ide valamit...",
-  "@habitDetail_skipReason_bodyHelpText": {},
-  "habitDetail_skipReason_cancelText": "mégse",
-  "@habitDetail_skipReason_cancelText": {},
-  "habitDetail_skipReason_saveText": "mentés",
-  "@habitDetail_skipReason_saveText": {},
-  "appSetting_appbar_titleText": "Beállítások",
-  "@appSetting_appbar_titleText": {},
-  "appSetting_displaySubgroupText": "Megjelenítés",
-  "@appSetting_displaySubgroupText": {},
-  "appSetting_operationSubgroupText": "Művelet",
-  "@appSetting_operationSubgroupText": {},
-  "appSetting_dragCalendarByPageTile_titleText": "Naptár húzása oldalanként",
-  "@appSetting_dragCalendarByPageTile_titleText": {},
-  "appSetting_dragCalendarByPageTile_subtitleText": "Ha a kapcsoló be van kapcsolva, a kezdőlap felső sávjában lévő naptár oldalanként húzható. Alapértelmezés szerint a kapcsoló ki van kapcsolva.",
-  "@appSetting_dragCalendarByPageTile_subtitleText": {},
-  "appSetting_changeRecordStatusOpTile_titleText": "Bejegyzés állapotának módosítása",
-  "@appSetting_changeRecordStatusOpTile_titleText": {},
-  "appSetting_changeRecordStatusOpTile_subtitleText": "Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzések állapotát lehessen változtatni.",
-  "@appSetting_changeRecordStatusOpTile_subtitleText": {},
-  "appSetting_openRecordStatusDialogOpTile_titleText": "Részletes bejegyzés megnyitása",
-  "@appSetting_openRecordStatusDialogOpTile_titleText": {},
-  "appSetting_openRecordStatusDialogOpTile_subtitleText": "Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzésekhez tartozó részletes felugró ablak nyíljon meg.",
-  "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
-  "appSetting_appThemeColorTile_titleText": "Téma színe",
-  "@appSetting_appThemeColorTile_titleText": {},
-  "appSetting_appThemeColorChosenDiloag_titleText": "Téma színének kiválasztása",
-  "@appSetting_appThemeColorChosenDiloag_titleText": {},
-  "appSetting_appThemeColorChosenDialog_subTitleText_android": "A háttérkép fő színének használata (Android 12+)",
-  "@appSetting_appThemeColorChosenDialog_subTitleText_android": {},
-  "appSetting_appThemeColorChosenDialog_subTitleText_linux": "A GTK+ téma kiválasztott háttérszínének használata",
-  "@appSetting_appThemeColorChosenDialog_subTitleText_linux": {},
-  "appSetting_appThemeColorChosenDialog_subTitleText_macos": "A rendszer téma színének használata",
-  "@appSetting_appThemeColorChosenDialog_subTitleText_macos": {},
-  "appSetting_appThemeColorChosenDialog_subTitleText_windows": "A rendszer kiemelőszínének vagy ablak/üveg színének használata",
-  "@appSetting_appThemeColorChosenDialog_subTitleText_windows": {},
-  "appSetting_firstDayOfWeek_titleText": "A hét első napja",
-  "@appSetting_firstDayOfWeek_titleText": {},
-  "appSetting_firstDayOfWeekDialog_titleText": "Mutassa a hét első napját",
-  "@appSetting_firstDayOfWeekDialog_titleText": {},
-  "appSetting_firstDayOfWeekDialog_defaultText": " (Alapértelmezett)",
-  "@appSetting_firstDayOfWeekDialog_defaultText": {},
-  "appSetting_changeLanguage_followSystem_text": "Renszer követése ({localeName})",
-  "@appSetting_changeLanguage_followSystem_text": {
-    "placeholders": {
-      "localeName": {
-        "type": "String",
-        "example": "English"
-      }
-    }
-  },
-  "appSetting_changeLanguage_followSystem_noLocale_text": "Rendszer Követése",
-  "@appSetting_changeLanguage_followSystem_noLocale_text": {},
-  "appSetting_changeLanguageTile_titleText": "Nyelv",
-  "@appSetting_changeLanguageTile_titleText": {},
-  "appSetting_changeLanguageDialog_titleText": "Nyelv kiválasztása",
-  "@appSetting_changeLanguageDialog_titleText": {},
-  "appSetting_dateDisplayFormat_titleText": "Dátum megjelenítési formátuma ({formatTemplate})",
-  "@appSetting_dateDisplayFormat_titleText": {
-    "placeholders": {
-      "formatTemplate": {
-        "type": "String",
-        "example": "yyyy/M/d"
-      }
-    }
-  },
-  "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "rendszer követése",
-  "@appSetting_dateDisplayFormat_titleTemplate_followSystemText": {},
-  "appSetting_dateDisplayFormat_subTitleText": "A beállított dátumformátum a szokás részletei oldalon jelenik meg.",
-  "@appSetting_dateDisplayFormat_subTitleText": {},
-  "appSetting_compactUISwitcher_titleText": "Kompakt felület engedélyezése a szokások oldalán",
-  "@appSetting_compactUISwitcher_titleText": {},
-  "appSetting_compactUISwitcher_subtitleText": "Lehetővé teszi, hogy a szokások ellenőrző táblája több tartalmat jelenítsen meg, de egyes UI elemek és szövegek kisebbnek tűnhetnek.",
-  "@appSetting_compactUISwitcher_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_titleText": "Szokások ellenőrző terület rádió-beállítása",
-  "@appSetting_collapsed_calendar_bararea_titleText": {},
-  "appSetting_collapsed_calendar_bararea_subtitleText": "Állítsd a százalékos arányt a szokások ellenőrző táblájában több vagy kevesebb hely biztosításához.",
-  "@appSetting_collapsed_calendar_bararea_subtitleText": {},
-  "appSetting_collapsed_calendar_bararea_defaultText": "Alapértelmezett",
-  "@appSetting_collapsed_calendar_bararea_defaultText": {},
-  "appSetting_reminderSubgroupText": "Emlékeztető & Értesítés",
-  "@appSetting_reminderSubgroupText": {
-    "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
-  },
-  "appSetting_dailyReminder_titleText": "Napi emlékeztető",
-  "@appSetting_dailyReminder_titleText": {},
-  "appSetting_backupAndRestoreSubgroupText": "Biztonsági mentés és visszaállítás",
-  "@appSetting_backupAndRestoreSubgroupText": {},
-  "appSetting_export_titleText": "Exportálás",
-  "@appSetting_export_titleText": {},
-  "appSetting_export_subtitleText": "A szokások JSON formátumban exportálva. Ez a fájl visszaimportálható.",
-  "@appSetting_export_subtitleText": {},
-  "appSetting_import_titleText": "Importálás",
-  "@appSetting_import_titleText": {},
-  "appSetting_import_subtitleText": "Szokások importálása JSON fájlból",
-  "@appSetting_import_subtitleText": {},
-  "appSetting_importDialog_confirmTitle": "Importáljuk a {count} szokást?",
-  "@appSetting_importDialog_confirmTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_confirmSubtitle": "Megjegyzés: Az importálás nem törli a meglévő szokásokat.",
-  "@appSetting_importDialog_confirmSubtitle": {},
-  "appSetting_importDialog_confirm_confirmText": "Megerősítés",
-  "@appSetting_importDialog_confirm_confirmText": {},
-  "appSetting_importDialog_confirm_cancelText": "mégse",
-  "@appSetting_importDialog_confirm_cancelText": {},
-  "appSetting_importDialog_importingTitle": "Importálva {completeCount}/{totalCount}",
-  "@appSetting_importDialog_importingTitle": {
-    "placeholders": {
-      "completeCount": {
-        "type": "int",
-        "example": "1"
-      },
-      "totalCount": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_completeTitle": "{count} importálása befejezve",
-  "@appSetting_importDialog_completeTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "appSetting_importDialog_complete_closeLabel": "bezárás",
-  "@appSetting_importDialog_complete_closeLabel": {},
-  "appSetting_resetConfig_titleText": "Konfiguráció visszaállítása",
-  "@appSetting_resetConfig_titleText": {},
-  "appSetting_resetConfig_subtitleText": "Összes konfiguráció visszaállítása alapértelmezettre",
-  "@appSetting_resetConfig_subtitleText": {},
-  "appSetting_resetConfigDialog_titleText": "Visszaállítja a konfigurációkat?",
-  "@appSetting_resetConfigDialog_titleText": {},
-  "appSetting_resetConfigDialog_subtitleText": "Az összes beállítás alapértelmezettre állítása, az alkalmazást újra kell indítani az érvényesítéshez.",
-  "@appSetting_resetConfigDialog_subtitleText": {},
-  "appSetting_resetConfigDialog_cancelText": "mégse",
-  "@appSetting_resetConfigDialog_cancelText": {},
-  "appSetting_resetConfigDialog_confirmText": "megerősítés",
-  "@appSetting_resetConfigDialog_confirmText": {},
-  "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
-  "@appSetting_resetConfigSuccess_snackbarText": {},
-  "appSetting_otherSubgroupText": "Egyéb",
-  "@appSetting_otherSubgroupText": {},
-  "appSetting_developMode_titleText": "Fejlesztői mód",
-  "@appSetting_developMode_titleText": {},
-  "appSetting_clearCache_titleText": "Gyorsítótár törlése",
-  "@appSetting_clearCache_titleText": {},
-  "appSetting_clearCacheDialog_titleText": "Gyorsítótár törlése",
-  "@appSetting_clearCacheDialog_titleText": {},
-  "appSetting_clearCacheDialog_subtitleText": "A gyorsítótár törlése után néhány egyéni érték alapértelmezett értékre áll vissza.",
-  "@appSetting_clearCacheDialog_subtitleText": {},
-  "appSetting_clearCacheDialog_cancelText": "mégse",
-  "@appSetting_clearCacheDialog_cancelText": {},
-  "appSetting_clearCacheDialog_confirmText": "megerősítés",
-  "@appSetting_clearCacheDialog_confirmText": {},
-  "appSetting_clearCache_snackBar_partSuccText": "A részleges gyorsítótár törlése sikertelen",
-  "@appSetting_clearCache_snackBar_partSuccText": {},
-  "appSetting_clearCache_snackBar_succText": "Gyorsítótár sikeresen törölve",
-  "@appSetting_clearCache_snackBar_succText": {},
-  "appSetting_clearCache_snackBar_failText": "Gyorsítótár törlése sikeretelen",
-  "@appSetting_clearCache_snackBar_failText": {},
-  "appSetting_debugger_titleText": "Hibakeresés info",
-  "@appSetting_debugger_titleText": {},
-  "appSetting_about_titleText": "Névjegy",
-  "@appSetting_about_titleText": {},
-  "appSetting_experimentalFeatureTile_titleText": "Kísérleti beállítások",
-  "@appSetting_experimentalFeatureTile_titleText": {},
-  "appSetting_synSubgroupText": "Szinkronizálás",
-  "@appSetting_synSubgroupText": {},
-  "appSetting_syncOption_titleText": "Szinkronizálás opciók",
-  "@appSetting_syncOption_titleText": {},
-  "appSetting_notify_titleTile": "Értesítések",
-  "@appSetting_notify_titleTile": {},
-  "appSetting_notify_subtitleTile": "Értesítési beállítások kezelése",
-  "@appSetting_notify_subtitleTile": {},
-  "appSetting_notify_subtitleTile_android": "Koppints a rendszer értesítési beállításainak megnyitásához",
-  "@appSetting_notify_subtitleTile_android": {},
-  "appSync_nowTile_titleText": "Szinkronizálás most",
-  "@appSync_nowTile_titleText": {},
-  "appSync_nowTile_titleText_syncing": "Szinkronizálás",
-  "@appSync_nowTile_titleText_syncing": {},
-  "appSync_nowTile_dateFormat": "{ymd} {jms}",
-  "@appSync_nowTile_dateFormat": {
-    "placeholders": {
-      "ymd": {
-        "type": "DateTime",
-        "format": "yMd"
-      },
-      "jms": {
-        "type": "DateTime",
-        "format": "jms"
-      }
-    }
-  },
-  "appSync_nowTile_text_noDate": "Utolsó szinkronizálás: N/A",
-  "@appSync_nowTile_text_noDate": {},
-  "appSync_nowTile_text": "Utolsó szinkronizálás: {dateStr}",
-  "@appSync_nowTile_text": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Utolsó szinkronizálás dátuma."
-      }
-    }
-  },
-  "appSync_nowTile_errorText_noDate": "Utolsó szinkronizálás (Hiba): N/A",
-  "@appSync_nowTile_errorText_noDate": {},
-  "appSync_nowTile_errorText": "Utolsó szinkronizálás (Hiba): {dateStr}",
-  "@appSync_nowTile_errorText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Utolsó szinkronizálás dátuma."
-      }
-    }
-  },
-  "appSync_nowTile_syncingText": "Szinkronizálás...",
-  "@appSync_nowTile_syncingText": {},
-  "appSync_nowTile_syncingText_withPrt": "Szinkronizálás: {prt}",
-  "@appSync_nowTile_syncingText_withPrt": {
-    "placeholders": {
-      "prt": {
-        "type": "num",
-        "description": "Jelenlegi szinkronizálási százalék (0-100).",
-        "format": "decimalPercentPattern",
-        "optionalParameters": {
-          "decimalDigits": 2
+    "@@locale": "hu",
+    "localeScriptName": "Hungarian",
+    "@localeScriptName": {
+        "description": "A területi beállításhoz használt nyelv ember által olvasható neve."
+    },
+    "appName": "Table Habit",
+    "habitEdit_saveButton_text": "Mentés",
+    "habitEdit_habitName_hintText": "Szokás neve ...",
+    "habitEdit_colorPicker_title": "Válassz színt",
+    "habitEdit_habitTypeDialog_title": "Szokás típusa",
+    "habitEdit_habitType_positiveText": "Pozitív",
+    "habitEdit_habitType_negativeText": "Negatív",
+    "habitEdit_habitDailyGoal_hintText": "Napi cél, alapértelmezett {number}",
+    "@habitEdit_habitDailyGoal_hintText": {
+        "description": "alapértelmezett szokás napi cél",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "1"
+            }
         }
-      }
-    }
-  },
-  "appSync_nowTile_cancellingText": "Mégsem...",
-  "@appSync_nowTile_cancellingText": {},
-  "appSync_nowTile_cancelText_noDate": "Utolsó szinkronizálás (Törölve): N/A",
-  "@appSync_nowTile_cancelText_noDate": {},
-  "appSync_nowTile_cancelText": "Utolsó szinkronizálás (Törölve): {dateStr}",
-  "@appSync_nowTile_cancelText": {
-    "placeholders": {
-      "dateStr": {
-        "type": "String",
-        "description": "Utolsó szinkronizálás dátuma."
-      }
-    }
-  },
-  "appSync_failedTile_titleText": "Hiba napló keresése",
-  "@appSync_failedTile_titleText": {},
-  "appSync_failedTile_errorText": "[Hiba]: {info}",
-  "@appSync_failedTile_errorText": {
-    "placeholders": {
-      "info": {
-        "type": "String",
-        "description": "Hiba információ."
-      }
-    }
-  },
-  "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
-  "@appSync_failedTile_webdavMulti_counterText": {
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus": "{status, select, success {Befejezve} cancelled {Mégsem} failed {Sikertelen} multi {Többszörös állapotok} other {Ismeretlen állapot}}",
-  "@appSync_webdav_resultStatus": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "Az állapot típusa, lásd: [WebDavAppSyncTaskResultStatus]"
-      }
-    }
-  },
-  "appSync_webdav_resultStatus_withReason": "{status, select, success {Befejezve ({reason} miatt)} cancelled {Mégsem ({reason} miatt)} failed {Sikertelen ({reason} miatt)} multi {Többszörös állapotok ({reason} miatt)} other {Ismeretlen állapot}}",
-  "@appSync_webdav_resultStatus_withReason": {
-    "placeholders": {
-      "status": {
-        "type": "String",
-        "description": "Az állapot típusa, lásd: [WebDavAppSyncTaskResultStatus]"
-      },
-      "reason": {
-        "type": "String",
-        "description": "Az állapot oka"
-      }
-    }
-  },
-  "appSync_webdav_resultReason": "{reason, select, error {Hiba} userAction {Felhasználói művelet szükséges} missingHabitUuid {Hiányzó szokás UUID} empty {Üres adat} other {Ismeretlen ok}}",
-  "@appSync_webdav_resultReason": {
-    "placeholders": {
-      "reason": {
-        "type": "String",
-        "description": "A WebDAV AppSync feladat eredményének oka, lásd: [WebDavAppSyncTaskResultSubStatus]"
-      }
-    }
-  },
-  "appSync_webdav_newServerConfirmDialog_titleText": "Új hely",
-  "@appSync_webdav_newServerConfirmDialog_titleText": {},
-  "appSync_webdav_newServerConfirmDialog_subtitleText": "A szinkron létrehozza a szükséges könyvtárakat és feltölti a helyi szokásokat a szerverre. Folytatod?",
-  "@appSync_webdav_newServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_newServerConfirmDialog_confirmText": "Szinkron most!",
-  "@appSync_webdav_newServerConfirmDialog_confirmText": {},
-  "appSync_webdav_oldServerConfirmDialog_titleText": "Szinkron megerősítése",
-  "@appSync_webdav_oldServerConfirmDialog_titleText": {},
-  "appSync_webdav_oldServerConfirmDialog_subtitleText": "A könyvtár nem üres. A szinkron összevonja a szerver és a helyi szokásokat. Folytatod?",
-  "@appSync_webdav_oldServerConfirmDialog_subtitleText": {},
-  "appSync_webdav_oldServerConfirmDialog_confirmText": "Összevonás megerősítése",
-  "@appSync_webdav_oldServerConfirmDialog_confirmText": {},
-  "appSync_exportAllLogsTile_titleText": "Sikertelen szinkron naplók exportálása",
-  "@appSync_exportAllLogsTile_titleText": {},
-  "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Nincs napló} false {Koppints az exportáláshoz} other {betöltés...}}",
-  "@appSync_exportAllLogsTile_subtitleText": {
-    "placeholders": {
-      "isEmpty": {
-        "type": "String",
-        "description": "<bool>.toString()"
-      }
-    }
-  },
-  "appSync_syncServerType_text": "{isCurrent, select, true {Aktuális: } other {}}{name, select, webdav {WebDAV} fake {Fake (Csak hibakereséshez)} other {Ismeretlen ({name})}}",
-  "@appSync_syncServerType_text": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "description": "A szerver neve, a konkrét szervertípustól függ.",
-        "example": "WebDAV"
-      },
-      "isCurrent": {
-        "type": "String",
-        "description": "Jelenleg kiválasztott szerver-e",
-        "example": "true|false"
-      }
-    }
-  },
-  "appSync_networkType_text": "{type, select, mobile {Mobil} wifi {Wi-Fi} other {Ismeretlen}}",
-  "@appSync_networkType_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_syncInterval_text": "{name, select, manual {Kézi} minute5 {5 perc} minute15 {15 perc} minute30 {30 perc} hour1 {1 óra} other {Ismeretlen}}",
-  "@appSync_syncInterval_text": {
-    "description": "A szinkronizálás időközének lokalizált megjelenítési szövege",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "minute15",
-        "description": "<AppSyncFetchInterval>.name"
-      }
-    }
-  },
-  "appSync_syncIntervalTile_title": "Lekérdezési időköz",
-  "@appSync_syncIntervalTile_title": {},
-  "appSync_summaryTile_title": "Szinkron szerver",
-  "@appSync_summaryTile_title": {},
-  "appSync_summaryTile_subtitle_text_notConfigured": "Nincs beállítva",
-  "@appSync_summaryTile_subtitle_text_notConfigured": {},
-  "appSync_exportAllLogsTile_exportSubjectText": "Minden legutóbbi sikertelen szinkron napló",
-  "@appSync_exportAllLogsTile_exportSubjectText": {},
-  "appSync_serverEditor_saveDialog_titleText": "Módosítások mentésének megerősítése",
-  "@appSync_serverEditor_saveDialog_titleText": {},
-  "appSync_serverEditor_saveDialog_subtitleText": "A mentés felülírja az előző szerverkonfigurációt.",
-  "@appSync_serverEditor_saveDialog_subtitleText": {},
-  "appSync_serverEditor_exitDialog_titleText": "Mentetlen módosítások",
-  "@appSync_serverEditor_exitDialog_titleText": {},
-  "appSync_serverEditor_exitDialog_subtitleText": "Kilépéskor minden mentetlen módosítás elvész.",
-  "@appSync_serverEditor_exitDialog_subtitleText": {},
-  "appSync_serverEditor_deleteDialog_titleText": "Törlés megerősítése",
-  "@appSync_serverEditor_deleteDialog_titleText": {},
-  "appSync_serverEditor_deleteDialog_subtitleText": "A törlés eltávolítja az aktuális szerverkonfigurációt.",
-  "@appSync_serverEditor_deleteDialog_subtitleText": {},
-  "appSync_serverEditor_titleText_add": "Új szinkron szerver",
-  "@appSync_serverEditor_titleText_add": {},
-  "appSync_serverEditor_titleText_modify": "Szinkron szerver módosítása",
-  "@appSync_serverEditor_titleText_modify": {},
-  "appSync_serverEditor_advance_titleText": "Speciális beállítások",
-  "@appSync_serverEditor_advance_titleText": {},
-  "appSync_serverEditor_pathTile_titleText": "Elérési út",
-  "@appSync_serverEditor_pathTile_titleText": {},
-  "appSync_serverEditor_pathTile_hintText": "Írd be ide az érvényes WebDAV elérési utat.",
-  "@appSync_serverEditor_pathTile_hintText": {},
-  "appSync_serverEditor_pathTile_errorText_emptyPath": "Az elérési út nem lehet üres!",
-  "@appSync_serverEditor_pathTile_errorText_emptyPath": {},
-  "appSync_serverEditor_usernameTile_titleText": "Felhasználónév",
-  "@appSync_serverEditor_usernameTile_titleText": {},
-  "appSync_serverEditor_usernameTile_hintText": "Add meg a felhasználónevet, hagyd üresen, ha nem szükséges.",
-  "@appSync_serverEditor_usernameTile_hintText": {},
-  "appSync_serverEditor_passwordTile_titleText": "Jelszó",
-  "@appSync_serverEditor_passwordTile_titleText": {},
-  "appSync_serverEditor_ignoreSSLTile_titleText": "SSL tanúsítvány figyelmen kívül hagyása",
-  "@appSync_serverEditor_ignoreSSLTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_titleText": "Szinkron időkorlát (másodperc)",
-  "@appSync_serverEditor_timeoutTile_titleText": {},
-  "appSync_serverEditor_timeoutTile_hintText": "Alapértelmezett: {seconds, plural, =0 {Végtelen} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_timeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_timeoutTile_unitText": "mp",
-  "@appSync_serverEditor_timeoutTile_unitText": {},
-  "appSync_serverEditor_connTimeoutTile_titleText": "Hálózati kapcsolat időkorlát (mp)",
-  "@appSync_serverEditor_connTimeoutTile_titleText": {},
-  "appSync_serverEditor_connTimeoutTile_hintText": "Alapértelmezett: {seconds, plural, =0 {Végtelen} other {{seconds}{unit}}}",
-  "@appSync_serverEditor_connTimeoutTile_hintText": {
-    "placeholders": {
-      "seconds": {
-        "type": "int",
-        "example": "10"
-      },
-      "unit": {
-        "type": "String",
-        "example": "s"
-      }
-    }
-  },
-  "appSync_serverEditor_connTimeoutTile_unitText": "mp",
-  "@appSync_serverEditor_connTimeoutTile_unitText": {},
-  "appSync_serverEditor_connRetryCountTile_titleText": "Hálózati újrapróbálkozások száma",
-  "@appSync_serverEditor_connRetryCountTile_titleText": {},
-  "appSync_serverEditor_connRetryCountTile_hintText": "Alapértelmezett: {count, plural, =0 {Újrapróbálkozás letiltva} other {{count}}}",
-  "@appSync_serverEditor_connRetryCountTile_hintText": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "10"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_titleText": "Hálózati szinkron mód",
-  "@appSync_serverEditor_netTypeTile_titleText": {},
-  "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Szinkron mobilhálózaton} wifi {Szinkron Wi-Fi-n} other {Ismeretlen}}",
-  "@appSync_serverEditor_netTypeTile_typeTooltip": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<AppSyncServerMobileNetwork>.name"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataText": "Alacsony adatforgalom",
-  "@appSync_serverEditor_netTypeTile_lowDataText": {},
-  "appSync_noti_readyToSync_body": "Szinkron előkészítése...",
-  "@appSync_noti_readyToSync_body": {},
-  "appSync_noti_syncing_title": "{synced, select, synced {Szinkron kész ({type})} failed {Szinkron sikertelen ({type})} other {Szinkron folyamatban ({type})}}",
-  "@appSync_noti_syncing_title": {
-    "placeholders": {
-      "synced": {
-        "type": "String",
-        "description": "<AppSyncNotiTitleEnum>.name",
-        "example": "synced"
-      },
-      "type": {
-        "type": "String",
-        "description": "Szerver típusa, lásd: 'appSync_syncServerType_text'",
-        "example": "WebDAV"
-      }
-    }
-  },
-  "appSync_serverEditor_netTypeTile_lowDataTooltip": "Szinkron alacsony adatforgalom módban",
-  "@appSync_serverEditor_netTypeTile_lowDataTooltip": {},
-  "experimentalFeatures_warnginBanner_title": "Egy vagy több kísérleti funkció engedélyezve, használatukkal óvatosan.",
-  "@experimentalFeatures_warnginBanner_title": {},
-  "experimentalFeatures_habitSyncTile_titleText": "Szokások felhő szinkron",
-  "@experimentalFeatures_habitSyncTile_titleText": {},
-  "experimentalFeatures_habitSyncTile_subtitleText": "Engedélyezés után a szinkron opció megjelenik a beállításokban",
-  "@experimentalFeatures_habitSyncTile_subtitleText": {},
-  "experimentalFeatures_warnTile_titleText": "A kísérleti funkció ({syncName}) le van tiltva, de a funkció továbbra is fut.",
-  "@experimentalFeatures_warnTile_titleText": {
-    "placeholders": {
-      "syncName": {
-        "type": "String",
-        "example": "Szokások felhő szinkron",
-        "description": "A kísérleti funkció neve"
-      }
-    }
-  },
-  "experimentalFeatures_warnTile_forHabitSyncText": "Teljes kikapcsoláshoz hosszú nyomással nyisd meg a '{menuName}' menüt, és kapcsold ki.",
-  "@experimentalFeatures_warnTile_forHabitSyncText": {
-    "placeholders": {
-      "menuName": {
-        "type": "String",
-        "example": "Szinkron opció"
-      }
-    }
-  },
-  "experimentalFeatures_habitSearchTile_titleText": "Szokás keresés",
-  "@experimentalFeatures_habitSearchTile_titleText": {},
-  "experimentalFeatures_habitSearchTile_subtitleText": "Engedélyezés után a Szokások képernyő tetején keresősáv jelenik meg, ahol szokások kereshetők.",
-  "@experimentalFeatures_habitSearchTile_subtitleText": {},
-  "appAbout_appbarTile_titleText": "Névjegy",
-  "@appAbout_appbarTile_titleText": {},
-  "appAbout_versionTile_titleText": "Verzió: {appVersion}",
-  "@appAbout_versionTile_titleText": {
-    "placeholders": {
-      "appVersion": {
-        "type": "String",
-        "example": "1.0.0"
-      }
-    }
-  },
-  "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
-  "@appAbout_versionTile_changeLogPath": {},
-  "appAbout_sourceCodeTile_titleText": "Forráskód",
-  "@appAbout_sourceCodeTile_titleText": {},
-  "appAbout_issueTrackerTile_titleText": "Hibakövető",
-  "@appAbout_issueTrackerTile_titleText": {},
-  "appAbout_contactEmailTile_titleText": "Kapcsolatfelvétel",
-  "@appAbout_contactEmailTile_titleText": {},
-  "appAbout_contactEmailTile_emailBody": "Szia, örülök, hogy megkerestél.\nHa hibát jelzel, kérlek add meg az alkalmazás verzióját és írd le a reprodukálás lépéseit.\n--------------------------------------",
-  "@appAbout_contactEmailTile_emailBody": {},
-  "appAbout_licenseTile_titleText": "Licenc",
-  "@appAbout_licenseTile_titleText": {},
-  "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
-  "@appAbout_licenseTile_subtitleText": {},
-  "appAbout_licenseThirdPartyTile_titleText": "Harmadik fél licenc nyilatkozat",
-  "@appAbout_licenseThirdPartyTile_titleText": {},
-  "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
-  "@appAbout_licenseThirdPartyTile_subtitleText": {},
-  "appAbout_privacyTile_titleText": "Adatvédelem",
-  "@appAbout_privacyTile_titleText": {},
-  "appAbout_privacyTile_subTitleText": "Az alkalmazásban elérheted az adatvédelmi szabályzatot",
-  "@appAbout_privacyTile_subTitleText": {},
-  "appAbout_donateTile_titleText": "Adományozás",
-  "@appAbout_donateTile_titleText": {},
-  "appAbout_donateTile_subTitleText": "Személyes fejlesztő vagyok. Ha tetszik az alkalmazás, vegyél nekem egy ☕-t.",
-  "@appAbout_donateTile_subTitleText": {},
-  "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
-  "@appAbout_donateTile_ways": {
-    "description": "Az adományozás `@`-vel kezdődik és `,`-vel elválasztva, elérhető módok: paypal, buyMeACoffee, alipay, wechatPay"
-  },
-  "donateWay_paypal": "Paypal",
-  "@donateWay_paypal": {},
-  "donateWay_buyMeACoffee": "Vegyél nekem egy kávét",
-  "@donateWay_buyMeACoffee": {},
-  "donateWay_alipay": "Alipay",
-  "@donateWay_alipay": {},
-  "donateWay_wechatPay": "Wechat Pay",
-  "@donateWay_wechatPay": {},
-  "donateWay_cryptoCurrency": "Kriptovaluták",
-  "@donateWay_cryptoCurrency": {},
-  "donateWay_cryptoCurrency_BTC": "BTC",
-  "@donateWay_cryptoCurrency_BTC": {},
-  "donateWay_cryptoCurrency_ETH": "ETH",
-  "@donateWay_cryptoCurrency_ETH": {},
-  "donateWay_cryptoCurrency_BNB": "BNB",
-  "@donateWay_cryptoCurrency_BNB": {},
-  "donateWay_cryptoCurrency_AVAX": "AVAX",
-  "@donateWay_cryptoCurrency_AVAX": {},
-  "donateWay_cryptoCurrency_FTM": "FTM",
-  "@donateWay_cryptoCurrency_FTM": {},
-  "donateWay_firstQRGroup": "Alipay & Wechat Pay",
-  "@donateWay_firstQRGroup": {},
-  "appAbout_donateDialog_copiedCrypto_msg": "{name} cím másolva",
-  "@appAbout_donateDialog_copiedCrypto_msg": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "BTC"
-      }
-    }
-  },
-  "batchCheckin_appbar_title": "Tömeges bejelentkezés",
-  "@batchCheckin_appbar_title": {},
-  "batchCheckin_datePicker_prevButton_tooltip": "Előző nap",
-  "@batchCheckin_datePicker_prevButton_tooltip": {},
-  "batchCheckin_datePicker_nextButton_tooltip": "Következő nap",
-  "@batchCheckin_datePicker_nextButton_tooltip": {},
-  "batchCheckin_status_skip_text": "Kihagyás",
-  "@batchCheckin_status_skip_text": {},
-  "batchCheckin_status_ok_text": "Teljesítve",
-  "@batchCheckin_status_ok_text": {},
-  "batchCheckin_status_double_text": "x2 Találat!",
-  "@batchCheckin_status_double_text": {},
-  "batchCheckin_status_zero_text": "Nem teljesített",
-  "@batchCheckin_status_zero_text": {},
-  "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{szokás} other{szokás}} kiválasztva",
-  "@batchCheckin_habits_groupTitle": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_button_text": "Mentés",
-  "@batchCheckin_save_button_text": {},
-  "batchCheckin_reset_button_text": "Visszaállítás",
-  "@batchCheckin_reset_button_text": {},
-  "batchCheckin_completed_snackbar_text": "Módosítva {count, plural, =1{a szokás állapota} other{{count} szokás állapota}}",
-  "@batchCheckin_completed_snackbar_text": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "batchCheckin_save_confirmDialog_title": "Meglévő bejegyzések felülírása",
-  "@batchCheckin_save_confirmDialog_title": {},
-  "batchCheckin_save_confirmDialog_body": "A meglévő bejegyzések felülíródnak. Mentés után az előző bejegyzések elvesznek.",
-  "@batchCheckin_save_confirmDialog_body": {},
-  "batchCheckin_save_confirmDialog_confirmButton_text": "mentés",
-  "@batchCheckin_save_confirmDialog_confirmButton_text": {},
-  "batchCheckin_save_confirmDialog_cancelButton_text": "mégse",
-  "@batchCheckin_save_confirmDialog_cancelButton_text": {},
-  "batchCheckin_close_confirmDialog_title": "Kilépés megerősítése",
-  "@batchCheckin_close_confirmDialog_title": {},
-  "batchCheckin_close_confirmDialog_body": "A bejelentkezés állapotváltozásai nem kerülnek mentésre.",
-  "@batchCheckin_close_confirmDialog_body": {},
-  "batchCheckin_close_confirmDialog_confirmButton_text": "kilépés",
-  "@batchCheckin_close_confirmDialog_confirmButton_text": {},
-  "batchCheckin_close_confirmDialog_cancelButton_text": "mégse",
-  "@batchCheckin_close_confirmDialog_cancelButton_text": {},
-  "appReminder_dailyReminder_title": "🏝 Ma betartottad a szokásaidat?",
-  "@appReminder_dailyReminder_title": {},
-  "appReminder_dailyReminder_body": "Kattints a belépéshez és időben jelöld a teljesítést.",
-  "@appReminder_dailyReminder_body": {},
-  "common_habitColorType_cc1": "Mélykáprázat lila",
-  "@common_habitColorType_cc1": {},
-  "common_habitColorType_cc2": "Piros",
-  "@common_habitColorType_cc2": {},
-  "common_habitColorType_cc3": "Lila",
-  "@common_habitColorType_cc3": {},
-  "common_habitColorType_cc4": "Királis kék",
-  "@common_habitColorType_cc4": {},
-  "common_habitColorType_cc5": "Sötét cián",
-  "@common_habitColorType_cc5": {},
-  "common_habitColorType_cc6": "Zöld",
-  "@common_habitColorType_cc6": {},
-  "common_habitColorType_cc7": "Ámbersárga",
-  "@common_habitColorType_cc7": {},
-  "common_habitColorType_cc8": "Narancs",
-  "@common_habitColorType_cc8": {},
-  "common_habitColorType_cc9": "Lime zöld",
-  "@common_habitColorType_cc9": {},
-  "common_habitColorType_cc10": "Sötét orchidea",
-  "@common_habitColorType_cc10": {},
-  "common_habitColorType_default": "Szín {index}",
-  "@common_habitColorType_default": {
-    "description": "ismeretlen szokás szín típusa",
-    "placeholders": {
-      "index": {
-        "type": "int",
-        "example": "0"
-      }
-    }
-  },
-  "common_appThemeColor_system": "Rendszer",
-  "@common_appThemeColor_system": {},
-  "common_appThemeColor_primary": "Elsődleges",
-  "@common_appThemeColor_primary": {},
-  "common_appThemeColor_dynamic": "Dinamikus",
-  "@common_appThemeColor_dynamic": {},
-  "common_customDateTimeFormatPicker_useSystemFormat_text": "Rendszer formátum használata",
-  "@common_customDateTimeFormatPicker_useSystemFormat_text": {},
-  "common_customDateTimeFormatPicker_fmtTileText": "Dátum formátum",
-  "@common_customDateTimeFormatPicker_fmtTileText": {},
-  "common_customDateTimeFormatPicker_ymd_text": "Év Hónap Nap",
-  "@common_customDateTimeFormatPicker_ymd_text": {},
-  "common_customDateTimeFormatPicker_mdy_text": "Hónap Nap Év",
-  "@common_customDateTimeFormatPicker_mdy_text": {},
-  "common_customDateTimeFormatPicker_dmy_text": "Nap Hónap Év",
-  "@common_customDateTimeFormatPicker_dmy_text": {},
-  "common_customDateTimeFormatPicker_SepTileText": "Elválasztó",
-  "@common_customDateTimeFormatPicker_SepTileText": {},
-  "common_customDateTimeFormatPicker_sepDash_text": "Kötőjel",
-  "@common_customDateTimeFormatPicker_sepDash_text": {},
-  "common_customDateTimeFormatPicker_sepSlash_text": "Perjel",
-  "@common_customDateTimeFormatPicker_sepSlash_text": {},
-  "common_customDateTimeFormatPicker_sepSpace_text": "Szóköz",
-  "@common_customDateTimeFormatPicker_sepSpace_text": {},
-  "common_customDateTimeFormatPicker_sepDot_text": "Pont",
-  "@common_customDateTimeFormatPicker_sepDot_text": {},
-  "common_customDateTimeFormatPicker_empty_text": "Nincs elválasztó",
-  "@common_customDateTimeFormatPicker_empty_text": {},
-  "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
-  "@common_customDateTimeFormatPicker_sep_formatter": {
-    "description": "elválasztó karakter",
-    "placeholders": {
-      "splitName": {
-        "type": "String",
-        "example": "Kötőjel"
-      },
-      "splitChar": {
-        "type": "String",
-        "example": "/"
-      }
-    }
-  },
-  "common_customDateTimeFormatPicker_12Hour_text": "12 órás formátum használata",
-  "@common_customDateTimeFormatPicker_12Hour_text": {},
-  "common_customDateTimeFormatPicker_monthName_text": "Teljes hónapnév használata",
-  "@common_customDateTimeFormatPicker_monthName_text": {},
-  "common_customDateTimeFormatPicker_applyFreqChart_text": "Alkalmazás a gyakorisági diagramhoz",
-  "@common_customDateTimeFormatPicker_applyFreqChart_text": {},
-  "common_customDateTimeFormatPicker_applyHeapmap_text": "Alkalmazás a naptárhoz",
-  "@common_customDateTimeFormatPicker_applyHeapmap_text": {},
-  "common_customDateTimeFormatPicker_cancelButton_text": "mégse",
-  "@common_customDateTimeFormatPicker_cancelButton_text": {},
-  "common_customDateTimeFormatPicker_confirmButton_text": "megerősítés",
-  "@common_customDateTimeFormatPicker_confirmButton_text": {},
-  "common_errorPage_title": "Hoppá, összeomlott!",
-  "@common_errorPage_title": {},
-  "common_errorPage_copied": "Összeomlási információk másolva",
-  "@common_errorPage_copied": {},
-  "common_enable_text": "Engedélyezve",
-  "@common_enable_text": {},
-  "calendarPicker_clip_today": "Ma",
-  "@calendarPicker_clip_today": {},
-  "calendarPicker_clip_tomorrow": "Holnap",
-  "@calendarPicker_clip_tomorrow": {},
-  "calendarPicker_clip_after7Days": "Következő {date}",
-  "@calendarPicker_clip_after7Days": {
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "E"
-      }
-    }
-  },
-  "exportConfirmDialog_title_exportAll": "Minden szokás exportálása?",
-  "@exportConfirmDialog_title_exportAll": {},
-  "exportConfirmDialog_title_exportMulti": "Exportáljuk {number, plural, =0{a jelenlegi szokást} =1{1 szokást} other{{number} szokást}}?",
-  "@exportConfirmDialog_title_exportMulti": {
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "exportConfirmDialog_option_includeRecords": "bejegyzésekkel együtt",
-  "@exportConfirmDialog_option_includeRecords": {},
-  "exportConfirmDialog_cancel_buttonText": "mégse",
-  "@exportConfirmDialog_cancel_buttonText": {},
-  "exportConfirmDialog_confirm_buttonText": "exportálás",
-  "@exportConfirmDialog_confirm_buttonText": {},
-  "debug_logLevelTile_title": "Naplózási szint",
-  "@debug_logLevelTile_title": {},
-  "debug_logLevelDialog_title": "Naplózási szint módosítása",
-  "@debug_logLevelDialog_title": {},
-  "debug_logLevel_debug": "Debug",
-  "@debug_logLevel_debug": {},
-  "debug_logLevel_info": "Info",
-  "@debug_logLevel_info": {},
-  "debug_logLevel_warn": "Figyelmeztetés",
-  "@debug_logLevel_warn": {},
-  "debug_logLevel_error": "Hiba",
-  "@debug_logLevel_error": {},
-  "debug_logLevel_fatal": "Kritikus",
-  "@debug_logLevel_fatal": {},
-  "debug_collectLogTile_title": "Naplók gyűjtése",
-  "@debug_collectLogTile_title": {},
-  "debug_collectLogTile_enable_subtitle": "Koppints a naplózás leállításához.",
-  "@debug_collectLogTile_enable_subtitle": {},
-  "debug_collectLogTile_disable_subtitle": "Koppints a naplózás elindításához.",
-  "@debug_collectLogTile_disable_subtitle": {},
-  "debug_downladDebugLogs_subject": "Naplók letöltése",
-  "@debug_downladDebugLogs_subject": {},
-  "dbeug_clearDebugLogs_complete_snackbar": "Naplók törölve.",
-  "@dbeug_clearDebugLogs_complete_snackbar": {},
-  "debug_downladDebugInfo_subject": "Debug információk letöltése",
-  "@debug_downladDebugInfo_subject": {},
-  "debug_downladDebugZip_subject": "{fileName} letöltése",
-  "@debug_downladDebugZip_subject": {
-    "placeholders": {
-      "fileName": {
-        "type": "String",
-        "example": "debug.zip"
-      }
-    }
-  },
-  "debug_missingDebugLogFile_snackbar": "Naplófájl nem található.",
-  "@debug_missingDebugLogFile_snackbar": {},
-  "debug_debuggerLogCard_title": "Napló információk",
-  "@debug_debuggerLogCard_title": {},
-  "debug_debuggerLogCard_subtitle": "Tartalmazza a helyi naplóadatokat, a gyűjtéshez a kapcsolót be kell kapcsolni.",
-  "@debug_debuggerLogCard_subtitle": {},
-  "debug_debuggerLogCard_saveButton_text": "Letöltés",
-  "@debug_debuggerLogCard_saveButton_text": {},
-  "debug_debuggerLogCard_clearButton_text": "Törlés",
-  "@debug_debuggerLogCard_clearButton_text": {},
-  "debug_debuggerInfoCard_title": "Debug információk",
-  "@debug_debuggerInfoCard_title": {},
-  "debug_debuggerInfoCard_subtitle": "Tartalmazza az alkalmazás hibakeresési adatait.",
-  "@debug_debuggerInfoCard_subtitle": {},
-  "debug_debuggerInfoCard_openButton_text": "Megnyitás",
-  "@debug_debuggerInfoCard_openButton_text": {},
-  "debug_debuggerInfoCard_saveButton_text": "Mentés",
-  "@debug_debuggerInfoCard_saveButton_text": {},
-  "debug_debuggerInfo_notificationTitle": "Alkalmazás információinak gyűjtése...",
-  "@debug_debuggerInfo_notificationTitle": {},
-  "confirmDialog_confirm_text": "{type, select, save {Mentés} exit {Kilépés} delete {Törlés} other {Megerősítés}}",
-  "@confirmDialog_confirm_text": {
-    "placeholders": {
-      "type": {
-        "type": "String",
-        "description": "<NormalizeConfirmDialogType>.name",
-        "example": "megerősítés"
-      }
-    }
-  },
-  "confirmDialog_cancel_text": "mégse",
-  "@confirmDialog_cancel_text": {},
-  "snackbar_undoText": "VISSZA",
-  "@snackbar_undoText": {},
-  "snackbar_dismissText": "ELVETÉS",
-  "@snackbar_dismissText": {},
-  "contributors_tile_title": "Közreműködők",
-  "@contributors_tile_title": {},
-  "userAction_tap": "Koppintás",
-  "@userAction_tap": {},
-  "userAction_doubleTap": "Dupla koppintás",
-  "@userAction_doubleTap": {},
-  "userAction_longTap": "Hosszú nyomás",
-  "@userAction_longTap": {},
-  "channelName_habitReminder": "Szokás emlékeztető",
-  "@channelName_habitReminder": {},
-  "channelName_appReminder": "Értesítés",
-  "@channelName_appReminder": {},
-  "channelName_appDebugger": "Debugger",
-  "@channelName_appDebugger": {},
-  "channelName_appSyncing": "Szinkron folyamat",
-  "@channelName_appSyncing": {},
-  "channelDesc_appSyncing": "A szinkron állapotának és nem sikertelen eredmények megjelenítésére szolgál",
-  "@channelDesc_appSyncing": {},
-  "channelName_appSyncFailed": "Szinkron sikertelen",
-  "@channelName_appSyncFailed": {},
-  "channelDesc_appSyncFailed": "Értesítés szinkronhiba esetén",
-  "@channelDesc_appSyncFailed": {}
+    },
+    "habitEdit_habitDailyGoal_negativeHintText": "Minimális napi küszöbérték, alapértelmezett {number}",
+    "@habitEdit_habitDailyGoal_negativeHintText": {
+        "description": "alapértelmezett napi cél a negatív szokáshoz",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText01": "napi cél > {number}",
+    "@habitEdit_habitDailyGoal_errorText01": {
+        "description": "a napi célhoz szükséges minimális szokásszám",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_errorText02": "napi cél ≤ {number}",
+    "@habitEdit_habitDailyGoal_errorText02": {
+        "description": "a napi szokáscél maximális száma",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText01": "napi cél ≥ {number}",
+    "@habitEdit_habitDailyGoal_negativeErrorText01": {
+        "description": "a negatív szokások napi céljának minimális száma",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoal_negativeErrorText02": "napi cél ≤ {number}",
+    "@habitEdit_habitDailyGoal_negativeErrorText02": {
+        "description": "a negatív szokások napi céljának maximális száma",
+        "placeholders": {
+            "number": {
+                "type": "num",
+                "example": "0"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalUnit_hintText": "Napi célegység",
+    "habitEdit_habitDailyGoalExtra_hintText": "Kívánt maximális napi cél",
+    "habitEdit_habitDailyGoalExtra_errorText": "érvénytelen érték, üresnek kell lennie, vagy ≥ {dailyGoal}",
+    "@habitEdit_habitDailyGoalExtra_errorText": {
+        "placeholders": {
+            "dailyGoal": {
+                "type": "num",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitDailyGoalExtra_negativeHintText": "Maximális napi limit",
+    "habitEdit_frequencySelector_title": "Válassza ki a frekvenciát",
+    "habitEdit_habitFreq_daily": "Napi",
+    "habitEdit_habitFreq_perweek_text": "%%time%% alkalommal hetente",
+    "habitEdit_habitFreq_permonth_text": "%%time%% alkalommal havonta",
+    "habitEdit_habitFreq_predayfreq_text": "%%time%% alkalommal %%day%% nap alatt",
+    "habitEdit_habitFreq_show_daily": "Napi",
+    "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{At least {freq} times per week}}",
+    "@habitEdit_habitFreq_show_perweek": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{Per month} other{At least {freq} times per month}}",
+    "@habitEdit_habitFreq_show_permonth": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{In every {days} days} other{At least {freq} times in every {days} days}}",
+    "@habitEdit_habitFreq_show_perdayfreq": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_title": "{targetDays} days",
+    "@habitEdit_targetDays_title": {
+        "placeholders": {
+            "targetDays": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_targetDays_dialogTitle": "Válassza a Célnapok",
+    "habitEdit_targetDays": "nap",
+    "habitEdit_reminder_hintText": "Emlékeztető",
+    "habitEdit_reminder_freq_weekHelpText": "A hét bármely napja",
+    "habitEdit_reminder_freq_week_text": "{days} minden héten",
+    "@habitEdit_reminder_freq_week_text": {
+        "description": "Comma-separated day list used in the weekly reminder sentence.",
+        "placeholders": {
+            "days": {
+                "type": "String",
+                "example": "Mon, Tue"
+            }
+        }
+    },
+    "habitEdit_reminder_freq_monthHelpText": "A hónap bármely napja",
+    "habitEdit_reminder_freq_month_text": "{days} minden hónapban",
+    "@habitEdit_reminder_freq_month_text": {
+        "description": "Comma-separated day list used in the monthly reminder sentence.",
+        "placeholders": {
+            "days": {
+                "type": "String",
+                "example": "5, 20"
+            }
+        }
+    },
+    "habitEdit_reminderQuest_hintText": "Kérdés, pl.: Mozogtál ma?",
+    "habitEdit_reminder_dialogTitle": "Válassza ki az emlékeztető típusát",
+    "habitEdit_reminder_dialogType_whenNeeded": "Mikor kell bejelentkezni",
+    "habitEdit_reminder_dialogType_daily": "Napi",
+    "habitEdit_reminder_dialogType_week": "Hetente",
+    "habitEdit_reminder_dialogType_month": "Havonta",
+    "habitEdit_reminder_dialogConfirm": "megerősítés",
+    "habitEdit_reminder_dialogCancel": "mégse",
+    "habitEdit_reminder_cancelDialogTitle": "Megerősítés",
+    "habitEdit_reminder_cancelDialogSubtitle": "Megerősíti az emlékeztető eltávolítását",
+    "habitEdit_reminder_cancelDialogConfirm": "megerősítés",
+    "habitEdit_reminder_cancelDialogCancel": "mégse",
+    "habitEdit_reminder_weekdayText_monday": "Hétfő",
+    "habitEdit_reminder_weekdayText_tuesday": "Kedd",
+    "habitEdit_reminder_weekdayText_wednesday": "Szerda",
+    "habitEdit_reminder_weekdayText_thursday": "Csütörtök",
+    "habitEdit_reminder_weekdayText_friday": "Péntek",
+    "habitEdit_reminder_weekdayText_saturday": "Szombat",
+    "habitEdit_reminder_weekdayText_sunday": "Vasárnap",
+    "habitEdit_desc_hintText": "Feljegyzés, támogatja a Markdownt",
+    "habitEdit_create_datetime_prefix": "Létrehozva: ",
+    "habitEdit_modify_datetime_prefix": "Módosítva: ",
+    "habitDisplay_fab_text": "Új szokás",
+    "habitDisplay_emptyImage_text_01": "Az ezer mérföldes utazás egyetlen lépéssel kezdődik",
+    "habitDisplay_notFoundImage_text_01": "Nem találhatók megfelelő szokások",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Akkor jelenik meg, ha egyetlen szokás sem felel meg az aktuális keresésnek"
+    },
+    "habitDisplay_notFoundImage_text_02": "Nincsenek megfelelő szokások a \"{keyword}\" számára",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Akkor jelenik meg, ha egyetlen szokás sem felel meg a megadott kulcsszónak",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Keresési kulcsszó"
+            }
+        }
+    },
+    "habitDisplay_archiveHabitsConfirmDialog_title": "Archiválja a kiválasztott szokásokat?",
+    "habitDisplay_archiveHabitsConfirmDialog_confirm": "megerősítés",
+    "habitDisplay_archiveHabitsConfirmDialog_cancel": "mégse",
+    "habitDisplay_archiveHabitsSuccSnackbarText": "{count} szokás archiválva",
+    "@habitDisplay_archiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_unarchiveHabitsConfirmDialog_title": "Visszavonja a kiválasztott szokások archiválásaát?",
+    "habitDisplay_unarchiveHabitsConfirmDialog_confirm": "megerősítés",
+    "habitDisplay_unarchiveHabitsConfirmDialog_cancel": "mégse",
+    "habitDisplay_unarchiveHabitsSuccSnackbarText": "{count} szokás archiválésa visszavonva",
+    "@habitDisplay_unarchiveHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteHabitsConfirmDialog_title": "Törli a kiválasztott szokásokat?",
+    "habitDisplay_deleteHabitsConfirmDialog_confirm": "megerősítés",
+    "habitDisplay_deleteHabitsConfirmDialog_cancel": "mégse",
+    "habitDisplay_deleteHabitsSuccSnackbarText": "{count} szokás törölve",
+    "@habitDisplay_deleteHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Törölt szokás: \"{name}\"",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Szokás neve."
+            }
+        }
+    },
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {Szokás exportálva.} other {{count} szokás exportálva.}}",
+    "@habitDisplay_exportHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Exportált szokások száma",
+                "example": "3"
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Összes szokás exportálva",
+    "habitDisplay_editPopMenu_selectAll": "Összes kijelölése",
+    "habitDisplay_editPopMenu_export": "Exportálás",
+    "habitDisplay_editPopMenu_delete": "Törlés",
+    "habitDisplay_editPopMenu_clone": "Sablon",
+    "habitDisplay_editButton_tooltip": "Szerkesztés",
+    "habitDisplay_archiveButton_tooltip": "Archiválás",
+    "habitDisplay_unarchiveButton_tooltip": "Archiválás visszavonása",
+    "habitDisplay_settingButton_tooltip": "Beállítások",
+    "habitDisplay_statsMenu_statSubgroupText": "Aktuális",
+    "habitDisplay_statsMenu_completedTileText": "Teljesített",
+    "habitDisplay_statsMenu_inProgresTileText": "Folyamatban lévő",
+    "habitDisplay_statsMenu_archivedTileText": "Archivált",
+    "habitDisplay_statsMenu_popularitySubgroupText": "Legnépszerűbb szokások: az elmúlt 30 nap változásai",
+    "habitDisplay_mainMenu_lightTheme": "Világos téma",
+    "habitDisplay_mainMenu_darkTheme": "Sötét téma",
+    "habitDisplay_mainMenu_followSystemTheme": "Rendszer követése",
+    "habitDisplay_mainMenu_showArchivedTileText": "Archiváltak megjelenítése",
+    "habitDisplay_mainMenu_showCompletedTileText": "Teljesítettek megjelenítése",
+    "habitDisplay_mainMenu_showActivedTileText": "Aktívak megjelenítése",
+    "habitDisplay_mainMenu_settingTileText": "Beállítások",
+    "habitDisplay_sort_reverseText": "Fordított",
+    "habitDisplay_sortDirection_asc": "(Növ.)",
+    "habitDisplay_sortDirection_Desc": "(Csök.)",
+    "habitDisplay_sortType_manual": "Saját sorrend",
+    "habitDisplay_sortType_name": "Név",
+    "habitDisplay_sortType_colorType": "Szín",
+    "habitDisplay_sortType_progress": "Sűrűség",
+    "habitDisplay_sortType_startT": "Kezdő dátum lapján",
+    "habitDisplay_sortType_status": "Állapot",
+    "habitDisplay_sortTypeDialog_title": "Rendezés",
+    "habitDisplay_sortTypeDialog_confirm": "megerősítés",
+    "habitDisplay_sortTypeDialog_cancel": "mégse",
+    "habitDisplay_debug_debugSubgroup_title": "🛠️Hibakeresés",
+    "habitDisplay_searchBar_hintText": "Szokás keresése",
+    "habitDisplay_searchFilter_ongoing": "Folyamatban lévő",
+    "habitDisplay_searchFilter_ongoing_desc": "Megjeleníti azokat a szokásokat, amelyek jelenleg aktívak és folyamatban vannak (nem archiváltak vagy töröltek).",
+    "habitDisplay_searchFilter_completed": "Teljesített",
+    "habitDisplay_searchFilter_habitType_groupTitle": "Szokás típusa",
+    "habitDisplay_searchFilter_tooltips": "Szűrők megjelenítése",
+    "habitDisplay_searchFilter_clearFilter": "Szűrők törlése",
+    "habitDisplay_tab_habits_label": "Szokások",
+    "habitDisplay_tab_today_label": "Ma",
+    "habitToday_appBar_title": "Ma",
+    "habitToday_image_desc": "MEGCSINÁLTAD!",
+    "@habitToday_image_desc": {
+        "description": "Ünneplő szöveg, amely akkor jelenik meg, amikor a felhasználó ma minden szokását teljesítette."
+    },
+    "habitToday_card_subtitle_text": "Kitartottál mellette {days} napig",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Napok a kiválasztott kezdő dátum óta"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "Kész+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Gomb felirata a mai szokás teljesítéséhez (párbeszédablakkal)"
+    },
+    "habitToday_card_skipPlusButton_label": "Kihagyás+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Gomb felirata a mai szokás kihagyásához (párbeszédablakkal)"
+    },
+    "habitDetail_editButton_tooltip": "Szerkesztés",
+    "habitDetail_editPopMenu_unarchive": "Archiválás visszavonása",
+    "habitDetail_editPopMenu_archive": "Archiválás",
+    "habitDetail_editPopMenu_export": "Exportálás",
+    "habitDetail_editPopMenu_delete": "Törlés",
+    "habitDetail_editPopMenu_clone": "Sablon",
+    "habitDetail_confirmDialog_confirm": "megerősítés",
+    "habitDetail_confirmDialog_cancel": "mégse",
+    "habitDetail_archiveConfirmDialog_titleText": "Archiválja a szokást?",
+    "habitDetail_unarchiveConfirmDialog_titleText": "Szokás archiválásának visszaállítása?",
+    "habitDetail_deleteConfirmDialog_titleText": "Törli a szokást?",
+    "habitDetail_summary_title": "Összegzés",
+    "habitDetail_summary_body": "A jelenlegi értékelés {score}, és {days} nap telt el a kezdés óta.",
+    "@habitDetail_summary_body": {
+        "placeholders": {
+            "score": {
+                "type": "String",
+                "example": "0.0"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_summary_preBody": "{days, plural, =1{Holnaptól kezdődik.} other{{days} nap múlva kezdődik.}}",
+    "@habitDetail_summary_preBody": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{NEM TELJESÍTETT} =2{ALACSONY SZINT} other{}}",
+    "@habitDetail_heatmap_leftHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_heatmap_rightHelpText": "{habitType, plural, =1{TÚLTELJESÍTETT} =2{TÖKÉLETES} other{}}",
+    "@habitDetail_heatmap_rightHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{Küszöb} other{Cél}}",
+    "@habitDetail_descDailyGoal_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitText": "Mértékegység: {unit}",
+    "@habitDetail_descDailyGoal_unitText": {
+        "placeholders": {
+            "unit": {
+                "type": "String",
+                "example": "M/S"
+            }
+        }
+    },
+    "habitDetail_descDailyGoal_unitEmptyText": "null",
+    "habitDetail_descTargetDays_titleText": "{habitType, plural, other{Napok}}",
+    "@habitDetail_descTargetDays_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descTargetDays_unitText": "nap",
+    "habitDetail_descRecordsNum_titleText": "Értékek",
+    "habitDetail_scoreChart_title": "Értékelés",
+    "habitDetail_scoreChartCombine_dailyText": "Nap",
+    "habitDetail_scoreChartCombine_weeklyText": "Hét",
+    "habitDetail_scoreChartCombine_monthlyText": "Hónap",
+    "habitDetail_scoreChartCombine_yearlyText": "Év",
+    "habitDetail_freqChart_freqTitle": "Sűrűség",
+    "habitDetail_freqChart_historyTitle": "Előzmény",
+    "habitDetail_freqChart_combinedTitle": "Sűrűség & Előzmény",
+    "habitDetail_freqChartCombine_weeklyText": "Hét",
+    "habitDetail_freqChartCombine_monthlyText": "Hónap",
+    "habitDetail_freqChartCombine_yearlyText": "Év",
+    "habitDetail_freqChartNaviBar_nowText": "Most",
+    "habitDetail_freqChart_expanded_hideTooltip": "Előzmények diagram elrejtése",
+    "habitDetail_freqChart_expanded_showTooltip": "Előzmények diagram megjelenítése",
+    "habitDetail_descSubgroup_title": "Jegyzet",
+    "habitDetail_otherSubgroup_title": "Más",
+    "habitDetail_habitType_title": "Típus",
+    "habitDetail_reminderTile_title": "Emlékeztető",
+    "habitDetail_freqTile_title": "Ismétlés",
+    "habitDetail_startDateTile_title": "Kezdő dátum",
+    "habitDetail_createDateTile_title": "Létrehozva",
+    "habitDetail_modifyDateTile_title": "Módosítva",
+    "habitDetail_editHeatmapCal_dateButtonText": "dátum",
+    "habitDetail_editHeatmapCal_valueButtonText": "érték",
+    "habitDetail_editHeatmapCal_backToToday_tooltipText": "vissza a mai naphoz",
+    "habitDetail_notFoundText": "Szokás betöltése sikertelen",
+    "habitDetail_notFoundRetryText": "Próbáld újra",
+    "habitDetail_changeGoal_title": "Cél változtatása",
+    "habitDetail_changeGoal_currentChipText": "jelenlegi: {goal}",
+    "@habitDetail_changeGoal_currentChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_doneChipText": "kész: {goal}",
+    "@habitDetail_changeGoal_doneChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_undoneChipText": "nem teljesített",
+    "habitDetail_changeGoal_extraChipText": "{goal}",
+    "@habitDetail_changeGoal_extraChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_helpText": "Napi cél, alapértelmezett: {goal}",
+    "@habitDetail_changeGoal_helpText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_cancelText": "mégse",
+    "habitDetail_changeGoal_saveText": "mentés",
+    "habitDetail_skipReason_title": "Kihagyás oka",
+    "habitDetail_skipReason_bodyHelpText": "Írj ide valamit...",
+    "habitDetail_skipReason_cancelText": "mégse",
+    "habitDetail_skipReason_saveText": "mentés",
+    "appSetting_appbar_titleText": "Beállítások",
+    "appSetting_displaySubgroupText": "Megjelenítés",
+    "appSetting_operationSubgroupText": "Művelet",
+    "appSetting_dragCalendarByPageTile_titleText": "Naptár húzása oldalanként",
+    "appSetting_dragCalendarByPageTile_subtitleText": "Ha a kapcsoló be van kapcsolva, a kezdőlap felső sávjában lévő naptár oldalanként húzható. Alapértelmezés szerint a kapcsoló ki van kapcsolva.",
+    "appSetting_changeRecordStatusOpTile_titleText": "Bejegyzés állapotának módosítása",
+    "appSetting_changeRecordStatusOpTile_subtitleText": "Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzések állapotát lehessen változtatni.",
+    "appSetting_openRecordStatusDialogOpTile_titleText": "Részletes bejegyzés megnyitása",
+    "appSetting_openRecordStatusDialogOpTile_subtitleText": "Módosítsd a kattintási viselkedést úgy, hogy a főoldalon a napi bejegyzésekhez tartozó részletes felugró ablak nyíljon meg.",
+    "appSetting_appThemeColorTile_titleText": "Téma színe",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Téma színének kiválasztása",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "A háttérkép fő színének használata (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "A GTK+ téma kiválasztott háttérszínének használata",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "A rendszer téma színének használata",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "A rendszer kiemelőszínének vagy ablak/üveg színének használata",
+    "appSetting_firstDayOfWeek_titleText": "A hét első napja",
+    "appSetting_firstDayOfWeekDialog_titleText": "Mutassa a hét első napját",
+    "appSetting_firstDayOfWeekDialog_defaultText": " (Alapértelmezett)",
+    "appSetting_changeLanguage_followSystem_text": "Renszer követése ({localeName})",
+    "@appSetting_changeLanguage_followSystem_text": {
+        "placeholders": {
+            "localeName": {
+                "type": "String",
+                "example": "English"
+            }
+        }
+    },
+    "appSetting_changeLanguage_followSystem_noLocale_text": "Rendszer Követése",
+    "appSetting_changeLanguageTile_titleText": "Nyelv",
+    "appSetting_changeLanguageDialog_titleText": "Nyelv kiválasztása",
+    "appSetting_dateDisplayFormat_titleText": "Dátum megjelenítési formátuma ({formatTemplate})",
+    "@appSetting_dateDisplayFormat_titleText": {
+        "placeholders": {
+            "formatTemplate": {
+                "type": "String",
+                "example": "yyyy/M/d"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "rendszer követése",
+    "appSetting_dateDisplayFormat_subTitleText": "A beállított dátumformátum a szokás részletei oldalon jelenik meg.",
+    "appSetting_compactUISwitcher_titleText": "Kompakt felület engedélyezése a szokások oldalán",
+    "appSetting_compactUISwitcher_subtitleText": "Lehetővé teszi, hogy a szokások ellenőrző táblája több tartalmat jelenítsen meg, de egyes UI elemek és szövegek kisebbnek tűnhetnek.",
+    "appSetting_collapsed_calendar_bararea_titleText": "Szokások ellenőrző terület rádió-beállítása",
+    "appSetting_collapsed_calendar_bararea_subtitleText": "Állítsd a százalékos arányt a szokások ellenőrző táblájában több vagy kevesebb hely biztosításához.",
+    "appSetting_collapsed_calendar_bararea_defaultText": "Alapértelmezett",
+    "appSetting_reminderSubgroupText": "Emlékeztető & Értesítés",
+    "@appSetting_reminderSubgroupText": {
+        "comment": "Update from \"Reminder\" to \"Reminder & Notification\"."
+    },
+    "appSetting_dailyReminder_titleText": "Napi emlékeztető",
+    "appSetting_backupAndRestoreSubgroupText": "Biztonsági mentés és visszaállítás",
+    "appSetting_export_titleText": "Exportálás",
+    "appSetting_export_subtitleText": "A szokások JSON formátumban exportálva. Ez a fájl visszaimportálható.",
+    "appSetting_import_titleText": "Importálás",
+    "appSetting_import_subtitleText": "Szokások importálása JSON fájlból",
+    "appSetting_importDialog_confirmTitle": "Importáljuk a {count} szokást?",
+    "@appSetting_importDialog_confirmTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_confirmSubtitle": "Megjegyzés: Az importálás nem törli a meglévő szokásokat.",
+    "appSetting_importDialog_confirm_confirmText": "Megerősítés",
+    "appSetting_importDialog_confirm_cancelText": "mégse",
+    "appSetting_importDialog_importingTitle": "Importálva {completeCount}/{totalCount}",
+    "@appSetting_importDialog_importingTitle": {
+        "placeholders": {
+            "completeCount": {
+                "type": "int",
+                "example": "1"
+            },
+            "totalCount": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_completeTitle": "{count} importálása befejezve",
+    "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_complete_closeLabel": "bezárás",
+    "appSetting_resetConfig_titleText": "Konfiguráció visszaállítása",
+    "appSetting_resetConfig_subtitleText": "Összes konfiguráció visszaállítása alapértelmezettre",
+    "appSetting_resetConfigDialog_titleText": "Visszaállítja a konfigurációkat?",
+    "appSetting_resetConfigDialog_subtitleText": "Az összes beállítás alapértelmezettre állítása, az alkalmazást újra kell indítani az érvényesítéshez.",
+    "appSetting_resetConfigDialog_cancelText": "mégse",
+    "appSetting_resetConfigDialog_confirmText": "megerősítés",
+    "appSetting_resetConfigSuccess_snackbarText": "reset app configs succeed",
+    "appSetting_otherSubgroupText": "Egyéb",
+    "appSetting_developMode_titleText": "Fejlesztői mód",
+    "appSetting_clearCache_titleText": "Gyorsítótár törlése",
+    "appSetting_clearCacheDialog_titleText": "Gyorsítótár törlése",
+    "appSetting_clearCacheDialog_subtitleText": "A gyorsítótár törlése után néhány egyéni érték alapértelmezett értékre áll vissza.",
+    "appSetting_clearCacheDialog_cancelText": "mégse",
+    "appSetting_clearCacheDialog_confirmText": "megerősítés",
+    "appSetting_clearCache_snackBar_partSuccText": "A részleges gyorsítótár törlése sikertelen",
+    "appSetting_clearCache_snackBar_succText": "Gyorsítótár sikeresen törölve",
+    "appSetting_clearCache_snackBar_failText": "Gyorsítótár törlése sikeretelen",
+    "appSetting_debugger_titleText": "Hibakeresés info",
+    "appSetting_about_titleText": "Névjegy",
+    "appSetting_experimentalFeatureTile_titleText": "Kísérleti beállítások",
+    "appSetting_synSubgroupText": "Szinkronizálás",
+    "appSetting_syncOption_titleText": "Szinkronizálás opciók",
+    "appSetting_notify_titleTile": "Értesítések",
+    "appSetting_notify_subtitleTile": "Értesítési beállítások kezelése",
+    "appSetting_notify_subtitleTile_android": "Koppints a rendszer értesítési beállításainak megnyitásához",
+    "appSync_nowTile_titleText": "Szinkronizálás most",
+    "appSync_nowTile_titleText_syncing": "Szinkronizálás",
+    "appSync_nowTile_dateFormat": "{ymd} {jms}",
+    "@appSync_nowTile_dateFormat": {
+        "placeholders": {
+            "ymd": {
+                "type": "DateTime",
+                "format": "yMd"
+            },
+            "jms": {
+                "type": "DateTime",
+                "format": "jms"
+            }
+        }
+    },
+    "appSync_nowTile_text_noDate": "Utolsó szinkronizálás: N/A",
+    "appSync_nowTile_text": "Utolsó szinkronizálás: {dateStr}",
+    "@appSync_nowTile_text": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Utolsó szinkronizálás dátuma."
+            }
+        }
+    },
+    "appSync_nowTile_errorText_noDate": "Utolsó szinkronizálás (Hiba): N/A",
+    "appSync_nowTile_errorText": "Utolsó szinkronizálás (Hiba): {dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Utolsó szinkronizálás dátuma."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "Szinkronizálás...",
+    "appSync_nowTile_syncingText_withPrt": "Szinkronizálás: {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Jelenlegi szinkronizálási százalék (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "Mégsem...",
+    "appSync_nowTile_cancelText_noDate": "Utolsó szinkronizálás (Törölve): N/A",
+    "appSync_nowTile_cancelText": "Utolsó szinkronizálás (Törölve): {dateStr}",
+    "@appSync_nowTile_cancelText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Utolsó szinkronizálás dátuma."
+            }
+        }
+    },
+    "appSync_failedTile_titleText": "Hiba napló keresése",
+    "appSync_failedTile_errorText": "[Hiba]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Hiba információ."
+            }
+        }
+    },
+    "appSync_failedTile_webdavMulti_counterText": "{reason}: {count}",
+    "@appSync_failedTile_webdavMulti_counterText": {
+        "placeholders": {
+            "reason": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus": "{status, select, success {Befejezve} cancelled {Mégsem} failed {Sikertelen} multi {Többszörös állapotok} other {Ismeretlen állapot}}",
+    "@appSync_webdav_resultStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "Az állapot típusa, lásd: [WebDavAppSyncTaskResultStatus]"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus_withReason": "{status, select, success {Befejezve ({reason} miatt)} cancelled {Mégsem ({reason} miatt)} failed {Sikertelen ({reason} miatt)} multi {Többszörös állapotok ({reason} miatt)} other {Ismeretlen állapot}}",
+    "@appSync_webdav_resultStatus_withReason": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "Az állapot típusa, lásd: [WebDavAppSyncTaskResultStatus]"
+            },
+            "reason": {
+                "type": "String",
+                "description": "Az állapot oka"
+            }
+        }
+    },
+    "appSync_webdav_resultReason": "{reason, select, error {Hiba} userAction {Felhasználói művelet szükséges} missingHabitUuid {Hiányzó szokás UUID} empty {Üres adat} other {Ismeretlen ok}}",
+    "@appSync_webdav_resultReason": {
+        "placeholders": {
+            "reason": {
+                "type": "String",
+                "description": "A WebDAV AppSync feladat eredményének oka, lásd: [WebDavAppSyncTaskResultSubStatus]"
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "Új hely",
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "A szinkron létrehozza a szükséges könyvtárakat és feltölti a helyi szokásokat a szerverre. Folytatod?",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "Szinkron most!",
+    "appSync_webdav_oldServerConfirmDialog_titleText": "Szinkron megerősítése",
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "A könyvtár nem üres. A szinkron összevonja a szerver és a helyi szokásokat. Folytatod?",
+    "appSync_webdav_oldServerConfirmDialog_confirmText": "Összevonás megerősítése",
+    "appSync_exportAllLogsTile_titleText": "Sikertelen szinkron naplók exportálása",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {Nincs napló} false {Koppints az exportáláshoz} other {betöltés...}}",
+    "@appSync_exportAllLogsTile_subtitleText": {
+        "placeholders": {
+            "isEmpty": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "appSync_syncServerType_text": "{isCurrent, select, true {Aktuális: } other {}}{name, select, webdav {WebDAV} fake {Fake (Csak hibakereséshez)} other {Ismeretlen ({name})}}",
+    "@appSync_syncServerType_text": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "A szerver neve, a konkrét szervertípustól függ.",
+                "example": "WebDAV"
+            },
+            "isCurrent": {
+                "type": "String",
+                "description": "Jelenleg kiválasztott szerver-e",
+                "example": "true|false"
+            }
+        }
+    },
+    "appSync_networkType_text": "{type, select, mobile {Mobil} wifi {Wi-Fi} other {Ismeretlen}}",
+    "@appSync_networkType_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_syncInterval_text": "{name, select, manual {Kézi} minute5 {5 perc} minute15 {15 perc} minute30 {30 perc} hour1 {1 óra} other {Ismeretlen}}",
+    "@appSync_syncInterval_text": {
+        "description": "A szinkronizálás időközének lokalizált megjelenítési szövege",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "minute15",
+                "description": "<AppSyncFetchInterval>.name"
+            }
+        }
+    },
+    "appSync_syncIntervalTile_title": "Lekérdezési időköz",
+    "appSync_summaryTile_title": "Szinkron szerver",
+    "appSync_summaryTile_subtitle_text_notConfigured": "Nincs beállítva",
+    "appSync_exportAllLogsTile_exportSubjectText": "Minden legutóbbi sikertelen szinkron napló",
+    "appSync_serverEditor_saveDialog_titleText": "Módosítások mentésének megerősítése",
+    "appSync_serverEditor_saveDialog_subtitleText": "A mentés felülírja az előző szerverkonfigurációt.",
+    "appSync_serverEditor_exitDialog_titleText": "Mentetlen módosítások",
+    "appSync_serverEditor_exitDialog_subtitleText": "Kilépéskor minden mentetlen módosítás elvész.",
+    "appSync_serverEditor_deleteDialog_titleText": "Törlés megerősítése",
+    "appSync_serverEditor_deleteDialog_subtitleText": "A törlés eltávolítja az aktuális szerverkonfigurációt.",
+    "appSync_serverEditor_titleText_add": "Új szinkron szerver",
+    "appSync_serverEditor_titleText_modify": "Szinkron szerver módosítása",
+    "appSync_serverEditor_advance_titleText": "Speciális beállítások",
+    "appSync_serverEditor_pathTile_titleText": "Elérési út",
+    "appSync_serverEditor_pathTile_hintText": "Írd be ide az érvényes WebDAV elérési utat.",
+    "appSync_serverEditor_pathTile_errorText_emptyPath": "Az elérési út nem lehet üres!",
+    "appSync_serverEditor_usernameTile_titleText": "Felhasználónév",
+    "appSync_serverEditor_usernameTile_hintText": "Add meg a felhasználónevet, hagyd üresen, ha nem szükséges.",
+    "appSync_serverEditor_passwordTile_titleText": "Jelszó",
+    "appSync_serverEditor_ignoreSSLTile_titleText": "SSL tanúsítvány figyelmen kívül hagyása",
+    "appSync_serverEditor_timeoutTile_titleText": "Szinkron időkorlát (másodperc)",
+    "appSync_serverEditor_timeoutTile_hintText": "Alapértelmezett: {seconds, plural, =0 {Végtelen} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_timeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_timeoutTile_unitText": "mp",
+    "appSync_serverEditor_connTimeoutTile_titleText": "Hálózati kapcsolat időkorlát (mp)",
+    "appSync_serverEditor_connTimeoutTile_hintText": "Alapértelmezett: {seconds, plural, =0 {Végtelen} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_connTimeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_connTimeoutTile_unitText": "mp",
+    "appSync_serverEditor_connRetryCountTile_titleText": "Hálózati újrapróbálkozások száma",
+    "appSync_serverEditor_connRetryCountTile_hintText": "Alapértelmezett: {count, plural, =0 {Újrapróbálkozás letiltva} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_titleText": "Hálózati szinkron mód",
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {Szinkron mobilhálózaton} wifi {Szinkron Wi-Fi-n} other {Ismeretlen}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataText": "Alacsony adatforgalom",
+    "appSync_noti_readyToSync_body": "Szinkron előkészítése...",
+    "appSync_noti_syncing_title": "{synced, select, synced {Szinkron kész ({type})} failed {Szinkron sikertelen ({type})} other {Szinkron folyamatban ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Szerver típusa, lásd: 'appSync_syncServerType_text'",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "Szinkron alacsony adatforgalom módban",
+    "experimentalFeatures_warnginBanner_title": "Egy vagy több kísérleti funkció engedélyezve, használatukkal óvatosan.",
+    "experimentalFeatures_habitSyncTile_titleText": "Szokások felhő szinkron",
+    "experimentalFeatures_habitSyncTile_subtitleText": "Engedélyezés után a szinkron opció megjelenik a beállításokban",
+    "experimentalFeatures_warnTile_titleText": "A kísérleti funkció ({syncName}) le van tiltva, de a funkció továbbra is fut.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Szokások felhő szinkron",
+                "description": "A kísérleti funkció neve"
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_forHabitSyncText": "Teljes kikapcsoláshoz hosszú nyomással nyisd meg a '{menuName}' menüt, és kapcsold ki.",
+    "@experimentalFeatures_warnTile_forHabitSyncText": {
+        "placeholders": {
+            "menuName": {
+                "type": "String",
+                "example": "Szinkron opció"
+            }
+        }
+    },
+    "experimentalFeatures_habitSearchTile_titleText": "Szokás keresés",
+    "experimentalFeatures_habitSearchTile_subtitleText": "Engedélyezés után a Szokások képernyő tetején keresősáv jelenik meg, ahol szokások kereshetők.",
+    "appAbout_appbarTile_titleText": "Névjegy",
+    "appAbout_versionTile_titleText": "Verzió: {appVersion}",
+    "@appAbout_versionTile_titleText": {
+        "placeholders": {
+            "appVersion": {
+                "type": "String",
+                "example": "1.0.0"
+            }
+        }
+    },
+    "appAbout_versionTile_changeLogPath": "CHANGELOG.md",
+    "appAbout_sourceCodeTile_titleText": "Forráskód",
+    "appAbout_issueTrackerTile_titleText": "Hibakövető",
+    "appAbout_contactEmailTile_titleText": "Kapcsolatfelvétel",
+    "appAbout_contactEmailTile_emailBody": "Szia, örülök, hogy megkerestél.\nHa hibát jelzel, kérlek add meg az alkalmazás verzióját és írd le a reprodukálás lépéseit.\n--------------------------------------",
+    "appAbout_licenseTile_titleText": "Licenc",
+    "appAbout_licenseTile_subtitleText": "Apache License, Version 2.0",
+    "appAbout_licenseThirdPartyTile_titleText": "Harmadik fél licenc nyilatkozat",
+    "appAbout_licenseThirdPartyTile_subtitleText": "flutter",
+    "appAbout_privacyTile_titleText": "Adatvédelem",
+    "appAbout_privacyTile_subTitleText": "Az alkalmazásban elérheted az adatvédelmi szabályzatot",
+    "appAbout_donateTile_titleText": "Adományozás",
+    "appAbout_donateTile_subTitleText": "Személyes fejlesztő vagyok. Ha tetszik az alkalmazás, vegyél nekem egy ☕-t.",
+    "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
+    "@appAbout_donateTile_ways": {
+        "description": "Az adományozás `@`-vel kezdődik és `,`-vel elválasztva, elérhető módok: paypal, buyMeACoffee, alipay, wechatPay"
+    },
+    "donateWay_paypal": "Paypal",
+    "donateWay_buyMeACoffee": "Vegyél nekem egy kávét",
+    "donateWay_alipay": "Alipay",
+    "donateWay_wechatPay": "Wechat Pay",
+    "donateWay_cryptoCurrency": "Kriptovaluták",
+    "donateWay_cryptoCurrency_BTC": "BTC",
+    "donateWay_cryptoCurrency_ETH": "ETH",
+    "donateWay_cryptoCurrency_BNB": "BNB",
+    "donateWay_cryptoCurrency_AVAX": "AVAX",
+    "donateWay_cryptoCurrency_FTM": "FTM",
+    "donateWay_firstQRGroup": "Alipay & Wechat Pay",
+    "appAbout_donateDialog_copiedCrypto_msg": "{name} cím másolva",
+    "@appAbout_donateDialog_copiedCrypto_msg": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "BTC"
+            }
+        }
+    },
+    "batchCheckin_appbar_title": "Tömeges bejelentkezés",
+    "batchCheckin_datePicker_prevButton_tooltip": "Előző nap",
+    "batchCheckin_datePicker_nextButton_tooltip": "Következő nap",
+    "batchCheckin_status_skip_text": "Kihagyás",
+    "batchCheckin_status_ok_text": "Teljesítve",
+    "batchCheckin_status_double_text": "x2 Találat!",
+    "batchCheckin_status_zero_text": "Nem teljesített",
+    "batchCheckin_habits_groupTitle": "{count} {count, plural, =1{szokás} other{szokás}} kiválasztva",
+    "@batchCheckin_habits_groupTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_button_text": "Mentés",
+    "batchCheckin_reset_button_text": "Visszaállítás",
+    "batchCheckin_completed_snackbar_text": "Módosítva {count, plural, =1{a szokás állapota} other{{count} szokás állapota}}",
+    "@batchCheckin_completed_snackbar_text": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_confirmDialog_title": "Meglévő bejegyzések felülírása",
+    "batchCheckin_save_confirmDialog_body": "A meglévő bejegyzések felülíródnak. Mentés után az előző bejegyzések elvesznek.",
+    "batchCheckin_save_confirmDialog_confirmButton_text": "mentés",
+    "batchCheckin_save_confirmDialog_cancelButton_text": "mégse",
+    "batchCheckin_close_confirmDialog_title": "Kilépés megerősítése",
+    "batchCheckin_close_confirmDialog_body": "A bejelentkezés állapotváltozásai nem kerülnek mentésre.",
+    "batchCheckin_close_confirmDialog_confirmButton_text": "kilépés",
+    "batchCheckin_close_confirmDialog_cancelButton_text": "mégse",
+    "appReminder_dailyReminder_title": "🏝 Ma betartottad a szokásaidat?",
+    "appReminder_dailyReminder_body": "Kattints a belépéshez és időben jelöld a teljesítést.",
+    "common_habitColorType_cc1": "Mélykáprázat lila",
+    "common_habitColorType_cc2": "Piros",
+    "common_habitColorType_cc3": "Lila",
+    "common_habitColorType_cc4": "Királis kék",
+    "common_habitColorType_cc5": "Sötét cián",
+    "common_habitColorType_cc6": "Zöld",
+    "common_habitColorType_cc7": "Ámbersárga",
+    "common_habitColorType_cc8": "Narancs",
+    "common_habitColorType_cc9": "Lime zöld",
+    "common_habitColorType_cc10": "Sötét orchidea",
+    "common_habitColorType_default": "Szín {index}",
+    "@common_habitColorType_default": {
+        "description": "ismeretlen szokás szín típusa",
+        "placeholders": {
+            "index": {
+                "type": "int",
+                "example": "0"
+            }
+        }
+    },
+    "common_appThemeColor_system": "Rendszer",
+    "common_appThemeColor_primary": "Elsődleges",
+    "common_appThemeColor_dynamic": "Dinamikus",
+    "common_customDateTimeFormatPicker_useSystemFormat_text": "Rendszer formátum használata",
+    "common_customDateTimeFormatPicker_fmtTileText": "Dátum formátum",
+    "common_customDateTimeFormatPicker_ymd_text": "Év Hónap Nap",
+    "common_customDateTimeFormatPicker_mdy_text": "Hónap Nap Év",
+    "common_customDateTimeFormatPicker_dmy_text": "Nap Hónap Év",
+    "common_customDateTimeFormatPicker_SepTileText": "Elválasztó",
+    "common_customDateTimeFormatPicker_sepDash_text": "Kötőjel",
+    "common_customDateTimeFormatPicker_sepSlash_text": "Perjel",
+    "common_customDateTimeFormatPicker_sepSpace_text": "Szóköz",
+    "common_customDateTimeFormatPicker_sepDot_text": "Pont",
+    "common_customDateTimeFormatPicker_empty_text": "Nincs elválasztó",
+    "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+    "@common_customDateTimeFormatPicker_sep_formatter": {
+        "description": "elválasztó karakter",
+        "placeholders": {
+            "splitName": {
+                "type": "String",
+                "example": "Kötőjel"
+            },
+            "splitChar": {
+                "type": "String",
+                "example": "/"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_12Hour_text": "12 órás formátum használata",
+    "common_customDateTimeFormatPicker_monthName_text": "Teljes hónapnév használata",
+    "common_customDateTimeFormatPicker_applyFreqChart_text": "Alkalmazás a gyakorisági diagramhoz",
+    "common_customDateTimeFormatPicker_applyHeapmap_text": "Alkalmazás a naptárhoz",
+    "common_customDateTimeFormatPicker_cancelButton_text": "mégse",
+    "common_customDateTimeFormatPicker_confirmButton_text": "megerősítés",
+    "common_errorPage_title": "Hoppá, összeomlott!",
+    "common_errorPage_copied": "Összeomlási információk másolva",
+    "common_enable_text": "Engedélyezve",
+    "calendarPicker_clip_today": "Ma",
+    "calendarPicker_clip_tomorrow": "Holnap",
+    "calendarPicker_clip_after7Days": "Következő {date}",
+    "@calendarPicker_clip_after7Days": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "format": "E"
+            }
+        }
+    },
+    "exportConfirmDialog_title_exportAll": "Minden szokás exportálása?",
+    "exportConfirmDialog_title_exportMulti": "Exportáljuk {number, plural, =0{a jelenlegi szokást} =1{1 szokást} other{{number} szokást}}?",
+    "@exportConfirmDialog_title_exportMulti": {
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "exportConfirmDialog_option_includeRecords": "bejegyzésekkel együtt",
+    "exportConfirmDialog_cancel_buttonText": "mégse",
+    "exportConfirmDialog_confirm_buttonText": "exportálás",
+    "debug_logLevelTile_title": "Naplózási szint",
+    "debug_logLevelDialog_title": "Naplózási szint módosítása",
+    "debug_logLevel_debug": "Debug",
+    "debug_logLevel_info": "Info",
+    "debug_logLevel_warn": "Figyelmeztetés",
+    "debug_logLevel_error": "Hiba",
+    "debug_logLevel_fatal": "Kritikus",
+    "debug_collectLogTile_title": "Naplók gyűjtése",
+    "debug_collectLogTile_enable_subtitle": "Koppints a naplózás leállításához.",
+    "debug_collectLogTile_disable_subtitle": "Koppints a naplózás elindításához.",
+    "debug_downladDebugLogs_subject": "Naplók letöltése",
+    "dbeug_clearDebugLogs_complete_snackbar": "Naplók törölve.",
+    "debug_downladDebugInfo_subject": "Debug információk letöltése",
+    "debug_downladDebugZip_subject": "{fileName} letöltése",
+    "@debug_downladDebugZip_subject": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "debug.zip"
+            }
+        }
+    },
+    "debug_missingDebugLogFile_snackbar": "Naplófájl nem található.",
+    "debug_debuggerLogCard_title": "Napló információk",
+    "debug_debuggerLogCard_subtitle": "Tartalmazza a helyi naplóadatokat, a gyűjtéshez a kapcsolót be kell kapcsolni.",
+    "debug_debuggerLogCard_saveButton_text": "Letöltés",
+    "debug_debuggerLogCard_clearButton_text": "Törlés",
+    "debug_debuggerInfoCard_title": "Debug információk",
+    "debug_debuggerInfoCard_subtitle": "Tartalmazza az alkalmazás hibakeresési adatait.",
+    "debug_debuggerInfoCard_openButton_text": "Megnyitás",
+    "debug_debuggerInfoCard_saveButton_text": "Mentés",
+    "debug_debuggerInfo_notificationTitle": "Alkalmazás információinak gyűjtése...",
+    "confirmDialog_confirm_text": "{type, select, save {Mentés} exit {Kilépés} delete {Törlés} other {Megerősítés}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<NormalizeConfirmDialogType>.name",
+                "example": "megerősítés"
+            }
+        }
+    },
+    "confirmDialog_cancel_text": "mégse",
+    "snackbar_undoText": "VISSZA",
+    "snackbar_dismissText": "ELVETÉS",
+    "contributors_tile_title": "Közreműködők",
+    "userAction_tap": "Koppintás",
+    "userAction_doubleTap": "Dupla koppintás",
+    "userAction_longTap": "Hosszú nyomás",
+    "channelName_habitReminder": "Szokás emlékeztető",
+    "channelName_appReminder": "Értesítés",
+    "channelName_appDebugger": "Debugger",
+    "channelName_appSyncing": "Szinkron folyamat",
+    "channelDesc_appSyncing": "A szinkron állapotának és nem sikertelen eredmények megjelenítésére szolgál",
+    "channelName_appSyncFailed": "Szinkron sikertelen",
+    "channelDesc_appSyncFailed": "Értesítés szinkronhiba esetén"
 }
