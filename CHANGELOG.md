@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.5+144-pre
+## 1.23.6+145
 
 - Updated Chinese (SC) translation, thank to ADAIBLOG's contribution on Weblate (#490)
 - Updated Russian translation, thank to Rudoy Artyom's contribution on Weblate (#490)
