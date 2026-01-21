@@ -18,7 +18,7 @@ TEMPLATE_FILE=$L10N_DIR/en.arb
 L10N_REFS_FILE="$SCRIPT_PATH/../configs/l10n_refs.json"
 echo "Normalizing ARB files from $L10N_DIR"
 for file in $L10N_DIR/*.arb; do
-	if [ -f "$file" ]; then
+    if [ -f "$file" ]; then
         if [[ "$file" == "$TEMPLATE_FILE" ]]; then
             python $SCRIPT_PATH/normalize_arb.py \
                 -i $file -t $TEMPLATE_FILE -o $file --refs $L10N_REFS_FILE \
@@ -28,8 +28,8 @@ for file in $L10N_DIR/*.arb; do
             python $SCRIPT_PATH/normalize_arb.py \
                 -i $file -t $TEMPLATE_FILE -o $file --refs $L10N_REFS_FILE \
                 --indent 4 --ignore-empty-meta
-		    _ERRCODE=$?
+            _ERRCODE=$?
         fi
-		echo "Done[$_ERRCODE]: $file"
-	fi
+        echo "Done[$_ERRCODE]: $file"
+    fi
 done
