@@ -35,6 +35,8 @@ jobs:
       commit-id: ${{ steps.pr.outputs.comment-id }}
       common-changed: ${{ steps.filter.outputs.common }}
       android-changed: ${{ steps.filter.outputs.android }}
+      ios-changed: ${{ steps.filter.outputs.ios }}
+      macos-changed: ${{ steps.filter.outputs.macos }}
     steps:
       - uses: actions/checkout@v4
       - name: Filter paths
@@ -49,6 +51,10 @@ jobs:
               - 'assets/**'
             android:
               - 'android/**'
+            ios:
+              - 'ios/**'
+            macos:
+              - 'macos/**'
       - id: date
         run: echo "now=$(date)" >> $GITHUB_OUTPUT
       - name: Comment on PR
@@ -100,10 +106,91 @@ jobs:
             ${{ job.status == 'success' && '✅ Android Build Completed:' || '❌ Android Build Failed' }}
             ${{ steps.upload.outputs.artifact-url || '' }}
 
+  build-ios:
+    needs:
+      - test-build-filter
+    runs-on: macos-latest
+    environment: check-ci
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.ios-changed == 'true'
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_ios_unsigned
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.ipa
+          path: ${{ steps.build.outputs.ipa-path }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: >
+            ${{ job.status == 'success' && '✅ iOS Build Completed:' || '❌ iOS Build Failed' }}
+            ${{ steps.upload.outputs.artifact-url || '' }}
+
+  build-macos:
+    needs:
+      - test-build-filter
+    runs-on: macos-latest
+    environment: check-ci
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.macos-changed == 'true'
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: false
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.app
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: >
+            ${{ job.status == 'success' && '✅ macOS Build Completed:' || '❌ macOS Build Failed' }}
+            ${{ steps.upload.outputs.artifact-url || '' }}
+
   report:
     needs:
       - test-build-filter
       - build-android
+      - build-ios
+      - build-macos
     if: >
       always() &&
       needs.test-build-filter.outputs.commit-id != null &&
