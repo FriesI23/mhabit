@@ -29,6 +29,7 @@ def format_arb(
     output_filepath: t.Optional[str] = None,
     template_filepath: t.Optional[str] = None,
     force_use_template_metadata: bool = False,
+    ignore_empty_template_metadata: bool = False,
     indent: t.Optional[int] = None,
     refs_filepath: str = None,
 ):
@@ -51,6 +52,7 @@ def format_arb(
             input=output,
             template=template,
             force_use_template_metadata=force_use_template_metadata,
+            ignore_empty_template_metadata=ignore_empty_template_metadata,
         )
 
     if output_filepath:
@@ -81,6 +83,7 @@ def _format_arb(
     input: T_JSON,
     template: T_JSON,
     force_use_template_metadata: bool,
+    ignore_empty_template_metadata: bool,
 ) -> T_JSON:
     output = OrderedDict()
     for key in template:
@@ -94,9 +97,18 @@ def _format_arb(
         meta_value = input.get(meta_key)
         if not meta_value:
             template_meta_val = template.get(meta_key)
+            if ignore_empty_template_metadata and (
+                template_meta_val is None or template_meta_val == {}
+            ):
+                continue
             output[meta_key] = template_meta_val or {}
         elif force_use_template_metadata and meta_key in template:
-            output[meta_key] = template[meta_key]
+            template_meta_val = template[meta_key]
+            if ignore_empty_template_metadata and (
+                template_meta_val is None or template_meta_val == {}
+            ):
+                continue
+            output[meta_key] = template_meta_val
         else:
             output[meta_key] = meta_value
     return output
@@ -109,6 +121,7 @@ def parse_args() -> ap.ArgumentParser:
     parser.add_argument("-t", "--template", type=str)
     parser.add_argument("--indent", type=int, default=2)
     parser.add_argument("--force-template", action=ap.BooleanOptionalAction)
+    parser.add_argument("--ignore-empty-meta", action=ap.BooleanOptionalAction, default=False)
     parser.add_argument("--refs", type=str, default="{}")
     return parser
 
@@ -121,12 +134,14 @@ def main():
     template_filepath = args.template  # type: str
     indent = args.indent  # type: int
     force_template = args.force_template  # type: bool
+    ignore_empty_meta = args.ignore_empty_meta  # type: bool
     refs_filepath: str = args.refs
     format_arb(
         input_filepath=input_filepath,
         output_filepath=output_filepath,
         template_filepath=template_filepath,
         force_use_template_metadata=force_template,
+        ignore_empty_template_metadata=ignore_empty_meta,
         indent=indent,
         refs_filepath=refs_filepath,
     )
