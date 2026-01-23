@@ -48,6 +48,7 @@ platform :ios do
     flavor = options[:flavor] || "f_store"
     do_build = options.fetch(:build, true)
     do_clean = options.fetch(:clean, true)
+    track = options[:track] || "alpha"
     ipa_path = "../build/ios/Build/Fastlane/Release-#{flavor}"
 
     clean() if do_clean
@@ -57,9 +58,23 @@ platform :ios do
       scheme: flavor,
       output_directory: ipa_path
     )
-    upload_to_testflight(
-      ipa: "#{ipa_path}/Runner.ipa",
-      uses_non_exempt_encryption: true
-    )
+
+    if track == "beta"
+      upload_to_testflight(
+        ipa: "#{ipa_path}/Runner.ipa",
+        uses_non_exempt_encryption: true,
+        distribute_external: true,
+        groups: ["Beta"]
+      )
+    elsif track == "public"
+      upload_to_app_store(
+        ipa: "#{ipa_path}/Runner.ipa"
+      )
+    else
+      upload_to_testflight(
+        ipa: "#{ipa_path}/Runner.ipa",
+        uses_non_exempt_encryption: true
+      )
+    end
   end
 end
