@@ -15,16 +15,16 @@
 SCRIPT_PATH=$(dirname $0)
 echo "Generating fastlane changelog: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
-    -o $SCRIPT_PATH/../fastlane/metadata/android/en-US/changelogs
+    -o $SCRIPT_PATH/../fastlane/metadata/android/en-US/changelogs --validate
 echo "Generating fastlane changelog: zh-CN"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
-    -o $SCRIPT_PATH/../fastlane/metadata/android/zh-CN/changelogs
+    -o $SCRIPT_PATH/../fastlane/metadata/android/zh-CN/changelogs --validate
 
 echo "Generating f_store's fastlane changelog: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
     -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/en-US/changelogs \
-    --min-version-code 125 --with-pre
+    --min-version-code 125 --with-pre --validate
 echo "Generating f_store's fastlane changelog: zh-CN"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
     -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/zh-CN/changelogs \
-    --min-version-code 125 --with-pre
+    --min-version-code 125 --with-pre --validate

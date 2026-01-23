@@ -15,14 +15,14 @@
 SCRIPT_PATH=$(dirname $0)
 echo "Generating iOS release notes: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
-    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/en-US
+    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/en-US --validate
 echo "Generating iOS release notes: zh-Hans"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
-    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/zh-Hans
+    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/zh-Hans --validate
 
 echo "Generating macOS release notes: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
-    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/en-US
+    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/en-US --validate
 echo "Generating macOS release notes: zh-Hans"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
-    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/zh-Hans
+    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/zh-Hans --validate
