@@ -43,7 +43,11 @@ def get_version_code(version: str):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("changelog_path")
-    parser.add_argument("-o", "--output_dir", required=True)
+    parser.add_argument("-o", "--output-dir")
+    parser.add_argument(
+        "--darwin-output-dir",
+        help="Write latest changelog to darwin release_notes.txt",
+    )
     parser.add_argument(
         "--with-pre", action="store_true", help="Include pre-release entries"
     )
@@ -64,10 +68,16 @@ if __name__ == "__main__":
     if not os.path.exists(changelog_path):
         print(f"change log not exists: {changelog_path}")
         exit(-1)
-    output_dir = args.output_dir
-    if not os.path.isdir(output_dir):
-        print(f"output dir is not dir: {output_dir}")
+    if not args.output_dir and not args.darwin_output_dir:
+        print("must set --output-dir or --darwin-output-dir")
         exit(-2)
+    output_dir = args.output_dir
+    if output_dir and not os.path.isdir(output_dir):
+        print(f"output dir is not dir: {output_dir}")
+        exit(-3)
+    darwin_output_dir = args.darwin_output_dir
+    if darwin_output_dir:
+        os.makedirs(darwin_output_dir, exist_ok=True)
 
     version_map = {}
     with open(changelog_path, "r") as fp:
@@ -81,16 +91,32 @@ if __name__ == "__main__":
             else:
                 version_map[version_code] = content
 
-    for version_code, version_content in version_map.items():
-        file_path = os.path.join(output_dir, f"{version_code}.txt")
-        if os.path.exists(file_path) and not args.force:
-            print(f"skip existing file: {file_path}")
-            continue
+    if not version_map:
+        print("no changelog entries matched")
+        exit(0)
 
-        with open(file_path, "w") as fp:
-            print(f"write at: {file_path}")
-            if not version_content.endswith("\n"):
-                version_content += os.linesep
-            fp.write(version_content)
+    if output_dir:
+        for version_code in sorted(version_map):
+            version_content = version_map[version_code]
+            file_path = os.path.join(output_dir, f"{version_code}.txt")
+            if os.path.exists(file_path) and not args.force:
+                print(f"skip existing file: {file_path}")
+                continue
+
+            with open(file_path, "w") as fp:
+                print(f"write at: {file_path}")
+                if not version_content.endswith("\n"):
+                    version_content += os.linesep
+                fp.write(version_content)
+
+    if darwin_output_dir:
+        latest_version_code = max(version_map)
+        darwin_path = os.path.join(darwin_output_dir, "release_notes.txt")
+        darwin_content = version_map[latest_version_code]
+        with open(darwin_path, "w") as fp:
+            print(f"write darwin release notes at: {darwin_path}")
+            if not darwin_content.endswith("\n"):
+                darwin_content += os.linesep
+            fp.write(darwin_content)
 
     del version_map

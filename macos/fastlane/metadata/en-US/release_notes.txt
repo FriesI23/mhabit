@@ -5,4 +5,3 @@
 - Fixed: Reset expanded cards after toggling record state on Habits Today (#492)
 - Fixed: prevent empty state image flashing on initial load (#494)
 - Remove unused empty video metadata
-
