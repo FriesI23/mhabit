@@ -1,0 +1,18 @@
+Build your micro-habits in the simplest way.
+Growth curves and visual charts make every step of your progress visible.
+Fully open-source and ad-free, making habit building pure and efficient.
+
+Key Features:
+
+• Scoring system to help you develop your own micro habits
+• Supports both positive and negative habits
+• Easy-to-use check-in UI
+• A quick search and filter to help quickly find past habits.
+• Color-coded habits for quick visual distinction
+• Import and export habits using a human-readable JSON format
+• Optimized for landscape and large-screen devices
+• WebDAV sync support for cross-device syncing
+
+Moreover, this app completely open source.
+
+Got source code from: https://github.com/FriesI23/mhabit
