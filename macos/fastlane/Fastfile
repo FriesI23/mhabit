@@ -49,6 +49,7 @@ platform :ios do
     flavor = options[:flavor] || "f_store"
     do_build = options.fetch(:build, true)
     do_clean = options.fetch(:clean, true)
+    track = options[:track] || "alpha"
     pkg_path = "../build/macos/Build/Fastlane/Release-#{flavor}"
 
     clean() if do_clean
@@ -58,9 +59,23 @@ platform :ios do
       scheme: flavor,
       output_directory: pkg_path
     )
-    upload_to_testflight(
-      pkg: "#{pkg_path}/mhabit.pkg",
-      uses_non_exempt_encryption: true,
-    )
+
+    if track == "beta"
+      upload_to_testflight(
+        pkg: "#{pkg_path}/mhabit.pkg",
+        uses_non_exempt_encryption: true,
+        distribute_external: true,
+        groups: ["Beta"]
+      )
+    elsif track == "public"
+      upload_to_app_store(
+        pkg: "#{pkg_path}/mhabit.pkg"
+      )
+    else
+      upload_to_testflight(
+        pkg: "#{pkg_path}/mhabit.pkg",
+        uses_non_exempt_encryption: true
+      )
+    end
   end
 end

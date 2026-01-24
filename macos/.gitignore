@@ -16,5 +16,9 @@
 # snapshot generated screenshots
 **/fastlane/screenshots
 
+# review information
+**/fastlane/metadata/**/review_information
+**/fastlane/metadata/**/copyright.txt
+
 # scan temporary files
 **/fastlane/test_output

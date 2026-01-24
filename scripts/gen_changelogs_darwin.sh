@@ -1,11 +1,11 @@
 #!/bin/sh
-# Copyright 2023 Fries_I23
+# Copyright 2026 Fries_I23
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,18 +27,16 @@ if [ "$FAIL_FAST" -eq 1 ]; then
     set -Eeuo pipefail
 fi
 
-echo "Generating fastlane changelog: en-US"
+echo "Generating iOS release notes: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
-    -o $SCRIPT_PATH/../fastlane/metadata/android/en-US/changelogs --validate
-echo "Generating fastlane changelog: zh-CN"
+    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/en-US --validate
+echo "Generating iOS release notes: zh-Hans"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
-    -o $SCRIPT_PATH/../fastlane/metadata/android/zh-CN/changelogs --validate
+    --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/zh-Hans --validate
 
-echo "Generating f_store's fastlane changelog: en-US"
+echo "Generating macOS release notes: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
-    -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/en-US/changelogs \
-    --min-version-code 125 --with-pre --validate
-echo "Generating f_store's fastlane changelog: zh-CN"
+    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/en-US --validate
+echo "Generating macOS release notes: zh-Hans"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../docs/CHANGELOG/zh.md \
-    -o $SCRIPT_PATH/../android/app/src/f_store/fastlane/metadata/android/zh-CN/changelogs \
-    --min-version-code 125 --with-pre --validate
+    --darwin-output-dir $SCRIPT_PATH/../macos/fastlane/metadata/zh-Hans --validate
