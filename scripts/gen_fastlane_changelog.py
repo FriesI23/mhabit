@@ -135,6 +135,8 @@ if __name__ == "__main__":
         logging.info("no changelog entries matched")
         exit(0)
 
+    validate_failed = False
+
     if output_dir:
         for version_code in sorted(version_map):
             version_content = version_map[version_code]
@@ -145,6 +147,7 @@ if __name__ == "__main__":
             if args.validate and not validate_android_content(
                 version_content, version_code
             ):
+                validate_failed = True
                 continue
 
             with open(file_path, "w") as fp:
@@ -157,7 +160,9 @@ if __name__ == "__main__":
         latest_version_code = max(version_map)
         darwin_path = os.path.join(darwin_output_dir, "release_notes.txt")
         darwin_content = version_map[latest_version_code]
-        if args.validate and validate_darwin_content(darwin_content):
+        if args.validate and not validate_darwin_content(darwin_content):
+            validate_failed = True
+        else:
             with open(darwin_path, "w") as fp:
                 logging.info(f"write darwin release notes at: {darwin_path}")
                 if not darwin_content.endswith(os.linesep):
@@ -165,3 +170,5 @@ if __name__ == "__main__":
                 fp.write(darwin_content)
 
     del version_map
+    if validate_failed:
+        exit(1)

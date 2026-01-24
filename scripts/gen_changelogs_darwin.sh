@@ -13,6 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 SCRIPT_PATH=$(dirname $0)
+FAIL_FAST=0
+
+while getopts ":F" opt; do
+    case "$opt" in
+        F) FAIL_FAST=1 ;;
+        \?) echo "Unknown option: -$OPTARG" >&2; exit 2 ;;
+    esac
+done
+
+shift $((OPTIND-1))
+if [ "$FAIL_FAST" -eq 1 ]; then
+    set -Eeuo pipefail
+fi
+
 echo "Generating iOS release notes: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
     --darwin-output-dir $SCRIPT_PATH/../ios/fastlane/metadata/en-US --validate

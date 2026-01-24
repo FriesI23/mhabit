@@ -13,6 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 SCRIPT_PATH=$(dirname $0)
+FAIL_FAST=0
+
+while getopts ":F" opt; do
+    case "$opt" in
+        F) FAIL_FAST=1 ;;
+        \?) echo "Unknown option: -$OPTARG" >&2; exit 2 ;;
+    esac
+done
+
+shift $((OPTIND-1))
+if [ "$FAIL_FAST" -eq 1 ]; then
+    set -Eeuo pipefail
+fi
+
 echo "Generating fastlane changelog: en-US"
 $SCRIPT_PATH/gen_fastlane_changelog.py $SCRIPT_PATH/../CHANGELOG.md \
     -o $SCRIPT_PATH/../fastlane/metadata/android/en-US/changelogs --validate
