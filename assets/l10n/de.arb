@@ -178,6 +178,20 @@
     "habitEdit_modify_datetime_prefix": "Modifiziert: ",
     "habitDisplay_fab_text": "Neue Gewohnheit",
     "habitDisplay_emptyImage_text_01": "Eine tausend-kilometer Reise beginnt mit einem einzigen Schritt",
+    "habitDisplay_notFoundImage_text_01": "Keine passenden Gewohnheiten gefunden",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "Keine passende Gewohnheit gefunden für \"{keyword}\"",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "Ausgewählte Gewohnheiten archivieren?",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "Archivieren",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "Abbrechen",
@@ -214,6 +228,16 @@
             }
         }
     },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Gewohnheit \"{name}\" Löschen",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Alle Gewohnheiten exportiert",
     "habitDisplay_editPopMenu_selectAll": "Alle Auswählen",
     "habitDisplay_editPopMenu_export": "Exportieren",
     "habitDisplay_editPopMenu_delete": "Löschen",
@@ -247,10 +271,27 @@
     "habitDisplay_sortTypeDialog_confirm": "Bestätigen",
     "habitDisplay_sortTypeDialog_cancel": "Abbrechen",
     "habitDisplay_debug_debugSubgroup_title": "🛠️Debug",
+    "habitDisplay_searchBar_hintText": "Suche Gewohnheit",
+    "habitDisplay_searchFilter_ongoing_desc": "Zeigt Gewohnheiten an, die derzeit aktiv und fortlaufend sind (nicht archiviert oder gelöscht).",
     "habitDisplay_searchFilter_completed": "Abgeschlossen",
     "habitDisplay_searchFilter_habitType_groupTitle": "Gewohnheitstyp",
+    "habitDisplay_searchFilter_tooltips": "Zeige Filter",
+    "habitDisplay_searchFilter_clearFilter": "Filter löschen",
+    "habitDisplay_tab_habits_label": "Gewohnheiten",
     "habitDisplay_tab_today_label": "Heute",
     "habitToday_appBar_title": "Heute",
+    "habitToday_image_desc": "Du hast es geschafft!",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_donePlusButton_label": "Geschafft",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Überspringen",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
     "habitDetail_editButton_tooltip": "Bearbeiten",
     "habitDetail_editPopMenu_unarchive": "Dearchivieren",
     "habitDetail_editPopMenu_archive": "Archivieren",
@@ -413,9 +454,15 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "Einstellung zur Anpassung des Tipp-Verhaltens, um eine Gewohnheit für ein Datum als abgeschlossen zu markieren.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Detaillierte Aufzeichnung öffnen",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Einstellung zur Anpassung des Tipp-Verhaltens, um das Pop-Up zur Modifikation eines Datenpunktes einer Gewohnheit zu öffnen.",
+    "appSetting_appThemeColorTile_titleText": "Farbe Schema",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Wähle Farbe Schema",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "Benutze GTK+ theme's ausgewählte Hintergrund Farbe",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Benutze das System Farbeschema",
     "appSetting_firstDayOfWeek_titleText": "Erster Tag der Woche",
     "appSetting_firstDayOfWeekDialog_titleText": "Ersten Tag der Woche auswählen",
     "appSetting_firstDayOfWeekDialog_defaultText": " (Standard)",
+    "appSetting_changeLanguageTile_titleText": "Sprache",
+    "appSetting_changeLanguageDialog_titleText": "Sprache auswählen",
     "appSetting_dateDisplayFormat_titleText": "Datumsformat ({formatTemplate})",
     "@appSetting_dateDisplayFormat_titleText": {
         "placeholders": {
@@ -494,7 +541,12 @@
     "appSetting_clearCache_snackBar_partSuccText": "Partielles Leeren des Cache fehlgeschlagen",
     "appSetting_clearCache_snackBar_succText": "Cache erfolgreich geleert",
     "appSetting_clearCache_snackBar_failText": "Cache konnte nicht geleert werden",
+    "appSetting_debugger_titleText": "Debug Info",
     "appSetting_about_titleText": "Über diese App",
+    "appSetting_experimentalFeatureTile_titleText": "Experimentelle Funktionen",
+    "appSetting_synSubgroupText": "Synchronisieren",
+    "appSetting_syncOption_titleText": "Synchronisations Optionen",
+    "appSetting_notify_titleTile": "Benachrichtigungen",
     "appAbout_appbarTile_titleText": "Über diese App",
     "appAbout_versionTile_titleText": "Version: {appVersion}",
     "@appAbout_versionTile_titleText": {
@@ -643,6 +695,7 @@
     "exportConfirmDialog_option_includeRecords": "Verlauf einschließen?",
     "exportConfirmDialog_cancel_buttonText": "Abbrechen",
     "exportConfirmDialog_confirm_buttonText": "Exportieren",
+    "confirmDialog_cancel_text": "Abbrechen",
     "snackbar_undoText": "Rückgängig",
     "snackbar_dismissText": "Ablehnen",
     "contributors_tile_title": "Mitwirkende",

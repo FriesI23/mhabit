@@ -237,11 +237,12 @@ class L10nDe extends L10n {
       'Eine tausend-kilometer Reise beginnt mit einem einzigen Schritt';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'Keine passenden Gewohnheiten gefunden';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'Keine passende Gewohnheit gefunden für \"$keyword\"';
   }
 
   @override
@@ -291,7 +292,7 @@ class L10nDe extends L10n {
 
   @override
   String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
-    return 'Deleted habit: \"$name\"';
+    return 'Gewohnheit \"$name\" Löschen';
   }
 
   @override
@@ -307,7 +308,7 @@ class L10nDe extends L10n {
 
   @override
   String get habitDisplay_exportAllHabitsSuccSnackbarText =>
-      'Exported All Habits';
+      'Alle Gewohnheiten exportiert';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => 'Alle Auswählen';
@@ -412,14 +413,14 @@ class L10nDe extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Debug';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Suche Gewohnheit';
 
   @override
   String get habitDisplay_searchFilter_ongoing => 'Ongoing';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
-      'Shows habits that are currently active and ongoing (not archived or deleted).';
+      'Zeigt Gewohnheiten an, die derzeit aktiv und fortlaufend sind (nicht archiviert oder gelöscht).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Abgeschlossen';
@@ -428,13 +429,13 @@ class L10nDe extends L10n {
   String get habitDisplay_searchFilter_habitType_groupTitle => 'Gewohnheitstyp';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Zeige Filter';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Filter löschen';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Gewohnheiten';
 
   @override
   String get habitDisplay_tab_today_label => 'Heute';
@@ -443,7 +444,7 @@ class L10nDe extends L10n {
   String get habitToday_appBar_title => 'Heute';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'Du hast es geschafft!';
 
   @override
   String habitToday_card_subtitle_text(int days) {
@@ -451,10 +452,10 @@ class L10nDe extends L10n {
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Geschafft';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Überspringen';
 
   @override
   String get habitDetail_editButton_tooltip => 'Bearbeiten';
@@ -730,11 +731,11 @@ class L10nDe extends L10n {
       'Einstellung zur Anpassung des Tipp-Verhaltens, um das Pop-Up zur Modifikation eines Datenpunktes einer Gewohnheit zu öffnen.';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Farbe Schema';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'Wähle Farbe Schema';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
@@ -742,11 +743,11 @@ class L10nDe extends L10n {
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
-      'Use GTK+ theme\'s selected background color';
+      'Benutze GTK+ theme\'s ausgewählte Hintergrund Farbe';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'Benutze das System Farbeschema';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
@@ -772,10 +773,10 @@ class L10nDe extends L10n {
       'Follow System';
 
   @override
-  String get appSetting_changeLanguageTile_titleText => 'Language';
+  String get appSetting_changeLanguageTile_titleText => 'Sprache';
 
   @override
-  String get appSetting_changeLanguageDialog_titleText => 'Select Language';
+  String get appSetting_changeLanguageDialog_titleText => 'Sprache auswählen';
 
   @override
   String appSetting_dateDisplayFormat_titleText(String formatTemplate) {
@@ -931,16 +932,16 @@ class L10nDe extends L10n {
 
   @override
   String get appSetting_experimentalFeatureTile_titleText =>
-      'Experimental Features';
+      'Experimentelle Funktionen';
 
   @override
-  String get appSetting_synSubgroupText => 'Sync';
+  String get appSetting_synSubgroupText => 'Synchronisieren';
 
   @override
-  String get appSetting_syncOption_titleText => 'Sync Options';
+  String get appSetting_syncOption_titleText => 'Synchronisations Optionen';
 
   @override
-  String get appSetting_notify_titleTile => 'Notifications';
+  String get appSetting_notify_titleTile => 'Benachrichtigungen';
 
   @override
   String get appSetting_notify_subtitleTile =>
@@ -1742,7 +1743,7 @@ class L10nDe extends L10n {
   }
 
   @override
-  String get confirmDialog_cancel_text => 'Cancel';
+  String get confirmDialog_cancel_text => 'Abbrechen';
 
   @override
   String get snackbar_undoText => 'Rückgängig';
