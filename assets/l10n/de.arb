@@ -648,5 +648,58 @@
     "contributors_tile_title": "Mitwirkende",
     "userAction_tap": "Tippen",
     "userAction_doubleTap": "Doppel",
-    "userAction_longTap": "Lang"
+    "userAction_longTap": "Lang",
+    "habitDisplay_notFoundImage_text_01": "Keine passenden Gewohnheiten gefunden",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "Keine passende Gewohnheit gefunden für \"{keyword}\"",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "Gewohnheit \"{Name}\" Löschen",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "Alle Gewohnheiten exportiert",
+    "habitDisplay_searchBar_hintText": "Suche Gewohnheit",
+    "habitDisplay_searchFilter_ongoing_desc": "Zeigt Gewohnheiten an, die derzeit aktiv und fortlaufend sind (nicht archiviert oder gelöscht).",
+    "habitDisplay_searchFilter_tooltips": "Zeige Filter",
+    "habitDisplay_searchFilter_clearFilter": "Filter löschen",
+    "habitDisplay_tab_habits_label": "Gewohnheiten",
+    "habitToday_image_desc": "Du hast es geschafft!",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_donePlusButton_label": "Geschafft",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Überspringen",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "appSetting_appThemeColorTile_titleText": "Farbe Schema",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Wähle Farbe Schema",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "Benutze GTK+ theme's ausgewählte Hintergrund Farbe",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Benutze das System Farbeschema",
+    "appSetting_changeLanguageTile_titleText": "Sprache",
+    "appSetting_changeLanguageDialog_titleText": "Sprache auswählen",
+    "appSetting_debugger_titleText": "Debug Info",
+    "appSetting_experimentalFeatureTile_titleText": "Experimentelle Funktionen",
+    "appSetting_synSubgroupText": "Synchronisieren",
+    "appSetting_syncOption_titleText": "Synchronisations Optionen",
+    "appSetting_notify_titleTile": "Benachrichtigungen",
+    "confirmDialog_cancel_text": "Abbrechen"
 }
