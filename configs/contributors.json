@@ -84,7 +84,13 @@
                 "email": "jirkacapek13@gmail.com"
             }
         ],
-        "de": [ 3 ],
+        "de": [
+            3,
+            {
+                "name": "TheKos",
+                "email": "noahwessendorf@gmail.com"
+            }
+        ],
         "fa": [ 5,
             {
                 "name": "ulracte"
