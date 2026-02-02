@@ -142,7 +142,6 @@ class _PageState extends State<_Page> {
     final bottomNavHeight = isWideLayout ? kBottomNavigationBarHeight : 80.0;
 
     final tabBody = PageView.builder(
-      physics: const NeverScrollableScrollPhysics(),
       controller: _pageController,
       itemCount: _PageTabs.values.length,
       itemBuilder: (context, index) {

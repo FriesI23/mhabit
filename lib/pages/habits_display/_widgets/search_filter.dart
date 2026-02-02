@@ -28,7 +28,7 @@ Future<HabitDisplaySearchOptions?> showSearchFilterBottomSheet({
   HabitDisplaySearchOptions? options,
 }) => showModalBottomSheet<HabitDisplaySearchOptions>(
   context: context,
-  enableDrag: false,
+  enableDrag: true,
   showDragHandle: true,
   useSafeArea: true,
   isScrollControlled: true,
