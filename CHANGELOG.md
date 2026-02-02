@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.23.7+147-pre
+
+- Enable drag on search filter and page scrolling (#504)
+- Update translation files, refresh ARB format and clean empty metadata
+- Update German translation, thank to TheKos's contribution on Weblate (#503)
+- Bump darwin xcode version to 26 (#500)
+- Add metadata and changelog validation for iOS/macOS (#501)
+- Update Donors.md
+
 ## 1.23.6+145
 
 - Updated Chinese (SC) translation, thank to ADAIBLOG's contribution on Weblate (#490)

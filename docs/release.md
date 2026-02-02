@@ -1,14 +1,19 @@
-# Pre-Released: 1.23.6+145
+# Pre-Release: v1.23.7+147
+
+**✨ New Features**
+
+- Enable drag on search filter and page scrolling (#504)
 
 **🌐 Localization**
 
-- Updated Chinese (Simplified Han script) translation, thank to ADAIBLOG's contribution on Weblate (#490)
-- Updated Russian translation, thank to Rudoy Artyom's contribution on Weblate (#490)
-- Refine reminder frequency localization using tokenized week/month/day templates (#491)
-- Add missing target-day unit in zh(SC) (#491)
+- Update translation files, refresh ARB format and clean empty metadata
+- Update German translation, thank to TheKos's contribution on Weblate (#503)
 
 **🧹 Others**
 
-- Fixed: Reset expanded cards after toggling record state on Habits Today (#492)
-- Fixed: prevent empty state image flashing on initial load (#494)
-- Remove unused empty video metadata
+- Bump darwin xcode version to 26 (#500)
+- Add metadata and changelog validation for iOS/macOS (#501)
+
+**📝 Documentation**
+
+- Update Donors.md
