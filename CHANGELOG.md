@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.7+147-pre
+## 1.23.8+148
 
 - Enable drag on search filter and page scrolling (#504)
 - Update translation files, refresh ARB format and clean empty metadata
