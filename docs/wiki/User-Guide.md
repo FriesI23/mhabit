@@ -90,7 +90,6 @@ To create a new habit, just fill in a form with the following fields:
 - Start Date
 - Target Days: The minimum number of days required to reach the full score (100) without any deductions.
 - Reminder: Set a scheduled reminder, a notification will appear when the time is reached.
-  > Windows and Linux platforms are not supported yet.
 - Description: Support `Markdown` format.
 
 Once the required fields are completed, you can click `"Save"` button upper-right the screen to save and create.
