@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.23.9+149-pre
+
+- Updated Czech translation, thanks to tenJirka's contribution on Weblate (#510)
+- Updated Hebrew translation and store descriptions, thanks to Omer I.S.'s contribution on Weblate (#510)
+- Refactor README: move Microsoft Store info to Windows section (#509)
+- Refactor README: fix `appsotre-myapp` typo to `appstore-myapp` (#508)
+- Update README structure and wording
+
 ## 1.23.8+148
 
 - Enable drag on search filter and page scrolling (#504)
