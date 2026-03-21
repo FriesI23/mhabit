@@ -1,12 +1,12 @@
 # 更新日志
 
-## 1.23.9+149-pre
+## 1.23.10+150-pre
 
 - 更新捷克语翻译，感谢 tenJirka 在 Weblate 上的贡献（#510）
-- 更新希伯来语翻译及商店描述，感谢 Omer I.S. 在 Weblate 上的贡献（#510）
+- 更新希伯来语翻译及商店描述，感谢 Omer I.S. 在 Weblate 上的贡献（#510 #514）
 - 重构 README：将 Microsoft Store 信息移动到 Windows 部分（#509）
 - 重构 README：修复 `appsotre-myapp` 到 `appstore-myapp` 的拼写错误（#508）
-- 更新 README 结构和措辞
+- 更新 README 结构和措辞（#512）
 
 ## 1.23.8+148
 
