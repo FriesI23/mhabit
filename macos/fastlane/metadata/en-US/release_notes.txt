@@ -1,6 +1,3 @@
-- Enable drag on search filter and page scrolling (#504)
-- Update translation files, refresh ARB format and clean empty metadata
-- Update German translation, thank to TheKos's contribution on Weblate (#503)
-- Bump darwin xcode version to 26 (#500)
-- Add metadata and changelog validation for iOS/macOS (#501)
-- Update Donors.md
+- Updated Czech translation, thanks to tenJirka's contribution on Weblate (#510)
+- Updated Hebrew translation and store descriptions, thanks to Omer I.S.'s contribution on Weblate (#510, #514)
+- Refactor README (#508 #509 #512)

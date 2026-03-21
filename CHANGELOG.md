@@ -2,13 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.23.10+150-pre
+## 1.23.11+151
 
 - Updated Czech translation, thanks to tenJirka's contribution on Weblate (#510)
 - Updated Hebrew translation and store descriptions, thanks to Omer I.S.'s contribution on Weblate (#510, #514)
-- Refactor README: move Microsoft Store info to Windows section (#509)
-- Refactor README: fix `appsotre-myapp` typo to `appstore-myapp` (#508)
-- Update README structure and wording (#512)
+- Refactor README (#508 #509 #512)
 
 ## 1.23.8+148
 
