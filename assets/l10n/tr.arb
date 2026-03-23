@@ -1024,5 +1024,57 @@
     "channelName_appSyncing": "Eşitleme Süreci",
     "channelDesc_appSyncing": "Eşitleme ilerlemesini ve başarılı sonuçları göstermek için kullanılır",
     "channelName_appSyncFailed": "Eşitleme Başarısız",
-    "channelDesc_appSyncFailed": "Eşitleme başarısız olduğunda uyarmak için kullanılır"
+    "channelDesc_appSyncFailed": "Eşitleme başarısız olduğunda uyarmak için kullanılır",
+    "habitDisplay_notFoundImage_text_01": "Eşleşen alışkanlık bulunamadı",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "\"{keyword}\" için eşleşen alışkanlık bulunamadı",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
+    "habitDisplay_searchBar_hintText": "Alışkanlık ara",
+    "habitDisplay_searchFilter_ongoing": "Devam eden",
+    "habitDisplay_searchFilter_ongoing_desc": "Şu anda aktif ve devam eden alışkanlıkları gösterir (arşivlenmemiş veya silinmemiş).",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Tema Rengi Seç",
+    "habitDisplay_searchFilter_clearFilter": "Filtreleri Temizle",
+    "habitToday_card_donePlusButton_label": "Tamamla+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "common_appThemeColor_dynamic": "Dinamik",
+    "habitDisplay_tab_habits_label": "Alışkanlıklar",
+    "experimentalFeatures_habitSearchTile_titleText": "Alışkanlık Ara",
+    "habitToday_card_subtitle_text": "{days} gündür devam ediyor",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "experimentalFeatures_habitSearchTile_subtitleText": "Etkinleştirildiğinde, Alışkanlıklar ekranının üstünde bir arama çubuğu görünecek ve alışkanlıkları aramanızı sağlayacaktır.",
+    "common_appThemeColor_primary": "Ana renk",
+    "habitDisplay_searchFilter_tooltips": "Filtreleri Göster",
+    "habitToday_card_skipPlusButton_label": "Geç+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "common_appThemeColor_system": "Sistem",
+    "appSetting_appThemeColorTile_titleText": "Tema Rengi",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "GTK+ temasının seçili arka plan rengini kullan",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "Sistem vurgu veya pencere/cam rengini kullan",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Sistem tema rengini kullan",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Duvar kağıdının ana rengini kullan (Android 12+)",
+    "habitToday_image_desc": "BAŞARDIN",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    }
 }
