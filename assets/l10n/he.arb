@@ -21,7 +21,7 @@
             }
         }
     },
-    "habitEdit_habitDailyGoal_negativeHintText": "סף יומי מינימלי, ברירת מחדל {number}",
+    "habitEdit_habitDailyGoal_negativeHintText": "סף יומי מינימלי, ברירת המחדל היא {number}",
     "@habitEdit_habitDailyGoal_negativeHintText": {
         "description": "default habit daily goal for negative habit",
         "placeholders": {
@@ -82,7 +82,7 @@
         }
     },
     "habitEdit_frequencySelector_title": "נא לבחור תדירות",
-    "habitEdit_habitFreq_daily": "בכל יום",
+    "habitEdit_habitFreq_daily": "מטרה יומית",
     "habitEdit_habitFreq_perweek_text": "%%time%% פעמים בשבוע",
     "habitEdit_habitFreq_permonth_text": "%%time%% פעמים בחודש",
     "habitEdit_habitFreq_predayfreq_text": "%%time%% פעמים ב־%%day%% ימים",
@@ -220,7 +220,7 @@
     "habitDisplay_tab_habits_label": "הרגלים",
     "habitDisplay_tab_today_label": "היום",
     "habitToday_appBar_title": "היום",
-    "habitToday_image_desc": "כל הכבוד",
+    "habitToday_image_desc": "עשית את זה",
     "@habitToday_image_desc": {
         "description": "Celebratory text shown when the user completes all their habit tasks for today"
     },
@@ -445,9 +445,468 @@
     "snackbar_dismissText": "ביטול",
     "contributors_tile_title": "תורמים",
     "userAction_tap": "הקשה",
-    "userAction_doubleTap": "הקשה כפולה",
-    "userAction_longTap": "הקשה ארוכה",
+    "userAction_doubleTap": "כפולה",
+    "userAction_longTap": "ארוכה",
     "channelName_habitReminder": "תזכורת להרגל",
     "channelName_appDebugger": "כלי ניפוי שגיאות",
-    "channelName_appSyncFailed": "הסנכרון נכשל"
+    "channelName_appSyncFailed": "הסנכרון נכשל",
+    "appSetting_appThemeColorTile_titleText": "צבע נושא",
+    "appSetting_appThemeColorChosenDiloag_titleText": "בחירת צבע נושא",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "שימוש בצבע הראשי של הרקע (אנדרואיד 12‏+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "שימוש בצבע הנבחר של ערכת הנושא ל־GTK‏+",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "שימוש בצבע הנושא של המערכת",
+    "appAbout_licenseThirdPartyTile_titleText": "הצהרת רישיון צד שלישי",
+    "appAbout_licenseThirdPartyTile_subtitleText": "Flutter",
+    "appSetting_changeRecordStatusOpTile_titleText": "שינוי מצב רשומה",
+    "appSetting_changeRecordStatusOpTile_subtitleText": "שינוי אופן הלחיצה לשינוי המצב של הרשומות היומיות בעמוד הראשי.",
+    "habitEdit_reminder_dialogTitle": "בחירת סוג תזכורת",
+    "habitEdit_habitDailyGoalExtra_negativeHintText": "מגבלה יומית מרבית",
+    "habitDetail_descDailyGoal_titleText": "{habitType, plural, =2{סף} other{מטרה}}",
+    "@habitDetail_descDailyGoal_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_statsMenu_statSubgroupText": "כרגע",
+    "common_habitColorType_cc1": "סגול כהה",
+    "common_habitColorType_cc5": "טורקיז",
+    "common_habitColorType_cc9": "ירוק לימון",
+    "common_habitColorType_cc10": "ורוד כהה",
+    "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{בשבוע} other{לפחות {freq} פעמים בשבוע}}",
+    "@habitEdit_habitFreq_show_perweek": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_permonth": "{freq, plural, =1{בחודש} other{לפחות {freq} פעמים בחודש}}",
+    "@habitEdit_habitFreq_show_permonth": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitEdit_habitFreq_show_perdayfreq": "{freq, plural, =1{בכל {days} ימים} other{לפחות {freq} פעמים בכל {days} ימים}}",
+    "@habitEdit_habitFreq_show_perdayfreq": {
+        "placeholders": {
+            "freq": {
+                "type": "int",
+                "example": "1"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_sort_reverseText": "היפוך",
+    "appSetting_compactUISwitcher_titleText": "הפעלת ממשק משתמש חסכוני בעמוד ההרגלים",
+    "appSetting_compactUISwitcher_subtitleText": "מאפשרת לרשימת ההרגלים לסימון להציג יותר תוכן, כאשר ממשק המשתמש והטקסט עשויים להופיע בקטן יותר.",
+    "appSetting_openRecordStatusDialogOpTile_titleText": "פתיחת רשומה מפורטת",
+    "appSetting_openRecordStatusDialogOpTile_subtitleText": "שינוי אופן הפתיחה של חלוניות נפתחות עם פירוט על הרשומות היומיות בעמוד הראשי.",
+    "appSetting_import_subtitleText": "ייבוא הרגלים מקובץ json.",
+    "appSetting_importDialog_confirmTitle": "לאשר את הייבוא של {count} הרגלים?",
+    "@appSetting_importDialog_confirmTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_confirmSubtitle": "הערה: הייבוא אינו מוחק הרגלים קיימים.",
+    "habitEdit_habitDailyGoalExtra_hintText": "כמות מרבית רצויה למטרה היומית",
+    "habitEdit_targetDays_dialogTitle": "בחירת ימים למטרה",
+    "habitEdit_reminder_dialogType_whenNeeded": "מתי צריך לסמן",
+    "habitDisplay_unarchiveHabitsConfirmDialog_title": "להוציא את ההרגלים הנבחרים מהארכיון?",
+    "habitDisplay_deleteHabitsSuccSnackbarText": "נמחקו {count} הרגלים",
+    "@habitDisplay_deleteHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "נמחק ההרגל: „{name}”",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "כל ההרגלים יוצאו",
+    "habitDisplay_statsMenu_popularitySubgroupText": "ההרגלים המובילים: שינויים ב־30 הימים האחרונים",
+    "habitToday_card_donePlusButton_label": "הושלם+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "דילוג+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "habitDetail_summary_body": "הציון הנוכחי הוא {score}, ועברו {days} ימים מאז ההתחלה.",
+    "@habitDetail_summary_body": {
+        "placeholders": {
+            "score": {
+                "type": "String",
+                "example": "0.0"
+            },
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_summary_preBody": "{days, plural, =1{מתחיל מחר.} other{מתחיל בעוד {days} ימים.}}",
+    "@habitDetail_summary_preBody": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_descTargetDays_titleText": "{habitType, plural, other{ימים}}",
+    "@habitDetail_descTargetDays_titleText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "habitDetail_freqChart_expanded_hideTooltip": "הסתרת תרשים ההיסטוריה",
+    "habitDetail_freqChart_expanded_showTooltip": "הצגת תרשים ההיסטוריה",
+    "habitDetail_editHeatmapCal_dateButtonText": "תאריך",
+    "habitDetail_editHeatmapCal_valueButtonText": "ערך",
+    "habitDetail_changeGoal_currentChipText": "כרגע: {goal}",
+    "@habitDetail_changeGoal_currentChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_doneChipText": "הושלם: {goal}",
+    "@habitDetail_changeGoal_doneChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "habitDetail_changeGoal_undoneChipText": "לא הושלם",
+    "habitDetail_changeGoal_extraChipText": "‏{goal}",
+    "@habitDetail_changeGoal_extraChipText": {
+        "placeholders": {
+            "goal": {
+                "type": "String",
+                "example": "1.5"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_titleTemplate_followSystemText": "לפי הגדרות המערכת",
+    "appSetting_importDialog_confirm_confirmText": "אישור",
+    "appSetting_importDialog_confirm_cancelText": "ביטול",
+    "appSetting_importDialog_importingTitle": "יובאו {completeCount}‏/{totalCount}",
+    "@appSetting_importDialog_importingTitle": {
+        "placeholders": {
+            "completeCount": {
+                "type": "int",
+                "example": "1"
+            },
+            "totalCount": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_importDialog_complete_closeLabel": "סגירה",
+    "appSetting_resetConfig_titleText": "איפוס ההגדרות",
+    "appSetting_resetConfig_subtitleText": "איפוס כל ההגדרות לברירת המחדל",
+    "appSetting_resetConfigDialog_titleText": "לאפס את ההגדרות?",
+    "appSetting_resetConfigDialog_subtitleText": "איפוס כל ההגדרות לברירת המחדל, על היישום להיפתח מחדש להחלת השינויים.",
+    "appSetting_resetConfigSuccess_snackbarText": "הגדרות היישום אופסו בהצלחה",
+    "appSetting_clearCache_snackBar_succText": "המטמון נוקה בהצלחה",
+    "appSetting_notify_subtitleTile": "ניהול העדפות ההתראות",
+    "appSync_nowTile_errorText_noDate": "סנכרון אחרון: (שגיאה): N/A",
+    "appSync_nowTile_errorText": "סנכרון אחרון (שגיאה): {dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText_withPrt": "מתבצע סנכרון: {prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_serverEditor_advance_titleText": "הגדרות מתקדמות",
+    "appSync_serverEditor_titleText_add": "שרת סנכרון חדש",
+    "appSync_serverEditor_titleText_modify": "עריכת שרת סנכרון",
+    "habitDisplay_exportHabitsSuccSnackbarText": "{count, plural, =1 {ההרגל יוצא.} other {יוצאו {count} הרגלים.}}",
+    "@habitDisplay_exportHabitsSuccSnackbarText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of exported habits",
+                "example": "3"
+            }
+        }
+    },
+    "habitDisplay_mainMenu_showActivedTileText": "הצגת פעילים",
+    "habitDisplay_searchFilter_ongoing_desc": "הצגת הרגלים שכרגע הם פעילים ובתהליך (ולא כאלה שבארכיון או שנמחקו).",
+    "habitDetail_heatmap_leftHelpText": "{habitType, plural, =1{לא הושלם} =2{מתחת לסף} other{}}",
+    "@habitDetail_heatmap_leftHelpText": {
+        "placeholders": {
+            "habitType": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_titleText": "תבנית להצגת תאריכים ({formatTemplate})",
+    "@appSetting_dateDisplayFormat_titleText": {
+        "placeholders": {
+            "formatTemplate": {
+                "type": "String",
+                "example": "yyyy/M/d"
+            }
+        }
+    },
+    "appSetting_dateDisplayFormat_subTitleText": "תבנית התאריך שהוגדרה תחול על תצוגת התאריך בעמוד פרטי ההרגל.",
+    "appSetting_export_subtitleText": "ההרגלים מיוצאים בתבנית הקובץ JSON, ניתן לייבא קובץ זה בחזרה.",
+    "appSetting_clearCacheDialog_subtitleText": "לאחר ניקוי המטמון, חלק מהערכים המותאמים אישית ישוחזרו לברירות המחדל.",
+    "appSetting_clearCache_snackBar_partSuccText": "ניקוי מטמון חלקי נכשל",
+    "appSetting_clearCache_snackBar_failText": "ניקוי המטמון נכשל",
+    "appSetting_notify_subtitleTile_android": "הקשה כאן תפתח את הגדרות ההתראות של המערכת",
+    "appSync_nowTile_cancelText_noDate": "סנכרון אחרון (בוטל): N/A",
+    "appSync_webdav_resultStatus": "{status, select, success {הושלם} cancelled {בוטל} failed {נכשל} multi {מצבים מרובים} other {מצב לא ידוע}}",
+    "@appSync_webdav_resultStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            }
+        }
+    },
+    "appSync_webdav_resultStatus_withReason": "{status, select, success {הושלם בשל {reason}} cancelled {בוטל בשל {reason}} failed {נכשל בשל {reason}} multi {מצבים מרובים בשל {reason}} other {מצב לא ידוע}}",
+    "@appSync_webdav_resultStatus_withReason": {
+        "placeholders": {
+            "status": {
+                "type": "String",
+                "description": "The status type, see [WebDavAppSyncTaskResultStatus]"
+            },
+            "reason": {
+                "type": "String",
+                "description": "The reason for the status"
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "הסנכרון ייצור את התיקיות הנדרשות ויעלה את ההרגלים המקומיים לשרת. להמשיך?",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "סנכרון כעת!",
+    "appSync_webdav_oldServerConfirmDialog_titleText": "אישור הסנכרון",
+    "appSync_webdav_oldServerConfirmDialog_subtitleText": "התיקייה אינה ריקה. הסנכרון ימזג את ההרגלים המקומיים עם אלה שבשרת. להמשיך?",
+    "appSync_exportAllLogsTile_titleText": "ייצוא יומני הסנכרון שנכשל",
+    "appSync_exportAllLogsTile_subtitleText": "{isEmpty, select, true {לא נמצאו יומנים} false {יש להקיש כאן כדי לייצא} other {בטעינה...}}",
+    "@appSync_exportAllLogsTile_subtitleText": {
+        "placeholders": {
+            "isEmpty": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "appSync_networkType_text": "{type, select, mobile {נתונים ניידים} wifi {רשת אלחוטית} other {לא ידוע}}",
+    "@appSync_networkType_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "appSync_syncInterval_text": "{name, select, manual {באופן ידני} minute5 {5 דקות} minute15 {רבע שעה} minute30 {חצי שעה} hour1 {שעה} other {לא ידוע}}",
+    "@appSync_syncInterval_text": {
+        "description": "Localized display text for app sync interval",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "minute15",
+                "description": "<AppSyncFetchInterval>.name"
+            }
+        }
+    },
+    "appSync_summaryTile_title": "סנכרון עם השרת",
+    "appSync_serverEditor_saveDialog_titleText": "אישור שמירת השינויים",
+    "appSync_serverEditor_saveDialog_subtitleText": "השמירה תשכתב את הגדרות השרת הקודמות.",
+    "appSync_serverEditor_exitDialog_titleText": "שינויים שלא נשמרו",
+    "appSync_serverEditor_exitDialog_subtitleText": "היציאה תשליך את כל השינויים שלא נשמרו.",
+    "appSync_serverEditor_deleteDialog_subtitleText": "המחיקה תסיר את הגדרת השרת הנוכחית.",
+    "appSync_serverEditor_pathTile_hintText": "נא למלא כאן נתיב תקני ל־WebDAV.",
+    "appSync_serverEditor_pathTile_errorText_emptyPath": "שדה הנתיב אינו יכול להיות ריק!",
+    "appSync_serverEditor_usernameTile_hintText": "נא למלא כאן שם משתמש, אם אינו נדרש אפשר להשאיר שדה זה ריק.",
+    "appSync_serverEditor_ignoreSSLTile_titleText": "התעלמות מתעודת SSL",
+    "appSync_serverEditor_timeoutTile_unitText": "שנ׳",
+    "appSync_serverEditor_connTimeoutTile_unitText": "שנ׳",
+    "appSync_serverEditor_connRetryCountTile_titleText": "כמות ניסיונות חוזרים להתחברות לרשת",
+    "appSync_serverEditor_connRetryCountTile_hintText": "ברירת מחדל: {count, plural, =0 {הניסיונות החוזרים מושבתים} other {{count}}}",
+    "@appSync_serverEditor_connRetryCountTile_hintText": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "10"
+            }
+        }
+    },
+    "appSync_serverEditor_netTypeTile_typeTooltip": "{type, select, mobile {סנכרון באמצעות נתונים ניידים} wifi {סנכרון באמצעות רשת אלחוטית} other {לא ידוע}}",
+    "@appSync_serverEditor_netTypeTile_typeTooltip": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<AppSyncServerMobileNetwork>.name"
+            }
+        }
+    },
+    "experimentalFeatures_warnginBanner_title": "מופעלת תכונה ניסיונית אחת או יותר, השימוש באחריותך.",
+    "experimentalFeatures_habitSyncTile_titleText": "סנכרון הרגלים עם הענן",
+    "appAbout_contactEmailTile_emailBody": "היי, אני שמח שבחרת ליצור איתי קשר.\nאם רצית לדווח על תקלה, נא לציין מה גרסת היישום ולתאר בשפה האנגלית את הצעדים לשחזור התקלה מחדש.\n--------------------------------------",
+    "appAbout_donateTile_ways": "‏@paypal,‏@buyMeACoffee,@alipay,‏@wechatPay,‏@cryptoCurrencyAll",
+    "@appAbout_donateTile_ways": {
+        "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
+    },
+    "donateWay_firstQRGroup": "‏Alipay ו־Wechat Pay",
+    "appAbout_donateDialog_copiedCrypto_msg": "הועתקה הכתובת של {name}",
+    "@appAbout_donateDialog_copiedCrypto_msg": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "BTC"
+            }
+        }
+    },
+    "batchCheckin_habits_groupTitle": "{count, plural, =1{נבחר הרגל אחד} other{נבחרו {count} הרגלים}}",
+    "@batchCheckin_habits_groupTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_completed_snackbar_text": "השתנה {count, plural, =1{מצב ההרגל} other{מצבם של {count} הרגלים}}",
+    "@batchCheckin_completed_snackbar_text": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "batchCheckin_save_confirmDialog_title": "שכתוב רשומות קיימות",
+    "batchCheckin_save_confirmDialog_body": "הרשומות הקיימות ישוכתבו לאחר השמירה, הרשומות הקודמות יימחקו.",
+    "batchCheckin_close_confirmDialog_title": "אישור חזרה",
+    "batchCheckin_close_confirmDialog_confirmButton_text": "יציאה",
+    "batchCheckin_close_confirmDialog_cancelButton_text": "ביטול",
+    "common_habitColorType_default": "צבע {index}",
+    "@common_habitColorType_default": {
+        "description": "unknown habit color type name",
+        "placeholders": {
+            "index": {
+                "type": "int",
+                "example": "0"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_SepTileText": "מפריד",
+    "common_customDateTimeFormatPicker_sepDash_text": "קו מפריד",
+    "common_customDateTimeFormatPicker_sepSlash_text": "קו נטוי",
+    "common_customDateTimeFormatPicker_sepSpace_text": "רווח",
+    "common_customDateTimeFormatPicker_sepDot_text": "נקודה",
+    "common_customDateTimeFormatPicker_empty_text": "ללא מפריד",
+    "common_customDateTimeFormatPicker_monthName_text": "שימוש בשם המלא",
+    "common_customDateTimeFormatPicker_cancelButton_text": "ביטול",
+    "common_customDateTimeFormatPicker_confirmButton_text": "אישור",
+    "exportConfirmDialog_option_includeRecords": "לכלול רשומות",
+    "exportConfirmDialog_cancel_buttonText": "ביטול",
+    "exportConfirmDialog_confirm_buttonText": "ייצוא",
+    "debug_logLevelTile_title": "רמת תיעוד ביומן",
+    "debug_logLevelDialog_title": "שינוי רמת התיעוד ביומן",
+    "debug_collectLogTile_title": "הנתונים נאספים ביומן",
+    "debug_collectLogTile_enable_subtitle": "הקשה כאן תפסיק את איסוף הנתונים ביומן.",
+    "debug_collectLogTile_disable_subtitle": "הקשה כאן תתחיל את איסוף הנתונים ביומן.",
+    "debug_downladDebugLogs_subject": "יומני ניפוי השגיאות מתקבלים",
+    "dbeug_clearDebugLogs_complete_snackbar": "נוקו יומני ניפוי השגיאות.",
+    "debug_downladDebugInfo_subject": "מידע ניפוי השגיאות מתקבל",
+    "debug_downladDebugZip_subject": "מתבצעת הורדת {fileName}",
+    "@debug_downladDebugZip_subject": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "debug.zip"
+            }
+        }
+    },
+    "debug_missingDebugLogFile_snackbar": "יומן ניפוי השגיאות אינו קיים.",
+    "debug_debuggerLogCard_title": "מידע על התיעוד ביומן",
+    "debug_debuggerLogCard_subtitle": "כולל מידע על יומני ניפוי שגיאות מקומיים, צריך להפעיל את מתג איסוף הנתונים ביומן.",
+    "debug_debuggerInfoCard_subtitle": "כולל את המידע על ניפוי השגיאות ביישום.",
+    "confirmDialog_confirm_text": "{type, select, save {שמירה} exit {יציאה} delete {מחיקה} other {אישור}}",
+    "@confirmDialog_confirm_text": {
+        "placeholders": {
+            "type": {
+                "type": "String",
+                "description": "<NormalizeConfirmDialogType>.name",
+                "example": "confirm"
+            }
+        }
+    },
+    "channelName_appSyncing": "התקדמות הסנכרון",
+    "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
+    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
+    "habitDetail_descDailyGoal_unitEmptyText": "אין נתונים",
+    "batchCheckin_status_double_text": "פעמיים ברצף!",
+    "exportConfirmDialog_title_exportMulti": "לייצא {number, plural, =0{את ההרגל הנוכחי} =1{הרגל אחד} other{{number} הרגלים}}?",
+    "@exportConfirmDialog_title_exportMulti": {
+        "placeholders": {
+            "number": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "donateWay_cryptoCurrency_FTM": "‏FTM",
+    "donateWay_cryptoCurrency_AVAX": "‏AVAX",
+    "donateWay_cryptoCurrency_BNB": "‏BNB",
+    "donateWay_cryptoCurrency_ETH": "‏ETH",
+    "donateWay_cryptoCurrency_BTC": "‏BTC",
+    "donateWay_wechatPay": "‏Wechat Pay",
+    "donateWay_alipay": "‏Alipay",
+    "donateWay_buyMeACoffee": "‏Buy me a coffee",
+    "donateWay_paypal": "פייפאל",
+    "appAbout_privacyTile_subTitleText": "עיון במדיניות הפרטיות של יישום זה",
+    "appAbout_versionTile_changeLogPath": "‏CHANGELOG.md"
 }
