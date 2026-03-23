@@ -12,9 +12,9 @@ Sidebar is now available on the right — explore the listed pages.
 It includes a complete set of growth curves and charts to help you build habits more effectively,
 and keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
 
-- [Installation Guide](./Installation)
-- [Building](./Dev꞉-Build-From-Source)
-- [Donors](./Donors)
+- [Installation Guide](https://github.com/FriesI23/mhabit/blob/main/docs/wiki/Installation.md)
+- [Building](https://github.com/FriesI23/mhabit/blob/main/docs/wiki/Dev%EA%9E%89-Build-From-Source.md)
+- [Donors](https://github.com/FriesI23/mhabit/blob/main/docs/wiki/Donors.md)
 
 Have some questions or found a BUG? Open a [github issue][github-issues].
 
