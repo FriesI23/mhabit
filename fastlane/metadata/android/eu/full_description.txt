@@ -1,0 +1,14 @@
+"Table Habit" zure mikro-ohiturak ezartzen eta jarraitzen laguntzen dizun aplikazioa da. Hazkunde-kurba eta grafiko multzo oso bat du, ohiturak modu eraginkorragoan ezartzen laguntzeko.
+
+Gainera, aplikazio honek kode erabat irekia du eta honako ezaugarri hauek ditu:
+
+- Puntuazio sistema bat zure mikro-ohiturak garatzen laguntzeko.
+- Ohitura positiboekin zein negatiboekin erabil daiteke.
+- Ohituren jarduna markatzen laguntzeko interfaze erabilerraza du.
+- Bilaketa eta iragazki azkarra, iraganeko ohiturak azkar aurkitzen laguntzeko.
+- Kolore desberdinak ohiturak ondo bereizteko.
+- Erraz esportatu eta inportatu zu ohiturak gizakiek irakurtzeko formatua erabiliz (JSON).
+- Android 12 eta ondorengo bertsioetan `Material3` eta `Dynamic Color`-era moldatzen da.
+- Pantaila handi eta panoramikoetara egokitzen da.
+- WebDAV-ekin saretik sinkronizatzeko gai da.
+- Aplikazio honek ez du iragarkirik.
