@@ -83,7 +83,7 @@ For more information, please visit our [**Wiki**][wiki].
 
 ## Contributing
 
-I am an independent developer and do not have professional expertise in managimg projects and writing documentation.
+I am an independent developer and do not have professional expertise in managing projects and writing documentation.
 
 If you have relevant knowledge and are willing to contribute to this project, you can help me improve the project documentation (for example the `README.md` file).
 
