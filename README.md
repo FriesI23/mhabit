@@ -14,11 +14,11 @@
 [![Trello][app-trello-badge]][app-trello-board]
 [![Discord][app-discord-badge]][app-discord-channel]
 
-"Table Habit" is an app that helps you establish and track your own micro habit.
-It includes a complete set of growth curves and charts to help you build habits more effectively,
-and keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
+Table Habit is an app that helps you establish and track your micro habits.
 
-Moreover, this app completely open source.
+It includes a comprehensive set of growth curves and charts to help you build habits more effectively. It also keeps your data in sync across devices (currently via WebDAV, with more options coming soon).
+
+Moreover, this app is completely open source.
 
 
 [<img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg"
@@ -53,16 +53,16 @@ Moreover, this app completely open source.
 
 ## Features
 
-- A scoring system to help develop your own micro habits.
-- Support both positive and negative habit.
-- An easy-to-use interface for habit check in.
-- A quick search and filter to help quickly find past habits.
-- Different colors used to distinguish between various habits.
+- A scoring system to help you develop micro habits.
+- Supports both positive and negative habits.
+- An easy-to-use interface for entering habits.
+- A quick search with filters to help find past habits.
+- Use different colors to distinguish between various habits.
 - Easily export and import habits using a human-readable format (JSON).
-- Adapt to `Material3` and `Dynamic Color` for Android 12 and later versions.
-- Adaptation for landscape and large screen devices.
-- Support network sync with WebDAV.
-- No ADs in this app.
+- Adapts to `Material3` and `Dynamic Color` for Android 12 and later versions.
+- Adapts to landscape and large screen devices.
+- Supports network sync via WebDAV.
+- No ADs.
 
 For more information, please visit our [**Wiki**][wiki].
 
@@ -83,19 +83,15 @@ For more information, please visit our [**Wiki**][wiki].
 
 ## Contributing
 
-I am an independent developer and do not have professional expertise in writing
-documentation and project management.
+I am an independent developer and do not have professional expertise in projevt management and writing documentation.
 
-If you have relevant knowledge and are willing to contribute to this project,
-you can help me improve project documentations, e.g `README.md` file.
+If you have relevant knowledge and are willing to contribute to this project, you can help me improve the project documentation (for example the `README.md` file).
 
-To ensure wiki pages can be indexed by search engines (due to limitations from GitHub),
-public editing permissions have been disabled. If you’d like to contribute documentation,
-please submit files to the `docs/wiki` folder and open a PR.
+To ensure wiki pages can be indexed by search engines (due to limitations from GitHub), public editing permissions have been disabled. If you’d like to contribute to the documentation, please add or edit files in the `docs/wiki` folder and open a PR.
 Once merged, an automated CI process will sync changes to the [wiki][wiki].
 
-When contribute code to this project, please try to follow
-[this][style-guide-for-flutter] guideline.
+When contributing code to this project, please try to follow
+[these][style-guide-for-flutter] guidelines.
 
 ## Donate
 
@@ -106,14 +102,14 @@ When contribute code to this project, please try to follow
 [![ETH][eth-badge]][eth-addr]
 [![BTC][btc-badge]][btc-addr]
 
-> Visit [**Donors**][page-donors] page for full list.
+> Visit the [**Donors**][page-donors] page for full list of donors.
 
 ## Translation
 
-Feel free to join and help translate Table Habit!
-To request a new language, follow the instructions on ["Wiki – Request New Language"][l10n-doc].
+Feel free to join in helping translate Table Habit!
+To request a new language, follow the instructions in ["Wiki – Request New Language"][l10n-doc].
 To update translations, you can either contribute directly on [Weblate.org][weblate]
-or modify the `.arb` files locally and request a PR to `weblate-translation` branch.
+or modify the `.arb` files locally and submit a PR to the `weblate-translation` branch.
 
 <!-- ![L10nStat][l10n-stat-pic] -->
 
