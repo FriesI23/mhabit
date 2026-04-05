@@ -83,7 +83,7 @@ For more information, please visit our [**Wiki**][wiki].
 
 ## Contributing
 
-I am an independent developer and do not have professional expertise in projevt management and writing documentation.
+I am an independent developer and do not have professional expertise in project management and writing documentation.
 
 If you have relevant knowledge and are willing to contribute to this project, you can help me improve the project documentation (for example the `README.md` file).
 
@@ -102,7 +102,7 @@ When contributing code to this project, please try to follow
 [![ETH][eth-badge]][eth-addr]
 [![BTC][btc-badge]][btc-addr]
 
-> Visit the [**Donors**][page-donors] page for full list of donors.
+> Visit the [**Donors**][page-donors] page for the full list of donors.
 
 ## Translation
 
