@@ -652,5 +652,9 @@
     "contributors_tile_title": "Contributeurs",
     "userAction_tap": "Appui",
     "userAction_doubleTap": "Double",
-    "userAction_longTap": "Long"
+    "userAction_longTap": "Long",
+    "habitDisplay_notFoundImage_text_01": "Aucune habitudes similaires trouvées",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    }
 }
