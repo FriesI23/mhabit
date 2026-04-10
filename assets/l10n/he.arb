@@ -908,5 +908,105 @@
     "donateWay_buyMeACoffee": "‏Buy me a coffee",
     "donateWay_paypal": "פייפאל",
     "appAbout_privacyTile_subTitleText": "עיון במדיניות הפרטיות של יישום זה",
-    "appAbout_versionTile_changeLogPath": "‏CHANGELOG.md"
+    "appAbout_versionTile_changeLogPath": "‏CHANGELOG.md",
+    "appSync_failedTile_titleText": "עיון ביומני כשל",
+    "appSync_failedTile_errorText": "[Error]: {info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_failedTile_webdavMulti_counterText": "{reason}:‏ {count}",
+    "@appSync_failedTile_webdavMulti_counterText": {
+        "placeholders": {
+            "reason": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "appSync_syncIntervalTile_title": "מרווח זמן למשיכת נתונים",
+    "appSync_exportAllLogsTile_exportSubjectText": "כל יומני הכשל האחרונים של הסנכרון",
+    "appSync_serverEditor_timeoutTile_titleText": "שניות מוקצבות לסנכרון",
+    "appSync_serverEditor_timeoutTile_hintText": "ברירת מחדל: {seconds, plural, =0 {ללא הגבלה} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_timeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_serverEditor_connTimeoutTile_titleText": "כמות שניות מוקצבות לחיבור לרשת",
+    "appSync_serverEditor_connTimeoutTile_hintText": "ברירת מחדל: {seconds, plural, =0 {ללא הגבלה} other {{seconds}{unit}}}",
+    "@appSync_serverEditor_connTimeoutTile_hintText": {
+        "placeholders": {
+            "seconds": {
+                "type": "int",
+                "example": "10"
+            },
+            "unit": {
+                "type": "String",
+                "example": "s"
+            }
+        }
+    },
+    "appSync_noti_syncing_title": "{synced, select, synced {התבצע סנכרון של ({type})} failed {נכשל הסנכרון של ({type})} other {מתבצע סנכרון של ({type})}}",
+    "@appSync_noti_syncing_title": {
+        "placeholders": {
+            "synced": {
+                "type": "String",
+                "description": "<AppSyncNotiTitleEnum>.name",
+                "example": "synced"
+            },
+            "type": {
+                "type": "String",
+                "description": "Server type, see 'appSync_syncServerType_text' field",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_titleText": "התכונה הניסיונית ({syncName}) מושבתת, אך הרכיבים שלה עדיין פועלים.",
+    "@experimentalFeatures_warnTile_titleText": {
+        "placeholders": {
+            "syncName": {
+                "type": "String",
+                "example": "Habit Cloud Sync",
+                "description": "Experimental Feature's name."
+            }
+        }
+    },
+    "experimentalFeatures_warnTile_forHabitSyncText": "לצורך השבתה מלאה, יש לגשת אל ‚{menuName}’ בעזרת לחיצה ארוכה ולכבות.",
+    "@experimentalFeatures_warnTile_forHabitSyncText": {
+        "placeholders": {
+            "menuName": {
+                "type": "String",
+                "example": "Sync Option"
+            }
+        }
+    },
+    "common_customDateTimeFormatPicker_sep_formatter": "{splitName}: \"{splitChar}\"",
+    "@common_customDateTimeFormatPicker_sep_formatter": {
+        "description": "split char",
+        "placeholders": {
+            "splitName": {
+                "type": "String",
+                "example": "Dash"
+            },
+            "splitChar": {
+                "type": "String",
+                "example": "/"
+            }
+        }
+    },
+    "channelName_appReminder": "הוראה"
 }
