@@ -726,5 +726,106 @@
     "contributors_tile_title": "貢獻者",
     "userAction_tap": "點選",
     "userAction_doubleTap": "點選兩次",
-    "userAction_longTap": "長按"
+    "userAction_longTap": "長按",
+    "habitDisplay_notFoundImage_text_01": "未找到相關習慣",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "找不到與「{keyword}」相符的習慣",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
+    "habitDisplay_deleteSingleHabitSuccSnackbarText": "已刪除習慣：「{name}」",
+    "@habitDisplay_deleteSingleHabitSuccSnackbarText": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Habit name."
+            }
+        }
+    },
+    "habitDisplay_exportAllHabitsSuccSnackbarText": "已匯出所有習慣",
+    "habitDisplay_searchBar_hintText": "搜尋習慣",
+    "habitDisplay_searchFilter_ongoing": "進行中",
+    "habitDisplay_searchFilter_ongoing_desc": "顯示目前進行中且活躍的習慣（不含已封存或已刪除項目）。",
+    "habitDisplay_searchFilter_tooltips": "顯示篩選條件",
+    "habitDisplay_searchFilter_clearFilter": "清除篩選條件",
+    "appSetting_appThemeColorTile_titleText": "主題顏色",
+    "appSetting_appThemeColorChosenDiloag_titleText": "選擇主題顏色",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用桌布主色調 (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "使用 GTK+ 主題的選取背景顏色",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "使用系統主題色彩",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "套用系統強調色或透明效果",
+    "appSetting_experimentalFeatureTile_titleText": "實驗性功能",
+    "appSetting_synSubgroupText": "同步",
+    "appSetting_syncOption_titleText": "同步選項",
+    "appSetting_notify_titleTile": "通知",
+    "appSetting_notify_subtitleTile": "管理通知偏好設定",
+    "appSetting_notify_subtitleTile_android": "輕觸以開啟系統通知設定",
+    "appSync_nowTile_titleText": "立即同步",
+    "appSync_nowTile_titleText_syncing": "同步中",
+    "appSync_nowTile_text_noDate": "上次同步：不適用",
+    "appSync_nowTile_text": "上次同步：{dateStr}",
+    "@appSync_nowTile_text": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_errorText_noDate": "上次同步 (錯誤)：不適用",
+    "appSync_nowTile_errorText": "上次同步 (錯誤)：{dateStr}",
+    "@appSync_nowTile_errorText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_nowTile_syncingText": "同步中...",
+    "appSync_nowTile_syncingText_withPrt": "同步中：{prt}",
+    "@appSync_nowTile_syncingText_withPrt": {
+        "placeholders": {
+            "prt": {
+                "type": "num",
+                "description": "Current sync progress percentage (0-100).",
+                "format": "decimalPercentPattern",
+                "optionalParameters": {
+                    "decimalDigits": 2
+                }
+            }
+        }
+    },
+    "appSync_nowTile_cancellingText": "正在取消...",
+    "appSync_nowTile_cancelText_noDate": "上次同步 (已取消)：不適用",
+    "appSync_nowTile_cancelText": "上次同步 (已取消)：{dateStr}",
+    "@appSync_nowTile_cancelText": {
+        "placeholders": {
+            "dateStr": {
+                "type": "String",
+                "description": "Last sync date."
+            }
+        }
+    },
+    "appSync_failedTile_titleText": "查看失敗記錄",
+    "appSync_failedTile_errorText": "[錯誤]：{info}",
+    "@appSync_failedTile_errorText": {
+        "placeholders": {
+            "info": {
+                "type": "String",
+                "description": "Error information."
+            }
+        }
+    },
+    "appSync_webdav_newServerConfirmDialog_titleText": "新地點",
+    "appSync_webdav_newServerConfirmDialog_subtitleText": "同步將會建立必要的目錄，並將本機的習慣紀錄上傳至伺服器。是否繼續？",
+    "appSync_webdav_newServerConfirmDialog_confirmText": "立即同步！"
 }
