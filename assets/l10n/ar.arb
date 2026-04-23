@@ -85,9 +85,9 @@
     "habitEdit_habitDailyGoalExtra_negativeHintText": "الحد اليومي الأعلى",
     "habitEdit_frequencySelector_title": "اختر مدى التكرار",
     "habitEdit_habitFreq_daily": "يومياً",
-    "habitEdit_habitFreq_perweek_text": "في الأسبوع %%time%% مرة في الأسبوع",
-    "habitEdit_habitFreq_permonth_text": "في الشهر %%time%% مرة في الشهر",
-    "habitEdit_habitFreq_predayfreq_text": "%%time%% مرات في %%day%% أيام",
+    "habitEdit_habitFreq_perweek_text": "%%time%% مرة في الأسبوع",
+    "habitEdit_habitFreq_permonth_text": "%%time%% مرة في الشهر",
+    "habitEdit_habitFreq_predayfreq_text": "%%time%% مرة خلال %%day%% يومًا",
     "habitEdit_habitFreq_show_daily": "يومياً",
     "habitEdit_habitFreq_show_perweek": "{freq, plural, =1{Per week} other{على الأقل {freq} مرات في الأسبوع}}",
     "@habitEdit_habitFreq_show_perweek": {
@@ -1031,5 +1031,50 @@
     "channelName_appSyncing": "عملية المزامنة",
     "channelDesc_appSyncing": "يستخدم لإظهار تقدم المزامنة والنتائج غير الفاشلة",
     "channelName_appSyncFailed": "فشلة المزامنة",
-    "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة"
+    "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
+    "habitDisplay_notFoundImage_text_01": "لم يتم العثور على عادات مطابقة",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "لا توجد عادات مطابقة لـ ”{keyword}“",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
+    "habitDisplay_tab_habits_label": "العادات",
+    "habitToday_image_desc": "تهانينا لقد حققت الهدف",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_subtitle_text": "استمر في ذلك لمدة {days} أيام",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "تم+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "تخطي+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
+    "appSetting_appThemeColorTile_titleText": "لون المظهر",
+    "appSetting_appThemeColorChosenDiloag_titleText": "اختر لون المظهر",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "استخدام اللون الرئيسي للخلفية (Android 12 وما فوق)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "استخدام لون الخلفية المحدد في سمة GTK+",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "استخدام لون سمة النظام",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "استخدام لون النظام أو لون النافذة/الزجاج",
+    "common_appThemeColor_system": "النظام",
+    "common_appThemeColor_primary": "الأساسي",
+    "common_appThemeColor_dynamic": "حيوي"
 }
