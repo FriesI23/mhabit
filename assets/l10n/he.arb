@@ -1043,5 +1043,31 @@
         }
     },
     "batchCheckin_appbar_title": "סימון כמותי",
-    "common_customDateTimeFormatPicker_applyFreqChart_text": "החלה על תרשים התדירות"
+    "common_customDateTimeFormatPicker_applyFreqChart_text": "החלה על תרשים התדירות",
+    "appSetting_dragCalendarByPageTile_subtitleText": "אם האפשרות מופעלת, לוח השנה שבשורת הכותרת של עמוד הבית של היישום תוכל להיגרר מעמוד לעמוד. האפשרות מושבתת כברירת מחדל.",
+    "appSetting_collapsed_calendar_bararea_titleText": "כוונון גודל השטח לסימון הרגלים",
+    "appSetting_importDialog_completeTitle": "השלמת הייבוא של {count}",
+    "@appSetting_importDialog_completeTitle": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "1"
+            }
+        }
+    },
+    "appSync_syncServerType_text": "{isCurrent, select, true {כרגע: } other {}}{name, select, webdav {WebDAV} fake {מזויף (לניפוי שגיאות בלבד)} other {לא ידוע ({name})}}",
+    "@appSync_syncServerType_text": {
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "description": "Server name, depend on specific server type.",
+                "example": "WebDAV"
+            },
+            "isCurrent": {
+                "type": "String",
+                "description": "Is currently selected server",
+                "example": "true|false"
+            }
+        }
+    }
 }
