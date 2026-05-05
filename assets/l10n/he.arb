@@ -1069,5 +1069,8 @@
                 "example": "true|false"
             }
         }
-    }
+    },
+    "appSetting_collapsed_calendar_bararea_subtitleText": "יש לכוונן את מספר האחוזים בשביל להקצות יותר או פחות מקום לסימון ההרגלים ברשימה.",
+    "experimentalFeatures_habitSyncTile_subtitleText": "לאחר ההפעלה, אפשרות הסנכרון של היישום תופיע בהגדרות",
+    "experimentalFeatures_habitSearchTile_subtitleText": "לאחר ההפעלה, תופיע שורת חיפוש בחלק העליון של מסך ההרגלים ויהיה ניתן לחפש הרגלים."
 }
