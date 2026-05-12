@@ -178,6 +178,10 @@
     "habitEdit_modify_datetime_prefix": "Modifiée: ",
     "habitDisplay_fab_text": "Nouvelle habitude",
     "habitDisplay_emptyImage_text_01": "Un voyage de mille lieux commence par un pas",
+    "habitDisplay_notFoundImage_text_01": "Aucune habitudes similaires trouvées",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "Archiver les habitudes sélectionnées ?",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "Confirmer",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "Annuler",

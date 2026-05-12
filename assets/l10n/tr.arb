@@ -178,6 +178,20 @@
     "habitEdit_modify_datetime_prefix": "Düzenlendi: ",
     "habitDisplay_fab_text": "Yeni Alışkanlık",
     "habitDisplay_emptyImage_text_01": "Uzun bir yolculuk, ilk adımla başlar",
+    "habitDisplay_notFoundImage_text_01": "Eşleşen alışkanlık bulunamadı",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "\"{keyword}\" için eşleşen alışkanlık bulunamadı",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "Seçilen Alışkanlıkları Arşivle?",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "onayla",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "iptal et",
@@ -267,10 +281,37 @@
     "habitDisplay_sortTypeDialog_confirm": "onayla",
     "habitDisplay_sortTypeDialog_cancel": "iptal et",
     "habitDisplay_debug_debugSubgroup_title": "🛠️Hata ayıkla",
+    "habitDisplay_searchBar_hintText": "Alışkanlık ara",
+    "habitDisplay_searchFilter_ongoing": "Devam eden",
+    "habitDisplay_searchFilter_ongoing_desc": "Şu anda aktif ve devam eden alışkanlıkları gösterir (arşivlenmemiş veya silinmemiş).",
     "habitDisplay_searchFilter_completed": "Tamamlandı",
     "habitDisplay_searchFilter_habitType_groupTitle": "Alışkanlık türü",
+    "habitDisplay_searchFilter_tooltips": "Filtreleri Göster",
+    "habitDisplay_searchFilter_clearFilter": "Filtreleri Temizle",
+    "habitDisplay_tab_habits_label": "Alışkanlıklar",
     "habitDisplay_tab_today_label": "Bugün",
     "habitToday_appBar_title": "Bugün",
+    "habitToday_image_desc": "BAŞARDIN",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_subtitle_text": "{days} gündür devam ediyor",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "Tamamla+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "Geç+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
     "habitDetail_editButton_tooltip": "Düzenle",
     "habitDetail_editPopMenu_unarchive": "Arşivden çıkar",
     "habitDetail_editPopMenu_archive": "Arşivle",
@@ -433,6 +474,12 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "Ana sayfadaki günlük kayıtların durumunu değiştirmek için tıklama davranışını düzenleyin.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "Detaylı Kaydı Aç",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.",
+    "appSetting_appThemeColorTile_titleText": "Tema Rengi",
+    "appSetting_appThemeColorChosenDiloag_titleText": "Tema Rengi Seç",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "Duvar kağıdının ana rengini kullan (Android 12+)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "GTK+ temasının seçili arka plan rengini kullan",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "Sistem tema rengini kullan",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "Sistem vurgu veya pencere/cam rengini kullan",
     "appSetting_firstDayOfWeek_titleText": "Haftanın ilk günü",
     "appSetting_firstDayOfWeekDialog_titleText": "Haftanın ilk gününü göster",
     "appSetting_firstDayOfWeekDialog_defaultText": " (Varsayılan)",
@@ -807,6 +854,8 @@
             }
         }
     },
+    "experimentalFeatures_habitSearchTile_titleText": "Alışkanlık Ara",
+    "experimentalFeatures_habitSearchTile_subtitleText": "Etkinleştirildiğinde, Alışkanlıklar ekranının üstünde bir arama çubuğu görünecek ve alışkanlıkları aramanızı sağlayacaktır.",
     "appAbout_appbarTile_titleText": "Hakkında",
     "appAbout_versionTile_titleText": "Versiyon: {appVersion}",
     "@appAbout_versionTile_titleText": {
@@ -911,6 +960,9 @@
             }
         }
     },
+    "common_appThemeColor_system": "Sistem",
+    "common_appThemeColor_primary": "Ana renk",
+    "common_appThemeColor_dynamic": "Dinamik",
     "common_customDateTimeFormatPicker_useSystemFormat_text": "Sistem formatını kullan",
     "common_customDateTimeFormatPicker_fmtTileText": "Tarih formatı",
     "common_customDateTimeFormatPicker_ymd_text": "Yıl Ay Gün",

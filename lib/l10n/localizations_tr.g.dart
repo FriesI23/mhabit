@@ -237,11 +237,12 @@ class L10nTr extends L10n {
       'Uzun bir yolculuk, ilk adımla başlar';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'Eşleşen alışkanlık bulunamadı';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return '\"$keyword\" için eşleşen alışkanlık bulunamadı';
   }
 
   @override
@@ -413,14 +414,14 @@ class L10nTr extends L10n {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️Hata ayıkla';
 
   @override
-  String get habitDisplay_searchBar_hintText => 'Search habits';
+  String get habitDisplay_searchBar_hintText => 'Alışkanlık ara';
 
   @override
-  String get habitDisplay_searchFilter_ongoing => 'Ongoing';
+  String get habitDisplay_searchFilter_ongoing => 'Devam eden';
 
   @override
   String get habitDisplay_searchFilter_ongoing_desc =>
-      'Shows habits that are currently active and ongoing (not archived or deleted).';
+      'Şu anda aktif ve devam eden alışkanlıkları gösterir (arşivlenmemiş veya silinmemiş).';
 
   @override
   String get habitDisplay_searchFilter_completed => 'Tamamlandı';
@@ -430,13 +431,13 @@ class L10nTr extends L10n {
       'Alışkanlık türü';
 
   @override
-  String get habitDisplay_searchFilter_tooltips => 'Show Filters';
+  String get habitDisplay_searchFilter_tooltips => 'Filtreleri Göster';
 
   @override
-  String get habitDisplay_searchFilter_clearFilter => 'Clear Filters';
+  String get habitDisplay_searchFilter_clearFilter => 'Filtreleri Temizle';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'Alışkanlıklar';
 
   @override
   String get habitDisplay_tab_today_label => 'Bugün';
@@ -445,18 +446,18 @@ class L10nTr extends L10n {
   String get habitToday_appBar_title => 'Bugün';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'BAŞARDIN';
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return '$days gündür devam ediyor';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'Tamamla+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'Geç+';
 
   @override
   String get habitDetail_editButton_tooltip => 'Düzenle';
@@ -733,27 +734,26 @@ class L10nTr extends L10n {
       'Ana sayfadaki günlük kayıtların detaylı penceresini açmak için tıklama davranışını ayarlayın.';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'Tema Rengi';
 
   @override
-  String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+  String get appSetting_appThemeColorChosenDiloag_titleText => 'Tema Rengi Seç';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'Duvar kağıdının ana rengini kullan (Android 12+)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
-      'Use GTK+ theme\'s selected background color';
+      'GTK+ temasının seçili arka plan rengini kullan';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'Sistem tema rengini kullan';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
-      'Use system accent or window/glass color';
+      'Sistem vurgu veya pencere/cam rengini kullan';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'Haftanın ilk günü';
@@ -1316,11 +1316,11 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get experimentalFeatures_habitSearchTile_titleText => 'Habit Search';
+  String get experimentalFeatures_habitSearchTile_titleText => 'Alışkanlık Ara';
 
   @override
   String get experimentalFeatures_habitSearchTile_subtitleText =>
-      'Once enabled, a search bar will appear at the top of the Habits screen and allowing to search habits.';
+      'Etkinleştirildiğinde, Alışkanlıklar ekranının üstünde bir arama çubuğu görünecek ve alışkanlıkları aramanızı sağlayacaktır.';
 
   @override
   String get appAbout_appbarTile_titleText => 'Hakkında';
@@ -1535,13 +1535,13 @@ class L10nTr extends L10n {
   }
 
   @override
-  String get common_appThemeColor_system => 'System';
+  String get common_appThemeColor_system => 'Sistem';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'Ana renk';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'Dinamik';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text =>

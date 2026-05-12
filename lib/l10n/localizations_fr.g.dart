@@ -240,7 +240,8 @@ class L10nFr extends L10n {
       'Un voyage de mille lieux commence par un pas';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'Aucune habitudes similaires trouvées';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {

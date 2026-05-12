@@ -105,6 +105,9 @@
             {
                 "name": "Massine Y",
                 "email": "enissam_426@hotmail.com"
+            },
+            {
+                "name": "biram"
             }
         ],
         "es": [
@@ -136,9 +139,15 @@
                 "url": "https://github.com/3Lord3"
             }
         ],
+        "eu": [
+            {
+                "name": "Txopi",
+                "email": "txopi@ikusimakusi.eus"
+            }
+        ],
         "he": [
             {
-                "name": "Omer I.S",
+                "name": "Omer I.S.",
                 "email": "omeritzicschwartz@gmail.com"
             },
             {
@@ -226,6 +235,10 @@
             {
                 "name": "PeterDaveHello",
                 "url": "https://github.com/PeterDaveHello"
+            },
+            {
+                "name": "William",
+                "email": "powerofphilo@gmail.com"
             }
         ]
     }
