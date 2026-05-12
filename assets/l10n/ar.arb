@@ -178,6 +178,20 @@
     "habitEdit_modify_datetime_prefix": "معدلة: ",
     "habitDisplay_fab_text": "عادة جديدة",
     "habitDisplay_emptyImage_text_01": "رحلة الألف ميل تبدأ بخطوة",
+    "habitDisplay_notFoundImage_text_01": "لم يتم العثور على عادات مطابقة",
+    "@habitDisplay_notFoundImage_text_01": {
+        "description": "Displayed when no habits match the current search"
+    },
+    "habitDisplay_notFoundImage_text_02": "لا توجد عادات مطابقة لـ ”{keyword}“",
+    "@habitDisplay_notFoundImage_text_02": {
+        "description": "Displayed when no habits match the specified keyword",
+        "placeholders": {
+            "keyword": {
+                "type": "String",
+                "description": "Search keyword"
+            }
+        }
+    },
     "habitDisplay_archiveHabitsConfirmDialog_title": "أرشفة العادات المحددة؟",
     "habitDisplay_archiveHabitsConfirmDialog_confirm": "تأكيد",
     "habitDisplay_archiveHabitsConfirmDialog_cancel": "إلغاء",
@@ -274,8 +288,30 @@
     "habitDisplay_searchFilter_habitType_groupTitle": "نوع العادة",
     "habitDisplay_searchFilter_tooltips": "عرض المرشحات",
     "habitDisplay_searchFilter_clearFilter": "مسح المرشحات",
+    "habitDisplay_tab_habits_label": "العادات",
     "habitDisplay_tab_today_label": "اليوم",
     "habitToday_appBar_title": "اليوم",
+    "habitToday_image_desc": "تهانينا لقد حققت الهدف",
+    "@habitToday_image_desc": {
+        "description": "Celebratory text shown when the user completes all their habit tasks for today"
+    },
+    "habitToday_card_subtitle_text": "استمر في ذلك لمدة {days} أيام",
+    "@habitToday_card_subtitle_text": {
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Days since the chosen start date"
+            }
+        }
+    },
+    "habitToday_card_donePlusButton_label": "تم+",
+    "@habitToday_card_donePlusButton_label": {
+        "description": "Button label for completing today's habit with dialog"
+    },
+    "habitToday_card_skipPlusButton_label": "تخطي+",
+    "@habitToday_card_skipPlusButton_label": {
+        "description": "Button label for skipping today's habit with dialog"
+    },
     "habitDetail_editButton_tooltip": "تحرير",
     "habitDetail_editPopMenu_unarchive": "عدم أرشفة",
     "habitDetail_editPopMenu_archive": "أرشفة",
@@ -438,6 +474,12 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "تعديل أسلوب الضغط لتغيير حالة التقرير في الصفحة الرئيسية.",
     "appSetting_openRecordStatusDialogOpTile_titleText": "استعرض السجل التفصيلي",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "تعديل أسلوب الضغط لعرض التقرير اليومي التفصيلي في الصفحة الرئيسية.",
+    "appSetting_appThemeColorTile_titleText": "لون المظهر",
+    "appSetting_appThemeColorChosenDiloag_titleText": "اختر لون المظهر",
+    "appSetting_appThemeColorChosenDialog_subTitleText_android": "استخدام اللون الرئيسي للخلفية (Android 12 وما فوق)",
+    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "استخدام لون الخلفية المحدد في سمة GTK+",
+    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "استخدام لون سمة النظام",
+    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "استخدام لون النظام أو لون النافذة/الزجاج",
     "appSetting_firstDayOfWeek_titleText": "أول يوم في الأسبوع",
     "appSetting_firstDayOfWeekDialog_titleText": "أظهر أول يوم في الأسبوع",
     "appSetting_firstDayOfWeekDialog_defaultText": " •(افتراضي)",
@@ -918,6 +960,9 @@
             }
         }
     },
+    "common_appThemeColor_system": "النظام",
+    "common_appThemeColor_primary": "الأساسي",
+    "common_appThemeColor_dynamic": "حيوي",
     "common_customDateTimeFormatPicker_useSystemFormat_text": "استخدم تنسيق الجهاز",
     "common_customDateTimeFormatPicker_fmtTileText": "تنسيق التاريخ",
     "common_customDateTimeFormatPicker_ymd_text": "سنة شهر يوم",
@@ -1031,50 +1076,5 @@
     "channelName_appSyncing": "عملية المزامنة",
     "channelDesc_appSyncing": "يستخدم لإظهار تقدم المزامنة والنتائج غير الفاشلة",
     "channelName_appSyncFailed": "فشلة المزامنة",
-    "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة",
-    "habitDisplay_notFoundImage_text_01": "لم يتم العثور على عادات مطابقة",
-    "@habitDisplay_notFoundImage_text_01": {
-        "description": "Displayed when no habits match the current search"
-    },
-    "habitDisplay_notFoundImage_text_02": "لا توجد عادات مطابقة لـ ”{keyword}“",
-    "@habitDisplay_notFoundImage_text_02": {
-        "description": "Displayed when no habits match the specified keyword",
-        "placeholders": {
-            "keyword": {
-                "type": "String",
-                "description": "Search keyword"
-            }
-        }
-    },
-    "habitDisplay_tab_habits_label": "العادات",
-    "habitToday_image_desc": "تهانينا لقد حققت الهدف",
-    "@habitToday_image_desc": {
-        "description": "Celebratory text shown when the user completes all their habit tasks for today"
-    },
-    "habitToday_card_subtitle_text": "استمر في ذلك لمدة {days} أيام",
-    "@habitToday_card_subtitle_text": {
-        "placeholders": {
-            "days": {
-                "type": "int",
-                "description": "Days since the chosen start date"
-            }
-        }
-    },
-    "habitToday_card_donePlusButton_label": "تم+",
-    "@habitToday_card_donePlusButton_label": {
-        "description": "Button label for completing today's habit with dialog"
-    },
-    "habitToday_card_skipPlusButton_label": "تخطي+",
-    "@habitToday_card_skipPlusButton_label": {
-        "description": "Button label for skipping today's habit with dialog"
-    },
-    "appSetting_appThemeColorTile_titleText": "لون المظهر",
-    "appSetting_appThemeColorChosenDiloag_titleText": "اختر لون المظهر",
-    "appSetting_appThemeColorChosenDialog_subTitleText_android": "استخدام اللون الرئيسي للخلفية (Android 12 وما فوق)",
-    "appSetting_appThemeColorChosenDialog_subTitleText_linux": "استخدام لون الخلفية المحدد في سمة GTK+",
-    "appSetting_appThemeColorChosenDialog_subTitleText_macos": "استخدام لون سمة النظام",
-    "appSetting_appThemeColorChosenDialog_subTitleText_windows": "استخدام لون النظام أو لون النافذة/الزجاج",
-    "common_appThemeColor_system": "النظام",
-    "common_appThemeColor_primary": "الأساسي",
-    "common_appThemeColor_dynamic": "حيوي"
+    "channelDesc_appSyncFailed": "يُستخدم للتنبيه عند فشل المزامنة"
 }

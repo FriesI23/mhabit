@@ -1913,6 +1913,14 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_emptyImage_text_01 => '千里之行，始於足下';
 
   @override
+  String get habitDisplay_notFoundImage_text_01 => '未找到相關習慣';
+
+  @override
+  String habitDisplay_notFoundImage_text_02(String keyword) {
+    return '找不到與「$keyword」相符的習慣';
+  }
+
+  @override
   String get habitDisplay_archiveHabitsConfirmDialog_title => '封存選取的習慣？';
 
   @override
@@ -1953,6 +1961,14 @@ class L10nZhHant extends L10nZh {
   String habitDisplay_deleteHabitsSuccSnackbarText(int count) {
     return '已刪除 $count 個習慣';
   }
+
+  @override
+  String habitDisplay_deleteSingleHabitSuccSnackbarText(String name) {
+    return '已刪除習慣：「$name」';
+  }
+
+  @override
+  String get habitDisplay_exportAllHabitsSuccSnackbarText => '已匯出所有習慣';
 
   @override
   String get habitDisplay_editPopMenu_selectAll => '全選';
@@ -2054,10 +2070,26 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_debug_debugSubgroup_title => '🛠️ 除錯';
 
   @override
+  String get habitDisplay_searchBar_hintText => '搜尋習慣';
+
+  @override
+  String get habitDisplay_searchFilter_ongoing => '進行中';
+
+  @override
+  String get habitDisplay_searchFilter_ongoing_desc =>
+      '顯示目前進行中且活躍的習慣（不含已封存或已刪除項目）。';
+
+  @override
   String get habitDisplay_searchFilter_completed => '已完成';
 
   @override
   String get habitDisplay_searchFilter_habitType_groupTitle => '習慣類型';
+
+  @override
+  String get habitDisplay_searchFilter_tooltips => '顯示篩選條件';
+
+  @override
+  String get habitDisplay_searchFilter_clearFilter => '清除篩選條件';
 
   @override
   String get habitDisplay_tab_habits_label => '習慣';
@@ -2349,6 +2381,28 @@ class L10nZhHant extends L10nZh {
       '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
 
   @override
+  String get appSetting_appThemeColorTile_titleText => '主題顏色';
+
+  @override
+  String get appSetting_appThemeColorChosenDiloag_titleText => '選擇主題顏色';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
+      '使用桌布主色調 (Android 12+)';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
+      '使用 GTK+ 主題的選取背景顏色';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
+      '使用系統主題色彩';
+
+  @override
+  String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
+      '套用系統強調色或透明效果';
+
+  @override
   String get appSetting_firstDayOfWeek_titleText => '每週的第一天';
 
   @override
@@ -2509,6 +2563,90 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_about_titleText => '關於';
+
+  @override
+  String get appSetting_experimentalFeatureTile_titleText => '實驗性功能';
+
+  @override
+  String get appSetting_synSubgroupText => '同步';
+
+  @override
+  String get appSetting_syncOption_titleText => '同步選項';
+
+  @override
+  String get appSetting_notify_titleTile => '通知';
+
+  @override
+  String get appSetting_notify_subtitleTile => '管理通知偏好設定';
+
+  @override
+  String get appSetting_notify_subtitleTile_android => '輕觸以開啟系統通知設定';
+
+  @override
+  String get appSync_nowTile_titleText => '立即同步';
+
+  @override
+  String get appSync_nowTile_titleText_syncing => '同步中';
+
+  @override
+  String get appSync_nowTile_text_noDate => '上次同步：不適用';
+
+  @override
+  String appSync_nowTile_text(String dateStr) {
+    return '上次同步：$dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_errorText_noDate => '上次同步 (錯誤)：不適用';
+
+  @override
+  String appSync_nowTile_errorText(String dateStr) {
+    return '上次同步 (錯誤)：$dateStr';
+  }
+
+  @override
+  String get appSync_nowTile_syncingText => '同步中...';
+
+  @override
+  String appSync_nowTile_syncingText_withPrt(num prt) {
+    final intl.NumberFormat prtNumberFormat =
+        intl.NumberFormat.decimalPercentPattern(
+          locale: localeName,
+          decimalDigits: 2,
+        );
+    final String prtString = prtNumberFormat.format(prt);
+
+    return '同步中：$prtString';
+  }
+
+  @override
+  String get appSync_nowTile_cancellingText => '正在取消...';
+
+  @override
+  String get appSync_nowTile_cancelText_noDate => '上次同步 (已取消)：不適用';
+
+  @override
+  String appSync_nowTile_cancelText(String dateStr) {
+    return '上次同步 (已取消)：$dateStr';
+  }
+
+  @override
+  String get appSync_failedTile_titleText => '查看失敗記錄';
+
+  @override
+  String appSync_failedTile_errorText(String info) {
+    return '[錯誤]：$info';
+  }
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_titleText => '新地點';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_subtitleText =>
+      '同步將會建立必要的目錄，並將本機的習慣紀錄上傳至伺服器。是否繼續？';
+
+  @override
+  String get appSync_webdav_newServerConfirmDialog_confirmText => '立即同步！';
 
   @override
   String get appAbout_appbarTile_titleText => '關於';

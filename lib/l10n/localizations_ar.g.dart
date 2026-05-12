@@ -84,16 +84,14 @@ class L10nAr extends L10n {
   String get habitEdit_habitFreq_daily => 'يومياً';
 
   @override
-  String get habitEdit_habitFreq_perweek_text =>
-      'في الأسبوع %%time%% مرة في الأسبوع';
+  String get habitEdit_habitFreq_perweek_text => '%%time%% مرة في الأسبوع';
 
   @override
-  String get habitEdit_habitFreq_permonth_text =>
-      'في الشهر %%time%% مرة في الشهر';
+  String get habitEdit_habitFreq_permonth_text => '%%time%% مرة في الشهر';
 
   @override
   String get habitEdit_habitFreq_predayfreq_text =>
-      '%%time%% مرات في %%day%% أيام';
+      '%%time%% مرة خلال %%day%% يومًا';
 
   @override
   String get habitEdit_habitFreq_show_daily => 'يومياً';
@@ -235,11 +233,12 @@ class L10nAr extends L10n {
   String get habitDisplay_emptyImage_text_01 => 'رحلة الألف ميل تبدأ بخطوة';
 
   @override
-  String get habitDisplay_notFoundImage_text_01 => 'No matching habits found';
+  String get habitDisplay_notFoundImage_text_01 =>
+      'لم يتم العثور على عادات مطابقة';
 
   @override
   String habitDisplay_notFoundImage_text_02(String keyword) {
-    return 'No matching habits for \"$keyword\"';
+    return 'لا توجد عادات مطابقة لـ ”$keyword“';
   }
 
   @override
@@ -430,7 +429,7 @@ class L10nAr extends L10n {
   String get habitDisplay_searchFilter_clearFilter => 'مسح المرشحات';
 
   @override
-  String get habitDisplay_tab_habits_label => 'Habits';
+  String get habitDisplay_tab_habits_label => 'العادات';
 
   @override
   String get habitDisplay_tab_today_label => 'اليوم';
@@ -439,18 +438,18 @@ class L10nAr extends L10n {
   String get habitToday_appBar_title => 'اليوم';
 
   @override
-  String get habitToday_image_desc => 'YOU MADE IT';
+  String get habitToday_image_desc => 'تهانينا لقد حققت الهدف';
 
   @override
   String habitToday_card_subtitle_text(int days) {
-    return 'Kept it up for $days days';
+    return 'استمر في ذلك لمدة $days أيام';
   }
 
   @override
-  String get habitToday_card_donePlusButton_label => 'Done+';
+  String get habitToday_card_donePlusButton_label => 'تم+';
 
   @override
-  String get habitToday_card_skipPlusButton_label => 'Skip+';
+  String get habitToday_card_skipPlusButton_label => 'تخطي+';
 
   @override
   String get habitDetail_editButton_tooltip => 'تحرير';
@@ -724,27 +723,27 @@ class L10nAr extends L10n {
       'تعديل أسلوب الضغط لعرض التقرير اليومي التفصيلي في الصفحة الرئيسية.';
 
   @override
-  String get appSetting_appThemeColorTile_titleText => 'Theme Color';
+  String get appSetting_appThemeColorTile_titleText => 'لون المظهر';
 
   @override
   String get appSetting_appThemeColorChosenDiloag_titleText =>
-      'Choose Theme Color';
+      'اختر لون المظهر';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_android =>
-      'Use wallpaper\'s main color (Android 12+)';
+      'استخدام اللون الرئيسي للخلفية (Android 12 وما فوق)';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_linux =>
-      'Use GTK+ theme\'s selected background color';
+      'استخدام لون الخلفية المحدد في سمة GTK+';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_macos =>
-      'Use system theme color';
+      'استخدام لون سمة النظام';
 
   @override
   String get appSetting_appThemeColorChosenDialog_subTitleText_windows =>
-      'Use system accent or window/glass color';
+      'استخدام لون النظام أو لون النافذة/الزجاج';
 
   @override
   String get appSetting_firstDayOfWeek_titleText => 'أول يوم في الأسبوع';
@@ -1507,13 +1506,13 @@ class L10nAr extends L10n {
   }
 
   @override
-  String get common_appThemeColor_system => 'System';
+  String get common_appThemeColor_system => 'النظام';
 
   @override
-  String get common_appThemeColor_primary => 'Primary';
+  String get common_appThemeColor_primary => 'الأساسي';
 
   @override
-  String get common_appThemeColor_dynamic => 'Dynamic';
+  String get common_appThemeColor_dynamic => 'حيوي';
 
   @override
   String get common_customDateTimeFormatPicker_useSystemFormat_text =>
