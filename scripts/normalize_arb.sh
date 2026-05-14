@@ -16,16 +16,24 @@ SCRIPT_PATH=$(dirname $0)
 L10N_DIR="$SCRIPT_PATH/../assets/l10n"
 TEMPLATE_FILE=$L10N_DIR/en.arb
 L10N_REFS_FILE="$SCRIPT_PATH/../configs/l10n_refs.json"
+if command -v python >/dev/null 2>&1; then
+    PYTHON_BIN=python
+elif command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN=python3
+else
+    echo "Python interpreter not found." >&2
+    exit 1
+fi
 echo "Normalizing ARB files from $L10N_DIR"
 for file in $L10N_DIR/*.arb; do
     if [ -f "$file" ]; then
         if [[ "$file" == "$TEMPLATE_FILE" ]]; then
-            python $SCRIPT_PATH/normalize_arb.py \
+            $PYTHON_BIN $SCRIPT_PATH/normalize_arb.py \
                 -i $file -t $TEMPLATE_FILE -o $file --refs $L10N_REFS_FILE \
                 --indent 4
             _ERRCODE=$?
         else
-            python $SCRIPT_PATH/normalize_arb.py \
+            $PYTHON_BIN $SCRIPT_PATH/normalize_arb.py \
                 -i $file -t $TEMPLATE_FILE -o $file --refs $L10N_REFS_FILE \
                 --indent 4 --ignore-empty-meta
             _ERRCODE=$?
