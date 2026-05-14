@@ -16,14 +16,21 @@ SCRIPT_PATH=$(dirname $0)
 L10N_DIR="$SCRIPT_PATH/../assets/l10n"
 TEMPLATE_FILE=$L10N_DIR/en.arb
 L10N_REFS_FILE="$SCRIPT_PATH/../configs/l10n_refs.json"
-if command -v python >/dev/null 2>&1; then
-    PYTHON_BIN=python
-elif command -v python3 >/dev/null 2>&1; then
+
+if [[ -n "${PYTHON:-}" ]]; then
+    if "$PYTHON" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 9) else 1)' >/dev/null 2>&1; then
+        PYTHON_BIN="$PYTHON"
+    else
+        echo "Python 3.9+ interpreter not found: $PYTHON" >&2
+        exit 1
+    fi
+elif python3 -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 9) else 1)' >/dev/null 2>&1; then
     PYTHON_BIN=python3
 else
-    echo "Python interpreter not found." >&2
+    echo "Python 3.9+ interpreter not found." >&2
     exit 1
 fi
+
 echo "Normalizing ARB files from $L10N_DIR"
 for file in $L10N_DIR/*.arb; do
     if [ -f "$file" ]; then
