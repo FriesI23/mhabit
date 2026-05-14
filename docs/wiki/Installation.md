@@ -10,14 +10,14 @@ from the [Release page][github-releases].
 
 Get [**Table Habit**](https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit&referrer=utm_source%3Dappwiki)
 
-### F-Droid / LzzLzzyOnDroid
+### F-Droid / IzzyOnDroid
 
 - Stable Version
 - Install an Update from Store
 
 Search and download app using ["F-Droid App Store"][fdroid-app] or download by visiting:
 
-| ["F-Droid"][fdroid-myapp] | ["LzzLzzyOnDroid"][lzzyondroid-myapp] |
+| ["F-Droid"][fdroid-myapp] | ["IzzyOnDroid"][lzzyondroid-myapp] |
 
 ### Github: APK
 
