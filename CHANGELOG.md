@@ -2,6 +2,14 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.23.12+152-pre
+
+- Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)
+- Update Arabic, French, Hebrew, Turkish, and Traditional Chinese translations, thanks to contributors on Weblate (#529)
+- Update Android, iOS, macOS, and Windows localization metadata, contributors, and README/Installation wording (#519, #525, #529)
+- Add Android ADI registration asset for the f_store flavor
+- Update Flathub metainfo brand colors and summary (#534)
+
 ## 1.23.11+151
 
 - Updated Czech translation, thanks to tenJirka's contribution on Weblate (#510)
