@@ -118,6 +118,9 @@
 		D91BB4D52DAE351C00E91D6C /* dev-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "dev-InfoPlist.strings"; path = "zh-Hans.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D72DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "en.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D91BB4D82DAE351C00E91D6C /* generic-InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "generic-InfoPlist.strings"; path = "zh-Hans.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D97345C12FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
+		D97345C22FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
+		D97345C32FB56395002015C2 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = "eu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660252F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/dev-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660262F06A14000E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/generic-InfoPlist.strings"; sourceTree = "<group>"; };
 		D9B660272F06A14100E2373D /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = "hu.lproj/store-InfoPlist.strings"; sourceTree = "<group>"; };
@@ -426,6 +429,7 @@
 				vi,
 				zh,
 				hu,
+				eu,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
@@ -533,9 +537,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -633,6 +641,7 @@
 				D9D35CF82EDC73090006DF01 /* vi */,
 				D9D35CFB2EDC73350006DF01 /* zh */,
 				D9B660272F06A14100E2373D /* hu */,
+				D97345C32FB56395002015C2 /* eu */,
 			);
 			name = "store-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -660,6 +669,7 @@
 				D9D35CF62EDC73090006DF01 /* vi */,
 				D9D35CF92EDC73340006DF01 /* zh */,
 				D9B660252F06A14000E2373D /* hu */,
+				D97345C12FB56395002015C2 /* eu */,
 			);
 			name = "dev-InfoPlist.strings";
 			sourceTree = "<group>";
@@ -687,6 +697,7 @@
 				D9D35CF72EDC73090006DF01 /* vi */,
 				D9D35CFA2EDC73350006DF01 /* zh */,
 				D9B660262F06A14000E2373D /* hu */,
+				D97345C22FB56395002015C2 /* eu */,
 			);
 			name = "generic-InfoPlist.strings";
 			sourceTree = "<group>";

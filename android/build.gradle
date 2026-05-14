@@ -16,7 +16,3 @@ subprojects {
 tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
-
-defaultConfig {
-    resourceConfigurations += ["en", "es", "eu"]
-}
