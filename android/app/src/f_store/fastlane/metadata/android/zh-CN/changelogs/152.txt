@@ -1,0 +1,5 @@
+- 添加巴斯克语翻译资源及语言元数据，感谢 Txopi 在 GitHub 上的贡献（#523 #529）
+- 更新阿拉伯语、法语、希伯来语、土耳其语和繁体中文翻译，感谢 Weblate 贡献者的贡献（#529）
+- 更新 Android、iOS、macOS、Windows 本地化元数据、贡献者及 README/安装指南文案（#519 #525 #529）
+- 为 f_store flavor 添加 Android ADI 注册资源
+- 更新 Flathub 元数据主品牌色和摘要（#534）
