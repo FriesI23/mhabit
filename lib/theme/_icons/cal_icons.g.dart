@@ -5,7 +5,10 @@ import 'package:flutter/widgets.dart';
 @immutable
 class _HabitCalIconsData extends IconData {
   const _HabitCalIconsData(int codePoint)
-    : super(codePoint, fontFamily: 'HabitCalIcons');
+      : super(
+          codePoint,
+          fontFamily: 'HabitCalIcons',
+        );
 }
 
 @immutable
