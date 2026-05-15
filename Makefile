@@ -3,18 +3,28 @@ SUBMAKE := $(MAKE) --no-print-directory
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd.exe
-FLUTTER_BIN := $(if $(wildcard .flutter/bin/flutter.bat),.flutter\bin\flutter.bat,flutter)
+FLUTTER_BIN_DIR := $(if $(wildcard .flutter/bin/flutter.bat),.flutter\bin,)
+PATH_SEP := ;
+BASE_PATH := $(strip $(shell powershell -NoProfile -Command "$$machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine'); $$user = [System.Environment]::GetEnvironmentVariable('Path', 'User'); [Console]::Write($$machine + ';' + $$user)"));$(PATH)
 BLANK_LINE := @echo.
 define run_script
 	@call scripts\$(1).cmd
 endef
 else
 SHELL := /bin/bash
-FLUTTER_BIN := $(if $(wildcard .flutter/bin/flutter),./.flutter/bin/flutter,flutter)
+FLUTTER_BIN_DIR := $(if $(wildcard .flutter/bin/flutter),./.flutter/bin,)
+PATH_SEP := :
+BASE_PATH := $(PATH)
 BLANK_LINE := @echo
 define run_script
 	@bash scripts/$(1).sh
 endef
+endif
+
+ifeq ($(MHABIT_MAKE_PATH_READY),)
+PATH := $(if $(FLUTTER_BIN_DIR),$(FLUTTER_BIN_DIR)$(PATH_SEP),)$(BASE_PATH)
+export PATH
+export MHABIT_MAKE_PATH_READY := 1
 endif
 
 
@@ -38,7 +48,7 @@ help:
 
 bootstrap:
 	@git submodule update --init --recursive
-	@"$(FLUTTER_BIN)" pub get
+	@flutter pub get
 
 normalize-l10n:
 	$(call run_script,normalize_arb)
@@ -65,7 +75,7 @@ aio:
 
 aio-full:
 	@$(SUBMAKE) aio
-	@"$(FLUTTER_BIN)" test
+	@flutter test
 
 package-windows:
 	$(call run_script,build_msix)
