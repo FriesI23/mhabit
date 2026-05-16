@@ -1289,13 +1289,6 @@
     "channelDesc_appSyncFailed"
   ],
 
-  "he": [
-    "appSync_serverEditor_netTypeTile_lowDataText",
-    "appSync_serverEditor_netTypeTile_lowDataTooltip",
-    "batchCheckin_close_confirmDialog_body",
-    "appReminder_dailyReminder_body"
-  ],
-
   "it": [
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",

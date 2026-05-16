@@ -1250,7 +1250,7 @@ class L10nHe extends L10n {
   }
 
   @override
-  String get appSync_serverEditor_netTypeTile_lowDataText => 'LowData';
+  String get appSync_serverEditor_netTypeTile_lowDataText => 'חיסכון בנתונים';
 
   @override
   String get appSync_noti_readyToSync_body => 'בהכנות לסנכרון...';
@@ -1267,7 +1267,7 @@ class L10nHe extends L10n {
 
   @override
   String get appSync_serverEditor_netTypeTile_lowDataTooltip =>
-      'Sync in Low Data Mode';
+      'סנכרון במצב חיסכון בנתונים';
 
   @override
   String get experimentalFeatures_warnginBanner_title =>
@@ -1350,8 +1350,7 @@ class L10nHe extends L10n {
       'אני מפתח עצמאי. אם אהבת את היישום, אפשר לקנות לי ☕.';
 
   @override
-  String get appAbout_donateTile_ways =>
-      '‏@paypal,‏@buyMeACoffee,@alipay,‏@wechatPay,‏@cryptoCurrencyAll';
+  String get appAbout_donateTile_ways => '';
 
   @override
   String get donateWay_paypal => 'פייפאל';
@@ -1458,7 +1457,7 @@ class L10nHe extends L10n {
 
   @override
   String get batchCheckin_close_confirmDialog_body =>
-      'Check-in Status Changes won\'t be applied before saved';
+      'השינויים במצב הסימון לא יוחלו עד שיישמרו';
 
   @override
   String get batchCheckin_close_confirmDialog_confirmButton_text => 'יציאה';
@@ -1471,7 +1470,7 @@ class L10nHe extends L10n {
 
   @override
   String get appReminder_dailyReminder_body =>
-      'click to enter app and punch in on time.';
+      'חשוב לסמן את ההרגל בזמן בעזרת לחיצה וכניסה ליישום.';
 
   @override
   String get common_habitColorType_cc1 => 'סגול כהה';

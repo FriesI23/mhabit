@@ -814,6 +814,7 @@
             }
         }
     },
+    "appSync_serverEditor_netTypeTile_lowDataText": "חיסכון בנתונים",
     "appSync_noti_readyToSync_body": "בהכנות לסנכרון...",
     "appSync_noti_syncing_title": "{synced, select, synced {התבצע סנכרון של ({type})} failed {נכשל הסנכרון של ({type})} other {מתבצע סנכרון של ({type})}}",
     "@appSync_noti_syncing_title": {
@@ -830,6 +831,7 @@
             }
         }
     },
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "סנכרון במצב חיסכון בנתונים",
     "experimentalFeatures_warnginBanner_title": "מופעלת תכונה ניסיונית אחת או יותר, השימוש באחריותך.",
     "experimentalFeatures_habitSyncTile_titleText": "סנכרון הרגלים עם הענן",
     "experimentalFeatures_habitSyncTile_subtitleText": "לאחר ההפעלה, אפשרות הסנכרון של היישום תופיע בהגדרות",
@@ -933,9 +935,11 @@
     "batchCheckin_save_confirmDialog_confirmButton_text": "שמירה",
     "batchCheckin_save_confirmDialog_cancelButton_text": "ביטול",
     "batchCheckin_close_confirmDialog_title": "אישור חזרה",
+    "batchCheckin_close_confirmDialog_body": "השינויים במצב הסימון לא יוחלו עד שיישמרו",
     "batchCheckin_close_confirmDialog_confirmButton_text": "יציאה",
     "batchCheckin_close_confirmDialog_cancelButton_text": "ביטול",
     "appReminder_dailyReminder_title": "🏝 האם דבקת בהרגלים שלך היום?",
+    "appReminder_dailyReminder_body": "חשוב לסמן את ההרגל בזמן בעזרת לחיצה וכניסה ליישום.",
     "common_habitColorType_cc1": "סגול כהה",
     "common_habitColorType_cc2": "אדום",
     "common_habitColorType_cc3": "סגול",
@@ -1072,9 +1076,5 @@
     "channelName_appSyncing": "התקדמות הסנכרון",
     "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
     "channelName_appSyncFailed": "הסנכרון נכשל",
-    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
-    "appSync_serverEditor_netTypeTile_lowDataText": "חיסכון בנתונים",
-    "appSync_serverEditor_netTypeTile_lowDataTooltip": "סנכרון במצב חיסכון בנתונים",
-    "batchCheckin_close_confirmDialog_body": "השינויים במצב הסימון לא יוחלו עד שיישמרו",
-    "appReminder_dailyReminder_body": "חשוב לסמן את ההרגל בזמן בעזרת לחיצה וכניסה ליישום."
+    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל"
 }
