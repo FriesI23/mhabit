@@ -27,7 +27,7 @@ abstract class _$AppWebDavSyncServerCWProxy {
     int? connectRetryCount,
     Duration? connectTimeout,
     bool configed,
-    Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
+    List<AppSyncServerMobileNetwork> syncMobileNetworks,
     bool syncInLowData,
     bool ignoreSSL,
   });
@@ -111,7 +111,7 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
               syncMobileNetworks == null
           ? _value.syncMobileNetworks
           // ignore: cast_nullable_to_non_nullable
-          : syncMobileNetworks as Iterable<AppSyncServerMobileNetwork>,
+          : syncMobileNetworks as List<AppSyncServerMobileNetwork>,
       syncInLowData:
           syncInLowData == const $CopyWithPlaceholder() || syncInLowData == null
           ? _value.syncInLowData
@@ -239,9 +239,9 @@ AppWebDavSyncServer _$AppWebDavSyncServerFromJson(Map<String, dynamic> json) =>
           ? null
           : Duration(microseconds: (json['connectTimeout'] as num).toInt()),
       configed: json['configed'] as bool,
-      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>).map(
-        (e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e),
-      ),
+      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
+          .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
+          .toList(),
       ignoreSSL: json['ignoreSSL'] as bool,
       syncInLowData: json['syncInLowData'] as bool,
     );

@@ -183,7 +183,7 @@ class AppWebDavSyncServer implements AppSyncServer {
   final String password;
   final bool ignoreSSL;
   final bool syncInLowData;
-  final Iterable<AppSyncServerMobileNetwork> syncMobileNetworks;
+  final List<AppSyncServerMobileNetwork> syncMobileNetworks;
   final int? connectRetryCount;
   final Duration? connectTimeout;
 
