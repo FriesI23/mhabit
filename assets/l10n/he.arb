@@ -877,7 +877,7 @@
     "appAbout_privacyTile_subTitleText": "עיון במדיניות הפרטיות של יישום זה",
     "appAbout_donateTile_titleText": "תרומה",
     "appAbout_donateTile_subTitleText": "אני מפתח עצמאי. אם אהבת את היישום, אפשר לקנות לי ☕.",
-    "appAbout_donateTile_ways": "‏@paypal,‏@buyMeACoffee,@alipay,‏@wechatPay,‏@cryptoCurrencyAll",
+    "appAbout_donateTile_ways": "",
     "@appAbout_donateTile_ways": {
         "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
     },
@@ -1072,5 +1072,9 @@
     "channelName_appSyncing": "התקדמות הסנכרון",
     "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
     "channelName_appSyncFailed": "הסנכרון נכשל",
-    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל"
+    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
+    "appSync_serverEditor_netTypeTile_lowDataText": "חיסכון בנתונים",
+    "appSync_serverEditor_netTypeTile_lowDataTooltip": "סנכרון במצב חיסכון בנתונים",
+    "batchCheckin_close_confirmDialog_body": "השינויים במצב הסימון לא יוחלו עד שיישמרו",
+    "appReminder_dailyReminder_body": "חשוב לסמן את ההרגל בזמן בעזרת לחיצה וכניסה ליישום."
 }
