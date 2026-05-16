@@ -36,6 +36,7 @@ jobs:
       common-changed: ${{ steps.filter.outputs.common }}
       android-changed: ${{ steps.filter.outputs.android }}
       ios-changed: ${{ steps.filter.outputs.ios }}
+      linux-changed: ${{ steps.filter.outputs.linux }}
       macos-changed: ${{ steps.filter.outputs.macos }}
     steps:
       - uses: actions/checkout@v4
@@ -53,6 +54,8 @@ jobs:
               - 'android/**'
             ios:
               - 'ios/**'
+            linux:
+              - 'linux/**'
             macos:
               - 'macos/**'
       - id: date
@@ -141,6 +144,38 @@ jobs:
             ${{ job.status == 'success' && '✅ iOS Build Completed:' || '❌ iOS Build Failed' }}
             ${{ steps.upload.outputs.artifact-url || '' }}
 
+  build-linux:
+    needs:
+      - test-build-filter
+    runs-on: ubuntu-latest
+    environment: check-ci
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.linux-changed == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_linux
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle-x64
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: >
+            ${{ job.status == 'success' && '✅ Linux Build Completed:' || '❌ Linux Build Failed' }}
+            ${{ steps.upload.outputs.artifact-url || '' }}
+
   build-macos:
     needs:
       - test-build-filter
@@ -190,6 +225,7 @@ jobs:
       - test-build-filter
       - build-android
       - build-ios
+      - build-linux
       - build-macos
     if: >
       always() &&
