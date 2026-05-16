@@ -2,12 +2,16 @@
 <component type="desktop">
   <id>io.github.friesi23.mhabit</id>
   <name>Table Habit</name>
-  <summary>Micro habit tracker for personal growth</summary>
+  <summary>Build micro habits</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>Apache-2.0</project_license>
   <developer id="io.github.friesi23">
     <name>Fries_I23</name>
   </developer>
+  <branding>
+    <color type="primary" scheme_preference="light">#458EF7</color>
+    <color type="primary" scheme_preference="dark">#1E4C8F</color>
+  </branding>
   <launchable type="desktop-id">io.github.friesi23.mhabit.desktop</launchable>
   <provides>
     <binary>mhabit</binary>
@@ -95,6 +99,9 @@
     <category>Utility</category>
   </categories>
   <releases>
+    <release version="1.23.12+152-pre" date="2026-05-14">
+      <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.23.12+152-pre</url>
+    </release>
     <release version="1.23.11+151" date="2026-03-21">
       <url type="details">https://github.com/FriesI23/mhabit/releases/tag/v1.23.11+151</url>
     </release>

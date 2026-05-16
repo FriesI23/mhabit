@@ -21,6 +21,9 @@ import argparse as ap
 from collections import OrderedDict
 
 
+JSON_ENCODING = "utf-8"
+
+
 T_JSON = dict[str, t.Optional[object]]
 
 
@@ -33,18 +36,18 @@ def format_arb(
     indent: t.Optional[int] = None,
     refs_filepath: str = None,
 ):
-    with open(input_filepath, "r") as fp:
+    with open(input_filepath, "r", encoding=JSON_ENCODING) as fp:
         input = json.load(fp, object_pairs_hook=OrderedDict)
         if not template_filepath:
             template = copy.deepcopy(input)
         else:
-            with open(template_filepath, "r") as fp:
+            with open(template_filepath, "r", encoding=JSON_ENCODING) as fp:
                 template = json.load(fp)
 
         output = input
 
         if refs_filepath is not None and os.path.exists(refs_filepath):
-            with open(refs_filepath, "r") as fp:
+            with open(refs_filepath, "r", encoding=JSON_ENCODING) as fp:
                 refs = json.load(fp)
                 output = _preprocess_arb_refs(input=output, refs=refs)
 
@@ -56,7 +59,7 @@ def format_arb(
         )
 
     if output_filepath:
-        with open(output_filepath, "w") as fp:
+        with open(output_filepath, "w", encoding=JSON_ENCODING) as fp:
             json.dump(output, fp=fp, indent=indent, ensure_ascii=False)
             fp.write("\n")
     else:

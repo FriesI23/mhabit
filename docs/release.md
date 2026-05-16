@@ -1,15 +1,19 @@
-# Release: v1.23.11+151
+# Pre-Released: v1.23.12+152
 
 **🌐 Localization**
-
-- Updated Czech translation, thanks to tenJirka's contribution on Weblate (#510)
-- Updated Hebrew translation and store descriptions, thanks to Omer I.S.'s contribution on Weblate (#510, #514)
+- Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)
+- Update Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate (#529)
+- Update French translation, thanks to biram's contribution on Weblate (#529)
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#529)
+- Update Turkish translation, thanks to Soykan Aydın's contribution on Weblate (#529)
+- Update Traditional Chinese translation, thanks to William's contribution on Weblate (#529)
+- Update Android, iOS, macOS, and Windows localization metadata (#529)
 
 **🧹 Others**
-
-- Refactor README: move Microsoft Store info to Windows section (#509)
-- Refactor README: fix `appsotre-myapp` typo to `appstore-myapp` (#508)
+- Update contributors (#529)
+- Add the Android ADI registration asset for the f_store flavor
+- Update Flathub metainfo brand colors and summary (#534)
 
 **📝 Documentation**
-
-- Update README structure and wording (#512)
+- Update README grammar (#525)
+- Update wording in the installation guide (#519)
