@@ -39,7 +39,7 @@ jobs:
             echo "Declare 'git_check_changes' Failed with exit code $?."
             exit 1
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_flutter
       - name: Normalized ARB files checking
         run: |
