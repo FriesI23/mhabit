@@ -41,6 +41,9 @@ SnackBar buildSnackBarWithDismiss(
 }) {
   return SnackBar(
     content: content,
+    // [flutter>=3.38] SnackBar with action no longer auto-dismisses
+    // https://docs.flutter.dev/release/breaking-changes/snackbar-with-action-behavior-update
+    persist: false,
     duration: duration ?? const Duration(milliseconds: 2000),
     action: SnackBarAction(
       label: label ?? L10n.of(context)?.snackbar_dismissText ?? 'dismiss',
