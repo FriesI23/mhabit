@@ -12,24 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
 import 'dart:ui' show Color;
 
 import 'package:material_color_utilities/material_color_utilities.dart';
+import 'package:material_color_utilities/palettes/core_palettes.dart';
 
 import '../../models/habit_form.dart';
 import '../color.dart';
 import 'custom_color.g.dart';
 
-final cc1Palette = CorePalette.of(cc1.toARGB32());
-final cc2Palette = CorePalette.of(cc2.toARGB32());
-final cc3Palette = CorePalette.of(cc3.toARGB32());
-final cc4Palette = CorePalette.of(cc4.toARGB32());
-final cc5Palette = CorePalette.of(cc5.toARGB32());
-final cc6Palette = CorePalette.of(cc6.toARGB32());
-final cc7Palette = CorePalette.of(cc7.toARGB32());
-final cc8Palette = CorePalette.of(cc8.toARGB32());
-final cc9Palette = CorePalette.of(cc9.toARGB32());
-final cc10Palette = CorePalette.of(cc10.toARGB32());
+CorePalettes buildCorePalettes(Color color) {
+  final cam = Cam16.fromInt(color.toARGB32());
+  return CorePalettes(
+    TonalPalette.of(cam.hue, math.max(48, cam.chroma)),
+    TonalPalette.of(cam.hue, 16),
+    TonalPalette.of(cam.hue + 60, 24),
+    TonalPalette.of(cam.hue, 4),
+    TonalPalette.of(cam.hue, 8),
+  );
+}
+
+final cc1Palette = buildCorePalettes(cc1);
+final cc2Palette = buildCorePalettes(cc2);
+final cc3Palette = buildCorePalettes(cc3);
+final cc4Palette = buildCorePalettes(cc4);
+final cc5Palette = buildCorePalettes(cc5);
+final cc6Palette = buildCorePalettes(cc6);
+final cc7Palette = buildCorePalettes(cc7);
+final cc8Palette = buildCorePalettes(cc8);
+final cc9Palette = buildCorePalettes(cc9);
+final cc10Palette = buildCorePalettes(cc10);
 
 final modifedLightCustomColors = lightCustomColors.copyWith(
   cc1: genHabitColorPrimaryLight(HabitColorType.cc1),
@@ -44,7 +57,7 @@ final modifedLightCustomColors = lightCustomColors.copyWith(
   cc10: genHabitColorPrimaryLight(HabitColorType.cc10),
 );
 
-CorePalette getHabitPalette(HabitColorType colorType) {
+CorePalettes getHabitPalette(HabitColorType colorType) {
   switch (colorType) {
     case HabitColorType.cc1:
       return cc1Palette;

@@ -239,9 +239,9 @@ AppWebDavSyncServer _$AppWebDavSyncServerFromJson(Map<String, dynamic> json) =>
           ? null
           : Duration(microseconds: (json['connectTimeout'] as num).toInt()),
       configed: json['configed'] as bool,
-      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>)
-          .map((e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e))
-          .toList(),
+      syncMobileNetworks: (json['syncMobileNetworks'] as List<dynamic>).map(
+        (e) => $enumDecode(_$AppSyncServerMobileNetworkEnumMap, e),
+      ),
       ignoreSSL: json['ignoreSSL'] as bool,
       syncInLowData: json['syncInLowData'] as bool,
     );
@@ -260,11 +260,11 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
   'password': instance.password,
   'ignoreSSL': instance.ignoreSSL,
   'syncInLowData': instance.syncInLowData,
-  'connectRetryCount': instance.connectRetryCount,
-  'connectTimeout': instance.connectTimeout?.inMicroseconds,
   'syncMobileNetworks': instance.syncMobileNetworks
       .map((e) => _$AppSyncServerMobileNetworkEnumMap[e]!)
       .toList(),
+  'connectRetryCount': instance.connectRetryCount,
+  'connectTimeout': instance.connectTimeout?.inMicroseconds,
 };
 
 const _$AppSyncServerMobileNetworkEnumMap = {

@@ -37,8 +37,7 @@ extension AppEventViewModelExtension on AppEventViewModel {
               uuidList: uuids,
               status: status,
               trace: {
-                if (source != null)
-                  source: const {AppEventFunctionSource.habitChanged},
+                ?source: const {AppEventFunctionSource.habitChanged},
               },
             ),
           );
@@ -60,8 +59,7 @@ extension AppEventViewModelExtension on AppEventViewModel {
         status: record.status,
         reason: reason,
         trace: {
-          if (source != null)
-            source: const {AppEventFunctionSource.recordChanged},
+          ?source: const {AppEventFunctionSource.recordChanged},
         },
       ),
     );

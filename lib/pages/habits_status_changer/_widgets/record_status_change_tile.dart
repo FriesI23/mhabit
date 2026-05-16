@@ -55,9 +55,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
     super.didUpdateWidget(oldWdiget);
   }
 
-  Set<RecordStatusChangerStatus> get currentSelection => {
-    if (selectStatus != null) selectStatus!,
-  };
+  Set<RecordStatusChangerStatus> get currentSelection => {?selectStatus};
 
   void _onSelectionChanged(Set<RecordStatusChangerStatus> newSelection) {
     if (currentSelection == newSelection) return;

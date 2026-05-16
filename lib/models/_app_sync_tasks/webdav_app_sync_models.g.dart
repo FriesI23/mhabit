@@ -572,16 +572,16 @@ class _$HttpClientRequestWebDavProxy implements HttpClientRequest {
   int get maxRedirects => _base.maxRedirects;
 
   @override
-  int get contentLength => _base.contentLength;
-
-  @override
-  bool get bufferOutput => _base.bufferOutput;
-
-  @override
   String get method => _base.method;
 
   @override
   Uri get uri => _base.uri;
+
+  @override
+  int get contentLength => _base.contentLength;
+
+  @override
+  bool get bufferOutput => _base.bufferOutput;
 
   @override
   HttpHeaders get headers => _base.headers;

@@ -178,13 +178,12 @@ class AppWebDavSyncServer implements AppSyncServer {
   @override
   final bool configed;
 
-  final List<AppSyncServerMobileNetwork> _syncMobileNetworks;
-
   final Uri path;
   final String username;
   final String password;
   final bool ignoreSSL;
   final bool syncInLowData;
+  final Iterable<AppSyncServerMobileNetwork> syncMobileNetworks;
   final int? connectRetryCount;
   final Duration? connectTimeout;
 
@@ -199,11 +198,10 @@ class AppWebDavSyncServer implements AppSyncServer {
     this.connectRetryCount,
     this.connectTimeout,
     required this.configed,
-    required List<AppSyncServerMobileNetwork> syncMobileNetworks,
+    required this.syncMobileNetworks,
     required this.ignoreSSL,
     required this.syncInLowData,
-  }) : type = AppSyncServerType.webdav,
-       _syncMobileNetworks = syncMobileNetworks;
+  }) : type = AppSyncServerType.webdav;
 
   factory AppWebDavSyncServer.newServer({
     required String identity,
@@ -247,13 +245,10 @@ class AppWebDavSyncServer implements AppSyncServer {
     this.connectRetryCount,
     this.connectTimeout,
     required this.configed,
-    required Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
+    required this.syncMobileNetworks,
     required this.syncInLowData,
     required this.ignoreSSL,
-  }) : type = AppSyncServerType.webdav,
-       _syncMobileNetworks = [] {
-    _syncMobileNetworks.addAll(syncMobileNetworks);
-  }
+  }) : type = AppSyncServerType.webdav;
 
   factory AppWebDavSyncServer.fromJson(Map<String, dynamic> json) =>
       _$AppWebDavSyncServerFromJson(json);
@@ -278,9 +273,6 @@ class AppWebDavSyncServer implements AppSyncServer {
     ignoreSSL: form.ignoreSSL!,
     syncInLowData: form.syncInLowData!,
   );
-
-  Iterable<AppSyncServerMobileNetwork> get syncMobileNetworks =>
-      _syncMobileNetworks;
 
   @override
   @JsonKey()
@@ -346,7 +338,7 @@ class AppWebDavSyncServer implements AppSyncServer {
   syncInLowData: $syncInLowData,
   timeout: $timeout,
   configed: $configed,
-  syncMobileNetworks: $_syncMobileNetworks,
+  syncMobileNetworks: $syncMobileNetworks,
   path: $path,
   username: $username,
   password: $password,

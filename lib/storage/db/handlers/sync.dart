@@ -580,13 +580,7 @@ class SyncDBHelper extends DBHelperHandler {
             "${configId != null ? ', ${SyncDbCellKey.lastConfigUUID} = ?' : ''}"
             "${sessionId != null ? ', ${SyncDbCellKey.lastSesionUUID} = ?' : ''}"
             " WHERE ${SyncDbCellKey.recordUUID} = ?",
-            [
-              recordDirty,
-              recordDirty,
-              if (configId != null) configId,
-              if (sessionId != null) sessionId,
-              recordUUID,
-            ],
+            [recordDirty, recordDirty, ?configId, ?sessionId, recordUUID],
           );
         }),
       );
@@ -616,8 +610,8 @@ class SyncDBHelper extends DBHelperHandler {
           habitDirtyTotal,
           habitDirtyTotal,
           etag,
-          if (configId != null) configId,
-          if (sessionId != null) sessionId,
+          ?configId,
+          ?sessionId,
           habitUUID,
         ],
       );
