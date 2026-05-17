@@ -1,19 +1,13 @@
-# Pre-Released: v1.23.12+152
-
-**🌐 Localization**
-- Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)
-- Update Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate (#529)
-- Update French translation, thanks to biram's contribution on Weblate (#529)
-- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#529)
-- Update Turkish translation, thanks to Soykan Aydın's contribution on Weblate (#529)
-- Update Traditional Chinese translation, thanks to William's contribution on Weblate (#529)
-- Update Android, iOS, macOS, and Windows localization metadata (#529)
+# Pre-Released: v1.24.0+153
 
 **🧹 Others**
-- Update contributors (#529)
-- Add the Android ADI registration asset for the f_store flavor
-- Update Flathub metainfo brand colors and summary (#534)
+- Upgrade Flutter to 3.41.9 and migrate required framework breaking changes
+- Update package dependencies and regenerated code, including notification, sharing, device info, and copy-with outputs
+- Update GitHub Actions and CI runtime versions, and add a Linux build check
+- Update iOS lifecycle integration with SceneDelegate and refresh platform toolchain/Fastlane dependencies
+- Improve desktop native asset handling for Windows and Linux builds
+- Fix App Sync server iter type handling
+- Fix theme colors
 
 **📝 Documentation**
-- Update README grammar (#525)
-- Update wording in the installation guide (#519)
+- Update the source builder wiki
