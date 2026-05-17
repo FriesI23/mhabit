@@ -2,6 +2,16 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.0+153-pre
+
+- Upgrade Flutter to 3.41.9 and migrate required framework breaking changes
+- Update package dependencies, generated files, and Fastlane lockfiles
+- Update GitHub Actions/CI runtimes and add a Linux build check
+- Update iOS lifecycle integration and desktop native asset handling for newer toolchains
+- Fix App Sync server iter type handling
+- Fix theme colors
+- Update the source builder wiki
+
 ## 1.23.12+152-pre
 
 - Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)

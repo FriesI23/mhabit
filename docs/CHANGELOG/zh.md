@@ -1,5 +1,15 @@
 # 更新日志
 
+## 1.24.0+153-pre
+
+- 升级 Flutter 到 3.41.9，并迁移所需的框架破坏性变更
+- 更新依赖包、生成文件和 Fastlane lockfile
+- 更新 GitHub Actions/CI 运行时，并新增 Linux 构建检查
+- 为新工具链更新 iOS 生命周期集成和桌面端 native assets 处理
+- 修复 App Sync server 的 iter type 处理
+- 修复主题颜色
+- 更新 source builder wiki 文档
+
 ## 1.23.12+152-pre
 
 - 添加巴斯克语翻译资源及语言元数据，感谢 Txopi 在 GitHub 上的贡献（#523 #529）
