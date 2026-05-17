@@ -13,6 +13,8 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+require_relative "../../fastlane/deploy_lane_helper"
+
 default_platform(:android)
 
 default_platform(:android)
@@ -43,6 +45,7 @@ platform :android do
     flavor = options[:flavor] || "f_store"
     meta_path = options[:meta_path] || "app/src/#{flavor}/fastlane/metadata/android"
     track = options[:track]
+    dry_run = DeployLaneHelper.dry_run_enabled?(options)
 
     upload_params = {
       metadata_path: meta_path,
@@ -57,6 +60,17 @@ platform :android do
       upload_params[:aab] = "../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
       upload_params[:track] = track if track
     end
+
+    if dry_run
+      DeployLaneHelper.report_dry_run_skip(
+        action: "supply",
+        artifact: upload_params[:aab],
+        track: track,
+        metadata_path: meta_path
+      )
+      next
+    end
+
     supply(upload_params)
   end
 
@@ -67,6 +81,7 @@ platform :android do
     do_build = options.fetch(:build, true)
     do_clean = options.fetch(:clean, true)
     track = options[:track]
+    dry_run = DeployLaneHelper.dry_run_enabled?(options)
 
     upload_params = {
       sync_image_upload: true,
@@ -77,6 +92,17 @@ platform :android do
 
     clean() if do_clean
     build(flavor: flavor) if do_build
+
+    if dry_run
+      DeployLaneHelper.report_dry_run_skip(
+        action: "upload_to_play_store",
+        artifact: upload_params[:aab],
+        track: track,
+        metadata_path: meta_path
+      )
+      next
+    end
+
     upload_to_play_store(upload_params)
   end
 end

@@ -13,7 +13,23 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+require_relative "../../fastlane/deploy_lane_helper"
+require_relative "../../fastlane/testflight_changelog_helper"
+
 default_platform(:ios)
+
+def testflight_android_changelog_metadata_dir(flavor)
+  flavor_dir = File.expand_path(
+    "../../android/app/src/#{flavor}/fastlane/metadata/android",
+    __dir__
+  )
+  return flavor_dir if Dir.exist?(flavor_dir)
+
+  shared_dir = File.expand_path("../../fastlane/metadata/android", __dir__)
+  return shared_dir if Dir.exist?(shared_dir)
+
+  UI.user_error!("No Android changelog metadata found for flavor #{flavor}")
+end
 
 platform :ios do
   desc "Clean environment"
@@ -50,6 +66,7 @@ platform :ios do
     do_build = options.fetch(:build, true)
     do_clean = options.fetch(:clean, true)
     track = options[:track] || "alpha"
+    dry_run = DeployLaneHelper.dry_run_enabled?(options)
     pkg_path = "../build/macos/Build/Fastlane/Release-#{flavor}"
 
     clean() if do_clean
@@ -60,22 +77,51 @@ platform :ios do
       output_directory: pkg_path
     )
 
-    if track == "beta"
-      upload_to_testflight(
-        pkg: "#{pkg_path}/mhabit.pkg",
-        uses_non_exempt_encryption: true,
-        distribute_external: true,
-        groups: ["Beta"]
-      )
-    elsif track == "public"
+    if track == "public"
+      if dry_run
+        DeployLaneHelper.report_dry_run_skip(
+          action: "upload_to_app_store",
+          artifact: "#{pkg_path}/mhabit.pkg",
+          track: track
+        )
+        next
+      end
+
       upload_to_app_store(
         pkg: "#{pkg_path}/mhabit.pkg"
       )
     else
-      upload_to_testflight(
-        pkg: "#{pkg_path}/mhabit.pkg",
-        uses_non_exempt_encryption: true
+      changelog, localized_build_info = TestflightChangelogHelper.load(
+        metadata_dir: testflight_android_changelog_metadata_dir(flavor),
+        pubspec_path: File.expand_path("../../pubspec.yaml", __dir__),
+        build_number: options[:changelog_build_number]&.to_s
       )
+      upload_options = {
+        pkg: "#{pkg_path}/mhabit.pkg",
+        uses_non_exempt_encryption: true,
+        changelog: changelog,
+        localized_build_info: localized_build_info
+      }
+
+      if dry_run
+        DeployLaneHelper.report_dry_run_skip(
+          action: "upload_to_testflight",
+          artifact: upload_options[:pkg],
+          track: track,
+          locales: localized_build_info.keys
+        )
+        next
+      end
+
+      if track == "beta"
+        upload_to_testflight(
+          **upload_options,
+          distribute_external: true,
+          groups: ["Beta"]
+        )
+      else
+        upload_to_testflight(**upload_options)
+      end
     end
   end
 end
