@@ -105,10 +105,10 @@ runs:
         echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
       shell: bash
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       if: ${{ inputs.package-dmg == 'true' }}
       with:
-        node-version: 20
+        node-version: 24
     - run: npm install -g appdmg
       if: ${{ inputs.package-dmg == 'true' }}
       shell: bash

@@ -37,11 +37,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
   }) {
     dateTime = dateTime ?? AppClock().now();
     final dateString = DateFormat('y_MM_dd_H_m_s').format(dateTime);
-    final fileStringList = [
-      if (prefix != null) prefix,
-      dateString,
-      if (suffix != null) suffix,
-    ];
+    final fileStringList = [?prefix, dateString, ?suffix];
     return "${fileStringList.join("-")}.json";
   }
 

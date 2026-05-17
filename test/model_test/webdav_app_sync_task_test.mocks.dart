@@ -27,6 +27,7 @@ import 'package:mockito/src/dummies.dart' as _i6;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeConverter_0<S1, T1> extends _i1.SmartFake
     implements _i2.Converter<S1, T1> {
@@ -216,12 +217,12 @@ class MockAppWebDavSyncServer extends _i1.Mock
           as bool);
 
   @override
-  Iterable<_i3.AppSyncServerMobileNetwork> get syncMobileNetworks =>
+  List<_i3.AppSyncServerMobileNetwork> get syncMobileNetworks =>
       (super.noSuchMethod(
             Invocation.getter(#syncMobileNetworks),
             returnValue: <_i3.AppSyncServerMobileNetwork>[],
           )
-          as Iterable<_i3.AppSyncServerMobileNetwork>);
+          as List<_i3.AppSyncServerMobileNetwork>);
 
   @override
   String get name =>

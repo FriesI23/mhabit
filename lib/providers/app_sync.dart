@@ -203,17 +203,17 @@ class AppSyncViewModel
   Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return Future.value(null);
-    return const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    ).read(key: "sync-pwd-$identity").catchError((e, s) {
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-      switch (serverConfig) {
-        case AppWebDavSyncServer(:final password):
-          return password;
-        default:
-          return null;
-      }
-    });
+    return const FlutterSecureStorage()
+        .read(key: "sync-pwd-$identity")
+        .catchError((e, s) {
+          if (kDebugMode) Error.throwWithStackTrace(e, s);
+          switch (serverConfig) {
+            case AppWebDavSyncServer(:final password):
+              return password;
+            default:
+              return null;
+          }
+        });
   }
 
   Future<bool> writePassword({String? identity, required String? value}) async {
@@ -221,7 +221,6 @@ class AppSyncViewModel
     if (identity == null) return false;
     try {
       const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
         mOptions: MacOsOptions(),
       ).write(key: "sync-pwd-$identity", value: value);
     } catch (e, s) {
@@ -346,7 +345,7 @@ class AppSyncViewModel
       }
       return Future.wait([
         removeOldPasswordTask,
-        if (postTask != null) postTask,
+        ?postTask,
       ]).then((results) => results.every((e) => e));
     }
 

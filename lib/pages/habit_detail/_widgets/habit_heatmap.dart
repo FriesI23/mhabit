@@ -155,9 +155,9 @@ class HabitHeatmap extends StatelessWidget {
             flex: 1,
             child: Column(
               children: [
-                if (descDailyGoalWidget != null) descDailyGoalWidget!,
-                if (descTargetDaysWidget != null) descTargetDaysWidget!,
-                if (descRecordsNumWidget != null) descRecordsNumWidget!,
+                ?descDailyGoalWidget,
+                ?descTargetDaysWidget,
+                ?descRecordsNumWidget,
               ],
             ),
           ),

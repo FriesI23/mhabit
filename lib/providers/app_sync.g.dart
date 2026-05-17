@@ -39,11 +39,11 @@ abstract class _$AppSyncContainerCWProxy<
   );
 
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T,R>(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T, R>(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// AppSyncContainer<T,R>(...).copyWith(id: 12, name: "My name")
+  /// AppSyncContainer<T, R>(...).copyWith(id: 12, name: "My name")
   /// ```
   AppSyncContainer<T, R> call({
     String id,
@@ -115,11 +115,11 @@ class _$AppSyncContainerCWProxyImpl<
 
   @override
   /// Creates a new instance with the provided field values.
-  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T,R>(...).copyWith.fieldName(value)`.
+  /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppSyncContainer<T, R>(...).copyWith.fieldName(value)`.
   ///
   /// Example:
   /// ```dart
-  /// AppSyncContainer<T,R>(...).copyWith(id: 12, name: "My name")
+  /// AppSyncContainer<T, R>(...).copyWith(id: 12, name: "My name")
   /// ```
   AppSyncContainer<T, R> call({
     Object? id = const $CopyWithPlaceholder(),

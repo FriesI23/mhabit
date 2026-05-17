@@ -205,7 +205,7 @@ final class NotificationServiceImpl implements NotificationService {
     );
 
     await plugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: notificationTap,
     );
   }
@@ -267,10 +267,10 @@ final class NotificationServiceImpl implements NotificationService {
 
     try {
       final future = plugin.show(
-        data.id,
-        data.title,
-        data.body,
-        details,
+        id: data.id,
+        title: data.title,
+        body: data.body,
+        notificationDetails: details,
         payload: data.toPayload(),
       );
 
@@ -295,7 +295,7 @@ final class NotificationServiceImpl implements NotificationService {
     required int id,
     Duration? timeout = defaultTimeout,
   }) async {
-    final future = plugin.cancel(id);
+    final future = plugin.cancel(id: id);
     timeout == null
         ? await future
         : future.timeout(timeout, onTimeout: () => null);
@@ -322,11 +322,11 @@ final class NotificationServiceImpl implements NotificationService {
       final scheduledDate = nextDailySchedule(timeOfDay, now);
 
       final future = plugin.zonedSchedule(
-        appReminderNotifyId,
-        title,
-        subtitle,
-        tz.TZDateTime.from(scheduledDate, tz.local),
-        details,
+        id: appReminderNotifyId,
+        title: title,
+        body: subtitle,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexact,
         matchDateTimeComponents: DateTimeComponents.time,
       );
@@ -352,7 +352,7 @@ final class NotificationServiceImpl implements NotificationService {
 
   @override
   Future<bool> cancelAppReminder({Duration? timeout = defaultTimeout}) async {
-    final future = plugin.cancel(appReminderNotifyId);
+    final future = plugin.cancel(id: appReminderNotifyId);
     timeout == null
         ? await future
         : future.timeout(timeout, onTimeout: () => null);
@@ -388,11 +388,11 @@ final class NotificationServiceImpl implements NotificationService {
       );
 
       final future = plugin.zonedSchedule(
-        data.id,
-        data.title,
-        data.body,
-        tz.TZDateTime.from(scheduledDate, tz.local),
-        details,
+        id: data.id,
+        title: data.title,
+        body: data.body,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexact,
         payload: data.toPayload(),
       );
@@ -421,7 +421,7 @@ final class NotificationServiceImpl implements NotificationService {
     required DBID id,
     Duration? timeout = defaultTimeout,
   }) async {
-    final future = plugin.cancel(id);
+    final future = plugin.cancel(id: id);
     timeout == null
         ? await future
         : future.timeout(timeout, onTimeout: () => null);
@@ -493,10 +493,10 @@ final class LinuxNotificationService extends NotificationServiceImpl {
   Future<void> _trigger(_LinuxPendingNotification pending) async {
     try {
       await plugin.show(
-        pending.data.id,
-        pending.data.title,
-        pending.data.body,
-        pending.details,
+        id: pending.data.id,
+        title: pending.data.title,
+        body: pending.data.body,
+        notificationDetails: pending.details,
         payload: pending.data.toPayload(),
       );
 
@@ -842,11 +842,11 @@ final class WindowsNotificationService extends NotificationServiceImpl {
       await cancel(id: appReminderNotifyId, timeout: timeout);
 
       final future = _windowsPlugin.zonedSchedule(
-        appReminderNotifyId,
-        title,
-        subtitle,
-        tz.TZDateTime.from(scheduledDate, tz.local),
-        details.windows,
+        id: appReminderNotifyId,
+        title: title,
+        body: subtitle,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: details.windows,
       );
       timeout == null
           ? await future
@@ -923,11 +923,11 @@ final class WindowsNotificationService extends NotificationServiceImpl {
       await cancel(id: id, timeout: timeout);
 
       final future = _windowsPlugin.zonedSchedule(
-        data.id,
-        data.title,
-        data.body,
-        tz.TZDateTime.from(scheduledDate, tz.local),
-        details.windows,
+        id: data.id,
+        title: data.title,
+        body: data.body,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: details.windows,
         payload: data.toPayload(),
       );
       timeout == null
