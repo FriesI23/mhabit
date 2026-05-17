@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
 import 'dart:ui' show Color;
 
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -23,13 +22,17 @@ import '../color.dart';
 import 'custom_color.g.dart';
 
 CorePalettes buildCorePalettes(Color color) {
-  final cam = Cam16.fromInt(color.toARGB32());
+  final scheme = SchemeTonalSpot(
+    sourceColorHct: Hct.fromInt(color.toARGB32()),
+    isDark: false,
+    contrastLevel: 0,
+  );
   return CorePalettes(
-    TonalPalette.of(cam.hue, math.max(48, cam.chroma)),
-    TonalPalette.of(cam.hue, 16),
-    TonalPalette.of(cam.hue + 60, 24),
-    TonalPalette.of(cam.hue, 4),
-    TonalPalette.of(cam.hue, 8),
+    scheme.primaryPalette,
+    scheme.secondaryPalette,
+    scheme.tertiaryPalette,
+    scheme.neutralPalette,
+    scheme.neutralVariantPalette,
   );
 }
 
