@@ -5,10 +5,7 @@ import 'package:flutter/widgets.dart';
 @immutable
 class _CommonIconsData extends IconData {
   const _CommonIconsData(int codePoint)
-      : super(
-          codePoint,
-          fontFamily: 'CommonIcons',
-        );
+    : super(codePoint, fontFamily: 'CommonIcons');
 }
 
 @immutable

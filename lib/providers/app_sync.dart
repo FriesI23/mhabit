@@ -203,15 +203,17 @@ class AppSyncViewModel
   Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return Future.value(null);
-    return const FlutterSecureStorage().read(key: "sync-pwd-$identity").catchError((e, s) {
-      if (kDebugMode) Error.throwWithStackTrace(e, s);
-      switch (serverConfig) {
-        case AppWebDavSyncServer(:final password):
-          return password;
-        default:
-          return null;
-      }
-    });
+    return const FlutterSecureStorage()
+        .read(key: "sync-pwd-$identity")
+        .catchError((e, s) {
+          if (kDebugMode) Error.throwWithStackTrace(e, s);
+          switch (serverConfig) {
+            case AppWebDavSyncServer(:final password):
+              return password;
+            default:
+              return null;
+          }
+        });
   }
 
   Future<bool> writePassword({String? identity, required String? value}) async {

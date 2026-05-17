@@ -29,7 +29,7 @@ endif
 
 
 .PHONY: help bootstrap \
-	normalize-l10n build-runner gen-icons gen \
+	normalize-l10n build-runner format fix gen-icons gen \
 	verify-generated ci-check aio aio-full package-windows
 
 help:
@@ -38,11 +38,13 @@ help:
 	@echo   bootstrap         Initialize Flutter submodule and fetch packages
 	@echo   normalize-l10n    Normalize ARB resources
 	@echo   build-runner      Run build_runner and gen-l10n
+	@echo   format            Format Dart sources under lib and test
+	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
 	@echo   ci-check          Alias of verify-generated
-	@echo   aio               Run the standard local all-in-one workflow
+	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the internal Flutter test suite
 	@echo   package-windows   Build Windows MSIX package
 
@@ -55,6 +57,13 @@ normalize-l10n:
 
 build-runner:
 	$(call run_script,build_runner)
+
+format:
+	@dart format lib test
+
+fix:
+	@dart fix --apply
+	@$(SUBMAKE) format
 
 gen-icons:
 	$(call run_script,gen_icons)
@@ -71,6 +80,7 @@ ci-check: verify-generated
 
 aio:
 	@$(SUBMAKE) gen
+	@$(SUBMAKE) fix
 	@$(SUBMAKE) verify-generated
 
 aio-full:
