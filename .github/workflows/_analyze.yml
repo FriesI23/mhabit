@@ -11,4 +11,6 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_flutter
       - name: Analyze Dart
-        uses: zgosalvez/github-actions-analyze-dart@v5
+        uses: FriesI23/github-actions-analyze-dart@v5.1.0
+        with:
+          ignore-suffixes: '.g.dart|.gen.dart|.mock.dart'
