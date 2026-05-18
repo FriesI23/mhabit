@@ -1,0 +1,5 @@
+- Add Basque; update Arabic, French, Hebrew, Turkish, and Traditional Chinese translations plus locale metadata and contributors (#523, #529)
+- Update store metadata, summary text, install wording, brand colors, and f_store registration asset (#519, #525, #529, #534)
+- Upgrade to Flutter 3.41.9 and refresh deps, generated files, lockfiles, release checks, and runtime integration (#540)
+- Fix App Sync iter type handling and theme colors (#540)
+- Update README and the builder wiki (#525, #540)
