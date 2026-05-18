@@ -1,10 +1,23 @@
 module DeployLaneHelper
   module_function
 
+  def option_enabled?(options, key, default:)
+    value = options[key]
+    return default if value.nil?
+    return value if value == true || value == false
+
+    case value.to_s.strip.downcase
+    when "true", "1", "yes", "y"
+      true
+    when "false", "0", "no", "n"
+      false
+    else
+      default
+    end
+  end
+
   def dry_run_enabled?(options)
-    value = options[:dry_run]
-    return true if value == true
-    return true if value.to_s.downcase == "true"
+    return true if option_enabled?(options, :dry_run, default: false)
 
     ENV["DRY_RUN"].to_s == "1"
   end

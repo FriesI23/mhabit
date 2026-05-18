@@ -63,32 +63,53 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :deploy do |options|
     flavor = options[:flavor] || "f_store"
-    do_build = options.fetch(:build, true)
-    do_clean = options.fetch(:clean, true)
+    do_build = DeployLaneHelper.option_enabled?(options, :build, default: true)
+    do_clean = DeployLaneHelper.option_enabled?(options, :clean, default: true)
+    force_build = DeployLaneHelper.option_enabled?(options, :force_build, default: false)
     track = options[:track] || "alpha"
     dry_run = DeployLaneHelper.dry_run_enabled?(options)
-    pkg_path = "../build/macos/Build/Fastlane/Release-#{flavor}"
+    pkg_path = File.expand_path("../../build/macos/Build/Fastlane/Release-#{flavor}", __dir__)
+    pkg_artifact = File.join(pkg_path, "mhabit.pkg")
+    artifact_exists = File.exist?(pkg_artifact)
+    should_build = force_build || (do_build && !artifact_exists)
 
-    clean() if do_clean
-    build(flavor: flavor) if do_build
-    build_mac_app(
-      workspace: "Runner.xcworkspace",
-      scheme: flavor,
-      output_directory: pkg_path
-    )
+    if !do_build && !artifact_exists && !force_build
+      UI.user_error!(
+        "Missing existing build artifact at #{pkg_artifact}. Remove build:false or pass force_build:true."
+      )
+    end
+
+    UI.important("force_build:true overrides build:false") if force_build && !do_build
+    UI.message("Reusing existing PKG at #{pkg_artifact}") if artifact_exists && !should_build
+    UI.message("No PKG found at #{pkg_artifact}; building before upload") if do_build && !artifact_exists && !force_build
+
+    if do_clean && should_build
+      clean()
+    elsif do_clean
+      UI.message("Skipping clean because the existing PKG will be reused")
+    end
+
+    if should_build
+      build(flavor: flavor)
+      build_mac_app(
+        workspace: "Runner.xcworkspace",
+        scheme: flavor,
+        output_directory: pkg_path
+      )
+    end
 
     if track == "public"
       if dry_run
         DeployLaneHelper.report_dry_run_skip(
           action: "upload_to_app_store",
-          artifact: "#{pkg_path}/mhabit.pkg",
+          artifact: pkg_artifact,
           track: track
         )
         next
       end
 
       upload_to_app_store(
-        pkg: "#{pkg_path}/mhabit.pkg"
+        pkg: pkg_artifact
       )
     else
       changelog, localized_build_info = TestflightChangelogHelper.load(
@@ -97,7 +118,7 @@ platform :ios do
         build_number: options[:changelog_build_number]&.to_s
       )
       upload_options = {
-        pkg: "#{pkg_path}/mhabit.pkg",
+        pkg: pkg_artifact,
         uses_non_exempt_encryption: true,
         changelog: changelog,
         localized_build_info: localized_build_info
