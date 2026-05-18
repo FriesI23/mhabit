@@ -92,7 +92,7 @@ platform :android do
     dry_run = DeployLaneHelper.dry_run_enabled?(options)
     aab_path = android_release_aab_path(flavor)
     artifact_exists = File.exist?(aab_path)
-    should_build = force_build || (do_build && !artifact_exists)
+    should_build = force_build || do_build
 
     if !do_build && !artifact_exists && !force_build
       FastlaneCore::UI.user_error!(

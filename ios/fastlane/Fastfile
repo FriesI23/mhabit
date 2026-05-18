@@ -70,7 +70,7 @@ platform :ios do
     ipa_path = File.expand_path("../../build/ios/Build/Fastlane/Release-#{flavor}", __dir__)
     ipa_artifact = File.join(ipa_path, "Runner.ipa")
     artifact_exists = File.exist?(ipa_artifact)
-    should_build = force_build || (do_build && !artifact_exists)
+    should_build = force_build || do_build
 
     if !do_build && !artifact_exists && !force_build
       UI.user_error!(

@@ -71,7 +71,7 @@ platform :ios do
     pkg_path = File.expand_path("../../build/macos/Build/Fastlane/Release-#{flavor}", __dir__)
     pkg_artifact = File.join(pkg_path, "mhabit.pkg")
     artifact_exists = File.exist?(pkg_artifact)
-    should_build = force_build || (do_build && !artifact_exists)
+    should_build = force_build || do_build
 
     if !do_build && !artifact_exists && !force_build
       UI.user_error!(
