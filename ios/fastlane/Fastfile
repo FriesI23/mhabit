@@ -62,32 +62,53 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :deploy do |options|
     flavor = options[:flavor] || "f_store"
-    do_build = options.fetch(:build, true)
-    do_clean = options.fetch(:clean, true)
+    do_build = DeployLaneHelper.option_enabled?(options, :build, default: true)
+    do_clean = DeployLaneHelper.option_enabled?(options, :clean, default: true)
+    force_build = DeployLaneHelper.option_enabled?(options, :force_build, default: false)
     track = options[:track] || "alpha"
     dry_run = DeployLaneHelper.dry_run_enabled?(options)
-    ipa_path = "../build/ios/Build/Fastlane/Release-#{flavor}"
+    ipa_path = File.expand_path("../../build/ios/Build/Fastlane/Release-#{flavor}", __dir__)
+    ipa_artifact = File.join(ipa_path, "Runner.ipa")
+    artifact_exists = File.exist?(ipa_artifact)
+    should_build = force_build || do_build
 
-    clean() if do_clean
-    build(flavor: flavor) if do_build
-    build_ios_app(
-      workspace: "Runner.xcworkspace",
-      scheme: flavor,
-      output_directory: ipa_path
-    )
+    if !do_build && !artifact_exists && !force_build
+      UI.user_error!(
+        "Missing existing build artifact at #{ipa_artifact}. Remove build:false or pass force_build:true."
+      )
+    end
+
+    UI.important("force_build:true overrides build:false") if force_build && !do_build
+    UI.message("Reusing existing IPA at #{ipa_artifact}") if artifact_exists && !should_build
+    UI.message("No IPA found at #{ipa_artifact}; building before upload") if do_build && !artifact_exists && !force_build
+
+    if do_clean && should_build
+      clean()
+    elsif do_clean
+      UI.message("Skipping clean because the existing IPA will be reused")
+    end
+
+    if should_build
+      build(flavor: flavor)
+      build_ios_app(
+        workspace: "Runner.xcworkspace",
+        scheme: flavor,
+        output_directory: ipa_path
+      )
+    end
 
     if track == "public"
       if dry_run
         DeployLaneHelper.report_dry_run_skip(
           action: "upload_to_app_store",
-          artifact: "#{ipa_path}/Runner.ipa",
+          artifact: ipa_artifact,
           track: track
         )
         next
       end
 
       upload_to_app_store(
-        ipa: "#{ipa_path}/Runner.ipa"
+        ipa: ipa_artifact
       )
     else
       changelog, localized_build_info = TestflightChangelogHelper.load(
@@ -96,7 +117,7 @@ platform :ios do
         build_number: options[:changelog_build_number]&.to_s
       )
       upload_options = {
-        ipa: "#{ipa_path}/Runner.ipa",
+        ipa: ipa_artifact,
         uses_non_exempt_encryption: true,
         changelog: changelog,
         localized_build_info: localized_build_info
