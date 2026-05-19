@@ -18,8 +18,19 @@ runs:
           echo "No jni CMakeLists.txt found under $pub_cache_root"
           exit 1
         fi
-        sed -i -E -e 's/-Wl,(--build-id=none,)*/-Wl,--build-id=none,/g' \
-          "${jni_cmake_files[@]}"
+        for jni_cmake_file in "${jni_cmake_files[@]}"; do
+          echo "Patching $jni_cmake_file"
+          mapfile -t before_matches < <(grep -n -- '-Wl,' "$jni_cmake_file" || true)
+          sed -i -E \
+            -e 's/-Wl,(--build-id=none,)*/-Wl,--build-id=none,/g' \
+            "$jni_cmake_file"
+          for before_match in "${before_matches[@]}"; do
+            line_number="${before_match%%:*}"
+            before_line="${before_match#*:}"
+            after_line=$(sed -n "${line_number}p" "$jni_cmake_file")
+            printf '  %s:%s -> %s\n' "$line_number" "$before_line" "$after_line"
+          done
+        done
         missing_patches=$(grep -L -- '--build-id=none' "${jni_cmake_files[@]}" || true)
         if [[ -n "$missing_patches" ]]; then
           echo "Failed to patch:"
