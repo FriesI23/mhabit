@@ -206,7 +206,7 @@ jobs:
       arch: ${{ matrix.variant.arch }}
       flatpak-arch: ${{ matrix.variant.flatpak-arch }}
       flatpak-name: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
-      retention-days: ${{ inputs.retention-days }}
+      retention-days: ${{ fromJSON(format('{0}', inputs.retention-days)) }}
 
   summary:
     name: Build Summary
