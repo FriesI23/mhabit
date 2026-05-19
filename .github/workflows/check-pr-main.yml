@@ -83,6 +83,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
+      - uses: ./.github/actions/patch_android_jni_build_id
       - id: build
         env:
           OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
