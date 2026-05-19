@@ -94,23 +94,32 @@ jobs:
       flatpak-artifact-id: ${{ steps.upload-bundle.outputs.artifact-id }}
       flatpak-name: ${{ env.FLATPAK_BUNDLE }}
     env:
-      ARTIFACT_TOKEN: ${{ secrets['artifact-token'] }}
       FLATPAK_ARCH: ${{ inputs.flatpak-arch }}
       FLATPAK_BUNDLE: >
         ${{ inputs.flatpak-name != '' && inputs.flatpak-name ||
         format('mhabit-{0}.flatpak', inputs.flatpak-arch) }}
     steps:
       - uses: actions/checkout@v6
+      - name: Check artifact token
+        id: artifact-token
+        env:
+          ARTIFACT_TOKEN: ${{ secrets['artifact-token'] }}
+        run: |
+          if [[ -n "$ARTIFACT_TOKEN" ]]; then
+            echo "use-token=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "use-token=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Fetch Bundle with token
-        if: ${{ env.ARTIFACT_TOKEN != '' }}
+        if: ${{ steps.artifact-token.outputs.use-token == 'true' }}
         id: fetch-bundle-step-token
         uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build.outputs.bundle-name }}
           path: ${{ needs.build.outputs.bundle-path }}
-          github-token: ${{ env.ARTIFACT_TOKEN }}
+          github-token: ${{ secrets['artifact-token'] }}
       - name: Fetch Bundle
-        if: ${{ env.ARTIFACT_TOKEN == '' }}
+        if: ${{ steps.artifact-token.outputs.use-token != 'true' }}
         id: fetch-bundle-step
         uses: actions/download-artifact@v8
         with:
