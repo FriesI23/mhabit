@@ -22,10 +22,11 @@ case "${ARCH}" in
   *)         echo "Unsupported arch: ${ARCH}"; exit 1 ;;
 esac
 
-apt-get install -y flatpak flatpak-builder
+apt-get install -y flatpak
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-flatpak install -y "org.freedesktop.Sdk/${FLAT_ARCH}/23.08"
-flatpak install -y "org.freedesktop.Platform/${FLAT_ARCH}/23.08"
+flatpak install -y "org.freedesktop.Sdk/${FLAT_ARCH}/25.08"
+flatpak install -y "org.freedesktop.Platform/${FLAT_ARCH}/25.08"
 flatpak install -y flathub org.freedesktop.appstream-glib
+flatpak install -y flathub org.flatpak.Builder

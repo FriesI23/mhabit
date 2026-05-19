@@ -87,7 +87,7 @@ jobs:
     needs:
       - build
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-23.08
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     runs-on: ${{ needs.build.outputs.runner }}
     outputs:
