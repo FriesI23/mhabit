@@ -20,6 +20,10 @@ on:
           0 means using default retention.
         type: number
         default: 0
+    secrets:
+      artifact-token:
+        description: Optional token for artifact download.
+        required: false
     outputs:
       flatpak-artifact-id:
         description: artifact-id for generated Flatpak file
@@ -90,19 +94,28 @@ jobs:
       flatpak-artifact-id: ${{ steps.upload-bundle.outputs.artifact-id }}
       flatpak-name: ${{ env.FLATPAK_BUNDLE }}
     env:
+      ARTIFACT_TOKEN: ${{ secrets['artifact-token'] }}
       FLATPAK_ARCH: ${{ inputs.flatpak-arch }}
       FLATPAK_BUNDLE: >
         ${{ inputs.flatpak-name != '' && inputs.flatpak-name ||
         format('mhabit-{0}.flatpak', inputs.flatpak-arch) }}
     steps:
       - uses: actions/checkout@v6
+      - name: Fetch Bundle with token
+        if: ${{ env.ARTIFACT_TOKEN != '' }}
+        id: fetch-bundle-step-token
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.bundle-name }}
+          path: ${{ needs.build.outputs.bundle-path }}
+          github-token: ${{ env.ARTIFACT_TOKEN }}
       - name: Fetch Bundle
+        if: ${{ env.ARTIFACT_TOKEN == '' }}
         id: fetch-bundle-step
         uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build.outputs.bundle-name }}
           path: ${{ needs.build.outputs.bundle-path }}
-          github-token: ${{ secrets.APP_RELEASE_TOKEN }}
       - run: ls -al ${{ needs.build.outputs.bundle-path }}
       - name: Build .flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
