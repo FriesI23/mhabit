@@ -1,0 +1,269 @@
+name: Manual Build Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Platform to build
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - android
+          - ios
+          - macos
+          - windows
+          - linux
+      run-prechecks:
+        description: Run analyze, check, and test before building
+        type: boolean
+        required: true
+        default: true
+      retention-days:
+        description: Artifact retention in days
+        type: number
+        required: true
+        default: 5
+
+jobs:
+  analyzing:
+    if: ${{ inputs.run-prechecks }}
+    uses: ./.github/workflows/_analyze.yml
+
+  checking:
+    if: ${{ inputs.run-prechecks }}
+    uses: ./.github/workflows/_check.yml
+
+  testing:
+    if: ${{ inputs.run-prechecks }}
+    uses: ./.github/workflows/_test.yml
+
+  precheck-gate:
+    name: Precheck Gate
+    if: ${{ always() }}
+    needs:
+      - analyzing
+      - checking
+      - testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify prechecks
+        env:
+          RUN_PRECHECKS: ${{ inputs.run-prechecks }}
+          ANALYZING_RESULT: ${{ needs.analyzing.result }}
+          CHECKING_RESULT: ${{ needs.checking.result }}
+          TESTING_RESULT: ${{ needs.testing.result }}
+        run: |
+          if [[ "$RUN_PRECHECKS" != "true" ]]; then
+            echo "Prechecks disabled."
+            exit 0
+          fi
+
+          if [[ "$ANALYZING_RESULT" != "success" ]]; then
+            echo "Analyze failed with result: $ANALYZING_RESULT"
+            exit 1
+          fi
+
+          if [[ "$CHECKING_RESULT" != "success" ]]; then
+            echo "Check failed with result: $CHECKING_RESULT"
+            exit 1
+          fi
+
+          if [[ "$TESTING_RESULT" != "success" ]]; then
+            echo "Test failed with result: $TESTING_RESULT"
+            exit 1
+          fi
+
+  build-android:
+    name: Build Android APK
+    needs:
+      - precheck-gate
+    if: ${{ inputs.target == 'all' || inputs.target == 'android' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_jdk
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_android
+        with:
+          app-sign-key-password: ${{ secrets.APP_SIGN_KEY_PASSWORD }}
+          app-sign-store-password: ${{ secrets.APP_SIGN_STORE_PASSWORD }}
+          app-sign-key-alias: ${{ secrets.APP_SIGN_KEY_ALIAS }}
+          app-sign-key-jks: ${{ secrets.APP_SIGN_KEY_JKS }}
+          properties-path: android/key.properties
+          build-bundle: false
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: mhabit-android-apk
+          path: |
+            ${{ steps.build.outputs.apk-path }}
+            ${{ steps.build.outputs.apk-v7a-path }}
+            ${{ steps.build.outputs.apk-v8a-path }}
+            ${{ steps.build.outputs.apk-x64-path }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+
+  build-ios:
+    name: Build Unsigned iOS IPA
+    needs:
+      - precheck-gate
+    if: ${{ inputs.target == 'all' || inputs.target == 'ios' }}
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_ios_unsigned
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mhabit-ios-ipa
+          path: ${{ steps.build.outputs.ipa-path }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+
+  build-macos-dmg:
+    name: Build macOS DMG
+    needs:
+      - precheck-gate
+    if: ${{ inputs.target == 'all' || inputs.target == 'macos' }}
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: true
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mhabit-macos-dmg
+          path: ${{ steps.build.outputs.dmg-path }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+
+  build-windows-msix:
+    name: Build Windows MSIX Installer
+    needs:
+      - precheck-gate
+    if: ${{ inputs.target == 'all' || inputs.target == 'windows' }}
+    strategy:
+      matrix:
+        variant:
+          - arch: x64
+            runner: windows-2022
+    runs-on: ${{ matrix.variant.runner }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_windows
+        with:
+          arch: ${{ matrix.variant.arch }}
+          app-sign-key-pfx: ${{ secrets.APP_SIGN_KEY_PFX }}
+          app-sign-key-pfx-password: ${{ secrets.APP_SIGN_KEY_PFX_PASSWORD }}
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mhabit-windows-${{ matrix.variant.arch }}-msix
+          path: ${{ steps.build.outputs.msix-path }}
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+
+  build-linux-flatpak:
+    name: Build Linux Flatpak
+    needs:
+      - precheck-gate
+    if: ${{ inputs.target == 'all' || inputs.target == 'linux' }}
+    strategy:
+      matrix:
+        variant:
+          - arch: x64
+            runner: ubuntu-22.04
+            flatpak-arch: x86_64
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+            flatpak-arch: aarch64
+    uses: ./.github/workflows/_build-linux-flatpak.yml
+    with:
+      arch: ${{ matrix.variant.arch }}
+      flatpak-arch: ${{ matrix.variant.flatpak-arch }}
+      flatpak-name: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
+      retention-days: ${{ inputs.retention-days }}
+
+  summary:
+    name: Build Summary
+    if: ${{ always() }}
+    needs:
+      - precheck-gate
+      - build-android
+      - build-ios
+      - build-macos-dmg
+      - build-windows-msix
+      - build-linux-flatpak
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write summary
+        env:
+          TARGET: ${{ inputs.target }}
+          RUN_PRECHECKS: ${{ inputs.run-prechecks }}
+          RETENTION_DAYS: ${{ inputs.retention-days }}
+          PRECHECK_RESULT: ${{ needs.precheck-gate.result }}
+          ANDROID_RESULT: ${{ needs.build-android.result }}
+          IOS_RESULT: ${{ needs.build-ios.result }}
+          MACOS_RESULT: ${{ needs.build-macos-dmg.result }}
+          WINDOWS_RESULT: ${{ needs.build-windows-msix.result }}
+          LINUX_RESULT: ${{ needs.build-linux-flatpak.result }}
+        run: |
+          {
+            echo "## Manual Build Summary"
+            echo
+            echo "- Target: $TARGET"
+            echo "- Run prechecks: $RUN_PRECHECKS"
+            echo "- Retention days: $RETENTION_DAYS"
+            echo
+            echo "### Job results"
+            echo
+            echo "- Precheck gate: $PRECHECK_RESULT"
+            echo "- Android: $ANDROID_RESULT"
+            echo "- iOS: $IOS_RESULT"
+            echo "- macOS: $MACOS_RESULT"
+            echo "- Windows: $WINDOWS_RESULT"
+            echo "- Linux Flatpak: $LINUX_RESULT"
+            echo
+            echo "### Artifact names"
+            echo
+            if [[ "$TARGET" == "all" || "$TARGET" == "android" ]]; then
+              echo "- mhabit-android-apk"
+            fi
+            if [[ "$TARGET" == "all" || "$TARGET" == "ios" ]]; then
+              echo "- mhabit-ios-ipa"
+            fi
+            if [[ "$TARGET" == "all" || "$TARGET" == "macos" ]]; then
+              echo "- mhabit-macos-dmg"
+            fi
+            if [[ "$TARGET" == "all" || "$TARGET" == "windows" ]]; then
+              echo "- mhabit-windows-x64-msix"
+            fi
+            if [[ "$TARGET" == "all" || "$TARGET" == "linux" ]]; then
+              echo "- mhabit-x86_64.flatpak"
+              echo "- mhabit-aarch64.flatpak"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -228,6 +228,8 @@ jobs:
       flatpak-arch: ${{ matrix.variant.flatpak-arch }}
       flatpak-name: mhabit-${{ matrix.variant.flatpak-arch }}.flatpak
       retention-days: 1
+    secrets:
+      artifact-token: ${{ secrets.APP_RELEASE_TOKEN }}
 
   publish-linux:
     needs:
