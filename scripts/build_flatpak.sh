@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -euo pipefail
+
 if [[ "$(uname)" != "Linux" ]]; then
     echo "Error: This script is only intended for linux systems." >&2
     exit 1
@@ -25,9 +27,17 @@ check_command() {
     fi
 }
 
+check_flatpak_app() {
+    local app_id="$1"
+    if ! flatpak info "$app_id" &>/dev/null; then
+        echo "Error: Flatpak app '$app_id' is not installed." >&2
+        exit 1
+    fi
+}
+
 check_command flutter
 check_command flatpak
-check_command flatpak-builder
+check_flatpak_app org.flatpak.Builder
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
@@ -35,10 +45,15 @@ flutter clean
 flutter pub get
 flutter build linux --release
 
+set -x
+
 mkdir -p "$HERE/../build/linux/flatpak_builder"
 cd "$HERE/../build/linux/flatpak_builder"
-flatpak-builder --force-clean build-dir \
+flatpak run org.flatpak.Builder \
+    --force-clean build-dir \
     --repo=repo-dir \
     --default-branch=main \
     "$HERE/../configs/flatpak_builder/io.github.friesi23.mhabit.yml"
 flatpak build-bundle repo-dir mhabit.flatpak io.github.friesi23.mhabit main
+
+set +x
