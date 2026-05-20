@@ -1,24 +1,34 @@
-# Release: v1.24.1+154
-
-**🌐 Localization**
-
-- Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)
-- Update Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate (#529)
-- Update French translation, thanks to biram's contribution on Weblate (#529)
-- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#529)
-- Update Turkish translation, thanks to Soykan Aydın's contribution on Weblate (#529)
-- Update Traditional Chinese translation, thanks to William's contribution on Weblate (#529)
-- Refresh related locale metadata and contributor info (#523, #529)
+# Release: v1.24.2+156
 
 **🧹 Others**
 
-- Update store metadata, brand colors, summary text, installation wording, and the f_store registration asset (#519, #525, #529, #534)
-- Upgrade to Flutter 3.41.9 and migrate required framework breaking changes (#540)
-- Refresh package dependencies, generated files, Fastlane lockfiles, release checks, and runtime integration for newer toolchains (#540)
-- Fix App Sync server iter type handling (#540)
-- Fix theme colors (#540)
+- Maintenance release to resolve a build issue affecting F-Droid distribution (#543, #544).
+- No user-facing changes in this release; app functionality remains the same as v1.24.1+154.
+
+---
+
+## Highlights from v1.24.1+154
+
+> Main user-facing updates are from v1.24.1+154.
+
+**🌐 Localization**
+
+- Added Basque translation resources and locale metadata.
+- Updated Arabic, French, Hebrew, Turkish, and Traditional Chinese translations.
+- Refreshed related locale metadata and contributor info.
+
+**🧹 Others**
+
+- Updated store metadata, brand colors, summary text, installation wording, and f_store registration asset.
+- Upgraded to Flutter 3.41.9 and migrated required framework breaking changes.
+- Refreshed dependencies, generated files, Fastlane lockfiles, release checks, and runtime integration for newer toolchains.
+- Fixed App Sync server iter type handling.
+- Fixed theme colors.
 
 **📝 Documentation**
 
-- Update installation wording and README content (#519, #525)
-- Update the source builder wiki (#540)
+- Updated installation wording, README content, and source builder wiki.
+
+**v1.24.1+154 Full Changelog**: https://github.com/FriesI23/mhabit/compare/v1.23.11+151...v1.24.1+154
+
+**Full Changelog**: https://github.com/FriesI23/mhabit/compare/v1.24.1+154...v1.24.2+156
