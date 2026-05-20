@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.2+156
+
+- Maintenance release to resolve a build issue affecting F-Droid distribution (#543, #544)
+- No user-facing changes in this version
+
 ## 1.24.1+154
 
 - Add Basque; update Arabic, French, Hebrew, Turkish, and Traditional Chinese translations plus locale metadata and contributors (#523, #529)

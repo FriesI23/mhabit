@@ -1,0 +1,2 @@
+- Maintenance release to resolve a build issue affecting F-Droid distribution (#543, #544)
+- No user-facing changes in this version
