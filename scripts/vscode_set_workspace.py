@@ -19,9 +19,17 @@ import json
 import logging
 import copy
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 
 here = os.path.dirname(__file__)
+
+
+def parse_launch_env(opt: str) -> tuple[str, str]:
+    """Parse KEY=VALUE pairs for launch env injection."""
+    key, sep, value = opt.partition("=")
+    if not sep or not key:
+        raise ArgumentTypeError(f"invalid --launch-env value: {opt!r}")
+    return key, value
 
 
 def init_parser():
@@ -39,30 +47,26 @@ def init_parser():
         "--launchs",
         nargs="+",
         type=str,
-        default=[
-            os.path.abspath(
-                os.path.join(here, "..", ".templates", "vscode", "launch.json.default")
-            )
-        ],
+        default=[os.path.abspath(os.path.join(here, "..", ".vscode", "launch.json"))],
     )
     parser.add_argument(
         "--settings",
         nargs="+",
         type=str,
         default=[
-            os.path.abspath(
-                os.path.join(here, "..", ".templates", "vscode", "settings.json.default")
-            ),
-            os.path.abspath(
-                os.path.join(
-                    here, "..", ".templates", "vscode", "settings.json.recommend"
-                ),
-            ),
+            os.path.abspath(os.path.join(here, "..", ".vscode", "settings.json")),
         ],
     )
     parser.add_argument("--licenser-author", type=str, default=None)
     parser.add_argument("--dart-flutterSdkPath", type=str, default=None)
-    parser.add_argument("--x11-display", type=str, default=None)
+    parser.add_argument(
+        "--launch-env",
+        action="append",
+        type=parse_launch_env,
+        default=[],
+        metavar="KEY=VALUE",
+        help="inject KEY=VALUE into every generated launch configuration; repeatable",
+    )
     parser.add_argument("-f", "--force", action="store_true", default=False)
     parser.add_argument("--dry-run", action="store_true", default=False)
     parser.add_argument("-v", "--verbose", action="store_true", default=False)
@@ -84,9 +88,7 @@ def main():
         "licenser.author": args.licenser_author,  # type: str | None
         "dart.flutterSdkPath": args.dart_flutterSdkPath,  # type: str | None
     }
-    launch_envs: dict[str:any] = {}
-    if args.x11_display is not None:
-        launch_envs["DISPLAY"] = args.x11_display
+    launch_envs = {key: value for key, value in args.launch_env}
     output = process(
         name=name,
         output_path=output_path,
@@ -174,7 +176,7 @@ def process(
     force: bool,
     dry_run: bool,
     setting_opts: dict[str:any] = None,
-    launch_envs: dict[str:any] = None,
+    launch_envs: dict[str, str] = None,
 ) -> str | None:
     """..."""
     setting_opts = setting_opts or {}
@@ -214,12 +216,12 @@ def process(
     setting_data = merge_settings(raw_setting_datas)
 
     ws_data = merge_settings((workspace_data.get("settings", {}), setting_data))
-    del ws_data["$schema"]
+    ws_data.pop("$schema", None)
     if ws_data:
         workspace_data["settings"] = ws_data
 
     wl_data = merge_launchs((workspace_data.get("launch", {}), launch_data))
-    del wl_data["$schema"]
+    wl_data.pop("$schema", None)
     if wl_data:
         workspace_data["launch"] = wl_data
 

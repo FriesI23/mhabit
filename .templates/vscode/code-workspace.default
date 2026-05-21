@@ -5,7 +5,18 @@
             "path": "."
         }
     ],
-    "settings": { },
-    "extensions": { },
-    "launch": { }
+    "settings": {
+        "licenser.projectName": "Table Habit",
+        "licenser.license": "AL2",
+        "files.associations": {
+            "*.arb": "json",
+            "*.gradle": "groovy"
+        },
+        "dartImport.fixOnSave": true,
+        "xml.format.spaceBeforeEmptyCloseTag": false,
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.project.resourceFilters": [
+            ".flutter"
+        ]
+    }
 }
