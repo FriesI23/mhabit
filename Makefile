@@ -3,6 +3,7 @@ SUBMAKE := $(MAKE) --no-print-directory
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd.exe
+LOCAL_FLUTTER := .flutter\bin\flutter.bat
 FLUTTER_BIN_DIR := $(if $(wildcard .flutter/bin/flutter.bat),.flutter\bin,)
 PATH_SEP := ;
 BASE_PATH := $(strip $(shell powershell -NoProfile -Command "$$machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine'); $$user = [System.Environment]::GetEnvironmentVariable('Path', 'User'); [Console]::Write($$machine + ';' + $$user)"));$(PATH)
@@ -12,6 +13,7 @@ define run_script
 endef
 else
 SHELL := /bin/bash
+LOCAL_FLUTTER := ./.flutter/bin/flutter
 FLUTTER_BIN_DIR := $(if $(wildcard .flutter/bin/flutter),./.flutter/bin,)
 PATH_SEP := :
 BASE_PATH := $(PATH)
@@ -61,7 +63,7 @@ init:
 	@echo "Git aliases configured: cfix, cbump"
 	@git submodule update --init --recursive
 	@echo "Submodules initialized"
-	@flutter pub get
+	@"$(LOCAL_FLUTTER)" pub get
 	@echo "Flutter packages resolved"
 
 bootstrap: init
