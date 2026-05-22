@@ -1,0 +1,7 @@
+# Type(<scope>): <subject>
+# fix: <title>
+
+# <body>
+
+# <footer>
+# resolved <issue/pr number, optional, e.g. #12345>
