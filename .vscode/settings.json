@@ -1,4 +1,10 @@
 {
+  "licenser.projectName": "Table Habit",
+  "licenser.license": "AL2",
+  "files.associations": {
+    "*.arb": "json",
+    "*.gradle": "groovy"
+  },
   "search.exclude": {
     "**/.flutter": true,
     "**/.fvm": true
@@ -18,6 +24,8 @@
   "dart.flutterRunAdditionalArgs": [
     "--no-enable-impeller"
   ],
+  "dartImport.fixOnSave": true,
+  "xml.format.spaceBeforeEmptyCloseTag": false,
   "[dart]": {
     "editor.tabSize": 2,
     "editor.rulers": [

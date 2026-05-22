@@ -26,6 +26,8 @@
 Add Release change log in `docs/release.md`,
 Release-CI will use this file to automatically fill in [Release][github-release] description.
 
+You can start from `docs/release.template.md` and then update it for the target version.
+
 > Change SHOULD include: `<previous stable version>...<current version>`.
 
 ## 3. Update Changelog
