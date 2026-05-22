@@ -22,7 +22,18 @@ write_template() {
         exit 1
     fi
 
-    cat "$template_file" >"$COMMIT_MSG_FILE"
+    temp_commit_msg_file="$COMMIT_MSG_FILE.tmp.$$"
+
+    {
+        cat "$template_file"
+
+        if [ -s "$COMMIT_MSG_FILE" ]; then
+            printf '\n'
+            cat "$COMMIT_MSG_FILE"
+        fi
+    } >"$temp_commit_msg_file" || exit 1
+
+    mv "$temp_commit_msg_file" "$COMMIT_MSG_FILE"
 }
 
 if [ -n "$COMMIT_SOURCE" ]; then

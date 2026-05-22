@@ -52,7 +52,7 @@ help:
 	@echo   package-windows   Build Windows MSIX package
 
 init:
-	@git config core.hooksPath .githooks
+	@git config --local core.hooksPath .githooks
 	@echo "Git hooks path has been set!"
 	-@git config --local --unset-all commit.template
 	@echo "Legacy git commit.template has been cleared if it was set"

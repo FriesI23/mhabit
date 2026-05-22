@@ -5,15 +5,16 @@ CLEAN_MSG=$(awk '!/^#/ && NF { print; exit }' "$COMMIT_MSG_FILE")
 
 REG_EXP='^(feat|fix|docs|style|refactor|test|chore)(\(.*\))?: .+'
 BUMP_VERSION_PREFIX='^chore(\(.*\))?: Bump version to '
-BUMP_VERSION_REG_EXP='^chore(\(.*\))?: Bump version to (pre-)?v[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$'
+BUMP_VERSION_REG_EXP='^chore(\(.*\))?: Bump version to (pre-v[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+|v[0-9]+\.[0-9]+\.[0-9]+(-pre(\.[0-9]+)?)?\+[0-9]+|v[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+-pre)$'
 
 if echo "$CLEAN_MSG" | grep -Eq "$BUMP_VERSION_PREFIX"; then
     if ! echo "$CLEAN_MSG" | grep -Eq "$BUMP_VERSION_REG_EXP"; then
         echo "========================================================="
         echo "❌ [ERROR]: Invalid bump version commit message format."
-        echo "Format : chore: Bump version to <vx.y.z+NN>"
+        echo "Format : chore: Bump version to <vx.y.z+NN[-pre]>"
         echo "Allowed: chore(scope): Bump version to v1.2.3+45"
-        echo "Allowed: chore(scope): Bump version to pre-v1.2.3+45"
+        echo "Allowed: chore(scope): Bump version to v1.2.3+45-pre"
+        echo "Also accepted: chore(scope): Bump version to pre-v1.2.3+45"
         echo "========================================================="
         exit 1
     fi
