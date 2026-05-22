@@ -33,7 +33,7 @@ template_kind=${MHABIT_COMMIT_TEMPLATE:-default}
 
 if [ "$template_kind" = "default" ] &&
     git diff --cached --unified=0 -- pubspec.yaml |
-    grep -Eq '^\+version: [0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$'; then
+    grep -Eq '^\+version: [0-9]+\.[0-9]+\.[0-9]+\+[0-9]+(-pre)?$'; then
     template_kind=bumpversion
 fi
 

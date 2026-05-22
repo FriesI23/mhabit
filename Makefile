@@ -56,8 +56,8 @@ init:
 	@echo "Git hooks path has been set!"
 	-@git config --local --unset-all commit.template
 	@echo "Legacy git commit.template has been cleared if it was set"
-	@git config --local alias.cfix 'commit -t .githooks/templates/bugfix.txt'
-	@git config --local alias.cbump 'commit -t .githooks/templates/bumpversion.txt'
+	@git config --local alias.cfix "commit -t .githooks/templates/bugfix.txt"
+	@git config --local alias.cbump "commit -t .githooks/templates/bumpversion.txt"
 	@echo "Git aliases configured: cfix, cbump"
 	@git submodule update --init --recursive
 	@echo "Submodules initialized"
