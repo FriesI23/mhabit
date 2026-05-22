@@ -28,14 +28,16 @@ export MHABIT_MAKE_PATH_READY := 1
 endif
 
 
-.PHONY: help bootstrap \
+
+.PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons gen \
-	verify-generated ci-check aio aio-full package-windows
+	verify-generated verify-submodules ci-check aio aio-full package-windows
 
 help:
 	@echo Standardized automation entrypoints
 	$(BLANK_LINE)
-	@echo   bootstrap         Initialize Flutter submodule and fetch packages
+	@echo   init              Configure git hooks and aliases, initialize submodule, fetch packages
+	@echo   bootstrap         Alias of init
 	@echo   normalize-l10n    Normalize ARB resources
 	@echo   build-runner      Run build_runner and gen-l10n
 	@echo   format            Format Dart sources under lib and test
@@ -43,14 +45,29 @@ help:
 	@echo   gen-icons         Generate icon fonts
 	@echo   gen               Run the main generation workflow
 	@echo   verify-generated  Ensure normalized/generated files are up to date
+	@echo   verify-submodules Show recursive submodule status
 	@echo   ci-check          Alias of verify-generated
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the internal Flutter test suite
 	@echo   package-windows   Build Windows MSIX package
 
-bootstrap:
+init:
+	@git config core.hooksPath .githooks
+	@echo "Git hooks path has been set!"
+	-@git config --local --unset-all commit.template
+	@echo "Legacy git commit.template has been cleared if it was set"
+	@git config --local alias.cfix 'commit -t .githooks/templates/bugfix.txt'
+	@git config --local alias.cbump 'commit -t .githooks/templates/bumpversion.txt'
+	@echo "Git aliases configured: cfix, cbump"
 	@git submodule update --init --recursive
+	@echo "Submodules initialized"
 	@flutter pub get
+	@echo "Flutter packages resolved"
+
+bootstrap: init
+
+verify-submodules:
+	@git submodule status --recursive
 
 normalize-l10n:
 	$(call run_script,normalize_arb)

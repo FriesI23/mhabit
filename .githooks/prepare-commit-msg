@@ -1,0 +1,40 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+REPO_ROOT=$(git rev-parse --show-toplevel)
+TEMPLATE_DIR="$REPO_ROOT/.githooks/templates"
+
+write_template() {
+    case "$1" in
+        default|bugfix|bumpversion)
+            template_file="$TEMPLATE_DIR/$1.txt"
+            ;;
+        *)
+            echo "Unsupported MHABIT_COMMIT_TEMPLATE: $1" >&2
+            echo "Allowed values: default, bugfix, bumpversion" >&2
+            exit 1
+            ;;
+    esac
+
+    if [ ! -f "$template_file" ]; then
+        echo "Missing commit template file: $template_file" >&2
+        exit 1
+    fi
+
+    cat "$template_file" >"$COMMIT_MSG_FILE"
+}
+
+if [ -n "$COMMIT_SOURCE" ]; then
+    exit 0
+fi
+
+template_kind=${MHABIT_COMMIT_TEMPLATE:-default}
+
+if [ "$template_kind" = "default" ] &&
+    git diff --cached --unified=0 -- pubspec.yaml |
+    grep -Eq '^\+version: [0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$'; then
+    template_kind=bumpversion
+fi
+
+write_template "$template_kind"

@@ -1,0 +1,6 @@
+# Type(<scope>): <subject>
+# chore: Bump version to <vx.y.z+NN>
+
+# <body>
+
+# <footer>
