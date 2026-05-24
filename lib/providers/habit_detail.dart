@@ -365,6 +365,7 @@ class HabitDetailViewModel extends ChangeNotifier
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (_, _) => _updateHabitAutoCompleteStatistics(),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -377,7 +378,6 @@ class HabitDetailViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics();
-    _updateHabitReminder();
     if (listen) notifyListeners();
     return result.data;
   }
@@ -399,6 +399,7 @@ class HabitDetailViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (_, _) => _updateHabitAutoCompleteStatistics(),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -411,7 +412,6 @@ class HabitDetailViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics();
-    _updateHabitReminder();
     if (listen) notifyListeners();
     return result.data;
   }
@@ -432,6 +432,7 @@ class HabitDetailViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (_, _) => _updateHabitAutoCompleteStatistics(),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -444,7 +445,6 @@ class HabitDetailViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics();
-    _updateHabitReminder();
     if (listen) notifyListeners();
     return result.data;
   }
@@ -459,11 +459,7 @@ class HabitDetailViewModel extends ChangeNotifier
       action: ChangeMultiHabitStatusAction([
         habitDetailData.data,
       ], status: newStatus),
-      extraResolver: (result) async {
-        final t1 = _updateHabitReminder();
-        _updateHabitAutoCompleteStatistics();
-        await t1;
-      },
+      extraResolver: (result) => _updateHabitAutoCompleteStatistics(),
     );
 
     if (results.isEmpty || !mounted) return null;

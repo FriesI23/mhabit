@@ -691,6 +691,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -703,7 +705,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _updateHabitReminder(data);
     if (listen) notifyListeners();
     return result.data;
   }
@@ -725,6 +726,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -737,7 +740,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _updateHabitReminder(data);
     if (listen) notifyListeners();
     return result.data;
   }
@@ -760,6 +762,8 @@ class HabitSummaryViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -772,7 +776,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _updateHabitReminder(data);
     if (listen) notifyListeners();
     return result.data;
   }
@@ -813,11 +816,8 @@ class HabitSummaryViewModel extends ChangeNotifier
     final dataList = uuidList.map(getHabit).nonNulls.toList();
     final results = await habitsManager.changeHabitStatus(
       action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
-      extraResolver: (result) async {
-        final t1 = _updateHabitReminder(result.data);
-        _updateHabitAutoCompleteStatistics(result.data);
-        await t1;
-      },
+      extraResolver: (result) =>
+          _updateHabitAutoCompleteStatistics(result.data),
     );
     return results
         .map(

@@ -423,6 +423,8 @@ class HabitsTodayViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -435,7 +437,6 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _updateHabitReminder(data);
     _resortData();
     _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();
@@ -459,6 +460,8 @@ class HabitsTodayViewModel extends ChangeNotifier
       ),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
+      beforeReminderUpdate: (habit, _) =>
+          _updateHabitAutoCompleteStatistics(habit),
     );
     final result = results.firstOrNull;
     if (result == null) return null;
@@ -471,7 +474,6 @@ class HabitsTodayViewModel extends ChangeNotifier
     );
 
     _updateHabitAutoCompleteStatistics(data);
-    _updateHabitReminder(data);
     _resortData();
     _removeHabitExpandStatus(uuid);
     if (listen) notifyListeners();

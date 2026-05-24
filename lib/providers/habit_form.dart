@@ -25,7 +25,6 @@ import '../models/habit_display.dart';
 import '../models/habit_form.dart';
 import '../models/habit_freq.dart';
 import '../models/habit_reminder.dart';
-import '../models/habit_summary.dart';
 import '../storage/db/handlers/habit.dart';
 import '../utils/app_clock.dart';
 import 'commons.dart';
@@ -231,14 +230,10 @@ class HabitFormViewModel extends ChangeNotifier
       );
       return null;
     }
-    final cell = switch (_form.editMode) {
-      HabitDisplayEditMode.create => await _saveNewHabit(),
-      HabitDisplayEditMode.edit => await _saveExistHabit(),
+    return switch (_form.editMode) {
+      HabitDisplayEditMode.create => _saveNewHabit(),
+      HabitDisplayEditMode.edit => _saveExistHabit(),
     };
-    if (!mounted || cell == null) return cell;
-    final habit = HabitSummaryData.fromDBQueryCell(cell);
-    await habitsManager.updateHabitReminder(habit);
-    return cell;
   }
 
   Future<HabitDBCell?> _saveNewHabit() async {
@@ -265,7 +260,7 @@ class HabitFormViewModel extends ChangeNotifier
       createT: now,
       modifyT: now,
     );
-    return habitsManager.saveNewHabitToDB(dbCell, returnResult: true);
+    return habitsManager.saveNewHabitAndUpdateReminder(dbCell);
   }
 
   Future<HabitDBCell?> _saveExistHabit() async {
@@ -290,6 +285,6 @@ class HabitFormViewModel extends ChangeNotifier
       remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
     );
-    return habitsManager.updateExistHabitToDB(dbCell, returnResult: true);
+    return habitsManager.updateExistHabitAndUpdateReminder(dbCell);
   }
 }

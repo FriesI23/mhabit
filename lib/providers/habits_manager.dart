@@ -33,6 +33,12 @@ import '../storage/db/handlers/record.dart';
 import '../storage/db_helper_provider.dart';
 import 'commons.dart';
 
+typedef BeforeHabitRecordReminderUpdateCb =
+    FutureOr<void> Function(
+      HabitSummaryData habit,
+      List<ChangeRecordStatusResult> records,
+    );
+
 class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   HabitsManager();
 
@@ -46,6 +52,10 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
       action.status,
     );
     final result = action.resolve();
+    final updatedHabits = {
+      for (final item in result) item.data.uuid: item.data,
+    }.values;
+    await Future.wait(updatedHabits.map(updateHabitReminder));
     if (extraResolver is Future) {
       await Future.wait(result.map((e) async => extraResolver?.call(e)));
     } else if (extraResolver != null) {
@@ -62,6 +72,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
       List<ChangeRecordStatusResult> results,
     )?
     postActionBuilder,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
     FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
   }) async {
     final preResults = preAction.resolve();
@@ -79,6 +90,10 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     }
 
     final results = postActionBuilder?.call(preResults).resolve() ?? preResults;
+    await _updateChangedHabitRecordReminders(
+      results,
+      beforeReminderUpdate: beforeReminderUpdate,
+    );
     if (extraResolver is Future) {
       await Future.wait(results.map((e) async => extraResolver?.call(e)));
     } else if (extraResolver != null) {
@@ -141,7 +156,21 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     ),
   );
 
-  Future<HabitDBCell?> saveNewHabitToDB(
+  Future<void> saveChangedHabitRecords({
+    required Iterable<ChangeRecordStatusResult> records,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+  }) async {
+    final recordList = records.toList(growable: false);
+    if (recordList.isEmpty) return;
+
+    await saveMultiHabitRecordToDB(recordList);
+    await _updateChangedHabitRecordReminders(
+      recordList,
+      beforeReminderUpdate: beforeReminderUpdate,
+    );
+  }
+
+  Future<HabitDBCell?> _saveNewHabitToDB(
     HabitDBCell cell, {
     bool returnResult = false,
   }) async {
@@ -152,7 +181,13 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return result;
   }
 
-  Future<HabitDBCell?> updateExistHabitToDB(
+  Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
+    final result = await _saveNewHabitToDB(cell, returnResult: true);
+    await _updateSavedHabitReminder(result);
+    return result;
+  }
+
+  Future<HabitDBCell?> _updateExistHabitToDB(
     HabitDBCell cell, {
     bool withReminder = true,
     bool returnResult = false,
@@ -173,6 +208,19 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     final result = (count > 0 && returnResult)
         ? await habitDBHelper.queryHabitByUUID(habitUUID)
         : null;
+    return result;
+  }
+
+  Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
+    HabitDBCell cell, {
+    bool withReminder = true,
+  }) async {
+    final result = await _updateExistHabitToDB(
+      cell,
+      withReminder: withReminder,
+      returnResult: true,
+    );
+    await _updateSavedHabitReminder(result);
     return result;
   }
   //#endregion
@@ -294,6 +342,35 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
         error: e,
       );
     }
+  }
+
+  Future<void> _updateChangedHabitRecordReminders(
+    Iterable<ChangeRecordStatusResult> records, {
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+  }) async {
+    final updatedHabits = <HabitUUID, HabitSummaryData>{};
+    final recordsByHabit = <HabitUUID, List<ChangeRecordStatusResult>>{};
+
+    for (final record in records) {
+      final habitUUID = record.habit.uuid;
+      updatedHabits[habitUUID] = record.habit;
+      (recordsByHabit[habitUUID] ??= []).add(record);
+    }
+
+    if (beforeReminderUpdate != null) {
+      await Future.wait(
+        updatedHabits.entries.map(
+          (entry) async =>
+              beforeReminderUpdate(entry.value, recordsByHabit[entry.key]!),
+        ),
+      );
+    }
+    await Future.wait(updatedHabits.values.map(updateHabitReminder));
+  }
+
+  Future<void> _updateSavedHabitReminder(HabitDBCell? cell) async {
+    if (cell == null) return;
+    await updateHabitReminder(HabitSummaryData.fromDBQueryCell(cell));
   }
 
   //#region import and export

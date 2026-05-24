@@ -333,8 +333,17 @@ class HabitStatusChangerViewModel
                 ? skipReason
                 : null,
           ),
-        );
-    await habitsManager.saveMultiHabitRecordToDB(records);
+        )
+        .toList(growable: false);
+    await habitsManager.saveChangedHabitRecords(
+      records: records,
+      beforeReminderUpdate: (habit, records) {
+        for (final record in records) {
+          habit.addRecord(record.data, replaced: true);
+        }
+        habit.reCalculateAutoComplateRecords(firstDay: firstday);
+      },
+    );
     if (!mounted) return 0;
 
     requestReloadData();
