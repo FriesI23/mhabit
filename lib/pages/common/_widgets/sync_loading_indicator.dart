@@ -23,14 +23,16 @@ class AppSyncLoadingIndicator extends StatelessWidget {
   const AppSyncLoadingIndicator({super.key});
 
   @override
-  Widget build(BuildContext context) => Selector<AppSyncViewModel, num?>(
-    selector: (context, vm) => switch (vm.appSyncTask.task?.task.status) {
-      AppSyncTaskStatus.running ||
-      AppSyncTaskStatus.cancelled ||
-      AppSyncTaskStatus.completed => vm.appSyncTask.task?.percentage,
-      _ => null,
-    },
-    builder: (context, value, child) =>
-        AnimatedLinearProgress(value: value?.toDouble()),
-  );
+  Widget build(BuildContext context) =>
+      Selector<AppSyncViewModel, AppSyncStatusSnapshot?>(
+        selector: (context, vm) => vm.syncStatus,
+        builder: (context, value, child) => AnimatedLinearProgress(
+          value: switch (value?.status) {
+            AppSyncTaskStatus.running ||
+            AppSyncTaskStatus.cancelled ||
+            AppSyncTaskStatus.completed => value?.percentage?.toDouble(),
+            _ => null,
+          },
+        ),
+      );
 }

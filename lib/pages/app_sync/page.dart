@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -74,9 +73,11 @@ final class _PageState extends State<_Page> {
     if (result == null) return;
     switch (result.op) {
       case app_sync_server_editor.AppSyncServerEditorResultOp.update:
+        final form = result.form;
+        if (form == null) return;
         final saveResult = await context
             .read<AppSyncViewModel>()
-            .saveWithConfigForm(result.form);
+            .saveServerConfigForm(form);
         if (!mounted) return;
         appLog.build.info(
           context,
@@ -85,7 +86,7 @@ final class _PageState extends State<_Page> {
       case app_sync_server_editor.AppSyncServerEditorResultOp.delete:
         final saveResult = await context
             .read<AppSyncViewModel>()
-            .saveWithConfigForm(null, removable: true);
+            .deleteServerConfig();
         if (!mounted) return;
         appLog.build.info(
           context,
@@ -213,11 +214,9 @@ class _DebugTile extends StatelessWidget {
           Text("FetchInterval: ${appSync.fetchInterval}"),
           Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),
           FutureBuilder(
-            future: appSync.readPassword(),
+            future: appSync.readDebugPasswordText(),
             builder: (context, snapshot) {
-              final pwd = snapshot.data ?? '';
-              final pwd2 = kDebugMode ? pwd : "*" * pwd.length;
-              return Text("Password: $pwd2");
+              return Text("Password: ${snapshot.data ?? ''}");
             },
           ),
         ],

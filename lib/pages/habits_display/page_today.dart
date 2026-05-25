@@ -89,7 +89,7 @@ class TodayTabPageState extends State<TodayTabPage>
     if (sync != _appSync) {
       _startSyncSub?.cancel();
       _appSync = sync;
-      _startSyncSub = sync.appSyncTask.startSyncEvents.listen((_) {
+      _startSyncSub = sync.startSyncEvents.listen((_) {
         _refreshIndicatorKey.currentState?.show();
       });
     }
@@ -120,11 +120,11 @@ class TodayTabPageState extends State<TodayTabPage>
     if (syncvm.mounted) {
       try {
         await syncvm.startSync(initWait: kAppSyncDelayDuration2);
-        await syncvm.appSyncTask.processing;
+        await syncvm.syncProcessing;
       } catch (e, s) {
         appLog.appsync.fatal(
           "start sync failed",
-          ex: [syncvm.appSyncTask.task],
+          ex: [syncvm.syncStatus],
           error: e,
           stackTrace: s,
         );
@@ -207,7 +207,7 @@ class _HabitsGroupView extends StatelessWidget {
     if (!context.mounted) return;
     final sync = context.read<AppSyncViewModel>();
     try {
-      if (sync.mounted) await sync.appSyncTask.processing;
+      if (sync.mounted) await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "TodayTabPage",

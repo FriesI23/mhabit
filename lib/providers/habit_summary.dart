@@ -632,7 +632,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#region: auto sync
   void updateAppSync(AppSyncViewModel appSync) {
     _startSyncSub?.cancel();
-    _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
+    _startSyncSub = appSync.startSyncEvents.listen((id) {
       appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
       requestReload(clearSnackBar: false);
     });

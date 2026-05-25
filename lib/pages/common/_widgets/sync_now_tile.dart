@@ -34,7 +34,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
   void _onCancelButtonPressed() {
     final vm = context.read<AppSyncViewModel>();
     if (!vm.mounted) return;
-    vm.appSyncTask.cancelSync();
+    vm.cancelSync();
   }
 
   void _onStartButtonPressed() {
@@ -51,7 +51,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildTitle(BuildContext context) =>
         Selector<AppSyncViewModel, bool?>(
-          selector: (context, vm) => vm.appSyncTask.task?.task.isProcessing,
+          selector: (context, vm) => vm.syncStatus?.isProcessing,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
             final l10n = L10n.of(context);
@@ -63,15 +63,12 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildSubtitle(
       BuildContext context,
-    ) => Selector<AppSyncViewModel, (AppSyncTaskStatus?, bool)>(
-      selector: (context, vm) => (
-        vm.appSyncTask.task?.task.status,
-        vm.appSyncTask.task?.result != null,
-      ),
+    ) => Selector<AppSyncViewModel, AppSyncStatusSnapshot?>(
+      selector: (context, vm) => vm.syncStatus,
       shouldRebuild: (previous, next) => previous != next,
-      builder: (context, _, child) {
+      builder: (context, value, child) {
         final l10n = L10n.of(context);
-        final lastSyncTask = context.read<AppSyncViewModel>().appSyncTask.task;
+        final lastSyncTask = value;
 
         final lastEndedTime = lastSyncTask?.endedTime;
         final lastEndedTimeStr = lastEndedTime != null
@@ -90,7 +87,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
         if (lastSyncTask == null) return buildLastSyncText();
-        switch (lastSyncTask.task.status) {
+        switch (lastSyncTask.status) {
           case AppSyncTaskStatus.idle:
           case AppSyncTaskStatus.completed:
             if (lastSyncTask.result?.isSuccessed != true) {
@@ -104,16 +101,14 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
             }
             return buildLastSyncText();
           case AppSyncTaskStatus.running:
-            return Selector<AppSyncViewModel, num?>(
-              selector: (context, vm) => vm.appSyncTask.task?.percentage,
-              builder: (context, value, child) => value != null
-                  ? Text(
-                      l10n != null
-                          ? l10n.appSync_nowTile_syncingText_withPrt(value)
-                          : "Syncing: ${(value * 100).toStringAsFixed(2)}%",
-                    )
-                  : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing..."),
-            );
+            final percentage = lastSyncTask.percentage;
+            return percentage != null
+                ? Text(
+                    l10n != null
+                        ? l10n.appSync_nowTile_syncingText_withPrt(percentage)
+                        : "Syncing: ${(percentage * 100).toStringAsFixed(2)}%",
+                  )
+                : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing...");
           case AppSyncTaskStatus.cancelling:
             return Text(l10n?.appSync_nowTile_cancellingText ?? "Canceling...");
           case AppSyncTaskStatus.cancelled:
@@ -130,7 +125,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildTrailing(BuildContext context) =>
         Selector<AppSyncViewModel, AppSyncTaskStatus?>(
-          selector: (context, vm) => vm.appSyncTask.task?.task.status,
+          selector: (context, vm) => vm.syncStatus?.status,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -154,8 +149,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildIndicator(BuildContext context) =>
         Selector<AppSyncViewModel, bool>(
-          selector: (context, vm) =>
-              vm.appSyncTask.task?.task.isProcessing ?? false,
+          selector: (context, vm) => vm.syncStatus?.isProcessing ?? false,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedOpacity(
             opacity: value ? 1.0 : 0.0,

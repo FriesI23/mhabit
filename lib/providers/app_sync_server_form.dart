@@ -19,7 +19,7 @@ import 'package:flutter/foundation.dart';
 import '../logging/helper.dart';
 import '../models/app_sync_server.dart';
 import '../models/app_sync_server_form.dart';
-import 'app_sync.dart';
+import 'app_sync_server_form_owner.dart';
 import 'commons.dart';
 
 class AppSyncServerFormViewModel extends ChangeNotifier
@@ -29,7 +29,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   bool _mounted = true;
   bool _pwdLoaded = false;
   bool _edited = false;
-  AppSyncViewModel? _parent;
+  AppSyncServerFormOwner? _owner;
   Completer<(String, String?)>? _pwdCompleter;
 
   late AppSyncServerForm _form;
@@ -69,12 +69,12 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   AppSyncServerForm getDefaultForm() =>
       AppSyncServer.newServer(AppSyncServerType.webdav)!.toForm();
 
-  AppSyncServer? get serverConfig => initServerConfig ?? _parent?.serverConfig;
+  AppSyncServer? get serverConfig => initServerConfig;
 
-  void attachParent(AppSyncViewModel? parent) {
-    if (parent != _parent) {
-      appLog.load.info("$runtimeType.attachParent", ex: [parent]);
-      _parent = parent;
+  void attachOwner(AppSyncServerFormOwner? owner) {
+    if (owner != _owner) {
+      appLog.load.info("$runtimeType.attachOwner", ex: [owner]);
+      _owner = owner;
     }
   }
 
@@ -243,7 +243,7 @@ final class WebDavSyncServerFromHandler implements _Handler {
     }
     final completer = root._pwdCompleter = Completer<(String, String?)>();
     final identity = root.identity;
-    (root._parent?.readPassword(identity: identity) ?? Future.value(null))
+    (root._owner?.readPassword(identity: identity) ?? Future.value(null))
         .timeout(timeout)
         .then((value) {
           value = value ?? form.password;

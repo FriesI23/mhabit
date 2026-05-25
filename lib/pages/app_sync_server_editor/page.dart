@@ -22,7 +22,6 @@ import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
 import '../../providers/app_developer.dart';
-import '../../providers/app_sync.dart';
 import '../../providers/app_sync_server_form.dart';
 import '../../widgets/widgets.dart';
 import 'widgets.dart';
@@ -343,7 +342,7 @@ class _PageDialog extends StatelessWidget {
     constraints: const BoxConstraints.expand(width: dialogMaxWidth),
     child: AlertDialog(
       scrollable: true,
-      title: Selector<AppSyncViewModel, bool>(
+      title: Selector<AppSyncServerFormViewModel, bool>(
         selector: (context, vm) => vm.serverConfig != null,
         builder: (context, value, child) {
           final l10n = L10n.of(context);

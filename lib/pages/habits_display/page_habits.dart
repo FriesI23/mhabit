@@ -605,7 +605,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       } catch (e, s) {
         appLog.appsync.fatal(
           "start sync failed",
-          ex: [syncvm.appSyncTask.task],
+          ex: [syncvm.syncStatus],
           error: e,
           stackTrace: s,
         );
@@ -1144,7 +1144,7 @@ class _HabitListState extends State<_HabitList> {
     final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
     final sync = context.read<AppSyncViewModel>();
     try {
-      if (sync.mounted) await sync.appSyncTask.processing;
+      if (sync.mounted) await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "HabitsTabPage",
