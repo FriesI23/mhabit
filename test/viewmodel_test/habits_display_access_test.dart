@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
@@ -135,17 +136,47 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 }
 
-final class _FakeAppSyncStartEventSource implements AppSyncStartEventSource {
+final class _FakeAppSyncWorkflowAccess implements AppSyncWorkflowAccess {
   final _controller = StreamController<String>.broadcast(sync: true);
 
   @override
+  bool get canStartSync => true;
+
+  @override
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents => const Stream.empty();
+
+  @override
+  Future? get syncProcessing => null;
+
+  @override
+  AppSyncStatusSnapshot? get syncStatus => null;
+
+  @override
   Stream<String> get startSyncEvents => _controller.stream;
+
+  @override
+  void onL10nUpdate(L10n? l10n) {}
+
+  @override
+  void addListener(void Function() listener) {}
+
+  @override
+  void cancelSync() {}
+
+  @override
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {}
 
   void emit(String id) {
     _controller.add(id);
   }
 
   Future<void> close() => _controller.close();
+
+  @override
+  void removeListener(void Function() listener) {}
+
+  @override
+  Future<void> startSync({Duration? initWait}) async {}
 }
 
 HabitSummaryData _buildHabitSummaryData({
@@ -244,19 +275,19 @@ void main() {
       () async {
         final seedData = _buildHabitSummaryData();
         final access = _FakeHabitsDisplayAccess(seedData: seedData);
-        final syncSource = _FakeAppSyncStartEventSource();
+        final appSync = _FakeAppSyncWorkflowAccess();
         final vm = HabitSummaryViewModel()
           ..attachAccess(access)
-          ..attachStartEventSource(syncSource);
+          ..attachWorkflow(appSync);
 
         await vm.loadData(listen: false);
-        syncSource.emit('sync-1');
+        appSync.emit('sync-1');
 
         expect(vm.consumeForceReloadFlag(), isTrue);
         expect(vm.consumeClearSnackBarFlag(), isFalse);
 
         vm.dispose();
-        await syncSource.close();
+        await appSync.close();
       },
     );
 
@@ -280,18 +311,18 @@ void main() {
       () async {
         final seedData = _buildHabitSummaryData();
         final access = _FakeHabitsDisplayAccess(seedData: seedData);
-        final syncSource = _FakeAppSyncStartEventSource();
+        final appSync = _FakeAppSyncWorkflowAccess();
         final vm = HabitsTodayViewModel()
           ..attachAccess(access)
-          ..attachStartEventSource(syncSource);
+          ..attachWorkflow(appSync);
 
         await vm.loadData(listen: false);
-        syncSource.emit('sync-1');
+        appSync.emit('sync-1');
 
         expect(vm.consumeForceReloadFlag(), isTrue);
 
         vm.dispose();
-        await syncSource.close();
+        await appSync.close();
       },
     );
   });

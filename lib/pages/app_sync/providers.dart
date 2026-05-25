@@ -28,10 +28,6 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) => context.read<AppSyncViewModel>(),
         update: (context, value, previous) => value,
       ),
-      ListenableProxyProvider<AppSyncViewModel, AppSyncDebugAccess>(
-        create: (context) => context.read<AppSyncViewModel>(),
-        update: (context, value, previous) => value,
-      ),
     ],
     child: child,
   );

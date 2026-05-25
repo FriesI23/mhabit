@@ -104,7 +104,7 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
-      context.maybeRead<AppSyncDelayedTriggerAccess>()?.delayedStartTaskOnce();
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {

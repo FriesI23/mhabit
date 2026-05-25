@@ -37,7 +37,7 @@ typedef BeforeHabitRecordReminderUpdateCb =
       List<ChangeRecordStatusResult> records,
     );
 
-abstract interface class HabitsDisplayQueries {
+abstract interface class HabitsDisplayAccess {
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
     List<String>? habitsColmns,
@@ -50,13 +50,7 @@ abstract interface class HabitsDisplayQueries {
   );
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid);
-}
 
-abstract interface class HabitDetailQueries implements HabitsDisplayQueries {
-  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid);
-}
-
-abstract interface class HabitsDisplayCommands {
   Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
     required ChangeHabitStatusAction action,
     FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
@@ -81,11 +75,9 @@ abstract interface class HabitsDisplayCommands {
   Future<void> updateHabitReminder(HabitSummaryData data);
 }
 
-abstract interface class HabitsDisplayAccess
-    implements HabitsDisplayQueries, HabitsDisplayCommands {}
-
-abstract interface class HabitDetailAccess
-    implements HabitDetailQueries, HabitsDisplayAccess {}
+abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
+  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid);
+}
 
 abstract interface class HabitFormCommands {
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
@@ -96,15 +88,13 @@ abstract interface class HabitFormCommands {
   });
 }
 
-abstract interface class HabitRecordBatchCommands {
+abstract interface class HabitStatusChangerAccess
+    implements HabitsDisplayAccess {
   Future<void> saveChangedHabitRecords({
     required Iterable<ChangeRecordStatusResult> records,
     BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
   });
 }
-
-abstract interface class HabitStatusChangerAccess
-    implements HabitsDisplayQueries, HabitRecordBatchCommands {}
 
 abstract interface class HabitExportQueries {
   Future<Iterable<HabitExportData>> loadHabitExportData({
@@ -125,13 +115,9 @@ abstract interface class HabitImportCommands {
 class HabitsManager
     with DBHelperLoadedMixin, NotificationChannelDataMixin
     implements
-        HabitsDisplayQueries,
-        HabitDetailQueries,
-        HabitsDisplayCommands,
         HabitsDisplayAccess,
         HabitDetailAccess,
         HabitFormCommands,
-        HabitRecordBatchCommands,
         HabitStatusChangerAccess,
         HabitExportQueries,
         HabitImportCommands {

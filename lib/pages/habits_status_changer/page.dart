@@ -44,7 +44,7 @@ import 'widgets.dart';
 ///   - [AppDeveloperViewModel]
 /// - Required for callback:
 /// - Optional:
-///   - [AppSyncViewModel]
+///   - [AppSyncTriggerAccess]
 class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -156,7 +156,7 @@ class _PageState extends State<_Page> {
     final changedCount = await _vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
 
-    context.maybeRead<AppSyncDelayedTriggerAccess>()?.delayedStartTaskOnce();
+    context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
 
     final snackBar = buildSnackBarWithDismiss(
       context,

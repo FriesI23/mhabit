@@ -201,7 +201,7 @@ class _DebugTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appSync = context.watch<AppSyncDebugAccess>();
+    final appSync = context.watch<AppSyncSettingsAccess>();
     return ListTile(
       leading: Icon(Icons.error, color: Theme.of(context).colorScheme.error),
       isThreeLine: true,

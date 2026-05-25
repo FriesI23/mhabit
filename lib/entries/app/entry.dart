@@ -295,12 +295,12 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
 
   void _onL10nUpdate([L10n? l10n]) {
     context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
-    context.maybeRead<AppSyncViewModel>()?.onL10nUpdate(l10n);
+    context.maybeRead<AppSyncWorkflowAccess>()?.onL10nUpdate(l10n);
   }
 
   void _onConfirmSubscriptionUpdate() {
     _confirmSub?.cancel();
-    final appSync = context.maybeRead<AppSyncViewModel>();
+    final appSync = context.maybeRead<AppSyncWorkflowAccess>();
     _confirmSub = appSync?.confirmEvents.listen(
       (event) => switch (event) {
         AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() =>

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/habit_date.dart';
@@ -39,6 +41,41 @@ final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {
 
   @override
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
+    required ChangeRecordStatusAction<HabitDate> preAction,
+    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
+      List<ChangeRecordStatusResult> results,
+    )?
+    postActionBuilder,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<HabitUUID>> fixAndSaveSortPositions(
+    List<HabitSummaryData> habits, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateHabitReminder(HabitSummaryData data) {
     throw UnimplementedError();
   }
 

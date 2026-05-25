@@ -53,16 +53,12 @@ const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
 
-abstract interface class AppSyncPasswordReader {
-  Future<String?> readPassword({String? identity});
-}
-
-abstract interface class AppSyncStartEventSource {
-  Stream<String> get startSyncEvents;
-}
-
 abstract interface class AppSyncSettingsAccess implements Listenable {
   bool get enabled;
+
+  Future<String?> readPassword({String? identity});
+
+  Future<String> readDebugPasswordText();
 
   Future<void> setSyncSwitch(bool value, {bool listen = true});
 
@@ -83,16 +79,6 @@ abstract interface class AppSyncSettingsAccess implements Listenable {
   Future<bool> deleteServerConfig();
 }
 
-abstract interface class AppSyncDebugAccess implements Listenable {
-  bool get enabled;
-
-  AppSyncFetchInterval get fetchInterval;
-
-  AppSyncServer? get serverConfig;
-
-  Future<String> readDebugPasswordText();
-}
-
 abstract interface class AppSyncStatusSource implements Listenable {
   AppSyncStatusSnapshot? get syncStatus;
 }
@@ -102,20 +88,20 @@ abstract interface class AppSyncTriggerAccess implements Listenable {
 
   Future<void> startSync({Duration? initWait});
 
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay});
+
   void cancelSync();
 }
 
-abstract interface class AppSyncDelayedTriggerAccess implements Listenable {
-  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay});
-}
-
 abstract interface class AppSyncWorkflowAccess
-    implements
-        AppSyncTriggerAccess,
-        AppSyncDelayedTriggerAccess,
-        AppSyncStatusSource,
-        AppSyncStartEventSource {
+    implements AppSyncTriggerAccess, AppSyncStatusSource {
   Future? get syncProcessing;
+
+  void onL10nUpdate(L10n? l10n);
+
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents;
+
+  Stream<String> get startSyncEvents;
 }
 
 class AppSyncViewModel
@@ -126,10 +112,7 @@ class AppSyncViewModel
         NotificationChannelDataMixin
     implements
         ProviderMounted,
-        AppSyncPasswordReader,
-        AppSyncStartEventSource,
         AppSyncSettingsAccess,
-        AppSyncDebugAccess,
         AppSyncStatusSource,
         AppSyncTriggerAccess,
         AppSyncWorkflowAccess {
@@ -244,6 +227,7 @@ class AppSyncViewModel
     }
   }
 
+  @override
   void onL10nUpdate(L10n? l10n) {
     _l10n = l10n != null ? WeakReference(l10n) : null;
   }
@@ -288,6 +272,7 @@ class AppSyncViewModel
   @override
   Future? get syncProcessing => _appSyncTask.processing;
 
+  @override
   Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
       _appSyncTask.confirmEvents;
 

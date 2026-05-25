@@ -22,6 +22,7 @@ import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
 import '../../providers/app_developer.dart';
+import '../../providers/app_sync.dart';
 import '../../providers/app_sync_server_form.dart';
 import '../../widgets/widgets.dart';
 import 'widgets.dart';
@@ -50,12 +51,16 @@ Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   AppSyncServer? serverConfig,
   bool? naviWithFullscreenDialog,
 }) async {
+  final appSync = context.read<AppSyncSettingsAccess>();
   return showDialog<AppSyncServerEditorResult>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => AppSyncServerEditorPage(
-      serverConfig: serverConfig,
-      showInFullscreenDialog: naviWithFullscreenDialog,
+    builder: (context) => ListenableProvider<AppSyncSettingsAccess>.value(
+      value: appSync,
+      child: AppSyncServerEditorPage(
+        serverConfig: serverConfig,
+        showInFullscreenDialog: naviWithFullscreenDialog,
+      ),
     ),
   );
 }

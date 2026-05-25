@@ -33,9 +33,8 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) =>
             AppSyncServerFormViewModel(initServerConfig: initServerConfig),
       ),
-      ViewModelProxyProvider<AppSyncPasswordReader, AppSyncServerFormViewModel>(
-        update: (context, value, previous) =>
-            previous..attachPasswordReader(value),
+      ViewModelProxyProvider<AppSyncSettingsAccess, AppSyncServerFormViewModel>(
+        update: (context, value, previous) => previous..attachSettings(value),
       ),
     ],
     child: child,

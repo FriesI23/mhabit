@@ -73,6 +73,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
   HabitsDisplayAccess? _access;
+  AppSyncWorkflowAccess? _workflow;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
   StreamSubscription<ReloadDataEvent>? _reloadDataSub;
@@ -313,9 +314,11 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#endregion
 
   //#region: auto sync
-  void attachStartEventSource(AppSyncStartEventSource appSync) {
+  void attachWorkflow(AppSyncWorkflowAccess workflow) {
+    if (identical(workflow, _workflow)) return;
+    _workflow = workflow;
     _startSyncSub?.cancel();
-    _startSyncSub = appSync.startSyncEvents.listen((id) {
+    _startSyncSub = workflow.startSyncEvents.listen((id) {
       appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
       requestReload();
     });

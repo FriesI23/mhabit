@@ -137,8 +137,8 @@ void main() {
     test('debug access uses owner-side display formatting', () async {
       final vm = _TestAppSyncPasswordViewModel('secret');
       final emptyVm = _TestAppSyncPasswordViewModel(null);
-      final debug = vm as AppSyncDebugAccess;
-      final emptyDebug = emptyVm as AppSyncDebugAccess;
+      final debug = vm as AppSyncSettingsAccess;
+      final emptyDebug = emptyVm as AppSyncSettingsAccess;
 
       expect(await debug.readDebugPasswordText(), 'secret');
       expect(await emptyDebug.readDebugPasswordText(), '');

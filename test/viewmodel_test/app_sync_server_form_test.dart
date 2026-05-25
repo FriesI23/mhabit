@@ -13,21 +13,59 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
+import 'package:mhabit/models/app_sync_server_form.dart';
 import 'package:mhabit/providers/app_sync.dart';
 import 'package:mhabit/providers/app_sync_server_form.dart';
 
-final class _FakeAppSyncPasswordReader implements AppSyncPasswordReader {
+final class _FakeAppSyncSettingsAccess implements AppSyncSettingsAccess {
   final String? password;
   String? lastIdentity;
 
-  _FakeAppSyncPasswordReader({this.password});
+  _FakeAppSyncSettingsAccess({this.password});
+
+  @override
+  bool get enabled => true;
+
+  @override
+  AppSyncFetchInterval get fetchInterval => AppSyncFetchInterval.minute30;
+
+  @override
+  AppSyncServer? get serverConfig => null;
 
   @override
   Future<String?> readPassword({String? identity}) async {
     lastIdentity = identity;
     return password;
   }
+
+  @override
+  Future<String> readDebugPasswordText() async => password ?? '';
+
+  @override
+  Future<bool> deleteServerConfig() async => false;
+
+  @override
+  void addListener(void Function() listener) {}
+
+  @override
+  void removeListener(void Function() listener) {}
+
+  @override
+  Future<bool> saveServerConfigForm(
+    AppSyncServerForm form, {
+    bool resetStatus = true,
+  }) async => false;
+
+  @override
+  Future<void> setFetchInterval(
+    AppSyncFetchInterval value, {
+    bool listen = true,
+  }) async {}
+
+  @override
+  Future<void> setSyncSwitch(bool value, {bool listen = true}) async {}
 }
 
 void main() {
@@ -35,18 +73,18 @@ void main() {
 
   group('AppSyncServerFormViewModel', () {
     test(
-      'uses the narrow owner contract for config and password access',
+      'uses app sync settings access for config and password access',
       () async {
         final serverConfig = AppSyncServer.newServer(AppSyncServerType.webdav);
-        final passwordReader = _FakeAppSyncPasswordReader(password: 'secret');
+        final appSync = _FakeAppSyncSettingsAccess(password: 'secret');
         final vm = AppSyncServerFormViewModel(initServerConfig: serverConfig)
-          ..attachPasswordReader(passwordReader);
+          ..attachSettings(appSync);
 
         expect(vm.serverConfig, same(serverConfig));
 
         final password = await vm.webdav!.readPassword();
 
-        expect(passwordReader.lastIdentity, vm.identity);
+        expect(appSync.lastIdentity, vm.identity);
         expect(password.$1, vm.identity);
         expect(password.$2, 'secret');
 

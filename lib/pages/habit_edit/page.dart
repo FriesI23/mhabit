@@ -283,7 +283,7 @@ class _PageState extends State<_Page> {
         ),
       });
       // try sync once
-      context.maybeRead<AppSyncDelayedTriggerAccess>()?.delayedStartTaskOnce();
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
     // pop result
     Navigator.of(context).maybePop(result);

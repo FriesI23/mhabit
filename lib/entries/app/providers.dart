@@ -93,26 +93,16 @@ class AppProviders extends SingleChildStatelessWidget {
         ..updateDBHelper(helper)
         ..setNotificationChannelData(channel),
     ),
-    ProxyProvider<AppSyncViewModel, AppSyncPasswordReader>(
-      update: (context, value, previous) => value,
-    ),
-    ProxyProvider<AppSyncViewModel, AppSyncStartEventSource>(
-      update: (context, value, previous) => value,
-    ),
-    ListenableProxyProvider<AppSyncViewModel, AppSyncTriggerAccess>(
-      create: (context) => context.read<AppSyncViewModel>(),
-      update: (context, value, previous) => value,
-    ),
-    ListenableProxyProvider<AppSyncViewModel, AppSyncDelayedTriggerAccess>(
-      create: (context) => context.read<AppSyncViewModel>(),
-      update: (context, value, previous) => value,
-    ),
-    ListenableProxyProvider<AppSyncViewModel, AppSyncStatusSource>(
-      create: (context) => context.read<AppSyncViewModel>(),
-      update: (context, value, previous) => value,
-    ),
     ListenableProxyProvider<AppSyncViewModel, AppSyncWorkflowAccess>(
       create: (context) => context.read<AppSyncViewModel>(),
+      update: (context, value, previous) => value,
+    ),
+    ListenableProxyProvider<AppSyncWorkflowAccess, AppSyncTriggerAccess>(
+      create: (context) => context.read<AppSyncWorkflowAccess>(),
+      update: (context, value, previous) => value,
+    ),
+    ListenableProxyProvider<AppSyncWorkflowAccess, AppSyncStatusSource>(
+      create: (context) => context.read<AppSyncWorkflowAccess>(),
       update: (context, value, previous) => value,
     ),
   ];
