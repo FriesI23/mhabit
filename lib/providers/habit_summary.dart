@@ -53,10 +53,7 @@ extension HabitSummaryDataExntesion on HabitSummaryData {
 }
 
 class HabitSummaryViewModel extends ChangeNotifier
-    with
-        NotificationChannelDataMixin,
-        HabitsManagerLoadedMixin,
-        PinnedAppbarMixin
+    with PinnedAppbarMixin
     implements ProviderMounted, AppEventLoaded {
   // data
   final _data = HabitSummaryDataCollection();
@@ -78,6 +75,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
+  HabitsDisplayAccess? _access;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
   StreamSubscription<ReloadDataEvent>? _reloadDataSub;
@@ -193,7 +191,20 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      habitsManager.updateHabitReminder(data);
+      access.updateHabitReminder(data);
+
+  @protected
+  HabitsDisplayAccess get access {
+    final access = _access;
+    if (access == null) {
+      throw StateError('HabitsDisplayAccess not attached');
+    }
+    return access;
+  }
+
+  void attachAccess(HabitsDisplayAccess newAccess) {
+    if (_access != newAccess) _access = newAccess;
+  }
 
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) {
     final now = HabitDate.now();
@@ -292,9 +303,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       );
 
       // init habits
-      await habitsManager.loadHabitSummaryCollectionData(
-        initedCollection: _data,
-      );
+      await access.loadHabitSummaryCollectionData(initedCollection: _data);
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
@@ -347,7 +356,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
-  ) => habitsManager.loadHabitRecordReason(data, date);
+  ) => access.loadHabitRecordReason(data, date);
 
   Future<HabitDBCell?> loadSelectedHabitDetail() async {
     final selectedData = getSelectedHabitsData().firstWhere(
@@ -355,7 +364,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       orElse: () => null,
     );
     if (selectedData == null) return null;
-    return habitsManager.loadHabitDetail(selectedData.uuid);
+    return access.loadHabitDetail(selectedData.uuid);
   }
 
   bool addNewData(HabitSummaryData cell, {bool listen = false}) {
@@ -630,7 +639,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   //#endregion
 
   //#region: auto sync
-  void updateAppSync(AppSyncViewModel appSync) {
+  void attachStartEventSource(AppSyncStartEventSource appSync) {
     _startSyncSub?.cancel();
     _startSyncSub = appSync.startSyncEvents.listen((id) {
       appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
@@ -687,7 +696,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
@@ -718,7 +727,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,
@@ -753,7 +762,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         reason: newReason,
@@ -788,7 +797,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         .toList();
     if (dataList.isEmpty) return;
 
-    final changedUUIDs = await habitsManager.fixAndSaveSortPositions(
+    final changedUUIDs = await access.fixAndSaveSortPositions(
       dataList,
       increaseStep: sortPositionConflictIncreaseStep,
       decimalPlaces: sortPositionConflictDecimalPlaces,
@@ -814,7 +823,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       ex: [uuidList, newStatus],
     );
     final dataList = uuidList.map(getHabit).nonNulls.toList();
-    final results = await habitsManager.changeHabitStatus(
+    final results = await access.changeHabitStatus(
       action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
       extraResolver: (result) =>
           _updateHabitAutoCompleteStatistics(result.data),

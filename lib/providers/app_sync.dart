@@ -44,7 +44,6 @@ import '../storage/profile_provider.dart';
 import '../utils/app_clock.dart';
 import '../utils/app_path_provider.dart';
 import '../utils/async_debouncer.dart';
-import 'app_sync_server_form_owner.dart';
 import 'commons.dart';
 
 part 'app_sync.g.dart';
@@ -54,13 +53,21 @@ const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
 
+abstract interface class AppSyncPasswordReader {
+  Future<String?> readPassword({String? identity});
+}
+
+abstract interface class AppSyncStartEventSource {
+  Stream<String> get startSyncEvents;
+}
+
 class AppSyncViewModel
     with
         ChangeNotifier,
         ProfileHandlerLoadedMixin,
         DBHelperLoadedMixin,
         NotificationChannelDataMixin
-    implements ProviderMounted, AppSyncServerFormOwner {
+    implements ProviderMounted, AppSyncPasswordReader, AppSyncStartEventSource {
   late final AppSyncTaskDispatcher _appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
@@ -209,6 +216,7 @@ class AppSyncViewModel
   Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
       _appSyncTask.confirmEvents;
 
+  @override
   Stream<String> get startSyncEvents => _appSyncTask.startSyncEvents;
 
   void cancelSync() => _appSyncTask.cancelSync();

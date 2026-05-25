@@ -20,10 +20,23 @@ import 'commons.dart';
 import 'habits_manager.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
+  HabitImportCommands? _commands;
+
+  @protected
+  HabitImportCommands get commands {
+    final commands = _commands;
+    if (commands == null) {
+      throw StateError('HabitImportCommands not attached');
+    }
+    return commands;
+  }
+
+  void attachCommands(HabitImportCommands newCommands) {
+    if (_commands != newCommands) _commands = newCommands;
+  }
 
   @override
   void dispose() {
@@ -43,7 +56,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
       if (listen) notifyListeners();
     }
 
-    final futures = habitsManager.getImporter(jsonData).importData();
+    final futures = commands.importHabitsData(jsonData);
     if (futures.isEmpty) return null;
 
     final completer = Completer<int>();
@@ -70,7 +83,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
   }
 
   int importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    return habitsManager.getImporter(jsonData).habitsCount;
+    return commands.getImportHabitsCount(jsonData);
   }
 
   @override

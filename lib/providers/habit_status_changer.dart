@@ -56,7 +56,7 @@ enum RecordStatusChangerStatus {
 }
 
 class HabitStatusChangerViewModel
-    with ChangeNotifier, HabitsManagerLoadedMixin
+    with ChangeNotifier
     implements ProviderMounted {
   // data
   final List<HabitUUID> _selectedUUIDList;
@@ -71,10 +71,24 @@ class HabitStatusChangerViewModel
   bool _isSkipReasonEdited = false;
   // sync from setting
   int _firstday = defaultFirstDay;
+  HabitStatusChangerAccess? _access;
 
   HabitStatusChangerViewModel({required List<HabitUUID> uuidList})
     : _selectedUUIDList = uuidList {
     _form = HabitStatusChangerForm(selectDate: HabitDate.now());
+  }
+
+  void attachAccess(HabitStatusChangerAccess newAccess) {
+    if (_access != newAccess) _access = newAccess;
+  }
+
+  @protected
+  HabitStatusChangerAccess get access {
+    final access = _access;
+    if (access == null) {
+      throw StateError('HabitStatusChangerAccess not attached');
+    }
+    return access;
   }
 
   //#region loading data
@@ -142,7 +156,7 @@ class HabitStatusChangerViewModel
       );
 
       // init habits
-      final collection = await habitsManager.loadHabitSummaryCollectionData(
+      final collection = await access.loadHabitSummaryCollectionData(
         habitUUIDs: _selectedUUIDList,
       );
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
@@ -335,7 +349,7 @@ class HabitStatusChangerViewModel
           ),
         )
         .toList(growable: false);
-    await habitsManager.saveChangedHabitRecords(
+    await access.saveChangedHabitRecords(
       records: records,
       beforeReminderUpdate: (habit, records) {
         for (final record in records) {

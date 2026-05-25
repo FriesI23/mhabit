@@ -21,7 +21,6 @@ import '../../providers/habit_detail.dart';
 import '../../providers/habit_detail_freqchart.dart';
 import '../../providers/habit_detail_scorechart.dart';
 import '../../providers/habits_manager.dart';
-import '../../reminders/notification_channel.dart';
 import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
@@ -32,17 +31,13 @@ class PageProviders extends SingleChildStatelessWidget {
       create: (context) => HabitDetailViewModel(),
     ),
     ViewModelProxyProvider<HabitsManager, HabitDetailViewModel>(
-      update: (context, value, previous) => previous..updateHabitManager(value),
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
       update: (context, value, previous) =>
           previous..updateFirstday(value.firstDay),
       post: (t, value, vm) =>
           value.firstDay != vm.firstday ? vm.requestReload() : null,
-    ),
-    ViewModelProxyProvider<NotificationChannelData, HabitDetailViewModel>(
-      update: (context, value, previous) =>
-          previous..setNotificationChannelData(value),
     ),
   ];
 

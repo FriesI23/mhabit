@@ -40,9 +40,7 @@ import 'utils.dart';
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
 
-class HabitDetailViewModel extends ChangeNotifier
-    with NotificationChannelDataMixin, HabitsManagerLoadedMixin
-    implements ProviderMounted {
+class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   // data
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
@@ -57,6 +55,7 @@ class HabitDetailViewModel extends ChangeNotifier
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
+  HabitDetailAccess? _access;
 
   HabitDetailViewModel();
 
@@ -159,9 +158,20 @@ class HabitDetailViewModel extends ChangeNotifier
 
   Future<void> _updateHabitReminder() {
     final data = _habitDetailData?.data;
-    return data != null
-        ? habitsManager.updateHabitReminder(data)
-        : Future.value();
+    return data != null ? access.updateHabitReminder(data) : Future.value();
+  }
+
+  @protected
+  HabitDetailAccess get access {
+    final access = _access;
+    if (access == null) {
+      throw StateError('HabitDetailAccess not attached');
+    }
+    return access;
+  }
+
+  void attachAccess(HabitDetailAccess newAccess) {
+    if (_access != newAccess) _access = newAccess;
   }
 
   void requestReload() {
@@ -240,7 +250,7 @@ class HabitDetailViewModel extends ChangeNotifier
       );
 
       // init habit
-      final data = await habitsManager.loadHabitDetailData(uuid);
+      final data = await access.loadHabitDetailData(uuid);
       if (data == null) return loadingFailed(["data load failed", uuid]);
       // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
       if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
@@ -283,13 +293,13 @@ class HabitDetailViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(HabitRecordDate date) async {
     final data = _habitDetailData?.data;
     if (data == null) return null;
-    return habitsManager.loadHabitRecordReason(data, date);
+    return access.loadHabitRecordReason(data, date);
   }
 
   Future<HabitDBCell?> loadCurrentHabitDetail() async {
     final habitUUID = this.habitUUID;
     if (habitUUID == null) return null;
-    return habitsManager.loadHabitDetail(habitUUID);
+    return access.loadHabitDetail(habitUUID);
   }
   //#endregion
 
@@ -361,7 +371,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
@@ -390,7 +400,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         reason: newReason,
@@ -424,7 +434,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,
@@ -455,7 +465,7 @@ class HabitDetailViewModel extends ChangeNotifier
     final habitDetailData = this.habitDetailData;
     if (habitDetailData == null) return null;
 
-    final results = await habitsManager.changeHabitStatus(
+    final results = await access.changeHabitStatus(
       action: ChangeMultiHabitStatusAction([
         habitDetailData.data,
       ], status: newStatus),

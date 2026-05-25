@@ -34,8 +34,7 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) => HabitStatusChangerViewModel(uuidList: uuidList),
       ),
       ViewModelProxyProvider<HabitsManager, HabitStatusChangerViewModel>(
-        update: (context, value, previous) =>
-            previous..updateHabitManager(value),
+        update: (context, value, previous) => previous..attachAccess(value),
       ),
       ViewModelProxyProvider<AppFirstDayViewModel, HabitStatusChangerViewModel>(
         update: (context, value, previous) =>

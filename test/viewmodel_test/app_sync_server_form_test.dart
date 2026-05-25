@@ -14,14 +14,14 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_sync_server.dart';
+import 'package:mhabit/providers/app_sync.dart';
 import 'package:mhabit/providers/app_sync_server_form.dart';
-import 'package:mhabit/providers/app_sync_server_form_owner.dart';
 
-final class _FakeAppSyncServerFormOwner implements AppSyncServerFormOwner {
+final class _FakeAppSyncPasswordReader implements AppSyncPasswordReader {
   final String? password;
   String? lastIdentity;
 
-  _FakeAppSyncServerFormOwner({this.password});
+  _FakeAppSyncPasswordReader({this.password});
 
   @override
   Future<String?> readPassword({String? identity}) async {
@@ -38,15 +38,15 @@ void main() {
       'uses the narrow owner contract for config and password access',
       () async {
         final serverConfig = AppSyncServer.newServer(AppSyncServerType.webdav);
-        final owner = _FakeAppSyncServerFormOwner(password: 'secret');
+        final passwordReader = _FakeAppSyncPasswordReader(password: 'secret');
         final vm = AppSyncServerFormViewModel(initServerConfig: serverConfig)
-          ..attachOwner(owner);
+          ..attachPasswordReader(passwordReader);
 
         expect(vm.serverConfig, same(serverConfig));
 
         final password = await vm.webdav!.readPassword();
 
-        expect(owner.lastIdentity, vm.identity);
+        expect(passwordReader.lastIdentity, vm.identity);
         expect(password.$1, vm.identity);
         expect(password.$2, 'secret');
 

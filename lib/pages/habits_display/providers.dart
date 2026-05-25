@@ -24,7 +24,6 @@ import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
 import '../../providers/habits_today.dart';
-import '../../reminders/notification_channel.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
 
@@ -36,13 +35,14 @@ class PageProviders extends SingleChildStatelessWidget {
       create: (context) => HabitSummaryViewModel(),
     ),
     ViewModelProxyProvider<HabitsManager, HabitSummaryViewModel>(
-      update: (context, value, previous) => previous..updateHabitManager(value),
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
     ),
     ViewModelProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
-      update: (context, value, previous) => previous..updateAppSync(value),
+      update: (context, value, previous) =>
+          previous..attachStartEventSource(value),
     ),
     ViewModelProxyProvider2<
       HabitsSortViewModel,
@@ -60,10 +60,6 @@ class PageProviders extends SingleChildStatelessWidget {
       post: (t, value, vm) =>
           value.firstDay != vm.firstday ? vm.requestReload() : null,
     ),
-    ViewModelProxyProvider<NotificationChannelData, HabitSummaryViewModel>(
-      update: (context, value, previous) =>
-          previous..setNotificationChannelData(value),
-    ),
   ];
 
   Iterable<SingleChildWidget> _buildTodayViewModel() => [
@@ -71,13 +67,14 @@ class PageProviders extends SingleChildStatelessWidget {
       create: (context) => HabitsTodayViewModel(),
     ),
     ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
-      update: (context, value, previous) => previous..updateHabitManager(value),
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
     ),
     ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
-      update: (context, value, previous) => previous..updateAppSync(value),
+      update: (context, value, previous) =>
+          previous..attachStartEventSource(value),
     ),
     ViewModelProxyProvider<HabitsSortViewModel, HabitsTodayViewModel>(
       update: (context, sortOptions, previous) => previous

@@ -38,7 +38,6 @@ import 'commons.dart';
 import 'habits_manager.dart';
 
 class HabitsTodayViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin
     implements ProviderMounted, AppEventLoaded {
   static const _loadHabitDataCollectionColumns = [
     HabitDBCellKey.id,
@@ -73,6 +72,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
+  HabitsDisplayAccess? _access;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
   StreamSubscription<ReloadDataEvent>? _reloadDataSub;
@@ -115,7 +115,20 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      habitsManager.updateHabitReminder(data);
+      access.updateHabitReminder(data);
+
+  @protected
+  HabitsDisplayAccess get access {
+    final access = _access;
+    if (access == null) {
+      throw StateError('HabitsDisplayAccess not attached');
+    }
+    return access;
+  }
+
+  void attachAccess(HabitsDisplayAccess newAccess) {
+    if (_access != newAccess) _access = newAccess;
+  }
 
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) =>
       data.reCalculateAutoComplateRecords(firstDay: firstday);
@@ -193,7 +206,7 @@ class HabitsTodayViewModel extends ChangeNotifier
       );
 
       // init habits
-      await habitsManager.loadHabitSummaryCollectionData(
+      await access.loadHabitSummaryCollectionData(
         initedCollection: _data,
         habitsColmns: _loadHabitDataCollectionColumns,
       );
@@ -249,7 +262,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
-  ) => habitsManager.loadHabitRecordReason(data, date);
+  ) => access.loadHabitRecordReason(data, date);
   //#endregion
 
   //#region sortbale habits list
@@ -300,7 +313,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#endregion
 
   //#region: auto sync
-  void updateAppSync(AppSyncViewModel appSync) {
+  void attachStartEventSource(AppSyncStartEventSource appSync) {
     _startSyncSub?.cancel();
     _startSyncSub = appSync.startSyncEvents.listen((id) {
       appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
@@ -414,7 +427,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         status: HabitRecordStatus.skip,
@@ -452,7 +465,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,

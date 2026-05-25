@@ -26,9 +26,26 @@ import '../utils/app_clock.dart';
 import '../utils/app_path_provider.dart';
 import 'habits_manager.dart';
 
-class HabitFileExporterViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin {
+class HabitFileExporterViewModel extends ChangeNotifier {
   static const defaultExportFileNamePrefix = "export-habits";
+  final AppPathProvider _pathProvider;
+  HabitExportQueries? _queries;
+
+  HabitFileExporterViewModel({AppPathProvider? pathProvider})
+    : _pathProvider = pathProvider ?? AppPathProvider();
+
+  @protected
+  HabitExportQueries get queries {
+    final queries = _queries;
+    if (queries == null) {
+      throw StateError('HabitExportQueries not attached');
+    }
+    return queries;
+  }
+
+  void attachQueries(HabitExportQueries newQueries) {
+    if (_queries != newQueries) _queries = newQueries;
+  }
 
   String _getExportDataFileName({
     DateTime? dateTime,
@@ -42,7 +59,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
   }
 
   Future<String> _writeDataToTmpDir(String fileName, String data) =>
-      AppPathProvider()
+      _pathProvider
           .getExportHabitsDirPath()
           .then((value) => File(path.join(value, fileName)).writeAsString(data))
           .then((value) => value.path);
@@ -66,9 +83,10 @@ class HabitFileExporterViewModel extends ChangeNotifier
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await habitsManager
-        .getExporter(uuidList: [habitUUID])
-        .exportData(withRecords: withRecords);
+    final result = await queries.loadHabitExportData(
+      uuidList: [habitUUID],
+      withRecords: withRecords,
+    );
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -90,9 +108,10 @@ class HabitFileExporterViewModel extends ChangeNotifier
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await habitsManager
-        .getExporter(uuidList: uuidList)
-        .exportData(withRecords: withRecords);
+    final result = await queries.loadHabitExportData(
+      uuidList: uuidList,
+      withRecords: withRecords,
+    );
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -113,9 +132,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
     bool withRecords = true,
     bool listen = true,
   }) async {
-    Iterable<HabitExportData> habitExportData;
-
-    habitExportData = await habitsManager.getExporter().exportData(
+    final habitExportData = await queries.loadHabitExportData(
       withRecords: withRecords,
     );
 

@@ -33,8 +33,7 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) => HabitFormViewModel(initForm: initForm),
       ),
       ViewModelProxyProvider<HabitsManager, HabitFormViewModel>(
-        update: (context, value, previous) =>
-            previous..updateHabitManager(value),
+        update: (context, value, previous) => previous..attachCommands(value),
       ),
     ],
     child: child,

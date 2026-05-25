@@ -16,9 +16,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/exceptions.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_daily_goal.dart';
+import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/providers/habit_form.dart';
+import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/storage/db/handlers/habit.dart';
+
+final class _FakeHabitFormCommands implements HabitFormCommands {
+  HabitDBCell? lastCreatedCell;
+  HabitDBCell? lastUpdatedCell;
+
+  @override
+  Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
+    lastCreatedCell = cell;
+    return cell;
+  }
+
+  @override
+  Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
+    HabitDBCell cell, {
+    bool withReminder = true,
+  }) async {
+    lastUpdatedCell = cell;
+    return cell;
+  }
+}
 
 void main() {
   HabitFormViewModel getMockViewModel() {
@@ -97,6 +121,57 @@ void main() {
         expect(provider.desc, 'test');
       });
       provider.desc = 'test';
+    });
+  });
+  group('HabitFormViewModel:commands', () {
+    test('saveHabit writes create path through commands', () async {
+      final commands = _FakeHabitFormCommands();
+      final provider = HabitFormViewModel()..attachCommands(commands);
+
+      provider.name = 'New Habit';
+      final saved = await provider.saveHabit();
+
+      expect(saved, isNotNull);
+      expect(commands.lastCreatedCell, isNotNull);
+      expect(commands.lastCreatedCell?.name, 'New Habit');
+      expect(commands.lastUpdatedCell, isNull);
+
+      provider.dispose();
+    });
+
+    test('saveHabit writes edit path through commands', () async {
+      final commands = _FakeHabitFormCommands();
+      final provider = HabitFormViewModel(
+        initForm: HabitForm(
+          name: 'Existing Habit',
+          type: HabitType.normal,
+          colorType: defaultHabitColorType,
+          dailyGoal: HabitDailyGoalData(type: HabitType.normal),
+          frequency: HabitFrequency.daily,
+          startDate: HabitStartDate.dateTime(DateTime(2020, 1, 20)),
+          targetDays: defaultHabitTargetDays,
+          desc: '',
+          editMode: HabitDisplayEditMode.edit,
+          editParams: HabitDisplayEditParams(
+            uuid: '11111111-1111-4111-8111-111111111111',
+            createT: DateTime(2020, 1, 20),
+            modifyT: DateTime(2020, 1, 21),
+          ),
+        ),
+      )..attachCommands(commands);
+
+      final saved = await provider.saveHabit();
+
+      expect(saved, isNotNull);
+      expect(commands.lastUpdatedCell, isNotNull);
+      expect(
+        commands.lastUpdatedCell?.uuid,
+        '11111111-1111-4111-8111-111111111111',
+      );
+      expect(commands.lastUpdatedCell?.name, 'Existing Habit');
+      expect(commands.lastCreatedCell, isNull);
+
+      provider.dispose();
     });
   });
   group("HabitFrequency", () {
