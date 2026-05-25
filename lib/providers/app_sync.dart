@@ -61,13 +61,78 @@ abstract interface class AppSyncStartEventSource {
   Stream<String> get startSyncEvents;
 }
 
+abstract interface class AppSyncSettingsAccess implements Listenable {
+  bool get enabled;
+
+  Future<void> setSyncSwitch(bool value, {bool listen = true});
+
+  AppSyncFetchInterval get fetchInterval;
+
+  Future<void> setFetchInterval(
+    AppSyncFetchInterval value, {
+    bool listen = true,
+  });
+
+  AppSyncServer? get serverConfig;
+
+  Future<bool> saveServerConfigForm(
+    AppSyncServerForm form, {
+    bool resetStatus = true,
+  });
+
+  Future<bool> deleteServerConfig();
+}
+
+abstract interface class AppSyncDebugAccess implements Listenable {
+  bool get enabled;
+
+  AppSyncFetchInterval get fetchInterval;
+
+  AppSyncServer? get serverConfig;
+
+  Future<String> readDebugPasswordText();
+}
+
+abstract interface class AppSyncStatusSource implements Listenable {
+  AppSyncStatusSnapshot? get syncStatus;
+}
+
+abstract interface class AppSyncTriggerAccess implements Listenable {
+  bool get canStartSync;
+
+  Future<void> startSync({Duration? initWait});
+
+  void cancelSync();
+}
+
+abstract interface class AppSyncDelayedTriggerAccess implements Listenable {
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay});
+}
+
+abstract interface class AppSyncWorkflowAccess
+    implements
+        AppSyncTriggerAccess,
+        AppSyncDelayedTriggerAccess,
+        AppSyncStatusSource,
+        AppSyncStartEventSource {
+  Future? get syncProcessing;
+}
+
 class AppSyncViewModel
     with
         ChangeNotifier,
         ProfileHandlerLoadedMixin,
         DBHelperLoadedMixin,
         NotificationChannelDataMixin
-    implements ProviderMounted, AppSyncPasswordReader, AppSyncStartEventSource {
+    implements
+        ProviderMounted,
+        AppSyncPasswordReader,
+        AppSyncStartEventSource,
+        AppSyncSettingsAccess,
+        AppSyncDebugAccess,
+        AppSyncStatusSource,
+        AppSyncTriggerAccess,
+        AppSyncWorkflowAccess {
   late final AppSyncTaskDispatcher _appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
@@ -183,8 +248,10 @@ class AppSyncViewModel
     _l10n = l10n != null ? WeakReference(l10n) : null;
   }
 
+  @override
   bool get enabled => _switch?.get() ?? false;
 
+  @override
   Future<void> setSyncSwitch(bool value, {bool listen = true}) async {
     if (_switch?.get() != value) {
       await _switch?.set(value);
@@ -192,9 +259,11 @@ class AppSyncViewModel
     }
   }
 
+  @override
   AppSyncFetchInterval get fetchInterval =>
       _interval?.get() ?? defaultAppSyncFetchInterval;
 
+  @override
   Future<void> setFetchInterval(
     AppSyncFetchInterval value, {
     bool listen = true,
@@ -206,11 +275,17 @@ class AppSyncViewModel
     }
   }
 
+  @override
   AppSyncServer? get serverConfig => _serverConfig?.get();
 
+  @override
   AppSyncStatusSnapshot? get syncStatus =>
       _appSyncTask.task?.toStatusSnapshot();
 
+  @override
+  bool get canStartSync => enabled && serverConfig != null;
+
+  @override
   Future? get syncProcessing => _appSyncTask.processing;
 
   Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
@@ -219,13 +294,16 @@ class AppSyncViewModel
   @override
   Stream<String> get startSyncEvents => _appSyncTask.startSyncEvents;
 
+  @override
   void cancelSync() => _appSyncTask.cancelSync();
 
+  @override
   Future<bool> saveServerConfigForm(
     AppSyncServerForm form, {
     bool resetStatus = false,
   }) => _applyServerConfigChange(form, resetStatus: resetStatus);
 
+  @override
   Future<bool> deleteServerConfig() =>
       _applyServerConfigChange(null, removable: true);
 
@@ -246,6 +324,7 @@ class AppSyncViewModel
         });
   }
 
+  @override
   Future<String> readDebugPasswordText() => readPassword().then(
     (password) => switch (password) {
       null || '' => '',
@@ -392,6 +471,7 @@ class AppSyncViewModel
     });
   }
 
+  @override
   Future<void> startSync({Duration? initWait}) =>
       _appSyncTask.shouldSync().then((result) {
         if (!result) {
@@ -446,6 +526,7 @@ class AppSyncViewModel
     }
   }
 
+  @override
   void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {
     if (!(mounted &&
         _serverConfig?.get() != null &&

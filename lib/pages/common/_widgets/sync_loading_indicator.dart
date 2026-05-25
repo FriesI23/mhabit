@@ -24,7 +24,7 @@ class AppSyncLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Selector<AppSyncViewModel, AppSyncStatusSnapshot?>(
+      Selector<AppSyncStatusSource, AppSyncStatusSnapshot?>(
         selector: (context, vm) => vm.syncStatus,
         builder: (context, value, child) => AnimatedLinearProgress(
           value: switch (value?.status) {

@@ -42,7 +42,7 @@ class AppSyncSummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final serverConfig = context.select<AppSyncViewModel, AppSyncServer?>(
+    final serverConfig = context.select<AppSyncSettingsAccess, AppSyncServer?>(
       (vm) => vm.serverConfig,
     );
     final l10n = L10n.of(context);

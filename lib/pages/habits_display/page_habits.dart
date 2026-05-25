@@ -204,10 +204,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) {
-        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
-      }
+      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
+        delay: kAppUndoDialogShowDuration * 2,
+      );
     }
   }
 
@@ -228,8 +227,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
     }
   }
 
@@ -598,19 +596,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
     DateChangeProvider.of(context).dateTime = HabitDate.now();
-    final syncvm = context.read<AppSyncViewModel>();
-    if (syncvm.mounted) {
-      try {
-        await syncvm.startSync(initWait: kAppSyncDelayDuration2);
-      } catch (e, s) {
-        appLog.appsync.fatal(
-          "start sync failed",
-          ex: [syncvm.syncStatus],
-          error: e,
-          stackTrace: s,
-        );
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-      }
+    final syncvm = context.read<AppSyncWorkflowAccess>();
+    try {
+      await syncvm.startSync(initWait: kAppSyncDelayDuration2);
+    } catch (e, s) {
+      appLog.appsync.fatal(
+        "start sync failed",
+        ex: [syncvm.syncStatus],
+        error: e,
+        stackTrace: s,
+      );
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
     }
   }
 
@@ -749,9 +745,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
             },
           ),
         );
-        final appSync = context.maybeRead<AppSyncViewModel>();
-        if (appSync == null || !appSync.mounted) return;
-        appSync.delayedStartTaskOnce();
+        context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
       });
     } else if (!viewmodel.isInEditMode) {
       viewmodel.exitEditMode(listen: false);
@@ -981,11 +975,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
             return defaultScrollNotificationPredicate(notification);
           }
           final summary = context.read<HabitSummaryViewModel>();
-          final sync = context.read<AppSyncViewModel>();
-          if (summary.isInEditMode ||
-              !(sync.enabled && sync.serverConfig != null)) {
-            return false;
-          }
+          final sync = context.read<AppSyncWorkflowAccess>();
+          if (summary.isInEditMode || !sync.canStartSync) return false;
           return defaultScrollNotificationPredicate(notification);
         },
         onRefresh: _onRefreshIndicatorTriggered,
@@ -1142,9 +1133,9 @@ class _HabitListState extends State<_HabitList> {
   Future<void> loadData() async {
     if (!mounted) return;
     final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     try {
-      if (sync.mounted) await sync.syncProcessing;
+      await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "HabitsTabPage",

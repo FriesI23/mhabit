@@ -58,37 +58,44 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AppSyncViewModel', () {
-    test('idle trigger and event boundary stays safe', () {
+    test('idle trigger and status surfaces stay safe', () {
       final vm = _TestAppSyncViewModel();
+      final trigger = vm as AppSyncTriggerAccess;
+      final status = vm as AppSyncStatusSource;
 
-      expect(vm.syncStatus, isNull);
+      expect(status.syncStatus, isNull);
+      expect(trigger.canStartSync, isFalse);
       expect(vm.syncProcessing, isNull);
       expect(vm.confirmEvents.isBroadcast, isTrue);
       expect(vm.startSyncEvents.isBroadcast, isTrue);
-      expect(vm.cancelSync, returnsNormally);
+      expect(trigger.cancelSync, returnsNormally);
 
       vm.dispose();
     });
 
     test(
-      'settings boundary persists switch interval and reflects config',
+      'settings access persists switch interval and reflects config',
       () async {
         final profile = await _buildProfile();
         final vm = _TestAppSyncViewModel()..updateProfile(profile);
+        final settings = vm as AppSyncSettingsAccess;
+        final trigger = vm as AppSyncTriggerAccess;
         final newInterval = AppSyncFetchInterval.values.firstWhere(
-          (value) => value != vm.fetchInterval,
+          (value) => value != settings.fetchInterval,
         );
         final fakeServer = AppSyncServer.newServer(AppSyncServerType.fake)!;
         final serverHandler = profile.getHandler<AppSyncServerConfigHandler>()!;
 
-        expect(vm.enabled, isFalse);
-        await vm.setSyncSwitch(true);
-        await vm.setFetchInterval(newInterval);
+        expect(settings.enabled, isFalse);
+        expect(trigger.canStartSync, isFalse);
+        await settings.setSyncSwitch(true);
+        await settings.setFetchInterval(newInterval);
         await serverHandler.set(fakeServer);
 
-        expect(vm.enabled, isTrue);
-        expect(vm.fetchInterval, newInterval);
-        expect(vm.serverConfig?.isSameConfig(fakeServer), isTrue);
+        expect(settings.enabled, isTrue);
+        expect(trigger.canStartSync, isTrue);
+        expect(settings.fetchInterval, newInterval);
+        expect(settings.serverConfig?.isSameConfig(fakeServer), isTrue);
         expect(profile.getHandler<AppSyncSwitchHandler>()?.get(), isTrue);
         expect(
           profile.getHandler<AppSyncFetchIntervalHandler>()?.get(),
@@ -101,37 +108,40 @@ void main() {
       },
     );
 
-    test('settings commands save and delete server config', () async {
+    test('settings access saves and deletes server config', () async {
       final profile = await _buildProfile();
       final vm = _TestAppSyncViewModel()..updateProfile(profile);
+      final settings = vm as AppSyncSettingsAccess;
 
-      final saved = await vm.saveServerConfigForm(
+      final saved = await settings.saveServerConfigForm(
         AppSyncServer.newServer(AppSyncServerType.fake)!.toForm(),
       );
 
       expect(saved, isTrue);
-      expect(vm.serverConfig, isA<AppFakeSyncServer>());
+      expect(settings.serverConfig, isA<AppFakeSyncServer>());
       expect(
         profile.getHandler<AppSyncServerConfigHandler>()?.get(),
         isA<AppFakeSyncServer>(),
       );
 
-      final deleted = await vm.deleteServerConfig();
+      final deleted = await settings.deleteServerConfig();
 
       expect(deleted, isTrue);
-      expect(vm.serverConfig, isNull);
+      expect(settings.serverConfig, isNull);
       expect(profile.getHandler<AppSyncServerConfigHandler>()?.get(), isNull);
 
       vm.dispose();
       profile.dispose();
     });
 
-    test('debug password text uses owner-side display formatting', () async {
+    test('debug access uses owner-side display formatting', () async {
       final vm = _TestAppSyncPasswordViewModel('secret');
       final emptyVm = _TestAppSyncPasswordViewModel(null);
+      final debug = vm as AppSyncDebugAccess;
+      final emptyDebug = emptyVm as AppSyncDebugAccess;
 
-      expect(await vm.readDebugPasswordText(), 'secret');
-      expect(await emptyVm.readDebugPasswordText(), '');
+      expect(await debug.readDebugPasswordText(), 'secret');
+      expect(await emptyDebug.readDebugPasswordText(), '');
 
       vm.dispose();
       emptyVm.dispose();

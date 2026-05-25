@@ -156,10 +156,7 @@ class _PageState extends State<_Page> {
     final changedCount = await _vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
 
-    final appSync = context.maybeRead<AppSyncViewModel>();
-    if (appSync != null && appSync.mounted) {
-      appSync.delayedStartTaskOnce();
-    }
+    context.maybeRead<AppSyncDelayedTriggerAccess>()?.delayedStartTaskOnce();
 
     final snackBar = buildSnackBarWithDismiss(
       context,

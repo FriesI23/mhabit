@@ -32,25 +32,23 @@ class AppSyncNowTile extends StatefulWidget {
 
 class _AppSyncNowTile extends State<AppSyncNowTile> {
   void _onCancelButtonPressed() {
-    final vm = context.read<AppSyncViewModel>();
-    if (!vm.mounted) return;
-    vm.cancelSync();
+    context.read<AppSyncTriggerAccess>().cancelSync();
   }
 
   void _onStartButtonPressed() {
-    final vm = context.read<AppSyncViewModel>();
-    if (!vm.mounted) return;
-    vm.startSync(initWait: kAppSyncDelayDuration1);
+    context.read<AppSyncTriggerAccess>().startSync(
+      initWait: kAppSyncDelayDuration1,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final enabled = context.select<AppSyncViewModel, bool>(
-      (vm) => vm.enabled && vm.serverConfig != null,
+    final enabled = context.select<AppSyncTriggerAccess, bool>(
+      (vm) => vm.canStartSync,
     );
 
     Widget buildTitle(BuildContext context) =>
-        Selector<AppSyncViewModel, bool?>(
+        Selector<AppSyncStatusSource, bool?>(
           selector: (context, vm) => vm.syncStatus?.isProcessing,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
@@ -63,7 +61,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildSubtitle(
       BuildContext context,
-    ) => Selector<AppSyncViewModel, AppSyncStatusSnapshot?>(
+    ) => Selector<AppSyncStatusSource, AppSyncStatusSnapshot?>(
       selector: (context, vm) => vm.syncStatus,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, value, child) {
@@ -124,7 +122,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
     );
 
     Widget buildTrailing(BuildContext context) =>
-        Selector<AppSyncViewModel, AppSyncTaskStatus?>(
+        Selector<AppSyncStatusSource, AppSyncTaskStatus?>(
           selector: (context, vm) => vm.syncStatus?.status,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedSwitcher(
@@ -148,7 +146,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
     Widget buildIndicator(BuildContext context) =>
-        Selector<AppSyncViewModel, bool>(
+        Selector<AppSyncStatusSource, bool>(
           selector: (context, vm) => vm.syncStatus?.isProcessing ?? false,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedOpacity(
