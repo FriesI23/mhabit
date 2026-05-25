@@ -30,7 +30,7 @@ class PageProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<HabitDetailViewModel>(
       create: (context) => HabitDetailViewModel(),
     ),
-    ViewModelProxyProvider<HabitsManager, HabitDetailViewModel>(
+    ViewModelProxyProvider<HabitDetailAccess, HabitDetailViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(

@@ -60,6 +60,24 @@ class AppProviders extends SingleChildStatelessWidget {
               ..updateDBHelper(db)
               ..setNotificationChannelData(channel),
       ),
+      ProxyProvider<HabitsManager, HabitsDisplayAccess>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<HabitsManager, HabitDetailAccess>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<HabitsManager, HabitFormCommands>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<HabitsManager, HabitStatusChangerAccess>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<HabitsManager, HabitExportQueries>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<HabitsManager, HabitImportCommands>(
+        update: (context, value, previous) => value,
+      ),
       ViewModelProxyProvider2<
         ProfileViewModel,
         NotificationChannelData,
@@ -128,6 +146,12 @@ class AppProviders extends SingleChildStatelessWidget {
           ..updateDBHelper(helper)
           ..setNotificationChannelData(channel),
       ),
+      ProxyProvider<AppSyncViewModel, AppSyncPasswordReader>(
+        update: (context, value, previous) => value,
+      ),
+      ProxyProvider<AppSyncViewModel, AppSyncStartEventSource>(
+        update: (context, value, previous) => value,
+      ),
       ListenableProxyProvider<AppSyncViewModel, AppSyncTriggerAccess>(
         create: (context) => context.read<AppSyncViewModel>(),
         update: (context, value, previous) => value,
@@ -173,11 +197,11 @@ class AppProviders extends SingleChildStatelessWidget {
             AppDeveloperViewModel(global: context.read<Global>()),
         update: (context, value, previous) => previous..updateGlobal(value),
       ),
-      ViewModelProxyProvider<HabitsManager, HabitFileExporterViewModel>(
+      ViewModelProxyProvider<HabitExportQueries, HabitFileExporterViewModel>(
         create: (context) => HabitFileExporterViewModel(),
         update: (context, value, previous) => previous..attachQueries(value),
       ),
-      ViewModelProxyProvider<HabitsManager, HabitFileImporterViewModel>(
+      ViewModelProxyProvider<HabitImportCommands, HabitFileImporterViewModel>(
         create: (context) => HabitFileImporterViewModel(),
         update: (context, value, previous) => previous..attachCommands(value),
       ),

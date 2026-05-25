@@ -34,13 +34,13 @@ class PageProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<HabitSummaryViewModel>(
       create: (context) => HabitSummaryViewModel(),
     ),
-    ViewModelProxyProvider<HabitsManager, HabitSummaryViewModel>(
+    ViewModelProxyProvider<HabitsDisplayAccess, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppEventViewModel, HabitSummaryViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
     ),
-    ViewModelProxyProvider<AppSyncViewModel, HabitSummaryViewModel>(
+    ViewModelProxyProvider<AppSyncStartEventSource, HabitSummaryViewModel>(
       update: (context, value, previous) =>
           previous..attachStartEventSource(value),
     ),
@@ -66,13 +66,13 @@ class PageProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<HabitsTodayViewModel>(
       create: (context) => HabitsTodayViewModel(),
     ),
-    ViewModelProxyProvider<HabitsManager, HabitsTodayViewModel>(
+    ViewModelProxyProvider<HabitsDisplayAccess, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppEventViewModel, HabitsTodayViewModel>(
       update: (context, value, previous) => previous..updateAppEvent(value),
     ),
-    ViewModelProxyProvider<AppSyncViewModel, HabitsTodayViewModel>(
+    ViewModelProxyProvider<AppSyncStartEventSource, HabitsTodayViewModel>(
       update: (context, value, previous) =>
           previous..attachStartEventSource(value),
     ),
