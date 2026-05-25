@@ -23,19 +23,10 @@ class HabitFileImporterViewModel extends ChangeNotifier
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
-  HabitImportCommands? _commands;
+  late HabitImportAccess _access;
 
-  @protected
-  HabitImportCommands get commands {
-    final commands = _commands;
-    if (commands == null) {
-      throw StateError('HabitImportCommands not attached');
-    }
-    return commands;
-  }
-
-  void attachCommands(HabitImportCommands newCommands) {
-    if (_commands != newCommands) _commands = newCommands;
+  void attachAccess(HabitImportAccess newAccess) {
+    _access = newAccess;
   }
 
   @override
@@ -56,7 +47,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
       if (listen) notifyListeners();
     }
 
-    final futures = commands.importHabitsData(jsonData);
+    final futures = _access.importHabitsData(jsonData);
     if (futures.isEmpty) return null;
 
     final completer = Completer<int>();
@@ -83,7 +74,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
   }
 
   int importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    return commands.getImportHabitsCount(jsonData);
+    return _access.getImportHabitsCount(jsonData);
   }
 
   @override

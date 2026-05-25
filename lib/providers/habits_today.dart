@@ -72,7 +72,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
-  HabitsDisplayAccess? _access;
+  late HabitsDisplayAccess _access;
   AppSyncWorkflowAccess? _workflow;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
@@ -116,19 +116,10 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      access.updateHabitReminder(data);
-
-  @protected
-  HabitsDisplayAccess get access {
-    final access = _access;
-    if (access == null) {
-      throw StateError('HabitsDisplayAccess not attached');
-    }
-    return access;
-  }
+      _access.updateHabitReminder(data);
 
   void attachAccess(HabitsDisplayAccess newAccess) {
-    if (_access != newAccess) _access = newAccess;
+    _access = newAccess;
   }
 
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) =>
@@ -207,7 +198,7 @@ class HabitsTodayViewModel extends ChangeNotifier
       );
 
       // init habits
-      await access.loadHabitSummaryCollectionData(
+      await _access.loadHabitSummaryCollectionData(
         initedCollection: _data,
         habitsColmns: _loadHabitDataCollectionColumns,
       );
@@ -263,7 +254,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
-  ) => access.loadHabitRecordReason(data, date);
+  ) => _access.loadHabitRecordReason(data, date);
   //#endregion
 
   //#region sortbale habits list
@@ -430,7 +421,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         status: HabitRecordStatus.skip,
@@ -468,7 +459,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,

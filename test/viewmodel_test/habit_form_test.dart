@@ -24,7 +24,7 @@ import 'package:mhabit/providers/habit_form.dart';
 import 'package:mhabit/providers/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-final class _FakeHabitFormCommands implements HabitFormCommands {
+final class _FakeHabitFormAccess implements HabitFormAccess {
   HabitDBCell? lastCreatedCell;
   HabitDBCell? lastUpdatedCell;
 
@@ -125,22 +125,22 @@ void main() {
   });
   group('HabitFormViewModel:commands', () {
     test('saveHabit writes create path through commands', () async {
-      final commands = _FakeHabitFormCommands();
-      final provider = HabitFormViewModel()..attachCommands(commands);
+      final access = _FakeHabitFormAccess();
+      final provider = HabitFormViewModel()..attachAccess(access);
 
       provider.name = 'New Habit';
       final saved = await provider.saveHabit();
 
       expect(saved, isNotNull);
-      expect(commands.lastCreatedCell, isNotNull);
-      expect(commands.lastCreatedCell?.name, 'New Habit');
-      expect(commands.lastUpdatedCell, isNull);
+      expect(access.lastCreatedCell, isNotNull);
+      expect(access.lastCreatedCell?.name, 'New Habit');
+      expect(access.lastUpdatedCell, isNull);
 
       provider.dispose();
     });
 
     test('saveHabit writes edit path through commands', () async {
-      final commands = _FakeHabitFormCommands();
+      final access = _FakeHabitFormAccess();
       final provider = HabitFormViewModel(
         initForm: HabitForm(
           name: 'Existing Habit',
@@ -158,18 +158,18 @@ void main() {
             modifyT: DateTime(2020, 1, 21),
           ),
         ),
-      )..attachCommands(commands);
+      )..attachAccess(access);
 
       final saved = await provider.saveHabit();
 
       expect(saved, isNotNull);
-      expect(commands.lastUpdatedCell, isNotNull);
+      expect(access.lastUpdatedCell, isNotNull);
       expect(
-        commands.lastUpdatedCell?.uuid,
+        access.lastUpdatedCell?.uuid,
         '11111111-1111-4111-8111-111111111111',
       );
-      expect(commands.lastUpdatedCell?.name, 'Existing Habit');
-      expect(commands.lastCreatedCell, isNull);
+      expect(access.lastUpdatedCell?.name, 'Existing Habit');
+      expect(access.lastCreatedCell, isNull);
 
       provider.dispose();
     });

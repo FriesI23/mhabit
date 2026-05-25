@@ -32,8 +32,8 @@ class PageProviders extends SingleChildStatelessWidget {
       ChangeNotifierProvider(
         create: (context) => HabitFormViewModel(initForm: initForm),
       ),
-      ViewModelProxyProvider<HabitFormCommands, HabitFormViewModel>(
-        update: (context, value, previous) => previous..attachCommands(value),
+      ViewModelProxyProvider<HabitFormAccess, HabitFormViewModel>(
+        update: (context, value, previous) => previous..attachAccess(value),
       ),
     ],
     child: child,

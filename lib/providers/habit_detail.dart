@@ -55,7 +55,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
-  HabitDetailAccess? _access;
+  late HabitDetailAccess _access;
 
   HabitDetailViewModel();
 
@@ -158,20 +158,11 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
 
   Future<void> _updateHabitReminder() {
     final data = _habitDetailData?.data;
-    return data != null ? access.updateHabitReminder(data) : Future.value();
-  }
-
-  @protected
-  HabitDetailAccess get access {
-    final access = _access;
-    if (access == null) {
-      throw StateError('HabitDetailAccess not attached');
-    }
-    return access;
+    return data != null ? _access.updateHabitReminder(data) : Future.value();
   }
 
   void attachAccess(HabitDetailAccess newAccess) {
-    if (_access != newAccess) _access = newAccess;
+    _access = newAccess;
   }
 
   void requestReload() {
@@ -250,7 +241,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
       );
 
       // init habit
-      final data = await access.loadHabitDetailData(uuid);
+      final data = await _access.loadHabitDetailData(uuid);
       if (data == null) return loadingFailed(["data load failed", uuid]);
       // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
       if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
@@ -293,13 +284,13 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   Future<String?> loadRecordReason(HabitRecordDate date) async {
     final data = _habitDetailData?.data;
     if (data == null) return null;
-    return access.loadHabitRecordReason(data, date);
+    return _access.loadHabitRecordReason(data, date);
   }
 
   Future<HabitDBCell?> loadCurrentHabitDetail() async {
     final habitUUID = this.habitUUID;
     if (habitUUID == null) return null;
-    return access.loadHabitDetail(habitUUID);
+    return _access.loadHabitDetail(habitUUID);
   }
   //#endregion
 
@@ -371,7 +362,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
@@ -400,7 +391,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         reason: newReason,
@@ -434,7 +425,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
     final data = _habitDetailData?.data;
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,
@@ -465,7 +456,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
     final habitDetailData = this.habitDetailData;
     if (habitDetailData == null) return null;
 
-    final results = await access.changeHabitStatus(
+    final results = await _access.changeHabitStatus(
       action: ChangeMultiHabitStatusAction([
         habitDetailData.data,
       ], status: newStatus),

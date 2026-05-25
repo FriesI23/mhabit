@@ -29,22 +29,13 @@ import 'habits_manager.dart';
 class HabitFileExporterViewModel extends ChangeNotifier {
   static const defaultExportFileNamePrefix = "export-habits";
   final AppPathProvider _pathProvider;
-  HabitExportQueries? _queries;
+  late HabitExportAccess _access;
 
   HabitFileExporterViewModel({AppPathProvider? pathProvider})
     : _pathProvider = pathProvider ?? AppPathProvider();
 
-  @protected
-  HabitExportQueries get queries {
-    final queries = _queries;
-    if (queries == null) {
-      throw StateError('HabitExportQueries not attached');
-    }
-    return queries;
-  }
-
-  void attachQueries(HabitExportQueries newQueries) {
-    if (_queries != newQueries) _queries = newQueries;
+  void attachAccess(HabitExportAccess newAccess) {
+    _access = newAccess;
   }
 
   String _getExportDataFileName({
@@ -83,7 +74,7 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await queries.loadHabitExportData(
+    final result = await _access.loadHabitExportData(
       uuidList: [habitUUID],
       withRecords: withRecords,
     );
@@ -108,7 +99,7 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await queries.loadHabitExportData(
+    final result = await _access.loadHabitExportData(
       uuidList: uuidList,
       withRecords: withRecords,
     );
@@ -132,7 +123,7 @@ class HabitFileExporterViewModel extends ChangeNotifier {
     bool withRecords = true,
     bool listen = true,
   }) async {
-    final habitExportData = await queries.loadHabitExportData(
+    final habitExportData = await _access.loadHabitExportData(
       withRecords: withRecords,
     );
 

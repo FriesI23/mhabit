@@ -75,7 +75,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   bool _mounted = true;
   // sync from setting
   int _firstday = defaultFirstDay;
-  HabitsDisplayAccess? _access;
+  late HabitsDisplayAccess _access;
   AppSyncWorkflowAccess? _workflow;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
@@ -192,19 +192,10 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      access.updateHabitReminder(data);
-
-  @protected
-  HabitsDisplayAccess get access {
-    final access = _access;
-    if (access == null) {
-      throw StateError('HabitsDisplayAccess not attached');
-    }
-    return access;
-  }
+      _access.updateHabitReminder(data);
 
   void attachAccess(HabitsDisplayAccess newAccess) {
-    if (_access != newAccess) _access = newAccess;
+    _access = newAccess;
   }
 
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) {
@@ -304,7 +295,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       );
 
       // init habits
-      await access.loadHabitSummaryCollectionData(initedCollection: _data);
+      await _access.loadHabitSummaryCollectionData(initedCollection: _data);
       if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
       if (loading.isCanceled) return loadingCancelled();
       if (loading.isCompleted) return;
@@ -357,7 +348,7 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
-  ) => access.loadHabitRecordReason(data, date);
+  ) => _access.loadHabitRecordReason(data, date);
 
   Future<HabitDBCell?> loadSelectedHabitDetail() async {
     final selectedData = getSelectedHabitsData().firstWhere(
@@ -365,7 +356,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       orElse: () => null,
     );
     if (selectedData == null) return null;
-    return access.loadHabitDetail(selectedData.uuid);
+    return _access.loadHabitDetail(selectedData.uuid);
   }
 
   bool addNewData(HabitSummaryData cell, {bool listen = false}) {
@@ -699,7 +690,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: AutoChangeRecordStatusAction(data: data, dateList: [date]),
       postActionBuilder: (results) =>
           ChangeRecordStatusPostAction(data: data, results: results),
@@ -730,7 +721,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,
@@ -765,7 +756,7 @@ class HabitSummaryViewModel extends ChangeNotifier
     final data = _data.getHabitByUUID(habitUUID);
     if (data == null) return null;
 
-    final results = await access.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         reason: newReason,
@@ -800,7 +791,7 @@ class HabitSummaryViewModel extends ChangeNotifier
         .toList();
     if (dataList.isEmpty) return;
 
-    final changedUUIDs = await access.fixAndSaveSortPositions(
+    final changedUUIDs = await _access.fixAndSaveSortPositions(
       dataList,
       increaseStep: sortPositionConflictIncreaseStep,
       decimalPlaces: sortPositionConflictDecimalPlaces,
@@ -826,7 +817,7 @@ class HabitSummaryViewModel extends ChangeNotifier
       ex: [uuidList, newStatus],
     );
     final dataList = uuidList.map(getHabit).nonNulls.toList();
-    final results = await access.changeHabitStatus(
+    final results = await _access.changeHabitStatus(
       action: ChangeMultiHabitStatusAction(dataList, status: newStatus),
       extraResolver: (result) =>
           _updateHabitAutoCompleteStatistics(result.data),

@@ -66,16 +66,16 @@ class AppProviders extends SingleChildStatelessWidget {
     ProxyProvider<HabitsManager, HabitDetailAccess>(
       update: (context, value, previous) => value,
     ),
-    ProxyProvider<HabitsManager, HabitFormCommands>(
+    ProxyProvider<HabitsManager, HabitFormAccess>(
       update: (context, value, previous) => value,
     ),
     ProxyProvider<HabitsManager, HabitStatusChangerAccess>(
       update: (context, value, previous) => value,
     ),
-    ProxyProvider<HabitsManager, HabitExportQueries>(
+    ProxyProvider<HabitsManager, HabitExportAccess>(
       update: (context, value, previous) => value,
     ),
-    ProxyProvider<HabitsManager, HabitImportCommands>(
+    ProxyProvider<HabitsManager, HabitImportAccess>(
       update: (context, value, previous) => value,
     ),
   ];
@@ -113,13 +113,13 @@ class AppProviders extends SingleChildStatelessWidget {
           AppDeveloperViewModel(global: context.read<Global>()),
       update: (context, value, previous) => previous..updateGlobal(value),
     ),
-    ViewModelProxyProvider<HabitExportQueries, HabitFileExporterViewModel>(
+    ViewModelProxyProvider<HabitExportAccess, HabitFileExporterViewModel>(
       create: (context) => HabitFileExporterViewModel(),
-      update: (context, value, previous) => previous..attachQueries(value),
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
-    ViewModelProxyProvider<HabitImportCommands, HabitFileImporterViewModel>(
+    ViewModelProxyProvider<HabitImportAccess, HabitFileImporterViewModel>(
       create: (context) => HabitFileImporterViewModel(),
-      update: (context, value, previous) => previous..attachCommands(value),
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
   ];
 

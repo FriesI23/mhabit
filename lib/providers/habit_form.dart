@@ -35,7 +35,7 @@ class HabitFormViewModel extends ChangeNotifier
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
-  HabitFormCommands? _commands;
+  late HabitFormAccess _access;
 
   final HabitForm _form;
 
@@ -52,15 +52,8 @@ class HabitFormViewModel extends ChangeNotifier
   @override
   bool get mounted => _mounted;
 
-  void attachCommands(HabitFormCommands newCommands) {
-    if (_commands != newCommands) _commands = newCommands;
-  }
-
-  @protected
-  HabitFormCommands get commands {
-    final commands = _commands;
-    if (commands == null) throw StateError('HabitFormCommands not attached');
-    return commands;
+  void attachAccess(HabitFormAccess newAccess) {
+    _access = newAccess;
   }
 
   @override
@@ -272,7 +265,7 @@ class HabitFormViewModel extends ChangeNotifier
       createT: now,
       modifyT: now,
     );
-    return commands.saveNewHabitAndUpdateReminder(dbCell);
+    return _access.saveNewHabitAndUpdateReminder(dbCell);
   }
 
   Future<HabitDBCell?> _saveExistHabit() async {
@@ -297,6 +290,6 @@ class HabitFormViewModel extends ChangeNotifier
       remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
     );
-    return commands.updateExistHabitAndUpdateReminder(dbCell);
+    return _access.updateExistHabitAndUpdateReminder(dbCell);
   }
 }

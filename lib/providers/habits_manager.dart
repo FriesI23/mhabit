@@ -79,7 +79,7 @@ abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
   Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid);
 }
 
-abstract interface class HabitFormCommands {
+abstract interface class HabitFormAccess {
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
 
   Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
@@ -96,14 +96,14 @@ abstract interface class HabitStatusChangerAccess
   });
 }
 
-abstract interface class HabitExportQueries {
+abstract interface class HabitExportAccess {
   Future<Iterable<HabitExportData>> loadHabitExportData({
     List<HabitUUID>? uuidList,
     bool withRecords = true,
   });
 }
 
-abstract interface class HabitImportCommands {
+abstract interface class HabitImportAccess {
   List<Future<void>> importHabitsData(
     Iterable<Object?> jsonData, {
     bool withRecords = true,
@@ -117,10 +117,10 @@ class HabitsManager
     implements
         HabitsDisplayAccess,
         HabitDetailAccess,
-        HabitFormCommands,
+        HabitFormAccess,
         HabitStatusChangerAccess,
-        HabitExportQueries,
-        HabitImportCommands {
+        HabitExportAccess,
+        HabitImportAccess {
   HabitsManager();
 
   //#region status
