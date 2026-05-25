@@ -29,7 +29,7 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   bool _mounted = true;
   bool _pwdLoaded = false;
   bool _edited = false;
-  AppSyncViewModel? _parent;
+  AppSyncSettingsAccess? _settings;
   Completer<(String, String?)>? _pwdCompleter;
 
   late AppSyncServerForm _form;
@@ -69,12 +69,12 @@ class AppSyncServerFormViewModel extends ChangeNotifier
   AppSyncServerForm getDefaultForm() =>
       AppSyncServer.newServer(AppSyncServerType.webdav)!.toForm();
 
-  AppSyncServer? get serverConfig => initServerConfig ?? _parent?.serverConfig;
+  AppSyncServer? get serverConfig => initServerConfig;
 
-  void attachParent(AppSyncViewModel? parent) {
-    if (parent != _parent) {
-      appLog.load.info("$runtimeType.attachParent", ex: [parent]);
-      _parent = parent;
+  void attachSettings(AppSyncSettingsAccess? settings) {
+    if (settings != _settings) {
+      appLog.load.info("$runtimeType.attachSettings", ex: [settings]);
+      _settings = settings;
     }
   }
 
@@ -243,7 +243,7 @@ final class WebDavSyncServerFromHandler implements _Handler {
     }
     final completer = root._pwdCompleter = Completer<(String, String?)>();
     final identity = root.identity;
-    (root._parent?.readPassword(identity: identity) ?? Future.value(null))
+    (root._settings?.readPassword(identity: identity) ?? Future.value(null))
         .timeout(timeout)
         .then((value) {
           value = value ?? form.password;

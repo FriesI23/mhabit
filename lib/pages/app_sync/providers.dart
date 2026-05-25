@@ -16,25 +16,17 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/app_sync_server.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
-import '../../widgets/provider.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
-  final AppSyncServer? initServerConfig;
-
-  const PageProviders({super.key, super.child, this.initServerConfig});
+  const PageProviders({super.key, super.child});
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
-      ChangeNotifierProvider(
-        create: (context) =>
-            AppSyncServerFormViewModel(initServerConfig: initServerConfig),
-      ),
-      ViewModelProxyProvider<AppSyncSettingsAccess, AppSyncServerFormViewModel>(
-        update: (context, value, previous) => previous..attachSettings(value),
+      ListenableProxyProvider<AppSyncViewModel, AppSyncSettingsAccess>(
+        create: (context) => context.read<AppSyncViewModel>(),
+        update: (context, value, previous) => value,
       ),
     ],
     child: child,

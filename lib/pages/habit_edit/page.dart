@@ -283,8 +283,7 @@ class _PageState extends State<_Page> {
         ),
       });
       // try sync once
-      final appSync = context.maybeRead<AppSyncViewModel>();
-      if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
     // pop result
     Navigator.of(context).maybePop(result);

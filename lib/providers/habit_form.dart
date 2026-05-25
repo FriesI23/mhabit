@@ -31,10 +31,11 @@ import 'commons.dart';
 import 'habits_manager.dart';
 
 class HabitFormViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin, PinnedAppbarMixin
+    with PinnedAppbarMixin
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
+  late HabitFormAccess _access;
 
   final HabitForm _form;
 
@@ -50,6 +51,10 @@ class HabitFormViewModel extends ChangeNotifier
 
   @override
   bool get mounted => _mounted;
+
+  void attachAccess(HabitFormAccess newAccess) {
+    _access = newAccess;
+  }
 
   @override
   void notifyListeners() {
@@ -260,7 +265,7 @@ class HabitFormViewModel extends ChangeNotifier
       createT: now,
       modifyT: now,
     );
-    return habitsManager.saveNewHabitAndUpdateReminder(dbCell);
+    return _access.saveNewHabitAndUpdateReminder(dbCell);
   }
 
   Future<HabitDBCell?> _saveExistHabit() async {
@@ -285,6 +290,6 @@ class HabitFormViewModel extends ChangeNotifier
       remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
     );
-    return habitsManager.updateExistHabitAndUpdateReminder(dbCell);
+    return _access.updateExistHabitAndUpdateReminder(dbCell);
   }
 }

@@ -26,9 +26,17 @@ import '../utils/app_clock.dart';
 import '../utils/app_path_provider.dart';
 import 'habits_manager.dart';
 
-class HabitFileExporterViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin {
+class HabitFileExporterViewModel extends ChangeNotifier {
   static const defaultExportFileNamePrefix = "export-habits";
+  final AppPathProvider _pathProvider;
+  late HabitExportAccess _access;
+
+  HabitFileExporterViewModel({AppPathProvider? pathProvider})
+    : _pathProvider = pathProvider ?? AppPathProvider();
+
+  void attachAccess(HabitExportAccess newAccess) {
+    _access = newAccess;
+  }
 
   String _getExportDataFileName({
     DateTime? dateTime,
@@ -42,7 +50,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
   }
 
   Future<String> _writeDataToTmpDir(String fileName, String data) =>
-      AppPathProvider()
+      _pathProvider
           .getExportHabitsDirPath()
           .then((value) => File(path.join(value, fileName)).writeAsString(data))
           .then((value) => value.path);
@@ -66,9 +74,10 @@ class HabitFileExporterViewModel extends ChangeNotifier
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await habitsManager
-        .getExporter(uuidList: [habitUUID])
-        .exportData(withRecords: withRecords);
+    final result = await _access.loadHabitExportData(
+      uuidList: [habitUUID],
+      withRecords: withRecords,
+    );
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -90,9 +99,10 @@ class HabitFileExporterViewModel extends ChangeNotifier
     withRecords = true,
     bool listen = true,
   }) async {
-    final result = await habitsManager
-        .getExporter(uuidList: uuidList)
-        .exportData(withRecords: withRecords);
+    final result = await _access.loadHabitExportData(
+      uuidList: uuidList,
+      withRecords: withRecords,
+    );
     if (result.isEmpty) return null;
 
     final data = formatExportJsonData(habits: result);
@@ -113,9 +123,7 @@ class HabitFileExporterViewModel extends ChangeNotifier
     bool withRecords = true,
     bool listen = true,
   }) async {
-    Iterable<HabitExportData> habitExportData;
-
-    habitExportData = await habitsManager.getExporter().exportData(
+    final habitExportData = await _access.loadHabitExportData(
       withRecords: withRecords,
     );
 

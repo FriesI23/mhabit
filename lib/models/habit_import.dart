@@ -66,8 +66,8 @@ class HabitImport {
     }
   }
 
-  List<Future> importData({bool withRecords = true}) {
-    final futures = <Future>[];
+  List<Future<void>> importData({bool withRecords = true}) {
+    final futures = <Future<void>>[];
     for (var json in _jsonData) {
       final habit = HabitExportData.fromJson(json);
       futures.add(_importHabitData(habit, withRecords: withRecords));

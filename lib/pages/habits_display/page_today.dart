@@ -57,7 +57,7 @@ class TodayTabPage extends StatefulWidget {
 class TodayTabPageState extends State<TodayTabPage>
     with AutomaticKeepAliveClientMixin {
   late HabitsTodayViewModel _vm;
-  AppSyncViewModel? _appSync;
+  AppSyncWorkflowAccess? _appSync;
   StreamSubscription<String>? _startSyncSub;
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -85,11 +85,11 @@ class TodayTabPageState extends State<TodayTabPage>
       _vm = vm;
     }
 
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     if (sync != _appSync) {
       _startSyncSub?.cancel();
       _appSync = sync;
-      _startSyncSub = sync.appSyncTask.startSyncEvents.listen((_) {
+      _startSyncSub = sync.startSyncEvents.listen((_) {
         _refreshIndicatorKey.currentState?.show();
       });
     }
@@ -116,20 +116,18 @@ class TodayTabPageState extends State<TodayTabPage>
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
     DateChangeProvider.of(context).dateTime = HabitDate.now();
-    final syncvm = context.read<AppSyncViewModel>();
-    if (syncvm.mounted) {
-      try {
-        await syncvm.startSync(initWait: kAppSyncDelayDuration2);
-        await syncvm.appSyncTask.processing;
-      } catch (e, s) {
-        appLog.appsync.fatal(
-          "start sync failed",
-          ex: [syncvm.appSyncTask.task],
-          error: e,
-          stackTrace: s,
-        );
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-      }
+    final syncvm = context.read<AppSyncWorkflowAccess>();
+    try {
+      await syncvm.startSync(initWait: kAppSyncDelayDuration2);
+      await syncvm.syncProcessing;
+    } catch (e, s) {
+      appLog.appsync.fatal(
+        "start sync failed",
+        ex: [syncvm.syncStatus],
+        error: e,
+        stackTrace: s,
+      );
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
     }
   }
 
@@ -167,8 +165,8 @@ class TodayTabPageState extends State<TodayTabPage>
         if (context == null) {
           return defaultScrollNotificationPredicate(notification);
         }
-        final sync = context.read<AppSyncViewModel>();
-        if (!(sync.enabled && sync.serverConfig != null)) {
+        final sync = context.read<AppSyncWorkflowAccess>();
+        if (!sync.canStartSync) {
           return false;
         }
         return defaultScrollNotificationPredicate(notification);
@@ -205,9 +203,9 @@ class _HabitsGroupView extends StatelessWidget {
   @visibleForTesting
   Future<void> loadData(BuildContext context) async {
     if (!context.mounted) return;
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     try {
-      if (sync.mounted) await sync.appSyncTask.processing;
+      await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "TodayTabPage",
@@ -298,8 +296,7 @@ class _HabitsTodayController {
       source: AppEventPageSource.habitToday,
     );
     // try sync once
-    final sync = context.maybeRead<AppSyncViewModel>();
-    if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
   }
 
   void onMain(HabitUUID uuid) {

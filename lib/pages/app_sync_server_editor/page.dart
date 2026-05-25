@@ -51,12 +51,16 @@ Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   AppSyncServer? serverConfig,
   bool? naviWithFullscreenDialog,
 }) async {
+  final appSync = context.read<AppSyncSettingsAccess>();
   return showDialog<AppSyncServerEditorResult>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => AppSyncServerEditorPage(
-      serverConfig: serverConfig,
-      showInFullscreenDialog: naviWithFullscreenDialog,
+    builder: (context) => ListenableProvider<AppSyncSettingsAccess>.value(
+      value: appSync,
+      child: AppSyncServerEditorPage(
+        serverConfig: serverConfig,
+        showInFullscreenDialog: naviWithFullscreenDialog,
+      ),
     ),
   );
 }
@@ -343,7 +347,7 @@ class _PageDialog extends StatelessWidget {
     constraints: const BoxConstraints.expand(width: dialogMaxWidth),
     child: AlertDialog(
       scrollable: true,
-      title: Selector<AppSyncViewModel, bool>(
+      title: Selector<AppSyncServerFormViewModel, bool>(
         selector: (context, vm) => vm.serverConfig != null,
         builder: (context, value, child) {
           final l10n = L10n.of(context);

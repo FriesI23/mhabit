@@ -272,10 +272,9 @@ class _PageState extends State<_Page>
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) {
-        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
-      }
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce(
+        delay: kAppUndoDialogShowDuration * 2,
+      );
     }
   }
 

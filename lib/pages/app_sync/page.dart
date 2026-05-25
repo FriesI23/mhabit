@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -24,6 +23,7 @@ import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/widgets.dart';
 import '../app_sync_server_editor/page.dart' as app_sync_server_editor;
+import 'providers.dart';
 import 'widgets.dart';
 
 Future<void> naviToAppSyncPage({required BuildContext context}) async {
@@ -36,7 +36,7 @@ final class AppSyncPage extends StatelessWidget {
   const AppSyncPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const _Page();
+  Widget build(BuildContext context) => const PageProviders(child: _Page());
 }
 
 final class _Page extends StatefulWidget {
@@ -60,7 +60,8 @@ final class _PageState extends State<_Page> {
   }
 
   void _onServerConfigPressed() async {
-    final config = context.read<AppSyncViewModel>().serverConfig;
+    final appSync = context.read<AppSyncSettingsAccess>();
+    final config = appSync.serverConfig;
     appLog.build.debug(
       context,
       ex: ["onServerConfigPressed", config?.toDebugString()],
@@ -74,18 +75,16 @@ final class _PageState extends State<_Page> {
     if (result == null) return;
     switch (result.op) {
       case app_sync_server_editor.AppSyncServerEditorResultOp.update:
-        final saveResult = await context
-            .read<AppSyncViewModel>()
-            .saveWithConfigForm(result.form);
+        final form = result.form;
+        if (form == null) return;
+        final saveResult = await appSync.saveServerConfigForm(form);
         if (!mounted) return;
         appLog.build.info(
           context,
           ex: ["onServerConfigPressed", "Saved[$saveResult]", result],
         );
       case app_sync_server_editor.AppSyncServerEditorResultOp.delete:
-        final saveResult = await context
-            .read<AppSyncViewModel>()
-            .saveWithConfigForm(null, removable: true);
+        final saveResult = await appSync.deleteServerConfig();
         if (!mounted) return;
         appLog.build.info(
           context,
@@ -95,14 +94,15 @@ final class _PageState extends State<_Page> {
   }
 
   void _onServerFetchIntervalPressed() async {
-    final interval = context.read<AppSyncViewModel>().fetchInterval;
+    final appSync = context.read<AppSyncSettingsAccess>();
+    final interval = appSync.fetchInterval;
     appLog.build.debug(context, ex: ["onServerFetchIntervalPressed", interval]);
     final result = await showAppSyncFetchIntervalSwitchDialog(
       context: context,
       select: interval,
     );
     if (!mounted || result == null) return;
-    context.read<AppSyncViewModel>().setFetchInterval(result);
+    appSync.setFetchInterval(result);
     appLog.build.debug(
       context,
       ex: ["onServerFetchIntervalPressed", "Done", result],
@@ -123,7 +123,7 @@ final class _PageState extends State<_Page> {
             pinned: true,
           ),
           SliverPinnedHeader(
-            child: Selector<AppSyncViewModel, bool>(
+            child: Selector<AppSyncSettingsAccess, bool>(
               selector: (ctx, v) => v.enabled,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, value, child) => ColoredBox(
@@ -134,13 +134,14 @@ final class _PageState extends State<_Page> {
                         Text(l10n?.common_enable_text ?? "Enable"),
                   ),
                   value: value,
-                  onChanged: (value) =>
-                      context.read<AppSyncViewModel>().setSyncSwitch(value),
+                  onChanged: (value) => context
+                      .read<AppSyncSettingsAccess>()
+                      .setSyncSwitch(value),
                 ),
               ),
             ),
           ),
-          Selector<AppSyncViewModel, bool>(
+          Selector<AppSyncSettingsAccess, bool>(
             selector: (ctx, v) => v.enabled,
             shouldRebuild: (previous, next) => previous != next,
             builder: (context, value, child) => SliverToBoxAdapter(
@@ -200,7 +201,7 @@ class _DebugTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appSync = context.watch<AppSyncViewModel>();
+    final appSync = context.watch<AppSyncSettingsAccess>();
     return ListTile(
       leading: Icon(Icons.error, color: Theme.of(context).colorScheme.error),
       isThreeLine: true,
@@ -213,11 +214,9 @@ class _DebugTile extends StatelessWidget {
           Text("FetchInterval: ${appSync.fetchInterval}"),
           Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),
           FutureBuilder(
-            future: appSync.readPassword(),
+            future: appSync.readDebugPasswordText(),
             builder: (context, snapshot) {
-              final pwd = snapshot.data ?? '';
-              final pwd2 = kDebugMode ? pwd : "*" * pwd.length;
-              return Text("Password: $pwd2");
+              return Text("Password: ${snapshot.data ?? ''}");
             },
           ),
         ],

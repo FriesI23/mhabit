@@ -53,14 +53,70 @@ const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
 
+abstract interface class AppSyncSettingsAccess implements Listenable {
+  bool get enabled;
+
+  Future<String?> readPassword({String? identity});
+
+  Future<String> readDebugPasswordText();
+
+  Future<void> setSyncSwitch(bool value, {bool listen = true});
+
+  AppSyncFetchInterval get fetchInterval;
+
+  Future<void> setFetchInterval(
+    AppSyncFetchInterval value, {
+    bool listen = true,
+  });
+
+  AppSyncServer? get serverConfig;
+
+  Future<bool> saveServerConfigForm(
+    AppSyncServerForm form, {
+    bool resetStatus = false,
+  });
+
+  Future<bool> deleteServerConfig();
+}
+
+abstract interface class AppSyncStatusSource implements Listenable {
+  AppSyncStatusSnapshot? get syncStatus;
+}
+
+abstract interface class AppSyncTriggerAccess implements Listenable {
+  bool get canStartSync;
+
+  Future<void> startSync({Duration? initWait});
+
+  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay});
+
+  void cancelSync();
+}
+
+abstract interface class AppSyncWorkflowAccess
+    implements AppSyncTriggerAccess, AppSyncStatusSource {
+  Future? get syncProcessing;
+
+  void onL10nUpdate(L10n? l10n);
+
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents;
+
+  Stream<String> get startSyncEvents;
+}
+
 class AppSyncViewModel
     with
         ChangeNotifier,
         ProfileHandlerLoadedMixin,
         DBHelperLoadedMixin,
         NotificationChannelDataMixin
-    implements ProviderMounted {
-  late final AppSyncTaskDispatcher appSyncTask;
+    implements
+        ProviderMounted,
+        AppSyncSettingsAccess,
+        AppSyncStatusSource,
+        AppSyncTriggerAccess,
+        AppSyncWorkflowAccess {
+  late final AppSyncTaskDispatcher _appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
 
@@ -78,8 +134,8 @@ class AppSyncViewModel
   bool _clearLogsOnStartup = false;
 
   AppSyncViewModel() {
-    appSyncTask = AppSyncTaskDispatcher(this);
-    appSyncTask.addListener(notifyListeners);
+    _appSyncTask = AppSyncTaskDispatcher(this);
+    _appSyncTask.addListener(notifyListeners);
     _delayedSyncTrigger = CascadingAsyncDebouncer(
       action: () async {
         if (!mounted) return;
@@ -88,7 +144,7 @@ class AppSyncViewModel
           ex: [_delayedSyncTrigger],
         );
         await startSync();
-        await appSyncTask.task?.task.result;
+        await _appSyncTask.task?.task.result;
       },
     );
     _lifecycleListener = AppLifecycleListener(
@@ -132,7 +188,7 @@ class AppSyncViewModel
     _lifecycleListener.dispose();
     _delayedSyncTrigger.cancel();
     _autoSyncTimer?.cancel();
-    appSyncTask.dispose();
+    _appSyncTask.dispose();
     super.dispose();
   }
 
@@ -171,12 +227,15 @@ class AppSyncViewModel
     }
   }
 
+  @override
   void onL10nUpdate(L10n? l10n) {
     _l10n = l10n != null ? WeakReference(l10n) : null;
   }
 
+  @override
   bool get enabled => _switch?.get() ?? false;
 
+  @override
   Future<void> setSyncSwitch(bool value, {bool listen = true}) async {
     if (_switch?.get() != value) {
       await _switch?.set(value);
@@ -184,9 +243,11 @@ class AppSyncViewModel
     }
   }
 
+  @override
   AppSyncFetchInterval get fetchInterval =>
       _interval?.get() ?? defaultAppSyncFetchInterval;
 
+  @override
   Future<void> setFetchInterval(
     AppSyncFetchInterval value, {
     bool listen = true,
@@ -198,8 +259,40 @@ class AppSyncViewModel
     }
   }
 
+  @override
   AppSyncServer? get serverConfig => _serverConfig?.get();
 
+  @override
+  AppSyncStatusSnapshot? get syncStatus =>
+      _appSyncTask.task?.toStatusSnapshot();
+
+  @override
+  bool get canStartSync => enabled && serverConfig != null;
+
+  @override
+  Future? get syncProcessing => _appSyncTask.processing;
+
+  @override
+  Stream<AppSyncNeedConfirmEvent> get confirmEvents =>
+      _appSyncTask.confirmEvents;
+
+  @override
+  Stream<String> get startSyncEvents => _appSyncTask.startSyncEvents;
+
+  @override
+  void cancelSync() => _appSyncTask.cancelSync();
+
+  @override
+  Future<bool> saveServerConfigForm(
+    AppSyncServerForm form, {
+    bool resetStatus = false,
+  }) => _applyServerConfigChange(form, resetStatus: resetStatus);
+
+  @override
+  Future<bool> deleteServerConfig() =>
+      _applyServerConfigChange(null, removable: true);
+
+  @override
   Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return Future.value(null);
@@ -216,11 +309,19 @@ class AppSyncViewModel
         });
   }
 
+  @override
+  Future<String> readDebugPasswordText() => readPassword().then(
+    (password) => switch (password) {
+      null || '' => '',
+      _ => kDebugMode ? password : '*' * password.length,
+    },
+  );
+
   Future<bool> writePassword({String? identity, required String? value}) async {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return false;
     try {
-      const FlutterSecureStorage(
+      await const FlutterSecureStorage(
         mOptions: MacOsOptions(),
       ).write(key: "sync-pwd-$identity", value: value);
     } catch (e, s) {
@@ -240,7 +341,7 @@ class AppSyncViewModel
       ? writePassword(identity: oldConfig.identity, value: null)
       : Future.value(true);
 
-  Future<bool> saveWithConfigForm(
+  Future<bool> _applyServerConfigChange(
     AppSyncServerForm? form, {
     bool resetStatus = false,
     bool removable = false,
@@ -268,11 +369,11 @@ class AppSyncViewModel
       (_, _) => crtConfig!.isSameServer(pendingConfig!, withoutPassword: true),
     };
     appLog.appsync.info(
-      "saveWithConfigForm",
+      "applyServerConfigChange",
       ex: [resetStatus, removable, crtConfig, pendingConfig],
     );
     appLog.appsync.debug(
-      "saveWithConfigForm.verbose",
+      "applyServerConfigChange.verbose",
       ex: [
         isSameServer,
         form?.toDebugString,
@@ -355,8 +456,9 @@ class AppSyncViewModel
     });
   }
 
+  @override
   Future<void> startSync({Duration? initWait}) =>
-      appSyncTask.shouldSync().then((result) {
+      _appSyncTask.shouldSync().then((result) {
         if (!result) {
           final config = _serverConfig?.get();
           appLog.appsync.info(
@@ -365,7 +467,7 @@ class AppSyncViewModel
           );
           return null;
         }
-        return appSyncTask.startSync(initWait: initWait);
+        return _appSyncTask.startSync(initWait: initWait);
       });
 
   Future<List<String>> cleanExpiredSyncFailedLogs() => AppPathProvider()
@@ -389,9 +491,9 @@ class AppSyncViewModel
           "[${timer.tick}] [${timer.hashCode}] Auto sync",
           ex: [timer.isActive, interval, () => config?.toDebugString()],
         );
-        if (!enabled || !(await appSyncTask.shouldSync())) return;
+        if (!enabled || !(await _appSyncTask.shouldSync())) return;
         if (!mounted) return;
-        await appSyncTask.startSync();
+        await _appSyncTask.startSync();
       }
 
       final oldTimer = _autoSyncTimer?..cancel();
@@ -409,6 +511,7 @@ class AppSyncViewModel
     }
   }
 
+  @override
   void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {
     if (!(mounted &&
         _serverConfig?.get() != null &&
@@ -421,6 +524,55 @@ class AppSyncViewModel
     );
     _delayedSyncTrigger.exec(delay: delay);
   }
+}
+
+@immutable
+final class AppSyncStatusSnapshot {
+  final String id;
+  final String sessionId;
+  final AppSyncTaskStatus status;
+  final DateTime? startTime;
+  final DateTime? endedTime;
+  final AppSyncTaskResult? result;
+  final num? percentage;
+
+  const AppSyncStatusSnapshot({
+    required this.id,
+    required this.sessionId,
+    required this.status,
+    required this.startTime,
+    required this.endedTime,
+    required this.result,
+    required this.percentage,
+  });
+
+  bool get isProcessing => switch (status) {
+    AppSyncTaskStatus.running || AppSyncTaskStatus.cancelling => true,
+    _ => false,
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppSyncStatusSnapshot &&
+          other.id == id &&
+          other.sessionId == sessionId &&
+          other.status == status &&
+          other.startTime == startTime &&
+          other.endedTime == endedTime &&
+          other.result == result &&
+          other.percentage == percentage;
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    sessionId,
+    status,
+    startTime,
+    endedTime,
+    result,
+    percentage,
+  );
 }
 
 class AppSyncNeedConfirmEvent<T> {
@@ -533,6 +685,16 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
       "reuslt=$result, loggerReplay=$loggerReplay, filePath=$filePath, "
       "logEventCallback=${logEventCallback.hashCode}"
       ")";
+
+  AppSyncStatusSnapshot toStatusSnapshot() => AppSyncStatusSnapshot(
+    id: id,
+    sessionId: task.sessionId,
+    status: task.status,
+    startTime: startTime,
+    endedTime: endedTime,
+    result: result,
+    percentage: percentage,
+  );
 }
 
 final class AppSyncTaskDispatcher with ChangeNotifier {

@@ -54,7 +54,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
   void initState() {
     controller = widget.controller ?? ExpansibleController();
     lastExpanded = isExpanded =
-        context.read<AppSyncViewModel>().appSyncTask.task?.result?.withError ==
+        context.read<AppSyncStatusSource>().syncStatus?.result?.withError ==
         true;
     super.initState();
   }
@@ -62,7 +62,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
   @override
   void didChangeDependencies() {
     lastExpanded =
-        context.read<AppSyncViewModel>().appSyncTask.task?.result?.withError ==
+        context.read<AppSyncStatusSource>().syncStatus?.result?.withError ==
         true;
     super.didChangeDependencies();
   }
@@ -72,12 +72,7 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
 
   void _onExportButtonPressed() {
     if (_onPressedFuture != null) return;
-    final sessionId = context
-        .read<AppSyncViewModel>()
-        .appSyncTask
-        .task
-        ?.task
-        .sessionId;
+    final sessionId = context.read<AppSyncStatusSource>().syncStatus?.sessionId;
     if (sessionId == null) return;
 
     Future<void> doSave(String sessionId) async {
@@ -138,8 +133,8 @@ class _AppSettingSyncFailedTile extends State<AppSettingSyncFailedTile>
       ),
     ];
 
-    return Selector<AppSyncViewModel, AppSyncTaskResult?>(
-      selector: (context, vm) => vm.appSyncTask.task?.result,
+    return Selector<AppSyncStatusSource, AppSyncTaskResult?>(
+      selector: (context, vm) => vm.syncStatus?.result,
       shouldRebuild: (previous, next) {
         if (previous == next) return false;
         next?.withError == true ? controller.expand() : controller.collapse();

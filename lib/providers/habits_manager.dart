@@ -14,8 +14,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-
 import '../common/types.dart';
 import '../extensions/iterable_extensions.dart';
 import '../logging/helper.dart';
@@ -39,10 +37,94 @@ typedef BeforeHabitRecordReminderUpdateCb =
       List<ChangeRecordStatusResult> records,
     );
 
-class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
+abstract interface class HabitsDisplayAccess {
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  });
+
+  Future<String?> loadHabitRecordReason(
+    HabitSummaryData data,
+    HabitRecordDate date,
+  );
+
+  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid);
+
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  });
+
+  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
+    required ChangeRecordStatusAction<HabitDate> preAction,
+    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
+      List<ChangeRecordStatusResult> results,
+    )?
+    postActionBuilder,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
+  });
+
+  Future<List<HabitUUID>> fixAndSaveSortPositions(
+    List<HabitSummaryData> habits, {
+    required num increaseStep,
+    required int decimalPlaces,
+  });
+
+  Future<void> updateHabitReminder(HabitSummaryData data);
+}
+
+abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
+  Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid);
+}
+
+abstract interface class HabitFormAccess {
+  Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
+
+  Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
+    HabitDBCell cell, {
+    bool withReminder = true,
+  });
+}
+
+abstract interface class HabitStatusChangerAccess
+    implements HabitsDisplayAccess {
+  Future<void> saveChangedHabitRecords({
+    required Iterable<ChangeRecordStatusResult> records,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+  });
+}
+
+abstract interface class HabitExportAccess {
+  Future<Iterable<HabitExportData>> loadHabitExportData({
+    List<HabitUUID>? uuidList,
+    bool withRecords = true,
+  });
+}
+
+abstract interface class HabitImportAccess {
+  List<Future<void>> importHabitsData(
+    Iterable<Object?> jsonData, {
+    bool withRecords = true,
+  });
+
+  int getImportHabitsCount(Iterable<Object?> jsonData);
+}
+
+class HabitsManager
+    with DBHelperLoadedMixin, NotificationChannelDataMixin
+    implements
+        HabitsDisplayAccess,
+        HabitDetailAccess,
+        HabitFormAccess,
+        HabitStatusChangerAccess,
+        HabitExportAccess,
+        HabitImportAccess {
   HabitsManager();
 
   //#region status
+  @override
   Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
     required ChangeHabitStatusAction action,
     FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
@@ -66,6 +148,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return result;
   }
 
+  @override
   Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
     required ChangeRecordStatusAction<HabitDate> preAction,
     ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
@@ -156,6 +239,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     ),
   );
 
+  @override
   Future<void> saveChangedHabitRecords({
     required Iterable<ChangeRecordStatusResult> records,
     BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
@@ -181,6 +265,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return result;
   }
 
+  @override
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
     final result = await _saveNewHabitToDB(cell, returnResult: true);
     await _updateSavedHabitReminder(result);
@@ -211,6 +296,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return result;
   }
 
+  @override
   Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
     HabitDBCell cell, {
     bool withReminder = true,
@@ -226,6 +312,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
   //#endregion
 
   //#region load from db
+  @override
   Future<String?> loadHabitRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
@@ -236,6 +323,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return rcd?.reason ?? '';
   }
 
+  @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
     List<String>? habitsColmns,
@@ -261,6 +349,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     }
   }
 
+  @override
   Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) async {
     final dataLoadTask = habitDBHelper.loadHabitDetail(uuid);
     final recordLoadTask = recordDBHelper.loadRecords(uuid);
@@ -272,10 +361,12 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return data;
   }
 
+  @override
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
       habitDBHelper.loadHabitDetail(uuid);
   //#endregion
 
+  @override
   Future<List<HabitUUID>> fixAndSaveSortPositions(
     List<HabitSummaryData> habits, {
     required num increaseStep,
@@ -312,6 +403,7 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
     return changedUUIDs;
   }
 
+  @override
   Future<void> updateHabitReminder(HabitSummaryData data) async {
     final reminderId = getHabitReminderId(data.id);
 
@@ -379,20 +471,21 @@ class HabitsManager with DBHelperLoadedMixin, NotificationChannelDataMixin {
 
   HabitImport getImporter(Iterable<Object?> jsonData) =>
       HabitImport(habitDBHelper, recordDBHelper, data: jsonData);
+
+  @override
+  Future<Iterable<HabitExportData>> loadHabitExportData({
+    List<HabitUUID>? uuidList,
+    bool withRecords = true,
+  }) => getExporter(uuidList: uuidList).exportData(withRecords: withRecords);
+
+  @override
+  List<Future<void>> importHabitsData(
+    Iterable<Object?> jsonData, {
+    bool withRecords = true,
+  }) => getImporter(jsonData).importData(withRecords: withRecords);
+
+  @override
+  int getImportHabitsCount(Iterable<Object?> jsonData) =>
+      getImporter(jsonData).habitsCount;
   //#endregion
-}
-
-mixin HabitsManagerLoadedMixin {
-  bool _loaded = false;
-  late HabitsManager _habitsManager;
-
-  @protected
-  HabitsManager get habitsManager => _habitsManager;
-
-  void updateHabitManager(HabitsManager newManager) {
-    if (!_loaded || _habitsManager != newManager) {
-      _habitsManager = newManager;
-      _loaded = true;
-    }
-  }
 }

@@ -66,7 +66,7 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
   const AppSyncFetchIntervalTile({super.key, this.onPressed});
 
   Widget buildSubtitle([L10n? l10n]) =>
-      Selector<AppSyncViewModel, AppSyncFetchInterval>(
+      Selector<AppSyncSettingsAccess, AppSyncFetchInterval>(
         selector: (context, vm) => vm.fetchInterval,
         builder: (context, value, child) => Text(value.getShowText(l10n)),
       );

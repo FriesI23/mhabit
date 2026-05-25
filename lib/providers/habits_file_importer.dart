@@ -20,10 +20,14 @@ import 'commons.dart';
 import 'habits_manager.dart';
 
 class HabitFileImporterViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin
     implements ProviderMounted {
   // inside status
   bool _mounted = true;
+  late HabitImportAccess _access;
+
+  void attachAccess(HabitImportAccess newAccess) {
+    _access = newAccess;
+  }
 
   @override
   void dispose() {
@@ -43,7 +47,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
       if (listen) notifyListeners();
     }
 
-    final futures = habitsManager.getImporter(jsonData).importData();
+    final futures = _access.importHabitsData(jsonData);
     if (futures.isEmpty) return null;
 
     final completer = Completer<int>();
@@ -70,7 +74,7 @@ class HabitFileImporterViewModel extends ChangeNotifier
   }
 
   int importHabitsDataDryRun(Iterable<Object?> jsonData) {
-    return habitsManager.getImporter(jsonData).habitsCount;
+    return _access.getImportHabitsCount(jsonData);
   }
 
   @override

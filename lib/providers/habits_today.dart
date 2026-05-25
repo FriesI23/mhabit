@@ -38,7 +38,6 @@ import 'commons.dart';
 import 'habits_manager.dart';
 
 class HabitsTodayViewModel extends ChangeNotifier
-    with HabitsManagerLoadedMixin
     implements ProviderMounted, AppEventLoaded {
   static const _loadHabitDataCollectionColumns = [
     HabitDBCellKey.id,
@@ -73,6 +72,8 @@ class HabitsTodayViewModel extends ChangeNotifier
   int _firstday = defaultFirstDay;
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
+  late HabitsDisplayAccess _access;
+  AppSyncWorkflowAccess? _workflow;
   // subscriptions
   StreamSubscription<String>? _startSyncSub;
   StreamSubscription<ReloadDataEvent>? _reloadDataSub;
@@ -115,7 +116,11 @@ class HabitsTodayViewModel extends ChangeNotifier
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      habitsManager.updateHabitReminder(data);
+      _access.updateHabitReminder(data);
+
+  void attachAccess(HabitsDisplayAccess newAccess) {
+    _access = newAccess;
+  }
 
   void _updateHabitAutoCompleteStatistics(HabitSummaryData data) =>
       data.reCalculateAutoComplateRecords(firstDay: firstday);
@@ -193,7 +198,7 @@ class HabitsTodayViewModel extends ChangeNotifier
       );
 
       // init habits
-      await habitsManager.loadHabitSummaryCollectionData(
+      await _access.loadHabitSummaryCollectionData(
         initedCollection: _data,
         habitsColmns: _loadHabitDataCollectionColumns,
       );
@@ -249,7 +254,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   Future<String?> loadRecordReason(
     HabitSummaryData data,
     HabitRecordDate date,
-  ) => habitsManager.loadHabitRecordReason(data, date);
+  ) => _access.loadHabitRecordReason(data, date);
   //#endregion
 
   //#region sortbale habits list
@@ -300,9 +305,11 @@ class HabitsTodayViewModel extends ChangeNotifier
   //#endregion
 
   //#region: auto sync
-  void updateAppSync(AppSyncViewModel appSync) {
+  void attachWorkflow(AppSyncWorkflowAccess workflow) {
+    if (identical(workflow, _workflow)) return;
+    _workflow = workflow;
     _startSyncSub?.cancel();
-    _startSyncSub = appSync.appSyncTask.startSyncEvents.listen((id) {
+    _startSyncSub = workflow.startSyncEvents.listen((id) {
       appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
       requestReload();
     });
@@ -414,7 +421,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         status: HabitRecordStatus.skip,
@@ -452,7 +459,7 @@ class HabitsTodayViewModel extends ChangeNotifier
     if (data == null) return null;
 
     final date = HabitDate.now();
-    final results = await habitsManager.changeHabitRecordStatus(
+    final results = await _access.changeHabitRecordStatus(
       preAction: ChangeMultiRecordStatusAction(
         data: data,
         goal: newValue,
