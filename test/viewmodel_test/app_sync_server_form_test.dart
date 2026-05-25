@@ -55,7 +55,7 @@ final class _FakeAppSyncSettingsAccess implements AppSyncSettingsAccess {
   @override
   Future<bool> saveServerConfigForm(
     AppSyncServerForm form, {
-    bool resetStatus = true,
+    bool resetStatus = false,
   }) async => false;
 
   @override

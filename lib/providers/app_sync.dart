@@ -73,7 +73,7 @@ abstract interface class AppSyncSettingsAccess implements Listenable {
 
   Future<bool> saveServerConfigForm(
     AppSyncServerForm form, {
-    bool resetStatus = true,
+    bool resetStatus = false,
   });
 
   Future<bool> deleteServerConfig();
