@@ -21,7 +21,7 @@ import '../../models/app_notify_config.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_provider.dart';
-import '../commons.dart';
+import '../support/commons.dart';
 
 class AppNotifyConfigUpdater {
   final NotificationService _notificationService;

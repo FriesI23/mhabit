@@ -21,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/async.dart';
 import '../common/global.dart';
 import '../logging/helper.dart';
-import '../providers/commons.dart';
+import '../providers/support/commons.dart';
 import 'profile/profile_helper.dart';
 
 typedef ProfileHandlerBuilder<T extends ProfileHelperHandler> =

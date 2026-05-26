@@ -32,8 +32,8 @@ import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_score.dart';
 import '../../../models/habit_status.dart';
 import '../../../models/habit_summary.dart';
-import '../../../providers/commons.dart';
-import '../../../providers/utils.dart';
+import '../../../providers/support/commons.dart';
+import '../../../providers/support/utils.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 

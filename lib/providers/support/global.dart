@@ -14,7 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../logging/helper.dart';
+import '../../logging/helper.dart';
 
 class Global {
   Global();

@@ -23,7 +23,7 @@ import '../../reminders/notification_details.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
-import '../commons.dart';
+import '../support/commons.dart';
 
 class AppReminderExecutor {
   final NotificationService _notificationService;

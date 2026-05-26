@@ -31,7 +31,7 @@ import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
-import '../../../providers/commons.dart';
+import '../../../providers/support/commons.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/habits_manager.dart';

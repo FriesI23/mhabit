@@ -28,7 +28,7 @@ import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
-import '../../providers/global.dart';
+import '../../providers/support/global.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_notify_config.dart';
 import '../../providers/workflow/app_reminder.dart';

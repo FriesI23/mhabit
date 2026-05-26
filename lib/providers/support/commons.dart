@@ -14,7 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../reminders/notification_channel.dart';
+import '../../reminders/notification_channel.dart';
 
 abstract interface class ProviderMounted {
   bool get mounted;

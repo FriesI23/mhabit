@@ -25,7 +25,7 @@ import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_freq.dart';
 import '../../../models/habit_reminder.dart';
-import '../../../providers/commons.dart';
+import '../../../providers/support/commons.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 import '../../../utils/app_clock.dart';

@@ -22,7 +22,7 @@ import '../../../common/exceptions.dart';
 import '../../../common/utils.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
-import '../../../providers/utils.dart';
+import '../../../providers/support/utils.dart';
 import '../../../utils/habit_date.dart';
 
 class HabitDetailScoreChartViewModel extends ChangeNotifier {

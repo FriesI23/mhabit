@@ -38,7 +38,7 @@ import '../../models/habit_status.dart';
 import '../../providers/app_ui/app_custom_date_format.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
-import '../../providers/utils.dart';
+import '../../providers/support/utils.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';

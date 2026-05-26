@@ -14,7 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../global.dart';
+import '../support/global.dart';
 
 class AppDeveloperViewModel extends ChangeNotifier with GlobalLoadedMixin {
   AppDeveloperViewModel({required Global global}) {

@@ -23,7 +23,7 @@ import 'package:mhabit/providers/app_ui/app_language.dart';
 import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
-import 'package:mhabit/providers/global.dart';
+import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
