@@ -19,16 +19,54 @@ import '../common/consts.dart';
 import '../l10n/localizations.dart';
 import '../logging/helper.dart';
 import '../models/app_reminder_config.dart';
+import '../reminders/notification_details.dart';
 import '../reminders/notification_service.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
 import 'commons.dart';
 
+class AppReminderExecutor {
+  final NotificationService _notificationService;
+
+  AppReminderExecutor({NotificationService? notificationService})
+    : _notificationService = notificationService ?? NotificationService();
+
+  Future<bool> applyReminder(
+    AppReminderConfig reminder, {
+    required L10n? l10n,
+    required NotificationDetails details,
+  }) async {
+    if (!(reminder.enabled && l10n != null)) {
+      await _notificationService.cancelAppReminder();
+      return true;
+    }
+
+    if (await _notificationService.requestPermissions() == false) {
+      return false;
+    }
+
+    switch (reminder.type) {
+      case AppReminderConfigType.daily:
+        if (reminder.timeOfDay != null) {
+          await _notificationService.regrAppReminderInDaily(
+            title: l10n.appReminder_dailyReminder_title,
+            subtitle: l10n.appReminder_dailyReminder_body,
+            timeOfDay: reminder.timeOfDay!,
+            details: details,
+          );
+        }
+        return true;
+    }
+  }
+}
+
 class AppReminderViewModel extends ChangeNotifier
     with NotificationChannelDataMixin, ProfileHandlerLoadedMixin {
   AppReminderProfileHandler? _rmd;
+  final AppReminderExecutor _executor;
 
-  AppReminderViewModel();
+  AppReminderViewModel({AppReminderExecutor? executor})
+    : _executor = executor ?? AppReminderExecutor();
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
@@ -100,26 +138,10 @@ class AppReminderViewModel extends ChangeNotifier
   }
 
   Future<bool> processAppReminder(L10n? l10n) async {
-    final reminder = this.reminder;
-    if (reminder.enabled && l10n != null) {
-      if (await NotificationService().requestPermissions() == false) {
-        return false;
-      }
-      switch (reminder.type) {
-        case AppReminderConfigType.daily:
-          if (reminder.timeOfDay != null) {
-            await NotificationService().regrAppReminderInDaily(
-              title: l10n.appReminder_dailyReminder_title,
-              subtitle: l10n.appReminder_dailyReminder_body,
-              timeOfDay: reminder.timeOfDay!,
-              details: channelData.appReminder,
-            );
-          }
-          return true;
-      }
-    } else {
-      await NotificationService().cancelAppReminder();
-      return true;
-    }
+    return _executor.applyReminder(
+      reminder,
+      l10n: l10n,
+      details: channelData.appReminder,
+    );
   }
 }

@@ -39,12 +39,12 @@ import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
 import '../../providers/app_reminder.dart';
+import '../../providers/app_settings.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_op_config.dart';
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
-import '../../reminders/notification_service.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../utils/app_path_provider.dart';
@@ -56,6 +56,7 @@ import '../app_debugger/page.dart' as app_debugger;
 import '../app_sync/page.dart' as app_sync;
 import '../common/widgets.dart';
 import '../expermental_features/page.dart' as exp_feature;
+import 'providers.dart';
 import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({required BuildContext context}) async {
@@ -65,6 +66,9 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 }
 
 /// Depend Providers
+/// - Required for page providers:
+///   - [ProfileViewModel]
+///   - [DBHelperViewModel]
 /// - Required for builder:
 ///   - [AppCustomDateYmdHmsConfigViewModel]
 ///   - [AppFirstDayViewModel]
@@ -76,13 +80,13 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImporterViewModel]
-///   - [ProfileViewModel]
+///   - [AppSettingsAccess]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _Page();
+    return const PageProviders(child: _Page());
   }
 }
 
@@ -329,13 +333,7 @@ class _PageState extends State<_Page> with XShare {
     );
 
     if (!mounted || result == null || !result) return;
-    await Future.wait([
-      context.read<ProfileViewModel>().clear(),
-      NotificationService().cancelAppReminder(),
-    ]);
-
-    if (!mounted) return;
-    await context.read<ProfileViewModel>().reload();
+    await context.read<AppSettingsAccess>().resetConfigs();
 
     if (!mounted) return;
     final snackBar = buildSnackBarWithDismiss(
@@ -408,8 +406,7 @@ class _PageState extends State<_Page> with XShare {
         return;
     }
 
-    await context.read<DBHelperViewModel>().reload();
-    await NotificationService().cancelAllHabitReminders();
+    await context.read<AppSettingsAccess>().clearDatabase();
     if (!context.mounted) return;
     final snackBar = buildSnackBarWithDismiss(
       context,
