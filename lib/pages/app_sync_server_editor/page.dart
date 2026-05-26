@@ -21,10 +21,10 @@ import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../widgets/widgets.dart';
+import '_providers/app_sync_server_form.dart';
 import 'widgets.dart';
 
 enum AppSyncServerEditorResultOp { update, delete }

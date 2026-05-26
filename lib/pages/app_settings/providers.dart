@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_settings.dart';
+import '../../providers/workflow/app_settings.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
@@ -30,15 +30,15 @@ class PageProviders extends SingleChildStatelessWidget {
       ViewModelProxyProvider2<
         ProfileViewModel,
         DBHelperViewModel,
-        AppSettingsViewModel
+        AppSettingsOwner
       >(
-        create: (context) => AppSettingsViewModel(),
+        create: (context) => AppSettingsOwner(),
         update: (context, profile, dbHelper, previous) => previous
           ..updateProfile(profile)
           ..updateDBHelper(dbHelper),
       ),
-      ListenableProxyProvider<AppSettingsViewModel, AppSettingsAccess>(
-        create: (context) => context.read<AppSettingsViewModel>(),
+      ListenableProxyProvider<AppSettingsOwner, AppSettingsAccess>(
+        create: (context) => context.read<AppSettingsOwner>(),
         update: (context, value, previous) => value,
       ),
     ],

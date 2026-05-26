@@ -39,19 +39,17 @@ import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_experimental_feature.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_theme.dart';
-import '../../providers/habit_detail.dart';
-import '../../providers/habit_op_config.dart';
-import '../../providers/habit_summary.dart';
-import '../../providers/habits_file_exporter.dart';
-import '../../providers/habits_filter.dart';
-import '../../providers/habits_record_scroll_behavior.dart';
-import '../../providers/habits_sort.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_experimental_feature.dart';
+import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/habit_op_config.dart';
+import '../../providers/app_ui/habits_filter.dart';
+import '../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../providers/app_ui/habits_sort.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_file_exporter.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
@@ -62,6 +60,7 @@ import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
+import '_providers/habit_summary.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 
@@ -197,7 +196,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitsChangeStatus(
+    context.read<AppEventBus>().pushHabitsChangeStatus(
       recordList,
       msg: "habit_display._onHabitStatusChangeConfirmed",
       source: AppEventPageSource.habitDisplay,
@@ -218,7 +217,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+    context.read<AppEventBus>().pushHabitRecordChangeStatus(
       uuid,
       record,
       reason: reason,
@@ -552,7 +551,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
-        .read<HabitFileExporterViewModel>()
+        .read<HabitFileExportRunner>()
         .exportMultiHabitsData(
           habitUUIDList,
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
@@ -735,7 +734,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
-        context.read<AppEventViewModel>().push(
+        context.read<AppEventBus>().push(
           const ReloadDataEvent(
             msg: "habit_display._onHabitListReorderComplete",
             trace: {
@@ -779,9 +778,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
       if (result == null || !mounted) return;
       switch (result.op) {
-        case DetailPageReturnOpr.unknown:
+        case habit_detail.DetailPageReturnOpr.unknown:
           break;
-        case DetailPageReturnOpr.deleted:
+        case habit_detail.DetailPageReturnOpr.deleted:
           if (!mounted) break;
           final habitName = result.habitName ?? "";
           final snackBar = buildSnackBarWithUndo(
@@ -937,7 +936,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<AppEventViewModel>().push(
+                context.read<AppEventBus>().push(
                   const ReloadDataEvent(
                     msg: "habit_display.debugAddMultiTempHabit",
                   ),

@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../providers/app_debugger.dart';
+import '../../../providers/app_ui/app_debugger.dart';
 import '../../common/widgets.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {

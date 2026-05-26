@@ -14,7 +14,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_entry.dart';
-import 'package:mhabit/providers/app_launch_entry.dart';
+import 'package:mhabit/providers/app_ui/app_launch_entry.dart';
 import 'package:mhabit/storage/profile/handlers.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

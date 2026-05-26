@@ -15,17 +15,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
-import 'package:mhabit/providers/app_compact_ui_switcher.dart';
-import 'package:mhabit/providers/app_custom_date_format.dart';
-import 'package:mhabit/providers/app_developer.dart';
-import 'package:mhabit/providers/app_first_day.dart';
-import 'package:mhabit/providers/app_language.dart';
-import 'package:mhabit/providers/app_reminder.dart';
-import 'package:mhabit/providers/app_sync.dart';
-import 'package:mhabit/providers/app_theme.dart';
-import 'package:mhabit/providers/global.dart';
-import 'package:mhabit/providers/habit_op_config.dart';
-import 'package:mhabit/providers/habits_record_scroll_behavior.dart';
+import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
+import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
+import 'package:mhabit/providers/app_ui/app_developer.dart';
+import 'package:mhabit/providers/app_ui/app_first_day.dart';
+import 'package:mhabit/providers/app_ui/app_language.dart';
+import 'package:mhabit/providers/app_ui/app_theme.dart';
+import 'package:mhabit/providers/app_ui/habit_op_config.dart';
+import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
+import 'package:mhabit/providers/support/global.dart';
+import 'package:mhabit/providers/workflow/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +71,8 @@ void main() {
     final firstDay = AppFirstDayViewModel()..updateProfile(profile);
     final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
     final developer = AppDeveloperViewModel(global: Global());
-    final reminder = AppReminderViewModel()..updateProfile(profile);
+    final reminderOwner = AppReminderOwner()..updateProfile(profile);
+    final reminder = AppReminderViewModel()..attachAccess(reminderOwner);
     final theme = AppThemeViewModel()..updateProfile(profile);
     final language = AppLanguageViewModel()..updateProfile(profile);
     final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
@@ -85,6 +86,7 @@ void main() {
       language.dispose();
       theme.dispose();
       reminder.dispose();
+      reminderOwner.dispose();
       developer.dispose();
       compactUi.dispose();
       firstDay.dispose();

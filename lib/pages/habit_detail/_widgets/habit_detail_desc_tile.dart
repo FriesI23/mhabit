@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../providers/habit_detail.dart';
 import '../../../widgets/widgets.dart';
+import '../_providers/habit_detail.dart';
 import '../styles.dart';
 import 'habit_detail_chart_title.dart';
 import 'habit_detail_tile_list.dart';

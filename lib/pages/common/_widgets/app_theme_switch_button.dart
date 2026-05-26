@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/app_theme.dart';
+import '../../../providers/app_ui/app_theme.dart';
 import '../../../theme/color.dart';
 
 class AppThemeSwitchButton extends StatelessWidget {

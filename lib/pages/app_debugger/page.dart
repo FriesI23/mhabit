@@ -27,7 +27,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../logging/level.dart';
 import '../../logging/logger_manager.dart';
-import '../../providers/app_debugger.dart';
+import '../../providers/app_ui/app_debugger.dart';
 import '../../utils/app_path_provider.dart';
 import '../../utils/debug_info.dart';
 import '../../utils/xshare.dart';

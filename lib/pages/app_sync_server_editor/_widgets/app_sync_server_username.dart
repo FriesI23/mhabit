@@ -17,7 +17,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../providers/app_sync_server_form.dart';
+import '../_providers/app_sync_server_form.dart';
 
 class AppSyncServerUsernameTile extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;

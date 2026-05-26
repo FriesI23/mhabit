@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/pages/common/debug.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:provider/provider.dart';
 
 final class _FakeHabitImportAccess implements HabitImportAccess {

@@ -1,0 +1,124 @@
+// Copyright 2025 Fries_I23
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+
+import '../../models/app_notify_config.dart';
+import '../../reminders/notification_service.dart';
+import '../../storage/profile/handlers/app_notify_config.dart';
+import '../../storage/profile_provider.dart';
+import '../support/commons.dart';
+
+class AppNotifyConfigUpdater {
+  final NotificationService _notificationService;
+
+  AppNotifyConfigUpdater({NotificationService? notificationService})
+    : _notificationService = notificationService ?? NotificationService();
+
+  void sync(AppNotifyConfig? config) {
+    _notificationService.onAppNotiConfigUpdate(config);
+  }
+}
+
+abstract interface class AppNotifyConfigAccess
+    implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
+  AppNotifyConfig get notifyConfig;
+  FutureOr<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  });
+
+  factory AppNotifyConfigAccess() {
+    /// Android uses system notification channels to manage notifications.
+    if (Platform.isAndroid) return AppNotifyConfigAndroidOwner();
+    return AppNotifyConfigOwner();
+  }
+}
+
+final class AppNotifyConfigOwner
+    with ChangeNotifier, ProfileHandlerLoadedMixin
+    implements AppNotifyConfigAccess {
+  bool _mounted = true;
+  AppNotifyConfigProfileHandler? _config;
+  final AppNotifyConfigUpdater _updater;
+
+  AppNotifyConfigOwner({AppNotifyConfigUpdater? updater})
+    : _updater = updater ?? AppNotifyConfigUpdater() {
+    addListener(() {
+      _updater.sync(notifyConfig);
+    });
+  }
+
+  @override
+  void dispose() {
+    if (!mounted) return;
+    _mounted = false;
+    _updater.sync(null);
+    super.dispose();
+  }
+
+  @override
+  bool get mounted => _mounted;
+
+  @override
+  void updateProfile(ProfileViewModel newProfile) {
+    _config = newProfile.getHandler<AppNotifyConfigProfileHandler>();
+    _updater.sync(notifyConfig);
+    super.updateProfile(newProfile);
+  }
+
+  @override
+  AppNotifyConfig get notifyConfig => _config?.get() ?? const AppNotifyConfig();
+
+  @override
+  Future<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  }) async {
+    if (_config?.get() != newConfig) {
+      await _config?.set(newConfig);
+      if (listen) notifyListeners();
+    }
+  }
+}
+
+final class AppNotifyConfigAndroidOwner
+    with ChangeNotifier, ProfileHandlerLoadedMixin
+    implements AppNotifyConfigAccess {
+  @override
+  final AppNotifyConfig notifyConfig = const AppNotifyConfig();
+
+  bool _mounted = true;
+
+  AppNotifyConfigAndroidOwner();
+
+  @override
+  void dispose() {
+    if (!mounted) return;
+    _mounted = false;
+    super.dispose();
+  }
+
+  @override
+  bool get mounted => _mounted;
+
+  @override
+  Future<void> updateNotifyConfig(
+    AppNotifyConfig newConfig, {
+    bool listen = true,
+  }) => Future.value();
+}

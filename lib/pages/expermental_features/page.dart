@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import '../../extensions/context_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
-import '../../providers/app_experimental_feature.dart';
+import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../widgets/widgets.dart';
 
 Future<void> naviToExperimentalFeaturesPage({required BuildContext context}) {

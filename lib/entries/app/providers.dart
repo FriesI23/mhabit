@@ -16,26 +16,26 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_caches.dart';
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_debugger.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_experimental_feature.dart';
-import '../../providers/app_first_day.dart';
-import '../../providers/app_language.dart';
-import '../../providers/app_launch_entry.dart';
-import '../../providers/app_notify_config.dart';
-import '../../providers/app_reminder.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_theme.dart';
-import '../../providers/global.dart';
-import '../../providers/habit_op_config.dart';
-import '../../providers/habits_file_exporter.dart';
-import '../../providers/habits_file_importer.dart';
-import '../../providers/habits_manager.dart';
-import '../../providers/habits_record_scroll_behavior.dart';
+import '../../providers/app_ui/app_caches.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_custom_date_format.dart';
+import '../../providers/app_ui/app_debugger.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_experimental_feature.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/app_ui/app_language.dart';
+import '../../providers/app_ui/app_launch_entry.dart';
+import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/habit_op_config.dart';
+import '../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../providers/support/global.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_notify_config.dart';
+import '../../providers/workflow/app_reminder.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_file_exporter.dart';
+import '../../providers/workflow/habits_file_importer.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
@@ -49,9 +49,7 @@ class AppProviders extends SingleChildStatelessWidget {
     Provider<NotificationChannelData>(
       create: (context) => NotificationChannelData(),
     ),
-    ChangeNotifierProvider<AppEventViewModel>(
-      create: (context) => AppEventViewModel(),
-    ),
+    ChangeNotifierProvider<AppEventBus>(create: (context) => AppEventBus()),
   ];
 
   Iterable<SingleChildWidget> _buildHabitsAppProviders() => [
@@ -86,16 +84,20 @@ class AppProviders extends SingleChildStatelessWidget {
       ProfileViewModel,
       DBHelperViewModel,
       NotificationChannelData,
-      AppSyncViewModel
+      AppSyncOwner
     >(
-      create: (context) => AppSyncViewModel(),
+      create: (context) => AppSyncOwner(),
       update: (context, profile, helper, channel, previous) => previous
         ..updateProfile(profile)
         ..updateDBHelper(helper)
         ..setNotificationChannelData(channel),
     ),
-    ListenableProxyProvider<AppSyncViewModel, AppSyncWorkflowAccess>(
-      create: (context) => context.read<AppSyncViewModel>(),
+    ListenableProxyProvider<AppSyncOwner, AppSyncSettingsAccess>(
+      create: (context) => context.read<AppSyncOwner>(),
+      update: (context, value, previous) => value,
+    ),
+    ListenableProxyProvider<AppSyncOwner, AppSyncWorkflowAccess>(
+      create: (context) => context.read<AppSyncOwner>(),
       update: (context, value, previous) => value,
     ),
     ListenableProxyProvider<AppSyncWorkflowAccess, AppSyncTriggerAccess>(
@@ -114,12 +116,12 @@ class AppProviders extends SingleChildStatelessWidget {
           AppDeveloperViewModel(global: context.read<Global>()),
       update: (context, value, previous) => previous..updateGlobal(value),
     ),
-    ViewModelProxyProvider<HabitExportAccess, HabitFileExporterViewModel>(
-      create: (context) => HabitFileExporterViewModel(),
+    ViewModelProxyProvider<HabitExportAccess, HabitFileExportRunner>(
+      create: (context) => HabitFileExportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
-    ViewModelProxyProvider<HabitImportAccess, HabitFileImporterViewModel>(
-      create: (context) => HabitFileImporterViewModel(),
+    ViewModelProxyProvider<HabitImportAccess, HabitFileImportRunner>(
+      create: (context) => HabitFileImportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
   ];
@@ -172,10 +174,10 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => AppCustomDateYmdHmsConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
-    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigViewModel>(
+    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigAccess>(
       // Config needs to be synced with Notification Service.
       lazy: false,
-      create: (context) => AppNotifyConfigViewModel(),
+      create: (context) => AppNotifyConfigAccess(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider<ProfileViewModel, HabitRecordOpConfigViewModel>(
@@ -185,13 +187,21 @@ class AppProviders extends SingleChildStatelessWidget {
     ViewModelProxyProvider2<
       ProfileViewModel,
       NotificationChannelData,
-      AppReminderViewModel
+      AppReminderOwner
     >(
       lazy: false,
-      create: (context) => AppReminderViewModel(),
+      create: (context) => AppReminderOwner(),
       update: (context, profile, channel, previous) => previous
         ..setNotificationChannelData(channel)
         ..updateProfile(profile),
+    ),
+    ListenableProxyProvider<AppReminderOwner, AppReminderAccess>(
+      create: (context) => context.read<AppReminderOwner>(),
+      update: (context, value, previous) => value,
+    ),
+    ViewModelProxyProvider<AppReminderAccess, AppReminderViewModel>(
+      create: (context) => AppReminderViewModel(),
+      update: (context, access, previous) => previous..attachAccess(access),
     ),
     ViewModelProxyProvider<
       ProfileViewModel,

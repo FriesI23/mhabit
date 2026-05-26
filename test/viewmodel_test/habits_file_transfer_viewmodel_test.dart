@@ -18,9 +18,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/habit_export.dart';
-import 'package:mhabit/providers/habits_file_exporter.dart';
-import 'package:mhabit/providers/habits_file_importer.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_file_exporter.dart';
+import 'package:mhabit/providers/workflow/habits_file_importer.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/utils/app_path_provider.dart';
 
 final class _FakeHabitExportAccess implements HabitExportAccess {
@@ -95,7 +95,7 @@ final class _FakeAppPathProvider implements AppPathProvider {
 }
 
 void main() {
-  group('HabitFileImporterViewModel:commands', () {
+  group('HabitFileImportRunner:commands', () {
     test(
       'importHabitsData routes through commands and tracks completion',
       () async {
@@ -105,7 +105,7 @@ void main() {
             Future<void>.microtask(() => throw StateError('import failed')),
           ],
         );
-        final provider = HabitFileImporterViewModel()..attachAccess(access);
+        final provider = HabitFileImportRunner()..attachAccess(access);
         final progress = <String>[];
         final allProgress = <String>[];
 
@@ -134,7 +134,7 @@ void main() {
 
     test('importHabitsDataDryRun routes through commands', () {
       final access = _FakeHabitImportAccess(dryRunCount: 3);
-      final provider = HabitFileImporterViewModel()..attachAccess(access);
+      final provider = HabitFileImportRunner()..attachAccess(access);
 
       final count = provider.importHabitsDataDryRun(const [
         {'name': 'A'},
@@ -149,7 +149,7 @@ void main() {
     });
   });
 
-  group('HabitFileExporterViewModel:queries', () {
+  group('HabitFileExportRunner:queries', () {
     test(
       'exportMultiHabitsData routes through queries and writes json file',
       () async {
@@ -161,7 +161,7 @@ void main() {
         final access = _FakeHabitExportAccess(
           result: const [HabitExportData(name: 'Read Book')],
         );
-        final provider = HabitFileExporterViewModel(
+        final provider = HabitFileExportRunner(
           pathProvider: _FakeAppPathProvider(tempDir.path),
         )..attachAccess(access);
 

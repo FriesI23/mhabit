@@ -17,14 +17,14 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_event.dart';
-import '../../../providers/app_event.dart';
-import '../../../providers/habits_file_importer.dart';
+import '../../../providers/workflow/app_event.dart';
+import '../../../providers/workflow/habits_file_importer.dart';
 
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,
   required Iterable<Object?> habitsData,
   required int habitCount,
-  required HabitFileImporterViewModel importer,
+  required HabitFileImportRunner importer,
 }) async {
   return showDialog(
     context: context,
@@ -78,7 +78,7 @@ class _AppSettingImportHabitsConfirmDialog
 
   void _whenAllHabitsLoad(int count, int failed, int total) {
     if (!mounted) return;
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "appt_settings.import._whenAllHabitsLoad",
         clearSnackBar: true,
@@ -94,7 +94,7 @@ class _AppSettingImportHabitsConfirmDialog
 
   void _onConfirmButtonPressed() {
     if (!mounted || _confirmed) return;
-    final dataImporter = context.read<HabitFileImporterViewModel>();
+    final dataImporter = context.read<HabitFileImportRunner>();
     if (!dataImporter.mounted) return;
     final task = dataImporter.importHabitsData(
       widget.data,

@@ -15,7 +15,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
-import 'package:mhabit/providers/app_debugger.dart';
+import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_data.dart';
 import 'package:mhabit/reminders/notification_service.dart';

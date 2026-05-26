@@ -32,11 +32,11 @@ import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
-import '../../providers/app_debugger.dart';
-import '../../providers/app_language.dart';
-import '../../providers/app_reminder.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_theme.dart';
+import '../../providers/app_ui/app_debugger.dart';
+import '../../providers/app_ui/app_language.dart';
+import '../../providers/app_ui/app_theme.dart';
+import '../../providers/workflow/app_reminder.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
@@ -284,6 +284,10 @@ class _AppPostInit extends SingleChildStatefulWidget {
 
 class _AppPostInitState extends SingleChildState<_AppPostInit> {
   StreamSubscription<AppSyncNeedConfirmEvent>? _confirmSub;
+  AppLifecycleListener? _appSyncLifecycleListener;
+  AppSyncSettingsAccess? _appSyncSettings;
+  AppSyncTriggerAccess? _appSyncTrigger;
+  Stopwatch? _appSyncPauseStopwatch;
 
   late bool inited;
 
@@ -312,6 +316,57 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
     );
   }
 
+  void _onAppSyncPaused() {
+    _appSyncPauseStopwatch?.stop();
+    _appSyncPauseStopwatch = Stopwatch()..start();
+    appLog.appsync.debug("AppSyncLifecycleBridge", ex: ["App Paused"]);
+  }
+
+  void _onAppSyncRestarted() {
+    Duration? stopDuration;
+    final stopwatch = _appSyncPauseStopwatch;
+    if (stopwatch != null && stopwatch.isRunning) {
+      stopwatch.stop();
+      stopDuration = stopwatch.elapsed;
+      _appSyncPauseStopwatch = null;
+      appLog.appsync.debug(
+        "AppSyncLifecycleBridge",
+        ex: ["App Resumed from Paused", stopDuration],
+      );
+    }
+    final interval = _appSyncSettings?.fetchInterval.t;
+    if (interval != null && stopDuration != null) {
+      final window = Duration(microseconds: interval.inMicroseconds ~/ 2);
+      appLog.appsync.debug(
+        "AppSyncLifecycleBridge",
+        ex: ["Try re-sync after resumed", stopDuration, window],
+      );
+      if (stopDuration > window) {
+        _appSyncTrigger?.delayedStartTaskOnce(delay: kAppSyncDelayDuration3);
+      }
+    }
+  }
+
+  void _onAppSyncLifecycleBridgeUpdate() {
+    final settings = context.maybeRead<AppSyncSettingsAccess>();
+    final trigger = context.maybeRead<AppSyncTriggerAccess>();
+    if (identical(_appSyncSettings, settings) &&
+        identical(_appSyncTrigger, trigger)) {
+      return;
+    }
+    _appSyncLifecycleListener?.dispose();
+    _appSyncSettings = settings;
+    _appSyncTrigger = trigger;
+    if (settings == null || trigger == null) {
+      _appSyncLifecycleListener = null;
+      return;
+    }
+    _appSyncLifecycleListener = AppLifecycleListener(
+      onPause: _onAppSyncPaused,
+      onRestart: _onAppSyncRestarted,
+    );
+  }
+
   Future<bool> _onWebDavAppSyncUserConfirmNeedCheck(
     WebDavConfigTaskChecklist checklist,
   ) {
@@ -327,12 +382,14 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
   void didChangeDependencies() {
     _onL10nUpdate(L10n.of(context));
     _onConfirmSubscriptionUpdate();
+    _onAppSyncLifecycleBridgeUpdate();
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     _confirmSub?.cancel();
+    _appSyncLifecycleListener?.dispose();
     super.dispose();
   }
 
@@ -342,7 +399,7 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
     context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
       l10n,
     );
-    context.maybeRead<AppReminderViewModel>()?.processAppReminder(l10n);
+    context.maybeRead<AppReminderAccess>()?.processAppReminder(l10n);
     _onL10nUpdate(L10n.of(context));
     inited = true;
   }

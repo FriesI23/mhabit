@@ -18,8 +18,8 @@ import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_notify_config.dart';
 import 'package:mhabit/models/app_reminder_config.dart';
-import 'package:mhabit/providers/app_notify_config.dart';
-import 'package:mhabit/providers/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_notify_config.dart';
+import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
 import 'package:mhabit/storage/profile/handlers/app_notify_config.dart';
@@ -85,14 +85,14 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(_initAppInfo);
 
-  group('AppReminderViewModel collaborator routing', () {
+  group('AppReminderOwner collaborator routing', () {
     test('processAppReminder delegates current reminder to executor', () async {
       final executor = _FakeAppReminderExecutor();
       final channelData = NotificationChannelData();
-      final viewModel = AppReminderViewModel(executor: executor)
+      final owner = AppReminderOwner(executor: executor)
         ..setNotificationChannelData(channelData);
 
-      final result = await viewModel.processAppReminder(null);
+      final result = await owner.processAppReminder(null);
 
       expect(result, isTrue);
       expect(executor.callCount, 1);
@@ -103,21 +103,21 @@ void main() {
         channelData.appReminder.android?.channelId,
       );
 
-      viewModel.dispose();
+      owner.dispose();
     });
   });
 
-  group('AppNotifyConfigViewModelImpl collaborator routing', () {
+  group('AppNotifyConfigOwner collaborator routing', () {
     test('updateProfile and dispose sync through updater', () async {
       const config = AppNotifyConfig(
         channels: {NotificationChannelId.appSyncing: false},
       );
       final profile = await _loadAppNotifyConfigProfile(initialConfig: config);
       final updater = _FakeAppNotifyConfigUpdater();
-      final viewModel = AppNotifyConfigViewModelImpl(updater: updater);
+      final owner = AppNotifyConfigOwner(updater: updater);
 
-      viewModel.updateProfile(profile);
-      viewModel.dispose();
+      owner.updateProfile(profile);
+      owner.dispose();
 
       expect(
         updater.syncedConfigs.map(
@@ -132,7 +132,7 @@ void main() {
     test('updateNotifyConfig syncs latest config through updater', () async {
       final profile = await _loadAppNotifyConfigProfile();
       final updater = _FakeAppNotifyConfigUpdater();
-      final viewModel = AppNotifyConfigViewModelImpl(updater: updater)
+      final owner = AppNotifyConfigOwner(updater: updater)
         ..updateProfile(profile);
 
       updater.syncedConfigs.clear();
@@ -140,9 +140,9 @@ void main() {
         channels: {NotificationChannelId.appSyncFailed: false},
       );
 
-      await viewModel.updateNotifyConfig(config);
+      await owner.updateNotifyConfig(config);
 
-      expect(viewModel.notifyConfig.toJson(), config.toJson());
+      expect(owner.notifyConfig.toJson(), config.toJson());
       expect(
         updater.syncedConfigs.map(
           (item) => item?.isChannelEnabled(NotificationChannelId.appSyncFailed),
@@ -150,7 +150,7 @@ void main() {
         orderedEquals([false]),
       );
 
-      viewModel.dispose();
+      owner.dispose();
       profile.dispose();
     });
   });

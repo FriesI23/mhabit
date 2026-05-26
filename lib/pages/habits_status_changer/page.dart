@@ -26,15 +26,15 @@ import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_summary.dart';
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_status_changer.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_custom_date_format.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '_providers/habit_status_changer.dart';
 import 'widgets.dart';
 
 /// Depend Providers
@@ -169,7 +169,7 @@ class _PageState extends State<_Page> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "habit_status_changer._onConfirmButtonpressed",
         exiEditMode: true,
