@@ -27,14 +27,12 @@ class PageProviders extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
-      ChangeNotifierProvider<AppSettingsViewModel>(
-        create: (context) => AppSettingsViewModel(),
-      ),
       ViewModelProxyProvider2<
         ProfileViewModel,
         DBHelperViewModel,
         AppSettingsViewModel
       >(
+        create: (context) => AppSettingsViewModel(),
         update: (context, profile, dbHelper, previous) => previous
           ..updateProfile(profile)
           ..updateDBHelper(dbHelper),

@@ -82,6 +82,7 @@ Future<void> _initAppInfo() async {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(_initAppInfo);
 
   group('AppReminderViewModel collaborator routing', () {
