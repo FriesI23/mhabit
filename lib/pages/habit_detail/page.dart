@@ -76,7 +76,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
-extension _AppEventViewModelExtension on AppEventViewModel {
+extension _AppEventBusExtension on AppEventBus {
   void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
     push(
       HabitStatusChangedEvent(
@@ -97,7 +97,7 @@ extension _AppEventViewModelExtension on AppEventViewModel {
 /// - Required for builder:
 ///   - [AppFirstDayViewModel]
 /// - Required for callback:
-///   - [HabitFileExporterViewModel]
+///   - [HabitFileExportRunner]
 /// - Optional:
 ///   - [habit_summary.HabitDetailAdapter]
 class HabitDetailPage extends StatelessWidget {
@@ -171,7 +171,7 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
     if (_summary?.mounted != true) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         const ReloadDataEvent(
           msg: "habit_detail._enterHabitEditPage",
           trace: {
@@ -231,7 +231,7 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return;
     if (_vm.getInsideVersion() == oldVersion) return;
     if (_summary?.mounted != true) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         const ReloadDataEvent(
           msg: "habit_detail._openEditDialog",
           trace: {
@@ -291,7 +291,7 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToArchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(
+      context.read<AppEventBus>().pushHabitChangeStatus(
         result,
         msg: "habit_detail._openHabitArchiveConfirmDialog",
       );
@@ -320,7 +320,7 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToUnarchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(
+      context.read<AppEventBus>().pushHabitChangeStatus(
         result,
         msg: "habit_detail._openHabitUnarchiveConfirmDialog",
       );
@@ -351,7 +351,7 @@ class _PageState extends State<_Page>
       if (_summary?.mounted != true) {
         final changedRecord = await _vm.onConfirmToDeleteHabit();
         if (changedRecord == null || !mounted) return null;
-        context.read<AppEventViewModel>().pushHabitChangeStatus(
+        context.read<AppEventBus>().pushHabitChangeStatus(
           changedRecord,
           msg: "habit_detail._openHabitDeleteConfirmDialog",
         );
@@ -378,7 +378,7 @@ class _PageState extends State<_Page>
   }
 
   void _exportHabitAndShared(BuildContext context) async {
-    HabitFileExporterViewModel fileExporter;
+    HabitFileExportRunner fileExporter;
 
     if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
@@ -387,7 +387,7 @@ class _PageState extends State<_Page>
     );
 
     if (!context.mounted || confirmResult == null) return;
-    fileExporter = context.read<HabitFileExporterViewModel>();
+    fileExporter = context.read<HabitFileExportRunner>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,

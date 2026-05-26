@@ -197,7 +197,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitsChangeStatus(
+    context.read<AppEventBus>().pushHabitsChangeStatus(
       recordList,
       msg: "habit_display._onHabitStatusChangeConfirmed",
       source: AppEventPageSource.habitDisplay,
@@ -218,7 +218,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+    context.read<AppEventBus>().pushHabitRecordChangeStatus(
       uuid,
       record,
       reason: reason,
@@ -552,7 +552,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
-        .read<HabitFileExporterViewModel>()
+        .read<HabitFileExportRunner>()
         .exportMultiHabitsData(
           habitUUIDList,
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
@@ -735,7 +735,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
-        context.read<AppEventViewModel>().push(
+        context.read<AppEventBus>().push(
           const ReloadDataEvent(
             msg: "habit_display._onHabitListReorderComplete",
             trace: {
@@ -937,7 +937,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<AppEventViewModel>().push(
+                context.read<AppEventBus>().push(
                   const ReloadDataEvent(
                     msg: "habit_display.debugAddMultiTempHabit",
                   ),

@@ -19,7 +19,7 @@ import '../../models/habit_status.dart';
 import '../../models/habit_summary.dart';
 import '../../providers/app_event.dart';
 
-extension AppEventViewModelExtension on AppEventViewModel {
+extension AppEventBusExtension on AppEventBus {
   void pushHabitsChangeStatus(
     List<HabitStatusChangedRecord> recordList, {
     String? msg,

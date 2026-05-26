@@ -60,12 +60,23 @@ class AppReminderExecutor {
   }
 }
 
-class AppReminderViewModel extends ChangeNotifier
-    with NotificationChannelDataMixin, ProfileHandlerLoadedMixin {
+// TODO: Move this reminder family into the role-based provider subtree when
+// provider files are split by role.
+abstract interface class AppReminderAccess implements Listenable {
+  AppReminderConfig get reminder;
+
+  Future<void> updateReminder(AppReminderConfig newReminder, {L10n? l10n});
+
+  Future<bool> processAppReminder(L10n? l10n);
+}
+
+final class AppReminderOwner extends ChangeNotifier
+    with NotificationChannelDataMixin, ProfileHandlerLoadedMixin
+    implements AppReminderAccess {
   AppReminderProfileHandler? _rmd;
   final AppReminderExecutor _executor;
 
-  AppReminderViewModel({AppReminderExecutor? executor})
+  AppReminderOwner({AppReminderExecutor? executor})
     : _executor = executor ?? AppReminderExecutor();
 
   @override
@@ -74,7 +85,69 @@ class AppReminderViewModel extends ChangeNotifier
     _rmd = newProfile.getHandler<AppReminderProfileHandler>();
   }
 
+  @override
   AppReminderConfig get reminder => _rmd?.get() ?? defaultAppReminder;
+
+  @override
+  Future<void> updateReminder(
+    AppReminderConfig newReminder, {
+    L10n? l10n,
+  }) async {
+    final reminder = this.reminder;
+    if (reminder == newReminder) return;
+    appLog.value.info(
+      '$runtimeType.updateReminder',
+      beforeVal: reminder,
+      afterVal: newReminder,
+      ex: [l10n],
+    );
+    await _rmd?.set(newReminder);
+    if (!await _handleChangeReminder(l10n)) notifyListeners();
+  }
+
+  Future<bool> _handleChangeReminder(L10n? l10n) async {
+    if ((await processAppReminder(l10n)) != true) {
+      appLog.value.info(
+        '$runtimeType._handleChangeReminder',
+        beforeVal: reminder.enabled,
+        afterVal: false,
+        ex: [l10n],
+      );
+      await _rmd?.set(reminder.copyWith(enabled: false));
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> processAppReminder(L10n? l10n) async {
+    return _executor.applyReminder(
+      reminder,
+      l10n: l10n,
+      details: channelData.appReminder,
+    );
+  }
+}
+
+class AppReminderViewModel extends ChangeNotifier {
+  AppReminderAccess? _access;
+
+  void attachAccess(AppReminderAccess access) {
+    if (identical(_access, access)) return;
+    _access?.removeListener(notifyListeners);
+    _access = access;
+    access.addListener(notifyListeners);
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _access?.removeListener(notifyListeners);
+    super.dispose();
+  }
+
+  AppReminderConfig get reminder => _access?.reminder ?? defaultAppReminder;
 
   Future<void> switchOff({L10n? l10n}) async {
     final reminder = this.reminder;
@@ -85,8 +158,10 @@ class AppReminderViewModel extends ChangeNotifier
         afterVal: false,
         ex: [l10n],
       );
-      await _rmd?.set(reminder.copyWith(enabled: false));
-      if (!await _handleChangeReminder(l10n)) notifyListeners();
+      await _access?.updateReminder(
+        reminder.copyWith(enabled: false),
+        l10n: l10n,
+      );
     }
   }
 
@@ -99,8 +174,10 @@ class AppReminderViewModel extends ChangeNotifier
         afterVal: true,
         ex: [l10n],
       );
-      await _rmd?.set(reminder.copyWith(enabled: true));
-      if (!await _handleChangeReminder(l10n)) notifyListeners();
+      await _access?.updateReminder(
+        reminder.copyWith(enabled: true),
+        l10n: l10n,
+      );
     }
   }
 
@@ -117,31 +194,7 @@ class AppReminderViewModel extends ChangeNotifier
         afterVal: newReminder,
         ex: [timeOfDay, l10n],
       );
-      await _rmd?.set(newReminder);
-      if (!await _handleChangeReminder(l10n)) notifyListeners();
+      await _access?.updateReminder(newReminder, l10n: l10n);
     }
-  }
-
-  Future<bool> _handleChangeReminder(L10n? l10n) async {
-    if ((await processAppReminder(l10n)) != true) {
-      appLog.value.info(
-        "$runtimeType._handleChangeReminder",
-        beforeVal: reminder.enabled,
-        afterVal: false,
-        ex: [l10n],
-      );
-      await _rmd?.set(reminder.copyWith(enabled: false));
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
-  Future<bool> processAppReminder(L10n? l10n) async {
-    return _executor.applyReminder(
-      reminder,
-      l10n: l10n,
-      details: channelData.appReminder,
-    );
   }
 }

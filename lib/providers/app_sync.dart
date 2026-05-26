@@ -19,7 +19,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:data_saver/data_saver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart' as l;
 import 'package:logger/logger.dart' show LogEvent;
@@ -52,6 +51,9 @@ const kAppSyncDelayDuration1 = Duration(seconds: 1);
 const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
+
+// TODO: Move this AppSync family into the business-side provider subtree when
+// provider files are split by role.
 
 abstract interface class AppSyncSettingsAccess implements Listenable {
   bool get enabled;
@@ -104,7 +106,7 @@ abstract interface class AppSyncWorkflowAccess
   Stream<String> get startSyncEvents;
 }
 
-class AppSyncViewModel
+class AppSyncOwner
     with
         ChangeNotifier,
         ProfileHandlerLoadedMixin,
@@ -120,63 +122,28 @@ class AppSyncViewModel
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
 
-  late AppLifecycleListener _lifecycleListener;
-
   WeakReference<L10n>? _l10n;
 
   bool _mounted = true;
   AppSyncSwitchHandler? _switch;
   AppSyncFetchIntervalHandler? _interval;
   AppSyncServerConfigHandler? _serverConfig;
-  Stopwatch? _appPauseStopwatch;
 
   AppSyncPeriodicTimer? _autoSyncTimer;
   bool _clearLogsOnStartup = false;
 
-  AppSyncViewModel() {
+  AppSyncOwner() {
     _appSyncTask = AppSyncTaskDispatcher(this);
     _appSyncTask.addListener(notifyListeners);
     _delayedSyncTrigger = CascadingAsyncDebouncer(
       action: () async {
         if (!mounted) return;
         appLog.appsync.debug(
-          "AppSyncViewModel.onSyncTriggerred",
+          "AppSyncOwner.onSyncTriggerred",
           ex: [_delayedSyncTrigger],
         );
         await startSync();
         await _appSyncTask.task?.task.result;
-      },
-    );
-    _lifecycleListener = AppLifecycleListener(
-      onPause: () {
-        _appPauseStopwatch?.stop();
-        _appPauseStopwatch = Stopwatch()..start();
-        appLog.appsync.debug("AppSyncViewModel", ex: ["App Paused"]);
-      },
-      onRestart: () {
-        Duration? stopDuration;
-        final stopwatch = _appPauseStopwatch;
-        if (stopwatch != null && stopwatch.isRunning) {
-          stopwatch.stop();
-          stopDuration = stopwatch.elapsed;
-          _appPauseStopwatch = null;
-          appLog.appsync.debug(
-            "AppSyncViewModel",
-            ex: ["App Resumed from Paused", stopDuration],
-          );
-        }
-        // re-sync
-        final interval = _interval?.get()?.t;
-        if (interval != null && stopDuration != null) {
-          final window = Duration(microseconds: interval.inMicroseconds ~/ 2);
-          appLog.appsync.debug(
-            "AppSyncViewModel",
-            ex: ["Try re-sync after resumed", stopDuration, window],
-          );
-          if (stopDuration > window) {
-            delayedStartTaskOnce(delay: kAppSyncDelayDuration3);
-          }
-        }
       },
     );
   }
@@ -185,7 +152,6 @@ class AppSyncViewModel
   void dispose() {
     if (!mounted) return;
     _mounted = false;
-    _lifecycleListener.dispose();
     _delayedSyncTrigger.cancel();
     _autoSyncTimer?.cancel();
     _appSyncTask.dispose();
@@ -519,7 +485,7 @@ class AppSyncViewModel
       return;
     }
     appLog.appsync.debug(
-      "AppSyncViewModel.delayedStartTaskOnce",
+      "AppSyncOwner.delayedStartTaskOnce",
       ex: [delay, _delayedSyncTrigger],
     );
     _delayedSyncTrigger.exec(delay: delay);
@@ -698,7 +664,7 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
 }
 
 final class AppSyncTaskDispatcher with ChangeNotifier {
-  final AppSyncViewModel _root;
+  final AppSyncOwner _root;
   final StreamController<AppSyncNeedConfirmEvent> _confirmEventController;
   final StreamController<String> _startSyncEventController;
 

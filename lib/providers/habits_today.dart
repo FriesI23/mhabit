@@ -318,7 +318,7 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   //#region: app event
   @override
-  void updateAppEvent(AppEventViewModel newAppEvent) {
+  void updateAppEvent(AppEventBus newAppEvent) {
     _reloadDataSub?.cancel();
     _habitStatusChangedSub?.cancel();
     _habitRecordStatusChangedSub?.cancel();

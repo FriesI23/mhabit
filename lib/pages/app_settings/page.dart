@@ -79,7 +79,7 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 ///   - [AppLanguageViewModel]
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
-///   - [HabitFileImporterViewModel]
+///   - [HabitFileImportRunner]
 ///   - [AppSettingsAccess]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
@@ -232,7 +232,7 @@ class _PageState extends State<_Page> with XShare {
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
-        .read<HabitFileExporterViewModel>()
+        .read<HabitFileExportRunner>()
         .exportAllHabitsData(
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
@@ -293,13 +293,13 @@ class _PageState extends State<_Page> with XShare {
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);
     final habitsData = jsonData["habits"] as Iterable<Object?>? ?? const [];
 
-    final fileImporter = context.read<HabitFileImporterViewModel>();
+    final fileImporter = context.read<HabitFileImportRunner>();
     final habitCount = fileImporter.importHabitsDataDryRun(habitsData);
     showAppSettingImportHabitsConfirmDialog(
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
-      importer: context.read<HabitFileImporterViewModel>(),
+      importer: context.read<HabitFileImportRunner>(),
     );
   }
 
@@ -377,7 +377,7 @@ class _PageState extends State<_Page> with XShare {
         break;
       case AppSettingConfirmClearDBOp.confirmWithExport:
         final filePath = await context
-            .read<HabitFileExporterViewModel>()
+            .read<HabitFileExportRunner>()
             .exportAllHabitsData();
         final dbPath = path.join(
           await AppPathProvider().getDatabaseDirPath(),
@@ -414,7 +414,7 @@ class _PageState extends State<_Page> with XShare {
     );
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "app_settings._onClearDBTilePressed",
         trace: {

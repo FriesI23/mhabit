@@ -26,18 +26,15 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => AppSettingsViewModel()),
-          ListenableProxyProvider<AppSettingsViewModel, AppSettingsAccess>(
-            create: (context) => context.read<AppSettingsViewModel>(),
+          ChangeNotifierProvider(create: (context) => AppSettingsOwner()),
+          ListenableProxyProvider<AppSettingsOwner, AppSettingsAccess>(
+            create: (context) => context.read<AppSettingsOwner>(),
             update: (context, value, previous) => value,
           ),
         ],
         child: Builder(
           builder: (context) {
-            expect(
-              context.read<AppSettingsAccess>(),
-              isA<AppSettingsViewModel>(),
-            );
+            expect(context.read<AppSettingsAccess>(), isA<AppSettingsOwner>());
             return const SizedBox.shrink();
           },
         ),

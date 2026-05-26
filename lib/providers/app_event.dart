@@ -19,7 +19,9 @@ import 'package:rxdart/rxdart.dart';
 
 import '../models/app_event.dart';
 
-class AppEventViewModel extends ChangeNotifier {
+// TODO: Move this event-bus family into the root-adjacent support subtree
+// when provider files are split by role.
+class AppEventBus extends ChangeNotifier {
   final _controller = StreamController<AppEvent>.broadcast();
 
   Stream<T> on<T extends AppEvent>() => _controller.stream.whereType<T>();
@@ -36,5 +38,5 @@ class AppEventViewModel extends ChangeNotifier {
 }
 
 abstract interface class AppEventLoaded {
-  void updateAppEvent(AppEventViewModel newAppEvent);
+  void updateAppEvent(AppEventBus newAppEvent);
 }

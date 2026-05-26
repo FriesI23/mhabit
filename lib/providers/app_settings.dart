@@ -18,19 +18,21 @@ import '../reminders/notification_service.dart';
 import '../storage/db_helper_provider.dart';
 import '../storage/profile_provider.dart';
 
+// TODO: Move this settings family into the business-side provider subtree
+// when provider files are split by role.
 abstract interface class AppSettingsAccess implements Listenable {
   Future<void> resetConfigs();
 
   Future<void> clearDatabase();
 }
 
-final class AppSettingsViewModel extends ChangeNotifier
+final class AppSettingsOwner extends ChangeNotifier
     implements AppSettingsAccess {
   late ProfileViewModel _profile;
   late DBHelperViewModel _dbHelper;
   final NotificationService _notificationService;
 
-  AppSettingsViewModel({NotificationService? notificationService})
+  AppSettingsOwner({NotificationService? notificationService})
     : _notificationService = notificationService ?? NotificationService();
 
   void updateProfile(ProfileViewModel newProfile) {

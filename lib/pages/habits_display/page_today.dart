@@ -288,7 +288,7 @@ class _HabitsTodayController {
     String? reason,
   }) {
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+    context.read<AppEventBus>().pushHabitRecordChangeStatus(
       uuid,
       record,
       reason: reason,

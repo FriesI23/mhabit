@@ -49,9 +49,7 @@ class AppProviders extends SingleChildStatelessWidget {
     Provider<NotificationChannelData>(
       create: (context) => NotificationChannelData(),
     ),
-    ChangeNotifierProvider<AppEventViewModel>(
-      create: (context) => AppEventViewModel(),
-    ),
+    ChangeNotifierProvider<AppEventBus>(create: (context) => AppEventBus()),
   ];
 
   Iterable<SingleChildWidget> _buildHabitsAppProviders() => [
@@ -86,16 +84,20 @@ class AppProviders extends SingleChildStatelessWidget {
       ProfileViewModel,
       DBHelperViewModel,
       NotificationChannelData,
-      AppSyncViewModel
+      AppSyncOwner
     >(
-      create: (context) => AppSyncViewModel(),
+      create: (context) => AppSyncOwner(),
       update: (context, profile, helper, channel, previous) => previous
         ..updateProfile(profile)
         ..updateDBHelper(helper)
         ..setNotificationChannelData(channel),
     ),
-    ListenableProxyProvider<AppSyncViewModel, AppSyncWorkflowAccess>(
-      create: (context) => context.read<AppSyncViewModel>(),
+    ListenableProxyProvider<AppSyncOwner, AppSyncSettingsAccess>(
+      create: (context) => context.read<AppSyncOwner>(),
+      update: (context, value, previous) => value,
+    ),
+    ListenableProxyProvider<AppSyncOwner, AppSyncWorkflowAccess>(
+      create: (context) => context.read<AppSyncOwner>(),
       update: (context, value, previous) => value,
     ),
     ListenableProxyProvider<AppSyncWorkflowAccess, AppSyncTriggerAccess>(
@@ -114,12 +116,12 @@ class AppProviders extends SingleChildStatelessWidget {
           AppDeveloperViewModel(global: context.read<Global>()),
       update: (context, value, previous) => previous..updateGlobal(value),
     ),
-    ViewModelProxyProvider<HabitExportAccess, HabitFileExporterViewModel>(
-      create: (context) => HabitFileExporterViewModel(),
+    ViewModelProxyProvider<HabitExportAccess, HabitFileExportRunner>(
+      create: (context) => HabitFileExportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
-    ViewModelProxyProvider<HabitImportAccess, HabitFileImporterViewModel>(
-      create: (context) => HabitFileImporterViewModel(),
+    ViewModelProxyProvider<HabitImportAccess, HabitFileImportRunner>(
+      create: (context) => HabitFileImportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
   ];
@@ -172,10 +174,10 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => AppCustomDateYmdHmsConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
-    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigViewModel>(
+    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigAccess>(
       // Config needs to be synced with Notification Service.
       lazy: false,
-      create: (context) => AppNotifyConfigViewModel(),
+      create: (context) => AppNotifyConfigAccess(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider<ProfileViewModel, HabitRecordOpConfigViewModel>(
@@ -185,13 +187,21 @@ class AppProviders extends SingleChildStatelessWidget {
     ViewModelProxyProvider2<
       ProfileViewModel,
       NotificationChannelData,
-      AppReminderViewModel
+      AppReminderOwner
     >(
       lazy: false,
-      create: (context) => AppReminderViewModel(),
+      create: (context) => AppReminderOwner(),
       update: (context, profile, channel, previous) => previous
         ..setNotificationChannelData(channel)
         ..updateProfile(profile),
+    ),
+    ListenableProxyProvider<AppReminderOwner, AppReminderAccess>(
+      create: (context) => context.read<AppReminderOwner>(),
+      update: (context, value, previous) => value,
+    ),
+    ViewModelProxyProvider<AppReminderAccess, AppReminderViewModel>(
+      create: (context) => AppReminderViewModel(),
+      update: (context, access, previous) => previous..attachAccess(access),
     ),
     ViewModelProxyProvider<
       ProfileViewModel,

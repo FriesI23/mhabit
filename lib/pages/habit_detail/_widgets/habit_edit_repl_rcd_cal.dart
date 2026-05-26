@@ -108,7 +108,7 @@ class _HabitEditReplacementRecordCalendarDialog
     }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         HabitRecordsChangedEvents(
           msg: "habit_detail.calendar._onRecordChangeConfirmed",
           uuidList: [habitUUID],

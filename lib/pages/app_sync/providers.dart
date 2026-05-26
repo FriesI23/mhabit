@@ -24,8 +24,8 @@ class PageProviders extends SingleChildStatelessWidget {
   @override
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
-      ListenableProxyProvider<AppSyncViewModel, AppSyncSettingsAccess>(
-        create: (context) => context.read<AppSyncViewModel>(),
+      ListenableProxyProvider<AppSyncOwner, AppSyncSettingsAccess>(
+        create: (context) => context.read<AppSyncOwner>(),
         update: (context, value, previous) => value,
       ),
     ],

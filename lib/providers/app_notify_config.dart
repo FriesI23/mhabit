@@ -34,7 +34,9 @@ class AppNotifyConfigUpdater {
   }
 }
 
-abstract interface class AppNotifyConfigViewModel
+// TODO: Move this notify-config family into the business-side provider
+// subtree when provider files are split by role.
+abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
   FutureOr<void> updateNotifyConfig(
@@ -42,21 +44,21 @@ abstract interface class AppNotifyConfigViewModel
     bool listen = true,
   });
 
-  factory AppNotifyConfigViewModel() {
+  factory AppNotifyConfigAccess() {
     /// Android uses system notification channels to manage notifications.
-    if (Platform.isAndroid) return AppNotifyConfigViewModelAndroidImpl();
-    return AppNotifyConfigViewModelImpl();
+    if (Platform.isAndroid) return AppNotifyConfigAndroidOwner();
+    return AppNotifyConfigOwner();
   }
 }
 
-final class AppNotifyConfigViewModelImpl
+final class AppNotifyConfigOwner
     with ChangeNotifier, ProfileHandlerLoadedMixin
-    implements AppNotifyConfigViewModel {
+    implements AppNotifyConfigAccess {
   bool _mounted = true;
   AppNotifyConfigProfileHandler? _config;
   final AppNotifyConfigUpdater _updater;
 
-  AppNotifyConfigViewModelImpl({AppNotifyConfigUpdater? updater})
+  AppNotifyConfigOwner({AppNotifyConfigUpdater? updater})
     : _updater = updater ?? AppNotifyConfigUpdater() {
     addListener(() {
       _updater.sync(notifyConfig);
@@ -96,15 +98,15 @@ final class AppNotifyConfigViewModelImpl
   }
 }
 
-final class AppNotifyConfigViewModelAndroidImpl
+final class AppNotifyConfigAndroidOwner
     with ChangeNotifier, ProfileHandlerLoadedMixin
-    implements AppNotifyConfigViewModel {
+    implements AppNotifyConfigAccess {
   @override
   final AppNotifyConfig notifyConfig = const AppNotifyConfig();
 
   bool _mounted = true;
 
-  AppNotifyConfigViewModelAndroidImpl();
+  AppNotifyConfigAndroidOwner();
 
   @override
   void dispose() {

@@ -268,7 +268,7 @@ class _PageState extends State<_Page> {
     if (!mounted) return;
     if (mounted && result != null) {
       // fire event
-      context.read<AppEventViewModel>().push(switch (formvm.editMode) {
+      context.read<AppEventBus>().push(switch (formvm.editMode) {
         HabitDisplayEditMode.create => const ReloadDataEvent(
           msg: "habit_edit._onSaveButtonPressed.create",
           trace: {

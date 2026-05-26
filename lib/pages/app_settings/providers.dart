@@ -30,15 +30,15 @@ class PageProviders extends SingleChildStatelessWidget {
       ViewModelProxyProvider2<
         ProfileViewModel,
         DBHelperViewModel,
-        AppSettingsViewModel
+        AppSettingsOwner
       >(
-        create: (context) => AppSettingsViewModel(),
+        create: (context) => AppSettingsOwner(),
         update: (context, profile, dbHelper, previous) => previous
           ..updateProfile(profile)
           ..updateDBHelper(dbHelper),
       ),
-      ListenableProxyProvider<AppSettingsViewModel, AppSettingsAccess>(
-        create: (context) => context.read<AppSettingsViewModel>(),
+      ListenableProxyProvider<AppSettingsOwner, AppSettingsAccess>(
+        create: (context) => context.read<AppSettingsOwner>(),
         update: (context, value, previous) => value,
       ),
     ],

@@ -71,7 +71,8 @@ void main() {
     final firstDay = AppFirstDayViewModel()..updateProfile(profile);
     final compactUi = AppCompactUISwitcherViewModel()..updateProfile(profile);
     final developer = AppDeveloperViewModel(global: Global());
-    final reminder = AppReminderViewModel()..updateProfile(profile);
+    final reminderOwner = AppReminderOwner()..updateProfile(profile);
+    final reminder = AppReminderViewModel()..attachAccess(reminderOwner);
     final theme = AppThemeViewModel()..updateProfile(profile);
     final language = AppLanguageViewModel()..updateProfile(profile);
     final scrollBehavior = HabitsRecordScrollBehaviorViewModel()
@@ -85,6 +86,7 @@ void main() {
       language.dispose();
       theme.dispose();
       reminder.dispose();
+      reminderOwner.dispose();
       developer.dispose();
       compactUi.dispose();
       firstDay.dispose();

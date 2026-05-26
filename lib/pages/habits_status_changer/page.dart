@@ -169,7 +169,7 @@ class _PageState extends State<_Page> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "habit_status_changer._onConfirmButtonpressed",
         exiEditMode: true,

@@ -21,7 +21,7 @@ import 'package:mhabit/storage/profile/handlers/app_sync.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class _TestAppSyncViewModel extends AppSyncViewModel {
+class _TestAppSyncOwner extends AppSyncOwner {
   @override
   Future<List<String>> cleanExpiredSyncFailedLogs() async => const [];
 
@@ -34,10 +34,10 @@ class _TestAppSyncViewModel extends AppSyncViewModel {
   }
 }
 
-class _TestAppSyncPasswordViewModel extends _TestAppSyncViewModel {
+class _TestAppSyncPasswordOwner extends _TestAppSyncOwner {
   final String? password;
 
-  _TestAppSyncPasswordViewModel(this.password);
+  _TestAppSyncPasswordOwner(this.password);
 
   @override
   Future<String?> readPassword({String? identity}) async => password;
@@ -57,9 +57,9 @@ Future<ProfileViewModel> _buildProfile() async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('AppSyncViewModel', () {
+  group('AppSyncOwner', () {
     test('idle trigger and status surfaces stay safe', () {
-      final vm = _TestAppSyncViewModel();
+      final vm = _TestAppSyncOwner();
       final trigger = vm as AppSyncTriggerAccess;
       final status = vm as AppSyncStatusSource;
 
@@ -77,7 +77,7 @@ void main() {
       'settings access persists switch interval and reflects config',
       () async {
         final profile = await _buildProfile();
-        final vm = _TestAppSyncViewModel()..updateProfile(profile);
+        final vm = _TestAppSyncOwner()..updateProfile(profile);
         final settings = vm as AppSyncSettingsAccess;
         final trigger = vm as AppSyncTriggerAccess;
         final newInterval = AppSyncFetchInterval.values.firstWhere(
@@ -110,7 +110,7 @@ void main() {
 
     test('settings access saves and deletes server config', () async {
       final profile = await _buildProfile();
-      final vm = _TestAppSyncViewModel()..updateProfile(profile);
+      final vm = _TestAppSyncOwner()..updateProfile(profile);
       final settings = vm as AppSyncSettingsAccess;
 
       final saved = await settings.saveServerConfigForm(
@@ -135,8 +135,8 @@ void main() {
     });
 
     test('debug access uses owner-side display formatting', () async {
-      final vm = _TestAppSyncPasswordViewModel('secret');
-      final emptyVm = _TestAppSyncPasswordViewModel(null);
+      final vm = _TestAppSyncPasswordOwner('secret');
+      final emptyVm = _TestAppSyncPasswordOwner(null);
       final debug = vm as AppSyncSettingsAccess;
       final emptyDebug = emptyVm as AppSyncSettingsAccess;
 
