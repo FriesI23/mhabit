@@ -17,8 +17,8 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_event.dart';
-import '../../../providers/app_event.dart';
-import '../../../providers/habits_file_importer.dart';
+import '../../../providers/workflow/app_event.dart';
+import '../../../providers/workflow/habits_file_importer.dart';
 
 Future<void> showAppSettingImportHabitsConfirmDialog({
   required BuildContext context,

@@ -24,8 +24,8 @@ import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
-import 'package:mhabit/providers/app_sync.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
 final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {

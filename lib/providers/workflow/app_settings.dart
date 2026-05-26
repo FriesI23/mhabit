@@ -14,9 +14,9 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../reminders/notification_service.dart';
-import '../storage/db_helper_provider.dart';
-import '../storage/profile_provider.dart';
+import '../../reminders/notification_service.dart';
+import '../../storage/db_helper_provider.dart';
+import '../../storage/profile_provider.dart';
 
 // TODO: Move this settings family into the business-side provider subtree
 // when provider files are split by role.

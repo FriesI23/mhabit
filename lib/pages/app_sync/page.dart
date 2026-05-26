@@ -17,8 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../logging/helper.dart';
-import '../../providers/app_sync.dart';
 import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import '../../widgets/widgets.dart';

@@ -33,8 +33,8 @@ import '../../../models/habit_score.dart';
 import '../../../models/habit_status.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/commons.dart';
-import '../../../providers/habits_manager.dart';
 import '../../../providers/utils.dart';
+import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;

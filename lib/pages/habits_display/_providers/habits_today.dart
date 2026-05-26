@@ -31,10 +31,10 @@ import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
-import '../../../providers/app_event.dart';
-import '../../../providers/app_sync.dart';
 import '../../../providers/commons.dart';
-import '../../../providers/habits_manager.dart';
+import '../../../providers/workflow/app_event.dart';
+import '../../../providers/workflow/app_sync.dart';
+import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 
 class HabitsTodayViewModel extends ChangeNotifier

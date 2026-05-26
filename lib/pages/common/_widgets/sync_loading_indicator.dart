@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/app_sync_tasks.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 import '../../../widgets/widgets.dart';
 
 class AppSyncLoadingIndicator extends StatelessWidget {

@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_sync.dart';
+import '../../providers/workflow/app_sync.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});

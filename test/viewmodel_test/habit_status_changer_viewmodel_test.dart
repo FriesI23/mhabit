@@ -22,7 +22,7 @@ import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_status_changer/_providers/habit_status_changer.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
 final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {

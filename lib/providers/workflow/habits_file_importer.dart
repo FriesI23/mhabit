@@ -16,7 +16,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'commons.dart';
+import '../commons.dart';
 import 'habits_manager.dart';
 
 // TODO: Move this import runner into the root-adjacent support subtree when

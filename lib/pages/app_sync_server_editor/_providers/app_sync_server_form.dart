@@ -19,8 +19,8 @@ import 'package:flutter/foundation.dart';
 import '../../../logging/helper.dart';
 import '../../../models/app_sync_server.dart';
 import '../../../models/app_sync_server_form.dart';
-import '../../../providers/app_sync.dart';
 import '../../../providers/commons.dart';
+import '../../../providers/workflow/app_sync.dart';
 
 class AppSyncServerFormViewModel extends ChangeNotifier
     implements ProviderMounted {

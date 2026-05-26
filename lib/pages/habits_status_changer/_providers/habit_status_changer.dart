@@ -31,7 +31,7 @@ import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/commons.dart';
-import '../../../providers/habits_manager.dart';
+import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
 

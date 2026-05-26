@@ -16,12 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_event.dart';
-import '../../providers/app_sync.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_sort.dart';
-import '../../providers/habits_manager.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_summary.dart';

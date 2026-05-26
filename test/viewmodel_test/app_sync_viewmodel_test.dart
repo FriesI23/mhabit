@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
-import 'package:mhabit/providers/app_sync.dart';
+import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/profile/handlers/app_sync.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

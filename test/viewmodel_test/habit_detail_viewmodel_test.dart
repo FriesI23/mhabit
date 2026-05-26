@@ -23,7 +23,7 @@ import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
 final class _FakeHabitDetailAccess implements HabitDetailAccess {

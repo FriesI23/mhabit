@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/localizations.dart';
-import '../../providers/app_notify_config.dart';
+import '../../providers/workflow/app_notify_config.dart';
 import '../../reminders/notification_channel.dart';
 import '../../widgets/widgets.dart';
 

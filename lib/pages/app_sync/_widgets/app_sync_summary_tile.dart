@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_server.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 
 class AppSyncSummaryTile extends StatelessWidget {
   final VoidCallback? onPressed;

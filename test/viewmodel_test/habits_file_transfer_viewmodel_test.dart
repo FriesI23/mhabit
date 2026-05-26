@@ -18,9 +18,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/habit_export.dart';
-import 'package:mhabit/providers/habits_file_exporter.dart';
-import 'package:mhabit/providers/habits_file_importer.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_file_exporter.dart';
+import 'package:mhabit/providers/workflow/habits_file_importer.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/utils/app_path_provider.dart';
 
 final class _FakeHabitExportAccess implements HabitExportAccess {

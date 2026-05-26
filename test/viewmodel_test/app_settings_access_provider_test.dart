@@ -14,7 +14,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/providers/app_settings.dart';
+import 'package:mhabit/providers/workflow/app_settings.dart';
 import 'package:provider/provider.dart';
 
 void main() {

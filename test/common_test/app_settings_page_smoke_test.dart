@@ -15,8 +15,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/pages/app_settings/page.dart';
-import 'package:mhabit/providers/app_reminder.dart';
-import 'package:mhabit/providers/app_sync.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
 import 'package:mhabit/providers/app_ui/app_custom_date_format.dart';
 import 'package:mhabit/providers/app_ui/app_developer.dart';
@@ -26,6 +24,8 @@ import 'package:mhabit/providers/app_ui/app_theme.dart';
 import 'package:mhabit/providers/app_ui/habit_op_config.dart';
 import 'package:mhabit/providers/app_ui/habits_record_scroll_behavior.dart';
 import 'package:mhabit/providers/global.dart';
+import 'package:mhabit/providers/workflow/app_reminder.dart';
+import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:provider/provider.dart';

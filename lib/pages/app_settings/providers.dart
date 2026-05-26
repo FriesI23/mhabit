@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_settings.dart';
+import '../../providers/workflow/app_settings.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';

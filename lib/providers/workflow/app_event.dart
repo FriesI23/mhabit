@@ -17,7 +17,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../models/app_event.dart';
+import '../../models/app_event.dart';
 
 // TODO: Move this event-bus family into the root-adjacent support subtree
 // when provider files are split by role.

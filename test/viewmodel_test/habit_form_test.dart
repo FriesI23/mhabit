@@ -21,7 +21,7 @@ import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/pages/habit_edit/_providers/habit_form.dart';
-import 'package:mhabit/providers/habits_manager.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
 final class _FakeHabitFormAccess implements HabitFormAccess {

@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 
 import '../../../logging/helper.dart';
 import '../../../models/app_sync_tasks.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 import '../../../utils/app_path_provider.dart';
 import '../../../utils/xshare.dart';
 import '../../../widgets/widgets.dart';
