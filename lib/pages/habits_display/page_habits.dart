@@ -46,7 +46,6 @@ import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
 import '../../providers/habit_op_config.dart';
-import '../../providers/habit_summary.dart';
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_filter.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
@@ -61,6 +60,7 @@ import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
+import '_providers/habit_summary.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 

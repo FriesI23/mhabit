@@ -19,23 +19,23 @@ import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/exceptions.dart';
-import '../common/types.dart';
-import '../common/utils.dart';
-import '../logging/helper.dart';
-import '../logging/logger_stack.dart';
-import '../models/app_event.dart';
-import '../models/habit_date.dart';
-import '../models/habit_display.dart';
-import '../models/habit_form.dart';
-import '../models/habit_repo_actions.dart';
-import '../models/habit_summary.dart';
-import '../storage/db/handlers/habit.dart';
-import 'app_event.dart';
-import 'app_sync.dart';
-import 'commons.dart';
-import 'habits_manager.dart';
+import '../../../common/consts.dart';
+import '../../../common/exceptions.dart';
+import '../../../common/types.dart';
+import '../../../common/utils.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../models/app_event.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_display.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/habit_repo_actions.dart';
+import '../../../models/habit_summary.dart';
+import '../../../providers/app_event.dart';
+import '../../../providers/app_sync.dart';
+import '../../../providers/commons.dart';
+import '../../../providers/habits_manager.dart';
+import '../../../storage/db/handlers/habit.dart';
 
 class HabitsTodayViewModel extends ChangeNotifier
     implements ProviderMounted, AppEventLoaded {

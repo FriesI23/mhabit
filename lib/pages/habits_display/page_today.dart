@@ -33,10 +33,10 @@ import '../../models/habit_summary.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_event.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habit_summary.dart';
-import '../../providers/habits_today.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
+import '_providers/habit_summary.dart';
+import '_providers/habits_today.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 

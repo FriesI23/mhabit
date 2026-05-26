@@ -19,13 +19,13 @@ import 'package:provider/provider.dart';
 import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habit_summary.dart';
 import '../../providers/habits_filter.dart';
 import '../../providers/habits_manager.dart';
 import '../../providers/habits_sort.dart';
-import '../../providers/habits_today.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
+import '_providers/habit_summary.dart';
+import '_providers/habits_today.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});

@@ -18,8 +18,8 @@ import 'package:provider/provider.dart';
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_stat.dart';
-import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
+import '../_providers/habit_summary.dart';
 import '../widgets.dart';
 
 export 'sliver_search_top_app_bar.dart';
