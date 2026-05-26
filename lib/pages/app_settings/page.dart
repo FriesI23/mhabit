@@ -45,6 +45,8 @@ import '../../providers/habit_op_config.dart';
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/habits_file_importer.dart';
 import '../../providers/habits_record_scroll_behavior.dart';
+import '../../storage/db_helper_provider.dart';
+import '../../storage/profile_provider.dart';
 import '../../utils/app_path_provider.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
@@ -64,6 +66,9 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 }
 
 /// Depend Providers
+/// - Required for page providers:
+///   - [ProfileViewModel]
+///   - [DBHelperViewModel]
 /// - Required for builder:
 ///   - [AppCustomDateYmdHmsConfigViewModel]
 ///   - [AppFirstDayViewModel]
