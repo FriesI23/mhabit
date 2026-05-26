@@ -31,10 +31,10 @@ import '../../providers/app_custom_date_format.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_event.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habit_status_changer.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '_providers/habit_status_changer.dart';
 import 'widgets.dart';
 
 /// Depend Providers

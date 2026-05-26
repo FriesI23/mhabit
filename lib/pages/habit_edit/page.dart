@@ -34,13 +34,13 @@ import '../../providers/app_developer.dart';
 import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habit_form.dart';
 import '../../providers/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
+import '_providers/habit_form.dart';
 import 'widgets.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({

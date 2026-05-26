@@ -16,19 +16,19 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/types.dart';
-import '../common/utils.dart';
-import '../logging/helper.dart';
-import '../models/habit_daily_goal.dart';
-import '../models/habit_display.dart';
-import '../models/habit_form.dart';
-import '../models/habit_freq.dart';
-import '../models/habit_reminder.dart';
-import '../storage/db/handlers/habit.dart';
-import '../utils/app_clock.dart';
-import 'commons.dart';
-import 'habits_manager.dart';
+import '../../../common/consts.dart';
+import '../../../common/types.dart';
+import '../../../common/utils.dart';
+import '../../../logging/helper.dart';
+import '../../../models/habit_daily_goal.dart';
+import '../../../models/habit_display.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/habit_freq.dart';
+import '../../../models/habit_reminder.dart';
+import '../../../providers/commons.dart';
+import '../../../providers/habits_manager.dart';
+import '../../../storage/db/handlers/habit.dart';
+import '../../../utils/app_clock.dart';
 
 class HabitFormViewModel extends ChangeNotifier
     with PinnedAppbarMixin

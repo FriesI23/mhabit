@@ -18,9 +18,9 @@ import 'package:provider/provider.dart';
 
 import '../../common/types.dart';
 import '../../providers/app_first_day.dart';
-import '../../providers/habit_status_changer.dart';
 import '../../providers/habits_manager.dart';
 import '../../widgets/provider.dart';
+import '_providers/habit_status_changer.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final List<HabitUUID> uuidList;

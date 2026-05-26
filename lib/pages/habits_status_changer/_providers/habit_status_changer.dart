@@ -19,19 +19,19 @@ import 'package:async/async.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/exceptions.dart';
-import '../common/types.dart';
-import '../common/utils.dart';
-import '../logging/helper.dart';
-import '../logging/logger_stack.dart';
-import '../models/habit_daily_record_form.dart';
-import '../models/habit_date.dart';
-import '../models/habit_form.dart';
-import '../models/habit_repo_actions.dart';
-import '../models/habit_summary.dart';
-import 'commons.dart';
-import 'habits_manager.dart';
+import '../../../common/consts.dart';
+import '../../../common/exceptions.dart';
+import '../../../common/types.dart';
+import '../../../common/utils.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../models/habit_daily_record_form.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/habit_repo_actions.dart';
+import '../../../models/habit_summary.dart';
+import '../../../providers/commons.dart';
+import '../../../providers/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
 
