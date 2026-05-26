@@ -17,11 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../reminders/notification_channel.dart';
-import '../../../reminders/notification_data.dart';
-import '../../../reminders/notification_id_range.dart' as notifyid;
-import '../../../reminders/notification_service.dart';
-import '../../../utils/app_clock.dart';
+import '../../../providers/app_debugger.dart';
 import '../../common/widgets.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
@@ -56,15 +52,7 @@ class _HabitDisplayDevelopSliverList
       title: const Text("Show demo notification"),
       onTap: () async {
         if (!mounted) return;
-        final now = AppClock().now();
-        NotificationService().show(
-          id: notifyid.getRandomDebugId(),
-          type: NotificationDataType.debug,
-          title: "debug only",
-          body: "timestamp: $now",
-          channelId: NotificationChannelId.debug,
-          details: context.read<NotificationChannelData>().habitReminder,
-        );
+        await context.read<AppDebuggerViewModel>().showDemoNotification();
       },
     );
   }

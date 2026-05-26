@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../common/app_info.dart';
 import '../common/global.dart';
@@ -26,6 +27,7 @@ import '../reminders/notification_id_range.dart';
 import '../reminders/notification_service.dart';
 import '../storage/profile/handlers.dart';
 import '../storage/profile_provider.dart';
+import '../utils/app_clock.dart';
 import 'commons.dart';
 
 class AppDebuggerViewModel
@@ -35,8 +37,10 @@ class AppDebuggerViewModel
         NotificationChannelDataMixin {
   CollectLogswitcherProfileHandler? _collectLogsSwitcher;
   LoggingLevelProfileHandler? _loggingLevel;
+  final NotificationService _notificationService;
 
-  AppDebuggerViewModel();
+  AppDebuggerViewModel({NotificationService? notificationService})
+    : _notificationService = notificationService ?? NotificationService();
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
@@ -83,9 +87,27 @@ class AppDebuggerViewModel
         : AppLoggerHandlerType.normal,
   );
 
+  Future<List<ActiveNotification>> loadActiveNotifications() =>
+      _notificationService.getActiveNotifications();
+
+  Future<List<PendingNotificationRequest>> loadPendingNotificationRequests() =>
+      _notificationService.pendingNotificationRequests();
+
+  Future<void> showDemoNotification({DateTime? at}) async {
+    final now = at ?? AppClock().now();
+    await _notificationService.show(
+      id: getRandomDebugId(),
+      type: NotificationDataType.debug,
+      title: 'debug only',
+      body: 'timestamp: $now',
+      channelId: NotificationChannelId.debug,
+      details: channelData.debug,
+    );
+  }
+
   void processDebuggingNotification([L10n? l10n]) {
     if (isCollectLogs) {
-      NotificationService().show(
+      _notificationService.show(
         id: appDebuggerNotifyId,
         title:
             l10n?.debug_debuggerInfo_notificationTitle ??
@@ -96,7 +118,7 @@ class AppDebuggerViewModel
         details: channelData.appDebugger,
       );
     } else {
-      NotificationService().cancel(id: appDebuggerNotifyId);
+      _notificationService.cancel(id: appDebuggerNotifyId);
     }
   }
 }

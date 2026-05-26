@@ -18,8 +18,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
-import '../../../reminders/notification_service.dart';
+import '../../../providers/app_debugger.dart';
 
 Future<void> showNotificationActivatedDialog({
   required BuildContext context,
@@ -77,7 +78,9 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
     }
 
     try {
-      actives = await NotificationService().getActiveNotifications();
+      actives = await context
+          .read<AppDebuggerViewModel>()
+          .loadActiveNotifications();
     } on PlatformException catch (error) {
       debugPrint(
         'Error calling "getActiveNotifications"\n'

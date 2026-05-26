@@ -25,6 +25,7 @@ import '../../providers/app_event.dart';
 import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_language.dart';
+import '../../providers/app_launch_entry.dart';
 import '../../providers/app_notify_config.dart';
 import '../../providers/app_reminder.dart';
 import '../../providers/app_sync.dart';
@@ -146,6 +147,10 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<ProfileViewModel, AppLanguageViewModel>(
       create: (context) => AppLanguageViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, AppLaunchEntryViewModel>(
+      create: (context) => AppLaunchEntryViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider<ProfileViewModel, AppThemeViewModel>(

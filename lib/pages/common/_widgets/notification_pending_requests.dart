@@ -16,8 +16,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
-import '../../../reminders/notification_service.dart';
+import '../../../providers/app_debugger.dart';
 
 Future<void> showNotificationPendingRequestsDialog({
   required BuildContext context,
@@ -47,7 +48,9 @@ class _NotificationPendingRequestsDialog
   }
 
   Future<void> _loadData() async {
-    pendingRequests = await NotificationService().pendingNotificationRequests();
+    pendingRequests = await context
+        .read<AppDebuggerViewModel>()
+        .loadPendingNotificationRequests();
   }
 
   @override

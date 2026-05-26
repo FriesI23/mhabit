@@ -18,7 +18,7 @@ import '../reminders/notification_service.dart';
 import '../storage/db_helper_provider.dart';
 import '../storage/profile_provider.dart';
 
-abstract interface class AppSettingsAccess {
+abstract interface class AppSettingsAccess implements Listenable {
   Future<void> resetConfigs();
 
   Future<void> clearDatabase();
