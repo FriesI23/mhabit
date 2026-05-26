@@ -26,8 +26,6 @@ import '../../utils/app_clock.dart';
 import '../../utils/app_path_provider.dart';
 import 'habits_manager.dart';
 
-// TODO: Move this export runner into the root-adjacent support subtree when
-// provider files are split by role.
 class HabitFileExportRunner extends ChangeNotifier {
   static const defaultExportFileNamePrefix = "export-habits";
   final AppPathProvider _pathProvider;

@@ -60,8 +60,6 @@ class AppReminderExecutor {
   }
 }
 
-// TODO: Move this reminder family into the role-based provider subtree when
-// provider files are split by role.
 abstract interface class AppReminderAccess implements Listenable {
   AppReminderConfig get reminder;
 

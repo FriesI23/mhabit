@@ -19,8 +19,6 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../models/app_event.dart';
 
-// TODO: Move this event-bus family into the root-adjacent support subtree
-// when provider files are split by role.
 class AppEventBus extends ChangeNotifier {
   final _controller = StreamController<AppEvent>.broadcast();
 

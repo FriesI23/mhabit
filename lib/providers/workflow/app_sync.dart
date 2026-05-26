@@ -52,9 +52,6 @@ const kAppSyncDelayDuration2 = Duration(milliseconds: 1500);
 const kAppSyncDelayDuration3 = Duration(milliseconds: 2500);
 const kAppSyncOnceDelay = Duration(seconds: 5);
 
-// TODO: Move this AppSync family into the business-side provider subtree when
-// provider files are split by role.
-
 abstract interface class AppSyncSettingsAccess implements Listenable {
   bool get enabled;
 

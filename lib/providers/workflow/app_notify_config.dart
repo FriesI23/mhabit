@@ -34,8 +34,6 @@ class AppNotifyConfigUpdater {
   }
 }
 
-// TODO: Move this notify-config family into the business-side provider
-// subtree when provider files are split by role.
 abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;

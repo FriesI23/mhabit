@@ -19,8 +19,6 @@ import 'package:flutter/foundation.dart';
 import '../support/commons.dart';
 import 'habits_manager.dart';
 
-// TODO: Move this import runner into the root-adjacent support subtree when
-// provider files are split by role.
 class HabitFileImportRunner extends ChangeNotifier implements ProviderMounted {
   // inside status
   bool _mounted = true;

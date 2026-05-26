@@ -77,6 +77,7 @@ class _NotificationActivatedDialog extends State<NotificationActivatedDialog> {
       }
     }
 
+    if (!mounted) return;
     try {
       actives = await context
           .read<AppDebuggerViewModel>()
