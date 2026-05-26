@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 import '../../common/utils.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../models/app_entry.dart';
-import '../../providers/app_launch_entry.dart';
+import '../../providers/app_ui/app_launch_entry.dart';
 import '../../widgets/widgets.dart';
 import '_providers/habit_summary.dart';
 import 'page_habits.dart';

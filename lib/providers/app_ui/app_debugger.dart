@@ -15,20 +15,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../common/app_info.dart';
-import '../common/global.dart';
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../logging/level.dart';
-import '../logging/logger_manager.dart';
-import '../reminders/notification_channel.dart';
-import '../reminders/notification_data.dart';
-import '../reminders/notification_id_range.dart';
-import '../reminders/notification_service.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
-import '../utils/app_clock.dart';
-import 'commons.dart';
+import '../../common/app_info.dart';
+import '../../common/global.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../logging/level.dart';
+import '../../logging/logger_manager.dart';
+import '../../reminders/notification_channel.dart';
+import '../../reminders/notification_data.dart';
+import '../../reminders/notification_id_range.dart';
+import '../../reminders/notification_service.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
+import '../../utils/app_clock.dart';
+import '../commons.dart';
 
 class AppDebuggerViewModel
     with

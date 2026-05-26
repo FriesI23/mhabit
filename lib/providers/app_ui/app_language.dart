@@ -16,10 +16,10 @@ import 'dart:ui' show Locale;
 
 import 'package:flutter/foundation.dart';
 
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../storage/profile/handlers/app_language.dart';
-import '../storage/profile_provider.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../storage/profile/handlers/app_language.dart';
+import '../../storage/profile_provider.dart';
 
 class AppLanguageViewModel with ChangeNotifier, ProfileHandlerLoadedMixin {
   AppLanguageProfileHanlder? _language;

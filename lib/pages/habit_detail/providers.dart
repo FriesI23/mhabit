@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_first_day.dart';
+import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/habits_manager.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_detail.dart';

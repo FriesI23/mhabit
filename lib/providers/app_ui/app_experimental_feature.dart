@@ -14,8 +14,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class AppExperimentalFeatureViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

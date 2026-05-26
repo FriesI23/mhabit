@@ -14,10 +14,10 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../logging/helper.dart';
-import '../models/habit_display.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../logging/helper.dart';
+import '../../models/habit_display.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class HabitsFilterViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

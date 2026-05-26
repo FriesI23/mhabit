@@ -16,11 +16,11 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../models/app_theme_color.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
-import '../theme/color.dart';
+import '../../common/consts.dart';
+import '../../models/app_theme_color.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
+import '../../theme/color.dart';
 
 class AppThemeViewModel extends ChangeNotifier with ProfileHandlerLoadedMixin {
   AppThemeTypeProfileHandler? _theme;

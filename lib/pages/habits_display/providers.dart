@@ -17,11 +17,11 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_event.dart';
-import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habits_filter.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/app_ui/habits_filter.dart';
+import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/habits_manager.dart';
-import '../../providers/habits_sort.dart';
 import '../../storage/profile_provider.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_summary.dart';

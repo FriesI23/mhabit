@@ -16,12 +16,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show IconData;
 import 'package:tuple/tuple.dart';
 
-import '../l10n/localizations.dart';
-import '../logging/helper.dart';
-import '../models/habit_display.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
-import '../theme/icon.dart';
+import '../../l10n/localizations.dart';
+import '../../logging/helper.dart';
+import '../../models/habit_display.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
+import '../../theme/icon.dart';
 
 class HabitsSortViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

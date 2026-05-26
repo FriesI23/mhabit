@@ -14,11 +14,11 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../common/enums.dart';
-import '../logging/helper.dart';
-import '../models/habit_display.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../common/enums.dart';
+import '../../logging/helper.dart';
+import '../../models/habit_display.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class HabitRecordOpConfigViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

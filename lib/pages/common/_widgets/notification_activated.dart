@@ -20,7 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/app_debugger.dart';
+import '../../../providers/app_ui/app_debugger.dart';
 
 Future<void> showNotificationActivatedDialog({
   required BuildContext context,

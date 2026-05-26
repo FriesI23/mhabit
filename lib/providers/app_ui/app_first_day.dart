@@ -14,11 +14,11 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/utils.dart';
-import '../logging/helper.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../common/consts.dart';
+import '../../common/utils.dart';
+import '../../logging/helper.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class AppFirstDayViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

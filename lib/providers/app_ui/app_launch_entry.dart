@@ -14,10 +14,10 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../logging/helper.dart';
-import '../models/app_entry.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../logging/helper.dart';
+import '../../models/app_entry.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class AppLaunchEntryViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

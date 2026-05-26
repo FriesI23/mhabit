@@ -15,9 +15,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 
-import '../logging/helper.dart';
-import '../storage/profile/handlers.dart';
-import '../storage/profile_provider.dart';
+import '../../logging/helper.dart';
+import '../../storage/profile/handlers.dart';
+import '../../storage/profile_provider.dart';
 
 class AppCompactUISwitcherViewModel extends ChangeNotifier
     with ProfileHandlerLoadedMixin {

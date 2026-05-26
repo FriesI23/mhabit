@@ -17,7 +17,7 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/types.dart';
-import '../../providers/app_first_day.dart';
+import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/habits_manager.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_status_changer.dart';
