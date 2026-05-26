@@ -16,8 +16,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_server_form.dart';
+import 'package:mhabit/pages/app_sync_server_editor/_providers/app_sync_server_form.dart';
 import 'package:mhabit/providers/app_sync.dart';
-import 'package:mhabit/providers/app_sync_server_form.dart';
 
 final class _FakeAppSyncSettingsAccess implements AppSyncSettingsAccess {
   final String? password;

@@ -18,8 +18,8 @@ import 'package:provider/provider.dart';
 
 import '../../models/app_sync_server.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
 import '../../widgets/provider.dart';
+import '_providers/app_sync_server_form.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final AppSyncServer? initServerConfig;

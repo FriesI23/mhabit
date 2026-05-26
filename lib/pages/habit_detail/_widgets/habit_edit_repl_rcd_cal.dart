@@ -30,10 +30,10 @@ import '../../../models/habit_summary.dart';
 import '../../../providers/app_custom_date_format.dart';
 import '../../../providers/app_event.dart';
 import '../../../providers/app_sync.dart';
-import '../../../providers/habit_detail.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
+import '../_providers/habit_detail.dart';
 import 'habit_heatmap.dart';
 
 Future<void> showHabitEditReplacementRecordCalendarDialog({

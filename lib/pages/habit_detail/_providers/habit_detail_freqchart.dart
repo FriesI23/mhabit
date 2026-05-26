@@ -13,37 +13,60 @@
 // limitations under the License.
 
 import 'dart:collection';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show AxisDirection;
 
-import '../common/consts.dart';
-import '../common/exceptions.dart';
-import '../common/utils.dart';
-import '../models/habit_date.dart';
-import '../models/habit_detail_chart.dart';
-import '../utils/habit_date.dart';
-import 'utils.dart';
+import '../../../common/consts.dart';
+import '../../../common/exceptions.dart';
+import '../../../common/utils.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_detail_chart.dart';
+import '../../../providers/utils.dart';
+import '../../../utils/habit_date.dart';
 
-class HabitDetailScoreChartViewModel extends ChangeNotifier {
+class HabitDetailFreqChartViewModel extends ChangeNotifier {
   late final Key _parentVersion;
-  late final HabitDetailScoreChartCombine _chartCombine;
-  late final SplayTreeMap<HabitDate, HabitDetailScoreChartDate> _data;
+  late final HabitDetailFreqChartCombine _chartCombine;
+  late final SplayTreeMap<HabitDate, HabitDetailFreqChartData> _data;
   late final bool _reversedData;
+  late bool _isFreqChartExpanded;
+  int _offset = 0;
   bool _inited = false;
   AxisDirection? _cachedScrollDirection;
   // sync from settings
   int _firstday = defaultFirstDay;
 
-  HabitDetailScoreChartViewModel();
+  HabitDetailFreqChartViewModel();
 
   Key get parentVersion => _parentVersion;
 
   bool get isInited => _inited;
 
-  HabitDetailScoreChartCombine get chartCombine => _chartCombine;
+  HabitDetailFreqChartCombine get chartCombine => _chartCombine;
 
-  int get offset => 0;
+  bool get isChartExpanded => _isFreqChartExpanded;
+
+  set isChartExpanded(bool newStatus) {
+    if (newStatus != _isFreqChartExpanded) {
+      _isFreqChartExpanded = newStatus;
+      notifyListeners();
+    }
+  }
+
+  int get offset => _offset;
+
+  set offset(int newOffset) {
+    if (kDebugMode) assert(newOffset >= 0);
+    if (newOffset != _offset) {
+      _cachedScrollDirection = newOffset > _offset
+          ? AxisDirection.right
+          : AxisDirection.left;
+      _offset = math.max(0, newOffset);
+      notifyListeners();
+    }
+  }
 
   int get firstday => _firstday;
 
@@ -57,9 +80,11 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
 
   void initState({
     required Key parentVersion,
-    required HabitDetailScoreChartCombine chartCombine,
-    Iterable<MapEntry<HabitDate, HabitDetailScoreChartDate>>? iter,
+    required HabitDetailFreqChartCombine chartCombine,
+    Iterable<MapEntry<HabitDate, HabitDetailFreqChartData>>? iter,
     bool reversedData = true,
+    required bool isFreqChartExpanded,
+    int? offset,
     int? firstday,
   }) {
     if (_inited) return;
@@ -70,6 +95,8 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
     );
     if (iter != null) _data.addEntries(iter);
     _reversedData = reversedData;
+    _isFreqChartExpanded = isFreqChartExpanded;
+    if (offset != null && offset >= 0) _offset = offset;
     if (firstday != null) updateFirstday(firstday);
     _inited = true;
     notifyListeners();
@@ -89,14 +116,14 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
 
   HabitDate getCurrentChartLastDate(HabitDate? initDate, int limit) =>
       _reversedData
-      ? scoreChartHelp.getFirstDate(
+      ? freqChartHelper.getFirstDate(
           initDate ?? HabitDate.now(),
           offset,
           limit,
           firstday,
           chartCombine: chartCombine,
         )
-      : scoreChartHelp.getLastDate(
+      : freqChartHelper.getLastDate(
           initDate ?? HabitDate.now(),
           offset,
           limit,
@@ -106,14 +133,14 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
 
   HabitDate getCurrentChartFirstDate(HabitDate? initDate, int limit) =>
       _reversedData
-      ? scoreChartHelp.getLastDate(
+      ? freqChartHelper.getLastDate(
           initDate ?? HabitDate.now(),
           offset,
           limit,
           firstday,
           chartCombine: chartCombine,
         )
-      : scoreChartHelp.getFirstDate(
+      : freqChartHelper.getFirstDate(
           initDate ?? HabitDate.now(),
           offset,
           limit,
@@ -121,7 +148,7 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
           chartCombine: chartCombine,
         );
 
-  List<MapEntry<HabitDate, HabitDetailScoreChartDate>>
+  List<MapEntry<HabitDate, HabitDetailFreqChartData>>
   getCurrentOffsetChartData({
     HabitDate? initDate,
     HabitDate? firstDate,
@@ -143,13 +170,13 @@ class HabitDetailScoreChartViewModel extends ChangeNotifier {
         reversed: _reversedData,
       ),
     );
-    return scoreChartHelp
+    return freqChartHelper
         .fetchDataByOffset(
           firstDate,
           lastDate,
           reversed: _reversedData,
           chartCombine: chartCombine,
-          dataBuilder: (date) => existMap[date] ?? HabitDetailScoreChartDate(),
+          dataBuilder: (date) => existMap[date] ?? HabitDetailFreqChartData(),
         )
         .toList();
   }

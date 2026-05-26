@@ -40,9 +40,6 @@ import '../../providers/app_developer.dart';
 import '../../providers/app_event.dart';
 import '../../providers/app_first_day.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/habit_detail.dart';
-import '../../providers/habit_detail_freqchart.dart';
-import '../../providers/habit_detail_scorechart.dart';
 import '../../providers/habit_summary.dart' as habit_summary;
 import '../../providers/habits_file_exporter.dart';
 import '../../providers/utils.dart';
@@ -56,9 +53,26 @@ import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
 import '../habit_edit/page.dart' as habit_edit;
+import '_providers/habit_detail.dart';
+import '_providers/habit_detail_freqchart.dart';
+import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
+
+enum DetailPageReturnOpr { unknown, deleted }
+
+class DetailPageReturn {
+  final DetailPageReturnOpr op;
+  final String? habitName;
+  final List<HabitStatusChangedRecord>? recordList;
+
+  const DetailPageReturn({
+    this.op = DetailPageReturnOpr.unknown,
+    this.habitName,
+    this.recordList,
+  });
+}
 
 Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,

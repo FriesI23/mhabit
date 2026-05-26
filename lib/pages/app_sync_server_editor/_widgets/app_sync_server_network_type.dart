@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_server.dart';
-import '../../../providers/app_sync_server_form.dart';
+import '../_providers/app_sync_server_form.dart';
 
 class AppSyncServerNetworkTypeTile extends StatelessWidget {
   final Widget? child;

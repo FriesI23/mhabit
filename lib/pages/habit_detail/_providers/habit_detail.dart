@@ -17,25 +17,25 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
-import '../common/consts.dart';
-import '../common/exceptions.dart';
-import '../common/types.dart';
-import '../common/utils.dart';
-import '../logging/helper.dart';
-import '../logging/logger_stack.dart';
-import '../models/habit_daily_record_form.dart';
-import '../models/habit_date.dart';
-import '../models/habit_detail.dart';
-import '../models/habit_detail_chart.dart';
-import '../models/habit_form.dart';
-import '../models/habit_repo_actions.dart';
-import '../models/habit_score.dart';
-import '../models/habit_status.dart';
-import '../models/habit_summary.dart';
-import '../storage/db/handlers/habit.dart';
-import 'commons.dart';
-import 'habits_manager.dart';
-import 'utils.dart';
+import '../../../common/consts.dart';
+import '../../../common/exceptions.dart';
+import '../../../common/types.dart';
+import '../../../common/utils.dart';
+import '../../../logging/helper.dart';
+import '../../../logging/logger_stack.dart';
+import '../../../models/habit_daily_record_form.dart';
+import '../../../models/habit_date.dart';
+import '../../../models/habit_detail.dart';
+import '../../../models/habit_detail_chart.dart';
+import '../../../models/habit_form.dart';
+import '../../../models/habit_repo_actions.dart';
+import '../../../models/habit_score.dart';
+import '../../../models/habit_status.dart';
+import '../../../models/habit_summary.dart';
+import '../../../providers/commons.dart';
+import '../../../providers/habits_manager.dart';
+import '../../../providers/utils.dart';
+import '../../../storage/db/handlers/habit.dart';
 
 const defaultHabitDetailFreqChardCombine = HabitDetailFreqChartCombine.monthly;
 const defaultHabitDetailScoreChartCombine = HabitDetailScoreChartCombine.daily;
@@ -761,18 +761,4 @@ class ScoreChartCalculator {
     }
     return result;
   }
-}
-
-enum DetailPageReturnOpr { unknown, deleted }
-
-class DetailPageReturn {
-  final DetailPageReturnOpr op;
-  final String? habitName;
-  final List<HabitStatusChangedRecord>? recordList;
-
-  const DetailPageReturn({
-    this.op = DetailPageReturnOpr.unknown,
-    this.habitName,
-    this.recordList,
-  });
 }

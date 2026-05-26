@@ -23,8 +23,8 @@ import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
 import '../../providers/app_developer.dart';
 import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
 import '../../widgets/widgets.dart';
+import '_providers/app_sync_server_form.dart';
 import 'widgets.dart';
 
 enum AppSyncServerEditorResultOp { update, delete }

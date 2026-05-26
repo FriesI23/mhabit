@@ -45,7 +45,6 @@ import '../../providers/app_event.dart';
 import '../../providers/app_experimental_feature.dart';
 import '../../providers/app_sync.dart';
 import '../../providers/app_theme.dart';
-import '../../providers/habit_detail.dart';
 import '../../providers/habit_op_config.dart';
 import '../../providers/habit_summary.dart';
 import '../../providers/habits_file_exporter.dart';
@@ -779,9 +778,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
       if (result == null || !mounted) return;
       switch (result.op) {
-        case DetailPageReturnOpr.unknown:
+        case habit_detail.DetailPageReturnOpr.unknown:
           break;
-        case DetailPageReturnOpr.deleted:
+        case habit_detail.DetailPageReturnOpr.deleted:
           if (!mounted) break;
           final habitName = result.habitName ?? "";
           final snackBar = buildSnackBarWithUndo(
