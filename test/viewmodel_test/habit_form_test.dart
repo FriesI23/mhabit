@@ -27,6 +27,13 @@ import 'package:mhabit/storage/db/handlers/habit.dart';
 final class _FakeHabitFormAccess implements HabitFormAccess {
   HabitDBCell? lastCreatedCell;
   HabitDBCell? lastUpdatedCell;
+  int reminderPermissionRequests = 0;
+
+  @override
+  Future<bool?> requestReminderPermissions() async {
+    reminderPermissionRequests += 1;
+    return true;
+  }
 
   @override
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {

@@ -80,6 +80,8 @@ abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
 }
 
 abstract interface class HabitFormAccess {
+  Future<bool?> requestReminderPermissions();
+
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
 
   Future<HabitDBCell?> updateExistHabitAndUpdateReminder(
@@ -263,6 +265,11 @@ class HabitsManager
         ? await habitDBHelper.queryHabitByDBID(dbid)
         : null;
     return result;
+  }
+
+  @override
+  Future<bool?> requestReminderPermissions() {
+    return NotificationService().requestPermissions();
   }
 
   @override
