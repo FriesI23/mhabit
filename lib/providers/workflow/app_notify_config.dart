@@ -23,17 +23,6 @@ import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
 
-class AppNotifyConfigUpdater {
-  final NotificationService _notificationService;
-
-  AppNotifyConfigUpdater({NotificationService? notificationService})
-    : _notificationService = notificationService ?? NotificationService();
-
-  void sync(AppNotifyConfig? config) {
-    _notificationService.onAppNotiConfigUpdate(config);
-  }
-}
-
 abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
@@ -54,12 +43,12 @@ final class AppNotifyConfigOwner
     implements AppNotifyConfigAccess {
   bool _mounted = true;
   AppNotifyConfigProfileHandler? _config;
-  final AppNotifyConfigUpdater _updater;
+  final NotificationService _notificationService;
 
-  AppNotifyConfigOwner({AppNotifyConfigUpdater? updater})
-    : _updater = updater ?? AppNotifyConfigUpdater() {
+  AppNotifyConfigOwner({NotificationService? notificationService})
+    : _notificationService = notificationService ?? NotificationService() {
     addListener(() {
-      _updater.sync(notifyConfig);
+      _notificationService.onAppNotiConfigUpdate(notifyConfig);
     });
   }
 
@@ -67,7 +56,7 @@ final class AppNotifyConfigOwner
   void dispose() {
     if (!mounted) return;
     _mounted = false;
-    _updater.sync(null);
+    _notificationService.onAppNotiConfigUpdate(null);
     super.dispose();
   }
 
@@ -77,7 +66,7 @@ final class AppNotifyConfigOwner
   @override
   void updateProfile(ProfileViewModel newProfile) {
     _config = newProfile.getHandler<AppNotifyConfigProfileHandler>();
-    _updater.sync(notifyConfig);
+    _notificationService.onAppNotiConfigUpdate(notifyConfig);
     super.updateProfile(newProfile);
   }
 

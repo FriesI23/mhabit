@@ -103,6 +103,22 @@ abstract interface class AppSyncWorkflowAccess
   Stream<String> get startSyncEvents;
 }
 
+final class _AppSyncPasswordStore {
+  const _AppSyncPasswordStore();
+
+  Future<String?> readPassword(String identity) {
+    return const FlutterSecureStorage().read(key: _passwordKey(identity));
+  }
+
+  Future<void> writePassword(String identity, {required String? value}) {
+    return const FlutterSecureStorage(
+      mOptions: MacOsOptions(),
+    ).write(key: _passwordKey(identity), value: value);
+  }
+
+  String _passwordKey(String identity) => 'sync-pwd-$identity';
+}
+
 class AppSyncOwner
     with
         ChangeNotifier,
@@ -118,6 +134,7 @@ class AppSyncOwner
   late final AppSyncTaskDispatcher _appSyncTask;
 
   late final CascadingAsyncDebouncer _delayedSyncTrigger;
+  final _AppSyncPasswordStore _passwordStore;
 
   WeakReference<L10n>? _l10n;
 
@@ -129,7 +146,7 @@ class AppSyncOwner
   AppSyncPeriodicTimer? _autoSyncTimer;
   bool _clearLogsOnStartup = false;
 
-  AppSyncOwner() {
+  AppSyncOwner() : _passwordStore = const _AppSyncPasswordStore() {
     _appSyncTask = AppSyncTaskDispatcher(this);
     _appSyncTask.addListener(notifyListeners);
     _delayedSyncTrigger = CascadingAsyncDebouncer(
@@ -259,17 +276,15 @@ class AppSyncOwner
   Future<String?> readPassword({String? identity}) {
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return Future.value(null);
-    return const FlutterSecureStorage()
-        .read(key: "sync-pwd-$identity")
-        .catchError((e, s) {
-          if (kDebugMode) Error.throwWithStackTrace(e, s);
-          switch (serverConfig) {
-            case AppWebDavSyncServer(:final password):
-              return password;
-            default:
-              return null;
-          }
-        });
+    return _passwordStore.readPassword(identity).catchError((e, s) {
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
+      switch (serverConfig) {
+        case AppWebDavSyncServer(:final password):
+          return password;
+        default:
+          return null;
+      }
+    });
   }
 
   @override
@@ -284,9 +299,7 @@ class AppSyncOwner
     identity = identity ?? serverConfig?.identity;
     if (identity == null) return false;
     try {
-      await const FlutterSecureStorage(
-        mOptions: MacOsOptions(),
-      ).write(key: "sync-pwd-$identity", value: value);
+      await _passwordStore.writePassword(identity, value: value);
     } catch (e, s) {
       if (kDebugMode) Error.throwWithStackTrace(e, s);
       return false;

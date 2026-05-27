@@ -24,6 +24,7 @@ import '../../models/habit_form.dart';
 import '../../models/habit_import.dart';
 import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
+import '../../reminders/notification_channel.dart';
 import '../../reminders/notification_id_range.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/db/handlers/habit.dart';
@@ -114,6 +115,51 @@ abstract interface class HabitImportAccess {
   int getImportHabitsCount(Iterable<Object?> jsonData);
 }
 
+class _HabitReminderRuntime {
+  final NotificationService _notificationService;
+
+  _HabitReminderRuntime({NotificationService? notificationService})
+    : _notificationService = notificationService ?? NotificationService();
+
+  Future<bool?> requestPermissions() =>
+      _notificationService.requestPermissions();
+
+  Future<void> updateHabitReminder(
+    HabitSummaryData data, {
+    required NotificationChannelData channelData,
+  }) async {
+    final reminderId = getHabitReminderId(data.id);
+
+    Future<bool> registerReminder() => _notificationService.regrHabitReminder(
+      id: reminderId,
+      uuid: data.uuid,
+      name: data.name,
+      quest: data.reminderQuest,
+      reminder: data.reminder!,
+      lastUntrackDate: data.getFirstUnTrackedDate(),
+      details: channelData.habitReminder,
+    );
+
+    Future<bool> cancelReminder() =>
+        _notificationService.cancelHabitReminder(id: reminderId);
+
+    try {
+      switch (data.status) {
+        case HabitStatus.activated:
+          await (data.reminder != null ? registerReminder() : cancelReminder());
+        case HabitStatus.archived || HabitStatus.deleted || HabitStatus.unknown:
+          await cancelReminder();
+      }
+    } on Exception catch (e) {
+      appLog.notify.error(
+        '$runtimeType.updateHabitReminder',
+        ex: ["catch err when try regr reminder"],
+        error: e,
+      );
+    }
+  }
+}
+
 class HabitsManager
     with DBHelperLoadedMixin, NotificationChannelDataMixin
     implements
@@ -123,7 +169,12 @@ class HabitsManager
         HabitStatusChangerAccess,
         HabitExportAccess,
         HabitImportAccess {
-  HabitsManager();
+  final _HabitReminderRuntime _reminderRuntime;
+
+  HabitsManager({NotificationService? notificationService})
+    : _reminderRuntime = _HabitReminderRuntime(
+        notificationService: notificationService,
+      );
 
   //#region status
   @override
@@ -268,9 +319,8 @@ class HabitsManager
   }
 
   @override
-  Future<bool?> requestReminderPermissions() {
-    return NotificationService().requestPermissions();
-  }
+  Future<bool?> requestReminderPermissions() =>
+      _reminderRuntime.requestPermissions();
 
   @override
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
@@ -411,37 +461,8 @@ class HabitsManager
   }
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) async {
-    final reminderId = getHabitReminderId(data.id);
-
-    Future<bool> regr() => NotificationService().regrHabitReminder(
-      id: reminderId,
-      uuid: data.uuid,
-      name: data.name,
-      quest: data.reminderQuest,
-      reminder: data.reminder!,
-      lastUntrackDate: data.getFirstUnTrackedDate(),
-      details: channelData.habitReminder,
-    );
-
-    Future<bool> unregr() =>
-        NotificationService().cancelHabitReminder(id: reminderId);
-
-    try {
-      switch (data.status) {
-        case HabitStatus.activated:
-          await (data.reminder != null ? regr() : unregr());
-        case HabitStatus.archived || HabitStatus.deleted || HabitStatus.unknown:
-          await unregr();
-      }
-    } on Exception catch (e) {
-      appLog.notify.error(
-        "HabitsManager._regrHabitReminder",
-        ex: ["catch err when try regr reminder"],
-        error: e,
-      );
-    }
-  }
+  Future<void> updateHabitReminder(HabitSummaryData data) =>
+      _reminderRuntime.updateHabitReminder(data, channelData: channelData);
 
   Future<void> _updateChangedHabitRecordReminders(
     Iterable<ChangeRecordStatusResult> records, {

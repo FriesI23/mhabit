@@ -25,10 +25,10 @@ import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
 
-class AppReminderExecutor {
+final class _AppReminderRuntime {
   final NotificationService _notificationService;
 
-  AppReminderExecutor({NotificationService? notificationService})
+  _AppReminderRuntime({NotificationService? notificationService})
     : _notificationService = notificationService ?? NotificationService();
 
   Future<bool> applyReminder(
@@ -72,10 +72,12 @@ final class AppReminderOwner extends ChangeNotifier
     with NotificationChannelDataMixin, ProfileHandlerLoadedMixin
     implements AppReminderAccess {
   AppReminderProfileHandler? _rmd;
-  final AppReminderExecutor _executor;
+  final _AppReminderRuntime _reminderRuntime;
 
-  AppReminderOwner({AppReminderExecutor? executor})
-    : _executor = executor ?? AppReminderExecutor();
+  AppReminderOwner({NotificationService? notificationService})
+    : _reminderRuntime = _AppReminderRuntime(
+        notificationService: notificationService,
+      );
 
   @override
   void updateProfile(ProfileViewModel newProfile) {
@@ -120,7 +122,7 @@ final class AppReminderOwner extends ChangeNotifier
 
   @override
   Future<bool> processAppReminder(L10n? l10n) async {
-    return _executor.applyReminder(
+    return _reminderRuntime.applyReminder(
       reminder,
       l10n: l10n,
       details: channelData.appReminder,

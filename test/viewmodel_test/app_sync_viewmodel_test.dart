@@ -43,6 +43,20 @@ class _TestAppSyncPasswordOwner extends _TestAppSyncOwner {
   Future<String?> readPassword({String? identity}) async => password;
 }
 
+class _TrackingAppSyncPasswordOwner extends _TestAppSyncOwner {
+  int writePasswordCallCount = 0;
+  String? lastIdentity;
+  String? lastPassword;
+
+  @override
+  Future<bool> writePassword({String? identity, required String? value}) async {
+    writePasswordCallCount += 1;
+    lastIdentity = identity;
+    lastPassword = value;
+    return true;
+  }
+}
+
 Future<ProfileViewModel> _buildProfile() async {
   SharedPreferences.setMockInitialValues({});
   final profile = ProfileViewModel([
@@ -129,6 +143,30 @@ void main() {
       expect(deleted, isTrue);
       expect(settings.serverConfig, isNull);
       expect(profile.getHandler<AppSyncServerConfigHandler>()?.get(), isNull);
+
+      vm.dispose();
+      profile.dispose();
+    });
+
+    test('settings access stores webdav password through owner seam', () async {
+      final profile = await _buildProfile();
+      final vm = _TrackingAppSyncPasswordOwner()..updateProfile(profile);
+      final settings = vm as AppSyncSettingsAccess;
+      final server = AppWebDavSyncServer.newServer(
+        identity: AppSyncServer.genNewIdentity(),
+        path: 'https://example.com/webdav',
+        username: 'tester',
+        password: 'secret',
+      );
+
+      final saved = await settings.saveServerConfigForm(server.toForm());
+      final savedServer = settings.serverConfig as AppWebDavSyncServer;
+
+      expect(saved, isTrue);
+      expect(vm.writePasswordCallCount, 1);
+      expect(vm.lastIdentity, savedServer.identity);
+      expect(vm.lastPassword, 'secret');
+      expect(savedServer.password, '');
 
       vm.dispose();
       profile.dispose();
