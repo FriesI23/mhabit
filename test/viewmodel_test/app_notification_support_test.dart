@@ -181,30 +181,34 @@ void main() {
       },
     );
 
-    test('updateNotifyConfig syncs latest config through updater', () async {
-      final profile = await _loadAppNotifyConfigProfile();
-      final notificationService = _FakeNotificationService();
-      final owner = AppNotifyConfigOwner(
-        notificationService: notificationService,
-      )..updateProfile(profile);
+    test(
+      'updateNotifyConfig syncs latest config through NotificationService',
+      () async {
+        final profile = await _loadAppNotifyConfigProfile();
+        final notificationService = _FakeNotificationService();
+        final owner = AppNotifyConfigOwner(
+          notificationService: notificationService,
+        )..updateProfile(profile);
 
-      notificationService.syncedConfigs.clear();
-      const config = AppNotifyConfig(
-        channels: {NotificationChannelId.appSyncFailed: false},
-      );
+        notificationService.syncedConfigs.clear();
+        const config = AppNotifyConfig(
+          channels: {NotificationChannelId.appSyncFailed: false},
+        );
 
-      await owner.updateNotifyConfig(config);
+        await owner.updateNotifyConfig(config);
 
-      expect(owner.notifyConfig.toJson(), config.toJson());
-      expect(
-        notificationService.syncedConfigs.map(
-          (item) => item?.isChannelEnabled(NotificationChannelId.appSyncFailed),
-        ),
-        orderedEquals([false]),
-      );
+        expect(owner.notifyConfig.toJson(), config.toJson());
+        expect(
+          notificationService.syncedConfigs.map(
+            (item) =>
+                item?.isChannelEnabled(NotificationChannelId.appSyncFailed),
+          ),
+          orderedEquals([false]),
+        );
 
-      owner.dispose();
-      profile.dispose();
-    });
+        owner.dispose();
+        profile.dispose();
+      },
+    );
   });
 }
