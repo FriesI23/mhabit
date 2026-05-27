@@ -52,7 +52,7 @@ import 'providers.dart';
 /// Note: [AppProviders] are use to build providers that need to be initialized
 /// in [MaterialApp]. An important to note that, e.g., [Localizations] are
 /// initialized within MaterialApp. Some feature that depend on these inherited
-/// widgets can be initialized in [_AppPostInit].
+/// widgets can be initialized in [AppPostInit].
 class AppEntry extends StatelessWidget {
   static const _profileHandlers = <ProfileHandlerBuilder>[
     AppReminderProfileHandler.new,
@@ -92,9 +92,7 @@ class AppEntry extends StatelessWidget {
         builder: (context, child) => DateChanger(
           interval: const Duration(seconds: 10),
           builder: (context) => const AppProviders(
-            child: _AppEntry(
-              homePage: _AppPostInit(child: HabitsDisplayPage()),
-            ),
+            child: _AppEntry(homePage: AppPostInit(child: HabitsDisplayPage())),
           ),
         ),
       ),
@@ -275,66 +273,63 @@ class _AppEntry extends StatelessWidget {
   }
 }
 
-class _AppPostInit extends SingleChildStatefulWidget {
-  const _AppPostInit({required Widget child}) : super(child: child);
-
-  @override
-  State<StatefulWidget> createState() => _AppPostInitState();
-}
-
-class _AppPostInitState extends SingleChildState<_AppPostInit> {
+final class _AppSyncPostInitBridge {
   StreamSubscription<AppSyncNeedConfirmEvent>? _confirmSub;
-  AppLifecycleListener? _appSyncLifecycleListener;
-  AppSyncSettingsAccess? _appSyncSettings;
-  AppSyncTriggerAccess? _appSyncTrigger;
-  Stopwatch? _appSyncPauseStopwatch;
+  AppLifecycleListener? _lifecycleListener;
+  AppSyncSettingsAccess? _settings;
+  AppSyncTriggerAccess? _trigger;
+  Stopwatch? _pauseStopwatch;
 
-  late bool inited;
-
-  @override
-  void initState() {
-    super.initState();
-    inited = false;
-  }
-
-  void _onL10nUpdate([L10n? l10n]) {
-    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+  void sync(
+    BuildContext context, {
+    required L10n? l10n,
+    required Future<bool> Function(WebDavConfigTaskChecklist) onNeedCheck,
+  }) {
     context.maybeRead<AppSyncWorkflowAccess>()?.onL10nUpdate(l10n);
+    _updateConfirmSubscription(context, onNeedCheck: onNeedCheck);
+    _updateLifecycleListener(context);
   }
 
-  void _onConfirmSubscriptionUpdate() {
+  void dispose() {
+    _confirmSub?.cancel();
+    _lifecycleListener?.dispose();
+  }
+
+  void _updateConfirmSubscription(
+    BuildContext context, {
+    required Future<bool> Function(WebDavConfigTaskChecklist) onNeedCheck,
+  }) {
     _confirmSub?.cancel();
     final appSync = context.maybeRead<AppSyncWorkflowAccess>();
     _confirmSub = appSync?.confirmEvents.listen(
       (event) => switch (event) {
-        AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() =>
-          _onWebDavAppSyncUserConfirmNeedCheck(
-            event.checklist,
-          ).then(event.complete),
+        AppSyncNeedConfirmEvent<WebDavConfigTaskChecklist>() => onNeedCheck(
+          event.checklist,
+        ).then(event.complete),
         _ => kDebugMode ? debugPrint("Unhandled event: $event") : null,
       },
     );
   }
 
-  void _onAppSyncPaused() {
-    _appSyncPauseStopwatch?.stop();
-    _appSyncPauseStopwatch = Stopwatch()..start();
+  void _onPaused() {
+    _pauseStopwatch?.stop();
+    _pauseStopwatch = Stopwatch()..start();
     appLog.appsync.debug("AppSyncLifecycleBridge", ex: ["App Paused"]);
   }
 
-  void _onAppSyncRestarted() {
+  void _onRestarted() {
     Duration? stopDuration;
-    final stopwatch = _appSyncPauseStopwatch;
+    final stopwatch = _pauseStopwatch;
     if (stopwatch != null && stopwatch.isRunning) {
       stopwatch.stop();
       stopDuration = stopwatch.elapsed;
-      _appSyncPauseStopwatch = null;
+      _pauseStopwatch = null;
       appLog.appsync.debug(
         "AppSyncLifecycleBridge",
         ex: ["App Resumed from Paused", stopDuration],
       );
     }
-    final interval = _appSyncSettings?.fetchInterval.t;
+    final interval = _settings?.fetchInterval.t;
     if (interval != null && stopDuration != null) {
       final window = Duration(microseconds: interval.inMicroseconds ~/ 2);
       appLog.appsync.debug(
@@ -342,28 +337,48 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
         ex: ["Try re-sync after resumed", stopDuration, window],
       );
       if (stopDuration > window) {
-        _appSyncTrigger?.delayedStartTaskOnce(delay: kAppSyncDelayDuration3);
+        _trigger?.delayedStartTaskOnce(delay: kAppSyncDelayDuration3);
       }
     }
   }
 
-  void _onAppSyncLifecycleBridgeUpdate() {
+  void _updateLifecycleListener(BuildContext context) {
     final settings = context.maybeRead<AppSyncSettingsAccess>();
     final trigger = context.maybeRead<AppSyncTriggerAccess>();
-    if (identical(_appSyncSettings, settings) &&
-        identical(_appSyncTrigger, trigger)) {
-      return;
-    }
-    _appSyncLifecycleListener?.dispose();
-    _appSyncSettings = settings;
-    _appSyncTrigger = trigger;
+    if (identical(_settings, settings) && identical(_trigger, trigger)) return;
+
+    _lifecycleListener?.dispose();
+    _settings = settings;
+    _trigger = trigger;
     if (settings == null || trigger == null) {
-      _appSyncLifecycleListener = null;
+      _lifecycleListener = null;
       return;
     }
-    _appSyncLifecycleListener = AppLifecycleListener(
-      onPause: _onAppSyncPaused,
-      onRestart: _onAppSyncRestarted,
+
+    _lifecycleListener = AppLifecycleListener(
+      onPause: _onPaused,
+      onRestart: _onRestarted,
+    );
+  }
+}
+
+class AppPostInit extends SingleChildStatefulWidget {
+  const AppPostInit({required Widget child, super.key}) : super(child: child);
+
+  @override
+  State<StatefulWidget> createState() => _AppPostInitState();
+}
+
+class _AppPostInitState extends SingleChildState<AppPostInit> {
+  final _appSyncBridge = _AppSyncPostInitBridge();
+  bool _didHandlePostInit = false;
+
+  void _syncL10n([L10n? l10n]) {
+    context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _appSyncBridge.sync(
+      context,
+      l10n: l10n,
+      onNeedCheck: _onWebDavAppSyncUserConfirmNeedCheck,
     );
   }
 
@@ -380,33 +395,30 @@ class _AppPostInitState extends SingleChildState<_AppPostInit> {
 
   @override
   void didChangeDependencies() {
-    _onL10nUpdate(L10n.of(context));
-    _onConfirmSubscriptionUpdate();
-    _onAppSyncLifecycleBridgeUpdate();
     super.didChangeDependencies();
+    _syncL10n(L10n.of(context));
   }
 
   @override
   void dispose() {
-    _confirmSub?.cancel();
-    _appSyncLifecycleListener?.dispose();
+    _appSyncBridge.dispose();
     super.dispose();
   }
 
-  void onPostInitHandled(BuildContext context) {
+  void _handlePostInit(BuildContext context) {
     final l10n = L10n.of(context);
     appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
     context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
       l10n,
     );
     context.maybeRead<AppReminderAccess>()?.processAppReminder(l10n);
-    _onL10nUpdate(L10n.of(context));
-    inited = true;
+    _syncL10n(l10n);
+    _didHandlePostInit = true;
   }
 
   @override
   Widget buildWithChild(BuildContext context, Widget? child) {
-    if (!inited) onPostInitHandled(context);
+    if (!_didHandlePostInit) _handlePostInit(context);
     return child!;
   }
 }
