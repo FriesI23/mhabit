@@ -1,0 +1,16 @@
+name: mhabit_proxy_builder
+description: Internal build_runner proxy generator for mhabit.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+
+dependencies:
+  analyzer: 10.0.1
+  build: 4.0.6
+  collection: ^1.17.0
+  mhabit_proxy_annotation:
+    path: ../mhabit_proxy_annotation
+  source_gen: 4.2.3
