@@ -409,6 +409,8 @@
     "habitDetail_editHeatmapCal_dateButtonText": "日期",
     "habitDetail_editHeatmapCal_valueButtonText": "數值",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "回到今天",
+    "common_loadError_text": "載入失敗",
+    "common_loadError_retryText": "重試",
     "habitDetail_notFoundText": "載入習慣失敗",
     "habitDetail_notFoundRetryText": "重試",
     "habitDetail_changeGoal_title": "變更目標",

@@ -624,6 +624,12 @@ class L10nZh extends L10n {
   String get habitDetail_editHeatmapCal_backToToday_tooltipText => '返回今日';
 
   @override
+  String get common_loadError_text => '载入失败';
+
+  @override
+  String get common_loadError_retryText => '重试';
+
+  @override
   String get habitDetail_notFoundText => '读取习惯失败';
 
   @override
@@ -2299,6 +2305,12 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitDetail_editHeatmapCal_backToToday_tooltipText => '回到今天';
+
+  @override
+  String get common_loadError_text => '載入失敗';
+
+  @override
+  String get common_loadError_retryText => '重試';
 
   @override
   String get habitDetail_notFoundText => '載入習慣失敗';

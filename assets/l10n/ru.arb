@@ -367,6 +367,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "дата",
     "habitDetail_editHeatmapCal_valueButtonText": "значение",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "назад к сегодня",
+    "common_loadError_retryText": "Попробовать снова",
     "habitDetail_notFoundText": "Загрузка привычки не удалась",
     "habitDetail_notFoundRetryText": "Попробовать снова",
     "habitDetail_changeGoal_title": "Изменить цель",

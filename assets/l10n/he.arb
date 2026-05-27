@@ -419,6 +419,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "תאריך",
     "habitDetail_editHeatmapCal_valueButtonText": "ערך",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "חזרה להיום",
+    "common_loadError_retryText": "ניסיון חוזר",
     "habitDetail_notFoundText": "טעינת ההרגל נכשלה",
     "habitDetail_notFoundRetryText": "ניסיון חוזר",
     "habitDetail_changeGoal_title": "שינוי מטרה",

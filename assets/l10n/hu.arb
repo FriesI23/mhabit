@@ -419,6 +419,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "dátum",
     "habitDetail_editHeatmapCal_valueButtonText": "érték",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "vissza a mai naphoz",
+    "common_loadError_retryText": "Próbáld újra",
     "habitDetail_notFoundText": "Szokás betöltése sikertelen",
     "habitDetail_notFoundRetryText": "Próbáld újra",
     "habitDetail_changeGoal_title": "Cél változtatása",

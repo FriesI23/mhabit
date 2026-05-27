@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
+import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
@@ -24,6 +25,7 @@ import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
@@ -131,8 +133,9 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) async {
+  Future<void> updateHabitReminder(HabitSummaryData data) {
     reminderUpdates.add(data);
+    return Future.value();
   }
 }
 
@@ -291,6 +294,25 @@ void main() {
       },
     );
 
+    test('HabitSummaryViewModel reloads through app event bus', () async {
+      final seedData = _buildHabitSummaryData();
+      final access = _FakeHabitsDisplayAccess(seedData: seedData);
+      final appEvent = AppEventBus();
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(appEvent);
+
+      await vm.loadData(listen: false);
+      appEvent.push(const ReloadDataEvent(clearSnackBar: true));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(vm.consumeForceReloadFlag(), isTrue);
+      expect(vm.consumeClearSnackBarFlag(), isTrue);
+
+      vm.dispose();
+      appEvent.dispose();
+    });
+
     test('HabitsTodayViewModel writes through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
@@ -325,5 +347,23 @@ void main() {
         await appSync.close();
       },
     );
+
+    test('HabitsTodayViewModel reloads through app event bus', () async {
+      final seedData = _buildHabitSummaryData();
+      final access = _FakeHabitsDisplayAccess(seedData: seedData);
+      final appEvent = AppEventBus();
+      final vm = HabitsTodayViewModel()
+        ..attachAccess(access)
+        ..updateAppEvent(appEvent);
+
+      await vm.loadData(listen: false);
+      appEvent.push(const ReloadDataEvent());
+      await Future<void>.delayed(Duration.zero);
+
+      expect(vm.consumeForceReloadFlag(), isTrue);
+
+      vm.dispose();
+      appEvent.dispose();
+    });
   });
 }

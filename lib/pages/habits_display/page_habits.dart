@@ -1144,7 +1144,7 @@ class _HabitListState extends State<_HabitList> {
       );
     }
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoading) {
+    if (!_vm.hasLoad) {
       await Future.wait([_vm.loadData(), minBarShowTimeFuture]);
       if (!(mounted && _vm.mounted)) return;
     }
@@ -1156,23 +1156,40 @@ class _HabitListState extends State<_HabitList> {
   @override
   Widget build(BuildContext context) {
     return Selector<HabitSummaryViewModel, (bool, bool)>(
-      selector: (context, vm) =>
-          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
-        builder: (context, _) => AnimatedSliverList(
-          controller: _dispatcher.controller,
-          delegate: AnimatedSliverChildBuilderDelegate(
-            (context, index, data) =>
-                _dispatcher.builder(context, _vm.currentHabitList, index, data),
-            _vm.currentHabitList.length,
-            animator: kHabitContentListAnimator,
-            addAnimatedElevation: kCommonEvalation,
-            morphDuration: kEditModeChangeAnimateDuration,
-            reorderModel: widget.reorderModel,
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  if (!(mounted && _vm.mounted)) return;
+                  _vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return AnimatedSliverList(
+            controller: _dispatcher.controller,
+            delegate: AnimatedSliverChildBuilderDelegate(
+              (context, index, data) => _dispatcher.builder(
+                context,
+                _vm.currentHabitList,
+                index,
+                data,
+              ),
+              _vm.currentHabitList.length,
+              animator: kHabitContentListAnimator,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
+              reorderModel: widget.reorderModel,
+            ),
+          );
+        },
       ),
     );
   }
@@ -1324,8 +1341,8 @@ class _EmptyImageState extends State<_EmptyImage> {
     _lastMode = _mode;
     _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
 
-    final isDataLoaded = _vm.isDataLoaded;
-    if (!_initialEmptyConsumed && isDataLoaded) {
+    final hasLoaded = _vm.hasLoaded;
+    if (!_initialEmptyConsumed && hasLoaded) {
       _initialEmptyConsumed = true;
       return;
     }
@@ -1335,8 +1352,7 @@ class _EmptyImageState extends State<_EmptyImage> {
   Widget build(BuildContext context) {
     final (habitCount, _, _) = context
         .select<HabitSummaryViewModel, (int, bool, bool)>(
-          (vm) =>
-              (vm.currentHabitList.length, vm.isInSearchMode, vm.isDataLoaded),
+          (vm) => (vm.currentHabitList.length, vm.isInSearchMode, vm.hasLoaded),
         );
     final (_, calBarHeight) = context
         .select<AppCompactUISwitcherViewModel, (bool, double)>(
@@ -1612,11 +1628,11 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDataLoaded = context.select<HabitSummaryViewModel, bool>(
-      (vm) => vm.isDataLoaded,
+    final hasLoaded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.hasLoaded,
     );
     return AnimatedOpacity(
-      opacity: isDataLoaded ? 0.0 : 1.0,
+      opacity: hasLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: const AppSyncLoadingIndicator(),
     );

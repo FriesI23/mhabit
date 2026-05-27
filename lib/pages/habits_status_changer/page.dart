@@ -34,6 +34,7 @@ import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '_providers/habit_status_changer.dart';
 import 'widgets.dart';
 
@@ -258,7 +259,7 @@ class _PageState extends State<_Page> {
           selector: (context, vm) => vm.config,
           builder: (context, formatter, child) {
             return Selector<HabitStatusChangerViewModel, bool>(
-              selector: (context, vm) => vm.isDataLoading,
+              selector: (context, vm) => vm.hasLoad,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, _, child) {
                 return DatePickerTile(
@@ -430,17 +431,29 @@ class _HabitListState extends State<_HabitList> {
   @visibleForTesting
   Future loadData() async {
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoading) await _vm.loadData();
+    if (!_vm.hasLoad) await _vm.loadData();
+  }
+
+  void _onRetryPressed() {
+    if (!(mounted && _vm.mounted)) return;
+    _vm.requestReloadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitStatusChangerViewModel, bool>(
-      selector: (context, vm) => vm.isDataLoading,
+      selector: (context, vm) => vm.hasLoad,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(onRetry: _onRetryPressed),
+            );
+          }
+
           return SliverStack(
             children: [
               SliverAnimatedOpacity(

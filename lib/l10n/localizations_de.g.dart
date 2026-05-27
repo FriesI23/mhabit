@@ -649,6 +649,12 @@ class L10nDe extends L10n {
       'Zurück nach heute';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Noch einmal Versuchen';
+
+  @override
   String get habitDetail_notFoundText => 'Laden der Gewohnheit fehlgeschlagen';
 
   @override

@@ -787,14 +787,14 @@ class HabitSummaryDataSortCache
 
 class HabitSummaryStatusCache {
   final bool isAppbarPinned;
-  final int reloadHashcode;
+  final int? loadId;
   final bool isClandarExpanded;
   final bool isInEditMode;
   final bool isInSearchMode;
 
   const HabitSummaryStatusCache({
     required this.isAppbarPinned,
-    required this.reloadHashcode,
+    required this.loadId,
     required this.isClandarExpanded,
     required this.isInEditMode,
     required this.isInSearchMode,
@@ -802,7 +802,7 @@ class HabitSummaryStatusCache {
 
   @override
   String toString() {
-    return "HabitSummaryStatusCache($isAppbarPinned|$reloadHashcode|"
+    return "HabitSummaryStatusCache($isAppbarPinned|$loadId|"
         "$isClandarExpanded|$isInEditMode|$isInSearchMode)";
   }
 
@@ -811,7 +811,7 @@ class HabitSummaryStatusCache {
     if (identical(this, other)) return true;
     return other is HabitSummaryStatusCache &&
         isAppbarPinned == other.isAppbarPinned &&
-        reloadHashcode == other.reloadHashcode &&
+        loadId == other.loadId &&
         isClandarExpanded == other.isClandarExpanded &&
         isInEditMode == other.isInEditMode &&
         isInSearchMode == other.isInSearchMode;
@@ -821,7 +821,7 @@ class HabitSummaryStatusCache {
   int get hashCode {
     return hashObjects([
       isAppbarPinned,
-      reloadHashcode,
+      loadId,
       isClandarExpanded,
       isInEditMode,
     ]);

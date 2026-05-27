@@ -46,6 +46,22 @@ final class _TrackingNotifier extends ChangeNotifier {
   }
 }
 
+final class _ValueTrackingNotifier extends ChangeNotifier {
+  int value;
+  int postCount = 0;
+
+  _ValueTrackingNotifier(this.value);
+
+  void update(int newValue) {
+    value = newValue;
+  }
+
+  void onPosted() {
+    postCount += 1;
+    notifyListeners();
+  }
+}
+
 void main() {
   testWidgets(
     'ViewModelProxyProvider2 with explicit create owns notifier lifecycle',
@@ -80,6 +96,55 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
 
       expect(notifier?.disposeCount, 1);
+    },
+  );
+
+  testWidgets(
+    'ViewModelProxyProvider shouldPost checks before update mutation',
+    (tester) async {
+      final notifier = _ValueTrackingNotifier(1);
+
+      Widget buildWidget(int value) {
+        return MultiProvider(
+          providers: [
+            Provider<_Value1>.value(value: _Value1(value)),
+            ChangeNotifierProvider<_ValueTrackingNotifier>.value(
+              value: notifier,
+            ),
+            ViewModelProxyProvider<_Value1, _ValueTrackingNotifier>(
+              update: (context, value1, previous) =>
+                  previous..update(value1.value),
+              shouldPost: (context, value1, previous) =>
+                  value1.value != previous.value,
+              post: (t, value1, vm) => vm.onPosted(),
+            ),
+          ],
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Builder(
+              builder: (context) {
+                final vm = context.watch<_ValueTrackingNotifier>();
+                return Text('${vm.value}-${vm.postCount}');
+              },
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildWidget(1));
+      await tester.pump();
+
+      expect(find.text('1-0'), findsOneWidget);
+
+      await tester.pumpWidget(buildWidget(7));
+      await tester.pump();
+
+      expect(find.text('7-1'), findsOneWidget);
+
+      await tester.pumpWidget(buildWidget(7));
+      await tester.pump();
+
+      expect(find.text('7-1'), findsOneWidget);
     },
   );
 }

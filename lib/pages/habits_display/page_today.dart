@@ -216,28 +216,41 @@ class _HabitsGroupView extends StatelessWidget {
     }
     if (!context.mounted) return;
     final vm = context.read<HabitsTodayViewModel>();
-    if (!vm.mounted || vm.isDataLoading) return;
+    if (!vm.mounted || vm.hasLoad) return;
     await vm.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitsTodayViewModel, (bool, bool)>(
-      selector: (context, vm) =>
-          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
-        builder: (context, _) => SliverPadding(
-          padding: kListTileContentPadding,
-          sliver: AppUiLayoutBuilder.useScreenSize(
-            ignoreHeight: false,
-            builder: (context, layoutType, child) => switch (layoutType) {
-              UiLayoutType.l => const _HabitGrid(),
-              UiLayoutType.s => const _HabitList(),
-            },
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  final vm = context.read<HabitsTodayViewModel>();
+                  if (vm.mounted) vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return SliverPadding(
+            padding: kListTileContentPadding,
+            sliver: AppUiLayoutBuilder.useScreenSize(
+              ignoreHeight: false,
+              builder: (context, layoutType, child) => switch (layoutType) {
+                UiLayoutType.l => const _HabitGrid(),
+                UiLayoutType.s => const _HabitList(),
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -656,8 +669,8 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       _adaptedStyle = _adaptStyle(TodayDoneImageStyle.inDefault, themeData);
     }
 
-    final isDataLoaded = _vm.isDataLoaded;
-    if (!_initialEmptyConsumed && isDataLoaded) {
+    final hasLoaded = _vm.hasLoaded;
+    if (!_initialEmptyConsumed && hasLoaded) {
       _initialEmptyConsumed = true;
       return;
     }
@@ -676,7 +689,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
 
   @override
   Widget build(BuildContext context) {
-    context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
+    context.select<HabitsTodayViewModel, bool>((vm) => vm.hasLoaded);
     final habitCount = context.select<HabitsTodayViewModel, int>(
       (vm) => vm.currentHabitList.length,
     );
