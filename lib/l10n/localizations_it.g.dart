@@ -653,6 +653,12 @@ class L10nIt extends L10n {
       'torna ad oggi';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Prova ancora';
+
+  @override
   String get habitDetail_notFoundText => 'Caricamento abitudini fallito';
 
   @override

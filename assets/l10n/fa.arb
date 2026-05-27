@@ -358,6 +358,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "تاریخ",
     "habitDetail_editHeatmapCal_valueButtonText": "مقدار",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "بازگشت به امروز",
+    "common_loadError_retryText": "تلاش مجدد",
     "habitDetail_notFoundText": "بارگذاری عادت ناموفق بود",
     "habitDetail_notFoundRetryText": "تلاش مجدد",
     "habitDetail_changeGoal_title": "تغییر هدف",

@@ -647,6 +647,12 @@ class L10nPt extends L10n {
       'Voltar para hoje';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Tente outra vez';
+
+  @override
   String get habitDetail_notFoundText => 'O carregamento do hábito falhou';
 
   @override

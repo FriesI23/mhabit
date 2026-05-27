@@ -657,6 +657,12 @@ class L10nPl extends L10n {
       'Powrót do dziś';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Spróbuj ponownie';
+
+  @override
   String get habitDetail_notFoundText => 'Nie udało się załadować nawyku';
 
   @override

@@ -419,6 +419,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "tarih",
     "habitDetail_editHeatmapCal_valueButtonText": "değer",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "bugüne geri dön",
+    "common_loadError_retryText": "Tekrar dene",
     "habitDetail_notFoundText": "Alışkanlığı yükleme başarısız oldu",
     "habitDetail_notFoundRetryText": "Tekrar dene",
     "habitDetail_changeGoal_title": "Hedefi değiştir",

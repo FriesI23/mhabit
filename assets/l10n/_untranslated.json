@@ -1,4 +1,8 @@
 {
+  "ar": [
+    "common_loadError_text"
+  ],
+
   "cs": [
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoalUnit_hintText",
@@ -102,6 +106,8 @@
     "habitDetail_editHeatmapCal_dateButtonText",
     "habitDetail_editHeatmapCal_valueButtonText",
     "habitDetail_editHeatmapCal_backToToday_tooltipText",
+    "common_loadError_text",
+    "common_loadError_retryText",
     "habitDetail_notFoundText",
     "habitDetail_notFoundRetryText",
     "habitDetail_changeGoal_title",
@@ -385,6 +391,7 @@
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_searchFilter_ongoing",
     "habitToday_card_subtitle_text",
+    "common_loadError_text",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "appSetting_changeLanguage_followSystem_text",
@@ -512,6 +519,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -721,6 +729,8 @@
     "habitDetail_editHeatmapCal_dateButtonText",
     "habitDetail_editHeatmapCal_valueButtonText",
     "habitDetail_editHeatmapCal_backToToday_tooltipText",
+    "common_loadError_text",
+    "common_loadError_retryText",
     "habitDetail_notFoundText",
     "habitDetail_notFoundRetryText",
     "habitDetail_changeGoal_title",
@@ -1023,6 +1033,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -1161,6 +1172,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -1289,6 +1301,14 @@
     "channelDesc_appSyncFailed"
   ],
 
+  "he": [
+    "common_loadError_text"
+  ],
+
+  "hu": [
+    "common_loadError_text"
+  ],
+
   "it": [
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
@@ -1305,6 +1325,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -1414,6 +1435,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -1594,6 +1616,8 @@
     "habitDetail_editHeatmapCal_dateButtonText",
     "habitDetail_editHeatmapCal_valueButtonText",
     "habitDetail_editHeatmapCal_backToToday_tooltipText",
+    "common_loadError_text",
+    "common_loadError_retryText",
     "habitDetail_notFoundText",
     "habitDetail_notFoundRetryText",
     "habitDetail_changeGoal_title",
@@ -1892,6 +1916,7 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDiloag_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_android",
@@ -1928,6 +1953,7 @@
     "habitDetail_descDailyGoal_unitEmptyText",
     "habitDetail_descTargetDays_titleText",
     "habitDetail_descSubgroup_title",
+    "common_loadError_text",
     "appSetting_dragCalendarByPageTile_subtitleText",
     "appSetting_changeRecordStatusOpTile_titleText",
     "appSetting_appThemeColorTile_titleText",
@@ -2071,12 +2097,25 @@
     "habitToday_card_subtitle_text",
     "habitToday_card_donePlusButton_label",
     "habitToday_card_skipPlusButton_label",
+    "common_loadError_text",
     "appSetting_appThemeColorTile_titleText",
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText"
+  ],
+
+  "tr": [
+    "common_loadError_text"
+  ],
+
+  "uk": [
+    "common_loadError_text"
+  ],
+
+  "vi": [
+    "common_loadError_text"
   ],
 
   "zh_Hant": [

@@ -419,6 +419,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "تاريخ",
     "habitDetail_editHeatmapCal_valueButtonText": "قيمة",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "العودة إلى اليوم",
+    "common_loadError_retryText": "حاول مرة أخرى",
     "habitDetail_notFoundText": "فشل تحميل العادات",
     "habitDetail_notFoundRetryText": "حاول مرة أخرى",
     "habitDetail_changeGoal_title": "تغيير الهدف",

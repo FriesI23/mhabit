@@ -650,6 +650,12 @@ class L10nRu extends L10n {
       'назад к сегодня';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Попробовать снова';
+
+  @override
   String get habitDetail_notFoundText => 'Загрузка привычки не удалась';
 
   @override

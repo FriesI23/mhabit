@@ -642,6 +642,12 @@ class L10nHe extends L10n {
   String get habitDetail_editHeatmapCal_backToToday_tooltipText => 'חזרה להיום';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'ניסיון חוזר';
+
+  @override
   String get habitDetail_notFoundText => 'טעינת ההרגל נכשלה';
 
   @override

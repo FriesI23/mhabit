@@ -42,13 +42,13 @@ class LoadErrorPlaceholder extends StatelessWidget {
           children: [
             message ??
                 (l10n != null
-                    ? Text(l10n.habitDetail_notFoundText)
-                    : const Text('Load data failed')),
+                    ? Text(l10n.common_loadError_text)
+                    : const Text('Failed to load')),
             if (onRetry != null)
               TextButton(
                 onPressed: onRetry,
                 child: l10n != null
-                    ? Text(l10n.habitDetail_notFoundRetryText)
+                    ? Text(l10n.common_loadError_retryText)
                     : const Text('Try Again'),
               ),
           ],

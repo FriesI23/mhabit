@@ -651,6 +651,12 @@ class L10nVi extends L10n {
       'trở lại ngày hôm nay';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Thử lại';
+
+  @override
   String get habitDetail_notFoundText => 'Tải thói quen thất bại';
 
   @override

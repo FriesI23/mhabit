@@ -32,7 +32,7 @@ void main() {
     );
 
     expect(find.byType(NotFoundImage), findsOneWidget);
-    expect(find.text('Load data failed'), findsOneWidget);
+    expect(find.text('Failed to load'), findsOneWidget);
     expect(find.text('Try Again'), findsOneWidget);
 
     await tester.tap(find.text('Try Again'));
@@ -53,7 +53,7 @@ void main() {
 
       expect(find.byType(NotFoundImage), findsOneWidget);
       expect(find.text('Custom load failure'), findsOneWidget);
-      expect(find.text('Load data failed'), findsNothing);
+      expect(find.text('Failed to load'), findsNothing);
       expect(find.text('Try Again'), findsNothing);
     },
   );

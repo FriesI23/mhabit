@@ -649,6 +649,12 @@ class L10nEs extends L10n {
       'Volver a hoy';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Volver a intentar';
+
+  @override
   String get habitDetail_notFoundText => 'Error al cargar el hábito';
 
   @override

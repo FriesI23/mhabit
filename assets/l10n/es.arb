@@ -383,6 +383,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "fecha",
     "habitDetail_editHeatmapCal_valueButtonText": "valor",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "Volver a hoy",
+    "common_loadError_retryText": "Volver a intentar",
     "habitDetail_notFoundText": "Error al cargar el hábito",
     "habitDetail_notFoundRetryText": "Volver a intentar",
     "habitDetail_changeGoal_title": "Cambiar meta",
