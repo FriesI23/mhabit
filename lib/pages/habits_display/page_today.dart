@@ -216,15 +216,14 @@ class _HabitsGroupView extends StatelessWidget {
     }
     if (!context.mounted) return;
     final vm = context.read<HabitsTodayViewModel>();
-    if (!vm.mounted || vm.isDataLoading) return;
+    if (!vm.mounted || vm.hasLoad) return;
     await vm.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitsTodayViewModel, (bool, bool)>(
-      selector: (context, vm) =>
-          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
@@ -656,8 +655,8 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       _adaptedStyle = _adaptStyle(TodayDoneImageStyle.inDefault, themeData);
     }
 
-    final isDataLoaded = _vm.isDataLoaded;
-    if (!_initialEmptyConsumed && isDataLoaded) {
+    final hasLoaded = _vm.hasLoaded;
+    if (!_initialEmptyConsumed && hasLoaded) {
       _initialEmptyConsumed = true;
       return;
     }
@@ -676,7 +675,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
 
   @override
   Widget build(BuildContext context) {
-    context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
+    context.select<HabitsTodayViewModel, bool>((vm) => vm.hasLoaded);
     final habitCount = context.select<HabitsTodayViewModel, int>(
       (vm) => vm.currentHabitList.length,
     );

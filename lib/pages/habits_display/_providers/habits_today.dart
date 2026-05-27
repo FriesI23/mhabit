@@ -32,10 +32,12 @@ import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/support/commons.dart';
+import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/app_event.dart';
 import '../../../providers/workflow/app_sync.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
+import 'habits_display_reload_bridge.dart';
 
 class HabitsTodayViewModel extends ChangeNotifier
     implements ProviderMounted, AppEventLoaded {
@@ -63,7 +65,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   final _data = HabitSummaryDataCollection();
   List<HabitSortCache> _lastSortedDataCache = const [];
   // status
-  CancelableCompleter<void>? _loading;
+  final _pageLoad = PageLoadRuntime();
   bool _nextRefreshForceReload = false;
   final LinkedHashMap<HabitUUID, bool> _expandStatus;
   // inside status
@@ -73,12 +75,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitDisplaySortType _sortType = defaultSortType;
   HabitDisplaySortDirection _sortDirection = defaultSortDirection;
   late HabitsDisplayAccess _access;
-  AppSyncWorkflowAccess? _workflow;
-  // subscriptions
-  StreamSubscription<String>? _startSyncSub;
-  StreamSubscription<ReloadDataEvent>? _reloadDataSub;
-  StreamSubscription<HabitStatusChangedEvent>? _habitStatusChangedSub;
-  StreamSubscription<HabitRecordsChangedEvents>? _habitRecordStatusChangedSub;
+  final _reloadBridge = HabitsDisplayReloadBridge();
 
   HabitsTodayViewModel() : _expandStatus = LinkedHashMap();
 
@@ -98,14 +95,15 @@ class HabitsTodayViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
-    _startSyncSub?.cancel();
+    _reloadBridge.dispose();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;
   }
 
   void requestReload() {
     _nextRefreshForceReload = true;
-    _cancelLoading();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     notifyListeners();
   }
 
@@ -126,49 +124,15 @@ class HabitsTodayViewModel extends ChangeNotifier
       data.reCalculateAutoComplateRecords(firstDay: firstday);
 
   //#region loading
-  void _cancelLoading() {
-    final loading = _loading;
-    if (loading == null) return;
+  bool get hasLoad => _pageLoad.hasLoad;
 
-    void onCancelled() {
-      if (_loading == loading) _loading = null;
-      appLog.load.info(
-        "$runtimeType._cancelLoading",
-        ex: ['cancelled', loading.hashCode],
-      );
-    }
+  bool get hasLoaded => _pageLoad.hasLoaded;
 
-    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
-    if (loading.isCompleted || loading.isCanceled) {
-      onCancelled();
-    } else {
-      loading.operation.cancel();
-      onCancelled();
-    }
-  }
-
-  CancelableCompleter<void>? get _effectiveLoading {
-    final loading = _loading;
-    return (loading != null && !loading.isCanceled) ? loading : null;
-  }
-
-  bool get isDataLoading => _effectiveLoading != null;
-
-  bool get isDataLoaded => _effectiveLoading?.isCompleted == true;
-
-  Future loadData({bool listen = true}) async {
-    final crtLoading = _effectiveLoading;
-    if (crtLoading != null) {
-      appLog.load.warn(
-        "$runtimeType.loadData",
-        ex: ["data already loaded", crtLoading.isCompleted],
-      );
-      return crtLoading.operation.valueOrCancellation();
-    }
-
-    final loading = _loading = CancelableCompleter<void>();
-
-    void loadingFailed(List errmsg) {
+  Future<void> loadData({bool listen = true}) {
+    void loadingFailed(
+      CancelableCompleter<void> loading,
+      List<Object?> errmsg,
+    ) {
       appLog.load.error(
         "$runtimeType.load",
         ex: [...errmsg, loading.hashCode],
@@ -182,69 +146,68 @@ class HabitsTodayViewModel extends ChangeNotifier
       }
     }
 
-    void loadingCancelled() {
+    void loadingCancelled(CancelableCompleter<void> loading) {
       appLog.load.info(
         "$runtimeType.load",
         ex: ['cancelled', loading.hashCode],
       );
     }
 
-    Future<void> loadingData() async {
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loading data", loading.hashCode, listen],
-      );
+    return _pageLoad.run(
+      logName: "$runtimeType.loadData",
+      alreadyLoadingEx: ["data already loaded"],
+      loadData: (loading) async {
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen],
+        );
 
-      // init habits
-      await _access.loadHabitSummaryCollectionData(
-        initedCollection: _data,
-        habitsColmns: _loadHabitDataCollectionColumns,
-      );
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      if (loading.isCompleted) return;
-      _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
-      _resortData();
+        // init habits
+        await _access.loadHabitSummaryCollectionData(
+          initedCollection: _data,
+          habitsColmns: _loadHabitDataCollectionColumns,
+        );
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        if (loading.isCompleted) return;
+        _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
+        _resortData();
 
-      // init reminders
-      final futureList = <Future>[];
-      _data.forEach((_, habit) => futureList.add(_updateHabitReminder(habit)));
-      await Future.wait(futureList);
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      if (loading.isCompleted) return;
+        // init reminders
+        final futureList = <Future>[];
+        _data.forEach(
+          (_, habit) => futureList.add(_updateHabitReminder(habit)),
+        );
+        await Future.wait(futureList);
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        if (loading.isCompleted) return;
 
-      // complete
-      loading.complete();
-      // reload
-      if (listen) {
-        notifyListeners();
-      }
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loaded", loading.hashCode, listen],
-      );
-    }
-
-    loadingData()
-        .catchError((e, s) {
-          if (loading.isCanceled) return loadingCancelled();
-          loadingFailed(["unexpected error", e]);
-          appLog.load.error(
-            "$runtimeType.load",
-            ex: ["caught", e, loading.hashCode],
-            stackTrace: s,
-          );
-        })
-        .whenComplete(() {
-          if (!loading.isCompleted && !loading.isCanceled) {
-            loading.complete();
-          }
-        });
-
-    return loading.operation.valueOrCancellation();
+        loading.complete();
+        if (listen) notifyListeners();
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loaded", loading.hashCode, listen],
+        );
+      },
+      onError: (loading, e, s) {
+        if (loading.isCanceled) return loadingCancelled(loading);
+        loadingFailed(loading, ["unexpected error", e]);
+        appLog.load.error(
+          "$runtimeType.load",
+          ex: ["caught", e, loading.hashCode],
+          stackTrace: s,
+        );
+      },
+    );
   }
 
   HabitSummaryData? getHabit(HabitUUID habitUUID) {
@@ -271,7 +234,7 @@ class HabitsTodayViewModel extends ChangeNotifier
   HabitSortCache? getHabitBySortId(int index) => _lastSortedDataCache[index];
 
   void resortData({bool listen = true}) {
-    if (!(_loading?.isCompleted ?? false)) return;
+    if (!_pageLoad.hasLoaded) return;
     _resortData();
     if (listen) notifyListeners();
   }
@@ -306,47 +269,43 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   //#region: auto sync
   void attachWorkflow(AppSyncWorkflowAccess workflow) {
-    if (identical(workflow, _workflow)) return;
-    _workflow = workflow;
-    _startSyncSub?.cancel();
-    _startSyncSub = workflow.startSyncEvents.listen((id) {
-      appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
-      requestReload();
-    });
+    _reloadBridge.attachWorkflow(
+      workflow,
+      onStartSync: (id) {
+        appLog.habit.debug("onStartSyncEventTriggered", ex: [id]);
+        requestReload();
+      },
+    );
   }
   //#endregion
 
   //#region: app event
   @override
   void updateAppEvent(AppEventBus newAppEvent) {
-    _reloadDataSub?.cancel();
-    _habitStatusChangedSub?.cancel();
-    _habitRecordStatusChangedSub?.cancel();
-    _reloadDataSub = newAppEvent.on<ReloadDataEvent>().listen((event) {
-      if (event.isInTrace(AppEventPageSource.habitToday)) return;
-      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-      requestReload();
-    });
-    _habitStatusChangedSub = newAppEvent.on<HabitStatusChangedEvent>().listen((
-      event,
-    ) {
-      if (event.isInTrace(AppEventPageSource.habitToday)) return;
-      appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-      requestReload();
-    });
-    _habitRecordStatusChangedSub = newAppEvent
-        .on<HabitRecordsChangedEvents>()
-        .listen((event) {
-          if (event.isInTrace(AppEventPageSource.habitToday)) return;
-          final now = HabitDate.now();
-          if (!event.dateList.contains(now)) return;
-          final allHabitCheckedIn = event.uuidList
-              .map((e) => getHabit(e)?.getRecordByDate(now))
-              .every((e) => e != null);
-          if (allHabitCheckedIn) return;
-          appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
-          requestReload();
-        });
+    _reloadBridge.updateAppEvent(
+      newAppEvent,
+      onReloadData: (event) {
+        if (event.isInTrace(AppEventPageSource.habitToday)) return;
+        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
+        requestReload();
+      },
+      onHabitStatusChanged: (event) {
+        if (event.isInTrace(AppEventPageSource.habitToday)) return;
+        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
+        requestReload();
+      },
+      onHabitRecordsChanged: (event) {
+        if (event.isInTrace(AppEventPageSource.habitToday)) return;
+        final now = HabitDate.now();
+        if (!event.dateList.contains(now)) return;
+        final allHabitCheckedIn = event.uuidList
+            .map((e) => getHabit(e)?.getRecordByDate(now))
+            .every((e) => e != null);
+        if (allHabitCheckedIn) return;
+        appLog.habit.debug("HabitsTody", ex: ["app event triggered", event]);
+        requestReload();
+      },
+    );
   }
   //#endregion
 

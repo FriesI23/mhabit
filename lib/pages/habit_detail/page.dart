@@ -465,7 +465,7 @@ class _PageState extends State<_Page>
   Future<void> loadData() async {
     if (!mounted) return;
     final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
-    if (!_vm.isDataLoading) {
+    if (!_vm.hasLoad) {
       await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
     }
   }
@@ -1019,7 +1019,7 @@ class _PageState extends State<_Page>
 
     Widget buildBody(BuildContext context) {
       return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.isDataLoading,
+        selector: (context, viewmodel) => viewmodel.hasLoad,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
           return FutureBuilder(

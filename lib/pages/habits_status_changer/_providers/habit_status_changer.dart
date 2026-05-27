@@ -31,6 +31,7 @@ import '../../../models/habit_form.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/support/commons.dart';
+import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/workflow/habits_manager.dart';
 
 part 'habit_status_changer.g.dart';
@@ -64,8 +65,7 @@ class HabitStatusChangerViewModel
   List<HabitSortCache> _currentHabitList = const [];
   // controller
   final _habitDataController = _HabitDataController();
-  // status
-  CancelableCompleter<void>? _loading;
+  final _pageLoad = PageLoadRuntime();
   // inside status
   bool _mounted = true;
   bool _isSkipReasonEdited = false;
@@ -82,42 +82,16 @@ class HabitStatusChangerViewModel
     _access = newAccess;
   }
 
+  bool get hasLoad => _pageLoad.hasLoad;
+
+  bool get hasLoaded => _pageLoad.hasLoaded;
+
   //#region loading data
-  void _cancelLoading() {
-    final loading = _loading;
-    if (loading == null) return;
-
-    if (!(loading.isCompleted || loading.isCanceled)) {
-      appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
-      loading.operation.cancel();
-    }
-    if (_loading == loading) _loading = null;
-    appLog.load.info(
-      "$runtimeType._cancelLoading",
-      ex: ['cancelled', loading.hashCode],
-    );
-  }
-
-  CancelableCompleter<void>? get _effectiveLoading {
-    final loading = _loading;
-    return (loading != null && !loading.isCanceled) ? loading : null;
-  }
-
-  bool get isDataLoading => _effectiveLoading != null;
-
-  Future loadData({bool listen = true}) async {
-    final currentLoading = _effectiveLoading;
-    if (currentLoading != null) {
-      appLog.load.warn(
-        "$runtimeType.loadData",
-        ex: ["data is currently loading", currentLoading.isCompleted],
-      );
-      return currentLoading.operation.valueOrCancellation();
-    }
-
-    final loading = _loading = CancelableCompleter<void>();
-
-    void loadingFailed(List errmsg) {
+  Future<void> loadData({bool listen = true}) {
+    void loadingFailed(
+      CancelableCompleter<void> loading,
+      List<Object?> errmsg,
+    ) {
       appLog.load.error(
         "$runtimeType.load",
         ex: [...errmsg, loading.hashCode],
@@ -131,67 +105,62 @@ class HabitStatusChangerViewModel
       }
     }
 
-    void loadingCancelled() {
+    void loadingCancelled(CancelableCompleter<void> loading) {
       appLog.load.info(
         "$runtimeType.load",
         ex: ['cancelled', loading.hashCode],
       );
     }
 
-    Future<void> loadingData() async {
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loading data", loading.hashCode, listen],
-      );
+    return _pageLoad.run(
+      logName: "$runtimeType.loadData",
+      alreadyLoadingEx: ["data is currently loading"],
+      loadData: (loading) async {
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen],
+        );
 
-      // init habits
-      final collection = await _access.loadHabitSummaryCollectionData(
-        habitUUIDs: _selectedUUIDList,
-      );
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      if (loading.isCompleted) return;
+        // init habits
+        final collection = await _access.loadHabitSummaryCollectionData(
+          habitUUIDs: _selectedUUIDList,
+        );
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        if (loading.isCompleted) return;
 
-      _habitDataController.replaceData(
-        collection..forEach(
-          (_, habit) =>
-              habit.reCalculateAutoComplateRecords(firstDay: firstday),
-        ),
-      );
-      _updateCurrentHabitList();
-      _updateForm(_form, withDefaultChangerStatus: true);
+        _habitDataController.replaceData(
+          collection..forEach(
+            (_, habit) =>
+                habit.reCalculateAutoComplateRecords(firstDay: firstday),
+          ),
+        );
+        _updateCurrentHabitList();
+        _updateForm(_form, withDefaultChangerStatus: true);
 
-      // complete
-      loading.complete();
-      // reload
-      if (listen) {
-        notifyListeners();
-      }
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loaded", loading.hashCode, listen],
-      );
-    }
-
-    loadingData()
-        .catchError((e, s) {
-          if (loading.isCanceled) return loadingCancelled();
-          loadingFailed(["unexpected error", e]);
-          appLog.load.error(
-            "$runtimeType.load",
-            ex: ["caught", e, loading.hashCode],
-            stackTrace: s,
-          );
-        })
-        .whenComplete(() {
-          if (!loading.isCompleted && !loading.isCanceled) {
-            loading.complete();
-          }
-        });
-
-    return loading.operation.valueOrCancellation();
+        loading.complete();
+        if (listen) notifyListeners();
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loaded", loading.hashCode, listen],
+        );
+      },
+      onError: (loading, e, s) {
+        if (loading.isCanceled) return loadingCancelled(loading);
+        loadingFailed(loading, ["unexpected error", e]);
+        appLog.load.error(
+          "$runtimeType.load",
+          ex: ["caught", e, loading.hashCode],
+          stackTrace: s,
+        );
+      },
+    );
   }
   //#endregion
 
@@ -371,13 +340,13 @@ class HabitStatusChangerViewModel
   @override
   void dispose() {
     if (!_mounted) return;
-    _cancelLoading();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;
   }
 
   void requestReloadData() {
-    _cancelLoading();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     notifyListeners();
   }
 

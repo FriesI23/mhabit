@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
@@ -33,6 +31,7 @@ import '../../../models/habit_score.dart';
 import '../../../models/habit_status.dart';
 import '../../../models/habit_summary.dart';
 import '../../../providers/support/commons.dart';
+import '../../../providers/support/page_load_runtime.dart';
 import '../../../providers/support/utils.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
@@ -45,12 +44,11 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   HabitDetailData? _habitDetailData;
   final _heatmapDateToColorMap = <HabitDate, num>{};
   final _habitScoreChangedDateColl = <HabitDate, num>{};
-  // status
-  CancelableCompleter<void>? _loading;
   HabitDetailFreqChartCombine _freqChartCombine =
       defaultHabitDetailFreqChardCombine;
   HabitDetailScoreChartCombine _scoreChartCombine =
       defaultHabitDetailScoreChartCombine;
+  final _pageLoad = PageLoadRuntime();
   // inside status
   bool _mounted = true;
   // sync from setting
@@ -129,7 +127,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   @override
   void dispose() {
     if (!_mounted) return;
-    _cancelLoading();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     super.dispose();
     _mounted = false;
   }
@@ -166,52 +164,20 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   }
 
   void requestReload() {
-    _cancelLoading();
+    _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     notifyListeners();
   }
 
+  bool get hasLoad => _pageLoad.hasLoad;
+
+  bool get hasLoaded => _pageLoad.hasLoaded;
+
   //#region loading
-  void _cancelLoading() {
-    final loading = _loading;
-    if (loading == null) return;
-
-    void onCancelled() {
-      if (_loading == loading) _loading = null;
-      appLog.load.info(
-        "$runtimeType._cancelLoading",
-        ex: ['cancelled', loading.hashCode],
-      );
-    }
-
-    appLog.load.info("$runtimeType._cancelLoading", ex: [loading.hashCode]);
-    if (loading.isCompleted || loading.isCanceled) {
-      onCancelled();
-    } else {
-      loading.operation.cancel();
-      onCancelled();
-    }
-  }
-
-  CancelableCompleter<void>? get _effectiveLoading {
-    final loading = _loading;
-    return (loading != null && !loading.isCanceled) ? loading : null;
-  }
-
-  bool get isDataLoading => _effectiveLoading != null;
-
-  Future<void> loadData(HabitUUID uuid, {bool listen = true}) async {
-    final crtLoading = _effectiveLoading;
-    if (crtLoading != null) {
-      appLog.load.warn(
-        "$runtimeType.load",
-        ex: ["data already loaded", uuid, crtLoading.isCompleted],
-      );
-      return crtLoading.operation.valueOrCancellation();
-    }
-
-    final loading = _loading = CancelableCompleter<void>();
-
-    void loadingFailed(List errmsg) {
+  Future<void> loadData(HabitUUID uuid, {bool listen = true}) {
+    void loadingFailed(
+      CancelableCompleter<void> loading,
+      List<Object?> errmsg,
+    ) {
       appLog.load.error(
         "$runtimeType.load",
         ex: [...errmsg, loading.hashCode],
@@ -225,60 +191,57 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
       }
     }
 
-    void loadingCancelled() {
+    void loadingCancelled(CancelableCompleter<void> loading) {
       appLog.load.info(
         "$runtimeType.load",
         ex: ['cancelled', loading.hashCode],
       );
     }
 
-    Future<void> loadingData() async {
-      if (!mounted) return loadingFailed(const ["viewmodel disposed"]);
-      if (loading.isCanceled) return loadingCancelled();
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loading data", loading.hashCode, listen],
-      );
+    return _pageLoad.run(
+      logName: "$runtimeType.load",
+      alreadyLoadingEx: ["data already loaded", uuid],
+      loadData: (loading) async {
+        if (!mounted) {
+          return loadingFailed(loading, const ["viewmodel disposed"]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loading data", loading.hashCode, listen],
+        );
 
-      // init habit
-      final data = await _access.loadHabitDetailData(uuid);
-      if (data == null) return loadingFailed(["data load failed", uuid]);
-      // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
-      if (!mounted) return loadingFailed(["viewmodel disposed", uuid]);
-      if (loading.isCanceled) return loadingCancelled();
-      if (loading.isCompleted) return;
-      _habitDetailData = data;
-      _updateHabitAutoCompleteStatistics();
-      _updateHabitReminder();
-      // complete
-      loading.complete();
-      // reload
-      if (listen) {
-        notifyListeners();
-      }
-      appLog.load.debug(
-        "$runtimeType.load",
-        ex: ["loaded", loading.hashCode, listen, data],
-      );
-    }
-
-    loadingData()
-        .catchError((e, s) {
-          if (loading.isCanceled) return loadingCancelled();
-          loadingFailed(["unexpected error", e]);
-          appLog.load.error(
-            "$runtimeType.load",
-            ex: ["caught", e, loading.hashCode],
-            stackTrace: s,
-          );
-        })
-        .whenComplete(() {
-          if (!loading.isCompleted && !loading.isCanceled) {
-            loading.complete();
-          }
-        });
-
-    return loading.operation.valueOrCancellation();
+        // init habit
+        final data = await _access.loadHabitDetailData(uuid);
+        if (data == null) {
+          return loadingFailed(loading, ["data load failed", uuid]);
+        }
+        // if (data.data.isDeleted) return loadingFailed(["data deleted", uuid]);
+        if (!mounted) {
+          return loadingFailed(loading, ["viewmodel disposed", uuid]);
+        }
+        if (loading.isCanceled) return loadingCancelled(loading);
+        if (loading.isCompleted) return;
+        _habitDetailData = data;
+        _updateHabitAutoCompleteStatistics();
+        _updateHabitReminder();
+        loading.complete();
+        if (listen) notifyListeners();
+        appLog.load.debug(
+          "$runtimeType.load",
+          ex: ["loaded", loading.hashCode, listen, data],
+        );
+      },
+      onError: (loading, e, s) {
+        if (loading.isCanceled) return loadingCancelled(loading);
+        loadingFailed(loading, ["unexpected error", e]);
+        appLog.load.error(
+          "$runtimeType.load",
+          ex: ["caught", e, loading.hashCode],
+          stackTrace: s,
+        );
+      },
+    );
   }
 
   Future<String?> loadRecordReason(HabitRecordDate date) async {

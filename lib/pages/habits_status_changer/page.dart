@@ -258,7 +258,7 @@ class _PageState extends State<_Page> {
           selector: (context, vm) => vm.config,
           builder: (context, formatter, child) {
             return Selector<HabitStatusChangerViewModel, bool>(
-              selector: (context, vm) => vm.isDataLoading,
+              selector: (context, vm) => vm.hasLoad,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, _, child) {
                 return DatePickerTile(
@@ -430,13 +430,13 @@ class _HabitListState extends State<_HabitList> {
   @visibleForTesting
   Future loadData() async {
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoading) await _vm.loadData();
+    if (!_vm.hasLoad) await _vm.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitStatusChangerViewModel, bool>(
-      selector: (context, vm) => vm.isDataLoading,
+      selector: (context, vm) => vm.hasLoad,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
