@@ -1160,18 +1160,36 @@ class _HabitListState extends State<_HabitList> {
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
-        builder: (context, _) => AnimatedSliverList(
-          controller: _dispatcher.controller,
-          delegate: AnimatedSliverChildBuilderDelegate(
-            (context, index, data) =>
-                _dispatcher.builder(context, _vm.currentHabitList, index, data),
-            _vm.currentHabitList.length,
-            animator: kHabitContentListAnimator,
-            addAnimatedElevation: kCommonEvalation,
-            morphDuration: kEditModeChangeAnimateDuration,
-            reorderModel: widget.reorderModel,
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  if (!(mounted && _vm.mounted)) return;
+                  _vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return AnimatedSliverList(
+            controller: _dispatcher.controller,
+            delegate: AnimatedSliverChildBuilderDelegate(
+              (context, index, data) => _dispatcher.builder(
+                context,
+                _vm.currentHabitList,
+                index,
+                data,
+              ),
+              _vm.currentHabitList.length,
+              animator: kHabitContentListAnimator,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
+              reorderModel: widget.reorderModel,
+            ),
+          );
+        },
       ),
     );
   }

@@ -34,6 +34,7 @@ import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
 import '_providers/habit_status_changer.dart';
 import 'widgets.dart';
 
@@ -433,6 +434,11 @@ class _HabitListState extends State<_HabitList> {
     if (!_vm.hasLoad) await _vm.loadData();
   }
 
+  void _onRetryPressed() {
+    if (!(mounted && _vm.mounted)) return;
+    _vm.requestReloadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Selector<HabitStatusChangerViewModel, bool>(
@@ -441,6 +447,13 @@ class _HabitListState extends State<_HabitList> {
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(onRetry: _onRetryPressed),
+            );
+          }
+
           return SliverStack(
             children: [
               SliverAnimatedOpacity(

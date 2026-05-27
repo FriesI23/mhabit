@@ -133,8 +133,9 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) async {
+  Future<void> updateHabitReminder(HabitSummaryData data) {
     reminderUpdates.add(data);
+    return Future.value();
   }
 }
 

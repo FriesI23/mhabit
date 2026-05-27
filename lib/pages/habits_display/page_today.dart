@@ -227,16 +227,30 @@ class _HabitsGroupView extends StatelessWidget {
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
-        builder: (context, _) => SliverPadding(
-          padding: kListTileContentPadding,
-          sliver: AppUiLayoutBuilder.useScreenSize(
-            ignoreHeight: false,
-            builder: (context, layoutType, child) => switch (layoutType) {
-              UiLayoutType.l => const _HabitGrid(),
-              UiLayoutType.s => const _HabitList(),
-            },
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  final vm = context.read<HabitsTodayViewModel>();
+                  if (vm.mounted) vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return SliverPadding(
+            padding: kListTileContentPadding,
+            sliver: AppUiLayoutBuilder.useScreenSize(
+              ignoreHeight: false,
+              builder: (context, layoutType, child) => switch (layoutType) {
+                UiLayoutType.l => const _HabitGrid(),
+                UiLayoutType.s => const _HabitList(),
+              },
+            ),
+          );
+        },
       ),
     );
   }
