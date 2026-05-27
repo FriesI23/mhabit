@@ -20,9 +20,8 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
+import 'package:mhabit_proxy_annotation/proxy_annotation.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../annotations/proxy_annotation.dart';
 
 class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
   static String getMethodSignature(MethodElement method) {
@@ -166,7 +165,6 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
     }
 
     final skipBuildFields = <String>{};
-    // getters
     for (final getter in targetClass.element.getters) {
       if (getter.isStatic) continue;
       final getterName = getter.name;
@@ -182,7 +180,7 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
       buffer.writeln('');
       skipBuildFields.add(getterName);
     }
-    // setters
+
     for (final setter in targetClass.element.setters) {
       if (setter.isStatic) continue;
       final setterNameWithEquals = setter.name;
@@ -235,7 +233,6 @@ class ProxyGenerator extends GeneratorForAnnotation<Proxy> {
   }
 }
 
-/// Builder function to return a PartBuilder
 Builder proxyGenerator(BuilderOptions options) {
   return SharedPartBuilder([ProxyGenerator()], 'proxy');
 }
