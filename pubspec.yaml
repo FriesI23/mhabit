@@ -106,6 +106,9 @@ dependencies:
   # logging
   logger: ^2.1.0
 
+  # Code Generation
+  vector_graphics: ^1.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -124,6 +127,9 @@ dev_dependencies:
 
   # Code Generation
   build_runner: ^2.3.3
+  analyzer: 10.0.1
+  build: 4.0.6
+  source_gen: 4.2.3
   copy_with_extension_gen: ^15.0.1
   icon_font_generator:
     # Can't extract file from a c URI
@@ -134,7 +140,7 @@ dev_dependencies:
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1
-  source_gen: ^4.2.3
+
 
   # Utilities
   package_rename: ^1.2.0
