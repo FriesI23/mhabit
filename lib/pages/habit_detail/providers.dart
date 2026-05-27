@@ -36,9 +36,8 @@ class PageProviders extends SingleChildStatelessWidget {
     ViewModelProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
       update: (context, value, previous) =>
           previous..updateFirstday(value.firstDay),
-      shouldPost: (context, value, previous) =>
-          value.firstDay != previous.firstday,
-      post: (t, value, vm) => vm.requestReload(),
+      post: (t, value, vm) =>
+          value.firstDay != vm.firstday ? vm.requestReload() : null,
     ),
   ];
 
