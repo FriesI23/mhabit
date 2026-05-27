@@ -879,7 +879,7 @@
     "appAbout_privacyTile_subTitleText": "עיון במדיניות הפרטיות של יישום זה",
     "appAbout_donateTile_titleText": "תרומה",
     "appAbout_donateTile_subTitleText": "אני מפתח עצמאי. אם אהבת את היישום, אפשר לקנות לי ☕.",
-    "appAbout_donateTile_ways": "",
+    "appAbout_donateTile_ways": "@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll",
     "@appAbout_donateTile_ways": {
         "description": "Donate begin with `@` and split with `,`, available ways: paypal, buyMeACoffee, alipay, wechatPay"
     },
