@@ -12,48 +12,81 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:ui' show Locale;
+
+import 'package:flutter/material.dart' show TimeOfDay;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    show NotificationDetails;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
-import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_notify_config.dart';
 import 'package:mhabit/models/app_reminder_config.dart';
 import 'package:mhabit/providers/workflow/app_notify_config.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
-import 'package:mhabit/reminders/notification_details.dart';
+import 'package:mhabit/reminders/notification_service.dart';
 import 'package:mhabit/storage/profile/handlers/app_notify_config.dart';
+import 'package:mhabit/storage/profile/handlers/app_reminder.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final class _FakeAppReminderExecutor extends AppReminderExecutor {
-  AppReminderConfig? reminder;
-  L10n? l10n;
-  NotificationDetails? details;
-  int callCount = 0;
-
-  @override
-  Future<bool> applyReminder(
-    AppReminderConfig reminder, {
-    required L10n? l10n,
-    required NotificationDetails details,
-  }) async {
-    this.reminder = reminder;
-    this.l10n = l10n;
-    this.details = details;
-    callCount += 1;
-    return true;
-  }
-}
-
-final class _FakeAppNotifyConfigUpdater extends AppNotifyConfigUpdater {
+final class _FakeNotificationService implements NotificationService {
+  int cancelAppReminderCallCount = 0;
+  int requestPermissionsCallCount = 0;
+  int regrAppReminderCallCount = 0;
+  String? lastReminderTitle;
+  String? lastReminderSubtitle;
+  NotificationDetails? lastReminderDetails;
   final syncedConfigs = <AppNotifyConfig?>[];
 
   @override
-  void sync(AppNotifyConfig? config) {
+  Future<bool> cancelAppReminder({Duration? timeout}) async {
+    cancelAppReminderCallCount += 1;
+    return true;
+  }
+
+  @override
+  void onAppNotiConfigUpdate(AppNotifyConfig? config) {
     syncedConfigs.add(config);
   }
+
+  @override
+  Future<bool?> requestPermissions() async {
+    requestPermissionsCallCount += 1;
+    return true;
+  }
+
+  @override
+  Future<bool> regrAppReminderInDaily({
+    required String title,
+    required String subtitle,
+    required TimeOfDay timeOfDay,
+    required NotificationDetails details,
+    Duration? timeout,
+  }) async {
+    lastReminderTitle = title;
+    lastReminderSubtitle = subtitle;
+    lastReminderDetails = details;
+    regrAppReminderCallCount += 1;
+    return true;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+Future<ProfileViewModel> _loadAppReminderProfile({
+  AppReminderConfig? initialReminder,
+}) async {
+  SharedPreferences.setMockInitialValues({});
+  final profile = ProfileViewModel([AppReminderProfileHandler.new]);
+  await profile.init();
+  if (initialReminder != null) {
+    await profile.getHandler<AppReminderProfileHandler>()!.set(initialReminder);
+  }
+  return profile;
 }
 
 Future<ProfileViewModel> _loadAppNotifyConfigProfile({
@@ -85,57 +118,77 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(_initAppInfo);
 
-  group('AppReminderOwner collaborator routing', () {
-    test('processAppReminder delegates current reminder to executor', () async {
-      final executor = _FakeAppReminderExecutor();
-      final channelData = NotificationChannelData();
-      final owner = AppReminderOwner(executor: executor)
-        ..setNotificationChannelData(channelData);
+  group('AppReminderOwner notification routing', () {
+    test(
+      'processAppReminder routes enabled reminder through notification service',
+      () async {
+        final profile = await _loadAppReminderProfile(
+          initialReminder: AppReminderConfig.dailyNight,
+        );
+        final notificationService = _FakeNotificationService();
+        final channelData = NotificationChannelData();
+        final owner = AppReminderOwner(notificationService: notificationService)
+          ..updateProfile(profile)
+          ..setNotificationChannelData(channelData);
 
-      final result = await owner.processAppReminder(null);
+        final result = await owner.processAppReminder(
+          lookupL10n(const Locale('en')),
+        );
 
-      expect(result, isTrue);
-      expect(executor.callCount, 1);
-      expect(executor.reminder, defaultAppReminder);
-      expect(executor.l10n, isNull);
-      expect(
-        executor.details?.android?.channelId,
-        channelData.appReminder.android?.channelId,
-      );
+        expect(result, isTrue);
+        expect(notificationService.cancelAppReminderCallCount, 0);
+        expect(notificationService.requestPermissionsCallCount, 1);
+        expect(notificationService.regrAppReminderCallCount, 1);
+        expect(notificationService.lastReminderTitle, isNotEmpty);
+        expect(notificationService.lastReminderSubtitle, isNotEmpty);
+        expect(
+          notificationService.lastReminderDetails?.android?.channelId,
+          channelData.appReminder.android?.channelId,
+        );
 
-      owner.dispose();
-    });
+        owner.dispose();
+        profile.dispose();
+      },
+    );
   });
 
-  group('AppNotifyConfigOwner collaborator routing', () {
-    test('updateProfile and dispose sync through updater', () async {
-      const config = AppNotifyConfig(
-        channels: {NotificationChannelId.appSyncing: false},
-      );
-      final profile = await _loadAppNotifyConfigProfile(initialConfig: config);
-      final updater = _FakeAppNotifyConfigUpdater();
-      final owner = AppNotifyConfigOwner(updater: updater);
+  group('AppNotifyConfigOwner notification routing', () {
+    test(
+      'updateProfile and dispose sync through notification service',
+      () async {
+        const config = AppNotifyConfig(
+          channels: {NotificationChannelId.appSyncing: false},
+        );
+        final profile = await _loadAppNotifyConfigProfile(
+          initialConfig: config,
+        );
+        final notificationService = _FakeNotificationService();
+        final owner = AppNotifyConfigOwner(
+          notificationService: notificationService,
+        );
 
-      owner.updateProfile(profile);
-      owner.dispose();
+        owner.updateProfile(profile);
+        owner.dispose();
 
-      expect(
-        updater.syncedConfigs.map(
-          (item) => item?.isChannelEnabled(NotificationChannelId.appSyncing),
-        ),
-        orderedEquals([false, null]),
-      );
+        expect(
+          notificationService.syncedConfigs.map(
+            (item) => item?.isChannelEnabled(NotificationChannelId.appSyncing),
+          ),
+          orderedEquals([false, null]),
+        );
 
-      profile.dispose();
-    });
+        profile.dispose();
+      },
+    );
 
     test('updateNotifyConfig syncs latest config through updater', () async {
       final profile = await _loadAppNotifyConfigProfile();
-      final updater = _FakeAppNotifyConfigUpdater();
-      final owner = AppNotifyConfigOwner(updater: updater)
-        ..updateProfile(profile);
+      final notificationService = _FakeNotificationService();
+      final owner = AppNotifyConfigOwner(
+        notificationService: notificationService,
+      )..updateProfile(profile);
 
-      updater.syncedConfigs.clear();
+      notificationService.syncedConfigs.clear();
       const config = AppNotifyConfig(
         channels: {NotificationChannelId.appSyncFailed: false},
       );
@@ -144,7 +197,7 @@ void main() {
 
       expect(owner.notifyConfig.toJson(), config.toJson());
       expect(
-        updater.syncedConfigs.map(
+        notificationService.syncedConfigs.map(
           (item) => item?.isChannelEnabled(NotificationChannelId.appSyncFailed),
         ),
         orderedEquals([false]),
