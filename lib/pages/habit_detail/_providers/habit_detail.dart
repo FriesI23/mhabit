@@ -49,6 +49,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   HabitDetailScoreChartCombine _scoreChartCombine =
       defaultHabitDetailScoreChartCombine;
   final _pageLoad = PageLoadRuntime();
+  bool _nextForceReload = false;
   // inside status
   bool _mounted = true;
   // sync from setting
@@ -164,8 +165,15 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   }
 
   void requestReload() {
+    _nextForceReload = true;
     _pageLoad.cancel(logName: "$runtimeType._cancelLoading");
     notifyListeners();
+  }
+
+  bool consumeForceReloadFlag() {
+    final result = _nextForceReload;
+    _nextForceReload = false;
+    return result;
   }
 
   bool get hasLoad => _pageLoad.hasLoad;

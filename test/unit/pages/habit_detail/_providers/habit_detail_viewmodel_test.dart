@@ -30,6 +30,7 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
   final HabitDetailData seedData;
   final String recordReason = 'detail-record-reason';
   final reminderUpdates = <HabitSummaryData>[];
+  int loadDetailDataCallCount = 0;
 
   HabitUUID? lastLoadedUuid;
   HabitUUID? lastDetailUuid;
@@ -42,6 +43,7 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
 
   @override
   Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) async {
+    loadDetailDataCallCount += 1;
     lastLoadedUuid = uuid;
     return seedData;
   }
@@ -204,6 +206,30 @@ void main() {
       final statusResult = await vm.onConfirmToArchiveHabit(listen: false);
       expect(statusResult, isNotNull);
       expect(access.lastStatusAction, isNotNull);
+
+      vm.dispose();
+    });
+
+    test('requestReload allows a fresh detail load cycle', () async {
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(seedData: detailData);
+      final vm = HabitDetailViewModel()..attachAccess(access);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      expect(access.loadDetailDataCallCount, 1);
+      expect(vm.hasLoad, isTrue);
+
+      vm.requestReload();
+
+      expect(vm.hasLoad, isFalse);
+      expect(vm.consumeForceReloadFlag(), isTrue);
+      expect(vm.consumeForceReloadFlag(), isFalse);
+
+      await vm.loadData(detailData.data.uuid, listen: false);
+
+      expect(access.loadDetailDataCallCount, 2);
+      expect(vm.hasLoad, isTrue);
 
       vm.dispose();
     });

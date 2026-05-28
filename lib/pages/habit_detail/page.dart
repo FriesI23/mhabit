@@ -142,6 +142,7 @@ class _PageState extends State<_Page>
     with HabitHeatmapColorChooseMixin<_Page>, XShare {
   late HabitDetailViewModel _vm;
   habit_summary.HabitDetailAdapter? _summary;
+  Future<void>? _loadDataFuture;
 
   @override
   void initState() {
@@ -157,6 +158,7 @@ class _PageState extends State<_Page>
     final vm = context.read<HabitDetailViewModel>();
     if (_vm != vm) {
       _vm = vm;
+      _loadDataFuture = null;
     }
     final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (_summary != summary) {
@@ -469,6 +471,11 @@ class _PageState extends State<_Page>
       await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
     }
   }
+
+  Future<void> _resolveLoadDataFuture({bool forceReload = false}) =>
+      forceReload || _loadDataFuture == null
+      ? _loadDataFuture = loadData()
+      : _loadDataFuture!;
 
   @override
   Widget build(BuildContext context) {
@@ -1018,12 +1025,13 @@ class _PageState extends State<_Page>
     }
 
     Widget buildBody(BuildContext context) {
-      return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.hasLoad,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, _, child) {
+      return Selector<HabitDetailViewModel, (bool, bool)>(
+        selector: (context, viewmodel) =>
+            (viewmodel.hasLoad, viewmodel.consumeForceReloadFlag()),
+        shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
+        builder: (context, state, child) {
           return FutureBuilder(
-            future: loadData(),
+            future: _resolveLoadDataFuture(forceReload: state.$2),
             builder: (context, snapshot) {
               final viewmodel = context.read<HabitDetailViewModel>();
               // appLog.load.debug("$widget.buildBody",
