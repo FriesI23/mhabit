@@ -61,9 +61,7 @@ void main() {
     test('exec while executing queues the next one', () async {
       debouncer.exec(delay: Duration(milliseconds: 10));
       await Future.delayed(Duration(milliseconds: 15));
-      // queued during execution
       debouncer.exec(delay: Duration(milliseconds: 10));
-      // enough to complete both
       await Future.delayed(Duration(milliseconds: 100));
       expect(records, ['executed', 'executed']);
     });

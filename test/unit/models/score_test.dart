@@ -23,8 +23,8 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
 
-import '../stub/habit_score.dart';
-import '../utils.dart';
+import '../../support/stub/habit_score.dart';
+import '../../support/utils.dart';
 
 class HabitScoreTestCase extends TestCase {
   static HabitScoreTestCase? _inst;

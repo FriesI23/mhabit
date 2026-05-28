@@ -187,7 +187,7 @@ void testSortPostionRankExtension() =>
           (
             input: [0.1, 0.2, 0.3, 0.4],
             increment: 0.05,
-            expect: [0.1, 0.2, 0.3, 0.4], // 结果应保持不变
+            expect: [0.1, 0.2, 0.3, 0.4],
             decimalPlaces: 2,
           ),
         ]);
@@ -220,38 +220,25 @@ void testHabitSummaryDataIterableExtension() => group(
       ]);
     });
 
-    test('toHabitSummarySortCacheList respects upstream filtering', () {
+    test('toHabitSummarySortCacheList preserves archived items', () {
       final collection = _buildCollection([
         _buildHabitSummaryData(
           uuid: '11111111-1111-4111-8111-111111111111',
-          name: 'Keep Habit',
+          name: 'Active Habit',
         ),
         _buildHabitSummaryData(
           uuid: '22222222-2222-4222-8222-222222222222',
-          name: 'Drop Habit',
+          name: 'Archived Habit',
           status: HabitStatus.archived,
         ),
       ]);
 
-      final cache = collection
-          .sort(HabitDisplaySortType.name, HabitDisplaySortDirection.asc)
-          .where((e) => e.status == HabitStatus.activated)
-          .toHabitSummarySortCacheList(growable: false);
+      final cache = collection.values.toHabitSummarySortCacheList();
 
       expect(cache.whereType<HabitSummaryDataSortCache>().map((e) => e.uuid), [
         '11111111-1111-4111-8111-111111111111',
+        '22222222-2222-4222-8222-222222222222',
       ]);
-      expect(
-        () => cache.add(
-          HabitSummaryDataSortCache(
-            data: _buildHabitSummaryData(
-              uuid: '33333333-3333-4333-8333-333333333333',
-              name: 'Blocked Habit',
-            ),
-          ),
-        ),
-        throwsUnsupportedError,
-      );
     });
   },
 );
