@@ -629,6 +629,17 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
     l.Logger.addLogListener(logEventCallback);
   }
 
+  void startRuntimeLifecycle() {
+    notification?.readyToSync();
+    startRecordSyncLog();
+  }
+
+  void completeRuntimeLifecycle() {
+    recordSyncFailureLog();
+    stopRecordSyncLog();
+    notification?.syncComplete(result: result);
+  }
+
   void stopRecordSyncLog() {
     final loggerReplay = this.loggerReplay;
     if (loggerReplay == null || loggerReplay.isClosed) return;
@@ -653,6 +664,21 @@ class AppSyncContainer<T extends AppSyncTask<R>, R extends AppSyncTaskResult> {
       });
     }
   }
+
+  void updateNotificationForTaskStatus() {
+    switch (task.status) {
+      case AppSyncTaskStatus.running:
+        notification?.syncing(percentage: percentage);
+      case AppSyncTaskStatus.cancelling:
+        notification?.syncing(percentage: null);
+      default:
+        break;
+    }
+  }
+
+  Future<AppSyncContainer<T, R>> withTaskResult({
+    required DateTime endedTime,
+  }) async => copyWith(result: await task.result, endedTime: endedTime);
 
   @override
   String toString() =>
@@ -684,19 +710,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
     : _task = null,
       _confirmEventController = StreamController.broadcast(),
       _startSyncEventController = StreamController.broadcast() {
-    addListener(() {
-      final task = _task;
-      if (task != null) {
-        switch (task.task.status) {
-          case AppSyncTaskStatus.running:
-            _task?.notification?.syncing(percentage: task.percentage);
-          case AppSyncTaskStatus.cancelling:
-            _task?.notification?.syncing(percentage: null);
-          default:
-            break;
-        }
-      }
-    });
+    addListener(() => _task?.updateNotificationForTaskStatus());
   }
 
   Future? get processing => task?.task.result;
@@ -914,8 +928,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
       return;
     }
 
-    newTask.notification?.readyToSync();
-    newTask.startRecordSyncLog();
+    newTask.startRuntimeLifecycle();
     newTask.task.run().whenComplete(() async {
       final crtTask = _task;
       if (crtTask == null ||
@@ -923,8 +936,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
           crtTask.task.status != AppSyncTaskStatus.completed) {
         return;
       }
-      final finalTask = _task = crtTask.copyWith(
-        result: await crtTask.task.result,
+      final finalTask = _task = await crtTask.withTaskResult(
         endedTime: AppClock().now(),
       );
       appLog.value.info(
@@ -936,10 +948,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         stackTrace: finalTask.result?.error.trace,
       );
       notifyListeners();
-      finalTask
-        ..recordSyncFailureLog()
-        ..stopRecordSyncLog();
-      finalTask.notification?.syncComplete(result: finalTask.result);
+      finalTask.completeRuntimeLifecycle();
     });
 
     _startSyncEventController.add(newTask.id);
@@ -956,8 +965,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
           crtTask.task.status != AppSyncTaskStatus.cancelled) {
         return;
       }
-      final finalTask = _task = crtTask.copyWith(
-        result: await crtTask.task.result,
+      final finalTask = _task = await crtTask.withTaskResult(
         endedTime: AppClock().now(),
       );
       appLog.value.info(
@@ -969,10 +977,7 @@ final class AppSyncTaskDispatcher with ChangeNotifier {
         stackTrace: finalTask.result?.error.trace,
       );
       notifyListeners();
-      finalTask
-        ..recordSyncFailureLog()
-        ..stopRecordSyncLog();
-      finalTask.notification?.syncComplete(result: finalTask.result);
+      finalTask.completeRuntimeLifecycle();
     });
 
     notifyListeners();
