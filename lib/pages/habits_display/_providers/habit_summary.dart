@@ -23,6 +23,7 @@ import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
 import '../../../models/app_event.dart';
@@ -944,11 +945,7 @@ class _HabitsSortableCache {
         (e) => searchOptions.filter(e, caps: true, keywords: keywords),
       );
     }
-    return copyWith(
-      lastSortedDataCache: sorted
-          .map((e) => HabitSummaryDataSortCache(data: e))
-          .toList(),
-    );
+    return copyWith(lastSortedDataCache: sorted.toHabitSummarySortCacheList());
   }
 
   @override

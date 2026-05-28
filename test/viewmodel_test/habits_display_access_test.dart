@@ -19,6 +19,7 @@ import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_event.dart';
 import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_repo_actions.dart';
@@ -32,6 +33,7 @@ import 'package:mhabit/storage/db/handlers/habit.dart';
 
 final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   final HabitSummaryData seedData;
+  final List<HabitSummaryData> extraSeedData;
   final String recordReason = 'record-reason';
   final reminderUpdates = <HabitSummaryData>[];
 
@@ -44,7 +46,10 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   num? lastIncreaseStep;
   int? lastDecimalPlaces;
 
-  _FakeHabitsDisplayAccess({required this.seedData});
+  _FakeHabitsDisplayAccess({
+    required this.seedData,
+    this.extraSeedData = const [],
+  });
 
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
@@ -54,6 +59,9 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }) async {
     final collection = initedCollection ?? HabitSummaryDataCollection();
     collection.addNewHabit(seedData, forceAdd: true);
+    for (final habit in extraSeedData) {
+      collection.addNewHabit(habit, forceAdd: true);
+    }
     return collection;
   }
 
@@ -183,25 +191,38 @@ final class _FakeAppSyncWorkflowAccess implements AppSyncWorkflowAccess {
 }
 
 HabitSummaryData _buildHabitSummaryData({
+  int id = 1,
   String uuid = '11111111-1111-4111-8111-111111111111',
+  String name = 'Sample Habit',
+  HabitStatus status = HabitStatus.activated,
+  HabitDate? startDate,
 }) {
-  final startDate = HabitDate.now().subtractDays(1);
+  final effectiveStartDate = startDate ?? HabitDate.now().subtractDays(1);
   return HabitSummaryData(
-    id: 1,
+    id: id,
     uuid: uuid,
     type: HabitType.normal,
-    name: 'Sample Habit',
+    name: name,
     desc: '',
     colorType: HabitColorType.cc1,
     dailyGoal: 1,
     targetDays: 1,
     frequency: HabitFrequency.daily,
-    startDate: startDate,
-    status: HabitStatus.activated,
+    startDate: effectiveStartDate,
+    status: status,
     sortPostion: 1,
-    createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
+    createTime: DateTime.utc(
+      effectiveStartDate.year,
+      effectiveStartDate.month,
+      effectiveStartDate.day,
+    ),
   );
 }
+
+Iterable<HabitUUID> _currentHabitUuids(HabitSummaryViewModel vm) => vm
+    .currentHabitList
+    .whereType<HabitSummaryDataSortCache>()
+    .map((e) => e.uuid);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -274,6 +295,64 @@ void main() {
     });
 
     test(
+      'HabitSummaryViewModel applies sort filter and keyword search',
+      () async {
+        final seedData = _buildHabitSummaryData(
+          id: 1,
+          uuid: '33333333-3333-4333-8333-333333333333',
+          name: 'Zulu Habit',
+        );
+        final access = _FakeHabitsDisplayAccess(
+          seedData: seedData,
+          extraSeedData: [
+            _buildHabitSummaryData(
+              id: 2,
+              uuid: '11111111-1111-4111-8111-111111111111',
+              name: 'Alpha Habit',
+            ),
+            _buildHabitSummaryData(
+              id: 3,
+              uuid: '22222222-2222-4222-8222-222222222222',
+              name: 'Bravo Habit',
+              status: HabitStatus.archived,
+            ),
+          ],
+        );
+        final vm = HabitSummaryViewModel()..attachAccess(access);
+
+        await vm.loadData(listen: false);
+
+        vm.updateSortOptions(
+          HabitDisplaySortType.name,
+          HabitDisplaySortDirection.asc,
+        );
+        vm.resortData(listen: false);
+
+        expect(_currentHabitUuids(vm), [
+          '11111111-1111-4111-8111-111111111111',
+          '33333333-3333-4333-8333-333333333333',
+        ]);
+
+        vm.updateHabitDisplayFilter(HabitsDisplayFilter.allTrue);
+        vm.resortData(listen: false);
+
+        expect(_currentHabitUuids(vm), [
+          '11111111-1111-4111-8111-111111111111',
+          '22222222-2222-4222-8222-222222222222',
+          '33333333-3333-4333-8333-333333333333',
+        ]);
+
+        vm.onSeachKeywordChanged('Zulu', listen: false);
+
+        expect(_currentHabitUuids(vm), [
+          '33333333-3333-4333-8333-333333333333',
+        ]);
+
+        vm.dispose();
+      },
+    );
+
+    test(
       'HabitSummaryViewModel reloads through sync start event source',
       () async {
         final seedData = _buildHabitSummaryData();
@@ -324,6 +403,70 @@ void main() {
 
       expect(result, isNotNull);
       expect(access.lastRecordPreAction, isNotNull);
+
+      vm.dispose();
+    });
+
+    test('HabitsTodayViewModel applies today predicate and sort', () async {
+      final checkedInToday =
+          _buildHabitSummaryData(
+            id: 4,
+            uuid: '44444444-4444-4444-8444-444444444444',
+            name: 'Done Today Habit',
+          )..addRecord(
+            HabitSummaryRecord.generate(
+              HabitDate.now(),
+              status: HabitRecordStatus.done,
+              value: 1,
+              parentUUID: '44444444-4444-4444-8444-444444444444',
+            ),
+          );
+      final access = _FakeHabitsDisplayAccess(
+        seedData: _buildHabitSummaryData(
+          id: 1,
+          uuid: '33333333-3333-4333-8333-333333333333',
+          name: 'Zulu Habit',
+        ),
+        extraSeedData: [
+          _buildHabitSummaryData(
+            id: 2,
+            uuid: '11111111-1111-4111-8111-111111111111',
+            name: 'Alpha Habit',
+          ),
+          _buildHabitSummaryData(
+            id: 3,
+            uuid: '22222222-2222-4222-8222-222222222222',
+            name: 'Archived Habit',
+            status: HabitStatus.archived,
+          ),
+          _buildHabitSummaryData(
+            id: 5,
+            uuid: '55555555-5555-4555-8555-555555555555',
+            name: 'Future Habit',
+            startDate: HabitDate.now().addDays(1),
+          ),
+          checkedInToday,
+        ],
+      );
+      final vm = HabitsTodayViewModel()..attachAccess(access);
+
+      await vm.loadData(listen: false);
+
+      vm.updateSortOptions(
+        HabitDisplaySortType.name,
+        HabitDisplaySortDirection.asc,
+      );
+      vm.resortData(listen: false);
+
+      expect(
+        vm.currentHabitList.whereType<HabitSummaryDataSortCache>().map(
+          (e) => e.uuid,
+        ),
+        [
+          '11111111-1111-4111-8111-111111111111',
+          '33333333-3333-4333-8333-333333333333',
+        ],
+      );
 
       vm.dispose();
     });

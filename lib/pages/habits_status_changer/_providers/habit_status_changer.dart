@@ -23,6 +23,7 @@ import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
 import '../../../models/habit_daily_record_form.dart';
@@ -327,9 +328,9 @@ class HabitStatusChangerViewModel
 
   void _updateCurrentHabitList() {
     if (!mounted) return;
-    final newList = _habitDataController.habits
-        .map((e) => HabitSummaryDataSortCache(data: e))
-        .toList(growable: false);
+    final newList = _habitDataController.habits.toHabitSummarySortCacheList(
+      growable: false,
+    );
     appLog.load.info(
       "_updateCurrentHabitList",
       ex: [_currentHabitList.hashCode, newList.hashCode],

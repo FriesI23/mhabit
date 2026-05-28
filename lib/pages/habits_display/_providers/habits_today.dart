@@ -23,6 +23,7 @@ import '../../../common/consts.dart';
 import '../../../common/exceptions.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
+import '../../../extensions/iterable_extensions.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
 import '../../../models/app_event.dart';
@@ -241,16 +242,12 @@ class HabitsTodayViewModel extends ChangeNotifier
 
   void _resortData() {
     final now = HabitDate.now();
-    final newData = _data
-        .sort(_sortType, _sortDirection)
-        .where((e) {
-          if (!e.isActived) return false;
-          if (e.startDate > now) return false;
-          if (e.getRecordByDate(now) != null) return false;
-          return true;
-        })
-        .map((e) => HabitSummaryDataSortCache(data: e))
-        .toList();
+    final newData = _data.sort(_sortType, _sortDirection).where((e) {
+      if (!e.isActived) return false;
+      if (e.startDate > now) return false;
+      if (e.getRecordByDate(now) != null) return false;
+      return true;
+    }).toHabitSummarySortCacheList();
     _replaceSortbaleCache(newData);
     _pruneExpandStatus(newData);
   }

@@ -15,7 +15,43 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:mhabit/extensions/iterable_extensions.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_display.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_summary.dart';
 import 'package:test/test.dart';
+
+HabitSummaryData _buildHabitSummaryData({
+  required String uuid,
+  required String name,
+  HabitStatus status = HabitStatus.activated,
+}) {
+  final startDate = HabitDate.now().subtractDays(1);
+  return HabitSummaryData(
+    id: uuid.hashCode,
+    uuid: uuid,
+    type: HabitType.normal,
+    name: name,
+    desc: '',
+    colorType: HabitColorType.cc1,
+    dailyGoal: 1,
+    targetDays: 1,
+    frequency: HabitFrequency.daily,
+    startDate: startDate,
+    status: status,
+    sortPostion: 1,
+    createTime: DateTime.utc(startDate.year, startDate.month, startDate.day),
+  );
+}
+
+HabitSummaryDataCollection _buildCollection(Iterable<HabitSummaryData> habits) {
+  final collection = HabitSummaryDataCollection();
+  for (final habit in habits) {
+    collection.addNewHabit(habit, forceAdd: true);
+  }
+  return collection;
+}
 
 void testSortPostionRankExtension() =>
     group("test SortPostionRankExtension", () {
@@ -159,6 +195,68 @@ void testSortPostionRankExtension() =>
       });
     });
 
+void testHabitSummaryDataIterableExtension() => group(
+  'test HabitSummaryDataIterableExtension',
+  () {
+    test('toHabitSummarySortCacheList preserves caller-defined order', () {
+      final collection = _buildCollection([
+        _buildHabitSummaryData(
+          uuid: '22222222-2222-4222-8222-222222222222',
+          name: 'Zulu Habit',
+        ),
+        _buildHabitSummaryData(
+          uuid: '11111111-1111-4111-8111-111111111111',
+          name: 'Alpha Habit',
+        ),
+      ]);
+
+      final cache = collection
+          .sort(HabitDisplaySortType.name, HabitDisplaySortDirection.asc)
+          .toHabitSummarySortCacheList();
+
+      expect(cache.whereType<HabitSummaryDataSortCache>().map((e) => e.uuid), [
+        '11111111-1111-4111-8111-111111111111',
+        '22222222-2222-4222-8222-222222222222',
+      ]);
+    });
+
+    test('toHabitSummarySortCacheList respects upstream filtering', () {
+      final collection = _buildCollection([
+        _buildHabitSummaryData(
+          uuid: '11111111-1111-4111-8111-111111111111',
+          name: 'Keep Habit',
+        ),
+        _buildHabitSummaryData(
+          uuid: '22222222-2222-4222-8222-222222222222',
+          name: 'Drop Habit',
+          status: HabitStatus.archived,
+        ),
+      ]);
+
+      final cache = collection
+          .sort(HabitDisplaySortType.name, HabitDisplaySortDirection.asc)
+          .where((e) => e.status == HabitStatus.activated)
+          .toHabitSummarySortCacheList(growable: false);
+
+      expect(cache.whereType<HabitSummaryDataSortCache>().map((e) => e.uuid), [
+        '11111111-1111-4111-8111-111111111111',
+      ]);
+      expect(
+        () => cache.add(
+          HabitSummaryDataSortCache(
+            data: _buildHabitSummaryData(
+              uuid: '33333333-3333-4333-8333-333333333333',
+              name: 'Blocked Habit',
+            ),
+          ),
+        ),
+        throwsUnsupportedError,
+      );
+    });
+  },
+);
+
 void main() {
   testSortPostionRankExtension();
+  testHabitSummaryDataIterableExtension();
 }
