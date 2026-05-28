@@ -143,7 +143,6 @@ class _PageState extends State<_Page>
   late HabitDetailViewModel _vm;
   habit_summary.HabitDetailAdapter? _summary;
   Future<void>? _loadDataFuture;
-  bool _isLoadDataFutureSettled = false;
 
   @override
   void initState() {
@@ -160,7 +159,6 @@ class _PageState extends State<_Page>
     if (_vm != vm) {
       _vm = vm;
       _loadDataFuture = null;
-      _isLoadDataFutureSettled = false;
     }
     final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (_summary != summary) {
@@ -232,10 +230,6 @@ class _PageState extends State<_Page>
   void _openRetryButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.requestReload();
-    setState(() {
-      _loadDataFuture = null;
-      _isLoadDataFutureSettled = false;
-    });
   }
 
   void _openEditDialog() async {
@@ -478,30 +472,10 @@ class _PageState extends State<_Page>
     }
   }
 
-  Future<void> _createLoadDataFuture() {
-    _isLoadDataFutureSettled = false;
-    final future = loadData();
-    _loadDataFuture = future;
-    future.then(
-      (_) {
-        if (!identical(_loadDataFuture, future)) return;
-        _isLoadDataFutureSettled = true;
-      },
-      onError: (_, __) {
-        if (!identical(_loadDataFuture, future)) return;
-        _isLoadDataFutureSettled = true;
-      },
-    );
-    return future;
-  }
-
-  Future<void> _resolveLoadDataFuture() {
-    final currentFuture = _loadDataFuture;
-    if (currentFuture == null || (_isLoadDataFutureSettled && !_vm.hasLoad)) {
-      return _createLoadDataFuture();
-    }
-    return currentFuture;
-  }
+  Future<void> _resolveLoadDataFuture({bool forceReload = false}) =>
+      forceReload || _loadDataFuture == null
+      ? _loadDataFuture = loadData()
+      : _loadDataFuture!;
 
   @override
   Widget build(BuildContext context) {
@@ -1051,12 +1025,13 @@ class _PageState extends State<_Page>
     }
 
     Widget buildBody(BuildContext context) {
-      return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.hasLoad,
-        shouldRebuild: (previous, next) => previous != next,
-        builder: (context, _, child) {
+      return Selector<HabitDetailViewModel, (bool, bool)>(
+        selector: (context, viewmodel) =>
+            (viewmodel.hasLoad, viewmodel.consumeForceReloadFlag()),
+        shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
+        builder: (context, state, child) {
           return FutureBuilder(
-            future: _resolveLoadDataFuture(),
+            future: _resolveLoadDataFuture(forceReload: state.$2),
             builder: (context, snapshot) {
               final viewmodel = context.read<HabitDetailViewModel>();
               // appLog.load.debug("$widget.buildBody",

@@ -223,6 +223,8 @@ void main() {
       vm.requestReload();
 
       expect(vm.hasLoad, isFalse);
+      expect(vm.consumeForceReloadFlag(), isTrue);
+      expect(vm.consumeForceReloadFlag(), isFalse);
 
       await vm.loadData(detailData.data.uuid, listen: false);
 
