@@ -41,7 +41,10 @@ final class _FakeAppSyncSettingsAccess implements AppSyncSettingsAccess {
   }
 
   @override
-  Future<String> readDebugPasswordText() async => password ?? '';
+  Future<String> readPasswordDisplayText() async {
+    final value = password;
+    return value == null || value.isEmpty ? '' : '*' * value.length;
+  }
 
   @override
   Future<bool> deleteServerConfig() async => false;

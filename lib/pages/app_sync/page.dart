@@ -214,7 +214,7 @@ class _DebugTile extends StatelessWidget {
           Text("FetchInterval: ${appSync.fetchInterval}"),
           Text("ServerConfig: ${appSync.serverConfig?.toDebugString()}"),
           FutureBuilder(
-            future: appSync.readDebugPasswordText(),
+            future: appSync.readPasswordDisplayText(),
             builder: (context, snapshot) {
               return Text("Password: ${snapshot.data ?? ''}");
             },

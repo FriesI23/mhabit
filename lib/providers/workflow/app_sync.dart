@@ -57,7 +57,7 @@ abstract interface class AppSyncSettingsAccess implements Listenable {
 
   Future<String?> readPassword({String? identity});
 
-  Future<String> readDebugPasswordText();
+  Future<String> readPasswordDisplayText();
 
   Future<void> setSyncSwitch(bool value, {bool listen = true});
 
@@ -288,10 +288,10 @@ class AppSyncOwner
   }
 
   @override
-  Future<String> readDebugPasswordText() => readPassword().then(
+  Future<String> readPasswordDisplayText() => readPassword().then(
     (password) => switch (password) {
       null || '' => '',
-      _ => kDebugMode ? password : '*' * password.length,
+      _ => '*' * password.length,
     },
   );
 

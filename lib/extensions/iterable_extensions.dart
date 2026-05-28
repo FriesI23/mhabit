@@ -54,7 +54,9 @@ extension SortPostionRankExtension on Iterable<num> {
 }
 
 extension HabitSummaryDataIterableExtension on Iterable<HabitSummaryData> {
-  List<HabitSortCache> toHabitSummarySortCacheList({bool growable = true}) {
+  List<HabitSortCache<dynamic>> toHabitSummarySortCacheList({
+    bool growable = true,
+  }) {
     return map(
       (e) => HabitSummaryDataSortCache(data: e),
     ).toList(growable: growable);

@@ -136,7 +136,7 @@ final class _FakeAppSyncAccess extends ChangeNotifier
   }
 
   @override
-  Future<String> readDebugPasswordText() async => '';
+  Future<String> readPasswordDisplayText() async => '';
 
   @override
   Future<String?> readPassword({String? identity}) async => null;

@@ -207,8 +207,8 @@ void main() {
       final debug = vm as AppSyncSettingsAccess;
       final emptyDebug = emptyVm as AppSyncSettingsAccess;
 
-      expect(await debug.readDebugPasswordText(), 'secret');
-      expect(await emptyDebug.readDebugPasswordText(), '');
+      expect(await debug.readPasswordDisplayText(), '******');
+      expect(await emptyDebug.readPasswordDisplayText(), '');
 
       vm.dispose();
       emptyVm.dispose();
