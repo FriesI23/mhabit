@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_tasks.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/reminders/providers/noti_app_sync_provider.dart';
 import 'package:mhabit/storage/profile/handlers/app_sync.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,6 +56,32 @@ class _TrackingAppSyncPasswordOwner extends _TestAppSyncOwner {
     writePasswordCallCount += 1;
     lastIdentity = identity;
     lastPassword = value;
+    return true;
+  }
+}
+
+final class _FakeNotiAppSyncProvider implements NotiAppSyncProvider {
+  int readyToSyncCallCount = 0;
+  int syncCompleteCallCount = 0;
+  final syncingPercentages = <num?>[];
+  AppSyncTaskResult? lastSyncCompleteResult;
+
+  @override
+  Future<bool> readyToSync() async {
+    readyToSyncCallCount += 1;
+    return true;
+  }
+
+  @override
+  Future<bool> syncing({num? percentage}) async {
+    syncingPercentages.add(percentage);
+    return true;
+  }
+
+  @override
+  Future<bool> syncComplete({AppSyncTaskResult? result}) async {
+    syncCompleteCallCount += 1;
+    lastSyncCompleteResult = result;
     return true;
   }
 }
@@ -223,5 +252,50 @@ void main() {
       expect(completedSnapshot.status, AppSyncTaskStatus.completed);
       expect(completedSnapshot.isProcessing, isFalse);
     });
+
+    test(
+      'legacy container completion sequence preserves failure-log handoff',
+      () async {
+        final tempDir = await Directory.systemTemp.createTemp(
+          'mhabit-app-sync-container-',
+        );
+        addTearDown(() => tempDir.delete(recursive: true));
+        final notification = _FakeNotiAppSyncProvider();
+        final task = BasicAppSyncTask(
+          config: AppSyncServer.newServer(AppSyncServerType.fake)!,
+          onExec: (task) async =>
+              BasicAppSyncTaskResult.error(error: StateError('sync failed')),
+        );
+        final container = AppSyncContainer.generate(
+          task: task,
+          filePath: '${tempDir.path}/sync.log',
+          notification: notification,
+        );
+
+        await notification.readyToSync();
+        container.startRecordSyncLog();
+        await task.run();
+        final completedContainer = container.copyWith(
+          result: await task.result,
+          endedTime: DateTime(2026, 5, 28, 12),
+        );
+        completedContainer.recordSyncFailureLog();
+        completedContainer.stopRecordSyncLog();
+        await notification.syncComplete(result: completedContainer.result);
+
+        expect(completedContainer.result?.withError, isTrue);
+        expect(completedContainer.loggerReplay?.isClosed, isTrue);
+        expect(completedContainer.loggerStreamer, isNotNull);
+        expect(notification.readyToSyncCallCount, 1);
+        expect(notification.syncCompleteCallCount, 1);
+        expect(
+          identical(
+            notification.lastSyncCompleteResult,
+            completedContainer.result,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 }
