@@ -143,7 +143,7 @@ class _PageState extends State<_Page>
   late HabitDetailViewModel _vm;
   habit_summary.HabitDetailAdapter? _summary;
   Future<void>? _loadDataFuture;
-  bool _lastHasLoad = false;
+  bool _isLoadDataFutureSettled = false;
 
   @override
   void initState() {
@@ -151,7 +151,6 @@ class _PageState extends State<_Page>
     super.initState();
     _vm = context.read<HabitDetailViewModel>();
     _summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
-    _lastHasLoad = _vm.hasLoad;
   }
 
   @override
@@ -161,7 +160,7 @@ class _PageState extends State<_Page>
     if (_vm != vm) {
       _vm = vm;
       _loadDataFuture = null;
-      _lastHasLoad = vm.hasLoad;
+      _isLoadDataFutureSettled = false;
     }
     final summary = context.maybeRead<habit_summary.HabitDetailAdapter>();
     if (_summary != summary) {
@@ -233,6 +232,10 @@ class _PageState extends State<_Page>
   void _openRetryButtonPressed() {
     if (!(mounted && _vm.mounted)) return;
     _vm.requestReload();
+    setState(() {
+      _loadDataFuture = null;
+      _isLoadDataFutureSettled = false;
+    });
   }
 
   void _openEditDialog() async {
@@ -475,14 +478,29 @@ class _PageState extends State<_Page>
     }
   }
 
+  Future<void> _createLoadDataFuture() {
+    _isLoadDataFutureSettled = false;
+    final future = loadData();
+    _loadDataFuture = future;
+    future.then(
+      (_) {
+        if (!identical(_loadDataFuture, future)) return;
+        _isLoadDataFutureSettled = true;
+      },
+      onError: (_, __) {
+        if (!identical(_loadDataFuture, future)) return;
+        _isLoadDataFutureSettled = true;
+      },
+    );
+    return future;
+  }
+
   Future<void> _resolveLoadDataFuture() {
-    final hasLoad = _vm.hasLoad;
     final currentFuture = _loadDataFuture;
-    if (currentFuture == null || (_lastHasLoad && !hasLoad)) {
-      _loadDataFuture = loadData();
+    if (currentFuture == null || (_isLoadDataFutureSettled && !_vm.hasLoad)) {
+      return _createLoadDataFuture();
     }
-    _lastHasLoad = hasLoad;
-    return _loadDataFuture!;
+    return currentFuture;
   }
 
   @override

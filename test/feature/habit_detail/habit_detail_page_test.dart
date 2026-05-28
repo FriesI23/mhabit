@@ -38,13 +38,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final class _FakeHabitDetailAccess implements HabitDetailAccess {
   final HabitDetailData seedData;
+  int failLoadDetailDataCount;
   int loadDetailDataCallCount = 0;
 
-  _FakeHabitDetailAccess({required this.seedData});
+  _FakeHabitDetailAccess({
+    required this.seedData,
+    this.failLoadDetailDataCount = 0,
+  });
 
   @override
   Future<HabitDetailData?> loadHabitDetailData(HabitUUID uuid) async {
     loadDetailDataCallCount += 1;
+    if (failLoadDetailDataCount > 0) {
+      failLoadDetailDataCount -= 1;
+      throw StateError('load failed');
+    }
     return seedData;
   }
 
@@ -214,6 +222,50 @@ void main() {
 
       expect(access.loadDetailDataCallCount, 1);
       expect(find.byType(PageLoadingIndicator), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'HabitDetailPage retries with a fresh load future after an error',
+    (tester) async {
+      final profile = await _loadProfile();
+      final detailData = _buildHabitDetailData();
+      final access = _FakeHabitDetailAccess(
+        seedData: detailData,
+        failLoadDetailDataCount: 1,
+      );
+      final rebuildToken = ValueNotifier(0);
+
+      addTearDown(() {
+        rebuildToken.dispose();
+        profile.dispose();
+      });
+
+      await _pumpHabitDetailPage(
+        tester,
+        profile: profile,
+        access: access,
+        rebuildToken: rebuildToken,
+        habitUUID: detailData.data.uuid,
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 350));
+
+      expect(access.loadDetailDataCallCount, 1);
+      expect(find.text('Try Again'), findsOneWidget);
+
+      await tester.tap(find.text('Try Again'));
+      await tester.pump();
+
+      expect(access.loadDetailDataCallCount, 2);
+
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 350));
+
+      expect(find.text('Sample Habit'), findsOneWidget);
+      expect(find.text('Try Again'), findsNothing);
     },
   );
 }
