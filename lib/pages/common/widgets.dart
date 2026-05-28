@@ -23,6 +23,7 @@ export '_widgets/habit_input_helper.dart';
 export '_widgets/habit_record_number_picker.dart';
 export '_widgets/habit_record_reason_modifier.dart';
 export '_widgets/habit_summary_list_tile.dart';
+export '_widgets/load_error_placeholder.dart';
 export '_widgets/loglevel_changer_tile.dart';
 export '_widgets/not_found_image.dart';
 export '_widgets/notification_activated.dart';

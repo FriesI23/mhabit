@@ -22,8 +22,8 @@ import '../../../extensions/num_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_stat.dart';
-import '../../../providers/habit_summary.dart';
 import '../../../theme/icon.dart';
+import '../_providers/habit_summary.dart';
 
 Future<void> showHabitDisplayStatsMenuDialog({
   required BuildContext context,

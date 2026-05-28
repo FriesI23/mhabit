@@ -640,6 +640,12 @@ class L10nAr extends L10n {
       'العودة إلى اليوم';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'حاول مرة أخرى';
+
+  @override
   String get habitDetail_notFoundText => 'فشل تحميل العادات';
 
   @override

@@ -1436,7 +1436,7 @@ packages:
     source: hosted
     version: "0.2.12"
   source_gen:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: source_gen
       sha256: ec37cc0e6694374cbef59ed79685572c870a54ede6fa30a3e420feb3adffea02
@@ -1724,13 +1724,13 @@ packages:
     source: hosted
     version: "4.5.3"
   vector_graphics:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vector_graphics
-      sha256: "4d35a36400983c3457c289d4d553b5308f506ea84f7e51c7a564651b5525209a"
+      sha256: "2306c03da2ba81724afeb589c351ebbc0aa7d86005925be8f8735856dbe5e42d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "1.2.2"
   vector_graphics_codec:
     dependency: transitive
     description:

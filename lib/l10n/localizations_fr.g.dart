@@ -655,6 +655,12 @@ class L10nFr extends L10n {
       'revenir à aujourd’hui';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Essayez une nouvelle fois';
+
+  @override
   String get habitDetail_notFoundText => 'Échec du chargement de l’habitude';
 
   @override

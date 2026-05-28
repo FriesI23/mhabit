@@ -1,0 +1,8 @@
+name: mhabit_proxy_annotation
+description: Shared proxy-generation annotations for mhabit.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"

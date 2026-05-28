@@ -18,11 +18,26 @@ import 'package:provider/provider.dart';
 typedef ViewModelProxyProviderBuilder<T, R> =
     R Function(BuildContext context, T value, R previous);
 
+typedef ViewModelProxyProviderShouldPost<T, R> =
+    bool Function(BuildContext context, T value, R previous);
+
 typedef ViewModelProxyProviderBuilder2<T1, T2, R> =
     R Function(BuildContext context, T1 value1, T2 value2, R previous);
 
+typedef ViewModelProxyProviderShouldPost2<T1, T2, R> =
+    bool Function(BuildContext context, T1 value1, T2 value2, R previous);
+
 typedef ViewModelProxyProviderBuilder3<T1, T2, T3, R> =
     R Function(
+      BuildContext context,
+      T1 value1,
+      T2 value2,
+      T3 value3,
+      R previous,
+    );
+
+typedef ViewModelProxyProviderShouldPost3<T1, T2, T3, R> =
+    bool Function(
       BuildContext context,
       T1 value1,
       T2 value2,
@@ -49,18 +64,19 @@ class ViewModelProxyProvider<T, R extends ChangeNotifier?>
     super.key,
     Create<R>? create,
     ViewModelProxyProviderBuilder<T, R>? update,
+    ViewModelProxyProviderShouldPost<T, R>? shouldPost,
     ViewModelProxyProviderPostCallback<T, R>? post,
     super.lazy,
   }) : super(
          create: create ?? _defaultCreater<R>,
          update: (context, value, previous) {
            assert(previous != null);
-           final vm = (update ?? _defaultUpdater)(
-             context,
-             value,
-             previous as R,
-           );
-           if (post != null) {
+           final current = previous as R;
+           final willPost =
+               post != null &&
+               (shouldPost?.call(context, value, current) ?? true);
+           final vm = (update ?? _defaultUpdater)(context, value, current);
+           if (willPost) {
              WidgetsBinding.instance.addPostFrameCallback(
                (t) => post(t, value, vm),
              );
@@ -84,19 +100,24 @@ class ViewModelProxyProvider2<T1, T2, R extends ChangeNotifier?>
     super.key,
     Create<R>? create,
     ViewModelProxyProviderBuilder2<T1, T2, R>? update,
+    ViewModelProxyProviderShouldPost2<T1, T2, R>? shouldPost,
     ViewModelProxyProviderPostCallback2<T1, T2, R>? post,
     super.lazy,
   }) : super(
          create: create ?? _defaultCreater<R>,
          update: (context, value1, value2, previous) {
            assert(previous != null);
+           final current = previous as R;
+           final willPost =
+               post != null &&
+               (shouldPost?.call(context, value1, value2, current) ?? true);
            final vm = (update ?? _defaultUpdater)(
              context,
              value1,
              value2,
-             previous as R,
+             current,
            );
-           if (post != null) {
+           if (willPost) {
              WidgetsBinding.instance.addPostFrameCallback(
                (t) => post(t, value1, value2, vm),
              );
@@ -121,20 +142,26 @@ class ViewModelProxyProvider3<T1, T2, T3, R extends ChangeNotifier?>
     super.key,
     Create<R>? create,
     ViewModelProxyProviderBuilder3<T1, T2, T3, R>? update,
+    ViewModelProxyProviderShouldPost3<T1, T2, T3, R>? shouldPost,
     ViewModelProxyProviderPostCallback3<T1, T2, T3, R>? post,
     super.lazy,
   }) : super(
          create: create ?? _defaultCreater<R>,
          update: (context, value1, value2, value3, previous) {
            assert(previous != null);
+           final current = previous as R;
+           final willPost =
+               post != null &&
+               (shouldPost?.call(context, value1, value2, value3, current) ??
+                   true);
            final vm = (update ?? _defaultUpdater)(
              context,
              value1,
              value2,
              value3,
-             previous as R,
+             current,
            );
-           if (post != null) {
+           if (willPost) {
              WidgetsBinding.instance.addPostFrameCallback(
                (t) => post(t, value1, value2, value3, vm),
              );

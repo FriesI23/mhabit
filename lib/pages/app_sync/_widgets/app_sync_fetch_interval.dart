@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_options.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 
 Future<AppSyncFetchInterval?> showAppSyncFetchIntervalSwitchDialog({
   required BuildContext context,
@@ -66,7 +66,7 @@ class AppSyncFetchIntervalTile extends StatelessWidget {
   const AppSyncFetchIntervalTile({super.key, this.onPressed});
 
   Widget buildSubtitle([L10n? l10n]) =>
-      Selector<AppSyncViewModel, AppSyncFetchInterval>(
+      Selector<AppSyncSettingsAccess, AppSyncFetchInterval>(
         selector: (context, vm) => vm.fetchInterval,
         builder: (context, value, child) => Text(value.getShowText(l10n)),
       );

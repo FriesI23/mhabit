@@ -21,7 +21,7 @@ import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
-import '../../../providers/about_info.dart';
+import '../../../providers/support/about_info.dart';
 import '../styles.dart';
 
 class AppAboutContactEmailTile extends StatefulWidget {

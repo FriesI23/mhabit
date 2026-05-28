@@ -16,13 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/app_first_day.dart';
-import '../../providers/habit_detail.dart';
-import '../../providers/habit_detail_freqchart.dart';
-import '../../providers/habit_detail_scorechart.dart';
-import '../../providers/habits_manager.dart';
-import '../../reminders/notification_channel.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
+import '_providers/habit_detail.dart';
+import '_providers/habit_detail_freqchart.dart';
+import '_providers/habit_detail_scorechart.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   const PageProviders({super.key, super.child});
@@ -31,18 +30,14 @@ class PageProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<HabitDetailViewModel>(
       create: (context) => HabitDetailViewModel(),
     ),
-    ViewModelProxyProvider<HabitsManager, HabitDetailViewModel>(
-      update: (context, value, previous) => previous..updateHabitManager(value),
+    ViewModelProxyProvider<HabitDetailAccess, HabitDetailViewModel>(
+      update: (context, value, previous) => previous..attachAccess(value),
     ),
     ViewModelProxyProvider<AppFirstDayViewModel, HabitDetailViewModel>(
       update: (context, value, previous) =>
           previous..updateFirstday(value.firstDay),
       post: (t, value, vm) =>
           value.firstDay != vm.firstday ? vm.requestReload() : null,
-    ),
-    ViewModelProxyProvider<NotificationChannelData, HabitDetailViewModel>(
-      update: (context, value, previous) =>
-          previous..setNotificationChannelData(value),
     ),
   ];
 

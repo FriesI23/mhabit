@@ -12,9 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class Proxy {
-  final Type targetClass;
-  final bool useAnnotatedName;
-
-  const Proxy(this.targetClass, {this.useAnnotatedName = false});
-}
+export 'package:mhabit_proxy_annotation/proxy_annotation.dart';

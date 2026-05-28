@@ -383,6 +383,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "日付",
     "habitDetail_editHeatmapCal_valueButtonText": "値",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "今日に戻る",
+    "common_loadError_retryText": "再試行",
     "habitDetail_notFoundText": "習慣の読み込みに失敗しました",
     "habitDetail_notFoundRetryText": "再試行",
     "habitDetail_changeGoal_title": "目標を変更",

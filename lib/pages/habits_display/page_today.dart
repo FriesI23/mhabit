@@ -30,13 +30,13 @@ import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_summary.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_summary.dart';
-import '../../providers/habits_today.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
+import '_providers/habit_summary.dart';
+import '_providers/habits_today.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 
@@ -57,7 +57,7 @@ class TodayTabPage extends StatefulWidget {
 class TodayTabPageState extends State<TodayTabPage>
     with AutomaticKeepAliveClientMixin {
   late HabitsTodayViewModel _vm;
-  AppSyncViewModel? _appSync;
+  AppSyncWorkflowAccess? _appSync;
   StreamSubscription<String>? _startSyncSub;
 
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -85,11 +85,11 @@ class TodayTabPageState extends State<TodayTabPage>
       _vm = vm;
     }
 
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     if (sync != _appSync) {
       _startSyncSub?.cancel();
       _appSync = sync;
-      _startSyncSub = sync.appSyncTask.startSyncEvents.listen((_) {
+      _startSyncSub = sync.startSyncEvents.listen((_) {
         _refreshIndicatorKey.currentState?.show();
       });
     }
@@ -116,20 +116,18 @@ class TodayTabPageState extends State<TodayTabPage>
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
     DateChangeProvider.of(context).dateTime = HabitDate.now();
-    final syncvm = context.read<AppSyncViewModel>();
-    if (syncvm.mounted) {
-      try {
-        await syncvm.startSync(initWait: kAppSyncDelayDuration2);
-        await syncvm.appSyncTask.processing;
-      } catch (e, s) {
-        appLog.appsync.fatal(
-          "start sync failed",
-          ex: [syncvm.appSyncTask.task],
-          error: e,
-          stackTrace: s,
-        );
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-      }
+    final syncvm = context.read<AppSyncWorkflowAccess>();
+    try {
+      await syncvm.startSync(initWait: kAppSyncDelayDuration2);
+      await syncvm.syncProcessing;
+    } catch (e, s) {
+      appLog.appsync.fatal(
+        "start sync failed",
+        ex: [syncvm.syncStatus],
+        error: e,
+        stackTrace: s,
+      );
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
     }
   }
 
@@ -167,8 +165,8 @@ class TodayTabPageState extends State<TodayTabPage>
         if (context == null) {
           return defaultScrollNotificationPredicate(notification);
         }
-        final sync = context.read<AppSyncViewModel>();
-        if (!(sync.enabled && sync.serverConfig != null)) {
+        final sync = context.read<AppSyncWorkflowAccess>();
+        if (!sync.canStartSync) {
           return false;
         }
         return defaultScrollNotificationPredicate(notification);
@@ -205,9 +203,9 @@ class _HabitsGroupView extends StatelessWidget {
   @visibleForTesting
   Future<void> loadData(BuildContext context) async {
     if (!context.mounted) return;
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     try {
-      if (sync.mounted) await sync.appSyncTask.processing;
+      await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "TodayTabPage",
@@ -218,28 +216,41 @@ class _HabitsGroupView extends StatelessWidget {
     }
     if (!context.mounted) return;
     final vm = context.read<HabitsTodayViewModel>();
-    if (!vm.mounted || vm.isDataLoading) return;
+    if (!vm.mounted || vm.hasLoad) return;
     await vm.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitsTodayViewModel, (bool, bool)>(
-      selector: (context, vm) =>
-          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(context),
-        builder: (context, _) => SliverPadding(
-          padding: kListTileContentPadding,
-          sliver: AppUiLayoutBuilder.useScreenSize(
-            ignoreHeight: false,
-            builder: (context, layoutType, child) => switch (layoutType) {
-              UiLayoutType.l => const _HabitGrid(),
-              UiLayoutType.s => const _HabitList(),
-            },
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  final vm = context.read<HabitsTodayViewModel>();
+                  if (vm.mounted) vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return SliverPadding(
+            padding: kListTileContentPadding,
+            sliver: AppUiLayoutBuilder.useScreenSize(
+              ignoreHeight: false,
+              builder: (context, layoutType, child) => switch (layoutType) {
+                UiLayoutType.l => const _HabitGrid(),
+                UiLayoutType.s => const _HabitList(),
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -290,7 +301,7 @@ class _HabitsTodayController {
     String? reason,
   }) {
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+    context.read<AppEventBus>().pushHabitRecordChangeStatus(
       uuid,
       record,
       reason: reason,
@@ -298,8 +309,7 @@ class _HabitsTodayController {
       source: AppEventPageSource.habitToday,
     );
     // try sync once
-    final sync = context.maybeRead<AppSyncViewModel>();
-    if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+    context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
   }
 
   void onMain(HabitUUID uuid) {
@@ -659,8 +669,8 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
       _adaptedStyle = _adaptStyle(TodayDoneImageStyle.inDefault, themeData);
     }
 
-    final isDataLoaded = _vm.isDataLoaded;
-    if (!_initialEmptyConsumed && isDataLoaded) {
+    final hasLoaded = _vm.hasLoaded;
+    if (!_initialEmptyConsumed && hasLoaded) {
       _initialEmptyConsumed = true;
       return;
     }
@@ -679,7 +689,7 @@ class _TodayDoneImageState extends State<_TodayDoneImage> {
 
   @override
   Widget build(BuildContext context) {
-    context.select<HabitsTodayViewModel, bool>((vm) => vm.isDataLoaded);
+    context.select<HabitsTodayViewModel, bool>((vm) => vm.hasLoaded);
     final habitCount = context.select<HabitsTodayViewModel, int>(
       (vm) => vm.currentHabitList.length,
     );

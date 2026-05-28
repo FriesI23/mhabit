@@ -1154,6 +1154,18 @@ abstract class L10n {
   /// **'back to today'**
   String get habitDetail_editHeatmapCal_backToToday_tooltipText;
 
+  /// No description provided for @common_loadError_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load'**
+  String get common_loadError_text;
+
+  /// No description provided for @common_loadError_retryText.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get common_loadError_retryText;
+
   /// No description provided for @habitDetail_notFoundText.
   ///
   /// In en, this message translates to:

@@ -31,9 +31,10 @@ endif
 
 
 
+
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons gen \
-	verify-generated verify-submodules ci-check aio aio-full package-windows
+	verify-generated verify-submodules ci-check aio aio-full test package-windows
 
 help:
 	@echo Standardized automation entrypoints
@@ -51,6 +52,7 @@ help:
 	@echo   ci-check          Alias of verify-generated
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the internal Flutter test suite
+	@echo   test              Run the internal Flutter test suite
 	@echo   package-windows   Build Windows MSIX package
 
 init:
@@ -104,6 +106,9 @@ aio:
 
 aio-full:
 	@$(SUBMAKE) aio
+	@flutter test
+
+test:
 	@flutter test
 
 package-windows:

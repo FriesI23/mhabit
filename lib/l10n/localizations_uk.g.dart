@@ -648,6 +648,12 @@ class L10nUk extends L10n {
       'повернутися до сьогоднішнього дня';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Спробуйте знову';
+
+  @override
   String get habitDetail_notFoundText => 'Завантажити звичку не вдалося';
 
   @override

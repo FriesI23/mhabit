@@ -39,19 +39,17 @@ import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_status.dart';
 import "../../models/habit_summary.dart";
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_experimental_feature.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_theme.dart';
-import '../../providers/habit_detail.dart';
-import '../../providers/habit_op_config.dart';
-import '../../providers/habit_summary.dart';
-import '../../providers/habits_file_exporter.dart';
-import '../../providers/habits_filter.dart';
-import '../../providers/habits_record_scroll_behavior.dart';
-import '../../providers/habits_sort.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_experimental_feature.dart';
+import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/habit_op_config.dart';
+import '../../providers/app_ui/habits_filter.dart';
+import '../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../providers/app_ui/habits_sort.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_file_exporter.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../utils/xshare.dart';
 import '../../widgets/helpers.dart';
@@ -62,6 +60,7 @@ import '../common/widgets.dart';
 import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
+import '_providers/habit_summary.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 
@@ -197,17 +196,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitsChangeStatus(
+    context.read<AppEventBus>().pushHabitsChangeStatus(
       recordList,
       msg: "habit_display._onHabitStatusChangeConfirmed",
       source: AppEventPageSource.habitDisplay,
     );
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) {
-        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
-      }
+      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce(
+        delay: kAppUndoDialogShowDuration * 2,
+      );
     }
   }
 
@@ -219,7 +217,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }) {
     if (!mounted) return;
     // fire event
-    context.read<AppEventViewModel>().pushHabitRecordChangeStatus(
+    context.read<AppEventBus>().pushHabitRecordChangeStatus(
       uuid,
       record,
       reason: reason,
@@ -228,8 +226,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     );
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+      context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
     }
   }
 
@@ -554,7 +551,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
-        .read<HabitFileExporterViewModel>()
+        .read<HabitFileExportRunner>()
         .exportMultiHabitsData(
           habitUUIDList,
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
@@ -598,19 +595,17 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Future<void> _onRefreshIndicatorTriggered() async {
     if (!mounted) return;
     DateChangeProvider.of(context).dateTime = HabitDate.now();
-    final syncvm = context.read<AppSyncViewModel>();
-    if (syncvm.mounted) {
-      try {
-        await syncvm.startSync(initWait: kAppSyncDelayDuration2);
-      } catch (e, s) {
-        appLog.appsync.fatal(
-          "start sync failed",
-          ex: [syncvm.appSyncTask.task],
-          error: e,
-          stackTrace: s,
-        );
-        if (kDebugMode) Error.throwWithStackTrace(e, s);
-      }
+    final syncvm = context.read<AppSyncWorkflowAccess>();
+    try {
+      await syncvm.startSync(initWait: kAppSyncDelayDuration2);
+    } catch (e, s) {
+      appLog.appsync.fatal(
+        "start sync failed",
+        ex: [syncvm.syncStatus],
+        error: e,
+        stackTrace: s,
+      );
+      if (kDebugMode) Error.throwWithStackTrace(e, s);
     }
   }
 
@@ -739,7 +734,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
-        context.read<AppEventViewModel>().push(
+        context.read<AppEventBus>().push(
           const ReloadDataEvent(
             msg: "habit_display._onHabitListReorderComplete",
             trace: {
@@ -749,9 +744,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
             },
           ),
         );
-        final appSync = context.maybeRead<AppSyncViewModel>();
-        if (appSync == null || !appSync.mounted) return;
-        appSync.delayedStartTaskOnce();
+        context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
       });
     } else if (!viewmodel.isInEditMode) {
       viewmodel.exitEditMode(listen: false);
@@ -785,9 +778,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
       if (result == null || !mounted) return;
       switch (result.op) {
-        case DetailPageReturnOpr.unknown:
+        case habit_detail.DetailPageReturnOpr.unknown:
           break;
-        case DetailPageReturnOpr.deleted:
+        case habit_detail.DetailPageReturnOpr.deleted:
           if (!mounted) break;
           final habitName = result.habitName ?? "";
           final snackBar = buildSnackBarWithUndo(
@@ -943,7 +936,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
-                context.read<AppEventViewModel>().push(
+                context.read<AppEventBus>().push(
                   const ReloadDataEvent(
                     msg: "habit_display.debugAddMultiTempHabit",
                   ),
@@ -981,11 +974,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
             return defaultScrollNotificationPredicate(notification);
           }
           final summary = context.read<HabitSummaryViewModel>();
-          final sync = context.read<AppSyncViewModel>();
-          if (summary.isInEditMode ||
-              !(sync.enabled && sync.serverConfig != null)) {
-            return false;
-          }
+          final sync = context.read<AppSyncWorkflowAccess>();
+          if (summary.isInEditMode || !sync.canStartSync) return false;
           return defaultScrollNotificationPredicate(notification);
         },
         onRefresh: _onRefreshIndicatorTriggered,
@@ -1142,9 +1132,9 @@ class _HabitListState extends State<_HabitList> {
   Future<void> loadData() async {
     if (!mounted) return;
     final minBarShowTimeFuture = Future.delayed(kHabitListFutureLoadDuration);
-    final sync = context.read<AppSyncViewModel>();
+    final sync = context.read<AppSyncWorkflowAccess>();
     try {
-      if (sync.mounted) await sync.appSyncTask.processing;
+      await sync.syncProcessing;
     } catch (e, s) {
       appLog.appsync.error(
         "HabitsTabPage",
@@ -1154,7 +1144,7 @@ class _HabitListState extends State<_HabitList> {
       );
     }
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoading) {
+    if (!_vm.hasLoad) {
       await Future.wait([_vm.loadData(), minBarShowTimeFuture]);
       if (!(mounted && _vm.mounted)) return;
     }
@@ -1166,23 +1156,40 @@ class _HabitListState extends State<_HabitList> {
   @override
   Widget build(BuildContext context) {
     return Selector<HabitSummaryViewModel, (bool, bool)>(
-      selector: (context, vm) =>
-          (vm.isDataLoading, vm.consumeForceReloadFlag()),
+      selector: (context, vm) => (vm.hasLoad, vm.consumeForceReloadFlag()),
       shouldRebuild: (previous, next) => previous.$1 != next.$1 || next.$2,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
-        builder: (context, _) => AnimatedSliverList(
-          controller: _dispatcher.controller,
-          delegate: AnimatedSliverChildBuilderDelegate(
-            (context, index, data) =>
-                _dispatcher.builder(context, _vm.currentHabitList, index, data),
-            _vm.currentHabitList.length,
-            animator: kHabitContentListAnimator,
-            addAnimatedElevation: kCommonEvalation,
-            morphDuration: kEditModeChangeAnimateDuration,
-            reorderModel: widget.reorderModel,
-          ),
-        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(
+                onRetry: () {
+                  if (!(mounted && _vm.mounted)) return;
+                  _vm.requestReload();
+                },
+              ),
+            );
+          }
+
+          return AnimatedSliverList(
+            controller: _dispatcher.controller,
+            delegate: AnimatedSliverChildBuilderDelegate(
+              (context, index, data) => _dispatcher.builder(
+                context,
+                _vm.currentHabitList,
+                index,
+                data,
+              ),
+              _vm.currentHabitList.length,
+              animator: kHabitContentListAnimator,
+              addAnimatedElevation: kCommonEvalation,
+              morphDuration: kEditModeChangeAnimateDuration,
+              reorderModel: widget.reorderModel,
+            ),
+          );
+        },
       ),
     );
   }
@@ -1334,8 +1341,8 @@ class _EmptyImageState extends State<_EmptyImage> {
     _lastMode = _mode;
     _mode = _vm.isInSearchMode ? EmptyImageMode.search : EmptyImageMode.normal;
 
-    final isDataLoaded = _vm.isDataLoaded;
-    if (!_initialEmptyConsumed && isDataLoaded) {
+    final hasLoaded = _vm.hasLoaded;
+    if (!_initialEmptyConsumed && hasLoaded) {
       _initialEmptyConsumed = true;
       return;
     }
@@ -1345,8 +1352,7 @@ class _EmptyImageState extends State<_EmptyImage> {
   Widget build(BuildContext context) {
     final (habitCount, _, _) = context
         .select<HabitSummaryViewModel, (int, bool, bool)>(
-          (vm) =>
-              (vm.currentHabitList.length, vm.isInSearchMode, vm.isDataLoaded),
+          (vm) => (vm.currentHabitList.length, vm.isInSearchMode, vm.hasLoaded),
         );
     final (_, calBarHeight) = context
         .select<AppCompactUISwitcherViewModel, (bool, double)>(
@@ -1622,11 +1628,11 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDataLoaded = context.select<HabitSummaryViewModel, bool>(
-      (vm) => vm.isDataLoaded,
+    final hasLoaded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => vm.hasLoaded,
     );
     return AnimatedOpacity(
-      opacity: isDataLoaded ? 0.0 : 1.0,
+      opacity: hasLoaded ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 200),
       child: const AppSyncLoadingIndicator(),
     );

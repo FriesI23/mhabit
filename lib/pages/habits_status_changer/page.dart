@@ -26,15 +26,16 @@ import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_summary.dart';
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_status_changer.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_custom_date_format.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../utils/safe_sliver_tools.dart';
 import '../../widgets/helpers.dart';
 import '../../widgets/widgets.dart';
+import '../common/widgets.dart';
+import '_providers/habit_status_changer.dart';
 import 'widgets.dart';
 
 /// Depend Providers
@@ -44,7 +45,7 @@ import 'widgets.dart';
 ///   - [AppDeveloperViewModel]
 /// - Required for callback:
 /// - Optional:
-///   - [AppSyncViewModel]
+///   - [AppSyncTriggerAccess]
 class HabitsStatusChangerPage extends StatelessWidget {
   final List<HabitUUID> uuidList;
 
@@ -156,10 +157,7 @@ class _PageState extends State<_Page> {
     final changedCount = await _vm.saveSelectStatus();
     if (!mounted || changedCount <= 0) return;
 
-    final appSync = context.maybeRead<AppSyncViewModel>();
-    if (appSync != null && appSync.mounted) {
-      appSync.delayedStartTaskOnce();
-    }
+    context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
 
     final snackBar = buildSnackBarWithDismiss(
       context,
@@ -172,7 +170,7 @@ class _PageState extends State<_Page> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "habit_status_changer._onConfirmButtonpressed",
         exiEditMode: true,
@@ -261,7 +259,7 @@ class _PageState extends State<_Page> {
           selector: (context, vm) => vm.config,
           builder: (context, formatter, child) {
             return Selector<HabitStatusChangerViewModel, bool>(
-              selector: (context, vm) => vm.isDataLoading,
+              selector: (context, vm) => vm.hasLoad,
               shouldRebuild: (previous, next) => previous != next,
               builder: (context, _, child) {
                 return DatePickerTile(
@@ -433,17 +431,29 @@ class _HabitListState extends State<_HabitList> {
   @visibleForTesting
   Future loadData() async {
     if (!(mounted && _vm.mounted)) return;
-    if (!_vm.isDataLoading) await _vm.loadData();
+    if (!_vm.hasLoad) await _vm.loadData();
+  }
+
+  void _onRetryPressed() {
+    if (!(mounted && _vm.mounted)) return;
+    _vm.requestReloadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Selector<HabitStatusChangerViewModel, bool>(
-      selector: (context, vm) => vm.isDataLoading,
+      selector: (context, vm) => vm.hasLoad,
       shouldRebuild: (previous, next) => previous != next,
       builder: (context, _, child) => FutureBuilder(
         future: loadData(),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: LoadErrorPlaceholder(onRetry: _onRetryPressed),
+            );
+          }
+
           return SliverStack(
             children: [
               SliverAnimatedOpacity(

@@ -35,17 +35,13 @@ import '../../models/habit_detail_chart.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_status.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_first_day.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_detail.dart';
-import '../../providers/habit_detail_freqchart.dart';
-import '../../providers/habit_detail_scorechart.dart';
-import '../../providers/habit_summary.dart' as habit_summary;
-import '../../providers/habits_file_exporter.dart';
-import '../../providers/utils.dart';
+import '../../providers/app_ui/app_custom_date_format.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/support/utils.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_file_exporter.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../theme/color.dart';
 import '../../theme/icon.dart';
@@ -56,9 +52,27 @@ import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
 import '../habit_edit/page.dart' as habit_edit;
+import '../habits_display/_providers/habit_summary.dart' as habit_summary;
+import '_providers/habit_detail.dart';
+import '_providers/habit_detail_freqchart.dart';
+import '_providers/habit_detail_scorechart.dart';
 import 'widgets.dart';
 
 const _largeScreenTwoChartBetween = 16.0;
+
+enum DetailPageReturnOpr { unknown, deleted }
+
+class DetailPageReturn {
+  final DetailPageReturnOpr op;
+  final String? habitName;
+  final List<HabitStatusChangedRecord>? recordList;
+
+  const DetailPageReturn({
+    this.op = DetailPageReturnOpr.unknown,
+    this.habitName,
+    this.recordList,
+  });
+}
 
 Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
@@ -76,7 +90,7 @@ Future<DetailPageReturn?> naviToHabitDetailPage({
   );
 }
 
-extension _AppEventViewModelExtension on AppEventViewModel {
+extension _AppEventBusExtension on AppEventBus {
   void pushHabitChangeStatus(HabitStatusChangedRecord result, {String? msg}) {
     push(
       HabitStatusChangedEvent(
@@ -97,7 +111,7 @@ extension _AppEventViewModelExtension on AppEventViewModel {
 /// - Required for builder:
 ///   - [AppFirstDayViewModel]
 /// - Required for callback:
-///   - [HabitFileExporterViewModel]
+///   - [HabitFileExportRunner]
 /// - Optional:
 ///   - [habit_summary.HabitDetailAdapter]
 class HabitDetailPage extends StatelessWidget {
@@ -171,7 +185,7 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return false;
     _vm.requestReload();
     if (_summary?.mounted != true) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         const ReloadDataEvent(
           msg: "habit_detail._enterHabitEditPage",
           trace: {
@@ -231,7 +245,7 @@ class _PageState extends State<_Page>
     if (!(mounted && _vm.mounted)) return;
     if (_vm.getInsideVersion() == oldVersion) return;
     if (_summary?.mounted != true) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         const ReloadDataEvent(
           msg: "habit_detail._openEditDialog",
           trace: {
@@ -272,10 +286,9 @@ class _PageState extends State<_Page>
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) {
-        sync.delayedStartTaskOnce(delay: kAppUndoDialogShowDuration * 2);
-      }
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce(
+        delay: kAppUndoDialogShowDuration * 2,
+      );
     }
   }
 
@@ -292,7 +305,7 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToArchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(
+      context.read<AppEventBus>().pushHabitChangeStatus(
         result,
         msg: "habit_detail._openHabitArchiveConfirmDialog",
       );
@@ -321,7 +334,7 @@ class _PageState extends State<_Page>
     if (_summary?.mounted != true) {
       final result = await _vm.onConfirmToUnarchiveHabit();
       if (result == null || !mounted) return;
-      context.read<AppEventViewModel>().pushHabitChangeStatus(
+      context.read<AppEventBus>().pushHabitChangeStatus(
         result,
         msg: "habit_detail._openHabitUnarchiveConfirmDialog",
       );
@@ -352,7 +365,7 @@ class _PageState extends State<_Page>
       if (_summary?.mounted != true) {
         final changedRecord = await _vm.onConfirmToDeleteHabit();
         if (changedRecord == null || !mounted) return null;
-        context.read<AppEventViewModel>().pushHabitChangeStatus(
+        context.read<AppEventBus>().pushHabitChangeStatus(
           changedRecord,
           msg: "habit_detail._openHabitDeleteConfirmDialog",
         );
@@ -379,7 +392,7 @@ class _PageState extends State<_Page>
   }
 
   void _exportHabitAndShared(BuildContext context) async {
-    HabitFileExporterViewModel fileExporter;
+    HabitFileExportRunner fileExporter;
 
     if (!context.mounted) return;
     final confirmResult = await showExporterConfirmDialog(
@@ -388,7 +401,7 @@ class _PageState extends State<_Page>
     );
 
     if (!context.mounted || confirmResult == null) return;
-    fileExporter = context.read<HabitFileExporterViewModel>();
+    fileExporter = context.read<HabitFileExportRunner>();
     final filePath = await fileExporter.exportHabitData(
       widget.habitUUID,
       withRecords: confirmResult == ExporterConfirmResultType.withRecords,
@@ -452,7 +465,7 @@ class _PageState extends State<_Page>
   Future<void> loadData() async {
     if (!mounted) return;
     final minBarShowTimeFuture = Future.delayed(kHabitDetailFutureLoadDuration);
-    if (!_vm.isDataLoading) {
+    if (!_vm.hasLoad) {
       await Future.wait([_vm.loadData(widget.habitUUID), minBarShowTimeFuture]);
     }
   }
@@ -1006,7 +1019,7 @@ class _PageState extends State<_Page>
 
     Widget buildBody(BuildContext context) {
       return Selector<HabitDetailViewModel, bool>(
-        selector: (context, viewmodel) => viewmodel.isDataLoading,
+        selector: (context, viewmodel) => viewmodel.hasLoad,
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, _, child) {
           return FutureBuilder(

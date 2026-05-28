@@ -650,6 +650,12 @@ class L10nHu extends L10n {
       'vissza a mai naphoz';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Próbáld újra';
+
+  @override
   String get habitDetail_notFoundText => 'Szokás betöltése sikertelen';
 
   @override

@@ -418,6 +418,8 @@
     "habitDetail_editHeatmapCal_dateButtonText": "日期",
     "habitDetail_editHeatmapCal_valueButtonText": "打卡值",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "返回今日",
+    "common_loadError_text": "载入失败",
+    "common_loadError_retryText": "重试",
     "habitDetail_notFoundText": "读取习惯失败",
     "habitDetail_notFoundRetryText": "重试",
     "habitDetail_changeGoal_title": "更改目标",

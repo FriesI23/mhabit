@@ -48,6 +48,7 @@ jobs:
             common:
               - 'pubspec.yaml'
               - 'pubspec.lock'
+              - 'packages/**'
               - 'lib/**'
               - 'assets/**'
             android:
