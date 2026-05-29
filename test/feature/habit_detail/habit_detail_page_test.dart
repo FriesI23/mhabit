@@ -98,7 +98,8 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
   }) => throw UnimplementedError();
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) => Future.value();
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
+      Future.value();
 }
 
 HabitSummaryData _buildHabitSummaryData({

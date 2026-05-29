@@ -36,6 +36,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   final List<HabitSummaryData> extraSeedData;
   final String recordReason = 'record-reason';
   final reminderUpdates = <HabitSummaryData>[];
+  final pageLoadReminderReconcileRequests = <List<HabitSummaryData>>[];
 
   HabitUUID? lastDetailUuid;
   HabitSummaryData? lastReasonData;
@@ -141,8 +142,10 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) {
-    reminderUpdates.add(data);
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) {
+    final habitList = habits.toList(growable: false);
+    pageLoadReminderReconcileRequests.add(habitList);
+    reminderUpdates.addAll(habitList);
     return Future.value();
   }
 }
@@ -237,6 +240,7 @@ void main() {
 
       expect(vm.habitCount, 1);
       expect(vm.currentHabitList, isNotEmpty);
+      expect(access.pageLoadReminderReconcileRequests, hasLength(1));
       expect(access.reminderUpdates.single.uuid, seedData.uuid);
 
       final loadedHabit = vm.getHabit(seedData.uuid);
@@ -263,6 +267,7 @@ void main() {
       await vm.loadData(listen: false);
 
       expect(vm.currentHabitList, isNotEmpty);
+      expect(access.pageLoadReminderReconcileRequests, hasLength(1));
       expect(access.reminderUpdates.single.uuid, seedData.uuid);
 
       final loadedHabit = vm.getHabit(seedData.uuid);

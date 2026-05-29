@@ -30,6 +30,7 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
   final HabitDetailData seedData;
   final String recordReason = 'detail-record-reason';
   final reminderUpdates = <HabitSummaryData>[];
+  final pageLoadReminderReconcileRequests = <List<HabitSummaryData>>[];
   int loadDetailDataCallCount = 0;
 
   HabitUUID? lastLoadedUuid;
@@ -128,8 +129,10 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
   }) async => const [];
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) {
-    reminderUpdates.add(data);
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) {
+    final habitList = habits.toList(growable: false);
+    pageLoadReminderReconcileRequests.add(habitList);
+    reminderUpdates.addAll(habitList);
     return Future.value();
   }
 }
@@ -176,6 +179,7 @@ void main() {
       await vm.loadData(detailData.data.uuid, listen: false);
 
       expect(access.lastLoadedUuid, detailData.data.uuid);
+      expect(access.pageLoadReminderReconcileRequests, hasLength(1));
       expect(access.reminderUpdates.single.uuid, detailData.data.uuid);
 
       final reason = await vm.loadRecordReason(HabitDate.now());

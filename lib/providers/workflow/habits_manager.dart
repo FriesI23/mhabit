@@ -73,7 +73,7 @@ abstract interface class HabitsDisplayAccess {
     required int decimalPlaces,
   });
 
-  Future<void> updateHabitReminder(HabitSummaryData data);
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits);
 }
 
 abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
@@ -190,7 +190,7 @@ class HabitsManager
     final updatedHabits = {
       for (final item in result) item.data.uuid: item.data,
     }.values;
-    await Future.wait(updatedHabits.map(updateHabitReminder));
+    await updateHabitReminders(updatedHabits);
     if (extraResolver is Future) {
       await Future.wait(result.map((e) async => extraResolver?.call(e)));
     } else if (extraResolver != null) {
@@ -460,9 +460,12 @@ class HabitsManager
     return changedUUIDs;
   }
 
-  @override
-  Future<void> updateHabitReminder(HabitSummaryData data) =>
+  Future<void> _updateHabitReminder(HabitSummaryData data) =>
       _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+
+  @override
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
+      Future.wait(habits.map(_updateHabitReminder));
 
   Future<void> _updateChangedHabitRecordReminders(
     Iterable<ChangeRecordStatusResult> records, {
@@ -485,12 +488,12 @@ class HabitsManager
         ),
       );
     }
-    await Future.wait(updatedHabits.values.map(updateHabitReminder));
+    await updateHabitReminders(updatedHabits.values);
   }
 
   Future<void> _updateSavedHabitReminder(HabitDBCell? cell) async {
     if (cell == null) return;
-    await updateHabitReminder(HabitSummaryData.fromDBQueryCell(cell));
+    await _updateHabitReminder(HabitSummaryData.fromDBQueryCell(cell));
   }
 
   //#region import and export

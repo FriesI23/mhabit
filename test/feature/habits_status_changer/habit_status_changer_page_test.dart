@@ -83,7 +83,7 @@ final class _FailingHabitStatusChangerAccess
   }) => throw UnimplementedError();
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) =>
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
       throw UnimplementedError();
 }
 
