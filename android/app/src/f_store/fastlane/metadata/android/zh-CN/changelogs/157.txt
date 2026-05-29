@@ -1,0 +1,2 @@
+- 重构 Provider 架构与页面依赖组装，并统一页面加载失败/重试处理，补充相关本地化文案与测试覆盖（#563）
+- 修复 Android predictive back 返回时 Habit Detail 页面重复刷新的问题（#565）
