@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.3+157-pre
+
+- Refactor provider architecture and page wiring, and add shared page load/error retry handling with related localization updates and expanded tests (#563)
+- Fix duplicate habit detail refresh when returning with Android predictive back (#565)
+
 ## 1.24.2+156
 
 - Maintenance release to resolve a build issue affecting F-Droid distribution (#543, #544)
