@@ -14,6 +14,7 @@
 
 import 'dart:ui' show Locale;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show NotificationDetails;
@@ -75,6 +76,32 @@ final class _FakeNotificationService implements NotificationService {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _TrackingAppReminderAccess extends ChangeNotifier
+    implements AppReminderAccess {
+  _TrackingAppReminderAccess({required this.reminder});
+
+  @override
+  AppReminderConfig reminder;
+  final triggers = <AppReminderTrigger>[];
+  L10n? lastL10n;
+
+  @override
+  Future<void> processReminderTrigger(
+    AppReminderTrigger trigger, {
+    L10n? l10n,
+  }) async {
+    triggers.add(trigger);
+    lastL10n = l10n;
+    if (trigger.reason == AppReminderTriggerReason.settings) {
+      reminder = trigger.nextReminder!;
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<bool> processAppReminder(L10n? l10n) async => true;
 }
 
 Future<ProfileViewModel> _loadAppReminderProfile({
@@ -148,6 +175,87 @@ void main() {
 
         owner.dispose();
         profile.dispose();
+      },
+    );
+  });
+
+  group('AppReminderViewModel settings routing', () {
+    test(
+      'switchOn routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.off,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchOn(l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(access.triggers.single.nextReminder?.enabled, isTrue);
+        expect(access.lastL10n, l10n);
+
+        viewModel.dispose();
+        access.dispose();
+      },
+    );
+
+    test(
+      'switchOff routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.dailyNight,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchOff(l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(access.triggers.single.nextReminder?.enabled, isFalse);
+        expect(access.lastL10n, l10n);
+
+        viewModel.dispose();
+        access.dispose();
+      },
+    );
+
+    test(
+      'switchToDaily routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.off,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        const timeOfDay = TimeOfDay(hour: 8, minute: 30);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchToDaily(timeOfDay: timeOfDay, l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(
+          access.triggers.single.nextReminder,
+          AppReminderConfig.dailyNight.copyWith(
+            timeOfDay: timeOfDay,
+            enabled: false,
+          ),
+        );
+        expect(access.lastL10n, l10n);
+
+        viewModel.dispose();
+        access.dispose();
       },
     );
   });

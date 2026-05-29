@@ -60,11 +60,31 @@ final class _AppReminderRuntime {
   }
 }
 
+enum AppReminderTriggerReason { startup, settings }
+
+final class AppReminderTrigger {
+  final AppReminderTriggerReason reason;
+  final AppReminderConfig? nextReminder;
+
+  const AppReminderTrigger._({required this.reason, this.nextReminder});
+
+  const AppReminderTrigger.startup()
+    : this._(reason: AppReminderTriggerReason.startup);
+
+  const AppReminderTrigger.settings(AppReminderConfig nextReminder)
+    : this._(
+        reason: AppReminderTriggerReason.settings,
+        nextReminder: nextReminder,
+      );
+}
+
 abstract interface class AppReminderAccess implements Listenable {
   AppReminderConfig get reminder;
 
-  Future<void> updateReminder(AppReminderConfig newReminder, {L10n? l10n});
+  Future<void> processReminderTrigger(AppReminderTrigger trigger, {L10n? l10n});
 
+  // Keep L10n as a boundary input here until a real blocker proves reminder
+  // content building must split from execution.
   Future<bool> processAppReminder(L10n? l10n);
 }
 
@@ -89,7 +109,19 @@ final class AppReminderOwner extends ChangeNotifier
   AppReminderConfig get reminder => _rmd?.get() ?? defaultAppReminder;
 
   @override
-  Future<void> updateReminder(
+  Future<void> processReminderTrigger(
+    AppReminderTrigger trigger, {
+    L10n? l10n,
+  }) async {
+    switch (trigger.reason) {
+      case AppReminderTriggerReason.startup:
+        await processAppReminder(l10n);
+      case AppReminderTriggerReason.settings:
+        await _updateReminder(trigger.nextReminder!, l10n: l10n);
+    }
+  }
+
+  Future<void> _updateReminder(
     AppReminderConfig newReminder, {
     L10n? l10n,
   }) async {
@@ -158,8 +190,8 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: false,
         ex: [l10n],
       );
-      await _access?.updateReminder(
-        reminder.copyWith(enabled: false),
+      await _access?.processReminderTrigger(
+        AppReminderTrigger.settings(reminder.copyWith(enabled: false)),
         l10n: l10n,
       );
     }
@@ -174,8 +206,8 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: true,
         ex: [l10n],
       );
-      await _access?.updateReminder(
-        reminder.copyWith(enabled: true),
+      await _access?.processReminderTrigger(
+        AppReminderTrigger.settings(reminder.copyWith(enabled: true)),
         l10n: l10n,
       );
     }
@@ -194,7 +226,10 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: newReminder,
         ex: [timeOfDay, l10n],
       );
-      await _access?.updateReminder(newReminder, l10n: l10n);
+      await _access?.processReminderTrigger(
+        AppReminderTrigger.settings(newReminder),
+        l10n: l10n,
+      );
     }
   }
 }

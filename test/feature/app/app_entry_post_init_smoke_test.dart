@@ -71,8 +71,18 @@ final class _TrackingAppDebuggerViewModel extends AppDebuggerViewModel {
 
 final class _TrackingAppReminderAccess extends ChangeNotifier
     implements AppReminderAccess {
+  final triggers = <AppReminderTrigger>[];
   int processCallCount = 0;
   L10n? lastL10n;
+
+  @override
+  Future<void> processReminderTrigger(
+    AppReminderTrigger trigger, {
+    L10n? l10n,
+  }) async {
+    triggers.add(trigger);
+    lastL10n = l10n;
+  }
 
   @override
   AppReminderConfig get reminder => AppReminderConfig.off;
@@ -82,11 +92,6 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
     processCallCount++;
     lastL10n = l10n;
     return true;
-  }
-
-  @override
-  Future<void> updateReminder(AppReminderConfig newReminder, {L10n? l10n}) {
-    return Future.value();
   }
 }
 
@@ -202,7 +207,10 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(debugger.processCallCount, 1);
-      expect(reminder.processCallCount, 1);
+      expect(reminder.triggers, hasLength(1));
+      expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
+      expect(reminder.triggers.single.nextReminder, isNull);
+      expect(reminder.processCallCount, 0);
       expect(debugger.lastL10n, isNotNull);
       expect(reminder.lastL10n, isNotNull);
       expect(appSync.lastL10n, isNotNull);
@@ -215,7 +223,10 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(debugger.processCallCount, 1);
-      expect(reminder.processCallCount, 1);
+      expect(reminder.triggers, hasLength(1));
+      expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
+      expect(reminder.triggers.single.nextReminder, isNull);
+      expect(reminder.processCallCount, 0);
       expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
     },
   );
