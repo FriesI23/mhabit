@@ -61,6 +61,7 @@ runs:
         echo storeFile=key.jks >> ${{ inputs.properties-path }}
         echo "${{ inputs.app-sign-key-jks }}" | base64 --decode > android/app/key.jks
       shell: bash
+    - uses: ./.github/actions/patch_android_jni_build_id
     - name: Build APPBUNDLE
       id: build-abb
       if: ${{ inputs.build-bundle == 'true' }}

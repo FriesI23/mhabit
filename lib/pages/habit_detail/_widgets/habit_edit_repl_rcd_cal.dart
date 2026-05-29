@@ -27,13 +27,13 @@ import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_summary.dart';
-import '../../../providers/app_custom_date_format.dart';
-import '../../../providers/app_event.dart';
-import '../../../providers/app_sync.dart';
-import '../../../providers/habit_detail.dart';
+import '../../../providers/app_ui/app_custom_date_format.dart';
+import '../../../providers/workflow/app_event.dart';
+import '../../../providers/workflow/app_sync.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 import '../../common/widgets.dart';
+import '../_providers/habit_detail.dart';
 import 'habit_heatmap.dart';
 
 Future<void> showHabitEditReplacementRecordCalendarDialog({
@@ -104,12 +104,11 @@ class _HabitEditReplacementRecordCalendarDialog
     if (!mounted) return;
     // try sync once
     if (shouldSyncOnce) {
-      final sync = context.maybeRead<AppSyncViewModel>();
-      if (sync != null && sync.mounted) sync.delayedStartTaskOnce();
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
     final habitUUID = _vm.habitUUID;
     if (habitUUID != null) {
-      context.read<AppEventViewModel>().push(
+      context.read<AppEventBus>().push(
         HabitRecordsChangedEvents(
           msg: "habit_detail.calendar._onRecordChangeConfirmed",
           uuidList: [habitUUID],

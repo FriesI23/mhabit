@@ -24,8 +24,8 @@ import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/app_theme_color.dart';
 import '../../../models/habit_form.dart';
-import '../../../providers/app_developer.dart';
-import '../../../providers/app_theme.dart';
+import '../../../providers/app_ui/app_developer.dart';
+import '../../../providers/app_ui/app_theme.dart';
 import '../../../theme/color.dart';
 
 Future<AppThemeColor?> showAppThemeColorChangerDialog({

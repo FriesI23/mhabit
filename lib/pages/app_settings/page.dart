@@ -31,20 +31,20 @@ import '../../logging/logger_stack.dart';
 import '../../models/app_event.dart';
 import '../../models/app_reminder_config.dart';
 import '../../models/custom_date_format.dart';
-import '../../providers/app_caches.dart';
-import '../../providers/app_compact_ui_switcher.dart';
-import '../../providers/app_custom_date_format.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_first_day.dart';
-import '../../providers/app_language.dart';
-import '../../providers/app_reminder.dart';
-import '../../providers/app_theme.dart';
-import '../../providers/habit_op_config.dart';
-import '../../providers/habits_file_exporter.dart';
-import '../../providers/habits_file_importer.dart';
-import '../../providers/habits_record_scroll_behavior.dart';
-import '../../reminders/notification_service.dart';
+import '../../providers/app_ui/app_caches.dart';
+import '../../providers/app_ui/app_compact_ui_switcher.dart';
+import '../../providers/app_ui/app_custom_date_format.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/app_ui/app_language.dart';
+import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/habit_op_config.dart';
+import '../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_reminder.dart';
+import '../../providers/workflow/app_settings.dart';
+import '../../providers/workflow/habits_file_exporter.dart';
+import '../../providers/workflow/habits_file_importer.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
 import '../../utils/app_path_provider.dart';
@@ -56,6 +56,7 @@ import '../app_debugger/page.dart' as app_debugger;
 import '../app_sync/page.dart' as app_sync;
 import '../common/widgets.dart';
 import '../expermental_features/page.dart' as exp_feature;
+import 'providers.dart';
 import 'widgets.dart';
 
 Future<void> naviToAppSettingPage({required BuildContext context}) async {
@@ -65,6 +66,9 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 }
 
 /// Depend Providers
+/// - Required for page providers:
+///   - [ProfileViewModel]
+///   - [DBHelperViewModel]
 /// - Required for builder:
 ///   - [AppCustomDateYmdHmsConfigViewModel]
 ///   - [AppFirstDayViewModel]
@@ -75,14 +79,14 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 ///   - [AppLanguageViewModel]
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
-///   - [HabitFileImporterViewModel]
-///   - [ProfileViewModel]
+///   - [HabitFileImportRunner]
+///   - [AppSettingsAccess]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _Page();
+    return const PageProviders(child: _Page());
   }
 }
 
@@ -228,7 +232,7 @@ class _PageState extends State<_Page> with XShare {
 
     if (!context.mounted || confirmResult == null) return;
     final filePath = await context
-        .read<HabitFileExporterViewModel>()
+        .read<HabitFileExportRunner>()
         .exportAllHabitsData(
           withRecords: confirmResult == ExporterConfirmResultType.withRecords,
         );
@@ -289,13 +293,13 @@ class _PageState extends State<_Page> with XShare {
     final Map<String, Object?> jsonData = jsonDecode(rawJsonData);
     final habitsData = jsonData["habits"] as Iterable<Object?>? ?? const [];
 
-    final fileImporter = context.read<HabitFileImporterViewModel>();
+    final fileImporter = context.read<HabitFileImportRunner>();
     final habitCount = fileImporter.importHabitsDataDryRun(habitsData);
     showAppSettingImportHabitsConfirmDialog(
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
-      importer: context.read<HabitFileImporterViewModel>(),
+      importer: context.read<HabitFileImportRunner>(),
     );
   }
 
@@ -329,13 +333,7 @@ class _PageState extends State<_Page> with XShare {
     );
 
     if (!mounted || result == null || !result) return;
-    await Future.wait([
-      context.read<ProfileViewModel>().clear(),
-      NotificationService().cancelAppReminder(),
-    ]);
-
-    if (!mounted) return;
-    await context.read<ProfileViewModel>().reload();
+    await context.read<AppSettingsAccess>().resetConfigs();
 
     if (!mounted) return;
     final snackBar = buildSnackBarWithDismiss(
@@ -379,7 +377,7 @@ class _PageState extends State<_Page> with XShare {
         break;
       case AppSettingConfirmClearDBOp.confirmWithExport:
         final filePath = await context
-            .read<HabitFileExporterViewModel>()
+            .read<HabitFileExportRunner>()
             .exportAllHabitsData();
         final dbPath = path.join(
           await AppPathProvider().getDatabaseDirPath(),
@@ -408,8 +406,7 @@ class _PageState extends State<_Page> with XShare {
         return;
     }
 
-    await context.read<DBHelperViewModel>().reload();
-    await NotificationService().cancelAllHabitReminders();
+    await context.read<AppSettingsAccess>().clearDatabase();
     if (!context.mounted) return;
     final snackBar = buildSnackBarWithDismiss(
       context,
@@ -417,7 +414,7 @@ class _PageState extends State<_Page> with XShare {
     );
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
-    context.read<AppEventViewModel>().push(
+    context.read<AppEventBus>().push(
       const ReloadDataEvent(
         msg: "app_settings._onClearDBTilePressed",
         trace: {

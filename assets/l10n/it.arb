@@ -358,6 +358,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "data",
     "habitDetail_editHeatmapCal_valueButtonText": "valore",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "torna ad oggi",
+    "common_loadError_retryText": "Prova ancora",
     "habitDetail_notFoundText": "Caricamento abitudini fallito",
     "habitDetail_notFoundRetryText": "Prova ancora",
     "habitDetail_changeGoal_title": "Cambia obiettivo",

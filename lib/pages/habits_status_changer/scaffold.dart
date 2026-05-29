@@ -115,7 +115,7 @@ class _MainSection extends StatelessWidget {
             const SliverPinnedHeader(child: Divider(height: 1)),
             habitsContent!,
           ].nonNulls,
-        if (debugContent != null) debugContent!,
+        ?debugContent,
       ],
     );
   }
@@ -137,7 +137,7 @@ class _DescSection extends StatelessWidget {
     return SafeArea(
       child: CustomScrollView(
         controller: controller,
-        slivers: [if (habitTitle != null) habitTitle!, habitsContent],
+        slivers: [?habitTitle, habitsContent],
       ),
     );
   }

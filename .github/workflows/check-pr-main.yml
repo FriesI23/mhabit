@@ -36,30 +36,34 @@ jobs:
       common-changed: ${{ steps.filter.outputs.common }}
       android-changed: ${{ steps.filter.outputs.android }}
       ios-changed: ${{ steps.filter.outputs.ios }}
+      linux-changed: ${{ steps.filter.outputs.linux }}
       macos-changed: ${{ steps.filter.outputs.macos }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Filter paths
         id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             common:
               - 'pubspec.yaml'
               - 'pubspec.lock'
+              - 'packages/**'
               - 'lib/**'
               - 'assets/**'
             android:
               - 'android/**'
             ios:
               - 'ios/**'
+            linux:
+              - 'linux/**'
             macos:
               - 'macos/**'
       - id: date
         run: echo "now=$(date)" >> $GITHUB_OUTPUT
       - name: Comment on PR
         id: pr
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -77,9 +81,10 @@ jobs:
       needs.test-build-filter.outputs.common-changed == 'true' ||
       needs.test-build-filter.outputs.android-changed == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
+      - uses: ./.github/actions/patch_android_jni_build_id
       - id: build
         env:
           OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
@@ -89,7 +94,7 @@ jobs:
           echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
       - id: upload
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release.apk
           path: ${{ steps.build.outputs.path }}
@@ -97,7 +102,7 @@ jobs:
           retention-days: 1
       - name: Comment on PR
         if: always()
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -118,13 +123,13 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ^26
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_ios_unsigned
       - id: upload
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release.ipa
           path: ${{ steps.build.outputs.ipa-path }}
@@ -132,13 +137,45 @@ jobs:
           retention-days: 1
       - name: Comment on PR
         if: always()
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
           body: >
             ${{ job.status == 'success' && '✅ iOS Build Completed:' || '❌ iOS Build Failed' }}
+            ${{ steps.upload.outputs.artifact-url || '' }}
+
+  build-linux:
+    needs:
+      - test-build-filter
+    runs-on: ubuntu-latest
+    environment: check-ci
+    if: >
+      needs.test-build-filter.outputs.common-changed == 'true' ||
+      needs.test-build-filter.outputs.linux-changed == 'true'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_linux
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-bundle-x64
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.PR_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ needs.test-build-filter.outputs.commit-id }}
+          body: >
+            ${{ job.status == 'success' && '✅ Linux Build Completed:' || '❌ Linux Build Failed' }}
             ${{ steps.upload.outputs.artifact-url || '' }}
 
   build-macos:
@@ -153,7 +190,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ^26
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_macos
@@ -168,7 +205,7 @@ jobs:
           package-dmg: false
       - id: upload
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release.app
           path: ${{ steps.build.outputs.path }}
@@ -176,7 +213,7 @@ jobs:
           retention-days: 1
       - name: Comment on PR
         if: always()
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -190,6 +227,7 @@ jobs:
       - test-build-filter
       - build-android
       - build-ios
+      - build-linux
       - build-macos
     if: >
       always() &&
@@ -201,7 +239,7 @@ jobs:
       - id: date
         run: echo "now=$(date)" >> $GITHUB_OUTPUT
       - name: Comment on PR
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.PR_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}

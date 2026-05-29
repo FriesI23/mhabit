@@ -19,7 +19,7 @@ import 'package:flutter/foundation.dart';
 
 import '../common/async.dart';
 import '../logging/helper.dart';
-import '../providers/commons.dart';
+import '../providers/support/commons.dart';
 import 'db/db_helper.dart';
 import 'db/handlers/habit.dart';
 import 'db/handlers/record.dart';

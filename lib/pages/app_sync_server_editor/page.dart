@@ -21,10 +21,10 @@ import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../models/app_sync_server.dart';
 import '../../models/app_sync_server_form.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../widgets/widgets.dart';
+import '_providers/app_sync_server_form.dart';
 import 'widgets.dart';
 
 enum AppSyncServerEditorResultOp { update, delete }
@@ -51,12 +51,16 @@ Future<AppSyncServerEditorResult?> naviToAppSyncServerEditorDialog({
   AppSyncServer? serverConfig,
   bool? naviWithFullscreenDialog,
 }) async {
+  final appSync = context.read<AppSyncSettingsAccess>();
   return showDialog<AppSyncServerEditorResult>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => AppSyncServerEditorPage(
-      serverConfig: serverConfig,
-      showInFullscreenDialog: naviWithFullscreenDialog,
+    builder: (context) => ListenableProvider<AppSyncSettingsAccess>.value(
+      value: appSync,
+      child: AppSyncServerEditorPage(
+        serverConfig: serverConfig,
+        showInFullscreenDialog: naviWithFullscreenDialog,
+      ),
     ),
   );
 }
@@ -343,7 +347,7 @@ class _PageDialog extends StatelessWidget {
     constraints: const BoxConstraints.expand(width: dialogMaxWidth),
     child: AlertDialog(
       scrollable: true,
-      title: Selector<AppSyncViewModel, bool>(
+      title: Selector<AppSyncServerFormViewModel, bool>(
         selector: (context, vm) => vm.serverConfig != null,
         builder: (context, value, child) {
           final l10n = L10n.of(context);

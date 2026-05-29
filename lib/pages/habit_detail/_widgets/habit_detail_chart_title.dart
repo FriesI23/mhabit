@@ -32,7 +32,7 @@ class HabitDetailChartTitle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: textTheme.bodyLarge),
-        if (rightChild != null) rightChild!,
+        ?rightChild,
       ],
     );
   }

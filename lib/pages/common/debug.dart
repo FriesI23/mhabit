@@ -22,10 +22,11 @@ import '../../common/consts.dart';
 import '../../common/debug.dart';
 import '../../common/utils.dart';
 import '../../models/habit_date.dart';
+import '../../models/habit_export.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_freq.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../storage/db/handlers/habit.dart';
-import '../../storage/db_helper_provider.dart';
 import '../../utils/app_clock.dart';
 
 const _defaultSliverScrollChildCount = 10;
@@ -47,13 +48,11 @@ mixin HabitsDisplayViewDebug {
     BuildContext context, {
     int count = 10,
   }) async {
-    final dbHelper = context.read<DBHelperViewModel>();
-    if (!dbHelper.mounted) return;
-
-    final tasks = <Future>[];
+    final access = context.read<HabitImportAccess>();
     final now = AppClock().now().millisecondsSinceEpoch ~/ onSecondMS;
     final rnd = Random();
     final freq = HabitFrequency.custom().toJson();
+    final habits = <Object?>[];
     for (var i = 0; i < count; i++) {
       final uuid = genHabitUUID();
       final meta = debugGetRandomHabitMeta(rnd);
@@ -79,9 +78,9 @@ mixin HabitsDisplayViewDebug {
         modifyT: now,
       );
 
-      tasks.add(HabitDBHelper(dbHelper.local).insertNewHabit(dbCell));
+      habits.add(HabitExportData.fromHabitDBCell(dbCell).toJson());
     }
 
-    await Future.wait(tasks);
+    await Future.wait(access.importHabitsData(habits, withRecords: false));
   }
 }

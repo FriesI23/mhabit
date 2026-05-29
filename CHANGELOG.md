@@ -2,6 +2,34 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.3+157-pre
+
+- Refactor provider architecture and page wiring, and add shared page load/error retry handling with related localization updates and expanded tests (#563)
+- Fix duplicate habit detail refresh when returning with Android predictive back (#565)
+
+## 1.24.2+156
+
+- Maintenance release to resolve a build issue affecting F-Droid distribution (#543, #544)
+- No user-facing changes in this version
+
+## 1.24.1+154
+
+- Add Basque; update Arabic, French, Hebrew, Turkish, and Traditional Chinese translations plus locale metadata and contributors (#523, #529)
+- Update store metadata, summary text, install wording, brand colors, and f_store registration asset (#519, #525, #529, #534)
+- Upgrade to Flutter 3.41.9 and refresh deps, generated files, lockfiles, release checks, and runtime integration (#540)
+- Fix App Sync iter type handling and theme colors (#540)
+- Update README and the builder wiki (#525, #540)
+
+## 1.24.0+153-pre
+
+- Upgrade Flutter to 3.41.9 and migrate required framework breaking changes
+- Update package dependencies, generated files, and Fastlane lockfiles
+- Update GitHub Actions/CI runtimes and add a Linux build check
+- Update iOS lifecycle integration and desktop native asset handling for newer toolchains
+- Fix App Sync server iter type handling
+- Fix theme colors
+- Update the source builder wiki
+
 ## 1.23.12+152-pre
 
 - Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)

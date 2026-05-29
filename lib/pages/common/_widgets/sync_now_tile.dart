@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_tasks.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 import '../../../widgets/styles.dart';
 import 'sync_loading_indicator.dart';
 
@@ -32,26 +32,24 @@ class AppSyncNowTile extends StatefulWidget {
 
 class _AppSyncNowTile extends State<AppSyncNowTile> {
   void _onCancelButtonPressed() {
-    final vm = context.read<AppSyncViewModel>();
-    if (!vm.mounted) return;
-    vm.appSyncTask.cancelSync();
+    context.read<AppSyncTriggerAccess>().cancelSync();
   }
 
   void _onStartButtonPressed() {
-    final vm = context.read<AppSyncViewModel>();
-    if (!vm.mounted) return;
-    vm.startSync(initWait: kAppSyncDelayDuration1);
+    context.read<AppSyncTriggerAccess>().startSync(
+      initWait: kAppSyncDelayDuration1,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final enabled = context.select<AppSyncViewModel, bool>(
-      (vm) => vm.enabled && vm.serverConfig != null,
+    final enabled = context.select<AppSyncTriggerAccess, bool>(
+      (vm) => vm.canStartSync,
     );
 
     Widget buildTitle(BuildContext context) =>
-        Selector<AppSyncViewModel, bool?>(
-          selector: (context, vm) => vm.appSyncTask.task?.task.isProcessing,
+        Selector<AppSyncStatusSource, bool?>(
+          selector: (context, vm) => vm.syncStatus?.isProcessing,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) {
             final l10n = L10n.of(context);
@@ -63,15 +61,12 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
 
     Widget buildSubtitle(
       BuildContext context,
-    ) => Selector<AppSyncViewModel, (AppSyncTaskStatus?, bool)>(
-      selector: (context, vm) => (
-        vm.appSyncTask.task?.task.status,
-        vm.appSyncTask.task?.result != null,
-      ),
+    ) => Selector<AppSyncStatusSource, AppSyncStatusSnapshot?>(
+      selector: (context, vm) => vm.syncStatus,
       shouldRebuild: (previous, next) => previous != next,
-      builder: (context, _, child) {
+      builder: (context, value, child) {
         final l10n = L10n.of(context);
-        final lastSyncTask = context.read<AppSyncViewModel>().appSyncTask.task;
+        final lastSyncTask = value;
 
         final lastEndedTime = lastSyncTask?.endedTime;
         final lastEndedTimeStr = lastEndedTime != null
@@ -90,7 +85,7 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
         if (lastSyncTask == null) return buildLastSyncText();
-        switch (lastSyncTask.task.status) {
+        switch (lastSyncTask.status) {
           case AppSyncTaskStatus.idle:
           case AppSyncTaskStatus.completed:
             if (lastSyncTask.result?.isSuccessed != true) {
@@ -104,16 +99,14 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
             }
             return buildLastSyncText();
           case AppSyncTaskStatus.running:
-            return Selector<AppSyncViewModel, num?>(
-              selector: (context, vm) => vm.appSyncTask.task?.percentage,
-              builder: (context, value, child) => value != null
-                  ? Text(
-                      l10n != null
-                          ? l10n.appSync_nowTile_syncingText_withPrt(value)
-                          : "Syncing: ${(value * 100).toStringAsFixed(2)}%",
-                    )
-                  : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing..."),
-            );
+            final percentage = lastSyncTask.percentage;
+            return percentage != null
+                ? Text(
+                    l10n != null
+                        ? l10n.appSync_nowTile_syncingText_withPrt(percentage)
+                        : "Syncing: ${(percentage * 100).toStringAsFixed(2)}%",
+                  )
+                : Text(l10n?.appSync_nowTile_syncingText ?? "Syncing...");
           case AppSyncTaskStatus.cancelling:
             return Text(l10n?.appSync_nowTile_cancellingText ?? "Canceling...");
           case AppSyncTaskStatus.cancelled:
@@ -129,8 +122,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
     );
 
     Widget buildTrailing(BuildContext context) =>
-        Selector<AppSyncViewModel, AppSyncTaskStatus?>(
-          selector: (context, vm) => vm.appSyncTask.task?.task.status,
+        Selector<AppSyncStatusSource, AppSyncTaskStatus?>(
+          selector: (context, vm) => vm.syncStatus?.status,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -153,9 +146,8 @@ class _AppSyncNowTile extends State<AppSyncNowTile> {
         );
 
     Widget buildIndicator(BuildContext context) =>
-        Selector<AppSyncViewModel, bool>(
-          selector: (context, vm) =>
-              vm.appSyncTask.task?.task.isProcessing ?? false,
+        Selector<AppSyncStatusSource, bool>(
+          selector: (context, vm) => vm.syncStatus?.isProcessing ?? false,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, value, child) => AnimatedOpacity(
             opacity: value ? 1.0 : 0.0,

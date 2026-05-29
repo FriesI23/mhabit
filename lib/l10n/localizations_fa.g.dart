@@ -645,6 +645,12 @@ class L10nFa extends L10n {
       'بازگشت به امروز';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'تلاش مجدد';
+
+  @override
   String get habitDetail_notFoundText => 'بارگذاری عادت ناموفق بود';
 
   @override

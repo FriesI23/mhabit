@@ -27,7 +27,7 @@ abstract class _$AppWebDavSyncServerCWProxy {
     int? connectRetryCount,
     Duration? connectTimeout,
     bool configed,
-    Iterable<AppSyncServerMobileNetwork> syncMobileNetworks,
+    List<AppSyncServerMobileNetwork> syncMobileNetworks,
     bool syncInLowData,
     bool ignoreSSL,
   });
@@ -111,7 +111,7 @@ class _$AppWebDavSyncServerCWProxyImpl implements _$AppWebDavSyncServerCWProxy {
               syncMobileNetworks == null
           ? _value.syncMobileNetworks
           // ignore: cast_nullable_to_non_nullable
-          : syncMobileNetworks as Iterable<AppSyncServerMobileNetwork>,
+          : syncMobileNetworks as List<AppSyncServerMobileNetwork>,
       syncInLowData:
           syncInLowData == const $CopyWithPlaceholder() || syncInLowData == null
           ? _value.syncInLowData
@@ -260,11 +260,11 @@ Map<String, dynamic> _$AppWebDavSyncServerToJson(
   'password': instance.password,
   'ignoreSSL': instance.ignoreSSL,
   'syncInLowData': instance.syncInLowData,
-  'connectRetryCount': instance.connectRetryCount,
-  'connectTimeout': instance.connectTimeout?.inMicroseconds,
   'syncMobileNetworks': instance.syncMobileNetworks
       .map((e) => _$AppSyncServerMobileNetworkEnumMap[e]!)
       .toList(),
+  'connectRetryCount': instance.connectRetryCount,
+  'connectTimeout': instance.connectTimeout?.inMicroseconds,
 };
 
 const _$AppSyncServerMobileNetworkEnumMap = {

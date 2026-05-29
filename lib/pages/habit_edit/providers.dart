@@ -17,9 +17,9 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/habit_form.dart';
-import '../../providers/habit_form.dart';
-import '../../providers/habits_manager.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
+import '_providers/habit_form.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final HabitForm? initForm;
@@ -32,9 +32,8 @@ class PageProviders extends SingleChildStatelessWidget {
       ChangeNotifierProvider(
         create: (context) => HabitFormViewModel(initForm: initForm),
       ),
-      ViewModelProxyProvider<HabitsManager, HabitFormViewModel>(
-        update: (context, value, previous) =>
-            previous..updateHabitManager(value),
+      ViewModelProxyProvider<HabitFormAccess, HabitFormViewModel>(
+        update: (context, value, previous) => previous..attachAccess(value),
       ),
     ],
     child: child,

@@ -1,0 +1,8 @@
+builders:
+  proxy_generator:
+    import: "package:mhabit_proxy_builder/proxy_generator.dart"
+    builder_factories: ["proxyGenerator"]
+    build_extensions: { ".dart": ["proxy_generator.g.part"] }
+    auto_apply: none
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

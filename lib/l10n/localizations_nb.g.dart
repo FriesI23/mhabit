@@ -642,6 +642,12 @@ class L10nNb extends L10n {
       'back to today';
 
   @override
+  String get common_loadError_text => 'Failed to load';
+
+  @override
+  String get common_loadError_retryText => 'Try again';
+
+  @override
   String get habitDetail_notFoundText => 'Load habit failed';
 
   @override

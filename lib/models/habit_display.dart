@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:collection';
-
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -222,16 +220,14 @@ class HabitDisplaySearchOptions {
   final String keyword;
   final bool activated;
   final bool completed;
-  final Set<HabitType> _types;
-
-  Set<HabitType> get types => UnmodifiableSetView(_types);
+  final Set<HabitType> types;
 
   const HabitDisplaySearchOptions({
     this.keyword = "",
     this.activated = false,
     this.completed = false,
-    Set<HabitType> types = const {},
-  }) : _types = types;
+    this.types = const {},
+  });
 
   const HabitDisplaySearchOptions.empty() : this();
 

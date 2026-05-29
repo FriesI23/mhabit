@@ -29,18 +29,18 @@ import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_freq.dart';
 import '../../models/habit_reminder.dart';
-import '../../providers/app_caches.dart';
-import '../../providers/app_developer.dart';
-import '../../providers/app_event.dart';
-import '../../providers/app_first_day.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/habit_form.dart';
+import '../../providers/app_ui/app_caches.dart';
+import '../../providers/app_ui/app_developer.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
-import '../../reminders/notification_service.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
 import '../common/debug.dart';
 import '../common/widgets.dart';
+import '_providers/habit_form.dart';
 import 'widgets.dart';
 
 Future<HabitDBCell?> naviToHabitEidtPage({
@@ -212,7 +212,7 @@ class _PageState extends State<_Page> {
     BuildContext context,
     HabitReminder? reminder,
   ) async {
-    await NotificationService().requestPermissions();
+    await context.read<HabitFormAccess>().requestReminderPermissions();
     if (!context.mounted) return;
     final result = await showTimePicker(
       context: context,
@@ -268,7 +268,7 @@ class _PageState extends State<_Page> {
     if (!mounted) return;
     if (mounted && result != null) {
       // fire event
-      context.read<AppEventViewModel>().push(switch (formvm.editMode) {
+      context.read<AppEventBus>().push(switch (formvm.editMode) {
         HabitDisplayEditMode.create => const ReloadDataEvent(
           msg: "habit_edit._onSaveButtonPressed.create",
           trace: {
@@ -283,8 +283,7 @@ class _PageState extends State<_Page> {
         ),
       });
       // try sync once
-      final appSync = context.maybeRead<AppSyncViewModel>();
-      if (appSync != null && appSync.mounted) appSync.delayedStartTaskOnce();
+      context.maybeRead<AppSyncTriggerAccess>()?.delayedStartTaskOnce();
     }
     // pop result
     Navigator.of(context).maybePop(result);

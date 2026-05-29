@@ -1,19 +1,10 @@
-# Pre-Released: v1.23.12+152
+# Release: v1.24.3+157-pre
 
-**🌐 Localization**
-- Add Basque translation resources and locale metadata, thanks to Txopi's contribution on GitHub (#523, #529)
-- Update Arabic translation, thanks to abdelbasset jabrane's contribution on Weblate (#529)
-- Update French translation, thanks to biram's contribution on Weblate (#529)
-- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#529)
-- Update Turkish translation, thanks to Soykan Aydın's contribution on Weblate (#529)
-- Update Traditional Chinese translation, thanks to William's contribution on Weblate (#529)
-- Update Android, iOS, macOS, and Windows localization metadata (#529)
+## 🧹 Others
 
-**🧹 Others**
-- Update contributors (#529)
-- Add the Android ADI registration asset for the f_store flavor
-- Update Flathub metainfo brand colors and summary (#534)
+- Refactor provider/runtime architecture and page wiring (#563).
+- Added shared load error and retry handling across pages, plus related localization updates and expanded test coverage (#563).
+- Fixed duplicate habit detail refresh when returning with Android predictive back (#565).
+- Added VS Code workspace and launch configurations for local development workflows (#550).
 
-**📝 Documentation**
-- Update README grammar (#525)
-- Update wording in the installation guide (#519)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.2+156...pre-v1.24.3+157)

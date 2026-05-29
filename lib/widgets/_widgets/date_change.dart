@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 
 import '../../logging/helper.dart';
 import '../../models/habit_date.dart';
-import '../../providers/commons.dart';
+import '../../providers/support/commons.dart';
 import '../../utils/app_clock.dart';
 import '../../utils/local_timezone.dart';
 

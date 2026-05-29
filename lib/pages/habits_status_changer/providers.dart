@@ -17,10 +17,10 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/types.dart';
-import '../../providers/app_first_day.dart';
-import '../../providers/habit_status_changer.dart';
-import '../../providers/habits_manager.dart';
+import '../../providers/app_ui/app_first_day.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
+import '_providers/habit_status_changer.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final List<HabitUUID> uuidList;
@@ -33,10 +33,10 @@ class PageProviders extends SingleChildStatelessWidget {
       ChangeNotifierProvider<HabitStatusChangerViewModel>(
         create: (context) => HabitStatusChangerViewModel(uuidList: uuidList),
       ),
-      ViewModelProxyProvider<HabitsManager, HabitStatusChangerViewModel>(
-        update: (context, value, previous) =>
-            previous..updateHabitManager(value),
-      ),
+      ViewModelProxyProvider<
+        HabitStatusChangerAccess,
+        HabitStatusChangerViewModel
+      >(update: (context, value, previous) => previous..attachAccess(value)),
       ViewModelProxyProvider<AppFirstDayViewModel, HabitStatusChangerViewModel>(
         update: (context, value, previous) =>
             previous..updateFirstday(value.firstDay),

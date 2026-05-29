@@ -14,6 +14,8 @@
 
 import 'dart:math' as math;
 
+import '../models/habit_summary.dart';
+
 extension SortPostionRankExtension on Iterable<num> {
   List<num> makeUniqueAndIncreasing(
     num increment, {
@@ -48,5 +50,15 @@ extension SortPostionRankExtension on Iterable<num> {
     }
 
     return result;
+  }
+}
+
+extension HabitSummaryDataIterableExtension on Iterable<HabitSummaryData> {
+  List<HabitSortCache<dynamic>> toHabitSummarySortCacheList({
+    bool growable = true,
+  }) {
+    return map(
+      (e) => HabitSummaryDataSortCache(data: e),
+    ).toList(growable: growable);
   }
 }

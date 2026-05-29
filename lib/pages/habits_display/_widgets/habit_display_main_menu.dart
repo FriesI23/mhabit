@@ -17,9 +17,9 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
-import '../../../providers/app_theme.dart';
-import '../../../providers/habits_filter.dart';
-import '../../../providers/habits_sort.dart';
+import '../../../providers/app_ui/app_theme.dart';
+import '../../../providers/app_ui/habits_filter.dart';
+import '../../../providers/app_ui/habits_sort.dart';
 import '../../../theme/color.dart';
 import '../../../theme/icon.dart';
 

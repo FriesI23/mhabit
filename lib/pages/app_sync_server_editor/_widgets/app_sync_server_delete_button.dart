@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../providers/app_sync.dart';
 import '../../../widgets/widgets.dart';
+import '../_providers/app_sync_server_form.dart';
 
 enum AppSyncServerDeleteButtonStyle { normal, fullsreen }
 
@@ -101,7 +101,7 @@ class AppSyncServerDeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canDelete = context.select<AppSyncViewModel, bool>(
+    final canDelete = context.select<AppSyncServerFormViewModel, bool>(
       (vm) => vm.serverConfig != null,
     );
     return Visibility(

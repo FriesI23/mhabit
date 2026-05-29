@@ -23,6 +23,11 @@ migrate_working_dir/
 # is commented out by default.
 /.vscode/*
 !/.vscode/extensions.json
+!/.vscode/settings.json
+!/.vscode/launch.json
+!/.vscode/tasks.json
+!/.vscode/search/
+!/.vscode/search/*.code-search
 /*.code-workspace
 
 # Flutter/Dart/Pub related

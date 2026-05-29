@@ -92,7 +92,7 @@ Build outputs located at:
 
    ```shell
    sudo apt-get -y install \
-      libsqlite3-0 libsqlite3-dev \
+      lld-14 libsqlite3-0 libsqlite3-dev \
       libsecret-1-dev libjsoncpp-dev
    ```
 
@@ -181,8 +181,8 @@ Following flavors are allowed:
 
 [sqflite-ffi-linux]: https://pub.dev/packages/sqflite_common_ffi#linux
 [fss-linux]: https://pub.dev/packages/flutter_secure_storage#configure-linux-version
-[flutter-linux]: https://docs.flutter.dev/get-started/install/linux/desktop#development-tools
-[flutter-windows]: https://docs.flutter.dev/get-started/install/windows/desktop
+[flutter-linux]: https://docs.flutter.dev/platform-integration/linux/setup
+[flutter-windows]: https://docs.flutter.dev/platform-integration/windows/setup
 
 ---
 

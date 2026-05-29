@@ -1,0 +1,2 @@
+- Refactor provider architecture and page wiring, and add shared page load/error retry handling with related localization updates and expanded tests (#563)
+- Fix duplicate habit detail refresh when returning with Android predictive back (#565)

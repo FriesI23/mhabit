@@ -18,7 +18,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../logging/helper.dart';
-import '../../../providers/habit_status_changer.dart';
+import '../_providers/habit_status_changer.dart';
 
 class RecordStatusChangeTile extends StatefulWidget {
   final RecordStatusChangerStatus? initStatus;
@@ -55,9 +55,7 @@ class _RecordStatusChangeTile extends State<RecordStatusChangeTile> {
     super.didUpdateWidget(oldWdiget);
   }
 
-  Set<RecordStatusChangerStatus> get currentSelection => {
-    if (selectStatus != null) selectStatus!,
-  };
+  Set<RecordStatusChangerStatus> get currentSelection => {?selectStatus};
 
   void _onSelectionChanged(Set<RecordStatusChangerStatus> newSelection) {
     if (currentSelection == newSelection) return;

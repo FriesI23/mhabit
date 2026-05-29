@@ -363,6 +363,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "date",
     "habitDetail_editHeatmapCal_valueButtonText": "valeur",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "revenir à aujourd’hui",
+    "common_loadError_retryText": "Essayez une nouvelle fois",
     "habitDetail_notFoundText": "Échec du chargement de l’habitude",
     "habitDetail_notFoundRetryText": "Essayez une nouvelle fois",
     "habitDetail_changeGoal_title": "Modifier l’objectif",

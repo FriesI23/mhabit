@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../../l10n/localizations.dart';
 import '../../../models/app_sync_server.dart';
-import '../../../providers/app_sync.dart';
+import '../../../providers/workflow/app_sync.dart';
 
 class AppSyncSummaryTile extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -42,7 +42,7 @@ class AppSyncSummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final serverConfig = context.select<AppSyncViewModel, AppSyncServer?>(
+    final serverConfig = context.select<AppSyncSettingsAccess, AppSyncServer?>(
       (vm) => vm.serverConfig,
     );
     final l10n = L10n.of(context);

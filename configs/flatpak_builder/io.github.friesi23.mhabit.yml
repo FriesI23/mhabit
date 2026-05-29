@@ -5,39 +5,40 @@ app-id: io.github.friesi23.mhabit
 runtime: org.freedesktop.Sdk
 # Make sure to keep this version in sync with corresponding release CI
 # e.g. .github/workflows/app-release.yaml#jobs.build-linux-flatpak
-runtime-version: "23.08"
+runtime-version: "25.08"
 sdk: org.freedesktop.Sdk
 command: mhabit
 separate-locales: false
 finish-args:
   - --share=network
   - --share=ipc
+  - --device=dri
   - --socket=fallback-x11
   - --socket=wayland
   - --socket=system-bus
-  - --device=dri
   - --talk-name=org.freedesktop.portal.Desktop
   - --talk-name=org.freedesktop.Notifications
   - --talk-name=org.freedesktop.secrets
 modules:
+  # <2026-05-19> The Freedesktop runtime version 25.08 provides the libsecret module.
   # Required by: flutter_secure_storage
   # https://github.com/flathub/shared-modules/blob/master/libsecret/libsecret.json
-  - name: libsecret
-    buildsystem: meson
-    config-opts:
-      - -Dmanpage=false
-      - -Dvapi=false
-      - -Dgtk_doc=false
-      - -Dintrospection=false
-    cleanup:
-      - /bin
-      - /include
-      - /lib/pkgconfig
-      - /share/man
-    sources:
-      - type: archive
-        url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.6.tar.xz
-        sha256: 747b8c175be108c880d3adfb9c3537ea66e520e4ad2dccf5dce58003aeeca090
+  # - name: libsecret
+  #   buildsystem: meson
+  #   config-opts:
+  #     - -Dmanpage=false
+  #     - -Dvapi=false
+  #     - -Dgtk_doc=false
+  #     - -Dintrospection=false
+  #   cleanup:
+  #     - /bin
+  #     - /include
+  #     - /lib/pkgconfig
+  #     - /share/man
+  #   sources:
+  #     - type: archive
+  #       url: https://download.gnome.org/sources/libsecret/0.21/libsecret-0.21.6.tar.xz
+  #       sha256: 747b8c175be108c880d3adfb9c3537ea66e520e4ad2dccf5dce58003aeeca090
 
   - name: jsoncpp
     buildsystem: meson

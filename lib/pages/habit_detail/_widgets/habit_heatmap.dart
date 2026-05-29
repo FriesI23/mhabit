@@ -21,8 +21,8 @@ import '../../../extensions/color_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail_chart.dart';
-import '../../../providers/habit_detail.dart';
 import '../../../theme/color.dart';
+import '../_providers/habit_detail.dart';
 
 class HabitHeatmap extends StatelessWidget {
   final int firstday;
@@ -155,9 +155,9 @@ class HabitHeatmap extends StatelessWidget {
             flex: 1,
             child: Column(
               children: [
-                if (descDailyGoalWidget != null) descDailyGoalWidget!,
-                if (descTargetDaysWidget != null) descTargetDaysWidget!,
-                if (descRecordsNumWidget != null) descRecordsNumWidget!,
+                ?descDailyGoalWidget,
+                ?descTargetDaysWidget,
+                ?descRecordsNumWidget,
               ],
             ),
           ),

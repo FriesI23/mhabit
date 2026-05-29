@@ -22,7 +22,7 @@ import '../../assets/assets.dart';
 import '../../common/app_info.dart';
 import '../../logging/helper.dart';
 import '../../models/contributor.dart';
-import '../../providers/about_info.dart';
+import '../../providers/support/about_info.dart';
 import '../../widgets/widgets.dart';
 import '../common/widgets.dart';
 import 'widgets.dart';

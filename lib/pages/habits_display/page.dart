@@ -17,13 +17,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../../common/utils.dart';
-import '../../extensions/context_extensions.dart';
 import '../../extensions/navigator_extensions.dart';
 import '../../models/app_entry.dart';
-import '../../providers/habit_summary.dart';
-import '../../storage/profile/handlers/app_launch_entry.dart';
-import '../../storage/profile_provider.dart';
+import '../../providers/app_ui/app_launch_entry.dart';
 import '../../widgets/widgets.dart';
+import '_providers/habit_summary.dart';
 import 'page_habits.dart';
 import 'page_today.dart';
 import 'providers.dart';
@@ -66,10 +64,7 @@ class _PageState extends State<_Page> {
   @override
   void initState() {
     super.initState();
-    final entryPoint = context
-        .maybeRead<ProfileViewModel>()
-        ?.getHandler<AppLaunchEntryProfileHandler>()
-        ?.get();
+    final entryPoint = context.read<AppLaunchEntryViewModel>().launchEntry;
     _currentTabIndex = switch (entryPoint) {
       AppEntrys.habitToday => _PageTabs.today.index,
       _ => 0,
@@ -166,10 +161,9 @@ class _PageState extends State<_Page> {
           _isBottomNavVisible = true;
           final newLaunchEntry = AppEntrys.getFromDBCode(_currentTabIndex + 1);
           if (newLaunchEntry != null) {
-            context
-                .maybeRead<ProfileViewModel>()
-                ?.getHandler<AppLaunchEntryProfileHandler>()
-                ?.set(newLaunchEntry);
+            context.read<AppLaunchEntryViewModel>().setNewLaunchEntry(
+              newLaunchEntry,
+            );
           }
         });
       },

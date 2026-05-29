@@ -19,8 +19,8 @@ import '../../../common/consts.dart';
 import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_form.dart';
-import '../../../providers/habit_summary.dart';
 import '../../../widgets/widgets.dart';
+import '../_providers/habit_summary.dart';
 import '../styles.dart';
 import 'search_filter.dart';
 

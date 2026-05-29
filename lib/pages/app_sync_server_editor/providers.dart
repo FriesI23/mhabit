@@ -17,9 +17,9 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/app_sync_server.dart';
-import '../../providers/app_sync.dart';
-import '../../providers/app_sync_server_form.dart';
+import '../../providers/workflow/app_sync.dart';
 import '../../widgets/provider.dart';
+import '_providers/app_sync_server_form.dart';
 
 class PageProviders extends SingleChildStatelessWidget {
   final AppSyncServer? initServerConfig;
@@ -33,8 +33,8 @@ class PageProviders extends SingleChildStatelessWidget {
         create: (context) =>
             AppSyncServerFormViewModel(initServerConfig: initServerConfig),
       ),
-      ViewModelProxyProvider<AppSyncViewModel, AppSyncServerFormViewModel>(
-        update: (context, value, previous) => previous..attachParent(value),
+      ViewModelProxyProvider<AppSyncSettingsAccess, AppSyncServerFormViewModel>(
+        update: (context, value, previous) => previous..attachSettings(value),
       ),
     ],
     child: child,
