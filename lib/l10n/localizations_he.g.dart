@@ -1356,7 +1356,8 @@ class L10nHe extends L10n {
       'אני מפתח עצמאי. אם אהבת את היישום, אפשר לקנות לי ☕.';
 
   @override
-  String get appAbout_donateTile_ways => '';
+  String get appAbout_donateTile_ways =>
+      '@paypal,@buyMeACoffee,@alipay,@wechatPay,@cryptoCurrencyAll';
 
   @override
   String get donateWay_paypal => 'פייפאל';
