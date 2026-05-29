@@ -31,6 +31,7 @@ import '../../storage/db/handlers/habit.dart';
 import '../../storage/db/handlers/record.dart';
 import '../../storage/db_helper_provider.dart';
 import '../support/commons.dart';
+import 'app_notify_config.dart';
 
 typedef BeforeHabitRecordReminderUpdateCb =
     FutureOr<void> Function(
@@ -81,7 +82,7 @@ abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
 }
 
 abstract interface class HabitFormAccess {
-  Future<bool?> requestReminderPermissions();
+  Future<bool?> requestReminderPermission();
 
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
 
@@ -121,7 +122,7 @@ class _HabitReminderRuntime {
   _HabitReminderRuntime({NotificationService? notificationService})
     : _notificationService = notificationService ?? NotificationService();
 
-  Future<bool?> requestPermissions() =>
+  Future<bool?> requestNotificationPermissions() =>
       _notificationService.requestPermissions();
 
   Future<void> updateHabitReminder(
@@ -170,11 +171,20 @@ class HabitsManager
         HabitExportAccess,
         HabitImportAccess {
   final _HabitReminderRuntime _reminderRuntime;
+  AppNotifyConfigAccess? _notifyConfig;
 
   HabitsManager({NotificationService? notificationService})
     : _reminderRuntime = _HabitReminderRuntime(
         notificationService: notificationService,
       );
+
+  void attachNotifyConfig(AppNotifyConfigAccess access) {
+    _notifyConfig = access;
+  }
+
+  bool get _isReminderChannelEnabled =>
+      _notifyConfig?.isChannelEnabled(NotificationChannelId.habitReminder) ??
+      true;
 
   //#region status
   @override
@@ -319,8 +329,8 @@ class HabitsManager
   }
 
   @override
-  Future<bool?> requestReminderPermissions() =>
-      _reminderRuntime.requestPermissions();
+  Future<bool?> requestReminderPermission() =>
+      _reminderRuntime.requestNotificationPermissions();
 
   @override
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
@@ -460,8 +470,10 @@ class HabitsManager
     return changedUUIDs;
   }
 
-  Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+  Future<void> _updateHabitReminder(HabitSummaryData data) {
+    if (!_isReminderChannelEnabled) return Future.value();
+    return _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+  }
 
   @override
   Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>

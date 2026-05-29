@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import '../../models/app_notify_config.dart';
+import '../../reminders/notification_channel.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_provider.dart';
@@ -26,10 +27,9 @@ import '../support/commons.dart';
 abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
-  FutureOr<void> updateNotifyConfig(
-    AppNotifyConfig newConfig, {
-    bool listen = true,
-  });
+  bool isChannelEnabled(NotificationChannelId channelId);
+
+  FutureOr<void> updateConfig(AppNotifyConfig newConfig, {bool listen = true});
 
   factory AppNotifyConfigAccess() {
     /// Android uses system notification channels to manage notifications.
@@ -74,7 +74,11 @@ final class AppNotifyConfigOwner
   AppNotifyConfig get notifyConfig => _config?.get() ?? const AppNotifyConfig();
 
   @override
-  Future<void> updateNotifyConfig(
+  bool isChannelEnabled(NotificationChannelId channelId) =>
+      notifyConfig.isChannelEnabled(channelId);
+
+  @override
+  Future<void> updateConfig(
     AppNotifyConfig newConfig, {
     bool listen = true,
   }) async {
@@ -91,6 +95,10 @@ final class AppNotifyConfigAndroidOwner
   @override
   final AppNotifyConfig notifyConfig = const AppNotifyConfig();
 
+  @override
+  bool isChannelEnabled(NotificationChannelId channelId) =>
+      notifyConfig.isChannelEnabled(channelId);
+
   bool _mounted = true;
 
   AppNotifyConfigAndroidOwner();
@@ -106,8 +114,6 @@ final class AppNotifyConfigAndroidOwner
   bool get mounted => _mounted;
 
   @override
-  Future<void> updateNotifyConfig(
-    AppNotifyConfig newConfig, {
-    bool listen = true,
-  }) => Future.value();
+  Future<void> updateConfig(AppNotifyConfig newConfig, {bool listen = true}) =>
+      Future.value();
 }

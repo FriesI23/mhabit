@@ -52,12 +52,28 @@ class AppProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<AppEventBus>(create: (context) => AppEventBus()),
   ];
 
+  Iterable<SingleChildWidget> _buildReminderWorkflowSupportProviders() => [
+    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigAccess>(
+      // Config needs to be synced with Notification Service.
+      lazy: false,
+      create: (context) => AppNotifyConfigAccess(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+  ];
+
   Iterable<SingleChildWidget> _buildHabitsAppProviders() => [
-    ProxyProvider2<DBHelperViewModel, NotificationChannelData, HabitsManager>(
+    ProxyProvider3<
+      DBHelperViewModel,
+      NotificationChannelData,
+      AppNotifyConfigAccess,
+      HabitsManager
+    >(
       create: (context) => HabitsManager(),
-      update: (context, db, channel, previous) => (previous ?? HabitsManager())
-        ..updateDBHelper(db)
-        ..setNotificationChannelData(channel),
+      update: (context, db, channel, notifyConfig, previous) =>
+          (previous ?? HabitsManager())
+            ..attachNotifyConfig(notifyConfig)
+            ..updateDBHelper(db)
+            ..setNotificationChannelData(channel),
     ),
     ProxyProvider<HabitsManager, HabitsDisplayAccess>(
       update: (context, value, previous) => value,
@@ -174,24 +190,20 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => AppCustomDateYmdHmsConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
-    ViewModelProxyProvider<ProfileViewModel, AppNotifyConfigAccess>(
-      // Config needs to be synced with Notification Service.
-      lazy: false,
-      create: (context) => AppNotifyConfigAccess(),
-      update: (context, profile, previous) => previous..updateProfile(profile),
-    ),
     ViewModelProxyProvider<ProfileViewModel, HabitRecordOpConfigViewModel>(
       create: (context) => HabitRecordOpConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
-    ViewModelProxyProvider2<
+    ViewModelProxyProvider3<
       ProfileViewModel,
       NotificationChannelData,
+      AppNotifyConfigAccess,
       AppReminderOwner
     >(
       lazy: false,
       create: (context) => AppReminderOwner(),
-      update: (context, profile, channel, previous) => previous
+      update: (context, profile, channel, notifyConfig, previous) => previous
+        ..attachNotifyConfig(notifyConfig)
         ..setNotificationChannelData(channel)
         ..updateProfile(profile),
     ),
@@ -216,6 +228,7 @@ class AppProviders extends SingleChildStatelessWidget {
   Widget buildWithChild(BuildContext context, Widget? child) => MultiProvider(
     providers: [
       ..._buildCommonAppProviders(),
+      ..._buildReminderWorkflowSupportProviders(),
       ..._buildHabitsAppProviders(),
       ..._buildProfileBackedAppProviders(),
       ..._buildAppSyncProviders(),

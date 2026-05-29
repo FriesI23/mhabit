@@ -27,11 +27,12 @@ final class _FakeHabitFormAccess implements HabitFormAccess {
   HabitDBCell? lastCreatedCell;
   HabitDBCell? lastUpdatedCell;
   int reminderPermissionRequests = 0;
+  bool? requestReminderPermissionResult = true;
 
   @override
-  Future<bool?> requestReminderPermissions() async {
+  Future<bool?> requestReminderPermission() async {
     reminderPermissionRequests += 1;
-    return true;
+    return requestReminderPermissionResult;
   }
 
   @override
@@ -130,6 +131,35 @@ void main() {
     });
   });
   group('HabitFormViewModel:commands', () {
+    test('requestReminderPermission blocks explicit denial', () async {
+      final access = _FakeHabitFormAccess()
+        ..requestReminderPermissionResult = false;
+      final provider = HabitFormViewModel()..attachAccess(access);
+
+      final result = await provider.requestReminderPermission();
+
+      expect(result, isFalse);
+      expect(access.reminderPermissionRequests, 1);
+
+      provider.dispose();
+    });
+
+    test(
+      'requestReminderPermission keeps nullable result permissive',
+      () async {
+        final access = _FakeHabitFormAccess()
+          ..requestReminderPermissionResult = null;
+        final provider = HabitFormViewModel()..attachAccess(access);
+
+        final result = await provider.requestReminderPermission();
+
+        expect(result, isTrue);
+        expect(access.reminderPermissionRequests, 1);
+
+        provider.dispose();
+      },
+    );
+
     test('saveHabit writes create path through commands', () async {
       final access = _FakeHabitFormAccess();
       final provider = HabitFormViewModel()..attachAccess(access);

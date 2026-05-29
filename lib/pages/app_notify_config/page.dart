@@ -79,7 +79,7 @@ class _AppNotifyConfigView extends State<AppNotifyConfigView> {
                 onChanged: (value) {
                   final config = context.read<AppNotifyConfigAccess>();
                   if (!config.mounted) return;
-                  config.updateNotifyConfig(
+                  config.updateConfig(
                     config.notifyConfig.copyWith({channelId: value}),
                   );
                 },

@@ -411,7 +411,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
       l10n,
     );
-    context.maybeRead<AppReminderAccess>()?.processReminderTrigger(
+    context.maybeRead<AppReminderAccess>()?.processTrigger(
       const AppReminderTrigger.startup(),
       l10n: l10n,
     );

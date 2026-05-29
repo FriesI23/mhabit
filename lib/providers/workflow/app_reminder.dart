@@ -19,17 +19,22 @@ import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_reminder_config.dart';
+import '../../reminders/notification_channel.dart';
 import '../../reminders/notification_details.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
+import 'app_notify_config.dart';
 
 final class _AppReminderRuntime {
   final NotificationService _notificationService;
 
   _AppReminderRuntime({NotificationService? notificationService})
     : _notificationService = notificationService ?? NotificationService();
+
+  Future<bool?> requestNotificationPermissions() =>
+      _notificationService.requestPermissions();
 
   Future<bool> applyReminder(
     AppReminderConfig reminder, {
@@ -39,10 +44,6 @@ final class _AppReminderRuntime {
     if (!(reminder.enabled && l10n != null)) {
       await _notificationService.cancelAppReminder();
       return true;
-    }
-
-    if (await _notificationService.requestPermissions() == false) {
-      return false;
     }
 
     switch (reminder.type) {
@@ -80,18 +81,22 @@ final class AppReminderTrigger {
 
 abstract interface class AppReminderAccess implements Listenable {
   AppReminderConfig get reminder;
+  bool get isChannelEnabled;
 
-  Future<void> processReminderTrigger(AppReminderTrigger trigger, {L10n? l10n});
+  Future<bool?> requestReminderPermission();
+
+  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n});
 
   // Keep L10n as a boundary input here until a real blocker proves reminder
   // content building must split from execution.
-  Future<bool> processAppReminder(L10n? l10n);
+  Future<bool> processReminder(L10n? l10n);
 }
 
 final class AppReminderOwner extends ChangeNotifier
     with NotificationChannelDataMixin, ProfileHandlerLoadedMixin
     implements AppReminderAccess {
   AppReminderProfileHandler? _rmd;
+  AppNotifyConfigAccess? _notifyConfig;
   final _AppReminderRuntime _reminderRuntime;
 
   AppReminderOwner({NotificationService? notificationService})
@@ -105,17 +110,36 @@ final class AppReminderOwner extends ChangeNotifier
     _rmd = newProfile.getHandler<AppReminderProfileHandler>();
   }
 
+  void attachNotifyConfig(AppNotifyConfigAccess access) {
+    if (identical(_notifyConfig, access)) return;
+    _notifyConfig?.removeListener(notifyListeners);
+    _notifyConfig = access;
+    access.addListener(notifyListeners);
+  }
+
+  @override
+  void dispose() {
+    _notifyConfig?.removeListener(notifyListeners);
+    super.dispose();
+  }
+
   @override
   AppReminderConfig get reminder => _rmd?.get() ?? defaultAppReminder;
 
   @override
-  Future<void> processReminderTrigger(
-    AppReminderTrigger trigger, {
-    L10n? l10n,
-  }) async {
+  bool get isChannelEnabled =>
+      _notifyConfig?.isChannelEnabled(NotificationChannelId.appReminder) ??
+      true;
+
+  @override
+  Future<bool?> requestReminderPermission() =>
+      _reminderRuntime.requestNotificationPermissions();
+
+  @override
+  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
     switch (trigger.reason) {
       case AppReminderTriggerReason.startup:
-        await processAppReminder(l10n);
+        await processReminder(l10n);
       case AppReminderTriggerReason.settings:
         await _updateReminder(trigger.nextReminder!, l10n: l10n);
     }
@@ -138,7 +162,7 @@ final class AppReminderOwner extends ChangeNotifier
   }
 
   Future<bool> _handleChangeReminder(L10n? l10n) async {
-    if ((await processAppReminder(l10n)) != true) {
+    if ((await processReminder(l10n)) != true) {
       appLog.value.info(
         '$runtimeType._handleChangeReminder',
         beforeVal: reminder.enabled,
@@ -153,7 +177,13 @@ final class AppReminderOwner extends ChangeNotifier
   }
 
   @override
-  Future<bool> processAppReminder(L10n? l10n) async {
+  Future<bool> processReminder(L10n? l10n) async {
+    final reminder = this.reminder;
+    if (reminder.enabled && l10n != null) {
+      if (!isChannelEnabled) return true;
+      if (await requestReminderPermission() == false) return false;
+    }
+
     return _reminderRuntime.applyReminder(
       reminder,
       l10n: l10n,
@@ -181,6 +211,8 @@ class AppReminderViewModel extends ChangeNotifier {
 
   AppReminderConfig get reminder => _access?.reminder ?? defaultAppReminder;
 
+  bool get isChannelEnabled => _access?.isChannelEnabled ?? true;
+
   Future<void> switchOff({L10n? l10n}) async {
     final reminder = this.reminder;
     if (reminder.enabled) {
@@ -190,7 +222,7 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: false,
         ex: [l10n],
       );
-      await _access?.processReminderTrigger(
+      await _access?.processTrigger(
         AppReminderTrigger.settings(reminder.copyWith(enabled: false)),
         l10n: l10n,
       );
@@ -206,7 +238,7 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: true,
         ex: [l10n],
       );
-      await _access?.processReminderTrigger(
+      await _access?.processTrigger(
         AppReminderTrigger.settings(reminder.copyWith(enabled: true)),
         l10n: l10n,
       );
@@ -226,7 +258,7 @@ class AppReminderViewModel extends ChangeNotifier {
         afterVal: newReminder,
         ex: [timeOfDay, l10n],
       );
-      await _access?.processReminderTrigger(
+      await _access?.processTrigger(
         AppReminderTrigger.settings(newReminder),
         l10n: l10n,
       );

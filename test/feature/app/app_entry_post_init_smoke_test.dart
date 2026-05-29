@@ -76,10 +76,13 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   L10n? lastL10n;
 
   @override
-  Future<void> processReminderTrigger(
-    AppReminderTrigger trigger, {
-    L10n? l10n,
-  }) async {
+  bool get isChannelEnabled => true;
+
+  @override
+  Future<bool?> requestReminderPermission() async => true;
+
+  @override
+  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
     triggers.add(trigger);
     lastL10n = l10n;
   }
@@ -88,7 +91,7 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   AppReminderConfig get reminder => AppReminderConfig.off;
 
   @override
-  Future<bool> processAppReminder(L10n? l10n) async {
+  Future<bool> processReminder(L10n? l10n) async {
     processCallCount++;
     lastL10n = l10n;
     return true;

@@ -84,14 +84,16 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
 
   @override
   AppReminderConfig reminder;
+  @override
+  bool isChannelEnabled = true;
   final triggers = <AppReminderTrigger>[];
   L10n? lastL10n;
 
   @override
-  Future<void> processReminderTrigger(
-    AppReminderTrigger trigger, {
-    L10n? l10n,
-  }) async {
+  Future<bool?> requestReminderPermission() async => true;
+
+  @override
+  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
     triggers.add(trigger);
     lastL10n = l10n;
     if (trigger.reason == AppReminderTriggerReason.settings) {
@@ -101,7 +103,7 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   }
 
   @override
-  Future<bool> processAppReminder(L10n? l10n) async => true;
+  Future<bool> processReminder(L10n? l10n) async => true;
 }
 
 Future<ProfileViewModel> _loadAppReminderProfile({
@@ -147,7 +149,64 @@ void main() {
 
   group('AppReminderOwner notification routing', () {
     test(
-      'processAppReminder routes enabled reminder through notification service',
+      'processReminder exposes and consumes the app reminder channel gate',
+      () async {
+        final reminderProfile = await _loadAppReminderProfile(
+          initialReminder: AppReminderConfig.dailyNight,
+        );
+        final notifyProfile = await _loadAppNotifyConfigProfile(
+          initialConfig: const AppNotifyConfig(
+            channels: {NotificationChannelId.appReminder: false},
+          ),
+        );
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = AppNotifyConfigOwner(
+          notificationService: notificationService,
+        )..updateProfile(notifyProfile);
+        final channelData = NotificationChannelData();
+        final owner = AppReminderOwner(notificationService: notificationService)
+          ..attachNotifyConfig(notifyConfig)
+          ..updateProfile(reminderProfile)
+          ..setNotificationChannelData(channelData);
+
+        final result = await owner.processReminder(
+          lookupL10n(const Locale('en')),
+        );
+
+        expect(owner.isChannelEnabled, isFalse);
+        expect(result, isTrue);
+        expect(notificationService.cancelAppReminderCallCount, 0);
+        expect(notificationService.requestPermissionsCallCount, 0);
+        expect(notificationService.regrAppReminderCallCount, 0);
+
+        owner.dispose();
+        notifyConfig.dispose();
+        reminderProfile.dispose();
+        notifyProfile.dispose();
+      },
+    );
+
+    test('requestReminderPermission exposes the app reminder gate', () async {
+      final profile = await _loadAppReminderProfile(
+        initialReminder: AppReminderConfig.dailyNight,
+      );
+      final notificationService = _FakeNotificationService();
+      final owner = AppReminderOwner(notificationService: notificationService)
+        ..updateProfile(profile);
+
+      final result = await owner.requestReminderPermission();
+
+      expect(result, isTrue);
+      expect(notificationService.requestPermissionsCallCount, 1);
+      expect(notificationService.cancelAppReminderCallCount, 0);
+      expect(notificationService.regrAppReminderCallCount, 0);
+
+      owner.dispose();
+      profile.dispose();
+    });
+
+    test(
+      'processReminder routes enabled reminder through notification service',
       () async {
         final profile = await _loadAppReminderProfile(
           initialReminder: AppReminderConfig.dailyNight,
@@ -158,7 +217,7 @@ void main() {
           ..updateProfile(profile)
           ..setNotificationChannelData(channelData);
 
-        final result = await owner.processAppReminder(
+        final result = await owner.processReminder(
           lookupL10n(const Locale('en')),
         );
 
@@ -180,6 +239,17 @@ void main() {
   });
 
   group('AppReminderViewModel settings routing', () {
+    test('viewmodel exposes the reminder channel gate from access', () {
+      final access = _TrackingAppReminderAccess(reminder: AppReminderConfig.off)
+        ..isChannelEnabled = false;
+      final viewModel = AppReminderViewModel()..attachAccess(access);
+
+      expect(viewModel.isChannelEnabled, isFalse);
+
+      viewModel.dispose();
+      access.dispose();
+    });
+
     test(
       'switchOn routes through the shared settings trigger contract',
       () async {
@@ -290,7 +360,7 @@ void main() {
     );
 
     test(
-      'updateNotifyConfig syncs latest config through NotificationService',
+      'updateConfig syncs latest config through NotificationService',
       () async {
         final profile = await _loadAppNotifyConfigProfile();
         final notificationService = _FakeNotificationService();
@@ -303,7 +373,7 @@ void main() {
           channels: {NotificationChannelId.appSyncFailed: false},
         );
 
-        await owner.updateNotifyConfig(config);
+        await owner.updateConfig(config);
 
         expect(owner.notifyConfig.toJson(), config.toJson());
         expect(
