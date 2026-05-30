@@ -37,6 +37,7 @@ final class _FakeNotificationService implements NotificationService {
   int cancelAppReminderCallCount = 0;
   int requestPermissionsCallCount = 0;
   int regrAppReminderCallCount = 0;
+  bool? requestPermissionsResult = true;
   String? lastReminderTitle;
   String? lastReminderSubtitle;
   NotificationDetails? lastReminderDetails;
@@ -56,7 +57,7 @@ final class _FakeNotificationService implements NotificationService {
   @override
   Future<bool?> requestPermissions() async {
     requestPermissionsCallCount += 1;
-    return true;
+    return requestPermissionsResult;
   }
 
   @override
@@ -190,6 +191,58 @@ void main() {
         notifyConfig.dispose();
         reminderProfile.dispose();
         notifyProfile.dispose();
+      },
+    );
+
+    test(
+      'notify config exposes app reminder channel status vocabulary',
+      () async {
+        final notifyProfile = await _loadAppNotifyConfigProfile(
+          initialConfig: const AppNotifyConfig(
+            channels: {NotificationChannelId.appReminder: false},
+          ),
+        );
+        final notifyConfig = AppNotifyConfigOwner()
+          ..updateProfile(notifyProfile);
+
+        final status = notifyConfig.getReminderStatus(
+          NotificationChannelId.appReminder,
+        );
+
+        expect(status.isReady, isFalse);
+        expect(status.isChannelDisabled, isTrue);
+        expect(status.isPermissionDenied, isFalse);
+
+        notifyConfig.dispose();
+        notifyProfile.dispose();
+      },
+    );
+
+    test(
+      'processReminder keeps permission denial inside the gate contract',
+      () async {
+        final profile = await _loadAppReminderProfile(
+          initialReminder: AppReminderConfig.dailyNight,
+        );
+        final notificationService = _FakeNotificationService()
+          ..requestPermissionsResult = false;
+        final channelData = NotificationChannelData();
+        final owner = AppReminderOwner(notificationService: notificationService)
+          ..updateProfile(profile)
+          ..setNotificationChannelData(channelData);
+        final content = AppReminderContent.fromL10n(
+          lookupL10n(const Locale('en')),
+        );
+
+        final result = await owner.processReminder(content);
+
+        expect(result, isFalse);
+        expect(notificationService.cancelAppReminderCallCount, 0);
+        expect(notificationService.requestPermissionsCallCount, 1);
+        expect(notificationService.regrAppReminderCallCount, 0);
+
+        owner.dispose();
+        profile.dispose();
       },
     );
 

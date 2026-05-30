@@ -12,24 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show NotificationDetails;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/app_notify_config.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_reminder.dart';
+import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/providers/workflow/app_notify_config.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_service.dart';
+import 'package:mhabit/storage/db/handlers/habit.dart';
+import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final class _FakeNotificationService implements NotificationService {
   int cancelHabitReminderCallCount = 0;
@@ -95,6 +102,12 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
       notifyConfig.isChannelEnabled(channelId);
 
   @override
+  ReminderStatus getReminderStatus(NotificationChannelId channelId) =>
+      isChannelEnabled(channelId)
+      ? const ReminderStatus.ready()
+      : const ReminderStatus.channelDisabled();
+
+  @override
   Future<void> updateConfig(
     AppNotifyConfig newConfig, {
     bool listen = true,
@@ -105,14 +118,17 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
 }
 
 final class _RefreshEntryHabitsManager extends HabitsManager {
-  final List<HabitSummaryData> _loadedHabits;
+  final List<HabitSummaryData>? _loadedHabits;
 
   _RefreshEntryHabitsManager({
     super.notificationService,
-    required List<HabitSummaryData> loadedHabits,
-  }) : _loadedHabits = List.unmodifiable(loadedHabits);
+    required List<HabitSummaryData>? loadedHabits,
+  }) : _loadedHabits = loadedHabits == null
+           ? null
+           : List.unmodifiable(loadedHabits);
 
   List<HabitUUID>? lastLoadedHabitUUIDs;
+  int loadHabitSummaryCallCount = 0;
 
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
@@ -120,9 +136,17 @@ final class _RefreshEntryHabitsManager extends HabitsManager {
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async {
+    loadHabitSummaryCallCount += 1;
     lastLoadedHabitUUIDs = habitUUIDs == null
         ? null
         : List.unmodifiable(habitUUIDs);
+    if (_loadedHabits == null) {
+      return super.loadHabitSummaryCollectionData(
+        initedCollection: initedCollection,
+        habitsColmns: habitsColmns,
+        habitUUIDs: habitUUIDs,
+      );
+    }
     final collection = initedCollection ?? HabitSummaryDataCollection();
     for (final habit in _loadedHabits) {
       if (habitUUIDs == null || habitUUIDs.contains(habit.uuid)) {
@@ -136,9 +160,10 @@ final class _RefreshEntryHabitsManager extends HabitsManager {
 HabitSummaryData _buildHabitSummaryData({
   HabitStatus status = HabitStatus.activated,
   HabitReminder? reminder = HabitReminder.dailyMidnight,
+  HabitUUID uuid = 'habit-1',
 }) => HabitSummaryData(
   id: 1,
-  uuid: 'habit-1',
+  uuid: uuid,
   type: HabitType.normal,
   name: 'Test habit',
   desc: '',
@@ -154,6 +179,29 @@ HabitSummaryData _buildHabitSummaryData({
   createTime: DateTime(2026, 1, 1),
 );
 
+HabitDBCell _buildHabitDBCell({
+  HabitUUID uuid = 'habit-db-1',
+  HabitStatus status = HabitStatus.activated,
+  HabitReminder? reminder = HabitReminder.dailyMidnight,
+}) => HabitDBCell(
+  type: HabitType.normal.dbCode,
+  createT: DateTime(2026, 1, 1).millisecondsSinceEpoch ~/ onSecondMS,
+  uuid: uuid,
+  status: status.dbCode,
+  name: 'DB Habit',
+  desc: '',
+  color: HabitColorType.cc1.dbCode,
+  dailyGoal: 1,
+  dailyGoalUnit: defaultHabitDailyGoalUnit,
+  freqType: HabitFrequency.daily.type.dbCode,
+  freqCustom: jsonEncode(HabitFrequency.daily.toJson()['args']),
+  startDate: HabitDate.dateTime(DateTime(2026, 1, 1)).epochDay,
+  targetDays: 1,
+  remindCustom: reminder == null ? null : jsonEncode(reminder.toJson()),
+  remindQuestion: 'Stay on track',
+  sortPosition: 1,
+);
+
 Future<void> _initAppInfo() async {
   PackageInfo.setMockInitialValues(
     appName: 'mhabit',
@@ -167,7 +215,11 @@ Future<void> _initAppInfo() async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(_initAppInfo);
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    return _initAppInfo();
+  });
 
   group('HabitsManager reminder channel gating', () {
     test('requestReminderPermission exposes the habit reminder gate', () async {
@@ -203,6 +255,24 @@ void main() {
         notifyConfig.dispose();
       },
     );
+
+    test('habit reminder status exposes the disabled habit channel reason', () {
+      final notifyConfig = _FakeAppNotifyConfigAccess(
+        notifyConfig: const AppNotifyConfig(
+          channels: {NotificationChannelId.habitReminder: false},
+        ),
+      );
+
+      final status = notifyConfig.getReminderStatus(
+        NotificationChannelId.habitReminder,
+      );
+
+      expect(status.isReady, isFalse);
+      expect(status.isChannelDisabled, isTrue);
+      expect(status.isPermissionDenied, isFalse);
+
+      notifyConfig.dispose();
+    });
 
     test(
       'updateHabitReminders cancels habit reminder when activated habit no longer has a reminder',
@@ -274,7 +344,7 @@ void main() {
     );
 
     test(
-      'refreshHabitReminders rehydrates detail params before reaching the reminder sink',
+      'refreshHabitReminders rehydrates reconcile params before reaching the reminder sink',
       () async {
         final notificationService = _FakeNotificationService();
         final notifyConfig = _FakeAppNotifyConfigAccess(
@@ -319,7 +389,7 @@ void main() {
     );
 
     test(
-      'refreshHabitReminders reuses loaded habits when params already carry them',
+      'repairHabitReminders reuses loaded habits without entering the reload path',
       () async {
         final notificationService = _FakeNotificationService();
         final notifyConfig = _FakeAppNotifyConfigAccess(
@@ -334,14 +404,117 @@ void main() {
               ..attachNotifyConfig(notifyConfig)
               ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.refreshHabitReminders(
-          params: HabitReminderRefreshParams.loadedHabits([loadedHabit]),
+        await manager.repairHabitReminders(
+          params: HabitReminderRepairParams.loadedHabits([loadedHabit]),
         );
 
         expect(manager.lastLoadedHabitUUIDs, isNull);
         expect(notificationService.regrHabitReminderCallCount, 1);
         expect(notificationService.cancelHabitReminderCallCount, 0);
 
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'refreshHabitReminders loads all habits for startup triggers',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final startupHabit = _buildHabitSummaryData(uuid: 'startup-habit-1');
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: [startupHabit],
+              )
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.refreshHabitReminders();
+
+        expect(manager.lastLoadedHabitUUIDs, isNull);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'saveNewHabitAndUpdateReminder keeps owner-local save follow-up off the reload path',
+      () async {
+        final habitUUID = 'save-habit-${DateTime.now().microsecondsSinceEpoch}';
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final dbHelper = DBHelperViewModel();
+        await dbHelper.init();
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: const [],
+              )
+              ..updateDBHelper(dbHelper)
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        final saved = await manager.saveNewHabitAndUpdateReminder(
+          _buildHabitDBCell(uuid: habitUUID),
+        );
+
+        expect(saved?.uuid, habitUUID);
+        expect(manager.loadHabitSummaryCallCount, 0);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        dbHelper.dispose();
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'changeHabitStatus keeps owner-local status follow-up off the reload path',
+      () async {
+        final habitUUID =
+            'status-habit-${DateTime.now().microsecondsSinceEpoch}';
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final dbHelper = DBHelperViewModel();
+        await dbHelper.init();
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: null,
+              )
+              ..updateDBHelper(dbHelper)
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+        await manager.habitDBHelper.insertNewHabit(
+          _buildHabitDBCell(uuid: habitUUID),
+        );
+
+        final loaded = await manager.loadHabitSummaryCollectionData(
+          habitUUIDs: [habitUUID],
+        );
+        final previousLoadCallCount = manager.loadHabitSummaryCallCount;
+
+        final results = await manager.changeHabitStatus(
+          action: ChangeMultiHabitStatusAction([
+            loaded.getHabitByUUID(habitUUID)!,
+          ], status: HabitStatus.archived),
+        );
+
+        expect(results.single.data.status, HabitStatus.archived);
+        expect(manager.loadHabitSummaryCallCount, previousLoadCallCount);
+        expect(notificationService.cancelHabitReminderCallCount, 1);
+        expect(notificationService.regrHabitReminderCallCount, 0);
+
+        dbHelper.dispose();
         notifyConfig.dispose();
       },
     );

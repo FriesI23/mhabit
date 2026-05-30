@@ -29,7 +29,7 @@ import 'package:mhabit/storage/db/handlers/habit.dart';
 final class _FakeHabitDetailAccess implements HabitDetailAccess {
   final HabitDetailData seedData;
   final String recordReason = 'detail-record-reason';
-  final reminderRefreshParamsList = <HabitReminderRefreshParams?>[];
+  final reminderRepairParamsList = <HabitReminderRepairParams>[];
   int loadDetailDataCallCount = 0;
 
   HabitUUID? lastLoadedUuid;
@@ -128,10 +128,16 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
   }) async => const [];
 
   @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) {
-    reminderRefreshParamsList.add(params);
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
+  }) {
+    reminderRepairParamsList.add(params);
     return Future.value();
   }
+
+  @override
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
+      Future.value();
 }
 
 HabitSummaryData _buildHabitSummaryData({
@@ -176,10 +182,10 @@ void main() {
       await vm.loadData(detailData.data.uuid, listen: false);
 
       expect(access.lastLoadedUuid, detailData.data.uuid);
-      expect(access.reminderRefreshParamsList, hasLength(1));
+      expect(access.reminderRepairParamsList, hasLength(1));
       expect(
-        access.reminderRefreshParamsList.single,
-        HabitReminderRefreshParams.loadedHabit(detailData.data),
+        access.reminderRepairParamsList.single,
+        HabitReminderRepairParams.loadedHabit(detailData.data),
       );
 
       final reason = await vm.loadRecordReason(HabitDate.now());

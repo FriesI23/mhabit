@@ -41,6 +41,74 @@ typedef BeforeHabitRecordReminderUpdateCb =
       List<ChangeRecordStatusResult> records,
     );
 
+enum HabitReminderTriggerReason { startup, mutation, reconcile }
+
+final class HabitReminderTrigger {
+  final HabitReminderTriggerReason reason;
+  final List<HabitUUID>? habitUUIDs;
+
+  const HabitReminderTrigger._({required this.reason, this.habitUUIDs});
+
+  const HabitReminderTrigger.startup()
+    : this._(reason: HabitReminderTriggerReason.startup);
+
+  factory HabitReminderTrigger.mutation({Iterable<HabitUUID>? habitUUIDs}) =>
+      HabitReminderTrigger._(
+        reason: HabitReminderTriggerReason.mutation,
+        habitUUIDs: habitUUIDs == null
+            ? null
+            : List<HabitUUID>.unmodifiable(habitUUIDs),
+      );
+
+  factory HabitReminderTrigger.reconcile({Iterable<HabitUUID>? habitUUIDs}) =>
+      HabitReminderTrigger._(
+        reason: HabitReminderTriggerReason.reconcile,
+        habitUUIDs: habitUUIDs == null
+            ? null
+            : List<HabitUUID>.unmodifiable(habitUUIDs),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HabitReminderTrigger &&
+          reason == other.reason &&
+          const ListEquality().equals(habitUUIDs, other.habitUUIDs);
+
+  @override
+  int get hashCode =>
+      Object.hash(reason, const ListEquality().hash(habitUUIDs));
+}
+
+sealed class HabitReminderRepairParams {
+  const HabitReminderRepairParams._();
+
+  factory HabitReminderRepairParams.loadedHabit(HabitSummaryData habit) =>
+      _HabitReminderLoadedHabitsRepairParams([habit]);
+
+  factory HabitReminderRepairParams.loadedHabits(
+    Iterable<HabitSummaryData> habits,
+  ) => _HabitReminderLoadedHabitsRepairParams(
+    List<HabitSummaryData>.unmodifiable(habits),
+  );
+}
+
+final class _HabitReminderLoadedHabitsRepairParams
+    extends HabitReminderRepairParams {
+  final List<HabitSummaryData> loadedHabits;
+
+  const _HabitReminderLoadedHabitsRepairParams(this.loadedHabits) : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderLoadedHabitsRepairParams &&
+          const ListEquality().equals(loadedHabits, other.loadedHabits);
+
+  @override
+  int get hashCode => const ListEquality().hash(loadedHabits);
+}
+
 sealed class HabitReminderRefreshParams {
   const HabitReminderRefreshParams._();
 
@@ -51,15 +119,6 @@ sealed class HabitReminderRefreshParams {
     Iterable<HabitUUID> habitUUIDs,
   ) =>
       _HabitReminderRefreshUuidParams(List<HabitUUID>.unmodifiable(habitUUIDs));
-
-  factory HabitReminderRefreshParams.loadedHabit(HabitSummaryData habit) =>
-      _HabitReminderRefreshLoadedHabitsParams([habit]);
-
-  factory HabitReminderRefreshParams.loadedHabits(
-    Iterable<HabitSummaryData> habits,
-  ) => _HabitReminderRefreshLoadedHabitsParams(
-    List<HabitSummaryData>.unmodifiable(habits),
-  );
 }
 
 final class _HabitReminderRefreshUuidParams extends HabitReminderRefreshParams {
@@ -75,22 +134,6 @@ final class _HabitReminderRefreshUuidParams extends HabitReminderRefreshParams {
 
   @override
   int get hashCode => const ListEquality().hash(habitUUIDs);
-}
-
-final class _HabitReminderRefreshLoadedHabitsParams
-    extends HabitReminderRefreshParams {
-  final List<HabitSummaryData> loadedHabits;
-
-  const _HabitReminderRefreshLoadedHabitsParams(this.loadedHabits) : super._();
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _HabitReminderRefreshLoadedHabitsParams &&
-          const ListEquality().equals(loadedHabits, other.loadedHabits);
-
-  @override
-  int get hashCode => const ListEquality().hash(loadedHabits);
 }
 
 abstract interface class HabitsDisplayAccess {
@@ -126,6 +169,10 @@ abstract interface class HabitsDisplayAccess {
     List<HabitSummaryData> habits, {
     required num increaseStep,
     required int decimalPlaces,
+  });
+
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
   });
 
   Future<void> refreshHabitReminders({HabitReminderRefreshParams? params});
@@ -236,9 +283,9 @@ class HabitsManager
     _notifyConfig = access;
   }
 
-  bool get _isReminderChannelEnabled =>
-      _notifyConfig?.isChannelEnabled(NotificationChannelId.habitReminder) ??
-      true;
+  ReminderStatus _resolveReminderStatus() =>
+      _notifyConfig?.getReminderStatus(NotificationChannelId.habitReminder) ??
+      const ReminderStatus.ready();
 
   //#region status
   @override
@@ -253,8 +300,13 @@ class HabitsManager
     final result = action.resolve();
     final updatedHabits = {
       for (final item in result) item.data.uuid: item.data,
-    }.values;
-    await updateHabitReminders(updatedHabits);
+    }.values.toList(growable: false);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(
+        habitUUIDs: updatedHabits.map((habit) => habit.uuid),
+      ),
+      repairParams: HabitReminderRepairParams.loadedHabits(updatedHabits),
+    );
     if (extraResolver is Future) {
       await Future.wait(result.map((e) async => extraResolver?.call(e)));
     } else if (extraResolver != null) {
@@ -525,8 +577,47 @@ class HabitsManager
   }
 
   Future<void> _updateHabitReminder(HabitSummaryData data) {
-    if (!_isReminderChannelEnabled) return Future.value();
+    if (!_resolveReminderStatus().isReady) return Future.value();
     return _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+  }
+
+  Future<void> _processHabitReminderTrigger(
+    HabitReminderTrigger trigger, {
+    HabitReminderRepairParams? repairParams,
+  }) async {
+    assert(
+      repairParams != null ||
+          trigger.reason == HabitReminderTriggerReason.startup ||
+          trigger.habitUUIDs != null,
+    );
+    final loadedHabits = switch (repairParams) {
+      _HabitReminderLoadedHabitsRepairParams(:final loadedHabits) =>
+        loadedHabits,
+      null => await _loadHabitReminderTriggerHabits(trigger),
+    };
+    await updateHabitReminders(loadedHabits);
+  }
+
+  Future<void> _repairHabitReminders(HabitReminderRepairParams params) async {
+    final loadedHabits = switch (params) {
+      _HabitReminderLoadedHabitsRepairParams(:final loadedHabits) =>
+        loadedHabits,
+    };
+    await updateHabitReminders(loadedHabits);
+  }
+
+  @override
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
+  }) => _repairHabitReminders(params);
+
+  Future<Iterable<HabitSummaryData>> _loadHabitReminderTriggerHabits(
+    HabitReminderTrigger trigger,
+  ) async {
+    final loadedHabits = await loadHabitSummaryCollectionData(
+      habitUUIDs: trigger.habitUUIDs,
+    );
+    return loadedHabits.values;
   }
 
   @override
@@ -534,16 +625,14 @@ class HabitsManager
     HabitReminderRefreshParams? params,
   }) async {
     switch (params) {
-      case _HabitReminderRefreshLoadedHabitsParams(:final loadedHabits):
-        await updateHabitReminders(loadedHabits);
       case _HabitReminderRefreshUuidParams(:final habitUUIDs):
-        final loadedHabits = await loadHabitSummaryCollectionData(
-          habitUUIDs: habitUUIDs,
+        await _processHabitReminderTrigger(
+          HabitReminderTrigger.reconcile(habitUUIDs: habitUUIDs),
         );
-        await updateHabitReminders(loadedHabits.values);
       case null:
-        final loadedHabits = await loadHabitSummaryCollectionData();
-        await updateHabitReminders(loadedHabits.values);
+        await _processHabitReminderTrigger(
+          const HabitReminderTrigger.startup(),
+        );
     }
   }
 
@@ -571,12 +660,22 @@ class HabitsManager
         ),
       );
     }
-    await updateHabitReminders(updatedHabits.values);
+    final changedHabits = updatedHabits.values.toList(growable: false);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(
+        habitUUIDs: changedHabits.map((habit) => habit.uuid),
+      ),
+      repairParams: HabitReminderRepairParams.loadedHabits(changedHabits),
+    );
   }
 
   Future<void> _updateSavedHabitReminder(HabitDBCell? cell) async {
     if (cell == null) return;
-    await _updateHabitReminder(HabitSummaryData.fromDBQueryCell(cell));
+    final habit = HabitSummaryData.fromDBQueryCell(cell);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(habitUUIDs: [habit.uuid]),
+      repairParams: HabitReminderRepairParams.loadedHabit(habit),
+    );
   }
 
   //#region import and export

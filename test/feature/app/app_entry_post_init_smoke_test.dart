@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as flutter_local_notifications
+    show NotificationDetails;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
 import 'package:mhabit/common/types.dart';
@@ -11,7 +14,9 @@ import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_server_form.dart';
 import 'package:mhabit/models/habit_date.dart';
-import 'package:mhabit/models/habit_repo_actions.dart';
+import 'package:mhabit/models/habit_form.dart';
+import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_reminder.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
@@ -19,7 +24,7 @@ import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
-import 'package:mhabit/storage/db/handlers/habit.dart';
+import 'package:mhabit/reminders/notification_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -109,6 +114,38 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   }
 }
 
+final class _FakeNotificationService implements NotificationService {
+  int cancelHabitReminderCallCount = 0;
+  flutter_local_notifications.NotificationDetails? lastReminderDetails;
+  int regrHabitReminderCallCount = 0;
+
+  @override
+  Future<bool> cancelHabitReminder({required int id, Duration? timeout}) async {
+    cancelHabitReminderCallCount += 1;
+    return true;
+  }
+
+  @override
+  Future<bool> regrHabitReminder<T>({
+    required int id,
+    required String uuid,
+    required String name,
+    String? quest,
+    required HabitReminder reminder,
+    required HabitDate? lastUntrackDate,
+    required flutter_local_notifications.NotificationDetails details,
+    DateTime? crtDate,
+    Duration? timeout,
+  }) async {
+    regrHabitReminderCallCount += 1;
+    lastReminderDetails = details;
+    return true;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 final class _FakeAppSyncAccess extends ChangeNotifier
     implements AppSyncSettingsAccess, AppSyncWorkflowAccess {
   int onL10nUpdateCallCount = 0;
@@ -179,49 +216,31 @@ final class _FakeAppSyncAccess extends ChangeNotifier
   Future<void> startSync({Duration? initWait}) async {}
 }
 
-final class _TrackingHabitsDisplayAccess implements HabitsDisplayAccess {
+final class _TrackingStartupHabitsAccess extends HabitsManager {
+  final List<HabitSummaryData> _loadedHabits;
+
+  _TrackingStartupHabitsAccess({
+    super.notificationService,
+    required List<HabitSummaryData> loadedHabits,
+  }) : _loadedHabits = List.unmodifiable(loadedHabits);
+
   int refreshCallCount = 0;
   HabitReminderRefreshParams? lastRefreshParams;
-
-  @override
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
-    required ChangeHabitStatusAction action,
-    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
-  }) async => const <ChangeHabitStatusResult>[];
-
-  @override
-  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
-    required ChangeRecordStatusAction<HabitDate> preAction,
-    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-      List<ChangeRecordStatusResult> results,
-    )?
-    postActionBuilder,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
-  }) async => const <ChangeRecordStatusResult>[];
-
-  @override
-  Future<List<HabitUUID>> fixAndSaveSortPositions(
-    List<HabitSummaryData> habits, {
-    required num increaseStep,
-    required int decimalPlaces,
-  }) async => const <HabitUUID>[];
-
-  @override
-  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) async => null;
-
-  @override
-  Future<String?> loadHabitRecordReason(
-    HabitSummaryData data,
-    HabitRecordDate date,
-  ) async => null;
 
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
-  }) async => initedCollection ?? HabitSummaryDataCollection();
+  }) async {
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    for (final habit in _loadedHabits) {
+      if (habitUUIDs == null || habitUUIDs.contains(habit.uuid)) {
+        collection.addNewHabit(habit, forceAdd: true);
+      }
+    }
+    return collection;
+  }
 
   @override
   Future<void> refreshHabitReminders({
@@ -229,8 +248,29 @@ final class _TrackingHabitsDisplayAccess implements HabitsDisplayAccess {
   }) async {
     refreshCallCount += 1;
     lastRefreshParams = params;
+    await super.refreshHabitReminders(params: params);
   }
 }
+
+HabitSummaryData _buildStartupHabitSummaryData({
+  HabitUUID uuid = 'startup-habit-1',
+}) => HabitSummaryData(
+  id: 1,
+  uuid: uuid,
+  type: HabitType.normal,
+  name: 'Startup habit',
+  desc: '',
+  colorType: HabitColorType.cc1,
+  dailyGoal: 1,
+  targetDays: 1,
+  frequency: HabitFrequency.daily,
+  startDate: HabitDate.dateTime(DateTime(2026, 1, 1)),
+  status: HabitStatus.activated,
+  reminder: HabitReminder.dailyMidnight,
+  reminderQuest: 'Startup proof',
+  sortPostion: 1,
+  createTime: DateTime(2026, 1, 1),
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -241,9 +281,13 @@ void main() {
     (tester) async {
       final appSync = _FakeAppSyncAccess();
       final debugger = _TrackingAppDebuggerViewModel();
+      final notificationService = _FakeNotificationService();
       final reminder = _TrackingAppReminderAccess();
-      final habitsAccess = _TrackingHabitsDisplayAccess();
       final channelData = _FakeNotificationChannelData();
+      final habitsAccess = _TrackingStartupHabitsAccess(
+        notificationService: notificationService,
+        loadedHabits: [_buildStartupHabitSummaryData()],
+      )..setNotificationChannelData(channelData);
 
       Widget buildTestApp() {
         return MultiProvider(
@@ -282,6 +326,12 @@ void main() {
       expect(reminder.processCallCount, 0);
       expect(habitsAccess.refreshCallCount, 1);
       expect(habitsAccess.lastRefreshParams, isNull);
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(
+        notificationService.lastReminderDetails?.android?.channelId,
+        channelData.habitReminder.android?.channelId,
+      );
       expect(debugger.lastL10n, isNotNull);
       expect(
         reminder.lastContent,
@@ -303,6 +353,8 @@ void main() {
       expect(reminder.processCallCount, 0);
       expect(habitsAccess.refreshCallCount, 1);
       expect(habitsAccess.lastRefreshParams, isNull);
+      expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
       expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
     },
   );

@@ -24,10 +24,43 @@ import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
 
+enum ReminderStatusReason { channelDisabled, permissionDenied }
+
+@immutable
+final class ReminderStatus {
+  final ReminderStatusReason? reason;
+
+  const ReminderStatus._({required this.reason});
+
+  const ReminderStatus.ready() : this._(reason: null);
+
+  const ReminderStatus.channelDisabled()
+    : this._(reason: ReminderStatusReason.channelDisabled);
+
+  const ReminderStatus.permissionDenied()
+    : this._(reason: ReminderStatusReason.permissionDenied);
+
+  bool get isReady => reason == null;
+
+  bool get isChannelDisabled => reason == ReminderStatusReason.channelDisabled;
+
+  bool get isPermissionDenied =>
+      reason == ReminderStatusReason.permissionDenied;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ReminderStatus && reason == other.reason;
+
+  @override
+  int get hashCode => reason.hashCode;
+}
+
 abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
   bool isChannelEnabled(NotificationChannelId channelId);
+  ReminderStatus getReminderStatus(NotificationChannelId channelId);
 
   FutureOr<void> updateConfig(AppNotifyConfig newConfig, {bool listen = true});
 
@@ -78,6 +111,12 @@ final class AppNotifyConfigOwner
       notifyConfig.isChannelEnabled(channelId);
 
   @override
+  ReminderStatus getReminderStatus(NotificationChannelId channelId) =>
+      isChannelEnabled(channelId)
+      ? const ReminderStatus.ready()
+      : const ReminderStatus.channelDisabled();
+
+  @override
   Future<void> updateConfig(
     AppNotifyConfig newConfig, {
     bool listen = true,
@@ -98,6 +137,12 @@ final class AppNotifyConfigAndroidOwner
   @override
   bool isChannelEnabled(NotificationChannelId channelId) =>
       notifyConfig.isChannelEnabled(channelId);
+
+  @override
+  ReminderStatus getReminderStatus(NotificationChannelId channelId) =>
+      isChannelEnabled(channelId)
+      ? const ReminderStatus.ready()
+      : const ReminderStatus.channelDisabled();
 
   bool _mounted = true;
 

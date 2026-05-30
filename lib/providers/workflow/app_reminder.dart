@@ -158,6 +158,20 @@ final class AppReminderOwner extends ChangeNotifier
       _notifyConfig?.isChannelEnabled(NotificationChannelId.appReminder) ??
       true;
 
+  ReminderStatus _resolveReminderStatus({
+    required bool needsPermission,
+    bool permissionGranted = true,
+  }) {
+    final status =
+        _notifyConfig?.getReminderStatus(NotificationChannelId.appReminder) ??
+        const ReminderStatus.ready();
+    if (!status.isReady) return status;
+    if (needsPermission && !permissionGranted) {
+      return const ReminderStatus.permissionDenied();
+    }
+    return status;
+  }
+
   @override
   Future<bool?> requestReminderPermission() =>
       _reminderRuntime.requestNotificationPermissions();
@@ -210,8 +224,15 @@ final class AppReminderOwner extends ChangeNotifier
   Future<bool> processReminder(AppReminderContent? content) async {
     final reminder = this.reminder;
     if (reminder.enabled && content != null) {
-      if (!isChannelEnabled) return true;
-      if (await requestReminderPermission() == false) return false;
+      final channelStatus = _resolveReminderStatus(needsPermission: false);
+      if (channelStatus.isChannelDisabled) return true;
+
+      final permissionGranted = await requestReminderPermission() != false;
+      final status = _resolveReminderStatus(
+        needsPermission: true,
+        permissionGranted: permissionGranted,
+      );
+      if (status.isPermissionDenied) return false;
     }
 
     return _reminderRuntime.applyReminder(
