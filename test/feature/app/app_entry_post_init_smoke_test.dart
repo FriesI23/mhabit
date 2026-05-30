@@ -1,17 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/common/types.dart';
 import 'package:mhabit/entries/app/entry.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_reminder_config.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_server_form.dart';
+import 'package:mhabit/models/habit_date.dart';
+import 'package:mhabit/models/habit_repo_actions.dart';
+import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/providers/app_ui/app_debugger.dart';
 import 'package:mhabit/providers/workflow/app_reminder.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
+import 'package:mhabit/storage/db/handlers/habit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -171,16 +179,70 @@ final class _FakeAppSyncAccess extends ChangeNotifier
   Future<void> startSync({Duration? initWait}) async {}
 }
 
+final class _TrackingHabitsDisplayAccess implements HabitsDisplayAccess {
+  int refreshCallCount = 0;
+  HabitReminderRefreshParams? lastRefreshParams;
+
+  @override
+  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
+    required ChangeHabitStatusAction action,
+    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
+  }) async => const <ChangeHabitStatusResult>[];
+
+  @override
+  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
+    required ChangeRecordStatusAction<HabitDate> preAction,
+    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
+      List<ChangeRecordStatusResult> results,
+    )?
+    postActionBuilder,
+    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
+    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
+  }) async => const <ChangeRecordStatusResult>[];
+
+  @override
+  Future<List<HabitUUID>> fixAndSaveSortPositions(
+    List<HabitSummaryData> habits, {
+    required num increaseStep,
+    required int decimalPlaces,
+  }) async => const <HabitUUID>[];
+
+  @override
+  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) async => null;
+
+  @override
+  Future<String?> loadHabitRecordReason(
+    HabitSummaryData data,
+    HabitRecordDate date,
+  ) async => null;
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async => initedCollection ?? HabitSummaryDataCollection();
+
+  @override
+  Future<void> refreshHabitReminders({
+    HabitReminderRefreshParams? params,
+  }) async {
+    refreshCallCount += 1;
+    lastRefreshParams = params;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(_initAppInfo);
 
   testWidgets(
-    'AppPostInit runs startup sync once and keeps AppSync l10n wired',
+    'AppPostInit runs startup triggers once and keeps AppSync l10n wired',
     (tester) async {
       final appSync = _FakeAppSyncAccess();
       final debugger = _TrackingAppDebuggerViewModel();
       final reminder = _TrackingAppReminderAccess();
+      final habitsAccess = _TrackingHabitsDisplayAccess();
       final channelData = _FakeNotificationChannelData();
 
       Widget buildTestApp() {
@@ -189,6 +251,7 @@ void main() {
             Provider<NotificationChannelData>.value(value: channelData),
             ChangeNotifierProvider<AppDebuggerViewModel>.value(value: debugger),
             ListenableProvider<AppReminderAccess>.value(value: reminder),
+            Provider<HabitsDisplayAccess>.value(value: habitsAccess),
             ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
             ListenableProvider<AppSyncTriggerAccess>.value(value: appSync),
             ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
@@ -217,6 +280,8 @@ void main() {
       expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
       expect(reminder.triggers.single.nextReminder, isNull);
       expect(reminder.processCallCount, 0);
+      expect(habitsAccess.refreshCallCount, 1);
+      expect(habitsAccess.lastRefreshParams, isNull);
       expect(debugger.lastL10n, isNotNull);
       expect(
         reminder.lastContent,
@@ -236,6 +301,8 @@ void main() {
       expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
       expect(reminder.triggers.single.nextReminder, isNull);
       expect(reminder.processCallCount, 0);
+      expect(habitsAccess.refreshCallCount, 1);
+      expect(habitsAccess.lastRefreshParams, isNull);
       expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
     },
   );

@@ -37,6 +37,7 @@ import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
@@ -416,6 +417,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
       const AppReminderTrigger.startup(),
       content: reminderContent,
     );
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders();
     _syncL10n(l10n);
     _didHandlePostInit = true;
   }
