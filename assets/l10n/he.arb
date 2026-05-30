@@ -419,6 +419,7 @@
     "habitDetail_editHeatmapCal_dateButtonText": "תאריך",
     "habitDetail_editHeatmapCal_valueButtonText": "ערך",
     "habitDetail_editHeatmapCal_backToToday_tooltipText": "חזרה להיום",
+    "common_loadError_text": "הטעינה נכשלה",
     "common_loadError_retryText": "ניסיון חוזר",
     "habitDetail_notFoundText": "טעינת ההרגל נכשלה",
     "habitDetail_notFoundRetryText": "ניסיון חוזר",
@@ -1077,6 +1078,5 @@
     "channelName_appSyncing": "התקדמות הסנכרון",
     "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
     "channelName_appSyncFailed": "הסנכרון נכשל",
-    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
-    "common_loadError_text": "הטעינה נכשלה"
+    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל"
 }
