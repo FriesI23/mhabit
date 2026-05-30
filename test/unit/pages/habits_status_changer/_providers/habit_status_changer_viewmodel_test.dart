@@ -89,7 +89,7 @@ final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {
   }
 
   @override
-  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
       Future.value();
 
   @override

@@ -270,7 +270,9 @@ class HabitSummaryViewModel extends ChangeNotifier
         _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
         _resortData();
 
-        await _access.updateHabitReminders(_data.values);
+        await _access.refreshHabitReminders(
+          params: HabitReminderRefreshParams.loadedHabits(_data.values),
+        );
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }

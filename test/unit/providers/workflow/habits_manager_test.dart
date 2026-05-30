@@ -17,6 +17,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show NotificationDetails;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/app_info.dart';
+import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/app_notify_config.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -100,6 +101,35 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
   }) async {
     notifyConfig = newConfig;
     if (listen) notifyListeners();
+  }
+}
+
+final class _RefreshEntryHabitsManager extends HabitsManager {
+  final List<HabitSummaryData> _loadedHabits;
+
+  _RefreshEntryHabitsManager({
+    super.notificationService,
+    required List<HabitSummaryData> loadedHabits,
+  }) : _loadedHabits = List.unmodifiable(loadedHabits);
+
+  List<HabitUUID>? lastLoadedHabitUUIDs;
+
+  @override
+  Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
+    HabitSummaryDataCollection? initedCollection,
+    List<String>? habitsColmns,
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    lastLoadedHabitUUIDs = habitUUIDs == null
+        ? null
+        : List.unmodifiable(habitUUIDs);
+    final collection = initedCollection ?? HabitSummaryDataCollection();
+    for (final habit in _loadedHabits) {
+      if (habitUUIDs == null || habitUUIDs.contains(habit.uuid)) {
+        collection.addNewHabit(habit, forceAdd: true);
+      }
+    }
+    return collection;
   }
 }
 
@@ -238,6 +268,79 @@ void main() {
           notificationService.lastReminderDetails?.android?.channelId,
           channelData.habitReminder.android?.channelId,
         );
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'refreshHabitReminders rehydrates detail params before reaching the reminder sink',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        const habitUUID = 'detail-habit-1';
+        final habit = HabitSummaryData(
+          id: 2,
+          uuid: habitUUID,
+          type: HabitType.normal,
+          name: 'Detail habit',
+          desc: '',
+          colorType: HabitColorType.cc1,
+          dailyGoal: 1,
+          targetDays: 1,
+          frequency: HabitFrequency.daily,
+          startDate: HabitDate.dateTime(DateTime(2026, 1, 2)),
+          status: HabitStatus.activated,
+          reminder: HabitReminder.dailyMidnight,
+          reminderQuest: 'Refresh me',
+          sortPostion: 2,
+          createTime: DateTime(2026, 1, 2),
+        );
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: [habit],
+              )
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.refreshHabitReminders(
+          params: HabitReminderRefreshParams.habitUUID(habitUUID),
+        );
+
+        expect(manager.lastLoadedHabitUUIDs, [habitUUID]);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'refreshHabitReminders reuses loaded habits when params already carry them',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final loadedHabit = _buildHabitSummaryData();
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: const [],
+              )
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.refreshHabitReminders(
+          params: HabitReminderRefreshParams.loadedHabits([loadedHabit]),
+        );
+
+        expect(manager.lastLoadedHabitUUIDs, isNull);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
 
         notifyConfig.dispose();
       },

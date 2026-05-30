@@ -88,7 +88,7 @@ final class _FailingHabitsDisplayAccess implements HabitsDisplayAccess {
   ) => throw UnimplementedError();
 
   @override
-  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
       throw UnimplementedError();
 }
 

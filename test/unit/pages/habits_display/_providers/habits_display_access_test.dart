@@ -35,8 +35,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   final HabitSummaryData seedData;
   final List<HabitSummaryData> extraSeedData;
   final String recordReason = 'record-reason';
-  final reminderUpdates = <HabitSummaryData>[];
-  final pageLoadReminderReconcileRequests = <List<HabitSummaryData>>[];
+  final reminderRefreshParamsList = <HabitReminderRefreshParams?>[];
 
   HabitUUID? lastDetailUuid;
   HabitSummaryData? lastReasonData;
@@ -142,10 +141,8 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 
   @override
-  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) {
-    final habitList = habits.toList(growable: false);
-    pageLoadReminderReconcileRequests.add(habitList);
-    reminderUpdates.addAll(habitList);
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) {
+    reminderRefreshParamsList.add(params);
     return Future.value();
   }
 }
@@ -240,8 +237,11 @@ void main() {
 
       expect(vm.habitCount, 1);
       expect(vm.currentHabitList, isNotEmpty);
-      expect(access.pageLoadReminderReconcileRequests, hasLength(1));
-      expect(access.reminderUpdates.single.uuid, seedData.uuid);
+      expect(access.reminderRefreshParamsList, hasLength(1));
+      expect(
+        access.reminderRefreshParamsList.single,
+        HabitReminderRefreshParams.loadedHabits([seedData]),
+      );
 
       final loadedHabit = vm.getHabit(seedData.uuid);
       expect(loadedHabit, isNotNull);
@@ -267,8 +267,11 @@ void main() {
       await vm.loadData(listen: false);
 
       expect(vm.currentHabitList, isNotEmpty);
-      expect(access.pageLoadReminderReconcileRequests, hasLength(1));
-      expect(access.reminderUpdates.single.uuid, seedData.uuid);
+      expect(access.reminderRefreshParamsList, hasLength(1));
+      expect(
+        access.reminderRefreshParamsList.single,
+        HabitReminderRefreshParams.loadedHabits([seedData]),
+      );
 
       final loadedHabit = vm.getHabit(seedData.uuid);
       expect(loadedHabit, isNotNull);

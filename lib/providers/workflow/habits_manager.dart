@@ -14,6 +14,8 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+
 import '../../common/types.dart';
 import '../../extensions/iterable_extensions.dart';
 import '../../logging/helper.dart';
@@ -38,6 +40,58 @@ typedef BeforeHabitRecordReminderUpdateCb =
       HabitSummaryData habit,
       List<ChangeRecordStatusResult> records,
     );
+
+sealed class HabitReminderRefreshParams {
+  const HabitReminderRefreshParams._();
+
+  factory HabitReminderRefreshParams.habitUUID(HabitUUID habitUUID) =>
+      _HabitReminderRefreshUuidParams([habitUUID]);
+
+  factory HabitReminderRefreshParams.habitUUIDs(
+    Iterable<HabitUUID> habitUUIDs,
+  ) =>
+      _HabitReminderRefreshUuidParams(List<HabitUUID>.unmodifiable(habitUUIDs));
+
+  factory HabitReminderRefreshParams.loadedHabit(HabitSummaryData habit) =>
+      _HabitReminderRefreshLoadedHabitsParams([habit]);
+
+  factory HabitReminderRefreshParams.loadedHabits(
+    Iterable<HabitSummaryData> habits,
+  ) => _HabitReminderRefreshLoadedHabitsParams(
+    List<HabitSummaryData>.unmodifiable(habits),
+  );
+}
+
+final class _HabitReminderRefreshUuidParams extends HabitReminderRefreshParams {
+  final List<HabitUUID> habitUUIDs;
+
+  const _HabitReminderRefreshUuidParams(this.habitUUIDs) : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderRefreshUuidParams &&
+          const ListEquality().equals(habitUUIDs, other.habitUUIDs);
+
+  @override
+  int get hashCode => const ListEquality().hash(habitUUIDs);
+}
+
+final class _HabitReminderRefreshLoadedHabitsParams
+    extends HabitReminderRefreshParams {
+  final List<HabitSummaryData> loadedHabits;
+
+  const _HabitReminderRefreshLoadedHabitsParams(this.loadedHabits) : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderRefreshLoadedHabitsParams &&
+          const ListEquality().equals(loadedHabits, other.loadedHabits);
+
+  @override
+  int get hashCode => const ListEquality().hash(loadedHabits);
+}
 
 abstract interface class HabitsDisplayAccess {
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
@@ -74,7 +128,7 @@ abstract interface class HabitsDisplayAccess {
     required int decimalPlaces,
   });
 
-  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits);
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params});
 }
 
 abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
@@ -476,6 +530,23 @@ class HabitsManager
   }
 
   @override
+  Future<void> refreshHabitReminders({
+    HabitReminderRefreshParams? params,
+  }) async {
+    switch (params) {
+      case _HabitReminderRefreshLoadedHabitsParams(:final loadedHabits):
+        await updateHabitReminders(loadedHabits);
+      case _HabitReminderRefreshUuidParams(:final habitUUIDs):
+        final loadedHabits = await loadHabitSummaryCollectionData(
+          habitUUIDs: habitUUIDs,
+        );
+        await updateHabitReminders(loadedHabits.values);
+      case null:
+        final loadedHabits = await loadHabitSummaryCollectionData();
+        await updateHabitReminders(loadedHabits.values);
+    }
+  }
+
   Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
       Future.wait(habits.map(_updateHabitReminder));
 
