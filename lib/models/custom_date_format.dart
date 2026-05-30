@@ -111,12 +111,9 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return useMonthWithName ? DateFormat(dayFormat, locale).pattern : dayFormat;
   }
 
-  DateFormat getFormatter([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat,
-    fallbackFormatterBuilder: (locale) => DateFormat.yMd(locale).add_Hms(),
-    configuredFormatterBuilder: _getYMDHMSFormatterWithConfig,
-  );
+  DateFormat getFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMd(locale).add_Hms()
+      : _getYMDHMSFormatterWithConfig(locale);
 
   DateFormat _getYMDHMSFormatterWithConfig(String? locale) {
     final ymdPattern = _getYMDFormatterWithConfig(locale).pattern;
@@ -129,35 +126,18 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return DateFormat([ymdPattern, hmsPattern].join(" "), locale);
   }
 
-  DateFormat _resolveFormatter(
-    String? locale, {
-    required bool useFallbackFormatter,
-    required DateFormat Function(String? locale) fallbackFormatterBuilder,
-    required DateFormat Function(String? locale) configuredFormatterBuilder,
-  }) => useFallbackFormatter
-      ? fallbackFormatterBuilder(locale)
-      : configuredFormatterBuilder(locale);
+  DateFormat getYMDFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
-  DateFormat getYMDFormatter([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat,
-    fallbackFormatterBuilder: DateFormat.yMd,
-    configuredFormatterBuilder: _getYMDFormatterWithConfig,
-  );
+  DateFormat getYMDBatchCheckinFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMMMMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
-  DateFormat getYMDBatchCheckinFormatter([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat,
-    fallbackFormatterBuilder: DateFormat.yMMMMd,
-    configuredFormatterBuilder: _getYMDFormatterWithConfig,
-  );
-
-  DateFormat getYMDFormatterForFreqChart([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat || !isApplyFreqChart,
-    fallbackFormatterBuilder: DateFormat.yMd,
-    configuredFormatterBuilder: _getYMDFormatterWithConfig,
-  );
+  DateFormat getYMDFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.yMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
   DateFormat _getYMDFormatterWithConfig(String? locale) {
     String getYMDFormatter() {
@@ -177,19 +157,15 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return DateFormat(getYMDFormatter(), locale);
   }
 
-  DateFormat getYMFormatterForFreqChart([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat || !isApplyFreqChart,
-    fallbackFormatterBuilder: DateFormat.yM,
-    configuredFormatterBuilder: _getYMFormatterWithConfig,
-  );
+  DateFormat getYMFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.yM(locale)
+      : _getYMFormatterWithConfig(locale);
 
-  DateFormat getYMFormatterForHeatmapCal([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat || !isApplyHeatmapCal,
-    fallbackFormatterBuilder: DateFormat.yMMM,
-    configuredFormatterBuilder: _getYMFormatterWithConfig,
-  );
+  DateFormat getYMFormatterForHeatmapCal([String? locale]) =>
+      useSystemFormat || !isApplyHeatmapCal
+      ? DateFormat.yMMM(locale)
+      : _getYMFormatterWithConfig(locale);
 
   DateFormat _getYMFormatterWithConfig(String? locale) {
     final formatYear = _getYearFormatterString(locale);
@@ -209,12 +185,10 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     }
   }
 
-  DateFormat getYFormatterForFreqChart([String? locale]) => _resolveFormatter(
-    locale,
-    useFallbackFormatter: useSystemFormat || !isApplyFreqChart,
-    fallbackFormatterBuilder: DateFormat.y,
-    configuredFormatterBuilder: (locale) => DateFormat(DateFormat.YEAR, locale),
-  );
+  DateFormat getYFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.y(locale)
+      : DateFormat(DateFormat.YEAR, locale);
 
   String getYearMonthDayDisplayText([L10n? l10n]) {
     switch (ymdFormat) {
