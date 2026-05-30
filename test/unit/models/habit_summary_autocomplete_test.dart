@@ -61,7 +61,7 @@ HabitSummaryRecord _buildRecord({
 }) => HabitSummaryRecord(uuid, _date(month, day), status, value);
 
 List<HabitDate> _autoMarkedDates(HabitSummaryData data) =>
-    data.getAllAutoComplateRecordDate().toList();
+    data.autoCompletedDates.toList();
 
 void main() {
   group('HabitSummaryData auto-complete', () {
@@ -78,7 +78,7 @@ void main() {
 
       expect(_autoMarkedDates(data), isEmpty);
       expect(data.isRecordAutoComplated(_date(1, 10)), isFalse);
-      expect(data.getFirstUnTrackedDate(), _date(1, 11));
+      expect(data.firstUntrackedDate, _date(1, 11));
     });
 
     test('weekly frequency marks the full qualifying week', () {
@@ -186,7 +186,7 @@ void main() {
       expect(_autoMarkedDates(data), [
         for (var day = 10; day <= 13; day++) _date(1, day),
       ]);
-      expect(data.getFirstUnTrackedDate(), _date(1, 14));
+      expect(data.firstUntrackedDate, _date(1, 14));
     });
 
     test(
@@ -213,7 +213,7 @@ void main() {
       _setNow(DateTime.utc(2026, 1, 20));
       final data = _buildHabitSummaryData();
 
-      expect(data.getFirstUnTrackedDate(), _date(1, 20));
+      expect(data.firstUntrackedDate, _date(1, 20));
     });
 
     test(
@@ -223,7 +223,7 @@ void main() {
         final data = _buildHabitSummaryData()
           ..addRecord(_buildRecord(uuid: 'record-1', month: 1, day: 12));
 
-        expect(data.getFirstUnTrackedDate(), _date(1, 13));
+        expect(data.firstUntrackedDate, _date(1, 13));
       },
     );
 
@@ -251,7 +251,7 @@ void main() {
         expect(_autoMarkedDates(data), [
           for (var day = 10; day <= 13; day++) _date(1, day),
         ]);
-        expect(data.getFirstUnTrackedDate(), _date(1, 21));
+        expect(data.firstUntrackedDate, _date(1, 21));
       },
     );
   });

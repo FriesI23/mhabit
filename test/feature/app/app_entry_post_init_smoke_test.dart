@@ -238,7 +238,7 @@ final class _TrackingStartupHabitsAccess extends HabitsManager {
     final collection = initedCollection ?? HabitSummaryDataCollection();
     for (final habit in _loadedHabits) {
       if (habitUUIDs == null || habitUUIDs.contains(habit.uuid)) {
-        collection.addNewHabit(habit, forceAdd: true);
+        collection.addHabit(habit, forceAdd: true);
       }
     }
     return collection;

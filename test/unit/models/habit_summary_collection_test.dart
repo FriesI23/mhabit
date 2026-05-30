@@ -89,7 +89,7 @@ HabitSummaryData _buildHabitSummaryData({
 HabitSummaryDataCollection _buildCollection(Iterable<HabitSummaryData> habits) {
   final collection = HabitSummaryDataCollection();
   for (final habit in habits) {
-    collection.addNewHabit(habit, forceAdd: true);
+    collection.addHabit(habit, forceAdd: true);
   }
   return collection;
 }
@@ -161,18 +161,19 @@ void main() {
         ),
       ]);
 
-      expect(_uuids(collection.sortDataByName(HabitDisplaySortDirection.asc)), [
+      expect(_uuids(collection.sortByName(HabitDisplaySortDirection.asc)), [
         'alpha-newer',
         'alpha-older',
         'zulu',
       ]);
-      expect(
-        _uuids(collection.sortDataByName(HabitDisplaySortDirection.desc)),
-        ['zulu', 'alpha-older', 'alpha-newer'],
-      );
+      expect(_uuids(collection.sortByName(HabitDisplaySortDirection.desc)), [
+        'zulu',
+        'alpha-older',
+        'alpha-newer',
+      ]);
     });
 
-    test('sortDataByManual uses sort position then create time', () {
+    test('sortByManual uses sort position then create time', () {
       final collection = _buildCollection([
         _buildHabitSummaryData(
           uuid: 'late-manual',
@@ -194,14 +195,14 @@ void main() {
         ),
       ]);
 
-      expect(_uuids(collection.sortDataByManual()), [
+      expect(_uuids(collection.sortByManual()), [
         'manual-older',
         'manual-newer',
         'late-manual',
       ]);
     });
 
-    test('sortDataByProgress orders by progress and then start date', () {
+    test('sortByProgress orders by progress and then start date', () {
       _setNow(DateTime.utc(2026, 1, 2));
       final collection = _buildCollection([
         _buildHabitSummaryData(
@@ -225,17 +226,18 @@ void main() {
         ),
       ]);
 
+      expect(_uuids(collection.sortByProgress(HabitDisplaySortDirection.asc)), [
+        'complete',
+        'stalled-newer',
+        'stalled-older',
+      ]);
       expect(
-        _uuids(collection.sortDataByProgress(HabitDisplaySortDirection.asc)),
-        ['complete', 'stalled-newer', 'stalled-older'],
-      );
-      expect(
-        _uuids(collection.sortDataByProgress(HabitDisplaySortDirection.desc)),
+        _uuids(collection.sortByProgress(HabitDisplaySortDirection.desc)),
         ['stalled-older', 'stalled-newer', 'complete'],
       );
     });
 
-    test('sortDataBySatus keeps activated habits first', () {
+    test('sortByStatus keeps activated habits first', () {
       final collection = _buildCollection([
         _buildHabitSummaryData(
           uuid: 'activated-older',
@@ -263,14 +265,18 @@ void main() {
         ),
       ]);
 
-      expect(
-        _uuids(collection.sortDataBySatus(HabitDisplaySortDirection.asc)),
-        ['activated-newer', 'activated-older', 'archived', 'deleted'],
-      );
-      expect(
-        _uuids(collection.sortDataBySatus(HabitDisplaySortDirection.desc)),
-        ['deleted', 'archived', 'activated-older', 'activated-newer'],
-      );
+      expect(_uuids(collection.sortByStatus(HabitDisplaySortDirection.asc)), [
+        'activated-newer',
+        'activated-older',
+        'archived',
+        'deleted',
+      ]);
+      expect(_uuids(collection.sortByStatus(HabitDisplaySortDirection.desc)), [
+        'deleted',
+        'archived',
+        'activated-older',
+        'activated-newer',
+      ]);
     });
 
     test('sort dispatches color and start-date strategies', () {
@@ -317,7 +323,7 @@ void main() {
   });
 
   group('HabitSummaryDataCollection mutation and materialization', () {
-    test('addNewHabit rejects duplicates unless forceAdd is true', () {
+    test('addHabit rejects duplicates unless forceAdd is true', () {
       final collection = HabitSummaryDataCollection();
       final original = _buildHabitSummaryData(
         uuid: 'habit-1',
@@ -328,12 +334,12 @@ void main() {
         name: 'Replacement Habit',
       );
 
-      expect(collection.addNewHabit(original), isTrue);
-      expect(collection.addNewHabit(replacement), isFalse);
+      expect(collection.addHabit(original), isTrue);
+      expect(collection.addHabit(replacement), isFalse);
       expect(collection.length, 1);
       expect(collection.getHabitByUUID(original.uuid), same(original));
 
-      expect(collection.addNewHabit(replacement, forceAdd: true), isTrue);
+      expect(collection.addHabit(replacement, forceAdd: true), isTrue);
       expect(collection.length, 1);
       expect(collection.getHabitByUUID(original.uuid), same(replacement));
     });
@@ -342,7 +348,7 @@ void main() {
       final collection = HabitSummaryDataCollection();
       final habit = _buildHabitSummaryData(uuid: 'habit-1', name: 'Habit');
 
-      collection.addNewHabit(habit);
+      collection.addHabit(habit);
 
       expect(collection.containsHabitUUID(habit.uuid), isTrue);
       expect(collection.removeHabitByUUID(habit.uuid), same(habit));
@@ -379,7 +385,7 @@ void main() {
 
         expect(collection.length, 1);
         expect(loaded, isNotNull);
-        expect(loaded!.recordsNum, 1);
+        expect(loaded!.recordCount, 1);
         expect(loaded.getRecordByUUID('record-valid')?.date, _date(1, 12));
         expect(loaded.getRecordByUUID('record-before-start'), isNull);
         expect(loaded.getRecordByUUID('record-orphan'), isNull);

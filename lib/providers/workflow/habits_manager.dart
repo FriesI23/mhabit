@@ -352,7 +352,7 @@ class _HabitReminderRuntime {
       name: data.name,
       quest: data.reminderQuest,
       reminder: data.reminder!,
-      lastUntrackDate: data.getFirstUnTrackedDate(),
+      lastUntrackDate: data.firstUntrackedDate,
       details: channelData.habitReminder,
     );
 
@@ -623,8 +623,7 @@ class HabitsManager
     final habitLoaded = await habitLoadTask;
     final recordLoaded = await recordLoadTask;
     if (initedCollection != null) {
-      return initedCollection
-        ..initDataFromDBQueuryResult(habitLoaded, recordLoaded);
+      return initedCollection..loadFromDBQueryResult(habitLoaded, recordLoaded);
     } else {
       return HabitSummaryDataCollection.fromDBQueryResult(
         habitLoaded,

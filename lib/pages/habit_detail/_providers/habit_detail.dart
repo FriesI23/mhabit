@@ -101,7 +101,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
 
   String? get habitDailyGoalUnit => _habitDetailData?.dailyGoalUnit;
 
-  int get habitRecordsTotalNum => _habitDetailData?.data.recordsNum ?? 0;
+  int get habitRecordsTotalNum => _habitDetailData?.data.recordCount ?? 0;
 
   String get habitDesc => _habitDetailData?.data.desc ?? '';
 

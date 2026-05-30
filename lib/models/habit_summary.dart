@@ -345,53 +345,39 @@ class HabitSummaryData with DirtyMarkMixin {
     (a, b) => a.compareTo(b),
   );
 
-  void initRecords(Iterable<HabitSummaryRecord> records) {
-    _records.initRecords(records);
-  }
+  void initRecords(Iterable<HabitSummaryRecord> records) =>
+      _records.initRecords(records);
 
-  int get recordsNum => _records.length;
+  int get recordCount => _records.length;
 
-  void clearRecords() {
-    _records.clearRecords();
-  }
+  void clearRecords() => _records.clearRecords();
 
-  Iterable<HabitSummaryRecord> getAllRecord() => _records.records;
+  Iterable<HabitSummaryRecord> get records => _records.records;
 
-  HabitSummaryRecord? removeRecordWithUUID(HabitRecordUUID uuid) {
-    return _records.removeByUUID(uuid);
-  }
+  HabitSummaryRecord? removeRecordByUUID(HabitRecordUUID uuid) =>
+      _records.removeByUUID(uuid);
 
-  HabitSummaryRecord? removeRecordWithDate(HabitRecordDate date) {
-    return _records.removeByDate(date);
-  }
+  HabitSummaryRecord? removeRecordByDate(HabitRecordDate date) =>
+      _records.removeByDate(date);
 
-  bool addRecord(HabitSummaryRecord record, {bool replaced = false}) {
-    return _records.add(record, replaced: replaced);
-  }
+  bool addRecord(HabitSummaryRecord record, {bool replaced = false}) =>
+      _records.add(record, replaced: replaced);
 
   bool addAllRecords(
     Iterable<HabitSummaryRecord> records, {
     HabitReocrdAddRepeatedBehaviour behaviour =
         HabitReocrdAddRepeatedBehaviour.failed,
-  }) {
-    return _records.addAll(records, behaviour: behaviour);
-  }
+  }) => _records.addAll(records, behaviour: behaviour);
 
-  HabitSummaryRecord? getRecordByUUID(HabitRecordUUID uuid) {
-    return _records.getByUUID(uuid);
-  }
+  HabitSummaryRecord? getRecordByUUID(HabitRecordUUID uuid) =>
+      _records.getByUUID(uuid);
 
-  HabitSummaryRecord? getRecordByDate(HabitRecordDate date) {
-    return _records.getByDate(date);
-  }
+  HabitSummaryRecord? getRecordByDate(HabitRecordDate date) =>
+      _records.getByDate(date);
 
-  bool containsRecordUUID(HabitRecordUUID uuid) {
-    return _records.containsUUID(uuid);
-  }
+  bool containsRecordUUID(HabitRecordUUID uuid) => _records.containsUUID(uuid);
 
-  bool containsRecordDate(HabitRecordDate date) {
-    return _records.containsDate(date);
-  }
+  bool containsRecordDate(HabitRecordDate date) => _records.containsDate(date);
 
   HabitSummaryData({
     required this.id,
@@ -461,8 +447,7 @@ class HabitSummaryData with DirtyMarkMixin {
     }
   }
 
-  Iterable<HabitRecordDate> getAllAutoComplateRecordDate() =>
-      _autoMarkedRecords;
+  Iterable<HabitRecordDate> get autoCompletedDates => _autoMarkedRecords;
 
   Set<HabitRecordDate> debugGetAutoMarkedRecordsCopy() {
     assert(kDebugMode);
@@ -493,7 +478,7 @@ class HabitSummaryData with DirtyMarkMixin {
 
     _progress = _calculateTotalScore(onScoreChange: onScoreChange);
 
-    // debugPrint('debug: last untrack date: ${getFirstUnTrackedDate()}');
+    // debugPrint('debug: last untrack date: $firstUntrackedDate');
   }
 
   HabitScoreCalculator getCalculator() => _createScoreCalculator();
@@ -501,7 +486,7 @@ class HabitSummaryData with DirtyMarkMixin {
   bool isRecordAutoComplated(HabitRecordDate date) =>
       _autoMarkedRecords.contains(date);
 
-  HabitDate getFirstUnTrackedDate() {
+  HabitDate get firstUntrackedDate {
     final lastAutoMarkDate = _autoMarkedRecords.lastOrNull;
     final lastRecordDate = _records.lastDate;
     final now = HabitDate.now().subtract(const Duration(days: 1));
@@ -516,7 +501,7 @@ class HabitSummaryData with DirtyMarkMixin {
   @override
   String toString() {
     String getRecordsString() {
-      final iterable = getAllRecord();
+      final iterable = records;
       return iterable.length > 10
           ? [
               ...iterable.take(5),
@@ -542,15 +527,13 @@ class HabitSummaryDataCollection {
     Iterable<HabitDBCell> result,
     Iterable<RecordDBCell> recordResult,
   ) {
-    initDataFromDBQueuryResult(result, recordResult);
+    loadFromDBQueryResult(result, recordResult);
   }
 
-  void initDataFromDBQueuryResult(
+  void loadFromDBQueryResult(
     Iterable<HabitDBCell> result,
     Iterable<RecordDBCell> recordResult,
-  ) {
-    _loadFromDBQueryResult(result, recordResult);
-  }
+  ) => _loadFromDBQueryResult(result, recordResult);
 
   int get length => _dataMap.length;
 
@@ -561,15 +544,14 @@ class HabitSummaryDataCollection {
   Iterable<MapEntry<HabitUUID, HabitSummaryData>> get entries =>
       _dataMap.entries;
 
-  void forEach(Function(HabitUUID k, HabitSummaryData v) action) {
-    _dataMap.forEach(action);
-  }
+  void forEach(Function(HabitUUID k, HabitSummaryData v) action) =>
+      _dataMap.forEach(action);
 
   bool containsHabitUUID(HabitUUID uuid) => _dataMap.containsKey(uuid);
 
   HabitSummaryData? getHabitByUUID(HabitUUID uuid) => _dataMap[uuid];
 
-  bool addNewHabit(HabitSummaryData cell, {bool forceAdd = false}) {
+  bool addHabit(HabitSummaryData cell, {bool forceAdd = false}) {
     if (_dataMap.containsKey(cell.uuid) && !forceAdd) {
       return false;
     }
@@ -580,27 +562,25 @@ class HabitSummaryDataCollection {
   HabitSummaryData? removeHabitByUUID(HabitUUID uuid) => _dataMap.remove(uuid);
 
   //#region: sort
-  List<HabitSummaryData> sortDataByName(
-    HabitDisplaySortDirection sortDirecton,
-  ) => _dataMap.values.sortByName(sortDirecton);
+  List<HabitSummaryData> sortByName(HabitDisplaySortDirection sortDirecton) =>
+      _dataMap.values.sortByName(sortDirecton);
 
-  List<HabitSummaryData> sortDataByColorType(
+  List<HabitSummaryData> sortByColorType(
     HabitDisplaySortDirection sortDirecton,
   ) => _dataMap.values.sortByColorType(sortDirecton);
 
-  List<HabitSummaryData> sortDataByProgress(
+  List<HabitSummaryData> sortByProgress(
     HabitDisplaySortDirection sortDirecton,
   ) => _dataMap.values.sortByProgress(sortDirecton);
 
-  List<HabitSummaryData> sortDataByStartT(
+  List<HabitSummaryData> sortByStartDate(
     HabitDisplaySortDirection sortDirecton,
   ) => _dataMap.values.sortByStartDate(sortDirecton);
 
-  List<HabitSummaryData> sortDataBySatus(
-    HabitDisplaySortDirection sortDirecton,
-  ) => _dataMap.values.sortByStatus(sortDirecton);
+  List<HabitSummaryData> sortByStatus(HabitDisplaySortDirection sortDirecton) =>
+      _dataMap.values.sortByStatus(sortDirecton);
 
-  List<HabitSummaryData> sortDataByManual() => _dataMap.values.sortByManual();
+  List<HabitSummaryData> sortByManual() => _dataMap.values.sortByManual();
 
   List<HabitSummaryData> sort(
     HabitDisplaySortType sortType,
@@ -753,41 +733,51 @@ extension on Iterable<HabitSummaryData> {
     return result;
   }
 
-  int _compareByName(HabitSummaryData a, HabitSummaryData b) {
-    final result = a.name.compareTo(b.name);
-    if (result != 0) return result;
-    return _compareByDescendingStartDate(a, b);
-  }
+  int _compareByName(HabitSummaryData a, HabitSummaryData b) =>
+      _compareWithFallback(
+        a,
+        b,
+        primaryResult: a.name.compareTo(b.name),
+        fallbackComparator: _compareByDescendingStartDate,
+      );
 
-  int _compareByColorType(HabitSummaryData a, HabitSummaryData b) {
-    final result = a.colorType.dbCode.compareTo(b.colorType.dbCode);
-    if (result != 0) return result;
-    return _compareByDescendingStartDate(a, b);
-  }
+  int _compareByColorType(HabitSummaryData a, HabitSummaryData b) =>
+      _compareWithFallback(
+        a,
+        b,
+        primaryResult: a.colorType.dbCode.compareTo(b.colorType.dbCode),
+        fallbackComparator: _compareByDescendingStartDate,
+      );
 
-  int _compareByProgress(HabitSummaryData a, HabitSummaryData b) {
-    final result = b.progress.compareTo(a.progress);
-    if (result != 0) return result;
-    return _compareByDescendingStartDate(a, b);
-  }
+  int _compareByProgress(HabitSummaryData a, HabitSummaryData b) =>
+      _compareWithFallback(
+        a,
+        b,
+        primaryResult: b.progress.compareTo(a.progress),
+        fallbackComparator: _compareByDescendingStartDate,
+      );
 
-  int _compareByStartDate(HabitSummaryData a, HabitSummaryData b) {
-    return a.startDate.compareTo(b.startDate);
-  }
+  int _compareByStartDate(HabitSummaryData a, HabitSummaryData b) =>
+      a.startDate.compareTo(b.startDate);
 
-  int _compareByStatus(HabitSummaryData a, HabitSummaryData b) {
-    final result = _compareActivatedStatus(a, b);
-    if (result != 0) return result;
-    final progressResult = b.progress.compareTo(a.progress);
-    if (progressResult != 0) return progressResult;
-    return _compareByDescendingStartDate(a, b);
-  }
+  int _compareByStatus(HabitSummaryData a, HabitSummaryData b) =>
+      _compareWithFallback(
+        a,
+        b,
+        primaryResult: _compareActivatedStatus(a, b),
+        fallbackComparator: _compareByProgress,
+      );
 
-  int _compareByManual(HabitSummaryData a, HabitSummaryData b) {
-    final result = a.sortPostion.compareTo(b.sortPostion);
-    if (result != 0) return result;
-    return a.createTime.compareTo(b.createTime);
-  }
+  int _compareByManual(HabitSummaryData a, HabitSummaryData b) =>
+      _compareWithFallback(
+        a,
+        b,
+        primaryResult: a.sortPostion.compareTo(b.sortPostion),
+        fallbackComparator: _compareByCreateTime,
+      );
+
+  int _compareByCreateTime(HabitSummaryData a, HabitSummaryData b) =>
+      a.createTime.compareTo(b.createTime);
 
   int _compareActivatedStatus(HabitSummaryData a, HabitSummaryData b) {
     if (a.status == HabitStatus.activated &&
@@ -799,6 +789,16 @@ extension on Iterable<HabitSummaryData> {
       return 1;
     }
     return 0;
+  }
+
+  int _compareWithFallback(
+    HabitSummaryData a,
+    HabitSummaryData b, {
+    required int primaryResult,
+    required Comparator<HabitSummaryData> fallbackComparator,
+  }) {
+    if (primaryResult != 0) return primaryResult;
+    return fallbackComparator(a, b);
   }
 
   int _compareByDescendingStartDate(HabitSummaryData a, HabitSummaryData b) {

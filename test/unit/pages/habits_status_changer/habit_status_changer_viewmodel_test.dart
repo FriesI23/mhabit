@@ -41,7 +41,7 @@ final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {
   }) async {
     lastHabitUuids = habitUUIDs;
     final collection = initedCollection ?? HabitSummaryDataCollection();
-    collection.addNewHabit(seedData, forceAdd: true);
+    collection.addHabit(seedData, forceAdd: true);
     return collection;
   }
 

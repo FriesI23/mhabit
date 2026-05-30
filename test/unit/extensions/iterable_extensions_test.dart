@@ -48,7 +48,7 @@ HabitSummaryData _buildHabitSummaryData({
 HabitSummaryDataCollection _buildCollection(Iterable<HabitSummaryData> habits) {
   final collection = HabitSummaryDataCollection();
   for (final habit in habits) {
-    collection.addNewHabit(habit, forceAdd: true);
+    collection.addHabit(habit, forceAdd: true);
   }
   return collection;
 }

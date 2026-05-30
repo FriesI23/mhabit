@@ -58,9 +58,9 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
     List<HabitUUID>? habitUUIDs,
   }) async {
     final collection = initedCollection ?? HabitSummaryDataCollection();
-    collection.addNewHabit(seedData, forceAdd: true);
+    collection.addHabit(seedData, forceAdd: true);
     for (final habit in extraSeedData) {
-      collection.addNewHabit(habit, forceAdd: true);
+      collection.addHabit(habit, forceAdd: true);
     }
     return collection;
   }

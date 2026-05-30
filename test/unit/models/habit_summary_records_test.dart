@@ -52,25 +52,25 @@ void main() {
     });
 
     test('missing lookups return null and false on an empty store', () {
-      expect(data.recordsNum, 0);
+      expect(data.recordCount, 0);
       expect(data.getRecordByUUID('missing-uuid'), isNull);
       expect(data.getRecordByDate(_date(20)), isNull);
       expect(data.containsRecordUUID('missing-uuid'), isFalse);
       expect(data.containsRecordDate(_date(20)), isFalse);
-      expect(data.removeRecordWithUUID('missing-uuid'), isNull);
-      expect(data.removeRecordWithDate(_date(20)), isNull);
+      expect(data.removeRecordByUUID('missing-uuid'), isNull);
+      expect(data.removeRecordByDate(_date(20)), isNull);
     });
 
     test('addRecord stores record in both lookup indexes', () {
       final record = _buildRecord(uuid: 'record-1', day: 2);
 
       expect(data.addRecord(record), isTrue);
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(record.uuid), same(record));
       expect(data.getRecordByDate(record.date), same(record));
       expect(data.containsRecordUUID(record.uuid), isTrue);
       expect(data.containsRecordDate(record.date), isTrue);
-      expect(data.getAllRecord().toList(), [record]);
+      expect(data.records.toList(), [record]);
     });
 
     test('addRecord rejects duplicate uuid without replacement', () {
@@ -80,7 +80,7 @@ void main() {
       expect(data.addRecord(original), isTrue);
       expect(data.addRecord(duplicateUuid), isFalse);
 
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(original.uuid), same(original));
       expect(data.getRecordByDate(original.date), same(original));
       expect(data.getRecordByDate(duplicateUuid.date), isNull);
@@ -93,7 +93,7 @@ void main() {
       expect(data.addRecord(original), isTrue);
       expect(data.addRecord(duplicateDate), isFalse);
 
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(original.uuid), same(original));
       expect(data.getRecordByUUID(duplicateDate.uuid), isNull);
       expect(data.getRecordByDate(original.date), same(original));
@@ -108,7 +108,7 @@ void main() {
       expect(data.addRecord(replaceByUuid, replaced: true), isTrue);
       expect(data.addRecord(replaceByDate, replaced: true), isTrue);
 
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(original.uuid), isNull);
       expect(data.getRecordByDate(original.date), isNull);
       expect(data.getRecordByUUID(replaceByUuid.uuid), isNull);
@@ -116,26 +116,26 @@ void main() {
       expect(data.getRecordByDate(replaceByDate.date), same(replaceByDate));
     });
 
-    test('removeRecordWithUUID removes both lookup entries', () {
+    test('removeRecordByUUID removes both lookup entries', () {
       final record = _buildRecord(uuid: 'record-1', day: 2);
 
       data.addRecord(record);
 
-      expect(data.removeRecordWithUUID(record.uuid), same(record));
-      expect(data.removeRecordWithUUID(record.uuid), isNull);
-      expect(data.recordsNum, 0);
+      expect(data.removeRecordByUUID(record.uuid), same(record));
+      expect(data.removeRecordByUUID(record.uuid), isNull);
+      expect(data.recordCount, 0);
       expect(data.getRecordByUUID(record.uuid), isNull);
       expect(data.getRecordByDate(record.date), isNull);
     });
 
-    test('removeRecordWithDate removes both lookup entries', () {
+    test('removeRecordByDate removes both lookup entries', () {
       final record = _buildRecord(uuid: 'record-1', day: 2);
 
       data.addRecord(record);
 
-      expect(data.removeRecordWithDate(record.date), same(record));
-      expect(data.removeRecordWithDate(record.date), isNull);
-      expect(data.recordsNum, 0);
+      expect(data.removeRecordByDate(record.date), same(record));
+      expect(data.removeRecordByDate(record.date), isNull);
+      expect(data.recordCount, 0);
       expect(data.getRecordByUUID(record.uuid), isNull);
       expect(data.getRecordByDate(record.date), isNull);
     });
@@ -147,8 +147,8 @@ void main() {
       data.addAllRecords([first, second]);
       data.clearRecords();
 
-      expect(data.recordsNum, 0);
-      expect(data.getAllRecord(), isEmpty);
+      expect(data.recordCount, 0);
+      expect(data.records, isEmpty);
       expect(data.getRecordByUUID(first.uuid), isNull);
       expect(data.getRecordByDate(second.date), isNull);
       expect(data.containsRecordUUID(first.uuid), isFalse);
@@ -170,7 +170,7 @@ void main() {
         isFalse,
       );
 
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(original.uuid), same(original));
       expect(data.getRecordByUUID(unique.uuid), isNull);
       expect(data.getRecordByDate(unique.date), isNull);
@@ -191,7 +191,7 @@ void main() {
         isFalse,
       );
 
-      expect(data.recordsNum, 1);
+      expect(data.recordCount, 1);
       expect(data.getRecordByUUID(original.uuid), same(original));
       expect(data.getRecordByUUID(unique.uuid), isNull);
       expect(data.getRecordByUUID(conflict.uuid), isNull);
@@ -215,14 +215,11 @@ void main() {
           isTrue,
         );
 
-        expect(data.recordsNum, 2);
+        expect(data.recordCount, 2);
         expect(data.getRecordByUUID(original.uuid), same(original));
         expect(data.getRecordByUUID(unique.uuid), same(unique));
         expect(data.getRecordByDate(conflict.date), isNull);
-        expect(data.getAllRecord().map((record) => record.date.day).toList(), [
-          2,
-          3,
-        ]);
+        expect(data.records.map((record) => record.date.day).toList(), [2, 3]);
       },
     );
 
@@ -241,12 +238,12 @@ void main() {
         isTrue,
       );
 
-      expect(data.recordsNum, 2);
+      expect(data.recordCount, 2);
       expect(data.getRecordByUUID(original.uuid), isNull);
       expect(data.getRecordByUUID(unique.uuid), same(unique));
       expect(data.getRecordByUUID(replacement.uuid), same(replacement));
       expect(data.getRecordByDate(original.date), same(replacement));
-      expect(data.getAllRecord().map((record) => record.uuid).toList(), [
+      expect(data.records.map((record) => record.uuid).toList(), [
         replacement.uuid,
         unique.uuid,
       ]);
@@ -260,10 +257,10 @@ void main() {
       data.addRecord(stale);
       data.initRecords([later, earlier]);
 
-      expect(data.recordsNum, 2);
+      expect(data.recordCount, 2);
       expect(data.getRecordByUUID(stale.uuid), isNull);
       expect(data.getRecordByDate(stale.date), isNull);
-      expect(data.getAllRecord().map((record) => record.uuid).toList(), [
+      expect(data.records.map((record) => record.uuid).toList(), [
         earlier.uuid,
         later.uuid,
       ]);
