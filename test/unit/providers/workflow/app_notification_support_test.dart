@@ -14,6 +14,7 @@
 
 import 'dart:ui' show Locale;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show NotificationDetails;
@@ -36,6 +37,7 @@ final class _FakeNotificationService implements NotificationService {
   int cancelAppReminderCallCount = 0;
   int requestPermissionsCallCount = 0;
   int regrAppReminderCallCount = 0;
+  bool? requestPermissionsResult = true;
   String? lastReminderTitle;
   String? lastReminderSubtitle;
   NotificationDetails? lastReminderDetails;
@@ -55,7 +57,7 @@ final class _FakeNotificationService implements NotificationService {
   @override
   Future<bool?> requestPermissions() async {
     requestPermissionsCallCount += 1;
-    return true;
+    return requestPermissionsResult;
   }
 
   @override
@@ -75,6 +77,40 @@ final class _FakeNotificationService implements NotificationService {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _TrackingAppReminderAccess extends ChangeNotifier
+    implements AppReminderAccess {
+  _TrackingAppReminderAccess({required this.reminder});
+
+  @override
+  AppReminderConfig reminder;
+  @override
+  bool isChannelEnabled = true;
+  final triggers = <AppReminderTrigger>[];
+  AppReminderContent? lastContent;
+
+  @override
+  Future<bool?> requestReminderPermission() async => true;
+
+  @override
+  Future<void> processTrigger(
+    AppReminderTrigger trigger, {
+    AppReminderContent? content,
+  }) async {
+    triggers.add(trigger);
+    lastContent = content;
+    if (trigger.reason == AppReminderTriggerReason.settings) {
+      reminder = trigger.nextReminder!;
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<bool> processReminder(AppReminderContent? content) async {
+    lastContent = content;
+    return true;
+  }
 }
 
 Future<ProfileViewModel> _loadAppReminderProfile({
@@ -120,7 +156,117 @@ void main() {
 
   group('AppReminderOwner notification routing', () {
     test(
-      'processAppReminder routes enabled reminder through notification service',
+      'processReminder exposes and consumes the app reminder channel gate',
+      () async {
+        final reminderProfile = await _loadAppReminderProfile(
+          initialReminder: AppReminderConfig.dailyNight,
+        );
+        final notifyProfile = await _loadAppNotifyConfigProfile(
+          initialConfig: const AppNotifyConfig(
+            channels: {NotificationChannelId.appReminder: false},
+          ),
+        );
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = AppNotifyConfigOwner(
+          notificationService: notificationService,
+        )..updateProfile(notifyProfile);
+        final channelData = NotificationChannelData();
+        final owner = AppReminderOwner(notificationService: notificationService)
+          ..attachNotifyConfig(notifyConfig)
+          ..updateProfile(reminderProfile)
+          ..setNotificationChannelData(channelData);
+        final content = AppReminderContent.fromL10n(
+          lookupL10n(const Locale('en')),
+        );
+
+        final result = await owner.processReminder(content);
+
+        expect(owner.isChannelEnabled, isFalse);
+        expect(result, isTrue);
+        expect(notificationService.cancelAppReminderCallCount, 0);
+        expect(notificationService.requestPermissionsCallCount, 0);
+        expect(notificationService.regrAppReminderCallCount, 0);
+
+        owner.dispose();
+        notifyConfig.dispose();
+        reminderProfile.dispose();
+        notifyProfile.dispose();
+      },
+    );
+
+    test(
+      'notify config exposes app reminder channel status vocabulary',
+      () async {
+        final notifyProfile = await _loadAppNotifyConfigProfile(
+          initialConfig: const AppNotifyConfig(
+            channels: {NotificationChannelId.appReminder: false},
+          ),
+        );
+        final notifyConfig = AppNotifyConfigOwner()
+          ..updateProfile(notifyProfile);
+
+        final status = notifyConfig.getReminderStatus(
+          NotificationChannelId.appReminder,
+        );
+
+        expect(status.isReady, isFalse);
+        expect(status.isChannelDisabled, isTrue);
+        expect(status.isPermissionDenied, isFalse);
+
+        notifyConfig.dispose();
+        notifyProfile.dispose();
+      },
+    );
+
+    test(
+      'processReminder keeps permission denial inside the gate contract',
+      () async {
+        final profile = await _loadAppReminderProfile(
+          initialReminder: AppReminderConfig.dailyNight,
+        );
+        final notificationService = _FakeNotificationService()
+          ..requestPermissionsResult = false;
+        final channelData = NotificationChannelData();
+        final owner = AppReminderOwner(notificationService: notificationService)
+          ..updateProfile(profile)
+          ..setNotificationChannelData(channelData);
+        final content = AppReminderContent.fromL10n(
+          lookupL10n(const Locale('en')),
+        );
+
+        final result = await owner.processReminder(content);
+
+        expect(result, isFalse);
+        expect(notificationService.cancelAppReminderCallCount, 0);
+        expect(notificationService.requestPermissionsCallCount, 1);
+        expect(notificationService.regrAppReminderCallCount, 0);
+
+        owner.dispose();
+        profile.dispose();
+      },
+    );
+
+    test('requestReminderPermission exposes the app reminder gate', () async {
+      final profile = await _loadAppReminderProfile(
+        initialReminder: AppReminderConfig.dailyNight,
+      );
+      final notificationService = _FakeNotificationService();
+      final owner = AppReminderOwner(notificationService: notificationService)
+        ..updateProfile(profile);
+
+      final result = await owner.requestReminderPermission();
+
+      expect(result, isTrue);
+      expect(notificationService.requestPermissionsCallCount, 1);
+      expect(notificationService.cancelAppReminderCallCount, 0);
+      expect(notificationService.regrAppReminderCallCount, 0);
+
+      owner.dispose();
+      profile.dispose();
+    });
+
+    test(
+      'processReminder routes enabled reminder through notification service',
       () async {
         final profile = await _loadAppReminderProfile(
           initialReminder: AppReminderConfig.dailyNight,
@@ -130,10 +276,11 @@ void main() {
         final owner = AppReminderOwner(notificationService: notificationService)
           ..updateProfile(profile)
           ..setNotificationChannelData(channelData);
-
-        final result = await owner.processAppReminder(
+        final content = AppReminderContent.fromL10n(
           lookupL10n(const Locale('en')),
         );
+
+        final result = await owner.processReminder(content);
 
         expect(result, isTrue);
         expect(notificationService.cancelAppReminderCallCount, 0);
@@ -148,6 +295,98 @@ void main() {
 
         owner.dispose();
         profile.dispose();
+      },
+    );
+  });
+
+  group('AppReminderViewModel settings routing', () {
+    test('viewmodel exposes the reminder channel gate from access', () {
+      final access = _TrackingAppReminderAccess(reminder: AppReminderConfig.off)
+        ..isChannelEnabled = false;
+      final viewModel = AppReminderViewModel()..attachAccess(access);
+
+      expect(viewModel.isChannelEnabled, isFalse);
+
+      viewModel.dispose();
+      access.dispose();
+    });
+
+    test(
+      'switchOn routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.off,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchOn(l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(access.triggers.single.nextReminder?.enabled, isTrue);
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
+
+        viewModel.dispose();
+        access.dispose();
+      },
+    );
+
+    test(
+      'switchOff routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.dailyNight,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchOff(l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(access.triggers.single.nextReminder?.enabled, isFalse);
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
+
+        viewModel.dispose();
+        access.dispose();
+      },
+    );
+
+    test(
+      'switchToDaily routes through the shared settings trigger contract',
+      () async {
+        final access = _TrackingAppReminderAccess(
+          reminder: AppReminderConfig.off,
+        );
+        final viewModel = AppReminderViewModel()..attachAccess(access);
+        const timeOfDay = TimeOfDay(hour: 8, minute: 30);
+        final l10n = lookupL10n(const Locale('en'));
+
+        await viewModel.switchToDaily(timeOfDay: timeOfDay, l10n: l10n);
+
+        expect(access.triggers, hasLength(1));
+        expect(
+          access.triggers.single.reason,
+          AppReminderTriggerReason.settings,
+        );
+        expect(
+          access.triggers.single.nextReminder,
+          AppReminderConfig.dailyNight.copyWith(
+            timeOfDay: timeOfDay,
+            enabled: false,
+          ),
+        );
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
+
+        viewModel.dispose();
+        access.dispose();
       },
     );
   });
@@ -182,7 +421,7 @@ void main() {
     );
 
     test(
-      'updateNotifyConfig syncs latest config through NotificationService',
+      'updateConfig syncs latest config through NotificationService',
       () async {
         final profile = await _loadAppNotifyConfigProfile();
         final notificationService = _FakeNotificationService();
@@ -195,7 +434,7 @@ void main() {
           channels: {NotificationChannelId.appSyncFailed: false},
         );
 
-        await owner.updateNotifyConfig(config);
+        await owner.updateConfig(config);
 
         expect(owner.notifyConfig.toJson(), config.toJson());
         expect(

@@ -34,7 +34,6 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
-import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
@@ -212,8 +211,10 @@ class _PageState extends State<_Page> {
     BuildContext context,
     HabitReminder? reminder,
   ) async {
-    await context.read<HabitFormAccess>().requestReminderPermissions();
-    if (!context.mounted) return;
+    final hasPermission = await context
+        .read<HabitFormViewModel>()
+        .requestReminderPermission();
+    if (!context.mounted || !hasPermission) return;
     final result = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),

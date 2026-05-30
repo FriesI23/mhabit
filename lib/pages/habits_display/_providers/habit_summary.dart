@@ -189,9 +189,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     return data != null ? data.diryMark : UniqueKey();
   }
 
-  Future<void> _updateHabitReminder(HabitSummaryData data) =>
-      _access.updateHabitReminder(data);
-
   void attachAccess(HabitsDisplayAccess newAccess) {
     _access = newAccess;
   }
@@ -273,12 +270,9 @@ class HabitSummaryViewModel extends ChangeNotifier
         _data.forEach((_, habit) => _updateHabitAutoCompleteStatistics(habit));
         _resortData();
 
-        // init reminders
-        final futureList = <Future>[];
-        _data.forEach(
-          (_, habit) => futureList.add(_updateHabitReminder(habit)),
+        await _access.repairHabitReminders(
+          params: HabitReminderRepairParams.loadedHabits(_data.values),
         );
-        await Future.wait(futureList);
         if (!mounted) {
           return loadingFailed(loading, const ["viewmodel disposed"]);
         }

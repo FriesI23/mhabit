@@ -35,7 +35,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   final HabitSummaryData seedData;
   final List<HabitSummaryData> extraSeedData;
   final String recordReason = 'record-reason';
-  final reminderUpdates = <HabitSummaryData>[];
+  final reminderRepairParamsList = <HabitReminderRepairParams>[];
 
   HabitUUID? lastDetailUuid;
   HabitSummaryData? lastReasonData;
@@ -141,10 +141,16 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   }
 
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) {
-    reminderUpdates.add(data);
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
+  }) {
+    reminderRepairParamsList.add(params);
     return Future.value();
   }
+
+  @override
+  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
+      Future.value();
 }
 
 final class _FakeAppSyncWorkflowAccess implements AppSyncWorkflowAccess {
@@ -237,7 +243,11 @@ void main() {
 
       expect(vm.habitCount, 1);
       expect(vm.currentHabitList, isNotEmpty);
-      expect(access.reminderUpdates.single.uuid, seedData.uuid);
+      expect(access.reminderRepairParamsList, hasLength(1));
+      expect(
+        access.reminderRepairParamsList.single,
+        HabitReminderRepairParams.loadedHabits([seedData]),
+      );
 
       final loadedHabit = vm.getHabit(seedData.uuid);
       expect(loadedHabit, isNotNull);
@@ -263,7 +273,11 @@ void main() {
       await vm.loadData(listen: false);
 
       expect(vm.currentHabitList, isNotEmpty);
-      expect(access.reminderUpdates.single.uuid, seedData.uuid);
+      expect(access.reminderRepairParamsList, hasLength(1));
+      expect(
+        access.reminderRepairParamsList.single,
+        HabitReminderRepairParams.loadedHabits([seedData]),
+      );
 
       final loadedHabit = vm.getHabit(seedData.uuid);
       expect(loadedHabit, isNotNull);

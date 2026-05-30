@@ -14,6 +14,8 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+
 import '../../common/types.dart';
 import '../../extensions/iterable_extensions.dart';
 import '../../logging/helper.dart';
@@ -31,12 +33,220 @@ import '../../storage/db/handlers/habit.dart';
 import '../../storage/db/handlers/record.dart';
 import '../../storage/db_helper_provider.dart';
 import '../support/commons.dart';
+import 'app_notify_config.dart';
 
 typedef BeforeHabitRecordReminderUpdateCb =
     FutureOr<void> Function(
       HabitSummaryData habit,
       List<ChangeRecordStatusResult> records,
     );
+
+enum HabitReminderTriggerReason {
+  /// Full refresh from the app startup production path.
+  startup,
+
+  /// Full refresh after the app returns from a paused lifecycle state.
+  restart,
+
+  /// Full refresh after a desktop day rollover or timezone change.
+  dateChange,
+
+  /// Owner-local refresh that reuses already loaded habits after a mutation.
+  mutation,
+
+  /// Explicit targeted refresh for a specific set of habit UUIDs.
+  reconcile,
+}
+
+sealed class HabitReminderTrigger {
+  final HabitReminderTriggerReason reason;
+
+  const HabitReminderTrigger._(this.reason);
+
+  const factory HabitReminderTrigger.startup() = _HabitReminderStartupTrigger;
+
+  const factory HabitReminderTrigger.restart() = _HabitReminderRestartTrigger;
+
+  const factory HabitReminderTrigger.dateChange() =
+      _HabitReminderDateChangeTrigger;
+
+  factory HabitReminderTrigger.mutation({
+    required Iterable<HabitSummaryData> loadedHabits,
+  }) => _HabitReminderMutationTrigger(
+    List<HabitSummaryData>.unmodifiable(loadedHabits),
+  );
+
+  factory HabitReminderTrigger.reconcile({
+    required Iterable<HabitUUID> habitUUIDs,
+  }) =>
+      _HabitReminderReconcileTrigger(List<HabitUUID>.unmodifiable(habitUUIDs));
+}
+
+final class _HabitReminderStartupTrigger extends HabitReminderTrigger {
+  const _HabitReminderStartupTrigger()
+    : super._(HabitReminderTriggerReason.startup);
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderStartupTrigger;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, reason);
+}
+
+final class _HabitReminderRestartTrigger extends HabitReminderTrigger {
+  const _HabitReminderRestartTrigger()
+    : super._(HabitReminderTriggerReason.restart);
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderRestartTrigger;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, reason);
+}
+
+final class _HabitReminderDateChangeTrigger extends HabitReminderTrigger {
+  const _HabitReminderDateChangeTrigger()
+    : super._(HabitReminderTriggerReason.dateChange);
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderDateChangeTrigger;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, reason);
+}
+
+final class _HabitReminderMutationTrigger extends HabitReminderTrigger {
+  final List<HabitSummaryData> loadedHabits;
+
+  const _HabitReminderMutationTrigger(this.loadedHabits)
+    : super._(HabitReminderTriggerReason.mutation);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderMutationTrigger &&
+          const ListEquality().equals(loadedHabits, other.loadedHabits);
+
+  @override
+  int get hashCode =>
+      Object.hash(reason, const ListEquality().hash(loadedHabits));
+}
+
+final class _HabitReminderReconcileTrigger extends HabitReminderTrigger {
+  final List<HabitUUID> habitUUIDs;
+
+  const _HabitReminderReconcileTrigger(this.habitUUIDs)
+    : super._(HabitReminderTriggerReason.reconcile);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderReconcileTrigger &&
+          const ListEquality().equals(habitUUIDs, other.habitUUIDs);
+
+  @override
+  int get hashCode =>
+      Object.hash(reason, const ListEquality().hash(habitUUIDs));
+}
+
+sealed class HabitReminderRepairParams {
+  const HabitReminderRepairParams._();
+
+  factory HabitReminderRepairParams.loadedHabit(HabitSummaryData habit) =>
+      _HabitReminderLoadedHabitsRepairParams([habit]);
+
+  factory HabitReminderRepairParams.loadedHabits(
+    Iterable<HabitSummaryData> habits,
+  ) => _HabitReminderLoadedHabitsRepairParams(
+    List<HabitSummaryData>.unmodifiable(habits),
+  );
+}
+
+final class _HabitReminderLoadedHabitsRepairParams
+    extends HabitReminderRepairParams {
+  final List<HabitSummaryData> loadedHabits;
+
+  const _HabitReminderLoadedHabitsRepairParams(this.loadedHabits) : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderLoadedHabitsRepairParams &&
+          const ListEquality().equals(loadedHabits, other.loadedHabits);
+
+  @override
+  int get hashCode => const ListEquality().hash(loadedHabits);
+}
+
+sealed class HabitReminderRefreshParams {
+  const HabitReminderRefreshParams();
+
+  const factory HabitReminderRefreshParams.startup() =
+      _HabitReminderStartupRefreshParams;
+
+  const factory HabitReminderRefreshParams.restart() =
+      _HabitReminderRestartRefreshParams;
+
+  const factory HabitReminderRefreshParams.dateChange() =
+      _HabitReminderDateChangeRefreshParams;
+
+  factory HabitReminderRefreshParams.habitUUID(HabitUUID habitUUID) =>
+      _HabitReminderRefreshUuidParams([habitUUID]);
+
+  factory HabitReminderRefreshParams.habitUUIDs(
+    Iterable<HabitUUID> habitUUIDs,
+  ) =>
+      _HabitReminderRefreshUuidParams(List<HabitUUID>.unmodifiable(habitUUIDs));
+}
+
+final class _HabitReminderStartupRefreshParams
+    extends HabitReminderRefreshParams {
+  const _HabitReminderStartupRefreshParams();
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderStartupRefreshParams;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+final class _HabitReminderRestartRefreshParams
+    extends HabitReminderRefreshParams {
+  const _HabitReminderRestartRefreshParams();
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderRestartRefreshParams;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+final class _HabitReminderDateChangeRefreshParams
+    extends HabitReminderRefreshParams {
+  const _HabitReminderDateChangeRefreshParams();
+
+  @override
+  bool operator ==(Object other) =>
+      other is _HabitReminderDateChangeRefreshParams;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+final class _HabitReminderRefreshUuidParams extends HabitReminderRefreshParams {
+  final List<HabitUUID> habitUUIDs;
+
+  const _HabitReminderRefreshUuidParams(this.habitUUIDs);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HabitReminderRefreshUuidParams &&
+          const ListEquality().equals(habitUUIDs, other.habitUUIDs);
+
+  @override
+  int get hashCode => const ListEquality().hash(habitUUIDs);
+}
 
 abstract interface class HabitsDisplayAccess {
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
@@ -73,7 +283,13 @@ abstract interface class HabitsDisplayAccess {
     required int decimalPlaces,
   });
 
-  Future<void> updateHabitReminder(HabitSummaryData data);
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
+  });
+
+  Future<void> refreshHabitReminders({
+    required HabitReminderRefreshParams params,
+  });
 }
 
 abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
@@ -81,7 +297,7 @@ abstract interface class HabitDetailAccess implements HabitsDisplayAccess {
 }
 
 abstract interface class HabitFormAccess {
-  Future<bool?> requestReminderPermissions();
+  Future<bool?> requestReminderPermission();
 
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell);
 
@@ -121,7 +337,7 @@ class _HabitReminderRuntime {
   _HabitReminderRuntime({NotificationService? notificationService})
     : _notificationService = notificationService ?? NotificationService();
 
-  Future<bool?> requestPermissions() =>
+  Future<bool?> requestNotificationPermissions() =>
       _notificationService.requestPermissions();
 
   Future<void> updateHabitReminder(
@@ -170,11 +386,20 @@ class HabitsManager
         HabitExportAccess,
         HabitImportAccess {
   final _HabitReminderRuntime _reminderRuntime;
+  AppNotifyConfigAccess? _notifyConfig;
 
   HabitsManager({NotificationService? notificationService})
     : _reminderRuntime = _HabitReminderRuntime(
         notificationService: notificationService,
       );
+
+  void attachNotifyConfig(AppNotifyConfigAccess access) {
+    _notifyConfig = access;
+  }
+
+  ReminderStatus _resolveReminderStatus() =>
+      _notifyConfig?.getReminderStatus(NotificationChannelId.habitReminder) ??
+      const ReminderStatus.ready();
 
   //#region status
   @override
@@ -189,8 +414,10 @@ class HabitsManager
     final result = action.resolve();
     final updatedHabits = {
       for (final item in result) item.data.uuid: item.data,
-    }.values;
-    await Future.wait(updatedHabits.map(updateHabitReminder));
+    }.values.toList(growable: false);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(loadedHabits: updatedHabits),
+    );
     if (extraResolver is Future) {
       await Future.wait(result.map((e) async => extraResolver?.call(e)));
     } else if (extraResolver != null) {
@@ -319,8 +546,8 @@ class HabitsManager
   }
 
   @override
-  Future<bool?> requestReminderPermissions() =>
-      _reminderRuntime.requestPermissions();
+  Future<bool?> requestReminderPermission() =>
+      _reminderRuntime.requestNotificationPermissions();
 
   @override
   Future<HabitDBCell?> saveNewHabitAndUpdateReminder(HabitDBCell cell) async {
@@ -460,9 +687,67 @@ class HabitsManager
     return changedUUIDs;
   }
 
+  Future<void> _updateHabitReminder(HabitSummaryData data) {
+    if (!_resolveReminderStatus().isReady) return Future.value();
+    return _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+  }
+
+  Future<void> _processHabitReminderTrigger(
+    HabitReminderTrigger trigger,
+  ) async {
+    final loadedHabits = switch (trigger) {
+      _HabitReminderStartupTrigger() ||
+      _HabitReminderRestartTrigger() ||
+      _HabitReminderDateChangeTrigger() =>
+        await _loadHabitReminderTriggerHabits(),
+      _HabitReminderMutationTrigger(:final loadedHabits) => loadedHabits,
+      _HabitReminderReconcileTrigger(:final habitUUIDs) =>
+        await _loadHabitReminderTriggerHabits(habitUUIDs: habitUUIDs),
+    };
+    await updateHabitReminders(loadedHabits);
+  }
+
+  Future<void> _repairHabitReminders(HabitReminderRepairParams params) async {
+    final loadedHabits = switch (params) {
+      _HabitReminderLoadedHabitsRepairParams(:final loadedHabits) =>
+        loadedHabits,
+    };
+    await updateHabitReminders(loadedHabits);
+  }
+
   @override
-  Future<void> updateHabitReminder(HabitSummaryData data) =>
-      _reminderRuntime.updateHabitReminder(data, channelData: channelData);
+  Future<void> repairHabitReminders({
+    required HabitReminderRepairParams params,
+  }) => _repairHabitReminders(params);
+
+  Future<Iterable<HabitSummaryData>> _loadHabitReminderTriggerHabits({
+    List<HabitUUID>? habitUUIDs,
+  }) async {
+    final loadedHabits = await loadHabitSummaryCollectionData(
+      habitUUIDs: habitUUIDs,
+    );
+    return loadedHabits.values;
+  }
+
+  @override
+  Future<void> refreshHabitReminders({
+    required HabitReminderRefreshParams params,
+  }) async {
+    final trigger = switch (params) {
+      _HabitReminderStartupRefreshParams() =>
+        const HabitReminderTrigger.startup(),
+      _HabitReminderRestartRefreshParams() =>
+        const HabitReminderTrigger.restart(),
+      _HabitReminderDateChangeRefreshParams() =>
+        const HabitReminderTrigger.dateChange(),
+      _HabitReminderRefreshUuidParams(:final habitUUIDs) =>
+        HabitReminderTrigger.reconcile(habitUUIDs: habitUUIDs),
+    };
+    await _processHabitReminderTrigger(trigger);
+  }
+
+  Future<void> updateHabitReminders(Iterable<HabitSummaryData> habits) =>
+      Future.wait(habits.map(_updateHabitReminder));
 
   Future<void> _updateChangedHabitRecordReminders(
     Iterable<ChangeRecordStatusResult> records, {
@@ -485,12 +770,18 @@ class HabitsManager
         ),
       );
     }
-    await Future.wait(updatedHabits.values.map(updateHabitReminder));
+    final changedHabits = updatedHabits.values.toList(growable: false);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(loadedHabits: changedHabits),
+    );
   }
 
   Future<void> _updateSavedHabitReminder(HabitDBCell? cell) async {
     if (cell == null) return;
-    await updateHabitReminder(HabitSummaryData.fromDBQueryCell(cell));
+    final habit = HabitSummaryData.fromDBQueryCell(cell);
+    await _processHabitReminderTrigger(
+      HabitReminderTrigger.mutation(loadedHabits: [habit]),
+    );
   }
 
   //#region import and export

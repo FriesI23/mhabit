@@ -56,6 +56,9 @@ class HabitFormViewModel extends ChangeNotifier
     _access = newAccess;
   }
 
+  Future<bool> requestReminderPermission() async =>
+      (await _access.requestReminderPermission()) ?? true;
+
   @override
   void notifyListeners() {
     super.notifyListeners();

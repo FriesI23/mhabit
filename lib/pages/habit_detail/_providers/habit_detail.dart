@@ -157,7 +157,11 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
 
   Future<void> _updateHabitReminder() {
     final data = _habitDetailData?.data;
-    return data != null ? _access.updateHabitReminder(data) : Future.value();
+    return data != null
+        ? _access.repairHabitReminders(
+            params: HabitReminderRepairParams.loadedHabit(data),
+          )
+        : Future.value();
   }
 
   void attachAccess(HabitDetailAccess newAccess) {

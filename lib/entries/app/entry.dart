@@ -30,6 +30,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
+import '../../models/habit_date.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_ui/app_debugger.dart';
@@ -37,6 +38,7 @@ import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/habits_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_builder.dart';
 import '../../storage/profile/handlers.dart';
@@ -362,6 +364,81 @@ final class _AppSyncPostInitBridge {
   }
 }
 
+bool _isDesktopReminderDateChangeEnabled() => switch (defaultTargetPlatform) {
+  TargetPlatform.linux ||
+  TargetPlatform.macOS ||
+  TargetPlatform.windows => true,
+  _ => false,
+};
+
+final class _HabitReminderPostInitBridge {
+  HabitsDisplayAccess? _access;
+  AppLifecycleListener? _lifecycleListener;
+  DateChangeNotifier? _dateChangeNotifier;
+  HabitDate? _lastDateTime;
+  String? _lastTzName;
+
+  void sync(BuildContext context) {
+    final access = context.maybeRead<HabitsDisplayAccess>();
+    final dateChangeNotifier = _isDesktopReminderDateChangeEnabled()
+        ? context.maybeRead<DateChangeNotifier>()
+        : null;
+    if (identical(_access, access) &&
+        identical(_dateChangeNotifier, dateChangeNotifier)) {
+      return;
+    }
+
+    _lifecycleListener?.dispose();
+    _dateChangeNotifier?.removeListener(_onDateChangeDetected);
+    _access = access;
+    _dateChangeNotifier = dateChangeNotifier;
+    if (access == null) {
+      _lifecycleListener = null;
+      _lastDateTime = null;
+      _lastTzName = null;
+      return;
+    }
+
+    _lifecycleListener = AppLifecycleListener(onRestart: _onRestarted);
+    if (dateChangeNotifier == null) {
+      _lastDateTime = null;
+      _lastTzName = null;
+      return;
+    }
+
+    _lastDateTime = dateChangeNotifier.dateTime;
+    _lastTzName = dateChangeNotifier.tzName;
+    dateChangeNotifier.addListener(_onDateChangeDetected);
+  }
+
+  void dispose() {
+    _lifecycleListener?.dispose();
+    _dateChangeNotifier?.removeListener(_onDateChangeDetected);
+  }
+
+  void _onRestarted() {
+    _access?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.restart(),
+    );
+  }
+
+  void _onDateChangeDetected() {
+    final access = _access;
+    final dateChangeNotifier = _dateChangeNotifier;
+    if (access == null || dateChangeNotifier == null) return;
+
+    final dateChanged = dateChangeNotifier.dateTime != _lastDateTime;
+    final tzChanged = dateChangeNotifier.tzName != _lastTzName;
+    if (!(dateChanged || tzChanged)) return;
+
+    _lastDateTime = dateChangeNotifier.dateTime;
+    _lastTzName = dateChangeNotifier.tzName;
+    access.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.dateChange(),
+    );
+  }
+}
+
 class AppPostInit extends SingleChildStatefulWidget {
   const AppPostInit({required Widget child, super.key}) : super(child: child);
 
@@ -371,10 +448,12 @@ class AppPostInit extends SingleChildStatefulWidget {
 
 class _AppPostInitState extends SingleChildState<AppPostInit> {
   final _appSyncBridge = _AppSyncPostInitBridge();
+  final _habitReminderBridge = _HabitReminderPostInitBridge();
   bool _didHandlePostInit = false;
 
   void _syncL10n([L10n? l10n]) {
     context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _habitReminderBridge.sync(context);
     _appSyncBridge.sync(
       context,
       l10n: l10n,
@@ -401,17 +480,25 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   @override
   void dispose() {
+    _habitReminderBridge.dispose();
     _appSyncBridge.dispose();
     super.dispose();
   }
 
   void _handlePostInit(BuildContext context) {
     final l10n = L10n.of(context);
+    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
     appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
     context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
       l10n,
     );
-    context.maybeRead<AppReminderAccess>()?.processAppReminder(l10n);
+    context.maybeRead<AppReminderAccess>()?.processTrigger(
+      const AppReminderTrigger.startup(),
+      content: reminderContent,
+    );
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.startup(),
+    );
     _syncL10n(l10n);
     _didHandlePostInit = true;
   }

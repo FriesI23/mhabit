@@ -18,18 +18,51 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import '../../models/app_notify_config.dart';
+import '../../reminders/notification_channel.dart';
 import '../../reminders/notification_service.dart';
 import '../../storage/profile/handlers/app_notify_config.dart';
 import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
 
+enum ReminderStatusReason { channelDisabled, permissionDenied }
+
+@immutable
+final class ReminderStatus {
+  final ReminderStatusReason? reason;
+
+  const ReminderStatus._({required this.reason});
+
+  const ReminderStatus.ready() : this._(reason: null);
+
+  const ReminderStatus.channelDisabled()
+    : this._(reason: ReminderStatusReason.channelDisabled);
+
+  const ReminderStatus.permissionDenied()
+    : this._(reason: ReminderStatusReason.permissionDenied);
+
+  bool get isReady => reason == null;
+
+  bool get isChannelDisabled => reason == ReminderStatusReason.channelDisabled;
+
+  bool get isPermissionDenied =>
+      reason == ReminderStatusReason.permissionDenied;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ReminderStatus && reason == other.reason;
+
+  @override
+  int get hashCode => reason.hashCode;
+}
+
 abstract interface class AppNotifyConfigAccess
     implements ChangeNotifier, ProviderMounted, ProfileHandlerLoadedMixin {
   AppNotifyConfig get notifyConfig;
-  FutureOr<void> updateNotifyConfig(
-    AppNotifyConfig newConfig, {
-    bool listen = true,
-  });
+  bool isChannelEnabled(NotificationChannelId channelId);
+  ReminderStatus getReminderStatus(NotificationChannelId channelId);
+
+  FutureOr<void> updateConfig(AppNotifyConfig newConfig, {bool listen = true});
 
   factory AppNotifyConfigAccess() {
     /// Android uses system notification channels to manage notifications.
@@ -74,7 +107,17 @@ final class AppNotifyConfigOwner
   AppNotifyConfig get notifyConfig => _config?.get() ?? const AppNotifyConfig();
 
   @override
-  Future<void> updateNotifyConfig(
+  bool isChannelEnabled(NotificationChannelId channelId) =>
+      notifyConfig.isChannelEnabled(channelId);
+
+  @override
+  ReminderStatus getReminderStatus(NotificationChannelId channelId) =>
+      isChannelEnabled(channelId)
+      ? const ReminderStatus.ready()
+      : const ReminderStatus.channelDisabled();
+
+  @override
+  Future<void> updateConfig(
     AppNotifyConfig newConfig, {
     bool listen = true,
   }) async {
@@ -91,6 +134,16 @@ final class AppNotifyConfigAndroidOwner
   @override
   final AppNotifyConfig notifyConfig = const AppNotifyConfig();
 
+  @override
+  bool isChannelEnabled(NotificationChannelId channelId) =>
+      notifyConfig.isChannelEnabled(channelId);
+
+  @override
+  ReminderStatus getReminderStatus(NotificationChannelId channelId) =>
+      isChannelEnabled(channelId)
+      ? const ReminderStatus.ready()
+      : const ReminderStatus.channelDisabled();
+
   bool _mounted = true;
 
   AppNotifyConfigAndroidOwner();
@@ -106,8 +159,6 @@ final class AppNotifyConfigAndroidOwner
   bool get mounted => _mounted;
 
   @override
-  Future<void> updateNotifyConfig(
-    AppNotifyConfig newConfig, {
-    bool listen = true,
-  }) => Future.value();
+  Future<void> updateConfig(AppNotifyConfig newConfig, {bool listen = true}) =>
+      Future.value();
 }
