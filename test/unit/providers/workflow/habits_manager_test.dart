@@ -432,7 +432,37 @@ void main() {
               ..attachNotifyConfig(notifyConfig)
               ..setNotificationChannelData(NotificationChannelData());
 
-        await manager.refreshHabitReminders();
+        await manager.refreshHabitReminders(
+          params: const HabitReminderRefreshParams.startup(),
+        );
+
+        expect(manager.lastLoadedHabitUUIDs, isNull);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'refreshHabitReminders loads all habits for restart triggers',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final restartHabit = _buildHabitSummaryData(uuid: 'restart-habit-1');
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: [restartHabit],
+              )
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.refreshHabitReminders(
+          params: const HabitReminderRefreshParams.restart(),
+        );
 
         expect(manager.lastLoadedHabitUUIDs, isNull);
         expect(notificationService.regrHabitReminderCallCount, 1);

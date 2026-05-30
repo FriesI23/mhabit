@@ -363,6 +363,35 @@ final class _AppSyncPostInitBridge {
   }
 }
 
+final class _HabitReminderPostInitBridge {
+  HabitsDisplayAccess? _access;
+  AppLifecycleListener? _lifecycleListener;
+
+  void sync(BuildContext context) {
+    final access = context.maybeRead<HabitsDisplayAccess>();
+    if (identical(_access, access)) return;
+
+    _lifecycleListener?.dispose();
+    _access = access;
+    if (access == null) {
+      _lifecycleListener = null;
+      return;
+    }
+
+    _lifecycleListener = AppLifecycleListener(onRestart: _onRestarted);
+  }
+
+  void dispose() {
+    _lifecycleListener?.dispose();
+  }
+
+  void _onRestarted() {
+    _access?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.restart(),
+    );
+  }
+}
+
 class AppPostInit extends SingleChildStatefulWidget {
   const AppPostInit({required Widget child, super.key}) : super(child: child);
 
@@ -372,10 +401,12 @@ class AppPostInit extends SingleChildStatefulWidget {
 
 class _AppPostInitState extends SingleChildState<AppPostInit> {
   final _appSyncBridge = _AppSyncPostInitBridge();
+  final _habitReminderBridge = _HabitReminderPostInitBridge();
   bool _didHandlePostInit = false;
 
   void _syncL10n([L10n? l10n]) {
     context.maybeRead<NotificationChannelData>()?.onL10nUpdate(l10n);
+    _habitReminderBridge.sync(context);
     _appSyncBridge.sync(
       context,
       l10n: l10n,
@@ -402,6 +433,7 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   @override
   void dispose() {
+    _habitReminderBridge.dispose();
     _appSyncBridge.dispose();
     super.dispose();
   }
@@ -417,7 +449,9 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
       const AppReminderTrigger.startup(),
       content: reminderContent,
     );
-    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders();
+    context.maybeRead<HabitsDisplayAccess>()?.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.startup(),
+    );
     _syncL10n(l10n);
     _didHandlePostInit = true;
   }

@@ -225,7 +225,7 @@ final class _TrackingStartupHabitsAccess extends HabitsManager {
   }) : _loadedHabits = List.unmodifiable(loadedHabits);
 
   int refreshCallCount = 0;
-  HabitReminderRefreshParams? lastRefreshParams;
+  final refreshParamsList = <HabitReminderRefreshParams>[];
 
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
@@ -244,10 +244,10 @@ final class _TrackingStartupHabitsAccess extends HabitsManager {
 
   @override
   Future<void> refreshHabitReminders({
-    HabitReminderRefreshParams? params,
+    required HabitReminderRefreshParams params,
   }) async {
     refreshCallCount += 1;
-    lastRefreshParams = params;
+    refreshParamsList.add(params);
     await super.refreshHabitReminders(params: params);
   }
 }
@@ -277,7 +277,7 @@ void main() {
   setUpAll(_initAppInfo);
 
   testWidgets(
-    'AppPostInit runs startup triggers once and keeps AppSync l10n wired',
+    'AppPostInit runs startup triggers once, refreshes habit reminders on restart, and keeps AppSync l10n wired',
     (tester) async {
       final appSync = _FakeAppSyncAccess();
       final debugger = _TrackingAppDebuggerViewModel();
@@ -325,7 +325,9 @@ void main() {
       expect(reminder.triggers.single.nextReminder, isNull);
       expect(reminder.processCallCount, 0);
       expect(habitsAccess.refreshCallCount, 1);
-      expect(habitsAccess.lastRefreshParams, isNull);
+      expect(habitsAccess.refreshParamsList, [
+        const HabitReminderRefreshParams.startup(),
+      ]);
       expect(notificationService.regrHabitReminderCallCount, 1);
       expect(notificationService.cancelHabitReminderCallCount, 0);
       expect(
@@ -352,8 +354,42 @@ void main() {
       expect(reminder.triggers.single.nextReminder, isNull);
       expect(reminder.processCallCount, 0);
       expect(habitsAccess.refreshCallCount, 1);
-      expect(habitsAccess.lastRefreshParams, isNull);
+      expect(habitsAccess.refreshParamsList, [
+        const HabitReminderRefreshParams.startup(),
+      ]);
       expect(notificationService.regrHabitReminderCallCount, 1);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
+      expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
+
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      await tester.pump();
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      await tester.pump();
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      // ignore: invalid_use_of_protected_member
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(debugger.processCallCount, 1);
+      expect(reminder.triggers, hasLength(1));
+      expect(reminder.processCallCount, 0);
+      expect(habitsAccess.refreshCallCount, 2);
+      expect(habitsAccess.refreshParamsList, [
+        const HabitReminderRefreshParams.startup(),
+        const HabitReminderRefreshParams.restart(),
+      ]);
+      expect(notificationService.regrHabitReminderCallCount, 2);
       expect(notificationService.cancelHabitReminderCallCount, 0);
       expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
     },
