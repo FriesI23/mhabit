@@ -30,6 +30,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_sync_tasks.dart';
 import '../../models/app_theme_color.dart';
+import '../../models/habit_date.dart';
 import '../../pages/common/widgets.dart';
 import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_ui/app_debugger.dart';
@@ -363,31 +364,77 @@ final class _AppSyncPostInitBridge {
   }
 }
 
+bool _isDesktopReminderDateChangeEnabled() => switch (defaultTargetPlatform) {
+  TargetPlatform.linux ||
+  TargetPlatform.macOS ||
+  TargetPlatform.windows => true,
+  _ => false,
+};
+
 final class _HabitReminderPostInitBridge {
   HabitsDisplayAccess? _access;
   AppLifecycleListener? _lifecycleListener;
+  DateChangeNotifier? _dateChangeNotifier;
+  HabitDate? _lastDateTime;
+  String? _lastTzName;
 
   void sync(BuildContext context) {
     final access = context.maybeRead<HabitsDisplayAccess>();
-    if (identical(_access, access)) return;
+    final dateChangeNotifier = _isDesktopReminderDateChangeEnabled()
+        ? context.maybeRead<DateChangeNotifier>()
+        : null;
+    if (identical(_access, access) &&
+        identical(_dateChangeNotifier, dateChangeNotifier)) {
+      return;
+    }
 
     _lifecycleListener?.dispose();
+    _dateChangeNotifier?.removeListener(_onDateChangeDetected);
     _access = access;
+    _dateChangeNotifier = dateChangeNotifier;
     if (access == null) {
       _lifecycleListener = null;
+      _lastDateTime = null;
+      _lastTzName = null;
       return;
     }
 
     _lifecycleListener = AppLifecycleListener(onRestart: _onRestarted);
+    if (dateChangeNotifier == null) {
+      _lastDateTime = null;
+      _lastTzName = null;
+      return;
+    }
+
+    _lastDateTime = dateChangeNotifier.dateTime;
+    _lastTzName = dateChangeNotifier.tzName;
+    dateChangeNotifier.addListener(_onDateChangeDetected);
   }
 
   void dispose() {
     _lifecycleListener?.dispose();
+    _dateChangeNotifier?.removeListener(_onDateChangeDetected);
   }
 
   void _onRestarted() {
     _access?.refreshHabitReminders(
       params: const HabitReminderRefreshParams.restart(),
+    );
+  }
+
+  void _onDateChangeDetected() {
+    final access = _access;
+    final dateChangeNotifier = _dateChangeNotifier;
+    if (access == null || dateChangeNotifier == null) return;
+
+    final dateChanged = dateChangeNotifier.dateTime != _lastDateTime;
+    final tzChanged = dateChangeNotifier.tzName != _lastTzName;
+    if (!(dateChanged || tzChanged)) return;
+
+    _lastDateTime = dateChangeNotifier.dateTime;
+    _lastTzName = dateChangeNotifier.tzName;
+    access.refreshHabitReminders(
+      params: const HabitReminderRefreshParams.dateChange(),
     );
   }
 }

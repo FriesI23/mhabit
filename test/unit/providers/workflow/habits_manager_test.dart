@@ -473,6 +473,36 @@ void main() {
     );
 
     test(
+      'refreshHabitReminders loads all habits for date-change triggers',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final dateChangeHabit = _buildHabitSummaryData(
+          uuid: 'date-change-habit-1',
+        );
+        final manager =
+            _RefreshEntryHabitsManager(
+                notificationService: notificationService,
+                loadedHabits: [dateChangeHabit],
+              )
+              ..attachNotifyConfig(notifyConfig)
+              ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.refreshHabitReminders(
+          params: const HabitReminderRefreshParams.dateChange(),
+        );
+
+        expect(manager.lastLoadedHabitUUIDs, isNull);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
       'saveNewHabitAndUpdateReminder keeps owner-local save follow-up off the reload path',
       () async {
         final habitUUID = 'save-habit-${DateTime.now().microsecondsSinceEpoch}';

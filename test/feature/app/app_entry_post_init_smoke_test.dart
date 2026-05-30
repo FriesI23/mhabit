@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as flutter_local_notifications
@@ -25,6 +26,7 @@ import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
 import 'package:mhabit/reminders/notification_service.dart';
+import 'package:mhabit/widgets/widgets.dart' show DateChangeNotifier;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -277,9 +279,15 @@ void main() {
   setUpAll(_initAppInfo);
 
   testWidgets(
-    'AppPostInit runs startup triggers once, refreshes habit reminders on restart, and keeps AppSync l10n wired',
+    'AppPostInit runs startup triggers once, refreshes habit reminders on restart and desktop date changes, and keeps AppSync l10n wired',
     (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
       final appSync = _FakeAppSyncAccess();
+      final dateChangeNotifier = DateChangeNotifier(
+        dateTime: HabitDate.dateTime(DateTime(2026, 1, 1)),
+        timezoneName: 'UTC',
+      );
       final debugger = _TrackingAppDebuggerViewModel();
       final notificationService = _FakeNotificationService();
       final reminder = _TrackingAppReminderAccess();
@@ -289,109 +297,155 @@ void main() {
         loadedHabits: [_buildStartupHabitSummaryData()],
       )..setNotificationChannelData(channelData);
 
-      Widget buildTestApp() {
-        return MultiProvider(
-          providers: [
-            Provider<NotificationChannelData>.value(value: channelData),
-            ChangeNotifierProvider<AppDebuggerViewModel>.value(value: debugger),
-            ListenableProvider<AppReminderAccess>.value(value: reminder),
-            Provider<HabitsDisplayAccess>.value(value: habitsAccess),
-            ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
-            ListenableProvider<AppSyncTriggerAccess>.value(value: appSync),
-            ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
-          ],
-          child: const MaterialApp(
-            locale: Locale('en'),
-            localizationsDelegates: L10n.localizationsDelegates,
-            supportedLocales: L10n.supportedLocales,
-            home: AppPostInit(child: SizedBox.shrink()),
-          ),
-        );
-      }
+      try {
+        Widget buildTestApp() {
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<DateChangeNotifier>.value(
+                value: dateChangeNotifier,
+              ),
+              Provider<NotificationChannelData>.value(value: channelData),
+              ChangeNotifierProvider<AppDebuggerViewModel>.value(
+                value: debugger,
+              ),
+              ListenableProvider<AppReminderAccess>.value(value: reminder),
+              Provider<HabitsDisplayAccess>.value(value: habitsAccess),
+              ListenableProvider<AppSyncSettingsAccess>.value(value: appSync),
+              ListenableProvider<AppSyncTriggerAccess>.value(value: appSync),
+              ListenableProvider<AppSyncWorkflowAccess>.value(value: appSync),
+            ],
+            child: const MaterialApp(
+              locale: Locale('en'),
+              localizationsDelegates: L10n.localizationsDelegates,
+              supportedLocales: L10n.supportedLocales,
+              home: AppPostInit(child: SizedBox.shrink()),
+            ),
+          );
+        }
 
-      addTearDown(() {
+        await tester.pumpWidget(buildTestApp());
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(debugger.processCallCount, 1);
+        expect(reminder.triggers, hasLength(1));
+        expect(
+          reminder.triggers.single.reason,
+          AppReminderTriggerReason.startup,
+        );
+        expect(reminder.triggers.single.nextReminder, isNull);
+        expect(reminder.processCallCount, 0);
+        expect(habitsAccess.refreshCallCount, 1);
+        expect(habitsAccess.refreshParamsList, [
+          const HabitReminderRefreshParams.startup(),
+        ]);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+        expect(
+          notificationService.lastReminderDetails?.android?.channelId,
+          channelData.habitReminder.android?.channelId,
+        );
+        expect(debugger.lastL10n, isNotNull);
+        expect(
+          reminder.lastContent,
+          AppReminderContent.fromL10n(lookupL10n(const Locale('en'))),
+        );
+        expect(appSync.lastL10n, isNotNull);
+
+        final initialL10nUpdateCount = appSync.onL10nUpdateCallCount;
+        expect(initialL10nUpdateCount, greaterThanOrEqualTo(2));
+
+        await tester.pumpWidget(buildTestApp());
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(debugger.processCallCount, 1);
+        expect(reminder.triggers, hasLength(1));
+        expect(
+          reminder.triggers.single.reason,
+          AppReminderTriggerReason.startup,
+        );
+        expect(reminder.triggers.single.nextReminder, isNull);
+        expect(reminder.processCallCount, 0);
+        expect(habitsAccess.refreshCallCount, 1);
+        expect(habitsAccess.refreshParamsList, [
+          const HabitReminderRefreshParams.startup(),
+        ]);
+        expect(notificationService.regrHabitReminderCallCount, 1);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+        expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
+
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.inactive,
+        );
+        await tester.pump();
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+        await tester.pump();
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        await tester.pump();
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+        await tester.pump();
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.inactive,
+        );
+        await tester.pump();
+        // ignore: invalid_use_of_protected_member
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(debugger.processCallCount, 1);
+        expect(reminder.triggers, hasLength(1));
+        expect(reminder.processCallCount, 0);
+        expect(habitsAccess.refreshCallCount, 2);
+        expect(habitsAccess.refreshParamsList, [
+          const HabitReminderRefreshParams.startup(),
+          const HabitReminderRefreshParams.restart(),
+        ]);
+        expect(notificationService.regrHabitReminderCallCount, 2);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+        expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
+
+        dateChangeNotifier.dateTime = HabitDate.dateTime(DateTime(2026, 1, 2));
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(habitsAccess.refreshCallCount, 3);
+        expect(habitsAccess.refreshParamsList, [
+          const HabitReminderRefreshParams.startup(),
+          const HabitReminderRefreshParams.restart(),
+          const HabitReminderRefreshParams.dateChange(),
+        ]);
+        expect(notificationService.regrHabitReminderCallCount, 3);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        dateChangeNotifier.tzName = 'Asia/Shanghai';
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(habitsAccess.refreshCallCount, 4);
+        expect(habitsAccess.refreshParamsList, [
+          const HabitReminderRefreshParams.startup(),
+          const HabitReminderRefreshParams.restart(),
+          const HabitReminderRefreshParams.dateChange(),
+          const HabitReminderRefreshParams.dateChange(),
+        ]);
+        expect(notificationService.regrHabitReminderCallCount, 4);
+        expect(notificationService.cancelHabitReminderCallCount, 0);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        dateChangeNotifier.dispose();
         reminder.dispose();
         debugger.dispose();
         appSync.dispose();
-      });
-
-      await tester.pumpWidget(buildTestApp());
-      await tester.pump();
-
-      expect(tester.takeException(), isNull);
-      expect(debugger.processCallCount, 1);
-      expect(reminder.triggers, hasLength(1));
-      expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
-      expect(reminder.triggers.single.nextReminder, isNull);
-      expect(reminder.processCallCount, 0);
-      expect(habitsAccess.refreshCallCount, 1);
-      expect(habitsAccess.refreshParamsList, [
-        const HabitReminderRefreshParams.startup(),
-      ]);
-      expect(notificationService.regrHabitReminderCallCount, 1);
-      expect(notificationService.cancelHabitReminderCallCount, 0);
-      expect(
-        notificationService.lastReminderDetails?.android?.channelId,
-        channelData.habitReminder.android?.channelId,
-      );
-      expect(debugger.lastL10n, isNotNull);
-      expect(
-        reminder.lastContent,
-        AppReminderContent.fromL10n(lookupL10n(const Locale('en'))),
-      );
-      expect(appSync.lastL10n, isNotNull);
-
-      final initialL10nUpdateCount = appSync.onL10nUpdateCallCount;
-      expect(initialL10nUpdateCount, greaterThanOrEqualTo(2));
-
-      await tester.pumpWidget(buildTestApp());
-      await tester.pump();
-
-      expect(tester.takeException(), isNull);
-      expect(debugger.processCallCount, 1);
-      expect(reminder.triggers, hasLength(1));
-      expect(reminder.triggers.single.reason, AppReminderTriggerReason.startup);
-      expect(reminder.triggers.single.nextReminder, isNull);
-      expect(reminder.processCallCount, 0);
-      expect(habitsAccess.refreshCallCount, 1);
-      expect(habitsAccess.refreshParamsList, [
-        const HabitReminderRefreshParams.startup(),
-      ]);
-      expect(notificationService.regrHabitReminderCallCount, 1);
-      expect(notificationService.cancelHabitReminderCallCount, 0);
-      expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
-
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
-      await tester.pump();
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
-      await tester.pump();
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
-      await tester.pump();
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
-      await tester.pump();
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
-      await tester.pump();
-      // ignore: invalid_use_of_protected_member
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      await tester.pump();
-
-      expect(tester.takeException(), isNull);
-      expect(debugger.processCallCount, 1);
-      expect(reminder.triggers, hasLength(1));
-      expect(reminder.processCallCount, 0);
-      expect(habitsAccess.refreshCallCount, 2);
-      expect(habitsAccess.refreshParamsList, [
-        const HabitReminderRefreshParams.startup(),
-        const HabitReminderRefreshParams.restart(),
-      ]);
-      expect(notificationService.regrHabitReminderCallCount, 2);
-      expect(notificationService.cancelHabitReminderCallCount, 0);
-      expect(appSync.onL10nUpdateCallCount, initialL10nUpdateCount);
+      }
     },
   );
 }

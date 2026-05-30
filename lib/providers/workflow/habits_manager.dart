@@ -41,16 +41,34 @@ typedef BeforeHabitRecordReminderUpdateCb =
       List<ChangeRecordStatusResult> records,
     );
 
-enum HabitReminderTriggerReason { startup, restart, mutation, reconcile }
+enum HabitReminderTriggerReason {
+  /// Full refresh from the app startup production path.
+  startup,
+
+  /// Full refresh after the app returns from a paused lifecycle state.
+  restart,
+
+  /// Full refresh after a desktop day rollover or timezone change.
+  dateChange,
+
+  /// Owner-local refresh that reuses already loaded habits after a mutation.
+  mutation,
+
+  /// Explicit targeted refresh for a specific set of habit UUIDs.
+  reconcile,
+}
 
 sealed class HabitReminderTrigger {
-  const HabitReminderTrigger();
+  final HabitReminderTriggerReason reason;
 
-  HabitReminderTriggerReason get reason;
+  const HabitReminderTrigger._(this.reason);
 
   const factory HabitReminderTrigger.startup() = _HabitReminderStartupTrigger;
 
   const factory HabitReminderTrigger.restart() = _HabitReminderRestartTrigger;
+
+  const factory HabitReminderTrigger.dateChange() =
+      _HabitReminderDateChangeTrigger;
 
   factory HabitReminderTrigger.mutation({
     required Iterable<HabitSummaryData> loadedHabits,
@@ -65,10 +83,8 @@ sealed class HabitReminderTrigger {
 }
 
 final class _HabitReminderStartupTrigger extends HabitReminderTrigger {
-  const _HabitReminderStartupTrigger();
-
-  @override
-  HabitReminderTriggerReason get reason => HabitReminderTriggerReason.startup;
+  const _HabitReminderStartupTrigger()
+    : super._(HabitReminderTriggerReason.startup);
 
   @override
   bool operator ==(Object other) => other is _HabitReminderStartupTrigger;
@@ -78,10 +94,8 @@ final class _HabitReminderStartupTrigger extends HabitReminderTrigger {
 }
 
 final class _HabitReminderRestartTrigger extends HabitReminderTrigger {
-  const _HabitReminderRestartTrigger();
-
-  @override
-  HabitReminderTriggerReason get reason => HabitReminderTriggerReason.restart;
+  const _HabitReminderRestartTrigger()
+    : super._(HabitReminderTriggerReason.restart);
 
   @override
   bool operator ==(Object other) => other is _HabitReminderRestartTrigger;
@@ -90,13 +104,22 @@ final class _HabitReminderRestartTrigger extends HabitReminderTrigger {
   int get hashCode => Object.hash(runtimeType, reason);
 }
 
+final class _HabitReminderDateChangeTrigger extends HabitReminderTrigger {
+  const _HabitReminderDateChangeTrigger()
+    : super._(HabitReminderTriggerReason.dateChange);
+
+  @override
+  bool operator ==(Object other) => other is _HabitReminderDateChangeTrigger;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, reason);
+}
+
 final class _HabitReminderMutationTrigger extends HabitReminderTrigger {
   final List<HabitSummaryData> loadedHabits;
 
-  const _HabitReminderMutationTrigger(this.loadedHabits);
-
-  @override
-  HabitReminderTriggerReason get reason => HabitReminderTriggerReason.mutation;
+  const _HabitReminderMutationTrigger(this.loadedHabits)
+    : super._(HabitReminderTriggerReason.mutation);
 
   @override
   bool operator ==(Object other) =>
@@ -112,10 +135,8 @@ final class _HabitReminderMutationTrigger extends HabitReminderTrigger {
 final class _HabitReminderReconcileTrigger extends HabitReminderTrigger {
   final List<HabitUUID> habitUUIDs;
 
-  const _HabitReminderReconcileTrigger(this.habitUUIDs);
-
-  @override
-  HabitReminderTriggerReason get reason => HabitReminderTriggerReason.reconcile;
+  const _HabitReminderReconcileTrigger(this.habitUUIDs)
+    : super._(HabitReminderTriggerReason.reconcile);
 
   @override
   bool operator ==(Object other) =>
@@ -166,6 +187,9 @@ sealed class HabitReminderRefreshParams {
   const factory HabitReminderRefreshParams.restart() =
       _HabitReminderRestartRefreshParams;
 
+  const factory HabitReminderRefreshParams.dateChange() =
+      _HabitReminderDateChangeRefreshParams;
+
   factory HabitReminderRefreshParams.habitUUID(HabitUUID habitUUID) =>
       _HabitReminderRefreshUuidParams([habitUUID]);
 
@@ -192,6 +216,18 @@ final class _HabitReminderRestartRefreshParams
 
   @override
   bool operator ==(Object other) => other is _HabitReminderRestartRefreshParams;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+final class _HabitReminderDateChangeRefreshParams
+    extends HabitReminderRefreshParams {
+  const _HabitReminderDateChangeRefreshParams();
+
+  @override
+  bool operator ==(Object other) =>
+      other is _HabitReminderDateChangeRefreshParams;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -661,7 +697,9 @@ class HabitsManager
   ) async {
     final loadedHabits = switch (trigger) {
       _HabitReminderStartupTrigger() ||
-      _HabitReminderRestartTrigger() => await _loadHabitReminderTriggerHabits(),
+      _HabitReminderRestartTrigger() ||
+      _HabitReminderDateChangeTrigger() =>
+        await _loadHabitReminderTriggerHabits(),
       _HabitReminderMutationTrigger(:final loadedHabits) => loadedHabits,
       _HabitReminderReconcileTrigger(:final habitUUIDs) =>
         await _loadHabitReminderTriggerHabits(habitUUIDs: habitUUIDs),
@@ -700,6 +738,8 @@ class HabitsManager
         const HabitReminderTrigger.startup(),
       _HabitReminderRestartRefreshParams() =>
         const HabitReminderTrigger.restart(),
+      _HabitReminderDateChangeRefreshParams() =>
+        const HabitReminderTrigger.dateChange(),
       _HabitReminderRefreshUuidParams(:final habitUUIDs) =>
         HabitReminderTrigger.reconcile(habitUUIDs: habitUUIDs),
     };
