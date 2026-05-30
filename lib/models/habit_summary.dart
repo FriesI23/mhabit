@@ -79,52 +79,60 @@ class HabitSummaryRecord {
   }
 }
 
-mixin _HabitSummaryDataRecordsMixin {
+final class _HabitSummaryRecordIndex {
   final Map<HabitRecordUUID, HabitSummaryRecord> _recordMap = {};
   final SplayTreeMap<HabitRecordDate, HabitSummaryRecord> _recordDateCacheMap =
       SplayTreeMap((a, b) => a.compareTo(b));
 
   void initRecords(Iterable<HabitSummaryRecord> records) {
     clearRecords();
-    addAllRecords(records, behaviour: HabitReocrdAddRepeatedBehaviour.skipped);
+    addAll(records, behaviour: HabitReocrdAddRepeatedBehaviour.skipped);
   }
 
-  int get recordsNum => _recordDateCacheMap.length;
+  int get length => _recordDateCacheMap.length;
+
+  bool get isEmpty => _recordDateCacheMap.isEmpty;
+
+  Iterable<HabitSummaryRecord> get records => _recordDateCacheMap.values;
+
+  Iterable<MapEntry<HabitRecordDate, HabitSummaryRecord>> get datedEntries =>
+      _recordDateCacheMap.entries;
+
+  Iterable<HabitRecordDate> get dates => _recordDateCacheMap.keys;
+
+  HabitRecordDate? get lastDate => _recordDateCacheMap.lastKey();
 
   void clearRecords() {
     _recordMap.clear();
     _recordDateCacheMap.clear();
   }
 
-  Iterable<HabitSummaryRecord> getAllRecord() =>
-      _recordDateCacheMap.entries.map((e) => e.value);
-
-  HabitSummaryRecord? removeRecordWithUUID(HabitRecordUUID uuid) {
+  HabitSummaryRecord? removeByUUID(HabitRecordUUID uuid) {
     final result = _recordMap.remove(uuid);
     if (result != null) _recordDateCacheMap.remove(result.date);
     return result;
   }
 
-  HabitSummaryRecord? removeRecordWithDate(HabitRecordDate date) {
+  HabitSummaryRecord? removeByDate(HabitRecordDate date) {
     final result = _recordDateCacheMap.remove(date);
     if (result != null) _recordMap.remove(result.uuid);
     return result;
   }
 
-  bool addRecord(HabitSummaryRecord record, {bool replaced = false}) {
+  bool add(HabitSummaryRecord record, {bool replaced = false}) {
     if ((_recordMap.containsKey(record.uuid) ||
             _recordDateCacheMap.containsKey(record.date)) &&
         !replaced) {
       return false;
     }
-    removeRecordWithUUID(record.uuid);
-    removeRecordWithDate(record.date);
+    removeByUUID(record.uuid);
+    removeByDate(record.date);
     _recordMap[record.uuid] = record;
     _recordDateCacheMap[record.date] = record;
     return true;
   }
 
-  bool addAllRecords(
+  bool addAll(
     Iterable<HabitSummaryRecord> records, {
     HabitReocrdAddRepeatedBehaviour behaviour =
         HabitReocrdAddRepeatedBehaviour.failed,
@@ -142,23 +150,178 @@ mixin _HabitSummaryDataRecordsMixin {
       tmpList.add(r);
     }
     for (final r in tmpList) {
-      addRecord(r, replaced: true);
+      add(r, replaced: true);
     }
     return true;
   }
 
-  HabitSummaryRecord? getRecordByUUID(HabitRecordUUID uuid) => _recordMap[uuid];
+  HabitSummaryRecord? getByUUID(HabitRecordUUID uuid) => _recordMap[uuid];
 
-  HabitSummaryRecord? getRecordByDate(HabitRecordDate date) =>
+  HabitSummaryRecord? getByDate(HabitRecordDate date) =>
       _recordDateCacheMap[date];
 
-  bool containsRecordUUID(HabitRecordUUID uuid) => _recordMap.containsKey(uuid);
+  bool containsUUID(HabitRecordUUID uuid) => _recordMap.containsKey(uuid);
 
-  bool containsRecordDate(HabitRecordDate date) =>
+  bool containsDate(HabitRecordDate date) =>
       _recordDateCacheMap.containsKey(date);
 }
 
-class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
+class _HabitSummaryAutoComplateCalculator {
+  final HabitType type;
+  final HabitDailyGoal dailyGoal;
+  final HabitDailyGoal? dailyGoalExtra;
+  final HabitFrequency frequency;
+  final HabitStartDate startDate;
+  final Iterable<MapEntry<HabitRecordDate, HabitSummaryRecord>> records;
+
+  const _HabitSummaryAutoComplateCalculator({
+    required this.type,
+    required this.dailyGoal,
+    required this.dailyGoalExtra,
+    required this.frequency,
+    required this.startDate,
+    required this.records,
+  });
+
+  Iterable<HabitRecordDate> calculate({
+    required int firstDay,
+    required HabitDate dateNow,
+  }) {
+    if (frequency.isDaily) return const <HabitRecordDate>[];
+
+    switch (frequency.type) {
+      case HabitFrequencyType.weekly:
+        return _calculateWeekly(firstDay, dateNow);
+      case HabitFrequencyType.monthly:
+        return _calculateMonthly(dateNow);
+      case HabitFrequencyType.custom:
+        return _calculateCustom(dateNow);
+      case HabitFrequencyType.unknown:
+        return const <HabitRecordDate>[];
+    }
+  }
+
+  Iterable<HabitRecordDate> _calculateCustom(HabitDate dateNow) {
+    final markedDateSet = <HabitRecordDate>{};
+    final window = Queue<HabitRecordDate>();
+
+    if (records.isEmpty) return markedDateSet;
+
+    for (final element in records) {
+      final crtDate = element.key;
+      final crtRecord = element.value;
+
+      if (crtDate > dateNow) break;
+      if (!_isQualifiedRecord(crtRecord)) continue;
+
+      window.add(crtDate);
+      if (window.length < frequency.freq) continue;
+
+      final insideDays = window.last.epochDay - window.first.epochDay + 1;
+      if (insideDays > frequency.days) {
+        window.removeFirst();
+        continue;
+      }
+
+      for (var i = 0; i < insideDays; i++) {
+        markedDateSet.add(window.first.addDays(i));
+      }
+
+      var lastDays = frequency.days - insideDays;
+      final leftLastDays = lastDays;
+      for (var i = 1; i <= leftLastDays; i++) {
+        final leftMarkDate = window.first.subtractDays(i);
+        if (markedDateSet.contains(leftMarkDate) || leftMarkDate < startDate) {
+          break;
+        }
+        markedDateSet.add(leftMarkDate);
+        lastDays -= 1;
+      }
+
+      for (var i = 1; i <= lastDays; i++) {
+        markedDateSet.add(window.last.addDays(i));
+      }
+      window.removeFirst();
+    }
+
+    return markedDateSet;
+  }
+
+  Iterable<HabitRecordDate> _calculateWeekly(
+    int firstDay,
+    HabitDate dateNow,
+  ) sync* {
+    final yearWeekRecordMap = <HabitRecordDate, int>{};
+
+    for (final entry in records) {
+      final crtDate = entry.key;
+      final crtRecord = entry.value;
+
+      if (crtDate > dateNow) break;
+      if (!_isQualifiedRecord(crtRecord)) continue;
+
+      yearWeekRecordMap.update(
+        crtDate.getFirstDayOfWeekWithStartDay(firstDay),
+        (value) => ++value,
+        ifAbsent: () => 1,
+      );
+    }
+
+    for (final entry in yearWeekRecordMap.entries) {
+      final crtFirstDate = entry.key;
+      final crtCount = entry.value;
+      if (crtCount < frequency.freq) continue;
+      for (var i = DateTime.daysPerWeek - 1; i >= 0; i--) {
+        final result = crtFirstDate.add(Duration(days: i));
+        if (result < startDate) break;
+        yield result;
+      }
+    }
+  }
+
+  Iterable<HabitRecordDate> _calculateMonthly(HabitDate dateNow) sync* {
+    final yearMonthRecordMap = <HabitRecordDate, int>{};
+
+    for (final entry in records) {
+      final crtDate = entry.key;
+      final crtRecord = entry.value;
+
+      if (crtDate > dateNow) break;
+      if (!_isQualifiedRecord(crtRecord)) continue;
+
+      yearMonthRecordMap.update(
+        crtDate.lastDayOfMonth,
+        (value) => ++value,
+        ifAbsent: () => 1,
+      );
+    }
+
+    for (final entry in yearMonthRecordMap.entries) {
+      final crtLastDate = entry.key;
+      final crtCount = entry.value;
+      if (crtCount < frequency.freq) continue;
+      for (var i = 0; i < crtLastDate.day; i++) {
+        final result = crtLastDate.subtract(Duration(days: i));
+        if (result < startDate) break;
+        yield result;
+      }
+    }
+  }
+
+  bool _isQualifiedRecord(HabitSummaryRecord record) {
+    final completeStatus = HabitDailyRecordForm.getImp(
+      type: type,
+      value: record.value,
+      targetValue: dailyGoal,
+      extraTargetValue: dailyGoalExtra,
+    ).complateStatus;
+    return record.status == HabitRecordStatus.done &&
+        (completeStatus == HabitDailyComplateStatus.goodjob ||
+            completeStatus == HabitDailyComplateStatus.ok);
+  }
+}
+
+class HabitSummaryData with DirtyMarkMixin {
   final DBID id;
   final HabitUUID uuid;
   final HabitType type;
@@ -176,10 +339,59 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
   HabitSortPostion sortPostion;
   DateTime createTime;
 
+  final _records = _HabitSummaryRecordIndex();
   num _progress = 0.0;
   final SplayTreeSet<HabitRecordDate> _autoMarkedRecords = SplayTreeSet(
     (a, b) => a.compareTo(b),
   );
+
+  void initRecords(Iterable<HabitSummaryRecord> records) {
+    _records.initRecords(records);
+  }
+
+  int get recordsNum => _records.length;
+
+  void clearRecords() {
+    _records.clearRecords();
+  }
+
+  Iterable<HabitSummaryRecord> getAllRecord() => _records.records;
+
+  HabitSummaryRecord? removeRecordWithUUID(HabitRecordUUID uuid) {
+    return _records.removeByUUID(uuid);
+  }
+
+  HabitSummaryRecord? removeRecordWithDate(HabitRecordDate date) {
+    return _records.removeByDate(date);
+  }
+
+  bool addRecord(HabitSummaryRecord record, {bool replaced = false}) {
+    return _records.add(record, replaced: replaced);
+  }
+
+  bool addAllRecords(
+    Iterable<HabitSummaryRecord> records, {
+    HabitReocrdAddRepeatedBehaviour behaviour =
+        HabitReocrdAddRepeatedBehaviour.failed,
+  }) {
+    return _records.addAll(records, behaviour: behaviour);
+  }
+
+  HabitSummaryRecord? getRecordByUUID(HabitRecordUUID uuid) {
+    return _records.getByUUID(uuid);
+  }
+
+  HabitSummaryRecord? getRecordByDate(HabitRecordDate date) {
+    return _records.getByDate(date);
+  }
+
+  bool containsRecordUUID(HabitRecordUUID uuid) {
+    return _records.containsUUID(uuid);
+  }
+
+  bool containsRecordDate(HabitRecordDate date) {
+    return _records.containsDate(date);
+  }
 
   HabitSummaryData({
     required this.id,
@@ -259,260 +471,39 @@ class HabitSummaryData with _HabitSummaryDataRecordsMixin, DirtyMarkMixin {
 
   num debugCalcTotalScore({HabitRecordDate? endDate}) {
     assert(kDebugMode);
-    num result = 0.0;
-    final calculator = getCalculator();
-    calculator.calculate(
-      onTotalScoreCalculated: (score) {
-        result = math.min(math.max(score, 0), 100);
-      },
-    );
-    return result;
+    return _calculateTotalScore();
   }
 
   void reCalculateAutoComplateRecords({
     OnScoreChangeCallback? onScoreChange,
     required int firstDay,
   }) {
-    _autoMarkedRecords.clear();
-    if (!frequency.isDaily) {
-      switch (frequency.type) {
-        case HabitFrequencyType.weekly:
-          _autoMarkedRecords.addAll(
-            _calculateAutoComplateRecordsWeekly(firstDay),
-          );
-          break;
-        case HabitFrequencyType.monthly:
-          _autoMarkedRecords.addAll(_calculateAutoComplateRecordsMonthly());
-          break;
-        case HabitFrequencyType.custom:
-          _autoMarkedRecords.addAll(_calculateAutoComplateRecordsCustom());
-          break;
-        default:
-          break;
-      }
-    }
+    _autoMarkedRecords
+      ..clear()
+      ..addAll(
+        _HabitSummaryAutoComplateCalculator(
+          type: type,
+          dailyGoal: dailyGoal,
+          dailyGoalExtra: dailyGoalExtra,
+          frequency: frequency,
+          startDate: startDate,
+          records: _records.datedEntries,
+        ).calculate(firstDay: firstDay, dateNow: HabitDate.now()),
+      );
 
-    final calculator = getCalculator();
-    calculator.calculate(
-      onTotalScoreCalculated: (score) {
-        _progress = math.min(math.max(score, 0), 100);
-      },
-      onScoreChanged: onScoreChange,
-    );
+    _progress = _calculateTotalScore(onScoreChange: onScoreChange);
 
     // debugPrint('debug: last untrack date: ${getFirstUnTrackedDate()}');
   }
 
-  HabitScoreCalculator getCalculator() {
-    HabitScore createHabitScore() => HabitScore.getImp(
-      type: type,
-      targetDays: targetDays,
-      dailyGoal: dailyGoal,
-      dailGoalExtra: dailyGoalExtra,
-    );
-
-    Iterable<HabitDate> createIterable() => combineIterables(
-      _autoMarkedRecords,
-      _recordDateCacheMap.keys,
-      compare: (a, b) => a.compareTo(b),
-    );
-
-    if (isArchived) {
-      return ArchivedHabitScoreCalculator(
-        habitScore: createHabitScore(),
-        startDate: startDate,
-        iterable: createIterable(),
-        isAutoComplated: _autoMarkedRecords.contains,
-        getHabitRecord: (date) => _recordDateCacheMap[date],
-      );
-    } else {
-      return HabitScoreCalculator(
-        habitScore: createHabitScore(),
-        startDate: startDate,
-        iterable: createIterable(),
-        isAutoComplated: _autoMarkedRecords.contains,
-        getHabitRecord: (date) => _recordDateCacheMap[date],
-      );
-    }
-  }
-
-  Iterable<HabitRecordDate> _calculateAutoComplateRecordsCustom() {
-    assert(frequency.type == HabitFrequencyType.custom);
-
-    final markedDateSet = <HabitRecordDate>{};
-    final window = Queue<HabitRecordDate>();
-    final dateNow = HabitDate.now();
-
-    HabitRecordDate crtDate;
-    HabitSummaryRecord crtRecord;
-
-    if (_recordDateCacheMap.isEmpty) return markedDateSet;
-
-    for (var element in _recordDateCacheMap.entries) {
-      crtDate = element.key;
-      crtRecord = element.value;
-
-      if (crtDate > dateNow) break;
-
-      final completeStatus = HabitDailyRecordForm.getImp(
-        type: type,
-        value: crtRecord.value,
-        targetValue: dailyGoal,
-        extraTargetValue: dailyGoalExtra,
-      ).complateStatus;
-      // debugPrint("----------------- $crtRecord  $completeStatus");
-      if (crtRecord.status != HabitRecordStatus.done ||
-          !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) {
-        continue;
-      }
-
-      window.add(crtDate);
-      // debugPrint("window: $window");
-      if (window.length < frequency.freq) continue;
-
-      final insideDays = window.last.epochDay - window.first.epochDay + 1;
-      if (insideDays > frequency.days) {
-        window.removeFirst();
-        continue;
-      }
-
-      for (var i = 0; i < insideDays; i++) {
-        final insideMarkDate = window.first.addDays(i);
-        // debugPrint("inside add [$insideDays]: $insideMarkDate");
-        markedDateSet.add(insideMarkDate);
-      }
-
-      int lastDays = frequency.days - insideDays;
-
-      final leftLastDays = lastDays;
-      for (var i = 1; i <= leftLastDays; i++) {
-        final leftMarkDate = window.first.subtractDays(i);
-        if (markedDateSet.contains(leftMarkDate) || leftMarkDate < startDate) {
-          break;
-        }
-        // debugPrint("left add [$lastDays]: $leftMarkDate");
-        markedDateSet.add(leftMarkDate);
-        lastDays -= 1;
-      }
-
-      for (var i = 1; i <= lastDays; i++) {
-        final rightMarkDate = window.last.addDays(i);
-        // debugPrint("right add[$lastDays]: $rightMarkDate");
-        // calculate full automarks
-        // if (rightMarkDate > dateNow) break;
-        markedDateSet.add(rightMarkDate);
-      }
-      window.removeFirst();
-    }
-
-    // debugPrint("result: ${markedDateSet.sorted((a, b) => a.compareTo(b))}");
-    return markedDateSet;
-  }
-
-  Iterable<HabitRecordDate> _calculateAutoComplateRecordsWeekly(
-    int firstDay,
-  ) sync* {
-    assert(frequency.type == HabitFrequencyType.weekly);
-
-    final yearWeekRecordMap = <HabitRecordDate, int>{};
-    final dateNow = HabitDate.now();
-
-    for (var e in _recordDateCacheMap.entries) {
-      final crtDate = e.key;
-      final crtRecord = e.value;
-
-      if (crtDate > dateNow) break;
-
-      final completeStatus = HabitDailyRecordForm.getImp(
-        type: type,
-        value: crtRecord.value,
-        targetValue: dailyGoal,
-        extraTargetValue: dailyGoalExtra,
-      ).complateStatus;
-
-      if (crtRecord.status != HabitRecordStatus.done ||
-          !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) {
-        continue;
-      }
-
-      yearWeekRecordMap.update(
-        crtDate.getFirstDayOfWeekWithStartDay(firstDay),
-        (value) => ++value,
-        ifAbsent: () => 1,
-      );
-    }
-
-    HabitDate crtFirstDate;
-    int crtCount;
-    for (var e in yearWeekRecordMap.entries) {
-      crtFirstDate = e.key;
-      crtCount = e.value;
-      if (crtCount < frequency.freq) continue;
-      for (var i = DateTime.daysPerWeek - 1; i >= 0; i--) {
-        final result = crtFirstDate.add(Duration(days: i));
-        // calculate full automarks
-        // if (result > dateNow) continue;
-        if (result < startDate) break;
-        yield result;
-      }
-    }
-  }
-
-  Iterable<HabitRecordDate> _calculateAutoComplateRecordsMonthly() sync* {
-    assert(frequency.type == HabitFrequencyType.monthly);
-
-    final yearMonthRecordMap = <HabitRecordDate, int>{};
-    final dateNow = HabitDate.now();
-
-    for (var e in _recordDateCacheMap.entries) {
-      final crtDate = e.key;
-      final crtRecord = e.value;
-
-      if (crtDate > dateNow) break;
-
-      final completeStatus = HabitDailyRecordForm.getImp(
-        type: type,
-        value: crtRecord.value,
-        targetValue: dailyGoal,
-        extraTargetValue: dailyGoalExtra,
-      ).complateStatus;
-      if (crtRecord.status != HabitRecordStatus.done ||
-          !(completeStatus == HabitDailyComplateStatus.goodjob ||
-              completeStatus == HabitDailyComplateStatus.ok)) {
-        continue;
-      }
-
-      yearMonthRecordMap.update(
-        crtDate.lastDayOfMonth,
-        (value) => ++value,
-        ifAbsent: () => 1,
-      );
-    }
-
-    HabitDate crtLastDate;
-    int crtCount;
-    for (var e in yearMonthRecordMap.entries) {
-      crtLastDate = e.key;
-      crtCount = e.value;
-      if (crtCount < frequency.freq) continue;
-      for (var i = 0; i < crtLastDate.day; i++) {
-        final result = crtLastDate.subtract(Duration(days: i));
-        // calculate full automarks
-        // if (result > dateNow) continue;
-        if (result < startDate) break;
-        yield result;
-      }
-    }
-  }
+  HabitScoreCalculator getCalculator() => _createScoreCalculator();
 
   bool isRecordAutoComplated(HabitRecordDate date) =>
       _autoMarkedRecords.contains(date);
 
   HabitDate getFirstUnTrackedDate() {
     final lastAutoMarkDate = _autoMarkedRecords.lastOrNull;
-    final lastRecordDate = _recordDateCacheMap.lastKey();
+    final lastRecordDate = _records.lastDate;
     final now = HabitDate.now().subtract(const Duration(days: 1));
 
     return (lastAutoMarkDate != null &&
@@ -558,21 +549,7 @@ class HabitSummaryDataCollection {
     Iterable<HabitDBCell> result,
     Iterable<RecordDBCell> recordResult,
   ) {
-    _dataMap.clear();
-    for (final cell in result) {
-      final data = HabitSummaryData.fromDBQueryCell(cell);
-      _dataMap[data.uuid] = data;
-    }
-    for (final cell in recordResult) {
-      final habitCell = getHabitByUUID(cell.parentUUID!);
-      if (habitCell == null) continue;
-      // Memory optimization: Don't cache records before start date.
-      // When the StartDate changes, it is necessary to reload the data from
-      // database to ensure that the cache is complete.
-      final record = HabitSummaryRecord.fromDBQueryCell(cell);
-      if (record.date.isBefore(habitCell.startDate)) continue;
-      habitCell.addRecord(record);
-    }
+    _loadFromDBQueryResult(result, recordResult);
   }
 
   int get length => _dataMap.length;
@@ -603,140 +580,32 @@ class HabitSummaryDataCollection {
   HabitSummaryData? removeHabitByUUID(HabitUUID uuid) => _dataMap.remove(uuid);
 
   //#region: sort
-  List<HabitSummaryData> _sortDataBy(
-    HabitDisplaySortDirection sortDirecton,
-    int Function(HabitSummaryData a, HabitSummaryData b) compareble,
-  ) {
-    final List<HabitSummaryData> result;
-    switch (sortDirecton) {
-      case HabitDisplaySortDirection.asc:
-        result = List.from(_dataMap.values.toList()..sort(compareble));
-        break;
-      case HabitDisplaySortDirection.desc:
-        result = List.from(
-          _dataMap.values.toList()..sort((a, b) => compareble(b, a)),
-        );
-        break;
-    }
-    return result;
-  }
-
   List<HabitSummaryData> sortDataByName(
     HabitDisplaySortDirection sortDirecton,
-  ) {
-    int compareble(HabitSummaryData a, HabitSummaryData b) {
-      final r1 = a.name.compareTo(b.name);
-      if (r1 != 0) {
-        return r1;
-      } else {
-        return b.startDate.compareTo(a.startDate);
-      }
-    }
-
-    return _sortDataBy(sortDirecton, compareble);
-  }
+  ) => _dataMap.values.sortByName(sortDirecton);
 
   List<HabitSummaryData> sortDataByColorType(
     HabitDisplaySortDirection sortDirecton,
-  ) {
-    int compareble(HabitSummaryData a, HabitSummaryData b) {
-      final r1 = a.colorType.dbCode.compareTo(b.colorType.dbCode);
-      if (r1 != 0) {
-        return r1;
-      } else {
-        return b.startDate.compareTo(a.startDate);
-      }
-    }
-
-    return _sortDataBy(sortDirecton, compareble);
-  }
+  ) => _dataMap.values.sortByColorType(sortDirecton);
 
   List<HabitSummaryData> sortDataByProgress(
     HabitDisplaySortDirection sortDirecton,
-  ) {
-    int compareble(HabitSummaryData a, HabitSummaryData b) {
-      final r1 = b.progress.compareTo(a.progress);
-      if (r1 != 0) {
-        return r1;
-      } else {
-        return b.startDate.compareTo(a.startDate);
-      }
-    }
-
-    return _sortDataBy(sortDirecton, compareble);
-  }
+  ) => _dataMap.values.sortByProgress(sortDirecton);
 
   List<HabitSummaryData> sortDataByStartT(
     HabitDisplaySortDirection sortDirecton,
-  ) {
-    int compareble(HabitSummaryData a, HabitSummaryData b) {
-      return a.startDate.compareTo(b.startDate);
-    }
-
-    return _sortDataBy(sortDirecton, compareble);
-  }
+  ) => _dataMap.values.sortByStartDate(sortDirecton);
 
   List<HabitSummaryData> sortDataBySatus(
     HabitDisplaySortDirection sortDirecton,
-  ) {
-    int statusCoparable(HabitSummaryData a, HabitSummaryData b) {
-      if (a.status == HabitStatus.activated &&
-          b.status != HabitStatus.activated) {
-        return -1;
-      } else if (a.status != HabitStatus.activated &&
-          b.status == HabitStatus.activated) {
-        return 1;
-      } else {
-        return 0;
-      }
-    }
+  ) => _dataMap.values.sortByStatus(sortDirecton);
 
-    int compareble(HabitSummaryData a, HabitSummaryData b) {
-      int result;
-      result = statusCoparable(a, b);
-      if (result != 0) return result;
-      result = b.progress.compareTo(a.progress);
-      if (result != 0) return result;
-      return b.startDate.compareTo(a.startDate);
-    }
-
-    return _sortDataBy(sortDirecton, compareble);
-  }
-
-  List<HabitSummaryData> sortDataByManual() {
-    final List<HabitSummaryData> result;
-    result = List.from(
-      _dataMap.values.toList()..sort((a, b) {
-        final r1 = a.sortPostion.compareTo(b.sortPostion);
-        if (r1 != 0) {
-          return r1;
-        } else {
-          return a.createTime.compareTo(b.createTime);
-        }
-      }),
-    );
-    return result;
-  }
+  List<HabitSummaryData> sortDataByManual() => _dataMap.values.sortByManual();
 
   List<HabitSummaryData> sort(
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
-  ) {
-    switch (sortType) {
-      case HabitDisplaySortType.manual:
-        return sortDataByManual();
-      case HabitDisplaySortType.name:
-        return sortDataByName(sortDirection);
-      case HabitDisplaySortType.colorType:
-        return sortDataByColorType(sortDirection);
-      case HabitDisplaySortType.progress:
-        return sortDataByProgress(sortDirection);
-      case HabitDisplaySortType.startT:
-        return sortDataByStartT(sortDirection);
-      case HabitDisplaySortType.status:
-        return sortDataBySatus(sortDirection);
-    }
-  }
+  ) => _dataMap.values.sortBy(sortType, sortDirection);
   //#endregion
 
   @override
@@ -751,6 +620,189 @@ class HabitSummaryDataCollection {
     return """HabitAboutDataCollection(
   dataMap=${_dataMap.length} {$dataString}
 )""";
+  }
+}
+
+extension on HabitSummaryData {
+  HabitScoreCalculator _createScoreCalculator() {
+    final habitScore = HabitScore.getImp(
+      type: type,
+      targetDays: targetDays,
+      dailyGoal: dailyGoal,
+      dailGoalExtra: dailyGoalExtra,
+    );
+    final iterable = combineIterables(
+      _autoMarkedRecords,
+      _records.dates,
+      compare: (a, b) => a.compareTo(b),
+    );
+
+    if (isArchived) {
+      return ArchivedHabitScoreCalculator(
+        habitScore: habitScore,
+        startDate: startDate,
+        iterable: iterable,
+        isAutoComplated: _autoMarkedRecords.contains,
+        getHabitRecord: _records.getByDate,
+      );
+    }
+
+    return HabitScoreCalculator(
+      habitScore: habitScore,
+      startDate: startDate,
+      iterable: iterable,
+      isAutoComplated: _autoMarkedRecords.contains,
+      getHabitRecord: _records.getByDate,
+    );
+  }
+
+  num _calculateTotalScore({OnScoreChangeCallback? onScoreChange}) {
+    num result = 0.0;
+    _createScoreCalculator().calculate(
+      onTotalScoreCalculated: (score) {
+        result = math.min(math.max(score, 0), 100);
+      },
+      onScoreChanged: onScoreChange,
+    );
+    return result;
+  }
+}
+
+extension on HabitSummaryDataCollection {
+  void _loadFromDBQueryResult(
+    Iterable<HabitDBCell> result,
+    Iterable<RecordDBCell> recordResult,
+  ) {
+    _dataMap.clear();
+
+    for (final cell in result) {
+      final data = HabitSummaryData.fromDBQueryCell(cell);
+      _dataMap[data.uuid] = data;
+    }
+
+    for (final cell in recordResult) {
+      final habitData = _dataMap[cell.parentUUID!];
+      if (habitData == null) continue;
+
+      final record = HabitSummaryRecord.fromDBQueryCell(cell);
+      if (record.date.isBefore(habitData.startDate)) continue;
+
+      // Memory optimization: Don't cache records before start date.
+      // When the StartDate changes, it is necessary to reload the data from
+      // database to ensure that the cache is complete.
+      habitData.addRecord(record);
+    }
+  }
+}
+
+extension on Iterable<HabitSummaryData> {
+  List<HabitSummaryData> sortBy(
+    HabitDisplaySortType sortType,
+    HabitDisplaySortDirection sortDirection,
+  ) {
+    switch (sortType) {
+      case HabitDisplaySortType.manual:
+        return sortByManual();
+      case HabitDisplaySortType.name:
+        return sortByName(sortDirection);
+      case HabitDisplaySortType.colorType:
+        return sortByColorType(sortDirection);
+      case HabitDisplaySortType.progress:
+        return sortByProgress(sortDirection);
+      case HabitDisplaySortType.startT:
+        return sortByStartDate(sortDirection);
+      case HabitDisplaySortType.status:
+        return sortByStatus(sortDirection);
+    }
+  }
+
+  List<HabitSummaryData> sortByName(HabitDisplaySortDirection direction) =>
+      _sort(direction, _compareByName);
+
+  List<HabitSummaryData> sortByColorType(HabitDisplaySortDirection direction) =>
+      _sort(direction, _compareByColorType);
+
+  List<HabitSummaryData> sortByProgress(HabitDisplaySortDirection direction) =>
+      _sort(direction, _compareByProgress);
+
+  List<HabitSummaryData> sortByStartDate(HabitDisplaySortDirection direction) =>
+      _sort(direction, _compareByStartDate);
+
+  List<HabitSummaryData> sortByStatus(HabitDisplaySortDirection direction) =>
+      _sort(direction, _compareByStatus);
+
+  List<HabitSummaryData> sortByManual() {
+    final result = toList();
+    result.sort(_compareByManual);
+    return result;
+  }
+
+  List<HabitSummaryData> _sort(
+    HabitDisplaySortDirection direction,
+    Comparator<HabitSummaryData> comparator,
+  ) {
+    final result = toList();
+    switch (direction) {
+      case HabitDisplaySortDirection.asc:
+        result.sort(comparator);
+        break;
+      case HabitDisplaySortDirection.desc:
+        result.sort((a, b) => comparator(b, a));
+        break;
+    }
+    return result;
+  }
+
+  int _compareByName(HabitSummaryData a, HabitSummaryData b) {
+    final result = a.name.compareTo(b.name);
+    if (result != 0) return result;
+    return _compareByDescendingStartDate(a, b);
+  }
+
+  int _compareByColorType(HabitSummaryData a, HabitSummaryData b) {
+    final result = a.colorType.dbCode.compareTo(b.colorType.dbCode);
+    if (result != 0) return result;
+    return _compareByDescendingStartDate(a, b);
+  }
+
+  int _compareByProgress(HabitSummaryData a, HabitSummaryData b) {
+    final result = b.progress.compareTo(a.progress);
+    if (result != 0) return result;
+    return _compareByDescendingStartDate(a, b);
+  }
+
+  int _compareByStartDate(HabitSummaryData a, HabitSummaryData b) {
+    return a.startDate.compareTo(b.startDate);
+  }
+
+  int _compareByStatus(HabitSummaryData a, HabitSummaryData b) {
+    final result = _compareActivatedStatus(a, b);
+    if (result != 0) return result;
+    final progressResult = b.progress.compareTo(a.progress);
+    if (progressResult != 0) return progressResult;
+    return _compareByDescendingStartDate(a, b);
+  }
+
+  int _compareByManual(HabitSummaryData a, HabitSummaryData b) {
+    final result = a.sortPostion.compareTo(b.sortPostion);
+    if (result != 0) return result;
+    return a.createTime.compareTo(b.createTime);
+  }
+
+  int _compareActivatedStatus(HabitSummaryData a, HabitSummaryData b) {
+    if (a.status == HabitStatus.activated &&
+        b.status != HabitStatus.activated) {
+      return -1;
+    }
+    if (a.status != HabitStatus.activated &&
+        b.status == HabitStatus.activated) {
+      return 1;
+    }
+    return 0;
+  }
+
+  int _compareByDescendingStartDate(HabitSummaryData a, HabitSummaryData b) {
+    return b.startDate.compareTo(a.startDate);
   }
 }
 
