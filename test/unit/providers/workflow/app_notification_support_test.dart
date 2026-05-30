@@ -87,15 +87,18 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   @override
   bool isChannelEnabled = true;
   final triggers = <AppReminderTrigger>[];
-  L10n? lastL10n;
+  AppReminderContent? lastContent;
 
   @override
   Future<bool?> requestReminderPermission() async => true;
 
   @override
-  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
+  Future<void> processTrigger(
+    AppReminderTrigger trigger, {
+    AppReminderContent? content,
+  }) async {
     triggers.add(trigger);
-    lastL10n = l10n;
+    lastContent = content;
     if (trigger.reason == AppReminderTriggerReason.settings) {
       reminder = trigger.nextReminder!;
       notifyListeners();
@@ -103,7 +106,10 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   }
 
   @override
-  Future<bool> processReminder(L10n? l10n) async => true;
+  Future<bool> processReminder(AppReminderContent? content) async {
+    lastContent = content;
+    return true;
+  }
 }
 
 Future<ProfileViewModel> _loadAppReminderProfile({
@@ -168,10 +174,11 @@ void main() {
           ..attachNotifyConfig(notifyConfig)
           ..updateProfile(reminderProfile)
           ..setNotificationChannelData(channelData);
-
-        final result = await owner.processReminder(
+        final content = AppReminderContent.fromL10n(
           lookupL10n(const Locale('en')),
         );
+
+        final result = await owner.processReminder(content);
 
         expect(owner.isChannelEnabled, isFalse);
         expect(result, isTrue);
@@ -216,10 +223,11 @@ void main() {
         final owner = AppReminderOwner(notificationService: notificationService)
           ..updateProfile(profile)
           ..setNotificationChannelData(channelData);
-
-        final result = await owner.processReminder(
+        final content = AppReminderContent.fromL10n(
           lookupL10n(const Locale('en')),
         );
+
+        final result = await owner.processReminder(content);
 
         expect(result, isTrue);
         expect(notificationService.cancelAppReminderCallCount, 0);
@@ -267,7 +275,7 @@ void main() {
           AppReminderTriggerReason.settings,
         );
         expect(access.triggers.single.nextReminder?.enabled, isTrue);
-        expect(access.lastL10n, l10n);
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
 
         viewModel.dispose();
         access.dispose();
@@ -291,7 +299,7 @@ void main() {
           AppReminderTriggerReason.settings,
         );
         expect(access.triggers.single.nextReminder?.enabled, isFalse);
-        expect(access.lastL10n, l10n);
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
 
         viewModel.dispose();
         access.dispose();
@@ -322,7 +330,7 @@ void main() {
             enabled: false,
           ),
         );
-        expect(access.lastL10n, l10n);
+        expect(access.lastContent, AppReminderContent.fromL10n(l10n));
 
         viewModel.dispose();
         access.dispose();

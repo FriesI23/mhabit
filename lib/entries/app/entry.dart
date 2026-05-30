@@ -407,13 +407,14 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
 
   void _handlePostInit(BuildContext context) {
     final l10n = L10n.of(context);
+    final reminderContent = AppReminderContent.maybeFromL10n(l10n);
     appLog.build.info(context, ex: ["onPostInitHandled", l10n]);
     context.maybeRead<AppDebuggerViewModel>()?.processDebuggingNotification(
       l10n,
     );
     context.maybeRead<AppReminderAccess>()?.processTrigger(
       const AppReminderTrigger.startup(),
-      l10n: l10n,
+      content: reminderContent,
     );
     _syncL10n(l10n);
     _didHandlePostInit = true;

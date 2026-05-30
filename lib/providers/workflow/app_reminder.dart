@@ -27,6 +27,32 @@ import '../../storage/profile_provider.dart';
 import '../support/commons.dart';
 import 'app_notify_config.dart';
 
+@immutable
+final class AppReminderContent {
+  final String title;
+  final String subtitle;
+
+  const AppReminderContent({required this.title, required this.subtitle});
+
+  factory AppReminderContent.fromL10n(L10n l10n) => AppReminderContent(
+    title: l10n.appReminder_dailyReminder_title,
+    subtitle: l10n.appReminder_dailyReminder_body,
+  );
+
+  static AppReminderContent? maybeFromL10n(L10n? l10n) =>
+      l10n == null ? null : AppReminderContent.fromL10n(l10n);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppReminderContent &&
+          title == other.title &&
+          subtitle == other.subtitle;
+
+  @override
+  int get hashCode => Object.hash(title, subtitle);
+}
+
 final class _AppReminderRuntime {
   final NotificationService _notificationService;
 
@@ -38,10 +64,10 @@ final class _AppReminderRuntime {
 
   Future<bool> applyReminder(
     AppReminderConfig reminder, {
-    required L10n? l10n,
+    required AppReminderContent? content,
     required NotificationDetails details,
   }) async {
-    if (!(reminder.enabled && l10n != null)) {
+    if (!(reminder.enabled && content != null)) {
       await _notificationService.cancelAppReminder();
       return true;
     }
@@ -50,8 +76,8 @@ final class _AppReminderRuntime {
       case AppReminderConfigType.daily:
         if (reminder.timeOfDay != null) {
           await _notificationService.regrAppReminderInDaily(
-            title: l10n.appReminder_dailyReminder_title,
-            subtitle: l10n.appReminder_dailyReminder_body,
+            title: content.title,
+            subtitle: content.subtitle,
             timeOfDay: reminder.timeOfDay!,
             details: details,
           );
@@ -85,11 +111,12 @@ abstract interface class AppReminderAccess implements Listenable {
 
   Future<bool?> requestReminderPermission();
 
-  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n});
+  Future<void> processTrigger(
+    AppReminderTrigger trigger, {
+    AppReminderContent? content,
+  });
 
-  // Keep L10n as a boundary input here until a real blocker proves reminder
-  // content building must split from execution.
-  Future<bool> processReminder(L10n? l10n);
+  Future<bool> processReminder(AppReminderContent? content);
 }
 
 final class AppReminderOwner extends ChangeNotifier
@@ -136,18 +163,21 @@ final class AppReminderOwner extends ChangeNotifier
       _reminderRuntime.requestNotificationPermissions();
 
   @override
-  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
+  Future<void> processTrigger(
+    AppReminderTrigger trigger, {
+    AppReminderContent? content,
+  }) async {
     switch (trigger.reason) {
       case AppReminderTriggerReason.startup:
-        await processReminder(l10n);
+        await processReminder(content);
       case AppReminderTriggerReason.settings:
-        await _updateReminder(trigger.nextReminder!, l10n: l10n);
+        await _updateReminder(trigger.nextReminder!, content: content);
     }
   }
 
   Future<void> _updateReminder(
     AppReminderConfig newReminder, {
-    L10n? l10n,
+    AppReminderContent? content,
   }) async {
     final reminder = this.reminder;
     if (reminder == newReminder) return;
@@ -155,19 +185,19 @@ final class AppReminderOwner extends ChangeNotifier
       '$runtimeType.updateReminder',
       beforeVal: reminder,
       afterVal: newReminder,
-      ex: [l10n],
+      ex: [content],
     );
     await _rmd?.set(newReminder);
-    if (!await _handleChangeReminder(l10n)) notifyListeners();
+    if (!await _handleChangeReminder(content)) notifyListeners();
   }
 
-  Future<bool> _handleChangeReminder(L10n? l10n) async {
-    if ((await processReminder(l10n)) != true) {
+  Future<bool> _handleChangeReminder(AppReminderContent? content) async {
+    if ((await processReminder(content)) != true) {
       appLog.value.info(
         '$runtimeType._handleChangeReminder',
         beforeVal: reminder.enabled,
         afterVal: false,
-        ex: [l10n],
+        ex: [content],
       );
       await _rmd?.set(reminder.copyWith(enabled: false));
       notifyListeners();
@@ -177,16 +207,16 @@ final class AppReminderOwner extends ChangeNotifier
   }
 
   @override
-  Future<bool> processReminder(L10n? l10n) async {
+  Future<bool> processReminder(AppReminderContent? content) async {
     final reminder = this.reminder;
-    if (reminder.enabled && l10n != null) {
+    if (reminder.enabled && content != null) {
       if (!isChannelEnabled) return true;
       if (await requestReminderPermission() == false) return false;
     }
 
     return _reminderRuntime.applyReminder(
       reminder,
-      l10n: l10n,
+      content: content,
       details: channelData.appReminder,
     );
   }
@@ -216,6 +246,7 @@ class AppReminderViewModel extends ChangeNotifier {
   Future<void> switchOff({L10n? l10n}) async {
     final reminder = this.reminder;
     if (reminder.enabled) {
+      final content = AppReminderContent.maybeFromL10n(l10n);
       appLog.value.info(
         "$runtimeType.switchOff",
         beforeVal: reminder.enabled,
@@ -224,7 +255,7 @@ class AppReminderViewModel extends ChangeNotifier {
       );
       await _access?.processTrigger(
         AppReminderTrigger.settings(reminder.copyWith(enabled: false)),
-        l10n: l10n,
+        content: content,
       );
     }
   }
@@ -232,6 +263,7 @@ class AppReminderViewModel extends ChangeNotifier {
   Future<void> switchOn({L10n? l10n}) async {
     final reminder = this.reminder;
     if (!reminder.enabled) {
+      final content = AppReminderContent.maybeFromL10n(l10n);
       appLog.value.info(
         "$runtimeType.switchOn",
         beforeVal: reminder.enabled,
@@ -240,7 +272,7 @@ class AppReminderViewModel extends ChangeNotifier {
       );
       await _access?.processTrigger(
         AppReminderTrigger.settings(reminder.copyWith(enabled: true)),
-        l10n: l10n,
+        content: content,
       );
     }
   }
@@ -252,6 +284,7 @@ class AppReminderViewModel extends ChangeNotifier {
       enabled: reminder.enabled,
     );
     if (newReminder != reminder) {
+      final content = AppReminderContent.maybeFromL10n(l10n);
       appLog.value.info(
         "$runtimeType.switchToDaily",
         beforeVal: reminder,
@@ -260,7 +293,7 @@ class AppReminderViewModel extends ChangeNotifier {
       );
       await _access?.processTrigger(
         AppReminderTrigger.settings(newReminder),
-        l10n: l10n,
+        content: content,
       );
     }
   }

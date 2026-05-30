@@ -33,6 +33,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 final class _FakeNotificationService implements NotificationService {
   int cancelHabitReminderCallCount = 0;
   int regrHabitReminderCallCount = 0;
+  int requestPermissionsCallCount = 0;
   NotificationDetails? lastReminderDetails;
 
   @override
@@ -55,6 +56,12 @@ final class _FakeNotificationService implements NotificationService {
   }) async {
     regrHabitReminderCallCount += 1;
     lastReminderDetails = details;
+    return true;
+  }
+
+  @override
+  Future<bool?> requestPermissions() async {
+    requestPermissionsCallCount += 1;
     return true;
   }
 
@@ -96,7 +103,10 @@ final class _FakeAppNotifyConfigAccess extends ChangeNotifier
   }
 }
 
-HabitSummaryData _buildHabitSummaryData() => HabitSummaryData(
+HabitSummaryData _buildHabitSummaryData({
+  HabitStatus status = HabitStatus.activated,
+  HabitReminder? reminder = HabitReminder.dailyMidnight,
+}) => HabitSummaryData(
   id: 1,
   uuid: 'habit-1',
   type: HabitType.normal,
@@ -107,8 +117,8 @@ HabitSummaryData _buildHabitSummaryData() => HabitSummaryData(
   targetDays: 1,
   frequency: HabitFrequency.daily,
   startDate: HabitDate.dateTime(DateTime(2026, 1, 1)),
-  status: HabitStatus.activated,
-  reminder: HabitReminder.dailyMidnight,
+  status: status,
+  reminder: reminder,
   reminderQuest: 'Stay on track',
   sortPostion: 1,
   createTime: DateTime(2026, 1, 1),
@@ -130,6 +140,18 @@ void main() {
   setUpAll(_initAppInfo);
 
   group('HabitsManager reminder channel gating', () {
+    test('requestReminderPermission exposes the habit reminder gate', () async {
+      final notificationService = _FakeNotificationService();
+      final manager = HabitsManager(notificationService: notificationService);
+
+      final result = await manager.requestReminderPermission();
+
+      expect(result, isTrue);
+      expect(notificationService.requestPermissionsCallCount, 1);
+      expect(notificationService.regrHabitReminderCallCount, 0);
+      expect(notificationService.cancelHabitReminderCallCount, 0);
+    });
+
     test(
       'updateHabitReminders skips notification service when habit channel is disabled',
       () async {
@@ -147,6 +169,50 @@ void main() {
 
         expect(notificationService.regrHabitReminderCallCount, 0);
         expect(notificationService.cancelHabitReminderCallCount, 0);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'updateHabitReminders cancels habit reminder when activated habit no longer has a reminder',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final manager = HabitsManager(notificationService: notificationService)
+          ..attachNotifyConfig(notifyConfig)
+          ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.updateHabitReminders([
+          _buildHabitSummaryData(reminder: null),
+        ]);
+
+        expect(notificationService.regrHabitReminderCallCount, 0);
+        expect(notificationService.cancelHabitReminderCallCount, 1);
+
+        notifyConfig.dispose();
+      },
+    );
+
+    test(
+      'updateHabitReminders cancels habit reminder when habit is archived',
+      () async {
+        final notificationService = _FakeNotificationService();
+        final notifyConfig = _FakeAppNotifyConfigAccess(
+          notifyConfig: const AppNotifyConfig(),
+        );
+        final manager = HabitsManager(notificationService: notificationService)
+          ..attachNotifyConfig(notifyConfig)
+          ..setNotificationChannelData(NotificationChannelData());
+
+        await manager.updateHabitReminders([
+          _buildHabitSummaryData(status: HabitStatus.archived),
+        ]);
+
+        expect(notificationService.regrHabitReminderCallCount, 0);
+        expect(notificationService.cancelHabitReminderCallCount, 1);
 
         notifyConfig.dispose();
       },

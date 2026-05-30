@@ -73,7 +73,7 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
     implements AppReminderAccess {
   final triggers = <AppReminderTrigger>[];
   int processCallCount = 0;
-  L10n? lastL10n;
+  AppReminderContent? lastContent;
 
   @override
   bool get isChannelEnabled => true;
@@ -82,18 +82,21 @@ final class _TrackingAppReminderAccess extends ChangeNotifier
   Future<bool?> requestReminderPermission() async => true;
 
   @override
-  Future<void> processTrigger(AppReminderTrigger trigger, {L10n? l10n}) async {
+  Future<void> processTrigger(
+    AppReminderTrigger trigger, {
+    AppReminderContent? content,
+  }) async {
     triggers.add(trigger);
-    lastL10n = l10n;
+    lastContent = content;
   }
 
   @override
   AppReminderConfig get reminder => AppReminderConfig.off;
 
   @override
-  Future<bool> processReminder(L10n? l10n) async {
+  Future<bool> processReminder(AppReminderContent? content) async {
     processCallCount++;
-    lastL10n = l10n;
+    lastContent = content;
     return true;
   }
 }
@@ -215,7 +218,10 @@ void main() {
       expect(reminder.triggers.single.nextReminder, isNull);
       expect(reminder.processCallCount, 0);
       expect(debugger.lastL10n, isNotNull);
-      expect(reminder.lastL10n, isNotNull);
+      expect(
+        reminder.lastContent,
+        AppReminderContent.fromL10n(lookupL10n(const Locale('en'))),
+      );
       expect(appSync.lastL10n, isNotNull);
 
       final initialL10nUpdateCount = appSync.onL10nUpdateCallCount;
