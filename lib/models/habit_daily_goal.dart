@@ -25,7 +25,7 @@ abstract interface class HabitDailyGoalContainer {
   num get normalizedGoal;
   HabitDailyGoal get defaultDailyGoal;
 
-  bool isGoalValid();
+  bool get isGoalValid;
 
   HabitDailyGoalData transform({required HabitType type});
 
@@ -95,6 +95,24 @@ abstract class _BaseHabitDailyGoalData implements HabitDailyGoalData {
     ),
     _ => throw UnsupportedError("Unsupport habit type: $type"),
   };
+
+  bool _isBelowLowerBound({required bool allowExactMin}) => allowExactMin
+      ? dailyGoal < minHabitDailyGoal
+      : dailyGoal <= minHabitDailyGoal;
+
+  bool _isGoalValid({required bool allowExactMin}) =>
+      !_isBelowLowerBound(allowExactMin: allowExactMin) &&
+      dailyGoal <= maxHabitdailyGoal;
+
+  HabitDailyGoal _normalizeGoal({required bool allowExactMin}) {
+    if (_isBelowLowerBound(allowExactMin: allowExactMin)) {
+      return defaultDailyGoal;
+    }
+    if (dailyGoal > maxHabitdailyGoal) {
+      return maxHabitdailyGoal;
+    }
+    return dailyGoal;
+  }
 }
 
 final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
@@ -123,26 +141,10 @@ final class PositiveHabitDailyGoalData extends _BaseHabitDailyGoalData
        );
 
   @override
-  bool isGoalValid() {
-    if (dailyGoal <= minHabitDailyGoal) {
-      return false;
-    } else if (dailyGoal > maxHabitdailyGoal) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  bool get isGoalValid => _isGoalValid(allowExactMin: false);
 
   @override
-  num get normalizedGoal {
-    if (dailyGoal <= minHabitDailyGoal) {
-      return defaultDailyGoal;
-    } else if (dailyGoal > maxHabitdailyGoal) {
-      return maxHabitdailyGoal;
-    } else {
-      return dailyGoal;
-    }
-  }
+  num get normalizedGoal => _normalizeGoal(allowExactMin: false);
 
   @override
   HabitDailyGoalData transform({required HabitType type}) => switch (type) {
@@ -183,26 +185,10 @@ final class NegativeHabitDailyGoalData extends _BaseHabitDailyGoalData
        );
 
   @override
-  bool isGoalValid() {
-    if (dailyGoal < minHabitDailyGoal) {
-      return false;
-    } else if (dailyGoal > maxHabitdailyGoal) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  bool get isGoalValid => _isGoalValid(allowExactMin: true);
 
   @override
-  num get normalizedGoal {
-    if (dailyGoal < minHabitDailyGoal) {
-      return defaultDailyGoal;
-    } else if (dailyGoal > maxHabitdailyGoal) {
-      return maxHabitdailyGoal;
-    } else {
-      return dailyGoal;
-    }
-  }
+  num get normalizedGoal => _normalizeGoal(allowExactMin: true);
 
   @override
   HabitDailyGoalData transform({required HabitType type}) => switch (type) {

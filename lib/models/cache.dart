@@ -26,7 +26,7 @@ abstract interface class Cache<K> {
   Future<void> removeCache<T>(K key, {void Function(bool, T?)? onRemoved});
   Future<void> clear({void Function(bool)? onClear});
   Future<void> reload({void Function(bool)? onReload});
-  bool isDirty();
+  bool get isDirty;
 }
 
 class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
@@ -42,10 +42,10 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
     appLog.cache.debug("$runtimeType.clear", ex: [this]);
     if (_handler.target == null) onClear?.call(false);
     final oldCache = {..._cache};
-    _cache.clear();
-    _markDirty();
-    final result = await writeCache();
-    if (!result) _cache.addAll(oldCache);
+    final result = await _applyCacheChange(
+      changeCache: _cache.clear,
+      rollback: () => _cache.addAll(oldCache),
+    );
     onClear?.call(result);
   }
 
@@ -60,9 +60,7 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
   }
 
   @override
-  V? getCache<V>(String key) {
-    return _cache[key];
-  }
+  V? getCache<V>(String key) => _cache[key];
 
   @override
   Future<void> removeCache<V>(
@@ -71,10 +69,11 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
   }) async {
     appLog.cache.debug("$runtimeType.removeCache", ex: [key, this]);
     if (_handler.target == null) onRemoved?.call(false, null);
-    final V? oldValue = _cache.remove(key);
-    _markDirty();
-    final result = await writeCache();
-    if (!result) _cache[key] = oldValue;
+    V? oldValue;
+    final result = await _applyCacheChange(
+      changeCache: () => oldValue = _cache.remove(key),
+      rollback: () => _cache[key] = oldValue,
+    );
     onRemoved?.call(result, oldValue);
   }
 
@@ -87,21 +86,30 @@ class AppCacheDelegate<T extends ProfileHelperHandler<JsonMap>>
     appLog.cache.debug("$runtimeType.updateCache", ex: [key, value, this]);
     if (_handler.target == null) onUpdated?.call(false, null);
     final V? oldValue = _cache[key];
-    _cache[key] = value;
-    _markDirty();
-    final result = await writeCache();
-    if (!result) _cache[key] = oldValue;
+    final result = await _applyCacheChange(
+      changeCache: () => _cache[key] = value,
+      rollback: () => _cache[key] = oldValue,
+    );
     onUpdated?.call(result, oldValue);
   }
 
   @override
-  bool isDirty() {
-    return _dirty;
-  }
+  bool get isDirty => _dirty;
 
   void _markDirty() => _dirty = true;
 
   void _markClean() => _dirty = false;
+
+  Future<bool> _applyCacheChange({
+    required void Function() changeCache,
+    required void Function() rollback,
+  }) async {
+    changeCache();
+    _markDirty();
+    final result = await writeCache();
+    if (!result) rollback();
+    return result;
+  }
 
   Future<bool> writeCache() async {
     appLog.cache.debug("$runtimeType.writeCache", ex: [this]);

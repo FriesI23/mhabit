@@ -82,6 +82,21 @@ void main() {
       });
       provider.dailyGoalValue = 10.5;
     });
+    test('isDailyGoalValueValid rejects positive exact minimum goal', () {
+      final provider = getMockViewModel();
+
+      provider.dailyGoalValue = minHabitDailyGoal;
+
+      expect(provider.isDailyGoalValueValid, isFalse);
+    });
+    test('isDailyGoalValueValid accepts negative exact minimum goal', () {
+      final provider = getMockViewModel();
+
+      provider.habitType = HabitType.negative;
+      provider.dailyGoalValue = minHabitDailyGoal;
+
+      expect(provider.isDailyGoalValueValid, isTrue);
+    });
     test('dailyGoalUnit', () {
       final provider = getMockViewModel();
       expect(provider.dailyGoalUnit, defaultHabitDailyGoalUnit);

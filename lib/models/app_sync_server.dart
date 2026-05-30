@@ -55,12 +55,7 @@ enum AppSyncServerType implements EnumWithDBCode<AppSyncServerType> {
   static AppSyncServerType? getFromDBCode(
     int dbCode, {
     AppSyncServerType? withDefault = AppSyncServerType.unknown,
-  }) {
-    for (var value in AppSyncServerType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => AppSyncServerType.values.byDBCode(dbCode, withDefault: withDefault);
 }
 
 class AppSyncServerTypeConfig {

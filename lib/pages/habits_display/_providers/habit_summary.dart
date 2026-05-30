@@ -929,7 +929,7 @@ class _HabitsSortableCache {
   }) {
     var sorted = data
         .sort(sortType, sortDirection)
-        .where((filter ?? this.filter).getDisplayFilterFunction());
+        .where((filter ?? this.filter).displayFilterFunction);
     if (searchOptions != null) {
       final keywords = searchOptions.keyword
           .toUpperCase()
