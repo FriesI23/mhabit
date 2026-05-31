@@ -30,6 +30,65 @@ workspace:
   - packages/mhabit_proxy_builder
   - packages/mhabit_color_builder
 
+melos:
+  sdkPath: .flutter
+  useRootAsPackage: true
+  categories:
+    internal_packages:
+      - packages/**
+  scripts:
+    analyze:
+      description: Analyze the root app and internal packages.
+      run: |
+        flutter analyze
+        dart run melos exec \
+          --category=internal_packages \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart analyze ."
+    format:
+      description: Format the root app and internal packages.
+      run: |
+        dart format lib test
+        dart run melos exec \
+          --category=internal_packages \
+          --dir-exists=lib \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart format ."
+    build-runner:
+      description: Run build_runner generators and gen-l10n.
+      steps:
+        - flutter pub run build_runner build --delete-conflicting-outputs
+        - flutter gen-l10n
+    fix:
+      description: Apply fixes and formatting in the root app and internal packages.
+      run: |
+        dart fix --apply
+        dart run melos exec \
+          --category=internal_packages \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart fix --apply"
+        dart run melos run format
+    gen-icons:
+      description: Generate icon fonts.
+      steps:
+        - flutter pub run icon_font_generator --from=assets/icons/sort_icons --class-name=HabitSortIcons --out-font=assets/fonts/sort_icons.ttf --out-flutter=lib/theme/_icons/sort_icons.g.dart
+        - flutter pub run icon_font_generator --from=assets/icons/calendar_icons --class-name=HabitCalIcons --out-font=assets/fonts/cal_icons.ttf --out-flutter=lib/theme/_icons/cal_icons.g.dart
+        - flutter pub run icon_font_generator --from=assets/icons/progress_icons --class-name=HabitProgressIcons --out-font=assets/fonts/progress_icons.ttf --out-flutter=lib/theme/_icons/progress_icons.g.dart
+        - flutter pub run icon_font_generator --from=assets/icons/common_icons --class-name=CommonIcons --out-font=assets/fonts/common_icons.ttf --out-flutter=lib/theme/_icons/common_icons.g.dart
+    test:
+      description: Run the root app and internal package test suites.
+      run: |
+        flutter test --reporter github
+        dart run melos exec \
+          --category=internal_packages \
+          --dir-exists=test \
+          --fail-fast \
+          --concurrency=1 \
+          -- "dart test --reporter github"
+
 mhabit_color_builder:
   app:
     primary_min_chroma: 48
@@ -170,6 +229,7 @@ dev_dependencies:
   package_rename: ^1.2.0
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
+  melos: ^7.8.0
   msix: ^3.16.8
 
 # For information on the generic Dart part of this file, see the
