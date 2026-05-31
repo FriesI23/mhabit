@@ -1,0 +1,14 @@
+name: mhabit_tools
+description: Tooling scripts for the mhabit workspace.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  args: ^2.7.0
+  dart_style: ^3.1.7
+  icon_font_generator: ^4.1.0
+  path: ^1.8.2

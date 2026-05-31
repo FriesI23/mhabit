@@ -1234,7 +1234,7 @@ class _OtherInfo extends StatelessWidget {
                     .getFormatter(l10n?.localeName)
                     .format(viewmodel.habitDetailData!.createT),
               ),
-              leading: const Icon(HabitCalIcons.calendar_create),
+              leading: const Icon(HabitCalIcons.calendarcreate),
             ),
           ),
         // modified date
@@ -1250,7 +1250,7 @@ class _OtherInfo extends StatelessWidget {
                     .getFormatter(l10n?.localeName)
                     .format(viewmodel.habitDetailData!.modifyT),
               ),
-              leading: const Icon(HabitCalIcons.calendar_modify),
+              leading: const Icon(HabitCalIcons.calendarmodify),
               padding: const EdgeInsets.only(bottom: 6.0),
             ),
           ),

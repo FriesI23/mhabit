@@ -25,6 +25,7 @@ environment:
   sdk: ">=3.11.0 <4.0.0"
 
 workspace:
+  - tools
   - packages/mhabit_color_annotation
   - packages/mhabit_proxy_annotation
   - packages/mhabit_proxy_builder
@@ -71,13 +72,6 @@ melos:
           --concurrency=1 \
           -- "dart fix --apply"
         dart run melos run format
-    gen-icons:
-      description: Generate icon fonts.
-      steps:
-        - flutter pub run icon_font_generator --from=assets/icons/sort_icons --class-name=HabitSortIcons --out-font=assets/fonts/sort_icons.ttf --out-flutter=lib/theme/_icons/sort_icons.g.dart
-        - flutter pub run icon_font_generator --from=assets/icons/calendar_icons --class-name=HabitCalIcons --out-font=assets/fonts/cal_icons.ttf --out-flutter=lib/theme/_icons/cal_icons.g.dart
-        - flutter pub run icon_font_generator --from=assets/icons/progress_icons --class-name=HabitProgressIcons --out-font=assets/fonts/progress_icons.ttf --out-flutter=lib/theme/_icons/progress_icons.g.dart
-        - flutter pub run icon_font_generator --from=assets/icons/common_icons --class-name=CommonIcons --out-font=assets/fonts/common_icons.ttf --out-flutter=lib/theme/_icons/common_icons.g.dart
     test:
       description: Run the root app and internal package test suites.
       run: |
@@ -214,12 +208,6 @@ dev_dependencies:
   mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1
-  icon_font_generator:
-    # Can't extract file from a c URI
-    # see here: https://github.com/ScerIO/icon_font_generator/pull/20
-    git:
-      url: https://github.com/Gaurav192/icon_font_generator.git
-      ref: file_path_fix
   flutter_gen: ^5.2.0
   flutter_gen_runner: ^5.2.0
   json_serializable: ^6.6.1
@@ -287,16 +275,16 @@ flutter:
   fonts:
     - family: HabitSortIcons
       fonts:
-        - asset: assets/fonts/sort_icons.ttf
+        - asset: assets/fonts/sort_icons.otf
     - family: HabitCalIcons
       fonts:
-        - asset: assets/fonts/cal_icons.ttf
+        - asset: assets/fonts/cal_icons.otf
     - family: HabitProgressIcons
       fonts:
-        - asset: assets/fonts/progress_icons.ttf
+        - asset: assets/fonts/progress_icons.otf
     - family: CommonIcons
       fonts:
-        - asset: assets/fonts/common_icons.ttf
+        - asset: assets/fonts/common_icons.otf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

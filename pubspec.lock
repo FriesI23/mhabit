@@ -806,14 +806,13 @@ packages:
     source: hosted
     version: "4.1.2"
   icon_font_generator:
-    dependency: "direct dev"
+    dependency: transitive
     description:
-      path: "."
-      ref: file_path_fix
-      resolved-ref: "134cfbd4d6a16f29ac31b11fa99d1db0c64fbd52"
-      url: "https://github.com/Gaurav192/icon_font_generator.git"
-    source: git
-    version: "3.1.0"
+      name: icon_font_generator
+      sha256: ee807b461e5cd6c543cf55fd41298158837e18d70014dfeb6f7d285647e83235
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   image:
     dependency: transitive
     description:

@@ -240,7 +240,7 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
           title: l10n != null
               ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
               : const Text("Show Actived"),
-          secondary: const Icon(HabitProgressIcons.progress_50percent),
+          secondary: const Icon(HabitProgressIcons.progress50),
           enabled:
               habitsDisplayFilter.copyWith(allowInProgressHabits: false) !=
               HabitsDisplayFilter.allFalse,
@@ -259,7 +259,7 @@ class _HabitsDisplayFilterListView extends StatelessWidget {
           title: l10n != null
               ? Text(l10n.habitDisplay_statsMenu_completedTileText)
               : const Text("Show Completed"),
-          secondary: const Icon(HabitProgressIcons.progress_100percent),
+          secondary: const Icon(HabitProgressIcons.progress100),
           enabled:
               habitsDisplayFilter.copyWith(allowCompleteHabits: false) !=
               HabitsDisplayFilter.allFalse,

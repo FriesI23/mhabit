@@ -131,37 +131,37 @@ class HabitsSortViewModel extends ChangeNotifier
       case HabitDisplaySortType.name:
         switch (sortDirection) {
           case HabitDisplaySortDirection.asc:
-            return HabitSortIcons.sort_alphabetical_ascending;
+            return HabitSortIcons.sortalphabeticalascending;
           case HabitDisplaySortDirection.desc:
-            return HabitSortIcons.sort_alphabetical_descending;
+            return HabitSortIcons.sortalphabeticaldescending;
         }
       case HabitDisplaySortType.colorType:
         switch (sortDirection) {
           case HabitDisplaySortDirection.asc:
-            return HabitSortIcons.sort_bool_ascending;
+            return HabitSortIcons.sortboolascending;
           case HabitDisplaySortDirection.desc:
-            return HabitSortIcons.sort_bool_descending;
+            return HabitSortIcons.sortbooldescending;
         }
       case HabitDisplaySortType.progress:
         switch (sortDirection) {
           case HabitDisplaySortDirection.asc:
-            return HabitSortIcons.sort_ascending;
+            return HabitSortIcons.sortascending;
           case HabitDisplaySortDirection.desc:
-            return HabitSortIcons.sort_descending;
+            return HabitSortIcons.sortdescending;
         }
       case HabitDisplaySortType.startT:
         switch (sortDirection) {
           case HabitDisplaySortDirection.asc:
-            return HabitSortIcons.sort_calendar_ascending;
+            return HabitSortIcons.sortcalendarascending;
           case HabitDisplaySortDirection.desc:
-            return HabitSortIcons.sort_calendar_descending;
+            return HabitSortIcons.sortcalendardescending;
         }
       case HabitDisplaySortType.status:
         switch (sortDirection) {
           case HabitDisplaySortDirection.asc:
-            return HabitSortIcons.sort_bool_ascending_variant;
+            return HabitSortIcons.sortboolascendingvariant;
           case HabitDisplaySortDirection.desc:
-            return HabitSortIcons.sort_bool_descending_variant;
+            return HabitSortIcons.sortbooldescendingvariant;
         }
     }
   }
