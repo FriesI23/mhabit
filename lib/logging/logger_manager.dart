@@ -118,6 +118,8 @@ abstract interface class AppLoggerMananger implements AsyncInitialization {
     await newLogger.init;
     _debuggingLogger = newLogger;
   }
+
+  static l.Logger buildSilentLogger() => l.Logger(level: l.Level.off);
 }
 
 class _AppLoggerManager implements AppLoggerMananger {
@@ -126,7 +128,9 @@ class _AppLoggerManager implements AppLoggerMananger {
   final Map<LoggerType, dynamic> appLoggerInstances = {};
 
   _AppLoggerManager(AppLoggerHandlerType t) : loggerType = t {
-    _logger = l.Logger(level: l.Level.warning);
+    _logger = t == AppLoggerHandlerType.custom
+        ? AppLoggerMananger.buildSilentLogger()
+        : l.Logger(level: l.Level.warning);
   }
 
   @override
