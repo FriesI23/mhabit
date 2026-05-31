@@ -72,8 +72,6 @@ final class _FakeAppSyncSettingsAccess implements AppSyncSettingsAccess {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('AppSyncServerFormViewModel', () {
     test(
       'uses app sync settings access for config and password access',

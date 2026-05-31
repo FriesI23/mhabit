@@ -57,8 +57,6 @@ Future<ProfileViewModel> _loadProfile() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets('AppSettingPage opens without provider runtime errors', (
     tester,
   ) async {

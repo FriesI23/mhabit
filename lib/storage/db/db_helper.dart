@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -48,39 +47,10 @@ extension DBInitExtension on Database {
   }
 }
 
-sealed class DBHelperConfig {
-  const factory DBHelperConfig() = _DefaultDBHelperConfig;
-
-  factory DBHelperConfig.dbPathBuilder(String Function() dbPathBuilder) =
-      _CustomDBPathBuilderConfig;
-}
-
-final class _DefaultDBHelperConfig implements DBHelperConfig {
-  const _DefaultDBHelperConfig();
-}
-
-final class _CustomDBPathBuilderConfig implements DBHelperConfig {
-  final String Function() dbPathBuilder;
-  late final String resolvedDbPath = dbPathBuilder();
-
-  _CustomDBPathBuilderConfig(this.dbPathBuilder);
-}
-
 abstract interface class DBHelper implements AsyncInitialization {
-  static const defaultConfig = DBHelperConfig();
-  static const _configZoneKey = #dbHelperConfig;
-
-  static T runWithConfig<T>(DBHelperConfig config, T Function() body) {
-    return runZoned(body, zoneValues: {_configZoneKey: config});
-  }
-
-  static DBHelperConfig? get _scopedConfig =>
-      Zone.current[_configZoneKey] as DBHelperConfig?;
-
   Database get db;
 
-  factory DBHelper({DBHelperConfig config = defaultConfig}) =>
-      _DBHelper(config: _scopedConfig ?? config);
+  factory DBHelper() => _DBHelper();
 
   @override
   Future init({bool reinit = false});
@@ -94,14 +64,12 @@ class _DBHelper implements DBHelper {
     TargetPlatform.windows,
   };
 
-  final DBHelperConfig _config;
-
   Database? _db;
 
   @override
   Database get db => _db!;
 
-  _DBHelper({required DBHelperConfig config}) : _config = config;
+  _DBHelper();
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(await getSqlFromFile(Assets.sql.mhHabits));
@@ -230,16 +198,6 @@ class _DBHelper implements DBHelper {
     }
   }
 
-  Future<String> _resolveDbPath() async {
-    return switch (_config) {
-      _DefaultDBHelperConfig() => path.join(
-        await AppPathProvider().getDatabaseDirPath(),
-        appDBName,
-      ),
-      _CustomDBPathBuilderConfig(:final resolvedDbPath) => resolvedDbPath,
-    };
-  }
-
   @override
   Future init({bool reinit = false}) async {
     if (!reinit && useffiPlafroms.contains(defaultTargetPlatform)) {
@@ -247,8 +205,11 @@ class _DBHelper implements DBHelper {
       databaseFactory = databaseFactoryFfi;
     }
 
-    if (_config case _DefaultDBHelperConfig()) await migrateDatabaseToNewPath();
-    final dbPath = await _resolveDbPath();
+    await migrateDatabaseToNewPath();
+    final String dbPath = path.join(
+      await AppPathProvider().getDatabaseDirPath(),
+      appDBName,
+    );
 
     Future initNew() async {
       appLog.db.info("local.$runtimeType.init", ex: ["processing"]);

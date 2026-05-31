@@ -66,8 +66,6 @@ final class _FakeDBHelperViewModel extends DBHelperViewModel {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('AppSettingsOwner reminder cleanup routing', () {
     test(
       'resetConfigs routes through app reminder maintenance cleanup',

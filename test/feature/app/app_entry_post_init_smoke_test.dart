@@ -275,7 +275,6 @@ HabitSummaryData _buildStartupHabitSummaryData({
 );
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(_initAppInfo);
 
   testWidgets(

@@ -15,7 +15,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mhabit/storage/db/db_helper.dart';
+import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -29,66 +29,73 @@ Future<void> _deleteTempDir(Directory dir) async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUpAll(() {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  });
-
-  group('DBHelper config', () {
-    test('DBHelperViewModel uses the configured scoped db path', () async {
-      final tempDir = await Directory.systemTemp.createTemp(
-        'mhabit_db_helper_default_',
+  group('DBHelper database path', () {
+    test('DBHelperViewModel uses the current databaseFactory path', () async {
+      final helper = DBHelperViewModel();
+      final expectedPath = path.join(
+        await databaseFactory.getDatabasesPath(),
+        appDBName,
       );
-      final expectedPath = path.join(tempDir.path, 'default.db');
-      await DBHelper.runWithConfig(
-        DBHelperConfig.dbPathBuilder(() => expectedPath),
-        () async {
-          final helper = DBHelperViewModel();
 
-          addTearDown(() async {
-            helper.dispose();
-            await _deleteTempDir(tempDir);
-          });
+      addTearDown(helper.dispose);
 
-          await helper.init();
+      await helper.init();
 
-          expect(helper.local.db.path, expectedPath);
-          expect(await File(expectedPath).exists(), isTrue);
-        },
-      );
+      expect(helper.local.db.path, expectedPath);
+      expect(await File(expectedPath).exists(), isTrue);
     });
 
     test(
-      'DBHelperViewModel keeps a scoped config path stable on reload',
+      'DBHelperViewModel keeps the current databaseFactory path on reload',
       () async {
-        final tempDir = await Directory.systemTemp.createTemp(
-          'mhabit_db_helper_reload_',
+        final helper = DBHelperViewModel();
+        final expectedPath = path.join(
+          await databaseFactory.getDatabasesPath(),
+          appDBName,
         );
-        var builderCallCount = 0;
-        await DBHelper.runWithConfig(
-          DBHelperConfig.dbPathBuilder(() {
-            builderCallCount += 1;
-            return path.join(tempDir.path, 'reload.db');
-          }),
-          () async {
-            final helper = DBHelperViewModel();
 
-            addTearDown(() async {
-              helper.dispose();
-              await _deleteTempDir(tempDir);
-            });
+        addTearDown(helper.dispose);
 
-            await helper.init();
-            final initialPath = helper.local.db.path;
+        await helper.init();
+        final initialPath = helper.local.db.path;
 
-            await helper.reload();
+        await helper.reload();
 
-            expect(helper.local.db.path, initialPath);
-            expect(builderCallCount, 1);
-          },
+        expect(initialPath, expectedPath);
+        expect(helper.local.db.path, initialPath);
+      },
+    );
+
+    test(
+      'DBHelperViewModel picks up a changed databaseFactory path for new helpers',
+      () async {
+        final overrideDir = await Directory.systemTemp.createTemp(
+          'mhabit_db_helper_override_',
         );
+        final firstHelper = DBHelperViewModel();
+        final firstExpectedPath = path.join(
+          await databaseFactory.getDatabasesPath(),
+          appDBName,
+        );
+
+        addTearDown(() async {
+          firstHelper.dispose();
+          await _deleteTempDir(overrideDir);
+        });
+
+        await firstHelper.init();
+        await databaseFactory.setDatabasesPath(overrideDir.path);
+
+        final secondHelper = DBHelperViewModel();
+        final secondExpectedPath = path.join(overrideDir.path, appDBName);
+
+        addTearDown(secondHelper.dispose);
+
+        await secondHelper.init();
+
+        expect(firstHelper.local.db.path, firstExpectedPath);
+        expect(secondHelper.local.db.path, secondExpectedPath);
+        expect(firstHelper.local.db.path, isNot(secondHelper.local.db.path));
       },
     );
   });
