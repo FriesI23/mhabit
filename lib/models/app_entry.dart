@@ -27,10 +27,5 @@ enum AppEntrys implements EnumWithDBCode {
   static AppEntrys? getFromDBCode(
     int dbCode, {
     AppEntrys? withDefault = AppEntrys.undefined,
-  }) {
-    for (var value in AppEntrys.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => AppEntrys.values.byDBCode(dbCode, withDefault: withDefault);
 }

@@ -46,12 +46,7 @@ enum HabitDisplaySortType implements EnumWithDBCode {
   static HabitDisplaySortType? getFromDBCode(
     int dbCode, {
     HabitDisplaySortType? withDefault = HabitDisplaySortType.manual,
-  }) {
-    for (var value in HabitDisplaySortType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitDisplaySortType.values.byDBCode(dbCode, withDefault: withDefault);
 
   static Iterable<HabitDisplaySortType> get menuOrderedList => const [
     HabitDisplaySortType.name,
@@ -77,12 +72,10 @@ enum HabitDisplaySortDirection implements EnumWithDBCode {
   static HabitDisplaySortDirection? getFromDBCode(
     int dbCode, {
     HabitDisplaySortDirection? withDefault = HabitDisplaySortDirection.asc,
-  }) {
-    for (var value in HabitDisplaySortDirection.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitDisplaySortDirection.values.byDBCode(
+    dbCode,
+    withDefault: withDefault,
+  );
 }
 
 enum HabitDisplayEditMode { create, edit }
@@ -153,22 +146,18 @@ class HabitsDisplayFilter {
 
   JsonMap toJson() => _$HabitsDisplayFilterToJson(this);
 
-  bool Function(HabitSummaryData) getDisplayFilterFunction() {
-    bool func(HabitSummaryData data) {
-      if (data.isArchived) {
-        return allowArchivedHabits;
-      }
-      if (data.isComplated) {
-        return allowCompleteHabits;
-      }
-      if (data.isInProgress) {
-        return allowInProgressHabits;
-      }
-      return true;
+  bool Function(HabitSummaryData) get displayFilterFunction => (data) {
+    if (data.isArchived) {
+      return allowArchivedHabits;
     }
-
-    return func;
-  }
+    if (data.isComplated) {
+      return allowCompleteHabits;
+    }
+    if (data.isInProgress) {
+      return allowInProgressHabits;
+    }
+    return true;
+  };
 
   @override
   bool operator ==(Object other) {

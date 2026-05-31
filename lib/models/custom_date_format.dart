@@ -111,13 +111,9 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return useMonthWithName ? DateFormat(dayFormat, locale).pattern : dayFormat;
   }
 
-  DateFormat getFormatter([String? locale]) {
-    if (useSystemFormat) {
-      return DateFormat.yMd(locale).add_Hms();
-    } else {
-      return _getYMDHMSFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMd(locale).add_Hms()
+      : _getYMDHMSFormatterWithConfig(locale);
 
   DateFormat _getYMDHMSFormatterWithConfig(String? locale) {
     final ymdPattern = _getYMDFormatterWithConfig(locale).pattern;
@@ -130,29 +126,18 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return DateFormat([ymdPattern, hmsPattern].join(" "), locale);
   }
 
-  DateFormat getYMDFormatter([String? locale]) {
-    if (useSystemFormat) {
-      return DateFormat.yMd(locale);
-    } else {
-      return _getYMDFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getYMDFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
-  DateFormat getYMDBatchCheckinFormatter([String? locale]) {
-    if (useSystemFormat) {
-      return DateFormat.yMMMMd(locale);
-    } else {
-      return _getYMDFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getYMDBatchCheckinFormatter([String? locale]) => useSystemFormat
+      ? DateFormat.yMMMMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
-  DateFormat getYMDFormatterForFreqChart([String? locale]) {
-    if (useSystemFormat || !isApplyFreqChart) {
-      return DateFormat.yMd(locale);
-    } else {
-      return _getYMDFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getYMDFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.yMd(locale)
+      : _getYMDFormatterWithConfig(locale);
 
   DateFormat _getYMDFormatterWithConfig(String? locale) {
     String getYMDFormatter() {
@@ -172,21 +157,15 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     return DateFormat(getYMDFormatter(), locale);
   }
 
-  DateFormat getYMFormatterForFreqChart([String? locale]) {
-    if (useSystemFormat || !isApplyFreqChart) {
-      return DateFormat.yM(locale);
-    } else {
-      return _getYMFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getYMFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.yM(locale)
+      : _getYMFormatterWithConfig(locale);
 
-  DateFormat getYMFormatterForHeatmapCal([String? locale]) {
-    if (useSystemFormat || !isApplyHeatmapCal) {
-      return DateFormat.yMMM(locale);
-    } else {
-      return _getYMFormatterWithConfig(locale);
-    }
-  }
+  DateFormat getYMFormatterForHeatmapCal([String? locale]) =>
+      useSystemFormat || !isApplyHeatmapCal
+      ? DateFormat.yMMM(locale)
+      : _getYMFormatterWithConfig(locale);
 
   DateFormat _getYMFormatterWithConfig(String? locale) {
     final formatYear = _getYearFormatterString(locale);
@@ -206,13 +185,10 @@ class CustomDateYmdHmsConfig implements JsonAdaptor {
     }
   }
 
-  DateFormat getYFormatterForFreqChart([String? locale]) {
-    if (useSystemFormat || !isApplyFreqChart) {
-      return DateFormat.y(locale);
-    } else {
-      return DateFormat(DateFormat.YEAR, locale);
-    }
-  }
+  DateFormat getYFormatterForFreqChart([String? locale]) =>
+      useSystemFormat || !isApplyFreqChart
+      ? DateFormat.y(locale)
+      : DateFormat(DateFormat.YEAR, locale);
 
   String getYearMonthDayDisplayText([L10n? l10n]) {
     switch (ymdFormat) {

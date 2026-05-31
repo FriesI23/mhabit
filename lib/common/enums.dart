@@ -16,6 +16,15 @@ abstract interface class EnumWithDBCode<T> {
   int get dbCode;
 }
 
+extension EnumWithDBCodeIterable<T extends EnumWithDBCode> on Iterable<T> {
+  T? byDBCode(int dbCode, {T? withDefault}) {
+    for (final value in this) {
+      if (value.dbCode == dbCode) return value;
+    }
+    return withDefault;
+  }
+}
+
 enum HabitsRecordScrollBehavior implements EnumWithDBCode {
   unknown(code: 0),
   scrollable(code: 1),
@@ -32,12 +41,10 @@ enum HabitsRecordScrollBehavior implements EnumWithDBCode {
     int dbCode, {
     HabitsRecordScrollBehavior? withDefault =
         HabitsRecordScrollBehavior.unknown,
-  }) {
-    for (var value in HabitsRecordScrollBehavior.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitsRecordScrollBehavior.values.byDBCode(
+    dbCode,
+    withDefault: withDefault,
+  );
 }
 
 enum DonateWay {
@@ -73,10 +80,5 @@ enum UserAction implements EnumWithDBCode {
   static UserAction? getFromDBCode(
     int dbCode, {
     UserAction? withDefault = UserAction.nothing,
-  }) {
-    for (var value in UserAction.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => UserAction.values.byDBCode(dbCode, withDefault: withDefault);
 }

@@ -35,12 +35,8 @@ enum AppThemeColorType implements EnumWithDBCode {
   @override
   int get dbCode => code;
 
-  static AppThemeColorType? getFromDBCode(int dbCode) {
-    for (var value in AppThemeColorType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return null;
-  }
+  static AppThemeColorType? getFromDBCode(int dbCode) =>
+      AppThemeColorType.values.byDBCode(dbCode);
 }
 
 abstract interface class AppThemeColor implements JsonAdaptor {

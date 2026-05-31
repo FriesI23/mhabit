@@ -95,7 +95,7 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  bool get isDailyGoalValueValid => _form.dailyGoal.isGoalValid();
+  bool get isDailyGoalValueValid => _form.dailyGoal.isGoalValid;
 
   HabitDailyGoalContainer get dailyGoal => _form.dailyGoal;
 

@@ -45,12 +45,7 @@ enum HabitType implements EnumWithDBCode {
   static HabitType? getFromDBCode(
     int dbCode, {
     HabitType? withDefault = HabitType.unknown,
-  }) {
-    for (var value in HabitType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitType.values.byDBCode(dbCode, withDefault: withDefault);
 
   static String getHabitTypeName(HabitType type, [L10n? l10n]) {
     switch (type) {
@@ -75,7 +70,7 @@ enum HabitType implements EnumWithDBCode {
 
   String getTypeName([L10n? l10n]) => HabitType.getHabitTypeName(this, l10n);
 
-  IconData getIcon() => HabitType.getHabitTypeFlagIcon(this);
+  IconData get icon => HabitType.getHabitTypeFlagIcon(this);
 }
 
 @JsonEnum(valueField: 'code')
@@ -95,12 +90,7 @@ enum HabitStatus implements EnumWithDBCode<HabitStatus> {
   static HabitStatus? getFromDBCode(
     int dbCode, {
     HabitStatus? withDefault = HabitStatus.unknown,
-  }) {
-    for (var value in HabitStatus.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitStatus.values.byDBCode(dbCode, withDefault: withDefault);
 }
 
 @JsonEnum(valueField: 'code')
@@ -126,12 +116,7 @@ enum HabitColorType implements EnumWithDBCode<HabitColorType> {
   static HabitColorType? getFromDBCode(
     int dbCode, {
     HabitColorType? withDefault = HabitColorType.cc1,
-  }) {
-    for (var value in HabitColorType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitColorType.values.byDBCode(dbCode, withDefault: withDefault);
 
   static String getColorName(HabitColorType colorType, L10n? l10n) {
     final fallbackColorName = 'Color ${colorType.code}';
@@ -181,12 +166,7 @@ enum HabitFrequencyType implements EnumWithDBCode<HabitRecordStatus> {
   static HabitFrequencyType? getFromDBCode(
     int dbCode, {
     HabitFrequencyType? withDefault = HabitFrequencyType.unknown,
-  }) {
-    for (var value in HabitFrequencyType.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitFrequencyType.values.byDBCode(dbCode, withDefault: withDefault);
 }
 
 @JsonEnum(valueField: 'code')
@@ -205,12 +185,7 @@ enum HabitRecordStatus implements EnumWithDBCode<HabitRecordStatus> {
   static HabitRecordStatus? getFromDBCode(
     int dbCode, {
     HabitRecordStatus? withDefault = HabitRecordStatus.unknown,
-  }) {
-    for (var value in HabitRecordStatus.values) {
-      if (value.dbCode == dbCode) return value;
-    }
-    return withDefault;
-  }
+  }) => HabitRecordStatus.values.byDBCode(dbCode, withDefault: withDefault);
 }
 
 enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard, noeffect }

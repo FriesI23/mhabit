@@ -1176,7 +1176,7 @@ class _OtherInfo extends StatelessWidget {
                 ? Text(l10n.habitDetail_habitType_title)
                 : const Text("Habit Type"),
             subTitle: Text(viewmodel.habitType!.getTypeName(l10n)),
-            leading: Icon(viewmodel.habitType!.getIcon()),
+            leading: Icon(viewmodel.habitType!.icon),
           ),
         // reminder
         if (viewmodel.habitDetailData?.data.reminder != null)

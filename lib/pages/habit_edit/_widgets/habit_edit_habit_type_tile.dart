@@ -38,7 +38,7 @@ class HabitEditHabitTypeTile extends StatelessWidget {
     final l10n = L10n.of(context);
 
     return ListTile(
-      leading: Icon(habitType.getIcon(), color: themeDate.colorScheme.outline),
+      leading: Icon(habitType.icon, color: themeDate.colorScheme.outline),
       title: Text(getHabitTypeName(l10n)),
       textColor: readOnly ? themeDate.colorScheme.outlineVariant : null,
       onTap: readOnly ? null : onPressed,

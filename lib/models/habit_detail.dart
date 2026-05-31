@@ -43,10 +43,9 @@ class HabitDetailData implements DirtyMarkMixin {
 
   HabitSummaryData get data => _data;
 
-  Iterable<HabitSummaryRecord> get records => _data.getAllRecord();
+  Iterable<HabitSummaryRecord> get records => _data.records;
 
-  Iterable<HabitRecordDate> get autoRecordsDate =>
-      _data.getAllAutoComplateRecordDate();
+  Iterable<HabitRecordDate> get autoRecordsDate => _data.autoCompletedDates;
 
   String get name => _data.name;
 

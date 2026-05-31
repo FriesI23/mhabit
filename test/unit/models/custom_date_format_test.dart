@@ -97,5 +97,101 @@ void main() {
       final formatter = config.getFormatter('en_US');
       expect(formatter.pattern, matches(patternWithRegex));
     });
+
+    test(
+      'getYMDFormatter returns system formatter when system format is on',
+      () {
+        const config = CustomDateYmdHmsConfig.withDefault();
+
+        final formatter = config.getYMDFormatter('en_US');
+
+        expect(formatter.pattern, 'M/d/y');
+      },
+    );
+
+    test(
+      'getYMDFormatter returns configured formatter when system format is off',
+      () {
+        const config = CustomDateYmdHmsConfig(
+          ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+          splitChar: DateSplitCharEnum.dash,
+          twelveHoursOn: false,
+          useSystemFormat: false,
+        );
+
+        final formatter = config.getYMDFormatter('en_US');
+
+        expect(formatter.pattern, 'd-M-yyyy');
+      },
+    );
+
+    test(
+      'getYMDFormatterForFreqChart falls back to system formatter when chart config is disabled',
+      () {
+        const config = CustomDateYmdHmsConfig(
+          ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+          splitChar: DateSplitCharEnum.dash,
+          twelveHoursOn: false,
+          useSystemFormat: false,
+          applyFreqChart: false,
+        );
+
+        final formatter = config.getYMDFormatterForFreqChart('en_US');
+
+        expect(formatter.pattern, 'M/d/y');
+      },
+    );
+
+    test(
+      'getYMDFormatterForFreqChart uses configured formatter when chart config is enabled',
+      () {
+        const config = CustomDateYmdHmsConfig(
+          ymdFormat: YearMonthDayFormtEnum.dayMonthYear,
+          splitChar: DateSplitCharEnum.dash,
+          twelveHoursOn: false,
+          useSystemFormat: false,
+          applyFreqChart: true,
+        );
+
+        final formatter = config.getYMDFormatterForFreqChart('en_US');
+
+        expect(formatter.pattern, 'd-M-yyyy');
+      },
+    );
+
+    test(
+      'getYMFormatterForHeatmapCal falls back to system formatter when heatmap config is disabled',
+      () {
+        const config = CustomDateYmdHmsConfig(
+          ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
+          splitChar: DateSplitCharEnum.dash,
+          twelveHoursOn: false,
+          useSystemFormat: false,
+          applyHeatmapCal: false,
+        );
+
+        final formatter = config.getYMFormatterForHeatmapCal('en_US');
+
+        expect(formatter.pattern, 'MMM y');
+      },
+    );
+
+    test(
+      'getYMFormatterForHeatmapCal uses configured formatter when heatmap config is enabled',
+      () {
+        const config = CustomDateYmdHmsConfig(
+          ymdFormat: YearMonthDayFormtEnum.yearMonthDay,
+          splitChar: DateSplitCharEnum.dot,
+          twelveHoursOn: false,
+          useSystemFormat: false,
+          useLeadingZero: true,
+          applyHeatmapCal: true,
+        );
+
+        final formatter = config.getYMFormatterForHeatmapCal('en_US');
+
+        expect(formatter.pattern, 'yyyy.MM');
+      },
+    );
   });
 }
