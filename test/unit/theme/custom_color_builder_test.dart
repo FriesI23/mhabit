@@ -69,10 +69,15 @@ $output
       );
       expect(
         output,
+        contains('/// Returns a copy of this [CustomColors] instance.'),
+      );
+      expect(
+        output,
         contains(
-          "/// colors are harmonized with [colorScheme]'s [ColorScheme.primary].",
+          '/// The generated implementation does not apply harmonization from',
         ),
       );
+      expect(output, contains('/// [colorScheme].'));
       expect(
         output,
         contains('class CustomColors extends ThemeExtension<CustomColors>'),
@@ -109,6 +114,62 @@ mhabit_color_builder:
         expect(output, explicitOutput);
       },
     );
+
+    test('throws when a tone value is outside 0..100', () {
+      expect(
+        () => generateCustomColorPartFromPubspec('''
+mhabit_color_builder:
+  app:
+    primary_tone: 101
+    colors:
+      cc1: '0xFF6750A4'
+''', configName: 'app'),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Expected mhabit_color_builder["app"]["primary_tone"] to be an integer in 0..100 in pubspec.yaml.',
+          ),
+        ),
+      );
+    });
+
+    test('throws when a min chroma value is negative', () {
+      expect(
+        () => generateCustomColorPartFromPubspec('''
+mhabit_color_builder:
+  app:
+    primary_min_chroma: -1
+    colors:
+      cc1: '0xFF6750A4'
+''', configName: 'app'),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Expected mhabit_color_builder["app"]["primary_min_chroma"] to be a finite number >= 0 in pubspec.yaml.',
+          ),
+        ),
+      );
+    });
+
+    test('throws when a custom color name is not a valid Dart identifier', () {
+      expect(
+        () => generateCustomColorPartFromPubspec('''
+mhabit_color_builder:
+  app:
+    colors:
+      invalid-name: '0xFF6750A4'
+''', configName: 'app'),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Expected each custom color name under mhabit_color_builder["app"]["colors"] to be a non-empty valid Dart identifier in pubspec.yaml.',
+          ),
+        ),
+      );
+    });
 
     test('throws when the named pubspec configuration entry is missing', () {
       expect(

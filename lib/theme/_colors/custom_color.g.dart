@@ -449,11 +449,10 @@ class CustomColors extends ThemeExtension<CustomColors> {
     );
   }
 
-  /// Returns an instance of [CustomColors] in which the following custom
-  /// colors are harmonized with [colorScheme]'s [ColorScheme.primary].
+  /// Returns a copy of this [CustomColors] instance.
   ///
-  /// See also:
-  ///   * <https://m3.material.io/styles/color/the-color-system/custom-colors#harmonization>
+  /// The generated implementation does not apply harmonization from
+  /// [colorScheme].
   CustomColors harmonized(ColorScheme colorScheme) {
     return copyWith();
   }

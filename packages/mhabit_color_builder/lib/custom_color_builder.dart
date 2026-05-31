@@ -29,6 +29,8 @@ const _defaultPrimaryMinChroma = 48.0;
 const _defaultLightPrimaryTone = 56;
 const _defaultDarkPrimaryTone = 80;
 
+final _dartIdentifierPattern = RegExp(r'^[A-Za-z_]\w*$');
+
 final _dartEmitter = cb.DartEmitter.scoped(useNullSafetySyntax: true);
 final _dartFormatter = DartFormatter(
   languageVersion: DartFormatter.latestLanguageVersion,
@@ -210,7 +212,14 @@ class _GeneratorConfig {
         'in $path.',
       );
     }
-    return value.toDouble();
+    final doubleValue = value.toDouble();
+    if (!doubleValue.isFinite || doubleValue < 0) {
+      throw FormatException(
+        'Expected $_configSectionKey["$configName"]["$key"] to be a '
+        'finite number >= 0 in $path.',
+      );
+    }
+    return doubleValue;
   }
 
   static int? _readOptionalInt(
@@ -227,7 +236,21 @@ class _GeneratorConfig {
         'in $path.',
       );
     }
-    return value.toInt();
+    if (value != value.toInt()) {
+      throw FormatException(
+        'Expected $_configSectionKey["$configName"]["$key"] to be an '
+        'integer in 0..100 in $path.',
+      );
+    }
+
+    final intValue = value.toInt();
+    if (intValue < 0 || intValue > 100) {
+      throw FormatException(
+        'Expected $_configSectionKey["$configName"]["$key"] to be an '
+        'integer in 0..100 in $path.',
+      );
+    }
+    return intValue;
   }
 }
 
@@ -248,6 +271,13 @@ class _ColorSeed {
         'Expected each custom color name under '
         '$_configSectionKey["$configName"]["colors"] to be a string '
         'in $path.',
+      );
+    }
+    if (name.isEmpty || !_dartIdentifierPattern.hasMatch(name)) {
+      throw FormatException(
+        'Expected each custom color name under '
+        '$_configSectionKey["$configName"]["colors"] to be a non-empty '
+        'valid Dart identifier in $path.',
       );
     }
 
@@ -503,11 +533,10 @@ cb.Method _buildHarmonizedMethod() {
   return cb.Method(
     (builder) => builder
       ..docs.addAll(const [
-        '/// Returns an instance of [CustomColors] in which the following custom',
-        "/// colors are harmonized with [colorScheme]'s [ColorScheme.primary].",
+        '/// Returns a copy of this [CustomColors] instance.',
         '///',
-        '/// See also:',
-        '///   * <https://m3.material.io/styles/color/the-color-system/custom-colors#harmonization>',
+        '/// The generated implementation does not apply harmonization from',
+        '/// [colorScheme].',
       ])
       ..returns = _customColorsType
       ..name = 'harmonized'
