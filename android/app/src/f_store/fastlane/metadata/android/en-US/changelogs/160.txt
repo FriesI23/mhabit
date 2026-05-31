@@ -1,0 +1,2 @@
+- Improve habit reminder refresh and repair handling across app startup, restart, and date changes (#569)
+- Update Hebrew translation for the shared load-error message (#570)

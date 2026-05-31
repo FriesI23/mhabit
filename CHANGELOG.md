@@ -2,6 +2,11 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.4+160-pre
+
+- Improve habit reminder refresh and repair handling across app startup, restart, and date changes (#569)
+- Update Hebrew translation for the shared load-error message (#570)
+
 ## 1.24.3+157-pre
 
 - Refactor provider architecture and page wiring, and add shared page load/error retry handling with related localization updates and expanded tests (#563)
