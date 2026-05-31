@@ -1,10 +1,13 @@
-# Release: v1.24.3+157-pre
+# Release: v1.24.4+160-pre
+
+## 🌐 Localization
+
+- Update Hebrew translation for the shared load-error message (#570).
 
 ## 🧹 Others
 
-- Refactor provider/runtime architecture and page wiring (#563).
-- Added shared load error and retry handling across pages, plus related localization updates and expanded test coverage (#563).
-- Fixed duplicate habit detail refresh when returning with Android predictive back (#565).
-- Added VS Code workspace and launch configurations for local development workflows (#550).
+- Improve habit reminder refresh and repair handling across app startup, restart, and date changes (#569).
+- Integrate Melos workspace automation and add test-scoped DB and logging helpers for local workflows (#573).
+- Stabilize icon font generation and refresh generated icon assets for release builds (#574).
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.2+156...pre-v1.24.3+157)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.2+156...pre-v1.24.4+160)
