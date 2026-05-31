@@ -22,7 +22,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.24.3+158-pre
 
 environment:
-  sdk: ">=3.8.0 <4.0.0"
+  sdk: ">=3.11.0 <4.0.0"
 
 workspace:
   - packages/mhabit_color_annotation
@@ -150,6 +150,7 @@ dev_dependencies:
   mockito: ^5.4.4
 
   # Code Generation
+  analyzer: ^10.0.1
   build_runner: ^2.3.3
   mhabit_color_builder: any
   mhabit_proxy_builder: any
