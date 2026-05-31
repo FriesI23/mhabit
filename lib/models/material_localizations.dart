@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
-import '../annotations/proxy_annotation.dart';
+import 'package:mhabit_proxy_annotation/proxy_annotation.dart';
 
 part 'material_localizations.g.dart';
 

@@ -19,12 +19,12 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mhabit_proxy_annotation/proxy_annotation.dart';
 import 'package:retry/retry.dart';
 import 'package:simple_webdav_client/dav.dart';
 import 'package:simple_webdav_client/error.dart';
 
 import '../../annotations/json_annotations.dart';
-import '../../annotations/proxy_annotation.dart';
 import '../../common/types.dart';
 import '../../extensions/webdav_extensions.dart';
 import '../../logging/helper.dart';

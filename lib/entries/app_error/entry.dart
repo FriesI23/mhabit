@@ -34,7 +34,7 @@ class AppErrorEntry extends StatelessWidget {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        extensions: [modifedLightCustomColors],
+        extensions: [lightCustomColors],
       ),
       darkThemeBuilder: () => ThemeData(
         colorScheme: ColorScheme.fromSeed(

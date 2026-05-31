@@ -222,7 +222,7 @@ class _AppEntry extends StatelessWidget {
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
             lightThemeBuilder: () {
-              final customColor = modifedLightCustomColors;
+              final customColor = lightCustomColors;
               final mainColor = getThemeColor(
                 themeColor,
                 themeMainColor: themeMainColor,

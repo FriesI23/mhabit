@@ -1,0 +1,8 @@
+name: mhabit_color_annotation
+description: Shared custom color generation annotations for mhabit.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
