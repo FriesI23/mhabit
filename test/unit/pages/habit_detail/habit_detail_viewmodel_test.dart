@@ -171,8 +171,6 @@ HabitDetailData _buildHabitDetailData() {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('HabitDetailViewModel seams', () {
     test('loads and reads through detail queries', () async {
       final detailData = _buildHabitDetailData();

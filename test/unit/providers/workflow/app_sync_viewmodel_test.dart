@@ -98,8 +98,6 @@ Future<ProfileViewModel> _buildProfile() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('AppSyncOwner', () {
     test('idle trigger and status surfaces stay safe', () {
       final vm = _TestAppSyncOwner();

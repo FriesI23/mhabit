@@ -231,8 +231,6 @@ Iterable<HabitUUID> _currentHabitUuids(HabitSummaryViewModel vm) => vm
     .map((e) => e.uuid);
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('Habits display access', () {
     test('HabitSummaryViewModel loads and reads through access', () async {
       final seedData = _buildHabitSummaryData();

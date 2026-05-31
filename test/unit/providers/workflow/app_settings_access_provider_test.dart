@@ -18,8 +18,6 @@ import 'package:mhabit/providers/workflow/app_settings.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets('AppSettingsAccess can be exposed as a listenable alias', (
     tester,
   ) async {

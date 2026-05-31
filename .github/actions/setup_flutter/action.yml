@@ -24,6 +24,9 @@ runs:
       shell: bash
     - name: Get Flutter packages
       run: |
-        echo $GITHUB_PATH
         flutter pub get
+      shell: bash
+    - name: Bootstrap Melos workspace
+      run: |
+        dart run melos bootstrap
       shell: bash

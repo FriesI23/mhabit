@@ -36,7 +36,6 @@ import 'package:mhabit/storage/db/handlers/habit.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final class _FakeNotificationService implements NotificationService {
   int cancelHabitReminderCallCount = 0;
@@ -214,12 +213,7 @@ Future<void> _initAppInfo() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    return _initAppInfo();
-  });
+  setUpAll(_initAppInfo);
 
   group('HabitsManager reminder channel gating', () {
     test('requestReminderPermission exposes the habit reminder gate', () async {

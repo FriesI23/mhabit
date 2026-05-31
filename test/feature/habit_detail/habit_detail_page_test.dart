@@ -190,8 +190,6 @@ Future<void> _pumpHabitDetailPage(
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets(
     'HabitDetailPage keeps a settled load stable across parent rebuilds',
     (tester) async {

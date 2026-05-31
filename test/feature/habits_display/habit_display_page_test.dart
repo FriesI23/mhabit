@@ -258,8 +258,6 @@ Future<void> _pumpHabitsTabPage(
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('Display page load errors', () {
     testWidgets('TodayTabPage shows error placeholder on load error', (
       tester,

@@ -39,8 +39,6 @@ final class _FakeHabitImportAccess implements HabitImportAccess {
 final class _DebugActions with HabitsDisplayViewDebug {}
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets(
     'debugAddMultiTempHabit routes through HabitImportAccess without records',
     (tester) async {

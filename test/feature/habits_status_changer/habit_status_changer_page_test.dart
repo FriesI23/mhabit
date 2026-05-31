@@ -100,8 +100,6 @@ Future<ProfileViewModel> _loadProfile() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets('HabitsStatusChangerPage shows error placeholder on load error', (
     tester,
   ) async {

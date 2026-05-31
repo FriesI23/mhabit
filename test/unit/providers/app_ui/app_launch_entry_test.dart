@@ -27,8 +27,6 @@ Future<ProfileViewModel> _loadProfile() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('AppLaunchEntryViewModel', () {
     test('reads default launch entry from profile', () async {
       final profile = await _loadProfile();

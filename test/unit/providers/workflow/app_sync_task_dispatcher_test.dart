@@ -24,7 +24,6 @@ import 'package:mhabit/storage/db_helper_provider.dart';
 import 'package:mhabit/storage/profile/handlers/app_sync.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const _connectivityChannel = MethodChannel(
   'dev.fluttercommunity.plus/connectivity',
@@ -170,13 +169,6 @@ AppWebDavSyncServer _buildWebDavConfig({
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUpAll(() {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  });
-
   tearDown(() {
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;

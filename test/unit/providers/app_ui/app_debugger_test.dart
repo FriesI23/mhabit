@@ -59,8 +59,6 @@ final class _FakeNotificationService implements NotificationService {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   setUpAll(() async {
     PackageInfo.setMockInitialValues(
       appName: 'mhabit',

@@ -141,8 +141,6 @@ HabitSummaryData _buildHabitSummaryData({
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('HabitStatusChangerViewModel seams', () {
     test('loads through access', () async {
       final seedData = _buildHabitSummaryData();
