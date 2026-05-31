@@ -86,7 +86,7 @@ fix:
 	@$(MELOS) run fix
 
 gen-icons:
-	@$(MELOS) run gen-icons
+	$(call run_script,gen_icons)
 
 test:
 	@$(MELOS) run test

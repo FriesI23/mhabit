@@ -65,7 +65,7 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
         title: l10n != null
             ? Text(l10n.habitDisplay_statsMenu_completedTileText)
             : const Text("Completed"),
-        leading: const Icon(HabitProgressIcons.progress_100percent),
+        leading: const Icon(HabitProgressIcons.progress100),
         trailing: Text(statisticsData.currentComplatedCount.toString()),
         visualDensity: VisualDensity.compact,
       ),
@@ -73,7 +73,7 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
         title: l10n != null
             ? Text(l10n.habitDisplay_statsMenu_inProgresTileText)
             : const Text("In Progress"),
-        leading: const Icon(HabitProgressIcons.progress_50percent),
+        leading: const Icon(HabitProgressIcons.progress50),
         trailing: Text(statisticsData.currentInProgressCount.toString()),
         visualDensity: VisualDensity.compact,
       ),
@@ -94,17 +94,17 @@ class HabitDisplayStatsMenuDialog extends StatelessWidget {
     switch (index) {
       case 0:
         return const Icon(
-          HabitProgressIcons.numeric_1_circle_outline,
+          HabitProgressIcons.numeric1circleoutline,
           color: HTMLColor.goldenrod,
         );
       case 1:
         return const Icon(
-          HabitProgressIcons.numeric_2_circle_outline,
+          HabitProgressIcons.numeric2circleoutline,
           color: HTMLColor.gray,
         );
       case 2:
         return const Icon(
-          HabitProgressIcons.numeric_3_circle_outline,
+          HabitProgressIcons.numeric3circleoutline,
           color: HTMLColor.brown,
         );
       default:

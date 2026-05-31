@@ -31,7 +31,7 @@ class AppAboutDonateTile extends StatelessWidget {
       leading: const SizedBox(
         height: kAppAboutListTileLeadingHeight,
         width: kAppAboutListTileLeadingWidth,
-        child: Icon(CommonIcons.la_donate),
+        child: Icon(CommonIcons.laDonate),
       ),
       title: l10n != null
           ? Text(l10n.appAbout_donateTile_titleText)
