@@ -1,0 +1,8 @@
+builders:
+  custom_color_builder:
+    import: "package:mhabit_color_builder/custom_color_builder.dart"
+    builder_factories: ["customColorBuilder"]
+    build_extensions: {".dart": ["custom_color_builder.g.part"]}
+    auto_apply: none
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

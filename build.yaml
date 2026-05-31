@@ -1,6 +1,11 @@
 targets:
   $default:
     builders:
+      mhabit_color_builder|custom_color_builder:
+        enabled: true
+        generate_for:
+          include:
+            - lib/theme/**/*.dart
       mhabit_proxy_builder|proxy_generator:
         enabled: true
         generate_for:

@@ -1,7 +1,15 @@
-// ignore_for_file: unused_import
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
-import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
+// coverage: ignore-file
+
+part of 'custom_color.dart';
+
+// **************************************************************************
+// CustomColorGenerator
+// **************************************************************************
+
+// ignore_for_file: type=lint
+// Source: pubspec.yaml > mhabit_color_builder["app"]
 
 const cc1 = Color(0xFF6750A4);
 const cc2 = Color(0xFFF44336);
@@ -13,60 +21,58 @@ const cc7 = Color(0xFFFFC107);
 const cc8 = Color(0xFFFF9800);
 const cc9 = Color(0xFF8BC34A);
 const cc10 = Color(0xFF673AB7);
-
 CustomColors lightCustomColors = const CustomColors(
   sourceCc1: Color(0xFF6750A4),
-  cc1: Color(0xFF6750A4),
+  cc1: Color(0xFF9078D0),
   onCc1: Color(0xFFFFFFFF),
   cc1Container: Color(0xFFE9DDFF),
   onCc1Container: Color(0xFF22005D),
   sourceCc2: Color(0xFFF44336),
-  cc2: Color(0xFFBB1614),
+  cc2: Color(0xFFF54437),
   onCc2: Color(0xFFFFFFFF),
   cc2Container: Color(0xFFFFDAD5),
   onCc2Container: Color(0xFF410001),
   sourceCc3: Color(0xFF9C27B0),
-  cc3: Color(0xFF9A25AE),
+  cc3: Color(0xFFC955DB),
   onCc3: Color(0xFFFFFFFF),
   cc3Container: Color(0xFFFFD6FE),
   onCc3Container: Color(0xFF35003F),
   sourceCc4: Color(0xFF3F51B5),
-  cc4: Color(0xFF4355B9),
+  cc4: Color(0xFF6D7EE5),
   onCc4: Color(0xFFFFFFFF),
   cc4Container: Color(0xFFDEE0FF),
   onCc4Container: Color(0xFF00105C),
   sourceCc5: Color(0xFF009688),
-  cc5: Color(0xFF006A60),
+  cc5: Color(0xFF009789),
   onCc5: Color(0xFFFFFFFF),
   cc5Container: Color(0xFF74F8E5),
   onCc5Container: Color(0xFF00201C),
   sourceCc6: Color(0xFF4CAF50),
-  cc6: Color(0xFF006E1C),
+  cc6: Color(0xFF35993D),
   onCc6: Color(0xFFFFFFFF),
   cc6Container: Color(0xFF94F990),
   onCc6Container: Color(0xFF002204),
   sourceCc7: Color(0xFFFFC107),
-  cc7: Color(0xFF785900),
+  cc7: Color(0xFFAA8000),
   onCc7: Color(0xFFFFFFFF),
   cc7Container: Color(0xFFFFDF9E),
   onCc7Container: Color(0xFF261A00),
   sourceCc8: Color(0xFFFF9800),
-  cc8: Color(0xFF8B5000),
+  cc8: Color(0xFFC37300),
   onCc8: Color(0xFFFFFFFF),
   cc8Container: Color(0xFFFFDCBE),
   onCc8Container: Color(0xFF2C1600),
   sourceCc9: Color(0xFF8BC34A),
-  cc9: Color(0xFF3E6A00),
+  cc9: Color(0xFF60941F),
   onCc9: Color(0xFFFFFFFF),
   cc9Container: Color(0xFFB9F474),
   onCc9Container: Color(0xFF0F2000),
   sourceCc10: Color(0xFF673AB7),
-  cc10: Color(0xFF6F43C0),
+  cc10: Color(0xFF996EEC),
   onCc10: Color(0xFFFFFFFF),
   cc10Container: Color(0xFFEBDDFF),
   onCc10Container: Color(0xFF250059),
 );
-
 CustomColors darkCustomColors = const CustomColors(
   sourceCc1: Color(0xFF6750A4),
   cc1: Color(0xFFCFBCFF),
@@ -180,54 +186,103 @@ class CustomColors extends ThemeExtension<CustomColors> {
   });
 
   final Color? sourceCc1;
+
   final Color? cc1;
+
   final Color? onCc1;
+
   final Color? cc1Container;
+
   final Color? onCc1Container;
+
   final Color? sourceCc2;
+
   final Color? cc2;
+
   final Color? onCc2;
+
   final Color? cc2Container;
+
   final Color? onCc2Container;
+
   final Color? sourceCc3;
+
   final Color? cc3;
+
   final Color? onCc3;
+
   final Color? cc3Container;
+
   final Color? onCc3Container;
+
   final Color? sourceCc4;
+
   final Color? cc4;
+
   final Color? onCc4;
+
   final Color? cc4Container;
+
   final Color? onCc4Container;
+
   final Color? sourceCc5;
+
   final Color? cc5;
+
   final Color? onCc5;
+
   final Color? cc5Container;
+
   final Color? onCc5Container;
+
   final Color? sourceCc6;
+
   final Color? cc6;
+
   final Color? onCc6;
+
   final Color? cc6Container;
+
   final Color? onCc6Container;
+
   final Color? sourceCc7;
+
   final Color? cc7;
+
   final Color? onCc7;
+
   final Color? cc7Container;
+
   final Color? onCc7Container;
+
   final Color? sourceCc8;
+
   final Color? cc8;
+
   final Color? onCc8;
+
   final Color? cc8Container;
+
   final Color? onCc8Container;
+
   final Color? sourceCc9;
+
   final Color? cc9;
+
   final Color? onCc9;
+
   final Color? cc9Container;
+
   final Color? onCc9Container;
+
   final Color? sourceCc10;
+
   final Color? cc10;
+
   final Color? onCc10;
+
   final Color? cc10Container;
+
   final Color? onCc10Container;
 
   @override
@@ -339,9 +394,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
 
   @override
   CustomColors lerp(ThemeExtension<CustomColors>? other, double t) {
-    if (other is! CustomColors) {
-      return this;
-    }
+    if (other is! CustomColors) return this;
     return CustomColors(
       sourceCc1: Color.lerp(sourceCc1, other.sourceCc1, t),
       cc1: Color.lerp(cc1, other.cc1, t),
@@ -396,12 +449,11 @@ class CustomColors extends ThemeExtension<CustomColors> {
     );
   }
 
-  /// Returns an instance of [CustomColors] in which the following custom
-  /// colors are harmonized with [dynamic]'s [ColorScheme.primary].
+  /// Returns a copy of this [CustomColors] instance.
   ///
-  /// See also:
-  ///   * <https://m3.material.io/styles/color/the-color-system/custom-colors#harmonization>
-  CustomColors harmonized(ColorScheme dynamic) {
+  /// The generated implementation does not apply harmonization from
+  /// [colorScheme].
+  CustomColors harmonized(ColorScheme colorScheme) {
     return copyWith();
   }
 }

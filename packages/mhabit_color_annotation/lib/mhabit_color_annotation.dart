@@ -1,4 +1,4 @@
-// Copyright 2025 Fries_I23
+// Copyright 2026 Fries_I23
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,4 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export 'package:mhabit_proxy_annotation/proxy_annotation.dart';
+class GenerateCustomColors {
+  final String configName;
+
+  const GenerateCustomColors(this.configName);
+}

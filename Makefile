@@ -42,7 +42,7 @@ help:
 	@echo   init              Configure git hooks and aliases, initialize submodule, fetch packages
 	@echo   bootstrap         Alias of init
 	@echo   normalize-l10n    Normalize ARB resources
-	@echo   build-runner      Run build_runner and gen-l10n
+	@echo   build-runner      Run build_runner generators and gen-l10n
 	@echo   format            Format Dart sources under lib and test
 	@echo   fix               Apply Dart fixes and then format sources
 	@echo   gen-icons         Generate icon fonts

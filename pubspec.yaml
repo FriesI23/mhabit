@@ -25,8 +25,27 @@ environment:
   sdk: ">=3.8.0 <4.0.0"
 
 workspace:
+  - packages/mhabit_color_annotation
   - packages/mhabit_proxy_annotation
   - packages/mhabit_proxy_builder
+  - packages/mhabit_color_builder
+
+mhabit_color_builder:
+  app:
+    primary_min_chroma: 48
+    light_primary_tone: 56
+    dark_primary_tone: 80
+    colors:
+      cc1: '0xFF6750A4'
+      cc2: '0xFFF44336'
+      cc3: '0xFF9C27B0'
+      cc4: '0xFF3F51B5'
+      cc5: '0xFF009688'
+      cc6: '0xFF4CAF50'
+      cc7: '0xFFFFC107'
+      cc8: '0xFFFF9800'
+      cc9: '0xFF8BC34A'
+      cc10: '0xFF673AB7'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -51,7 +70,6 @@ dependencies:
 
   # Extra Features
   dynamic_color: ^1.5.4
-  material_color_utilities: ^0.13.0
   linked_scroll_controller: ^0.2.0
   sliver_tools: ^0.2.9
   share_plus: ^13.1.0
@@ -74,6 +92,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   data_saver: ^0.4.0
   app_settings: ^7.0.0
+  mhabit_color_annotation: any
   mhabit_proxy_annotation: any
 
   # Fonts and Icons
@@ -132,6 +151,7 @@ dev_dependencies:
 
   # Code Generation
   build_runner: ^2.3.3
+  mhabit_color_builder: any
   mhabit_proxy_builder: any
   copy_with_extension_gen: ^15.0.1
   icon_font_generator:

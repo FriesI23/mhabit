@@ -1,0 +1,19 @@
+name: mhabit_color_builder
+description: Local generator for mhabit custom color theme outputs.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+
+dependencies:
+  analyzer: 10.0.1
+  build: 4.0.6
+  code_builder: ^4.11.1
+  dart_style: ^3.1.7
+  material_color_utilities: ^0.13.0
+  mhabit_color_annotation:
+    path: ../mhabit_color_annotation
+  source_gen: 4.2.3
+  yaml: ^3.1.3
