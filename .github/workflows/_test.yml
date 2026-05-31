@@ -10,10 +10,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup_flutter
-      - run: |
+      - name: Run app Flutter tests
+        run: |
           set -o pipefail
           flutter test --machine | tee test_report.log
           set +o pipefail
+      - name: Run internal package tests
+        run: |
+          dart run melos exec \
+            --category=internal_packages \
+            --dir-exists=test \
+            --fail-fast \
+            --concurrency=1 \
+            -- "dart test --reporter github"
       - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:

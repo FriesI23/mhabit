@@ -1,10 +1,11 @@
 .DEFAULT_GOAL := help
 SUBMAKE := $(MAKE) --no-print-directory
-MELOS := dart run melos
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd.exe
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter.bat)
+LOCAL_DART := $(abspath ./.flutter/bin/dart.bat)
+MELOS := call "$(LOCAL_DART)" run melos
 FLUTTER_BIN_DIR := $(if $(wildcard $(LOCAL_FLUTTER)),$(patsubst %/,%,$(dir $(LOCAL_FLUTTER))),)
 PATH_SEP := ;
 BASE_PATH := $(strip $(shell powershell -NoProfile -Command "$$machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine'); $$user = [System.Environment]::GetEnvironmentVariable('Path', 'User'); [Console]::Write($$machine + ';' + $$user)"));$(PATH)
@@ -15,6 +16,8 @@ endef
 else
 SHELL := /bin/bash
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter)
+LOCAL_DART := $(abspath ./.flutter/bin/dart)
+MELOS := "$(LOCAL_DART)" run melos
 FLUTTER_BIN_DIR := $(if $(wildcard $(LOCAL_FLUTTER)),$(patsubst %/,%,$(dir $(LOCAL_FLUTTER))),)
 PATH_SEP := :
 BASE_PATH := $(PATH)
@@ -29,9 +32,6 @@ PATH := $(if $(FLUTTER_BIN_DIR),$(FLUTTER_BIN_DIR)$(PATH_SEP),)$(BASE_PATH)
 export PATH
 export MHABIT_MAKE_PATH_READY := 1
 endif
-
-
-
 
 
 .PHONY: help init bootstrap \

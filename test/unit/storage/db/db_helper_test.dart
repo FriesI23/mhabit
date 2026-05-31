@@ -14,6 +14,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
@@ -30,6 +31,14 @@ Future<void> _deleteTempDir(Directory dir) async {
 
 void main() {
   group('DBHelper database path', () {
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     test('DBHelperViewModel uses the current databaseFactory path', () async {
       final helper = DBHelperViewModel();
       final expectedPath = path.join(
