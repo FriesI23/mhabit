@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math' as math;
 import 'dart:ui' show Color;
 
 import 'package:material_color_utilities/material_color_utilities.dart';
@@ -21,14 +22,21 @@ import '../../models/habit_form.dart';
 import '../color.dart';
 import 'custom_color.g.dart';
 
+const _lightHabitPrimaryMinChroma = 48.0;
+const _lightHabitPrimaryTone = 56;
+
 CorePalettes buildCorePalettes(Color color) {
+  final sourceColor = Hct.fromInt(color.toARGB32());
   final scheme = SchemeTonalSpot(
-    sourceColorHct: Hct.fromInt(color.toARGB32()),
+    sourceColorHct: sourceColor,
     isDark: false,
     contrastLevel: 0,
   );
   return CorePalettes(
-    scheme.primaryPalette,
+    TonalPalette.of(
+      sourceColor.hue,
+      math.max(_lightHabitPrimaryMinChroma, sourceColor.chroma),
+    ),
     scheme.secondaryPalette,
     scheme.tertiaryPalette,
     scheme.neutralPalette,
@@ -86,4 +94,4 @@ CorePalettes getHabitPalette(HabitColorType colorType) {
 }
 
 Color genHabitColorPrimaryLight(HabitColorType colorType) =>
-    Color(getHabitPalette(colorType).primary.get(60));
+    Color(getHabitPalette(colorType).primary.get(_lightHabitPrimaryTone));
