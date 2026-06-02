@@ -2,6 +2,15 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.24.5+161
+
+- Refactor page state wiring, tidy page unit-test paths, and simplify habit summary helpers (#563, #571)
+- Refactor reminder handling to improve stability on app start, restart, and day changes (#569)
+- Improve custom color generation with mhabit_color_builder for a more consistent app palette (#572)
+- Fix duplicate habit detail refresh when returning via back navigation (#565)
+- Update Hebrew wording for the shared load-error message and refresh translation outputs (#570)
+- Stabilize icon font generation and refresh generated icon assets for release builds (#574)
+
 ## 1.24.4+160-pre
 
 - Improve habit reminder refresh and repair handling across app startup, restart, and date changes (#569)
