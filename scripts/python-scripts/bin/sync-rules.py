@@ -47,7 +47,7 @@ def log_error(message: str) -> None:
 
 def repo_globs() -> list[str]:
     # Keep all targeting repo-local. Do not encode workspace-level paths.
-    return ["**/*"]
+    return ['"**/*"']
 
 
 def check_rules_exists(rules_file: Path) -> None:
