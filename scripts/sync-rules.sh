@@ -1,157 +1,50 @@
-#!/bin/bash
-# sync-rules.sh
+#!/usr/bin/env bash
+# Copyright 2026 Fries_I23
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-# --- Configuration ---
-RULES_FILE="docs/rules/rules.md"
-CLAUDE_FILE="CLAUDE.md"
-COPILOT_FILE=".github/copilot-instructions.md"
-CONTINUE_FILE=".continue/rules/main.md"
-CURSOR_FILE=".cursor/rules/main.mdc"
+set -euo pipefail
 
-# Files to ignore in git (local only)
-IGNORE_LIST=(
-    ".continue/"
-    ".cursor/"
-    ".github/copilot-instructions.md"
-)
+SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+PYTHON_SCRIPTS_DIR="$REPO_ROOT/scripts/python-scripts"
 
-# --- Helper Functions ---
+ACTION="${1:-}"
+RULES_FILE_INPUT="${2:-docs/rules/rules.md}"
 
-log_info() {
-    printf '[INFO] %s\n' "$1"
-}
+if [[ "$ACTION" != "install" && "$ACTION" != "uninstall" ]]; then
+  echo "Usage: $0 <install|uninstall> [rules-file]" >&2
+  exit 2
+fi
 
-log_success() {
-    printf '[SUCCESS] %s\n' "$1"
-}
+if ! command -v poetry >/dev/null 2>&1; then
+  echo "Poetry is required but not found in PATH." >&2
+  exit 1
+fi
 
-log_error() {
-    printf '[ERROR] %s\n' "$1"
-}
+if [[ "$RULES_FILE_INPUT" = /* ]]; then
+  RULES_FILE_PATH="$RULES_FILE_INPUT"
+else
+  RULES_FILE_PATH="$REPO_ROOT/$RULES_FILE_INPUT"
+fi
 
-check_rules_exists() {
-    if [ ! -f "$RULES_FILE" ]; then
-        log_error "Rules file not found: $RULES_FILE"
-        exit 1
-    fi
-}
+cd "$PYTHON_SCRIPTS_DIR"
+POETRY_PYTHON="$(poetry env info --path)/bin/python"
 
-update_git_exclude() {
-    local action=$1
-    local pattern=$2
-    local git_exclude=".git/info/exclude"
-    local git_exclude_dir=".git/info"
+if [[ ! -x "$POETRY_PYTHON" ]]; then
+  echo "Poetry environment python not found: $POETRY_PYTHON" >&2
+  exit 1
+fi
 
-    if [ ! -d "$git_exclude_dir" ]; then
-        log_error "Git metadata directory not found: $git_exclude_dir"
-        exit 1
-    fi
+"$POETRY_PYTHON" bin/sync-rules.py "$ACTION" --rules-file "$RULES_FILE_PATH"
 
-    if [ ! -f "$git_exclude" ]; then
-        touch "$git_exclude"
-    fi
-
-    if [ "$action" == "add" ]; then
-        if ! grep -Fxq "$pattern" "$git_exclude"; then
-            echo "$pattern" >> "$git_exclude"
-            log_info "Added $pattern to $git_exclude"
-        else
-            log_info "$pattern already in $git_exclude"
-        fi
-    elif [ "$action" == "remove" ]; then
-        if grep -Fxq "$pattern" "$git_exclude"; then
-            # Avoid regex/sed escaping issues for patterns like ".continue/".
-            local tmp_file
-            tmp_file=$(mktemp)
-            grep -Fvx -- "$pattern" "$git_exclude" > "$tmp_file" || true
-            cat "$tmp_file" > "$git_exclude"
-            rm -f "$tmp_file"
-            log_info "Removed $pattern from $git_exclude"
-        else
-            log_info "$pattern not in $git_exclude"
-        fi
-    fi
-}
-
-# --- Core Logic ---
-
-install() {
-    check_rules_exists
-    log_info "Starting rules installation..."
-
-    # 1. Claude Code
-    cp "$RULES_FILE" "$CLAUDE_FILE"
-    log_info "Copied rules to $CLAUDE_FILE"
-
-    # 2. Copilot
-    mkdir -p .github
-    cp "$RULES_FILE" "$COPILOT_FILE"
-    log_info "Copied rules to $COPILOT_FILE"
-
-    # 3. Continue (with YAML frontmatter)
-    mkdir -p .continue/rules
-    cat > "$CONTINUE_FILE" << EOF
----
-name: Project Rules
-alwaysApply: true
----
-
-$(cat "$RULES_FILE")
-EOF
-    log_info "Created $CONTINUE_FILE with frontmatter"
-
-    # 4. Cursor (with YAML frontmatter)
-    mkdir -p .cursor/rules
-    cat > "$CURSOR_FILE" << EOF
----
-description: Project Rules
-alwaysApply: true
----
-
-$(cat "$RULES_FILE")
-EOF
-    log_info "Created $CURSOR_FILE with frontmatter"
-
-    # 5. Update .git/info/exclude
-    for pattern in "${IGNORE_LIST[@]}"; do
-        update_git_exclude "add" "$pattern"
-    done
-
-    log_success "Rules installation complete!"
-}
-
-uninstall() {
-    log_info "Starting rules uninstallation..."
-
-    # 1. Remove files
-    rm -f "$CLAUDE_FILE" "$COPILOT_FILE" "$CONTINUE_FILE" "$CURSOR_FILE"
-    log_info "Removed AI config files"
-
-    # 2. Remove directories if empty
-    rmdir .continue/rules 2>/dev/null || true
-    rmdir .continue 2>/dev/null || true
-    rmdir .cursor/rules 2>/dev/null || true
-    rmdir .cursor 2>/dev/null || true
-
-    # 3. Update .git/info/exclude
-    for pattern in "${IGNORE_LIST[@]}"; do
-        update_git_exclude "remove" "$pattern"
-    done
-
-    log_success "Rules uninstallation complete!"
-}
-
-# --- Main Entry Point ---
-
-case "$1" in
-    install)
-        install
-        ;;
-    uninstall)
-        uninstall
-        ;;
-    *)
-        echo "Usage: $0 {install|uninstall}"
-        exit 1
-        ;;
-esac

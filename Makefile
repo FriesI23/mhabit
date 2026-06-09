@@ -11,7 +11,7 @@ PATH_SEP := ;
 BASE_PATH := $(strip $(shell powershell -NoProfile -Command "$$machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine'); $$user = [System.Environment]::GetEnvironmentVariable('Path', 'User'); [Console]::Write($$machine + ';' + $$user)"));$(PATH)
 BLANK_LINE := @echo.
 define run_script
-	@call scripts\$(1).cmd
+	@call scripts\$(1).cmd $(2)
 endef
 else
 SHELL := /bin/bash
@@ -23,7 +23,7 @@ PATH_SEP := :
 BASE_PATH := $(PATH)
 BLANK_LINE := @echo
 define run_script
-	@bash scripts/$(1).sh
+	@bash scripts/$(1).sh $(2)
 endef
 endif
 
@@ -102,10 +102,10 @@ verify-generated:
 	$(call run_script,verify_generated)
 
 sync-rules:
-	@bash scripts/sync-rules.sh install
+	$(call run_script,sync-rules,install)
 
 unsync-rules:
-	@bash scripts/sync-rules.sh uninstall
+	$(call run_script,sync-rules,uninstall)
 
 aio:
 	@$(SUBMAKE) gen

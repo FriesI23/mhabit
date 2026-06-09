@@ -55,6 +55,9 @@ app.*.map.json
 # Flutter coverage lcov html pages
 coverage/html/
 
+# Python scripts (Poetry)
+.venv/
+
 # fvm
 .fvm/flutter_sdk
 .fvm/release

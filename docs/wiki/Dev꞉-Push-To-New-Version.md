@@ -14,8 +14,8 @@
    ```shell
    flutter clean
    flutter pub get
-   scripts/normalize_arb.sh
-   scripts/build_runner.sh
+  scripts/normalize_arb.sh
+  scripts/build_runner.sh
    ```
 
 ## 2. Update Release Description
@@ -58,7 +58,18 @@ Or copy current version code change log from `CHANGELOG.md` to `{versionCode}.tx
 
 > Optionally, Add translation text at `fastlane/metadata/android/<locale>/changelogs`.
 
-## 5. Flatpak / Flathub
+## 5. Apple Platforms
+
+> - [x] stable
+> - [ ] beta
+
+For **stable** releases, generate Apple release notes:
+
+```shell
+scripts/gen_changelogs_darwin.sh
+```
+
+## 6. Flatpak / Flathub
 
 > - [x] stable
 > - [x] beta
@@ -93,7 +104,7 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder appstream \
   io.github.friesi23.mhabit.metainfo.xml
 ```
 
-## 6. Commit and Add Release Tag
+## 7. Commit and Add Release Tag
 
 > - [x] stable
 > - [x] beta
@@ -125,14 +136,14 @@ git cbump
 git tag <valid-version-tag>
 ```
 
-## 7. Waiting Release CI
+## 8. Waiting Release CI
 
 > - [x] stable
 > - [x] beta
 
 Checking Here: [App Release - Github Action][action-app-release]
 
-## 8. Publish on Github
+## 9. Publish on Github
 
 > - [x] stable
 > - [x] beta
