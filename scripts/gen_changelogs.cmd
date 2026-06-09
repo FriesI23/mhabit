@@ -1,4 +1,4 @@
-@rem Copyright 2025 Fries_I23
+@rem Copyright 2026 Fries_I23
 @rem
 @rem Licensed under the Apache License, Version 2.0 (the "License");
 @rem you may not use this file except in compliance with the License.
@@ -12,14 +12,11 @@
 @rem See the License for the specific language governing permissions and
 @rem limitations under the License.
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 
-set "SCRIPT_DIR=%~dp0"
+for %%I in ("%~dp0") do set "SCRIPT_DIR=%%~fI"
 for %%I in ("%SCRIPT_DIR%..") do set "REPO_ROOT=%%~fI"
-set "PYTHON_SCRIPTS_DIR=%REPO_ROOT%\scripts\python-scripts"
-set "L10N_DIR=%REPO_ROOT%\assets\l10n"
-set "TEMPLATE_FILE=%L10N_DIR%\en.arb"
-set "L10N_REFS_FILE=%REPO_ROOT%\configs\l10n_refs.json"
+set "PYTHON_SCRIPTS_DIR=%SCRIPT_DIR%\python-scripts"
 
 where poetry >nul 2>nul
 if errorlevel 1 (
@@ -49,26 +46,32 @@ if not exist "%POETRY_PYTHON%" (
   exit /b 1
 )
 
-echo Normalizing ARB files from %L10N_DIR%
-for %%F in ("%L10N_DIR%\*.arb") do (
-  if /I "%%~fF"=="%TEMPLATE_FILE%" (
-    "%POETRY_PYTHON%" bin\normalize_arb.py ^
-      -i "%%~fF" -t "%TEMPLATE_FILE%" -o "%%~fF" --refs "%L10N_REFS_FILE%" ^
-      --indent 4
-  ) else (
-    "%POETRY_PYTHON%" bin\normalize_arb.py ^
-      -i "%%~fF" -t "%TEMPLATE_FILE%" -o "%%~fF" --refs "%L10N_REFS_FILE%" ^
-      --indent 4 --ignore-empty-meta
-  )
+echo Generating fastlane changelog: en-US
+"%POETRY_PYTHON%" bin\gen_fastlane_changelog.py "%REPO_ROOT%\CHANGELOG.md" ^
+  -o "%REPO_ROOT%\fastlane\metadata\android\en-US\changelogs" --validate
+if errorlevel 1 goto fail
 
-  if errorlevel 1 (
-    set "ERR=!errorlevel!"
-    exit /b !ERR!
-  )
+echo Generating fastlane changelog: zh-CN
+"%POETRY_PYTHON%" bin\gen_fastlane_changelog.py "%REPO_ROOT%\docs\CHANGELOG\zh.md" ^
+  -o "%REPO_ROOT%\fastlane\metadata\android\zh-CN\changelogs" --validate
+if errorlevel 1 goto fail
 
-  echo Done[0]: %%~fF
-)
+echo Generating f_store's fastlane changelog: en-US
+"%POETRY_PYTHON%" bin\gen_fastlane_changelog.py "%REPO_ROOT%\CHANGELOG.md" ^
+  -o "%REPO_ROOT%\android\app\src\f_store\fastlane\metadata\android\en-US\changelogs" ^
+  --min-version-code 125 --with-pre --validate
+if errorlevel 1 goto fail
+
+echo Generating f_store's fastlane changelog: zh-CN
+"%POETRY_PYTHON%" bin\gen_fastlane_changelog.py "%REPO_ROOT%\docs\CHANGELOG\zh.md" ^
+  -o "%REPO_ROOT%\android\app\src\f_store\fastlane\metadata\android\zh-CN\changelogs" ^
+  --min-version-code 125 --with-pre --validate
+if errorlevel 1 goto fail
 
 popd >nul
-
 exit /b 0
+
+:fail
+set "ERR=%errorlevel%"
+popd >nul
+exit /b %ERR%

@@ -3,7 +3,6 @@ SUBMAKE := $(MAKE) --no-print-directory
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd.exe
-PYTHON := py -3
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter.bat)
 LOCAL_DART := $(abspath ./.flutter/bin/dart.bat)
 MELOS := call "$(LOCAL_DART)" run melos
@@ -12,11 +11,10 @@ PATH_SEP := ;
 BASE_PATH := $(strip $(shell powershell -NoProfile -Command "$$machine = [System.Environment]::GetEnvironmentVariable('Path', 'Machine'); $$user = [System.Environment]::GetEnvironmentVariable('Path', 'User'); [Console]::Write($$machine + ';' + $$user)"));$(PATH)
 BLANK_LINE := @echo.
 define run_script
-	@call scripts\$(1).cmd
+	@call scripts\$(1).cmd $(2)
 endef
 else
 SHELL := /bin/bash
-PYTHON := python3
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter)
 LOCAL_DART := $(abspath ./.flutter/bin/dart)
 MELOS := "$(LOCAL_DART)" run melos
@@ -25,7 +23,7 @@ PATH_SEP := :
 BASE_PATH := $(PATH)
 BLANK_LINE := @echo
 define run_script
-	@bash scripts/$(1).sh
+	@bash scripts/$(1).sh $(2)
 endef
 endif
 
@@ -104,10 +102,10 @@ verify-generated:
 	$(call run_script,verify_generated)
 
 sync-rules:
-	@$(PYTHON) scripts/sync-rules.py install
+	$(call run_script,sync-rules,install)
 
 unsync-rules:
-	@$(PYTHON) scripts/sync-rules.py uninstall
+	$(call run_script,sync-rules,uninstall)
 
 aio:
 	@$(SUBMAKE) gen

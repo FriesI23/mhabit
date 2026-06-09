@@ -25,6 +25,11 @@ fi
 
 cd "$REPO_ROOT"
 
+if ! command -v poetry >/dev/null 2>&1; then
+  echo "Poetry is required but not found in PATH." >&2
+  exit 1
+fi
+
 before_status="$(mktemp)"
 after_status="$(mktemp)"
 before_diff="$(mktemp)"

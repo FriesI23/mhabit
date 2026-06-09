@@ -15,6 +15,7 @@
 setlocal
 
 for %%I in ("%~dp0..") do set "REPO_ROOT=%%~fI"
+set "PYTHON_SCRIPTS_DIR=%REPO_ROOT%\scripts\python-scripts"
 set "WORK_DIR=%TEMP%\mhabit-verify-%RANDOM%%RANDOM%"
 
 mkdir "%WORK_DIR%" >nul 2>nul
@@ -37,6 +38,12 @@ git status --porcelain --untracked-files=all > "%BEFORE_STATUS%"
 if errorlevel 1 goto fail
 git diff --binary --no-ext-diff > "%BEFORE_DIFF%"
 if errorlevel 1 goto fail
+
+where poetry >nul 2>nul
+if errorlevel 1 (
+  echo Poetry is required but not found in PATH.
+  goto fail
+)
 
 call "%~dp0normalize_arb.cmd"
 if errorlevel 1 goto fail

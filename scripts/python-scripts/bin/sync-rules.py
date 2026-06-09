@@ -8,11 +8,22 @@ import sys
 from pathlib import Path
 
 
-RULES_FILE = Path("docs/rules/rules.md")
-CLAUDE_FILE = Path("CLAUDE.md")
-COPILOT_FILE = Path(".github/copilot-instructions.md")
-CONTINUE_FILE = Path(".continue/rules/main.md")
-CURSOR_FILE = Path(".cursor/rules/main.mdc")
+def resolve_repo_root() -> Path:
+    script_path = Path(__file__).resolve()
+    for parent in script_path.parents:
+        if (parent / "pubspec.yaml").is_file() and (parent / ".git").exists():
+            return parent
+    raise RuntimeError(
+        f"Failed to resolve repository root from script path: {script_path}"
+    )
+
+
+REPO_ROOT = resolve_repo_root()
+DEFAULT_RULES_FILE = REPO_ROOT / "docs/rules/rules.md"
+CLAUDE_FILE = REPO_ROOT / "CLAUDE.md"
+COPILOT_FILE = REPO_ROOT / ".github/copilot-instructions.md"
+CONTINUE_FILE = REPO_ROOT / ".continue/rules/main.md"
+CURSOR_FILE = REPO_ROOT / ".cursor/rules/main.mdc"
 
 IGNORE_LIST = [
     ".continue/",
@@ -39,14 +50,14 @@ def repo_globs() -> list[str]:
     return ["**/*"]
 
 
-def check_rules_exists() -> None:
-    if not RULES_FILE.is_file():
-        log_error(f"Rules file not found: {RULES_FILE}")
+def check_rules_exists(rules_file: Path) -> None:
+    if not rules_file.is_file():
+        log_error(f"Rules file not found: {rules_file}")
         sys.exit(1)
 
 
 def ensure_git_exclude_path() -> Path:
-    git_exclude_dir = Path(".git/info")
+    git_exclude_dir = REPO_ROOT / ".git/info"
     git_exclude = git_exclude_dir / "exclude"
 
     if not git_exclude_dir.is_dir():
@@ -109,11 +120,11 @@ def build_frontmatter(*, name: str | None = None, description: str, globs: list[
     return "\n".join(lines)
 
 
-def install() -> None:
-    check_rules_exists()
+def install(rules_file: Path) -> None:
+    check_rules_exists(rules_file)
     log_info("Starting rules installation...")
 
-    rules_text = RULES_FILE.read_text(encoding="utf-8")
+    rules_text = rules_file.read_text(encoding="utf-8")
     scoped_globs = repo_globs()
 
     CLAUDE_FILE.write_text(rules_text, encoding="utf-8")
@@ -159,7 +170,12 @@ def uninstall() -> None:
         path.unlink(missing_ok=True)
     log_info("Removed AI config files")
 
-    for path in [Path(".continue/rules"), Path(".continue"), Path(".cursor/rules"), Path(".cursor")]:
+    for path in [
+        REPO_ROOT / ".continue/rules",
+        REPO_ROOT / ".continue",
+        REPO_ROOT / ".cursor/rules",
+        REPO_ROOT / ".cursor",
+    ]:
         try:
             path.rmdir()
         except OSError:
@@ -174,16 +190,24 @@ def uninstall() -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="sync-rules.py",
-        description="Sync docs/rules/rules.md to AI tool config files.",
+        description="Sync rules file to AI tool config files.",
     )
     parser.add_argument("action", choices=["install", "uninstall"])
+    parser.add_argument(
+        "--rules-file",
+        default=str(DEFAULT_RULES_FILE),
+        help="Path to source rules file (used by install action)",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    rules_file = Path(args.rules_file)
+    if not rules_file.is_absolute():
+        rules_file = (REPO_ROOT / rules_file).resolve()
     if args.action == "install":
-        install()
+        install(rules_file)
         return
     uninstall()
 
