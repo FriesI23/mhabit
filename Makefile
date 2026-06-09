@@ -36,7 +36,7 @@ endif
 
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
-	verify-generated verify-submodules aio aio-full
+	verify-generated verify-submodules aio aio-full sync-rules unsync-rules
 
 help:
 	@echo Standardized automation entrypoints
@@ -54,6 +54,8 @@ help:
 	@echo   verify-submodules Show recursive submodule status
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the root app and internal package test suites
+	@echo "  sync-rules        Distribute project rules to AI tools (.continue, .github, etc.)"
+	@echo "  unsync-rules      Remove AI tool rules and clean up .git/info/exclude"
 
 init:
 	@git config --local core.hooksPath .githooks
@@ -98,6 +100,12 @@ gen:
 
 verify-generated:
 	$(call run_script,verify_generated)
+
+sync-rules:
+	@bash scripts/sync-rules.sh install
+
+unsync-rules:
+	@bash scripts/sync-rules.sh uninstall
 
 aio:
 	@$(SUBMAKE) gen
