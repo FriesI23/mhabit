@@ -3,6 +3,7 @@ SUBMAKE := $(MAKE) --no-print-directory
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd.exe
+PYTHON := py -3
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter.bat)
 LOCAL_DART := $(abspath ./.flutter/bin/dart.bat)
 MELOS := call "$(LOCAL_DART)" run melos
@@ -15,6 +16,7 @@ define run_script
 endef
 else
 SHELL := /bin/bash
+PYTHON := python3
 LOCAL_FLUTTER := $(abspath ./.flutter/bin/flutter)
 LOCAL_DART := $(abspath ./.flutter/bin/dart)
 MELOS := "$(LOCAL_DART)" run melos
@@ -102,10 +104,10 @@ verify-generated:
 	$(call run_script,verify_generated)
 
 sync-rules:
-	@bash scripts/sync-rules.sh install
+	@$(PYTHON) scripts/sync-rules.py install
 
 unsync-rules:
-	@bash scripts/sync-rules.sh uninstall
+	@$(PYTHON) scripts/sync-rules.py uninstall
 
 aio:
 	@$(SUBMAKE) gen
