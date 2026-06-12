@@ -224,8 +224,8 @@ After operations above, this MSIX package should now be able to install successf
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
 [altstore]: https://altstore.io/
 [sidestore]: https://sidestore.io/
-[altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
-[sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
+[altstore-source]: https://friesi23.icu/altstore-repo/pages/altstore.html
+[sidestore-source]: https://friesi23.icu/altstore-repo/pages/sidestore.html
 [flathub-myapp]: https://flathub.org/apps/io.github.friesi23.mhabit
 [msix-install-cert]: https://www.advancedinstaller.com/install-test-certificate-from-msix.html
 

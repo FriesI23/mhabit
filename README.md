@@ -155,8 +155,8 @@ limitations under the License.
 [fdroid-myapp]: https://f-droid.org/packages/io.github.friesi23.mhabit
 [lzzyondroid-myapp]: https://apt.izzysoft.de/fdroid/index/apk/io.github.friesi23.mhabit
 [play-myapp]: https://play.google.com/store/apps/details?id=io.github.friesi23.mhabit&referrer=utm_source%3Dappbadge
-[altstore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/altstore.html
-[sidestore-source]: https://play4fun.friesi23.cn/altstore-repo/pages/sidestore.html
+[altstore-source]: https://friesi23.icu/altstore-repo/pages/altstore.html
+[sidestore-source]: https://friesi23.icu/altstore-repo/pages/sidestore.html
 [appstore-myapp]: https://apps.apple.com/app/table-habit/id6744886469
 [msstore-myapp]: https://apps.microsoft.com/detail/9NG22PL73NGZ?referrer=appbadge&mode=direct
 [github-myapp]: https://github.com/FriesI23/mhabit/releases/latest

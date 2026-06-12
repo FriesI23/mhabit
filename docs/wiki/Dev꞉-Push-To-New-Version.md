@@ -14,8 +14,8 @@
    ```shell
    flutter clean
    flutter pub get
-  scripts/normalize_arb.sh
-  scripts/build_runner.sh
+   scripts/normalize_arb.sh
+   scripts/build_runner.sh
    ```
 
 ## 2. Update Release Description
