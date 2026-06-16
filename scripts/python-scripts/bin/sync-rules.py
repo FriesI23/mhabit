@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -32,6 +33,64 @@ IGNORE_LIST = [
     "CLAUDE.md",
 ]
 
+# ---------------------------------------------------------------------------
+# Per-tool output templates
+#
+# Each template is intentionally self-contained and readable on its own.
+# Variables: {rel} = relative path from the output file to the rules file,
+#            {name} = filename of the rules file (e.g. "rules.md").
+# ---------------------------------------------------------------------------
+
+CLAUDE_TEMPLATE = """\
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
+
+See [{name}]({rel}) for the full rule set: architecture decisions, workflow
+commands, provider patterns, Dart style requirements, and generated-code
+conventions.
+"""
+
+COPILOT_TEMPLATE = """\
+# Copilot Instructions
+
+This file provides context for GitHub Copilot in the mhabit repository.
+
+See [{name}]({rel}) for the full rule set: architecture decisions, workflow
+commands, provider patterns, Dart style requirements, and generated-code
+conventions.
+"""
+
+CONTINUE_TEMPLATE = """\
+---
+name: Project Rules
+description: Rules for the mhabit repository only
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+See [{name}]({rel}) for the full rule set: architecture decisions, workflow
+commands, provider patterns, Dart style requirements, and generated-code
+conventions.
+"""
+
+CURSOR_TEMPLATE = """\
+---
+description: Rules for the mhabit repository only
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+See [{name}]({rel}) for the full rule set: architecture decisions, workflow
+commands, provider patterns, Dart style requirements, and generated-code
+conventions.
+"""
+
+# ---------------------------------------------------------------------------
+
 
 def log_info(message: str) -> None:
     print(f"[INFO] {message}")
@@ -43,11 +102,6 @@ def log_success(message: str) -> None:
 
 def log_error(message: str) -> None:
     print(f"[ERROR] {message}")
-
-
-def repo_globs() -> list[str]:
-    # Keep all targeting repo-local. Do not encode workspace-level paths.
-    return ['"**/*"']
 
 
 def check_rules_exists(rules_file: Path) -> None:
@@ -103,59 +157,33 @@ def update_git_exclude(action: str, pattern: str) -> None:
             log_info(f"{pattern} not in {git_exclude}")
 
 
-def build_frontmatter(*, name: str | None = None, description: str, globs: list[str]) -> str:
-    lines = ["---"]
-    if name:
-        lines.append(f"name: {name}")
-    lines.extend(
-        [
-            f"description: {description}",
-            "alwaysApply: true",
-            "globs:",
-            *(f"  - {glob_item}" for glob_item in globs),
-            "---",
-            "",
-        ]
-    )
-    return "\n".join(lines)
+def _rel(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file's directory to to_file, using forward slashes."""
+    return Path(os.path.relpath(to_file, from_file.parent)).as_posix()
 
 
 def install(rules_file: Path) -> None:
     check_rules_exists(rules_file)
     log_info("Starting rules installation...")
 
-    rules_text = rules_file.read_text(encoding="utf-8")
-    scoped_globs = repo_globs()
+    vars_ = {"name": rules_file.name, "rel": _rel(CLAUDE_FILE, rules_file)}
+    CLAUDE_FILE.write_text(CLAUDE_TEMPLATE.format(**vars_), encoding="utf-8")
+    log_info(f"Created reference at {CLAUDE_FILE}")
 
-    CLAUDE_FILE.write_text(rules_text, encoding="utf-8")
-    log_info(f"Copied rules to {CLAUDE_FILE}")
-
+    vars_ = {"name": rules_file.name, "rel": _rel(COPILOT_FILE, rules_file)}
     COPILOT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    COPILOT_FILE.write_text(rules_text, encoding="utf-8")
-    log_info(f"Copied rules to {COPILOT_FILE}")
+    COPILOT_FILE.write_text(COPILOT_TEMPLATE.format(**vars_), encoding="utf-8")
+    log_info(f"Created reference at {COPILOT_FILE}")
 
+    vars_ = {"name": rules_file.name, "rel": _rel(CONTINUE_FILE, rules_file)}
     CONTINUE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    continue_header = build_frontmatter(
-        name="Project Rules",
-        description="Rules for the mhabit repository only",
-        globs=scoped_globs,
-    )
-    CONTINUE_FILE.write_text(
-        f"{continue_header}{rules_text}",
-        encoding="utf-8",
-    )
-    log_info(f"Created {CONTINUE_FILE} with frontmatter")
+    CONTINUE_FILE.write_text(CONTINUE_TEMPLATE.format(**vars_), encoding="utf-8")
+    log_info(f"Created reference at {CONTINUE_FILE}")
 
+    vars_ = {"name": rules_file.name, "rel": _rel(CURSOR_FILE, rules_file)}
     CURSOR_FILE.parent.mkdir(parents=True, exist_ok=True)
-    cursor_header = build_frontmatter(
-        description="Rules for the mhabit repository only",
-        globs=scoped_globs,
-    )
-    CURSOR_FILE.write_text(
-        f"{cursor_header}{rules_text}",
-        encoding="utf-8",
-    )
-    log_info(f"Created {CURSOR_FILE} with frontmatter")
+    CURSOR_FILE.write_text(CURSOR_TEMPLATE.format(**vars_), encoding="utf-8")
+    log_info(f"Created reference at {CURSOR_FILE}")
 
     for pattern in IGNORE_LIST:
         update_git_exclude("add", pattern)
