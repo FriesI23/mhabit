@@ -32,6 +32,7 @@ import '../../storage/db/handlers/habit.dart';
 import '../../storage/db/handlers/record.dart';
 import '../../storage/db/handlers/sync.dart';
 import '../common.dart';
+import '../habit_color.dart';
 import '../habit_form.dart';
 import '../habit_freq.dart';
 import '../habit_reminder.dart';
@@ -344,6 +345,7 @@ class WebDavSyncHabitKey {
   static const String name = 'name';
   static const String desc = 'desc';
   static const String color = 'color';
+  static const String customColor = 'custom_color';
   static const String dailyGoal = 'daily_goal';
   static const String dailyGoalUnit = 'daily_goal_unit';
   static const String dailyGoalExtra = 'daily_goal_extra';
@@ -357,6 +359,24 @@ class WebDavSyncHabitKey {
   static const String sessionId = 'sessionId';
   static const String records = 'records';
   static const String convertType = '_convert_type';
+  static const String schemaVersion = '_schema_version';
+}
+
+/// Sync-payload (wire) encoding of [HabitColor]: unlike [HabitColor.dbColorType],
+/// a custom color encodes `color` as `null` rather than the `cc1` placeholder,
+/// so the payload's color-range validation naturally skips custom colors.
+/// This is a [WebDavSyncHabitData]-specific wire quirk, not a property of
+/// [HabitColor] itself, so it stays local to this file.
+extension on HabitColor {
+  int? get _syncColorCode => switch (this) {
+    BuiltInHabitColor(colorType: final t) => t.dbCode,
+    CustomHabitColor() => null,
+  };
+
+  int? get _syncCustomColor => switch (this) {
+    BuiltInHabitColor() => null,
+    CustomHabitColor(argb: final a) => a,
+  };
 }
 
 /// More model design refs:
@@ -369,6 +389,14 @@ class WebDavSyncHabitKey {
 @CopyWith(skipFields: true)
 class WebDavSyncHabitData implements JsonAdaptor {
   static const _convertType = 'habit_';
+
+  /// Bump this whenever this class's JSON field shape changes in a way that
+  /// older clients need to distinguish (see
+  /// docs/design/draft/20260619-webdav-sync-schema-version.md).
+  static const int currentSchemaVersion = 2;
+
+  @JsonKey(name: WebDavSyncHabitKey.schemaVersion, defaultValue: 1)
+  final int schemaVersion;
 
   @JsonKey(name: WebDavSyncHabitKey.uuid)
   final String? uuid;
@@ -386,6 +414,8 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final String? desc;
   @JsonKey(name: WebDavSyncHabitKey.color)
   final int? color;
+  @JsonKey(name: WebDavSyncHabitKey.customColor)
+  final int? customColor;
   @JsonKey(name: WebDavSyncHabitKey.dailyGoal)
   final num? dailyGoal;
   @JsonKey(name: WebDavSyncHabitKey.dailyGoalUnit)
@@ -436,6 +466,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   );
 
   const WebDavSyncHabitData({
+    this.schemaVersion = 1,
     this.uuid,
     this.createT,
     this.modifyT,
@@ -444,6 +475,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.name,
     this.desc,
     this.color,
+    this.customColor,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
@@ -461,31 +493,48 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.dirtyTotal,
   });
 
-  WebDavSyncHabitData.fromHabitDBCell(
+  factory WebDavSyncHabitData.fromHabitDBCell(
     HabitDBCell cell, {
-    this.etag,
-    this.dirty,
-    this.dirtyTotal,
-    this.sessionId,
-    this.records = const {},
-  }) : uuid = cell.uuid,
-       createT = cell.createT,
-       modifyT = cell.modifyT,
-       type = cell.type,
-       status = cell.status,
-       name = cell.name,
-       desc = cell.desc,
-       color = cell.color,
-       dailyGoal = cell.dailyGoal,
-       dailyGoalUnit = cell.dailyGoalUnit,
-       dailyGoalExtra = cell.dailyGoalExtra,
-       freqType = cell.freqType,
-       freqCustom = cell.freqCustom,
-       reminder = cell.remindCustom,
-       reminderQuest = cell.remindQuestion,
-       startDate = cell.startDate,
-       targetDays = cell.targetDays,
-       sortPostion = cell.sortPosition;
+    String? etag,
+    int? dirty,
+    int? dirtyTotal,
+    String? sessionId,
+    Map<HabitRecordUUID, WebDavSyncRecordData> records = const {},
+  }) {
+    final habitColor = HabitColor.fromRaw(
+      colorType: cell.customColor != null
+          ? HabitColorType.cc1
+          : HabitColorType.getFromDBCode(cell.color!)!,
+      customColor: cell.customColor,
+    );
+    return WebDavSyncHabitData(
+      schemaVersion: currentSchemaVersion,
+      uuid: cell.uuid,
+      createT: cell.createT,
+      modifyT: cell.modifyT,
+      type: cell.type,
+      status: cell.status,
+      name: cell.name,
+      desc: cell.desc,
+      color: habitColor._syncColorCode,
+      customColor: habitColor._syncCustomColor,
+      dailyGoal: cell.dailyGoal,
+      dailyGoalUnit: cell.dailyGoalUnit,
+      dailyGoalExtra: cell.dailyGoalExtra,
+      freqType: cell.freqType,
+      freqCustom: cell.freqCustom,
+      reminder: cell.remindCustom,
+      reminderQuest: cell.remindQuestion,
+      startDate: cell.startDate,
+      targetDays: cell.targetDays,
+      sortPostion: cell.sortPosition,
+      etag: etag,
+      dirty: dirty,
+      dirtyTotal: dirtyTotal,
+      sessionId: sessionId,
+      records: records,
+    );
+  }
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
     assert(
@@ -496,31 +545,43 @@ class WebDavSyncHabitData implements JsonAdaptor {
     return _$WebDavSyncHabitDataFromJson(json);
   }
 
-  HabitDBCell toHabitDBCell() => HabitDBCell(
-    uuid: uuid,
-    createT: createT,
-    modifyT: modifyT,
-    type: type,
-    status: status,
-    name: name,
-    desc: desc,
-    color: color,
-    dailyGoal: dailyGoal,
-    dailyGoalUnit: dailyGoalUnit,
-    dailyGoalExtra: dailyGoalExtra,
-    freqType: freqType,
-    freqCustom: freqCustom,
-    remindCustom: reminder,
-    remindQuestion: reminderQuest,
-    startDate: startDate,
-    targetDays: targetDays,
-    sortPosition: sortPostion,
-  );
+  HabitDBCell toHabitDBCell() {
+    final habitColor = HabitColor.fromRaw(
+      colorType: customColor != null
+          ? HabitColorType.cc1
+          : HabitColorType.getFromDBCode(color!)!,
+      customColor: customColor,
+    );
+    return HabitDBCell(
+      uuid: uuid,
+      createT: createT,
+      modifyT: modifyT,
+      type: type,
+      status: status,
+      name: name,
+      desc: desc,
+      color: habitColor.dbColorType.dbCode,
+      customColor: habitColor.dbCustomColor,
+      dailyGoal: dailyGoal,
+      dailyGoalUnit: dailyGoalUnit,
+      dailyGoalExtra: dailyGoalExtra,
+      freqType: freqType,
+      freqCustom: freqCustom,
+      remindCustom: reminder,
+      remindQuestion: reminderQuest,
+      startDate: startDate,
+      targetDays: targetDays,
+      sortPosition: sortPostion,
+    );
+  }
 
   @override
-  JsonMap toJson() =>
-      _$WebDavSyncHabitDataToJson(this)
-        ..[WebDavSyncHabitKey.convertType] = _convertType;
+  JsonMap toJson() {
+    final json = _$WebDavSyncHabitDataToJson(this)
+      ..[WebDavSyncHabitKey.convertType] = _convertType;
+    if (schemaVersion <= 1) json.remove(WebDavSyncHabitKey.schemaVersion);
+    return json;
+  }
 
   SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
     habitUUID: uuid,
