@@ -1507,6 +1507,9 @@ class L10nAr extends L10n {
   String get common_habitColorType_cc10 => 'أوركيد داكن';
 
   @override
+  String get common_habitColorType_custom => 'Custom';
+
+  @override
   String common_habitColorType_default(int index) {
     return 'لون $index';
   }

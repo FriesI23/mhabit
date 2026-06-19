@@ -41,6 +41,12 @@ class HabitColorPickerDialog extends StatelessWidget {
     final colorData = themeData.extension<CustomColors>();
     final l10n = L10n.of(context);
 
+    // No `CustomColors` registered on the theme means there's nothing to
+    // pick from; fall back to an empty swatch list instead of forcing one.
+    final availableColors = colorData?.builtInColors ?? const [];
+    final pickerColor =
+        colorData?.getBuiltInColor(colorType) ?? Colors.transparent;
+
     return AlertDialog(
       title: l10n != null ? Text(l10n.habitEdit_colorPicker_title) : null,
       content: SingleChildScrollView(
@@ -56,10 +62,10 @@ class HabitColorPickerDialog extends StatelessWidget {
             ),
           ),
           itemBuilder: (color, isCurrentColor, changeColor) {
-            final HabitColorType? colorType = colorData?.getHabitColorTypeByCC(
-              color,
-            );
-            final Color? onColor = colorData?.getOnColor(colorType!);
+            final colorType = colorData?.getBuiltInColorType(color);
+            final onColor = colorType != null
+                ? colorData?.getBuiltInOnColor(colorType)
+                : null;
             return IconButton(
               onPressed: changeColor,
               icon: isCurrentColor ? const Icon(Icons.check) : const Icon(null),
@@ -75,21 +81,10 @@ class HabitColorPickerDialog extends StatelessWidget {
               ),
             );
           },
-          pickerColor: colorData?.getColor(colorType) as Color,
-          availableColors: [
-            colorData?.cc1 as Color,
-            colorData?.cc2 as Color,
-            colorData?.cc3 as Color,
-            colorData?.cc4 as Color,
-            colorData?.cc5 as Color,
-            colorData?.cc6 as Color,
-            colorData?.cc7 as Color,
-            colorData?.cc8 as Color,
-            colorData?.cc9 as Color,
-            colorData?.cc10 as Color,
-          ],
+          pickerColor: pickerColor,
+          availableColors: availableColors,
           onColorChanged: (value) {
-            Navigator.pop(context, colorData?.getHabitColorTypeByCC(value));
+            Navigator.pop(context, colorData?.getBuiltInColorType(value));
           },
         ),
       ),

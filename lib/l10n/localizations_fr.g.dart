@@ -1540,6 +1540,9 @@ class L10nFr extends L10n {
   String get common_habitColorType_cc10 => 'Orchidée foncée';
 
   @override
+  String get common_habitColorType_custom => 'Custom';
+
+  @override
   String common_habitColorType_default(int index) {
     return 'Couleur $index';
   }

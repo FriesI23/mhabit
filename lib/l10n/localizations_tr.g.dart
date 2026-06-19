@@ -1536,6 +1536,9 @@ class L10nTr extends L10n {
   String get common_habitColorType_cc10 => 'Koyu orkide';
 
   @override
+  String get common_habitColorType_custom => 'Custom';
+
+  @override
   String common_habitColorType_default(int index) {
     return 'Renk $index';
   }

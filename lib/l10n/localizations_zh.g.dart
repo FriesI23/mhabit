@@ -1447,6 +1447,9 @@ class L10nZh extends L10n {
   String get common_habitColorType_cc10 => '兰花紫';
 
   @override
+  String get common_habitColorType_custom => '自定义';
+
+  @override
   String common_habitColorType_default(int index) {
     return '颜色-$index';
   }

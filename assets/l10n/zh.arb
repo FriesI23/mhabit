@@ -951,6 +951,7 @@
     "common_habitColorType_cc8": "橙色",
     "common_habitColorType_cc9": "酸橙绿",
     "common_habitColorType_cc10": "兰花紫",
+    "common_habitColorType_custom": "自定义",
     "common_habitColorType_default": "颜色-{index}",
     "@common_habitColorType_default": {
         "description": "unknown habit color type name",

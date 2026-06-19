@@ -14,6 +14,7 @@ import 'package:mhabit/models/app_reminder_config.dart';
 import 'package:mhabit/models/app_sync_options.dart';
 import 'package:mhabit/models/app_sync_server.dart';
 import 'package:mhabit/models/app_sync_server_form.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
@@ -262,7 +263,7 @@ HabitSummaryData _buildStartupHabitSummaryData({
   type: HabitType.normal,
   name: 'Startup habit',
   desc: '',
-  colorType: HabitColorType.cc1,
+  color: const HabitColor.builtIn(HabitColorType.cc1),
   dailyGoal: 1,
   targetDays: 1,
   frequency: HabitFrequency.daily,

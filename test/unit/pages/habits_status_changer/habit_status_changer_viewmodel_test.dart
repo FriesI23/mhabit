@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
@@ -129,7 +130,7 @@ HabitSummaryData _buildHabitSummaryData({
     type: HabitType.normal,
     name: 'Sample Habit',
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
     targetDays: 1,
     frequency: HabitFrequency.daily,

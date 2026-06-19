@@ -160,7 +160,7 @@ class _AppEntry extends StatelessWidget {
         return colorData != null ? Color(colorData) : themeMainColor;
       case InternalAppThemeColor():
         final colorType = themeColor.colorType;
-        return customColor?.getColor(colorType) ?? themeMainColor;
+        return customColor?.getBuiltInColor(colorType) ?? themeMainColor;
       default:
         return themeMainColor;
     }

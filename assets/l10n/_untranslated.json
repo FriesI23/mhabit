@@ -1,6 +1,7 @@
 {
   "ar": [
-    "common_loadError_text"
+    "common_loadError_text",
+    "common_habitColorType_custom"
   ],
 
   "cs": [
@@ -314,6 +315,7 @@
     "common_habitColorType_cc8",
     "common_habitColorType_cc9",
     "common_habitColorType_cc10",
+    "common_habitColorType_custom",
     "common_habitColorType_default",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
@@ -471,6 +473,7 @@
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -543,6 +546,7 @@
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText",
     "appAbout_privacyTile_titleText",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -943,6 +947,7 @@
     "common_habitColorType_cc8",
     "common_habitColorType_cc9",
     "common_habitColorType_cc10",
+    "common_habitColorType_custom",
     "common_habitColorType_default",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
@@ -1120,6 +1125,7 @@
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -1260,6 +1266,7 @@
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
     "batchCheckin_completed_snackbar_text",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -1301,8 +1308,13 @@
     "channelDesc_appSyncFailed"
   ],
 
+  "he": [
+    "common_habitColorType_custom"
+  ],
+
   "hu": [
-    "common_loadError_text"
+    "common_loadError_text",
+    "common_habitColorType_custom"
   ],
 
   "it": [
@@ -1406,6 +1418,7 @@
     "experimentalFeatures_habitSearchTile_subtitleText",
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -1438,6 +1451,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic"
@@ -1826,6 +1840,7 @@
     "common_habitColorType_cc8",
     "common_habitColorType_cc9",
     "common_habitColorType_cc10",
+    "common_habitColorType_custom",
     "common_habitColorType_default",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
@@ -1919,6 +1934,7 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_linux",
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic"
@@ -2054,6 +2070,7 @@
     "appReminder_dailyReminder_body",
     "common_habitColorType_cc1",
     "common_habitColorType_cc10",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",
@@ -2099,19 +2116,23 @@
     "appSetting_appThemeColorChosenDialog_subTitleText_macos",
     "appSetting_appThemeColorChosenDialog_subTitleText_windows",
     "experimentalFeatures_habitSearchTile_titleText",
-    "experimentalFeatures_habitSearchTile_subtitleText"
+    "experimentalFeatures_habitSearchTile_subtitleText",
+    "common_habitColorType_custom"
   ],
 
   "tr": [
-    "common_loadError_text"
+    "common_loadError_text",
+    "common_habitColorType_custom"
   ],
 
   "uk": [
-    "common_loadError_text"
+    "common_loadError_text",
+    "common_habitColorType_custom"
   ],
 
   "vi": [
-    "common_loadError_text"
+    "common_loadError_text",
+    "common_habitColorType_custom"
   ],
 
   "zh_Hant": [
@@ -2172,6 +2193,7 @@
     "experimentalFeatures_habitSearchTile_subtitleText",
     "appAbout_privacyTile_titleText",
     "appAbout_privacyTile_subTitleText",
+    "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
     "common_appThemeColor_dynamic",

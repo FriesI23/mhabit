@@ -1483,6 +1483,9 @@ class L10nJa extends L10n {
   String get common_habitColorType_cc10 => 'ダークオーキッド';
 
   @override
+  String get common_habitColorType_custom => 'Custom';
+
+  @override
   String common_habitColorType_default(int index) {
     return '色 $index';
   }

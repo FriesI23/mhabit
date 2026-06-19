@@ -38,6 +38,7 @@ class HabitDBCellKey {
   static const String name = 'name';
   static const String desc = 'desc';
   static const String color = 'color';
+  static const String customColor = 'custom_color';
   static const String dailyGoal = 'daily_goal';
   static const String dailyGoalUnit = 'daily_goal_unit';
   static const String dailyGoalExtra = 'daily_goal_extra';
@@ -71,6 +72,8 @@ class HabitDBCell with DBCell {
   final String? desc;
   @JsonKey(name: HabitDBCellKey.color)
   final int? color;
+  @JsonKey(name: HabitDBCellKey.customColor)
+  final int? customColor;
   @JsonKey(name: HabitDBCellKey.dailyGoal)
   final num? dailyGoal;
   @JsonKey(name: HabitDBCellKey.dailyGoalUnit)
@@ -102,6 +105,7 @@ class HabitDBCell with DBCell {
     this.name,
     this.desc,
     this.color,
+    this.customColor,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
@@ -257,6 +261,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.name,
     HabitDBCellKey.desc,
     HabitDBCellKey.color,
+    HabitDBCellKey.customColor,
     HabitDBCellKey.dailyGoal,
     HabitDBCellKey.dailyGoalUnit,
     HabitDBCellKey.dailyGoalExtra,
@@ -289,6 +294,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.type,
     HabitDBCellKey.name,
     HabitDBCellKey.color,
+    HabitDBCellKey.customColor,
     HabitDBCellKey.dailyGoal,
     HabitDBCellKey.dailyGoalExtra,
     HabitDBCellKey.targetDays,

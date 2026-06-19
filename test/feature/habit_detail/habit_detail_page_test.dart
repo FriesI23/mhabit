@@ -17,6 +17,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_detail.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -117,7 +118,7 @@ HabitSummaryData _buildHabitSummaryData({
     type: HabitType.normal,
     name: 'Sample Habit',
     desc: 'Detail regression fixture',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
     targetDays: 1,
     frequency: HabitFrequency.daily,
@@ -181,7 +182,7 @@ Future<void> _pumpHabitDetailPage(
           valueListenable: rebuildToken,
           builder: (context, _, child) => HabitDetailPage(
             habitUUID: habitUUID,
-            colorType: HabitColorType.cc1,
+            color: const HabitColor.builtIn(HabitColorType.cc1),
           ),
         ),
       ),

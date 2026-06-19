@@ -24,6 +24,7 @@ import '../common/types.dart';
 import '../l10n/localizations.dart';
 import '../storage/db/handlers/habit.dart';
 import '../utils/app_clock.dart';
+import 'habit_color.dart';
 import 'habit_daily_goal.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
@@ -193,7 +194,13 @@ enum HabitDailyComplateStatus { zero, ok, goodjob, tryhard, noeffect }
 class HabitForm {
   String name;
   HabitType type;
-  HabitColorType colorType;
+
+  /// The only color property on this model. There is no separate
+  /// `colorType`/`customColor` pair here: those are raw persistence fields
+  /// owned by `HabitDBCell`, and only [HabitColor.fromRaw]/the
+  /// `dbColorType`/`dbCustomColor` getters are allowed to unpack [color]
+  /// back into that shape, at the DB conversion boundary.
+  HabitColor color;
   HabitDailyGoalData dailyGoal;
   HabitFrequency frequency;
   HabitStartDate startDate;
@@ -207,7 +214,7 @@ class HabitForm {
   HabitForm({
     required this.name,
     required this.type,
-    required this.colorType,
+    required this.color,
     required this.dailyGoal,
     required this.frequency,
     required this.startDate,
@@ -222,7 +229,7 @@ class HabitForm {
   HabitForm._fromHabitDBCell({
     required this.name,
     required this.type,
-    required this.colorType,
+    required this.color,
     required this.dailyGoal,
     required this.frequency,
     required this.startDate,
@@ -240,7 +247,7 @@ class HabitForm {
   }) : this(
          name: '',
          type: type,
-         colorType: colorType,
+         color: HabitColor.builtIn(colorType),
          startDate: HabitStartDate.dateTime(AppClock().now()),
          frequency: HabitFrequency.daily,
          dailyGoal: HabitDailyGoalData(type: type),
@@ -280,7 +287,10 @@ class HabitForm {
     return HabitForm._fromHabitDBCell(
       name: name,
       type: type,
-      colorType: HabitColorType.getFromDBCode(cell.color!)!,
+      color: HabitColor.fromRaw(
+        colorType: HabitColorType.getFromDBCode(cell.color!)!,
+        customColor: cell.customColor,
+      ),
       dailyGoal: dailyGoal,
       frequency: frequency,
       startDate: startDate,
@@ -295,7 +305,7 @@ class HabitForm {
 
   @override
   String toString() {
-    return 'HabitForm(name=$name,type=$type,colorType=$colorType,'
+    return 'HabitForm(name=$name,type=$type,color=$color,'
         'dailyGoal=$dailyGoal,frequency=$frequency,'
         'startDate=$startDate,targetDays=$targetDays,desc=$desc,'
         'reminder=$reminder,reminderQuest=$reminderQuest,editMode=$editMode,'

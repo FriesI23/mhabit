@@ -2444,6 +2444,12 @@ abstract class L10n {
   /// **'Dark orchid'**
   String get common_habitColorType_cc10;
 
+  /// No description provided for @common_habitColorType_custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get common_habitColorType_custom;
+
   /// unknown habit color type name
   ///
   /// In en, this message translates to:

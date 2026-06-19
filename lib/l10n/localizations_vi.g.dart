@@ -1539,6 +1539,9 @@ class L10nVi extends L10n {
   String get common_habitColorType_cc10 => 'Tím tối';
 
   @override
+  String get common_habitColorType_custom => 'Custom';
+
+  @override
   String common_habitColorType_default(int index) {
     return 'Màu $index';
   }

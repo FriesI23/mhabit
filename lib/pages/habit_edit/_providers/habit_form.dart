@@ -20,6 +20,7 @@ import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../logging/helper.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_goal.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
@@ -84,14 +85,14 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  HabitColorType get colorType => _form.colorType;
-  set colorType(HabitColorType newColorType) {
+  HabitColor get color => _form.color;
+  set color(HabitColor newColor) {
     appLog.value.debug(
-      "$runtimeType.colorType",
-      beforeVal: _form.colorType,
-      afterVal: newColorType,
+      "$runtimeType.color",
+      beforeVal: _form.color,
+      afterVal: newColor,
     );
-    _form.colorType = newColorType;
+    _form.color = newColor;
     notifyListeners();
   }
 
@@ -254,7 +255,8 @@ class HabitFormViewModel extends ChangeNotifier
       status: HabitStatus.activated.dbCode,
       name: name,
       desc: desc,
-      color: colorType.dbCode,
+      color: color.dbColorType.dbCode,
+      customColor: color.dbCustomColor,
       dailyGoal: dailyGoalValue,
       dailyGoalUnit: dailyGoalUnit,
       dailyGoalExtra: dailyGoalExtra,
@@ -282,7 +284,8 @@ class HabitFormViewModel extends ChangeNotifier
       uuid: habitUUID,
       name: name,
       desc: desc,
-      color: colorType.dbCode,
+      color: color.dbColorType.dbCode,
+      customColor: color.dbCustomColor,
       dailyGoal: dailyGoalValue,
       dailyGoalUnit: dailyGoalUnit,
       dailyGoalExtra: dailyGoalExtra,

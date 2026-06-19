@@ -16,6 +16,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_summary.dart';
@@ -34,7 +35,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 5, freq = 3}) {
     type: HabitType.normal,
     name: 'test_single',
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 15.0,
     targetDays: 100,
     frequency: HabitFrequency.custom(freq: freq, days: days),

@@ -50,7 +50,9 @@ const String appSyncFailedZipFile = "app_sync_failed.zip";
 /// - add daily goal extra column
 /// ## version 4
 /// - add sync table
-const int appDBVersion = 4;
+/// ## version 5
+/// - add custom_color column
+const int appDBVersion = 5;
 //#endregion
 
 //#region app-theme

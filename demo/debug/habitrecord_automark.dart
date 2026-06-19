@@ -17,6 +17,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_summary.dart';
@@ -44,7 +45,7 @@ void cusomFreqPerformanceTest({
       type: HabitType.normal,
       name: 'test_$i',
       desc: '',
-      colorType: HabitColorType.cc1,
+      color: const HabitColor.builtIn(HabitColorType.cc1),
       dailyGoal: 10.0,
       targetDays: 1000,
       frequency: HabitFrequency.custom(freq: freq, days: days),
@@ -100,7 +101,7 @@ void sinplePerformanceTest({int preRecordNum = 365, days = 99, freq = 3}) {
     type: HabitType.normal,
     name: 'test_single',
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 10.0,
     targetDays: 1000,
     frequency: HabitFrequency.custom(freq: freq, days: days),
@@ -148,7 +149,7 @@ void functionTest() {
     type: HabitType.normal,
     name: 'test',
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 10.0,
     targetDays: 1000,
     frequency: HabitFrequency.custom(freq: 1, days: 99),

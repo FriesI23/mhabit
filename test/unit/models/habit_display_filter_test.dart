@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -48,7 +49,7 @@ HabitSummaryData _buildHabit({
     type: HabitType.normal,
     name: name,
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
     targetDays: 1,
     frequency: HabitFrequency.daily,

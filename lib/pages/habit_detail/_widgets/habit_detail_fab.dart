@@ -15,14 +15,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
 
 class HabitDetailFAB extends StatelessWidget {
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final VoidCallback? onPressed;
 
-  const HabitDetailFAB({super.key, this.colorType, this.onPressed});
+  const HabitDetailFAB({super.key, this.color, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +32,19 @@ class HabitDetailFAB extends StatelessWidget {
     Color? backgroundColor = themeData.colorScheme.secondaryContainer;
     Color? iconColor = themeData.colorScheme.onSecondaryContainer;
     backgroundColor =
-        (colorType != null ? colorData?.getColorContainer(colorType!) : null) ??
+        (color != null
+            ? colorData?.getColorContainer(
+                color!,
+                brightness: themeData.brightness,
+              )
+            : null) ??
         backgroundColor;
     iconColor =
-        (colorType != null
-            ? colorData?.getColorOnContainer(colorType!)
+        (color != null
+            ? colorData?.getColorOnContainer(
+                color!,
+                brightness: themeData.brightness,
+              )
             : null) ??
         iconColor;
     return FloatingActionButton(

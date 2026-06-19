@@ -15,11 +15,11 @@
 import 'package:flutter/material.dart';
 
 import '../../extensions/custom_color_extensions.dart';
-import '../../models/habit_form.dart';
+import '../../models/habit_color.dart';
 import '../../theme/color.dart';
 
 class ThemeWithCustomColors extends StatelessWidget {
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final bool overwritePrimaryColor;
   final bool overwriteOnPrimaryColor;
   final bool overwritePrimaryContainerColor;
@@ -28,7 +28,7 @@ class ThemeWithCustomColors extends StatelessWidget {
 
   const ThemeWithCustomColors({
     super.key,
-    this.colorType,
+    this.color,
     this.overwritePrimaryColor = true,
     this.overwriteOnPrimaryColor = true,
     this.overwritePrimaryContainerColor = true,
@@ -44,18 +44,23 @@ class ThemeWithCustomColors extends StatelessWidget {
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(
-          primary: colorType != null && overwritePrimaryColor
-              ? colorData?.getColor(colorType!)
+          primary: color != null && overwritePrimaryColor
+              ? colorData?.getColor(color!, brightness: themeData.brightness)
               : null,
-          onPrimary: colorType != null && overwriteOnPrimaryColor
-              ? colorData?.getOnColor(colorType!)
+          onPrimary: color != null && overwriteOnPrimaryColor
+              ? colorData?.getOnColor(color!, brightness: themeData.brightness)
               : null,
-          primaryContainer: colorType != null && overwritePrimaryContainerColor
-              ? colorData?.getColorContainer(colorType!)
+          primaryContainer: color != null && overwritePrimaryContainerColor
+              ? colorData?.getColorContainer(
+                  color!,
+                  brightness: themeData.brightness,
+                )
               : null,
-          onPrimaryContainer:
-              colorType != null && overwriteOnPrimaryContainerColor
-              ? colorData?.getColorOnContainer(colorType!)
+          onPrimaryContainer: color != null && overwriteOnPrimaryContainerColor
+              ? colorData?.getColorOnContainer(
+                  color!,
+                  brightness: themeData.brightness,
+                )
               : null,
         ),
       ),

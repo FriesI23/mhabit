@@ -15,6 +15,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_daily_goal.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -66,13 +67,22 @@ void main() {
       provider.name = "test";
       provider.dispose();
     });
-    test('colorType', () {
+    test('color builtIn', () {
       final provider = getMockViewModel();
-      expect(provider.colorType, defaultHabitColorType);
+      expect(provider.color, const HabitColor.builtIn(defaultHabitColorType));
       provider.addListener(() async {
-        expect(provider.colorType, HabitColorType.cc5);
+        expect(provider.color, const HabitColor.builtIn(HabitColorType.cc5));
       });
-      provider.colorType = HabitColorType.cc5;
+      provider.color = const HabitColor.builtIn(HabitColorType.cc5);
+    });
+    test('color custom', () {
+      final provider = getMockViewModel();
+      expect(provider.color, const HabitColor.builtIn(defaultHabitColorType));
+      provider.addListener(() async {
+        expect(provider.color, const CustomHabitColor(0xFF112233));
+        expect(provider.color.dbCustomColor, 0xFF112233);
+      });
+      provider.color = const CustomHabitColor(0xFF112233);
     });
     test('dailyGoal', () {
       final provider = getMockViewModel();
@@ -196,7 +206,7 @@ void main() {
         initForm: HabitForm(
           name: 'Existing Habit',
           type: HabitType.normal,
-          colorType: defaultHabitColorType,
+          color: const HabitColor.builtIn(defaultHabitColorType),
           dailyGoal: HabitDailyGoalData(type: HabitType.normal),
           frequency: HabitFrequency.daily,
           startDate: HabitStartDate.dateTime(DateTime(2020, 1, 20)),
@@ -224,5 +234,92 @@ void main() {
 
       provider.dispose();
     });
+
+    test(
+      'saveHabit writes custom color to created cell (create mode)',
+      () async {
+        final access = _FakeHabitFormAccess();
+        final provider = HabitFormViewModel()..attachAccess(access);
+
+        provider.name = 'Custom Color Habit';
+        provider.color = const CustomHabitColor(0xFFAABBCC);
+        final saved = await provider.saveHabit();
+
+        expect(saved, isNotNull);
+        final cell = access.lastCreatedCell;
+        expect(cell, isNotNull);
+        expect(
+          cell?.color,
+          HabitColorType.cc1.dbCode,
+          reason: 'CustomHabitColor dbColorType is cc1 placeholder',
+        );
+        expect(cell?.customColor, 0xFFAABBCC);
+
+        provider.dispose();
+      },
+    );
+
+    test('saveHabit writes custom color to updated cell (edit mode)', () async {
+      final access = _FakeHabitFormAccess();
+      final provider = HabitFormViewModel(
+        initForm: HabitForm(
+          name: 'Edit Custom',
+          type: HabitType.normal,
+          color: const HabitColor.builtIn(defaultHabitColorType),
+          dailyGoal: HabitDailyGoalData(type: HabitType.normal),
+          frequency: HabitFrequency.daily,
+          startDate: HabitStartDate.dateTime(DateTime(2020, 1, 20)),
+          targetDays: defaultHabitTargetDays,
+          desc: '',
+          editMode: HabitDisplayEditMode.edit,
+          editParams: HabitDisplayEditParams(
+            uuid: 'edit-custom-uuid',
+            createT: DateTime(2020, 1, 20),
+            modifyT: DateTime(2020, 1, 21),
+          ),
+        ),
+      )..attachAccess(access);
+
+      provider.color = const CustomHabitColor(0xFFDDEEFF);
+      final saved = await provider.saveHabit();
+
+      expect(saved, isNotNull);
+      final cell = access.lastUpdatedCell;
+      expect(cell, isNotNull);
+      expect(cell?.uuid, 'edit-custom-uuid');
+      expect(
+        cell?.color,
+        HabitColorType.cc1.dbCode,
+        reason: 'CustomHabitColor dbColorType is cc1 placeholder',
+      );
+      expect(cell?.customColor, 0xFFDDEEFF);
+
+      provider.dispose();
+    });
+
+    test(
+      'saveHabit writes null customColor for built-in color (create mode)',
+      () async {
+        final access = _FakeHabitFormAccess();
+        final provider = HabitFormViewModel()..attachAccess(access);
+
+        provider.name = 'Built-in Color Habit';
+        provider.color = const HabitColor.builtIn(HabitColorType.cc5);
+        final saved = await provider.saveHabit();
+
+        expect(saved, isNotNull);
+        final cell = access.lastCreatedCell;
+        expect(cell, isNotNull);
+        expect(cell?.color, HabitColorType.cc5.dbCode);
+        expect(
+          cell?.customColor,
+          isNull,
+          reason:
+              'built-in color should not leave a stale customColor in the cell',
+        );
+
+        provider.dispose();
+      },
+    );
   });
 }

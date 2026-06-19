@@ -181,22 +181,37 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
     final viewmodel = context.read<HabitDetailViewModel>();
     return {
       HabitHeatMapColorMapDefine.uncomplate:
-          (colorData?.getColor(viewmodel.habitColorType!) ??
+          (colorData?.getColor(
+                    viewmodel.habitColor!,
+                    brightness: themeData.brightness,
+                  ) ??
                   themeData.colorScheme.primary)
               .withValues(alpha: 0.2),
       HabitHeatMapColorMapDefine.partiallyCompleted:
-          (colorData?.getColor(viewmodel.habitColorType!) ??
+          (colorData?.getColor(
+                    viewmodel.habitColor!,
+                    brightness: themeData.brightness,
+                  ) ??
                   themeData.colorScheme.primary)
               .withValues(alpha: 0.3),
       HabitHeatMapColorMapDefine.autoComplate:
-          (colorData?.getColor(viewmodel.habitColorType!) ??
+          (colorData?.getColor(
+                    viewmodel.habitColor!,
+                    brightness: themeData.brightness,
+                  ) ??
                   themeData.colorScheme.primary)
               .withValues(alpha: 0.5),
       HabitHeatMapColorMapDefine.complate:
-          (colorData?.getColor(viewmodel.habitColorType!) ??
+          (colorData?.getColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.primary),
       HabitHeatMapColorMapDefine.overfulfil:
-          (colorData?.getColor(viewmodel.habitColorType!) ??
+          (colorData?.getColor(
+                    viewmodel.habitColor!,
+                    brightness: themeData.brightness,
+                  ) ??
                   themeData.colorScheme.primary)
               .darken(0.2),
     };
@@ -208,19 +223,34 @@ mixin HabitHeatmapColorChooseMixin<T extends StatefulWidget> on State<T> {
     final viewmodel = context.read<HabitDetailViewModel>();
     return {
       HabitHeatMapColorMapDefine.uncomplate:
-          colorData?.getColor(viewmodel.habitColorType!) ??
+          colorData?.getColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.primary,
       HabitHeatMapColorMapDefine.partiallyCompleted:
-          colorData?.getColor(viewmodel.habitColorType!) ??
+          colorData?.getColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.primary,
       HabitHeatMapColorMapDefine.autoComplate:
-          colorData?.getOnColor(viewmodel.habitColorType!) ??
+          colorData?.getOnColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.onPrimary,
       HabitHeatMapColorMapDefine.complate:
-          colorData?.getOnColor(viewmodel.habitColorType!) ??
+          colorData?.getOnColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.onPrimary,
       HabitHeatMapColorMapDefine.overfulfil:
-          colorData?.getOnColor(viewmodel.habitColorType!) ??
+          colorData?.getOnColor(
+            viewmodel.habitColor!,
+            brightness: themeData.brightness,
+          ) ??
           themeData.colorScheme.onPrimary,
     };
   }
