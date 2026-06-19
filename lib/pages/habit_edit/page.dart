@@ -124,13 +124,10 @@ class _PageState extends State<_Page> {
   void _openColorPickerDialog(BuildContext context, HabitColor color) async {
     final result = await showHabitColorPickerDialog(
       context: context,
-      colorType: switch (color) {
-        BuiltInHabitColor(colorType: final t) => t,
-        CustomHabitColor() => HabitColorType.cc1,
-      },
+      color: color,
     );
     if (result == null || !context.mounted) return;
-    context.read<HabitFormViewModel>().color = HabitColor.builtIn(result);
+    context.read<HabitFormViewModel>().color = result;
   }
 
   void _openHabitTypePickerDialog() async {

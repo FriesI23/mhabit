@@ -24,6 +24,15 @@ class L10nJa extends L10n {
   String get habitEdit_colorPicker_title => '色を選択';
 
   @override
+  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+
+  @override
+  String get habitEdit_colorPicker_customSectionLabel => 'Custom';
+
+  @override
+  String get habitEdit_colorPicker_cancel => 'Cancel';
+
+  @override
   String get habitEdit_habitTypeDialog_title => '習慣のタイプ';
 
   @override

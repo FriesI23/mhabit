@@ -24,6 +24,15 @@ class L10nHu extends L10n {
   String get habitEdit_colorPicker_title => 'Válassz színt';
 
   @override
+  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+
+  @override
+  String get habitEdit_colorPicker_customSectionLabel => 'Custom';
+
+  @override
+  String get habitEdit_colorPicker_cancel => 'Cancel';
+
+  @override
   String get habitEdit_habitTypeDialog_title => 'Szokás típusa';
 
   @override

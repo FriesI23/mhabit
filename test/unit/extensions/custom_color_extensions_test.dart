@@ -147,12 +147,27 @@ void main() {
           );
         });
 
-        test('light and dark return different role colors', () {
-          final light = lightCustomColors.getColor(
+        test('getColor preserves hue and saturation in both brightnesses '
+            '(only lightness may be nudged for visibility)', () {
+          final rawHsl = HSLColor.fromColor(Color(argb));
+          final light = HSLColor.fromColor(
+            lightCustomColors.getColor(color, brightness: Brightness.light)!,
+          );
+          final dark = HSLColor.fromColor(
+            darkCustomColors.getColor(color, brightness: Brightness.dark)!,
+          );
+          expect(light.hue, closeTo(rawHsl.hue, 0.5));
+          expect(light.saturation, closeTo(rawHsl.saturation, 0.01));
+          expect(dark.hue, closeTo(rawHsl.hue, 0.5));
+          expect(dark.saturation, closeTo(rawHsl.saturation, 0.01));
+        });
+
+        test('getOnColor differs between light and dark', () {
+          final light = lightCustomColors.getOnColor(
             color,
             brightness: Brightness.light,
           );
-          final dark = darkCustomColors.getColor(
+          final dark = darkCustomColors.getOnColor(
             color,
             brightness: Brightness.dark,
           );
@@ -162,39 +177,51 @@ void main() {
     }
   });
 
-  group('HabitColorExtension — builtInColors', () {
-    test('returns 10 non-null colors in HabitColorType order', () {
-      final colors = lightCustomColors.builtInColors;
-      expect(colors.length, HabitColorType.values.length);
-      expect(colors, everyElement(isNotNull));
-      expect(colors, [
-        for (final t in HabitColorType.values)
-          lightCustomColors.getBuiltInColor(t),
-      ]);
-    });
-  });
-
-  group('HabitColorExtension — getBuiltInColorType', () {
-    test('returns correct type for each built-in swatch', () {
-      for (final t in HabitColorType.values) {
-        final swatch = lightCustomColors.getBuiltInColor(t)!;
-        expect(
-          lightCustomColors.getBuiltInColorType(swatch),
-          t,
-          reason: 'cc${t.code} swatch should reverse-look up to its own type',
-        );
-      }
+  group('HabitColorExtension — getColor visibility nudge', () {
+    test('near-white custom color is nudged down for light theme but left '
+        'unchanged for dark theme', () {
+      const color = CustomHabitColor(0xFFFFFFFF);
+      final light = lightCustomColors.getColor(
+        color,
+        brightness: Brightness.light,
+      );
+      final dark = darkCustomColors.getColor(
+        color,
+        brightness: Brightness.dark,
+      );
+      expect(light, isNot(equals(const Color(0xFFFFFFFF))));
+      expect(HSLColor.fromColor(light!).lightness, closeTo(0.85, 0.01));
+      expect(dark, equals(const Color(0xFFFFFFFF)));
     });
 
-    test('returns null for a non-built-in color', () {
-      const notBuiltIn = Color(0x12345678);
-      expect(lightCustomColors.getBuiltInColorType(notBuiltIn), isNull);
+    test('near-black custom color is nudged up for dark theme but left '
+        'unchanged for light theme', () {
+      const color = CustomHabitColor(0xFF000000);
+      final light = lightCustomColors.getColor(
+        color,
+        brightness: Brightness.light,
+      );
+      final dark = darkCustomColors.getColor(
+        color,
+        brightness: Brightness.dark,
+      );
+      expect(light, equals(const Color(0xFF000000)));
+      expect(dark, isNot(equals(const Color(0xFF000000))));
+      expect(HSLColor.fromColor(dark!).lightness, closeTo(0.2, 0.01));
     });
 
-    test('returns null for a custom-color seed that matches no built-in', () {
-      // 0xFF000002 is not in the built-in palette.
-      const nonBuiltIn = Color(0xFF000002);
-      expect(lightCustomColors.getBuiltInColorType(nonBuiltIn), isNull);
+    test('mid-tone custom color passes through unchanged in both themes', () {
+      const color = CustomHabitColor(0xFF336699);
+      final light = lightCustomColors.getColor(
+        color,
+        brightness: Brightness.light,
+      );
+      final dark = darkCustomColors.getColor(
+        color,
+        brightness: Brightness.dark,
+      );
+      expect(light, equals(const Color(0xFF336699)));
+      expect(dark, equals(const Color(0xFF336699)));
     });
   });
 
@@ -202,11 +229,14 @@ void main() {
     const argb = 0xFFAABBCC;
 
     test('same (argb, brightness) pair returns same ColorScheme', () {
-      final result1 = lightCustomColors.getColor(
+      // getOnColor (not getColor) is used here: getColor for a custom color
+      // is just `Color(argb)` now, which carries no information about
+      // whether the underlying seeded ColorScheme was actually cached.
+      final result1 = lightCustomColors.getOnColor(
         const CustomHabitColor(argb),
         brightness: Brightness.light,
       );
-      final result2 = lightCustomColors.getColor(
+      final result2 = lightCustomColors.getOnColor(
         const CustomHabitColor(argb),
         brightness: Brightness.light,
       );
@@ -215,11 +245,11 @@ void main() {
     });
 
     test('different brightness returns different value for same argb', () {
-      final light = lightCustomColors.getColor(
+      final light = lightCustomColors.getOnColor(
         const CustomHabitColor(argb),
         brightness: Brightness.light,
       );
-      final dark = darkCustomColors.getColor(
+      final dark = darkCustomColors.getOnColor(
         const CustomHabitColor(argb),
         brightness: Brightness.dark,
       );

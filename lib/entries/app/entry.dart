@@ -69,6 +69,7 @@ class AppEntry extends StatelessWidget {
     FirstDayProfileHandler.new,
     HabitCellGestureModeProfileHandler.new,
     InputFillCacheProfileHandler.new,
+    CustomColorHistoryProfileHandler.new,
     CollectLogswitcherProfileHandler.new,
     LoggingLevelProfileHandler.new,
     AppLanguageProfileHanlder.new,

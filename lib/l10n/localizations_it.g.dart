@@ -24,6 +24,15 @@ class L10nIt extends L10n {
   String get habitEdit_colorPicker_title => 'Scegli colore';
 
   @override
+  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+
+  @override
+  String get habitEdit_colorPicker_customSectionLabel => 'Custom';
+
+  @override
+  String get habitEdit_colorPicker_cancel => 'Cancel';
+
+  @override
   String get habitEdit_habitTypeDialog_title => 'Tipologia abitudine';
 
   @override

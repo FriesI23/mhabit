@@ -164,6 +164,24 @@ abstract class L10n {
   /// **'Pick color'**
   String get habitEdit_colorPicker_title;
 
+  /// No description provided for @habitEdit_colorPicker_historySectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently used'**
+  String get habitEdit_colorPicker_historySectionLabel;
+
+  /// No description provided for @habitEdit_colorPicker_customSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get habitEdit_colorPicker_customSectionLabel;
+
+  /// No description provided for @habitEdit_colorPicker_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get habitEdit_colorPicker_cancel;
+
   /// No description provided for @habitEdit_habitTypeDialog_title.
   ///
   /// In en, this message translates to:

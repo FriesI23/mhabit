@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/material.dart' show Brightness, Color, ColorScheme;
+import 'package:flutter/material.dart'
+    show Brightness, Color, ColorScheme, HSLColor;
 
 import '../models/habit_color.dart';
 import '../models/habit_form.dart' show HabitColorType;
@@ -28,10 +29,19 @@ import '../theme/color.dart' show CustomColors;
 /// on-primary-container).
 ///
 /// Built-in colors (cc1–cc10) are looked up directly from the theme
-/// extension's tone properties.  Custom colors are computed via
-/// [ColorScheme.fromSeed] and cached by `(argb, brightness)` so that
-/// repeated calls for the same custom seed + brightness pair avoid
-/// redundant seed-scheme construction.
+/// extension's tone properties. For custom colors, [getColor] stays as
+/// close as possible to the user-picked ARGB value — never the toned
+/// `.primary` of a seeded scheme, since that can visibly drift from the
+/// color the user actually selected. The only adjustment it makes is a
+/// minimal lightness nudge (see [_visibleLightness]) for colors that would
+/// otherwise nearly disappear against the current theme's surface — most
+/// picked colors pass through completely unchanged. The *other* three role
+/// colors ([getOnColor], [getColorContainer], [getColorOnContainer]) still
+/// need a fully contrast-appropriate, brightness-aware tone that isn't just
+/// the raw value, so they derive from [ColorScheme.fromSeed] seeded with
+/// that same raw value, cached by `(argb, brightness)` so repeated calls
+/// for the same custom seed + brightness pair avoid redundant seed-scheme
+/// construction.
 extension HabitColorExtension on CustomColors {
   // -----------------------------------------------------------------
   // Cache for custom-color schemes
@@ -53,6 +63,34 @@ extension HabitColorExtension on CustomColors {
         );
       });
 
+  // A near-white custom color is barely visible on a light theme's surface
+  // (typically lightness ~0.96–1.0), and a near-black one is barely visible
+  // on a dark theme's surface (typically lightness ~0.07–0.12). These
+  // thresholds only catch those two extremes — most picked colors (anything
+  // with a moderately saturated, non-extreme tone) are well clear of both
+  // and pass through with zero adjustment.
+  static const _minVisibleLightnessOnDark = 0.2;
+  static const _maxVisibleLightnessOnLight = 0.85;
+
+  /// Nudges [argb]'s lightness just enough to stay visible against the
+  /// current theme's surface, keeping hue and saturation untouched so the
+  /// result still reads as "the color the user picked" rather than a
+  /// re-toned approximation. Returns [argb] itself whenever no nudge is
+  /// needed.
+  static Color _visibleLightness(int argb, Brightness brightness) {
+    final hsl = HSLColor.fromColor(Color(argb));
+    final lightness = switch (brightness) {
+      Brightness.light when hsl.lightness > _maxVisibleLightnessOnLight =>
+        _maxVisibleLightnessOnLight,
+      Brightness.dark when hsl.lightness < _minVisibleLightnessOnDark =>
+        _minVisibleLightnessOnDark,
+      _ => null,
+    };
+    return lightness == null
+        ? Color(argb)
+        : hsl.withLightness(lightness).toColor();
+  }
+
   // -----------------------------------------------------------------
   // Public color-role resolution — HabitColor → Material role
   // -----------------------------------------------------------------
@@ -60,12 +98,17 @@ extension HabitColorExtension on CustomColors {
   /// Returns the primary-color tone for [color].
   ///
   /// * Built-in colors map to the corresponding `ccN` tone.
-  /// * Custom colors return [ColorScheme.primary] of the seed-derived
-  ///   scheme computed from the custom ARGB value.
+  /// * Custom colors stay as close as possible to the user-picked ARGB
+  ///   value — *not* [ColorScheme.primary] of a seed-derived scheme, which
+  ///   can be a visibly different tone than what was actually picked.
+  ///   The only change applied is [_visibleLightness]'s minimal nudge for
+  ///   colors that would otherwise nearly disappear against the current
+  ///   theme's surface. Seeding is reserved for the supporting role colors
+  ///   (see [getOnColor] et al.), not the primary swatch itself.
   Color? getColor(HabitColor color, {required Brightness brightness}) =>
       switch (color) {
         BuiltInHabitColor(colorType: final t) => getBuiltInColor(t),
-        CustomHabitColor(argb: final v) => _customScheme(v, brightness).primary,
+        CustomHabitColor(argb: final v) => _visibleLightness(v, brightness),
       };
 
   /// Returns the on-primary-color tone for [color].
@@ -101,33 +144,6 @@ extension HabitColorExtension on CustomColors {
       brightness,
     ).onPrimaryContainer,
   };
-
-  // -----------------------------------------------------------------
-  // Built-in palette reverse lookup (color -> type)
-  // -----------------------------------------------------------------
-
-  /// Per-[CustomColors] cache of built-in swatch color -> [HabitColorType],
-  /// keyed by instance identity. The built-in palette is static for a
-  /// given [CustomColors], so this is built once and reused across
-  /// repeated reverse lookups (e.g. from a color picker grid).
-  static final _builtInColorTypeCache =
-      <CustomColors, Map<Color, HabitColorType>>{};
-
-  Map<Color, HabitColorType> get _builtInColorTypes =>
-      _builtInColorTypeCache.putIfAbsent(
-        this,
-        () => {for (final t in HabitColorType.values) ?getBuiltInColor(t): t},
-      );
-
-  /// Reverse lookup from a built-in swatch [color] to its [HabitColorType].
-  /// Returns null if [color] doesn't match any built-in swatch (e.g. it's
-  /// a custom seed color).
-  HabitColorType? getBuiltInColorType(Color color) => _builtInColorTypes[color];
-
-  /// All built-in swatch colors, in [HabitColorType] order.
-  List<Color> get builtInColors => [
-    for (final t in HabitColorType.values) ?getBuiltInColor(t),
-  ];
 
   // -----------------------------------------------------------------
   // Built-in palette direct access (public helpers)

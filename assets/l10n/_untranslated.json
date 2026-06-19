@@ -1,10 +1,16 @@
 {
   "ar": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_loadError_text",
     "common_habitColorType_custom"
   ],
 
   "cs": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitEdit_habitDailyGoal_negativeHintText",
     "habitEdit_habitDailyGoalUnit_hintText",
     "habitEdit_habitFreq_show_perweek",
@@ -390,6 +396,9 @@
   ],
 
   "de": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_searchFilter_ongoing",
     "habitToday_card_subtitle_text",
@@ -515,6 +524,9 @@
   ],
 
   "es": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_tab_habits_label",
@@ -568,6 +580,9 @@
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitEdit_habitTypeDialog_title",
     "habitEdit_habitType_positiveText",
     "habitEdit_habitType_negativeText",
@@ -1023,6 +1038,9 @@
   ],
 
   "fa": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
@@ -1165,6 +1183,9 @@
   ],
 
   "fr": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
@@ -1309,15 +1330,24 @@
   ],
 
   "he": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_habitColorType_custom"
   ],
 
   "hu": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_loadError_text",
     "common_habitColorType_custom"
   ],
 
   "it": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
@@ -1437,6 +1467,9 @@
   ],
 
   "ja": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_tab_habits_label",
@@ -1461,6 +1494,9 @@
     "habitEdit_saveButton_text",
     "habitEdit_habitName_hintText",
     "habitEdit_colorPicker_title",
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitEdit_habitTypeDialog_title",
     "habitEdit_habitType_positiveText",
     "habitEdit_habitType_negativeText",
@@ -1916,6 +1952,9 @@
   ],
 
   "pl": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_searchFilter_ongoing",
@@ -1941,6 +1980,9 @@
   ],
 
   "pt": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitEdit_habitFreq_show_perdayfreq",
     "habitEdit_desc_hintText",
     "habitDisplay_emptyImage_text_01",
@@ -2096,6 +2138,9 @@
   ],
 
   "ru": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_exportHabitsSuccSnackbarText",
@@ -2121,21 +2166,33 @@
   ],
 
   "tr": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_loadError_text",
     "common_habitColorType_custom"
   ],
 
   "uk": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_loadError_text",
     "common_habitColorType_custom"
   ],
 
   "vi": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "common_loadError_text",
     "common_habitColorType_custom"
   ],
 
   "zh_Hant": [
+    "habitEdit_colorPicker_historySectionLabel",
+    "habitEdit_colorPicker_customSectionLabel",
+    "habitEdit_colorPicker_cancel",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "appSync_nowTile_dateFormat",
     "appSync_failedTile_webdavMulti_counterText",
