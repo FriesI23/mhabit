@@ -16,15 +16,16 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/habit_color.dart';
 import '../profile_helper.dart';
 
-/// Persists the locally most-recently-used custom (non-built-in) ARGB
-/// colors. MRU ordering and the 20-entry cap are enforced by
-/// [CustomColorHistoryViewModel], not here — this handler only stores and
-/// retrieves whatever list it is given, same division of responsibility as
-/// every other [ProfileHelperHandler].
+/// Persists the locally most-recently-used custom (non-built-in) colors,
+/// including each one's [CustomHabitColor.tinted] state. MRU ordering and
+/// the 20-entry cap are enforced by [CustomColorHistoryViewModel], not here —
+/// this handler only stores and retrieves whatever list it is given, same
+/// division of responsibility as every other [ProfileHelperHandler].
 final class CustomColorHistoryProfileHandler
-    implements ProfileHelperHandler<List<int>> {
+    implements ProfileHelperHandler<List<CustomHabitColor>> {
   final SharedPreferences _pref;
 
   const CustomColorHistoryProfileHandler(SharedPreferences pref) : _pref = pref;
@@ -33,13 +34,26 @@ final class CustomColorHistoryProfileHandler
   String get key => "customColorHistory";
 
   @override
-  List<int>? get() {
+  List<CustomHabitColor>? get() {
     final source = _pref.getString(key);
-    return source != null ? (jsonDecode(source) as List).cast<int>() : null;
+    if (source == null) return null;
+    return (jsonDecode(source) as List)
+        .map(
+          (e) => CustomHabitColor(
+            (e as Map)['argb'] as int,
+            tinted: e['tinted'] as bool? ?? true,
+          ),
+        )
+        .toList();
   }
 
   @override
-  Future<bool> set(List<int> value) => _pref.setString(key, jsonEncode(value));
+  Future<bool> set(List<CustomHabitColor> value) => _pref.setString(
+    key,
+    jsonEncode([
+      for (final c in value) {'argb': c.argb, 'tinted': c.tinted},
+    ]),
+  );
 
   @override
   Future<bool> remove() => _pref.remove(key);

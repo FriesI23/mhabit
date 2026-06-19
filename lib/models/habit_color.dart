@@ -21,29 +21,40 @@ import 'habit_form.dart';
 sealed class HabitColor implements Comparable<HabitColor> {
   const HabitColor();
 
-  /// Builds from the two raw persistence fields. Which variant results is
+  /// Builds from the raw persistence fields. Which variant results is
   /// decided purely by which field is populated, never by comparing
   /// [customColor] against a built-in seed value: a custom color that
   /// happens to numerically match a built-in seed must still render and
   /// display as custom, not be silently reinterpreted as a built-in pick.
+  ///
+  /// [customColorTinted] is the raw `0`/`1`/`null` persistence value for
+  /// [CustomHabitColor.tinted]. A missing value (`null`) — whether because
+  /// the data predates this field or because it was never written —
+  /// defaults to tinted-on, matching the picker's default toggle state.
   factory HabitColor.fromRaw({
     required HabitColorType colorType,
     int? customColor,
+    int? customColorTinted,
   }) {
     return customColor == null
         ? HabitColor.builtIn(colorType)
-        : HabitColor.custom(customColor);
+        : HabitColor.custom(
+            customColor,
+            tinted: customColorTinted == null || customColorTinted != 0,
+          );
   }
 
   const factory HabitColor.builtIn(HabitColorType colorType) =
       BuiltInHabitColor;
-  const factory HabitColor.custom(int argb) = CustomHabitColor;
+  const factory HabitColor.custom(int argb, {bool tinted}) = CustomHabitColor;
 
-  /// Unpacks back into the two raw persistence fields. This and
+  /// Unpacks back into the raw persistence fields. This and
   /// [HabitColor.fromRaw] are the only places allowed to touch the raw
-  /// `colorType`/`customColor` shape; everything else consumes [HabitColor].
+  /// `colorType`/`customColor`/`customColorTinted` shape; everything else
+  /// consumes [HabitColor].
   HabitColorType get dbColorType;
   int? get dbCustomColor;
+  int? get dbCustomColorTinted;
 
   /// Orders built-in colors by palette position (`cc1` < `cc2` < ... <
   /// `cc10`), with all custom colors sorted after every built-in color and
@@ -73,6 +84,8 @@ final class BuiltInHabitColor extends HabitColor {
   HabitColorType get dbColorType => colorType;
   @override
   int? get dbCustomColor => null;
+  @override
+  int? get dbCustomColorTinted => null;
 
   @override
   bool operator ==(Object other) =>
@@ -89,21 +102,33 @@ final class BuiltInHabitColor extends HabitColor {
 final class CustomHabitColor extends HabitColor {
   final int argb;
 
-  const CustomHabitColor(this.argb);
+  /// Whether [getColor] should resolve this color through
+  /// [ColorScheme.fromSeed] (the same Material You tone the other three role
+  /// colors already use) rather than staying close to the picked [argb]
+  /// value. Defaults to `true` — most custom colors are expected to opt in
+  /// to the tonal look; turning it off is the escape hatch for users who
+  /// want the exact picked color rendered as-is.
+  final bool tinted;
+
+  const CustomHabitColor(this.argb, {this.tinted = true});
 
   @override
   HabitColorType get dbColorType => HabitColorType.cc1;
   @override
   int? get dbCustomColor => argb;
+  @override
+  int? get dbCustomColorTinted => tinted ? 1 : 0;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is CustomHabitColor && argb == other.argb);
+      (other is CustomHabitColor &&
+          argb == other.argb &&
+          tinted == other.tinted);
 
   @override
-  int get hashCode => argb.hashCode;
+  int get hashCode => Object.hash(argb, tinted);
 
   @override
-  String toString() => 'CustomHabitColor($argb)';
+  String toString() => 'CustomHabitColor($argb, tinted: $tinted)';
 }

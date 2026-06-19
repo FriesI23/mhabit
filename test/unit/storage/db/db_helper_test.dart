@@ -135,8 +135,8 @@ void main() {
     );
   });
 
-  group('DB v4→v5 migration — custom_color column', () {
-    test('ALTER TABLE adds custom_color column', () async {
+  group('DB v4→v5 migration — custom_color + custom_color_tinted columns', () {
+    test('ALTER TABLE adds both columns', () async {
       final db = await databaseFactory.openDatabase(
         inMemoryDatabasePath,
         options: OpenDatabaseOptions(
@@ -148,7 +148,7 @@ void main() {
       );
       addTearDown(db.close);
 
-      // Verify v4 schema has no custom_color
+      // Verify v4 schema has neither column
       var tableInfo = await db.rawQuery(
         'PRAGMA table_info(${TableName.habits})',
       );
@@ -156,6 +156,11 @@ void main() {
         tableInfo.any((col) => col['name'] == 'custom_color'),
         isFalse,
         reason: 'v4 schema should not have custom_color column',
+      );
+      expect(
+        tableInfo.any((col) => col['name'] == 'custom_color_tinted'),
+        isFalse,
+        reason: 'v4 schema should not have custom_color_tinted column',
       );
 
       // Apply v5 migration (same logic as _onUpgrade)
@@ -166,19 +171,25 @@ void main() {
           "ADD COLUMN custom_color INTEGER",
         );
       }
+      if (!tableInfo.any((col) => col['name'] == 'custom_color_tinted')) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN custom_color_tinted INTEGER",
+        );
+      }
 
-      // Verify column now exists
+      // Verify both columns now exist
       tableInfo = await db.rawQuery('PRAGMA table_info(${TableName.habits})');
-      expect(
-        tableInfo.any((col) => col['name'] == 'custom_color'),
-        isTrue,
-        reason: 'after v5 migration, custom_color column should exist',
-      );
-      final customColorCol = tableInfo.firstWhere(
-        (col) => col['name'] == 'custom_color',
-      );
-      expect(customColorCol['type'], 'INTEGER');
-      expect(customColorCol['notnull'], 0, reason: 'column should be nullable');
+      for (final name in ['custom_color', 'custom_color_tinted']) {
+        expect(
+          tableInfo.any((col) => col['name'] == name),
+          isTrue,
+          reason: 'after v5 migration, $name column should exist',
+        );
+        final col = tableInfo.firstWhere((col) => col['name'] == name);
+        expect(col['type'], 'INTEGER');
+        expect(col['notnull'], 0, reason: 'column should be nullable');
+      }
     });
 
     test('reapplying migration is safe (PRAGMA guard)', () async {
@@ -193,30 +204,28 @@ void main() {
       );
       addTearDown(db.close);
 
-      // Apply v5 migration once
-      var tableInfo = await db.rawQuery(
-        'PRAGMA table_info(${TableName.habits})',
-      );
-      if (!tableInfo.any((col) => col['name'] == 'custom_color')) {
-        await db.execute(
-          "ALTER TABLE ${TableName.habits} "
-          "ADD COLUMN custom_color INTEGER",
+      Future<void> applyMigration() async {
+        final tableInfo = await db.rawQuery(
+          'PRAGMA table_info(${TableName.habits})',
         );
+        if (!tableInfo.any((col) => col['name'] == 'custom_color')) {
+          await db.execute(
+            "ALTER TABLE ${TableName.habits} "
+            "ADD COLUMN custom_color INTEGER",
+          );
+        }
+        if (!tableInfo.any((col) => col['name'] == 'custom_color_tinted')) {
+          await db.execute(
+            "ALTER TABLE ${TableName.habits} "
+            "ADD COLUMN custom_color_tinted INTEGER",
+          );
+        }
       }
 
-      // Apply again — the PRAGMA check should skip the ALTER
+      // Apply once, then again — the PRAGMA check should skip the ALTERs.
+      await applyMigration();
       await expectLater(
-        () async {
-          tableInfo = await db.rawQuery(
-            'PRAGMA table_info(${TableName.habits})',
-          );
-          if (!tableInfo.any((col) => col['name'] == 'custom_color')) {
-            await db.execute(
-              "ALTER TABLE ${TableName.habits} "
-              "ADD COLUMN custom_color INTEGER",
-            );
-          }
-        },
+        applyMigration,
         returnsNormally,
         reason:
             'second migration pass should be a no-op, not throw duplicate column',
@@ -262,8 +271,14 @@ void main() {
           "ADD COLUMN custom_color INTEGER",
         );
       }
+      if (!tableInfo.any((col) => col['name'] == 'custom_color_tinted')) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN custom_color_tinted INTEGER",
+        );
+      }
 
-      // Insert a new habit with custom_color
+      // Insert a new habit with custom_color + custom_color_tinted
       await db.insert(TableName.habits, {
         'type_': 1,
         'uuid': 'test-uuid-002',
@@ -272,6 +287,7 @@ void main() {
         'desc': '',
         'color': 1,
         'custom_color': 0xFF123456,
+        'custom_color_tinted': 0,
         'daily_goal': 1,
         'daily_goal_unit': 'times',
         'freq_type': 1,
@@ -288,13 +304,15 @@ void main() {
       );
       expect(rows.length, 2);
 
-      // Legacy habit: custom_color is null
+      // Legacy habit: both new columns are null
       expect(rows[0]['name'], 'Legacy Habit');
       expect(rows[0]['custom_color'], isNull);
+      expect(rows[0]['custom_color_tinted'], isNull);
 
-      // New habit: custom_color is preserved
+      // New habit: both columns are preserved
       expect(rows[1]['name'], 'Custom Color Habit');
       expect(rows[1]['custom_color'], 0xFF123456);
+      expect(rows[1]['custom_color_tinted'], 0);
     });
   });
 }

@@ -27,10 +27,26 @@ class L10nZh extends L10n {
   String get habitEdit_colorPicker_historySectionLabel => '最近使用';
 
   @override
-  String get habitEdit_colorPicker_customSectionLabel => '自定义';
+  String habitEdit_colorPicker_customSectionLabel(String tinted) {
+    String _temp0 = intl.Intl.selectLogic(tinted, {
+      'true': '自定义（已调色）',
+      'false': '自定义',
+      'other': '自定义',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get habitEdit_colorPicker_cancel => '取消';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleLabel => '调色';
+
+  @override
+  String get habitEdit_colorPicker_tintedLabel => '已调色';
+
+  @override
+  String get habitEdit_colorPicker_untintedLabel => '未调色';
 
   @override
   String get habitEdit_habitTypeDialog_title => '习惯类型';

@@ -414,6 +414,7 @@ class HabitSummaryData with DirtyMarkMixin {
       color = HabitColor.fromRaw(
         colorType: HabitColorType.getFromDBCode(cell.color!)!,
         customColor: cell.customColor,
+        customColorTinted: cell.customColorTinted,
       ),
       dailyGoal = cell.dailyGoal!,
       dailyGoalExtra = cell.dailyGoalExtra,

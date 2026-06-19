@@ -76,6 +76,7 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
   static const _sectionSpacing = 16.0;
 
   late Color _wheelColor;
+  late bool _tinted;
 
   @override
   void initState() {
@@ -88,11 +89,15 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
       CustomHabitColor(argb: final v) => Color(v),
       BuiltInHabitColor() => const Color(0xFF2196F3),
     };
+    _tinted = switch (widget.color) {
+      CustomHabitColor(tinted: final t) => t,
+      BuiltInHabitColor() => true,
+    };
   }
 
   void _selectAndClose(HabitColor color) {
     if (color is CustomHabitColor) {
-      context.read<CustomColorHistoryViewModel>().recordUsage(color.argb);
+      context.read<CustomColorHistoryViewModel>().recordUsage(color);
     }
     Navigator.of(context).pop(color);
   }
@@ -109,6 +114,15 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
   // tree in a context upstream never tests.
   Future<void> _openCustomColorPicker(BuildContext context) async {
     Color picked = _wheelColor;
+    // Drafted the same way `picked` is: only committed to `_selectAndClose`
+    // below if the user actually confirms the nested dialog. Living here
+    // (rather than as a toggle in the outer dialog, mutated separately) is
+    // what keeps the two in sync — the old outer-dialog toggle could be left
+    // in one state while the wheel still held a since-abandoned pick, so
+    // confirming reflected whichever was touched last instead of "what the
+    // user just picked".
+    var tintedDraft = _tinted;
+    final l10n = L10n.of(context);
     final confirmed = await ColorPicker(
       color: _wheelColor,
       onColorChanged: (value) => picked = value,
@@ -128,9 +142,96 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
       showColorCode: true,
       colorCodeHasColor: true,
       wheelDiameter: 200,
+      // `wheelSubheading` is the one slot flex_color_picker exposes inside
+      // its own wheel-picker content (rendered above the shade row, only
+      // while the wheel tab is active — the only tab this dialog enables),
+      // so the toggle lives right next to the color it affects instead of
+      // in the outer dialog. `StatefulBuilder` gives the switch its own
+      // local re-render without needing the outer `State`'s `setState` (that
+      // would rebuild the *outer* dialog, not this already-pushed nested
+      // route).
+      wheelSubheading: StatefulBuilder(
+        builder: (context, setLocalState) => SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            l10n?.habitEdit_colorPicker_tintToggleLabel ?? 'Tint to theme',
+          ),
+          value: tintedDraft,
+          onChanged: (value) => setLocalState(() => tintedDraft = value),
+        ),
+      ),
     ).showPickerDialog(context);
     if (!confirmed || !context.mounted) return;
-    _selectAndClose(HabitColor.custom(picked.toARGB32() | 0xFF000000));
+    _selectAndClose(
+      HabitColor.custom(picked.toARGB32() | 0xFF000000, tinted: tintedDraft),
+    );
+  }
+
+  static String _hex(int argb) =>
+      '#${(argb & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+
+  static String _tintStateLabel(bool tinted, L10n? l10n) => tinted
+      ? (l10n?.habitEdit_colorPicker_tintedLabel ?? 'Tinted')
+      : (l10n?.habitEdit_colorPicker_untintedLabel ?? 'Not tinted');
+
+  /// A plain circle for an untinted color (it already renders close to the
+  /// raw selected value, so no extra marker is needed), or — when
+  /// [gradientFrom] is given — a circle gradient from the raw selected
+  /// value to [background] (the actual `_customScheme(...).primary` render
+  /// result) plus a small corner badge, visualizing the tint transformation
+  /// tinting applies. The badge exists because the gradient alone reads
+  /// weakly whenever the raw and tinted colors happen to be close in hue —
+  /// it gives tinted swatches a second, gradient-independent tell. Badge
+  /// colors are deliberately the swatch's own [background]/[onColor] pair
+  /// (already contrast-checked against each other by [CustomColors]) rather
+  /// than a new fixed palette choice. This is the swatch's *background
+  /// layer only*; callers stack interactive content (an `IconButton`, in
+  /// [_buildSwatch]) on top of it.
+  static Widget _colorPreviewCircle({
+    required double size,
+    required Color background,
+    Color? onColor,
+    Color? gradientFrom,
+  }) {
+    final circle = Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: gradientFrom == null ? background : null,
+        gradient: gradientFrom == null
+            ? null
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [gradientFrom, background],
+              ),
+      ),
+    );
+    if (gradientFrom == null) return circle;
+    final badgeSize = size * 0.42;
+    return Stack(
+      children: [
+        circle,
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Container(
+            width: badgeSize,
+            height: badgeSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: onColor ?? Colors.black,
+            ),
+            child: Icon(
+              Icons.palette,
+              size: badgeSize * 0.62,
+              color: background,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildSwatch(
@@ -140,20 +241,32 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
     required bool selected,
     required VoidCallback onTap,
     String? tooltip,
+    Color? gradientFrom,
   }) {
-    final button = IconButton(
-      onPressed: onTap,
-      icon: selected ? const Icon(Icons.check) : const Icon(null),
-      isSelected: selected,
-      style: IconButton.styleFrom(
-        foregroundColor: onColor,
-        backgroundColor: background,
-        hoverColor: onColor?.withValues(alpha: 0.08),
-        focusColor: onColor?.withValues(alpha: 0.12),
-        highlightColor: onColor?.withValues(alpha: 0.12),
-        fixedSize: const Size.square(_swatchExtent),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
+    final button = Stack(
+      alignment: Alignment.center,
+      children: [
+        _colorPreviewCircle(
+          size: _swatchExtent,
+          background: background,
+          onColor: onColor,
+          gradientFrom: gradientFrom,
+        ),
+        IconButton(
+          onPressed: onTap,
+          icon: selected ? const Icon(Icons.check) : const Icon(null),
+          isSelected: selected,
+          style: IconButton.styleFrom(
+            foregroundColor: onColor,
+            backgroundColor: Colors.transparent,
+            hoverColor: onColor?.withValues(alpha: 0.08),
+            focusColor: onColor?.withValues(alpha: 0.12),
+            highlightColor: onColor?.withValues(alpha: 0.12),
+            fixedSize: const Size.square(_swatchExtent),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ),
+      ],
     );
     return tooltip == null ? button : Tooltip(message: tooltip, child: button);
   }
@@ -253,22 +366,24 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
     CustomColors? colorData,
     Brightness brightness,
     L10n? l10n,
-    List<int> history,
+    List<CustomHabitColor> history,
     double contentWidth,
     double spacing,
   ) {
     if (history.isEmpty) return null;
     final swatches = [
-      for (final argb in history)
+      for (final entry in history)
         _buildSwatch(
           context,
-          background: Color(argb),
-          onColor: colorData?.getOnColor(
-            HabitColor.custom(argb),
-            brightness: brightness,
-          ),
-          selected: widget.color == HabitColor.custom(argb),
-          onTap: () => _selectAndClose(HabitColor.custom(argb)),
+          background:
+              colorData?.getColor(entry, brightness: brightness) ??
+              Color(entry.argb),
+          onColor: colorData?.getOnColor(entry, brightness: brightness),
+          selected: widget.color == entry,
+          onTap: () => _selectAndClose(entry),
+          tooltip:
+              '${_hex(entry.argb)} · ${_tintStateLabel(entry.tinted, l10n)}',
+          gradientFrom: entry.tinted ? Color(entry.argb) : null,
         ),
     ];
     return Column(
@@ -288,18 +403,40 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
     );
   }
 
-  Widget _buildCustomEntry(BuildContext context, L10n? l10n) {
-    final hex =
-        '#${(_wheelColor.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+  Widget _buildCustomEntry(
+    BuildContext context,
+    CustomColors? colorData,
+    Brightness brightness,
+    L10n? l10n,
+  ) {
+    final wheelArgb = _wheelColor.toARGB32() | 0xFF000000;
+    final previewHabitColor = HabitColor.custom(wheelArgb, tinted: _tinted);
+    final previewColor =
+        colorData?.getColor(previewHabitColor, brightness: brightness) ??
+        _wheelColor;
+    final previewOnColor = colorData?.getOnColor(
+      previewHabitColor,
+      brightness: brightness,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: _sectionSpacing),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: CircleAvatar(backgroundColor: _wheelColor),
-          title: Text(l10n?.habitEdit_colorPicker_customSectionLabel ?? ''),
-          subtitle: Text(hex),
+          leading: _colorPreviewCircle(
+            size: 40,
+            background: previewColor,
+            onColor: previewOnColor,
+            gradientFrom: _tinted ? Color(wheelArgb) : null,
+          ),
+          title: Text(
+            l10n?.habitEdit_colorPicker_customSectionLabel(
+                  _tinted.toString(),
+                ) ??
+                '',
+          ),
+          subtitle: Text(_hex(wheelArgb)),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => _openCustomColorPicker(context),
         ),
@@ -341,7 +478,7 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
                   spacing,
                 ) ??
                 const SizedBox.shrink(),
-            _buildCustomEntry(context, l10n),
+            _buildCustomEntry(context, colorData, themeData.brightness, l10n),
           ],
         ),
       ),

@@ -27,10 +27,26 @@ class L10nJa extends L10n {
   String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
 
   @override
-  String get habitEdit_colorPicker_customSectionLabel => 'Custom';
+  String habitEdit_colorPicker_customSectionLabel(String tinted) {
+    String _temp0 = intl.Intl.selectLogic(tinted, {
+      'true': 'Custom (Tinted)',
+      'false': 'Custom',
+      'other': 'Custom',
+    });
+    return '$_temp0';
+  }
 
   @override
   String get habitEdit_colorPicker_cancel => 'Cancel';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+
+  @override
+  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+
+  @override
+  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
 
   @override
   String get habitEdit_habitTypeDialog_title => '習慣のタイプ';

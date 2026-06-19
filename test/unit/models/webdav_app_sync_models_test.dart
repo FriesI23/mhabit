@@ -79,6 +79,59 @@ void main() {
       expect(restoredCell.color, HabitColorType.cc1.dbCode);
     });
 
+    test('fromHabitDBCell: custom_color_tinted round-trips through DB cell '
+        '(tinted)', () {
+      const argb = 0xFF123456;
+      final cell = HabitDBCell(
+        color: HabitColorType.cc1.dbCode,
+        customColor: argb,
+        customColorTinted: 1,
+      );
+      final data = WebDavSyncHabitData.fromHabitDBCell(cell);
+
+      expect(data.customColorTinted, 1);
+
+      final json = data.toJson();
+      final restored = WebDavSyncHabitData.fromJson(json);
+      expect(restored.customColorTinted, 1);
+
+      final restoredCell = restored.toHabitDBCell();
+      expect(restoredCell.customColorTinted, 1);
+    });
+
+    test('fromHabitDBCell: custom_color_tinted round-trips through DB cell '
+        '(not tinted)', () {
+      const argb = 0xFF123456;
+      final cell = HabitDBCell(
+        color: HabitColorType.cc1.dbCode,
+        customColor: argb,
+        customColorTinted: 0,
+      );
+      final data = WebDavSyncHabitData.fromHabitDBCell(cell);
+
+      expect(data.customColorTinted, 0);
+
+      final json = data.toJson();
+      final restored = WebDavSyncHabitData.fromJson(json);
+      expect(restored.customColorTinted, 0);
+
+      final restoredCell = restored.toHabitDBCell();
+      expect(restoredCell.customColorTinted, 0);
+    });
+
+    test('fromJson on legacy payload without custom_color_tinted key defaults '
+        'to null', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': null,
+        'custom_color': 0xFF123456,
+      });
+      expect(data.customColorTinted, isNull);
+      // toHabitDBCell -> HabitColor.fromRaw -> dbCustomColorTinted treats
+      // the missing key as tinted-on, same default used everywhere else.
+      expect(data.toHabitDBCell().customColorTinted, 1);
+    });
+
     test('fromHabitDBCell: built-in color round-trips through DB cell', () {
       final cell = HabitDBCell(
         color: HabitColorType.cc5.dbCode,
@@ -152,10 +205,13 @@ void main() {
         );
         final json = WebDavSyncHabitData.fromHabitDBCell(cell).toJson();
 
-        // sanity: this really is a v2 payload carrying keys a legacy
-        // client has never heard of.
+        // sanity: this really is a current-schema payload carrying keys a
+        // legacy client has never heard of.
         expect(json[WebDavSyncHabitKey.customColor], 0xFF112233);
-        expect(json[WebDavSyncHabitKey.schemaVersion], 2);
+        expect(
+          json[WebDavSyncHabitKey.schemaVersion],
+          WebDavSyncHabitData.currentSchemaVersion,
+        );
 
         // a legacy client only ever reads `color`; the unknown keys are
         // simply ignored, not inspected, so they can't throw.
@@ -169,7 +225,10 @@ void main() {
       final cell = HabitDBCell(color: HabitColorType.cc7.dbCode);
       final json = WebDavSyncHabitData.fromHabitDBCell(cell).toJson();
 
-      expect(json[WebDavSyncHabitKey.schemaVersion], 2);
+      expect(
+        json[WebDavSyncHabitKey.schemaVersion],
+        WebDavSyncHabitData.currentSchemaVersion,
+      );
       expect(() => _legacyValidate(json), returnsNormally);
       final legacyCell = _legacyToHabitDBCell(json);
       expect(legacyCell.color, HabitColorType.cc7.dbCode);

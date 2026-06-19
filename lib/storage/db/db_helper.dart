@@ -144,6 +144,14 @@ class _DBHelper implements DBHelper {
           "ADD COLUMN ${HabitDBCellKey.customColor} INTEGER",
         );
       }
+      if (!tableInfo.any(
+        (column) => column['name'] == HabitDBCellKey.customColorTinted,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN ${HabitDBCellKey.customColorTinted} INTEGER",
+        );
+      }
     }
   }
 

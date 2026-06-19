@@ -29,18 +29,22 @@ import '../theme/color.dart' show CustomColors;
 /// on-primary-container).
 ///
 /// Built-in colors (cc1–cc10) are looked up directly from the theme
-/// extension's tone properties. For custom colors, [getColor] stays as
-/// close as possible to the user-picked ARGB value — never the toned
-/// `.primary` of a seeded scheme, since that can visibly drift from the
-/// color the user actually selected. The only adjustment it makes is a
-/// minimal lightness nudge (see [_visibleLightness]) for colors that would
-/// otherwise nearly disappear against the current theme's surface — most
-/// picked colors pass through completely unchanged. The *other* three role
-/// colors ([getOnColor], [getColorContainer], [getColorOnContainer]) still
-/// need a fully contrast-appropriate, brightness-aware tone that isn't just
-/// the raw value, so they derive from [ColorScheme.fromSeed] seeded with
-/// that same raw value, cached by `(argb, brightness)` so repeated calls
-/// for the same custom seed + brightness pair avoid redundant seed-scheme
+/// extension's tone properties. For custom colors, [getColor]'s behavior is
+/// controlled by [CustomHabitColor.tinted]: when tinted (the default),
+/// [getColor] uses the toned `.primary` of a [ColorScheme.fromSeed]-derived
+/// scheme, same as the other three role colors below; when not tinted, it
+/// stays as close as possible to the user-picked ARGB value instead, since
+/// the toned primary can visibly drift from the color the user actually
+/// selected. In the untinted case the only adjustment applied is a minimal
+/// lightness nudge (see [_visibleLightness]) for colors that would otherwise
+/// nearly disappear against the current theme's surface — most picked
+/// colors pass through completely unchanged. The *other* three role colors
+/// ([getOnColor], [getColorContainer], [getColorOnContainer]) are never
+/// affected by [CustomHabitColor.tinted] — they always need a fully
+/// contrast-appropriate, brightness-aware tone that isn't just the raw
+/// value, so they always derive from [ColorScheme.fromSeed] seeded with that
+/// same raw value, cached by `(argb, brightness)` so repeated calls for the
+/// same custom seed + brightness pair avoid redundant seed-scheme
 /// construction.
 extension HabitColorExtension on CustomColors {
   // -----------------------------------------------------------------
@@ -98,17 +102,24 @@ extension HabitColorExtension on CustomColors {
   /// Returns the primary-color tone for [color].
   ///
   /// * Built-in colors map to the corresponding `ccN` tone.
-  /// * Custom colors stay as close as possible to the user-picked ARGB
-  ///   value — *not* [ColorScheme.primary] of a seed-derived scheme, which
-  ///   can be a visibly different tone than what was actually picked.
-  ///   The only change applied is [_visibleLightness]'s minimal nudge for
-  ///   colors that would otherwise nearly disappear against the current
-  ///   theme's surface. Seeding is reserved for the supporting role colors
-  ///   (see [getOnColor] et al.), not the primary swatch itself.
+  /// * Custom colors with [CustomHabitColor.tinted] set (the default) use
+  ///   [ColorScheme.primary] of a seed-derived scheme, same as the other
+  ///   three role colors below.
+  /// * Custom colors with tinting turned off stay as close as possible to
+  ///   the user-picked ARGB value instead, with only
+  ///   [_visibleLightness]'s minimal nudge applied for colors that would
+  ///   otherwise nearly disappear against the current theme's surface.
   Color? getColor(HabitColor color, {required Brightness brightness}) =>
       switch (color) {
         BuiltInHabitColor(colorType: final t) => getBuiltInColor(t),
-        CustomHabitColor(argb: final v) => _visibleLightness(v, brightness),
+        CustomHabitColor(argb: final v, tinted: true) => _customScheme(
+          v,
+          brightness,
+        ).primary,
+        CustomHabitColor(argb: final v, tinted: false) => _visibleLightness(
+          v,
+          brightness,
+        ),
       };
 
   /// Returns the on-primary-color tone for [color].

@@ -51,7 +51,7 @@ const String appSyncFailedZipFile = "app_sync_failed.zip";
 /// ## version 4
 /// - add sync table
 /// ## version 5
-/// - add custom_color column
+/// - add custom_color and custom_color_tinted columns
 const int appDBVersion = 5;
 //#endregion
 

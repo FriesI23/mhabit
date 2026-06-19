@@ -173,14 +173,32 @@ abstract class L10n {
   /// No description provided for @habitEdit_colorPicker_customSectionLabel.
   ///
   /// In en, this message translates to:
-  /// **'Custom'**
-  String get habitEdit_colorPicker_customSectionLabel;
+  /// **'{tinted, select, true {Custom (Tinted)} false {Custom} other {Custom}}'**
+  String habitEdit_colorPicker_customSectionLabel(String tinted);
 
   /// No description provided for @habitEdit_colorPicker_cancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get habitEdit_colorPicker_cancel;
+
+  /// No description provided for @habitEdit_colorPicker_tintToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tint to theme'**
+  String get habitEdit_colorPicker_tintToggleLabel;
+
+  /// No description provided for @habitEdit_colorPicker_tintedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinted'**
+  String get habitEdit_colorPicker_tintedLabel;
+
+  /// No description provided for @habitEdit_colorPicker_untintedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tinted'**
+  String get habitEdit_colorPicker_untintedLabel;
 
   /// No description provided for @habitEdit_habitTypeDialog_title.
   ///

@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
+import 'package:mhabit/storage/db_helper_provider.dart';
 
 void main() {
   group("HabitDBCell", () {
@@ -78,6 +80,58 @@ void main() {
     });
     test('toString', () {
       expect(habit1.toString().startsWith("HabitDB"), true);
+    });
+  });
+
+  group('HabitDBHelper — customColorTinted round-trip', () {
+    // Regression test for a bug where `loadHabitDetail` and
+    // `loadHabitAboutDataCollection` explicitly enumerate DB columns to
+    // query, and `custom_color_tinted` was added to the table/model but
+    // never added to either list — so a saved `tinted: false` value was
+    // silently dropped on read and always came back as the "missing"
+    // default (tinted-on), even though the write itself was correct.
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('loadHabitDetail and loadHabitAboutDataCollection both return '
+        'a saved customColorTinted value', () async {
+      final helper = DBHelperViewModel();
+      addTearDown(helper.dispose);
+      await helper.init();
+
+      final dbHelper = HabitDBHelper(helper.local);
+      const habit = HabitDBCell(
+        type: 1,
+        uuid: 'custom-color-tinted-roundtrip',
+        status: 1,
+        name: 'name',
+        desc: 'desc',
+        color: 1,
+        customColor: 0xFF112233,
+        customColorTinted: 0,
+        dailyGoal: 1,
+        dailyGoalUnit: 'times',
+        freqType: 1,
+        freqCustom: '{}',
+        startDate: 1,
+        targetDays: 1,
+        sortPosition: 1,
+      );
+
+      await dbHelper.insertNewHabit(habit);
+
+      final detail = await dbHelper.loadHabitDetail(habit.uuid!);
+      expect(detail, isNotNull);
+      expect(detail!.customColorTinted, 0);
+
+      final collection = await dbHelper.loadHabitAboutDataCollection();
+      final loaded = collection.firstWhere((e) => e.uuid == habit.uuid);
+      expect(loaded.customColorTinted, 0);
     });
   });
 }

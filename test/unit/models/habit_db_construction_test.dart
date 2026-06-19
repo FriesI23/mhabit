@@ -26,6 +26,7 @@ HabitDBCell _buildCell({
   required String uuid,
   int colorCode = 1,
   int? customColor,
+  int? customColorTinted,
   int typeCode = 1,
   int statusCode = 1,
   String name = 'Test Habit',
@@ -51,6 +52,7 @@ HabitDBCell _buildCell({
     desc: desc,
     color: colorCode,
     customColor: customColor,
+    customColorTinted: customColorTinted,
     dailyGoal: dailyGoal,
     dailyGoalUnit: dailyGoalUnit,
     freqType: freqType,
@@ -83,6 +85,29 @@ void main() {
       expect(data.color.dbCustomColor, 0xFFAABBCC);
       // dbColorType returns cc1 placeholder for custom colors
       expect(data.color.dbColorType, HabitColorType.cc1);
+    });
+
+    test('customColorTinted 0 produces tinted: false', () {
+      final cell = _buildCell(
+        uuid: 'test-uuid-002b',
+        colorCode: 1,
+        customColor: 0xFFAABBCC,
+        customColorTinted: 0,
+      );
+      final data = HabitSummaryData.fromDBQueryCell(cell);
+
+      expect(data.color, const CustomHabitColor(0xFFAABBCC, tinted: false));
+    });
+
+    test('customColorTinted null defaults to tinted: true', () {
+      final cell = _buildCell(
+        uuid: 'test-uuid-002c',
+        colorCode: 1,
+        customColor: 0xFFAABBCC,
+      );
+      final data = HabitSummaryData.fromDBQueryCell(cell);
+
+      expect(data.color, const CustomHabitColor(0xFFAABBCC, tinted: true));
     });
 
     test('customColor non-null with different colorCode still custom', () {

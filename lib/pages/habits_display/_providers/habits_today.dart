@@ -48,6 +48,8 @@ class HabitsTodayViewModel extends ChangeNotifier
     HabitDBCellKey.type,
     HabitDBCellKey.name,
     HabitDBCellKey.color,
+    HabitDBCellKey.customColor,
+    HabitDBCellKey.customColorTinted,
     HabitDBCellKey.dailyGoal,
     HabitDBCellKey.dailyGoalExtra,
     HabitDBCellKey.targetDays,

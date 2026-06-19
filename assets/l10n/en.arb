@@ -14,10 +14,23 @@
     "@habitEdit_colorPicker_title": {},
     "habitEdit_colorPicker_historySectionLabel": "Recently used",
     "@habitEdit_colorPicker_historySectionLabel": {},
-    "habitEdit_colorPicker_customSectionLabel": "Custom",
-    "@habitEdit_colorPicker_customSectionLabel": {},
+    "habitEdit_colorPicker_customSectionLabel": "{tinted, select, true {Custom (Tinted)} false {Custom} other {Custom}}",
+    "@habitEdit_colorPicker_customSectionLabel": {
+        "placeholders": {
+            "tinted": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
     "habitEdit_colorPicker_cancel": "Cancel",
     "@habitEdit_colorPicker_cancel": {},
+    "habitEdit_colorPicker_tintToggleLabel": "Tint to theme",
+    "@habitEdit_colorPicker_tintToggleLabel": {},
+    "habitEdit_colorPicker_tintedLabel": "Tinted",
+    "@habitEdit_colorPicker_tintedLabel": {},
+    "habitEdit_colorPicker_untintedLabel": "Not tinted",
+    "@habitEdit_colorPicker_untintedLabel": {},
     "habitEdit_habitTypeDialog_title": "Habit type",
     "@habitEdit_habitTypeDialog_title": {},
     "habitEdit_habitType_positiveText": "Positive",

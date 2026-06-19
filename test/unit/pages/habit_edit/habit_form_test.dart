@@ -81,6 +81,7 @@ void main() {
       provider.addListener(() async {
         expect(provider.color, const CustomHabitColor(0xFF112233));
         expect(provider.color.dbCustomColor, 0xFF112233);
+        expect(provider.color.dbCustomColorTinted, 1);
       });
       provider.color = const CustomHabitColor(0xFF112233);
     });
@@ -254,6 +255,26 @@ void main() {
           reason: 'CustomHabitColor dbColorType is cc1 placeholder',
         );
         expect(cell?.customColor, 0xFFAABBCC);
+        expect(cell?.customColorTinted, 1, reason: 'tinted defaults to true');
+
+        provider.dispose();
+      },
+    );
+
+    test(
+      'saveHabit writes customColorTinted: 0 for an untinted custom color',
+      () async {
+        final access = _FakeHabitFormAccess();
+        final provider = HabitFormViewModel()..attachAccess(access);
+
+        provider.name = 'Untinted Custom Color Habit';
+        provider.color = const CustomHabitColor(0xFFAABBCC, tinted: false);
+        final saved = await provider.saveHabit();
+
+        expect(saved, isNotNull);
+        final cell = access.lastCreatedCell;
+        expect(cell?.customColor, 0xFFAABBCC);
+        expect(cell?.customColorTinted, 0);
 
         provider.dispose();
       },

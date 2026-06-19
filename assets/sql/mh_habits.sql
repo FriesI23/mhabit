@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS mh_habits (
     desc TEXT,
     color INTEGER,
     custom_color INTEGER,
+    custom_color_tinted INTEGER,
     daily_goal REAL NOT NULL,
     daily_goal_unit TEXT NOT NULL,
     daily_goal_extra REAL,

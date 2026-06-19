@@ -64,6 +64,33 @@ void main() {
       expect(color, isA<CustomHabitColor>());
       expect(color, const CustomHabitColor(0xFFABCDEF));
     });
+
+    test('defaults tinted to true when customColorTinted is null', () {
+      final color = HabitColor.fromRaw(
+        colorType: HabitColorType.cc1,
+        customColor: 0xFF123456,
+        customColorTinted: null,
+      );
+      expect(color, const CustomHabitColor(0xFF123456, tinted: true));
+    });
+
+    test('reads tinted: false from customColorTinted == 0', () {
+      final color = HabitColor.fromRaw(
+        colorType: HabitColorType.cc1,
+        customColor: 0xFF123456,
+        customColorTinted: 0,
+      );
+      expect(color, const CustomHabitColor(0xFF123456, tinted: false));
+    });
+
+    test('reads tinted: true from customColorTinted == 1', () {
+      final color = HabitColor.fromRaw(
+        colorType: HabitColorType.cc1,
+        customColor: 0xFF123456,
+        customColorTinted: 1,
+      );
+      expect(color, const CustomHabitColor(0xFF123456, tinted: true));
+    });
   });
 
   group('BuiltInHabitColor', () {
@@ -97,6 +124,11 @@ void main() {
       expect(color.dbCustomColor, isNull);
     });
 
+    test('dbCustomColorTinted returns null', () {
+      const color = HabitColor.builtIn(HabitColorType.cc1);
+      expect(color.dbCustomColorTinted, isNull);
+    });
+
     test('toString includes the colorType', () {
       const color = HabitColor.builtIn(HabitColorType.cc3);
       expect(color.toString(), contains('cc3'));
@@ -117,6 +149,18 @@ void main() {
       expect(a, isNot(equals(b)));
     });
 
+    test('equality — same argb but different tinted are unequal', () {
+      const a = CustomHabitColor(0xFF123456, tinted: true);
+      const b = CustomHabitColor(0xFF123456, tinted: false);
+      expect(a, isNot(equals(b)));
+      expect(a.hashCode, isNot(equals(b.hashCode)));
+    });
+
+    test('tinted defaults to true', () {
+      const color = CustomHabitColor(0xFF123456);
+      expect(color.tinted, isTrue);
+    });
+
     test('dbColorType returns cc1 as placeholder', () {
       const color = CustomHabitColor(0xFFABCDEF);
       expect(color.dbColorType, HabitColorType.cc1);
@@ -125,6 +169,16 @@ void main() {
     test('dbCustomColor returns the argb', () {
       const color = CustomHabitColor(0xFFABCDEF);
       expect(color.dbCustomColor, 0xFFABCDEF);
+    });
+
+    test('dbCustomColorTinted returns 1 when tinted', () {
+      const color = CustomHabitColor(0xFFABCDEF, tinted: true);
+      expect(color.dbCustomColorTinted, 1);
+    });
+
+    test('dbCustomColorTinted returns 0 when not tinted', () {
+      const color = CustomHabitColor(0xFFABCDEF, tinted: false);
+      expect(color.dbCustomColorTinted, 0);
     });
 
     test('toString includes the value', () {

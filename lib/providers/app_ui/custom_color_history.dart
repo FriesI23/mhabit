@@ -14,6 +14,7 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../models/habit_color.dart';
 import '../../storage/profile/handlers.dart';
 import '../../storage/profile_provider.dart';
 
@@ -31,17 +32,23 @@ class CustomColorHistoryViewModel extends ChangeNotifier
     _history = newProfile.getHandler<CustomColorHistoryProfileHandler>();
   }
 
-  List<int> get history => _history?.get() ?? const [];
+  List<CustomHabitColor> get history => _history?.get() ?? const [];
 
-  /// Moves [argb] to the front of the history (inserting it if it wasn't
+  /// Moves [color] to the front of the history (inserting it if it wasn't
   /// already present), then truncates to [maxLength]. Called for every
   /// custom-color selection — fresh wheel/hex/RGB input as well as
   /// re-selecting an existing history swatch — so "most recently used"
   /// stays accurate regardless of where the selection came from.
-  Future<void> recordUsage(int argb) async {
-    final updated = List<int>.of(history)
-      ..remove(argb)
-      ..insert(0, argb);
+  ///
+  /// Matching for "already present" uses [CustomHabitColor]'s own value
+  /// equality, which compares both `argb` and `tinted`: picking the same hex
+  /// value with tinting on vs. off are different colors as far as the
+  /// history is concerned (they render differently), so they end up as two
+  /// separate entries rather than one overwriting the other's tint state.
+  Future<void> recordUsage(CustomHabitColor color) async {
+    final updated = List<CustomHabitColor>.of(history)
+      ..remove(color)
+      ..insert(0, color);
     final truncated = updated.length > maxLength
         ? updated.sublist(0, maxLength)
         : updated;

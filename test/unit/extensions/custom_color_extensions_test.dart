@@ -89,6 +89,8 @@ void main() {
 
     for (final argb in testArgbValues) {
       group('argb $argb', () {
+        // tinted defaults to true, so getColor below goes through the same
+        // ColorScheme.fromSeed path as the other three role colors.
         final color = CustomHabitColor(argb);
 
         test('getColor returns non-null in light and dark', () {
@@ -147,19 +149,23 @@ void main() {
           );
         });
 
-        test('getColor preserves hue and saturation in both brightnesses '
-            '(only lightness may be nudged for visibility)', () {
-          final rawHsl = HSLColor.fromColor(Color(argb));
-          final light = HSLColor.fromColor(
-            lightCustomColors.getColor(color, brightness: Brightness.light)!,
+        test('getColor matches the seeded ColorScheme primary', () {
+          final expectedLight = ColorScheme.fromSeed(
+            seedColor: Color(argb),
+            brightness: Brightness.light,
+          ).primary;
+          final expectedDark = ColorScheme.fromSeed(
+            seedColor: Color(argb),
+            brightness: Brightness.dark,
+          ).primary;
+          expect(
+            lightCustomColors.getColor(color, brightness: Brightness.light),
+            expectedLight,
           );
-          final dark = HSLColor.fromColor(
-            darkCustomColors.getColor(color, brightness: Brightness.dark)!,
+          expect(
+            darkCustomColors.getColor(color, brightness: Brightness.dark),
+            expectedDark,
           );
-          expect(light.hue, closeTo(rawHsl.hue, 0.5));
-          expect(light.saturation, closeTo(rawHsl.saturation, 0.01));
-          expect(dark.hue, closeTo(rawHsl.hue, 0.5));
-          expect(dark.saturation, closeTo(rawHsl.saturation, 0.01));
         });
 
         test('getOnColor differs between light and dark', () {
@@ -177,10 +183,99 @@ void main() {
     }
   });
 
-  group('HabitColorExtension — getColor visibility nudge', () {
+  group('HabitColorExtension — custom colors (tinted: false)', () {
+    const testArgbValues = [0xFF123456, 0xFFABCDEF, 0x00000000, 0xFFFFFFFF];
+
+    for (final argb in testArgbValues) {
+      group('argb $argb', () {
+        final color = CustomHabitColor(argb, tinted: false);
+
+        test('getColor returns non-null in light and dark', () {
+          expect(
+            lightCustomColors.getColor(color, brightness: Brightness.light),
+            isNotNull,
+          );
+          expect(
+            darkCustomColors.getColor(color, brightness: Brightness.dark),
+            isNotNull,
+          );
+        });
+
+        test('getColor preserves hue and saturation in both brightnesses '
+            '(only lightness may be nudged for visibility)', () {
+          final rawHsl = HSLColor.fromColor(Color(argb));
+          final light = HSLColor.fromColor(
+            lightCustomColors.getColor(color, brightness: Brightness.light)!,
+          );
+          final dark = HSLColor.fromColor(
+            darkCustomColors.getColor(color, brightness: Brightness.dark)!,
+          );
+          expect(light.hue, closeTo(rawHsl.hue, 0.5));
+          expect(light.saturation, closeTo(rawHsl.saturation, 0.01));
+          expect(dark.hue, closeTo(rawHsl.hue, 0.5));
+          expect(dark.saturation, closeTo(rawHsl.saturation, 0.01));
+        });
+
+        test('getOnColor/getColorContainer/getColorOnContainer are '
+            'unaffected by tinted: false (still seeded)', () {
+          final tinted = CustomHabitColor(argb);
+          expect(
+            lightCustomColors.getOnColor(color, brightness: Brightness.light),
+            lightCustomColors.getOnColor(tinted, brightness: Brightness.light),
+          );
+          expect(
+            lightCustomColors.getColorContainer(
+              color,
+              brightness: Brightness.light,
+            ),
+            lightCustomColors.getColorContainer(
+              tinted,
+              brightness: Brightness.light,
+            ),
+          );
+          expect(
+            lightCustomColors.getColorOnContainer(
+              color,
+              brightness: Brightness.light,
+            ),
+            lightCustomColors.getColorOnContainer(
+              tinted,
+              brightness: Brightness.light,
+            ),
+          );
+        });
+      });
+    }
+  });
+
+  group('HabitColorExtension — getColor tinted toggle', () {
+    const argb = 0xFF336699;
+
+    test('tinted: true returns the seeded ColorScheme primary', () {
+      const color = CustomHabitColor(argb, tinted: true);
+      final expected = ColorScheme.fromSeed(
+        seedColor: const Color(argb),
+        brightness: Brightness.light,
+      ).primary;
+      expect(
+        lightCustomColors.getColor(color, brightness: Brightness.light),
+        expected,
+      );
+    });
+
+    test('tinted: false returns the visibility-nudged raw value', () {
+      const color = CustomHabitColor(argb, tinted: false);
+      expect(
+        lightCustomColors.getColor(color, brightness: Brightness.light),
+        const Color(argb),
+      );
+    });
+  });
+
+  group('HabitColorExtension — getColor visibility nudge (tinted: false)', () {
     test('near-white custom color is nudged down for light theme but left '
         'unchanged for dark theme', () {
-      const color = CustomHabitColor(0xFFFFFFFF);
+      const color = CustomHabitColor(0xFFFFFFFF, tinted: false);
       final light = lightCustomColors.getColor(
         color,
         brightness: Brightness.light,
@@ -196,7 +291,7 @@ void main() {
 
     test('near-black custom color is nudged up for dark theme but left '
         'unchanged for light theme', () {
-      const color = CustomHabitColor(0xFF000000);
+      const color = CustomHabitColor(0xFF000000, tinted: false);
       final light = lightCustomColors.getColor(
         color,
         brightness: Brightness.light,
@@ -211,7 +306,7 @@ void main() {
     });
 
     test('mid-tone custom color passes through unchanged in both themes', () {
-      const color = CustomHabitColor(0xFF336699);
+      const color = CustomHabitColor(0xFF336699, tinted: false);
       final light = lightCustomColors.getColor(
         color,
         brightness: Brightness.light,
@@ -229,9 +324,8 @@ void main() {
     const argb = 0xFFAABBCC;
 
     test('same (argb, brightness) pair returns same ColorScheme', () {
-      // getOnColor (not getColor) is used here: getColor for a custom color
-      // is just `Color(argb)` now, which carries no information about
-      // whether the underlying seeded ColorScheme was actually cached.
+      // getOnColor (not getColor) is used here: it's always seeded
+      // regardless of `tinted`, so it reliably exercises the cache.
       final result1 = lightCustomColors.getOnColor(
         const CustomHabitColor(argb),
         brightness: Brightness.light,

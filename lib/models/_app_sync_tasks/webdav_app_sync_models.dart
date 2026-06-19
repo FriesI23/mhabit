@@ -346,6 +346,7 @@ class WebDavSyncHabitKey {
   static const String desc = 'desc';
   static const String color = 'color';
   static const String customColor = 'custom_color';
+  static const String customColorTinted = 'custom_color_tinted';
   static const String dailyGoal = 'daily_goal';
   static const String dailyGoalUnit = 'daily_goal_unit';
   static const String dailyGoalExtra = 'daily_goal_extra';
@@ -376,6 +377,11 @@ extension on HabitColor {
   int? get _syncCustomColor => switch (this) {
     BuiltInHabitColor() => null,
     CustomHabitColor(argb: final a) => a,
+  };
+
+  int? get _syncCustomColorTinted => switch (this) {
+    BuiltInHabitColor() => null,
+    CustomHabitColor(tinted: final t) => t ? 1 : 0,
   };
 }
 
@@ -416,6 +422,8 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? color;
   @JsonKey(name: WebDavSyncHabitKey.customColor)
   final int? customColor;
+  @JsonKey(name: WebDavSyncHabitKey.customColorTinted)
+  final int? customColorTinted;
   @JsonKey(name: WebDavSyncHabitKey.dailyGoal)
   final num? dailyGoal;
   @JsonKey(name: WebDavSyncHabitKey.dailyGoalUnit)
@@ -476,6 +484,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.desc,
     this.color,
     this.customColor,
+    this.customColorTinted,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
@@ -506,6 +515,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
           ? HabitColorType.cc1
           : HabitColorType.getFromDBCode(cell.color!)!,
       customColor: cell.customColor,
+      customColorTinted: cell.customColorTinted,
     );
     return WebDavSyncHabitData(
       schemaVersion: currentSchemaVersion,
@@ -518,6 +528,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       desc: cell.desc,
       color: habitColor._syncColorCode,
       customColor: habitColor._syncCustomColor,
+      customColorTinted: habitColor._syncCustomColorTinted,
       dailyGoal: cell.dailyGoal,
       dailyGoalUnit: cell.dailyGoalUnit,
       dailyGoalExtra: cell.dailyGoalExtra,
@@ -551,6 +562,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
           ? HabitColorType.cc1
           : HabitColorType.getFromDBCode(color!)!,
       customColor: customColor,
+      customColorTinted: customColorTinted,
     );
     return HabitDBCell(
       uuid: uuid,
@@ -562,6 +574,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       desc: desc,
       color: habitColor.dbColorType.dbCode,
       customColor: habitColor.dbCustomColor,
+      customColorTinted: habitColor.dbCustomColorTinted,
       dailyGoal: dailyGoal,
       dailyGoalUnit: dailyGoalUnit,
       dailyGoalExtra: dailyGoalExtra,
