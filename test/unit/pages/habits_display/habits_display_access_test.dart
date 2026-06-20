@@ -46,6 +46,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   List<HabitSummaryData>? lastSortedHabits;
   num? lastIncreaseStep;
   int? lastDecimalPlaces;
+  List<String>? lastHabitsColmns;
 
   _FakeHabitsDisplayAccess({
     required this.seedData,
@@ -58,6 +59,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async {
+    lastHabitsColmns = habitsColmns;
     final collection = initedCollection ?? HabitSummaryDataCollection();
     collection.addHabit(seedData, forceAdd: true);
     for (final habit in extraSeedData) {
@@ -287,6 +289,29 @@ void main() {
 
       vm.dispose();
     });
+
+    test(
+      'HabitsTodayViewModel loadData requests customColor / customColorTinted'
+      ' columns',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final access = _FakeHabitsDisplayAccess(seedData: seedData);
+        final vm = HabitsTodayViewModel()..attachAccess(access);
+
+        await vm.loadData(listen: false);
+
+        expect(access.lastHabitsColmns, isNotNull);
+        expect(
+          access.lastHabitsColmns,
+          containsAll([
+            HabitDBCellKey.customColor,
+            HabitDBCellKey.customColorTinted,
+          ]),
+        );
+
+        vm.dispose();
+      },
+    );
 
     test('HabitSummaryViewModel writes through access', () async {
       final seedData = _buildHabitSummaryData();

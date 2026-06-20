@@ -88,6 +88,8 @@ class HabitExportDataKey {
   static const String name = 'name';
   static const String desc = 'desc';
   static const String color = 'color';
+  static const String customColor = 'custom_color';
+  static const String customColorTinted = 'custom_color_tinted';
   static const String dailyGoal = 'daily_goal';
   static const String dailyGoalUnit = 'daily_goal_unit';
   static const String dailyGoalExtra = 'daily_goal_extra';
@@ -118,6 +120,10 @@ class HabitExportData implements JsonAdaptor {
   final String? desc;
   @JsonKey(name: HabitExportDataKey.color)
   final int? color;
+  @JsonKey(name: HabitExportDataKey.customColor)
+  final int? customColor;
+  @JsonKey(name: HabitExportDataKey.customColorTinted)
+  final int? customColorTinted;
   @JsonKey(name: HabitExportDataKey.dailyGoal)
   final num? dailyGoal;
   @JsonKey(name: HabitExportDataKey.dailyGoalUnit)
@@ -147,6 +153,8 @@ class HabitExportData implements JsonAdaptor {
     this.name,
     this.desc,
     this.color,
+    this.customColor,
+    this.customColorTinted,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
@@ -167,6 +175,8 @@ class HabitExportData implements JsonAdaptor {
       name = cell.name,
       desc = cell.desc,
       color = cell.color,
+      customColor = cell.customColor,
+      customColorTinted = cell.customColorTinted,
       dailyGoal = cell.dailyGoal,
       dailyGoalUnit = cell.dailyGoalUnit,
       dailyGoalExtra = cell.dailyGoalExtra,
@@ -188,6 +198,8 @@ class HabitExportData implements JsonAdaptor {
     name: name,
     desc: desc,
     color: color,
+    customColor: customColor,
+    customColorTinted: customColorTinted,
     dailyGoal: dailyGoal,
     dailyGoalUnit: dailyGoalUnit,
     dailyGoalExtra: dailyGoalExtra,

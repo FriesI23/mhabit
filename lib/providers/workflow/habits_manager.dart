@@ -571,8 +571,13 @@ class HabitsManager
               HabitDBCellKey.remindCustom,
               HabitDBCellKey.remindQuestion,
               HabitDBCellKey.dailyGoalExtra,
+              HabitDBCellKey.customColor,
+              HabitDBCellKey.customColorTinted,
             ]
-          : const [],
+          : const [
+              HabitDBCellKey.customColor,
+              HabitDBCellKey.customColorTinted,
+            ],
     );
     final result = (count > 0 && returnResult)
         ? await habitDBHelper.queryHabitByUUID(habitUUID)

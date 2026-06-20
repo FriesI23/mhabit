@@ -133,5 +133,56 @@ void main() {
       final loaded = collection.firstWhere((e) => e.uuid == habit.uuid);
       expect(loaded.customColorTinted, 0);
     });
+
+    test('updateExistHabit nulls out customColor / customColorTinted when'
+        ' switching from custom to built-in', () async {
+      final helper = DBHelperViewModel();
+      addTearDown(helper.dispose);
+      await helper.init();
+
+      final dbHelper = HabitDBHelper(helper.local);
+      const habit = HabitDBCell(
+        type: 1,
+        uuid: 'custom-to-builtin-nullout',
+        status: 1,
+        name: 'name',
+        desc: 'desc',
+        color: 1,
+        customColor: 0xFFAABBCC,
+        customColorTinted: 1,
+        dailyGoal: 1,
+        dailyGoalUnit: 'times',
+        freqType: 1,
+        freqCustom: '{}',
+        startDate: 1,
+        targetDays: 1,
+        sortPosition: 1,
+      );
+
+      // Insert with custom color
+      await dbHelper.insertNewHabit(habit);
+      var loaded = await dbHelper.loadHabitDetail(habit.uuid!);
+      expect(loaded!.customColor, 0xFFAABBCC);
+      expect(loaded.customColorTinted, 1);
+
+      // Update: switch to built-in (null out custom fields)
+      await dbHelper.updateExistHabit(
+        const HabitDBCell(
+          uuid: 'custom-to-builtin-nullout',
+          color: 2,
+          customColor: null,
+          customColorTinted: null,
+        ),
+        includeNullKeys: const [
+          HabitDBCellKey.customColor,
+          HabitDBCellKey.customColorTinted,
+        ],
+      );
+
+      loaded = await dbHelper.loadHabitDetail(habit.uuid!);
+      expect(loaded!.color, 2);
+      expect(loaded.customColor, isNull);
+      expect(loaded.customColorTinted, isNull);
+    });
   });
 }
