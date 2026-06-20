@@ -16,13 +16,13 @@ import 'package:flutter/material.dart';
 
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 
 class HabitDetailSummaryTile extends StatelessWidget {
   final num habitProgress;
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final bool isHabitCompleted;
   final bool isHabitArchived;
   final bool isHabitDeleted;
@@ -32,7 +32,7 @@ class HabitDetailSummaryTile extends StatelessWidget {
   const HabitDetailSummaryTile({
     super.key,
     required this.habitProgress,
-    this.colorType,
+    this.color,
     required this.isHabitCompleted,
     this.isHabitArchived = false,
     this.isHabitDeleted = false,
@@ -50,8 +50,8 @@ class HabitDetailSummaryTile extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: HabitProgressIndicator(
           value: habitProgress / 100,
-          color: colorType != null
-              ? colorData?.getColor(colorType!)
+          color: color != null
+              ? colorData?.getColor(color!, brightness: themeData.brightness)
               : Colors.transparent,
           backgroundColor: themeData.colorScheme.outlineOpacity16,
           strokeWidth: 6,

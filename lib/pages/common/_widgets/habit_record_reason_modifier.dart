@@ -19,8 +19,8 @@ import 'package:intl/intl.dart';
 import '../../../common/consts.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_date.dart';
-import '../../../models/habit_form.dart';
 import '../../../widgets/widgets.dart';
 
 Future<String?> showHabitRecordReasonModifierDialog({
@@ -28,12 +28,12 @@ Future<String?> showHabitRecordReasonModifierDialog({
   String initReason = '',
   HabitDate? recordDate,
   List<String> chipTextList = const [],
-  HabitColorType? colorType,
+  HabitColor? color,
 }) {
   return showDialog<String>(
     context: context,
     builder: (context) => ThemeWithCustomColors(
-      colorType: colorType,
+      color: color,
       child: HabitRecordReasonModifierDialog(
         initReson: initReason,
         recordDate: recordDate,

@@ -178,7 +178,7 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
     final recordCell = HabitDailyStatusContainer(
       date: showDate,
       padding: widget.itemPadding,
-      colorType: data.colorType,
+      color: data.color,
       habitDailyRecordForm: HabitDailyRecordForm.getImp(
         type: data.type,
         value: record != null ? record.value : 0.0,
@@ -293,8 +293,14 @@ class _HabitSummaryListTile extends State<HabitSummaryListTile> {
   HabitSummaryListTileColor _getDefaultListTileColor(ThemeData themeData) {
     final CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryListTileColor(
-      titleColor: colorData?.getColor(data.colorType),
-      progressCircleColor: colorData?.getColor(data.colorType),
+      titleColor: colorData?.getColor(
+        data.color,
+        brightness: themeData.brightness,
+      ),
+      progressCircleColor: colorData?.getColor(
+        data.color,
+        brightness: themeData.brightness,
+      ),
       progressCircleBGColor: themeData.colorScheme.outlineOpacity16,
       selectedColor: themeData.colorScheme.onSurfaceOpacity08,
     );

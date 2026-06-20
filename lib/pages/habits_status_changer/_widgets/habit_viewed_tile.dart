@@ -49,7 +49,10 @@ class HabitSpecialDateViewedTile extends StatelessWidget {
             border: Border(
               bottom: BorderSide(
                 color:
-                    colorData?.getColorContainer(data.colorType) ??
+                    colorData?.getColorContainer(
+                      data.color,
+                      brightness: themeData.brightness,
+                    ) ??
                     themeData.colorScheme.primaryContainer,
                 width: 6.0,
               ),

@@ -12,6 +12,29 @@
     "@habitEdit_habitName_hintText": {},
     "habitEdit_colorPicker_title": "Pick color",
     "@habitEdit_colorPicker_title": {},
+    "habitEdit_colorPicker_historySectionLabel": "Recently used",
+    "@habitEdit_colorPicker_historySectionLabel": {},
+    "habitEdit_colorPicker_customSectionLabel": "{tinted, select, true {Custom (Tinted)} false {Custom} other {Custom}}",
+    "@habitEdit_colorPicker_customSectionLabel": {
+        "placeholders": {
+            "tinted": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "habitEdit_colorPicker_cancel": "Cancel",
+    "@habitEdit_colorPicker_cancel": {},
+    "habitEdit_colorPicker_tintToggleLabel": "Tint to theme",
+    "@habitEdit_colorPicker_tintToggleLabel": {},
+    "habitEdit_colorPicker_tintedLabel": "Tinted",
+    "@habitEdit_colorPicker_tintedLabel": {},
+    "habitEdit_colorPicker_untintedLabel": "Not tinted",
+    "@habitEdit_colorPicker_untintedLabel": {},
+    "habitEdit_colorPicker_tintToggleOnHint": "Tinting may shift the final color away from the one you picked.",
+    "@habitEdit_colorPicker_tintToggleOnHint": {},
+    "habitEdit_colorPicker_tintToggleOffHint": "Some colors may reduce text readability in light or dark theme.",
+    "@habitEdit_colorPicker_tintToggleOffHint": {},
     "habitEdit_habitTypeDialog_title": "Habit type",
     "@habitEdit_habitTypeDialog_title": {},
     "habitEdit_habitType_positiveText": "Positive",
@@ -1268,6 +1291,8 @@
     "@common_habitColorType_cc9": {},
     "common_habitColorType_cc10": "Dark orchid",
     "@common_habitColorType_cc10": {},
+    "common_habitColorType_custom": "Custom",
+    "@common_habitColorType_custom": {},
     "common_habitColorType_default": "Color {index}",
     "@common_habitColorType_default": {
         "description": "unknown habit color type name",

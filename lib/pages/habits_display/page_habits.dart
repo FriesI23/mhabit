@@ -457,7 +457,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       initReason: initReason,
       recordDate: date,
       chipTextList: skipReasonChipTextList,
-      colorType: data.colorType,
+      color: data.color,
     );
 
     if (result == null || result == initReason) return;
@@ -489,7 +489,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
-      colorType: data.colorType,
+      color: data.color,
     );
 
     if (result == null || result == record?.value) return;
@@ -772,7 +772,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       final result = await habit_detail.naviToHabitDetailPage(
         context: context,
         habitUUID: uuid,
-        colorType: _vm.getHabit(uuid)?.colorType,
+        color: _vm.getHabit(uuid)?.color,
         summary: _vm,
       );
 

@@ -106,18 +106,24 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
     final l10n = L10n.of(context);
     final data = widget.data;
     final record = data.getRecordByDate(widget.date);
-    final color = colorData?.getColor(data.colorType);
+    final color = colorData?.getColor(
+      data.color,
+      brightness: themeData.brightness,
+    );
     final trailing = IconButton.filled(
       onPressed: widget.onMainPressed ?? () {},
       style: IconButton.styleFrom(
-        backgroundColor: colorData?.getColorContainer(data.colorType),
+        backgroundColor: colorData?.getColorContainer(
+          data.color,
+          brightness: themeData.brightness,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(color: color ?? Colors.transparent, width: 1), // 边框
         ),
       ),
       icon: HabitDailyStatusIcon(
-        colorType: data.colorType,
+        color: data.color,
         habitDailyStatus: HabitRecordStatus.done,
         habitDailyRecordForm: HabitDailyRecordForm.getImp(
           type: data.type,
@@ -180,7 +186,7 @@ class _HabitTodayListCardState extends State<HabitTodayListCard> {
             ColorfulMarkdownBlock(
               data: data.desc,
               selectable: false,
-              colorType: data.colorType,
+              color: data.color,
               textScaler: textScaler,
             ),
             if (!widget.canScroll) bottomButtons,

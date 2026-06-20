@@ -566,13 +566,14 @@ class HabitsManager
     if (habitUUID == null) return null;
     final count = await habitDBHelper.updateExistHabit(
       cell,
-      includeNullKeys: withReminder
-          ? const [
-              HabitDBCellKey.remindCustom,
-              HabitDBCellKey.remindQuestion,
-              HabitDBCellKey.dailyGoalExtra,
-            ]
-          : const [],
+      includeNullKeys: [
+        ...HabitDBCellKey.nullableColorKeys,
+        if (withReminder) ...[
+          HabitDBCellKey.remindCustom,
+          HabitDBCellKey.remindQuestion,
+          HabitDBCellKey.dailyGoalExtra,
+        ],
+      ],
     );
     final result = (count > 0 && returnResult)
         ? await habitDBHelper.queryHabitByUUID(habitUUID)

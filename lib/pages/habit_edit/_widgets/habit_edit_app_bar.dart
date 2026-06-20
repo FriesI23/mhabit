@@ -16,13 +16,13 @@ import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
 import '../../../l10n/localizations.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 
 class HabitEditAppBar extends StatelessWidget {
   final String name;
-  final HabitColorType colorType;
+  final HabitColor color;
   final TextEditingController? controller;
   final double? scrolledUnderElevation;
   final bool autofocus;
@@ -35,7 +35,7 @@ class HabitEditAppBar extends StatelessWidget {
   const HabitEditAppBar({
     super.key,
     required this.name,
-    required this.colorType,
+    required this.color,
     this.controller,
     this.scrolledUnderElevation,
     required this.autofocus,
@@ -64,12 +64,14 @@ class HabitEditAppBar extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           hintText: l10n?.habitEdit_habitName_hintText,
           hintStyle: TextStyle(
-            color: colorData?.getColor(colorType)?.withValues(alpha: 0.64),
+            color: colorData
+                ?.getColor(color, brightness: themeData.brightness)
+                ?.withValues(alpha: 0.64),
           ),
           border: InputBorder.none,
         ),
         style: textTheme.headlineMedium?.copyWith(
-          color: colorData?.getColor(colorType),
+          color: colorData?.getColor(color, brightness: themeData.brightness),
         ),
         keyboardType: TextInputType.text,
         onChanged: onNameChanged,
@@ -79,7 +81,7 @@ class HabitEditAppBar extends StatelessWidget {
     Widget buildShowText(BuildContext context) {
       return DefaultTextStyle(
         style: textTheme.titleLarge!.copyWith(
-          color: colorData?.getColor(colorType),
+          color: colorData?.getColor(color, brightness: themeData.brightness),
         ),
         overflow: TextOverflow.ellipsis,
         child: Text(name),
@@ -99,7 +101,7 @@ class HabitEditAppBar extends StatelessWidget {
         reason: showInFullscreenDialog
             ? PageBackReason.close
             : PageBackReason.back,
-        color: colorData?.getColor(colorType),
+        color: colorData?.getColor(color, brightness: themeData.brightness),
       ),
       actions: [
         AnimatedOpacity(
@@ -109,7 +111,12 @@ class HabitEditAppBar extends StatelessWidget {
             onPressed: onSaveButtonPressed,
             child: Text(
               l10n?.habitEdit_saveButton_text ?? "Save",
-              style: TextStyle(color: colorData?.getColor(colorType)),
+              style: TextStyle(
+                color: colorData?.getColor(
+                  color,
+                  brightness: themeData.brightness,
+                ),
+              ),
             ),
           ),
         ),

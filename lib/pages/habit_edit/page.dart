@@ -24,6 +24,7 @@ import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
+import '../../models/habit_color.dart';
 import '../../models/habit_daily_goal.dart';
 import '../../models/habit_display.dart';
 import '../../models/habit_form.dart';
@@ -120,16 +121,13 @@ class _PageState extends State<_Page> {
     super.dispose();
   }
 
-  void _openColorPickerDialog(
-    BuildContext context,
-    HabitColorType colorType,
-  ) async {
+  void _openColorPickerDialog(BuildContext context, HabitColor color) async {
     final result = await showHabitColorPickerDialog(
       context: context,
-      colorType: colorType,
+      color: color,
     );
     if (result == null || !context.mounted) return;
-    context.read<HabitFormViewModel>().colorType = result;
+    context.read<HabitFormViewModel>().color = result;
   }
 
   void _openHabitTypePickerDialog() async {
@@ -158,12 +156,12 @@ class _PageState extends State<_Page> {
   void _openDatePickerDialog(
     BuildContext context,
     DateTime startDate,
-    HabitColorType colorType,
+    HabitColor color,
   ) async {
     final result = await showHabitDatePickerDialog(
       context: context,
       date: startDate,
-      colorType: colorType,
+      color: color,
     );
     appLog.navi.info("$runtimeType._openDatePickerDialog", ex: [result]);
     if (result == null || !context.mounted) return;
@@ -194,11 +192,11 @@ class _PageState extends State<_Page> {
     HabitReminder? reminder,
   ) async {
     if (!mounted) return;
-    final colorType = context.read<HabitFormViewModel>().colorType;
+    final color = context.read<HabitFormViewModel>().color;
     final result = await showHabitReminderTypePickerDialog(
       context: context,
       reminder: reminder ?? HabitReminder.dailyMidnight,
-      colorType: colorType,
+      color: color,
     );
     if (!context.mounted || result == null) return;
     context.read<HabitFormViewModel>().reminder = context
@@ -302,7 +300,7 @@ class _PageState extends State<_Page> {
             Text("Name: ${value.name}"),
             Text("Name: ${value.habitType}"),
             Text("UUID: ${value.uuid}"),
-            Text("Color: ${value.colorType}"),
+            Text("Color: ${value.color}"),
             Text("DailyGoal: ${value.dailyGoalValue} ${value.dailyGoalUnit}"),
             Text("Frequency: ${value.frequency}"),
             Text("StartDate: ${value.startDate}"),
@@ -327,17 +325,13 @@ class _PageState extends State<_Page> {
 
     //#region private builders
     Widget buildColorField(BuildContext context) {
-      return Selector<HabitFormViewModel, HabitColorType>(
-        selector: (context, formViewModel) => formViewModel.colorType,
+      return Selector<HabitFormViewModel, HabitColor>(
+        selector: (context, formViewModel) => formViewModel.color,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, colorType, child) {
-          appLog.build.debug(
-            context,
-            ex: [colorType],
-            name: "$widget.ColorField",
-          );
+        builder: (context, color, child) {
+          appLog.build.debug(context, ex: [color], name: "$widget.ColorField");
           return HabitEditColorTile(
-            colorType: colorType,
+            color: color,
             onPressed: _openColorPickerDialog,
           );
         },
@@ -381,12 +375,9 @@ class _PageState extends State<_Page> {
     }
 
     Widget buildStartDateField(BuildContext context) {
-      return Selector<
-        HabitFormViewModel,
-        Tuple2<HabitStartDate, HabitColorType>
-      >(
+      return Selector<HabitFormViewModel, Tuple2<HabitStartDate, HabitColor>>(
         selector: (context, formViewModel) =>
-            Tuple2(formViewModel.startDate, formViewModel.colorType),
+            Tuple2(formViewModel.startDate, formViewModel.color),
         shouldRebuild: (previous, next) => previous != next,
         builder: (context, data, child) {
           appLog.build.debug(
@@ -395,11 +386,11 @@ class _PageState extends State<_Page> {
             name: "$widget.StartDateField",
           );
           final startDate = data.item1;
-          final colorType = data.item2;
+          final color = data.item2;
           return HabitEditStartDateTile(
             startDate: startDate,
             onPressed: (context, date) =>
-                _openDatePickerDialog(context, date, colorType),
+                _openDatePickerDialog(context, date, color),
           );
         },
       );
@@ -529,19 +520,18 @@ final class _Appbar extends StatelessWidget {
     return SingleTextFormInputField<HabitFormViewModel>(
       valueBuilder: (vm) => vm.name,
       builder: (context, controller, child) {
-        final (name, colorType, pinned, canSave) = context
-            .select<HabitFormViewModel, (String, HabitColorType, bool, bool)>(
-              (vm) =>
-                  (vm.name, vm.colorType, vm.isAppbarPinned, vm.canSaveHabit()),
+        final (name, color, pinned, canSave) = context
+            .select<HabitFormViewModel, (String, HabitColor, bool, bool)>(
+              (vm) => (vm.name, vm.color, vm.isAppbarPinned, vm.canSaveHabit()),
             );
         appLog.build.debug(
           context,
-          ex: [name, colorType, pinned, canSave],
+          ex: [name, color, pinned, canSave],
           name: "HabitEditPage.Appbar",
         );
         return HabitEditAppBar(
           name: name,
-          colorType: colorType,
+          color: color,
           controller: controller,
           scrolledUnderElevation: kHabitEditCommonEvalation,
           autofocus: name.isNotEmpty ? false : true,

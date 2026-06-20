@@ -26,6 +26,8 @@ abstract class _$HabitDBCellCWProxy {
     String? name,
     String? desc,
     int? color,
+    int? customColor,
+    int? customColorTinted,
     num? dailyGoal,
     String? dailyGoalUnit,
     num? dailyGoalExtra,
@@ -64,6 +66,8 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
     Object? name = const $CopyWithPlaceholder(),
     Object? desc = const $CopyWithPlaceholder(),
     Object? color = const $CopyWithPlaceholder(),
+    Object? customColor = const $CopyWithPlaceholder(),
+    Object? customColorTinted = const $CopyWithPlaceholder(),
     Object? dailyGoal = const $CopyWithPlaceholder(),
     Object? dailyGoalUnit = const $CopyWithPlaceholder(),
     Object? dailyGoalExtra = const $CopyWithPlaceholder(),
@@ -112,6 +116,14 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
           ? _value.color
           // ignore: cast_nullable_to_non_nullable
           : color as int?,
+      customColor: customColor == const $CopyWithPlaceholder()
+          ? _value.customColor
+          // ignore: cast_nullable_to_non_nullable
+          : customColor as int?,
+      customColorTinted: customColorTinted == const $CopyWithPlaceholder()
+          ? _value.customColorTinted
+          // ignore: cast_nullable_to_non_nullable
+          : customColorTinted as int?,
       dailyGoal: dailyGoal == const $CopyWithPlaceholder()
           ? _value.dailyGoal
           // ignore: cast_nullable_to_non_nullable
@@ -177,6 +189,8 @@ HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
   name: json['name'] as String?,
   desc: json['desc'] as String?,
   color: (json['color'] as num?)?.toInt(),
+  customColor: (json['custom_color'] as num?)?.toInt(),
+  customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
   dailyGoal: json['daily_goal'] as num?,
   dailyGoalUnit: json['daily_goal_unit'] as String?,
   dailyGoalExtra: json['daily_goal_extra'] as num?,
@@ -200,6 +214,8 @@ Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) =>
       'name': ?instance.name,
       'desc': ?instance.desc,
       'color': ?instance.color,
+      'custom_color': ?instance.customColor,
+      'custom_color_tinted': ?instance.customColorTinted,
       'daily_goal': ?instance.dailyGoal,
       'daily_goal_unit': ?instance.dailyGoalUnit,
       'daily_goal_extra': ?instance.dailyGoalExtra,

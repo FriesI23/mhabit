@@ -15,19 +15,19 @@
 import 'package:flutter/material.dart';
 
 import '../../extensions/custom_color_extensions.dart';
-import '../../models/habit_form.dart';
+import '../../models/habit_color.dart';
 import '../../theme/color.dart';
 
 const kPageLoadingCircleIndicatorSize = 64.0;
 
 class PageLoadingIndicator extends StatelessWidget {
   final Size size;
-  final HabitColorType? colorType;
+  final HabitColor? color;
 
   const PageLoadingIndicator({
     super.key,
     this.size = const Size.square(kPageLoadingCircleIndicatorSize),
-    this.colorType,
+    this.color,
   });
 
   @override
@@ -39,7 +39,9 @@ class PageLoadingIndicator extends StatelessWidget {
         width: size.width,
         height: size.height,
         child: CircularProgressIndicator(
-          color: colorType != null ? colorData?.getColor(colorType!) : null,
+          color: color != null
+              ? colorData?.getColor(color!, brightness: themeData.brightness)
+              : null,
         ),
       ),
     );

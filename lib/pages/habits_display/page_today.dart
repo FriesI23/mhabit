@@ -359,7 +359,7 @@ class _HabitsTodayController {
       recordStatus: record?.status ?? HabitRecordStatus.unknown,
       recordDate: date,
       targetExtraValue: data.dailyGoalExtra,
-      colorType: data.colorType,
+      color: data.color,
     );
 
     if (result == null || result == record?.value) return;
@@ -382,7 +382,7 @@ class _HabitsTodayController {
       initReason: initReason,
       recordDate: date,
       chipTextList: skipReasonChipTextList,
-      colorType: data.colorType,
+      color: data.color,
     );
 
     if (result == null || result == initReason) return;

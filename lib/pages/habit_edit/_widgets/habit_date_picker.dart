@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/consts.dart';
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/material_localizations.dart';
 import '../../../providers/app_ui/app_first_day.dart';
 import '../../../theme/color.dart';
@@ -27,19 +27,19 @@ import '../../../widgets/widgets.dart';
 Future<DateTime?> showHabitDatePickerDialog({
   required BuildContext context,
   required DateTime date,
-  required HabitColorType colorType,
+  required HabitColor color,
 }) async {
   return showDialog<DateTime>(
     context: context,
-    builder: (context) => HabitDatePickerDialog(date, colorType),
+    builder: (context) => HabitDatePickerDialog(date, color),
   );
 }
 
 class HabitDatePickerDialog extends StatelessWidget {
   final DateTime date;
-  final HabitColorType colorType;
+  final HabitColor color;
 
-  const HabitDatePickerDialog(this.date, this.colorType, {super.key});
+  const HabitDatePickerDialog(this.date, this.color, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +52,20 @@ class HabitDatePickerDialog extends StatelessWidget {
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(
-          primary: colorData?.getColor(colorType),
-          onPrimary: colorData?.getOnColor(colorType),
-          secondaryContainer: colorData?.getColorContainer(colorType),
-          onSecondaryContainer: colorData?.getColorOnContainer(colorType),
-          outline: colorData?.getColor(colorType),
+          primary: colorData?.getColor(color, brightness: themeData.brightness),
+          onPrimary: colorData?.getOnColor(
+            color,
+            brightness: themeData.brightness,
+          ),
+          secondaryContainer: colorData?.getColorContainer(
+            color,
+            brightness: themeData.brightness,
+          ),
+          onSecondaryContainer: colorData?.getColorOnContainer(
+            color,
+            brightness: themeData.brightness,
+          ),
+          outline: colorData?.getColor(color, brightness: themeData.brightness),
         ),
       ),
       child: Localizations.override(

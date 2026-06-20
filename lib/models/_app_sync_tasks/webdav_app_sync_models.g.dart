@@ -120,6 +120,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
   /// WebDavSyncHabitData(...).copyWith(id: 12, name: "My name")
   /// ```
   WebDavSyncHabitData call({
+    int schemaVersion,
     String? uuid,
     int? createT,
     int? modifyT,
@@ -128,6 +129,8 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     String? name,
     String? desc,
     int? color,
+    int? customColor,
+    int? customColorTinted,
     num? dailyGoal,
     String? dailyGoalUnit,
     num? dailyGoalExtra,
@@ -162,6 +165,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
   /// WebDavSyncHabitData(...).copyWith(id: 12, name: "My name")
   /// ```
   WebDavSyncHabitData call({
+    Object? schemaVersion = const $CopyWithPlaceholder(),
     Object? uuid = const $CopyWithPlaceholder(),
     Object? createT = const $CopyWithPlaceholder(),
     Object? modifyT = const $CopyWithPlaceholder(),
@@ -170,6 +174,8 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? name = const $CopyWithPlaceholder(),
     Object? desc = const $CopyWithPlaceholder(),
     Object? color = const $CopyWithPlaceholder(),
+    Object? customColor = const $CopyWithPlaceholder(),
+    Object? customColorTinted = const $CopyWithPlaceholder(),
     Object? dailyGoal = const $CopyWithPlaceholder(),
     Object? dailyGoalUnit = const $CopyWithPlaceholder(),
     Object? dailyGoalExtra = const $CopyWithPlaceholder(),
@@ -187,6 +193,11 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? dirtyTotal = const $CopyWithPlaceholder(),
   }) {
     return WebDavSyncHabitData(
+      schemaVersion:
+          schemaVersion == const $CopyWithPlaceholder() || schemaVersion == null
+          ? _value.schemaVersion
+          // ignore: cast_nullable_to_non_nullable
+          : schemaVersion as int,
       uuid: uuid == const $CopyWithPlaceholder()
           ? _value.uuid
           // ignore: cast_nullable_to_non_nullable
@@ -219,6 +230,14 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.color
           // ignore: cast_nullable_to_non_nullable
           : color as int?,
+      customColor: customColor == const $CopyWithPlaceholder()
+          ? _value.customColor
+          // ignore: cast_nullable_to_non_nullable
+          : customColor as int?,
+      customColorTinted: customColorTinted == const $CopyWithPlaceholder()
+          ? _value.customColorTinted
+          // ignore: cast_nullable_to_non_nullable
+          : customColorTinted as int?,
       dailyGoal: dailyGoal == const $CopyWithPlaceholder()
           ? _value.dailyGoal
           // ignore: cast_nullable_to_non_nullable
@@ -325,6 +344,7 @@ Map<String, dynamic> _$WebDavSyncRecordDataToJson(
 
 WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
     WebDavSyncHabitData(
+      schemaVersion: (json['_schema_version'] as num?)?.toInt() ?? 1,
       uuid: json['uuid'] as String?,
       createT: (json['create_t'] as num?)?.toInt(),
       modifyT: (json['modify_t'] as num?)?.toInt(),
@@ -333,6 +353,8 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       desc: json['desc'] as String?,
       color: (json['color'] as num?)?.toInt(),
+      customColor: (json['custom_color'] as num?)?.toInt(),
+      customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
       dailyGoal: json['daily_goal'] as num?,
       dailyGoalUnit: json['daily_goal_unit'] as String?,
       dailyGoalExtra: json['daily_goal_extra'] as num?,
@@ -352,6 +374,7 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$WebDavSyncHabitDataToJson(
   WebDavSyncHabitData instance,
 ) => <String, dynamic>{
+  '_schema_version': instance.schemaVersion,
   'uuid': instance.uuid,
   'create_t': instance.createT,
   'modify_t': instance.modifyT,
@@ -360,6 +383,8 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
   'name': instance.name,
   'desc': instance.desc,
   'color': instance.color,
+  'custom_color': instance.customColor,
+  'custom_color_tinted': instance.customColorTinted,
   'daily_goal': instance.dailyGoal,
   'daily_goal_unit': instance.dailyGoalUnit,
   'daily_goal_extra': instance.dailyGoalExtra,

@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../extensions/custom_color_extensions.dart';
-import '../../models/habit_form.dart';
+import '../../models/habit_color.dart';
 import '../../theme/color.dart';
 
 class MonthPickerCell extends StatelessWidget {
@@ -24,7 +24,7 @@ class MonthPickerCell extends StatelessWidget {
   final TextStyle? unselectStyle;
   final TextStyle? selectedStyle;
   final bool selected;
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final Duration? changeDuration;
   final double elevation;
   final void Function(int monthday)? onPressed;
@@ -36,7 +36,7 @@ class MonthPickerCell extends StatelessWidget {
     this.unselectStyle,
     this.selectedStyle,
     this.selected = false,
-    this.colorType,
+    this.color,
     this.changeDuration,
     this.elevation = 2.0,
     this.onPressed,
@@ -47,7 +47,9 @@ class MonthPickerCell extends StatelessWidget {
     final CustomColors? colorData = theme.extension<CustomColors>();
 
     if (selected) {
-      return (colorType != null ? colorData?.getColor(colorType!) : null) ??
+      return (color != null
+              ? colorData?.getColor(color!, brightness: theme.brightness)
+              : null) ??
           theme.colorScheme.primary;
     } else {
       return Colors.transparent;
@@ -62,8 +64,11 @@ class MonthPickerCell extends StatelessWidget {
       return selectedStyle ??
           theme.textTheme.labelSmall?.copyWith(
             color:
-                (colorType != null
-                    ? colorData?.getOnColor(colorType!)
+                (color != null
+                    ? colorData?.getOnColor(
+                        color!,
+                        brightness: theme.brightness,
+                      )
                     : null) ??
                 theme.colorScheme.onPrimary,
           );
@@ -71,7 +76,9 @@ class MonthPickerCell extends StatelessWidget {
       return unselectStyle ??
           theme.textTheme.labelSmall?.copyWith(
             color:
-                (colorType != null ? colorData?.getColor(colorType!) : null) ??
+                (color != null
+                    ? colorData?.getColor(color!, brightness: theme.brightness)
+                    : null) ??
                 theme.colorScheme.primary,
           );
     }

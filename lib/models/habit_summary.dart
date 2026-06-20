@@ -28,6 +28,7 @@ import '../common/utils.dart';
 import '../storage/db/handlers/habit.dart';
 import '../storage/db/handlers/record.dart';
 import 'common.dart';
+import 'habit_color.dart';
 import 'habit_daily_record_form.dart';
 import 'habit_date.dart';
 import 'habit_display.dart';
@@ -327,7 +328,13 @@ class HabitSummaryData with DirtyMarkMixin {
   final HabitType type;
   String name;
   String desc;
-  HabitColorType colorType;
+
+  /// The only color property on this model. There is no separate
+  /// `colorType`/`customColor` pair here: those are raw persistence fields
+  /// owned by `HabitDBCell`, and only [HabitColor.fromRaw]/the
+  /// `dbColorType`/`dbCustomColor` getters are allowed to unpack [color]
+  /// back into that shape, at the DB conversion boundary.
+  HabitColor color;
   HabitDailyGoal dailyGoal;
   HabitDailyGoal? dailyGoalExtra;
   int targetDays;
@@ -385,7 +392,7 @@ class HabitSummaryData with DirtyMarkMixin {
     required this.type,
     required this.name,
     required this.desc,
-    required this.colorType,
+    required this.color,
     required this.dailyGoal,
     this.dailyGoalExtra,
     required this.targetDays,
@@ -404,7 +411,11 @@ class HabitSummaryData with DirtyMarkMixin {
       type = HabitType.getFromDBCode(cell.type!)!,
       name = cell.name!,
       desc = cell.desc ?? '',
-      colorType = HabitColorType.getFromDBCode(cell.color!)!,
+      color = HabitColor.fromRaw(
+        colorType: HabitColorType.getFromDBCode(cell.color!)!,
+        customColor: cell.customColor,
+        customColorTinted: cell.customColorTinted,
+      ),
       dailyGoal = cell.dailyGoal!,
       dailyGoalExtra = cell.dailyGoalExtra,
       targetDays = cell.targetDays!,
@@ -512,7 +523,7 @@ class HabitSummaryData with DirtyMarkMixin {
     }
 
     return "HabitAboutData(id=$id,uuid=$uuid,type=${type.dbCode},name=$name,"
-        "color=$colorType,dailyGoal=$dailyGoal,freq=$frequency,"
+        "color=$color,dailyGoal=$dailyGoal,freq=$frequency,"
         "startDate=$startDate,status=$status,sort=$sortPostion,score=$progress,"
         "version=$diryMark,records={${getRecordsString()}})";
   }
@@ -745,7 +756,7 @@ extension on Iterable<HabitSummaryData> {
       _compareWithFallback(
         a,
         b,
-        primaryResult: a.colorType.dbCode.compareTo(b.colorType.dbCode),
+        primaryResult: a.color.compareTo(b.color),
         fallbackComparator: _compareByDescendingStartDate,
       );
 

@@ -19,6 +19,7 @@ import '../../common/consts.dart';
 import '../../common/types.dart';
 import '../../extensions/colorscheme_extensions.dart';
 import '../../extensions/custom_color_extensions.dart';
+import '../../models/habit_color.dart';
 import '../../models/habit_daily_record_form.dart';
 import '../../models/habit_form.dart';
 import '../../theme/color.dart';
@@ -31,7 +32,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
   final double? iconSize;
   final EdgeInsetsGeometry? padding;
   final HabitRecordDate date;
-  final HabitColorType colorType;
+  final HabitColor color;
   final HabitRecordStatus habitDailyStatus;
   final HabitDailyRecordForm habitDailyRecordForm;
   final void Function(HabitRecordDate date, HabitRecordStatus crt)? onPressed;
@@ -49,7 +50,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
     this.iconSize,
     this.padding,
     required this.date,
-    this.colorType = HabitColorType.cc1,
+    this.color = const HabitColor.builtIn(HabitColorType.cc1),
     required this.habitDailyStatus,
     required this.habitDailyRecordForm,
     this.onPressed,
@@ -85,7 +86,7 @@ class HabitDailyStatusContainer extends StatelessWidget {
           icon: HabitDailyStatusIcon(
             habitDailyStatus: habitDailyStatus,
             habitDailyRecordForm: habitDailyRecordForm,
-            colorType: colorType,
+            color: color,
             isAutoComplated: isAutoComplated,
           ),
           onPressed: null,
@@ -98,14 +99,14 @@ class HabitDailyStatusContainer extends StatelessWidget {
 class HabitDailyStatusIcon extends StatelessWidget {
   final HabitRecordStatus habitDailyStatus;
   final HabitDailyRecordForm habitDailyRecordForm;
-  final HabitColorType colorType;
+  final HabitColor color;
   final bool isAutoComplated;
 
   const HabitDailyStatusIcon({
     super.key,
     required this.habitDailyStatus,
     required this.habitDailyRecordForm,
-    required this.colorType,
+    required this.color,
     this.isAutoComplated = false,
   });
 
@@ -207,12 +208,15 @@ class HabitDailyStatusIcon extends StatelessWidget {
   ) {
     final CustomColors? colorData = themeData.extension<CustomColors>();
     return HabitSummaryDailyStatusColor(
-      autoMark: colorData?.getColor(colorType),
+      autoMark: colorData?.getColor(color, brightness: themeData.brightness),
       unknown: themeData.colorScheme.outlineOpacity48,
-      skip: colorData?.getColor(colorType),
-      doneAndOk: colorData?.getColor(colorType),
+      skip: colorData?.getColor(color, brightness: themeData.brightness),
+      doneAndOk: colorData?.getColor(color, brightness: themeData.brightness),
       doneAndZero: themeData.colorScheme.outlineOpacity64,
-      doneAndGoodjob: colorData?.getColor(colorType),
+      doneAndGoodjob: colorData?.getColor(
+        color,
+        brightness: themeData.brightness,
+      ),
       doneAndTryhard: themeData.colorScheme.outline,
     );
   }
