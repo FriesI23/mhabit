@@ -80,6 +80,12 @@ class RecordExportData implements JsonAdaptor {
   Map<String, dynamic> toJson() => _$RecordExportDataToJson(this);
 }
 
+/// Local JSON backup export/import keys. Mirrors color-related entries in
+/// [HabitDBCellKey] (`lib/storage/db/handlers/habit.dart`) and
+/// `WebDavSyncHabitKey`
+/// (`lib/models/_app_sync_tasks/webdav_app_sync_models.dart`).
+///
+/// {@macro habit_color_keys_relationship}
 class HabitExportDataKey {
   static const String createT = 'create_t';
   static const String modifyT = 'modify_t';

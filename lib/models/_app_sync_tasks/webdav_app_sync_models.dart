@@ -336,6 +336,11 @@ class WebDavSyncRecordData implements JsonAdaptor {
   String toString() => "WebDavSyncRecordData${toJson()..['dirty'] = dirty}";
 }
 
+/// WebDAV sync keys. Mirrors color-related entries in [HabitDBCellKey]
+/// (`lib/storage/db/handlers/habit.dart`) and `HabitExportDataKey`
+/// (`lib/models/habit_export.dart`).
+///
+/// {@macro habit_color_keys_relationship}
 class WebDavSyncHabitKey {
   static const String uuid = 'uuid';
   static const String createT = 'create_t';
