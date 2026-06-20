@@ -49,6 +49,14 @@ class L10nFa extends L10n {
   String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
 
   @override
+  String get habitEdit_colorPicker_tintToggleOnHint =>
+      'Tinting may shift the final color away from the one you picked.';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleOffHint =>
+      'Some colors may reduce text readability in light or dark theme.';
+
+  @override
   String get habitEdit_habitTypeDialog_title => 'نوع عادت';
 
   @override

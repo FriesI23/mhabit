@@ -156,6 +156,13 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
           title: Text(
             l10n?.habitEdit_colorPicker_tintToggleLabel ?? 'Tint to theme',
           ),
+          subtitle: l10n == null
+              ? null
+              : Text(
+                  tintedDraft
+                      ? l10n.habitEdit_colorPicker_tintToggleOnHint
+                      : l10n.habitEdit_colorPicker_tintToggleOffHint,
+                ),
           value: tintedDraft,
           onChanged: (value) => setLocalState(() => tintedDraft = value),
         ),

@@ -49,6 +49,13 @@ class L10nZh extends L10n {
   String get habitEdit_colorPicker_untintedLabel => '未调色';
 
   @override
+  String get habitEdit_colorPicker_tintToggleOnHint => '调色可能导致最终颜色与所选颜色不一致。';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleOffHint =>
+      '部分颜色在浅色或深色主题下可能降低文字可读性。';
+
+  @override
   String get habitEdit_habitTypeDialog_title => '习惯类型';
 
   @override

@@ -22,6 +22,8 @@
     "habitEdit_colorPicker_tintToggleLabel": "调色",
     "habitEdit_colorPicker_tintedLabel": "已调色",
     "habitEdit_colorPicker_untintedLabel": "未调色",
+    "habitEdit_colorPicker_tintToggleOnHint": "调色可能导致最终颜色与所选颜色不一致。",
+    "habitEdit_colorPicker_tintToggleOffHint": "部分颜色在浅色或深色主题下可能降低文字可读性。",
     "habitEdit_habitTypeDialog_title": "习惯类型",
     "habitEdit_habitType_positiveText": "积极",
     "habitEdit_habitType_negativeText": "消极",

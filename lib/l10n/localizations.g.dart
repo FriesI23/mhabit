@@ -200,6 +200,18 @@ abstract class L10n {
   /// **'Not tinted'**
   String get habitEdit_colorPicker_untintedLabel;
 
+  /// No description provided for @habitEdit_colorPicker_tintToggleOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinting may shift the final color away from the one you picked.'**
+  String get habitEdit_colorPicker_tintToggleOnHint;
+
+  /// No description provided for @habitEdit_colorPicker_tintToggleOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Some colors may reduce text readability in light or dark theme.'**
+  String get habitEdit_colorPicker_tintToggleOffHint;
+
   /// No description provided for @habitEdit_habitTypeDialog_title.
   ///
   /// In en, this message translates to:
