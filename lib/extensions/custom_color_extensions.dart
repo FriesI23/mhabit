@@ -54,18 +54,27 @@ extension HabitColorExtension on CustomColors {
   /// Per-(argb, brightness) → [ColorScheme] cache for custom colors.
   /// A custom color's scheme is deterministic for a given seed and
   /// brightness, so caching eliminates redundant [ColorScheme.fromSeed]
-  /// work across rebuilds.
+  /// work across rebuilds. Capped at [_maxCustomSchemeCacheSize] with FIFO
+  /// eviction so picking many distinct colors in a long-running session
+  /// can't grow this without bound.
+  static const _maxCustomSchemeCacheSize = 64;
   static final _customSchemeCache = <(int, Brightness), ColorScheme>{};
 
   /// Returns the cached [ColorScheme] for a custom ARGB seed +
   /// [Brightness], computing it once on first access.
-  static ColorScheme _customScheme(int argb, Brightness brightness) =>
-      _customSchemeCache.putIfAbsent((argb, brightness), () {
-        return ColorScheme.fromSeed(
-          seedColor: Color(argb),
-          brightness: brightness,
-        );
-      });
+  static ColorScheme _customScheme(int argb, Brightness brightness) {
+    final key = (argb, brightness);
+    final cached = _customSchemeCache[key];
+    if (cached != null) return cached;
+    final scheme = ColorScheme.fromSeed(
+      seedColor: Color(argb),
+      brightness: brightness,
+    );
+    if (_customSchemeCache.length >= _maxCustomSchemeCacheSize) {
+      _customSchemeCache.remove(_customSchemeCache.keys.first);
+    }
+    return _customSchemeCache[key] = scheme;
+  }
 
   // A near-white custom color is barely visible on a light theme's surface
   // (typically lightness ~0.96–1.0), and a near-black one is barely visible

@@ -46,7 +46,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   List<HabitSummaryData>? lastSortedHabits;
   num? lastIncreaseStep;
   int? lastDecimalPlaces;
-  List<String>? lastHabitsColmns;
+  List<String>? lastHabitsColumns;
 
   _FakeHabitsDisplayAccess({
     required this.seedData,
@@ -59,7 +59,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async {
-    lastHabitsColmns = habitsColmns;
+    lastHabitsColumns = habitsColmns;
     final collection = initedCollection ?? HabitSummaryDataCollection();
     collection.addHabit(seedData, forceAdd: true);
     for (final habit in extraSeedData) {
@@ -300,9 +300,9 @@ void main() {
 
         await vm.loadData(listen: false);
 
-        expect(access.lastHabitsColmns, isNotNull);
+        expect(access.lastHabitsColumns, isNotNull);
         expect(
-          access.lastHabitsColmns,
+          access.lastHabitsColumns,
           containsAll([
             HabitDBCellKey.customColor,
             HabitDBCellKey.customColorTinted,
