@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'habit_form.dart';
+import 'habit_color_type.dart';
 
 /// Unified business-layer color for a habit. The persistence layer
 /// (`HabitDBCell`) keeps `colorType`/`customColor` as two separate raw
@@ -58,9 +58,13 @@ sealed class HabitColor implements Comparable<HabitColor> {
 
   /// Orders built-in colors by palette position (`cc1` < `cc2` < ... <
   /// `cc10`), with all custom colors sorted after every built-in color and
-  /// ordered among themselves by ARGB value. Encapsulated here so callers
-  /// never need to reach into [dbColorType]/[dbCustomColor] just to compare
-  /// two colors.
+  /// ordered among themselves by ARGB value, then by [CustomHabitColor.tinted]
+  /// (untinted before tinted) when the ARGB matches — two custom colors that
+  /// share an ARGB but differ in `tinted` are unequal per [==], so
+  /// `compareTo` must not return `0` for them too; only an exact ARGB +
+  /// tinted match collapses to `0`, consistent with [==]. Encapsulated here
+  /// so callers never need to reach into [dbColorType]/[dbCustomColor] just
+  /// to compare two colors.
   @override
   int compareTo(HabitColor other) => switch ((this, other)) {
     (
@@ -70,8 +74,11 @@ sealed class HabitColor implements Comparable<HabitColor> {
       a.index.compareTo(b.index),
     (BuiltInHabitColor(), CustomHabitColor()) => -1,
     (CustomHabitColor(), BuiltInHabitColor()) => 1,
-    (CustomHabitColor(argb: final a), CustomHabitColor(argb: final b)) =>
-      a.compareTo(b),
+    (
+      CustomHabitColor(argb: final a, tinted: final at),
+      CustomHabitColor(argb: final b, tinted: final bt),
+    ) =>
+      a != b ? a.compareTo(b) : (at == bt ? 0 : (at ? 1 : -1)),
   };
 }
 

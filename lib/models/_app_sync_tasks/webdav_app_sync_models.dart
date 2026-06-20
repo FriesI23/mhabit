@@ -562,10 +562,17 @@ class WebDavSyncHabitData implements JsonAdaptor {
   }
 
   HabitDBCell toHabitDBCell() {
+    // Unlike `fromHabitDBCell`'s `cell.color!` (a locally-saved `HabitDBCell`
+    // always has a non-null `color`, by construction), `color` here comes
+    // from a deserialized sync payload `validate()` only requires `color` to
+    // be in 1-10 *when present* — it never requires `color`/`customColor` to
+    // jointly be non-null. A legacy or malformed payload with both missing
+    // would pass `validate()` but crash on a bare `color!`, so fall back to
+    // `cc1` (the same placeholder used for the custom-color path) instead.
     final habitColor = HabitColor.fromRaw(
       colorType: customColor != null
           ? HabitColorType.cc1
-          : HabitColorType.getFromDBCode(color!)!,
+          : HabitColorType.getFromDBCode(color ?? HabitColorType.cc1.dbCode)!,
       customColor: customColor,
       customColorTinted: customColorTinted,
     );

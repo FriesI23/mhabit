@@ -160,6 +160,20 @@ void main() {
       final data = WebDavSyncHabitData.fromHabitDBCell(cell);
       expect(data.validate, returnsNormally);
     });
+
+    test('toHabitDBCell() falls back to cc1 instead of throwing when both '
+        'color and custom_color are missing', () {
+      // validate() only range-checks `color` when it is present, so a
+      // payload with neither key (a malformed write, or one from some
+      // future/legacy client that omits both) passes validate() but must
+      // not crash the DB write path that follows it.
+      final data = WebDavSyncHabitData.fromJson({'_convert_type': 'habit_'});
+      expect(data.validate, returnsNormally);
+      expect(data.toHabitDBCell, returnsNormally);
+      final cell = data.toHabitDBCell();
+      expect(cell.color, HabitColorType.cc1.dbCode);
+      expect(cell.customColor, isNull);
+    });
   });
 
   group('WebDavSyncHabitData schema_version', () {

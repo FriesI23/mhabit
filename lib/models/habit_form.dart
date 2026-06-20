@@ -25,10 +25,13 @@ import '../l10n/localizations.dart';
 import '../storage/db/handlers/habit.dart';
 import '../utils/app_clock.dart';
 import 'habit_color.dart';
+import 'habit_color_type.dart';
 import 'habit_daily_goal.dart';
 import 'habit_display.dart';
 import 'habit_freq.dart';
 import 'habit_reminder.dart';
+
+export 'habit_color_type.dart';
 
 @JsonEnum(valueField: 'code')
 enum HabitType implements EnumWithDBCode {
@@ -92,62 +95,6 @@ enum HabitStatus implements EnumWithDBCode<HabitStatus> {
     int dbCode, {
     HabitStatus? withDefault = HabitStatus.unknown,
   }) => HabitStatus.values.byDBCode(dbCode, withDefault: withDefault);
-}
-
-@JsonEnum(valueField: 'code')
-enum HabitColorType implements EnumWithDBCode<HabitColorType> {
-  cc1(code: 1),
-  cc2(code: 2),
-  cc3(code: 3),
-  cc4(code: 4),
-  cc5(code: 5),
-  cc6(code: 6),
-  cc7(code: 7),
-  cc8(code: 8),
-  cc9(code: 9),
-  cc10(code: 10);
-
-  final int code;
-
-  const HabitColorType({required this.code});
-
-  @override
-  int get dbCode => code;
-
-  static HabitColorType? getFromDBCode(
-    int dbCode, {
-    HabitColorType? withDefault = HabitColorType.cc1,
-  }) => HabitColorType.values.byDBCode(dbCode, withDefault: withDefault);
-
-  static String getColorName(HabitColorType colorType, L10n? l10n) {
-    final fallbackColorName = 'Color ${colorType.code}';
-    switch (colorType) {
-      case HabitColorType.cc1:
-        return l10n?.common_habitColorType_cc1 ?? fallbackColorName;
-      case HabitColorType.cc2:
-        return l10n?.common_habitColorType_cc2 ?? fallbackColorName;
-      case HabitColorType.cc3:
-        return l10n?.common_habitColorType_cc3 ?? fallbackColorName;
-      case HabitColorType.cc4:
-        return l10n?.common_habitColorType_cc4 ?? fallbackColorName;
-      case HabitColorType.cc5:
-        return l10n?.common_habitColorType_cc5 ?? fallbackColorName;
-      case HabitColorType.cc6:
-        return l10n?.common_habitColorType_cc6 ?? fallbackColorName;
-      case HabitColorType.cc7:
-        return l10n?.common_habitColorType_cc7 ?? fallbackColorName;
-      case HabitColorType.cc8:
-        return l10n?.common_habitColorType_cc8 ?? fallbackColorName;
-      case HabitColorType.cc9:
-        return l10n?.common_habitColorType_cc9 ?? fallbackColorName;
-      case HabitColorType.cc10:
-        return l10n?.common_habitColorType_cc10 ?? fallbackColorName;
-      // ignore: unreachable_switch_default
-      default:
-        return l10n?.common_habitColorType_default(colorType.code) ??
-            fallbackColorName;
-    }
-  }
 }
 
 @JsonEnum(valueField: 'code')

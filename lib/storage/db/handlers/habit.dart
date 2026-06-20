@@ -79,7 +79,10 @@ class HabitDBCellKey {
   /// `updateExistHabit`'s `includeNullKeys` — `color` itself doesn't belong
   /// here, since it's legitimately left null/unprovided when an update only
   /// touches unrelated fields.
-  static const List<String> nullableColorKeys = [customColor, customColorTinted];
+  static const List<String> nullableColorKeys = [
+    customColor,
+    customColorTinted,
+  ];
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)

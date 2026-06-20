@@ -216,6 +216,20 @@ void main() {
       expect(high.compareTo(low), greaterThan(0));
       expect(mid.compareTo(mid), 0);
     });
+
+    test('same argb but different tinted never compares equal, consistent '
+        'with ==', () {
+      const tinted = CustomHabitColor(0xFFABCDEF, tinted: true);
+      const untinted = CustomHabitColor(0xFFABCDEF, tinted: false);
+      expect(tinted, isNot(equals(untinted)));
+      expect(tinted.compareTo(untinted), isNot(0));
+      expect(untinted.compareTo(tinted), isNot(0));
+      expect(
+        tinted.compareTo(untinted),
+        -untinted.compareTo(tinted),
+        reason: 'compareTo must stay antisymmetric',
+      );
+    });
   });
 
   group('HabitColor const constructors', () {
