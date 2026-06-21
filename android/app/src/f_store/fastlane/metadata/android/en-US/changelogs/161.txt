@@ -1,0 +1,6 @@
+- Refactor page wiring, tidy unit tests, and simplify habit summary helpers (#563, #571)
+- Refactor reminder handling to improve stability on app start, restart, and day changes (#569)
+- Improve custom color palette with mhabit_color_builder (#572)
+- Fix duplicate habit detail refresh on back navigation (#565)
+- Update Hebrew load-error wording and refresh translations (#570)
+- Stabilize icon font generation and refresh icon assets for release (#574)

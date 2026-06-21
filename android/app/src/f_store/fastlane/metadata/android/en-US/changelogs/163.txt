@@ -1,0 +1,1 @@
+- Feature: add per-habit custom color support with built-in swatches, color picker, and recent-color history (#580)
