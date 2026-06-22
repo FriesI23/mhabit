@@ -1,4 +1,4 @@
-# Release: v1.25.0+163-pre
+# Release: v1.25.1+164
 
 ## ✨ New Features
 
@@ -21,4 +21,4 @@
 
 - Update AltStore/SideStore source URLs and fix shell command indentation.
 
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.5+161...v1.25.0+163-pre)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.5+161...v1.25.1+164)

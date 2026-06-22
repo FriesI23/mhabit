@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.25.0+163-pre
+## 1.25.1+164
 
 - Feature: add per-habit custom color support with built-in swatches, color picker, and recent-color history (#580)
 
