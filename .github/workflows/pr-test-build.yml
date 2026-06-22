@@ -114,7 +114,7 @@ jobs:
         with:
           command: "/build"
           allowed_contexts: pull_request
-          permissions: "read,triage,write,maintain,admin"
+          permissions: "triage,write,maintain,admin"
           allow_drafts: "false"
           allow_forks: "true"
           skip_reviews: "true"
@@ -231,7 +231,8 @@ jobs:
       sha: ${{ steps.pr.outputs.sha }}
       issue-number: ${{ steps.pr.outputs.number }}
       commit-id: ${{ steps.start-comment.outputs.comment-id }}
-      environment: check-ci
+      fork: ${{ steps.pr.outputs.fork }}
+      environment: ${{ steps.pr.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
       android: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true') }}
       ios: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true') }}
       linux: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true') }}

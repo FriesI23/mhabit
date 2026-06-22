@@ -18,6 +18,14 @@ DRAFT=$(echo "$PR_JSON" | jq -r '.draft')
 BASE_SHA=$(echo "$PR_JSON" | jq -r '.base.sha')
 LABELS=$(echo "$PR_JSON" | jq -r '[.labels[].name] | join(",")')
 
+HEAD_REPO=$(echo "$PR_JSON" | jq -r '.head.repo.full_name')
+BASE_REPO=$(echo "$PR_JSON" | jq -r '.base.repo.full_name')
+if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+  FORK="true"
+else
+  FORK="false"
+fi
+
 if [ "$DRAFT" = "true" ]; then
   PROCEED="false"
 elif printf ',%s,' "$LABELS" | grep -q ',need test-build,'; then
@@ -30,5 +38,6 @@ fi
   echo "number=$NUMBER"
   echo "sha=$SHA"
   echo "base-sha=$BASE_SHA"
+  echo "fork=$FORK"
   echo "proceed=$PROCEED"
 } >> "$GITHUB_OUTPUT"
