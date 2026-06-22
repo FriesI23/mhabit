@@ -4,9 +4,10 @@ on:
   pull_request:
     branches:
       - main
+      - weblate-translation
     types: [opened]
   workflow_run:
-    workflows: ["Check PR (Main Branch)"]
+    workflows: ["Check PR"]
     types: [completed]
   issue_comment:
     types: [created]
@@ -354,6 +355,37 @@ jobs:
           body: >
             ${{ needs.build-macos.result == 'success' && '✅ macOS Build Completed:' || '❌ macOS Build Failed' }}
             ${{ needs.build-macos.outputs.artifact-url || '' }}
+
+  # Single required-status-check target for branch protection: green when no
+  # build ran (nothing to fail) or all that ran succeeded, red when any
+  # triggered platform build failed or was cancelled.
+  gate:
+    name: Build Status Gate
+    needs:
+      - build-android
+      - build-ios
+      - build-linux
+      - build-macos
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check build results
+        run: |
+          failed=false
+          for r in \
+            "${{ needs.build-android.result }}" \
+            "${{ needs.build-ios.result }}" \
+            "${{ needs.build-linux.result }}" \
+            "${{ needs.build-macos.result }}"; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              failed=true
+            fi
+          done
+          if [ "$failed" = "true" ]; then
+            echo "A platform test build failed or was cancelled."
+            exit 1
+          fi
+          echo "No test build failures (or none were requested)."
 
   report:
     needs:

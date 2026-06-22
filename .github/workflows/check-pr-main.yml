@@ -1,9 +1,10 @@
-name: Check PR (Main Branch)
+name: Check PR
 
 on:
   pull_request:
     branches:
       - main
+      - weblate-translation
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
