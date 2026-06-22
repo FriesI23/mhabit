@@ -60,8 +60,9 @@ jobs:
             You can also trigger test builds manually anytime, regardless of the label:
 
             ```
-            /build                build all platforms (android, ios, linux, macos)
-            /build all             same as above
+            /build                 same as `/build auto`
+            /build auto            build only platforms whose paths changed (same logic as automatic builds)
+            /build all             build all platforms (android, ios, linux, macos) unconditionally
             /build <platforms>     build only the given platforms, comma- or space-separated
                                    e.g. /build android,ios
             /build stop            cancel an in-progress manual build
@@ -79,10 +80,30 @@ jobs:
       issue-number: ${{ steps.command.outputs.issue_number }}
       commit-id: ${{ steps.start-comment.outputs.comment-id }}
       environment: ${{ steps.command.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
-      android: ${{ steps.platforms.outputs.android }}
-      ios: ${{ steps.platforms.outputs.ios }}
-      linux: ${{ steps.platforms.outputs.linux }}
-      macos: ${{ steps.platforms.outputs.macos }}
+      android: >-
+        ${{
+          (steps.mode.outputs.mode == 'all' && 'true') ||
+          (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true')) ||
+          steps.platforms.outputs.android
+        }}
+      ios: >-
+        ${{
+          (steps.mode.outputs.mode == 'all' && 'true') ||
+          (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true')) ||
+          steps.platforms.outputs.ios
+        }}
+      linux: >-
+        ${{
+          (steps.mode.outputs.mode == 'all' && 'true') ||
+          (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true')) ||
+          steps.platforms.outputs.linux
+        }}
+      macos: >-
+        ${{
+          (steps.mode.outputs.mode == 'all' && 'true') ||
+          (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true')) ||
+          steps.platforms.outputs.macos
+        }}
     steps:
       # Low bar to *request* a build (this step touches no secrets) — the real
       # gate for fork contributors is the dynamic `environment:` above, which
@@ -108,7 +129,9 @@ jobs:
       - uses: actions/checkout@v6
         if: steps.command.outputs.continue == 'true'
         with:
-          sparse-checkout: .github/scripts
+          sparse-checkout: |
+            .github/scripts
+            .github/actions/pr-test-build-filter
           sparse-checkout-cone-mode: false
 
       - name: Resolve duplicate or stop command
@@ -120,16 +143,53 @@ jobs:
           RAW_PARAMS: ${{ steps.command.outputs.params }}
         run: bash .github/scripts/pr-test-build-dedup.sh
 
-      - name: Parse requested platforms
-        id: platforms
+      # `/build` (no args) and `/build auto` decide platforms from changed
+      # paths; `/build all` forces every platform unconditionally; anything
+      # else is an explicit platform list.
+      - name: Determine build mode
+        id: mode
         if: steps.dedup.outputs.proceed == 'true'
         env:
           RAW_PARAMS: ${{ steps.command.outputs.params }}
         run: |
-          ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
-          if [ -z "$(echo "$ARGS" | xargs)" ] || echo " $ARGS " | grep -qw all; then
-            ARGS="android ios linux macos"
+          PARAM_NORM=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]' | xargs)
+          if [ -z "$PARAM_NORM" ] || [ "$PARAM_NORM" = "auto" ]; then
+            echo "mode=auto" >> "$GITHUB_OUTPUT"
+          elif echo " $PARAM_NORM " | grep -qw all; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=explicit" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Resolve PR base for path filter
+        id: pr
+        if: steps.mode.outputs.mode == 'auto'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+        run: |
+          BASE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER" --jq '.base.sha')
+          echo "base-sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+
+      # Same path-filter logic as the automatic entry point (`resolve-auto`),
+      # so `/build`/`/build auto` decide platforms identically to an
+      # automatic build.
+      - name: Filter paths
+        id: filter
+        if: steps.mode.outputs.mode == 'auto'
+        uses: ./.github/actions/pr-test-build-filter
+        with:
+          token: ${{ github.token }}
+          base: ${{ steps.pr.outputs.base-sha }}
+          ref: ${{ steps.command.outputs.sha }}
+
+      - name: Parse explicit platform list
+        id: platforms
+        if: steps.mode.outputs.mode == 'explicit'
+        env:
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: |
+          ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
           for p in android ios linux macos; do
             if echo " $ARGS " | grep -qw "$p"; then
               echo "$p=true" >> "$GITHUB_OUTPUT"
@@ -184,7 +244,9 @@ jobs:
       - uses: actions/checkout@v6
         if: github.event.workflow_run.conclusion == 'success'
         with:
-          sparse-checkout: .github/scripts
+          sparse-checkout: |
+            .github/scripts
+            .github/actions/pr-test-build-filter
           sparse-checkout-cone-mode: false
 
       - name: Resolve PR for this check run
@@ -200,26 +262,11 @@ jobs:
       - name: Filter paths
         id: filter
         if: steps.pr.outputs.proceed == 'true'
-        uses: dorny/paths-filter@v4
+        uses: ./.github/actions/pr-test-build-filter
         with:
           token: ${{ github.token }}
           base: ${{ steps.pr.outputs.base-sha }}
           ref: ${{ steps.pr.outputs.sha }}
-          filters: |
-            common:
-              - 'pubspec.yaml'
-              - 'pubspec.lock'
-              - 'packages/**'
-              - 'lib/**'
-              - 'assets/**'
-            android:
-              - 'android/**'
-            ios:
-              - 'ios/**'
-            linux:
-              - 'linux/**'
-            macos:
-              - 'macos/**'
 
       - name: Comment on PR (auto build started)
         id: start-comment

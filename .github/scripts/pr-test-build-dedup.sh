@@ -18,8 +18,9 @@ if [ "$MODE" = "help" ]; then
   MSG=$(cat <<'HELP_EOF'
 Usage: /build [target]
 
-  /build                build all platforms (android, ios, linux, macos)
-  /build all             same as above
+  /build                 same as `/build auto`
+  /build auto            build only platforms whose paths changed (same logic as automatic builds)
+  /build all             build all platforms (android, ios, linux, macos) unconditionally
   /build <platforms>     build only the given platforms, comma- or space-separated
                          e.g. /build android,ios
   /build stop            cancel an in-progress manual build
