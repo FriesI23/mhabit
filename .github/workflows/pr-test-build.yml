@@ -65,6 +65,7 @@ jobs:
                                    e.g. /build android,ios
             /build stop            cancel an in-progress manual build
             /build cancel          alias for stop
+            /build help            show this message
             ```
 
   # ---- Manual entry point: `/build ...` comment ----
@@ -100,6 +101,15 @@ jobs:
 
       # `/build` while one is already running is ignored (not queued/restarted);
       # `/build stop` cancels whatever is currently running for this PR.
+      # Script content always comes from the default branch (issue_comment
+      # workflows ignore the PR's own files), so this checkout is safe even
+      # for fork PRs.
+      - uses: actions/checkout@v6
+        if: steps.command.outputs.continue == 'true'
+        with:
+          sparse-checkout: .github/scripts
+          sparse-checkout-cone-mode: false
+
       - name: Resolve duplicate or stop command
         id: dedup
         if: steps.command.outputs.continue == 'true'
@@ -107,39 +117,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
           RAW_PARAMS: ${{ steps.command.outputs.params }}
-        run: |
-          MODE="build"
-          if printf '%s' "$RAW_PARAMS" | tr '[:upper:]' '[:lower:]' | xargs | grep -qE '^(stop|cancel)$'; then
-            MODE="stop"
-          fi
-
-          RUNS_JSON=$(gh run list --workflow=pr-test-build.yml --json databaseId,name,status --limit 50)
-          RUNNING_IDS=$(echo "$RUNS_JSON" | jq -r \
-            --arg prefix "/build #$ISSUE_NUMBER (" \
-            --arg self "$GITHUB_RUN_ID" \
-            '.[] | select(.status == "in_progress" or .status == "queued") | select(.name | startswith($prefix)) | select((.databaseId | tostring) != $self) | .databaseId')
-
-          if [ "$MODE" = "stop" ]; then
-            if [ -z "$RUNNING_IDS" ]; then
-              MSG="ℹ️ No test build is currently running for this PR."
-            else
-              for id in $RUNNING_IDS; do gh run cancel "$id"; done
-              MSG="🛑 Cancelled the in-progress test build for this PR."
-            fi
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-          elif [ -n "$RUNNING_IDS" ]; then
-            # shellcheck disable=SC2016 # intentionally literal, no expansion wanted
-            MSG='⏳ A test build is already running for this PR — ignoring this `/build` request. Comment `/build stop` to cancel it first.'
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-          else
-            MSG=""
-            echo "proceed=true" >> "$GITHUB_OUTPUT"
-          fi
-          {
-            echo "message<<EOF"
-            echo "$MSG"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+        run: bash .github/scripts/pr-test-build-dedup.sh
 
       - name: Parse requested platforms
         id: platforms
@@ -200,35 +178,21 @@ jobs:
     steps:
       # Resolve the PR for this commit via the API (works for same-repo and
       # fork PRs alike), then gate on draft status + `need test-build` label.
+      # workflow_run always uses the default branch's own files, so this
+      # checkout is safe even though the triggering PR may be a fork.
+      - uses: actions/checkout@v6
+        if: github.event.workflow_run.conclusion == 'success'
+        with:
+          sparse-checkout: .github/scripts
+          sparse-checkout-cone-mode: false
+
       - name: Resolve PR for this check run
         id: pr
         if: github.event.workflow_run.conclusion == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          NUMBER=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
-          if [ -z "$NUMBER" ]; then
-            echo "proceed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          PR_JSON=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$NUMBER")
-          DRAFT=$(echo "$PR_JSON" | jq -r '.draft')
-          BASE_SHA=$(echo "$PR_JSON" | jq -r '.base.sha')
-          LABELS=$(echo "$PR_JSON" | jq -r '[.labels[].name] | join(",")')
-          if [ "$DRAFT" = "true" ]; then
-            PROCEED="false"
-          elif printf ',%s,' "$LABELS" | grep -q ',need test-build,'; then
-            PROCEED="true"
-          else
-            PROCEED="false"
-          fi
-          {
-            echo "number=$NUMBER"
-            echo "sha=$SHA"
-            echo "base-sha=$BASE_SHA"
-            echo "proceed=$PROCEED"
-          } >> "$GITHUB_OUTPUT"
+        run: bash .github/scripts/pr-test-build-resolve-pr.sh
 
       # API-based diff (no checkout needed) — paths-filter's recommended mode
       # when not running directly off a `pull_request` event.
