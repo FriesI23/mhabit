@@ -123,11 +123,6 @@ jobs:
           skip_reviews: "true"
           skip_ci: "true"
           reaction: "eyes"
-          # github/command's param_separator defaults to "|", but our /build
-          # syntax (stop/help/all/<platforms>) is space-separated with no "|"
-          # — without this, `params` is always empty and every mode below
-          # silently degrades to `auto`.
-          param_separator: " "
 
       # `/build` while one is already running is ignored (not queued/restarted);
       # `/build stop` cancels whatever is currently running for this PR.
@@ -148,7 +143,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
-          RAW_PARAMS: ${{ steps.command.outputs.params }}
+          # Not steps.command.outputs.params: that relies on github/command's
+          # param_separator input, but actions/core's getInput() trims
+          # whitespace-only input values, so a literal " " separator collapses
+          # to "" and params ends up split character-by-character instead
+          # (e.g. `/build` -> "build"). Stripping the `/build` prefix from the
+          # full comment_body ourselves sidesteps that entirely.
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
         run: bash .github/scripts/pr-test-build-dedup.sh
 
       # `/build` (no args) and `/build auto` decide platforms from changed
@@ -158,8 +159,9 @@ jobs:
         id: mode
         if: steps.dedup.outputs.proceed == 'true'
         env:
-          RAW_PARAMS: ${{ steps.command.outputs.params }}
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
         run: |
+          RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
           PARAM_NORM=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]' | xargs)
           if [ -z "$PARAM_NORM" ] || [ "$PARAM_NORM" = "auto" ]; then
             echo "mode=auto" >> "$GITHUB_OUTPUT"
@@ -195,8 +197,9 @@ jobs:
         id: platforms
         if: steps.mode.outputs.mode == 'explicit'
         env:
-          RAW_PARAMS: ${{ steps.command.outputs.params }}
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
         run: |
+          RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
           ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
           for p in android ios linux macos; do
             if echo " $ARGS " | grep -qw "$p"; then

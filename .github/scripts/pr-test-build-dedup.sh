@@ -3,10 +3,15 @@
 # in-progress run for this PR, reject an unrecognized target, ignore a
 # duplicate request, or proceed.
 #
-# Required env: GH_TOKEN, ISSUE_NUMBER, RAW_PARAMS, GITHUB_OUTPUT,
+# Required env: GH_TOKEN, ISSUE_NUMBER, COMMENT_BODY, GITHUB_OUTPUT,
 # GITHUB_RUN_ID (the latter two are provided automatically by the runner).
 set -eo pipefail
 
+# COMMENT_BODY is the full `/build ...` comment text (github/command's own
+# `params` output is unusable here: actions/core trims whitespace-only input
+# values, so a literal " " param_separator collapses to "", which makes it
+# split params character-by-character instead of on spaces).
+RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
 PARAM_NORM=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]' | xargs)
 MODE="build"
 if echo "$PARAM_NORM" | grep -qE '^(stop|cancel)$'; then
