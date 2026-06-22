@@ -29,7 +29,9 @@ concurrency:
   group: >-
     ${{ github.event_name == 'issue_comment'
         && format('pr-test-build-comment-{0}', github.event.comment.id)
-        || format('pr-test-build-{0}', github.event.pull_request.number || github.event.workflow_run.head_branch) }}
+        || github.event_name == 'workflow_run'
+        && format('pr-test-build-{0}-{1}', github.event.workflow_run.head_repository.full_name, github.event.workflow_run.head_branch)
+        || format('pr-test-build-{0}', github.event.pull_request.number) }}
   cancel-in-progress: ${{ github.event_name != 'issue_comment' }}
 
 run-name: >-
@@ -45,9 +47,7 @@ jobs:
   auto-build-help:
     if: >
       github.event_name == 'pull_request' &&
-      contains(
-        join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
-        'need test-build')
+      contains(github.event.pull_request.labels.*.name, 'need test-build')
     runs-on: ubuntu-latest
     steps:
       - name: Comment on PR
@@ -118,7 +118,7 @@ jobs:
           allow_drafts: "false"
           allow_forks: "true"
           skip_reviews: "true"
-          skip_ci: "false"
+          skip_ci: "true"
           reaction: "eyes"
 
       # `/build` while one is already running is ignored (not queued/restarted);
