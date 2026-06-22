@@ -115,7 +115,7 @@ jobs:
         id: command
         if: steps.draft-check.outputs.draft != 'true'
         with:
-          command: "/build"
+          command: "build"
           allowed_contexts: pull_request
           permissions: "read,triage,write,maintain,admin"
           allow_drafts: "false"
