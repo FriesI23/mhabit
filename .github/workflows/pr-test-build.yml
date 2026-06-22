@@ -1,0 +1,401 @@
+name: PR Test Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - weblate-translation
+    types: [opened]
+  workflow_run:
+    workflows: ["Check PR"]
+    types: [completed]
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: read
+  issues: write
+  checks: read
+  contents: read
+  actions: write # needed by the dedup/stop step to list & cancel workflow runs
+
+concurrency:
+  # issue_comment runs each get their own group (keyed by comment id) so a
+  # `/build`/`/build stop` comment is never queued behind another run in the
+  # same group — they must actually run concurrently for the dedup step's
+  # own `gh run list`/`gh run cancel` logic (below) to observe and act on
+  # an in-progress run. pull_request/workflow_run runs still share one group
+  # per PR so a new push cancels a stale auto-build.
+  group: >-
+    ${{ github.event_name == 'issue_comment'
+        && format('pr-test-build-comment-{0}', github.event.comment.id)
+        || github.event_name == 'workflow_run'
+        && format('pr-test-build-{0}-{1}', github.event.workflow_run.head_repository.full_name, github.event.workflow_run.head_branch)
+        || format('pr-test-build-{0}', github.event.pull_request.number) }}
+  cancel-in-progress: ${{ github.event_name != 'issue_comment' }}
+
+run-name: >-
+  ${{
+    (github.event_name == 'issue_comment' && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)) ||
+    (github.event_name == 'workflow_run' && format('auto test build (run {0})', github.event.workflow_run.id)) ||
+    format('PR opened #{0}', github.event.pull_request.number)
+  }}
+
+jobs:
+  # One PR creation help comment, shown once, when the PR already carries the
+  # `need test-build` label at creation time.
+  auto-build-help:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false &&
+      contains(github.event.pull_request.labels.*.name, 'need test-build')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            👋 This PR is labeled `need test-build` — once analyzing/checking/testing pass, platform builds run automatically based on which paths changed.
+
+            You can also trigger test builds manually anytime, regardless of the label:
+
+            ```
+            /build                 same as `/build auto`
+            /build auto            build only platforms whose paths changed (same logic as automatic builds)
+            /build all             build all platforms (android, ios, linux, macos) unconditionally
+            /build <platforms>     build only the given platforms, comma- or space-separated
+                                   e.g. /build android,ios
+            /build stop            cancel an in-progress manual build
+            /build cancel          alias for stop
+            /build help            show this message
+            ```
+
+  # ---- Manual entry point: `/build ...` comment ----
+  resolve-manual:
+    # github.event.issue.pull_request only exists when the comment is on a
+    # PR — issue_comment fires for plain issues too, and without this guard
+    # the draft-check step below would call the pulls API with an issue
+    # number that isn't a PR and 404.
+    if: >
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      startsWith(github.event.comment.body, '/build')
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.dedup.outputs.proceed }}
+      sha: ${{ steps.command.outputs.sha }}
+      issue-number: ${{ steps.command.outputs.issue_number }}
+      commit-id: ${{ steps.start-comment.outputs.comment-id }}
+      environment: ${{ steps.command.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
+      # JSON array of selected platform names, e.g. '["android","linux"]' or
+      # '[]' — feeds the `build` job's matrix directly (see "Resolve
+      # platforms" step below for how each platform is selected per mode).
+      platforms: ${{ steps.resolve-platforms.outputs.platforms }}
+    steps:
+      # `/build` on a draft PR should be a quiet no-op (old label-gated job
+      # used `if: draft == false` and just skipped). github/command's own
+      # `allow_drafts: "false"` below also enforces this, but it fails the
+      # step + posts a comment when it trips — checking here first keeps
+      # that as a pure backstop and restores the quiet skip for this
+      # expected case.
+      - name: Check draft status
+        id: draft-check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DRAFT=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" --jq '.draft')
+          echo "draft=$DRAFT" >> "$GITHUB_OUTPUT"
+
+      # Low bar to *request* a build (this step touches no secrets) — the real
+      # gate for fork contributors is the dynamic `environment:` above, which
+      # routes fork-originated requests through `check-ci-review` (required
+      # reviewer approval); non-fork requests use the ungated `check-ci`.
+      - uses: github/command@v2
+        id: command
+        if: steps.draft-check.outputs.draft != 'true'
+        with:
+          command: "/build"
+          allowed_contexts: pull_request
+          permissions: "read,triage,write,maintain,admin"
+          allow_drafts: "false"
+          allow_forks: "true"
+          skip_reviews: "true"
+          skip_ci: "true"
+          reaction: "eyes"
+          # github/command's param_separator defaults to "|", but our /build
+          # syntax (stop/help/all/<platforms>) is space-separated with no "|"
+          # — without this, `params` is always empty and every mode below
+          # silently degrades to `auto`.
+          param_separator: " "
+
+      # `/build` while one is already running is ignored (not queued/restarted);
+      # `/build stop` cancels whatever is currently running for this PR.
+      # Script content always comes from the default branch (issue_comment
+      # workflows ignore the PR's own files), so this checkout is safe even
+      # for fork PRs.
+      - uses: actions/checkout@v6
+        if: steps.command.outputs.continue == 'true'
+        with:
+          sparse-checkout: |
+            .github/scripts
+            .github/actions/pr-test-build-filter
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve duplicate or stop command
+        id: dedup
+        if: steps.command.outputs.continue == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: bash .github/scripts/pr-test-build-dedup.sh
+
+      # `/build` (no args) and `/build auto` decide platforms from changed
+      # paths; `/build all` forces every platform unconditionally; anything
+      # else is an explicit platform list.
+      - name: Determine build mode
+        id: mode
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: |
+          PARAM_NORM=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]' | xargs)
+          if [ -z "$PARAM_NORM" ] || [ "$PARAM_NORM" = "auto" ]; then
+            echo "mode=auto" >> "$GITHUB_OUTPUT"
+          elif echo " $PARAM_NORM " | grep -qw all; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=explicit" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve PR base for path filter
+        id: pr
+        if: steps.mode.outputs.mode == 'auto'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+        run: |
+          BASE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER" --jq '.base.sha')
+          echo "base-sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+
+      # Same path-filter logic as the automatic entry point (`resolve-auto`),
+      # so `/build`/`/build auto` decide platforms identically to an
+      # automatic build.
+      - name: Filter paths
+        id: filter
+        if: steps.mode.outputs.mode == 'auto'
+        uses: ./.github/actions/pr-test-build-filter
+        with:
+          token: ${{ github.token }}
+          base: ${{ steps.pr.outputs.base-sha }}
+          ref: ${{ steps.command.outputs.sha }}
+
+      - name: Parse explicit platform list
+        id: platforms
+        if: steps.mode.outputs.mode == 'explicit'
+        env:
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: |
+          ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
+          for p in android ios linux macos; do
+            if echo " $ARGS " | grep -qw "$p"; then
+              echo "$p=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$p=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+      # Collapses the per-platform selection (mode=all -> everything;
+      # mode=auto -> same common/path-filter rule as the automatic entry
+      # point; mode=explicit -> the parsed list above) into one JSON array
+      # consumed directly by the `build` job's matrix.
+      - name: Resolve platforms
+        id: resolve-platforms
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          ANDROID: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true')) ||
+              steps.platforms.outputs.android
+            }}
+          IOS: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true')) ||
+              steps.platforms.outputs.ios
+            }}
+          LINUX: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true')) ||
+              steps.platforms.outputs.linux
+            }}
+          MACOS: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true')) ||
+              steps.platforms.outputs.macos
+            }}
+        run: bash .github/scripts/pr-test-build-resolve-platforms.sh
+
+      - name: Comment on PR (build started)
+        id: start-comment
+        if: steps.dedup.outputs.proceed == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: |
+            Start Test Build...
+            ===
+            Requested by @${{ steps.command.outputs.actor }}
+            Commit: ${{ steps.command.outputs.sha }}
+
+      - name: Comment on PR (dedup/stop result)
+        if: >
+          steps.command.outputs.continue == 'true' &&
+          steps.dedup.outputs.proceed != 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: ${{ steps.dedup.outputs.message }}
+
+  # ---- Automatic entry point: `need test-build` label + path filter ----
+  # Triggered by completion of check-pr-main.yml (analyzing/checking/testing)
+  # instead of `pull_request` directly, so this only ever runs once those
+  # checks have actually finished — no polling needed.
+  resolve-auto:
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.pr.outputs.proceed }}
+      sha: ${{ steps.pr.outputs.sha }}
+      issue-number: ${{ steps.pr.outputs.number }}
+      commit-id: ${{ steps.start-comment.outputs.comment-id }}
+      environment: ${{ steps.pr.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
+      platforms: ${{ steps.resolve-platforms.outputs.platforms }}
+    steps:
+      # Resolve the PR for this commit via the API (works for same-repo and
+      # fork PRs alike), then gate on draft status + `need test-build` label.
+      # workflow_run always uses the default branch's own files, so this
+      # checkout is safe even though the triggering PR may be a fork.
+      - uses: actions/checkout@v6
+        if: github.event.workflow_run.conclusion == 'success'
+        with:
+          sparse-checkout: |
+            .github/scripts
+            .github/actions/pr-test-build-filter
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve PR for this check run
+        id: pr
+        if: github.event.workflow_run.conclusion == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: bash .github/scripts/pr-test-build-resolve-pr.sh
+
+      # API-based diff (no checkout needed) — paths-filter's recommended mode
+      # when not running directly off a `pull_request` event.
+      - name: Filter paths
+        id: filter
+        if: steps.pr.outputs.proceed == 'true'
+        uses: ./.github/actions/pr-test-build-filter
+        with:
+          token: ${{ github.token }}
+          base: ${{ steps.pr.outputs.base-sha }}
+          ref: ${{ steps.pr.outputs.sha }}
+
+      - name: Resolve platforms
+        id: resolve-platforms
+        if: steps.pr.outputs.proceed == 'true'
+        env:
+          ANDROID: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true' }}
+          IOS: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true' }}
+          LINUX: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true' }}
+          MACOS: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true' }}
+        run: bash .github/scripts/pr-test-build-resolve-platforms.sh
+
+      - name: Comment on PR (auto build started)
+        id: start-comment
+        if: steps.pr.outputs.proceed == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.pr.outputs.number }}
+          body: |
+            🤖 Auto Test Build...
+            ===
+            Commit: ${{ steps.pr.outputs.sha }}
+
+  # One matrix entry per platform, calling the single parameterized
+  # _build_test.yml (replaces the four near-identical build-<platform> +
+  # comment-build-<platform> job pairs — the PR comment is now posted as the
+  # last step inside _build_test.yml itself, keyed off the same per-platform
+  # `if:` gate, so there's no separate runner spun up just to post it).
+  build:
+    needs:
+      - resolve-manual
+      - resolve-auto
+    # `if:` cannot reference `matrix` (it's not in the allowed-context list
+    # for jobs.<job_id>.if), so the platform selection has to be fully
+    # resolved into the `platforms` JSON array *before* this job's `if:`
+    # runs — gating on that array being non-empty here means the matrix
+    # (and thus any per-platform runner) never gets a chance to expand at
+    # all when nothing was selected.
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
+      (needs.resolve-manual.outputs.platforms || needs.resolve-auto.outputs.platforms || '[]') != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.resolve-manual.outputs.platforms || needs.resolve-auto.outputs.platforms || '[]') }}
+    uses: ./.github/workflows/_build_test.yml
+    with:
+      platform: ${{ matrix.platform }}
+      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
+      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
+      issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+      comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+    secrets: inherit
+
+  # Single required-status-check target for branch protection: green when no
+  # build ran (nothing to fail) or all that ran succeeded, red when any
+  # triggered platform build failed or was cancelled. needs.build.result is
+  # already the aggregate across all matrix entries (failure/cancelled if
+  # any entry was, skipped if none ran, success otherwise).
+  gate:
+    name: Build Status Gate
+    needs:
+      - build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check build results
+        run: |
+          if [ "${{ needs.build.result }}" = "failure" ] || [ "${{ needs.build.result }}" = "cancelled" ]; then
+            echo "A platform test build failed or was cancelled."
+            exit 1
+          fi
+          echo "No test build failures (or none were requested)."
+
+  report:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - build
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.commit-id != '' || needs.resolve-auto.outputs.commit-id != '')
+    runs-on: ubuntu-latest
+    steps:
+      - id: date
+        run: echo "now=$(date)" >> "$GITHUB_OUTPUT"
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: |
+            Ended at: ${{ steps.date.outputs.now }}
