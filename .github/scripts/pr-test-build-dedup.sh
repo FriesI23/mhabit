@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Resolves what the `/build` comment should do: print help, stop/cancel the
-# in-progress run for this PR, ignore a duplicate request, or proceed.
+# in-progress run for this PR, reject an unrecognized target, ignore a
+# duplicate request, or proceed.
 #
 # Required env: GH_TOKEN, ISSUE_NUMBER, RAW_PARAMS, GITHUB_OUTPUT,
 # GITHUB_RUN_ID (the latter two are provided automatically by the runner).
@@ -12,6 +13,15 @@ if echo "$PARAM_NORM" | grep -qE '^(stop|cancel)$'; then
   MODE="stop"
 elif echo "$PARAM_NORM" | grep -qE '^(help|-h|--help)$'; then
   MODE="help"
+elif [ -n "$PARAM_NORM" ] && [ "$PARAM_NORM" != "auto" ] && ! echo " $PARAM_NORM " | grep -qw all; then
+  # An explicit target list (anything other than empty/auto/all) must name at
+  # least one real platform, or nothing will actually build (see PR #581
+  # review comment 4543798296).
+  VALID_TARGET=false
+  for p in android ios linux macos; do
+    echo " $PARAM_NORM " | grep -qw "$p" && VALID_TARGET=true
+  done
+  [ "$VALID_TARGET" = false ] && MODE="invalid"
 fi
 
 if [ "$MODE" = "help" ]; then
@@ -28,6 +38,17 @@ Usage: /build [target]
   /build help            show this message
 HELP_EOF
   )
+  echo "proceed=false" >> "$GITHUB_OUTPUT"
+  {
+    echo "message<<EOF"
+    echo "$MSG"
+    echo "EOF"
+  } >> "$GITHUB_OUTPUT"
+  exit 0
+fi
+
+if [ "$MODE" = "invalid" ]; then
+  MSG="⚠️ No recognized platform in \`/build $RAW_PARAMS\` — nothing would be built. Valid targets: \`android\`, \`ios\`, \`linux\`, \`macos\`, \`all\`, \`auto\` (or no argument). Comment \`/build help\` for full usage."
   echo "proceed=false" >> "$GITHUB_OUTPUT"
   {
     echo "message<<EOF"
