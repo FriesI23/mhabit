@@ -72,7 +72,7 @@ jobs:
 
   # ---- Manual entry point: `/build ...` comment ----
   resolve-manual:
-    if: github.event_name == 'issue_comment'
+    if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/build')
     runs-on: ubuntu-latest
     outputs:
       proceed: ${{ steps.dedup.outputs.proceed }}
@@ -114,7 +114,7 @@ jobs:
         with:
           command: "/build"
           allowed_contexts: pull_request
-          permissions: "triage,write,maintain,admin"
+          permissions: "read,triage,write,maintain,admin"
           allow_drafts: "false"
           allow_forks: "true"
           skip_reviews: "true"
