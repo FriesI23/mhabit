@@ -20,7 +20,6 @@ It includes a comprehensive set of growth curves and charts to help you build ha
 
 Moreover, this app is completely open source.
 
-
 [<img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/4711835e032fe2735dc80c1329beb4685899aa91/get-it-on-github.svg"
   alt="Get in on Github"
   height="80">][github-myapp]
@@ -45,11 +44,11 @@ Moreover, this app is completely open source.
 
 | platform | build | publish                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | -------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android  | ✅     | [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on LzzyOnDroid" height="80">][lzzyondroid-myapp] <br/> [F-Droid][fdroid-myapp] / [Play Store][play-myapp] / [Obtainium][obtainium-myapp] / [GitHub - apk][github-myapp]                                                                                                                                                                                                                                                                                                                                  |
-| iOS      | ✅     | [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore-org.png" alt="Get it on AltStore" height="80">][altstore-source] [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore-org.png" alt="Get it on SideStore" height="80">][sidestore-source] [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [iOS Apple Store][appstore-myapp] / [GitHub - ipa][github-myapp] |
-| macOS    | ✅     | [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [Mac Apple Store][appstore-myapp] / [HomeBrew Tap][homebrew-tap-wiki] / [GitHub - dmg][github-myapp] |
-| Windows  | ✅     | [Scoop Bucket][scoop-bucket-wiki] / [GitHub - msix][github-myapp] / [Microsoft Store][msstore-myapp] |
-| Linux    | ✅     | [Flathub][flathub-source] / [GitHub - flatpak][github-myapp] |
+| Android  | ✅    | [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on LzzyOnDroid" height="80">][lzzyondroid-myapp] <br/> [F-Droid][fdroid-myapp] / [Play Store][play-myapp] / [Obtainium][obtainium-myapp] / [GitHub - apk][github-myapp]                                                                                                                                                                                                                                                                                                     |
+| iOS      | ✅    | [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-altstore-org.png" alt="Get it on AltStore" height="80">][altstore-source] [<img src="https://raw.githubusercontent.com/FriesI23/altstore-repo/refs/heads/master/assets/get-it-on-sidestore-org.png" alt="Get it on SideStore" height="80">][sidestore-source] [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [iOS Apple Store][appstore-myapp] / [GitHub - ipa][github-myapp] |
+| macOS    | ✅    | [<img src="docs/README/images/testflight-get-it-on.svg" alt="Available on TestFlight" height="80">][ios-testflight-pre-release] <br/> [Mac Apple Store][appstore-myapp] / [HomeBrew Tap][homebrew-tap-wiki] / [GitHub - dmg][github-myapp]                                                                                                                                                                                                                                                                                                                                  |
+| Windows  | ✅    | [Scoop Bucket][scoop-bucket-wiki] / [GitHub - msix][github-myapp] / [Microsoft Store][msstore-myapp]                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Linux    | ✅    | [Flathub][flathub-source] / [GitHub - flatpak][github-myapp]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ## Features
 
@@ -75,11 +74,11 @@ For more information, please visit our [**Wiki**][wiki].
 
 ## Todo
 
-| status | progress                               | desc. |
-| ------ | -------------------------------------- | ----- |
-| ✅      | Scheduled reminders on Linux / Windows |       |
-| 🟨      | Android Widget                         |       |
-| 🟨      | iOS Widget                             |       |
+| status | progress       | desc. |
+| ------ | -------------- | ----- |
+| 🟨     | Group          |       |
+| 🟨     | Android Widget |       |
+| 🟨     | iOS Widget     |       |
 
 ## Contributing
 
