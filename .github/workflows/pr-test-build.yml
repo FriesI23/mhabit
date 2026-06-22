@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - main
+    types: [opened]
+  workflow_run:
+    workflows: ["Check PR (Main Branch)"]
+    types: [completed]
   issue_comment:
     types: [created]
 
@@ -15,13 +19,24 @@ permissions:
   actions: write # needed by the dedup/stop step to list & cancel workflow runs
 
 concurrency:
-  group: pr-test-build-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # issue_comment runs each get their own group (keyed by comment id) so a
+  # `/build`/`/build stop` comment is never queued behind another run in the
+  # same group — they must actually run concurrently for the dedup step's
+  # own `gh run list`/`gh run cancel` logic (below) to observe and act on
+  # an in-progress run. pull_request/workflow_run runs still share one group
+  # per PR so a new push cancels a stale auto-build.
+  group: >-
+    ${{ github.event_name == 'issue_comment'
+        && format('pr-test-build-comment-{0}', github.event.comment.id)
+        || format('pr-test-build-{0}', github.event.pull_request.number || github.event.workflow_run.head_branch) }}
+  cancel-in-progress: ${{ github.event_name != 'issue_comment' }}
 
 run-name: >-
-  ${{ github.event_name == 'issue_comment'
-      && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)
-      || format('auto test build #{0}', github.event.pull_request.number) }}
+  ${{
+    (github.event_name == 'issue_comment' && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)) ||
+    (github.event_name == 'workflow_run' && format('auto test build (run {0})', github.event.workflow_run.id)) ||
+    format('PR opened #{0}', github.event.pull_request.number)
+  }}
 
 jobs:
   # One PR creation help comment, shown once, when the PR already carries the
@@ -29,7 +44,6 @@ jobs:
   auto-build-help:
     if: >
       github.event_name == 'pull_request' &&
-      github.event.action == 'opened' &&
       contains(
         join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
         'need test-build')
@@ -40,12 +54,18 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            👋 This PR is labeled `need test-build`, so platform builds (android/ios/linux/macos) will run automatically on every push, once analyzing/checking/testing pass, based on which paths changed.
+            👋 This PR is labeled `need test-build` — once analyzing/checking/testing pass, platform builds run automatically based on which paths changed.
 
-            You can also manually trigger test builds anytime, regardless of the label, by commenting on this PR:
-            - `/build` or `/build all` — build all platforms
-            - `/build android,ios` — build only the listed platforms (comma or space separated)
-            - `/build stop` — cancel an in-progress manual build
+            You can also trigger test builds manually anytime, regardless of the label:
+
+            ```
+            /build                build all platforms (android, ios, linux, macos)
+            /build all             same as above
+            /build <platforms>     build only the given platforms, comma- or space-separated
+                                   e.g. /build android,ios
+            /build stop            cancel an in-progress manual build
+            /build cancel          alias for stop
+            ```
 
   # ---- Manual entry point: `/build ...` comment ----
   resolve-manual:
@@ -161,87 +181,65 @@ jobs:
           body: ${{ steps.dedup.outputs.message }}
 
   # ---- Automatic entry point: `need test-build` label + path filter ----
+  # Triggered by completion of check-pr-main.yml (analyzing/checking/testing)
+  # instead of `pull_request` directly, so this only ever runs once those
+  # checks have actually finished — no polling needed.
   resolve-auto:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_run'
     runs-on: ubuntu-latest
     outputs:
-      proceed: ${{ steps.ci-gate.outputs.passed == 'true' }}
-      sha: ${{ github.event.pull_request.head.sha }}
-      issue-number: ${{ github.event.pull_request.number }}
+      proceed: ${{ steps.pr.outputs.proceed }}
+      sha: ${{ steps.pr.outputs.sha }}
+      issue-number: ${{ steps.pr.outputs.number }}
       commit-id: ${{ steps.start-comment.outputs.comment-id }}
       environment: check-ci
-      android: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true') }}
-      ios: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true') }}
-      linux: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true') }}
-      macos: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true') }}
+      android: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true') }}
+      ios: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true') }}
+      linux: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true') }}
+      macos: ${{ steps.pr.outputs.proceed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true') }}
     steps:
-      # Only PRs labeled `need test-build` auto-build, and only once
-      # analyzing/checking/testing (from check-pr-main.yml) have passed for
-      # this commit. This is a non-blocking-forever, bounded poll against the
-      # Checks API since cross-workflow-file `needs:` isn't possible.
-      - name: Wait for analyze/check/test to pass
-        id: ci-gate
-        if: >
-          github.event.pull_request.draft == false &&
-          contains(
-            join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
-            'need test-build')
+      # Resolve the PR for this commit via the API (works for same-repo and
+      # fork PRs alike), then gate on draft status + `need test-build` label.
+      - name: Resolve PR for this check run
+        id: pr
+        if: github.event.workflow_run.conclusion == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
-          SHA: ${{ github.event.pull_request.head.sha }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          NAMES="analyzing checking testing"
-          TIMEOUT=1800
-          INTERVAL=15
-          ELAPSED=0
-          while true; do
-            RUNS_JSON=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs" --paginate --jq '.check_runs')
-            ALL_DONE=true
-            ANY_FAILED=false
-            for n in $NAMES; do
-              MATCHES=$(echo "$RUNS_JSON" | jq -c --arg n "$n" '[.[] | select(.name == $n or (.name | startswith($n + " /")))]')
-              COUNT=$(echo "$MATCHES" | jq 'length')
-              if [ "$COUNT" -eq 0 ]; then
-                ALL_DONE=false
-                continue
-              fi
-              INCOMPLETE=$(echo "$MATCHES" | jq '[.[] | select(.status != "completed")] | length')
-              if [ "$INCOMPLETE" -gt 0 ]; then
-                ALL_DONE=false
-                continue
-              fi
-              FAILED=$(echo "$MATCHES" | jq '[.[] | select(.conclusion != "success" and .conclusion != "neutral" and .conclusion != "skipped")] | length')
-              if [ "$FAILED" -gt 0 ]; then
-                ANY_FAILED=true
-              fi
-            done
-            if [ "$ANY_FAILED" = "true" ]; then
-              echo "passed=false" >> "$GITHUB_OUTPUT"
-              break
-            fi
-            if [ "$ALL_DONE" = "true" ]; then
-              echo "passed=true" >> "$GITHUB_OUTPUT"
-              break
-            fi
-            if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
-              echo "::warning::Timed out waiting for analyzing/checking/testing checks on $SHA"
-              echo "passed=false" >> "$GITHUB_OUTPUT"
-              break
-            fi
-            sleep "$INTERVAL"
-            ELAPSED=$((ELAPSED + INTERVAL))
-          done
+          NUMBER=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
+          if [ -z "$NUMBER" ]; then
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          PR_JSON=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$NUMBER")
+          DRAFT=$(echo "$PR_JSON" | jq -r '.draft')
+          BASE_SHA=$(echo "$PR_JSON" | jq -r '.base.sha')
+          LABELS=$(echo "$PR_JSON" | jq -r '[.labels[].name] | join(",")')
+          if [ "$DRAFT" = "true" ]; then
+            PROCEED="false"
+          elif printf ',%s,' "$LABELS" | grep -q ',need test-build,'; then
+            PROCEED="true"
+          else
+            PROCEED="false"
+          fi
+          {
+            echo "number=$NUMBER"
+            echo "sha=$SHA"
+            echo "base-sha=$BASE_SHA"
+            echo "proceed=$PROCEED"
+          } >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
-        if: steps.ci-gate.outputs.passed == 'true'
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
+      # API-based diff (no checkout needed) — paths-filter's recommended mode
+      # when not running directly off a `pull_request` event.
       - name: Filter paths
         id: filter
-        if: steps.ci-gate.outputs.passed == 'true'
+        if: steps.pr.outputs.proceed == 'true'
         uses: dorny/paths-filter@v4
         with:
+          token: ${{ github.token }}
+          base: ${{ steps.pr.outputs.base-sha }}
+          ref: ${{ steps.pr.outputs.sha }}
           filters: |
             common:
               - 'pubspec.yaml'
@@ -260,14 +258,14 @@ jobs:
 
       - name: Comment on PR (auto build started)
         id: start-comment
-        if: steps.ci-gate.outputs.passed == 'true'
+        if: steps.pr.outputs.proceed == 'true'
         uses: peter-evans/create-or-update-comment@v5
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ steps.pr.outputs.number }}
           body: |
-            🤖 Auto Test Build (need test-build label)...
+            🤖 Auto Test Build...
             ===
-            Commit: ${{ github.event.pull_request.head.sha }}
+            Commit: ${{ steps.pr.outputs.sha }}
 
   build-android:
     needs:
