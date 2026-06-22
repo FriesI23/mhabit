@@ -1,0 +1,43 @@
+name: Build Test iOS IPA (Unsigned)
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref/sha to checkout (defaults to the calling workflow's own ref)
+        type: string
+        required: false
+        default: ''
+      environment:
+        description: GitHub environment the build job runs under
+        type: string
+        required: true
+    outputs:
+      artifact-url:
+        description: URL of the uploaded IPA artifact
+        value: ${{ jobs.build.outputs.artifact-url }}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      artifact-url: ${{ steps.upload.outputs.artifact-url }}
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_ios_unsigned
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-release.ipa
+          path: ${{ steps.build.outputs.ipa-path }}
+          if-no-files-found: error
+          retention-days: 1

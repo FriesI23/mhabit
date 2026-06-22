@@ -1,0 +1,417 @@
+name: PR Test Build
+
+on:
+  pull_request:
+    branches:
+      - main
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+  checks: read
+  contents: read
+  actions: write # needed by the dedup/stop step to list & cancel workflow runs
+
+concurrency:
+  group: pr-test-build-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+run-name: >-
+  ${{ github.event_name == 'issue_comment'
+      && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)
+      || format('auto test build #{0}', github.event.pull_request.number) }}
+
+jobs:
+  # One PR creation help comment, shown once, when the PR already carries the
+  # `need test-build` label at creation time.
+  auto-build-help:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'opened' &&
+      contains(
+        join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
+        'need test-build')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            👋 This PR is labeled `need test-build`, so platform builds (android/ios/linux/macos) will run automatically on every push, once analyzing/checking/testing pass, based on which paths changed.
+
+            You can also manually trigger test builds anytime, regardless of the label, by commenting on this PR:
+            - `/build` or `/build all` — build all platforms
+            - `/build android,ios` — build only the listed platforms (comma or space separated)
+            - `/build stop` — cancel an in-progress manual build
+
+  # ---- Manual entry point: `/build ...` comment ----
+  resolve-manual:
+    if: github.event_name == 'issue_comment'
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.dedup.outputs.proceed }}
+      sha: ${{ steps.command.outputs.sha }}
+      issue-number: ${{ steps.command.outputs.issue_number }}
+      commit-id: ${{ steps.start-comment.outputs.comment-id }}
+      environment: ${{ steps.command.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
+      android: ${{ steps.platforms.outputs.android }}
+      ios: ${{ steps.platforms.outputs.ios }}
+      linux: ${{ steps.platforms.outputs.linux }}
+      macos: ${{ steps.platforms.outputs.macos }}
+    steps:
+      # Low bar to *request* a build (this step touches no secrets) — the real
+      # gate for fork contributors is the dynamic `environment:` above, which
+      # routes fork-originated requests through `check-ci-review` (required
+      # reviewer approval); non-fork requests use the ungated `check-ci`.
+      - uses: github/command@v2.0.3
+        id: command
+        with:
+          command: "/build"
+          allowed_contexts: pull_request
+          permissions: "read,triage,write,maintain,admin"
+          allow_drafts: "false"
+          allow_forks: "true"
+          skip_reviews: "true"
+          skip_ci: "false"
+          reaction: "eyes"
+
+      # `/build` while one is already running is ignored (not queued/restarted);
+      # `/build stop` cancels whatever is currently running for this PR.
+      - name: Resolve duplicate or stop command
+        id: dedup
+        if: steps.command.outputs.continue == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: |
+          MODE="build"
+          if printf '%s' "$RAW_PARAMS" | tr '[:upper:]' '[:lower:]' | xargs | grep -qE '^(stop|cancel)$'; then
+            MODE="stop"
+          fi
+
+          RUNS_JSON=$(gh run list --workflow=pr-test-build.yml --json databaseId,name,status --limit 50)
+          RUNNING_IDS=$(echo "$RUNS_JSON" | jq -r \
+            --arg prefix "/build #$ISSUE_NUMBER (" \
+            --arg self "$GITHUB_RUN_ID" \
+            '.[] | select(.status == "in_progress" or .status == "queued") | select(.name | startswith($prefix)) | select((.databaseId | tostring) != $self) | .databaseId')
+
+          if [ "$MODE" = "stop" ]; then
+            if [ -z "$RUNNING_IDS" ]; then
+              MSG="ℹ️ No test build is currently running for this PR."
+            else
+              for id in $RUNNING_IDS; do gh run cancel "$id"; done
+              MSG="🛑 Cancelled the in-progress test build for this PR."
+            fi
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$RUNNING_IDS" ]; then
+            # shellcheck disable=SC2016 # intentionally literal, no expansion wanted
+            MSG='⏳ A test build is already running for this PR — ignoring this `/build` request. Comment `/build stop` to cancel it first.'
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          else
+            MSG=""
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "message<<EOF"
+            echo "$MSG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Parse requested platforms
+        id: platforms
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          RAW_PARAMS: ${{ steps.command.outputs.params }}
+        run: |
+          ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
+          if [ -z "$(echo "$ARGS" | xargs)" ] || echo " $ARGS " | grep -qw all; then
+            ARGS="android ios linux macos"
+          fi
+          for p in android ios linux macos; do
+            if echo " $ARGS " | grep -qw "$p"; then
+              echo "$p=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$p=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+      - name: Comment on PR (build started)
+        id: start-comment
+        if: steps.dedup.outputs.proceed == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: |
+            Start Test Build...
+            ===
+            Requested by @${{ steps.command.outputs.actor }}
+            Commit: ${{ steps.command.outputs.sha }}
+
+      - name: Comment on PR (dedup/stop result)
+        if: >
+          steps.command.outputs.continue == 'true' &&
+          steps.dedup.outputs.proceed != 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: ${{ steps.dedup.outputs.message }}
+
+  # ---- Automatic entry point: `need test-build` label + path filter ----
+  resolve-auto:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.ci-gate.outputs.passed == 'true' }}
+      sha: ${{ github.event.pull_request.head.sha }}
+      issue-number: ${{ github.event.pull_request.number }}
+      commit-id: ${{ steps.start-comment.outputs.comment-id }}
+      environment: check-ci
+      android: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true') }}
+      ios: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true') }}
+      linux: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true') }}
+      macos: ${{ steps.ci-gate.outputs.passed == 'true' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true') }}
+    steps:
+      # Only PRs labeled `need test-build` auto-build, and only once
+      # analyzing/checking/testing (from check-pr-main.yml) have passed for
+      # this commit. This is a non-blocking-forever, bounded poll against the
+      # Checks API since cross-workflow-file `needs:` isn't possible.
+      - name: Wait for analyze/check/test to pass
+        id: ci-gate
+        if: >
+          github.event.pull_request.draft == false &&
+          contains(
+            join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','),
+            'need test-build')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          NAMES="analyzing checking testing"
+          TIMEOUT=1800
+          INTERVAL=15
+          ELAPSED=0
+          while true; do
+            RUNS_JSON=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs" --paginate --jq '.check_runs')
+            ALL_DONE=true
+            ANY_FAILED=false
+            for n in $NAMES; do
+              MATCHES=$(echo "$RUNS_JSON" | jq -c --arg n "$n" '[.[] | select(.name == $n or (.name | startswith($n + " /")))]')
+              COUNT=$(echo "$MATCHES" | jq 'length')
+              if [ "$COUNT" -eq 0 ]; then
+                ALL_DONE=false
+                continue
+              fi
+              INCOMPLETE=$(echo "$MATCHES" | jq '[.[] | select(.status != "completed")] | length')
+              if [ "$INCOMPLETE" -gt 0 ]; then
+                ALL_DONE=false
+                continue
+              fi
+              FAILED=$(echo "$MATCHES" | jq '[.[] | select(.conclusion != "success" and .conclusion != "neutral" and .conclusion != "skipped")] | length')
+              if [ "$FAILED" -gt 0 ]; then
+                ANY_FAILED=true
+              fi
+            done
+            if [ "$ANY_FAILED" = "true" ]; then
+              echo "passed=false" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            if [ "$ALL_DONE" = "true" ]; then
+              echo "passed=true" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+              echo "::warning::Timed out waiting for analyzing/checking/testing checks on $SHA"
+              echo "passed=false" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            sleep "$INTERVAL"
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+
+      - uses: actions/checkout@v6
+        if: steps.ci-gate.outputs.passed == 'true'
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Filter paths
+        id: filter
+        if: steps.ci-gate.outputs.passed == 'true'
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            common:
+              - 'pubspec.yaml'
+              - 'pubspec.lock'
+              - 'packages/**'
+              - 'lib/**'
+              - 'assets/**'
+            android:
+              - 'android/**'
+            ios:
+              - 'ios/**'
+            linux:
+              - 'linux/**'
+            macos:
+              - 'macos/**'
+
+      - name: Comment on PR (auto build started)
+        id: start-comment
+        if: steps.ci-gate.outputs.passed == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🤖 Auto Test Build (need test-build label)...
+            ===
+            Commit: ${{ github.event.pull_request.head.sha }}
+
+  build-android:
+    needs:
+      - resolve-manual
+      - resolve-auto
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
+      (needs.resolve-manual.outputs.android == 'true' || needs.resolve-auto.outputs.android == 'true')
+    uses: ./.github/workflows/_build_test_android.yml
+    with:
+      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
+      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
+    secrets: inherit
+
+  comment-build-android:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - build-android
+    if: always() && needs.build-android.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: >
+            ${{ needs.build-android.result == 'success' && '✅ Android Build Completed:' || '❌ Android Build Failed' }}
+            ${{ needs.build-android.outputs.artifact-url || '' }}
+
+  build-ios:
+    needs:
+      - resolve-manual
+      - resolve-auto
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
+      (needs.resolve-manual.outputs.ios == 'true' || needs.resolve-auto.outputs.ios == 'true')
+    uses: ./.github/workflows/_build_test_ios.yml
+    with:
+      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
+      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
+    secrets: inherit
+
+  comment-build-ios:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - build-ios
+    if: always() && needs.build-ios.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: >
+            ${{ needs.build-ios.result == 'success' && '✅ iOS Build Completed:' || '❌ iOS Build Failed' }}
+            ${{ needs.build-ios.outputs.artifact-url || '' }}
+
+  build-linux:
+    needs:
+      - resolve-manual
+      - resolve-auto
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
+      (needs.resolve-manual.outputs.linux == 'true' || needs.resolve-auto.outputs.linux == 'true')
+    uses: ./.github/workflows/_build_test_linux.yml
+    with:
+      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
+      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
+    secrets: inherit
+
+  comment-build-linux:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - build-linux
+    if: always() && needs.build-linux.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: >
+            ${{ needs.build-linux.result == 'success' && '✅ Linux Build Completed:' || '❌ Linux Build Failed' }}
+            ${{ needs.build-linux.outputs.artifact-url || '' }}
+
+  build-macos:
+    needs:
+      - resolve-manual
+      - resolve-auto
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
+      (needs.resolve-manual.outputs.macos == 'true' || needs.resolve-auto.outputs.macos == 'true')
+    uses: ./.github/workflows/_build_test_macos.yml
+    with:
+      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
+      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
+    secrets: inherit
+
+  comment-build-macos:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - build-macos
+    if: always() && needs.build-macos.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: >
+            ${{ needs.build-macos.result == 'success' && '✅ macOS Build Completed:' || '❌ macOS Build Failed' }}
+            ${{ needs.build-macos.outputs.artifact-url || '' }}
+
+  report:
+    needs:
+      - resolve-manual
+      - resolve-auto
+      - comment-build-android
+      - comment-build-ios
+      - comment-build-linux
+      - comment-build-macos
+    if: >
+      always() &&
+      (needs.resolve-manual.outputs.commit-id != '' || needs.resolve-auto.outputs.commit-id != '')
+    runs-on: ubuntu-latest
+    steps:
+      - id: date
+        run: echo "now=$(date)" >> "$GITHUB_OUTPUT"
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          body: |
+            Ended at: ${{ steps.date.outputs.now }}

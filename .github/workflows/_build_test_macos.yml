@@ -1,0 +1,52 @@
+name: Build Test macOS App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref/sha to checkout (defaults to the calling workflow's own ref)
+        type: string
+        required: false
+        default: ''
+      environment:
+        description: GitHub environment the build job runs under
+        type: string
+        required: true
+    outputs:
+      artifact-url:
+        description: URL of the uploaded app artifact
+        value: ${{ jobs.build.outputs.artifact-url }}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      artifact-url: ${{ steps.upload.outputs.artifact-url }}
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: ./.github/actions/setup_flutter
+      - id: build
+        uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: false
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-release.app
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1

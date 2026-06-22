@@ -1,0 +1,47 @@
+name: Build Test Android APK
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref/sha to checkout (defaults to the calling workflow's own ref)
+        type: string
+        required: false
+        default: ''
+      environment:
+        description: GitHub environment the build job runs under
+        type: string
+        required: true
+    outputs:
+      artifact-url:
+        description: URL of the uploaded APK artifact
+        value: ${{ jobs.build.outputs.artifact-url }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      artifact-url: ${{ steps.upload.outputs.artifact-url }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: ./.github/actions/setup_jdk
+      - uses: ./.github/actions/setup_flutter
+      - uses: ./.github/actions/patch_android_jni_build_id
+      - id: build
+        env:
+          OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
+        run: |
+          flutter build apk --release
+          md5sum "$OUTPUT_PATH"
+          echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-release.apk
+          path: ${{ steps.build.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
