@@ -47,6 +47,7 @@ jobs:
   auto-build-help:
     if: >
       github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false &&
       contains(github.event.pull_request.labels.*.name, 'need test-build')
     runs-on: ubuntu-latest
     steps:

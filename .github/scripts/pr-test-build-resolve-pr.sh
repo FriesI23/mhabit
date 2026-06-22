@@ -7,7 +7,8 @@
 # two are provided automatically by the runner).
 set -eo pipefail
 
-NUMBER=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
+PULLS_JSON=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls")
+NUMBER=$(echo "$PULLS_JSON" | jq -r --arg sha "$SHA" '[.[] | select(.state=="open" and .head.sha==$sha)][0].number // empty')
 if [ -z "$NUMBER" ]; then
   echo "proceed=false" >> "$GITHUB_OUTPUT"
   exit 0
