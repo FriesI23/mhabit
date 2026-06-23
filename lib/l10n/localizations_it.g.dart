@@ -24,6 +24,39 @@ class L10nIt extends L10n {
   String get habitEdit_colorPicker_title => 'Scegli colore';
 
   @override
+  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+
+  @override
+  String habitEdit_colorPicker_customSectionLabel(String tinted) {
+    String _temp0 = intl.Intl.selectLogic(tinted, {
+      'true': 'Custom (Tinted)',
+      'false': 'Custom',
+      'other': 'Custom',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get habitEdit_colorPicker_cancel => 'Cancel';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+
+  @override
+  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+
+  @override
+  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleOnHint =>
+      'Tinting may shift the final color away from the one you picked.';
+
+  @override
+  String get habitEdit_colorPicker_tintToggleOffHint =>
+      'Some colors may reduce text readability in light or dark theme.';
+
+  @override
   String get habitEdit_habitTypeDialog_title => 'Tipologia abitudine';
 
   @override
@@ -1533,6 +1566,9 @@ class L10nIt extends L10n {
 
   @override
   String get common_habitColorType_cc10 => 'Orchidea scura';
+
+  @override
+  String get common_habitColorType_custom => 'Custom';
 
   @override
   String common_habitColorType_default(int index) {

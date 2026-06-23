@@ -257,7 +257,7 @@ class _InternalChosenOption extends StatelessWidget {
     final l10n = L10n.of(context);
     final color = Theme.of(
       context,
-    ).extension<CustomColors>()?.getColor(colorType);
+    ).extension<CustomColors>()?.getBuiltInColor(colorType);
     return ListTile(
       title: Text(HabitColorType.getColorName(colorType, l10n)),
       subtitle: debug ? Text("$color") : null,

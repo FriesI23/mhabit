@@ -33,6 +33,8 @@ export PATH
 export MHABIT_MAKE_PATH_READY := 1
 endif
 
+SYNC_RULES_FILE ?= docs/rules/rules.md
+
 
 .PHONY: help init bootstrap \
 	normalize-l10n build-runner format fix gen-icons test gen \
@@ -54,7 +56,7 @@ help:
 	@echo   verify-submodules Show recursive submodule status
 	@echo   aio               Run generation, fixes, and generation verification
 	@echo   aio-full          Run aio plus the root app and internal package test suites
-	@echo "  sync-rules        Distribute project rules to AI tools (.continue, .github, etc.)"
+	@echo "  sync-rules        Distribute rule references to AI tools (SYNC_RULES_FILE=docs/rules/rules.md)"
 	@echo "  unsync-rules      Remove AI tool rules and clean up .git/info/exclude"
 
 init:
@@ -102,7 +104,7 @@ verify-generated:
 	$(call run_script,verify_generated)
 
 sync-rules:
-	$(call run_script,sync-rules,install)
+	$(call run_script,sync-rules,install $(SYNC_RULES_FILE))
 
 unsync-rules:
 	$(call run_script,sync-rules,uninstall)

@@ -30,6 +30,7 @@ import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/app_event.dart';
 import '../../models/custom_date_format.dart';
+import '../../models/habit_color.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_detail_chart.dart';
 import '../../models/habit_display.dart';
@@ -77,14 +78,14 @@ class DetailPageReturn {
 Future<DetailPageReturn?> naviToHabitDetailPage({
   required BuildContext context,
   required HabitUUID habitUUID,
-  HabitColorType? colorType,
+  HabitColor? color,
   habit_summary.HabitSummaryViewModel? summary,
 }) async {
   return Navigator.of(context).push<DetailPageReturn>(
     MaterialPageRoute(
       builder: (context) => Provider.value(
         value: summary?.buildHabitDetailAdapter(),
-        child: HabitDetailPage(habitUUID: habitUUID, colorType: colorType),
+        child: HabitDetailPage(habitUUID: habitUUID, color: color),
       ),
     ),
   );
@@ -116,23 +117,23 @@ extension _AppEventBusExtension on AppEventBus {
 ///   - [habit_summary.HabitDetailAdapter]
 class HabitDetailPage extends StatelessWidget {
   final HabitUUID habitUUID;
-  final HabitColorType? colorType;
+  final HabitColor? color;
 
-  const HabitDetailPage({super.key, required this.habitUUID, this.colorType});
+  const HabitDetailPage({super.key, required this.habitUUID, this.color});
 
   @override
   Widget build(BuildContext context) {
     return PageProviders(
-      child: _Page(habitUUID: habitUUID, colorType: colorType),
+      child: _Page(habitUUID: habitUUID, color: color),
     );
   }
 }
 
 class _Page extends StatefulWidget {
   final HabitUUID habitUUID;
-  final HabitColorType? colorType;
+  final HabitColor? color;
 
-  const _Page({required this.habitUUID, this.colorType});
+  const _Page({required this.habitUUID, this.color});
 
   @override
   State<StatefulWidget> createState() => _PageState();
@@ -239,7 +240,7 @@ class _PageState extends State<_Page>
 
     await showHabitEditReplacementRecordCalendarDialog(
       context: context,
-      habitColorType: _vm.habitColorType,
+      habitColor: _vm.habitColor,
       firstday: _vm.firstday,
       detail: _vm,
     );
@@ -482,10 +483,7 @@ class _PageState extends State<_Page>
     appLog.build.debug(context);
 
     Widget buildAppbar(BuildContext context) {
-      Widget buildAppbarAction(
-        BuildContext context,
-        HabitColorType? colorType,
-      ) {
+      Widget buildAppbarAction(BuildContext context, HabitColor? habitColor) {
         return Selector<HabitDetailViewModel, bool>(
           selector: (context, viewmodel) => viewmodel.isHabitArchived,
           shouldRebuild: (previous, next) => previous != next,
@@ -493,8 +491,11 @@ class _PageState extends State<_Page>
             final themeData = Theme.of(context);
             final colorData = themeData.extension<CustomColors>();
             final l10n = L10n.of(context);
-            final color = colorType != null
-                ? colorData?.getColor(colorType)
+            final color = habitColor != null
+                ? colorData?.getColor(
+                    habitColor,
+                    brightness: themeData.brightness,
+                  )
                 : Colors.transparent;
             return AppBarActions<
               DetailAppbarActionItemConfig,
@@ -535,12 +536,12 @@ class _PageState extends State<_Page>
         );
       }
 
-      return Selector<HabitDetailViewModel, HabitColorType?>(
-        selector: (context, viewmodel) => viewmodel.habitColorType,
+      return Selector<HabitDetailViewModel, HabitColor?>(
+        selector: (context, viewmodel) => viewmodel.habitColor,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, colorType, child) {
+        builder: (context, habitColor, child) {
           return HabitDetailAppBar(
-            colorType: colorType,
+            color: habitColor,
             title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Selector<HabitDetailViewModel, String>(
@@ -549,7 +550,7 @@ class _PageState extends State<_Page>
                 builder: (context, title, child) => Text(title),
               ),
             ),
-            actionBuilder: (context) => buildAppbarAction(context, colorType),
+            actionBuilder: (context) => buildAppbarAction(context, habitColor),
           );
         },
       );
@@ -570,7 +571,7 @@ class _PageState extends State<_Page>
           return L10nBuilder(
             builder: (context, l10n) => HabitDetailSummaryTile(
               habitProgress: viewmodel.habitProgress,
-              colorType: viewmodel.habitColorType,
+              color: viewmodel.habitColor,
               isHabitCompleted: viewmodel.isHabitCompleted,
               isHabitArchived: viewmodel.isHabitArchived,
               isHabitDeleted: viewmodel.isHabitDeleted,
@@ -1014,11 +1015,11 @@ class _PageState extends State<_Page>
     }
 
     Widget buildFAB(BuildContext context) {
-      return Selector<HabitDetailViewModel, HabitColorType?>(
-        selector: (context, viewmodel) => viewmodel.habitColorType,
+      return Selector<HabitDetailViewModel, HabitColor?>(
+        selector: (context, viewmodel) => viewmodel.habitColor,
         shouldRebuild: (previous, next) => previous != next,
-        builder: (context, habitColorType, child) => HabitDetailFAB(
-          colorType: habitColorType ?? widget.colorType,
+        builder: (context, habitColor, child) => HabitDetailFAB(
+          color: habitColor ?? widget.color,
           onPressed: _openEditDialog,
         ),
       );
@@ -1052,7 +1053,7 @@ class _PageState extends State<_Page>
                     size: const Size.square(
                       kHabitDetailLoadingCircleIndicatorSize,
                     ),
-                    colorType: viewmodel.habitColorType,
+                    color: viewmodel.habitColor,
                   ),
                 );
               } else if (snapshot.hasError) {

@@ -28,6 +28,21 @@ import 'sync.dart';
 
 part 'habit.g.dart';
 
+/// DB column keys. Mirrored by `HabitExportDataKey`
+/// (`lib/models/habit_export.dart`, local JSON backup) and
+/// `WebDavSyncHabitKey`
+/// (`lib/models/_app_sync_tasks/webdav_app_sync_models.dart`, WebDAV sync).
+///
+/// {@template habit_color_keys_relationship}
+/// These three key sets mirror each other's `color`/`customColor`/
+/// `customColorTinted` entries but deliberately do not reference one
+/// another — coupling them just because the values happen to match today
+/// would tie unrelated wire formats together. When adding, renaming, or
+/// removing a color-related field in one, check the other two too.
+/// {@endtemplate}
+///
+/// [colorKeys]/[nullableColorKeys] below are the shared lists the DB-layer
+/// call sites spread instead of repeating this trio.
 class HabitDBCellKey {
   static const String id = 'id_';
   static const String type = 'type_';
@@ -38,6 +53,8 @@ class HabitDBCellKey {
   static const String name = 'name';
   static const String desc = 'desc';
   static const String color = 'color';
+  static const String customColor = 'custom_color';
+  static const String customColorTinted = 'custom_color_tinted';
   static const String dailyGoal = 'daily_goal';
   static const String dailyGoalUnit = 'daily_goal_unit';
   static const String dailyGoalExtra = 'daily_goal_extra';
@@ -48,6 +65,24 @@ class HabitDBCellKey {
   static const String remindCustom = 'remind_cutsom';
   static const String remindQuestion = 'remind_question';
   static const String sortPosition = 'sort_position';
+
+  /// `color`/`customColor`/`customColorTinted` always travel together as one
+  /// semantic unit: a habit's color is either a built-in `color` code, or a
+  /// `customColor` ARGB value (with `customColorTinted` as its only
+  /// modifier). Any "which columns" list should spread this constant instead
+  /// of listing the three keys individually, so a future color-related field
+  /// only needs to be added here.
+  static const List<String> colorKeys = [color, customColor, customColorTinted];
+
+  /// Subset of [colorKeys]: only the nullable fields that must be explicitly
+  /// cleared when switching back to a built-in color. Used for
+  /// `updateExistHabit`'s `includeNullKeys` — `color` itself doesn't belong
+  /// here, since it's legitimately left null/unprovided when an update only
+  /// touches unrelated fields.
+  static const List<String> nullableColorKeys = [
+    customColor,
+    customColorTinted,
+  ];
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake, includeIfNull: false)
@@ -71,6 +106,10 @@ class HabitDBCell with DBCell {
   final String? desc;
   @JsonKey(name: HabitDBCellKey.color)
   final int? color;
+  @JsonKey(name: HabitDBCellKey.customColor)
+  final int? customColor;
+  @JsonKey(name: HabitDBCellKey.customColorTinted)
+  final int? customColorTinted;
   @JsonKey(name: HabitDBCellKey.dailyGoal)
   final num? dailyGoal;
   @JsonKey(name: HabitDBCellKey.dailyGoalUnit)
@@ -102,6 +141,8 @@ class HabitDBCell with DBCell {
     this.name,
     this.desc,
     this.color,
+    this.customColor,
+    this.customColorTinted,
     this.dailyGoal,
     this.dailyGoalUnit,
     this.dailyGoalExtra,
@@ -256,7 +297,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.type,
     HabitDBCellKey.name,
     HabitDBCellKey.desc,
-    HabitDBCellKey.color,
+    ...HabitDBCellKey.colorKeys,
     HabitDBCellKey.dailyGoal,
     HabitDBCellKey.dailyGoalUnit,
     HabitDBCellKey.dailyGoalExtra,
@@ -288,7 +329,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.uuid,
     HabitDBCellKey.type,
     HabitDBCellKey.name,
-    HabitDBCellKey.color,
+    ...HabitDBCellKey.colorKeys,
     HabitDBCellKey.dailyGoal,
     HabitDBCellKey.dailyGoalExtra,
     HabitDBCellKey.targetDays,

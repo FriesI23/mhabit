@@ -61,7 +61,10 @@ class HabitTodayCard extends StatelessWidget {
     return Theme(
       data: themeData.copyWith(
         colorScheme: themeData.colorScheme.copyWith(
-          primary: colorData?.getColor(data.colorType),
+          primary: colorData?.getColor(
+            data.color,
+            brightness: themeData.brightness,
+          ),
         ),
       ),
       child: HabitTodayListCard(

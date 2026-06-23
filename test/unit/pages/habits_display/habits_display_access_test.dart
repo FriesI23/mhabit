@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_event.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -45,6 +46,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
   List<HabitSummaryData>? lastSortedHabits;
   num? lastIncreaseStep;
   int? lastDecimalPlaces;
+  List<String>? lastHabitsColumns;
 
   _FakeHabitsDisplayAccess({
     required this.seedData,
@@ -57,6 +59,7 @@ final class _FakeHabitsDisplayAccess implements HabitsDisplayAccess {
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async {
+    lastHabitsColumns = habitsColmns;
     final collection = initedCollection ?? HabitSummaryDataCollection();
     collection.addHabit(seedData, forceAdd: true);
     for (final habit in extraSeedData) {
@@ -210,7 +213,7 @@ HabitSummaryData _buildHabitSummaryData({
     type: HabitType.normal,
     name: name,
     desc: '',
-    colorType: HabitColorType.cc1,
+    color: const HabitColor.builtIn(HabitColorType.cc1),
     dailyGoal: 1,
     targetDays: 1,
     frequency: HabitFrequency.daily,
@@ -286,6 +289,29 @@ void main() {
 
       vm.dispose();
     });
+
+    test(
+      'HabitsTodayViewModel loadData requests customColor / customColorTinted'
+      ' columns',
+      () async {
+        final seedData = _buildHabitSummaryData();
+        final access = _FakeHabitsDisplayAccess(seedData: seedData);
+        final vm = HabitsTodayViewModel()..attachAccess(access);
+
+        await vm.loadData(listen: false);
+
+        expect(access.lastHabitsColumns, isNotNull);
+        expect(
+          access.lastHabitsColumns,
+          containsAll([
+            HabitDBCellKey.customColor,
+            HabitDBCellKey.customColorTinted,
+          ]),
+        );
+
+        vm.dispose();
+      },
+    );
 
     test('HabitSummaryViewModel writes through access', () async {
       final seedData = _buildHabitSummaryData();

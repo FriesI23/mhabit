@@ -164,6 +164,54 @@ abstract class L10n {
   /// **'Pick color'**
   String get habitEdit_colorPicker_title;
 
+  /// No description provided for @habitEdit_colorPicker_historySectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently used'**
+  String get habitEdit_colorPicker_historySectionLabel;
+
+  /// No description provided for @habitEdit_colorPicker_customSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{tinted, select, true {Custom (Tinted)} false {Custom} other {Custom}}'**
+  String habitEdit_colorPicker_customSectionLabel(String tinted);
+
+  /// No description provided for @habitEdit_colorPicker_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get habitEdit_colorPicker_cancel;
+
+  /// No description provided for @habitEdit_colorPicker_tintToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tint to theme'**
+  String get habitEdit_colorPicker_tintToggleLabel;
+
+  /// No description provided for @habitEdit_colorPicker_tintedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinted'**
+  String get habitEdit_colorPicker_tintedLabel;
+
+  /// No description provided for @habitEdit_colorPicker_untintedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tinted'**
+  String get habitEdit_colorPicker_untintedLabel;
+
+  /// No description provided for @habitEdit_colorPicker_tintToggleOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinting may shift the final color away from the one you picked.'**
+  String get habitEdit_colorPicker_tintToggleOnHint;
+
+  /// No description provided for @habitEdit_colorPicker_tintToggleOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Some colors may reduce text readability in light or dark theme.'**
+  String get habitEdit_colorPicker_tintToggleOffHint;
+
   /// No description provided for @habitEdit_habitTypeDialog_title.
   ///
   /// In en, this message translates to:
@@ -2443,6 +2491,12 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Dark orchid'**
   String get common_habitColorType_cc10;
+
+  /// No description provided for @common_habitColorType_custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get common_habitColorType_custom;
 
   /// unknown habit color type name
   ///

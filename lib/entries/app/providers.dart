@@ -26,6 +26,7 @@ import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/custom_color_history.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/support/global.dart';
@@ -181,6 +182,10 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<ProfileViewModel, AppFirstDayViewModel>(
       create: (context) => AppFirstDayViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, CustomColorHistoryViewModel>(
+      create: (context) => CustomColorHistoryViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider<

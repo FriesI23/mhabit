@@ -15,32 +15,30 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/localizations.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_reminder.dart';
 import '../../../widgets/widgets.dart';
 
 Future<HabitReminder?> showHabitReminderTypePickerDialog({
   required BuildContext context,
   required HabitReminder reminder,
-  HabitColorType? colorType,
+  HabitColor? color,
 }) async {
   return showDialog<HabitReminder>(
     context: context,
-    builder: (context) => HabitReminderTypePickerDialog(
-      initReminder: reminder,
-      colorType: colorType,
-    ),
+    builder: (context) =>
+        HabitReminderTypePickerDialog(initReminder: reminder, color: color),
   );
 }
 
 class HabitReminderTypePickerDialog extends StatefulWidget {
   final HabitReminder initReminder;
-  final HabitColorType? colorType;
+  final HabitColor? color;
 
   const HabitReminderTypePickerDialog({
     super.key,
     required this.initReminder,
-    this.colorType,
+    this.color,
   });
 
   @override
@@ -134,7 +132,7 @@ class _HabitReminderTypePickerDialog
             children: List.generate(
               7,
               (index) => WeekPickerCell(
-                colorType: widget.colorType,
+                color: widget.color,
                 selected: _weekSelectedColl.contains(index + 1),
                 weekday: index + 1,
                 onPressed: (weekday) => setState(() {
@@ -162,7 +160,7 @@ class _HabitReminderTypePickerDialog
             children: List.generate(
               31,
               (index) => MonthPickerCell(
-                colorType: widget.colorType,
+                color: widget.color,
                 selected: _monthSelectedColl.contains(index + 1),
                 monthday: index + 1,
                 onPressed: (monthday) => setState(() {

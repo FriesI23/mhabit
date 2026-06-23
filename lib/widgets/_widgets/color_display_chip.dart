@@ -16,17 +16,30 @@ import 'package:flutter/material.dart';
 
 import '../../extensions/custom_color_extensions.dart';
 import '../../l10n/localizations.dart';
+import '../../models/habit_color.dart';
 import '../../models/habit_form.dart';
 import '../../theme/color.dart';
 
-class ColorDisplayChip extends StatelessWidget {
-  final HabitColorType colorType;
+/// The effective display name for a habit color: the localized built-in
+/// name for [BuiltInHabitColor], or the localized "Custom" string for
+/// [CustomHabitColor]. Custom colors never show a per-color name.
+String getEffectiveColorName(HabitColor color, L10n? l10n) => switch (color) {
+  BuiltInHabitColor(colorType: final t) => HabitColorType.getColorName(t, l10n),
+  CustomHabitColor() => l10n?.common_habitColorType_custom ?? "Custom",
+};
 
-  const ColorDisplayChip(this.colorType, {super.key});
+class ColorDisplayChip extends StatelessWidget {
+  final HabitColor color;
+
+  const ColorDisplayChip(this.color, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final CustomColors? colorData = Theme.of(context).extension<CustomColors>();
+    final resolvedColor = colorData?.getColor(
+      color,
+      brightness: Theme.of(context).brightness,
+    );
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,15 +47,15 @@ class ColorDisplayChip extends StatelessWidget {
           Container(
             width: 42,
             decoration: BoxDecoration(
-              color: colorData?.getColor(colorType),
+              color: resolvedColor,
               shape: BoxShape.rectangle,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
           ),
           const SizedBox(width: 8),
           Text(
-            HabitColorType.getColorName(colorType, L10n.of(context)),
-            style: TextStyle(color: colorData?.getColor(colorType)),
+            getEffectiveColorName(color, L10n.of(context)),
+            style: TextStyle(color: resolvedColor),
           ),
         ],
       ),

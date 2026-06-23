@@ -16,20 +16,20 @@ import 'package:flutter/material.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 import '../../common/utils.dart';
-import '../../models/habit_form.dart';
+import '../../models/habit_color.dart';
 import 'theme_with_custom_colors.dart' show ThemeWithCustomColors;
 
 class ColorfulMarkdownBlock extends StatelessWidget {
   final String data;
   final bool selectable;
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final TextScaler? textScaler;
 
   const ColorfulMarkdownBlock({
     super.key,
     required this.data,
     this.selectable = true,
-    this.colorType,
+    this.color,
     this.textScaler,
   });
 
@@ -71,7 +71,7 @@ class ColorfulMarkdownBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ThemeWithCustomColors(
-    colorType: colorType,
+    color: color,
     child: MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: textScaler),
       child: Builder(

@@ -14,19 +14,14 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../widgets/widgets.dart';
 
 class HabitEditColorTile extends StatelessWidget {
-  final HabitColorType colorType;
-  final void Function(BuildContext context, HabitColorType colorType)?
-  onPressed;
+  final HabitColor color;
+  final void Function(BuildContext context, HabitColor color)? onPressed;
 
-  const HabitEditColorTile({
-    super.key,
-    required this.colorType,
-    this.onPressed,
-  });
+  const HabitEditColorTile({super.key, required this.color, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +30,8 @@ class HabitEditColorTile extends StatelessWidget {
         Icons.palette_outlined,
         color: Theme.of(context).colorScheme.outline,
       ),
-      title: ColorDisplayChip(colorType),
-      onTap: () => onPressed?.call(context, colorType),
+      title: ColorDisplayChip(color),
+      onTap: () => onPressed?.call(context, color),
     );
   }
 }

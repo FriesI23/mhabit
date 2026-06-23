@@ -1,0 +1,127 @@
+name: Build Test App
+
+# Single parameterized replacement for the four near-identical
+# _build_test_{android,ios,linux,macos}.yml files. Each platform's build
+# mechanism (inline script vs. composite action, required secrets, runner
+# OS) stays exactly as it was in the platform-specific file — only the
+# surrounding structure (checkout/setup/upload + the PR comment, which used
+# to be a separate comment-build-<platform> job) is shared.
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        description: Platform to build (android, ios, linux, macos)
+        type: string
+        required: true
+      ref:
+        description: Git ref/sha to checkout (defaults to the calling workflow's own ref)
+        type: string
+        required: false
+        default: ''
+      environment:
+        description: GitHub environment the build job runs under
+        type: string
+        required: true
+      issue-number:
+        description: PR number to comment the build result on
+        type: string
+        required: true
+      comment-id:
+        description: Existing PR comment id to update with the build result
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ${{ (inputs.platform == 'ios' || inputs.platform == 'macos') && 'macos-latest' || 'ubuntu-latest' }}
+    environment: ${{ inputs.environment }}
+    steps:
+      - id: meta
+        run: |
+          case "${{ inputs.platform }}" in
+            android) echo "label=Android" >> "$GITHUB_OUTPUT" ;;
+            ios) echo "label=iOS" >> "$GITHUB_OUTPUT" ;;
+            linux) echo "label=Linux" >> "$GITHUB_OUTPUT" ;;
+            macos) echo "label=macOS" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - if: inputs.platform == 'ios' || inputs.platform == 'macos'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ^26
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+
+      - if: inputs.platform == 'android'
+        uses: ./.github/actions/setup_jdk
+
+      - uses: ./.github/actions/setup_flutter
+
+      - if: inputs.platform == 'android'
+        uses: ./.github/actions/patch_android_jni_build_id
+
+      - if: inputs.platform == 'android'
+        id: build-android
+        env:
+          OUTPUT_PATH: build/app/outputs/flutter-apk/app-release.apk
+        run: |
+          flutter build apk --release
+          md5sum "$OUTPUT_PATH"
+          echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+
+      - if: inputs.platform == 'ios'
+        id: build-ios
+        uses: ./.github/actions/build_ios_unsigned
+
+      - if: inputs.platform == 'linux'
+        id: build-linux
+        uses: ./.github/actions/build_linux
+
+      - if: inputs.platform == 'macos'
+        id: build-macos
+        uses: ./.github/actions/build_macos
+        with:
+          apple-keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          apple-dev-cert-password: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          apple-dev-cert-p12-base64: ${{ secrets.APPLE_DEV_CERT_P12_BASE64 }}
+          apple-macos-api-key-id: ${{ secrets.APPLE_MACOS_API_KEY_ID }}
+          apple-macos-api-authkey-p8-base64: ${{ secrets.APPLE_MACOS_API_AUTHKEY_P8_BASE64 }}
+          apple-api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          apple-team-id: ${{ secrets.APPLE_TEAM_ID }}
+          package-dmg: false
+
+      - id: artifact
+        if: success()
+        run: |
+          case "${{ inputs.platform }}" in
+            android) echo "name=app-release.apk" >> "$GITHUB_OUTPUT"
+                     echo "path=${{ steps.build-android.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
+            ios)     echo "name=app-release.ipa" >> "$GITHUB_OUTPUT"
+                     echo "path=${{ steps.build-ios.outputs.ipa-path }}" >> "$GITHUB_OUTPUT" ;;
+            linux)   echo "name=linux-bundle-x64" >> "$GITHUB_OUTPUT"
+                     echo "path=${{ steps.build-linux.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
+            macos)   echo "name=app-release.app" >> "$GITHUB_OUTPUT"
+                     echo "path=${{ steps.build-macos.outputs.path }}" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - id: upload
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: ${{ steps.artifact.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Comment on PR
+        if: always()
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          body: >
+            ${{ job.status == 'success' && format('✅ {0} Build Completed:', steps.meta.outputs.label) || format('❌ {0} Build Failed', steps.meta.outputs.label) }}
+            ${{ steps.upload.outputs.artifact-url || '' }}

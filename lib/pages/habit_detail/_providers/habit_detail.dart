@@ -21,6 +21,7 @@ import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../logging/helper.dart';
 import '../../../logging/logger_stack.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
 import '../../../models/habit_detail.dart';
@@ -90,7 +91,7 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
 
   HabitDailyGoal? get habitOkValue => _habitDetailData?.data.habitOkValue;
 
-  HabitColorType? get habitColorType => _habitDetailData?.data.colorType;
+  HabitColor? get habitColor => _habitDetailData?.data.color;
 
   HabitDailyGoal? get habitDailyGoal => _habitDetailData?.data.dailyGoal;
 

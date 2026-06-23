@@ -16,6 +16,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/consts.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -63,7 +64,7 @@ HabitSummaryData _buildHabitSummaryData({
     type: type,
     name: name,
     desc: '',
-    colorType: colorType,
+    color: HabitColor.builtIn(colorType),
     dailyGoal: dailyGoal,
     dailyGoalExtra: dailyGoalExtra,
     targetDays: targetDays,

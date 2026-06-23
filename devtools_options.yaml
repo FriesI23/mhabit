@@ -1,1 +1,3 @@
 extensions:
+  - provider: true
+  - shared_preferences: true

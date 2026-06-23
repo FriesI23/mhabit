@@ -23,6 +23,7 @@ import '../../../common/types.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../extensions/num_extensions.dart';
 import '../../../l10n/localizations.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_goal.dart';
 import '../../../models/habit_daily_record_form.dart';
 import '../../../models/habit_date.dart';
@@ -38,12 +39,12 @@ Future<HabitDailyGoal?> showHabitRecordCustomNumberPickerDialog({
   required HabitRecordStatus recordStatus,
   HabitDailyGoal? targetExtraValue,
   HabitDate? recordDate,
-  HabitColorType? colorType,
+  HabitColor? color,
 }) async {
   return showDialog<HabitDailyGoal>(
     context: context,
     builder: (context) => ThemeWithCustomColors(
-      colorType: colorType,
+      color: color,
       child: HabitRecordCustomNumberPickerDialog(
         recordForm: recordForm,
         recordStatus: recordStatus,

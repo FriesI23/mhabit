@@ -1,0 +1,371 @@
+name: PR Test Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - weblate-translation
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+  statuses: write # needed to create/update the PR Test Build commit status
+  contents: read
+  actions: write # needed by the dedup/stop step to list & cancel workflow runs
+
+concurrency:
+  # issue_comment runs get their own group (keyed by comment id) so dedup's
+  # `gh run list`/`gh run cancel` logic (below) can see and cancel other
+  # in-progress runs instead of being queued behind them. pull_request
+  # (labeled) runs share one group per PR and queue rather than cancel each
+  # other — attaching multiple labels at once (e.g. at PR creation) fires
+  # one `labeled` event per label, and cancelling would risk killing the
+  # one run that actually matches `need test-build` before it can comment.
+  group: >-
+    ${{ github.event_name == 'issue_comment'
+        && format('pr-test-build-comment-{0}', github.event.comment.id)
+        || format('pr-test-build-{0}', github.event.pull_request.number) }}
+  cancel-in-progress: false
+
+run-name: >-
+  ${{
+    (github.event_name == 'issue_comment' && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)) ||
+    format('label added #{0}', github.event.pull_request.number)
+  }}
+
+jobs:
+  # Fires only when `need test-build` itself is the label being attached
+  # (at PR creation or later) — adding some other label afterwards doesn't
+  # re-trigger this.
+  label-help:
+    # Also hardcoded in resolve-build's `LABELED` check below (job-level
+    # `if:` can't read `env`, so there's no single source of truth) — keep
+    # both in sync if this label is ever renamed.
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'need test-build' &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            👋 This PR is labeled `need test-build` — you can now trigger test builds with a `/build` comment:
+
+            ```
+            /build                 same as `/build auto`
+            /build auto            build only platforms whose paths changed
+            /build all             build all platforms (android, ios, linux, macos) unconditionally
+            /build <platforms>     build only the given platforms, comma- or space-separated
+                                   e.g. /build android,ios
+            /build stop            cancel an in-progress build
+            /build cancel          alias for stop
+            /build help            show this message
+            ```
+
+  resolve-build:
+    # github.event.issue.pull_request only exists for PR comments
+    # (issue_comment also fires on plain issues) — without this guard,
+    # draft-check below would 404 calling the pulls API with a non-PR number.
+    if: >
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      startsWith(github.event.comment.body, '/build')
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.dedup.outputs.proceed }}
+      sha: ${{ steps.command.outputs.sha }}
+      issue-number: ${{ steps.command.outputs.issue_number }}
+      comment-id: ${{ steps.start-comment.outputs.comment-id }}
+      environment: ${{ steps.command.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
+      # JSON array of platforms, e.g. '["android","linux"]' or '[]' — feeds
+      # the `build` job's matrix (see "Resolve platforms" step below).
+      platforms: ${{ steps.resolve-platforms.outputs.platforms }}
+    steps:
+      # `/build` on a draft PR should be a quiet no-op. github/command's own
+      # `allow_drafts: "false"` below also blocks drafts, but it fails the
+      # step + posts a comment when tripped — checking here first keeps that
+      # as a pure backstop.
+      - name: Check draft status
+        id: draft-check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DRAFT=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" --jq '.draft')
+          echo "draft=$DRAFT" >> "$GITHUB_OUTPUT"
+
+      # This step touches no secrets, so the real fork gate is the dynamic
+      # `environment:` above — fork requests route through `check-ci-review`
+      # (required review), others through the ungated `check-ci`.
+      - uses: github/command@v2
+        id: command
+        if: steps.draft-check.outputs.draft != 'true'
+        with:
+          command: "/build"
+          allowed_contexts: pull_request
+          permissions: "read,triage,write,maintain,admin"
+          allow_drafts: "false"
+          allow_forks: "true"
+          skip_reviews: "true"
+          skip_ci: "true"
+          reaction: "eyes"
+
+      # issue_comment workflows always use the default branch's files (not
+      # the PR's), so this checkout is safe even for fork PRs.
+      - uses: actions/checkout@v6
+        if: steps.command.outputs.continue == 'true'
+        with:
+          sparse-checkout: |
+            .github/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve duplicate or stop command
+        id: dedup
+        if: steps.command.outputs.continue == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+          # Not steps.command.outputs.params: github/command's param_separator
+          # relies on a literal " ", but actions/core's getInput() trims
+          # whitespace-only inputs to "", so params ends up split character-
+          # by-character (e.g. `/build` -> "build"). Stripping the `/build`
+          # prefix from comment_body ourselves sidesteps that.
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
+          # issue_comment's `issue` payload already carries the PR's labels,
+          # so no extra API call is needed to gate an actual build request
+          # on the `need test-build` label (help/stop/invalid are exempt).
+          # Also hardcoded in `label-help`'s `if:` above — keep both in sync.
+          LABELED: ${{ contains(github.event.issue.labels.*.name, 'need test-build') }}
+        run: bash .github/scripts/pr-test-build-dedup.sh
+
+      # auto: infer platforms from changed paths; all: every platform;
+      # else: explicit platform list.
+      - name: Determine build mode
+        id: mode
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
+        run: |
+          RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
+          PARAM_NORM=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]' | xargs)
+          if [ -z "$PARAM_NORM" ] || [ "$PARAM_NORM" = "auto" ]; then
+            echo "mode=auto" >> "$GITHUB_OUTPUT"
+          elif echo " $PARAM_NORM " | grep -qw all; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=explicit" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve PR base for path filter
+        id: pr-base
+        if: steps.mode.outputs.mode == 'auto'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
+        run: |
+          BASE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER" --jq '.base.sha')
+          echo "base-sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+
+      # `/build` (no args) and `/build auto` infer platforms from changed paths.
+      - name: Filter paths
+        id: filter
+        if: steps.mode.outputs.mode == 'auto'
+        uses: dorny/paths-filter@v4
+        with:
+          token: ${{ github.token }}
+          base: ${{ steps.pr-base.outputs.base-sha }}
+          ref: ${{ steps.command.outputs.sha }}
+          filters: |
+            common:
+              - 'pubspec.yaml'
+              - 'pubspec.lock'
+              - 'packages/**'
+              - 'lib/**'
+              - 'assets/**'
+            android:
+              - 'android/**'
+            ios:
+              - 'ios/**'
+            linux:
+              - 'linux/**'
+            macos:
+              - 'macos/**'
+
+      - name: Parse explicit platform list
+        id: platforms
+        if: steps.mode.outputs.mode == 'explicit'
+        env:
+          COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
+        run: |
+          RAW_PARAMS=$(printf '%s' "$COMMENT_BODY" | sed -E 's#^/build[[:space:]]*##')
+          ARGS=$(printf '%s' "$RAW_PARAMS" | tr ',|' ' ' | tr '[:upper:]' '[:lower:]')
+          for p in android ios linux macos; do
+            if echo " $ARGS " | grep -qw "$p"; then
+              echo "$p=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$p=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+      # Collapses the per-platform selection (all -> everything; auto -> the
+      # path-filter result above; explicit -> the parsed list above) into
+      # one JSON array consumed by the `build` job's matrix.
+      - name: Resolve platforms
+        id: resolve-platforms
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          ANDROID: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true')) ||
+              steps.platforms.outputs.android
+            }}
+          IOS: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true')) ||
+              steps.platforms.outputs.ios
+            }}
+          LINUX: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true')) ||
+              steps.platforms.outputs.linux
+            }}
+          MACOS: >-
+            ${{
+              (steps.mode.outputs.mode == 'all' && 'true') ||
+              (steps.mode.outputs.mode == 'auto' && (steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true')) ||
+              steps.platforms.outputs.macos
+            }}
+        run: bash .github/scripts/pr-test-build-resolve-platforms.sh
+
+      # Surfaces this build's pass/fail on the PR itself, not just as a
+      # comment — created `pending` here, completed by `report` once `gate`
+      # resolves. A commit status, not a check run: check runs created via
+      # the bare /check-runs API get silently attached to whatever
+      # (github-actions, this sha) check suite GitHub considers current,
+      # which on this workflow is often an unrelated `labeled`-triggered run
+      # that already finished — so the PR's checks panel never re-surfaces
+      # it. Commit statuses aren't grouped into suites, so they always show.
+      - name: Create build status
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ steps.command.outputs.sha }}" \
+            -f state="pending" \
+            -f context="PR Test Build" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f description="Build in progress"
+
+      - name: Comment on PR (build started)
+        id: start-comment
+        if: steps.dedup.outputs.proceed == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: |
+            Start Test Build...
+            ===
+            Requested by @${{ steps.command.outputs.actor }}
+            Commit: ${{ steps.command.outputs.sha }}
+            Build status: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Comment on PR (dedup/stop result)
+        if: >
+          steps.command.outputs.continue == 'true' &&
+          steps.dedup.outputs.proceed != 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ steps.command.outputs.issue_number }}
+          body: ${{ steps.dedup.outputs.message }}
+
+  # One matrix entry per platform, calling the single parameterized
+  # _build_test.yml — it posts the PR comment as its own last step, gated
+  # per platform, so no separate runner is spun up just to post it.
+  build:
+    needs:
+      - resolve-build
+    # `if:` can't reference `matrix` (not in the allowed-context list for
+    # jobs.<job_id>.if), so platforms must already be a fully resolved JSON
+    # array — gating on it being non-empty here stops the matrix from
+    # expanding at all when nothing was selected.
+    if: >
+      always() &&
+      needs.resolve-build.outputs.proceed == 'true' &&
+      needs.resolve-build.outputs.platforms != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.resolve-build.outputs.platforms) }}
+    uses: ./.github/workflows/_build_test.yml
+    with:
+      platform: ${{ matrix.platform }}
+      ref: ${{ needs.resolve-build.outputs.sha }}
+      environment: ${{ needs.resolve-build.outputs.environment }}
+      issue-number: ${{ needs.resolve-build.outputs.issue-number }}
+      comment-id: ${{ needs.resolve-build.outputs.comment-id }}
+    secrets: inherit
+
+  # Single required-status-check target for branch protection: green when
+  # nothing ran or everything succeeded, red if any platform build failed
+  # or was cancelled. needs.build.result already aggregates the matrix.
+  gate:
+    name: Build Status Gate
+    needs:
+      - build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check build results
+        run: |
+          if [ "${{ needs.build.result }}" = "failure" ] || [ "${{ needs.build.result }}" = "cancelled" ]; then
+            echo "A platform test build failed or was cancelled."
+            exit 1
+          fi
+          echo "No test build failures (or none were requested)."
+
+  report:
+    needs:
+      - resolve-build
+      - build
+      - gate
+    if: >
+      always() &&
+      needs.resolve-build.outputs.comment-id != ''
+    runs-on: ubuntu-latest
+    steps:
+      - id: date
+        run: echo "now=$(date)" >> "$GITHUB_OUTPUT"
+      - name: Comment on PR
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ needs.resolve-build.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-build.outputs.comment-id }}
+          body: |
+            Ended at: ${{ steps.date.outputs.now }}
+
+      # `gate` is the single source of truth for pass/fail across the whole
+      # matrix — mirror its outcome onto the commit status created at build
+      # start so the PR's own checks/status area reflects this build too.
+      # No `sha != ''` guard needed: it's set earlier in the same job as
+      # `comment-id` (already required by this job's `if:` above).
+      - name: Complete build status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Commit statuses only support success/failure/error/pending — no
+          # direct equivalent of "cancelled", so it maps to error.
+          STATE: ${{ needs.gate.result == 'success' && 'success' || needs.gate.result == 'failure' && 'failure' || 'error' }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ needs.resolve-build.outputs.sha }}" \
+            -f state="$STATE" \
+            -f context="PR Test Build" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f description="Build ${{ needs.gate.result }}"

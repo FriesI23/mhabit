@@ -15,18 +15,18 @@
 import 'package:flutter/material.dart';
 
 import '../../../extensions/custom_color_extensions.dart';
-import '../../../models/habit_form.dart';
+import '../../../models/habit_color.dart';
 import '../../../theme/color.dart';
 import '../../../widgets/widgets.dart';
 
 class HabitDetailAppBar extends StatelessWidget {
-  final HabitColorType? colorType;
+  final HabitColor? color;
   final Widget? title;
   final WidgetBuilder? actionBuilder;
 
   const HabitDetailAppBar({
     super.key,
-    this.colorType,
+    this.color,
     this.title,
     this.actionBuilder,
   });
@@ -36,7 +36,9 @@ class HabitDetailAppBar extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final CustomColors? colorData = themeData.extension<CustomColors>();
 
-    final color = colorType != null ? colorData?.getColor(colorType!) : null;
+    final resolvedColor = color != null
+        ? colorData?.getColor(color!, brightness: themeData.brightness)
+        : null;
     final titleFont = themeData.textTheme.titleLarge;
 
     return SliverAppBar(
@@ -46,13 +48,16 @@ class HabitDetailAppBar extends StatelessWidget {
         child: title != null
             ? titleFont != null
                   ? DefaultTextStyle(
-                      style: titleFont.copyWith(color: color),
+                      style: titleFont.copyWith(color: resolvedColor),
                       child: title!,
                     )
                   : title
             : null,
       ),
-      leading: PageBackButton(reason: PageBackReason.back, color: color),
+      leading: PageBackButton(
+        reason: PageBackReason.back,
+        color: resolvedColor,
+      ),
       actions: [if (actionBuilder != null) actionBuilder!(context)],
     );
   }

@@ -132,6 +132,27 @@ class _DBHelper implements DBHelper {
       await mh.reCalcHabitRecordUUIDs();
       await mh.initSyncTable();
     }
+    if (oldVersion < 5) {
+      final tableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.habits})',
+      );
+      if (!tableInfo.any(
+        (column) => column['name'] == HabitDBCellKey.customColor,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN ${HabitDBCellKey.customColor} INTEGER",
+        );
+      }
+      if (!tableInfo.any(
+        (column) => column['name'] == HabitDBCellKey.customColorTinted,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN ${HabitDBCellKey.customColorTinted} INTEGER",
+        );
+      }
+    }
   }
 
   Future<Database> _openDB(String dbPath) async {

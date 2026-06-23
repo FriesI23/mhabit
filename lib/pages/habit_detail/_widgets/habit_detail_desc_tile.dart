@@ -48,7 +48,7 @@ class HabitDetailDescTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ColorfulMarkdownBlock(
               data: viewmodel.habitDesc,
-              colorType: viewmodel.habitColorType,
+              color: viewmodel.habitColor,
               textScaler: textScaler,
             ),
           ),

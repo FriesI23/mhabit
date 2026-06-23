@@ -2,14 +2,18 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.25.1+164
+
+- Feature: add per-habit custom color support with built-in swatches, color picker, and recent-color history (#580)
+
 ## 1.24.5+161
 
-- Refactor page state wiring, tidy page unit-test paths, and simplify habit summary helpers (#563, #571)
+- Refactor page wiring, tidy unit tests, and simplify habit summary helpers (#563, #571)
 - Refactor reminder handling to improve stability on app start, restart, and day changes (#569)
-- Improve custom color generation with mhabit_color_builder for a more consistent app palette (#572)
-- Fix duplicate habit detail refresh when returning via back navigation (#565)
-- Update Hebrew wording for the shared load-error message and refresh translation outputs (#570)
-- Stabilize icon font generation and refresh generated icon assets for release builds (#574)
+- Improve custom color palette with mhabit_color_builder (#572)
+- Fix duplicate habit detail refresh on back navigation (#565)
+- Update Hebrew load-error wording and refresh translations (#570)
+- Stabilize icon font generation and refresh icon assets for release (#574)
 
 ## 1.24.4+160-pre
 

@@ -22,6 +22,7 @@ import 'package:mhabit/common/app_info.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/app_notify_config.dart';
+import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
@@ -166,7 +167,7 @@ HabitSummaryData _buildHabitSummaryData({
   type: HabitType.normal,
   name: 'Test habit',
   desc: '',
-  colorType: HabitColorType.cc1,
+  color: const HabitColor.builtIn(HabitColorType.cc1),
   dailyGoal: 1,
   targetDays: 1,
   frequency: HabitFrequency.daily,
@@ -351,7 +352,7 @@ void main() {
           type: HabitType.normal,
           name: 'Detail habit',
           desc: '',
-          colorType: HabitColorType.cc1,
+          color: const HabitColor.builtIn(HabitColorType.cc1),
           dailyGoal: 1,
           targetDays: 1,
           frequency: HabitFrequency.daily,

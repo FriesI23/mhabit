@@ -1,5 +1,10 @@
 <!-- markdownlint-disable no-inline-html first-line-heading -->
 
+> Steps 1–6 below can be semi-automated with an AI tool's agent/command mode
+> using the `docs/prompts/mhabit-release-flow.md` prompt. Step 7 can also be
+> done through that prompt, but it always stops to ask for explicit
+> confirmation first. Steps 8–9 and Post-1 stay manual always.
+
 ## 1. Bump App Version
 
 > - [x] stable
@@ -13,9 +18,7 @@
 
    ```shell
    flutter clean
-   flutter pub get
-  scripts/normalize_arb.sh
-  scripts/build_runner.sh
+   make aio-full
    ```
 
 ## 2. Update Release Description
@@ -33,19 +36,26 @@ You can start from `docs/release.template.md` and then update it for the target 
 ## 3. Update Changelog
 
 > - [x] stable
-> - [ ] beta
+> - [x] beta
 
 Add the release changelog in `CHANGELOG.md`, keeping its content consistent with `docs/release.md`.
 
 > Optionally, provide a translated changelog in `docs/CHANGELOG/<locale>.md`.
 
-## 4. F-Droid
+## 4. Android Platforms
 
 > - [x] stable
-> - [ ] beta
+> - [x] beta
 
-Metainfo required by F-Droid must be included in repo along with current tag,
-with Fastlane-compatible sturcture and format.
+Metadata required by F-Droid and Google Play must be included in repo along with
+current tag, with Fastlane-compatible structure and format.
+
+- **F-Droid**: `fastlane/metadata/android/<locale>/changelogs`
+  > - [x] stable
+  > - [ ] beta
+- **Google Play** (`f_store` flavor): `android/app/src/f_store/fastlane/metadata/android/<locale>/changelogs`
+  > - [x] stable
+  > - [x] beta
 
 Update info can be auto-generated from `CHANGELOG.md` by executing:
 
