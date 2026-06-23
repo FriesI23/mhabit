@@ -651,7 +651,7 @@ class L10nTr extends L10n {
       'bugüne geri dön';
 
   @override
-  String get common_loadError_text => 'Failed to load';
+  String get common_loadError_text => 'Yüklenemedi';
 
   @override
   String get common_loadError_retryText => 'Tekrar dene';
