@@ -12,7 +12,7 @@ on:
 permissions:
   pull-requests: write
   issues: write
-  checks: write # needed to create/update the PR Test Build check run
+  statuses: write # needed to create/update the PR Test Build commit status
   contents: read
   actions: write # needed by the dedup/stop step to list & cancel workflow runs
 
@@ -87,7 +87,6 @@ jobs:
       # JSON array of platforms, e.g. '["android","linux"]' or '[]' — feeds
       # the `build` job's matrix (see "Resolve platforms" step below).
       platforms: ${{ steps.resolve-platforms.outputs.platforms }}
-      check-run-id: ${{ steps.check-run.outputs.id }}
     steps:
       # `/build` on a draft PR should be a quiet no-op. github/command's own
       # `allow_drafts: "false"` below also blocks drafts, but it fails the
@@ -248,24 +247,23 @@ jobs:
         run: bash .github/scripts/pr-test-build-resolve-platforms.sh
 
       # Surfaces this build's pass/fail on the PR itself, not just as a
-      # comment — created in_progress here, completed by `report` once
-      # `gate` resolves. If this job is cancelled before `report` runs, the
-      # check run is left `in_progress` (same accepted risk as the "Ended
-      # at" comment below, which depends on the same job outputs).
-      - name: Create check run
-        id: check-run
+      # comment — created `pending` here, completed by `report` once `gate`
+      # resolves. A commit status, not a check run: check runs created via
+      # the bare /check-runs API get silently attached to whatever
+      # (github-actions, this sha) check suite GitHub considers current,
+      # which on this workflow is often an unrelated `labeled`-triggered run
+      # that already finished — so the PR's checks panel never re-surfaces
+      # it. Commit statuses aren't grouped into suites, so they always show.
+      - name: Create build status
         if: steps.dedup.outputs.proceed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          read -r ID URL <<< "$(gh api "repos/$GITHUB_REPOSITORY/check-runs" \
-            -f name="PR Test Build" \
-            -f head_sha="${{ steps.command.outputs.sha }}" \
-            -f status="in_progress" \
-            -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            --jq '"\(.id) \(.html_url)"')"
-          echo "id=$ID" >> "$GITHUB_OUTPUT"
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ steps.command.outputs.sha }}" \
+            -f state="pending" \
+            -f context="PR Test Build" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f description="Build in progress"
 
       - name: Comment on PR (build started)
         id: start-comment
@@ -278,7 +276,7 @@ jobs:
             ===
             Requested by @${{ steps.command.outputs.actor }}
             Commit: ${{ steps.command.outputs.sha }}
-            Build status: ${{ steps.check-run.outputs.url }}
+            Build status: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Comment on PR (dedup/stop result)
         if: >
@@ -355,19 +353,19 @@ jobs:
             Ended at: ${{ steps.date.outputs.now }}
 
       # `gate` is the single source of truth for pass/fail across the whole
-      # matrix — mirror its outcome onto the check run created at build start
-      # so the PR's own checks/status area reflects this build too.
-      - name: Complete check run
-        if: needs.resolve-build.outputs.check-run-id != ''
+      # matrix — mirror its outcome onto the commit status created at build
+      # start so the PR's own checks/status area reflects this build too.
+      # No `sha != ''` guard needed: it's set earlier in the same job as
+      # `comment-id` (already required by this job's `if:` above).
+      - name: Complete build status
         env:
           GH_TOKEN: ${{ github.token }}
-          # gate's job result (success/failure/cancelled/skipped) maps 1:1
-          # onto the check-run conclusion enum, so pass it straight through —
-          # squashing cancelled into failure would show a misleading ❌
-          # instead of ⚠️ when the run was cancelled rather than failing.
-          CONCLUSION: ${{ needs.gate.result }}
+          # Commit statuses only support success/failure/error/pending — no
+          # direct equivalent of "cancelled", so it maps to error.
+          STATE: ${{ needs.gate.result == 'success' && 'success' || needs.gate.result == 'failure' && 'failure' || 'error' }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/check-runs/${{ needs.resolve-build.outputs.check-run-id }}" \
-            -X PATCH \
-            -f status="completed" \
-            -f conclusion="$CONCLUSION"
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ needs.resolve-build.outputs.sha }}" \
+            -f state="$STATE" \
+            -f context="PR Test Build" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            -f description="Build ${{ needs.gate.result }}"
