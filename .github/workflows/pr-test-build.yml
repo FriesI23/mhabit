@@ -20,12 +20,15 @@ concurrency:
   # issue_comment runs get their own group (keyed by comment id) so dedup's
   # `gh run list`/`gh run cancel` logic (below) can see and cancel other
   # in-progress runs instead of being queued behind them. pull_request
-  # (labeled) runs still share one group per PR.
+  # (labeled) runs share one group per PR and queue rather than cancel each
+  # other — attaching multiple labels at once (e.g. at PR creation) fires
+  # one `labeled` event per label, and cancelling would risk killing the
+  # one run that actually matches `need test-build` before it can comment.
   group: >-
     ${{ github.event_name == 'issue_comment'
         && format('pr-test-build-comment-{0}', github.event.comment.id)
         || format('pr-test-build-{0}', github.event.pull_request.number) }}
-  cancel-in-progress: ${{ github.event_name != 'issue_comment' }}
+  cancel-in-progress: false
 
 run-name: >-
   ${{
