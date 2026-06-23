@@ -77,22 +77,22 @@ class L10nHe extends L10n {
 
   @override
   String habitEdit_habitDailyGoal_errorText01(num number) {
-    return 'על החובה היומית להיות גדולה מ־$number';
+    return 'על המטרה היומית להיות גדולה מ־$number';
   }
 
   @override
   String habitEdit_habitDailyGoal_errorText02(num number) {
-    return 'על החובה היומית להיות קטנה או שווה ל־$number';
+    return 'על המטרה היומית להיות קטנה או שווה ל־$number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText01(num number) {
-    return 'על החובה היומית להיות גדולה או שווה ל־$number';
+    return 'על המטרה היומית להיות גדולה או שווה ל־$number';
   }
 
   @override
   String habitEdit_habitDailyGoal_negativeErrorText02(num number) {
-    return 'על החובה היומית להיות קטנה או שווה ל־$number';
+    return 'על המטרה היומית להיות קטנה או שווה ל־$number';
   }
 
   @override
