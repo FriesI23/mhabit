@@ -13,9 +13,7 @@
 
    ```shell
    flutter clean
-   flutter pub get
-   scripts/normalize_arb.sh
-   scripts/build_runner.sh
+   make aio-full
    ```
 
 ## 2. Update Release Description
