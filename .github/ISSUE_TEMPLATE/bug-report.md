@@ -7,30 +7,28 @@ assignees: FriesI23, Miaaaim
 
 ---
 
-<!-- This template is modified from GitHub's provided standard bug report template. 
-template copyright belongs to GitHub. -->
-## Before reporting bug, make sure the following options
-
-- [ ] Check for the Latest Version [HERE](https://github.com/FriesI23/mhabit/releases/latest)
-- [ ] Search for Existing Issues [HERE](https://github.com/FriesI23/mhabit/issues?q=is%3Aissue)
-- [ ] Verify if this BUG can be reproduced
-
----
+<!-- Before submitting, please check:
+- Latest Version: https://github.com/FriesI23/mhabit/releases/latest
+- Existing Issues: https://github.com/FriesI23/mhabit/issues?q=is%3Aissue
+-->
 
 **Description**
 A clear and concise description of what the bug is.
 
-**Step to Reproduce**
-Use numbers 1. 2. 3. ... to describe how to reproduce this BUG.
+**Steps to Reproduce**
+1.
+2.
+3.
 
 **Expected Behavior**
-Describe what you expected to happen.
+What did you expect to happen instead?
 
 **Screenshots**
-If applicable, attach screenshots.
+If applicable, attach screenshots or a screen recording.
 
-**Device/Environment Info**
-Provide details about the Device, Platform, OS Version, OS Distribution, App Version, etc.
+**Environment**
+- App version:
+- Platform/OS:
 
 **Additional Context**
-Add any relevant context about the problem here.
+Add any other context about the problem here.
