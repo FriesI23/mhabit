@@ -5,50 +5,47 @@ on:
     branches:
       - main
       - weblate-translation
-    types: [opened]
-  workflow_run:
-    workflows: ["Check PR"]
-    types: [completed]
+    types: [labeled]
   issue_comment:
     types: [created]
 
 permissions:
   pull-requests: write
   issues: write
-  checks: read
+  checks: write # needed to create/update the PR Test Build check run
   contents: read
   actions: write # needed by the dedup/stop step to list & cancel workflow runs
 
 concurrency:
-  # issue_comment runs each get their own group (keyed by comment id) so a
-  # `/build`/`/build stop` comment is never queued behind another run in the
-  # same group — they must actually run concurrently for the dedup step's
-  # own `gh run list`/`gh run cancel` logic (below) to observe and act on
-  # an in-progress run. pull_request/workflow_run runs still share one group
-  # per PR so a new push cancels a stale auto-build.
+  # issue_comment runs get their own group (keyed by comment id) so dedup's
+  # `gh run list`/`gh run cancel` logic (below) can see and cancel other
+  # in-progress runs instead of being queued behind them. pull_request
+  # (labeled) runs still share one group per PR.
   group: >-
     ${{ github.event_name == 'issue_comment'
         && format('pr-test-build-comment-{0}', github.event.comment.id)
-        || github.event_name == 'workflow_run'
-        && format('pr-test-build-{0}-{1}', github.event.workflow_run.head_repository.full_name, github.event.workflow_run.head_branch)
         || format('pr-test-build-{0}', github.event.pull_request.number) }}
   cancel-in-progress: ${{ github.event_name != 'issue_comment' }}
 
 run-name: >-
   ${{
     (github.event_name == 'issue_comment' && format('/build #{0} (comment {1})', github.event.issue.number, github.event.comment.id)) ||
-    (github.event_name == 'workflow_run' && format('auto test build (run {0})', github.event.workflow_run.id)) ||
-    format('PR opened #{0}', github.event.pull_request.number)
+    format('label added #{0}', github.event.pull_request.number)
   }}
 
 jobs:
-  # One PR creation help comment, shown once, when the PR already carries the
-  # `need test-build` label at creation time.
-  auto-build-help:
+  # Fires only when `need test-build` itself is the label being attached
+  # (at PR creation or later) — adding some other label afterwards doesn't
+  # re-trigger this.
+  label-help:
+    # Also hardcoded in resolve-build's `LABELED` check below (job-level
+    # `if:` can't read `env`, so there's no single source of truth) — keep
+    # both in sync if this label is ever renamed.
     if: >
       github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false &&
-      contains(github.event.pull_request.labels.*.name, 'need test-build')
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'need test-build' &&
+      github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - name: Comment on PR
@@ -56,27 +53,23 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            👋 This PR is labeled `need test-build` — once analyzing/checking/testing pass, platform builds run automatically based on which paths changed.
-
-            You can also trigger test builds manually anytime, regardless of the label:
+            👋 This PR is labeled `need test-build` — you can now trigger test builds with a `/build` comment:
 
             ```
             /build                 same as `/build auto`
-            /build auto            build only platforms whose paths changed (same logic as automatic builds)
+            /build auto            build only platforms whose paths changed
             /build all             build all platforms (android, ios, linux, macos) unconditionally
             /build <platforms>     build only the given platforms, comma- or space-separated
                                    e.g. /build android,ios
-            /build stop            cancel an in-progress manual build
+            /build stop            cancel an in-progress build
             /build cancel          alias for stop
             /build help            show this message
             ```
 
-  # ---- Manual entry point: `/build ...` comment ----
-  resolve-manual:
-    # github.event.issue.pull_request only exists when the comment is on a
-    # PR — issue_comment fires for plain issues too, and without this guard
-    # the draft-check step below would call the pulls API with an issue
-    # number that isn't a PR and 404.
+  resolve-build:
+    # github.event.issue.pull_request only exists for PR comments
+    # (issue_comment also fires on plain issues) — without this guard,
+    # draft-check below would 404 calling the pulls API with a non-PR number.
     if: >
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request != null &&
@@ -86,19 +79,17 @@ jobs:
       proceed: ${{ steps.dedup.outputs.proceed }}
       sha: ${{ steps.command.outputs.sha }}
       issue-number: ${{ steps.command.outputs.issue_number }}
-      commit-id: ${{ steps.start-comment.outputs.comment-id }}
+      comment-id: ${{ steps.start-comment.outputs.comment-id }}
       environment: ${{ steps.command.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
-      # JSON array of selected platform names, e.g. '["android","linux"]' or
-      # '[]' — feeds the `build` job's matrix directly (see "Resolve
-      # platforms" step below for how each platform is selected per mode).
+      # JSON array of platforms, e.g. '["android","linux"]' or '[]' — feeds
+      # the `build` job's matrix (see "Resolve platforms" step below).
       platforms: ${{ steps.resolve-platforms.outputs.platforms }}
+      check-run-id: ${{ steps.check-run.outputs.id }}
     steps:
-      # `/build` on a draft PR should be a quiet no-op (old label-gated job
-      # used `if: draft == false` and just skipped). github/command's own
-      # `allow_drafts: "false"` below also enforces this, but it fails the
-      # step + posts a comment when it trips — checking here first keeps
-      # that as a pure backstop and restores the quiet skip for this
-      # expected case.
+      # `/build` on a draft PR should be a quiet no-op. github/command's own
+      # `allow_drafts: "false"` below also blocks drafts, but it fails the
+      # step + posts a comment when tripped — checking here first keeps that
+      # as a pure backstop.
       - name: Check draft status
         id: draft-check
         env:
@@ -107,10 +98,9 @@ jobs:
           DRAFT=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" --jq '.draft')
           echo "draft=$DRAFT" >> "$GITHUB_OUTPUT"
 
-      # Low bar to *request* a build (this step touches no secrets) — the real
-      # gate for fork contributors is the dynamic `environment:` above, which
-      # routes fork-originated requests through `check-ci-review` (required
-      # reviewer approval); non-fork requests use the ungated `check-ci`.
+      # This step touches no secrets, so the real fork gate is the dynamic
+      # `environment:` above — fork requests route through `check-ci-review`
+      # (required review), others through the ungated `check-ci`.
       - uses: github/command@v2
         id: command
         if: steps.draft-check.outputs.draft != 'true'
@@ -124,17 +114,13 @@ jobs:
           skip_ci: "true"
           reaction: "eyes"
 
-      # `/build` while one is already running is ignored (not queued/restarted);
-      # `/build stop` cancels whatever is currently running for this PR.
-      # Script content always comes from the default branch (issue_comment
-      # workflows ignore the PR's own files), so this checkout is safe even
-      # for fork PRs.
+      # issue_comment workflows always use the default branch's files (not
+      # the PR's), so this checkout is safe even for fork PRs.
       - uses: actions/checkout@v6
         if: steps.command.outputs.continue == 'true'
         with:
           sparse-checkout: |
             .github/scripts
-            .github/actions/pr-test-build-filter
           sparse-checkout-cone-mode: false
 
       - name: Resolve duplicate or stop command
@@ -143,18 +129,21 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ steps.command.outputs.issue_number }}
-          # Not steps.command.outputs.params: that relies on github/command's
-          # param_separator input, but actions/core's getInput() trims
-          # whitespace-only input values, so a literal " " separator collapses
-          # to "" and params ends up split character-by-character instead
-          # (e.g. `/build` -> "build"). Stripping the `/build` prefix from the
-          # full comment_body ourselves sidesteps that entirely.
+          # Not steps.command.outputs.params: github/command's param_separator
+          # relies on a literal " ", but actions/core's getInput() trims
+          # whitespace-only inputs to "", so params ends up split character-
+          # by-character (e.g. `/build` -> "build"). Stripping the `/build`
+          # prefix from comment_body ourselves sidesteps that.
           COMMENT_BODY: ${{ steps.command.outputs.comment_body }}
+          # issue_comment's `issue` payload already carries the PR's labels,
+          # so no extra API call is needed to gate an actual build request
+          # on the `need test-build` label (help/stop/invalid are exempt).
+          # Also hardcoded in `label-help`'s `if:` above — keep both in sync.
+          LABELED: ${{ contains(github.event.issue.labels.*.name, 'need test-build') }}
         run: bash .github/scripts/pr-test-build-dedup.sh
 
-      # `/build` (no args) and `/build auto` decide platforms from changed
-      # paths; `/build all` forces every platform unconditionally; anything
-      # else is an explicit platform list.
+      # auto: infer platforms from changed paths; all: every platform;
+      # else: explicit platform list.
       - name: Determine build mode
         id: mode
         if: steps.dedup.outputs.proceed == 'true'
@@ -172,7 +161,7 @@ jobs:
           fi
 
       - name: Resolve PR base for path filter
-        id: pr
+        id: pr-base
         if: steps.mode.outputs.mode == 'auto'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -181,17 +170,30 @@ jobs:
           BASE_SHA=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER" --jq '.base.sha')
           echo "base-sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
 
-      # Same path-filter logic as the automatic entry point (`resolve-auto`),
-      # so `/build`/`/build auto` decide platforms identically to an
-      # automatic build.
+      # `/build` (no args) and `/build auto` infer platforms from changed paths.
       - name: Filter paths
         id: filter
         if: steps.mode.outputs.mode == 'auto'
-        uses: ./.github/actions/pr-test-build-filter
+        uses: dorny/paths-filter@v4
         with:
           token: ${{ github.token }}
-          base: ${{ steps.pr.outputs.base-sha }}
+          base: ${{ steps.pr-base.outputs.base-sha }}
           ref: ${{ steps.command.outputs.sha }}
+          filters: |
+            common:
+              - 'pubspec.yaml'
+              - 'pubspec.lock'
+              - 'packages/**'
+              - 'lib/**'
+              - 'assets/**'
+            android:
+              - 'android/**'
+            ios:
+              - 'ios/**'
+            linux:
+              - 'linux/**'
+            macos:
+              - 'macos/**'
 
       - name: Parse explicit platform list
         id: platforms
@@ -209,10 +211,9 @@ jobs:
             fi
           done
 
-      # Collapses the per-platform selection (mode=all -> everything;
-      # mode=auto -> same common/path-filter rule as the automatic entry
-      # point; mode=explicit -> the parsed list above) into one JSON array
-      # consumed directly by the `build` job's matrix.
+      # Collapses the per-platform selection (all -> everything; auto -> the
+      # path-filter result above; explicit -> the parsed list above) into
+      # one JSON array consumed by the `build` job's matrix.
       - name: Resolve platforms
         id: resolve-platforms
         if: steps.dedup.outputs.proceed == 'true'
@@ -243,6 +244,26 @@ jobs:
             }}
         run: bash .github/scripts/pr-test-build-resolve-platforms.sh
 
+      # Surfaces this build's pass/fail on the PR itself, not just as a
+      # comment — created in_progress here, completed by `report` once
+      # `gate` resolves. If this job is cancelled before `report` runs, the
+      # check run is left `in_progress` (same accepted risk as the "Ended
+      # at" comment below, which depends on the same job outputs).
+      - name: Create check run
+        id: check-run
+        if: steps.dedup.outputs.proceed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          read -r ID URL <<< "$(gh api "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f name="PR Test Build" \
+            -f head_sha="${{ steps.command.outputs.sha }}" \
+            -f status="in_progress" \
+            -f details_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --jq '"\(.id) \(.html_url)"')"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
       - name: Comment on PR (build started)
         id: start-comment
         if: steps.dedup.outputs.proceed == 'true'
@@ -254,6 +275,7 @@ jobs:
             ===
             Requested by @${{ steps.command.outputs.actor }}
             Commit: ${{ steps.command.outputs.sha }}
+            Build status: ${{ steps.check-run.outputs.url }}
 
       - name: Comment on PR (dedup/stop result)
         if: >
@@ -264,110 +286,36 @@ jobs:
           issue-number: ${{ steps.command.outputs.issue_number }}
           body: ${{ steps.dedup.outputs.message }}
 
-  # ---- Automatic entry point: `need test-build` label + path filter ----
-  # Triggered by completion of check-pr-main.yml (analyzing/checking/testing)
-  # instead of `pull_request` directly, so this only ever runs once those
-  # checks have actually finished — no polling needed.
-  resolve-auto:
-    if: github.event_name == 'workflow_run'
-    runs-on: ubuntu-latest
-    outputs:
-      proceed: ${{ steps.pr.outputs.proceed }}
-      sha: ${{ steps.pr.outputs.sha }}
-      issue-number: ${{ steps.pr.outputs.number }}
-      commit-id: ${{ steps.start-comment.outputs.comment-id }}
-      environment: ${{ steps.pr.outputs.fork == 'true' && 'check-ci-review' || 'check-ci' }}
-      platforms: ${{ steps.resolve-platforms.outputs.platforms }}
-    steps:
-      # Resolve the PR for this commit via the API (works for same-repo and
-      # fork PRs alike), then gate on draft status + `need test-build` label.
-      # workflow_run always uses the default branch's own files, so this
-      # checkout is safe even though the triggering PR may be a fork.
-      - uses: actions/checkout@v6
-        if: github.event.workflow_run.conclusion == 'success'
-        with:
-          sparse-checkout: |
-            .github/scripts
-            .github/actions/pr-test-build-filter
-          sparse-checkout-cone-mode: false
-
-      - name: Resolve PR for this check run
-        id: pr
-        if: github.event.workflow_run.conclusion == 'success'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SHA: ${{ github.event.workflow_run.head_sha }}
-        run: bash .github/scripts/pr-test-build-resolve-pr.sh
-
-      # API-based diff (no checkout needed) — paths-filter's recommended mode
-      # when not running directly off a `pull_request` event.
-      - name: Filter paths
-        id: filter
-        if: steps.pr.outputs.proceed == 'true'
-        uses: ./.github/actions/pr-test-build-filter
-        with:
-          token: ${{ github.token }}
-          base: ${{ steps.pr.outputs.base-sha }}
-          ref: ${{ steps.pr.outputs.sha }}
-
-      - name: Resolve platforms
-        id: resolve-platforms
-        if: steps.pr.outputs.proceed == 'true'
-        env:
-          ANDROID: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.android == 'true' }}
-          IOS: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.ios == 'true' }}
-          LINUX: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.linux == 'true' }}
-          MACOS: ${{ steps.filter.outputs.common == 'true' || steps.filter.outputs.macos == 'true' }}
-        run: bash .github/scripts/pr-test-build-resolve-platforms.sh
-
-      - name: Comment on PR (auto build started)
-        id: start-comment
-        if: steps.pr.outputs.proceed == 'true'
-        uses: peter-evans/create-or-update-comment@v5
-        with:
-          issue-number: ${{ steps.pr.outputs.number }}
-          body: |
-            🤖 Auto Test Build...
-            ===
-            Commit: ${{ steps.pr.outputs.sha }}
-
   # One matrix entry per platform, calling the single parameterized
-  # _build_test.yml (replaces the four near-identical build-<platform> +
-  # comment-build-<platform> job pairs — the PR comment is now posted as the
-  # last step inside _build_test.yml itself, keyed off the same per-platform
-  # `if:` gate, so there's no separate runner spun up just to post it).
+  # _build_test.yml — it posts the PR comment as its own last step, gated
+  # per platform, so no separate runner is spun up just to post it.
   build:
     needs:
-      - resolve-manual
-      - resolve-auto
-    # `if:` cannot reference `matrix` (it's not in the allowed-context list
-    # for jobs.<job_id>.if), so the platform selection has to be fully
-    # resolved into the `platforms` JSON array *before* this job's `if:`
-    # runs — gating on that array being non-empty here means the matrix
-    # (and thus any per-platform runner) never gets a chance to expand at
-    # all when nothing was selected.
+      - resolve-build
+    # `if:` can't reference `matrix` (not in the allowed-context list for
+    # jobs.<job_id>.if), so platforms must already be a fully resolved JSON
+    # array — gating on it being non-empty here stops the matrix from
+    # expanding at all when nothing was selected.
     if: >
       always() &&
-      (needs.resolve-manual.outputs.proceed == 'true' || needs.resolve-auto.outputs.proceed == 'true') &&
-      (needs.resolve-manual.outputs.platforms || needs.resolve-auto.outputs.platforms || '[]') != '[]'
+      needs.resolve-build.outputs.proceed == 'true' &&
+      needs.resolve-build.outputs.platforms != '[]'
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJSON(needs.resolve-manual.outputs.platforms || needs.resolve-auto.outputs.platforms || '[]') }}
+        platform: ${{ fromJSON(needs.resolve-build.outputs.platforms) }}
     uses: ./.github/workflows/_build_test.yml
     with:
       platform: ${{ matrix.platform }}
-      ref: ${{ needs.resolve-manual.outputs.sha || needs.resolve-auto.outputs.sha }}
-      environment: ${{ needs.resolve-manual.outputs.environment || needs.resolve-auto.outputs.environment }}
-      issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
-      comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+      ref: ${{ needs.resolve-build.outputs.sha }}
+      environment: ${{ needs.resolve-build.outputs.environment }}
+      issue-number: ${{ needs.resolve-build.outputs.issue-number }}
+      comment-id: ${{ needs.resolve-build.outputs.comment-id }}
     secrets: inherit
 
-  # Single required-status-check target for branch protection: green when no
-  # build ran (nothing to fail) or all that ran succeeded, red when any
-  # triggered platform build failed or was cancelled. needs.build.result is
-  # already the aggregate across all matrix entries (failure/cancelled if
-  # any entry was, skipped if none ran, success otherwise).
+  # Single required-status-check target for branch protection: green when
+  # nothing ran or everything succeeded, red if any platform build failed
+  # or was cancelled. needs.build.result already aggregates the matrix.
   gate:
     name: Build Status Gate
     needs:
@@ -385,12 +333,12 @@ jobs:
 
   report:
     needs:
-      - resolve-manual
-      - resolve-auto
+      - resolve-build
       - build
+      - gate
     if: >
       always() &&
-      (needs.resolve-manual.outputs.commit-id != '' || needs.resolve-auto.outputs.commit-id != '')
+      needs.resolve-build.outputs.comment-id != ''
     runs-on: ubuntu-latest
     steps:
       - id: date
@@ -398,7 +346,25 @@ jobs:
       - name: Comment on PR
         uses: peter-evans/create-or-update-comment@v5
         with:
-          issue-number: ${{ needs.resolve-manual.outputs.issue-number || needs.resolve-auto.outputs.issue-number }}
-          comment-id: ${{ needs.resolve-manual.outputs.commit-id || needs.resolve-auto.outputs.commit-id }}
+          issue-number: ${{ needs.resolve-build.outputs.issue-number }}
+          comment-id: ${{ needs.resolve-build.outputs.comment-id }}
           body: |
             Ended at: ${{ steps.date.outputs.now }}
+
+      # `gate` is the single source of truth for pass/fail across the whole
+      # matrix — mirror its outcome onto the check run created at build start
+      # so the PR's own checks/status area reflects this build too.
+      - name: Complete check run
+        if: needs.resolve-build.outputs.check-run-id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # gate's job result (success/failure/cancelled/skipped) maps 1:1
+          # onto the check-run conclusion enum, so pass it straight through —
+          # squashing cancelled into failure would show a misleading ❌
+          # instead of ⚠️ when the run was cancelled rather than failing.
+          CONCLUSION: ${{ needs.gate.result }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/check-runs/${{ needs.resolve-build.outputs.check-run-id }}" \
+            -X PATCH \
+            -f status="completed" \
+            -f conclusion="$CONCLUSION"
