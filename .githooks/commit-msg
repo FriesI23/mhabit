@@ -6,6 +6,11 @@ CLEAN_MSG=$(awk '!/^#/ && NF { print; exit }' "$COMMIT_MSG_FILE")
 REG_EXP='^(feat|fix|docs|style|refactor|test|chore)(\(.*\))?: .+'
 BUMP_VERSION_PREFIX='^chore(\(.*\))?: Bump version to '
 BUMP_VERSION_REG_EXP='^chore(\(.*\))?: Bump version to (pre-v[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+|v[0-9]+\.[0-9]+\.[0-9]+(-pre(\.[0-9]+)?)?\+[0-9]+|v[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+-pre)$'
+GIT_STANDARD_REG_EXP='^(Merge (branch|tag|pull request|remote-tracking branch) |Revert ")'
+
+if echo "$CLEAN_MSG" | grep -Eq "$GIT_STANDARD_REG_EXP"; then
+    exit 0
+fi
 
 if echo "$CLEAN_MSG" | grep -Eq "$BUMP_VERSION_PREFIX"; then
     if ! echo "$CLEAN_MSG" | grep -Eq "$BUMP_VERSION_REG_EXP"; then
