@@ -31,19 +31,26 @@ You can start from `docs/release.template.md` and then update it for the target 
 ## 3. Update Changelog
 
 > - [x] stable
-> - [ ] beta
+> - [x] beta
 
 Add the release changelog in `CHANGELOG.md`, keeping its content consistent with `docs/release.md`.
 
 > Optionally, provide a translated changelog in `docs/CHANGELOG/<locale>.md`.
 
-## 4. F-Droid
+## 4. Android Platforms
 
 > - [x] stable
-> - [ ] beta
+> - [x] beta
 
-Metainfo required by F-Droid must be included in repo along with current tag,
-with Fastlane-compatible sturcture and format.
+Metadata required by F-Droid and Google Play must be included in repo along with
+current tag, with Fastlane-compatible structure and format.
+
+- **F-Droid**: `fastlane/metadata/android/<locale>/changelogs`
+  > - [x] stable
+  > - [ ] beta
+- **Google Play** (`f_store` flavor): `android/app/src/f_store/fastlane/metadata/android/<locale>/changelogs`
+  > - [x] stable
+  > - [x] beta
 
 Update info can be auto-generated from `CHANGELOG.md` by executing:
 
