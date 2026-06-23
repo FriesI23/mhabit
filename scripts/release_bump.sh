@@ -21,31 +21,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
-PYTHON_SCRIPTS_DIR="$REPO_ROOT/scripts/python-scripts"
 
-if [[ "${1:-}" != "--version" || -z "${2:-}" ]]; then
-	echo "Usage: $0 --version <x.y.z+a[-pre]>" >&2
-	exit 2
-fi
-SUGGESTED="$2"
-
-if ! command -v poetry >/dev/null 2>&1; then
-	echo "Poetry is required but not found in PATH." >&2
-	exit 1
-fi
-
-cd "$PYTHON_SCRIPTS_DIR"
-POETRY_PYTHON="$(poetry env info --path)/bin/python"
-
-if [[ ! -x "$POETRY_PYTHON" ]]; then
-	echo "Poetry environment python not found: $POETRY_PYTHON" >&2
-	exit 1
-fi
-
-"$POETRY_PYTHON" bin/bump_version.py --version "$SUGGESTED"
+POETRY_ENV_PATH="$(cd "$SCRIPT_DIR/python-scripts" && poetry env info --path)"
+"$POETRY_ENV_PATH/bin/python" "$SCRIPT_DIR/python-scripts/bin/bump_version.py" "$@"
 
 cd "$REPO_ROOT"
-echo "Running flutter clean..."
 flutter clean
-echo "Running make aio-full..."
 make aio-full

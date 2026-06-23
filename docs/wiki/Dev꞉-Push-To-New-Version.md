@@ -1,5 +1,10 @@
 <!-- markdownlint-disable no-inline-html first-line-heading -->
 
+> Steps 1–6 below can be semi-automated with an AI tool's agent/command mode
+> using the `docs/prompts/mhabit-release-flow.md` prompt. Step 7 can also be
+> done through that prompt, but it always stops to ask for explicit
+> confirmation first. Steps 8–9 and Post-1 stay manual always.
+
 ## 1. Bump App Version
 
 > - [x] stable

@@ -19,59 +19,21 @@
 @echo off
 setlocal
 
-if /I not "%~1"=="--version" goto usage
-if "%~2"=="" goto usage
-set "SUGGESTED=%~2"
-
 for %%I in ("%~dp0") do set "SCRIPT_DIR=%%~fI"
 for %%I in ("%SCRIPT_DIR%..") do set "REPO_ROOT=%%~fI"
-set "PYTHON_SCRIPTS_DIR=%SCRIPT_DIR%\python-scripts"
 
-where poetry >nul 2>nul
-if errorlevel 1 (
-  echo Poetry is required but not found in PATH.
-  exit /b 1
-)
-
-pushd "%PYTHON_SCRIPTS_DIR%" >nul
-if errorlevel 1 (
-  echo Failed to enter directory: %PYTHON_SCRIPTS_DIR%
-  exit /b 1
-)
-
-set "POETRY_ENV_PATH="
-for /f "usebackq delims=" %%I in (`poetry env info --path 2^>nul`) do set "POETRY_ENV_PATH=%%I"
-if not defined POETRY_ENV_PATH (
-  echo Failed to resolve Poetry environment path.
-  popd >nul
-  exit /b 1
-)
+pushd "%SCRIPT_DIR%\python-scripts"
+for /f "usebackq delims=" %%I in (`poetry env info --path`) do set "POETRY_ENV_PATH=%%I"
+popd
 
 set "POETRY_PYTHON=%POETRY_ENV_PATH%\Scripts\python.exe"
 if not exist "%POETRY_PYTHON%" set "POETRY_PYTHON=%POETRY_ENV_PATH%\bin\python"
-if not exist "%POETRY_PYTHON%" (
-  echo Poetry environment python not found: %POETRY_ENV_PATH%
-  popd >nul
-  exit /b 1
-)
 
-"%POETRY_PYTHON%" bin\bump_version.py --version "%SUGGESTED%"
-if errorlevel 1 (
-  popd >nul
-  exit /b 1
-)
-popd >nul
+"%POETRY_PYTHON%" "%SCRIPT_DIR%\python-scripts\bin\bump_version.py" %*
+if errorlevel 1 exit /b 1
 
 cd "%REPO_ROOT%"
-echo Running flutter clean...
 call flutter clean
 if errorlevel 1 exit /b 1
-echo Running make aio-full...
 call make aio-full
 if errorlevel 1 exit /b 1
-
-exit /b 0
-
-:usage
-echo Usage: %~nx0 --version ^<x.y.z+a[-pre]^>
-exit /b 2
