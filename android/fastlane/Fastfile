@@ -75,7 +75,7 @@ platform :android do
         track: track,
         metadata_path: meta_path
       )
-      next
+      upload_params[:validate_only] = true
     end
 
     supply(upload_params)
@@ -103,7 +103,11 @@ platform :android do
     upload_params = {
       sync_image_upload: true,
       metadata_path: meta_path,
-      aab: aab_path
+      aab: aab_path,
+      skip_upload_metadata: !DeployLaneHelper.option_enabled?(options, :metadata, default: true),
+      skip_upload_changelogs: !DeployLaneHelper.option_enabled?(options, :changelog, default: true),
+      skip_upload_images: !DeployLaneHelper.option_enabled?(options, :images, default: true),
+      skip_upload_screenshots: !DeployLaneHelper.option_enabled?(options, :screenshots, default: true)
     }
     upload_params[:track] = track if track
 
@@ -126,7 +130,7 @@ platform :android do
         track: track,
         metadata_path: meta_path
       )
-      next
+      upload_params[:validate_only] = true
     end
 
     upload_to_play_store(upload_params)

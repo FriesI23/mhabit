@@ -14,6 +14,7 @@ key.properties
 **/*.keystore
 **/*.jks
 **/fastlane/table-habit-*.json
+**/fastlane/play_store_service_account.json
 
 # fastlane specific
 **/fastlane/report.xml

@@ -117,6 +117,15 @@ jobs:
             ${{ steps.build.outputs.apk-x64-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
+  submit-android-play-store:
+    needs:
+      - pre-build
+    uses: ./.github/workflows/_submit-android-play-store.yml
+    with:
+      track: internal
+      dry_run: false
+    secrets: inherit
+
   build-ios:
     name: "Build Unsigned iOS IPA"
     needs:
