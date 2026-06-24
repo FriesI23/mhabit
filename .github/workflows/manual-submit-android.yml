@@ -10,6 +10,9 @@ on:
         default: internal
         options:
           - internal
+          - alpha
+          - beta
+          - production
       dry_run:
         description: Run as a validate_only dry run (no real submission)
         type: boolean

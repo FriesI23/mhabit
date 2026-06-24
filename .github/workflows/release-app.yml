@@ -122,7 +122,7 @@ jobs:
       - pre-build
     uses: ./.github/workflows/_submit-android-play-store.yml
     with:
-      track: internal
+      track: ${{ needs.pre-build.outputs.pre-release == 'true' && 'beta' || 'production' }}
       dry_run: false
     secrets: inherit
 
