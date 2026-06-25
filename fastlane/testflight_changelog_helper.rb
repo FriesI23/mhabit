@@ -42,8 +42,9 @@ module TestflightChangelogHelper
     end
 
     if localized_build_info.empty?
+      searched_dirs = [metadata_dir, fallback_metadata_dir].compact.join(" or ")
       FastlaneCore::UI.user_error!(
-        "No changelog found for build #{build_number} under #{metadata_dir} or #{fallback_metadata_dir}"
+        "No changelog found for build #{build_number} under #{searched_dirs}"
       )
     end
 
