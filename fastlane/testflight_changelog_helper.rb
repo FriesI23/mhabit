@@ -18,7 +18,7 @@ module TestflightChangelogHelper
     match[1]
   end
 
-  def load(metadata_dir:, pubspec_path:, build_number: nil)
+  def load(metadata_dir:, pubspec_path:, fallback_metadata_dir: nil, build_number: nil)
     build_number ||= read_flutter_build_number(pubspec_path)
     localized_build_info = {}
 
@@ -29,17 +29,22 @@ module TestflightChangelogHelper
         "changelogs",
         "#{build_number}.txt"
       )
-      next unless File.file?(changelog_path)
+      whats_new = File.file?(changelog_path) ? File.read(changelog_path).strip : ""
 
-      whats_new = File.read(changelog_path).strip
+      if whats_new.empty? && fallback_metadata_dir
+        release_notes_path = File.join(fallback_metadata_dir, testflight_locale, "release_notes.txt")
+        whats_new = File.read(release_notes_path).strip if File.file?(release_notes_path)
+      end
+
       next if whats_new.empty?
 
       localized_build_info[testflight_locale] = { whats_new: whats_new }
     end
 
     if localized_build_info.empty?
+      searched_dirs = [metadata_dir, fallback_metadata_dir].compact.join(" or ")
       FastlaneCore::UI.user_error!(
-        "No Android changelog files found for build #{build_number} under #{metadata_dir}"
+        "No changelog found for build #{build_number} under #{searched_dirs}"
       )
     end
 

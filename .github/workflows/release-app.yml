@@ -150,6 +150,15 @@ jobs:
             ${{ steps.build.outputs.ipa-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
+  submit-ios-app-store:
+    needs:
+      - pre-build
+    uses: ./.github/workflows/_submit-ios-app-store.yml
+    with:
+      track: ${{ needs.pre-build.outputs.pre-release == 'true' && 'beta' || 'public' }}
+      dry_run: false
+    secrets: inherit
+
   build-macos-dmg:
     name: "Build macOS DMG"
     needs:
