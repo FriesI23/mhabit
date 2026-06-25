@@ -132,10 +132,8 @@ jobs:
       - pre-build
     runs-on: macos-latest
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ^26
       - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_ios_unsigned
@@ -159,16 +157,23 @@ jobs:
       dry_run: false
     secrets: inherit
 
+  submit-macos-app-store:
+    needs:
+      - pre-build
+    uses: ./.github/workflows/_submit-macos-app-store.yml
+    with:
+      track: internal
+      dry_run: false
+    secrets: inherit
+
   build-macos-dmg:
     name: "Build macOS DMG"
     needs:
       - pre-build
     runs-on: macos-latest
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ^26
       - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_macos

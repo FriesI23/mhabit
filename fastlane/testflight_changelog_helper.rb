@@ -6,6 +6,19 @@ module TestflightChangelogHelper
 
   module_function
 
+  def android_metadata_dir(flavor)
+    flavor_dir = File.expand_path(
+      "../android/app/src/#{flavor}/fastlane/metadata/android",
+      __dir__
+    )
+    return flavor_dir if Dir.exist?(flavor_dir)
+
+    shared_dir = File.expand_path("metadata/android", __dir__)
+    return shared_dir if Dir.exist?(shared_dir)
+
+    FastlaneCore::UI.user_error!("No Android changelog metadata found for flavor #{flavor}")
+  end
+
   def read_flutter_build_number(pubspec_path)
     version_line = File.readlines(pubspec_path).find do |line|
       line.start_with?("version:")
@@ -16,6 +29,17 @@ module TestflightChangelogHelper
     FastlaneCore::UI.user_error!("Missing build number in #{pubspec_path}") if match.nil?
 
     match[1]
+  end
+
+  # Resolves the metadata/fallback dirs for a platform's fastlane lane and loads its changelog.
+  # lane_dir should be the calling Fastfile's `__dir__` (e.g. "ios/fastlane", "macos/fastlane").
+  def load_for_lane(lane_dir:, flavor:, pubspec_path:, build_number: nil)
+    load(
+      metadata_dir: android_metadata_dir(flavor),
+      fallback_metadata_dir: File.join(lane_dir, "metadata"),
+      pubspec_path: pubspec_path,
+      build_number: build_number
+    )
   end
 
   def load(metadata_dir:, pubspec_path:, fallback_metadata_dir: nil, build_number: nil)

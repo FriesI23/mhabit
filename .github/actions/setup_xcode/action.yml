@@ -1,0 +1,15 @@
+name: Setup Xcode
+description: setup the project's pinned Xcode version, for common use.
+
+inputs:
+  xcode-version:
+    description: Xcode version to select
+    required: false
+    default: "^26"
+
+runs:
+  using: composite
+  steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: ${{ inputs.xcode-version }}

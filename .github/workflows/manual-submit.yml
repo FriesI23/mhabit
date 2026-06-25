@@ -13,6 +13,11 @@ on:
         type: boolean
         required: true
         default: true
+      macos:
+        description: Submit macOS (App Store)
+        type: boolean
+        required: true
+        default: true
       track:
         description: >
           Submission track, applied to every platform checked above (no
@@ -44,7 +49,7 @@ jobs:
   # fastlane lanes branch on. Shared across iOS today, macOS later.
   resolve-apple-store-track:
     name: Map shared track vocabulary to Apple's native track
-    if: ${{ inputs.ios }}
+    if: ${{ inputs.ios || inputs.macos }}
     runs-on: ubuntu-latest
     outputs:
       track: ${{ steps.map.outputs.track }}
@@ -88,6 +93,15 @@ jobs:
     needs: resolve-apple-store-track
     if: ${{ inputs.ios }}
     uses: ./.github/workflows/_submit-ios-app-store.yml
+    with:
+      track: ${{ needs.resolve-apple-store-track.outputs.track }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit
+
+  submit-macos-app-store:
+    needs: resolve-apple-store-track
+    if: ${{ inputs.macos }}
+    uses: ./.github/workflows/_submit-macos-app-store.yml
     with:
       track: ${{ needs.resolve-apple-store-track.outputs.track }}
       dry_run: ${{ inputs.dry_run }}

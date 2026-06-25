@@ -14,26 +14,10 @@
 # update_fastlane
 
 require_relative "../../fastlane/deploy_lane_helper"
+require_relative "../../fastlane/match_signing_helper"
 require_relative "../../fastlane/testflight_changelog_helper"
 
 default_platform(:ios)
-
-def sigh_appstore_env(app_identifier, suffix)
-  ENV["sigh_#{app_identifier}_appstore_#{suffix}"]
-end
-
-def testflight_android_changelog_metadata_dir(flavor)
-  flavor_dir = File.expand_path(
-    "../../android/app/src/#{flavor}/fastlane/metadata/android",
-    __dir__
-  )
-  return flavor_dir if Dir.exist?(flavor_dir)
-
-  shared_dir = File.expand_path("../../fastlane/metadata/android", __dir__)
-  return shared_dir if Dir.exist?(shared_dir)
-
-  UI.user_error!("No Android changelog metadata found for flavor #{flavor}")
-end
 
 platform :ios do
   desc "Clean environment"
@@ -97,17 +81,23 @@ platform :ios do
     end
 
     if should_build
-      app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-      match(type: "appstore")
-      update_code_signing_settings(
-        path: "Runner.xcodeproj",
-        use_automatic_signing: false,
-        code_sign_identity: "Apple Distribution",
-        team_id: sigh_appstore_env(app_identifier, "team-id"),
-        profile_name: sigh_appstore_env(app_identifier, "profile-name"),
-        targets: ["Runner"],
-        build_configurations: ["Release-#{flavor}"]
-      )
+      if is_ci
+        app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+        match(type: "appstore")
+        update_code_signing_settings(
+          path: "Runner.xcodeproj",
+          use_automatic_signing: false,
+          code_sign_identity: "Apple Distribution",
+          team_id: MatchSigningHelper.appstore_env(app_identifier, "team-id"),
+          profile_name: MatchSigningHelper.appstore_env(app_identifier, "profile-name"),
+          targets: ["Runner"],
+          build_configurations: ["Release-#{flavor}"]
+        )
+      else
+        # Keep Xcode's "Automatic" signing in the project as-is, just fetch the
+        # existing cert/profile from the match storage into the local keychain.
+        match(type: "appstore", readonly: true)
+      end
       build(flavor: flavor)
       build_ios_app(
         workspace: "Runner.xcworkspace",
@@ -118,20 +108,16 @@ platform :ios do
     end
 
     if track == "public"
-      DeployLaneHelper.report_dry_run_skip(
-        action: "upload_to_app_store",
-        artifact: ipa_artifact,
-        track: track
-      ) if dry_run
+      DeployLaneHelper.report_dry_run_verify_only(artifact: ipa_artifact, track: track) if dry_run
 
       upload_to_app_store(
         ipa: ipa_artifact,
         verify_only: dry_run
       )
     else
-      changelog, localized_build_info = TestflightChangelogHelper.load(
-        metadata_dir: testflight_android_changelog_metadata_dir(flavor),
-        fallback_metadata_dir: File.join(__dir__, "metadata"),
+      changelog, localized_build_info = TestflightChangelogHelper.load_for_lane(
+        lane_dir: __dir__,
+        flavor: flavor,
         pubspec_path: File.expand_path("../../pubspec.yaml", __dir__),
         build_number: options[:changelog_build_number]&.to_s
       )
