@@ -30,4 +30,14 @@ module DeployLaneHelper
     FastlaneCore::UI.message("locales: #{locales.join(', ')}") if locales && !locales.empty?
     FastlaneCore::UI.message("metadata_path: #{metadata_path}") if metadata_path
   end
+
+  # Unlike report_dry_run_skip, this does NOT skip the call: the public track still
+  # invokes upload_to_app_store with verify_only: true, which does a real (read-only)
+  # binary validation against App Store Connect without submitting for review.
+  def report_dry_run_verify_only(artifact:, track:)
+    FastlaneCore::UI.important(
+      "[dry_run] track: #{track} - calling upload_to_app_store with verify_only: true " \
+      "(validates #{artifact} against App Store Connect, does not submit for review)"
+    )
+  end
 end

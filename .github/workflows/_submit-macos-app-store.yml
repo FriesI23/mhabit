@@ -1,4 +1,4 @@
-name: Submit iOS (App Store)
+name: Submit macOS (App Store)
 
 on:
   workflow_call:
@@ -17,8 +17,8 @@ on:
         default: false
 
 jobs:
-  submit-ios-app-store:
-    name: "Submit iOS (App Store ${{ inputs.track }})"
+  submit-macos-app-store:
+    name: "Submit macOS (App Store ${{ inputs.track }})"
     runs-on: macos-latest
     environment: store-submission
     steps:
@@ -27,7 +27,7 @@ jobs:
       - uses: ./.github/actions/setup_flutter
       - uses: ./.github/actions/setup_ruby
         with:
-          working-directory: ios
+          working-directory: macos
       - name: Deploy to App Store
         env:
           TRACK: ${{ inputs.track }}
@@ -39,8 +39,8 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
         run: |
-          cd ios
-          bundle exec fastlane ios deploy \
+          cd macos
+          bundle exec fastlane mac deploy \
             track:"$TRACK" build:true force_build:false \
             dry_run:"$DRY_RUN"
         shell: bash

@@ -13,36 +13,36 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-## iOS
+## Mac
 
-### ios clean
+### mac clean
 
 ```sh
-[bundle exec] fastlane ios clean
+[bundle exec] fastlane mac clean
 ```
 
 Clean environment
 
-### ios test
+### mac test
 
 ```sh
-[bundle exec] fastlane ios test
+[bundle exec] fastlane mac test
 ```
 
 Run Flutter unit tests
 
-### ios build
+### mac build
 
 ```sh
-[bundle exec] fastlane ios build
+[bundle exec] fastlane mac build
 ```
 
 Build Flutter app for a specified flavor (default: f_generic)
 
-### ios deploy
+### mac deploy
 
 ```sh
-[bundle exec] fastlane ios deploy
+[bundle exec] fastlane mac deploy
 ```
 
 Push a new release build to the App Store

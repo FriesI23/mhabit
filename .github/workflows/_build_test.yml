@@ -46,14 +46,12 @@ jobs:
             macos) echo "label=macOS" >> "$GITHUB_OUTPUT" ;;
           esac
 
-      - if: inputs.platform == 'ios' || inputs.platform == 'macos'
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ^26
-
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
+
+      - if: inputs.platform == 'ios' || inputs.platform == 'macos'
+        uses: ./.github/actions/setup_xcode
 
       - if: inputs.platform == 'android'
         uses: ./.github/actions/setup_jdk

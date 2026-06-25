@@ -41,10 +41,8 @@ jobs:
           JSON_KEY_DATA: ${{ secrets.PLAY_STORE_JSON_KEY_DATA }}
         run: echo "$JSON_KEY_DATA" > android/fastlane/play_store_service_account.json
         shell: bash
-      - uses: ruby/setup-ruby@v1
+      - uses: ./.github/actions/setup_ruby
         with:
-          ruby-version: "3.4"
-          bundler-cache: true
           working-directory: android
       - name: Deploy to Play Store
         env:

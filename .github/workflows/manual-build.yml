@@ -113,10 +113,8 @@ jobs:
     if: ${{ inputs.target == 'all' || inputs.target == 'ios' }}
     runs-on: macos-latest
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ^26
       - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_ios_unsigned
@@ -135,10 +133,8 @@ jobs:
     if: ${{ inputs.target == 'all' || inputs.target == 'macos' }}
     runs-on: macos-latest
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ^26
       - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_macos
