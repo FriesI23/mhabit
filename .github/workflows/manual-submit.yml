@@ -46,7 +46,7 @@ on:
 jobs:
   # Apple (App Store Connect) has no native "alpha"/"production" track;
   # this maps the shared input vocabulary to the literal Apple's own
-  # fastlane lanes branch on. Shared across iOS today, macOS later.
+  # fastlane lanes branch on. Shared across iOS and macOS.
   resolve-apple-store-track:
     name: Map shared track vocabulary to Apple's native track
     if: ${{ inputs.ios || inputs.macos }}

@@ -28,7 +28,7 @@ jobs:
       - uses: ./.github/actions/setup_ruby
         with:
           working-directory: macos
-      - name: Deploy to App Store (TestFlight)
+      - name: Deploy to App Store
         env:
           TRACK: ${{ inputs.track }}
           DRY_RUN: ${{ inputs.dry_run }}
