@@ -1,0 +1,50 @@
+name: Manual Submit
+
+on:
+  workflow_dispatch:
+    inputs:
+      android:
+        description: Submit Android (Play Store)
+        type: boolean
+        required: true
+        default: true
+      ios:
+        description: Submit iOS (App Store)
+        type: boolean
+        required: true
+        default: true
+      track:
+        description: >
+          Submission track, applied to every platform checked above (no
+          per-platform override). Valid values differ per platform —
+          Android: internal/alpha/beta/production; iOS: alpha/beta/public
+          (TestFlight tracks; fastlane treats any non-"public"/"beta"
+          value as default internal-ish TestFlight). "public"/"production"
+          submit to real review/release and are out of scope for both
+          platforms' first rollout — pick an internal/beta value unless
+          you specifically mean to test that path.
+        type: string
+        required: true
+        default: internal
+      dry_run:
+        description: Run as a dry run (no real submission)
+        type: boolean
+        required: true
+        default: true
+
+jobs:
+  submit-android-play-store:
+    if: ${{ inputs.android }}
+    uses: ./.github/workflows/_submit-android-play-store.yml
+    with:
+      track: ${{ inputs.track }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit
+
+  submit-ios-app-store:
+    if: ${{ inputs.ios }}
+    uses: ./.github/workflows/_submit-ios-app-store.yml
+    with:
+      track: ${{ inputs.track }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit

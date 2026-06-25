@@ -1,0 +1,5 @@
+git_url("git@github.com:FriesI23/mhabit-apple-certificates.git")
+
+storage_mode("git")
+type("appstore")
+app_identifier(["io.github.friesi23.mhabit.store"])
