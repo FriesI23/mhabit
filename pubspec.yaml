@@ -129,7 +129,7 @@ dependencies:
   file_selector: ^1.0.3
   path_provider: ^2.0.14
   device_info_plus: ^13.1.0
-  flutter_local_notifications: ^21.0.0
+  flutter_local_notifications: ^22.0.1
   flutter_svg: ^2.0.4
   flutter_timezone: ^5.0.1
   markdown_widget: ^2.3.2+8
