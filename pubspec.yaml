@@ -203,7 +203,7 @@ dev_dependencies:
   mockito: ^5.4.4
 
   # Code Generation
-  analyzer: ^10.0.1
+  analyzer: 12.1.0
   build_runner: ^2.3.3
   mhabit_color_builder: any
   mhabit_proxy_builder: any

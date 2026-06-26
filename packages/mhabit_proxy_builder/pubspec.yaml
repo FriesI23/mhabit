@@ -8,7 +8,7 @@ environment:
   sdk: ">=3.11.0 <4.0.0"
 
 dependencies:
-  analyzer: 10.0.1
+  analyzer: 12.1.0
   build: 4.0.6
   collection: ^1.17.0
   mhabit_proxy_annotation:
