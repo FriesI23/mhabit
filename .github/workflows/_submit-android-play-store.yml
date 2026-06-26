@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: store-submission
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
       - name: Write key.properties (Play Store keystore)

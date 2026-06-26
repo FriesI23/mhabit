@@ -27,7 +27,7 @@ jobs:
     outputs:
       pre-release: ${{ steps.pre-release.outputs.pre-release }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check if prerelease
         id: pre-release
         run: |
@@ -57,7 +57,7 @@ jobs:
       - build-linux-flatpak
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: sersoft-gmbh/setup-gh-cli-action@v3
         with:
           version: stable
@@ -91,7 +91,7 @@ jobs:
       - pre-build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -132,7 +132,7 @@ jobs:
       - pre-build
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -172,7 +172,7 @@ jobs:
       - pre-build
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -213,7 +213,7 @@ jobs:
           #   runner: windows-11-arm
     runs-on: ${{ matrix.variant.runner }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_windows

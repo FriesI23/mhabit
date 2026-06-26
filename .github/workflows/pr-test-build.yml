@@ -118,7 +118,7 @@ jobs:
 
       # issue_comment workflows always use the default branch's files (not
       # the PR's), so this checkout is safe even for fork PRs.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.command.outputs.continue == 'true'
         with:
           sparse-checkout: |
