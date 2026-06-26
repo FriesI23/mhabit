@@ -22,7 +22,7 @@ jobs:
     runs-on: macos-latest
     environment: store-submission
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - uses: ./.github/actions/setup_ruby

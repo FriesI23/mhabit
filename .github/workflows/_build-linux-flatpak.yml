@@ -67,7 +67,7 @@ jobs:
       bundle-path: ${{ steps.build.outputs.path }}
       bundle-name: ${{ env.BUNDLE_NAME }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_linux
@@ -99,7 +99,7 @@ jobs:
         ${{ inputs.flatpak-name != '' && inputs.flatpak-name ||
         format('mhabit-{0}.flatpak', inputs.flatpak-arch) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check artifact token
         id: artifact-token
         env:

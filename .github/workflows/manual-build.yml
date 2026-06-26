@@ -82,7 +82,7 @@ jobs:
     if: ${{ inputs.target == 'all' || inputs.target == 'android' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_jdk
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -113,7 +113,7 @@ jobs:
     if: ${{ inputs.target == 'all' || inputs.target == 'ios' }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -133,7 +133,7 @@ jobs:
     if: ${{ inputs.target == 'all' || inputs.target == 'macos' }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_xcode
       - uses: ./.github/actions/setup_flutter
       - id: build
@@ -167,7 +167,7 @@ jobs:
             runner: windows-2022
     runs-on: ${{ matrix.variant.runner }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup_flutter
       - id: build
         uses: ./.github/actions/build_windows

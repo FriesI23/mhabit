@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-2022
     environment: store-submission
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Setup Microsoft Store Developer CLI
         uses: microsoft/microsoft-store-apppublisher@v1.3
       - name: Configure Microsoft Store Developer CLI
