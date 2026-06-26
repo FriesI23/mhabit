@@ -1,0 +1,98 @@
+name: Submit Windows (Microsoft Store)
+
+on:
+  workflow_call:
+    inputs:
+      dry_run:
+        description: >
+          Stage the package and changelog into a draft submission but skip
+          the final `submission publish` (no real submission).
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  submit-windows-store:
+    name: "Submit Windows (Microsoft Store)"
+    runs-on: windows-2022
+    environment: store-submission
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Microsoft Store Developer CLI
+        uses: microsoft/microsoft-store-apppublisher@v1.3
+      - name: Configure Microsoft Store Developer CLI
+        shell: pwsh
+        env:
+          MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+          MSSTORE_SELLER_ID: ${{ secrets.MSSTORE_SELLER_ID }}
+          MSSTORE_CLIENT_ID: ${{ secrets.MSSTORE_CLIENT_ID }}
+          MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
+        run: >
+          msstore reconfigure
+          --tenantId $env:MSSTORE_TENANT_ID
+          --sellerId $env:MSSTORE_SELLER_ID
+          --clientId $env:MSSTORE_CLIENT_ID
+          --clientSecret $env:MSSTORE_CLIENT_SECRET
+      # Microsoft Store keeps exactly one pending draft per app. Refuse to
+      # touch it if it isn't one this pipeline created itself, so a draft
+      # someone is preparing by hand in Partner Center never gets silently
+      # overwritten. Compares the live draft's Id (read-only, server-
+      # assigned) against MSSTORE_LAST_CI_SUBMISSION_ID, a repo/environment
+      # Variable this pipeline updates after a successful run (see "Record
+      # CI-owned submission Id" below) -- not a value written into the
+      # submission itself: a marker written into FriendlyName was tried and
+      # silently dropped by the API, and writing one into a real Listing
+      # field like Description was rejected since that risks shipping it
+      # to the actual Store listing.
+      - id: ownership
+        name: Check pending submission ownership
+        shell: pwsh
+        run: >
+          scripts\msstore\check_draft_ownership.ps1
+          -ProductId "${{ vars.MSSTORE_PRODUCT_ID }}"
+          -KnownSubmissionId "${{ vars.MSSTORE_LAST_CI_SUBMISSION_ID }}"
+      # Runs only once ownership is confirmed, so a foreign draft never pays
+      # for a multi-minute Windows build it can't use.
+      - id: build
+        if: ${{ steps.ownership.outputs.proceed == 'true' }}
+        uses: ./.github/actions/build_windows_store
+      # Always --noCommit here: staging the package never finalizes the
+      # submission by itself. The "Finalize submission" step below is the
+      # single place that decides whether to actually publish, so it stays
+      # correct regardless of whether the changelog step finds anything to
+      # change.
+      - name: Stage package
+        if: ${{ steps.ownership.outputs.proceed == 'true' }}
+        shell: pwsh
+        env:
+          MSIX_PATH: ${{ steps.build.outputs.msix-path }}
+        run: msstore publish $env:MSIX_PATH -id ${{ vars.MSSTORE_PRODUCT_ID }} --noCommit
+      # Logic lives in scripts/msstore/update_changelog.ps1 (reusable,
+      # runnable locally the same way fastlane lanes are); this step is
+      # just the call + the data it needs.
+      - id: changelog
+        name: Stage changelog metadata
+        if: ${{ steps.ownership.outputs.proceed == 'true' }}
+        shell: pwsh
+        run: >
+          scripts\msstore\update_changelog.ps1
+          -ProductId "${{ vars.MSSTORE_PRODUCT_ID }}"
+      # The single point that decides whether this is a real submission.
+      - name: Finalize submission
+        if: ${{ steps.ownership.outputs.proceed == 'true' && !inputs.dry_run }}
+        shell: pwsh
+        run: msstore submission publish ${{ vars.MSSTORE_PRODUCT_ID }}
+      # GITHUB_TOKEN can't write repo/environment Variables (that API isn't
+      # covered by any `permissions:` grant) -- MSSTORE_VARS_PAT is a
+      # fine-grained PAT scoped to only "Variables: read and write" on this
+      # repo, set up once by the maintainer, used only for this one call.
+      - name: Record CI-owned submission Id
+        if: ${{ steps.ownership.outputs.proceed == 'true' }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.MSSTORE_VARS_PAT }}
+        run: >
+          gh variable set MSSTORE_LAST_CI_SUBMISSION_ID
+          --body "${{ steps.changelog.outputs.submission-id }}"
+          --env store-submission
+          --repo ${{ github.repository }}

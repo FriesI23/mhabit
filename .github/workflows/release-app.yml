@@ -162,7 +162,7 @@ jobs:
       - pre-build
     uses: ./.github/workflows/_submit-macos-app-store.yml
     with:
-      track: internal
+      track: ${{ needs.pre-build.outputs.pre-release == 'true' && 'beta' || 'public' }}
       dry_run: false
     secrets: inherit
 
@@ -231,6 +231,18 @@ jobs:
           artifacts: >
             ${{ steps.build.outputs.msix-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
+
+  submit-windows-store:
+    needs:
+      - pre-build
+    # Microsoft Store has no public beta channel (package flights/private
+    # audience are invite-only), so there's nothing to submit pre-releases
+    # to — only submit real (non-pre-release) tags.
+    if: ${{ needs.pre-build.outputs.pre-release != 'true' }}
+    uses: ./.github/workflows/_submit-windows-store.yml
+    with:
+      dry_run: false
+    secrets: inherit
 
   build-linux-flatpak:
     name: "Build Linux Flatpak"
