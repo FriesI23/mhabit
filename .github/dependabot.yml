@@ -1,29 +1,10 @@
 version: 2
 updates:
-  # Project's own Dart/Flutter dependencies (pubspec.yaml)
-  - package-ecosystem: "pub"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-
   # Actions used across CI/release workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-
-  # Android's own Gradle dependencies (androidx.window, desugar_jdk_libs, etc.)
-  # Flutter pins AGP/Kotlin/Gradle versions; avoid auto-bumping minor/patch
-  # to prevent silent build breakage.
-  - package-ecosystem: "gradle"
-    directory: "/android"
-    schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "com.android.application"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
-      - dependency-name: "org.jetbrains.kotlin.android"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   # fastlane's own Ruby toolchain (cocoapods/dotenv/etc.), not a project dependency
   - package-ecosystem: "bundler"
