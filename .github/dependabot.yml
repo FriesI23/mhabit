@@ -6,6 +6,23 @@ updates:
     schedule:
       interval: "weekly"
 
+  # pub/gradle deps are managed manually (Dependabot's pub resolver doesn't
+  # account for the full pubspec.yaml constraint graph and has proposed
+  # conflicting upgrades). Alerts still show up under Security > Dependabot,
+  # this just stops it from opening unreliable auto-PRs.
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+
   # fastlane's own Ruby toolchain (cocoapods/dotenv/etc.), not a project dependency
   - package-ecosystem: "bundler"
     directory: "/ios"
