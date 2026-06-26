@@ -17,7 +17,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - uses: dorny/test-reporter@v2
+      - uses: dorny/test-reporter@v3
         with:
           artifact: flutter-unittest-result
           name: Flutter Test
