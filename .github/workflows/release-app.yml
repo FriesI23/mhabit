@@ -232,6 +232,14 @@ jobs:
             ${{ steps.build.outputs.msix-path }}
           token: ${{ secrets.APP_RELEASE_TOKEN }}
 
+  submit-windows-store:
+    needs:
+      - pre-build
+    uses: ./.github/workflows/_submit-windows-store.yml
+    with:
+      dry_run: false
+    secrets: inherit
+
   build-linux-flatpak:
     name: "Build Linux Flatpak"
     needs:

@@ -18,6 +18,11 @@ on:
         type: boolean
         required: true
         default: true
+      windows:
+        description: Submit Windows (Microsoft Store)
+        type: boolean
+        required: true
+        default: true
       track:
         description: >
           Submission track, applied to every platform checked above (no
@@ -28,7 +33,8 @@ on:
           Fastfile lanes' own default), and "production" is translated
           to a real App Store submission. "beta"/"production" submit
           to real review/release — pick internal/alpha unless you
-          specifically mean to test that path.
+          specifically mean to test that path. Windows (Microsoft Store)
+          has no track concept, so this input has no effect on it.
         type: choice
         options:
           - internal
@@ -104,5 +110,12 @@ jobs:
     uses: ./.github/workflows/_submit-macos-app-store.yml
     with:
       track: ${{ needs.resolve-apple-store-track.outputs.track }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit
+
+  submit-windows-store:
+    if: ${{ inputs.windows }}
+    uses: ./.github/workflows/_submit-windows-store.yml
+    with:
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit

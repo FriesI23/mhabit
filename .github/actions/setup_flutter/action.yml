@@ -20,7 +20,7 @@ runs:
       shell: bash
     - name: Add Flutter to syspath
       run: |
-        echo "${{ github.workspace }}/.flutter/bin:$PATH" >> $GITHUB_PATH
+        echo "${{ github.workspace }}/.flutter/bin" >> $GITHUB_PATH
       shell: bash
     - name: Get Flutter packages
       run: |
