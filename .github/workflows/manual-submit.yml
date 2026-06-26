@@ -4,45 +4,49 @@ on:
   workflow_dispatch:
     inputs:
       android:
-        description: Submit Android (Play Store)
-        type: boolean
-        required: true
-        default: true
-      ios:
-        description: Submit iOS (App Store)
-        type: boolean
-        required: true
-        default: true
-      macos:
-        description: Submit macOS (App Store)
-        type: boolean
-        required: true
-        default: true
-      windows:
-        description: Submit Windows (Microsoft Store)
-        type: boolean
-        required: true
-        default: true
-      track:
-        description: >
-          Submission track, applied to every platform checked above (no
-          per-platform override). Android maps 1:1 to its Play Store
-          track. iOS/macOS have no native "internal"/"production" —
-          "internal" is treated as an alias of "alpha" (both land on
-          TestFlight's default internal testers; "alpha" is also the
-          Fastfile lanes' own default), and "production" is translated
-          to a real App Store submission. "beta"/"production" submit
-          to real review/release — pick internal/alpha unless you
-          specifically mean to test that path. Windows (Microsoft Store)
-          has no track concept, so this input has no effect on it.
+        description: "Submit Android (Play Store track, or skip)"
         type: choice
         options:
+          - skip
           - internal
           - alpha
           - beta
           - production
         required: true
-        default: internal
+        default: skip
+      ios:
+        description: >
+          Submit iOS (App Store track, or skip). "alpha"/"beta" land on
+          TestFlight (their only difference is which TestFlight group),
+          "public" is a real App Store submission.
+        type: choice
+        options:
+          - skip
+          - alpha
+          - beta
+          - public
+        required: true
+        default: skip
+      macos:
+        description: >
+          Submit macOS (App Store track, or skip). Same vocabulary as iOS.
+        type: choice
+        options:
+          - skip
+          - alpha
+          - beta
+          - public
+        required: true
+        default: skip
+      windows:
+        description: >
+          Submit Windows (Microsoft Store, or skip). No track concept.
+        type: choice
+        options:
+          - skip
+          - submit
+        required: true
+        default: skip
       dry_run:
         description: Run as a dry run (no real submission)
         type: boolean
@@ -50,71 +54,32 @@ on:
         default: true
 
 jobs:
-  # Apple (App Store Connect) has no native "alpha"/"production" track;
-  # this maps the shared input vocabulary to the literal Apple's own
-  # fastlane lanes branch on. Shared across iOS and macOS.
-  resolve-apple-store-track:
-    name: Map shared track vocabulary to Apple's native track
-    if: ${{ inputs.ios || inputs.macos }}
-    runs-on: ubuntu-latest
-    outputs:
-      track: ${{ steps.map.outputs.track }}
-    steps:
-      - id: map
-        env:
-          TRACK: ${{ inputs.track }}
-        run: |
-          case "$TRACK" in
-            internal)
-              # Apple has no "internal"; alias of "alpha", the literal
-              # the iOS/macOS Fastfile lanes themselves default to when
-              # no track is given (and the Fastfile treats any
-              # non-"public"/"beta" value identically anyway).
-              APPLE_TRACK="alpha" ;;
-            alpha)
-              APPLE_TRACK="alpha" ;;
-            beta)
-              APPLE_TRACK="beta" ;;
-            production)
-              # Apple has no "production"; the Fastfile branches on the
-              # literal "public" for a real App Store submission.
-              APPLE_TRACK="public" ;;
-            *)
-              echo "Unknown track: $TRACK" >&2
-              exit 1
-              ;;
-          esac
-          echo "track=$APPLE_TRACK" >> "$GITHUB_OUTPUT"
-        shell: bash
-
   submit-android-play-store:
-    if: ${{ inputs.android }}
+    if: ${{ inputs.android != 'skip' }}
     uses: ./.github/workflows/_submit-android-play-store.yml
     with:
-      track: ${{ inputs.track }}
+      track: ${{ inputs.android }}
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit
 
   submit-ios-app-store:
-    needs: resolve-apple-store-track
-    if: ${{ inputs.ios }}
+    if: ${{ inputs.ios != 'skip' }}
     uses: ./.github/workflows/_submit-ios-app-store.yml
     with:
-      track: ${{ needs.resolve-apple-store-track.outputs.track }}
+      track: ${{ inputs.ios }}
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit
 
   submit-macos-app-store:
-    needs: resolve-apple-store-track
-    if: ${{ inputs.macos }}
+    if: ${{ inputs.macos != 'skip' }}
     uses: ./.github/workflows/_submit-macos-app-store.yml
     with:
-      track: ${{ needs.resolve-apple-store-track.outputs.track }}
+      track: ${{ inputs.macos }}
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit
 
   submit-windows-store:
-    if: ${{ inputs.windows }}
+    if: ${{ inputs.windows != 'skip' }}
     uses: ./.github/workflows/_submit-windows-store.yml
     with:
       dry_run: ${{ inputs.dry_run }}
