@@ -172,7 +172,7 @@ dependencies:
   # Data Persistence
   shared_preferences: ^2.0.15
   flutter_secure_storage: ^10.2.0
-  sqflite: ^2.2.2
+  sqflite: ^2.4.3
   sqflite_common_ffi: ^2.3.0+4
   path: ^1.8.2
 
