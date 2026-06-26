@@ -162,7 +162,7 @@ jobs:
       - pre-build
     uses: ./.github/workflows/_submit-macos-app-store.yml
     with:
-      track: internal
+      track: ${{ needs.pre-build.outputs.pre-release == 'true' && 'beta' || 'public' }}
       dry_run: false
     secrets: inherit
 
