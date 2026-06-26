@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.25.2+167-pre
+
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#589)
+- Update Turkish translation, thanks to Oğuz Ersen's contribution on Weblate (#589)
+- Add automated store submission pipelines (#590, #591, #592, #593)
+
 ## 1.25.1+164
 
 - Feature: add per-habit custom color support with built-in swatches, color picker, and recent-color history (#580)

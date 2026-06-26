@@ -1,24 +1,16 @@
-# Release: v1.25.1+164
+# Release: v1.25.2+167-pre
 
-## ✨ New Features
+## 🌐 Localization
 
-- Add per-habit custom color support: built-in swatches (cc1–cc10), adaptive
-  three-area color picker (swatches / recent history / wheel-hex-RGB), and
-  MRU color history capped at 20 (#580).
-- Introduce sealed `HabitColor` / `BuiltInHabitColor` / `CustomHabitColor`
-  unifying the color model at the business layer; migrate ~27 call sites from
-  `colorType` to `color: HabitColor` (#580).
-- Extend WebDAV sync payload and local JSON export/import with custom color
-  fields, preserving backward compatibility through `_schema_version` (#580).
+- Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#589)
+- Update Turkish translation, thanks to Oğuz Ersen's contribution on Weblate (#589)
 
-## 🛠 Refactor
+## 🧹 Others
 
-- Migrate build scripts (`sync-rules`, `gen_changelogs`, `normalize_arb`) to
-  Python with Poetry for cross-platform compatibility; add `.cmd` wrappers for
-  Windows (#578).
+- Add automated submission pipelines for Android Play Store, iOS App Store,
+  macOS App Store (fastlane match signing), and Microsoft Store (#590, #591,
+  #592, #593).
+- Add semi-automated release-flow scripts and orchestrator prompt for version
+  bump, changelog, and store-metadata generation (#588).
 
-## 📝 Documentation
-
-- Update AltStore/SideStore source URLs and fix shell command indentation.
-
-[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.24.5+161...v1.25.1+164)
+[Full Changelog](https://github.com/FriesI23/mhabit/compare/v1.25.1+164...v1.25.2+167-pre)
