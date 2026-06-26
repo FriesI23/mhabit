@@ -235,6 +235,10 @@ jobs:
   submit-windows-store:
     needs:
       - pre-build
+    # Microsoft Store has no public beta channel (package flights/private
+    # audience are invite-only), so there's nothing to submit pre-releases
+    # to — only submit real (non-pre-release) tags.
+    if: ${{ needs.pre-build.outputs.pre-release != 'true' }}
     uses: ./.github/workflows/_submit-windows-store.yml
     with:
       dry_run: false
