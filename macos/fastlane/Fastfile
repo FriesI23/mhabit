@@ -113,7 +113,8 @@ platform :mac do
 
       upload_to_app_store(
         pkg: pkg_artifact,
-        verify_only: dry_run
+        verify_only: dry_run,
+        force: is_ci
       )
     else
       changelog, localized_build_info = TestflightChangelogHelper.load_for_lane(
