@@ -18,18 +18,21 @@ jobs:
     environment: store-submission
     steps:
       - uses: actions/checkout@v6
-      - id: build
-        uses: ./.github/actions/build_windows_store
       - name: Setup Microsoft Store Developer CLI
         uses: microsoft/microsoft-store-apppublisher@v1.3
       - name: Configure Microsoft Store Developer CLI
         shell: pwsh
+        env:
+          MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+          MSSTORE_SELLER_ID: ${{ secrets.MSSTORE_SELLER_ID }}
+          MSSTORE_CLIENT_ID: ${{ secrets.MSSTORE_CLIENT_ID }}
+          MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
         run: >
           msstore reconfigure
-          --tenantId ${{ secrets.MSSTORE_TENANT_ID }}
-          --sellerId ${{ secrets.MSSTORE_SELLER_ID }}
-          --clientId ${{ secrets.MSSTORE_CLIENT_ID }}
-          --clientSecret ${{ secrets.MSSTORE_CLIENT_SECRET }}
+          --tenantId $env:MSSTORE_TENANT_ID
+          --sellerId $env:MSSTORE_SELLER_ID
+          --clientId $env:MSSTORE_CLIENT_ID
+          --clientSecret $env:MSSTORE_CLIENT_SECRET
       # Microsoft Store keeps exactly one pending draft per app. Refuse to
       # touch it if it isn't one this pipeline created itself, so a draft
       # someone is preparing by hand in Partner Center never gets silently
@@ -48,6 +51,11 @@ jobs:
           scripts\msstore\check_draft_ownership.ps1
           -ProductId "${{ vars.MSSTORE_PRODUCT_ID }}"
           -KnownSubmissionId "${{ vars.MSSTORE_LAST_CI_SUBMISSION_ID }}"
+      # Runs only once ownership is confirmed, so a foreign draft never pays
+      # for a multi-minute Windows build it can't use.
+      - id: build
+        if: ${{ steps.ownership.outputs.proceed == 'true' }}
+        uses: ./.github/actions/build_windows_store
       # Always --noCommit here: staging the package never finalizes the
       # submission by itself. The "Finalize submission" step below is the
       # single place that decides whether to actually publish, so it stays
