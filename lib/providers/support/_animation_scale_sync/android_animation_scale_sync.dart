@@ -14,6 +14,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/scheduler.dart' show SchedulerBinding, timeDilation;
 import 'package:flutter/services.dart' show EventChannel;
 
@@ -70,6 +71,9 @@ class AndroidAnimationScaleSync extends AnimationScaleSync {
     );
     if (_scale <= 0.0) {
       // Animations off — yield timeDilation, use disableAnimations.
+      if (_lastWrittenDilation != null && !_isOverridden) {
+        timeDilation = 1.0;
+      }
       _lastWrittenDilation = null;
       _isOverridden = false;
     } else {
@@ -107,8 +111,17 @@ class AndroidAnimationScaleSync extends AnimationScaleSync {
 
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     _subscription?.cancel();
     super.dispose();
   }
+
+  // -- Test hooks -------------------------------------------------------
+
+  @visibleForTesting
+  void testReceiveScale(double value) => _onScaleChanged(value);
+
+  @visibleForTesting
+  void testTickFrame() => _onFrame(Duration.zero);
 }

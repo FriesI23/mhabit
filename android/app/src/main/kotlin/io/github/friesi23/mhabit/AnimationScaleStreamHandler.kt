@@ -36,7 +36,7 @@ class AnimationScaleStreamHandler(
 
         val o = object : ContentObserver(Handler(Looper.getMainLooper())) {
             override fun onChange(selfChange: Boolean, changeUri: Uri?) {
-                if (changeUri != uri) return
+                if (changeUri != null && changeUri != uri) return
                 if (!closed) sink?.success(readScale())
             }
         }
