@@ -1078,5 +1078,21 @@
     "channelName_appSyncing": "התקדמות הסנכרון",
     "channelDesc_appSyncing": "משמשת להצגת התקדמות הסנכרון ותוצאות שאינן כישלון",
     "channelName_appSyncFailed": "הסנכרון נכשל",
-    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל"
+    "channelDesc_appSyncFailed": "משמשת להתרעה על סנכרון שנכשל",
+    "habitEdit_colorPicker_historySectionLabel": "בשימוש לאחרונה",
+    "habitEdit_colorPicker_customSectionLabel": "{tinted, select, true {מותאם אישית (משתנה לפי גון ערכת הנושא)} false {מותאם אישית} other {מותאם אישית}}",
+    "@habitEdit_colorPicker_customSectionLabel": {
+        "placeholders": {
+            "tinted": {
+                "type": "String",
+                "description": "<bool>.toString()"
+            }
+        }
+    },
+    "habitEdit_colorPicker_tintToggleLabel": "התאמה אישית לגון ערכת הנושא",
+    "habitEdit_colorPicker_tintedLabel": "משתנה לפי גון ערכת הנושא",
+    "habitEdit_colorPicker_untintedLabel": "לא משתנה לפי גון ערכת הנושא",
+    "habitEdit_colorPicker_tintToggleOnHint": "התאמת הגוון עלולה לגרום לצבע הסופי להיות שונה מזה שבחרת.",
+    "habitEdit_colorPicker_tintToggleOffHint": "קריאות צבעים מסוימים עשויים להפחית את קריאוּת הטקסט בסגנון הבהיר או הכהה.",
+    "common_habitColorType_custom": "מותאם אישית"
 }
