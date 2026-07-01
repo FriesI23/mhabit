@@ -25,6 +25,7 @@ class AppRootView extends StatelessWidget {
   final Widget? child;
   final ThemeData Function()? lightThemeBuilder;
   final ThemeData Function()? darkThemeBuilder;
+  final bool disableAnimations;
 
   const AppRootView({
     super.key,
@@ -33,6 +34,7 @@ class AppRootView extends StatelessWidget {
     this.lightThemeBuilder,
     this.darkThemeBuilder,
     this.child,
+    this.disableAnimations = false,
   });
 
   const AppRootView.withDefault({
@@ -42,6 +44,7 @@ class AppRootView extends StatelessWidget {
     this.lightThemeBuilder,
     this.darkThemeBuilder,
     this.child,
+    this.disableAnimations = false,
   });
 
   @override
@@ -57,7 +60,13 @@ class AppRootView extends StatelessWidget {
       locale: language,
       shortcuts: WidgetsApp.defaultShortcuts,
       actions: WidgetsApp.defaultActions,
-      builder: (context, child) => UnfocusOnTap(child: child),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          disableAnimations:
+              disableAnimations || MediaQuery.disableAnimationsOf(context),
+        ),
+        child: UnfocusOnTap(child: child),
+      ),
       home: child,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,

@@ -29,6 +29,7 @@ import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/custom_color_history.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
+import '../../providers/support/animation_scale_sync.dart';
 import '../../providers/support/global.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_notify_config.dart';
@@ -51,6 +52,10 @@ class AppProviders extends SingleChildStatelessWidget {
       create: (context) => NotificationChannelData(),
     ),
     ChangeNotifierProvider<AppEventBus>(create: (context) => AppEventBus()),
+    ChangeNotifierProvider<AnimationScaleSync>(
+      lazy: false,
+      create: (context) => AnimationScaleSync.create(),
+    ),
   ];
 
   Iterable<SingleChildWidget> _buildReminderWorkflowSupportProviders() => [
