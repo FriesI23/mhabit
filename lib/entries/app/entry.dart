@@ -36,6 +36,7 @@ import '../../pages/habits_display/page.dart' show HabitsDisplayPage;
 import '../../providers/app_ui/app_debugger.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
+import '../../providers/support/animation_scale_sync.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_manager.dart';
@@ -219,9 +220,13 @@ class _AppEntry extends StatelessWidget {
               .select<AppThemeViewModel, (AppThemeType, AppThemeColor, Color)>(
                 (vm) => (vm.themeType, vm.themeColor, vm.mainColor),
               );
+          final disableAnimations = context.select<AnimationScaleSync, bool>(
+            (vm) => vm.disableAnimations,
+          );
           return AppRootView(
             themeMode: transToMaterialThemeType(themeMode),
             language: language,
+            disableAnimations: disableAnimations,
             lightThemeBuilder: () {
               final customColor = lightCustomColors;
               final mainColor = getThemeColor(
