@@ -2,7 +2,7 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
-## 1.25.2+167-pre
+## 1.25.3+168
 
 - Update Hebrew translation, thanks to Omer I.S.'s contribution on Weblate (#589)
 - Update Turkish translation, thanks to Oğuz Ersen's contribution on Weblate (#589)

@@ -33,7 +33,7 @@ If stable-vs-pre/beta or the mode (ask/plan/execute) aren't already stated, ask 
 ## Rules
 
 - Stable-vs-pre/beta is always the user's call — never infer or override it.
-- Suggest the next version from commits/PRs since the last same-type tag (feature/fix/breaking → patch/minor/major; build number always +1 from `pubspec.yaml`). Show the reasoning.
+- **Version + Build Number Rule**: Both version and build number must advance together. When suggesting the next release, increment the patch/minor/major version component AND increment the build number (+N → +(N+1)). Example: `1.25.2+168` → `1.25.3+169`. Show the reasoning.
 - Stage 1: never touch `pubspec.yaml`, `flutter`, or `make` directly — always go through `release_bump.sh`/`.cmd`, never hand-run the equivalent commands yourself. Stop on failure, surface it verbatim; only fall back to manual steps if the script itself won't run, and say so first.
 - Stage 2: delegate all content judgment to the `mhabit-release-notes` prompt's Execute Mode; don't redefine its rules here. Both stable and beta get `CHANGELOG.md`/`zh.md` entries; that prompt also owns deleting `-pre` entries a stable release supersedes.
 - Stage 3: always go through `release_postgen.sh`/`.cmd --release|--pre` matching Stage 1's confirmed mode — never call `gen_changelogs.sh`/`gen_changelogs_darwin.sh`/`gen_flatpak_info.sh` directly yourself as a substitute. Then check the verification paths above with `git status`/`git diff`. Only fall back to running those generator scripts manually if `release_postgen.sh`/`.cmd` itself won't run, and say so first.
