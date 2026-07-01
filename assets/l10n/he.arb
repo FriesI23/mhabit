@@ -1094,5 +1094,6 @@
     "habitEdit_colorPicker_untintedLabel": "לא משתנה לפי גון ערכת הנושא",
     "habitEdit_colorPicker_tintToggleOnHint": "התאמת הגוון עלולה לגרום לצבע הסופי להיות שונה מזה שבחרת.",
     "habitEdit_colorPicker_tintToggleOffHint": "קריאות צבעים מסוימים עשויים להפחית את קריאוּת הטקסט בסגנון הבהיר או הכהה.",
-    "common_habitColorType_custom": "מותאם אישית"
+    "common_habitColorType_custom": "מותאם אישית",
+    "habitEdit_colorPicker_cancel": "ביטול"
 }
