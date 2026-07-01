@@ -22,6 +22,13 @@ module DeployLaneHelper
     ENV["DRY_RUN"].to_s == "1"
   end
 
+  # Precheck cannot check In-App Purchases when authenticated with an App Store
+  # Connect API Key (as opposed to Apple ID login).  Return false when the API
+  # Key env var is set so that precheck skips the IAP check in CI.
+  def precheck_include_in_app_purchases?
+    ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"].nil?
+  end
+
   def report_dry_run_skip(action:, artifact: nil, track: nil, locales: nil,
                           metadata_path: nil)
     FastlaneCore::UI.important("[dry_run] Skipping #{action}")

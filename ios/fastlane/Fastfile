@@ -45,6 +45,7 @@ platform :ios do
       bundle check || bundle install
       bundle exec pod install --no-repo-update
     EOS
+    sh "../../.flutter/bin/flutter build ios --flavor #{flavor} --config-only"
   end
 
   desc "Push a new release build to the App Store"
@@ -113,7 +114,8 @@ platform :ios do
       upload_to_app_store(
         ipa: ipa_artifact,
         verify_only: dry_run,
-        force: is_ci
+        force: is_ci,
+        precheck_include_in_app_purchases: DeployLaneHelper.precheck_include_in_app_purchases?
       )
     else
       changelog, localized_build_info = TestflightChangelogHelper.load_for_lane(
