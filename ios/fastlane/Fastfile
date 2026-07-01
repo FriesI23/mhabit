@@ -114,6 +114,7 @@ platform :ios do
       upload_to_app_store(
         ipa: ipa_artifact,
         verify_only: dry_run,
+        submit_for_review: !dry_run,
         force: is_ci,
         precheck_include_in_app_purchases: DeployLaneHelper.precheck_include_in_app_purchases?
       )
