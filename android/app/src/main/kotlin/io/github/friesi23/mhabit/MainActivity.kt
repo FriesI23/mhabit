@@ -14,12 +14,14 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        animationScaleHandler = AnimationScaleStreamHandler(contentResolver)
+        animationScaleHandler?.dispose()
+        val handler = AnimationScaleStreamHandler(contentResolver)
+        animationScaleHandler = handler
 
         EventChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             ANIMATION_SCALE_CHANNEL
-        ).setStreamHandler(animationScaleHandler!!)
+        ).setStreamHandler(handler)
     }
 
     override fun onDestroy() {

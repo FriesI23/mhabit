@@ -67,7 +67,7 @@ class AnimationScaleStreamHandler(
             Settings.Global.getFloat(
                 resolver, Settings.Global.ANIMATOR_DURATION_SCALE
             ).toDouble()
-        } catch (_: Settings.SettingNotFoundException) {
+        } catch (_: Exception) {
             1.0
         }
     }
