@@ -81,6 +81,7 @@ class AppEntry extends StatelessWidget {
     AppNotifyConfigProfileHandler.new,
     AppLaunchEntryProfileHandler.new,
     AppThemeColorProfileHandler.new,
+    AppLastChangelogVersionProfileHandler.new,
   ];
 
   const AppEntry({super.key});
