@@ -89,6 +89,8 @@ class _HabitDisplayDevelopSliverList
       // TODO(Slice 6): replace with real version/content, gate behind debug flag
       onTap: () => widget.changelogBannerController?.show(
         changelogContent: '- Test bullet A\n- Test bullet B\n- Test bullet C',
+        fullChangelog:
+            '## 1.0.0+1\n- Test bullet A\n- Test bullet B\n- Test bullet C\n\n## 0.9.0+1\n- Old stuff\n',
         version: '1.0.0+1',
       ),
     );
