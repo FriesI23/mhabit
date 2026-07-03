@@ -132,6 +132,7 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   flutter_svg: ^2.0.4
   flutter_timezone: ^5.0.1
+  markdown: ^7.3.1
   markdown_widget: ^2.3.2+8
   url_launcher: ^6.1.10
   package_info_plus: ^10.1.0
