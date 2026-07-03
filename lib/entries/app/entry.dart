@@ -517,13 +517,10 @@ class _AppPostInitState extends SingleChildState<AppPostInit> {
     final lastVersion = handler?.get();
 
     if (lastVersion != currentVersion) {
+      handler?.set(currentVersion);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        showChangelogBanner(
-          context,
-          version: currentVersion,
-          onDismiss: () => handler?.set(currentVersion),
-        );
+        showChangelogBanner(context, version: currentVersion);
       });
     }
   }

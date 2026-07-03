@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 
 import '../../common/consts.dart';
-import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/_widgets/markdown_block.dart';
 
 /// Shows an adaptive changelog view.
 ///
-/// On small screens (width < 600px or height < 400px), renders a
-/// [showModalBottomSheet] with a [DraggableScrollableSheet].
-/// On large screens, renders an [AlertDialog] via [showDialog].
+/// On desktop platforms (macOS, Windows, Linux) always renders an
+/// [AlertDialog] via [showDialog].
+/// On mobile platforms (Android, iOS) renders a [showModalBottomSheet]
+/// on phones, and an [AlertDialog] on tablets (width >= 600).
 ///
 /// [context] is used for navigation and localisation lookups.
 ///
@@ -41,17 +42,15 @@ Future<void> showChangelogDialog({
   required String fullChangelog,
   required String version,
 }) {
-  final size = MediaQuery.sizeOf(context);
-  final layoutType = computeLayoutType(
-    width: size.width,
-    height: size.height,
-    largeScreenWidth: kHabitLargeScreenAdaptWidth,
-    largeScreenHeight: kHabitLargeScreenAdaptHeight,
-    ignoreWidth: false,
-    ignoreHeight: false,
-    defaultType: UiLayoutType.s,
-  );
-  if (layoutType == UiLayoutType.s) {
+  final useDialog = switch (defaultTargetPlatform) {
+    TargetPlatform.android ||
+    TargetPlatform.iOS ||
+    TargetPlatform.fuchsia =>
+      MediaQuery.sizeOf(context).width >= kHabitLargeScreenAdaptWidth,
+    _ => true,
+  };
+
+  if (!useDialog) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

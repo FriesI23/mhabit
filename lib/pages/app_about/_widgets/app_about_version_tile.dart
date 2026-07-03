@@ -18,6 +18,8 @@ import 'package:flutter/services.dart';
 import '../../../common/app_info.dart';
 import '../../../l10n/localizations.dart';
 import '../../../widgets/widgets.dart';
+import '../../app_changelog/changelog_dialog.dart';
+import '../../app_changelog/changelog_parser.dart';
 import '../styles.dart';
 
 class AppAboutVersionTile extends StatefulWidget {
@@ -38,25 +40,36 @@ class AppAboutVersionTile extends StatefulWidget {
 
 class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
   void onLongPressed() async {
-    final text = await rootBundle.loadString(
-      L10n.of(context)?.appAbout_versionTile_changeLogPath ??
-          widget.changeLogPath,
-    );
+    final path =
+        L10n.of(context)?.appAbout_versionTile_changeLogPath ??
+        widget.changeLogPath;
+    final content = await rootBundle.loadChangelog(path);
     if (!mounted) return;
-    await showDialog(
+
+    final version = AppInfo().changelogVersion;
+    final section = await _loadSectionForVersion(version, content);
+    final fullChangelog = stripChangelogPreamble(content);
+
+    if (!mounted) return;
+    await showChangelogDialog(
       context: context,
-      builder: (context) => L10nBuilder(
-        builder: (context, l10n) => AlertDialog(
-          content: Scrollbar(
-            child: SingleChildScrollView(
-              primary: true,
-              scrollDirection: Axis.vertical,
-              child: ThematicMarkdownBlock(data: text),
-            ),
-          ),
-        ),
-      ),
+      currentVersionSection: section ?? fullChangelog,
+      fullChangelog: fullChangelog,
+      version: version,
     );
+  }
+
+  /// Tries exact match first, then strips flavor suffix (e.g. -dev)
+  /// to match CHANGELOG.md headings.
+  Future<String?> _loadSectionForVersion(String version, String content) async {
+    var section = extractVersionSection(content, version);
+    if (section == null) {
+      final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
+      if (baseVersion != version) {
+        section = extractVersionSection(content, baseVersion);
+      }
+    }
+    return section;
   }
 
   @override

@@ -67,9 +67,11 @@ Future<void> showChangelogBanner(
   String? version,
   VoidCallback? onDismiss,
 }) async {
+  final l10n = L10n.of(context)!;
+  final path = l10n.appAbout_versionTile_changeLogPath;
   final v = version ?? AppInfo().changelogVersion;
-  final raw = await rootBundle.loadString('CHANGELOG.md');
-  final section = await _loadSectionForVersion(v);
+  final raw = await rootBundle.loadChangelog(path);
+  final section = await _loadSectionForVersion(v, path: path);
   if (section == null || !context.mounted) return;
   ChangelogBanner.of(context).show(
     changelogContent: section,
@@ -80,13 +82,16 @@ Future<void> showChangelogBanner(
 }
 
 /// Tries exact match first, then strips flavor suffix (e.g. -dev)
-/// to match CHANGELOG.md headings.
-Future<String?> _loadSectionForVersion(String version) async {
-  var section = await loadChangelogForVersion(version);
+/// to match changelog headings.
+Future<String?> _loadSectionForVersion(
+  String version, {
+  required String path,
+}) async {
+  var section = await loadChangelogForVersion(version, path: path);
   if (section == null) {
     final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
     if (baseVersion != version) {
-      section = await loadChangelogForVersion(baseVersion);
+      section = await loadChangelogForVersion(baseVersion, path: path);
     }
   }
   return section;

@@ -15,11 +15,16 @@
 import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
 
+import '../../../extensions/asset_bundle_extensions.dart';
+import '../../assets/assets.dart';
+
+export '../../../extensions/asset_bundle_extensions.dart';
+
 /// Extracts the body markdown for [version] from raw [content].
 ///
-/// [content] is the full text of CHANGELOG.md.
+/// [content] is the full text of a changelog file.
 /// [version] is a `"<semver>+<buildNumber>"` string matching the
-/// `pubspec.yaml` / CHANGELOG.md `+` convention.
+/// `pubspec.yaml` / changelog `+` convention.
 ///
 /// Returns the section body (list items etc.) as markdown text without the
 /// `## <version>` heading, or `null` when no matching heading is found.
@@ -31,9 +36,15 @@ String? extractVersionSection(String content, String version) {
   return _renderNodesToMarkdown(sectionNodes);
 }
 
-/// Loads CHANGELOG.md from assets and returns the body markdown for [version].
-Future<String?> loadChangelogForVersion(String version) async {
-  final content = await rootBundle.loadString('CHANGELOG.md');
+/// Loads a changelog asset from [path] and returns the body markdown for
+/// [version].
+///
+/// [path] defaults to `'CHANGELOG.md'`.
+Future<String?> loadChangelogForVersion(
+  String version, {
+  String path = Assets.changelog,
+}) async {
+  final content = await rootBundle.loadChangelog(path);
   return extractVersionSection(content, version);
 }
 
