@@ -19,13 +19,16 @@ import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_ui/app_debugger.dart';
 import '../../common/widgets.dart';
+import 'changelog_banner_sliver.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
   final void Function(int count)? onAddCountHabitsPressed;
+  final ChangelogBannerController? changelogBannerController;
 
   const HabitDisplayDevelopSliverList({
     super.key,
     this.onAddCountHabitsPressed,
+    this.changelogBannerController,
   });
 
   @override
@@ -77,6 +80,20 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
+  Widget _buildChangelogBannerButton(BuildContext context) {
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      leading: const Icon(Icons.celebration_outlined),
+      title: const Text('Show Changelog Banner'),
+      // TODO(Slice 6): replace with real version/content, gate behind debug flag
+      onTap: () => widget.changelogBannerController?.show(
+        changelogContent: '- Test bullet A\n- Test bullet B\n- Test bullet C',
+        version: '1.0.0+1',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -98,6 +115,7 @@ class _HabitDisplayDevelopSliverList
             _buildNotificationTextButton(context),
             _buildActiveNotificationTextButton(context),
             _buildCheckPendingNotificationTextButton(context),
+            _buildChangelogBannerButton(context),
           ],
         ),
       ),

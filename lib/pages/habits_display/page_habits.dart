@@ -79,6 +79,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   late AppCompactUISwitcherViewModel _uiSwitcher;
 
   late final LinkedScrollControllerGroup _horizonalScrollControllerGroup;
+  late final ChangelogBannerController _changelogBannerController;
   late final double _toolbarHeight;
 
   static const Duration _bottomNavAnimationDuration = Duration(
@@ -106,6 +107,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _horizonalScrollControllerGroup.addOffsetChangedListener(
       _onHorizonalOffsetChanged,
     );
+    _changelogBannerController = ChangelogBannerController();
     final vm = context.read<AppExperimentalFeatureViewModel>();
     _toolbarHeight = vm.habitSearch ? kSearchAppBarHeight : kToolbarHeight;
     _scrollVisibilityDispatcher = VerticalScrollVisibilityDispatcher(
@@ -136,6 +138,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
     _scrollCalendarToStartSub.cancel();
     _scrollVisibilityDispatcher.dispose();
+    _changelogBannerController.dispose();
     super.dispose();
   }
 
@@ -933,6 +936,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
           sliver: EnhancedSafeArea.edgeToEdgeSafe(
             withSliver: true,
             child: HabitDisplayDevelopSliverList(
+              changelogBannerController: _changelogBannerController,
               onAddCountHabitsPressed: (count) async {
                 await debugAddMultiTempHabit(context, count: count);
                 if (!context.mounted) return;
@@ -991,6 +995,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
               slivers: [
                 buildAppbar(context),
                 buildCalendarBar(context),
+                ChangelogBannerSliver(controller: _changelogBannerController),
                 const PinnedHeaderSliver(child: HabitDivider(height: 1)),
                 buildHabits(context),
                 buildDevelopSliverList(context),
