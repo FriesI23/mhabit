@@ -1729,7 +1729,7 @@ class L10nZh extends L10n {
 
   @override
   String changelog_banner_title(String version) {
-    return '🎉 v$version 更新内容';
+    return 'v$version 更新内容';
   }
 
   @override
@@ -1739,9 +1739,7 @@ class L10nZh extends L10n {
   String get changelog_banner_view => '查看';
 
   @override
-  String changelog_dialog_title(String version) {
-    return '更新日志 — v$version';
-  }
+  String get changelog_dialog_title => '更新日志';
 
   @override
   String get changelog_view_full => '查看完整更新日志';
@@ -3110,7 +3108,7 @@ class L10nZhHant extends L10nZh {
 
   @override
   String changelog_banner_title(String version) {
-    return '🎉 v$version 更新內容';
+    return 'v$version 更新內容';
   }
 
   @override
@@ -3120,9 +3118,7 @@ class L10nZhHant extends L10nZh {
   String get changelog_banner_view => '檢視';
 
   @override
-  String changelog_dialog_title(String version) {
-    return '更新日誌 — v$version';
-  }
+  String get changelog_dialog_title => '更新日誌';
 
   @override
   String get changelog_view_full => '檢視完整更新日誌';

@@ -14,18 +14,18 @@
 
 import 'package:flutter/material.dart';
 
+import '../../common/consts.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
-import '../../widgets/_widgets/app_ui_layout_builder.dart';
 import '../../widgets/_widgets/markdown_block.dart';
 
-/// Shows an adaptive changelog dialog.
+/// Shows an adaptive changelog view.
 ///
-/// On small screens (width < 600px or height < 400px), renders a fullscreen
-/// [Dialog.fullscreen] with a [Scaffold] and close button in the [AppBar].
-/// On large screens, renders an [AlertDialog].
+/// On small screens (width < 600px or height < 400px), renders a
+/// [showModalBottomSheet] with a [DraggableScrollableSheet].
+/// On large screens, renders an [AlertDialog] via [showDialog].
 ///
-/// [context] is used for navigation and (post-Slice 5) localisation lookups.
+/// [context] is used for navigation and localisation lookups.
 ///
 /// [currentVersionSection] is the body markdown for the current app version,
 /// extracted by `extractVersionSection()` (Slice 2). This is shown by default.
@@ -34,66 +34,126 @@ import '../../widgets/_widgets/markdown_block.dart';
 /// user taps "View Full Changelog".
 ///
 /// [version] is the `"<semver>+<buildNumber>"` version string for display
-/// in the dialog title.
+/// in the title.
 Future<void> showChangelogDialog({
   required BuildContext context,
   required String currentVersionSection,
   required String fullChangelog,
   required String version,
 }) {
+  final size = MediaQuery.sizeOf(context);
+  final layoutType = computeLayoutType(
+    width: size.width,
+    height: size.height,
+    largeScreenWidth: kHabitLargeScreenAdaptWidth,
+    largeScreenHeight: kHabitLargeScreenAdaptHeight,
+    ignoreWidth: false,
+    ignoreHeight: false,
+    defaultType: UiLayoutType.s,
+  );
+  if (layoutType == UiLayoutType.s) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (_) => _ChangelogBottomSheet(
+        currentVersionSection: currentVersionSection,
+        fullChangelog: fullChangelog,
+        version: version,
+      ),
+    );
+  }
   return showDialog<void>(
     context: context,
-    builder: (ctx) => AppUiLayoutBuilder(
-      ignoreHeight: false,
-      ignoreWidth: false,
-      builder: (ctx, layoutType, _) {
-        return layoutType == UiLayoutType.s
-            ? _ChangelogFullscreenDialog(
-                currentVersionSection: currentVersionSection,
-                fullChangelog: fullChangelog,
-                version: version,
-              )
-            : _ChangelogAlertDialog(
-                currentVersionSection: currentVersionSection,
-                fullChangelog: fullChangelog,
-                version: version,
-              );
-      },
+    builder: (_) => _ChangelogDialog(
+      currentVersionSection: currentVersionSection,
+      fullChangelog: fullChangelog,
+      version: version,
     ),
   );
 }
 
 // ---------------------------------------------------------------------------
-// Fullscreen dialog (small screens)
+// Bottom sheet (small screens) — Material drag handle + unified scroll
 // ---------------------------------------------------------------------------
 
-class _ChangelogFullscreenDialog extends StatelessWidget {
+class _ChangelogBottomSheet extends StatefulWidget {
   final String currentVersionSection;
   final String fullChangelog;
   final String version;
 
-  const _ChangelogFullscreenDialog({
+  const _ChangelogBottomSheet({
     required this.currentVersionSection,
     required this.fullChangelog,
     required this.version,
   });
 
   @override
+  State<_ChangelogBottomSheet> createState() => _ChangelogBottomSheetState();
+}
+
+class _ChangelogBottomSheetState extends State<_ChangelogBottomSheet> {
+  var _showFull = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Dialog.fullscreen(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(L10n.of(context)!.changelog_dialog_title(version)),
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        body: _ChangelogContent(
-          currentVersionSection: currentVersionSection,
-          fullChangelog: fullChangelog,
-        ),
-      ),
+    final l10n = L10n.of(context)!;
+    final title = _ChangelogTitle(version: widget.version);
+    final markdownData = _showFull
+        ? widget.fullChangelog
+        : widget.currentVersionSection;
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.6,
+      minChildSize: 0.25,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return Column(
+          children: [
+            // Title + scrollable markdown — unified scroll via DraggableScrollableSheet
+            Expanded(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    title,
+                    const SizedBox(height: 12),
+                    ThematicMarkdownBlock(
+                      data: markdownData,
+                      selectable: false,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Pinned bottom bar
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    if (!_showFull)
+                      FilledButton(
+                        onPressed: () => setState(() => _showFull = true),
+                        child: Text(l10n.changelog_view_full),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -102,32 +162,46 @@ class _ChangelogFullscreenDialog extends StatelessWidget {
 // AlertDialog (large screens)
 // ---------------------------------------------------------------------------
 
-class _ChangelogAlertDialog extends StatelessWidget {
+class _ChangelogDialog extends StatefulWidget {
   final String currentVersionSection;
   final String fullChangelog;
   final String version;
 
-  const _ChangelogAlertDialog({
+  const _ChangelogDialog({
     required this.currentVersionSection,
     required this.fullChangelog,
     required this.version,
   });
 
   @override
+  State<_ChangelogDialog> createState() => _ChangelogDialogState();
+}
+
+class _ChangelogDialogState extends State<_ChangelogDialog> {
+  var _showFull = false;
+
+  @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context)!;
+    final title = _ChangelogTitle(version: widget.version);
+    final content = _ChangelogContent(
+      data: _showFull ? widget.fullChangelog : widget.currentVersionSection,
+    );
+    final viewFullButton = !_showFull
+        ? FilledButton(
+            onPressed: () => setState(() => _showFull = true),
+            child: Text(l10n.changelog_view_full),
+          )
+        : null;
+
     return AlertDialog(
-      title: Text(L10n.of(context)!.changelog_dialog_title(version)),
-      content: SizedBox(
-        width: 500,
-        child: _ChangelogContent(
-          currentVersionSection: currentVersionSection,
-          fullChangelog: fullChangelog,
-        ),
-      ),
+      title: title,
+      content: SizedBox(width: 500, child: content),
       actions: [
+        ?viewFullButton,
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
       ],
     );
@@ -135,48 +209,65 @@ class _ChangelogAlertDialog extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Shared content with "View Full Changelog" toggle
+// Dialog title: "Changelog" heading + version row with icon
 // ---------------------------------------------------------------------------
 
-class _ChangelogContent extends StatefulWidget {
-  final String currentVersionSection;
-  final String fullChangelog;
+class _ChangelogTitle extends StatelessWidget {
+  final String version;
 
-  const _ChangelogContent({
-    required this.currentVersionSection,
-    required this.fullChangelog,
-  });
+  const _ChangelogTitle({required this.version});
 
   @override
-  State<_ChangelogContent> createState() => _ChangelogContentState();
+  Widget build(BuildContext context) {
+    final l10n = L10n.of(context)!;
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(l10n.changelog_dialog_title),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.info_outline, size: 16, color: color),
+            const SizedBox(width: 6),
+            Text(
+              'v$version',
+              style: theme.textTheme.bodySmall?.copyWith(color: color),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
-class _ChangelogContentState extends State<_ChangelogContent> {
-  var _showFull = false;
+// ---------------------------------------------------------------------------
+// Shared markdown content
+// ---------------------------------------------------------------------------
+
+class _ChangelogContent extends StatelessWidget {
+  final String data;
+
+  const _ChangelogContent({required this.data});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
-          child: Scrollbar(
-            child: SingleChildScrollView(
-              primary: true,
-              scrollDirection: Axis.vertical,
-              child: ThematicMarkdownBlock(
-                data: _showFull
-                    ? widget.fullChangelog
-                    : widget.currentVersionSection,
-                selectable: false,
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                primary: true,
+                scrollDirection: Axis.vertical,
+                child: ThematicMarkdownBlock(data: data, selectable: false),
               ),
             ),
           ),
         ),
-        if (!_showFull)
-          TextButton(
-            onPressed: () => setState(() => _showFull = true),
-            child: Text(L10n.of(context)!.changelog_view_full),
-          ),
       ],
     );
   }

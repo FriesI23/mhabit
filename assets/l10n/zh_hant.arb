@@ -830,7 +830,7 @@
     "userAction_tap": "點選",
     "userAction_doubleTap": "點選兩次",
     "userAction_longTap": "長按",
-    "changelog_banner_title": "🎉 v{version} 更新內容",
+    "changelog_banner_title": "v{version} 更新內容",
     "@changelog_banner_title": {
         "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
         "placeholders": {
@@ -848,16 +848,7 @@
     "@changelog_banner_view": {
         "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
     },
-    "changelog_dialog_title": "更新日誌 — v{version}",
-    "@changelog_dialog_title": {
-        "description": "Title in the adaptive changelog dialog (About page long-press on version).",
-        "placeholders": {
-            "version": {
-                "type": "String",
-                "example": "1.25.3+168"
-            }
-        }
-    },
+    "changelog_dialog_title": "更新日誌",
     "changelog_view_full": "檢視完整更新日誌",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."

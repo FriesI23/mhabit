@@ -130,9 +130,9 @@ void main() {
     });
 
     // -----------------------------------------------------------------------
-    // 5: fullscreen dialog on small screen (width < 600px)
+    // 5: modal bottom sheet on small screen (width < 600px)
     // -----------------------------------------------------------------------
-    testWidgets('fullscreen dialog on small screen (width < 600px)', (
+    testWidgets('modal bottom sheet on small screen (width < 600px)', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(400, 800);
@@ -142,11 +142,13 @@ void main() {
       await tester.pumpWidget(_buildTestApp());
       await _openDialog(tester);
 
-      // Fullscreen dialog uses Dialog.fullscreen, which has a Scaffold
-      // with AppBar containing a close IconButton
-      expect(find.byIcon(Icons.close), findsOneWidget);
+      // Bottom sheet content should be visible
+      expect(find.text('Changelog'), findsOneWidget);
+      expect(find.text('v$_version'), findsOneWidget);
       // AlertDialog close button should not be present
       expect(find.text('Close'), findsNothing);
+      // Fullscreen close icon should not be present
+      expect(find.byIcon(Icons.close), findsNothing);
     });
 
     // -----------------------------------------------------------------------

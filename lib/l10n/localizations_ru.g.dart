@@ -1839,7 +1839,7 @@ class L10nRu extends L10n {
 
   @override
   String changelog_banner_title(String version) {
-    return '🎉 What\'s New in v$version';
+    return 'What\'s New in v$version';
   }
 
   @override
@@ -1849,9 +1849,7 @@ class L10nRu extends L10n {
   String get changelog_banner_view => 'VIEW';
 
   @override
-  String changelog_dialog_title(String version) {
-    return 'Changelog — v$version';
-  }
+  String get changelog_dialog_title => 'Changelog';
 
   @override
   String get changelog_view_full => 'View Full Changelog';

@@ -27,9 +27,11 @@ import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/reminders/notification_channel.dart';
 import 'package:mhabit/reminders/notification_details.dart';
 import 'package:mhabit/reminders/notification_service.dart';
+import 'package:mhabit/storage/profile_provider.dart';
 import 'package:mhabit/widgets/widgets.dart' show DateChangeNotifier;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _initAppInfo() async {
   PackageInfo.setMockInitialValues(
@@ -297,10 +299,15 @@ void main() {
         loadedHabits: [_buildStartupHabitSummaryData()],
       )..setNotificationChannelData(channelData);
 
+      SharedPreferences.setMockInitialValues({});
+      final profile = ProfileViewModel(const []);
+      await profile.init();
+
       try {
         Widget buildTestApp() {
           return MultiProvider(
             providers: [
+              ChangeNotifierProvider<ProfileViewModel>.value(value: profile),
               ChangeNotifierProvider<DateChangeNotifier>.value(
                 value: dateChangeNotifier,
               ),
@@ -445,6 +452,7 @@ void main() {
         reminder.dispose();
         debugger.dispose();
         appSync.dispose();
+        profile.dispose();
       }
     },
   );

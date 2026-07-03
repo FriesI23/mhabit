@@ -13,12 +13,131 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
+import '../../../common/app_info.dart';
 import '../../../l10n/localizations.dart';
 import '../../app_changelog/changelog_dialog.dart';
+import '../../app_changelog/changelog_parser.dart';
 
-/// Controller that manages the visibility and content of the changelog banner
-/// embedded in the habit display sliver list.
+/// App-level manager for the changelog banner.
+///
+/// Place above [HabitsDisplayPage] in the widget tree. Use
+/// [ChangelogBanner.of] to trigger the banner from anywhere in the subtree —
+/// this follows the same pattern as [ScaffoldMessenger.of].
+///
+/// ```dart
+/// ChangelogBanner(
+///   child: HabitsDisplayPage(),
+/// )
+/// ```
+///
+/// Then trigger from anywhere below:
+/// ```dart
+/// ChangelogBanner.of(context).show(
+///   changelogContent: '...',
+///   fullChangelog: '...',
+///   version: '1.0.0+1',
+/// );
+/// ```
+class ChangelogBanner extends StatefulWidget {
+  final Widget child;
+
+  const ChangelogBanner({super.key, required this.child});
+
+  /// Returns the [ChangelogBannerState] for the nearest [ChangelogBanner]
+  /// ancestor. Throws if none found — mirroring [ScaffoldMessenger.of].
+  static ChangelogBannerState of(BuildContext context) {
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<_ChangelogBannerScope>();
+    assert(scope != null, 'No ChangelogBanner found in widget tree');
+    return scope!.state;
+  }
+
+  @override
+  State<ChangelogBanner> createState() => ChangelogBannerState();
+}
+
+/// Loads CHANGELOG.md and shows the banner for the current app version.
+///
+/// Handles version lookup, CHANGELOG loading, and flavor-suffix fallback.
+/// Optionally override [version] and provide [onDismiss] callback.
+Future<void> showChangelogBanner(
+  BuildContext context, {
+  String? version,
+  VoidCallback? onDismiss,
+}) async {
+  final v = version ?? AppInfo().changelogVersion;
+  final raw = await rootBundle.loadString('CHANGELOG.md');
+  final section = await _loadSectionForVersion(v);
+  if (section == null || !context.mounted) return;
+  ChangelogBanner.of(context).show(
+    changelogContent: section,
+    fullChangelog: stripChangelogPreamble(raw),
+    version: v,
+    onDismiss: onDismiss,
+  );
+}
+
+/// Tries exact match first, then strips flavor suffix (e.g. -dev)
+/// to match CHANGELOG.md headings.
+Future<String?> _loadSectionForVersion(String version) async {
+  var section = await loadChangelogForVersion(version);
+  if (section == null) {
+    final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
+    if (baseVersion != version) {
+      section = await loadChangelogForVersion(baseVersion);
+    }
+  }
+  return section;
+}
+
+class ChangelogBannerState extends State<ChangelogBanner> {
+  final ChangelogBannerController _controller = ChangelogBannerController();
+
+  /// The underlying controller. Exposed for widgets that need to listen
+  /// directly (e.g. [_ChangelogBanner]).
+  ChangelogBannerController get controller => _controller;
+
+  /// Shows the banner for [version].
+  void show({
+    required String changelogContent,
+    required String fullChangelog,
+    required String version,
+    VoidCallback? onDismiss,
+  }) {
+    _controller.show(
+      changelogContent: changelogContent,
+      fullChangelog: fullChangelog,
+      version: version,
+      onDismiss: onDismiss,
+    );
+  }
+
+  /// Dismisses the banner.
+  void dismiss() => _controller.dismiss();
+
+  @override
+  Widget build(BuildContext context) {
+    return _ChangelogBannerScope(state: this, child: widget.child);
+  }
+}
+
+class _ChangelogBannerScope extends InheritedWidget {
+  final ChangelogBannerState state;
+
+  const _ChangelogBannerScope({required this.state, required super.child});
+
+  @override
+  bool updateShouldNotify(_ChangelogBannerScope old) => false;
+}
+
+/// Controller that manages the visibility and content of the changelog banner.
+///
+/// Owned by [ChangelogBannerState]; widgets that need to listen for changes
+/// (e.g. [_ChangelogBanner]) access it via
+/// `ChangelogBanner.of(context).controller`.
+
 class ChangelogBannerController extends ChangeNotifier {
   String _changelogContent = '';
   String _fullChangelog = '';
@@ -81,16 +200,18 @@ class ChangelogBannerController extends ChangeNotifier {
 /// A sliver-based changelog banner that embeds directly in a [CustomScrollView].
 ///
 /// Renders inline between the calendar bar and habit list. Banner is always in
-/// the tree; [_ChangelogBanner] manages its own expand/collapse animation in
-/// response to controller state changes.
+/// the tree; [_ChangelogBanner] manages its own expand/collapse animation.
+/// Requires a [ChangelogBanner] ancestor in the widget tree.
 class ChangelogBannerSliver extends StatelessWidget {
-  final ChangelogBannerController controller;
-
-  const ChangelogBannerSliver({super.key, required this.controller});
+  const ChangelogBannerSliver({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(child: _ChangelogBanner(controller: controller));
+    return SliverToBoxAdapter(
+      child: _ChangelogBanner(
+        controller: ChangelogBanner.of(context).controller,
+      ),
+    );
   }
 }
 
@@ -161,7 +282,6 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             leading: const Icon(Icons.celebration_outlined),
-            forceActionsBelow: true,
             content: Text(
               L10n.of(
                 context,
@@ -170,6 +290,9 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
             ),
             actions: [
               FilledButton(
+                style: FilledButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                ),
                 onPressed: () {
                   widget.controller.dismiss();
                   showChangelogDialog(
@@ -182,6 +305,9 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
                 child: Text(L10n.of(context)!.changelog_banner_view),
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                ),
                 onPressed: widget.controller.dismiss,
                 child: Text(L10n.of(context)!.changelog_banner_action),
               ),

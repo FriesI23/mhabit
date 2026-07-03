@@ -34,6 +34,7 @@ class AppInfo implements AsyncInitialization {
   late String _packageName;
   late String _appName;
   late String _appVersion;
+  PackageInfo? _packageInfo;
 
   factory AppInfo() {
     return _singleton;
@@ -46,6 +47,19 @@ class AppInfo implements AsyncInitialization {
   String get appName => _appName;
 
   String get appVersion => _appVersion;
+
+  /// The version in `"<version>+<buildNumber>"` format, with any leading
+  /// `v`/`V` stripped, suitable for comparing with CHANGELOG.md headings.
+  /// Falls back to parsing [appVersion] when [init] has not completed.
+  String get changelogVersion {
+    if (_packageInfo != null) {
+      final v = _packageInfo!.version.replaceFirst(RegExp(r'^[vV]'), '');
+      return '$v+${_packageInfo!.buildNumber}';
+    }
+    return _appVersion
+        .replaceFirst(': ', '+')
+        .replaceFirst(RegExp(r'^[vV]'), '');
+  }
 
   LinuxPlatformArchitecture? get linuxArchitecture => _linuxArchitecture;
 
@@ -63,6 +77,7 @@ class AppInfo implements AsyncInitialization {
     }
 
     final packageInfo = await PackageInfo.fromPlatform();
+    _packageInfo = packageInfo;
     _packageName = packageInfo.packageName;
     _appName = packageInfo.appName;
     _appVersion = "${packageInfo.version}: ${packageInfo.buildNumber}";

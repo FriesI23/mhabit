@@ -37,6 +37,16 @@ Future<String?> loadChangelogForVersion(String version) async {
   return extractVersionSection(content, version);
 }
 
+/// Strips the preamble (title, links) from raw CHANGELOG.md [content],
+/// returning only the version heading lines and their body content.
+///
+/// Finds the first `## ` (h2) heading and returns everything from that
+/// point onward. If no h2 is found, returns [content] unchanged.
+String stripChangelogPreamble(String content) {
+  final match = RegExp(r'^## ', multiLine: true).firstMatch(content);
+  return match != null ? content.substring(match.start) : content;
+}
+
 int? _findVersionHeading(List<md.Node> nodes, String version) {
   for (final (index, node) in nodes.indexed) {
     if (node case md.Element(

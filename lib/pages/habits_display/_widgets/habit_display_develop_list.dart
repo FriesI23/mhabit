@@ -18,17 +18,17 @@ import 'package:provider/provider.dart';
 import '../../../extensions/colorscheme_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../../providers/app_ui/app_debugger.dart';
+import '../../../storage/profile/handlers.dart';
+import '../../../storage/profile_provider.dart';
 import '../../common/widgets.dart';
 import 'changelog_banner_sliver.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
   final void Function(int count)? onAddCountHabitsPressed;
-  final ChangelogBannerController? changelogBannerController;
 
   const HabitDisplayDevelopSliverList({
     super.key,
     this.onAddCountHabitsPressed,
-    this.changelogBannerController,
   });
 
   @override
@@ -86,13 +86,28 @@ class _HabitDisplayDevelopSliverList
       visualDensity: VisualDensity.compact,
       leading: const Icon(Icons.celebration_outlined),
       title: const Text('Show Changelog Banner'),
-      // TODO(Slice 6): replace with real version/content, gate behind debug flag
-      onTap: () => widget.changelogBannerController?.show(
-        changelogContent: '- Test bullet A\n- Test bullet B\n- Test bullet C',
-        fullChangelog:
-            '## 1.0.0+1\n- Test bullet A\n- Test bullet B\n- Test bullet C\n\n## 0.9.0+1\n- Old stuff\n',
-        version: '1.0.0+1',
-      ),
+      onTap: () => showChangelogBanner(context),
+    );
+  }
+
+  Widget _buildClearChangelogVersionButton(BuildContext context) {
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      leading: const Icon(Icons.cleaning_services_outlined),
+      title: const Text('Clear last changelog version'),
+      subtitle: const Text('Restart to re-trigger the banner'),
+      onTap: () {
+        context
+            .read<ProfileViewModel>()
+            .getHandler<AppLastChangelogVersionProfileHandler>()
+            ?.remove();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Changelog version cleared')),
+          );
+        }
+      },
     );
   }
 
@@ -118,6 +133,7 @@ class _HabitDisplayDevelopSliverList
             _buildActiveNotificationTextButton(context),
             _buildCheckPendingNotificationTextButton(context),
             _buildChangelogBannerButton(context),
+            _buildClearChangelogVersionButton(context),
           ],
         ),
       ),

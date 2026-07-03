@@ -24,6 +24,7 @@ import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
+import 'package:mhabit/pages/habits_display/_widgets/changelog_banner_sliver.dart';
 import 'package:mhabit/pages/habits_display/page_habits.dart';
 import 'package:mhabit/pages/habits_display/page_today.dart';
 import 'package:mhabit/providers/app_ui/app_compact_ui_switcher.dart';
@@ -250,11 +251,13 @@ Future<void> _pumpHabitsTabPage(
         ListenableProvider<AppSyncStatusSource>.value(value: sync),
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
-      child: const MaterialApp(
-        localizationsDelegates: L10n.localizationsDelegates,
-        supportedLocales: L10n.supportedLocales,
-        home: Scaffold(
-          body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
+      child: const ChangelogBanner(
+        child: MaterialApp(
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          home: Scaffold(
+            body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
+          ),
         ),
       ),
     ),
