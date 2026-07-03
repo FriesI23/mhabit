@@ -1726,6 +1726,25 @@ class L10nZh extends L10n {
 
   @override
   String get channelDesc_appSyncFailed => '用于在同步失败时提醒';
+
+  @override
+  String changelog_banner_title(String version) {
+    return '🎉 v$version 更新内容';
+  }
+
+  @override
+  String get changelog_banner_action => '关闭';
+
+  @override
+  String get changelog_banner_view => '查看';
+
+  @override
+  String changelog_dialog_title(String version) {
+    return '更新日志 — v$version';
+  }
+
+  @override
+  String get changelog_view_full => '查看完整更新日志';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3088,4 +3107,23 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get userAction_longTap => '長按';
+
+  @override
+  String changelog_banner_title(String version) {
+    return '🎉 v$version 更新內容';
+  }
+
+  @override
+  String get changelog_banner_action => '關閉';
+
+  @override
+  String get changelog_banner_view => '檢視';
+
+  @override
+  String changelog_dialog_title(String version) {
+    return '更新日誌 — v$version';
+  }
+
+  @override
+  String get changelog_view_full => '檢視完整更新日誌';
 }

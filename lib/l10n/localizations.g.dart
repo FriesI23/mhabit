@@ -2932,6 +2932,36 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Used to alert when sync fails'**
   String get channelDesc_appSyncFailed;
+
+  /// Title in the MaterialBanner showing the current version changelog on first open after upgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 What\'s New in v{version}'**
+  String changelog_banner_title(String version);
+
+  /// Dismiss button label on the changelog MaterialBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOSE'**
+  String get changelog_banner_action;
+
+  /// View button label on the changelog MaterialBanner that opens the full changelog dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW'**
+  String get changelog_banner_view;
+
+  /// Title in the adaptive changelog dialog (About page long-press on version).
+  ///
+  /// In en, this message translates to:
+  /// **'Changelog — v{version}'**
+  String changelog_dialog_title(String version);
+
+  /// Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Changelog'**
+  String get changelog_view_full;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

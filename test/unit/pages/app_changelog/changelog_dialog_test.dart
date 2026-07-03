@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/app_changelog/changelog_dialog.dart';
 import 'package:mhabit/widgets/_widgets/markdown_block.dart';
 
@@ -27,6 +28,8 @@ Widget _buildTestApp({
   String version = _version,
 }) {
   return MaterialApp(
+    localizationsDelegates: L10n.localizationsDelegates,
+    supportedLocales: L10n.supportedLocales,
     home: Builder(
       builder: (context) => TextButton(
         onPressed: () => showChangelogDialog(

@@ -1094,5 +1094,37 @@
     "channelName_appSyncing": "同步进程",
     "channelDesc_appSyncing": "用于显示同步进度和非失败结果",
     "channelName_appSyncFailed": "同步失败",
-    "channelDesc_appSyncFailed": "用于在同步失败时提醒"
+    "channelDesc_appSyncFailed": "用于在同步失败时提醒",
+    "changelog_banner_title": "🎉 v{version} 更新内容",
+    "@changelog_banner_title": {
+        "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.25.3+168"
+            }
+        }
+    },
+    "changelog_banner_action": "关闭",
+    "@changelog_banner_action": {
+        "description": "Dismiss button label on the changelog MaterialBanner."
+    },
+    "changelog_banner_view": "查看",
+    "@changelog_banner_view": {
+        "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
+    },
+    "changelog_dialog_title": "更新日志 — v{version}",
+    "@changelog_dialog_title": {
+        "description": "Title in the adaptive changelog dialog (About page long-press on version).",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.25.3+168"
+            }
+        }
+    },
+    "changelog_view_full": "查看完整更新日志",
+    "@changelog_view_full": {
+        "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    }
 }

@@ -657,5 +657,37 @@
     "contributors_tile_title": "Contributeurs",
     "userAction_tap": "Appui",
     "userAction_doubleTap": "Double",
-    "userAction_longTap": "Long"
+    "userAction_longTap": "Long",
+    "changelog_banner_title": "🎉 What's New in v{version}",
+    "@changelog_banner_title": {
+        "description": "Title in the MaterialBanner showing the current version changelog on first open after upgrade.",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.25.3+168"
+            }
+        }
+    },
+    "changelog_banner_action": "CLOSE",
+    "@changelog_banner_action": {
+        "description": "Dismiss button label on the changelog MaterialBanner."
+    },
+    "changelog_banner_view": "VIEW",
+    "@changelog_banner_view": {
+        "description": "View button label on the changelog MaterialBanner that opens the full changelog dialog."
+    },
+    "changelog_dialog_title": "Changelog — v{version}",
+    "@changelog_dialog_title": {
+        "description": "Title in the adaptive changelog dialog (About page long-press on version).",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.25.3+168"
+            }
+        }
+    },
+    "changelog_view_full": "View Full Changelog",
+    "@changelog_view_full": {
+        "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    }
 }

@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 
 import '../../common/utils.dart';
+import '../../l10n/localizations.dart';
 import '../../widgets/_widgets/app_ui_layout_builder.dart';
 import '../../widgets/_widgets/markdown_block.dart';
 
@@ -82,7 +83,7 @@ class _ChangelogFullscreenDialog extends StatelessWidget {
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Changelog ($version)'),
+          title: Text(L10n.of(context)!.changelog_dialog_title(version)),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
@@ -115,7 +116,7 @@ class _ChangelogAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Changelog ($version)'),
+      title: Text(L10n.of(context)!.changelog_dialog_title(version)),
       content: SizedBox(
         width: 500,
         child: _ChangelogContent(
@@ -174,7 +175,7 @@ class _ChangelogContentState extends State<_ChangelogContent> {
         if (!_showFull)
           TextButton(
             onPressed: () => setState(() => _showFull = true),
-            child: const Text('View Full Changelog'),
+            child: Text(L10n.of(context)!.changelog_view_full),
           ),
       ],
     );

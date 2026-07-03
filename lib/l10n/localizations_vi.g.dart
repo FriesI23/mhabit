@@ -1836,4 +1836,23 @@ class L10nVi extends L10n {
   @override
   String get channelDesc_appSyncFailed =>
       'Dùng để cảnh báo khi đồng bộ hóa không thành công';
+
+  @override
+  String changelog_banner_title(String version) {
+    return '🎉 What\'s New in v$version';
+  }
+
+  @override
+  String get changelog_banner_action => 'CLOSE';
+
+  @override
+  String get changelog_banner_view => 'VIEW';
+
+  @override
+  String changelog_dialog_title(String version) {
+    return 'Changelog — v$version';
+  }
+
+  @override
+  String get changelog_view_full => 'View Full Changelog';
 }

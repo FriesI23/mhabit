@@ -1795,4 +1795,23 @@ class L10nAr extends L10n {
 
   @override
   String get channelDesc_appSyncFailed => 'يُستخدم للتنبيه عند فشل المزامنة';
+
+  @override
+  String changelog_banner_title(String version) {
+    return '🎉 What\'s New in v$version';
+  }
+
+  @override
+  String get changelog_banner_action => 'CLOSE';
+
+  @override
+  String get changelog_banner_view => 'VIEW';
+
+  @override
+  String changelog_dialog_title(String version) {
+    return 'Changelog — v$version';
+  }
+
+  @override
+  String get changelog_view_full => 'View Full Changelog';
 }

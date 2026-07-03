@@ -173,6 +173,8 @@ Future<void> _pumpTodayTabPage(
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
       child: const MaterialApp(
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
         home: Scaffold(
           body: TodayTabPage(onBottomNavVisibilityChanged: _ignoreBool),
         ),
@@ -249,6 +251,8 @@ Future<void> _pumpHabitsTabPage(
         ListenableProvider<AppSyncWorkflowAccess>.value(value: sync),
       ],
       child: const MaterialApp(
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
         home: Scaffold(
           body: HabitsTabPage(onBottomNavVisibilityChanged: _ignoreBool),
         ),

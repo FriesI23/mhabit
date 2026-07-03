@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../l10n/localizations.dart';
 import '../../app_changelog/changelog_dialog.dart';
 
 /// Controller that manages the visibility and content of the changelog banner
@@ -24,8 +25,22 @@ class ChangelogBannerController extends ChangeNotifier {
   String _version = '';
   VoidCallback? _onDismiss;
   bool _isShowing = false;
+  int _generation = 0;
 
   bool get isShowing => _isShowing;
+
+  /// The version string for the current changelog display.
+  String get version => _version;
+
+  /// The current-version section markdown content.
+  String get changelogContent => _changelogContent;
+
+  /// The full CHANGELOG.md content.
+  String get fullChangelog => _fullChangelog;
+
+  /// Unique key for the [Dismissible] widget, changes on each [show] call
+  /// to force a fresh widget after swipe-dismiss.
+  String get dismissibleKey => 'changelog_banner_$_generation';
 
   /// Shows the banner with the given [changelogContent], [fullChangelog],
   /// and [version].
@@ -42,6 +57,7 @@ class ChangelogBannerController extends ChangeNotifier {
     _version = version;
     _onDismiss = onDismiss;
     _isShowing = true;
+    _generation++;
     notifyListeners();
   }
 
@@ -136,7 +152,7 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
         axisAlignment: 1.0,
         sizeFactor: _animation,
         child: Dismissible(
-          key: const ValueKey('changelog_banner'),
+          key: ValueKey(widget.controller.dismissibleKey),
           direction: DismissDirection.horizontal,
           resizeDuration: null,
           dismissThresholds: const {DismissDirection.horizontal: 0.4},
@@ -146,9 +162,10 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
             surfaceTintColor: Colors.transparent,
             leading: const Icon(Icons.celebration_outlined),
             forceActionsBelow: true,
-            // TODO(Slice 5): replace with L10n.of(context).changelogBannerContent(version)
             content: Text(
-              "v${widget.controller._version} is now available",
+              L10n.of(
+                context,
+              )!.changelog_banner_title(widget.controller.version),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             actions: [
@@ -157,16 +174,16 @@ class _ChangelogBannerState extends State<_ChangelogBanner>
                   widget.controller.dismiss();
                   showChangelogDialog(
                     context: context,
-                    currentVersionSection: widget.controller._changelogContent,
-                    fullChangelog: widget.controller._fullChangelog,
-                    version: widget.controller._version,
+                    currentVersionSection: widget.controller.changelogContent,
+                    fullChangelog: widget.controller.fullChangelog,
+                    version: widget.controller.version,
                   );
                 },
-                child: const Text('VIEW'),
+                child: Text(L10n.of(context)!.changelog_banner_view),
               ),
               TextButton(
                 onPressed: widget.controller.dismiss,
-                child: const Text('CLOSE'),
+                child: Text(L10n.of(context)!.changelog_banner_action),
               ),
             ],
           ),
