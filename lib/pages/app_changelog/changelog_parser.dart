@@ -39,13 +39,27 @@ String? extractVersionSection(String content, String version) {
 /// Loads a changelog asset from [path] and returns the body markdown for
 /// [version].
 ///
-/// [path] defaults to `'CHANGELOG.md'`.
+/// [path] defaults to `'CHANGELOG.md'`. If an exact match for [version]
+/// is not found, strips flavor suffixes (`-dev`, `-alpha`, etc.) and retries.
 Future<String?> loadChangelogForVersion(
   String version, {
   String path = Assets.changelog,
 }) async {
   final content = await rootBundle.loadChangelog(path);
-  return extractVersionSection(content, version);
+  return extractVersionSectionWithFallback(content, version);
+}
+
+/// Like [extractVersionSection], but if the exact [version] is not found,
+/// strips flavor suffixes (`-dev`, `-alpha`, etc.) and retries.
+///
+/// This is the pre-loaded-content variant of [loadChangelogForVersion], for
+/// callers that already hold the raw changelog text.
+String? extractVersionSectionWithFallback(String content, String version) {
+  final section = extractVersionSection(content, version);
+  if (section != null) return section;
+  final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
+  if (baseVersion == version) return null;
+  return extractVersionSection(content, baseVersion);
 }
 
 /// Strips the preamble (title, links) from raw CHANGELOG.md [content],

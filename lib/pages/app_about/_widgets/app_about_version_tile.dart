@@ -47,7 +47,7 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
     if (!mounted) return;
 
     final version = AppInfo().changelogVersion;
-    final section = await _loadSectionForVersion(version, content);
+    final section = extractVersionSectionWithFallback(content, version);
     final fullChangelog = stripChangelogPreamble(content);
 
     if (!mounted) return;
@@ -57,19 +57,6 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
       fullChangelog: fullChangelog,
       version: version,
     );
-  }
-
-  /// Tries exact match first, then strips flavor suffix (e.g. -dev)
-  /// to match CHANGELOG.md headings.
-  Future<String?> _loadSectionForVersion(String version, String content) async {
-    var section = extractVersionSection(content, version);
-    if (section == null) {
-      final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
-      if (baseVersion != version) {
-        section = extractVersionSection(content, baseVersion);
-      }
-    }
-    return section;
   }
 
   @override

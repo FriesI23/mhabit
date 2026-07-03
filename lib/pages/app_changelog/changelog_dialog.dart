@@ -43,9 +43,7 @@ Future<void> showChangelogDialog({
   required String version,
 }) {
   final useDialog = switch (defaultTargetPlatform) {
-    TargetPlatform.android ||
-    TargetPlatform.iOS ||
-    TargetPlatform.fuchsia =>
+    TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia =>
       MediaQuery.sizeOf(context).width >= kHabitLargeScreenAdaptWidth,
     _ => true,
   };
@@ -253,21 +251,13 @@ class _ChangelogContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                primary: true,
-                scrollDirection: Axis.vertical,
-                child: ThematicMarkdownBlock(data: data, selectable: false),
-              ),
-            ),
-          ),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 400),
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          child: ThematicMarkdownBlock(data: data, selectable: false),
         ),
-      ],
+      ),
     );
   }
 }

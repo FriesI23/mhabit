@@ -60,7 +60,8 @@ class ChangelogBanner extends StatefulWidget {
 
 /// Loads CHANGELOG.md and shows the banner for the current app version.
 ///
-/// Handles version lookup, CHANGELOG loading, and flavor-suffix fallback.
+/// Handles version lookup, CHANGELOG loading, and flavor-suffix fallback
+/// (delegated to [loadChangelogForVersion]).
 /// Optionally override [version] and provide [onDismiss] callback.
 Future<void> showChangelogBanner(
   BuildContext context, {
@@ -71,7 +72,7 @@ Future<void> showChangelogBanner(
   final path = l10n.appAbout_versionTile_changeLogPath;
   final v = version ?? AppInfo().changelogVersion;
   final raw = await rootBundle.loadChangelog(path);
-  final section = await _loadSectionForVersion(v, path: path);
+  final section = await loadChangelogForVersion(v, path: path);
   if (section == null || !context.mounted) return;
   ChangelogBanner.of(context).show(
     changelogContent: section,
@@ -79,22 +80,6 @@ Future<void> showChangelogBanner(
     version: v,
     onDismiss: onDismiss,
   );
-}
-
-/// Tries exact match first, then strips flavor suffix (e.g. -dev)
-/// to match changelog headings.
-Future<String?> _loadSectionForVersion(
-  String version, {
-  required String path,
-}) async {
-  var section = await loadChangelogForVersion(version, path: path);
-  if (section == null) {
-    final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
-    if (baseVersion != version) {
-      section = await loadChangelogForVersion(baseVersion, path: path);
-    }
-  }
-  return section;
 }
 
 class ChangelogBannerState extends State<ChangelogBanner> {
