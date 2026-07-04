@@ -13,16 +13,17 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:csv/csv.dart';
 
+import '../common/consts.dart';
 import '../logging/helper.dart';
-
-// ---------------------------------------------------------------------------
-// Loop Habit Data – parsed row from Habits.csv
-// ---------------------------------------------------------------------------
+import 'habit_color.dart';
+import 'habit_export.dart';
+import 'habit_form.dart';
 
 class LoopHabitData {
   final int position;
@@ -54,10 +55,6 @@ class LoopHabitData {
   });
 }
 
-// ---------------------------------------------------------------------------
-// Loop Record Data – parsed row from Checkmarks.csv
-// ---------------------------------------------------------------------------
-
 class LoopRecordData {
   final String date;
   final String valueStr;
@@ -69,10 +66,6 @@ class LoopRecordData {
     required this.notes,
   });
 }
-
-// ---------------------------------------------------------------------------
-// CSV Importer – ZIP decompression + CSV parsing
-// ---------------------------------------------------------------------------
 
 class LoopCsvImporter {
   final List<LoopHabitData> habits;
@@ -205,5 +198,194 @@ class LoopCsvImporter {
     );
 
     return LoopCsvImporter._(habits, recordsByHabit);
+  }
+
+  /// Convert parsed Loop CSV data into mhabit [HabitExportData]-compatible
+  /// JSON maps.
+  ///
+  /// Each map uses [HabitExportDataKey] constants as keys; nested `records`
+  /// arrays use [RecordExportDataKey] constants.  The output can be fed
+  /// directly to `HabitExportData.fromJson()`.
+  List<Map<String, dynamic>> toExportJson() {
+    final result = <Map<String, dynamic>>[];
+    for (var i = 0; i < habits.length; i++) {
+      final habit = habits[i];
+      final records = recordsByHabit[i];
+
+      final freq = _mapFrequency(habit.freqNum, habit.freqDen);
+      final color = _mapColor(habit.colorHex);
+      final mappedRecords = _mapRecords(habit, records);
+      final startDate = _calcStartDate(records);
+
+      final isNumerical = habit.type == 'NUMERICAL';
+      final isAtMost = isNumerical && habit.targetType == 'AT_MOST';
+
+      result.add({
+        HabitExportDataKey.name: habit.name,
+        HabitExportDataKey.desc: habit.description,
+        HabitExportDataKey.type: isAtMost
+            ? HabitType.negative.dbCode
+            : HabitType.normal.dbCode,
+        HabitExportDataKey.status: habit.archived
+            ? HabitStatus.archived.dbCode
+            : HabitStatus.activated.dbCode,
+        HabitExportDataKey.color: color.dbColorType.dbCode,
+        if (color.dbCustomColor != null)
+          HabitExportDataKey.customColor: color.dbCustomColor,
+        if (color.dbCustomColorTinted != null)
+          HabitExportDataKey.customColorTinted: color.dbCustomColorTinted,
+        HabitExportDataKey.dailyGoal: switch ((isNumerical, isAtMost)) {
+          (true, true) => 0, // AT_MOST → negative
+          (true, false) => habit.targetValue, // AT_LEAST → normal
+          (false, _) => defaultHabitDailyGoal, // YES_NO → normal
+        },
+        HabitExportDataKey.dailyGoalUnit: habit.unit,
+        if (isAtMost) HabitExportDataKey.dailyGoalExtra: habit.targetValue,
+        HabitExportDataKey.freqType: freq.key,
+        HabitExportDataKey.freqCustom: freq.value,
+        HabitExportDataKey.startDate: startDate,
+        HabitExportDataKey.targetDays: defaultHabitTargetDays,
+        HabitExportDataKey.records: mappedRecords,
+      });
+    }
+    return result;
+  }
+
+  /// Map Loop frequency (num/den) → mhabit freqType + freqCustom.
+  ///
+  /// Returns a [MapEntry] where `.key` is the dbCode of [HabitFrequencyType]
+  /// and `.value` is the JSON-encoded freqCustom string.
+  static MapEntry<int, String> _mapFrequency(int freqNum, int freqDen) {
+    if (freqDen == 7) {
+      return MapEntry(HabitFrequencyType.weekly.dbCode, jsonEncode([freqNum]));
+    }
+    if (freqDen >= 30) {
+      return MapEntry(HabitFrequencyType.monthly.dbCode, jsonEncode([freqNum]));
+    }
+    if (freqNum == freqDen) {
+      // daily → custom(1, 1)
+      return MapEntry(HabitFrequencyType.custom.dbCode, jsonEncode([1, 1]));
+    }
+    return MapEntry(
+      HabitFrequencyType.custom.dbCode,
+      jsonEncode([freqNum, freqDen]),
+    );
+  }
+
+  /// Map Loop hex color to a [HabitColor].
+  ///
+  /// Uses Euclidean distance in RGB space (threshold 80) to find the
+  /// closest built-in color; falls back to a [CustomHabitColor] otherwise.
+  static HabitColor _mapColor(String hex) {
+    final r = int.parse(hex.substring(1, 3), radix: 16);
+    final g = int.parse(hex.substring(3, 5), radix: 16);
+    final b = int.parse(hex.substring(5, 7), radix: 16);
+
+    const builtInColors = <({HabitColorType type, int argb})>[
+      (type: HabitColorType.cc1, argb: 0xFF6750A4),
+      (type: HabitColorType.cc2, argb: 0xFFF44336),
+      (type: HabitColorType.cc3, argb: 0xFF9C27B0),
+      (type: HabitColorType.cc4, argb: 0xFF3F51B5),
+      (type: HabitColorType.cc5, argb: 0xFF009688),
+      (type: HabitColorType.cc6, argb: 0xFF4CAF50),
+      (type: HabitColorType.cc7, argb: 0xFFFFC107),
+      (type: HabitColorType.cc8, argb: 0xFFFF9800),
+      (type: HabitColorType.cc9, argb: 0xFF8BC34A),
+      (type: HabitColorType.cc10, argb: 0xFF673AB7),
+    ];
+
+    const threshold = 80;
+    ({HabitColorType type, int argb})? bestMatch;
+    double bestDist = double.infinity;
+
+    for (final c in builtInColors) {
+      final cr = (c.argb >> 16) & 0xFF;
+      final cg = (c.argb >> 8) & 0xFF;
+      final cb = c.argb & 0xFF;
+      final dr = r - cr;
+      final dg = g - cg;
+      final db = b - cb;
+      final dist = math.sqrt(dr * dr + dg * dg + db * db);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestMatch = c;
+      }
+    }
+
+    if (bestDist < threshold && bestMatch != null) {
+      return HabitColor.builtIn(bestMatch.type);
+    }
+
+    final argb = (0xFF000000) | (r << 16) | (g << 8) | b;
+    return HabitColor.custom(argb, tinted: true);
+  }
+
+  /// Map Loop records to mhabit record JSON entries.
+  static List<Map<String, dynamic>> _mapRecords(
+    LoopHabitData habit,
+    List<LoopRecordData> records,
+  ) {
+    final isNumerical = habit.type == 'NUMERICAL';
+    final isAtMost = isNumerical && habit.targetType == 'AT_MOST';
+    final dailyGoal = switch ((isNumerical, isAtMost)) {
+      (true, true) => 0, // AT_MOST → negative, goal=0
+      (true, false) => habit.targetValue, // AT_LEAST → normal, goal=target
+      (false, _) => defaultHabitDailyGoal, // YES_NO → normal, goal=1
+    };
+
+    final result = <Map<String, dynamic>>[];
+    for (final r in records) {
+      final entry = _mapRecordEntry(r.valueStr, isNumerical, dailyGoal);
+      if (entry == null) continue;
+
+      result.add({
+        RecordExportDataKey.recordDate: _dateToEpochDay(r.date),
+        RecordExportDataKey.recordType: entry.recordType,
+        RecordExportDataKey.recordValue: entry.recordValue,
+      });
+    }
+    return result;
+  }
+
+  /// Map a single Loop record value to mhabit record fields.
+  ///
+  /// Returns `null` for entries that should be skipped
+  /// (YES_AUTO, NO, UNKNOWN, empty).
+  static ({int recordType, num recordValue})? _mapRecordEntry(
+    String valueStr,
+    bool isNumerical,
+    num dailyGoal,
+  ) {
+    // Try numeric parse first — NUMERICAL habits store values as integers
+    final numericValue = int.tryParse(valueStr);
+    if (numericValue != null) {
+      return (recordType: 1, recordValue: numericValue / 1000.0);
+    }
+
+    return switch (valueStr) {
+      'YES_MANUAL' => (recordType: 1, recordValue: dailyGoal),
+      'SKIP' => (recordType: 2, recordValue: 0),
+      _ => null, // YES_AUTO, NO, UNKNOWN — skip
+    };
+  }
+
+  /// Convert a "YYYY-MM-DD" date string to an epoch day integer.
+  static int _dateToEpochDay(String dateStr) {
+    final dt = DateTime.parse(dateStr);
+    return dt.millisecondsSinceEpoch ~/ oneDayMilliseconds;
+  }
+
+  /// Calculate the start date (epoch day) from the earliest record date.
+  ///
+  /// Falls back to today if there are no records.
+  static int _calcStartDate(List<LoopRecordData> records) {
+    if (records.isEmpty) {
+      return DateTime.now().millisecondsSinceEpoch ~/ oneDayMilliseconds;
+    }
+    final dates = records.map((r) => DateTime.parse(r.date));
+    return dates
+            .reduce((a, b) => a.isBefore(b) ? a : b)
+            .millisecondsSinceEpoch ~/
+        oneDayMilliseconds;
   }
 }

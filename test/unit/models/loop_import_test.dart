@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:mhabit/common/consts.dart';
+import 'package:mhabit/models/habit_export.dart';
+import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/loop_import.dart';
 import 'package:test/test.dart';
 
@@ -204,4 +208,215 @@ void main() {
       }
     });
   });
+
+  //#endregion
+
+  //#region toExportJson
+
+  group('LoopCsvImporter.toExportJson', () {
+    late LoopCsvImporter importer;
+    late List<Map<String, dynamic>> jsonList;
+
+    setUp(() {
+      importer = LoopCsvImporter.fromZipBytes(buildLoopSampleZip());
+      jsonList = importer.toExportJson();
+    });
+
+    test('produces correct number of habits', () {
+      expect(jsonList.length, 3);
+    });
+
+    test('each habit JSON can round-trip through HabitExportData.fromJson', () {
+      for (final json in jsonList) {
+        final exportData = HabitExportData.fromJson(json);
+        expect(exportData, isA<HabitExportData>());
+        final dbCell = exportData.toHabitDBCell();
+        expect(dbCell.name, isNotEmpty);
+      }
+    });
+
+    test('Meditate (YES_NO, daily) → correct JSON fields', () {
+      final json = jsonList[0];
+      expect(json[HabitExportDataKey.name], 'Meditate');
+      expect(json[HabitExportDataKey.desc], 'this is a test description');
+      expect(json[HabitExportDataKey.type], HabitType.normal.dbCode);
+      expect(json[HabitExportDataKey.status], HabitStatus.activated.dbCode);
+      expect(json[HabitExportDataKey.dailyGoal], defaultHabitDailyGoal);
+      expect(json[HabitExportDataKey.dailyGoalUnit], '');
+      expect(json[HabitExportDataKey.targetDays], defaultHabitTargetDays);
+    });
+
+    test('Meditate frequency: 1/1 → custom [1,1] (daily)', () {
+      final json = jsonList[0];
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.custom.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [1, 1]);
+    });
+
+    test('Wake up early frequency: 2/3 → custom [2,3]', () {
+      final json = jsonList[2];
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.custom.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [2, 3]);
+    });
+
+    test('Meditate color #FF8F00 mapped to a built-in or custom color', () {
+      final json = jsonList[0];
+      expect(json[HabitExportDataKey.color], isA<int>());
+      // #FF8F00 (amber) should match cc8 (#FF9800) — distance ~24 < 80
+      final customColor = json[HabitExportDataKey.customColor];
+      if (customColor != null) {
+        expect(json[HabitExportDataKey.customColorTinted], 1);
+      }
+    });
+
+    test('Meditate records: YES_AUTO/NO filtered, only manual+skip kept', () {
+      final records = jsonList[0][HabitExportDataKey.records] as List;
+      expect(records.length, 2); // YES_MANUAL + SKIP (YES_AUTO/NO filtered)
+      expect(records[0][RecordExportDataKey.recordType], 1); // YES_MANUAL→done
+      expect(
+        records[0][RecordExportDataKey.recordValue],
+        defaultHabitDailyGoal,
+      );
+      expect(records[1][RecordExportDataKey.recordType], 2); // SKIP
+      expect(records[1][RecordExportDataKey.recordValue], 0);
+    });
+
+    test('Run (NUMERICAL) records: numeric values parsed as N/1000', () {
+      final records = jsonList[1][HabitExportDataKey.records] as List;
+      expect(records.length, 3);
+      expect(records[0][RecordExportDataKey.recordValue], 2.0); // 2000/1000
+      expect(records[1][RecordExportDataKey.recordValue], 3.0); // 3000/1000
+      expect(records[2][RecordExportDataKey.recordType], 2); // SKIP
+    });
+
+    test('Run dailyGoal is targetValue', () {
+      final json = jsonList[1];
+      expect(json[HabitExportDataKey.dailyGoal], 2.0);
+      expect(json[HabitExportDataKey.dailyGoalUnit], 'miles');
+    });
+
+    test('Wake up early is archived', () {
+      final json = jsonList[2];
+      expect(json[HabitExportDataKey.status], HabitStatus.archived.dbCode);
+    });
+
+    test('startDate is earliest record date', () {
+      // Meditate: 2025-01-23 is earliest
+      final json = jsonList[0];
+      final expectedEpoch =
+          DateTime.parse('2025-01-23').millisecondsSinceEpoch ~/
+          oneDayMilliseconds;
+      expect(json[HabitExportDataKey.startDate], expectedEpoch);
+    });
+
+    test('recordDate is stored as epoch day int', () {
+      final records = jsonList[0][HabitExportDataKey.records] as List;
+      expect(records[0][RecordExportDataKey.recordDate], isA<int>());
+    });
+  });
+
+  group('_mapFrequency edge cases', () {
+    /// Helper: builds a single-habit JSON with the given frequency.
+    /// Always returns the first habit (Meditate) from the sample ZIP.
+    Map<String, dynamic> habitJsonForFreq(int freqNum, int freqDen) {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(freqNum: freqNum, freqDen: freqDen),
+      ).toExportJson();
+      return jsonList.first;
+    }
+
+    test('1/7 → weekly(freq:1)', () {
+      final json = habitJsonForFreq(1, 7);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.weekly.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [1]);
+    });
+
+    test('3/7 → weekly(freq:3)', () {
+      final json = habitJsonForFreq(3, 7);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.weekly.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [3]);
+    });
+
+    test('2/30 → monthly(freq:2)', () {
+      final json = habitJsonForFreq(2, 30);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.monthly.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [2]);
+    });
+
+    test('1/31 → monthly(freq:1)', () {
+      final json = habitJsonForFreq(1, 31);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.monthly.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [1]);
+    });
+
+    test('5/5 → custom [1,1] (daily)', () {
+      final json = habitJsonForFreq(5, 5);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.custom.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [1, 1]);
+    });
+
+    test('3/14 → custom [3,14]', () {
+      final json = habitJsonForFreq(3, 14);
+      expect(
+        json[HabitExportDataKey.freqType],
+        HabitFrequencyType.custom.dbCode,
+      );
+      expect(jsonDecode(json[HabitExportDataKey.freqCustom] as String), [
+        3,
+        14,
+      ]);
+    });
+  });
+
+  group('_mapColor edge cases', () {
+    test('exact match: #6750A4 → cc1', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(colorHex: '#6750A4'),
+      ).toExportJson();
+      final json = jsonList[0];
+      expect(json[HabitExportDataKey.color], HabitColorType.cc1.dbCode);
+      expect(json[HabitExportDataKey.customColor], isNull);
+    });
+
+    test('close match: #D32F2F → cc2 (#F44336)', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(colorHex: '#D32F2F'),
+      ).toExportJson();
+      final json = jsonList[0];
+      // distance sqrt((211-244)²+(47-67)²+(47-54)²) ≈ sqrt(1089+400+49)≈39
+      expect(json[HabitExportDataKey.color], HabitColorType.cc2.dbCode);
+      expect(json[HabitExportDataKey.customColor], isNull);
+    });
+
+    test('far color: #123456 → custom', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(colorHex: '#123456'),
+      ).toExportJson();
+      final json = jsonList[0];
+      expect(json[HabitExportDataKey.customColor], isNotNull);
+      expect(json[HabitExportDataKey.customColorTinted], 1);
+    });
+  });
+
+  //#endregion
 }
