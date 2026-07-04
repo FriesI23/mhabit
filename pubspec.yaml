@@ -186,6 +186,7 @@ dependencies:
 
   # Code Generation
   vector_graphics: ^1.2.2
+  csv: ^8.0.0
 
 dev_dependencies:
   flutter_test:
