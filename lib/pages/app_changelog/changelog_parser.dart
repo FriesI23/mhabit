@@ -18,8 +18,6 @@ import 'package:markdown/markdown.dart' as md;
 import '../../../extensions/asset_bundle_extensions.dart';
 import '../../assets/assets.dart';
 
-export '../../../extensions/asset_bundle_extensions.dart';
-
 /// Extracts the body markdown for [version] from raw [content].
 ///
 /// [content] is the full text of a changelog file.

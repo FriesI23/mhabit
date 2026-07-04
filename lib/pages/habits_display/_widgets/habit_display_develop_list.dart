@@ -37,7 +37,7 @@ class HabitDisplayDevelopSliverList extends StatefulWidget {
 
 class _HabitDisplayDevelopSliverList
     extends State<HabitDisplayDevelopSliverList> {
-  Widget _buildDebugHabitsButton(BuildContext context, int count) {
+  Widget _buildDebugHabitsButton(int count) {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -47,7 +47,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildNotificationTextButton(BuildContext context) {
+  Widget _buildNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -60,7 +60,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildCheckPendingNotificationTextButton(BuildContext context) {
+  Widget _buildCheckPendingNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -70,7 +70,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildActiveNotificationTextButton(BuildContext context) {
+  Widget _buildActiveNotificationTextButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -80,7 +80,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildChangelogBannerButton(BuildContext context) {
+  Widget _buildChangelogBannerButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -90,7 +90,7 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
-  Widget _buildClearChangelogVersionButton(BuildContext context) {
+  Widget _buildClearChangelogVersionButton() {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -126,14 +126,14 @@ class _HabitDisplayDevelopSliverList
             style: TextStyle(color: Theme.of(context).colorScheme.outline),
           ),
           children: [
-            _buildDebugHabitsButton(context, 1),
-            _buildDebugHabitsButton(context, 20),
-            _buildDebugHabitsButton(context, 100),
-            _buildNotificationTextButton(context),
-            _buildActiveNotificationTextButton(context),
-            _buildCheckPendingNotificationTextButton(context),
-            _buildChangelogBannerButton(context),
-            _buildClearChangelogVersionButton(context),
+            _buildDebugHabitsButton(1),
+            _buildDebugHabitsButton(20),
+            _buildDebugHabitsButton(100),
+            _buildNotificationTextButton(),
+            _buildActiveNotificationTextButton(),
+            _buildCheckPendingNotificationTextButton(),
+            _buildChangelogBannerButton(),
+            _buildClearChangelogVersionButton(),
           ],
         ),
       ),

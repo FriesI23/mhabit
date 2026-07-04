@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../common/app_info.dart';
+import '../../../extensions/asset_bundle_extensions.dart';
 import '../../../l10n/localizations.dart';
 import '../../app_changelog/changelog_dialog.dart';
 import '../../app_changelog/changelog_parser.dart';
