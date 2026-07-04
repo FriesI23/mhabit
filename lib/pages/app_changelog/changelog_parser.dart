@@ -15,8 +15,8 @@
 import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
 
-import '../../../extensions/asset_bundle_extensions.dart';
 import '../../assets/assets.dart';
+import '../../extensions/asset_bundle_extensions.dart';
 
 /// Extracts the body markdown for [version] from raw [content].
 ///
