@@ -97,8 +97,8 @@ class _HabitDisplayDevelopSliverList
       leading: const Icon(Icons.cleaning_services_outlined),
       title: const Text('Clear last changelog version'),
       subtitle: const Text('Restart to re-trigger the banner'),
-      onTap: () {
-        context
+      onTap: () async {
+        await context
             .read<ProfileViewModel>()
             .getHandler<AppLastChangelogVersionProfileHandler>()
             ?.remove();

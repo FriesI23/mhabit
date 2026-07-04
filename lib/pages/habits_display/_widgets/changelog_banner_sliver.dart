@@ -108,6 +108,12 @@ class ChangelogBannerState extends State<ChangelogBanner> {
   void dismiss() => _controller.dismiss();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _ChangelogBannerScope(state: this, child: widget.child);
   }
