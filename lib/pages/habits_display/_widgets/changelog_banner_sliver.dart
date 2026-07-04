@@ -72,7 +72,7 @@ Future<void> showChangelogBanner(
   final path = l10n.appAbout_versionTile_changeLogPath;
   final v = version ?? AppInfo().changelogVersion;
   final raw = await rootBundle.loadChangelog(path);
-  final section = await loadChangelogForVersion(v, path: path);
+  final section = extractVersionSectionWithFallback(raw, v);
   if (section == null || !context.mounted) return;
   ChangelogBanner.of(context).show(
     changelogContent: section,

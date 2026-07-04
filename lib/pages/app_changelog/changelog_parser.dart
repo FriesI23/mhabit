@@ -112,6 +112,7 @@ void _renderNode(md.Node node, StringBuffer out) {
             _renderNode(child, out);
           }
           out.writeln();
+          out.writeln();
         case 'ul':
           for (final child in c) {
             out.write('- ');

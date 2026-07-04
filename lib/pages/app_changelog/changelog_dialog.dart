@@ -195,7 +195,7 @@ class _ChangelogDialogState extends State<_ChangelogDialog> {
       title: title,
       content: SizedBox(width: 500, child: content),
       actions: [
-        ?viewFullButton,
+        if (viewFullButton != null) viewFullButton,
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
