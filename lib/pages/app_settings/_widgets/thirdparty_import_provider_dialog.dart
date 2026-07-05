@@ -131,19 +131,21 @@ class _ThirdPartyImportProviderDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: ThirdPartyProvider.values.map((provider) {
-          return L10nBuilder(
-            builder: (context, l10n) => ListTile(
-              contentPadding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              leading: _providerIcon(provider),
-              title: Text(_providerDisplayName(provider, l10n)),
-              subtitle: _buildProviderVersionTile(provider, l10n, context),
-              onTap: () => Navigator.of(context).pop(provider),
-            ),
-          );
-        }).toList(),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: ThirdPartyProvider.values.map((provider) {
+            return L10nBuilder(
+              builder: (context, l10n) => ListTile(
+                contentPadding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                leading: _providerIcon(provider),
+                title: Text(_providerDisplayName(provider, l10n)),
+                subtitle: _buildProviderVersionTile(provider, l10n, context),
+                onTap: () => Navigator.of(context).pop(provider),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
