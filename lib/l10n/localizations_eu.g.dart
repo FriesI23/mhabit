@@ -866,6 +866,17 @@ class L10nEu extends L10n {
   String get appSetting_import_subtitleText => 'Import habits from json file.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'Confirm import $count habits?';
   }

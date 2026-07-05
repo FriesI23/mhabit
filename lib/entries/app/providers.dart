@@ -38,6 +38,7 @@ import '../../providers/workflow/app_sync.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
+import '../../providers/workflow/thirdparty_file_importer.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db_helper_provider.dart';
 import '../../storage/profile_provider.dart';
@@ -144,6 +145,17 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<HabitImportAccess, HabitFileImportRunner>(
       create: (context) => HabitFileImportRunner(),
+      update: (context, value, previous) => previous..attachAccess(value),
+    ),
+    ChangeNotifierProvider<ThirdPartyImportOwner>(
+      create: (context) => ThirdPartyImportOwner(),
+    ),
+    ListenableProxyProvider<ThirdPartyImportOwner, ThirdPartyImportAccess>(
+      create: (context) => context.read<ThirdPartyImportOwner>(),
+      update: (context, value, previous) => value,
+    ),
+    ViewModelProxyProvider<ThirdPartyImportAccess, ThirdPartyFileImportRunner>(
+      create: (context) => ThirdPartyFileImportRunner(),
       update: (context, value, previous) => previous..attachAccess(value),
     ),
   ];

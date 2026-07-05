@@ -24,6 +24,7 @@ import '../logging/helper.dart';
 import 'habit_color.dart';
 import 'habit_export.dart';
 import 'habit_form.dart';
+import 'thirdparty_import.dart';
 
 class LoopHabitData {
   final int position;
@@ -67,11 +68,24 @@ class LoopRecordData {
   });
 }
 
-class LoopCsvImporter {
+class LoopCsvImporter implements ThirdPartyImporter {
   final List<LoopHabitData> habits;
   final List<List<LoopRecordData>> recordsByHabit;
 
   const LoopCsvImporter._(this.habits, this.recordsByHabit);
+
+  /// Creates a dummy instance for calling [parseFromBytes] (which delegates to
+  /// static parsers internally).
+  static const LoopCsvImporter dummy = LoopCsvImporter._([], []);
+
+  @override
+  ThirdPartyProvider get provider => ThirdPartyProvider.loopHabitTracker;
+
+  @override
+  Future<List<Map<String, dynamic>>> parseFromBytes(Uint8List bytes) async {
+    final importer = LoopCsvImporter.fromZipBytes(bytes);
+    return importer.toExportJson();
+  }
 
   int get habitCount => habits.length;
   int get totalRecordCount =>

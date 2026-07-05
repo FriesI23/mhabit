@@ -879,6 +879,17 @@ class L10nIt extends L10n {
       'Importa le abitudini da un file JSON.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'Confermi l\'importazione di $count abitudini?';
   }

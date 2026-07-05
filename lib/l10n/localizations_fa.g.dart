@@ -871,6 +871,17 @@ class L10nFa extends L10n {
       'عادت‌ها را از پرونده JSON وارد کنید.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'تأیید وارد کردن $count عادت؟';
   }

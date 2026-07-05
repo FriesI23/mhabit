@@ -26,3 +26,4 @@ export '_widgets/app_setting_sync_failed_tile.dart';
 export '_widgets/app_setting_theme_color.dart';
 export '_widgets/icp_filling_number_tile.dart';
 export '_widgets/import_habits_confirm.dart';
+export '_widgets/thirdparty_import_provider_dialog.dart';

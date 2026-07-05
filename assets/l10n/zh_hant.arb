@@ -513,6 +513,9 @@
     "appSetting_export_subtitleText": "將習慣匯出為 JSON 格式，此檔案可以再匯入。",
     "appSetting_import_titleText": "匯入",
     "appSetting_import_subtitleText": "從 JSON 檔案匯入習慣。",
+    "appSetting_thirdPartyImport_titleText": "第三方匯入",
+    "appSetting_thirdPartyImport_subtitleText": "從其他習慣追蹤應用匯入習慣。",
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
     "appSetting_importDialog_confirmTitle": "確認匯入 {count} 個習慣？",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {

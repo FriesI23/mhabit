@@ -882,6 +882,17 @@ class L10nPl extends L10n {
   String get appSetting_import_subtitleText => 'Importuj nawyki z pliku JSON.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'Potwierdź import $count nawyków?';
   }

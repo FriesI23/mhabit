@@ -1520,6 +1520,24 @@ abstract class L10n {
   /// **'Import habits from json file.'**
   String get appSetting_import_subtitleText;
 
+  /// No description provided for @appSetting_thirdPartyImport_titleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from third-party'**
+  String get appSetting_thirdPartyImport_titleText;
+
+  /// No description provided for @appSetting_thirdPartyImport_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Import habits from other habit tracker apps'**
+  String get appSetting_thirdPartyImport_subtitleText;
+
+  /// No description provided for @appSetting_thirdPartyImport_provider_loopName.
+  ///
+  /// In en, this message translates to:
+  /// **'Loop Habit Tracker'**
+  String get appSetting_thirdPartyImport_provider_loopName;
+
   /// No description provided for @appSetting_importDialog_confirmTitle.
   ///
   /// In en, this message translates to:

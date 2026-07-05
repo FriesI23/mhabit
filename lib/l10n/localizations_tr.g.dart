@@ -876,6 +876,17 @@ class L10nTr extends L10n {
       'Alışkanlıkları JSON dosyadan içe aktar.';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => 'Import from third-party';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText =>
+      'Import habits from other habit tracker apps';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return '$count alışkanlıkları içe aktarmayı onayla?';
   }

@@ -730,6 +730,12 @@
     "@appSetting_import_titleText": {},
     "appSetting_import_subtitleText": "Import habits from json file.",
     "@appSetting_import_subtitleText": {},
+    "appSetting_thirdPartyImport_titleText": "Import from third-party",
+    "@appSetting_thirdPartyImport_titleText": {},
+    "appSetting_thirdPartyImport_subtitleText": "Import habits from other habit tracker apps",
+    "@appSetting_thirdPartyImport_subtitleText": {},
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
+    "@appSetting_thirdPartyImport_provider_loopName": {},
     "appSetting_importDialog_confirmTitle": "Confirm import {count} habits?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {

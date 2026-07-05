@@ -34,6 +34,17 @@ class $DocsGen {
   $DocsCHANGELOGGen get changelog => const $DocsCHANGELOGGen();
 }
 
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// File path: assets/icons/uhabit_icon.png
+  AssetGenImage get uhabitIcon =>
+      const AssetGenImage('assets/icons/uhabit_icon.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [uhabitIcon];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -133,6 +144,7 @@ class Assets {
   static const String license = 'LICENSE';
   static const String licenseThirdparty = 'LICENSE_THIRDPARTY.md';
   static const String privacy = 'PRIVACY.md';
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogoGen logo = $AssetsLogoGen();
   static const $AssetsSqlGen sql = $AssetsSqlGen();

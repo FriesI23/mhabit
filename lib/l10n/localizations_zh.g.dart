@@ -838,6 +838,16 @@ class L10nZh extends L10n {
   String get appSetting_import_subtitleText => '从 JSON 文件导入习惯。';
 
   @override
+  String get appSetting_thirdPartyImport_titleText => '第三方导入';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText => '从其他习惯追踪应用导入习惯。';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return '确认导入 $count 个习惯？';
   }
@@ -2539,6 +2549,16 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_import_subtitleText => '從 JSON 檔案匯入習慣。';
+
+  @override
+  String get appSetting_thirdPartyImport_titleText => '第三方匯入';
+
+  @override
+  String get appSetting_thirdPartyImport_subtitleText => '從其他習慣追蹤應用匯入習慣。';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_loopName =>
+      'Loop Habit Tracker';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {

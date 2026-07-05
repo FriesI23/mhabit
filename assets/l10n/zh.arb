@@ -538,6 +538,9 @@
     "appSetting_export_subtitleText": "将习惯导出为 JSON 格式，该文件可以导入。",
     "appSetting_import_titleText": "导入",
     "appSetting_import_subtitleText": "从 JSON 文件导入习惯。",
+    "appSetting_thirdPartyImport_titleText": "第三方导入",
+    "appSetting_thirdPartyImport_subtitleText": "从其他习惯追踪应用导入习惯。",
+    "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
     "appSetting_importDialog_confirmTitle": "确认导入 {count} 个习惯？",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {
