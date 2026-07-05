@@ -21,6 +21,9 @@ import 'package:archive/archive.dart';
 ///
 /// The ZIP is stored at `test/support/loop_habits_csv_v2.3.1.zip` and is
 /// loaded in-memory at test time — it is never unpacked in the source tree.
+///
+/// ⚠️ Test-only helper (blocking I/O). Do not use in production code or
+/// from the UI isolate.
 Uint8List loadLoopRealZip() =>
     File('test/support/loop_habits_csv_v2.3.1.zip').readAsBytesSync();
 

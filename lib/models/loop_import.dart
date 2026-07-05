@@ -93,9 +93,12 @@ class LoopCsvImporter implements ThirdPartyImporter {
 
   @override
   void annotateJson(List<Map<String, dynamic>> jsonList) {
+    final prefix = '[From: $displayName]';
     for (final json in jsonList) {
       final rawDesc = (json[HabitExportDataKey.desc] as String?) ?? '';
-      json[HabitExportDataKey.desc] = '[From: $displayName] $rawDesc';
+      json[HabitExportDataKey.desc] = rawDesc.isEmpty
+          ? prefix
+          : '$prefix $rawDesc';
     }
   }
 
@@ -135,8 +138,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
     );
   }
 
-  static List<LoopHabitData> _parseHabits(ArchiveFile file) {
-    final text = utf8.decode(file.content);
+  static List<LoopHabitData> _parseHabits(String text) {
     final rows = _csvDecoder.convert(text);
     if (rows.isEmpty) return const [];
 
@@ -232,9 +234,10 @@ class LoopCsvImporter implements ThirdPartyImporter {
       );
     }
 
-    // Pre-check: verify Habits.csv is valid UTF-8
+    // Decode Habits.csv once; throws FormatException on invalid UTF-8.
+    final String habitsText;
     try {
-      utf8.decode(habitsCsv.content);
+      habitsText = utf8.decode(habitsCsv.content);
     } on FormatException {
       throw const ThirdPartyImportException(
         ThirdPartyImportErrorType.parseError,
@@ -244,7 +247,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
       );
     }
 
-    final habits = _parseHabits(habitsCsv);
+    final habits = _parseHabits(habitsText);
 
     // 2. For each habit, locate its Checkmarks.csv by position prefix
     final recordsByHabit = <List<LoopRecordData>>[];
@@ -333,6 +336,14 @@ class LoopCsvImporter implements ThirdPartyImporter {
 
   /// Map Loop frequency (num/den) → mhabit freqType + freqCustom.
   ///
+  /// Loop Habit Tracker's frequency model:
+  /// - **Daily**: `num == den` (normalized to `1/1` internally).
+  /// - **Weekly**: `den == 7` (e.g. `3/7` = 3 times per week).
+  /// - **Monthly**: `den == 30` (or rarely `31` from manual editing).
+  ///   The picker always uses `30`; `den == 28` is **not** monthly in uhabit
+  ///   — it is treated as a custom "X per Y days" frequency.
+  /// - **Custom**: everything else stored as `freqNum/freqDen`.
+  ///
   /// Returns a [MapEntry] where `.key` is the dbCode of [HabitFrequencyType]
   /// and `.value` is the JSON-encoded freqCustom string.
   static MapEntry<int, String> _mapFrequency(int freqNum, int freqDen) {
@@ -344,6 +355,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
     if (freqDen == 7) {
       return MapEntry(HabitFrequencyType.weekly.dbCode, jsonEncode([freqNum]));
     }
+    // uhabit always uses den=30 for monthly in its picker.
     if (freqDen >= 30) {
       return MapEntry(HabitFrequencyType.monthly.dbCode, jsonEncode([freqNum]));
     }

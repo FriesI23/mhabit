@@ -506,7 +506,7 @@ void main() {
 
       for (final json in jsonList) {
         final desc = json[HabitExportDataKey.desc] as String;
-        expect(desc, startsWith('[From: Loop Habit Tracker] '));
+        expect(desc, startsWith('[From: Loop Habit Tracker]'));
       }
     });
 
@@ -520,7 +520,7 @@ void main() {
 
       LoopCsvImporter.dummy.annotateJson(jsonList);
 
-      expect(runJson[HabitExportDataKey.desc], '[From: Loop Habit Tracker] ');
+      expect(runJson[HabitExportDataKey.desc], '[From: Loop Habit Tracker]');
     });
 
     test('preserves original desc after prefix', () {
