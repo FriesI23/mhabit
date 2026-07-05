@@ -24,8 +24,7 @@ import 'package:archive/archive.dart';
 Uint8List loadLoopRealZip() =>
     File('test/support/loop_habits_csv_v2.3.1.zip').readAsBytesSync();
 
-/// Sample Loop CSV export ZIP matching the format described in
-/// [05-loop-csv-format-spec.md].
+/// Sample Loop CSV export ZIP for the Loop Habit Tracker CSV format.
 ///
 /// Habits:
 /// - 001 Meditate (YES_NO, active, 1/1 daily)
