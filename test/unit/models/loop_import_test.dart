@@ -17,6 +17,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:mhabit/common/consts.dart';
+import 'package:mhabit/common/exceptions.dart';
 import 'package:mhabit/models/habit_export.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/loop_import.dart';
@@ -400,6 +401,57 @@ void main() {
 
   //#endregion
 
+  //#region AT_MOST → negative mapping
+
+  group('AT_MOST target → negative habit mapping', () {
+    test(
+      'AT_MOST → negative type, dailyGoal=0, dailyGoalExtra=targetValue',
+      () {
+        final jsonList = LoopCsvImporter.fromZipBytes(
+          buildLoopSampleZip(
+            numericalTargetType: 'AT_MOST',
+            numericalTargetValue: 5.0,
+          ),
+        ).toExportJson();
+
+        // Habit 1 (index 1) is Run with AT_MOST
+        final json = jsonList[1];
+        expect(json[HabitExportDataKey.type], HabitType.negative.dbCode);
+        expect(json[HabitExportDataKey.dailyGoal], 0);
+        expect(json[HabitExportDataKey.dailyGoalExtra], 5.0);
+        expect(json[HabitExportDataKey.dailyGoalUnit], 'miles');
+      },
+    );
+
+    test('AT_MOST records: numeric values parsed as N/1000', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(
+          numericalTargetType: 'AT_MOST',
+          numericalTargetValue: 5.0,
+        ),
+      ).toExportJson();
+
+      final records = jsonList[1][HabitExportDataKey.records] as List;
+      expect(records.length, 3);
+      expect(records[0][RecordExportDataKey.recordValue], 2.0); // 2000/1000
+      expect(records[1][RecordExportDataKey.recordValue], 3.0); // 3000/1000
+      expect(records[2][RecordExportDataKey.recordType], 2); // SKIP
+    });
+
+    test('AT_LEAST (default) → normal type, dailyGoal=targetValue', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(),
+      ).toExportJson();
+
+      final json = jsonList[1];
+      expect(json[HabitExportDataKey.type], HabitType.normal.dbCode);
+      expect(json[HabitExportDataKey.dailyGoal], 2.0);
+      expect(json.containsKey(HabitExportDataKey.dailyGoalExtra), isFalse);
+    });
+  });
+
+  //#endregion
+
   //#region annotateJson
 
   group('LoopCsvImporter.annotateJson', () {
@@ -449,7 +501,7 @@ void main() {
   //#region error handling
 
   group('LoopCsvImporter error handling', () {
-    test('throws FormatException with guidance when Habits.csv missing', () {
+    test('throws ThirdPartyImportException when Habits.csv missing', () {
       final archive = Archive();
       archive.addFile(ArchiveFile('other.txt', 0, []));
       final encoder = ZipEncoder();
@@ -458,13 +510,10 @@ void main() {
       expect(
         () => LoopCsvImporter.fromZipBytes(bytes),
         throwsA(
-          isA<FormatException>().having(
-            (e) => e.message,
-            'message',
-            allOf(
-              contains('Habits.csv not found'),
-              contains('valid Loop Habit Tracker export'),
-            ),
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
           ),
         ),
       );

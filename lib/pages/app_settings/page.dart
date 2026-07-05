@@ -23,6 +23,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../common/consts.dart';
 import '../../common/enums.dart';
+import '../../common/exceptions.dart';
 import '../../common/flavor.dart';
 import '../../common/utils.dart';
 import '../../l10n/localizations.dart';
@@ -316,14 +317,14 @@ class _PageState extends State<_Page> with XShare {
       habitsData = await context
           .read<ThirdPartyFileImportRunner>()
           .loadHabitsData(provider);
-    } on FormatException catch (e) {
+    } on ThirdPartyImportException catch (e) {
       appLog.import.error(
         '$widget._onThirdPartyImportTilePressed',
-        ex: ['Invalid file format', e.message],
+        ex: ['Invalid file format', e.toString()],
         error: e,
       );
       if (!mounted) return;
-      _showImportErrorSnackBar(context, e.message);
+      _showThirdPartyImportError(context, e.type);
       return;
     }
 
@@ -341,10 +342,27 @@ class _PageState extends State<_Page> with XShare {
     );
   }
 
-  void _showImportErrorSnackBar(BuildContext context, String message) {
+  void _showThirdPartyImportError(
+    BuildContext context,
+    ThirdPartyImportErrorType type,
+  ) {
     final snackBar = buildSnackBarWithDismiss(
       context,
-      content: Text(message),
+      content: L10nBuilder(
+        builder: (context, l10n) {
+          final text = switch (type) {
+            ThirdPartyImportErrorType.fileReadError =>
+              l10n?.appSetting_thirdPartyImport_error_fileReadError,
+            ThirdPartyImportErrorType.noHabitsFound =>
+              l10n?.appSetting_thirdPartyImport_error_noHabitsFound,
+            ThirdPartyImportErrorType.parseError =>
+              l10n?.appSetting_thirdPartyImport_error_parseError,
+            ThirdPartyImportErrorType.unknown =>
+              l10n?.appSetting_thirdPartyImport_error_unknown,
+          };
+          return Text(text ?? 'Import failed');
+        },
+      ),
       duration: kAppUndoDialogShowDuration,
     );
     ScaffoldMessenger.of(context)

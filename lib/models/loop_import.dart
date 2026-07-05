@@ -20,6 +20,7 @@ import 'package:archive/archive.dart';
 import 'package:csv/csv.dart';
 
 import '../common/consts.dart';
+import '../common/exceptions.dart';
 import '../logging/helper.dart';
 import 'habit_color.dart';
 import 'habit_export.dart';
@@ -193,9 +194,11 @@ class LoopCsvImporter implements ThirdPartyImporter {
     // 1. Locate and parse Habits.csv
     final habitsCsv = archive.findFile('Habits.csv');
     if (habitsCsv == null) {
-      throw const FormatException(
-        'Habits.csv not found in the ZIP file. '
-        'Please make sure you selected a valid Loop Habit Tracker export.',
+      throw const ThirdPartyImportException(
+        ThirdPartyImportErrorType.parseError,
+        detail:
+            'Habits.csv not found in the ZIP file. '
+            'Please make sure you selected a valid Loop Habit Tracker export.',
       );
     }
 
@@ -203,9 +206,11 @@ class LoopCsvImporter implements ThirdPartyImporter {
     try {
       utf8.decode(habitsCsv.content);
     } on FormatException {
-      throw const FormatException(
-        'The file contains non-UTF-8 encoded text. '
-        'Loop Habit Tracker exports should be UTF-8.',
+      throw const ThirdPartyImportException(
+        ThirdPartyImportErrorType.parseError,
+        detail:
+            'The file contains non-UTF-8 encoded text. '
+            'Loop Habit Tracker exports should be UTF-8.',
       );
     }
 

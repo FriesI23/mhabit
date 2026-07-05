@@ -83,3 +83,38 @@ class HttpStatusException implements HttpException {
     return b.toString();
   }
 }
+
+/// Error categories for third-party import failures.
+enum ThirdPartyImportErrorType {
+  /// File could not be read from disk.
+  fileReadError,
+
+  /// Parsed data contained no importable habits or records.
+  noHabitsFound,
+
+  /// File format or content is invalid (e.g. missing Habits.csv, non-UTF-8).
+  parseError,
+
+  /// An unexpected error not covered by other categories (e.g. ZIP decode
+  /// failure, internal crash in a third-party importer).
+  unknown,
+}
+
+class ThirdPartyImportException implements Exception {
+  final ThirdPartyImportErrorType type;
+  final String? detail;
+
+  const ThirdPartyImportException(this.type, {this.detail});
+
+  @override
+  String toString() {
+    final b = StringBuffer()
+      ..write('ThirdPartyImportException: ')
+      ..write(type.name);
+    final detail = this.detail;
+    if (detail != null) {
+      b.write(' ($detail)');
+    }
+    return b.toString();
+  }
+}

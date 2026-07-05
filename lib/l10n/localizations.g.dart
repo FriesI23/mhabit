@@ -1556,6 +1556,30 @@ abstract class L10n {
   /// **'Source: {provider}'**
   String appSetting_importConfirmDialog_sourceLabel(String provider);
 
+  /// No description provided for @appSetting_thirdPartyImport_error_fileReadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to read the selected file.'**
+  String get appSetting_thirdPartyImport_error_fileReadError;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_noHabitsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No habits found in the import file.'**
+  String get appSetting_thirdPartyImport_error_noHabitsFound;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_parseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to parse import file'**
+  String get appSetting_thirdPartyImport_error_parseError;
+
+  /// No description provided for @appSetting_thirdPartyImport_error_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred during import.'**
+  String get appSetting_thirdPartyImport_error_unknown;
+
   /// No description provided for @appSetting_importDialog_confirm_confirmText.
   ///
   /// In en, this message translates to:

@@ -891,6 +891,22 @@ class L10nNb extends L10n {
   }
 
   @override
+  String get appSetting_thirdPartyImport_error_fileReadError =>
+      'Failed to read the selected file.';
+
+  @override
+  String get appSetting_thirdPartyImport_error_noHabitsFound =>
+      'No habits found in the import file.';
+
+  @override
+  String get appSetting_thirdPartyImport_error_parseError =>
+      'Failed to parse import file';
+
+  @override
+  String get appSetting_thirdPartyImport_error_unknown =>
+      'An unexpected error occurred during import.';
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'confirm';
 
   @override

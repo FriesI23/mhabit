@@ -560,6 +560,10 @@
             }
         }
     },
+    "appSetting_thirdPartyImport_error_fileReadError": "读取所选文件失败。",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "导入文件中未找到习惯。",
+    "appSetting_thirdPartyImport_error_parseError": "解析导入文件失败",
+    "appSetting_thirdPartyImport_error_unknown": "导入时发生意外错误。",
     "appSetting_importDialog_confirm_confirmText": "确认",
     "appSetting_importDialog_confirm_cancelText": "取消",
     "appSetting_importDialog_importingTitle": "已导入 {completeCount}/{totalCount}",

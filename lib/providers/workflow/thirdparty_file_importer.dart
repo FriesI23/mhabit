@@ -15,6 +15,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../common/exceptions.dart';
 import '../../logging/helper.dart';
 import '../../logging/logger_stack.dart';
 import '../../models/loop_import.dart';
@@ -51,10 +52,29 @@ final class ThirdPartyImportOwner extends ChangeNotifier
       ThirdPartyProvider.loopHabitTracker => LoopCsvImporter.dummy,
     };
 
-    final result = await importer.parseFromBytes(bytes);
+    final List<Map<String, dynamic>> result;
+    try {
+      result = await importer.parseFromBytes(bytes);
+    } on ThirdPartyImportException {
+      rethrow;
+    } catch (e, s) {
+      appLog.import.error(
+        '$ThirdPartyImportOwner.parseThirdPartyFile',
+        ex: ['Unexpected parse error', provider.displayName],
+        error: e,
+        stackTrace: LoggerStackTrace.from(s),
+      );
+      throw ThirdPartyImportException(
+        ThirdPartyImportErrorType.unknown,
+        detail: e.toString(),
+      );
+    }
+
     importer.annotateJson(result);
     if (result.isEmpty) {
-      throw const FormatException('No habits found in import file');
+      throw const ThirdPartyImportException(
+        ThirdPartyImportErrorType.noHabitsFound,
+      );
     }
     return result;
   }
@@ -98,21 +118,20 @@ class ThirdPartyFileImportRunner extends ChangeNotifier
 
     if (file == null) return null;
 
-    final Uint8List? bytes = await file
-        .readAsBytes()
-        .then<Uint8List?>((value) => value)
-        .timeout(const Duration(seconds: 10))
-        .catchError((e, s) {
-          appLog.load.error(
-            '$runtimeType.loadHabitsData',
-            ex: ["Can't read file", file],
-            error: e,
-            stackTrace: LoggerStackTrace.from(StackTrace.current),
-          );
-          return null;
-        });
-
-    if (bytes == null) return null;
+    final Uint8List bytes;
+    try {
+      bytes = await file.readAsBytes().timeout(const Duration(seconds: 10));
+    } catch (e) {
+      appLog.load.error(
+        '$runtimeType.loadHabitsData',
+        ex: ["Can't read file", file],
+        error: e,
+        stackTrace: LoggerStackTrace.from(StackTrace.current),
+      );
+      throw const ThirdPartyImportException(
+        ThirdPartyImportErrorType.fileReadError,
+      );
+    }
 
     final habitsData = await _access.parseThirdPartyFile(provider, bytes);
     if (listen) notifyListeners();

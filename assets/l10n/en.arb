@@ -756,6 +756,14 @@
             }
         }
     },
+    "appSetting_thirdPartyImport_error_fileReadError": "Failed to read the selected file.",
+    "@appSetting_thirdPartyImport_error_fileReadError": {},
+    "appSetting_thirdPartyImport_error_noHabitsFound": "No habits found in the import file.",
+    "@appSetting_thirdPartyImport_error_noHabitsFound": {},
+    "appSetting_thirdPartyImport_error_parseError": "Failed to parse import file",
+    "@appSetting_thirdPartyImport_error_parseError": {},
+    "appSetting_thirdPartyImport_error_unknown": "An unexpected error occurred during import.",
+    "@appSetting_thirdPartyImport_error_unknown": {},
     "appSetting_importDialog_confirm_confirmText": "confirm",
     "@appSetting_importDialog_confirm_confirmText": {},
     "appSetting_importDialog_confirm_cancelText": "cancel",

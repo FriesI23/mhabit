@@ -535,6 +535,10 @@
             }
         }
     },
+    "appSetting_thirdPartyImport_error_fileReadError": "讀取所選檔案失敗。",
+    "appSetting_thirdPartyImport_error_noHabitsFound": "匯入檔案中未找到習慣。",
+    "appSetting_thirdPartyImport_error_parseError": "解析匯入檔案失敗",
+    "appSetting_thirdPartyImport_error_unknown": "匯入時發生意外錯誤。",
     "appSetting_importDialog_confirm_confirmText": "確認",
     "appSetting_importDialog_confirm_cancelText": "取消",
     "appSetting_importDialog_importingTitle": "已匯入 {completeCount}/{totalCount}",

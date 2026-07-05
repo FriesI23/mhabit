@@ -32,20 +32,29 @@ Uint8List loadLoopRealZip() =>
 /// - 002 Run (NUMERICAL, active, 1/1 daily, unit=miles, target AT_LEAST 2.0)
 /// - 003 Wake up early (YES_NO, archived, 2/3)
 ///
-/// Optional named parameters allow overriding frequency and color for the
-/// first habit for isolated mapping tests.
-Uint8List buildLoopSampleZip({int? freqNum, int? freqDen, String? colorHex}) {
+/// Optional named parameters allow overriding:
+/// - Frequency and color for the first habit （Meditate）.
+/// - Target type and value for the second habit （Run, NUMERICAL）.
+Uint8List buildLoopSampleZip({
+  int? freqNum,
+  int? freqDen,
+  String? colorHex,
+  String? numericalTargetType,
+  double? numericalTargetValue,
+}) {
   final archive = Archive();
 
   // Habits.csv
   final effectiveFreqNum = freqNum ?? 1;
   final effectiveFreqDen = freqDen ?? 1;
   final effectiveColor = colorHex ?? '#FF8F00';
+  final effectiveTargetType = numericalTargetType ?? 'AT_LEAST';
+  final effectiveTargetValue = numericalTargetValue ?? 2.0;
   final habitsCsv =
       '''
 Position,Name,Type,Question,Description,FrequencyNumerator,FrequencyDenominator,Color,Unit,Target Type,Target Value,Archived?
 001,Meditate,YES_NO,Did you meditate this morning?,this is a test description,$effectiveFreqNum,$effectiveFreqDen,$effectiveColor,,,,false
-002,Run,NUMERICAL,How many miles did you run today?,,1,1,#E64A19,miles,AT_LEAST,2.0,false
+002,Run,NUMERICAL,How many miles did you run today?,,1,1,#E64A19,miles,$effectiveTargetType,$effectiveTargetValue,false
 003,Wake up early,YES_NO,Did you wake up before 6am?,,2,3,#AFB42B,,,,true
 ''';
   archive.addFile(
