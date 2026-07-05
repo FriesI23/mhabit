@@ -22,13 +22,6 @@ import '../../models/loop_import.dart';
 import '../../models/thirdparty_import.dart';
 import '../support/commons.dart';
 
-abstract interface class ThirdPartyImportAccess implements Listenable {
-  Future<List<Map<String, dynamic>>> parseThirdPartyFile(
-    ThirdPartyProvider provider,
-    Uint8List bytes,
-  );
-}
-
 /// Return the [ThirdPartyImporter.supportedVersion] for [provider].
 ///
 /// This is a thin lookup so callers (e.g. the provider selection dialog)
@@ -42,7 +35,7 @@ ImporterVersion getThirdPartyImporterVersion(ThirdPartyProvider provider) {
 }
 
 final class ThirdPartyImportOwner extends ChangeNotifier
-    implements ThirdPartyImportAccess, ProviderMounted {
+    implements ProviderMounted {
   bool _mounted = true;
 
   @override
@@ -55,7 +48,10 @@ final class ThirdPartyImportOwner extends ChangeNotifier
   @override
   bool get mounted => _mounted;
 
-  @override
+  /// Parse raw file bytes from a third-party provider into importable JSON.
+  ///
+  /// Exposed as a public method so unit tests can verify error-mapping
+  /// without simulating the full file-picker flow.
   Future<List<Map<String, dynamic>>> parseThirdPartyFile(
     ThirdPartyProvider provider,
     Uint8List bytes,
@@ -90,27 +86,11 @@ final class ThirdPartyImportOwner extends ChangeNotifier
     }
     return result;
   }
-}
 
-class ThirdPartyFileImportRunner extends ChangeNotifier
-    implements ProviderMounted {
-  bool _mounted = true;
-  late ThirdPartyImportAccess _access;
-
-  void attachAccess(ThirdPartyImportAccess newAccess) {
-    _access = newAccess;
-  }
-
-  @override
-  void dispose() {
-    if (!_mounted) return;
-    super.dispose();
-    _mounted = false;
-  }
-
-  @override
-  bool get mounted => _mounted;
-
+  /// Open a file picker filtered to [provider]'s file extensions, read the
+  /// selected file, parse it, and return importable JSON.
+  ///
+  /// Returns `null` when the user cancels the file picker.
   Future<Iterable<Object?>?> loadHabitsData(
     ThirdPartyProvider provider, {
     bool listen = true,
@@ -145,7 +125,7 @@ class ThirdPartyFileImportRunner extends ChangeNotifier
       );
     }
 
-    final habitsData = await _access.parseThirdPartyFile(provider, bytes);
+    final habitsData = await parseThirdPartyFile(provider, bytes);
     if (listen) notifyListeners();
     return habitsData;
   }

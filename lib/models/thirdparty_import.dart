@@ -88,7 +88,7 @@ abstract interface class ThirdPartyImporter {
   Future<List<Map<String, dynamic>>> parseFromBytes(Uint8List bytes);
 
   /// Annotate parsed JSON with source metadata before feeding it into the
-  /// import pipeline.  Called by [ThirdPartyImportOwner] after
+  /// import pipeline.  Called by `ThirdPartyImportOwner` after
   /// [parseFromBytes].
   ///
   /// The default implementation is a no-op.  Providers that want to stamp

@@ -82,7 +82,7 @@ Future<void> naviToAppSettingPage({required BuildContext context}) async {
 ///   - [HabitsRecordScrollBehaviorViewModel]
 /// - Required for callback:
 ///   - [HabitFileImportRunner]
-///   - [ThirdPartyFileImportRunner]
+///   - [ThirdPartyImportOwner]
 ///   - [AppSettingsAccess]
 class AppSettingPage extends StatelessWidget {
   const AppSettingPage({super.key});
@@ -314,9 +314,9 @@ class _PageState extends State<_Page> with XShare {
 
     final Iterable<Object?>? habitsData;
     try {
-      habitsData = await context
-          .read<ThirdPartyFileImportRunner>()
-          .loadHabitsData(provider);
+      habitsData = await context.read<ThirdPartyImportOwner>().loadHabitsData(
+        provider,
+      );
     } on ThirdPartyImportException catch (e) {
       appLog.import.error(
         '$widget._onThirdPartyImportTilePressed',

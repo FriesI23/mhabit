@@ -150,14 +150,6 @@ class AppProviders extends SingleChildStatelessWidget {
     ChangeNotifierProvider<ThirdPartyImportOwner>(
       create: (context) => ThirdPartyImportOwner(),
     ),
-    ListenableProxyProvider<ThirdPartyImportOwner, ThirdPartyImportAccess>(
-      create: (context) => context.read<ThirdPartyImportOwner>(),
-      update: (context, value, previous) => value,
-    ),
-    ViewModelProxyProvider<ThirdPartyImportAccess, ThirdPartyFileImportRunner>(
-      create: (context) => ThirdPartyFileImportRunner(),
-      update: (context, value, previous) => previous..attachAccess(value),
-    ),
   ];
 
   Iterable<SingleChildWidget> _buildProfileBackedAppProviders() => [
