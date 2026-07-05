@@ -526,6 +526,15 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "注意：匯入不會刪除現有的習慣。",
+    "appSetting_importConfirmDialog_sourceLabel": "來源: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "第三方匯入來源名稱"
+            }
+        }
+    },
     "appSetting_importDialog_confirm_confirmText": "確認",
     "appSetting_importDialog_confirm_cancelText": "取消",
     "appSetting_importDialog_importingTitle": "已匯入 {completeCount}/{totalCount}",

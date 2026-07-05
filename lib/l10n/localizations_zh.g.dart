@@ -856,6 +856,11 @@ class L10nZh extends L10n {
   String get appSetting_importDialog_confirmSubtitle => '注意：导入不会删除现有的习惯。';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return '来源: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => '确认';
 
   @override
@@ -2567,6 +2572,11 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get appSetting_importDialog_confirmSubtitle => '注意：匯入不會刪除現有的習慣。';
+
+  @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return '來源: $provider';
+  }
 
   @override
   String get appSetting_importDialog_confirm_confirmText => '確認';

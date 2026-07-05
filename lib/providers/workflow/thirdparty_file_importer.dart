@@ -52,6 +52,7 @@ final class ThirdPartyImportOwner extends ChangeNotifier
     };
 
     final result = await importer.parseFromBytes(bytes);
+    importer.annotateJson(result);
     if (result.isEmpty) {
       throw const FormatException('No habits found in import file');
     }

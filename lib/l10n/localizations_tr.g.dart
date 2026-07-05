@@ -896,6 +896,11 @@ class L10nTr extends L10n {
       'Not: İçe aktarma, mevcut alışkanlıkları silmez.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'onayla';
 
   @override

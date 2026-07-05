@@ -886,6 +886,11 @@ class L10nEn extends L10n {
       'Note: Import doesn\'t delete existing habits.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'confirm';
 
   @override

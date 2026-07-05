@@ -82,6 +82,17 @@ class LoopCsvImporter implements ThirdPartyImporter {
   ThirdPartyProvider get provider => ThirdPartyProvider.loopHabitTracker;
 
   @override
+  String get displayName => provider.displayName;
+
+  @override
+  void annotateJson(List<Map<String, dynamic>> jsonList) {
+    for (final json in jsonList) {
+      final rawDesc = (json[HabitExportDataKey.desc] as String?) ?? '';
+      json[HabitExportDataKey.desc] = '[From: $displayName] $rawDesc';
+    }
+  }
+
+  @override
   Future<List<Map<String, dynamic>>> parseFromBytes(Uint8List bytes) async {
     final importer = LoopCsvImporter.fromZipBytes(bytes);
     return importer.toExportJson();
@@ -182,8 +193,22 @@ class LoopCsvImporter implements ThirdPartyImporter {
     // 1. Locate and parse Habits.csv
     final habitsCsv = archive.findFile('Habits.csv');
     if (habitsCsv == null) {
-      throw const FormatException('Habits.csv not found in ZIP archive');
+      throw const FormatException(
+        'Habits.csv not found in the ZIP file. '
+        'Please make sure you selected a valid Loop Habit Tracker export.',
+      );
     }
+
+    // Pre-check: verify Habits.csv is valid UTF-8
+    try {
+      utf8.decode(habitsCsv.content);
+    } on FormatException {
+      throw const FormatException(
+        'The file contains non-UTF-8 encoded text. '
+        'Loop Habit Tracker exports should be UTF-8.',
+      );
+    }
+
     final habits = _parseHabits(habitsCsv);
 
     // 2. For each habit, locate its Checkmarks.csv by position prefix
@@ -198,9 +223,15 @@ class LoopCsvImporter implements ThirdPartyImporter {
           break;
         }
       }
-      recordsByHabit.add(
-        found != null ? _parseRecords(found) : <LoopRecordData>[],
-      );
+      if (found == null) {
+        appLog.import.warn(
+          '$LoopCsvImporter.fromZipBytes',
+          ex: ['Missing Checkmarks.csv for habit', habit.name],
+        );
+        recordsByHabit.add(<LoopRecordData>[]);
+      } else {
+        recordsByHabit.add(_parseRecords(found));
+      }
     }
 
     appLog.import.info(

@@ -896,6 +896,11 @@ class L10nUk extends L10n {
       'Примітка. Імпорт не видаляє наявні звички.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'підтвердити';
 
   @override

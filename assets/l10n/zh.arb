@@ -551,6 +551,15 @@
         }
     },
     "appSetting_importDialog_confirmSubtitle": "注意：导入不会删除现有的习惯。",
+    "appSetting_importConfirmDialog_sourceLabel": "来源: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "第三方导入来源名称"
+            }
+        }
+    },
     "appSetting_importDialog_confirm_confirmText": "确认",
     "appSetting_importDialog_confirm_cancelText": "取消",
     "appSetting_importDialog_importingTitle": "已导入 {completeCount}/{totalCount}",

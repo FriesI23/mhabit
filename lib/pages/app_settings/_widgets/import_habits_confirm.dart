@@ -25,6 +25,7 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
   required Iterable<Object?> habitsData,
   required int habitCount,
   required HabitFileImportRunner importer,
+  String? providerName,
 }) async {
   return showDialog(
     context: context,
@@ -34,6 +35,7 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
       child: AppSettingImportHabitsConfirmDialog(
         data: habitsData,
         habitCount: habitCount,
+        providerName: providerName,
       ),
     ),
   );
@@ -42,11 +44,13 @@ Future<void> showAppSettingImportHabitsConfirmDialog({
 class AppSettingImportHabitsConfirmDialog extends StatefulWidget {
   final Iterable<Object?> data;
   final int habitCount;
+  final String? providerName;
 
   const AppSettingImportHabitsConfirmDialog({
     super.key,
     required this.data,
     this.habitCount = 0,
+    this.providerName,
   });
 
   @override
@@ -108,6 +112,32 @@ class _AppSettingImportHabitsConfirmDialog
     setState(confirmed);
   }
 
+  Widget _buildConfirmContent(BuildContext context, L10n? l10n) {
+    final subtitle =
+        l10n?.appSetting_importDialog_confirmSubtitle ??
+        'Note: Import doesn\'t delete existing habits.';
+
+    if (widget.providerName != null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n?.appSetting_importConfirmDialog_sourceLabel(
+                  widget.providerName!,
+                ) ??
+                'Source: ${widget.providerName}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 4),
+          Text(subtitle),
+        ],
+      );
+    }
+
+    return Text(subtitle);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
@@ -138,7 +168,7 @@ class _AppSettingImportHabitsConfirmDialog
       title: buildTitle(context),
       content: AnimatedCrossFade(
         duration: const Duration(milliseconds: 300),
-        firstChild: Text(l10n?.appSetting_importDialog_confirmSubtitle ?? ''),
+        firstChild: _buildConfirmContent(context, l10n),
         secondChild: Padding(
           padding: const EdgeInsetsDirectional.symmetric(vertical: 20),
           child: LinearProgressIndicator(

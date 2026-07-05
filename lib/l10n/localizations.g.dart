@@ -1550,6 +1550,12 @@ abstract class L10n {
   /// **'Note: Import doesn\'t delete existing habits.'**
   String get appSetting_importDialog_confirmSubtitle;
 
+  /// No description provided for @appSetting_importConfirmDialog_sourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {provider}'**
+  String appSetting_importConfirmDialog_sourceLabel(String provider);
+
   /// No description provided for @appSetting_importDialog_confirm_confirmText.
   ///
   /// In en, this message translates to:

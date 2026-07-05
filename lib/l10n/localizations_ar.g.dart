@@ -884,6 +884,11 @@ class L10nAr extends L10n {
       'ملاحظة: الاستيراد لا يحذف العادات الموجودة.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'تأكيد';
 
   @override

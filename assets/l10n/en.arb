@@ -747,6 +747,15 @@
     },
     "appSetting_importDialog_confirmSubtitle": "Note: Import doesn't delete existing habits.",
     "@appSetting_importDialog_confirmSubtitle": {},
+    "appSetting_importConfirmDialog_sourceLabel": "Source: {provider}",
+    "@appSetting_importConfirmDialog_sourceLabel": {
+        "placeholders": {
+            "provider": {
+                "type": "String",
+                "description": "Third-party provider display name"
+            }
+        }
+    },
     "appSetting_importDialog_confirm_confirmText": "confirm",
     "@appSetting_importDialog_confirm_confirmText": {},
     "appSetting_importDialog_confirm_cancelText": "cancel",

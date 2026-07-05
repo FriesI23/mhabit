@@ -898,6 +898,11 @@ class L10nHu extends L10n {
       'Megjegyzés: Az importálás nem törli a meglévő szokásokat.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'Megerősítés';
 
   @override

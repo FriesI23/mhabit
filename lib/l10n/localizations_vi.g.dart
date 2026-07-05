@@ -895,6 +895,11 @@ class L10nVi extends L10n {
       'Lưu ý: Quá trình nhập không xóa các thói quen hiện có.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'xác nhận';
 
   @override

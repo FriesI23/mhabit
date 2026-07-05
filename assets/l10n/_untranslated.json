@@ -12,6 +12,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom"
   ],
 
@@ -179,6 +180,7 @@
     "appSetting_thirdPartyImport_provider_loopName",
     "appSetting_importDialog_confirmTitle",
     "appSetting_importDialog_confirmSubtitle",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_importDialog_confirm_confirmText",
     "appSetting_importDialog_confirm_cancelText",
     "appSetting_importDialog_importingTitle",
@@ -431,6 +433,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_notify_subtitleTile",
     "appSetting_notify_subtitleTile_android",
     "appSync_nowTile_titleText",
@@ -573,6 +576,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSync_serverEditor_connTimeoutTile_unitText",
     "appSync_serverEditor_connRetryCountTile_titleText",
     "appSync_serverEditor_connRetryCountTile_hintText",
@@ -843,6 +847,7 @@
     "appSetting_thirdPartyImport_provider_loopName",
     "appSetting_importDialog_confirmTitle",
     "appSetting_importDialog_confirmSubtitle",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_importDialog_confirm_confirmText",
     "appSetting_importDialog_confirm_cancelText",
     "appSetting_importDialog_importingTitle",
@@ -1112,6 +1117,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -1266,6 +1272,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_debugger_titleText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
@@ -1388,7 +1395,8 @@
   "he": [
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
-    "appSetting_thirdPartyImport_provider_loopName"
+    "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel"
   ],
 
   "hu": [
@@ -1404,6 +1412,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom"
   ],
 
@@ -1441,6 +1450,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
     "appSetting_syncOption_titleText",
@@ -1563,6 +1573,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
@@ -1804,6 +1815,7 @@
     "appSetting_thirdPartyImport_provider_loopName",
     "appSetting_importDialog_confirmTitle",
     "appSetting_importDialog_confirmSubtitle",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_importDialog_confirm_confirmText",
     "appSetting_importDialog_confirm_cancelText",
     "appSetting_importDialog_importingTitle",
@@ -2068,6 +2080,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
@@ -2120,6 +2133,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "appSetting_developMode_titleText",
     "appSetting_experimentalFeatureTile_titleText",
     "appSetting_synSubgroupText",
@@ -2271,6 +2285,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText",
     "common_habitColorType_custom"
@@ -2288,6 +2303,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom"
   ],
 
@@ -2304,6 +2320,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom"
   ],
 
@@ -2320,6 +2337,7 @@
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
+    "appSetting_importConfirmDialog_sourceLabel",
     "common_habitColorType_custom"
   ],
 

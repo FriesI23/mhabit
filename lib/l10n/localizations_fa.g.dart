@@ -891,6 +891,11 @@ class L10nFa extends L10n {
       'توجه: وارد کردن ، عادت‌های موجود را حذف نمی‌کند.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'تأیید';
 
   @override

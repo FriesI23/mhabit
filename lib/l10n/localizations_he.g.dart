@@ -886,6 +886,11 @@ class L10nHe extends L10n {
       'הערה: הייבוא אינו מוחק הרגלים קיימים.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'אישור';
 
   @override

@@ -113,26 +113,6 @@ void main() {
     });
   });
 
-  group('LoopCsvImporter error handling', () {
-    test('throws FormatException when Habits.csv missing', () {
-      final archive = Archive();
-      archive.addFile(ArchiveFile('other.txt', 0, []));
-      final encoder = ZipEncoder();
-      final bytes = Uint8List.fromList(encoder.encode(archive));
-
-      expect(
-        () => LoopCsvImporter.fromZipBytes(bytes),
-        throwsA(
-          isA<FormatException>().having(
-            (e) => e.message,
-            'message',
-            contains('Habits.csv not found'),
-          ),
-        ),
-      );
-    });
-  });
-
   group('LoopCsvImporter.fromZipBytes with real Loop v2.3.1 data', () {
     late LoopCsvImporter importer;
 
@@ -415,6 +395,105 @@ void main() {
       final json = jsonList[0];
       expect(json[HabitExportDataKey.customColor], isNotNull);
       expect(json[HabitExportDataKey.customColorTinted], 1);
+    });
+  });
+
+  //#endregion
+
+  //#region annotateJson
+
+  group('LoopCsvImporter.annotateJson', () {
+    test('prefixes desc with [From: Loop Habit Tracker]', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(),
+      ).toExportJson();
+      LoopCsvImporter.dummy.annotateJson(jsonList);
+
+      for (final json in jsonList) {
+        final desc = json[HabitExportDataKey.desc] as String;
+        expect(desc, startsWith('[From: Loop Habit Tracker] '));
+      }
+    });
+
+    test('annotates even empty desc', () {
+      // Run (002) has empty description
+      final importer = LoopCsvImporter.fromZipBytes(buildLoopSampleZip());
+      final jsonList = importer.toExportJson();
+      // Find the Run habit (index 1, desc is empty)
+      final runJson = jsonList[1];
+      expect(runJson[HabitExportDataKey.desc], '');
+
+      LoopCsvImporter.dummy.annotateJson(jsonList);
+
+      expect(runJson[HabitExportDataKey.desc], '[From: Loop Habit Tracker] ');
+    });
+
+    test('preserves original desc after prefix', () {
+      final jsonList = LoopCsvImporter.fromZipBytes(
+        buildLoopSampleZip(),
+      ).toExportJson();
+      const originalDesc = 'this is a test description';
+
+      LoopCsvImporter.dummy.annotateJson(jsonList);
+
+      final medJson = jsonList[0];
+      expect(
+        medJson[HabitExportDataKey.desc],
+        '[From: Loop Habit Tracker] $originalDesc',
+      );
+    });
+  });
+
+  //#endregion
+
+  //#region error handling
+
+  group('LoopCsvImporter error handling', () {
+    test('throws FormatException with guidance when Habits.csv missing', () {
+      final archive = Archive();
+      archive.addFile(ArchiveFile('other.txt', 0, []));
+      final encoder = ZipEncoder();
+      final bytes = Uint8List.fromList(encoder.encode(archive));
+
+      expect(
+        () => LoopCsvImporter.fromZipBytes(bytes),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            allOf(
+              contains('Habits.csv not found'),
+              contains('valid Loop Habit Tracker export'),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('does not crash when Checkmarks.csv is missing for a habit', () {
+      // Build ZIP with Habits.csv but no Checkmarks.csv for any habit
+      final archive = Archive();
+      const habitsCsv =
+          'Position,Name,Type,Question,Description,'
+          'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+          'Target Type,Target Value,Archived?\n'
+          '001,Meditate,YES_NO,,desc,1,1,#FF8F00,,,,false\n'
+          '002,Run,NUMERICAL,,,1,1,#E64A19,miles,AT_LEAST,2.0,false\n'
+          '003,Wake,YES_NO,,,2,3,#AFB42B,,,,true\n';
+      archive.addFile(
+        ArchiveFile('Habits.csv', habitsCsv.length, habitsCsv.codeUnits),
+      );
+      final encoder = ZipEncoder();
+      final bytes = Uint8List.fromList(encoder.encode(archive));
+
+      // Should not throw
+      final importer = LoopCsvImporter.fromZipBytes(bytes);
+      expect(importer.habitCount, 3);
+      expect(importer.totalRecordCount, 0);
+      // Each habit should have an empty records list
+      for (final records in importer.recordsByHabit) {
+        expect(records, isEmpty);
+      }
     });
   });
 

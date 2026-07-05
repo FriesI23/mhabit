@@ -17,12 +17,18 @@ import 'dart:typed_data';
 /// Identifies a supported third-party habit tracker that mhabit can import from.
 enum ThirdPartyProvider {
   /// [Loop Habit Tracker](https://github.com/iSoron/uhabits) CSV export.
-  loopHabitTracker(fileExtensions: ['zip']);
+  loopHabitTracker(fileExtensions: ['zip'], displayName: 'Loop Habit Tracker');
 
   /// File extensions accepted by the file picker for this provider.
   final List<String> fileExtensions;
 
-  const ThirdPartyProvider({required this.fileExtensions});
+  /// Human-readable name shown in the UI (confirm dialogs, error messages).
+  final String displayName;
+
+  const ThirdPartyProvider({
+    required this.fileExtensions,
+    required this.displayName,
+  });
 }
 
 /// Abstract interface for parsing a third-party export file into
@@ -33,10 +39,23 @@ abstract interface class ThirdPartyImporter {
   /// Which provider this importer handles.
   ThirdPartyProvider get provider;
 
+  /// Human-readable label for the source, used in confirm dialogs and
+  /// error messages.  Defaults to [ThirdPartyProvider.displayName].
+  String get displayName => provider.displayName;
+
   /// Parse raw file bytes into a list of [HabitExportData]-compatible JSON maps.
   ///
   /// Each map in the returned list uses [HabitExportDataKey] constants as keys
   /// and can be fed directly to [HabitExportData.fromJson] and the existing
   /// [HabitFileImportRunner] pipeline.
   Future<List<Map<String, dynamic>>> parseFromBytes(Uint8List bytes);
+
+  /// Annotate parsed JSON with source metadata before feeding it into the
+  /// import pipeline.  Called by [ThirdPartyImportOwner] after
+  /// [parseFromBytes].
+  ///
+  /// The default implementation is a no-op.  Providers that want to stamp
+  /// each habit (e.g. with a source prefix in the description) override
+  /// this method.
+  void annotateJson(List<Map<String, dynamic>> jsonList) {}
 }

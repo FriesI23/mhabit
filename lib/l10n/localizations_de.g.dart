@@ -894,6 +894,11 @@ class L10nDe extends L10n {
       'Hinweis: Der Import löscht keine existierende Gewohnheiten.';
 
   @override
+  String appSetting_importConfirmDialog_sourceLabel(String provider) {
+    return 'Source: $provider';
+  }
+
+  @override
   String get appSetting_importDialog_confirm_confirmText => 'Bestätigen';
 
   @override
