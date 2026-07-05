@@ -736,6 +736,8 @@
     "@appSetting_thirdPartyImport_subtitleText": {},
     "appSetting_thirdPartyImport_provider_loopName": "Loop Habit Tracker",
     "@appSetting_thirdPartyImport_provider_loopName": {},
+    "appSetting_thirdPartyImport_provider_versionHint": "Supports CSV (tested up to <ver/>)",
+    "@appSetting_thirdPartyImport_provider_versionHint": {},
     "appSetting_importDialog_confirmTitle": "Confirm import {count} habits?",
     "@appSetting_importDialog_confirmTitle": {
         "placeholders": {

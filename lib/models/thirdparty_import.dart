@@ -14,6 +14,31 @@
 
 import 'dart:typed_data';
 
+/// Version metadata for a third-party importer.
+///
+/// Each [ThirdPartyImporter] implementation provides an instance that carries
+/// the target app version and a link to the corresponding release page.
+sealed class ImporterVersion {
+  /// The version string (e.g. `"2.3.1"`).
+  String get version;
+
+  /// URL to the release page on the third-party project's repository.
+  Uri get releaseUrl;
+}
+
+/// Version info from the Loop Habit Tracker CSV export format.
+///
+/// URL is internally derived from the version:
+/// `https://github.com/iSoron/uhabits/releases/tag/v{version}`.
+final class LoopImporterVersion extends ImporterVersion {
+  @override
+  String get version => '2.3.1';
+
+  @override
+  Uri get releaseUrl =>
+      Uri.parse('https://github.com/iSoron/uhabits/releases/tag/v$version');
+}
+
 /// Identifies a supported third-party habit tracker that mhabit can import from.
 enum ThirdPartyProvider {
   /// [Loop Habit Tracker](https://github.com/iSoron/uhabits) CSV export.
@@ -42,6 +67,14 @@ abstract interface class ThirdPartyImporter {
   /// Human-readable label for the source, used in confirm dialogs and
   /// error messages.  Defaults to [ThirdPartyProvider.displayName].
   String get displayName => provider.displayName;
+
+  /// The version of the third-party app that this importer targets.
+  ///
+  /// Shown in the provider selection dialog so users can verify
+  /// compatibility.  Each importer implementation owns its own
+  /// [ImporterVersion] instance; future importers for newer formats can
+  /// return a different version without changing the interface.
+  ImporterVersion get supportedVersion;
 
   /// Parse raw file bytes into a list of [HabitExportData]-compatible JSON maps.
   ///

@@ -448,6 +448,40 @@ void main() {
       expect(json[HabitExportDataKey.dailyGoal], 2.0);
       expect(json.containsKey(HabitExportDataKey.dailyGoalExtra), isFalse);
     });
+
+    test('YES_NO numeric-looking value is ignored', () {
+      final archive = Archive();
+      const habitsCsv =
+          'Position,Name,Type,Question,Description,'
+          'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+          'Target Type,Target Value,Archived?\n'
+          '001,Meditate,YES_NO,,desc,1,1,#FF8F00,,,,false\n';
+      const checkmarksCsv =
+          'Date,Value,Notes\n'
+          '2025-01-25,1000,Should be ignored for YES_NO\n'
+          '2025-01-24,YES_MANUAL,Manual done\n';
+      archive.addFile(
+        ArchiveFile('Habits.csv', habitsCsv.length, habitsCsv.codeUnits),
+      );
+      archive.addFile(
+        ArchiveFile(
+          '001 Meditate/Checkmarks.csv',
+          checkmarksCsv.length,
+          checkmarksCsv.codeUnits,
+        ),
+      );
+
+      final bytes = Uint8List.fromList(ZipEncoder().encode(archive));
+      final jsonList = LoopCsvImporter.fromZipBytes(bytes).toExportJson();
+      final records = jsonList[0][HabitExportDataKey.records] as List;
+
+      expect(records.length, 1);
+      expect(records[0][RecordExportDataKey.recordType], 1);
+      expect(
+        records[0][RecordExportDataKey.recordValue],
+        defaultHabitDailyGoal,
+      );
+    });
   });
 
   //#endregion

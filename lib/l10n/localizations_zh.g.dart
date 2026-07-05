@@ -848,6 +848,10 @@ class L10nZh extends L10n {
       'Loop Habit Tracker';
 
   @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      '支持 CSV（测试兼容 <ver/>）';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return '确认导入 $count 个习惯？';
   }
@@ -2576,6 +2580,10 @@ class L10nZhHant extends L10nZh {
   @override
   String get appSetting_thirdPartyImport_provider_loopName =>
       'Loop Habit Tracker';
+
+  @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      '支援 CSV（測試相容 <ver/>）';
 
   @override
   String appSetting_importDialog_confirmTitle(int count) {

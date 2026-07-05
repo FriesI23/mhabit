@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../assets/assets.gen.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/thirdparty_import.dart';
+import '../../../providers/workflow/thirdparty_file_importer.dart';
 import '../../../widgets/widgets.dart';
 
 /// Return an icon widget for the given [ThirdPartyProvider].
@@ -35,6 +38,49 @@ String _providerDisplayName(ThirdPartyProvider provider, L10n? l10n) {
       l10n?.appSetting_thirdPartyImport_provider_loopName ??
           'Loop Habit Tracker',
   };
+}
+
+/// Build the version subtitle widget where only the version ("vX.Y.Z") is a
+/// clickable link.  The l10n string uses "__VERSION__" as a placeholder that
+/// gets replaced by the tappable version label.
+Widget _buildProviderVersionTile(
+  ThirdPartyProvider provider,
+  L10n? l10n,
+  BuildContext context,
+) {
+  final importerVersion = getThirdPartyImporterVersion(provider);
+
+  const kMarker = '<ver/>';
+  final template =
+      l10n?.appSetting_thirdPartyImport_provider_versionHint ??
+      'Supports CSV (tested up to $kMarker)';
+  final parts = template.split(kMarker);
+
+  final versionLabel = 'v${importerVersion.version}';
+  final baseStyle = Theme.of(context).textTheme.bodySmall;
+  final linkStyle = baseStyle?.copyWith(
+    decoration: TextDecoration.underline,
+    color: Theme.of(context).colorScheme.primary,
+  );
+
+  return Text.rich(
+    TextSpan(
+      style: baseStyle,
+      children: [
+        TextSpan(text: parts.first),
+        TextSpan(
+          text: versionLabel,
+          style: linkStyle,
+          recognizer: TapGestureRecognizer()
+            ..onTap = () => launchUrl(
+              importerVersion.releaseUrl,
+              mode: LaunchMode.externalApplication,
+            ),
+        ),
+        if (parts.length > 1) TextSpan(text: parts.sublist(1).join(kMarker)),
+      ],
+    ),
+  );
 }
 
 /// Show a dialog that lets the user pick a third-party import source.
@@ -64,6 +110,7 @@ class _ThirdPartyImportProviderDialog extends StatelessWidget {
               contentPadding: const EdgeInsets.only(left: 8.0, right: 8.0),
               leading: _providerIcon(provider),
               title: Text(_providerDisplayName(provider, l10n)),
+              subtitle: _buildProviderVersionTile(provider, l10n, context),
               onTap: () => Navigator.of(context).pop(provider),
             ),
           );

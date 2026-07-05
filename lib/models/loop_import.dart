@@ -86,6 +86,11 @@ class LoopCsvImporter implements ThirdPartyImporter {
   String get displayName => provider.displayName;
 
   @override
+  ImporterVersion get supportedVersion => _loopVersion;
+
+  static final _loopVersion = LoopImporterVersion();
+
+  @override
   void annotateJson(List<Map<String, dynamic>> jsonList) {
     for (final json in jsonList) {
       final rawDesc = (json[HabitExportDataKey.desc] as String?) ?? '';
@@ -95,8 +100,20 @@ class LoopCsvImporter implements ThirdPartyImporter {
 
   @override
   Future<List<Map<String, dynamic>>> parseFromBytes(Uint8List bytes) async {
-    final importer = LoopCsvImporter.fromZipBytes(bytes);
-    return importer.toExportJson();
+    try {
+      final importer = LoopCsvImporter.fromZipBytes(bytes);
+      return importer.toExportJson();
+    } on FormatException catch (e) {
+      throw ThirdPartyImportException(
+        ThirdPartyImportErrorType.parseError,
+        detail: e.message,
+      );
+    } on RangeError catch (e) {
+      throw ThirdPartyImportException(
+        ThirdPartyImportErrorType.parseError,
+        detail: e.toString(),
+      );
+    }
   }
 
   int get habitCount => habits.length;
@@ -406,10 +423,11 @@ class LoopCsvImporter implements ThirdPartyImporter {
     bool isNumerical,
     num dailyGoal,
   ) {
-    // Try numeric parse first — NUMERICAL habits store values as integers
-    final numericValue = int.tryParse(valueStr);
-    if (numericValue != null) {
-      return (recordType: 1, recordValue: numericValue / 1000.0);
+    if (isNumerical) {
+      final numericValue = int.tryParse(valueStr);
+      if (numericValue != null) {
+        return (recordType: 1, recordValue: numericValue / 1000.0);
+      }
     }
 
     return switch (valueStr) {

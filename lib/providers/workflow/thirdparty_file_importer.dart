@@ -29,6 +29,18 @@ abstract interface class ThirdPartyImportAccess implements Listenable {
   );
 }
 
+/// Return the [ThirdPartyImporter.supportedVersion] for [provider].
+///
+/// This is a thin lookup so callers (e.g. the provider selection dialog)
+/// can display version information without depending on concrete importer
+/// classes directly.
+ImporterVersion getThirdPartyImporterVersion(ThirdPartyProvider provider) {
+  return switch (provider) {
+    ThirdPartyProvider.loopHabitTracker =>
+      LoopCsvImporter.dummy.supportedVersion,
+  };
+}
+
 final class ThirdPartyImportOwner extends ChangeNotifier
     implements ThirdPartyImportAccess, ProviderMounted {
   bool _mounted = true;
@@ -111,7 +123,7 @@ class ThirdPartyFileImportRunner extends ChangeNotifier
             '$runtimeType.loadHabitsData',
             ex: ["Can't open file picker"],
             error: e,
-            stackTrace: LoggerStackTrace.from(StackTrace.current),
+            stackTrace: LoggerStackTrace.from(s),
           );
           return null;
         });
@@ -121,12 +133,12 @@ class ThirdPartyFileImportRunner extends ChangeNotifier
     final Uint8List bytes;
     try {
       bytes = await file.readAsBytes().timeout(const Duration(seconds: 10));
-    } catch (e) {
+    } catch (e, s) {
       appLog.load.error(
         '$runtimeType.loadHabitsData',
         ex: ["Can't read file", file],
         error: e,
-        stackTrace: LoggerStackTrace.from(StackTrace.current),
+        stackTrace: LoggerStackTrace.from(s),
       );
       throw const ThirdPartyImportException(
         ThirdPartyImportErrorType.fileReadError,

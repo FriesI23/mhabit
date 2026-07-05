@@ -1538,6 +1538,12 @@ abstract class L10n {
   /// **'Loop Habit Tracker'**
   String get appSetting_thirdPartyImport_provider_loopName;
 
+  /// No description provided for @appSetting_thirdPartyImport_provider_versionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports CSV (tested up to <ver/>)'**
+  String get appSetting_thirdPartyImport_provider_versionHint;
+
   /// No description provided for @appSetting_importDialog_confirmTitle.
   ///
   /// In en, this message translates to:

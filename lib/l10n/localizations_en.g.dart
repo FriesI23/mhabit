@@ -877,6 +877,10 @@ class L10nEn extends L10n {
       'Loop Habit Tracker';
 
   @override
+  String get appSetting_thirdPartyImport_provider_versionHint =>
+      'Supports CSV (tested up to <ver/>)';
+
+  @override
   String appSetting_importDialog_confirmTitle(int count) {
     return 'Confirm import $count habits?';
   }
