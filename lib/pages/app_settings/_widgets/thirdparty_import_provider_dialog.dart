@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../assets/assets.gen.dart';
+import '../../../common/utils.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/thirdparty_import.dart';
 import '../../../providers/workflow/thirdparty_file_importer.dart';
@@ -100,8 +100,7 @@ class _VersionHintText extends StatelessWidget {
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,
             child: InkWell(
-              onTap: () =>
-                  launchUrl(versionUrl, mode: LaunchMode.externalApplication),
+              onTap: () => launchExternalUrl(versionUrl),
               child: Text(versionLabel, style: linkStyle),
             ),
           ),

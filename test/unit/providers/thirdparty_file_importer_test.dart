@@ -119,5 +119,55 @@ void main() {
         ),
       );
     });
+
+    test('zero frequency numerator in Habits.csv → parseError', () async {
+      final archive = Archive();
+      const habitsCsv =
+          'Position,Name,Type,Question,Description,'
+          'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+          'Target Type,Target Value,Archived?\n'
+          '001,Meditate,YES_NO,,desc,0,1,#FF8F00,,,,false\n';
+      archive.addFile(
+        ArchiveFile('Habits.csv', habitsCsv.length, habitsCsv.codeUnits),
+      );
+      final encoder = ZipEncoder();
+      final bytes = Uint8List.fromList(encoder.encode(archive));
+
+      expect(
+        () => owner.parseThirdPartyFile(provider, bytes),
+        throwsA(
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
+          ),
+        ),
+      );
+    });
+
+    test('zero frequency denominator in Habits.csv → parseError', () async {
+      final archive = Archive();
+      const habitsCsv =
+          'Position,Name,Type,Question,Description,'
+          'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+          'Target Type,Target Value,Archived?\n'
+          '001,Meditate,YES_NO,,desc,1,0,#FF8F00,,,,false\n';
+      archive.addFile(
+        ArchiveFile('Habits.csv', habitsCsv.length, habitsCsv.codeUnits),
+      );
+      final encoder = ZipEncoder();
+      final bytes = Uint8List.fromList(encoder.encode(archive));
+
+      expect(
+        () => owner.parseThirdPartyFile(provider, bytes),
+        throwsA(
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
+          ),
+        ),
+      );
+    });
   });
 }

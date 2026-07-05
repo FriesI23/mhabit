@@ -336,6 +336,11 @@ class LoopCsvImporter implements ThirdPartyImporter {
   /// Returns a [MapEntry] where `.key` is the dbCode of [HabitFrequencyType]
   /// and `.value` is the JSON-encoded freqCustom string.
   static MapEntry<int, String> _mapFrequency(int freqNum, int freqDen) {
+    if (freqNum <= 0 || freqDen <= 0) {
+      throw FormatException(
+        'Invalid frequency $freqNum/$freqDen in Habits.csv',
+      );
+    }
     if (freqDen == 7) {
       return MapEntry(HabitFrequencyType.weekly.dbCode, jsonEncode([freqNum]));
     }

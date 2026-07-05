@@ -368,6 +368,14 @@ void main() {
         14,
       ]);
     });
+
+    test('0/1 → FormatException in toExportJson', () {
+      expect(() => habitJsonForFreq(0, 1), throwsA(isA<FormatException>()));
+    });
+
+    test('1/0 → FormatException in toExportJson', () {
+      expect(() => habitJsonForFreq(1, 0), throwsA(isA<FormatException>()));
+    });
   });
 
   group('_mapColor edge cases', () {
