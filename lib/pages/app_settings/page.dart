@@ -302,7 +302,7 @@ class _PageState extends State<_Page> with XShare {
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
-      importer: context.read<HabitFileImportRunner>(),
+      importer: fileImporter,
     );
   }
 
@@ -337,7 +337,7 @@ class _PageState extends State<_Page> with XShare {
       context: context,
       habitsData: habitsData,
       habitCount: habitCount,
-      importer: context.read<HabitFileImportRunner>(),
+      importer: fileImporter,
       providerName: provider.displayName,
     );
   }

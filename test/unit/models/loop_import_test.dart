@@ -18,6 +18,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:mhabit/common/consts.dart';
 import 'package:mhabit/common/exceptions.dart';
+import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_export.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/loop_import.dart';
@@ -289,9 +290,9 @@ void main() {
     test('startDate is earliest record date', () {
       // Meditate: 2025-01-23 is earliest
       final json = jsonList[0];
-      final expectedEpoch =
-          DateTime.parse('2025-01-23').millisecondsSinceEpoch ~/
-          oneDayMilliseconds;
+      final expectedEpoch = HabitDate.dateTime(
+        DateTime.parse('2025-01-23'),
+      ).epochDay;
       expect(json[HabitExportDataKey.startDate], expectedEpoch);
     });
 

@@ -23,6 +23,7 @@ import '../common/consts.dart';
 import '../common/exceptions.dart';
 import '../logging/helper.dart';
 import 'habit_color.dart';
+import 'habit_date.dart';
 import 'habit_export.dart';
 import 'habit_form.dart';
 import 'thirdparty_import.dart';
@@ -449,23 +450,20 @@ class LoopCsvImporter implements ThirdPartyImporter {
     };
   }
 
-  /// Convert a "YYYY-MM-DD" date string to an epoch day integer.
-  static int _dateToEpochDay(String dateStr) {
-    final dt = DateTime.parse(dateStr);
-    return dt.millisecondsSinceEpoch ~/ oneDayMilliseconds;
-  }
+  /// Convert a "YYYY-MM-DD" date string to a UTC-based epoch day integer
+  /// matching the convention used by [HabitDate.fromEpochDay].
+  static int _dateToEpochDay(String dateStr) =>
+      HabitDate.dateTime(DateTime.parse(dateStr)).epochDay;
 
   /// Calculate the start date (epoch day) from the earliest record date.
   ///
-  /// Falls back to today if there are no records.
+  /// Falls back to today (UTC) if there are no records.
   static int _calcStartDate(List<LoopRecordData> records) {
-    if (records.isEmpty) {
-      return DateTime.now().millisecondsSinceEpoch ~/ oneDayMilliseconds;
-    }
-    final dates = records.map((r) => DateTime.parse(r.date));
-    return dates
-            .reduce((a, b) => a.isBefore(b) ? a : b)
-            .millisecondsSinceEpoch ~/
-        oneDayMilliseconds;
+    if (records.isEmpty) return HabitDate.now().epochDay;
+
+    return records
+        .map((r) => HabitDate.dateTime(DateTime.parse(r.date)))
+        .reduce((a, b) => a.isBefore(b) ? a : b)
+        .epochDay;
   }
 }
