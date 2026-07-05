@@ -19,6 +19,8 @@ import 'dart:typed_data';
 /// Each [ThirdPartyImporter] implementation provides an instance that carries
 /// the target app version and a link to the corresponding release page.
 sealed class ImporterVersion {
+  const ImporterVersion();
+
   /// The version string (e.g. `"2.3.1"`).
   String get version;
 
@@ -31,6 +33,8 @@ sealed class ImporterVersion {
 /// URL is internally derived from the version:
 /// `https://github.com/iSoron/uhabits/releases/tag/v{version}`.
 final class LoopImporterVersion extends ImporterVersion {
+  const LoopImporterVersion();
+
   @override
   String get version => '2.3.1';
 

@@ -88,7 +88,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
   @override
   ImporterVersion get supportedVersion => _loopVersion;
 
-  static final _loopVersion = LoopImporterVersion();
+  static const _loopVersion = LoopImporterVersion();
 
   @override
   void annotateJson(List<Map<String, dynamic>> jsonList) {
@@ -122,6 +122,18 @@ class LoopCsvImporter implements ThirdPartyImporter {
 
   static const _csvDecoder = CsvDecoder();
 
+  static double _parseTargetValue(Object rawValue, int rowIndex) {
+    final rawText = '$rawValue'.trim();
+    if (rawText.isEmpty) return 0;
+
+    final parsed = double.tryParse(rawText);
+    if (parsed != null) return parsed;
+
+    throw FormatException(
+      'Invalid target value "$rawText" at Habits.csv row $rowIndex',
+    );
+  }
+
   static List<LoopHabitData> _parseHabits(ArchiveFile file) {
     final text = utf8.decode(file.content);
     final rows = _csvDecoder.convert(text);
@@ -152,7 +164,7 @@ class LoopCsvImporter implements ThirdPartyImporter {
           colorHex: '${fields[7]}',
           unit: '${fields[8]}',
           targetType: '${fields[9]}',
-          targetValue: double.tryParse('${fields[10]}') ?? 0,
+          targetValue: _parseTargetValue(fields[10], i),
           archived: '${fields[11]}' == 'true',
         ),
       );

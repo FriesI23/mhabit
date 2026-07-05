@@ -94,5 +94,30 @@ void main() {
         ),
       );
     });
+
+    test('invalid non-empty target value in Habits.csv → parseError', () async {
+      final archive = Archive();
+      const habitsCsv =
+          'Position,Name,Type,Question,Description,'
+          'FrequencyNumerator,FrequencyDenominator,Color,Unit,'
+          'Target Type,Target Value,Archived?\n'
+          '001,Run,NUMERICAL,,desc,1,1,#FF8F00,miles,AT_LEAST,abc,false\n';
+      archive.addFile(
+        ArchiveFile('Habits.csv', habitsCsv.length, habitsCsv.codeUnits),
+      );
+      final encoder = ZipEncoder();
+      final bytes = Uint8List.fromList(encoder.encode(archive));
+
+      expect(
+        () => owner.parseThirdPartyFile(provider, bytes),
+        throwsA(
+          isA<ThirdPartyImportException>().having(
+            (e) => e.type,
+            'type',
+            ThirdPartyImportErrorType.parseError,
+          ),
+        ),
+      );
+    });
   });
 }

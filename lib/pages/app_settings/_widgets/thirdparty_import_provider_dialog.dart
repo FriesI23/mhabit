@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,7 +40,7 @@ String _providerDisplayName(ThirdPartyProvider provider, L10n? l10n) {
 }
 
 /// Build the version subtitle widget where only the version ("vX.Y.Z") is a
-/// clickable link.  The l10n string uses "__VERSION__" as a placeholder that
+/// clickable link. The l10n string uses "\<ver/\>" as a placeholder that
 /// gets replaced by the tappable version label.
 Widget _buildProviderVersionTile(
   ThirdPartyProvider provider,
@@ -63,24 +62,54 @@ Widget _buildProviderVersionTile(
     color: Theme.of(context).colorScheme.primary,
   );
 
-  return Text.rich(
-    TextSpan(
-      style: baseStyle,
-      children: [
-        TextSpan(text: parts.first),
-        TextSpan(
-          text: versionLabel,
-          style: linkStyle,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () => launchUrl(
-              importerVersion.releaseUrl,
-              mode: LaunchMode.externalApplication,
-            ),
-        ),
-        if (parts.length > 1) TextSpan(text: parts.sublist(1).join(kMarker)),
-      ],
-    ),
+  return _VersionHintText(
+    leadingText: parts.first,
+    trailingText: parts.length > 1 ? parts.sublist(1).join(kMarker) : null,
+    versionLabel: versionLabel,
+    versionUrl: importerVersion.releaseUrl,
+    baseStyle: baseStyle,
+    linkStyle: linkStyle,
   );
+}
+
+class _VersionHintText extends StatelessWidget {
+  final String leadingText;
+  final String? trailingText;
+  final String versionLabel;
+  final Uri versionUrl;
+  final TextStyle? baseStyle;
+  final TextStyle? linkStyle;
+
+  const _VersionHintText({
+    required this.leadingText,
+    required this.trailingText,
+    required this.versionLabel,
+    required this.versionUrl,
+    required this.baseStyle,
+    required this.linkStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        style: baseStyle,
+        children: [
+          TextSpan(text: leadingText),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: InkWell(
+              onTap: () =>
+                  launchUrl(versionUrl, mode: LaunchMode.externalApplication),
+              child: Text(versionLabel, style: linkStyle),
+            ),
+          ),
+          if (trailingText != null) TextSpan(text: trailingText),
+        ],
+      ),
+    );
+  }
 }
 
 /// Show a dialog that lets the user pick a third-party import source.
