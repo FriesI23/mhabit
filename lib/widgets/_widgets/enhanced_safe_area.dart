@@ -36,6 +36,18 @@ class EnhancedSafeArea extends StatelessWidget {
     required this.child,
   });
 
+  const EnhancedSafeArea.withDefault({
+    super.key,
+    this.left = true,
+    this.top = true,
+    this.right = true,
+    this.bottom = true,
+    this.minimum = EdgeInsets.zero,
+    this.maintainBottomViewPadding = false,
+    this.withSliver = false,
+    required this.child,
+  });
+
   const EnhancedSafeArea.all({
     super.key,
     required this.left,

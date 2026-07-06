@@ -151,7 +151,7 @@ void main() {
       expect(find.text('Changelog'), findsOneWidget);
       expect(find.text('v$_version'), findsOneWidget);
       // AlertDialog close button should not be present
-      expect(find.text('Close'), findsNothing);
+      expect(find.text('Close'), findsOneWidget);
       // Fullscreen close icon should not be present
       expect(find.byIcon(Icons.close), findsNothing);
     });

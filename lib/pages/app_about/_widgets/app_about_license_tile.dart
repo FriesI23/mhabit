@@ -30,19 +30,15 @@ class _AppAboutLicenseTileState extends State<AppAboutLicenseTile> {
   void onPressed() async {
     final licenseText = await rootBundle.loadString('LICENSE');
     if (!mounted) return;
-    await showDialog(
+    final l10n = L10n.of(context);
+    await showAdaptiveContentSheet(
       context: context,
-      builder: (context) => L10nBuilder(
-        builder: (context, l10n) => AlertDialog(
-          content: Scrollbar(
-            child: SingleChildScrollView(
-              primary: true,
-              scrollDirection: Axis.vertical,
-              child: ThematicMarkdownBlock(data: "```text\n$licenseText\n```"),
-            ),
-          ),
-        ),
-      ),
+      title: l10n != null
+          ? Text(l10n.appAbout_licenseTile_titleText)
+          : const Text("License"),
+      contentBuilder: (_) =>
+          ThematicMarkdownBlock(data: "```text\n$licenseText\n```"),
+      sheetShowCloseButton: false,
     );
   }
 

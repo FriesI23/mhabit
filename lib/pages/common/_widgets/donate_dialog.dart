@@ -36,9 +36,13 @@ Future<DonateDialogResult?> showDonateDialog(
   String alipayQRCodePath = 'assets/images/donate-alipay.jpg',
   String wechatPayQRCodePath = 'assets/images/donate-wechatpay.png',
 }) async {
-  return showDialog<DonateDialogResult>(
+  final l10n = L10n.of(context);
+  return showAdaptiveContentSheet<DonateDialogResult>(
     context: context,
-    builder: (context) => DonateDialog(
+    showCloseButton: false,
+    title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
+    dialogWidth: 800,
+    contentBuilder: (_) => DonateContent(
       donateBuyMeACoffeeToken: donateBuyMeACoffeeToken,
       donatePaypalToken: donatePaypalToken,
       btcAddress: btcAddress,
@@ -52,7 +56,7 @@ Future<DonateDialogResult?> showDonateDialog(
   );
 }
 
-class DonateDialog extends StatefulWidget {
+class DonateContent extends StatefulWidget {
   final String donateBuyMeACoffeeToken;
   final String donatePaypalToken;
   final String btcAddress;
@@ -63,7 +67,7 @@ class DonateDialog extends StatefulWidget {
   final String alipayQRCodePath;
   final String wechatPayQRCodePath;
 
-  const DonateDialog({
+  const DonateContent({
     super.key,
     required this.donateBuyMeACoffeeToken,
     required this.donatePaypalToken,
@@ -77,10 +81,10 @@ class DonateDialog extends StatefulWidget {
   });
 
   @override
-  State<DonateDialog> createState() => _DonateDialogState();
+  State<DonateContent> createState() => _DonateContentState();
 }
 
-class _DonateDialogState extends State<DonateDialog> {
+class _DonateContentState extends State<DonateContent> {
   Future<bool> _onLaunchExternelUrl(String urlString) async {
     return launchExternalUrl(Uri.parse(urlString));
   }
@@ -149,132 +153,160 @@ class _DonateDialogState extends State<DonateDialog> {
       }
     }
 
-    Iterable<Widget> buildBuyMeACoffeeList(BuildContext context) => [
-      if (l10n != null)
-        ListTile(
-          title: Text(l10n.donateWay_buyMeACoffee),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
+    Widget buildBuyMeACoffeeList() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (l10n != null)
+          ListTile(
+            title: Text(l10n.donateWay_buyMeACoffee),
+            contentPadding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
+          ),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: BuyMeACoffeeButton(
+            buyMeACoffeeName: widget.donateBuyMeACoffeeToken,
+            onLaunchURL: _onLaunchExternelUrl,
+            onDonation: () => _onDonation(DonateWay.buyMeACoffee),
+          ),
         ),
-      BuyMeACoffeeButton(
-        buyMeACoffeeName: widget.donateBuyMeACoffeeToken,
-        onLaunchURL: _onLaunchExternelUrl,
-        onDonation: () => _onDonation(DonateWay.buyMeACoffee),
-      ),
-    ];
+      ],
+    );
 
-    Iterable<Widget> buildPaypalList(BuildContext context) => [
-      if (l10n != null)
-        ListTile(
-          title: Text(l10n.donateWay_paypal),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
+    Widget buildPaypalList() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (l10n != null)
+          ListTile(
+            title: Text(l10n.donateWay_paypal),
+            contentPadding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
+          ),
+        PayPalButton(
+          paypalButtonId: widget.donatePaypalToken,
+          onLaunchURL: _onLaunchExternelUrl,
+          onDonation: () => _onDonation(DonateWay.paypal),
         ),
-      PayPalButton(
-        paypalButtonId: widget.donatePaypalToken,
-        onLaunchURL: _onLaunchExternelUrl,
-        onDonation: () => _onDonation(DonateWay.paypal),
-      ),
-    ];
+      ],
+    );
 
-    Iterable<Widget> buildAlipayList(BuildContext context) => [
-      if (l10n != null)
-        ListTile(
-          title: Text(l10n.donateWay_alipay),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
+    Widget buildCryptoButtonList() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (l10n != null)
+          ListTile(
+            title: Text(l10n.donateWay_cryptoCurrency),
+            contentPadding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
+          ),
+        Wrap(
+          spacing: 8.0,
+          children: List<Widget>.generate(
+            CryptoDonateButtonType.values.length,
+            (index) {
+              final t = CryptoDonateButtonType.values[index];
+              final addr = getCryptoAddress(t);
+              return Tooltip(
+                triggerMode: TooltipTriggerMode.longPress,
+                message: getCryptoLabel(t, l10n),
+                child: CryptoDonateButton(
+                  cryptoType: t,
+                  address: addr,
+                  onPressed: addr != ''
+                      ? () => _onCopyCryptoAddressToClipboard(t)
+                      : null,
+                ),
+              );
+            },
+          ),
         ),
-      Image.asset(widget.alipayQRCodePath, width: 300),
-    ];
+      ],
+    );
 
-    Iterable<Widget> buildWechatPayList(BuildContext context) => [
-      if (l10n != null)
-        ListTile(
-          title: Text(l10n.donateWay_wechatPay),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      Image.asset(widget.wechatPayQRCodePath, width: 300),
-    ];
+    Widget buildQRSection() {
+      final hasAlipay = donateWays.contains(DonateWay.alipay);
+      final hasWechat = donateWays.contains(DonateWay.wechatPay);
+      if (!hasAlipay && !hasWechat) return const SizedBox.shrink();
 
-    Iterable<Widget> buildCryptoButtonList(BuildContext context) => [
-      if (l10n != null)
-        ListTile(
-          title: Text(l10n.donateWay_cryptoCurrency),
-          contentPadding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact,
-        ),
-      Wrap(
-        spacing: 8.0,
-        children: List<Widget>.generate(CryptoDonateButtonType.values.length, (
-          index,
-        ) {
-          final t = CryptoDonateButtonType.values[index];
-          final addr = getCryptoAddress(t);
-          return Tooltip(
-            triggerMode: TooltipTriggerMode.longPress,
-            message: getCryptoLabel(t, l10n),
-            child: CryptoDonateButton(
-              cryptoType: t,
-              address: addr,
-              onPressed: addr != ''
-                  ? () => _onCopyCryptoAddressToClipboard(t)
-                  : null,
-            ),
+      return AppUiLayoutBuilder(
+        builder: (context, layoutType, _) {
+          final wide = layoutType == UiLayoutType.l;
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          final qrSize = wide
+              ? 300.0
+              : (screenWidth * 0.55).clamp(180.0, 280.0);
+
+          Widget qrImage(String path) => Image.asset(
+            path,
+            width: qrSize,
+            height: qrSize,
+            fit: BoxFit.fill,
           );
-        }),
-      ),
-    ];
+          Widget alipayQR() => qrImage(widget.alipayQRCodePath);
+          Widget wechatQR() => qrImage(widget.wechatPayQRCodePath);
 
-    Iterable<Widget> buildFirstQRGroup(BuildContext context) {
-      switch (MediaQuery.orientationOf(context)) {
-        case Orientation.portrait:
-          return [
-            if (donateWays.contains(DonateWay.alipay))
-              ...buildAlipayList(context),
-            if (donateWays.contains(DonateWay.wechatPay))
-              ...buildWechatPayList(context),
-          ];
-        case Orientation.landscape:
-          return [
-            if (l10n != null)
-              ListTile(
-                title: Text(l10n.donateWay_firstQRGroup),
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-              ),
-            if (l10n != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (donateWays.contains(DonateWay.alipay))
-                    Image.asset(widget.alipayQRCodePath, height: 300),
-                  if (donateWays.contains(DonateWay.wechatPay))
-                    const SizedBox(width: 8.0),
-                  if (donateWays.contains(DonateWay.wechatPay))
-                    Image.asset(widget.wechatPayQRCodePath, height: 300),
-                ],
-              ),
-          ];
-      }
+          if (wide) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (l10n != null)
+                  ListTile(
+                    title: Text(l10n.donateWay_firstQRGroup),
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 6.0,
+                  children: [
+                    if (hasAlipay) alipayQR(),
+                    if (hasWechat) wechatQR(),
+                  ],
+                ),
+              ],
+            );
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (hasAlipay) ...[
+                if (l10n != null)
+                  ListTile(
+                    title: Text(l10n.donateWay_alipay),
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                alipayQR(),
+              ],
+              if (hasWechat) ...[
+                if (l10n != null)
+                  ListTile(
+                    title: Text(l10n.donateWay_wechatPay),
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                wechatQR(),
+              ],
+            ],
+          );
+        },
+      );
     }
 
-    return AlertDialog(
-      scrollable: true,
-      title: l10n != null ? Text(l10n.appAbout_donateTile_titleText) : null,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (donateWays.contains(DonateWay.cryptoCurrencyAll))
-            ...buildCryptoButtonList(context),
-          if (donateWays.contains(DonateWay.buyMeACoffee))
-            ...buildBuyMeACoffeeList(context),
-          if (donateWays.contains(DonateWay.paypal) &&
-              widget.donatePaypalToken.isNotEmpty)
-            ...buildPaypalList(context),
-          ...buildFirstQRGroup(context),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (donateWays.contains(DonateWay.cryptoCurrencyAll))
+          buildCryptoButtonList(),
+        if (donateWays.contains(DonateWay.buyMeACoffee))
+          buildBuyMeACoffeeList(),
+        if (donateWays.contains(DonateWay.paypal) &&
+            widget.donatePaypalToken.isNotEmpty)
+          buildPaypalList(),
+        buildQRSection(),
+        const SizedBox(height: 8),
+      ],
     );
   }
 }

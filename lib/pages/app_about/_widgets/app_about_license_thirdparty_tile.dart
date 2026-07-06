@@ -35,27 +35,21 @@ class _AppAboutThirdPartyLicenseTileState
   void onPressed() async {
     final licenseText = await rootBundle.loadString('LICENSE_THIRDPARTY.md');
     if (!mounted) return;
-    await showDialog(
+    final l10n = L10n.of(context);
+    await showAdaptiveContentSheet(
       context: context,
-      builder: (context) => L10nBuilder(
-        builder: (context, l10n) => AlertDialog(
-          content: Scrollbar(
-            child: SingleChildScrollView(
-              primary: true,
-              child: ThematicMarkdownBlock(
-                data: licenseText,
-                configBuilder: (config) => config.copy(
-                  configs: [
-                    LinkConfig(
-                      onTap: (href) => launchExternalUrl(Uri.parse(href)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+      title: l10n != null
+          ? Text(l10n.appAbout_licenseThirdPartyTile_titleText)
+          : const Text("Third Party License"),
+      contentBuilder: (_) => ThematicMarkdownBlock(
+        data: licenseText,
+        configBuilder: (config) => config.copy(
+          configs: [
+            LinkConfig(onTap: (href) => launchExternalUrl(Uri.parse(href))),
+          ],
         ),
       ),
+      sheetShowCloseButton: false,
     );
   }
 

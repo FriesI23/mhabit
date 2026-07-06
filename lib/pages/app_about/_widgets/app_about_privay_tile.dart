@@ -57,28 +57,23 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
   void _onPressed() async {
     final text = await rootBundle.loadString(widget.privacyPath);
     if (!mounted) return;
-    await showDialog(
+    final l10n = L10n.of(context);
+    await showAdaptiveContentSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        content: Scrollbar(
-          child: SingleChildScrollView(
-            primary: true,
-            scrollDirection: Axis.vertical,
-            child: ThematicMarkdownBlock(
-              data: text,
-              configBuilder: (config) =>
-                  config.copy(configs: [_buildTableConfig()]),
-            ),
-          ),
-        ),
+      title: l10n != null
+          ? Text(l10n.appAbout_privacyTile_titleText)
+          : const Text("Privacy"),
+      contentBuilder: (_) => ThematicMarkdownBlock(
+        data: text,
+        configBuilder: (config) => config.copy(configs: [_buildTableConfig()]),
       ),
+      sheetShowCloseButton: false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-
     return ListTile(
       leading: const SizedBox(
         height: kAppAboutListTileLeadingHeight,
@@ -90,7 +85,7 @@ class _AppAboutPrivacyTile extends State<AppAboutPrivacyTile> {
           : const Text("Privacy"),
       subtitle: l10n != null
           ? Text(l10n.appAbout_privacyTile_subTitleText)
-          : null,
+          : const Text("Unknown"),
       onTap: _onPressed,
     );
   }
