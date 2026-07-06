@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../widgets/_widgets/markdown_block.dart';
+import 'changelog_parser.dart';
 
 /// Shows an adaptive changelog view.
 ///
@@ -71,10 +72,6 @@ Future<void> showChangelogDialog({
   );
 }
 
-// ---------------------------------------------------------------------------
-// Bottom sheet (small screens) — Material drag handle + unified scroll
-// ---------------------------------------------------------------------------
-
 class _ChangelogBottomSheet extends StatefulWidget {
   final String currentVersionSection;
   final String fullChangelog;
@@ -96,10 +93,6 @@ class _ChangelogBottomSheetState extends State<_ChangelogBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context)!;
-    final title = _ChangelogTitle(version: widget.version);
-    final markdownData = _showFull
-        ? widget.fullChangelog
-        : widget.currentVersionSection;
 
     return DraggableScrollableSheet(
       expand: false,
@@ -107,57 +100,70 @@ class _ChangelogBottomSheetState extends State<_ChangelogBottomSheet> {
       minChildSize: 0.25,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
-        return Column(
-          children: [
-            // Title + scrollable markdown — unified scroll via DraggableScrollableSheet
-            Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    title,
-                    const SizedBox(height: 12),
-                    ThematicMarkdownBlock(
-                      data: markdownData,
-                      selectable: false,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Pinned bottom bar
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    if (!_showFull)
-                      FilledButton(
-                        onPressed: () => setState(() => _showFull = true),
-                        child: Text(l10n.changelog_view_full),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
+        if (_showFull) return _buildFullList(scrollController, l10n);
+        return _buildCurrentVersion(scrollController, l10n);
       },
     );
   }
-}
 
-// ---------------------------------------------------------------------------
-// AlertDialog (large screens)
-// ---------------------------------------------------------------------------
+  Widget _buildFullList(ScrollController scrollController, L10n l10n) {
+    final sections = parseChangelogSections(widget.fullChangelog);
+    return ListView.builder(
+      controller: scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: sections.length + 1, // +1 for title header
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _ChangelogTitle(version: widget.version),
+          );
+        }
+        return _ChangelogSectionTile(section: sections[index - 1]);
+      },
+    );
+  }
+
+  Widget _buildCurrentVersion(ScrollController scrollController, L10n l10n) {
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ChangelogTitle(version: widget.version),
+                const SizedBox(height: 12),
+                ThematicMarkdownBlock(
+                  data: widget.currentVersionSection,
+                  selectable: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                const Spacer(),
+                FilledButton(
+                  onPressed: () => setState(() => _showFull = true),
+                  child: Text(l10n.changelog_view_full),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class _ChangelogDialog extends StatefulWidget {
   final String currentVersionSection;
@@ -180,22 +186,21 @@ class _ChangelogDialogState extends State<_ChangelogDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context)!;
-    final title = _ChangelogTitle(version: widget.version);
-    final content = _ChangelogContent(
-      data: _showFull ? widget.fullChangelog : widget.currentVersionSection,
-    );
-    final viewFullButton = !_showFull
-        ? FilledButton(
-            onPressed: () => setState(() => _showFull = true),
-            child: Text(l10n.changelog_view_full),
-          )
-        : null;
 
     return AlertDialog(
-      title: title,
-      content: SizedBox(width: 500, child: content),
+      title: _ChangelogTitle(version: widget.version),
+      content: SizedBox(
+        width: 500,
+        child: _showFull
+            ? _buildFullList()
+            : _ChangelogContent(data: widget.currentVersionSection),
+      ),
       actions: [
-        ?viewFullButton,
+        if (!_showFull)
+          FilledButton(
+            onPressed: () => setState(() => _showFull = true),
+            child: Text(l10n.changelog_view_full),
+          ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
@@ -203,11 +208,19 @@ class _ChangelogDialogState extends State<_ChangelogDialog> {
       ],
     );
   }
-}
 
-// ---------------------------------------------------------------------------
-// Dialog title: "Changelog" heading + version row with icon
-// ---------------------------------------------------------------------------
+  Widget _buildFullList() {
+    final sections = parseChangelogSections(widget.fullChangelog);
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 400),
+      child: ListView.builder(
+        itemCount: sections.length,
+        itemBuilder: (context, index) =>
+            _ChangelogSectionTile(section: sections[index]),
+      ),
+    );
+  }
+}
 
 class _ChangelogTitle extends StatelessWidget {
   final String version;
@@ -240,10 +253,6 @@ class _ChangelogTitle extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Shared markdown content
-// ---------------------------------------------------------------------------
-
 class _ChangelogContent extends StatelessWidget {
   final String data;
 
@@ -257,6 +266,39 @@ class _ChangelogContent extends StatelessWidget {
         child: SingleChildScrollView(
           child: ThematicMarkdownBlock(data: data, selectable: false),
         ),
+      ),
+    );
+  }
+}
+
+class _ChangelogSectionTile extends StatelessWidget {
+  final ChangelogSection section;
+
+  const _ChangelogSectionTile({required this.section});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.info_outline, size: 14, color: color),
+              const SizedBox(width: 6),
+              Text(
+                'v${section.version}',
+                style: theme.textTheme.titleSmall?.copyWith(color: color),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ThematicMarkdownBlock(data: section.body, selectable: false),
+        ],
       ),
     );
   }

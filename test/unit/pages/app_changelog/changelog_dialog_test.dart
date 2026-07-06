@@ -88,11 +88,16 @@ void main() {
         await tester.tap(find.text('View Full Changelog'));
         await tester.pumpAndSettle();
 
-        // Content should now be the full changelog
+        // Content should now show parsed section body (lazy list item)
         final block = find.byWidgetPredicate(
-          (w) => w is ThematicMarkdownBlock && w.data == _fullChangelog,
+          (w) => w is ThematicMarkdownBlock && w.data == '- old item',
         );
         expect(block, findsOneWidget);
+        // Original current-version content should be gone
+        final oldBlock = find.byWidgetPredicate(
+          (w) => w is ThematicMarkdownBlock && w.data == _currentVersionSection,
+        );
+        expect(oldBlock, findsNothing);
         expect(find.text('View Full Changelog'), findsNothing);
       },
     );

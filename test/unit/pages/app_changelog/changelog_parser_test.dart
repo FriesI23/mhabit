@@ -241,4 +241,37 @@ Second paragraph.
       expect(result, isNull);
     });
   });
+
+  group('parseChangelogSections', () {
+    // 16: Parses all sections from sample changelog
+    test('parses all sections from sample changelog', () {
+      final sections = parseChangelogSections(_sampleChangelog);
+      expect(sections.length, 7);
+      expect(sections[0].version, '1.25.3+168');
+      expect(sections[0].body, contains('- Update Hebrew translation'));
+      expect(sections[1].version, '1.25.1+164');
+      expect(sections[2].version, '1.24.5+161');
+      expect(sections[3].version, '1.24.4+160-pre');
+      expect(sections[4].version, '1.24.3+159');
+      expect(sections[5].version, '1.0.1');
+      expect(sections[6].version, '1.0.0');
+    });
+
+    // 17: Handles empty body sections
+    test('handles empty body sections', () {
+      final sections = parseChangelogSections(_sparseChangelog);
+      expect(sections.length, 2);
+      expect(sections[0].version, '1.0.0');
+      expect(sections[0].body, isEmpty);
+      expect(sections[1].version, '1.0.1');
+      expect(sections[1].body, isNotEmpty);
+    });
+
+    // 18: Returns empty list for content without h2 headings
+    test('returns empty list for content without h2 headings', () {
+      const content = '# Only h1\n\n- item';
+      final sections = parseChangelogSections(content);
+      expect(sections, isEmpty);
+    });
+  });
 }

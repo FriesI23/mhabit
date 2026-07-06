@@ -18,6 +18,45 @@ import 'package:markdown/markdown.dart' as md;
 import '../../assets/assets.dart';
 import '../../extensions/asset_bundle_extensions.dart';
 
+/// A single version section parsed from a changelog.
+///
+/// [version] is the `## <version>` heading text (e.g. `"1.25.3+168"`).
+/// [body] is the section body rendered back to markdown, or empty string
+/// when the section has no body content.
+final class ChangelogSection {
+  final String version;
+  final String body;
+
+  const ChangelogSection({required this.version, required this.body});
+}
+
+/// Parses [content] into a list of [ChangelogSection]s, one per `## ` h2
+/// heading.
+///
+/// Each section spans from its `## <version>` heading to the next `## `
+/// heading (or EOF). The section body is rendered back to markdown via the
+/// same `_renderNodesToMarkdown` pipeline used by [extractVersionSection].
+///
+/// [content] should be the raw CHANGELOG.md text. Callers that have already
+/// stripped the preamble via [stripChangelogPreamble] can pass the result
+/// directly.
+List<ChangelogSection> parseChangelogSections(String content) {
+  final nodes = md.Document().parse(content);
+  final sections = <ChangelogSection>[];
+
+  for (var i = 0; i < nodes.length; i++) {
+    final node = nodes[i];
+    if (node case md.Element(tag: 'h2')) {
+      final version = node.textContent.trim();
+      final bodyNodes = _collectSectionNodes(nodes, i + 1);
+      final body = _renderNodesToMarkdown(bodyNodes);
+      sections.add(ChangelogSection(version: version, body: body));
+    }
+  }
+
+  return sections;
+}
+
 /// Extracts the body markdown for [version] from raw [content].
 ///
 /// [content] is the full text of a changelog file.
@@ -27,11 +66,10 @@ import '../../extensions/asset_bundle_extensions.dart';
 /// Returns the section body (list items etc.) as markdown text without the
 /// `## <version>` heading, or `null` when no matching heading is found.
 String? extractVersionSection(String content, String version) {
-  final nodes = md.Document().parse(content);
-  final headingIdx = _findVersionHeading(nodes, version);
-  if (headingIdx == null) return null;
-  final sectionNodes = _collectSectionNodes(nodes, headingIdx + 1);
-  return _renderNodesToMarkdown(sectionNodes);
+  for (final section in parseChangelogSections(content)) {
+    if (section.version == version) return section.body;
+  }
+  return null;
 }
 
 /// Loads a changelog asset from [path] and returns the body markdown for
@@ -110,17 +148,6 @@ String? _tryBetaHeading(String content, String base) {
 String stripChangelogPreamble(String content) {
   final match = RegExp(r'^## ', multiLine: true).firstMatch(content);
   return match != null ? content.substring(match.start) : content;
-}
-
-int? _findVersionHeading(List<md.Node> nodes, String version) {
-  for (final (index, node) in nodes.indexed) {
-    if (node case md.Element(
-      tag: 'h2',
-    ) when node.textContent.trim() == version) {
-      return index;
-    }
-  }
-  return null;
 }
 
 List<md.Node> _collectSectionNodes(List<md.Node> nodes, int start) {
