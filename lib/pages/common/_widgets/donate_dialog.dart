@@ -85,7 +85,7 @@ class DonateContent extends StatefulWidget {
 }
 
 class _DonateContentState extends State<DonateContent> {
-  Future<bool> _onLaunchExternelUrl(String urlString) async {
+  Future<bool> _onLaunchExternalUrl(String urlString) async {
     return launchExternalUrl(Uri.parse(urlString));
   }
 
@@ -166,7 +166,7 @@ class _DonateContentState extends State<DonateContent> {
           constraints: const BoxConstraints(maxWidth: 320),
           child: BuyMeACoffeeButton(
             buyMeACoffeeName: widget.donateBuyMeACoffeeToken,
-            onLaunchURL: _onLaunchExternelUrl,
+            onLaunchURL: _onLaunchExternalUrl,
             onDonation: () => _onDonation(DonateWay.buyMeACoffee),
           ),
         ),
@@ -184,7 +184,7 @@ class _DonateContentState extends State<DonateContent> {
           ),
         PayPalButton(
           paypalButtonId: widget.donatePaypalToken,
-          onLaunchURL: _onLaunchExternelUrl,
+          onLaunchURL: _onLaunchExternalUrl,
           onDonation: () => _onDonation(DonateWay.paypal),
         ),
       ],

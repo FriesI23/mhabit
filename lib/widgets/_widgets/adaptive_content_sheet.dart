@@ -26,12 +26,15 @@ import 'enhanced_safe_area.dart';
 /// content identically in both modes — it should not include its own scroll
 /// view.
 ///
-/// On small screens (< [kHabitLargeScreenAdaptWidth] px on mobile):
-///   [showModalBottomSheet] + [DraggableScrollableSheet].
-/// On large screens: [showDialog] + [AlertDialog].
+/// On Android, iOS, and Fuchsia, dialog mode is used only when
+/// [computeLayoutType] resolves a large layout with both the width and height
+/// thresholds enabled. Otherwise this uses [showModalBottomSheet] with a
+/// [DraggableScrollableSheet]. On other platforms, this always uses
+/// [showDialog] with an [AlertDialog].
 ///
-/// [actions] are placed in a bottom area (sheet) or prepended to
-/// [AlertDialog.actions] (dialog).  [showCloseButton] controls the default
+/// [actions] are placed in a bottom area (sheet) or appended before the
+/// default close button in [AlertDialog.actions] (dialog).
+/// [showCloseButton] controls the default
 /// close button.  [sheetActionsAlign] and [sheetTitleAlignment] control
 /// layout in the sheet scaffold.
 ///
@@ -57,6 +60,14 @@ Future<T?> showAdaptiveContentSheet<T>({
   double dialogMaxContentHeight = 400,
   bool dialogShowScrollbar = true,
 }) {
+  assert(
+    0 <= sheetMinChildSize &&
+        sheetMinChildSize <= sheetInitialChildSize &&
+        sheetInitialChildSize <= sheetMaxChildSize &&
+        sheetMaxChildSize <= 1,
+    'sheet child sizes must satisfy 0 <= min <= initial <= max <= 1',
+  );
+
   final viewSize = MediaQuery.sizeOf(context);
   final appLayoutType = computeLayoutType(
     width: viewSize.width,
@@ -236,7 +247,7 @@ class _AdaptiveSheet extends StatelessWidget {
   }
 }
 
-class _AdaptiveAlertDialog extends StatelessWidget {
+class _AdaptiveAlertDialog extends StatefulWidget {
   final Widget? title;
   final Widget child;
   final double? width;
@@ -256,29 +267,51 @@ class _AdaptiveAlertDialog extends StatelessWidget {
   });
 
   @override
+  State<_AdaptiveAlertDialog> createState() => _AdaptiveAlertDialogState();
+}
+
+class _AdaptiveAlertDialogState extends State<_AdaptiveAlertDialog> {
+  late final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final scrolledChild = SingleChildScrollView(child: child);
+    final scrolledChild = SingleChildScrollView(
+      controller: _scrollController,
+      child: widget.child,
+    );
     return AlertDialog(
-      title: title,
-      content: width != null
+      title: widget.title,
+      content: widget.width != null
           ? SizedBox(
-              width: width,
+              width: widget.width,
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxContentHeight),
-                child: showScrollbar
-                    ? Scrollbar(child: scrolledChild)
+                constraints: BoxConstraints(maxHeight: widget.maxContentHeight),
+                child: widget.showScrollbar
+                    ? Scrollbar(
+                        controller: _scrollController,
+                        child: scrolledChild,
+                      )
                     : scrolledChild,
               ),
             )
           : ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxContentHeight),
-              child: showScrollbar
-                  ? Scrollbar(child: scrolledChild)
+              constraints: BoxConstraints(maxHeight: widget.maxContentHeight),
+              child: widget.showScrollbar
+                  ? Scrollbar(
+                      controller: _scrollController,
+                      child: scrolledChild,
+                    )
                   : scrolledChild,
             ),
       actions: [
-        if (actions != null) ...actions!,
-        if (showCloseButton)
+        if (widget.actions != null) ...widget.actions!,
+        if (widget.showCloseButton)
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(MaterialLocalizations.of(context).closeButtonLabel),

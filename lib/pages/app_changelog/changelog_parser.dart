@@ -44,15 +44,12 @@ List<ChangelogSection> parseChangelogSections(String content) {
   final nodes = md.Document().parse(content);
   final sections = <ChangelogSection>[];
 
-  for (var i = 0; i < nodes.length; i++) {
-    final node = nodes[i];
-    if (node case md.Element(tag: 'h2')) {
-      final version = node.textContent.trim();
-      final bodyNodes = _collectSectionNodes(nodes, i + 1);
-      final body = _renderNodesToMarkdown(bodyNodes);
-      sections.add(ChangelogSection(version: version, body: body));
-    }
-  }
+  _forEachVersionSection(nodes, (version, bodyStart) {
+    final bodyNodes = _collectSectionNodes(nodes, bodyStart);
+    final body = _renderNodesToMarkdown(bodyNodes);
+    sections.add(ChangelogSection(version: version, body: body));
+    return true;
+  });
 
   return sections;
 }
@@ -66,10 +63,17 @@ List<ChangelogSection> parseChangelogSections(String content) {
 /// Returns the section body (list items etc.) as markdown text without the
 /// `## <version>` heading, or `null` when no matching heading is found.
 String? extractVersionSection(String content, String version) {
-  for (final section in parseChangelogSections(content)) {
-    if (section.version == version) return section.body;
-  }
-  return null;
+  final nodes = md.Document().parse(content);
+  String? section;
+
+  _forEachVersionSection(nodes, (heading, bodyStart) {
+    if (heading != version) return true;
+    final bodyNodes = _collectSectionNodes(nodes, bodyStart);
+    section = _renderNodesToMarkdown(bodyNodes);
+    return false;
+  });
+
+  return section;
 }
 
 /// Loads a changelog asset from [path] and returns the body markdown for
@@ -157,6 +161,19 @@ List<md.Node> _collectSectionNodes(List<md.Node> nodes, int start) {
     result.add(node);
   }
   return result;
+}
+
+void _forEachVersionSection(
+  List<md.Node> nodes,
+  bool Function(String version, int bodyStart) visitor,
+) {
+  for (var i = 0; i < nodes.length; i++) {
+    final node = nodes[i];
+    if (node case md.Element(tag: 'h2')) {
+      final keepWalking = visitor(node.textContent.trim(), i + 1);
+      if (!keepWalking) return;
+    }
+  }
 }
 
 String _renderNodesToMarkdown(List<md.Node> nodes) {

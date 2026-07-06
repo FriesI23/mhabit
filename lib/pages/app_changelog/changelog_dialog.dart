@@ -29,6 +29,7 @@ Future<void> showChangelogDialog({
   required String version,
 }) {
   final showFullNotifier = ValueNotifier<bool>(false);
+  List<ChangelogSection>? fullSections;
 
   return showAdaptiveContentSheet(
     context: context,
@@ -37,7 +38,9 @@ Future<void> showChangelogDialog({
     contentBuilder: (_) => ValueListenableBuilder<bool>(
       valueListenable: showFullNotifier,
       builder: (_, showFull, _) => showFull
-          ? _buildFullList(fullChangelog)
+          ? _buildFullList(
+              fullSections ??= parseChangelogSections(fullChangelog),
+            )
           : _buildCurrentVersion(currentVersionSection),
     ),
     actions: [
@@ -60,8 +63,7 @@ Widget _buildCurrentVersion(String data) {
   return ThematicMarkdownBlock(data: data, selectable: false);
 }
 
-Widget _buildFullList(String fullChangelog) {
-  final sections = parseChangelogSections(fullChangelog);
+Widget _buildFullList(List<ChangelogSection> sections) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.start,

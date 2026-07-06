@@ -150,7 +150,7 @@ void main() {
       // Bottom sheet content should be visible
       expect(find.text('Changelog'), findsOneWidget);
       expect(find.text('v$_version'), findsOneWidget);
-      // AlertDialog close button should not be present
+      // Bottom sheet actions should include the close button
       expect(find.text('Close'), findsOneWidget);
       // Fullscreen close icon should not be present
       expect(find.byIcon(Icons.close), findsNothing);
