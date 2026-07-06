@@ -212,7 +212,7 @@ class _DonateContentState extends State<DonateContent> {
                 child: CryptoDonateButton(
                   cryptoType: t,
                   address: addr,
-                  onPressed: addr != ''
+                  onPressed: addr.isNotEmpty
                       ? () => _onCopyCryptoAddressToClipboard(t)
                       : null,
                 ),
