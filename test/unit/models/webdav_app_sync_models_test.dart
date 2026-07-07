@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -469,7 +467,7 @@ void main() {
         color: HabitColorType.cc4.dbCode,
         syncExtras: '{"group_id":"g-inject","extra":true}',
       );
-      final unknown = jsonDecode(cell.syncExtras!) as Map<String, dynamic>;
+      final unknown = decodeSyncExtras(cell.syncExtras)!;
       final data = WebDavSyncHabitData.fromHabitDBCell(cell, unknown: unknown);
       expect(data.unknown, isNotNull);
       expect(data.unknown!['group_id'], 'g-inject');
@@ -501,9 +499,7 @@ void main() {
 
       // toHabitDBCell → decode syncExtras
       final cell = original.toHabitDBCell();
-      final unknown = cell.syncExtras != null
-          ? jsonDecode(cell.syncExtras!) as Map<String, dynamic>
-          : null;
+      final unknown = decodeSyncExtras(cell.syncExtras);
 
       // fromHabitDBCell with unknown
       final restored = WebDavSyncHabitData.fromHabitDBCell(

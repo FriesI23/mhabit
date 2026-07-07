@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -509,9 +507,7 @@ class SyncDBHelper extends DBHelperHandler {
             final lastMarkId = result[lastMarkKey] as String?;
             final lastConfigId = result[configIdKey] as String?;
             final cell = HabitDBCell.fromJson(result);
-            final unknown = cell.syncExtras != null
-                ? jsonDecode(cell.syncExtras!) as Map<String, dynamic>?
-                : null;
+            final unknown = decodeSyncExtras(cell.syncExtras);
             return WebDavSyncHabitData.fromHabitDBCell(
               cell,
               dirty: dirty,

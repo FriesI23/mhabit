@@ -41,6 +41,49 @@ import 'app_sync_task.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
+/// Encodes [unknown] for the DB [syncExtras] column.
+/// Returns `null` when [unknown] is `null` or empty.
+String? encodeSyncExtras(Map<String, dynamic>? unknown) {
+  if (unknown == null || unknown.isEmpty) return null;
+  return jsonEncode(unknown);
+}
+
+/// Decodes [raw] from DB [syncExtras].
+/// Returns `null` for `null`/invalid/empty input.
+Map<String, dynamic>? decodeSyncExtras(String? raw) {
+  if (raw == null) return null;
+  try {
+    final decoded = jsonDecode(raw);
+    return decoded is Map<String, dynamic> && decoded.isNotEmpty
+        ? decoded
+        : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Captures keys from [json] that are not in [knownKeys].
+/// Returns `null` when no unknown keys are present.
+Map<String, dynamic>? captureSyncUnknown(JsonMap json, Set<String> knownKeys) {
+  final unknownKeys = json.keys.where((k) => !knownKeys.contains(k));
+  final unknown = <String, dynamic>{};
+  var count = 0;
+  for (final k in unknownKeys) {
+    unknown[k] = json[k];
+    count++;
+  }
+  return count > 0 ? unknown : null;
+}
+
+/// Merges [unknown] entries into [target] in-place.
+/// Existing keys win ([putIfAbsent] semantics).
+void mergeSyncUnknown(JsonMap target, Map<String, dynamic>? unknown) {
+  if (unknown == null) return;
+  for (final entry in unknown.entries) {
+    target.putIfAbsent(entry.key, () => entry.value);
+  }
+}
+
 /// Matches a habit JSON file name, e.g. 'habit-xxx-yyy-zzz.json'
 final reAppSyncHabitFileName = RegExp(r'^habit-([^/]+)\.json$');
 
@@ -627,12 +670,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
           : true,
     );
     final data = _$WebDavSyncHabitDataFromJson(json);
-    final unknownKeys = json.keys.where(
-      (k) => !WebDavSyncHabitKeys.allKnownKeys.contains(k),
-    );
-    if (unknownKeys.isNotEmpty) {
-      data.unknown = {for (final k in unknownKeys) k: json[k]};
-    }
+    data.unknown = captureSyncUnknown(json, WebDavSyncHabitKeys.allKnownKeys);
     return data;
   }
 
@@ -672,7 +710,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       startDate: startDate,
       targetDays: targetDays,
       sortPosition: sortPostion,
-      syncExtras: unknown != null ? jsonEncode(unknown) : null,
+      syncExtras: encodeSyncExtras(unknown),
     );
   }
 
@@ -681,11 +719,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     final json = _$WebDavSyncHabitDataToJson(this)
       ..[WebDavSyncHabitKey.convertType] = _convertType;
     if (schemaVersion <= 1) json.remove(WebDavSyncHabitKey.schemaVersion);
-    if (unknown != null) {
-      for (final entry in unknown!.entries) {
-        json.putIfAbsent(entry.key, () => entry.value);
-      }
-    }
+    mergeSyncUnknown(json, unknown);
     return json;
   }
 
