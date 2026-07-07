@@ -341,6 +341,10 @@ class WebDavSyncRecordData implements JsonAdaptor {
 /// (`lib/models/habit_export.dart`).
 ///
 /// {@macro habit_color_keys_relationship}
+///
+/// This class is the single source of truth for JSON key strings. The
+/// sibling enum [WebDavSyncHabitKeys] derives its entries from these
+/// constants so the two are inherently aligned.
 class WebDavSyncHabitKey {
   static const String uuid = 'uuid';
   static const String createT = 'create_t';
@@ -373,31 +377,37 @@ class WebDavSyncHabitKey {
 /// (`lib/models/habit_export.dart`).
 ///
 /// {@macro habit_color_keys_relationship}
+///
+/// Each entry references the corresponding [WebDavSyncHabitKey] constant so
+/// the enum registry stays in sync with the annotation-level source of truth.
+/// When adding a new sync-payload field, add a static const to
+/// [WebDavSyncHabitKey] first, then add an enum entry here.
+///
 enum WebDavSyncHabitKeys {
-  uuid('uuid'),
-  createT('create_t'),
-  modifyT('modify_t'),
-  type('type'),
-  status('status'),
-  name('name'),
-  desc('desc'),
-  color('color'),
-  customColor('custom_color'),
-  customColorTinted('custom_color_tinted'),
-  dailyGoal('daily_goal'),
-  dailyGoalUnit('daily_goal_unit'),
-  dailyGoalExtra('daily_goal_extra'),
-  freqType('freq_type'),
-  freqCustom('freq_custom'),
-  reminder('reminder'),
-  reminderQuest('reminder_quest'),
-  startDate('start_date'),
-  targetDays('target_days'),
-  sortPosition('sort_position'),
-  sessionId('sessionId'),
-  records('records'),
-  convertType('_convert_type'),
-  schemaVersion('_schema_version');
+  uuid(WebDavSyncHabitKey.uuid),
+  createT(WebDavSyncHabitKey.createT),
+  modifyT(WebDavSyncHabitKey.modifyT),
+  type(WebDavSyncHabitKey.type),
+  status(WebDavSyncHabitKey.status),
+  name(WebDavSyncHabitKey.name),
+  desc(WebDavSyncHabitKey.desc),
+  color(WebDavSyncHabitKey.color),
+  customColor(WebDavSyncHabitKey.customColor),
+  customColorTinted(WebDavSyncHabitKey.customColorTinted),
+  dailyGoal(WebDavSyncHabitKey.dailyGoal),
+  dailyGoalUnit(WebDavSyncHabitKey.dailyGoalUnit),
+  dailyGoalExtra(WebDavSyncHabitKey.dailyGoalExtra),
+  freqType(WebDavSyncHabitKey.freqType),
+  freqCustom(WebDavSyncHabitKey.freqCustom),
+  reminder(WebDavSyncHabitKey.reminder),
+  reminderQuest(WebDavSyncHabitKey.reminderQuest),
+  startDate(WebDavSyncHabitKey.startDate),
+  targetDays(WebDavSyncHabitKey.targetDays),
+  sortPosition(WebDavSyncHabitKey.sortPosition),
+  sessionId(WebDavSyncHabitKey.sessionId),
+  records(WebDavSyncHabitKey.records),
+  convertType(WebDavSyncHabitKey.convertType),
+  schemaVersion(WebDavSyncHabitKey.schemaVersion);
 
   const WebDavSyncHabitKeys(this.jsonKey);
 
@@ -409,9 +419,9 @@ enum WebDavSyncHabitKeys {
   /// Derived from the enum registry so it stays aligned with the actual
   /// serialized shape. When adding a new sync-payload field to
   /// [WebDavSyncHabitData], add a new enum entry here.
-  static final Set<String> allKnownKeys = WebDavSyncHabitKeys.values
-      .map((e) => e.jsonKey)
-      .toSet();
+  static final Set<String> allKnownKeys = Set.unmodifiable(
+    WebDavSyncHabitKeys.values.map((e) => e.jsonKey),
+  );
 }
 
 /// Sync-payload (wire) encoding of [HabitColor]: unlike [HabitColor.dbColorType],

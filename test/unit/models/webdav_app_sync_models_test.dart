@@ -378,22 +378,52 @@ void main() {
     });
   });
 
-  group('WebDavSyncHabitKey.allKnownKeys', () {
-    test('allKnownKeys includes every WebDavSyncHabitData JSON key', () {
-      expect(
-        WebDavSyncHabitKeys.allKnownKeys,
-        containsAll([
+  group('WebDavSyncHabitKey ↔ WebDavSyncHabitKeys alignment', () {
+    test(
+      'every WebDavSyncHabitKeys entry has a matching WebDavSyncHabitKey const',
+      () {
+        const classKeyValues = <String>{
           WebDavSyncHabitKey.uuid,
+          WebDavSyncHabitKey.createT,
+          WebDavSyncHabitKey.modifyT,
+          WebDavSyncHabitKey.type,
+          WebDavSyncHabitKey.status,
           WebDavSyncHabitKey.name,
+          WebDavSyncHabitKey.desc,
           WebDavSyncHabitKey.color,
           WebDavSyncHabitKey.customColor,
-          WebDavSyncHabitKey.records,
+          WebDavSyncHabitKey.customColorTinted,
+          WebDavSyncHabitKey.dailyGoal,
+          WebDavSyncHabitKey.dailyGoalUnit,
+          WebDavSyncHabitKey.dailyGoalExtra,
+          WebDavSyncHabitKey.freqType,
+          WebDavSyncHabitKey.freqCustom,
+          WebDavSyncHabitKey.reminder,
+          WebDavSyncHabitKey.reminderQuest,
+          WebDavSyncHabitKey.startDate,
+          WebDavSyncHabitKey.targetDays,
+          WebDavSyncHabitKey.sortPosition,
           WebDavSyncHabitKey.sessionId,
+          WebDavSyncHabitKey.records,
           WebDavSyncHabitKey.convertType,
           WebDavSyncHabitKey.schemaVersion,
-        ]),
-      );
-    });
+        };
+
+        // 1:1 count check — if this fails, an enum entry or class const was
+        // added/removed on only one side.
+        expect(
+          classKeyValues.length,
+          WebDavSyncHabitKeys.values.length,
+          reason:
+              'WebDavSyncHabitKey and WebDavSyncHabitKeys are out of sync — '
+              'did you forget to add/remove a constant on both sides?',
+        );
+
+        // Value alignment check — each class const derives from the enum so
+        // values must match.
+        expect(classKeyValues, WebDavSyncHabitKeys.allKnownKeys);
+      },
+    );
 
     test('key missing from allKnownKeys is captured by _unknown', () {
       final knownKeySet = WebDavSyncHabitKeys.allKnownKeys;

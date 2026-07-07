@@ -14,6 +14,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -53,12 +54,14 @@ void main() {
     late SyncDBHelper syncHelper;
 
     setUp(() async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
       viewModel = DBHelperViewModel();
       await viewModel.init();
       syncHelper = SyncDBHelper(viewModel.local);
     });
 
     tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
       viewModel.dispose();
     });
 
