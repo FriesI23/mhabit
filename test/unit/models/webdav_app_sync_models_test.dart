@@ -407,8 +407,6 @@ void main() {
           WebDavSyncHabitKey.schemaVersion,
         };
 
-        // 1:1 count check — if this fails, an enum entry or class const was
-        // added/removed on only one side.
         expect(
           classKeyValues.length,
           WebDavSyncHabitKeys.values.length,
@@ -416,9 +414,6 @@ void main() {
               'WebDavSyncHabitKey and WebDavSyncHabitKeys are out of sync — '
               'did you forget to add/remove a constant on both sides?',
         );
-
-        // Value alignment check — each class const derives from the enum so
-        // values must match.
         expect(classKeyValues, WebDavSyncHabitKeys.allKnownKeys);
       },
     );
@@ -472,7 +467,6 @@ void main() {
       expect(data.unknown, isNotNull);
       expect(data.unknown!['group_id'], 'g-inject');
       expect(data.unknown!['extra'], true);
-      // toJson includes unknown fields
       final json = data.toJson();
       expect(json['group_id'], 'g-inject');
       expect(json['extra'], true);
@@ -507,16 +501,11 @@ void main() {
         unknown: unknown,
       );
 
-      // Known fields preserved
       expect(restored.uuid, 'full-roundtrip');
       expect(restored.name, 'Original');
-
-      // Unknown fields preserved
       expect(restored.unknown, isNotNull);
       expect(restored.unknown!['group_id'], 'g-full');
       expect(restored.unknown!['custom_attr'], [1, 2, 3]);
-
-      // Restored toJson includes unknown fields
       final restoredJson = restored.toJson();
       expect(restoredJson['group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);

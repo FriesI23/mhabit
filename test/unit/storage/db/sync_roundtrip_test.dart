@@ -180,12 +180,9 @@ void main() {
       expect(restored!.uuid, 'full-db-roundtrip');
       expect(restored.name, 'Original');
 
-      // Unknown fields survived the DB round-trip
       expect(restored.unknown, isNotNull);
       expect(restored.unknown!['group_id'], 'g-full');
       expect(restored.unknown!['custom_attr'], [1, 2, 3]);
-
-      // toJson includes unknown fields
       final restoredJson = restored.toJson();
       expect(restoredJson['group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);

@@ -41,15 +41,11 @@ import 'app_sync_task.dart';
 
 part 'webdav_app_sync_models.g.dart';
 
-/// Encodes [unknown] for the DB [syncExtras] column.
-/// Returns `null` when [unknown] is `null` or empty.
 String? encodeSyncExtras(Map<String, dynamic>? unknown) {
   if (unknown == null || unknown.isEmpty) return null;
   return jsonEncode(unknown);
 }
 
-/// Decodes [raw] from DB [syncExtras].
-/// Returns `null` for `null`/invalid/empty input.
 Map<String, dynamic>? decodeSyncExtras(String? raw) {
   if (raw == null) return null;
   try {
@@ -62,8 +58,6 @@ Map<String, dynamic>? decodeSyncExtras(String? raw) {
   }
 }
 
-/// Captures keys from [json] that are not in [knownKeys].
-/// Returns `null` when no unknown keys are present.
 Map<String, dynamic>? captureSyncUnknown(JsonMap json, Set<String> knownKeys) {
   final unknownKeys = json.keys.where((k) => !knownKeys.contains(k));
   final unknown = <String, dynamic>{};
@@ -75,7 +69,6 @@ Map<String, dynamic>? captureSyncUnknown(JsonMap json, Set<String> knownKeys) {
   return count > 0 ? unknown : null;
 }
 
-/// Merges [unknown] entries into [target] in-place.
 /// Existing keys win ([putIfAbsent] semantics).
 void mergeSyncUnknown(JsonMap target, Map<String, dynamic>? unknown) {
   if (unknown == null) return;
@@ -385,9 +378,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
 ///
 /// {@macro habit_color_keys_relationship}
 ///
-/// This class is the single source of truth for JSON key strings. The
-/// sibling enum [WebDavSyncHabitKeys] derives its entries from these
-/// constants so the two are inherently aligned.
+/// Single source of truth for JSON keys; [WebDavSyncHabitKeys] derives from this.
 class WebDavSyncHabitKey {
   static const String uuid = 'uuid';
   static const String createT = 'create_t';
@@ -415,17 +406,8 @@ class WebDavSyncHabitKey {
   static const String schemaVersion = '_schema_version';
 }
 
-/// WebDAV sync keys. Mirrors color-related entries in [HabitDBCellKey]
-/// (`lib/storage/db/handlers/habit.dart`) and `HabitExportDataKey`
-/// (`lib/models/habit_export.dart`).
-///
-/// {@macro habit_color_keys_relationship}
-///
-/// Each entry references the corresponding [WebDavSyncHabitKey] constant so
-/// the enum registry stays in sync with the annotation-level source of truth.
 /// When adding a new sync-payload field, add a static const to
 /// [WebDavSyncHabitKey] first, then add an enum entry here.
-///
 enum WebDavSyncHabitKeys {
   uuid(WebDavSyncHabitKey.uuid),
   createT(WebDavSyncHabitKey.createT),
@@ -456,12 +438,6 @@ enum WebDavSyncHabitKeys {
 
   final String jsonKey;
 
-  /// All JSON keys that the current schema version recognizes.
-  /// Used by [WebDavSyncHabitData.fromJson] to compute the unknown-key bucket.
-  ///
-  /// Derived from the enum registry so it stays aligned with the actual
-  /// serialized shape. When adding a new sync-payload field to
-  /// [WebDavSyncHabitData], add a new enum entry here.
   static final Set<String> allKnownKeys = Set.unmodifiable(
     WebDavSyncHabitKeys.values.map((e) => e.jsonKey),
   );
@@ -561,8 +537,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? dirty;
   final int? dirtyTotal;
 
-  /// Runtime bucket: carries JSON keys not recognized by the current schema.
-  /// Populated in [fromJson] and merged back in [toJson]; never serialized.
+  /// Runtime bucket for JSON keys not recognized by the current schema.
   @JsonKey(includeFromJson: false, includeToJson: false)
   Map<String, dynamic>? unknown;
 
@@ -582,8 +557,6 @@ class WebDavSyncHabitData implements JsonAdaptor {
         .nonNulls,
   );
 
-  // Non-const because [unknown] is populated post-construction by
-  // [fromJson] — it can't be final, so the constructor can't be const.
   WebDavSyncHabitData({
     this.schemaVersion = 1,
     this.uuid,
@@ -675,13 +648,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
   }
 
   HabitDBCell toHabitDBCell() {
-    // Unlike `fromHabitDBCell`'s `cell.color!` (a locally-saved `HabitDBCell`
-    // always has a non-null `color`, by construction), `color` here comes
-    // from a deserialized sync payload `validate()` only requires `color` to
-    // be in 1-10 *when present* — it never requires `color`/`customColor` to
-    // jointly be non-null. A legacy or malformed payload with both missing
-    // would pass `validate()` but crash on a bare `color!`, so fall back to
-    // `cc1` (the same placeholder used for the custom-color path) instead.
+    // Sync payload may lack color; fall back to cc1 to avoid null crash.
     final habitColor = HabitColor.fromRaw(
       colorType: customColor != null
           ? HabitColorType.cc1
