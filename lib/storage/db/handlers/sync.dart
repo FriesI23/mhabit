@@ -274,9 +274,16 @@ class SyncDBHelper extends DBHelperHandler {
     int syncCount = 0;
     if (habitSyncInfo.lastMark != data.sessionId) {
       if (habitSyncInfo.lastSesionUUID != data.sessionId) {
+        final habitDbMap = data
+            .toHabitDBCell()
+            .copyWith(id: null, uuid: null)
+            .toJson();
+        if (data.unknown == null || data.unknown!.isEmpty) {
+          habitDbMap[HabitDBCellKey.syncExtras] = null;
+        }
         count += await db.update(
           TableName.habits,
-          data.toHabitDBCell().copyWith(id: null, uuid: null).toJson(),
+          habitDbMap,
           where: "${HabitDBCellKey.uuid} = ?",
           whereArgs: [habitUUID],
         );

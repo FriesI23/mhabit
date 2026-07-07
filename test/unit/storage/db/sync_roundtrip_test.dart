@@ -187,5 +187,85 @@ void main() {
       expect(restoredJson['group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);
     });
+
+    test('second download without unknown clears stale sync_extras', () async {
+      final firstDownload = WebDavSyncHabitData.fromJson({
+        ..._basePayload('clear-stale-uuid', 'Stale Extras'),
+        'sessionId': 'server-session-1',
+        'group_id': 'g-stale',
+      });
+      await syncHelper.syncHabitDataToDb(firstDownload);
+
+      final secondDownload = WebDavSyncHabitData.fromJson({
+        ..._basePayload('clear-stale-uuid', 'Stale Extras'),
+        'sessionId': 'server-session-2',
+      });
+      await syncHelper.syncHabitDataToDb(secondDownload);
+
+      final rows = await viewModel.local.db.rawQuery(
+        'SELECT sync_extras FROM mh_habits WHERE uuid = ?',
+        ['clear-stale-uuid'],
+      );
+      expect(rows, hasLength(1));
+      expect(rows.first['sync_extras'], isNull);
+
+      final restored = await syncHelper.loadHabitDataFromBb(
+        'clear-stale-uuid',
+        withRecords: false,
+        configId: 'test-config',
+        sessionId: 'test-session',
+      );
+
+      expect(restored, isNotNull);
+      expect(restored!.unknown, isNull);
+      expect(restored.toJson().containsKey('group_id'), isFalse);
+    });
+
+    test('second download with partial unknown prunes removed fields', () async {
+      // First download: two unknown fields.
+      final firstDownload = WebDavSyncHabitData.fromJson({
+        ..._basePayload('partial-prune-uuid', 'Partial Prune'),
+        'sessionId': 'server-session-1',
+        'removed_field': 'will-go',
+        'kept_field': 99,
+      });
+      await syncHelper.syncHabitDataToDb(firstDownload);
+
+      // Second download: 'removed_field' is gone from server, 'kept_field' remains.
+      final secondDownload = WebDavSyncHabitData.fromJson({
+        ..._basePayload('partial-prune-uuid', 'Partial Prune'),
+        'sessionId': 'server-session-2',
+        'kept_field': 99,
+      });
+      await syncHelper.syncHabitDataToDb(secondDownload);
+
+      final rows = await viewModel.local.db.rawQuery(
+        'SELECT sync_extras FROM mh_habits WHERE uuid = ?',
+        ['partial-prune-uuid'],
+      );
+      expect(rows, hasLength(1));
+      final extrasJson = rows.first['sync_extras'] as String?;
+      expect(extrasJson, isNotNull);
+      final extras = jsonDecode(extrasJson!) as Map<String, dynamic>;
+      expect(extras, hasLength(1));
+      expect(extras['kept_field'], 99);
+      expect(extras.containsKey('removed_field'), isFalse);
+
+      final restored = await syncHelper.loadHabitDataFromBb(
+        'partial-prune-uuid',
+        withRecords: false,
+        configId: 'test-config',
+        sessionId: 'test-session',
+      );
+
+      expect(restored, isNotNull);
+      expect(restored!.unknown, isNotNull);
+      expect(restored.unknown!.containsKey('removed_field'), isFalse);
+      expect(restored.unknown!['kept_field'], 99);
+
+      final restoredJson = restored.toJson();
+      expect(restoredJson.containsKey('removed_field'), isFalse);
+      expect(restoredJson['kept_field'], 99);
+    });
   });
 }

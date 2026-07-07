@@ -47,6 +47,9 @@ Map<String, Object?> _legacyToJson(HabitDBCell cell) => {
   'color': cell.color,
 };
 
+String? _futureGroupIdFromJson(Map<String, Object?> json) =>
+    json['group_id'] as String?;
+
 void main() {
   group('WebDavSyncHabitData custom_color', () {
     test('fromJson on legacy payload without custom_color key', () {
@@ -373,6 +376,25 @@ void main() {
         'a': 1,
         'b': [2, 3],
       });
+    });
+
+    test('future field survives old-schema forwarder round-trip', () {
+      final serverPayload = {
+        '_convert_type': 'habit_',
+        'uuid': 'future-forward-uuid',
+        'color': HabitColorType.cc6.dbCode,
+        'group_id': 'future-group',
+      };
+
+      final oldSchemaClient = WebDavSyncHabitData.fromJson(serverPayload);
+      final cell = oldSchemaClient.toHabitDBCell();
+      final forwarded = WebDavSyncHabitData.fromHabitDBCell(
+        cell,
+        unknown: decodeSyncExtras(cell.syncExtras),
+      ).toJson();
+
+      expect(forwarded['group_id'], 'future-group');
+      expect(_futureGroupIdFromJson(forwarded), 'future-group');
     });
   });
 
