@@ -19,5 +19,6 @@ CREATE TABLE IF NOT EXISTS mh_habits (
     target_days INTEGER,
     remind_cutsom TEXT,
     remind_question TEXT,
-    sort_position REAL NOT NULL DEFAULT 9e999
+    sort_position REAL NOT NULL DEFAULT 9e999,
+    sync_extras TEXT
 );

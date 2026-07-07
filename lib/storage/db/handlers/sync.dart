@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -506,13 +508,18 @@ class SyncDBHelper extends DBHelperHandler {
             final dirtyTotal = result[dirtyTotalKey] as int?;
             final lastMarkId = result[lastMarkKey] as String?;
             final lastConfigId = result[configIdKey] as String?;
+            final cell = HabitDBCell.fromJson(result);
+            final unknown = cell.syncExtras != null
+                ? jsonDecode(cell.syncExtras!) as Map<String, dynamic>?
+                : null;
             return WebDavSyncHabitData.fromHabitDBCell(
-              HabitDBCell.fromJson(result),
+              cell,
               dirty: dirty,
               dirtyTotal: dirtyTotal,
               sessionId: ((dirty ?? 0) > 0 || lastConfigId != configId)
                   ? sessionId
                   : lastMarkId,
+              unknown: unknown,
             );
           });
       if (!withRecords || habit == null) return habit;
@@ -543,13 +550,18 @@ class SyncDBHelper extends DBHelperHandler {
               );
             }),
           );
-      return habit.copyWith(
+      final unknown = habit.unknown;
+      final result = habit.copyWith(
         records: Map.fromEntries(
           records
               .map((e) => e.uuid != null ? MapEntry(e.uuid!, e) : null)
               .nonNulls,
         ),
       );
+      if (unknown != null && unknown.isNotEmpty) {
+        result.unknown = unknown;
+      }
+      return result;
     });
   }
 

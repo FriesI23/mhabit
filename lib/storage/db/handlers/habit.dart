@@ -65,6 +65,7 @@ class HabitDBCellKey {
   static const String remindCustom = 'remind_cutsom';
   static const String remindQuestion = 'remind_question';
   static const String sortPosition = 'sort_position';
+  static const String syncExtras = 'sync_extras';
 
   /// `color`/`customColor`/`customColorTinted` always travel together as one
   /// semantic unit: a habit's color is either a built-in `color` code, or a
@@ -130,6 +131,8 @@ class HabitDBCell with DBCell {
   final String? remindQuestion;
   @JsonKey(name: HabitDBCellKey.sortPosition)
   final HabitSortPostion? sortPosition;
+  @JsonKey(name: HabitDBCellKey.syncExtras)
+  final String? syncExtras;
 
   const HabitDBCell({
     this.id,
@@ -153,6 +156,7 @@ class HabitDBCell with DBCell {
     this.remindCustom,
     this.remindQuestion,
     this.sortPosition,
+    this.syncExtras,
   });
 
   factory HabitDBCell.fromJson(Map<String, Object?> cell) =>

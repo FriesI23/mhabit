@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/_app_sync_tasks/webdav_app_sync_models.dart';
 import 'package:mhabit/models/habit_form.dart';
@@ -186,12 +188,12 @@ void main() {
     });
 
     test('toJson omits _schema_version when schemaVersion == 1', () {
-      const data = WebDavSyncHabitData(schemaVersion: 1);
+      final data = WebDavSyncHabitData(schemaVersion: 1);
       expect(data.toJson(), isNot(contains('_schema_version')));
     });
 
     test('toJson includes _schema_version when schemaVersion >= 2', () {
-      const data = WebDavSyncHabitData(
+      final data = WebDavSyncHabitData(
         schemaVersion: WebDavSyncHabitData.currentSchemaVersion,
       );
       expect(data.toJson()['_schema_version'], 2);
@@ -204,7 +206,7 @@ void main() {
     });
 
     test('validate() does not throw for a future schema version', () {
-      const data = WebDavSyncHabitData(schemaVersion: 99);
+      final data = WebDavSyncHabitData(schemaVersion: 99);
       expect(data.validate, returnsNormally);
     });
   });
@@ -281,6 +283,217 @@ void main() {
       expect(redownloaded.customColor, isNull);
       expect(redownloaded.schemaVersion, 1);
       expect(redownloaded.validate, returnsNormally);
+    });
+  });
+
+  group('WebDavSyncHabitData _unknown bucket', () {
+    test('fromJson captures unknown keys into _unknown', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc3.dbCode,
+        'group_id': 'g-abc-123',
+        'future_field': 42,
+      });
+      expect(data.unknown, isNotNull);
+      expect(data.unknown!['group_id'], 'g-abc-123');
+      expect(data.unknown!['future_field'], 42);
+    });
+
+    test('fromJson with only known keys leaves _unknown null', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc5.dbCode,
+        'uuid': 'test-uuid',
+        'name': 'Test Habit',
+      });
+      expect(data.unknown, isNull);
+    });
+
+    test('toJson merges _unknown back into output', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc3.dbCode,
+        'uuid': 'test-uuid',
+        'group_id': 'g-xyz',
+        'future_field': 'hello',
+      });
+      final json = data.toJson();
+      expect(json['group_id'], 'g-xyz');
+      expect(json['future_field'], 'hello');
+    });
+
+    test('known field wins over _unknown in toJson', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc4.dbCode,
+        'uuid': 'test-uuid',
+      });
+      data.unknown = {'uuid': 'evil-override', 'group_id': 'g-ok'};
+      final json = data.toJson();
+      expect(json['uuid'], 'test-uuid');
+      expect(json['group_id'], 'g-ok');
+    });
+
+    test('_unknown does not appear as a JSON key', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc2.dbCode,
+        'group_id': 'g-test',
+      });
+      final json = data.toJson();
+      expect(json.containsKey('_unknown'), isFalse);
+    });
+
+    test('empty _unknown map is no-op in toJson', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc3.dbCode,
+      });
+      data.unknown = {};
+      final json = data.toJson();
+      expect(json['color'], HabitColorType.cc3.dbCode);
+      expect(json.length, greaterThanOrEqualTo(2));
+    });
+
+    test('_unknown survives fromJson → toJson round-trip', () {
+      final originalJson = {
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc6.dbCode,
+        'uuid': 'roundtrip-uuid',
+        'name': 'Roundtrip',
+        'group_id': 'g-roundtrip',
+        'extra_nested': {
+          'a': 1,
+          'b': [2, 3],
+        },
+      };
+      final data = WebDavSyncHabitData.fromJson(originalJson);
+      final roundtripped = WebDavSyncHabitData.fromJson(data.toJson());
+      expect(roundtripped.unknown, isNotNull);
+      expect(roundtripped.unknown!['group_id'], 'g-roundtrip');
+      expect(roundtripped.unknown!['extra_nested'], {
+        'a': 1,
+        'b': [2, 3],
+      });
+    });
+  });
+
+  group('WebDavSyncHabitKey.allKnownKeys', () {
+    test('allKnownKeys includes every WebDavSyncHabitData JSON key', () {
+      expect(
+        WebDavSyncHabitKeys.allKnownKeys,
+        containsAll([
+          WebDavSyncHabitKey.uuid,
+          WebDavSyncHabitKey.name,
+          WebDavSyncHabitKey.color,
+          WebDavSyncHabitKey.customColor,
+          WebDavSyncHabitKey.records,
+          WebDavSyncHabitKey.sessionId,
+          WebDavSyncHabitKey.convertType,
+          WebDavSyncHabitKey.schemaVersion,
+        ]),
+      );
+    });
+
+    test('key missing from allKnownKeys is captured by _unknown', () {
+      final knownKeySet = WebDavSyncHabitKeys.allKnownKeys;
+      const nonexistentKey = '_this_key_definitely_does_not_exist_';
+      expect(knownKeySet.contains(nonexistentKey), isFalse);
+
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        nonexistentKey: 'surprise',
+      });
+      expect(data.unknown, isNotNull);
+      expect(data.unknown![nonexistentKey], 'surprise');
+    });
+  });
+
+  group('WebDavSyncHabitData syncExtras cell round-trip', () {
+    test('toHabitDBCell encodes _unknown into syncExtras', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc3.dbCode,
+        'uuid': 'test-uuid',
+        'group_id': 'g-encode',
+      });
+      final cell = data.toHabitDBCell();
+      expect(cell.syncExtras, isNotNull);
+      expect(cell.syncExtras, contains('group_id'));
+      expect(cell.syncExtras, contains('g-encode'));
+    });
+
+    test('toHabitDBCell with null _unknown sets syncExtras to null', () {
+      final data = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc4.dbCode,
+        'uuid': 'no-unknown',
+      });
+      final cell = data.toHabitDBCell();
+      expect(cell.syncExtras, isNull);
+    });
+
+    test('fromHabitDBCell with unknown injects _unknown', () {
+      final cell = HabitDBCell(
+        uuid: 'test-uuid',
+        color: HabitColorType.cc4.dbCode,
+        syncExtras: '{"group_id":"g-inject","extra":true}',
+      );
+      final unknown = jsonDecode(cell.syncExtras!) as Map<String, dynamic>;
+      final data = WebDavSyncHabitData.fromHabitDBCell(cell, unknown: unknown);
+      expect(data.unknown, isNotNull);
+      expect(data.unknown!['group_id'], 'g-inject');
+      expect(data.unknown!['extra'], true);
+      // toJson includes unknown fields
+      final json = data.toJson();
+      expect(json['group_id'], 'g-inject');
+      expect(json['extra'], true);
+    });
+
+    test('fromHabitDBCell without unknown leaves _unknown null', () {
+      final cell = HabitDBCell(
+        uuid: 'test-uuid',
+        color: HabitColorType.cc5.dbCode,
+      );
+      final data = WebDavSyncHabitData.fromHabitDBCell(cell);
+      expect(data.unknown, isNull);
+    });
+
+    test('full cell round-trip preserves unknown fields', () {
+      final original = WebDavSyncHabitData.fromJson({
+        '_convert_type': 'habit_',
+        'color': HabitColorType.cc2.dbCode,
+        'uuid': 'full-roundtrip',
+        'name': 'Original',
+        'group_id': 'g-full',
+        'custom_attr': [1, 2, 3],
+      });
+
+      // toHabitDBCell → decode syncExtras
+      final cell = original.toHabitDBCell();
+      final unknown = cell.syncExtras != null
+          ? jsonDecode(cell.syncExtras!) as Map<String, dynamic>
+          : null;
+
+      // fromHabitDBCell with unknown
+      final restored = WebDavSyncHabitData.fromHabitDBCell(
+        cell,
+        unknown: unknown,
+      );
+
+      // Known fields preserved
+      expect(restored.uuid, 'full-roundtrip');
+      expect(restored.name, 'Original');
+
+      // Unknown fields preserved
+      expect(restored.unknown, isNotNull);
+      expect(restored.unknown!['group_id'], 'g-full');
+      expect(restored.unknown!['custom_attr'], [1, 2, 3]);
+
+      // Restored toJson includes unknown fields
+      final restoredJson = restored.toJson();
+      expect(restoredJson['group_id'], 'g-full');
+      expect(restoredJson['custom_attr'], [1, 2, 3]);
     });
   });
 }

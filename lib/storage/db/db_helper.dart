@@ -153,6 +153,19 @@ class _DBHelper implements DBHelper {
         );
       }
     }
+    if (oldVersion < 6) {
+      final tableInfo = await db.rawQuery(
+        'PRAGMA table_info(${TableName.habits})',
+      );
+      if (!tableInfo.any(
+        (column) => column['name'] == HabitDBCellKey.syncExtras,
+      )) {
+        await db.execute(
+          "ALTER TABLE ${TableName.habits} "
+          "ADD COLUMN ${HabitDBCellKey.syncExtras} TEXT",
+        );
+      }
+    }
   }
 
   Future<Database> _openDB(String dbPath) async {

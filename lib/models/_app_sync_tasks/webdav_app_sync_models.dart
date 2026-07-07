@@ -291,7 +291,7 @@ class WebDavSyncRecordData implements JsonAdaptor {
   factory WebDavSyncRecordData.fromJson(JsonMap json) {
     assert(
       json.isNotEmpty
-          ? json[WebDavSyncHabitKey.convertType] == _convertType
+          ? json[WebDavSyncRecordKey.convertType] == _convertType
           : true,
     );
     return _$WebDavSyncRecordDataFromJson(json);
@@ -366,6 +366,52 @@ class WebDavSyncHabitKey {
   static const String records = 'records';
   static const String convertType = '_convert_type';
   static const String schemaVersion = '_schema_version';
+}
+
+/// WebDAV sync keys. Mirrors color-related entries in [HabitDBCellKey]
+/// (`lib/storage/db/handlers/habit.dart`) and `HabitExportDataKey`
+/// (`lib/models/habit_export.dart`).
+///
+/// {@macro habit_color_keys_relationship}
+enum WebDavSyncHabitKeys {
+  uuid('uuid'),
+  createT('create_t'),
+  modifyT('modify_t'),
+  type('type'),
+  status('status'),
+  name('name'),
+  desc('desc'),
+  color('color'),
+  customColor('custom_color'),
+  customColorTinted('custom_color_tinted'),
+  dailyGoal('daily_goal'),
+  dailyGoalUnit('daily_goal_unit'),
+  dailyGoalExtra('daily_goal_extra'),
+  freqType('freq_type'),
+  freqCustom('freq_custom'),
+  reminder('reminder'),
+  reminderQuest('reminder_quest'),
+  startDate('start_date'),
+  targetDays('target_days'),
+  sortPosition('sort_position'),
+  sessionId('sessionId'),
+  records('records'),
+  convertType('_convert_type'),
+  schemaVersion('_schema_version');
+
+  const WebDavSyncHabitKeys(this.jsonKey);
+
+  final String jsonKey;
+
+  /// All JSON keys that the current schema version recognizes.
+  /// Used by [WebDavSyncHabitData.fromJson] to compute the unknown-key bucket.
+  ///
+  /// Derived from the enum registry so it stays aligned with the actual
+  /// serialized shape. When adding a new sync-payload field to
+  /// [WebDavSyncHabitData], add a new enum entry here.
+  static final Set<String> allKnownKeys = WebDavSyncHabitKeys.values
+      .map((e) => e.jsonKey)
+      .toSet();
 }
 
 /// Sync-payload (wire) encoding of [HabitColor]: unlike [HabitColor.dbColorType],
@@ -462,6 +508,11 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? dirty;
   final int? dirtyTotal;
 
+  /// Runtime bucket: carries JSON keys not recognized by the current schema.
+  /// Populated in [fromJson] and merged back in [toJson]; never serialized.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? unknown;
+
   static List<List> _recordsToJson(
     Map<HabitRecordUUID, WebDavSyncRecordData> records,
   ) => const NormalizingListConverter().toJson(
@@ -478,7 +529,9 @@ class WebDavSyncHabitData implements JsonAdaptor {
         .nonNulls,
   );
 
-  const WebDavSyncHabitData({
+  // Non-const because [unknown] is populated post-construction by
+  // [fromJson] — it can't be final, so the constructor can't be const.
+  WebDavSyncHabitData({
     this.schemaVersion = 1,
     this.uuid,
     this.createT,
@@ -514,6 +567,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     int? dirtyTotal,
     String? sessionId,
     Map<HabitRecordUUID, WebDavSyncRecordData> records = const {},
+    Map<String, dynamic>? unknown,
   }) {
     final habitColor = HabitColor.fromRaw(
       colorType: cell.customColor != null
@@ -522,7 +576,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       customColor: cell.customColor,
       customColorTinted: cell.customColorTinted,
     );
-    return WebDavSyncHabitData(
+    final data = WebDavSyncHabitData(
       schemaVersion: currentSchemaVersion,
       uuid: cell.uuid,
       createT: cell.createT,
@@ -550,6 +604,10 @@ class WebDavSyncHabitData implements JsonAdaptor {
       sessionId: sessionId,
       records: records,
     );
+    if (unknown != null && unknown.isNotEmpty) {
+      data.unknown = unknown;
+    }
+    return data;
   }
 
   factory WebDavSyncHabitData.fromJson(JsonMap json) {
@@ -558,7 +616,14 @@ class WebDavSyncHabitData implements JsonAdaptor {
           ? json[WebDavSyncHabitKey.convertType] == _convertType
           : true,
     );
-    return _$WebDavSyncHabitDataFromJson(json);
+    final data = _$WebDavSyncHabitDataFromJson(json);
+    final unknownKeys = json.keys.where(
+      (k) => !WebDavSyncHabitKeys.allKnownKeys.contains(k),
+    );
+    if (unknownKeys.isNotEmpty) {
+      data.unknown = {for (final k in unknownKeys) k: json[k]};
+    }
+    return data;
   }
 
   HabitDBCell toHabitDBCell() {
@@ -597,6 +662,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       startDate: startDate,
       targetDays: targetDays,
       sortPosition: sortPostion,
+      syncExtras: unknown != null ? jsonEncode(unknown) : null,
     );
   }
 
@@ -605,6 +671,11 @@ class WebDavSyncHabitData implements JsonAdaptor {
     final json = _$WebDavSyncHabitDataToJson(this)
       ..[WebDavSyncHabitKey.convertType] = _convertType;
     if (schemaVersion <= 1) json.remove(WebDavSyncHabitKey.schemaVersion);
+    if (unknown != null) {
+      for (final entry in unknown!.entries) {
+        json.putIfAbsent(entry.key, () => entry.value);
+      }
+    }
     return json;
   }
 
