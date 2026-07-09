@@ -61,8 +61,8 @@ class ChangelogBanner extends StatefulWidget {
 
 /// Loads CHANGELOG.md and shows the banner for the current app version.
 ///
-/// Handles version lookup, CHANGELOG loading, and flavor-suffix fallback
-/// (delegated to [loadChangelogForVersion]).
+/// Handles version lookup, CHANGELOG loading, and version-section extraction
+/// (delegated to [extractVersionSectionWithFallback]).
 /// Optionally override [version] and provide [onDismiss] callback.
 /// Set [useLatestFallback] to `true` to show the latest changelog section
 /// when version matching fails (manual triggers only).

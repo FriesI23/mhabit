@@ -337,7 +337,23 @@ Second paragraph.
       expect(result, isNot(contains('- Pre-release content')));
     });
 
-    // 22: Semver fallback returns null, but latest-section fallback kicks in
+    // 22: Flavor suffix + wrong build number → semver fallback
+    //     1.25.4-dev+2170 → base 1.25.4+2170 → semver 1.25.4 → match 1.25.4+169
+    test('strips flavor suffix before semver fallback', () {
+      const content = '''
+## 1.25.4+169
+
+- Content for 169
+''';
+      final result = extractVersionSectionWithFallback(
+        content,
+        '1.25.4-dev+2170',
+      );
+      expect(result, isNotNull);
+      expect(result!, contains('- Content for 169'));
+    });
+
+    // 23: Semver fallback returns null, but latest-section fallback kicks in
     test('falls back to latest section when no heading matches at all', () {
       const content = '''
 ## 1.25.5+170
@@ -358,7 +374,7 @@ Second paragraph.
       expect(result, isNot(contains('- Older content')));
     });
 
-    // 23: Latest-section fallback with content containing only one heading
+    // 24: Latest-section fallback with content containing only one heading
     test(
       'returns only section when content has a single heading and no match',
       () {

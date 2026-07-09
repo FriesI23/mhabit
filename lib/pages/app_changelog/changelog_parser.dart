@@ -170,7 +170,7 @@ String? extractVersionSectionWithFallback(
   if (strippedResult != null) return strippedResult;
 
   // 3. Semver-only match (ignores build number).
-  final semverResult = _tryMatchBySemver(content, version);
+  final semverResult = _tryMatchBySemver(content, base);
   if (semverResult != null) return semverResult;
 
   // 4. Ultimate fallback (manual triggers only).
