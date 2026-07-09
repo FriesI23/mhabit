@@ -144,9 +144,9 @@ String? _findAndRenderFirstSection(
 /// base with a different `-suffix`.
 ///
 /// Fallback levels (from most to least specific):
-///   1. Exact match — [`extractVersionSection`]
-///   2. Stripped suffix / beta heading — [`_tryBetaHeading`]
-///   3. Semver-only — [`_tryMatchBySemver`] (ignores build number —
+///   1. Exact match — [extractVersionSection]
+///   2. Stripped suffix / beta heading — [_tryBetaHeading]
+///   3. Semver-only — [_tryMatchBySemver] (ignores build number —
 ///      handles app-store-transformed versionCodes like F-Droid ABI prefix)
 ///   4. Latest section — only when [useLatestFallback] is `true`
 ///      (first h2 in content; for manual triggers like About page)
