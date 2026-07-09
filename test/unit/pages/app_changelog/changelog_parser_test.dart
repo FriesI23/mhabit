@@ -240,6 +240,54 @@ Second paragraph.
       final result = extractVersionSectionWithFallback(content, '1.25.4+169');
       expect(result, isNull);
     });
+
+    // 16: Beta heading with multi-hyphen suffix (e.g. -pre-release)
+    //     Regression: old \w+ regex failed on suffixes containing '-'
+    test('matches beta heading with multi-hyphen suffix', () {
+      const content = '''
+## 1.25.5+170-pre-release
+
+- Multi-hyphen suffix content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- Multi-hyphen suffix content'));
+    });
+
+    // 17: Beta heading with dotted suffix (e.g. -rc.1)
+    //     Regression: old \w+ regex failed on suffixes containing '.'
+    test('matches beta heading with dotted suffix', () {
+      const content = '''
+## 1.25.5+170-rc.1
+
+- Release candidate content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- Release candidate content'));
+    });
+
+    // 18: Chinese preamble with ASCII version headings
+    //     Simulates zh.md: h1 in Chinese + CHANGELOG link before first h2
+    test('matches version with Chinese preamble and CHANGELOG link', () {
+      const content = '''
+# 更新日志
+
+[中文](./docs/CHANGELOG/zh.md)
+
+## 1.25.5+170-pre
+
+- 功能：实现自适应内容面板
+
+## 1.25.4+169-pre
+
+- 旧版本内容
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.5+170');
+      expect(result, isNotNull);
+      expect(result!, contains('- 功能：实现自适应内容面板'));
+      expect(result, isNot(contains('- 旧版本内容')));
+    });
   });
 
   group('parseChangelogSections', () {

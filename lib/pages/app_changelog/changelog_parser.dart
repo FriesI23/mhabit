@@ -135,13 +135,26 @@ String? extractVersionSectionWithFallback(String content, String version) {
   };
 }
 
-// Looks for a CHANGELOG h2 heading that starts with [base]-.
+// Looks for a CHANGELOG h2 heading that starts with [base]- and returns
+// the section body rendered back to markdown.
+//
+// Unlike the old regex-based implementation, this performs prefix matching
+// directly against the markdown AST, avoiding consistency issues between
+// regex-captured text and AST-extracted text (which can differ on some
+// platforms or when the file contains invisible characters).
 String? _tryBetaHeading(String content, String base) {
-  final m = RegExp(
-    '^## +(${RegExp.escape(base)}-\\w+)',
-    multiLine: true,
-  ).firstMatch(content);
-  return m != null ? extractVersionSection(content, m.group(1)!) : null;
+  final nodes = md.Document().parse(content);
+  final prefix = '$base-';
+  for (var i = 0; i < nodes.length; i++) {
+    final node = nodes[i];
+    if (node case md.Element(tag: 'h2')) {
+      final text = node.textContent.trim();
+      if (!text.startsWith(prefix)) continue;
+      final bodyNodes = _collectSectionNodes(nodes, i + 1);
+      return _renderNodesToMarkdown(bodyNodes);
+    }
+  }
+  return null;
 }
 
 /// Strips the preamble (title, links) from raw CHANGELOG.md [content],
