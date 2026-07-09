@@ -64,16 +64,23 @@ class ChangelogBanner extends StatefulWidget {
 /// Handles version lookup, CHANGELOG loading, and flavor-suffix fallback
 /// (delegated to [loadChangelogForVersion]).
 /// Optionally override [version] and provide [onDismiss] callback.
+/// Set [useLatestFallback] to `true` to show the latest changelog section
+/// when version matching fails (manual triggers only).
 Future<void> showChangelogBanner(
   BuildContext context, {
   String? version,
   VoidCallback? onDismiss,
+  bool useLatestFallback = false,
 }) async {
   final l10n = L10n.of(context)!;
   final path = l10n.appAbout_versionTile_changeLogPath;
   final v = version ?? AppInfo().changelogVersion;
   final raw = await rootBundle.loadChangelog(path);
-  final section = extractVersionSectionWithFallback(raw, v);
+  final section = extractVersionSectionWithFallback(
+    raw,
+    v,
+    useLatestFallback: useLatestFallback,
+  );
   if (section == null || !context.mounted) return;
   ChangelogBanner.of(context).show(
     changelogContent: section,

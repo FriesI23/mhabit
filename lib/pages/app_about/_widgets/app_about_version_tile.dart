@@ -48,7 +48,11 @@ class _AppAboutVersionTileState extends State<AppAboutVersionTile> {
     if (!mounted) return;
 
     final version = AppInfo().changelogVersion;
-    final section = extractVersionSectionWithFallback(content, version);
+    final section = extractVersionSectionWithFallback(
+      content,
+      version,
+      useLatestFallback: true,
+    );
     final fullChangelog = stripChangelogPreamble(content);
 
     if (!mounted) return;

@@ -86,7 +86,7 @@ class _HabitDisplayDevelopSliverList
       visualDensity: VisualDensity.compact,
       leading: const Icon(Icons.celebration_outlined),
       title: const Text('Show Changelog Banner'),
-      onTap: () => showChangelogBanner(context),
+      onTap: () => showChangelogBanner(context, useLatestFallback: true),
     );
   }
 

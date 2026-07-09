@@ -118,44 +118,89 @@ Future<String?> loadChangelogForVersion(
   return (base: version, suffix: null);
 }
 
-/// Like [extractVersionSection], but with fallback: strips flavor suffix
-/// from the code version, or matches CHANGELOG headings that share the same
-/// base with a different `-suffix`.
-String? extractVersionSectionWithFallback(String content, String version) {
-  // 1. Exact match.
-  final section = extractVersionSection(content, version);
-  if (section != null) return section;
-
-  final (:base, :suffix) = _splitVersion(version);
-
-  return switch (suffix) {
-    final _? =>
-      extractVersionSection(content, base) ?? _tryBetaHeading(content, base),
-    _ => _tryBetaHeading(content, base),
-  };
-}
-
-// Looks for a CHANGELOG h2 heading that starts with [base]- and returns
-// the section body rendered back to markdown.
-//
-// Unlike the old regex-based implementation, this performs prefix matching
-// directly against the markdown AST, avoiding consistency issues between
-// regex-captured text and AST-extracted text (which can differ on some
-// platforms or when the file contains invisible characters).
-String? _tryBetaHeading(String content, String base) {
+/// Finds the first h2 heading matching [predicate], collects its body
+/// nodes, and renders them back to markdown.
+///
+/// Returns `null` when no h2 heading satisfies [predicate].
+String? _findAndRenderFirstSection(
+  String content,
+  bool Function(String headingText) predicate,
+) {
   final nodes = md.Document().parse(content);
-  final prefix = '$base-';
   for (var i = 0; i < nodes.length; i++) {
     final node = nodes[i];
     if (node case md.Element(tag: 'h2')) {
       final text = node.textContent.trim();
-      if (!text.startsWith(prefix)) continue;
+      if (!predicate(text)) continue;
       final bodyNodes = _collectSectionNodes(nodes, i + 1);
       return _renderNodesToMarkdown(bodyNodes);
     }
   }
   return null;
 }
+
+/// Like [extractVersionSection], but with fallback: strips flavor suffix
+/// from the code version, or matches CHANGELOG headings that share the same
+/// base with a different `-suffix`.
+///
+/// Fallback levels (from most to least specific):
+///   1. Exact match — [`extractVersionSection`]
+///   2. Stripped suffix / beta heading — [`_tryBetaHeading`]
+///   3. Semver-only — [`_tryMatchBySemver`] (ignores build number —
+///      handles app-store-transformed versionCodes like F-Droid ABI prefix)
+///   4. Latest section — only when [useLatestFallback] is `true`
+///      (first h2 in content; for manual triggers like About page)
+String? extractVersionSectionWithFallback(
+  String content,
+  String version, {
+  bool useLatestFallback = false,
+}) {
+  // 1. Exact match.
+  final section = extractVersionSection(content, version);
+  if (section != null) return section;
+
+  final (:base, :suffix) = _splitVersion(version);
+
+  // 2. Stripped suffix / beta heading.
+  final strippedResult = switch (suffix) {
+    final _? =>
+      extractVersionSection(content, base) ?? _tryBetaHeading(content, base),
+    _ => _tryBetaHeading(content, base),
+  };
+  if (strippedResult != null) return strippedResult;
+
+  // 3. Semver-only match (ignores build number).
+  final semverResult = _tryMatchBySemver(content, version);
+  if (semverResult != null) return semverResult;
+
+  // 4. Ultimate fallback (manual triggers only).
+  return useLatestFallback ? _tryLatestSection(content) : null;
+}
+
+/// Looks for a CHANGELOG h2 heading that starts with [base]-.
+///
+/// Handles the case where the code version is stable (e.g. 1.25.5+170)
+/// but the CHANGELOG heading has a pre-release suffix (1.25.5+170-pre).
+String? _tryBetaHeading(String content, String base) =>
+    _findAndRenderFirstSection(content, (t) => t.startsWith('$base-'));
+
+/// Matches any h2 heading whose semver part equals [version]'s semver,
+/// ignoring the build number.
+///
+/// Handles cases where app stores transform the build number
+/// (e.g. F-Droid ARM64 prefix: 170 → 2170).
+String? _tryMatchBySemver(String content, String version) {
+  final plusIdx = version.indexOf('+');
+  if (plusIdx == -1) return null;
+  final semver = version.substring(0, plusIdx);
+  return _findAndRenderFirstSection(content, (t) => t.startsWith('$semver+'));
+}
+
+/// Returns the body of the first h2 section — the latest changelog entry.
+///
+/// Ultimate fallback when no other version-matching strategy succeeds.
+String? _tryLatestSection(String content) =>
+    _findAndRenderFirstSection(content, (_) => true);
 
 /// Strips the preamble (title, links) from raw CHANGELOG.md [content],
 /// returning only the version heading lines and their body content.
