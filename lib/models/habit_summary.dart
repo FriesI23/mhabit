@@ -345,6 +345,7 @@ class HabitSummaryData with DirtyMarkMixin {
   String? reminderQuest;
   HabitSortPostion sortPostion;
   DateTime createTime;
+  final String? groupId;
 
   final _records = _HabitSummaryRecordIndex();
   num _progress = 0.0;
@@ -403,6 +404,7 @@ class HabitSummaryData with DirtyMarkMixin {
     this.reminderQuest,
     required this.sortPostion,
     required this.createTime,
+    this.groupId,
   });
 
   HabitSummaryData.fromDBQueryCell(HabitDBCell cell)
@@ -432,7 +434,8 @@ class HabitSummaryData with DirtyMarkMixin {
       sortPostion = cell.sortPosition!,
       createTime = DateTime.fromMillisecondsSinceEpoch(
         cell.createT! * onSecondMS,
-      );
+      ),
+      groupId = cell.groupId;
 
   num get progress => _progress.isFinite ? _progress : -1.0;
 

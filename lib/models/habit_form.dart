@@ -155,6 +155,7 @@ class HabitForm {
   String? desc;
   HabitReminder? reminder;
   String? reminderQuest;
+  String? groupId;
   final HabitDisplayEditMode editMode;
   final HabitDisplayEditParams? editParams;
 
@@ -169,6 +170,7 @@ class HabitForm {
     this.desc,
     this.reminder,
     this.reminderQuest,
+    this.groupId,
     this.editMode = HabitDisplayEditMode.create,
     this.editParams,
   });
@@ -184,6 +186,7 @@ class HabitForm {
     this.desc,
     this.reminder,
     this.reminderQuest,
+    this.groupId,
     required this.editMode,
     required this.editParams,
   });
@@ -246,6 +249,7 @@ class HabitForm {
       desc: cell.desc,
       reminder: reminder,
       reminderQuest: cell.remindQuestion,
+      groupId: cell.groupId,
       editMode: editMode,
       editParams: editParams,
     );

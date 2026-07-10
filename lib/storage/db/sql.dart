@@ -74,6 +74,21 @@ BEGIN
 END
 """;
 
+  static const String rmAutoAddSortOrderWhenAddNewGroupTrigger = """
+DROP TRIGGER IF EXISTS auto_insert_mh_groups_sort_order;
+""";
+
+  static const String autoAddSortOrderWhenAddNewGroup =
+      """
+CREATE TRIGGER auto_insert_mh_groups_sort_order
+AFTER INSERT ON ${TableName.groups}
+BEGIN
+  UPDATE ${TableName.groups}
+  SET sort_order = NEW.id_
+  WHERE uuid = NEW.uuid AND sort_order = 9e999;
+END
+""";
+
   /// required arguments: [recordUUID]
   static String increaseRecordSyncDirtySql({
     ConflictAlgorithm? conflictAlgorithm,

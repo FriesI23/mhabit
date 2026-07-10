@@ -112,6 +112,7 @@ abstract class _$HabitExportDataCWProxy {
     String? reminderQuest,
     int? startDate,
     int? targetDays,
+    String? groupId,
     List<RecordExportData> records,
   });
 }
@@ -150,6 +151,7 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
     Object? reminderQuest = const $CopyWithPlaceholder(),
     Object? startDate = const $CopyWithPlaceholder(),
     Object? targetDays = const $CopyWithPlaceholder(),
+    Object? groupId = const $CopyWithPlaceholder(),
     Object? records = const $CopyWithPlaceholder(),
   }) {
     return HabitExportData(
@@ -225,6 +227,10 @@ class _$HabitExportDataCWProxyImpl implements _$HabitExportDataCWProxy {
           ? _value.targetDays
           // ignore: cast_nullable_to_non_nullable
           : targetDays as int?,
+      groupId: groupId == const $CopyWithPlaceholder()
+          ? _value.groupId
+          // ignore: cast_nullable_to_non_nullable
+          : groupId as String?,
       records: records == const $CopyWithPlaceholder() || records == null
           ? _value.records
           // ignore: cast_nullable_to_non_nullable
@@ -284,6 +290,7 @@ HabitExportData _$HabitExportDataFromJson(Map<String, dynamic> json) =>
       reminderQuest: json['reminder_quest'] as String?,
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
+      groupId: json['group_id'] as String?,
       records:
           (json['records'] as List<dynamic>?)
               ?.map(RecordExportData.fromJson)
@@ -311,5 +318,6 @@ Map<String, dynamic> _$HabitExportDataToJson(HabitExportData instance) =>
       'reminder_quest': ?instance.reminderQuest,
       'start_date': ?instance.startDate,
       'target_days': ?instance.targetDays,
+      'group_id': ?instance.groupId,
       'records': HabitExportData._recordsToJson(instance.records),
     };

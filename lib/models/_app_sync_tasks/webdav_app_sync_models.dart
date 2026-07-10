@@ -400,6 +400,7 @@ class WebDavSyncHabitKey {
   static const String startDate = 'start_date';
   static const String targetDays = 'target_days';
   static const String sortPosition = 'sort_position';
+  static const String groupId = 'group_id';
   static const String sessionId = 'sessionId';
   static const String records = 'records';
   static const String convertType = '_convert_type';
@@ -429,6 +430,7 @@ enum WebDavSyncHabitKeys {
   startDate(WebDavSyncHabitKey.startDate),
   targetDays(WebDavSyncHabitKey.targetDays),
   sortPosition(WebDavSyncHabitKey.sortPosition),
+  groupId(WebDavSyncHabitKey.groupId),
   sessionId(WebDavSyncHabitKey.sessionId),
   records(WebDavSyncHabitKey.records),
   convertType(WebDavSyncHabitKey.convertType),
@@ -524,6 +526,8 @@ class WebDavSyncHabitData implements JsonAdaptor {
   final int? targetDays;
   @JsonKey(name: WebDavSyncHabitKey.sortPosition)
   final HabitSortPostion? sortPostion;
+  @JsonKey(name: WebDavSyncHabitKey.groupId)
+  final String? groupId;
   @JsonKey(name: WebDavSyncHabitKey.sessionId)
   final String? sessionId;
   @JsonKey(
@@ -579,6 +583,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
     this.startDate,
     this.targetDays,
     this.sortPostion,
+    this.groupId,
     this.sessionId,
     this.records = const {},
     this.etag,
@@ -624,6 +629,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       startDate: cell.startDate,
       targetDays: cell.targetDays,
       sortPostion: cell.sortPosition,
+      groupId: cell.groupId,
       etag: etag,
       dirty: dirty,
       dirtyTotal: dirtyTotal,
@@ -677,6 +683,7 @@ class WebDavSyncHabitData implements JsonAdaptor {
       startDate: startDate,
       targetDays: targetDays,
       sortPosition: sortPostion,
+      groupId: groupId,
       syncExtras: encodeSyncExtras(unknown),
     );
   }

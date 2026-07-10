@@ -20,5 +20,6 @@ CREATE TABLE IF NOT EXISTS mh_habits (
     remind_cutsom TEXT,
     remind_question TEXT,
     sort_position REAL NOT NULL DEFAULT 9e999,
-    sync_extras TEXT
+    sync_extras TEXT,
+    group_id TEXT
 );

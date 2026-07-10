@@ -105,6 +105,9 @@ class $AssetsSqlGen {
   /// File path: assets/sql/indexes.sql
   String get indexes => 'assets/sql/indexes.sql';
 
+  /// File path: assets/sql/mh_groups.sql
+  String get mhGroups => 'assets/sql/mh_groups.sql';
+
   /// File path: assets/sql/mh_habits.sql
   String get mhHabits => 'assets/sql/mh_habits.sql';
 
@@ -120,6 +123,7 @@ class $AssetsSqlGen {
   /// List of all assets
   List<String> get values => [
     indexes,
+    mhGroups,
     mhHabits,
     mhRecords,
     mhSync,

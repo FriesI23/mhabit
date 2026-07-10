@@ -21,6 +21,7 @@ import '../common/async.dart';
 import '../logging/helper.dart';
 import '../providers/support/commons.dart';
 import 'db/db_helper.dart';
+import 'db/handlers/group.dart';
 import 'db/handlers/habit.dart';
 import 'db/handlers/record.dart';
 import 'db/handlers/sync.dart';
@@ -99,6 +100,7 @@ abstract mixin class DBHelperLoadedMixin {
   late HabitDBHelper habitDBHelper;
   late RecordDBHelper recordDBHelper;
   late SyncDBHelper syncDBHelper;
+  late GroupDBHelper groupDBHelper;
 
   void updateDBHelper(DBHelperViewModel newHelper) {
     final localHelper = newHelper.local;
@@ -107,6 +109,7 @@ abstract mixin class DBHelperLoadedMixin {
       habitDBHelper = HabitDBHelper(newHelper.local);
       recordDBHelper = RecordDBHelper(newHelper.local);
       syncDBHelper = SyncDBHelper(newHelper.local);
+      groupDBHelper = GroupDBHelper(newHelper.local);
       _lastLocalHelper = localHelper;
     }
   }

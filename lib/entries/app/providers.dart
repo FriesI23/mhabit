@@ -35,6 +35,7 @@ import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_notify_config.dart';
 import '../../providers/workflow/app_reminder.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_file_exporter.dart';
 import '../../providers/workflow/habits_file_importer.dart';
 import '../../providers/workflow/habits_manager.dart';
@@ -99,6 +100,14 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ProxyProvider<HabitsManager, HabitImportAccess>(
       update: (context, value, previous) => value,
+    ),
+  ];
+
+  Iterable<SingleChildWidget> _buildGroupAppProviders() => [
+    ProxyProvider<DBHelperViewModel, GroupManager>(
+      create: (context) => GroupManager(),
+      update: (context, db, previous) =>
+          (previous ?? GroupManager())..updateDBHelper(db),
     ),
   ];
 
@@ -244,6 +253,7 @@ class AppProviders extends SingleChildStatelessWidget {
       ..._buildCommonAppProviders(),
       ..._buildReminderWorkflowSupportProviders(),
       ..._buildHabitsAppProviders(),
+      ..._buildGroupAppProviders(),
       ..._buildProfileBackedAppProviders(),
       ..._buildAppSyncProviders(),
       ..._buildRootAdjacentSupportProviders(),

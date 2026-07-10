@@ -22,6 +22,7 @@ abstract class _$SyncDBCellCWProxy {
     int? modifyT,
     HabitUUID? habitUUID,
     HabitUUID? recordUUID,
+    HabitUUID? groupUUID,
     int? dirty,
     int? dirtyTotal,
     String? lastConfigUUID,
@@ -52,6 +53,7 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
     Object? modifyT = const $CopyWithPlaceholder(),
     Object? habitUUID = const $CopyWithPlaceholder(),
     Object? recordUUID = const $CopyWithPlaceholder(),
+    Object? groupUUID = const $CopyWithPlaceholder(),
     Object? dirty = const $CopyWithPlaceholder(),
     Object? dirtyTotal = const $CopyWithPlaceholder(),
     Object? lastConfigUUID = const $CopyWithPlaceholder(),
@@ -80,6 +82,10 @@ class _$SyncDBCellCWProxyImpl implements _$SyncDBCellCWProxy {
           ? _value.recordUUID
           // ignore: cast_nullable_to_non_nullable
           : recordUUID as HabitUUID?,
+      groupUUID: groupUUID == const $CopyWithPlaceholder()
+          ? _value.groupUUID
+          // ignore: cast_nullable_to_non_nullable
+          : groupUUID as HabitUUID?,
       dirty: dirty == const $CopyWithPlaceholder()
           ? _value.dirty
           // ignore: cast_nullable_to_non_nullable
@@ -125,6 +131,7 @@ SyncDBCell _$SyncDBCellFromJson(Map<String, dynamic> json) => SyncDBCell(
   modifyT: (json['modify_t'] as num?)?.toInt(),
   habitUUID: json['habit_uuid'] as String?,
   recordUUID: json['record_uuid'] as String?,
+  groupUUID: json['group_uuid'] as String?,
   dirty: (json['dirty'] as num?)?.toInt(),
   dirtyTotal: (json['dirty_total'] as num?)?.toInt(),
   lastConfigUUID: json['last_config_uuid'] as String?,
@@ -140,6 +147,7 @@ Map<String, dynamic> _$SyncDBCellToJson(SyncDBCell instance) =>
       'modify_t': ?instance.modifyT,
       'habit_uuid': ?instance.habitUUID,
       'record_uuid': ?instance.recordUUID,
+      'group_uuid': ?instance.groupUUID,
       'dirty': ?instance.dirty,
       'dirty_total': ?instance.dirtyTotal,
       'last_config_uuid': ?instance.lastConfigUUID,

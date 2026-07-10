@@ -39,6 +39,7 @@ abstract class _$HabitDBCellCWProxy {
     String? remindQuestion,
     HabitSortPostion? sortPosition,
     String? syncExtras,
+    String? groupId,
   });
 }
 
@@ -80,6 +81,7 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
     Object? remindQuestion = const $CopyWithPlaceholder(),
     Object? sortPosition = const $CopyWithPlaceholder(),
     Object? syncExtras = const $CopyWithPlaceholder(),
+    Object? groupId = const $CopyWithPlaceholder(),
   }) {
     return HabitDBCell(
       id: id == const $CopyWithPlaceholder()
@@ -170,6 +172,10 @@ class _$HabitDBCellCWProxyImpl implements _$HabitDBCellCWProxy {
           ? _value.syncExtras
           // ignore: cast_nullable_to_non_nullable
           : syncExtras as String?,
+      groupId: groupId == const $CopyWithPlaceholder()
+          ? _value.groupId
+          // ignore: cast_nullable_to_non_nullable
+          : groupId as String?,
     );
   }
 }
@@ -208,6 +214,7 @@ HabitDBCell _$HabitDBCellFromJson(Map<String, dynamic> json) => HabitDBCell(
   remindQuestion: json['remind_question'] as String?,
   sortPosition: json['sort_position'] as num?,
   syncExtras: json['sync_extras'] as String?,
+  groupId: json['group_id'] as String?,
 );
 
 Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) =>
@@ -234,4 +241,5 @@ Map<String, dynamic> _$HabitDBCellToJson(HabitDBCell instance) =>
       'remind_question': ?instance.remindQuestion,
       'sort_position': ?instance.sortPosition,
       'sync_extras': ?instance.syncExtras,
+      'group_id': ?instance.groupId,
     };

@@ -106,6 +106,7 @@ class HabitExportDataKey {
   static const String startDate = 'start_date';
   static const String targetDays = 'target_days';
   static const String sortPosition = 'sort_position';
+  static const String groupId = 'group_id';
   static const String records = 'records';
 }
 
@@ -148,6 +149,8 @@ class HabitExportData implements JsonAdaptor {
   final int? startDate;
   @JsonKey(name: HabitExportDataKey.targetDays)
   final int? targetDays;
+  @JsonKey(name: HabitExportDataKey.groupId)
+  final String? groupId;
   @JsonKey(name: HabitExportDataKey.records, toJson: _recordsToJson)
   final List<RecordExportData> records;
 
@@ -170,6 +173,7 @@ class HabitExportData implements JsonAdaptor {
     this.reminderQuest,
     this.startDate,
     this.targetDays,
+    this.groupId,
     this.records = const [],
   });
 
@@ -191,7 +195,8 @@ class HabitExportData implements JsonAdaptor {
       reminder = cell.remindCustom,
       reminderQuest = cell.remindQuestion,
       startDate = cell.startDate,
-      targetDays = cell.targetDays;
+      targetDays = cell.targetDays,
+      groupId = cell.groupId;
 
   factory HabitExportData.fromJson(dynamic json) =>
       _$HabitExportDataFromJson(json);

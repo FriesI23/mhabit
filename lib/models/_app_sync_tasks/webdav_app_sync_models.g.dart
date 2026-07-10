@@ -141,6 +141,7 @@ abstract class _$WebDavSyncHabitDataCWProxy {
     int? startDate,
     int? targetDays,
     HabitSortPostion? sortPostion,
+    String? groupId,
     String? sessionId,
     Map<HabitRecordUUID, WebDavSyncRecordData> records,
     String? etag,
@@ -186,6 +187,7 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
     Object? startDate = const $CopyWithPlaceholder(),
     Object? targetDays = const $CopyWithPlaceholder(),
     Object? sortPostion = const $CopyWithPlaceholder(),
+    Object? groupId = const $CopyWithPlaceholder(),
     Object? sessionId = const $CopyWithPlaceholder(),
     Object? records = const $CopyWithPlaceholder(),
     Object? etag = const $CopyWithPlaceholder(),
@@ -278,6 +280,10 @@ class _$WebDavSyncHabitDataCWProxyImpl implements _$WebDavSyncHabitDataCWProxy {
           ? _value.sortPostion
           // ignore: cast_nullable_to_non_nullable
           : sortPostion as HabitSortPostion?,
+      groupId: groupId == const $CopyWithPlaceholder()
+          ? _value.groupId
+          // ignore: cast_nullable_to_non_nullable
+          : groupId as String?,
       sessionId: sessionId == const $CopyWithPlaceholder()
           ? _value.sessionId
           // ignore: cast_nullable_to_non_nullable
@@ -365,6 +371,7 @@ WebDavSyncHabitData _$WebDavSyncHabitDataFromJson(Map<String, dynamic> json) =>
       startDate: (json['start_date'] as num?)?.toInt(),
       targetDays: (json['target_days'] as num?)?.toInt(),
       sortPostion: json['sort_position'] as num?,
+      groupId: json['group_id'] as String?,
       sessionId: json['sessionId'] as String?,
       records: json['records'] == null
           ? const {}
@@ -395,6 +402,7 @@ Map<String, dynamic> _$WebDavSyncHabitDataToJson(
   'start_date': instance.startDate,
   'target_days': instance.targetDays,
   'sort_position': instance.sortPostion,
+  'group_id': instance.groupId,
   'sessionId': instance.sessionId,
   'records': WebDavSyncHabitData._recordsToJson(instance.records),
 };

@@ -47,8 +47,8 @@ Map<String, Object?> _legacyToJson(HabitDBCell cell) => {
   'color': cell.color,
 };
 
-String? _futureGroupIdFromJson(Map<String, Object?> json) =>
-    json['group_id'] as String?;
+String? _futureFieldIdFromJson(Map<String, Object?> json) =>
+    json['x_group_id'] as String?;
 
 void main() {
   group('WebDavSyncHabitData custom_color', () {
@@ -292,11 +292,11 @@ void main() {
       final data = WebDavSyncHabitData.fromJson({
         '_convert_type': 'habit_',
         'color': HabitColorType.cc3.dbCode,
-        'group_id': 'g-abc-123',
+        'x_group_id': 'g-abc-123',
         'future_field': 42,
       });
       expect(data.unknown, isNotNull);
-      expect(data.unknown!['group_id'], 'g-abc-123');
+      expect(data.unknown!['x_group_id'], 'g-abc-123');
       expect(data.unknown!['future_field'], 42);
     });
 
@@ -315,11 +315,11 @@ void main() {
         '_convert_type': 'habit_',
         'color': HabitColorType.cc3.dbCode,
         'uuid': 'test-uuid',
-        'group_id': 'g-xyz',
+        'x_group_id': 'g-xyz',
         'future_field': 'hello',
       });
       final json = data.toJson();
-      expect(json['group_id'], 'g-xyz');
+      expect(json['x_group_id'], 'g-xyz');
       expect(json['future_field'], 'hello');
     });
 
@@ -329,17 +329,17 @@ void main() {
         'color': HabitColorType.cc4.dbCode,
         'uuid': 'test-uuid',
       });
-      data.unknown = {'uuid': 'evil-override', 'group_id': 'g-ok'};
+      data.unknown = {'uuid': 'evil-override', 'x_group_id': 'g-ok'};
       final json = data.toJson();
       expect(json['uuid'], 'test-uuid');
-      expect(json['group_id'], 'g-ok');
+      expect(json['x_group_id'], 'g-ok');
     });
 
     test('_unknown does not appear as a JSON key', () {
       final data = WebDavSyncHabitData.fromJson({
         '_convert_type': 'habit_',
         'color': HabitColorType.cc2.dbCode,
-        'group_id': 'g-test',
+        'x_group_id': 'g-test',
       });
       final json = data.toJson();
       expect(json.containsKey('_unknown'), isFalse);
@@ -362,7 +362,7 @@ void main() {
         'color': HabitColorType.cc6.dbCode,
         'uuid': 'roundtrip-uuid',
         'name': 'Roundtrip',
-        'group_id': 'g-roundtrip',
+        'x_group_id': 'g-roundtrip',
         'extra_nested': {
           'a': 1,
           'b': [2, 3],
@@ -371,7 +371,7 @@ void main() {
       final data = WebDavSyncHabitData.fromJson(originalJson);
       final roundtripped = WebDavSyncHabitData.fromJson(data.toJson());
       expect(roundtripped.unknown, isNotNull);
-      expect(roundtripped.unknown!['group_id'], 'g-roundtrip');
+      expect(roundtripped.unknown!['x_group_id'], 'g-roundtrip');
       expect(roundtripped.unknown!['extra_nested'], {
         'a': 1,
         'b': [2, 3],
@@ -383,7 +383,7 @@ void main() {
         '_convert_type': 'habit_',
         'uuid': 'future-forward-uuid',
         'color': HabitColorType.cc6.dbCode,
-        'group_id': 'future-group',
+        'x_group_id': 'future-group',
       };
 
       final oldSchemaClient = WebDavSyncHabitData.fromJson(serverPayload);
@@ -393,8 +393,8 @@ void main() {
         unknown: decodeSyncExtras(cell.syncExtras),
       ).toJson();
 
-      expect(forwarded['group_id'], 'future-group');
-      expect(_futureGroupIdFromJson(forwarded), 'future-group');
+      expect(forwarded['x_group_id'], 'future-group');
+      expect(_futureFieldIdFromJson(forwarded), 'future-group');
     });
   });
 
@@ -423,6 +423,7 @@ void main() {
           WebDavSyncHabitKey.startDate,
           WebDavSyncHabitKey.targetDays,
           WebDavSyncHabitKey.sortPosition,
+          WebDavSyncHabitKey.groupId,
           WebDavSyncHabitKey.sessionId,
           WebDavSyncHabitKey.records,
           WebDavSyncHabitKey.convertType,
@@ -460,11 +461,11 @@ void main() {
         '_convert_type': 'habit_',
         'color': HabitColorType.cc3.dbCode,
         'uuid': 'test-uuid',
-        'group_id': 'g-encode',
+        'x_group_id': 'g-encode',
       });
       final cell = data.toHabitDBCell();
       expect(cell.syncExtras, isNotNull);
-      expect(cell.syncExtras, contains('group_id'));
+      expect(cell.syncExtras, contains('x_group_id'));
       expect(cell.syncExtras, contains('g-encode'));
     });
 
@@ -482,15 +483,15 @@ void main() {
       final cell = HabitDBCell(
         uuid: 'test-uuid',
         color: HabitColorType.cc4.dbCode,
-        syncExtras: '{"group_id":"g-inject","extra":true}',
+        syncExtras: '{"x_group_id":"g-inject","extra":true}',
       );
       final unknown = decodeSyncExtras(cell.syncExtras)!;
       final data = WebDavSyncHabitData.fromHabitDBCell(cell, unknown: unknown);
       expect(data.unknown, isNotNull);
-      expect(data.unknown!['group_id'], 'g-inject');
+      expect(data.unknown!['x_group_id'], 'g-inject');
       expect(data.unknown!['extra'], true);
       final json = data.toJson();
-      expect(json['group_id'], 'g-inject');
+      expect(json['x_group_id'], 'g-inject');
       expect(json['extra'], true);
     });
 
@@ -509,7 +510,7 @@ void main() {
         'color': HabitColorType.cc2.dbCode,
         'uuid': 'full-roundtrip',
         'name': 'Original',
-        'group_id': 'g-full',
+        'x_group_id': 'g-full',
         'custom_attr': [1, 2, 3],
       });
 
@@ -526,10 +527,10 @@ void main() {
       expect(restored.uuid, 'full-roundtrip');
       expect(restored.name, 'Original');
       expect(restored.unknown, isNotNull);
-      expect(restored.unknown!['group_id'], 'g-full');
+      expect(restored.unknown!['x_group_id'], 'g-full');
       expect(restored.unknown!['custom_attr'], [1, 2, 3]);
       final restoredJson = restored.toJson();
-      expect(restoredJson['group_id'], 'g-full');
+      expect(restoredJson['x_group_id'], 'g-full');
       expect(restoredJson['custom_attr'], [1, 2, 3]);
     });
   });

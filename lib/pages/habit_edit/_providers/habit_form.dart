@@ -207,6 +207,17 @@ class HabitFormViewModel extends ChangeNotifier
     notifyListeners();
   }
 
+  String? get groupId => _form.groupId;
+  set groupId(String? newGroupId) {
+    appLog.value.debug(
+      "$runtimeType.groupId",
+      beforeVal: _form.groupId,
+      afterVal: newGroupId,
+    );
+    _form.groupId = newGroupId;
+    notifyListeners();
+  }
+
   HabitUUID? get uuid => _form.editParams?.uuid;
 
   DateTime? get createT => _form.editParams?.createT;
@@ -270,6 +281,7 @@ class HabitFormViewModel extends ChangeNotifier
       sortPosition: double.infinity,
       createT: now,
       modifyT: now,
+      groupId: _form.groupId,
     );
     return _access.saveNewHabitAndUpdateReminder(dbCell);
   }
@@ -297,6 +309,7 @@ class HabitFormViewModel extends ChangeNotifier
       targetDays: targetDays,
       remindCustom: reminder != null ? jsonEncode(reminder.toJson()) : null,
       remindQuestion: reminder != null ? reminderQuest : null,
+      groupId: _form.groupId,
     );
     return _access.updateExistHabitAndUpdateReminder(dbCell);
   }
