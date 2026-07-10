@@ -43,6 +43,8 @@ void testWebdavAppSyncTaskMainBody() =>
       fetchHabitsFromServerTask;
       late AppSyncSubTask<List<SyncDBCell>> queryHabitsFromDbTask;
       late WebDavSyncHabitInfoMerger syncInfoMerger;
+      late AppSyncSubTask<Map<WebDavAppSyncGroupInfo, WebDavAppSyncTaskResult>>
+      groupSyncSubTask;
       late WebDavAppSyncTaskExecutor task;
 
       test("test normal progress", () async {
@@ -52,6 +54,7 @@ void testWebdavAppSyncTaskMainBody() =>
         fetchHabitsFromServerTask = MockAppSyncSubTask();
         queryHabitsFromDbTask = MockAppSyncSubTask();
         syncInfoMerger = MockConverter();
+        groupSyncSubTask = MockAppSyncSubTask();
 
         final singleHabitTasks = <AppSyncSubTask<WebDavAppSyncTaskResult>>[];
 
@@ -69,6 +72,7 @@ void testWebdavAppSyncTaskMainBody() =>
             singleHabitTasks.add(task);
             return task;
           },
+          groupSyncSubTask: groupSyncSubTask,
         );
 
         final serverResult = [
@@ -85,6 +89,9 @@ void testWebdavAppSyncTaskMainBody() =>
             etag: 'xxx3',
           ),
         ];
+        when(groupSyncSubTask.run(task)).thenAnswer(
+          (_) async => <WebDavAppSyncGroupInfo, WebDavAppSyncTaskResult>{},
+        );
         when(
           fetchHabitsFromServerTask.run(task),
         ).thenAnswer((inv) async => serverResult);

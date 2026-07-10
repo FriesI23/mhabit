@@ -14,7 +14,9 @@
 
 import '../../../models/group.dart';
 import '../db_helper.dart';
+import '../sql.dart';
 import '../table.dart';
+import 'sync.dart';
 
 class GroupDBHelper extends DBHelperHandler {
   const GroupDBHelper(super.helper);
@@ -22,30 +24,64 @@ class GroupDBHelper extends DBHelperHandler {
   @override
   String get table => TableName.groups;
 
-  Future<int> insertNewGroup(GroupDBCell group) async {
+  Future<int> insertNewGroup(GroupDBCell group) {
     assert(group.uuid != null);
-    // Parse 1: no sync table write (deferred to Parse 2)
-    return db.insert(table, group.toJson());
+
+    return db.transaction((db) async {
+      final result = await db.insert(table, group.toJson());
+      if (result > 0) {
+        await db.insert(
+          TableName.sync,
+          SyncDBCell.genFromGroup(group).toJson(),
+        );
+      }
+      return result;
+    });
   }
 
-  Future<int> updateExistGroup(GroupDBCell group) async {
+  Future<int> updateExistGroup(GroupDBCell group) {
     assert(group.uuid != null);
-    return db.update(
-      table,
-      group.toJson(),
-      where: "${GroupDBCellKey.uuid} = ?",
-      whereArgs: [group.uuid],
-    );
+
+    return db.transaction((db) async {
+      final result = await db.update(
+        table,
+        group.toJson(),
+        where: "${GroupDBCellKey.uuid} = ?",
+        whereArgs: [group.uuid],
+      );
+      if (result == 0) return result;
+
+      final syncRows = await db.rawUpdate(
+        CustomSql.increaseGroupSyncDirtySql(),
+        [group.uuid],
+      );
+      if (syncRows == 0) {
+        throw StateError('Missing sync row for group uuid: ${group.uuid}');
+      }
+      return result;
+    });
   }
 
   /// Soft delete: sets status = 2.
-  Future<int> deleteGroup(String uuid) async {
-    return db.update(
-      table,
-      {GroupDBCellKey.status: 2},
-      where: "${GroupDBCellKey.uuid} = ?",
-      whereArgs: [uuid],
-    );
+  Future<int> deleteGroup(String uuid) {
+    return db.transaction((db) async {
+      final result = await db.update(
+        table,
+        {GroupDBCellKey.status: 2},
+        where: "${GroupDBCellKey.uuid} = ?",
+        whereArgs: [uuid],
+      );
+      if (result == 0) return result;
+
+      final syncRows = await db.rawUpdate(
+        CustomSql.increaseGroupSyncDirtySql(),
+        [uuid],
+      );
+      if (syncRows == 0) {
+        throw StateError('Missing sync row for group uuid: $uuid');
+      }
+      return result;
+    });
   }
 
   Future<List<GroupDBCell>> loadAllActiveGroups() async {

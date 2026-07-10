@@ -26,6 +26,7 @@ import '../db_helper.dart';
 import '../table.dart';
 import 'habit.dart';
 import 'record.dart';
+import 'sync_group.dart';
 
 part 'sync.g.dart';
 
@@ -111,7 +112,7 @@ class SyncDBCell with DBCell {
 }
 
 class SyncDBHelper extends DBHelperHandler {
-  const SyncDBHelper(super.helper);
+  SyncDBHelper(super.helper);
 
   @override
   String get table => TableName.sync;
@@ -642,4 +643,8 @@ class SyncDBHelper extends DBHelperHandler {
       );
     });
   }
+
+  SyncGroupDBHelper? _group;
+
+  SyncGroupDBHelper get group => _group ??= SyncGroupDBHelper(helper);
 }

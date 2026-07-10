@@ -32,6 +32,7 @@ import '../../storage/db/handlers/habit.dart';
 import '../../storage/db/handlers/record.dart';
 import '../../storage/db/handlers/sync.dart';
 import '../common.dart';
+import '../group.dart';
 import '../habit_color.dart';
 import '../habit_form.dart';
 import '../habit_freq.dart';
@@ -89,6 +90,9 @@ final reAppSyncRecordDirName = RegExp(r'^\d{4}$');
 /// Matches a record JSON file name, e.g. 'record-xxx-yyy-zzz.json'
 final reAppSyncRecordFileName = RegExp(r'^record-([^/]+)\.json$');
 
+/// Matches a group JSON file name, e.g. 'group-xxx-yyy-zzz.json'
+final reAppSyncGroupFileName = RegExp(r'^group-([^/]+)\.json$');
+
 enum WebDavAppSyncInfoStatus { server, local, both }
 
 abstract interface class WebDavAppSyncCellInfo {
@@ -143,25 +147,6 @@ abstract class _WebDavAppSyncCellInfo implements WebDavAppSyncCellInfo {
   };
 }
 
-class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
-  final HabitUUID uuid;
-
-  WebDavAppSyncHabitInfo({
-    required super.configUUID,
-    required this.uuid,
-    required super.status,
-    super.isDirty = false,
-  });
-
-  @override
-  String toString() =>
-      "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
-      "sEtag=<$eTagFromServer>, cEtag=<$eTagFromLocal>, "
-      "configId=$configUUID, lastConfigId=$lastConfgUUID, "
-      "spath=$serverPath"
-      ")";
-}
-
 class WebDavResourceContainer {
   final Uri path;
   final String? etag;
@@ -203,6 +188,12 @@ class WebDavResourceContainer {
     final filename = path.pathSegments.lastOrNull;
     if (filename == null || filename.isEmpty) return null;
     return reAppSyncRecordFileName.firstMatch(filename)?.group(1);
+  }
+
+  HabitUUID? get groupUUID {
+    final filename = path.pathSegments.lastOrNull;
+    if (filename == null || filename.isEmpty) return null;
+    return reAppSyncGroupFileName.firstMatch(filename)?.group(1);
   }
 
   @override
@@ -253,6 +244,7 @@ final class WebDavConfigTaskChecklistDirImpl
       ')';
 }
 
+// #region habits
 class WebDavSyncRecordKey {
   static const String recordDate = 'record_date';
   static const String recordType = 'record_type';
@@ -745,6 +737,250 @@ class WebDavSyncHabitData implements JsonAdaptor {
         ..['records'] = '...(length=${records.length})'}";
 }
 
+class WebDavAppSyncHabitInfo extends _WebDavAppSyncCellInfo {
+  final HabitUUID uuid;
+
+  WebDavAppSyncHabitInfo({
+    required super.configUUID,
+    required this.uuid,
+    required super.status,
+    super.isDirty = false,
+  });
+
+  @override
+  String toString() =>
+      "WebDavAppSyncCellInfo(uuid=$uuid, status=$status, "
+      "sEtag=<$eTagFromServer>, cEtag=<$eTagFromLocal>, "
+      "configId=$configUUID, lastConfigId=$lastConfgUUID, "
+      "spath=$serverPath"
+      ")";
+}
+// #endregion
+
+// #region group
+class WebDavAppSyncGroupInfo extends _WebDavAppSyncCellInfo {
+  final HabitUUID uuid;
+
+  WebDavAppSyncGroupInfo({
+    required super.configUUID,
+    required this.uuid,
+    required super.status,
+    super.isDirty = false,
+  });
+}
+
+class WebDavSyncGroupKey {
+  static const String uuid = 'uuid';
+  static const String createT = 'create_t';
+  static const String modifyT = 'modify_t';
+  static const String name = 'name';
+  static const String desc = 'desc';
+  static const String icon = 'icon';
+  static const String color = 'color';
+  static const String customColor = 'custom_color';
+  static const String customColorTinted = 'custom_color_tinted';
+  static const String sortOrder = 'sort_order';
+  static const String status = 'status';
+  static const String sessionId = 'sessionId';
+  static const String schemaVersion = '_schema_version';
+  static const String convertType = '_convert_type';
+}
+
+enum WebDavSyncGroupKeys {
+  uuid(WebDavSyncGroupKey.uuid),
+  createT(WebDavSyncGroupKey.createT),
+  modifyT(WebDavSyncGroupKey.modifyT),
+  name(WebDavSyncGroupKey.name),
+  desc(WebDavSyncGroupKey.desc),
+  icon(WebDavSyncGroupKey.icon),
+  color(WebDavSyncGroupKey.color),
+  customColor(WebDavSyncGroupKey.customColor),
+  customColorTinted(WebDavSyncGroupKey.customColorTinted),
+  sortOrder(WebDavSyncGroupKey.sortOrder),
+  status(WebDavSyncGroupKey.status),
+  sessionId(WebDavSyncGroupKey.sessionId),
+  schemaVersion(WebDavSyncGroupKey.schemaVersion),
+  convertType(WebDavSyncGroupKey.convertType);
+
+  final String jsonKey;
+  const WebDavSyncGroupKeys(this.jsonKey);
+
+  static final Set<String> allKnownKeys = Set.unmodifiable(
+    WebDavSyncGroupKeys.values.map((e) => e.jsonKey),
+  );
+}
+
+@JsonSerializable(
+  fieldRename: FieldRename.snake,
+  includeIfNull: true,
+  ignoreUnannotated: true,
+)
+@CopyWith(skipFields: true)
+class WebDavSyncGroupData implements JsonAdaptor {
+  static const _convertType = 'group_';
+  static const int currentSchemaVersion = 1;
+
+  @JsonKey(
+    name: WebDavSyncGroupKey.schemaVersion,
+    defaultValue: currentSchemaVersion,
+  )
+  final int schemaVersion;
+  @JsonKey(name: WebDavSyncGroupKey.uuid)
+  final String? uuid;
+  @JsonKey(name: WebDavSyncGroupKey.createT)
+  final int? createT;
+  @JsonKey(name: WebDavSyncGroupKey.modifyT)
+  final int? modifyT;
+  @JsonKey(name: WebDavSyncGroupKey.name)
+  final String? name;
+  @JsonKey(name: WebDavSyncGroupKey.desc)
+  final String? desc;
+  @JsonKey(name: WebDavSyncGroupKey.icon)
+  final int? icon;
+  @JsonKey(name: WebDavSyncGroupKey.color)
+  final int? color;
+  @JsonKey(name: WebDavSyncGroupKey.customColor)
+  final int? customColor;
+  @JsonKey(name: WebDavSyncGroupKey.customColorTinted)
+  final int? customColorTinted;
+  @JsonKey(name: WebDavSyncGroupKey.sortOrder)
+  final num? sortOrder;
+  @JsonKey(name: WebDavSyncGroupKey.status)
+  final int? status;
+  @JsonKey(name: WebDavSyncGroupKey.sessionId)
+  final String? sessionId;
+
+  final String? etag;
+  final int? dirty;
+  final int? dirtyTotal;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? unknown;
+
+  WebDavSyncGroupData({
+    this.schemaVersion = currentSchemaVersion,
+    this.uuid,
+    this.createT,
+    this.modifyT,
+    this.name,
+    this.desc,
+    this.icon,
+    this.color,
+    this.customColor,
+    this.customColorTinted,
+    this.sortOrder,
+    this.status,
+    this.sessionId,
+    this.etag,
+    this.dirty,
+    this.dirtyTotal,
+    this.unknown,
+  });
+
+  /// Constructs [WebDavSyncGroupData] from a [GroupDBCell].
+  ///
+  /// Color encoding reuses the HabitColor sync codec extensions
+  /// (`_syncColorCode` / `_syncCustomColor` / `_syncCustomColorTinted`).
+  factory WebDavSyncGroupData.fromGroupDBCell(
+    GroupDBCell cell, {
+    String? etag,
+    int? dirty,
+    int? dirtyTotal,
+    String? sessionId,
+    Map<String, dynamic>? unknown,
+  }) {
+    final groupColor = HabitColor.fromRaw(
+      colorType: cell.customColor != null
+          ? HabitColorType.cc1
+          : HabitColorType.getFromDBCode(cell.color ?? 0)!,
+      customColor: cell.customColor,
+      customColorTinted: cell.customColorTinted,
+    );
+    return WebDavSyncGroupData(
+      schemaVersion: currentSchemaVersion,
+      uuid: cell.uuid,
+      createT: cell.createT,
+      modifyT: cell.modifyT,
+      name: cell.name,
+      desc: cell.desc,
+      icon: cell.icon,
+      color: groupColor._syncColorCode,
+      customColor: groupColor._syncCustomColor,
+      customColorTinted: groupColor._syncCustomColorTinted,
+      sortOrder: cell.sortOrder,
+      status: cell.status,
+      sessionId: sessionId,
+      etag: etag,
+      dirty: dirty,
+      dirtyTotal: dirtyTotal,
+    );
+  }
+
+  /// Deserializes Group sync data from JSON.
+  ///
+  /// Uses [captureSyncUnknown] to capture unknown fields, ensuring round-trip compatibility.
+  factory WebDavSyncGroupData.fromJson(JsonMap json) {
+    final data = _$WebDavSyncGroupDataFromJson(json);
+    data.unknown = captureSyncUnknown(json, WebDavSyncGroupKeys.allKnownKeys);
+    return data;
+  }
+
+  /// Converts to [GroupDBCell] for writing to the local DB.
+  GroupDBCell toGroupDBCell() {
+    final groupColor = HabitColor.fromRaw(
+      colorType: customColor != null
+          ? HabitColorType.cc1
+          : HabitColorType.getFromDBCode(color ?? 0)!,
+      customColor: customColor,
+      customColorTinted: customColorTinted,
+    );
+    return GroupDBCell(
+      uuid: uuid,
+      createT: createT,
+      modifyT: modifyT,
+      name: name,
+      desc: desc,
+      icon: icon,
+      color: groupColor.dbColorType.dbCode,
+      customColor: groupColor.dbCustomColor,
+      customColorTinted: groupColor.dbCustomColorTinted,
+      sortOrder: sortOrder,
+      status: status,
+    );
+  }
+
+  /// Serializes to JSON for upload to WebDAV.
+  @override
+  JsonMap toJson() {
+    final json = _$WebDavSyncGroupDataToJson(this)
+      ..[WebDavSyncGroupKey.convertType] = _convertType;
+    mergeSyncUnknown(json, unknown);
+    return json;
+  }
+
+  /// Produces a [SyncDBCell] for the mh_sync table.
+  SyncDBCell genSyncDBCell({String? configId}) => SyncDBCell(
+    groupUUID: uuid,
+    dirty: dirty ?? 0,
+    dirtyTotal: dirtyTotal ?? 0,
+    lastMark: sessionId,
+    lastMark2: etag,
+    lastConfigUUID: configId,
+    lastSesionUUID: sessionId,
+  );
+
+  /// Data validation.
+  ///
+  /// Does not enforce non-empty name at this layer -- empty names are allowed
+  /// to align with Habit behavior. Empty-name interception is handled at the
+  /// GUI and GroupManager business layer.
+  void validate() {
+    // Schema version check (reserved)
+    // Name etc. not validated at data layer
+  }
+}
+// #endregion
+
 class WebDavAppSyncPathBuilder {
   final Uri root;
 
@@ -772,6 +1008,12 @@ class WebDavAppSyncPathBuilder {
 
   WebDavAppSyncHabitPathBuilder habit(HabitUUID uuid) =>
       WebDavAppSyncHabitPathBuilder(uuid, habitsDir);
+
+  /// Group file path builder.
+  ///
+  /// Group JSON files live under /habits/ with the naming convention
+  /// group-{uuid}.json, co-located with habit-{uuid}.json.
+  Uri group(HabitUUID uuid) => habitsDir.resolve('group-$uuid.json');
 }
 
 class WebDavAppSyncHabitPathBuilder {

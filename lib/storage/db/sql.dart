@@ -177,4 +177,27 @@ END
 
     return sql.toString();
   }
+
+  /// required arguments: [groupUUID]
+  static String increaseGroupSyncDirtySql({
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {
+    final sql = StringBuffer();
+    sql.write("UPDATE");
+    if (conflictAlgorithm != null) {
+      sql
+        ..write(" ")
+        ..write(buildConflictAlgorithm(conflictAlgorithm));
+    }
+    sql
+      ..write(" ${TableName.sync}")
+      ..write(
+        " SET ${SyncDbCellKey.dirtyTotal} "
+        "= COALESCE(${SyncDbCellKey.dirtyTotal}, 0) + 1",
+      )
+      ..write(", ${SyncDbCellKey.dirty} = ${SyncDbCellKey.dirty} + 1")
+      ..write(" WHERE ${SyncDbCellKey.groupUUID} = ?");
+
+    return sql.toString();
+  }
 }

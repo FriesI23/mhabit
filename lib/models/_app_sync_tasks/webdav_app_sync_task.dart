@@ -29,6 +29,7 @@ import '../../logging/helper.dart';
 import '../../storage/db/handlers/sync.dart';
 import '../app_sync_server.dart';
 import 'app_sync_task.dart';
+import 'webdav_app_sync_group_subtasks.dart';
 import 'webdav_app_sync_models.dart';
 import 'webdav_app_sync_subtasks.dart';
 import 'webdav_app_sync_task_status.dart';
@@ -237,6 +238,9 @@ class WebDavAppSyncTaskExecutor
   )
   singleHabitSyncTaskBuilder;
 
+  final AppSyncSubTask<Map<WebDavAppSyncGroupInfo, WebDavAppSyncTaskResult>>
+  groupSyncSubTask;
+
   late final WeakReference<WebDavStdClient>? _client;
 
   WebDavAppSyncTaskExecutor({
@@ -248,6 +252,7 @@ class WebDavAppSyncTaskExecutor
     required this.queryHabitsFromDbTask,
     required this.syncInfoMergerBuilder,
     required this.singleHabitSyncTaskBuilder,
+    required this.groupSyncSubTask,
     WebDavStdClient? client,
   }) {
     _client = client != null ? WeakReference(client) : null;
@@ -313,6 +318,48 @@ class WebDavAppSyncTaskExecutor
               ),
             ),
       ),
+      groupSyncSubTask: GroupSyncTask(
+        fetchMetaFromServer: FetchMetaFromServerTask.groups(
+          WebDavAppSyncPathBuilder(config.path).habitsDir,
+          client,
+        ),
+        queryFromDb: QueryGroupsFromDBTask(helper: syncDBHelper),
+        mergerBuilder: SyncGroupsInfoMergerImpl.new,
+        singleTaskBuilder: (cell) => SingleGroupSyncTask(
+          cell: cell,
+          serverToLocalTask: (context, cell) =>
+              SingleGroupSyncTask.downloadTask(
+                context: context,
+                fetchGroupDataTask:
+                    FetchDataFromServerTask.fetchGroupDataFromServerBuilder(
+                      path: cell.serverPath!,
+                      client: client,
+                      etag: cell.eTagFromServer,
+                    ),
+                writeToDbTaskBuilder: (data) =>
+                    WriteGroupToDBTask(helper: syncDBHelper, data: data),
+              ),
+          localToServerTask: (context, cell) => SingleGroupSyncTask.uploadTask(
+            context: context,
+            loadFromDBTask: LoadGroupFromDBTask(
+              helper: syncDBHelper,
+              uuid: cell.uuid,
+            ),
+            uploadGroupToServerTaskBuilder: (data) => UploadGroupToServerTask(
+              root: config.path,
+              data: data,
+              helper: syncDBHelper,
+              uploadTaskBuilder: (path, data, [etag]) => UploadDataToServerTask(
+                path: path,
+                data: data,
+                etag: etag,
+                contentType: ContentType.json,
+                client: client,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
 
     final httpClient = client.client;
@@ -341,6 +388,9 @@ class WebDavAppSyncTaskExecutor
   }
 
   Future<WebDavAppSyncTaskResult> doExec() async {
+    await groupSyncSubTask.run(this);
+    if (isCancalling) return const WebDavAppSyncTaskResult.cancelled();
+
     final serverHabitsMetaFuture = fetchHabitsMetaFromServerTask.run(this);
     final localHabitsFuture = queryHabitsFromDbTask.run(this);
 

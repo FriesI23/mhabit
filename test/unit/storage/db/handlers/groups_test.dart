@@ -16,6 +16,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/models/group.dart';
 import 'package:mhabit/storage/db/handlers/group.dart';
+import 'package:mhabit/storage/db/handlers/sync.dart';
+import 'package:mhabit/storage/db/handlers/sync_group.dart';
 import 'package:mhabit/storage/db_helper_provider.dart';
 
 void main() {
@@ -83,12 +85,24 @@ void main() {
   group('GroupDBHelper', () {
     late DBHelperViewModel viewModel;
     late GroupDBHelper helper;
+    late SyncGroupDBHelper syncHelper;
+
+    Future<Map<String, Object?>> loadSyncRow(String uuid) async {
+      final rows = await viewModel.local.db.query(
+        'mh_sync',
+        where: '${SyncDbCellKey.groupUUID} = ?',
+        whereArgs: [uuid],
+      );
+      expect(rows, hasLength(1));
+      return rows.first;
+    }
 
     setUp(() async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       viewModel = DBHelperViewModel();
       await viewModel.init();
       helper = GroupDBHelper(viewModel.local);
+      syncHelper = SyncGroupDBHelper(viewModel.local);
     });
 
     tearDown(() {
@@ -96,7 +110,7 @@ void main() {
       viewModel.dispose();
     });
 
-    test('insertNewGroup writes to DB', () async {
+    test('insertNewGroup writes group row and sync row', () async {
       const group = GroupDBCell(
         uuid: 'insert-test-uuid',
         name: 'Insert Test',
@@ -105,6 +119,11 @@ void main() {
       );
       final id = await helper.insertNewGroup(group);
       expect(id, greaterThan(0));
+
+      final sync = await loadSyncRow('insert-test-uuid');
+      expect(sync[SyncDbCellKey.groupUUID], 'insert-test-uuid');
+      expect(sync[SyncDbCellKey.dirty], 1);
+      expect(sync[SyncDbCellKey.dirtyTotal], 1);
     });
 
     test('loadAllActiveGroups returns only active groups', () async {
@@ -211,5 +230,139 @@ void main() {
       expect(softDeleted, isNotNull);
       expect(softDeleted!.status, 2);
     });
+
+    test('update/delete increment group dirty counters', () async {
+      await helper.insertNewGroup(
+        const GroupDBCell(
+          uuid: 'dirty-inc',
+          name: 'Dirty Increment',
+          status: 1,
+        ),
+      );
+
+      var sync = await loadSyncRow('dirty-inc');
+      expect(sync[SyncDbCellKey.dirty], 1);
+      expect(sync[SyncDbCellKey.dirtyTotal], 1);
+
+      await helper.updateExistGroup(
+        const GroupDBCell(
+          uuid: 'dirty-inc',
+          name: 'Dirty Increment v2',
+          status: 1,
+        ),
+      );
+      sync = await loadSyncRow('dirty-inc');
+      expect(sync[SyncDbCellKey.dirty], 2);
+      expect(sync[SyncDbCellKey.dirtyTotal], 2);
+
+      await helper.updateExistGroup(
+        const GroupDBCell(
+          uuid: 'dirty-inc',
+          name: 'Dirty Increment v3',
+          desc: 'desc',
+          status: 1,
+        ),
+      );
+      sync = await loadSyncRow('dirty-inc');
+      expect(sync[SyncDbCellKey.dirty], 3);
+      expect(sync[SyncDbCellKey.dirtyTotal], 3);
+
+      await helper.deleteGroup('dirty-inc');
+      sync = await loadSyncRow('dirty-inc');
+      expect(sync[SyncDbCellKey.dirty], 4);
+      expect(sync[SyncDbCellKey.dirtyTotal], 4);
+    });
+
+    test('updateExistGroup rolls back when sync row is missing', () async {
+      await helper.insertNewGroup(
+        const GroupDBCell(
+          uuid: 'tx-update-rollback',
+          name: 'Before',
+          status: 1,
+        ),
+      );
+      await viewModel.local.db.delete(
+        'mh_sync',
+        where: '${SyncDbCellKey.groupUUID} = ?',
+        whereArgs: ['tx-update-rollback'],
+      );
+
+      await expectLater(
+        helper.updateExistGroup(
+          const GroupDBCell(
+            uuid: 'tx-update-rollback',
+            name: 'After',
+            status: 1,
+          ),
+        ),
+        throwsA(isA<StateError>()),
+      );
+
+      final group = await helper.loadGroupByUUID('tx-update-rollback');
+      expect(group, isNotNull);
+      expect(group!.name, 'Before');
+    });
+
+    test('deleteGroup rolls back when sync row is missing', () async {
+      await helper.insertNewGroup(
+        const GroupDBCell(
+          uuid: 'tx-delete-rollback',
+          name: 'Before',
+          status: 1,
+        ),
+      );
+      await viewModel.local.db.delete(
+        'mh_sync',
+        where: '${SyncDbCellKey.groupUUID} = ?',
+        whereArgs: ['tx-delete-rollback'],
+      );
+
+      await expectLater(
+        helper.deleteGroup('tx-delete-rollback'),
+        throwsA(isA<StateError>()),
+      );
+
+      final group = await helper.loadGroupByUUID('tx-delete-rollback');
+      expect(group, isNotNull);
+      expect(group!.status, 1);
+    });
+
+    test(
+      'clearGroupDirtyMark decrements by snapshot and preserves newer edits',
+      () async {
+        await helper.insertNewGroup(
+          const GroupDBCell(uuid: 'clear-dirty', name: 'Original', status: 1),
+        );
+
+        final snapshot = await syncHelper.loadGroupDataFromDb(
+          'clear-dirty',
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+        expect(snapshot, isNotNull);
+        expect(snapshot!.dirty, 1);
+        expect(snapshot.dirtyTotal, 1);
+
+        await helper.updateExistGroup(
+          const GroupDBCell(
+            uuid: 'clear-dirty',
+            name: 'Local New Edit',
+            status: 1,
+          ),
+        );
+
+        await syncHelper.clearGroupDirtyMark(
+          snapshot,
+          etag: 'etag-after-upload',
+          configId: 'cfg',
+          sessionId: 'session',
+        );
+
+        final sync = await loadSyncRow('clear-dirty');
+        expect(sync[SyncDbCellKey.dirty], 1);
+        expect(sync[SyncDbCellKey.dirtyTotal], 1);
+        expect(sync[SyncDbCellKey.lastMark2], 'etag-after-upload');
+      },
+    );
   });
 }

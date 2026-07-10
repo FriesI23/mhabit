@@ -46,6 +46,10 @@ class GroupManager extends ChangeNotifier
     int? icon,
     int? color,
   }) async {
+    // Block empty or whitespace-only name
+    if (name.trim().isEmpty) {
+      throw ArgumentError('Group name must not be empty');
+    }
     final uuid = genHabitUUID();
     final cell = GroupDBCell(
       uuid: uuid,

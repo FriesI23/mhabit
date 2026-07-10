@@ -81,6 +81,15 @@ class FetchMetaFromServerTask
             _filterFiles(resource, path, client, reAppSyncHabitFileName),
       );
 
+  factory FetchMetaFromServerTask.groups(Uri path, WebDavStdClient client) =>
+      FetchMetaFromServerTask(
+        path: path,
+        client: client,
+        depth: Depth.members,
+        filter: (resource) =>
+            _filterFiles(resource, path, client, reAppSyncGroupFileName),
+      );
+
   @override
   Future<List<WebDavResourceContainer>> run(AppSyncContext context) => client
       .dispatch(path)
@@ -343,6 +352,21 @@ class FetchDataFromServerTask<T> implements AppSyncSubTask<T> {
     client: client,
     responseHandler: (response) => _responseHandler(response, path).then(
       (value) => WebDavSyncHabitData.fromJson(
+        value.data,
+      ).copyWith(etag: etag ?? value.etag),
+    ),
+  );
+
+  static FetchDataFromServerTask<WebDavSyncGroupData>
+  fetchGroupDataFromServerBuilder({
+    required Uri path,
+    required WebDavStdClient client,
+    String? etag,
+  }) => FetchDataFromServerTask(
+    path: path,
+    client: client,
+    responseHandler: (response) => _responseHandler(response, path).then(
+      (value) => WebDavSyncGroupData.fromJson(
         value.data,
       ).copyWith(etag: etag ?? value.etag),
     ),
