@@ -97,10 +97,6 @@ void main() {
     });
   });
 
-  // ------------------------------------------------------------------------
-  // SyncGroupsInfoMergerImpl
-  // ------------------------------------------------------------------------
-
   group("SyncGroupsInfoMergerImpl", () {
     late AppSyncContext context;
 
@@ -168,10 +164,6 @@ void main() {
     });
   });
 
-  // ------------------------------------------------------------------------
-  // SingleGroupSyncTask
-  // ------------------------------------------------------------------------
-
   group("SingleGroupSyncTask", () {
     late WebDavAppSyncGroupInfo cell;
 
@@ -204,15 +196,9 @@ void main() {
       final result = await task.run(_FakeAppSyncContext());
       expect(result.isSuccessed, isTrue);
       expect(serverCalled, isTrue);
-      // isNeedUpload should be false for server-only →
-      // actually it's WebDavAppSyncInfoStatus.both with different etags,
-      // so both isNeedDownload AND isNeedUpload would be true
-      // Let me adjust the test
     });
 
     test("runs download-then-upload when both needed", () async {
-      // cell is "both" with different etags → needs download
-      // and is dirty → needs upload
       cell.eTagFromLocal = 'a';
       cell.eTagFromServer = 'b';
       cell.makeDirty();
@@ -253,10 +239,6 @@ void main() {
       expect(uploadCalled, isFalse);
     });
   });
-
-  // ------------------------------------------------------------------------
-  // GroupSyncTask (integration of fetch/query/merge/single-task pipeline)
-  // ------------------------------------------------------------------------
 
   group("GroupSyncTask", () {
     late AppSyncContext ctx;
@@ -301,10 +283,6 @@ void main() {
       expect(result.values.first.isSuccessed, isTrue);
     });
   });
-
-  // ------------------------------------------------------------------------
-  // WriteGroupToDBTask / LoadGroupFromDBTask
-  // ------------------------------------------------------------------------
 
   group("WriteGroupToDBTask", () {
     test("calls helper.group.syncGroupDataToDb and returns success", () async {

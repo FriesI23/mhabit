@@ -55,15 +55,11 @@ void main() {
       timeDilation = savedTimeDilation;
     });
 
-    // -- Initial state ------------------------------------------------
-
     test('initial state is default', () {
       expect(sync.scale, 1.0);
       expect(sync.disableAnimations, isFalse);
       expect(sync.isOverridden, isFalse);
     });
-
-    // -- Normal scale changes -----------------------------------------
 
     test('applies normal scale to timeDilation', () {
       sync.testReceiveScale(2.0);
@@ -82,14 +78,11 @@ void main() {
       expect(sync.disableAnimations, isFalse);
     });
 
-    // -- Scale = 0 (disable animations) -------------------------------
-
     test('scale=0 sets disableAnimations but does not write timeDilation', () {
       sync.testReceiveScale(0.0);
 
       expect(sync.scale, 0.0);
       expect(sync.disableAnimations, isTrue);
-      // Must stay 1.0 — Flutter requires timeDilation > 0
       expect(timeDilation, 1.0);
     });
 
@@ -104,8 +97,6 @@ void main() {
         expect(sync.disableAnimations, isTrue);
       },
     );
-
-    // -- Disable → re-enable transitions ------------------------------
 
     test('transition 2.0 → 0 → 1.5 applies new scale correctly', () {
       sync.testReceiveScale(2.0);
@@ -130,13 +121,11 @@ void main() {
       expect(sync.scale, 1.0);
     });
 
-    // -- External override detection ----------------------------------
-
     test('detects external override via frame callback', () {
       sync.testReceiveScale(2.0);
       expect(timeDilation, 2.0);
 
-      timeDilation = 3.0; // external tool changes it
+      timeDilation = 3.0;
       sync.testTickFrame();
       expect(sync.isOverridden, isTrue);
     });
@@ -150,7 +139,7 @@ void main() {
       timeDilation = 1.0;
       sync.testTickFrame();
       expect(sync.isOverridden, isFalse);
-      expect(timeDilation, 2.0); // bridge reapplies scale
+      expect(timeDilation, 2.0);
     });
 
     test('override prevents new scale from being applied', () {
@@ -160,8 +149,8 @@ void main() {
       expect(sync.isOverridden, isTrue);
 
       sync.testReceiveScale(1.5);
-      expect(timeDilation, 3.0); // still overridden
-      expect(sync.scale, 1.5); // but scale is tracked
+      expect(timeDilation, 3.0);
+      expect(sync.scale, 1.5);
     });
 
     test('does not stomp external override when scale goes to 0', () {
@@ -171,13 +160,9 @@ void main() {
       expect(sync.isOverridden, isTrue);
 
       sync.testReceiveScale(0.0);
-      // External override preserved — we only reset when we had control
       expect(timeDilation, 3.0);
       expect(sync.disableAnimations, isTrue);
-      // After disable, override flag is cleared
     });
-
-    // -- Listener notifications ---------------------------------------
 
     test('notifies listeners on scale change', () {
       var notified = false;
@@ -209,8 +194,6 @@ void main() {
       sync.testTickFrame();
       expect(notified, isTrue);
     });
-
-    // -- Dispose -----------------------------------------------------
 
     test('dispose stops frame callback from detecting overrides', () {
       sync.testReceiveScale(2.0);

@@ -117,8 +117,6 @@ class AndroidAnimationScaleSync extends AnimationScaleSync {
     super.dispose();
   }
 
-  // -- Test hooks -------------------------------------------------------
-
   @visibleForTesting
   void testReceiveScale(double value) => _onScaleChanged(value);
 

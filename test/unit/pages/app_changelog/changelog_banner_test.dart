@@ -17,24 +17,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/pages/habits_display/_widgets/changelog_banner_sliver.dart';
 
-// ---------------------------------------------------------------------------
-// Test constants
-// ---------------------------------------------------------------------------
-
 const _testVersion = '1.0.0+1';
 const _testContent = '- item a\n- item b';
 const _fullChangelog = '## 1.0.0+1\n- item a\n- item b\n';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/// Builds a minimal widget tree with [ChangelogBanner] ancestor and a
-/// [ChangelogBannerSliver] inside a [CustomScrollView] so the private
-/// `_ChangelogBanner` widget is in the tree and can animate.
-///
-/// Tapping the trigger button calls [ChangelogBannerController.show]
-/// directly, bypassing asset loading.
 Widget _buildTestApp({
   String version = _testVersion,
   String content = _testContent,
@@ -67,9 +52,6 @@ Widget _buildTestApp({
   );
 }
 
-/// Builds a widget tree with [ChangelogBanner] + [ChangelogBannerSliver]
-/// but without calling [ChangelogBannerController.show] — used to test
-/// the idle / collapsed state.
 Widget _buildIdleApp() {
   return const MaterialApp(
     localizationsDelegates: L10n.localizationsDelegates,
@@ -86,10 +68,6 @@ Future<void> _triggerBanner(WidgetTester tester) async {
   await tester.tap(find.text('Trigger Banner'));
   await tester.pumpAndSettle();
 }
-
-// ---------------------------------------------------------------------------
-// ChangelogBannerController — pure unit tests
-// ---------------------------------------------------------------------------
 
 void main() {
   group('ChangelogBannerController', () {
@@ -164,7 +142,6 @@ void main() {
     });
 
     test('dismiss() when not showing is no-op', () {
-      // Should not throw.
       controller.dismiss();
       expect(controller.isShowing, false);
     });
@@ -190,7 +167,7 @@ void main() {
         onDismiss: () => callCount++,
       );
       controller.dismiss();
-      controller.dismiss(); // second dismiss should NOT invoke callback again
+      controller.dismiss();
       expect(callCount, 1);
     });
 
@@ -212,10 +189,6 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------------
-  // ChangelogBanner InheritedWidget integration tests
-  // -------------------------------------------------------------------------
-
   group('ChangelogBanner widget tree', () {
     testWidgets('ChangelogBanner.of throws when no ancestor', (tester) async {
       await tester.pumpWidget(
@@ -231,7 +204,6 @@ void main() {
         ),
       );
       await tester.tap(find.text('Bad'));
-      // Expect assertion error from ChangelogBanner.of
       expect(tester.takeException(), isAssertionError);
     });
 
@@ -258,14 +230,9 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------------
-  // ChangelogBannerSliver widget tests
-  // -------------------------------------------------------------------------
-
   group('ChangelogBannerSliver', () {
     testWidgets('banner is not visible in idle state', (tester) async {
       await tester.pumpWidget(_buildIdleApp());
-      // MaterialBanner should not be present when controller is not showing
       expect(find.byType(MaterialBanner), findsNothing);
     });
 
@@ -284,7 +251,6 @@ void main() {
       await tester.tap(find.text('CLOSE'));
       await tester.pumpAndSettle();
 
-      // MaterialBanner should animate out
       expect(find.byType(MaterialBanner), findsNothing);
     });
 

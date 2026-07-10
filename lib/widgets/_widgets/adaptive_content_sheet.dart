@@ -120,10 +120,6 @@ Future<T?> showAdaptiveContentSheet<T>({
   };
 }
 
-// ---------------------------------------------------------------------------
-// Scaffold widgets
-// ---------------------------------------------------------------------------
-
 class _AdaptiveSheet extends StatelessWidget {
   final Widget? title;
   final Widget child;

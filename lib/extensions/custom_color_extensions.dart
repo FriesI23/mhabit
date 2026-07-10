@@ -47,10 +47,6 @@ import '../theme/color.dart' show CustomColors;
 /// same custom seed + brightness pair avoid redundant seed-scheme
 /// construction.
 extension HabitColorExtension on CustomColors {
-  // -----------------------------------------------------------------
-  // Cache for custom-color schemes
-  // -----------------------------------------------------------------
-
   /// Per-(argb, brightness) → [ColorScheme] cache for custom colors.
   /// A custom color's scheme is deterministic for a given seed and
   /// brightness, so caching eliminates redundant [ColorScheme.fromSeed]
@@ -103,10 +99,6 @@ extension HabitColorExtension on CustomColors {
         ? Color(argb)
         : hsl.withLightness(lightness).toColor();
   }
-
-  // -----------------------------------------------------------------
-  // Public color-role resolution — HabitColor → Material role
-  // -----------------------------------------------------------------
 
   /// Returns the primary-color tone for [color].
   ///
@@ -164,10 +156,6 @@ extension HabitColorExtension on CustomColors {
       brightness,
     ).onPrimaryContainer,
   };
-
-  // -----------------------------------------------------------------
-  // Built-in palette direct access (public helpers)
-  // -----------------------------------------------------------------
 
   /// Returns the primary tone for a built-in palette slot.
   Color? getBuiltInColor(HabitColorType t) => switch (t) {
