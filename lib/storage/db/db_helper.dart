@@ -92,7 +92,6 @@ class _DBHelper implements DBHelper {
     await db.execute(CustomSql.autoUpdateRecordsModifyTimeTrigger);
     await db.execute(CustomSql.autoAddSortPostionWhenAddNewHabit);
     await db.execute(CustomSql.autoUpdateSyncModifyTimeTrigger);
-    await db.execute(CustomSql.autoAddSortOrderWhenAddNewGroup);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -220,9 +219,6 @@ class _DBHelper implements DBHelper {
           "ADD COLUMN ${SyncDbCellKey.groupUUID} TEXT",
         );
       }
-
-      // 4. Add group sort_order trigger
-      await db.execute(CustomSql.autoAddSortOrderWhenAddNewGroup);
     }
   }
 

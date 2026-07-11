@@ -31,7 +31,6 @@ void main() {
       color: 0xFF00FF00,
       customColor: 0x11223344,
       customColorTinted: 1,
-      sortOrder: 1.0,
       status: 1,
     );
 
@@ -45,7 +44,6 @@ void main() {
       expect(json[GroupDBCellKey.color], 0xFF00FF00);
       expect(json[GroupDBCellKey.customColor], 0x11223344);
       expect(json[GroupDBCellKey.customColorTinted], 1);
-      expect(json[GroupDBCellKey.sortOrder], 1.0);
       expect(json[GroupDBCellKey.status], 1);
     });
 
@@ -60,7 +58,6 @@ void main() {
       expect(restored.color, group.color);
       expect(restored.customColor, group.customColor);
       expect(restored.customColorTinted, group.customColorTinted);
-      expect(restored.sortOrder, group.sortOrder);
       expect(restored.status, group.status);
     });
 
@@ -73,7 +70,6 @@ void main() {
       expect(cell.color, isNull);
       expect(cell.customColor, isNull);
       expect(cell.customColorTinted, isNull);
-      expect(cell.sortOrder, isNull);
       expect(cell.status, isNull);
     });
 
@@ -114,7 +110,6 @@ void main() {
       const group = GroupDBCell(
         uuid: 'insert-test-uuid',
         name: 'Insert Test',
-        sortOrder: 9e999,
         status: 1,
       );
       final id = await helper.insertNewGroup(group);
@@ -128,56 +123,31 @@ void main() {
 
     test('loadAllActiveGroups returns only active groups', () async {
       await helper.insertNewGroup(
-        const GroupDBCell(
-          uuid: 'active-1',
-          name: 'Active 1',
-          sortOrder: 2.0,
-          status: 1,
-        ),
+        const GroupDBCell(uuid: 'active-1', name: 'Active 1', status: 1),
       );
       await helper.insertNewGroup(
-        const GroupDBCell(
-          uuid: 'active-2',
-          name: 'Active 2',
-          sortOrder: 1.0,
-          status: 1,
-        ),
+        const GroupDBCell(uuid: 'active-2', name: 'Active 2', status: 1),
       );
       await helper.insertNewGroup(
-        const GroupDBCell(
-          uuid: 'deleted-1',
-          name: 'Deleted 1',
-          sortOrder: 3.0,
-          status: 2,
-        ),
+        const GroupDBCell(uuid: 'deleted-1', name: 'Deleted 1', status: 2),
       );
 
       final groups = await helper.loadAllActiveGroups();
       expect(groups.length, 2);
     });
 
-    test('loadAllActiveGroups orders by sortOrder', () async {
+    test('loadAllActiveGroups orders by createT', () async {
       await helper.insertNewGroup(
-        const GroupDBCell(
-          uuid: 'order-2',
-          name: 'Second',
-          sortOrder: 20.0,
-          status: 1,
-        ),
+        const GroupDBCell(uuid: 'order-2', name: 'Second', status: 1),
       );
       await helper.insertNewGroup(
-        const GroupDBCell(
-          uuid: 'order-1',
-          name: 'First',
-          sortOrder: 10.0,
-          status: 1,
-        ),
+        const GroupDBCell(uuid: 'order-1', name: 'First', status: 1),
       );
 
       final groups = await helper.loadAllActiveGroups();
       expect(groups.length, 2);
-      expect(groups[0].uuid, 'order-1');
-      expect(groups[1].uuid, 'order-2');
+      expect(groups[0].uuid, 'order-2');
+      expect(groups[1].uuid, 'order-1');
     });
 
     test('loadGroupByUUID returns correct group', () async {

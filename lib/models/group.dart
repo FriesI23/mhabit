@@ -31,7 +31,6 @@ class GroupDBCellKey {
   static const String color = 'color';
   static const String customColor = 'custom_color';
   static const String customColorTinted = 'custom_color_tinted';
-  static const String sortOrder = 'sort_order';
   static const String status = 'status';
 
   /// `color`/`customColor`/`customColorTinted` always travel together as one
@@ -69,8 +68,6 @@ class GroupDBCell with DBCell {
   final int? customColor;
   @JsonKey(name: GroupDBCellKey.customColorTinted)
   final int? customColorTinted;
-  @JsonKey(name: GroupDBCellKey.sortOrder)
-  final num? sortOrder;
   @JsonKey(name: GroupDBCellKey.status)
   final int? status;
 
@@ -85,7 +82,6 @@ class GroupDBCell with DBCell {
     this.color,
     this.customColor,
     this.customColorTinted,
-    this.sortOrder,
     this.status,
   });
 

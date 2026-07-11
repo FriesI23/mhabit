@@ -57,7 +57,6 @@ class GroupManager extends ChangeNotifier
       desc: desc,
       icon: icon,
       color: color,
-      sortOrder: double.infinity,
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);

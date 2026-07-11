@@ -27,7 +27,6 @@ abstract class _$GroupDBCellCWProxy {
     int? color,
     int? customColor,
     int? customColorTinted,
-    num? sortOrder,
     int? status,
   });
 }
@@ -58,7 +57,6 @@ class _$GroupDBCellCWProxyImpl implements _$GroupDBCellCWProxy {
     Object? color = const $CopyWithPlaceholder(),
     Object? customColor = const $CopyWithPlaceholder(),
     Object? customColorTinted = const $CopyWithPlaceholder(),
-    Object? sortOrder = const $CopyWithPlaceholder(),
     Object? status = const $CopyWithPlaceholder(),
   }) {
     return GroupDBCell(
@@ -102,10 +100,6 @@ class _$GroupDBCellCWProxyImpl implements _$GroupDBCellCWProxy {
           ? _value.customColorTinted
           // ignore: cast_nullable_to_non_nullable
           : customColorTinted as int?,
-      sortOrder: sortOrder == const $CopyWithPlaceholder()
-          ? _value.sortOrder
-          // ignore: cast_nullable_to_non_nullable
-          : sortOrder as num?,
       status: status == const $CopyWithPlaceholder()
           ? _value.status
           // ignore: cast_nullable_to_non_nullable
@@ -136,7 +130,6 @@ GroupDBCell _$GroupDBCellFromJson(Map<String, dynamic> json) => GroupDBCell(
   color: (json['color'] as num?)?.toInt(),
   customColor: (json['custom_color'] as num?)?.toInt(),
   customColorTinted: (json['custom_color_tinted'] as num?)?.toInt(),
-  sortOrder: json['sort_order'] as num?,
   status: (json['status'] as num?)?.toInt(),
 );
 
@@ -152,6 +145,5 @@ Map<String, dynamic> _$GroupDBCellToJson(GroupDBCell instance) =>
       'color': ?instance.color,
       'custom_color': ?instance.customColor,
       'custom_color_tinted': ?instance.customColorTinted,
-      'sort_order': ?instance.sortOrder,
       'status': ?instance.status,
     };

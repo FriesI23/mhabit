@@ -89,7 +89,7 @@ class GroupDBHelper extends DBHelperHandler {
       table,
       where: "${GroupDBCellKey.status} = ?",
       whereArgs: [1],
-      orderBy: "${GroupDBCellKey.sortOrder} ASC",
+      orderBy: "${GroupDBCellKey.createT} ASC",
     );
     return result.map(GroupDBCell.fromJson).toList();
   }

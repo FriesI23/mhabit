@@ -9,6 +9,5 @@ CREATE TABLE IF NOT EXISTS mh_groups (
     color INTEGER,
     custom_color INTEGER,
     custom_color_tinted INTEGER,
-    sort_order REAL NOT NULL DEFAULT 9e999,
     status INTEGER NOT NULL DEFAULT 1
 );
