@@ -63,6 +63,9 @@ class GroupDBHelper extends DBHelperHandler {
   }
 
   /// Soft delete: sets status = 2.
+  ///
+  /// Associated habits keep [groupId] unchanged so a future restore
+  /// (status ← 1) automatically reattaches them without data loss.
   Future<int> deleteGroup(String uuid) {
     return db.transaction((db) async {
       final result = await db.update(
