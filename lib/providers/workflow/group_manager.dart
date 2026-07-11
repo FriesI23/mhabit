@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../models/group.dart';
 import '../../providers/support/commons.dart';
@@ -44,7 +45,7 @@ class GroupManager extends ChangeNotifier
     required String name,
     String? desc,
     int? icon,
-    int? color,
+    GroupColor? color,
   }) async {
     // Block empty or whitespace-only name
     if (name.trim().isEmpty) {
@@ -56,7 +57,9 @@ class GroupManager extends ChangeNotifier
       name: name,
       desc: desc,
       icon: icon,
-      color: color,
+      color: color?.dbColorType.dbCode,
+      customColor: color?.dbCustomColor,
+      customColorTinted: color?.dbCustomColorTinted,
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);

@@ -15,6 +15,7 @@
 import 'package:flutter/widgets.dart'
     show BuildContext, ScrollPhysics, ValueKey, Widget;
 
+import '../models/habit_color.dart';
 import '../models/habit_date.dart';
 import '../models/habit_detail_chart.dart';
 import '../models/habit_form.dart';
@@ -26,6 +27,8 @@ typedef JsonMap = Map<String, dynamic>;
 
 typedef HabitUUID = String;
 typedef HabitRecordUUID = String;
+
+typedef GroupColor = HabitColor;
 typedef HabitDailyGoal = num;
 typedef HabitSortPostion = num;
 typedef HabitRecordDate = HabitDate;
