@@ -226,7 +226,7 @@ void main() {
         expect(_habitUuids(vm), ['a', 'b', 'c']);
 
         // op: drag b(idx=2) before a(drop=1)
-        await vm.onGroupedHabitReorderComplate(2, 1);
+        await vm.onHabitReorderComplate(2, 1);
 
         // after: [H(G1), b(pos=1), a(pos=2), H(G2), c(pos=3)]
         expect(_habitUuids(vm), ['b', 'a', 'c']);
@@ -322,7 +322,7 @@ void main() {
         vm2.resortData();
         // before: [H(G1), a, b, H(null), c]
         // op:     drag b(idx=2) before a(drop=1)
-        await vm2.onGroupedHabitReorderComplate(2, 1);
+        await vm2.onHabitReorderComplate(2, 1);
         final groupedUuids = _habitUuids(vm2);
         final groupedPos = _habitSortPositions(vm2);
         vm2.dispose();
@@ -372,7 +372,7 @@ void main() {
 
       // before: [H(G1), a(pos=1), b(pos=2), H(G2), c(pos=3), H(null), d(pos=4)]
       // op:     drag b(idx=2) before a(drop=1)
-      await vm.onGroupedHabitReorderComplate(2, 1);
+      await vm.onHabitReorderComplate(2, 1);
       // after:  [H(G1), b(pos=1), a(pos=2), H(G2), c(pos=3), H(null), d(pos=4)]
 
       // G1: multiset {1,2} preserved, values swapped
@@ -492,7 +492,7 @@ void main() {
       final group1PosBefore = [a.sortPostion, b.sortPostion]..sort();
 
       // op: drag b(idx=2) before a(drop=1)
-      await vm.onGroupedHabitReorderComplate(2, 1);
+      await vm.onHabitReorderComplate(2, 1);
       // after: [H(G1), b(pos=10), a(pos=20), H(G2), c(pos=30)]
 
       final group1PosAfter = [a.sortPostion, b.sortPostion]..sort();
@@ -504,6 +504,80 @@ void main() {
       expect(b.sortPostion, 10);
       // G2 untouched
       expect(c.sortPostion, 30);
+
+      vm.dispose();
+    });
+
+    // ── cross-group reorder (range-based, no groupUUID needed) ──
+    //  before(group): [H(G1), a(pos=10), H(G2), b(pos=20), c(pos=30)]
+    //  op:            drag a(idx=1) down to after c(drop=4)
+    //  range:         [1, 4] → a, H(G2), b, c → habits: [a, b, c]
+    //  after:         [H(G1), H(G2), b(pos=10), c(pos=20), a(pos=30)]
+    test('cross-group reorder via range handles both groups', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g2');
+      final c = _h(id: 3, uuid: 'c', sortPostion: 30, groupId: 'g2');
+      final access = _ReorderTestAccess([a, b, c]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(
+          _ReorderTestGroupManager([
+            _g(uuid: 'g1', name: 'G1'),
+            _g(uuid: 'g2', name: 'G2'),
+          ]),
+        );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // before: [H(G1), a(pos=10), H(G2), b(pos=20), c(pos=30)]
+      expect(_habitUuids(vm), ['a', 'b', 'c']);
+
+      // op: drag a(idx=1) → after c(drop=4)
+      await vm.onHabitReorderComplate(1, 4);
+
+      // after(flat): [b(pos=10), c(pos=20), a(pos=30)]
+      expect(_habitUuids(vm), ['b', 'c', 'a']);
+      expect(b.sortPostion, 10);
+      expect(c.sortPostion, 20);
+      expect(a.sortPostion, 30);
+
+      // range-based: only [a, b, c] passed (not just one group)
+      expect(
+        access.lastSortedHabits!.map((h) => h.uuid),
+        unorderedEquals(['a', 'b', 'c']),
+      );
+
+      vm.dispose();
+    });
+
+    // ── ungrouped reorder ignores range and uses all habits ─────
+    //  Verifies that _groupingEnabled=false uses the full-list path
+    //  even when fromIndex/toIndex are passed.
+    test('ungrouped reorder reassigns all habits (ignores range)', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10);
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20);
+      final c = _h(id: 3, uuid: 'c', sortPostion: 30);
+      final access = _ReorderTestAccess([a, b, c]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_ReorderTestGroupManager([]));
+
+      await vm.loadData(listen: false);
+      vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
+      vm.resortData();
+
+      // before: [a(pos=10), b(pos=20), c(pos=30)]
+      // op:     drag c(idx=2) before b(drop=1)
+      // range:  [1, 2] → b, c  (but _groupingEnabled=false → all: a, b, c)
+      await vm.onHabitReorderComplate(2, 1);
+
+      // pass all habits (not just range [b, c])
+      expect(
+        access.lastSortedHabits!.map((h) => h.uuid),
+        unorderedEquals(['a', 'b', 'c']),
+      );
 
       vm.dispose();
     });

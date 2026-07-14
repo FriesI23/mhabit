@@ -759,9 +759,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
-      final task = context.read<HabitsGroupingViewModel>().isGroupingEnabled
-          ? viewmodel.onGroupedHabitReorderComplate(index, dropIndex)
-          : viewmodel.onHabitReorderComplate(index, dropIndex);
+      final task = viewmodel.onHabitReorderComplate(index, dropIndex);
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;

@@ -821,6 +821,29 @@ extension HabitSummarySortExtension on Iterable<HabitSummaryData> {
   }
 }
 
+/// Reassigns [HabitSummaryData.sortPostion] to match iteration order.
+///
+/// Collects all existing weights, sorts them, then assigns them in
+/// ascending order following the iteration order of [this].  The
+/// pre-existing [sortPostion] multiset is preserved; only the mapping
+/// from values to positions changes.
+///
+/// Group-agnostic: this operates on a flat list of habits regardless of
+/// group membership.  Both grouped and ungrouped reorder paths use the
+/// same algorithm — the caller is responsible for providing the habits
+/// in the desired flat order.
+extension HabitSortReassignmentExtension on Iterable<HabitSummaryData> {
+  void reassignSortPositions() {
+    final list = toList();
+    if (list.isEmpty) return;
+
+    final weights = list.map((h) => h.sortPostion).toList()..sort();
+    for (final (i, h) in list.indexed) {
+      h.sortPostion = weights[i];
+    }
+  }
+}
+
 final class GroupHeaderSortCache extends HabitSortCache<GroupHeaderSortCache> {
   final String? groupUUID;
   final String name;
