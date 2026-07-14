@@ -25,6 +25,7 @@ import '../../extensions/async_extensions.dart';
 import '../../extensions/color_extensions.dart';
 import '../../extensions/context_extensions.dart';
 import '../../extensions/custom_color_extensions.dart';
+import '../../extensions/group_icon_extensions.dart';
 import '../../extensions/num_extensions.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
@@ -1165,12 +1166,25 @@ class _OtherInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final viewmodel = context.read<HabitDetailViewModel>();
+    final groupId = viewmodel.habitGroupId;
 
     return HabitDetailTileList(
       title: HabitDetailChartTitle(
         title: l10n?.habitDetail_otherSubgroup_title ?? "Others",
       ),
       contentChildren: [
+        if (groupId != null)
+          HabitOtherInfoTile(
+            title: Text(l10n?.habitDetail_groupTile_title ?? 'Group'),
+            subTitle: Text(
+              viewmodel.groupDisplayInfo?.name ??
+                  l10n?.habitGroup_uncategorized ??
+                  '<nogroup>',
+            ),
+            leading: Icon(
+              viewmodel.groupDisplayInfo?.icon?.iconData ?? defaultGroupIcon,
+            ),
+          ),
         if (viewmodel.habitType != null)
           HabitOtherInfoTile(
             title: l10n != null

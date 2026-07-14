@@ -19,27 +19,32 @@ import '../common/types.dart';
 import '../storage/db/handlers/habit.dart';
 import 'common.dart';
 import 'habit_form.dart';
+import 'habit_group.dart';
 import 'habit_summary.dart';
 
 class HabitDetailData implements DirtyMarkMixin {
   final HabitSummaryData _data;
   final DateTime _modifyT;
   final String _dailyGoalUnit;
+  final HabitGroupData? _groupData;
 
   HabitDetailData({
     required HabitSummaryData data,
     required DateTime modifyT,
     required String dailyGoalUnit,
+    HabitGroupData? groupData,
   }) : _data = data,
        _modifyT = modifyT,
-       _dailyGoalUnit = dailyGoalUnit;
+       _dailyGoalUnit = dailyGoalUnit,
+       _groupData = groupData;
 
-  HabitDetailData.fromDBQueryCell(HabitDBCell cell)
+  HabitDetailData.fromDBQueryCell(HabitDBCell cell, {HabitGroupData? groupData})
     : _data = HabitSummaryData.fromDBQueryCell(cell),
       _dailyGoalUnit = cell.dailyGoalUnit!,
       _modifyT = DateTime.fromMillisecondsSinceEpoch(
         cell.modifyT! * onSecondMS,
-      );
+      ),
+      _groupData = groupData;
 
   HabitSummaryData get data => _data;
 
@@ -56,6 +61,9 @@ class HabitDetailData implements DirtyMarkMixin {
   DateTime get modifyT => _modifyT;
 
   String get dailyGoalUnit => _dailyGoalUnit;
+
+  /// Domain-layer group data, or `null` when no group is assigned.
+  HabitGroupData? get groupData => _groupData;
 
   @override
   Key get diryMark => _data.diryMark;

@@ -35,6 +35,7 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/workflow/app_event.dart';
 import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../reminders/notification_channel.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../widgets/widgets.dart';
@@ -456,6 +457,8 @@ class _PageState extends State<_Page> {
               children: [
                 buildColorField(context),
                 kHabitDivider,
+                const _GroupField(),
+                kHabitDivider,
                 buildHabitTypeField(context),
                 kHabitDivider,
                 const _DailyGoalField(),
@@ -733,6 +736,52 @@ final class _DescField extends StatelessWidget {
           if (vm.mounted) vm.desc = value;
         },
       ),
+    );
+  }
+}
+
+final class _GroupField extends StatefulWidget {
+  const _GroupField();
+
+  @override
+  State<_GroupField> createState() => _GroupFieldState();
+}
+
+class _GroupFieldState extends State<_GroupField> {
+  @override
+  Widget build(BuildContext context) {
+    void onGroupSelected(String? id) {
+      context.read<HabitFormViewModel>().groupId = id;
+    }
+
+    Future<String> onCreateGroup(String name) async {
+      final groupManager = context.read<GroupManager>();
+      final groupUuid = (await groupManager.createGroup(name: name)).uuid!;
+      if (!context.mounted) return groupUuid;
+      context.read<AppEventBus>().push(
+        GroupChangedEvent(
+          msg: "habit_edit.onCreateGroup",
+          groupUUID: groupUuid,
+          changeType: GroupChangeType.created,
+          trace: {
+            AppEventPageSource.habitEdit: {AppEventFunctionSource.groupChanged},
+          },
+        ),
+      );
+      return groupUuid;
+    }
+
+    final (hasLoaded, groupId) = context
+        .select<HabitFormViewModel, (bool, String?)>(
+          (vm) => (vm.hasLoadedGroups, vm.groupState.groupId),
+        );
+
+    return HabitEditGroupTile(
+      groups: context.read<HabitFormViewModel>().groups,
+      currentGroupId: groupId,
+      loading: !hasLoaded,
+      onSelected: onGroupSelected,
+      onCreateGroup: onCreateGroup,
     );
   }
 }

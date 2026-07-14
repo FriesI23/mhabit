@@ -28,6 +28,7 @@ typedef JsonMap = Map<String, dynamic>;
 typedef HabitUUID = String;
 typedef HabitRecordUUID = String;
 
+typedef GroupUUID = String;
 typedef GroupColor = HabitColor;
 typedef HabitDailyGoal = num;
 typedef HabitSortPostion = num;

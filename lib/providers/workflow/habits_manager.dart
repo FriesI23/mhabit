@@ -23,6 +23,7 @@ import '../../models/habit_date.dart';
 import '../../models/habit_detail.dart';
 import '../../models/habit_export.dart';
 import '../../models/habit_form.dart';
+import '../../models/habit_group.dart';
 import '../../models/habit_import.dart';
 import '../../models/habit_repo_actions.dart';
 import '../../models/habit_summary.dart';
@@ -568,6 +569,7 @@ class HabitsManager
       cell,
       includeNullKeys: [
         ...HabitDBCellKey.nullableColorKeys,
+        HabitDBCellKey.groupId,
         if (withReminder) ...[
           HabitDBCellKey.remindCustom,
           HabitDBCellKey.remindQuestion,
@@ -639,8 +641,18 @@ class HabitsManager
     final recordLoadTask = recordDBHelper.loadRecords(uuid);
     final cell = await dataLoadTask;
     if (cell == null) return null;
+
+    // Resolve group display info from the habit's groupId FK.
+    final groupTask = cell.groupId != null
+        ? groupDBHelper.loadGroupByUUID(cell.groupId!)
+        : null;
+
     final records = await recordLoadTask;
-    final data = HabitDetailData.fromDBQueryCell(cell);
+    final group = await groupTask;
+    final data = HabitDetailData.fromDBQueryCell(
+      cell,
+      groupData: group != null ? HabitGroupData.fromDBQueryCell(group) : null,
+    );
     data.data.initRecords(records.map(HabitSummaryRecord.fromDBQueryCell));
     return data;
   }

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 
@@ -27,6 +29,7 @@ import '../../../models/habit_date.dart';
 import '../../../models/habit_detail.dart';
 import '../../../models/habit_detail_chart.dart';
 import '../../../models/habit_form.dart';
+import '../../../models/habit_group.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_score.dart';
 import '../../../models/habit_status.dart';
@@ -116,6 +119,9 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
 
   HabitUUID? get habitUUID => _habitDetailData?.data.uuid;
 
+  /// Group UUID associated with this habit, or null if uncategorized.
+  String? get habitGroupId => _habitDetailData?.data.groupId;
+
   Key getInsideVersion() {
     return _habitDetailData != null
         ? _habitDetailData!.diryMark
@@ -168,6 +174,8 @@ class HabitDetailViewModel extends ChangeNotifier implements ProviderMounted {
   void attachAccess(HabitDetailAccess newAccess) {
     _access = newAccess;
   }
+
+  HabitGroupData? get groupDisplayInfo => _habitDetailData?.groupData;
 
   void requestReload() {
     _nextForceReload = true;

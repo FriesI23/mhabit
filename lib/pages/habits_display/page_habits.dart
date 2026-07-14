@@ -45,6 +45,7 @@ import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_filter.dart';
+import '../../providers/app_ui/habits_grouping.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/app_ui/habits_sort.dart';
 import '../../providers/workflow/app_event.dart';
@@ -399,6 +400,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
       sortType: context.read<HabitsSortViewModel>().sortType,
       sortDirection: context.read<HabitsSortViewModel>().sortDirection,
       habitFilter: context.read<HabitsFilterViewModel>(),
+      grouping: context.read<HabitsGroupingViewModel>(),
       appTheme: context.read<AppThemeViewModel>(),
     );
 
@@ -693,6 +695,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
   }
 
   bool _onHabitListReorderStart(int index, double dx, double dy) {
+    // FIXME: disable drag-reorder when grouping is enabled until in-group drag (Parse 4).
+    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) return false;
+
     if (!mounted) return false;
 
     final viewmodel = context.read<HabitSummaryViewModel>();
@@ -1108,6 +1113,8 @@ class _HabitListState extends State<_HabitList> {
         itemBuilder: (context, element, data) {
           if (data.measuring) {
             return const _HabitListItemMeasurer();
+          } else if (element is GroupHeaderSortCache) {
+            return _GroupHeaderTile(header: element);
           } else if (element is HabitSummaryDataSortCache) {
             return _HabitListItem(
               uuid: element.uuid,
@@ -1205,6 +1212,25 @@ class _HabitListItemMeasurer extends StatelessWidget {
       (vm) => vm.appHabitDisplayListTileHeight,
     );
     return SizedBox(height: height);
+  }
+}
+
+class _GroupHeaderTile extends StatelessWidget {
+  final GroupHeaderSortCache header;
+
+  const _GroupHeaderTile({required this.header});
+
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded = context.select<HabitSummaryViewModel, bool>(
+      (vm) => !vm.isGroupCollapsed(header.groupUUID),
+    );
+    return GroupHeader(
+      header: header,
+      isExpanded: isExpanded,
+      onTap: () =>
+          context.read<HabitSummaryViewModel>().toggleGroup(header.groupUUID),
+    );
   }
 }
 

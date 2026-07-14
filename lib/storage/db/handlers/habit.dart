@@ -319,6 +319,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.sortPosition,
     HabitDBCellKey.createT,
     HabitDBCellKey.modifyT,
+    HabitDBCellKey.groupId,
   ];
 
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) async {
@@ -349,6 +350,7 @@ class HabitDBHelper extends DBHelperHandler {
     HabitDBCellKey.status,
     HabitDBCellKey.sortPosition,
     HabitDBCellKey.createT,
+    HabitDBCellKey.groupId,
   ];
 
   Future<Iterable<HabitDBCell>> loadHabitAboutDataCollection({

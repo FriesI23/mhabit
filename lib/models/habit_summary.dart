@@ -34,6 +34,7 @@ import 'habit_date.dart';
 import 'habit_display.dart';
 import 'habit_form.dart';
 import 'habit_freq.dart';
+import 'habit_group.dart';
 import 'habit_reminder.dart';
 import 'habit_score.dart';
 
@@ -41,7 +42,7 @@ part 'habit_summary.g.dart';
 
 enum HabitReocrdAddRepeatedBehaviour { failed, skipped, replaced }
 
-abstract class HabitSortCache<T> {
+sealed class HabitSortCache<T> {
   bool isSameItem(HabitSortCache? other);
   bool isSameContent(T? other);
 }
@@ -599,7 +600,7 @@ class HabitSummaryDataCollection {
   List<HabitSummaryData> sort(
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
-  ) => _dataMap.values.sortBy(sortType, sortDirection);
+  ) => _dataMap.values.sortedBy(sortType, sortDirection);
   //#endregion
 
   @override
@@ -689,8 +690,8 @@ extension on HabitSummaryDataCollection {
   }
 }
 
-extension on Iterable<HabitSummaryData> {
-  List<HabitSummaryData> sortBy(
+extension HabitSummarySortExtension on Iterable<HabitSummaryData> {
+  List<HabitSummaryData> sortedBy(
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
   ) {
@@ -820,7 +821,37 @@ extension on Iterable<HabitSummaryData> {
   }
 }
 
-class HabitSummaryDataSortCache
+final class GroupHeaderSortCache extends HabitSortCache<GroupHeaderSortCache> {
+  final String? groupUUID;
+  final String name;
+  final GroupIcon? icon;
+  final HabitColor? color;
+  int count;
+
+  GroupHeaderSortCache({
+    required this.groupUUID,
+    required this.name,
+    this.icon,
+    this.color,
+    this.count = 0,
+  });
+
+  bool get isUncategorized => groupUUID == null;
+
+  @override
+  bool isSameItem(HabitSortCache? other) {
+    if (other == null || other is! GroupHeaderSortCache) return false;
+    return groupUUID == other.groupUUID;
+  }
+
+  @override
+  bool isSameContent(GroupHeaderSortCache? other) {
+    if (other == null) return false;
+    return name == other.name && count == other.count;
+  }
+}
+
+final class HabitSummaryDataSortCache
     extends HabitSortCache<HabitSummaryDataSortCache> {
   final HabitUUID uuid;
   final WeakReference<HabitSummaryData> _data;

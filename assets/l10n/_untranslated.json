@@ -8,6 +8,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_mainMenu_groupingTileText",
     "common_loadError_text",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
@@ -18,7 +19,14 @@
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
     "appSetting_thirdPartyImport_error_unknown",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "cs": [
@@ -64,6 +72,7 @@
     "habitDisplay_statsMenu_popularitySubgroupText",
     "habitDisplay_mainMenu_showCompletedTileText",
     "habitDisplay_mainMenu_showActivedTileText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_sort_reverseText",
     "habitDisplay_sortDirection_asc",
     "habitDisplay_sortDirection_Desc",
@@ -420,7 +429,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "de": [
@@ -433,6 +449,7 @@
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchFilter_ongoing",
     "habitToday_card_subtitle_text",
     "common_loadError_text",
@@ -562,7 +579,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "es": [
@@ -576,6 +600,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
@@ -629,7 +654,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "eu": [
@@ -735,6 +767,7 @@
     "habitDisplay_mainMenu_showCompletedTileText",
     "habitDisplay_mainMenu_showActivedTileText",
     "habitDisplay_mainMenu_settingTileText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_sort_reverseText",
     "habitDisplay_sortDirection_asc",
     "habitDisplay_sortDirection_Desc",
@@ -1104,7 +1137,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "fa": [
@@ -1121,6 +1161,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
@@ -1263,7 +1304,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "fr": [
@@ -1279,6 +1327,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
@@ -1424,10 +1473,18 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "he": [
+    "habitDisplay_mainMenu_groupingTileText",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
@@ -1436,7 +1493,14 @@
     "appSetting_thirdPartyImport_error_fileReadError",
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
-    "appSetting_thirdPartyImport_error_unknown"
+    "appSetting_thirdPartyImport_error_unknown",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "hu": [
@@ -1448,6 +1512,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_mainMenu_groupingTileText",
     "common_loadError_text",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
@@ -1458,7 +1523,14 @@
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
     "appSetting_thirdPartyImport_error_unknown",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "it": [
@@ -1475,6 +1547,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
@@ -1594,7 +1667,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "ja": [
@@ -1608,6 +1688,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_tab_habits_label",
     "habitToday_image_desc",
     "habitToday_card_subtitle_text",
@@ -1632,7 +1713,14 @@
     "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
-    "common_appThemeColor_dynamic"
+    "common_appThemeColor_dynamic",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "nb": [
@@ -1738,6 +1826,7 @@
     "habitDisplay_mainMenu_showCompletedTileText",
     "habitDisplay_mainMenu_showActivedTileText",
     "habitDisplay_mainMenu_settingTileText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_sort_reverseText",
     "habitDisplay_sortDirection_asc",
     "habitDisplay_sortDirection_Desc",
@@ -2107,7 +2196,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "pl": [
@@ -2121,6 +2217,7 @@
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_notFoundImage_text_01",
     "habitDisplay_notFoundImage_text_02",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
     "habitDisplay_searchFilter_tooltips",
@@ -2149,7 +2246,14 @@
     "common_habitColorType_custom",
     "common_appThemeColor_system",
     "common_appThemeColor_primary",
-    "common_appThemeColor_dynamic"
+    "common_appThemeColor_dynamic",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "pt": [
@@ -2169,6 +2273,7 @@
     "habitDisplay_deleteSingleHabitSuccSnackbarText",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
@@ -2321,7 +2426,14 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "ru": [
@@ -2337,6 +2449,7 @@
     "habitDisplay_notFoundImage_text_02",
     "habitDisplay_exportHabitsSuccSnackbarText",
     "habitDisplay_exportAllHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "habitDisplay_searchBar_hintText",
     "habitDisplay_searchFilter_ongoing",
     "habitDisplay_searchFilter_ongoing_desc",
@@ -2363,7 +2476,14 @@
     "appSetting_thirdPartyImport_error_unknown",
     "experimentalFeatures_habitSearchTile_titleText",
     "experimentalFeatures_habitSearchTile_subtitleText",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "tr": [
@@ -2375,6 +2495,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_mainMenu_groupingTileText",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
     "appSetting_thirdPartyImport_provider_loopName",
@@ -2384,7 +2505,14 @@
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
     "appSetting_thirdPartyImport_error_unknown",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "uk": [
@@ -2396,6 +2524,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_mainMenu_groupingTileText",
     "common_loadError_text",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
@@ -2406,7 +2535,14 @@
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
     "appSetting_thirdPartyImport_error_unknown",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "vi": [
@@ -2418,6 +2554,7 @@
     "habitEdit_colorPicker_untintedLabel",
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
+    "habitDisplay_mainMenu_groupingTileText",
     "common_loadError_text",
     "appSetting_thirdPartyImport_titleText",
     "appSetting_thirdPartyImport_subtitleText",
@@ -2428,7 +2565,14 @@
     "appSetting_thirdPartyImport_error_noHabitsFound",
     "appSetting_thirdPartyImport_error_parseError",
     "appSetting_thirdPartyImport_error_unknown",
-    "common_habitColorType_custom"
+    "common_habitColorType_custom",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ],
 
   "zh_Hant": [
@@ -2441,6 +2585,7 @@
     "habitEdit_colorPicker_tintToggleOnHint",
     "habitEdit_colorPicker_tintToggleOffHint",
     "habitDisplay_exportHabitsSuccSnackbarText",
+    "habitDisplay_mainMenu_groupingTileText",
     "appSync_nowTile_dateFormat",
     "appSync_failedTile_webdavMulti_counterText",
     "appSync_webdav_resultStatus",
@@ -2510,6 +2655,13 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "habitGroup_uncategorized",
+    "habitDetail_groupTile_title",
+    "habitEdit_groupTile_title",
+    "habitEdit_groupPicker_hintText",
+    "habitEdit_groupPicker_noGroup",
+    "habitEdit_groupPicker_createGroup",
+    "habitEdit_groupPicker_loading"
   ]
 }

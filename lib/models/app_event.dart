@@ -30,6 +30,7 @@ enum AppEventFunctionSource {
   habitCreated,
   habitChanged,
   recordChanged,
+  groupChanged,
 }
 
 abstract interface class AppEvent {
@@ -189,3 +190,43 @@ final class HabitRecordsChangedEvents extends AppEventBase {
     return bf.toString();
   }
 }
+
+final class GroupChangedEvent extends AppEventBase {
+  final String? msg;
+  final GroupUUID? groupUUID;
+  final GroupChangeType changeType;
+
+  const GroupChangedEvent({
+    this.msg,
+    this.groupUUID,
+    this.changeType = GroupChangeType.unknown,
+    super.trace,
+  });
+
+  @override
+  GroupChangedEvent extendSource(
+    AppEventPageSource page,
+    AppEventFunctionSource function,
+  ) => GroupChangedEvent(
+    msg: msg,
+    groupUUID: groupUUID,
+    changeType: changeType,
+    trace: buildNewTrace(page, function),
+  );
+
+  @override
+  String toString() {
+    final bf = StringBuffer("GroupChangedEvent(");
+    final data = <String>[
+      if (msg != null) "msg=$msg",
+      if (groupUUID != null) "groupUUID=$groupUUID",
+      "changeType=$changeType",
+      "trace=$trace",
+    ];
+    bf.writeAll(data, ",");
+    bf.write(")");
+    return bf.toString();
+  }
+}
+
+enum GroupChangeType { unknown, created, updated, deleted }

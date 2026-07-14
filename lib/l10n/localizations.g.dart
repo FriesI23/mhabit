@@ -758,6 +758,12 @@ abstract class L10n {
   /// **'Settings'**
   String get habitDisplay_mainMenu_settingTileText;
 
+  /// Toggle label for enabling/disabling habit grouping display
+  ///
+  /// In en, this message translates to:
+  /// **'Grouping'**
+  String get habitDisplay_mainMenu_groupingTileText;
+
   /// No description provided for @habitDisplay_sort_reverseText.
   ///
   /// In en, this message translates to:
@@ -3016,6 +3022,48 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'View Full Changelog'**
   String get changelog_view_full;
+
+  /// Virtual group name for habits without a group
+  ///
+  /// In en, this message translates to:
+  /// **'No Group'**
+  String get habitGroup_uncategorized;
+
+  /// Title for the group info tile on the habit detail page
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get habitDetail_groupTile_title;
+
+  /// Title for the group selector tile on the habit edit page
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get habitEdit_groupTile_title;
+
+  /// Placeholder text for the group picker search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search or create group'**
+  String get habitEdit_groupPicker_hintText;
+
+  /// Option text for selecting no group
+  ///
+  /// In en, this message translates to:
+  /// **'No Group'**
+  String get habitEdit_groupPicker_noGroup;
+
+  /// Button text to create a new group with the given name
+  ///
+  /// In en, this message translates to:
+  /// **'Create \"{name}\"'**
+  String habitEdit_groupPicker_createGroup(String name);
+
+  /// Placeholder text shown in the group picker while groups are loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading groups…'**
+  String get habitEdit_groupPicker_loading;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

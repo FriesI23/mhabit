@@ -366,6 +366,10 @@
     "@habitDisplay_mainMenu_showActivedTileText": {},
     "habitDisplay_mainMenu_settingTileText": "Settings",
     "@habitDisplay_mainMenu_settingTileText": {},
+    "habitDisplay_mainMenu_groupingTileText": "Grouping",
+    "@habitDisplay_mainMenu_groupingTileText": {
+        "description": "Toggle label for enabling/disabling habit grouping display"
+    },
     "habitDisplay_sort_reverseText": "Reverse",
     "@habitDisplay_sort_reverseText": {},
     "habitDisplay_sortDirection_asc": "(Asc)",
@@ -1534,5 +1538,39 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "habitGroup_uncategorized": "No Group",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "Group",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "Group",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "Search or create group",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "No Group",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "Create \"{name}\"",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "Loading groups…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
     }
 }

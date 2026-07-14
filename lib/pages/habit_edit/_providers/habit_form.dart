@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -20,23 +21,34 @@ import '../../../common/consts.dart';
 import '../../../common/types.dart';
 import '../../../common/utils.dart';
 import '../../../logging/helper.dart';
+import '../../../models/app_event.dart';
 import '../../../models/habit_color.dart';
 import '../../../models/habit_daily_goal.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_freq.dart';
+import '../../../models/habit_group.dart';
 import '../../../models/habit_reminder.dart';
 import '../../../providers/support/commons.dart';
+import '../../../providers/workflow/app_event.dart';
+import '../../../providers/workflow/app_sync.dart';
+import '../../../providers/workflow/group_manager.dart';
 import '../../../providers/workflow/habits_manager.dart';
 import '../../../storage/db/handlers/habit.dart';
 import '../../../utils/app_clock.dart';
 
 class HabitFormViewModel extends ChangeNotifier
     with PinnedAppbarMixin
-    implements ProviderMounted {
+    implements ProviderMounted, AppEventLoaded {
   // inside status
   bool _mounted = true;
   late HabitFormAccess _access;
+  GroupManager? _groupManager;
+  GroupCollection? _groupCollection;
+
+  StreamSubscription<AppEvent>? _groupEventSubscription;
+  StreamSubscription<String>? _startSyncSub;
+  int _groupVersion = 0;
 
   final HabitForm _form;
 
@@ -46,6 +58,8 @@ class HabitFormViewModel extends ChangeNotifier
   @override
   void dispose() {
     if (!_mounted) return;
+    _groupEventSubscription?.cancel();
+    _startSyncSub?.cancel();
     super.dispose();
     _mounted = false;
   }
@@ -55,6 +69,67 @@ class HabitFormViewModel extends ChangeNotifier
 
   void attachAccess(HabitFormAccess newAccess) {
     _access = newAccess;
+  }
+
+  void attachGroupManager(GroupManager gm) {
+    _groupManager = gm;
+  }
+
+  Future<void> _reloadGroups() async {
+    final cells = await _groupManager?.loadAllActiveGroups() ?? [];
+    _groupCollection = GroupCollection.fromDBQueryResult(cells);
+  }
+
+  /// Whether initial group loading has completed.
+  ///
+  /// Returns `false` before [ensureGroupsLoaded] is called (typically during
+  /// the provider `post` hook), allowing callers to defer group-dependent work.
+  bool get hasLoadedGroups => _groupCollection != null;
+
+  /// Ensures groups are loaded exactly once; no-op if already loaded.
+  ///
+  /// Called from the provider `post` hook. Subsequent reloads are triggered
+  /// by events via [_reloadGroups] directly.
+  Future<void> ensureGroupsLoaded() async {
+    if (_groupCollection != null) return;
+    await _reloadGroups();
+    if (!_mounted) return;
+    _groupVersion++;
+    notifyListeners();
+  }
+
+  List<HabitGroupData> get groups => _groupCollection?.toList() ?? [];
+
+  /// Combined (version, groupId) for the UI to watch via [Selector].
+  ///
+  /// The version side-carries a monotonic counter that changes each time the
+  /// group list is reloaded, so [Selector] can detect list updates without
+  /// deep-comparing [groups]. The [groupId] side tracks the currently selected
+  /// group so the picker tile reflects selection changes.
+  ({int version, String? groupId}) get groupState =>
+      (version: _groupVersion, groupId: _form.groupId);
+
+  void attachSyncWorkflow(AppSyncWorkflowAccess workflow) {
+    _startSyncSub?.cancel();
+    _startSyncSub = workflow.startSyncEvents.listen((_) async {
+      await _reloadGroups();
+      if (!_mounted) return;
+      _groupVersion++;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void updateAppEvent(AppEventBus newAppEvent) {
+    _groupEventSubscription?.cancel();
+    _groupEventSubscription = newAppEvent.on<GroupChangedEvent>().listen((
+      _,
+    ) async {
+      if (!_mounted) return;
+      await _reloadGroups();
+      _groupVersion++;
+      notifyListeners();
+    });
   }
 
   Future<bool> requestReminderPermission() async =>

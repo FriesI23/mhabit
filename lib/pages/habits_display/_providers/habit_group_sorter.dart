@@ -1,0 +1,141 @@
+// Copyright 2026 Fries_I23
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import '../../../extensions/iterable_extensions.dart';
+import '../../../models/habit_display.dart';
+import '../../../models/habit_group.dart';
+import '../../../models/habit_summary.dart';
+
+/// Builds a flat grouped sort-cache list from the given [data].
+///
+/// Habits are grouped by their effective group ID (which resolves orphan
+/// group references to `null`), sorted by [sortType]/[sortDirection] within
+/// each group, and wrapped in [HabitSummaryDataSortCache]. Group headers
+/// ([GroupHeaderSortCache]) are inserted for each non-empty group plus an
+/// uncategorized section for ungrouped habits.
+///
+/// Groups with no habits are skipped. Collapsed groups (by
+/// [collapsedUUIDs]) only emit the header, omitting their habit items.
+List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
+  required HabitSummaryDataCollection data,
+  required List<HabitGroupData> groups,
+  required Set<String?> collapsedUUIDs,
+  HabitsDisplayFilter? filter,
+  HabitDisplaySortType sortType = HabitDisplaySortType.manual,
+  HabitDisplaySortDirection sortDirection = HabitDisplaySortDirection.asc,
+}) {
+  final result = <HabitSortCache<dynamic>>[];
+
+  final habitByGroup = <String?, List<HabitSummaryData>>{};
+  for (final habit in data.values) {
+    if (filter != null && !filter.displayFilterFunction(habit)) continue;
+    final gid = resolveEffectiveGroupId(habit.groupId, groups);
+    habitByGroup.putIfAbsent(gid, () => []).add(habit);
+  }
+
+  for (final group in groups) {
+    final gid = group.uuid;
+    final habits = habitByGroup.remove(gid);
+    if (habits == null || habits.isEmpty) continue;
+
+    result.add(
+      GroupHeaderSortCache(
+        groupUUID: group.uuid,
+        name: group.name,
+        icon: group.icon,
+        color: group.color,
+        count: habits.length,
+      ),
+    );
+
+    if (!collapsedUUIDs.contains(gid)) {
+      result.addAll(
+        habits.sortedBy(sortType, sortDirection).toHabitSummarySortCacheList(),
+      );
+    }
+  }
+
+  final uncategorized = habitByGroup.remove(null) ?? [];
+  for (final entry in habitByGroup.entries) {
+    uncategorized.addAll(entry.value);
+  }
+
+  if (uncategorized.isNotEmpty || result.isEmpty) {
+    final header = GroupHeaderSortCache(
+      groupUUID: null,
+      name: '',
+      count: uncategorized.length,
+    );
+    result.add(header);
+
+    if (!collapsedUUIDs.contains(null)) {
+      result.addAll(
+        uncategorized
+            .sortedBy(sortType, sortDirection)
+            .toHabitSummarySortCacheList(),
+      );
+    }
+  }
+
+  return result;
+}
+
+/// Applies [options] keyword/status/type filtering to [sorted].
+///
+/// Group header items always pass through; only habit items are tested.
+/// Returns a new list without mutating the original.
+List<HabitSortCache<dynamic>> filterGroupedList(
+  List<HabitSortCache<dynamic>> sorted,
+  HabitDisplaySearchOptions options,
+) => sorted
+    .where(
+      (e) => switch (e) {
+        GroupHeaderSortCache() => true,
+        HabitSummaryDataSortCache(data: final HabitSummaryData d) =>
+          options.filter(d, caps: true, keywords: options.splitKeywords),
+        HabitSummaryDataSortCache(data: null) => false,
+      },
+    )
+    .toList();
+
+/// Recalculates the [GroupHeaderSortCache.count] fields in [list] to match
+/// the actual number of habit items between consecutive group headers.
+///
+/// Mutates headers in-place because the list is rebuilt on every sort pass.
+void updateGroupHeaderCounts(List<HabitSortCache<dynamic>> list) {
+  final (:header, :count) = list
+      .fold<({GroupHeaderSortCache? header, int count})>(
+        (header: null, count: 0),
+        (acc, element) {
+          switch (element) {
+            case GroupHeaderSortCache h:
+              acc.header?.count = acc.count;
+              return (header: h, count: 0);
+            case HabitSummaryDataSortCache():
+              return (header: acc.header, count: acc.count + 1);
+          }
+        },
+      );
+  if (header != null) header.count = count;
+}
+
+/// Resolves [groupId] to an effective group identifier.
+///
+/// Returns `null` when [groupId] is null or references a group that no longer
+/// exists in [groups].
+String? resolveEffectiveGroupId(String? groupId, List<HabitGroupData> groups) {
+  if (groupId == null) return null;
+  if (groups.any((g) => g.uuid == groupId)) return groupId;
+  return null;
+}

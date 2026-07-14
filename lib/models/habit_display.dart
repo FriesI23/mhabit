@@ -226,6 +226,9 @@ class HabitDisplaySearchOptions {
 
   bool get isNotEmpty => !isEmpty;
 
+  Iterable<String> get splitKeywords =>
+      keyword.toUpperCase().split(' ').where((e) => e.isNotEmpty);
+
   bool filter(
     HabitSummaryData data, {
     Iterable<String>? keywords,

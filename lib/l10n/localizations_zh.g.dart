@@ -391,6 +391,9 @@ class L10nZh extends L10n {
   String get habitDisplay_mainMenu_settingTileText => '设置';
 
   @override
+  String get habitDisplay_mainMenu_groupingTileText => '分组显示';
+
+  @override
   String get habitDisplay_sort_reverseText => '反向排序';
 
   @override
@@ -1774,6 +1777,29 @@ class L10nZh extends L10n {
 
   @override
   String get changelog_view_full => '查看完整更新日志';
+
+  @override
+  String get habitGroup_uncategorized => '无分组';
+
+  @override
+  String get habitDetail_groupTile_title => '分组';
+
+  @override
+  String get habitEdit_groupTile_title => '分组';
+
+  @override
+  String get habitEdit_groupPicker_hintText => '搜索或创建分组';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => '无分组';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return '创建「$name」';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => '分组加载中…';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

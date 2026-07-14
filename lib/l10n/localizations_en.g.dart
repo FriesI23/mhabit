@@ -404,6 +404,9 @@ class L10nEn extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'Settings';
 
   @override
+  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+
+  @override
   String get habitDisplay_sort_reverseText => 'Reverse';
 
   @override
@@ -1865,4 +1868,27 @@ class L10nEn extends L10n {
 
   @override
   String get changelog_view_full => 'View Full Changelog';
+
+  @override
+  String get habitGroup_uncategorized => 'No Group';
+
+  @override
+  String get habitDetail_groupTile_title => 'Group';
+
+  @override
+  String get habitEdit_groupTile_title => 'Group';
+
+  @override
+  String get habitEdit_groupPicker_hintText => 'Search or create group';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => 'No Group';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return 'Create \"$name\"';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => 'Loading groups…';
 }

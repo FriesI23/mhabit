@@ -15,10 +15,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/consts.dart';
 import '../../../l10n/localizations.dart';
 import '../../../models/habit_display.dart';
 import '../../../providers/app_ui/app_theme.dart';
 import '../../../providers/app_ui/habits_filter.dart';
+import '../../../providers/app_ui/habits_grouping.dart';
 import '../../../providers/app_ui/habits_sort.dart';
 import '../../../theme/color.dart';
 import '../../../theme/icon.dart';
@@ -28,6 +30,7 @@ Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
   required HabitDisplaySortType sortType,
   required HabitDisplaySortDirection sortDirection,
   required HabitsFilterViewModel habitFilter,
+  required HabitsGroupingViewModel grouping,
   required AppThemeViewModel appTheme,
 }) async {
   return showDialog<HabitDisplayMainMenuDialogOpr>(
@@ -36,6 +39,7 @@ Future<HabitDisplayMainMenuDialogOpr?> showHabitDisplayMainMenuDialog({
       providers: [
         ChangeNotifierProvider.value(value: appTheme),
         ChangeNotifierProvider.value(value: habitFilter),
+        ChangeNotifierProvider.value(value: grouping),
       ],
       child: HabitDisplayMainMenuDialog(
         themeType: context.read<AppThemeViewModel>().themeType,
@@ -111,6 +115,7 @@ class _HabitDisplayMainMenuDialog extends State<HabitDisplayMainMenuDialog> {
               HabitDisplayMainMenuDialogOpr.showSortMenu,
             ),
           ),
+          const _GroupingToggleListTile(),
           const Divider(),
           _HabitsDisplayFilterListView(
             habitsDisplayFilter: habitFilter.habitsDisplayFilter,
@@ -294,6 +299,25 @@ class _SettingListTile extends StatelessWidget {
       leading: const Icon(Icons.settings_outlined),
       iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
       onTap: onPressed,
+    );
+  }
+}
+
+class _GroupingToggleListTile extends StatelessWidget {
+  const _GroupingToggleListTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final groupingVM = context.watch<HabitsGroupingViewModel>();
+    return SwitchListTile(
+      secondary: Icon(
+        groupingVM.isGroupingEnabled ? noGroupIcon : hideGroupingIcon,
+      ),
+      title: Text(
+        L10n.of(context)?.habitDisplay_mainMenu_groupingTileText ?? 'Group',
+      ),
+      value: groupingVM.isGroupingEnabled,
+      onChanged: groupingVM.setGroupingEnabled,
     );
   }
 }

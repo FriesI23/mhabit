@@ -198,6 +198,12 @@ const kRecordDoneStatusIcon = Icons.check_outlined;
 const kRecordZeroStatusIcon = Icons.close_sharp;
 //#endregion
 
+//#region groups
+const noGroupIcon = Icons.circle_outlined;
+const defaultGroupIcon = Icons.circle;
+const hideGroupingIcon = Icons.hide_source;
+//#endregion
+
 //#region other
 const chinaICPFillingNumber = "浙ICP备2024100574号-2A";
 //#endregion

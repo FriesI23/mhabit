@@ -17,6 +17,9 @@ import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/habit_form.dart';
+import '../../providers/workflow/app_event.dart';
+import '../../providers/workflow/app_sync.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../widgets/provider.dart';
 import '_providers/habit_form.dart';
@@ -34,6 +37,20 @@ class PageProviders extends SingleChildStatelessWidget {
       ),
       ViewModelProxyProvider<HabitFormAccess, HabitFormViewModel>(
         update: (context, value, previous) => previous..attachAccess(value),
+      ),
+      ViewModelProxyProvider<AppEventBus, HabitFormViewModel>(
+        update: (context, value, previous) => previous..updateAppEvent(value),
+      ),
+      ViewModelProxyProvider<GroupManager, HabitFormViewModel>(
+        update: (context, value, previous) =>
+            previous..attachGroupManager(value),
+        post: (t, _, vm) {
+          vm.ensureGroupsLoaded();
+        },
+      ),
+      ViewModelProxyProvider<AppSyncWorkflowAccess, HabitFormViewModel>(
+        update: (context, value, previous) =>
+            previous..attachSyncWorkflow(value),
       ),
     ],
     child: child,

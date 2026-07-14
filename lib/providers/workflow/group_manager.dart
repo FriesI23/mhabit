@@ -12,34 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-
 import '../../common/types.dart';
 import '../../common/utils.dart';
 import '../../models/group.dart';
-import '../../providers/support/commons.dart';
 import '../../storage/db_helper_provider.dart';
 
 /// Manages Group CRUD at the business-logic layer.
 ///
+/// Stateless service — similar to [HabitsManager]. Callers own their own
+/// cache (typically in a page ViewModel) and call [loadAllActiveGroups] when
+/// they need current data.
+///
 /// Sync writes to mh_sync are deferred to Parse 2.
-class GroupManager extends ChangeNotifier
-    with DBHelperLoadedMixin
-    implements ProviderMounted {
-  List<GroupDBCell> _groups = [];
-  bool _mounted = true;
-
-  @override
-  bool get mounted => _mounted;
-
-  List<GroupDBCell> get groups => List.unmodifiable(_groups);
-
-  Future<void> loadGroups() async {
-    _groups = await groupDBHelper.loadAllActiveGroups();
-    notifyListeners();
-  }
+class GroupManager with DBHelperLoadedMixin {
+  Future<List<GroupDBCell>> loadAllActiveGroups() =>
+      groupDBHelper.loadAllActiveGroups();
 
   Future<GroupDBCell> createGroup({
     required String name,
@@ -63,24 +50,14 @@ class GroupManager extends ChangeNotifier
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);
-    await loadGroups();
     return cell;
   }
 
   Future<void> updateGroup(GroupDBCell group) async {
     await groupDBHelper.updateExistGroup(group);
-    await loadGroups();
   }
 
   Future<void> deleteGroup(String uuid) async {
     await groupDBHelper.deleteGroup(uuid);
-    await loadGroups();
-  }
-
-  @override
-  void dispose() {
-    if (!_mounted) return;
-    super.dispose();
-    _mounted = false;
   }
 }

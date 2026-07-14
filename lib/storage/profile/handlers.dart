@@ -27,6 +27,7 @@ export 'handlers/compact_ui_switcher.dart';
 export 'handlers/custom_color_history.dart';
 export 'handlers/display_calendar_bar_occupy_prt.dart';
 export 'handlers/display_calendar_scroll_mode.dart';
+export 'handlers/display_grouping.dart';
 export 'handlers/display_habits_filter.dart';
 export 'handlers/display_sort_mode.dart';
 export 'handlers/first_day.dart';

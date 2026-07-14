@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
 import 'package:mhabit/models/app_event.dart';
+import 'package:mhabit/models/group.dart';
 import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_display.dart';
@@ -29,6 +30,7 @@ import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habits_today.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
+import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
@@ -199,6 +201,11 @@ final class _FakeAppSyncWorkflowAccess implements AppSyncWorkflowAccess {
   Future<void> startSync({Duration? initWait}) async {}
 }
 
+final class _StubGroupManager extends GroupManager {
+  @override
+  Future<List<GroupDBCell>> loadAllActiveGroups() async => [];
+}
+
 HabitSummaryData _buildHabitSummaryData({
   int id = 1,
   String uuid = '11111111-1111-4111-8111-111111111111',
@@ -238,7 +245,9 @@ void main() {
     test('HabitSummaryViewModel loads and reads through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
-      final vm = HabitSummaryViewModel()..attachAccess(access);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
 
@@ -316,7 +325,9 @@ void main() {
     test('HabitSummaryViewModel writes through access', () async {
       final seedData = _buildHabitSummaryData();
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
-      final vm = HabitSummaryViewModel()..attachAccess(access);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
 
@@ -356,7 +367,9 @@ void main() {
             ),
           ],
         );
-        final vm = HabitSummaryViewModel()..attachAccess(access);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(_StubGroupManager());
 
         await vm.loadData(listen: false);
 
@@ -397,8 +410,9 @@ void main() {
         final access = _FakeHabitsDisplayAccess(seedData: seedData);
         final appSync = _FakeAppSyncWorkflowAccess();
         final vm = HabitSummaryViewModel()
+          ..attachWorkflow(appSync)
           ..attachAccess(access)
-          ..attachWorkflow(appSync);
+          ..attachGroupManager(_StubGroupManager());
 
         await vm.loadData(listen: false);
         appSync.emit('sync-1');
@@ -416,8 +430,9 @@ void main() {
       final access = _FakeHabitsDisplayAccess(seedData: seedData);
       final appEvent = AppEventBus();
       final vm = HabitSummaryViewModel()
+        ..updateAppEvent(appEvent)
         ..attachAccess(access)
-        ..updateAppEvent(appEvent);
+        ..attachGroupManager(_StubGroupManager());
 
       await vm.loadData(listen: false);
       appEvent.push(const ReloadDataEvent(clearSnackBar: true));
