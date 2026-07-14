@@ -822,7 +822,21 @@ class HabitSummaryViewModel extends ChangeNotifier
     return result.data;
   }
 
+  void _applyHabitReorder(int index, int dropIndex) {
+    final moved = currentHabitList.removeAt(index);
+    if (dropIndex > currentHabitList.length) {
+      currentHabitList.add(moved);
+    } else {
+      currentHabitList.insert(dropIndex, moved);
+    }
+  }
+
   Future<void> _writeChangedSortPositionToDB() async {
+    assert(
+      !_groupingEnabled,
+      'use _writeGroupWeightReassignment in grouping mode',
+    );
+
     final dataList = currentHabitList
         .whereType<HabitSummaryDataSortCache>()
         .map((e) => e.data)
@@ -843,8 +857,54 @@ class HabitSummaryViewModel extends ChangeNotifier
   }
 
   Future<void> onHabitReorderComplate(int index, int dropIndex) {
-    currentHabitList.insert(dropIndex, currentHabitList.removeAt(index));
+    _applyHabitReorder(index, dropIndex);
     return _writeChangedSortPositionToDB();
+  }
+
+  Future<void> onGroupedHabitReorderComplate(int index, int dropIndex) async {
+    _applyHabitReorder(index, dropIndex);
+    await _writeGroupWeightReassignment(_findEnclosingGroupUUID(index));
+  }
+
+  String? _findEnclosingGroupUUID(int index) => currentHabitList
+      .take(index + 1)
+      .whereType<GroupHeaderSortCache>()
+      .lastOrNull
+      ?.groupUUID;
+
+  Future<void> _writeGroupWeightReassignment(String? groupUUID) async {
+    final startIndex = currentHabitList.indexWhere(
+      (e) => e is GroupHeaderSortCache && e.groupUUID == groupUUID,
+    );
+    if (startIndex < 0) return;
+
+    final endIndex = currentHabitList.indexWhere(
+      (e) => e is GroupHeaderSortCache,
+      startIndex + 1,
+    );
+
+    final groupHabits = currentHabitList
+        .sublist(
+          startIndex + 1,
+          endIndex < 0 ? currentHabitList.length : endIndex,
+        )
+        .whereType<HabitSummaryDataSortCache>()
+        .map((e) => e.data)
+        .nonNulls
+        .toList();
+
+    if (groupHabits.isEmpty) return;
+
+    final changedUUIDs = await _access.fixAndSaveSortPositions(
+      groupHabits,
+      increaseStep: sortPositionConflictIncreaseStep,
+      decimalPlaces: sortPositionConflictDecimalPlaces,
+    );
+
+    appLog.habit.debug(
+      "HabitSummary._writeGroupWeightReassignment",
+      ex: [groupUUID, changedUUIDs],
+    );
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(

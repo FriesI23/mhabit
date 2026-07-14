@@ -694,13 +694,27 @@ class HabitsTabPageState extends State<HabitsTabPage>
     context.read<HabitSummaryViewModel>().toggleCalendarStatus();
   }
 
-  bool _onHabitListReorderStart(int index, double dx, double dy) {
-    // FIXME: disable drag-reorder when grouping is enabled until in-group drag (Parse 4).
-    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) return false;
+  String? _findEnclosingGroupUUID(
+    List<HabitSortCache<dynamic>> list,
+    int index,
+  ) {
+    return list
+        .take(index + 1)
+        .whereType<GroupHeaderSortCache>()
+        .lastOrNull
+        ?.groupUUID;
+  }
 
+  bool _onHabitListReorderStart(int index, double dx, double dy) {
     if (!mounted) return false;
 
     final viewmodel = context.read<HabitSummaryViewModel>();
+
+    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) {
+      final item = viewmodel.getHabitBySortId(index);
+      if (item is! HabitSummaryDataSortCache) return false;
+    }
+
     if (!viewmodel.canBeDragged) return false;
 
     if (!viewmodel.isInEditMode) {
@@ -724,6 +738,16 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!mounted) return false;
 
     final viewmodel = context.read<HabitSummaryViewModel>();
+
+    if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) {
+      final list = viewmodel.currentHabitList;
+      final sourceGroupUUID = _findEnclosingGroupUUID(list, index);
+      final dropItem = viewmodel.getHabitBySortId(dropIndex);
+      if (dropItem is GroupHeaderSortCache) return false;
+      final targetGroupUUID = _findEnclosingGroupUUID(list, dropIndex);
+      if (sourceGroupUUID != targetGroupUUID) return false;
+    }
+
     if (index != dropIndex && viewmodel.isInEditMode) {
       viewmodel.exitEditModeOnly();
     }
@@ -735,7 +759,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
     final viewmodel = context.read<HabitSummaryViewModel>();
     if (index != dropIndex) {
-      final task = viewmodel.onHabitReorderComplate(index, dropIndex);
+      final task = context.read<HabitsGroupingViewModel>().isGroupingEnabled
+          ? viewmodel.onGroupedHabitReorderComplate(index, dropIndex)
+          : viewmodel.onHabitReorderComplate(index, dropIndex);
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
