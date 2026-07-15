@@ -346,7 +346,7 @@ class HabitSummaryData with DirtyMarkMixin {
   String? reminderQuest;
   HabitSortPostion sortPostion;
   DateTime createTime;
-  final String? groupId;
+  String? groupId;
 
   final _records = _HabitSummaryRecordIndex();
   num _progress = 0.0;

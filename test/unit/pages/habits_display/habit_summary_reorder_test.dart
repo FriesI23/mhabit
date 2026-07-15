@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/extensions/iterable_extensions.dart';
@@ -24,14 +22,15 @@ import 'package:mhabit/models/habit_display.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
 import 'package:mhabit/models/habit_group.dart';
-import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
 import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-final class _ReorderTestAccess implements HabitsDisplayAccess {
+import '../../../support/stub/habits_display_access.dart';
+
+final class _ReorderTestAccess extends StubHabitsDisplayAccess {
   final List<HabitSummaryData> _seed;
   final reminderRepairParamsList = <HabitReminderRepairParams>[];
 
@@ -65,23 +64,6 @@ final class _ReorderTestAccess implements HabitsDisplayAccess {
   Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) async => null;
 
   @override
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
-    required ChangeHabitStatusAction action,
-    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
-    required ChangeRecordStatusAction<HabitDate> preAction,
-    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-      List<ChangeRecordStatusResult> results,
-    )?
-    postActionBuilder,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
   Future<List<HabitUUID>> fixAndSaveSortPositions(
     List<HabitSummaryData> habits, {
     required num increaseStep,
@@ -110,10 +92,21 @@ final class _ReorderTestAccess implements HabitsDisplayAccess {
     reminderRepairParamsList.add(params);
   }
 
+  List<HabitUUID>? lastGroupIdsUuids;
+  List<String?>? lastGroupIdsValues;
+
   @override
-  Future<void> refreshHabitReminders({
-    required HabitReminderRefreshParams params,
-  }) async {}
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  ) async {
+    lastGroupIdsUuids = uuids;
+    lastGroupIdsValues = groupIds;
+    for (var i = 0; i < uuids.length; i++) {
+      final data = _seed.where((h) => h.uuid == uuids[i]).firstOrNull;
+      if (data != null) data.groupId = groupIds[i];
+    }
+  }
 }
 
 final class _ReorderTestGroupManager extends GroupManager {
@@ -553,8 +546,6 @@ void main() {
     });
 
     // ── ungrouped reorder ignores range and uses all habits ─────
-    //  Verifies that _groupingEnabled=false uses the full-list path
-    //  even when fromIndex/toIndex are passed.
     test('ungrouped reorder reassigns all habits (ignores range)', () async {
       final a = _h(id: 1, uuid: 'a', sortPostion: 10);
       final b = _h(id: 2, uuid: 'b', sortPostion: 20);
@@ -568,16 +559,147 @@ void main() {
       vm.updateHabitDisplayFilter(const HabitsDisplayFilter.withDefault());
       vm.resortData();
 
-      // before: [a(pos=10), b(pos=20), c(pos=30)]
-      // op:     drag c(idx=2) before b(drop=1)
-      // range:  [1, 2] → b, c  (but _groupingEnabled=false → all: a, b, c)
       await vm.onHabitReorderComplate(2, 1);
 
-      // pass all habits (not just range [b, c])
       expect(
         access.lastSortedHabits!.map((h) => h.uuid),
         unorderedEquals(['a', 'b', 'c']),
       );
+
+      vm.dispose();
+    });
+
+    // ── cross-group onCrossGroupHabitMove ───────────────────────
+    test(
+      'cross-group move scopes fixAndSaveSortPositions to target group',
+      () async {
+        final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');
+        final b = _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g2');
+        final c = _h(id: 3, uuid: 'c', sortPostion: 30, groupId: 'g2');
+        final access = _ReorderTestAccess([a, b, c]);
+        final vm = HabitSummaryViewModel()
+          ..attachAccess(access)
+          ..attachGroupManager(
+            _ReorderTestGroupManager([
+              _g(uuid: 'g1', name: 'G1'),
+              _g(uuid: 'g2', name: 'G2'),
+            ]),
+          );
+
+        await vm.loadData(listen: false);
+        vm.updateGroupingEnabled(true);
+        vm.resortData();
+
+        // before: [H(G1), a(pos=10), H(G2), b(pos=20), c(pos=30)]
+        // drag a(idx=1) between b and c in G2 → drop=3
+        // after removeAt(1): [H(G1), H(G2), b@1, c@2]
+        // insert at 3 (between b and c)
+
+        await vm.onCrossGroupHabitMove(1, 3, 'g2');
+        expect(access.lastGroupIdsUuids, ['a']);
+        expect(access.lastGroupIdsValues, ['g2']);
+        expect(a.groupId, 'g2');
+
+        // fixAndSaveSortPositions scoped to target group only
+        expect(
+          access.lastSortedHabits!.map((h) => h.uuid),
+          unorderedEquals(['b', 'c', 'a']),
+        );
+
+        // G1's a got reassigned into G2's multiset {10,20,30}
+        // b, c sortPositions may shift (within-group reorder semantics)
+        final g2Positions = [a.sortPostion, b.sortPostion, c.sortPostion]
+          ..sort();
+        expect(g2Positions, [10, 20, 30]);
+
+        vm.dispose();
+      },
+    );
+
+    test('cross-group move to uncategorized sets groupId to null', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20); // uncategorized
+      final access = _ReorderTestAccess([a, b]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(
+          _ReorderTestGroupManager([_g(uuid: 'g1', name: 'G1')]),
+        );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // before: [H(G1), a(pos=10), H(null), b(pos=20)]
+      // drag a(idx=1) to end of uncategorized → drop=3
+      // after removeAt(1): [H(G1), H(null)@1, b@2]
+      // insert at 3 (after b)
+
+      await vm.onCrossGroupHabitMove(1, 3, null);
+      expect(a.groupId, null);
+
+      vm.dispose();
+    });
+
+    test('cross-group move from uncategorized into a named group', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10); // uncategorized
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g1');
+      final access = _ReorderTestAccess([a, b]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(
+          _ReorderTestGroupManager([_g(uuid: 'g1', name: 'G1')]),
+        );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // before: [H(G1), b(pos=20), H(null), a(pos=10)]
+      // drag a(idx=3) before b → drop=1
+      // after removeAt(3): [H(G1), b@1, H(null)@1]
+      // insert at 1 (before b)
+
+      await vm.onCrossGroupHabitMove(3, 1, 'g1');
+      expect(a.groupId, 'g1');
+
+      // G1 multiset {10,20} preserved
+      final g1Positions = [a.sortPostion, b.sortPostion]..sort();
+      expect(g1Positions, [10, 20]);
+
+      vm.dispose();
+    });
+
+    test('cross-group move leaves source group habits untouched', () async {
+      final a = _h(id: 1, uuid: 'a', sortPostion: 10, groupId: 'g1');
+      final b = _h(id: 2, uuid: 'b', sortPostion: 20, groupId: 'g1');
+      final c = _h(id: 3, uuid: 'c', sortPostion: 5, groupId: 'g2');
+      final access = _ReorderTestAccess([a, b, c]);
+      final vm = HabitSummaryViewModel()
+        ..attachAccess(access)
+        ..attachGroupManager(
+          _ReorderTestGroupManager([
+            _g(uuid: 'g1', name: 'G1'),
+            _g(uuid: 'g2', name: 'G2'),
+          ]),
+        );
+
+      await vm.loadData(listen: false);
+      vm.updateGroupingEnabled(true);
+      vm.resortData();
+
+      // before: [H(G1), a(pos=10), b(pos=20), H(G2), c(pos=5)]
+      // drag b(idx=2) before c(idx=3) → drop to G2
+
+      await vm.onCrossGroupHabitMove(2, 3, 'g2');
+      expect(a.sortPostion, closeTo(10.0, 0.001));
+      expect(a.groupId, 'g1');
+
+      // G2: b + c were both included in fixAndSaveSortPositions
+      // multiset {5, 20} preserved
+      final g2Positions = [b.sortPostion, c.sortPostion]..sort();
+      expect(g2Positions, [5, 20]);
+      expect(b.groupId, 'g2');
 
       vm.dispose();
     });

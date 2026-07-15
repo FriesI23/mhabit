@@ -251,6 +251,34 @@ class HabitDBHelper extends DBHelperHandler {
     }, exclusive: true);
   }
 
+  Future<void> updateSelectedHabitsGroupId(
+    List<HabitUUID> uuidList,
+    List<String?> groupIdList,
+  ) async {
+    assert(uuidList.length == groupIdList.length, true);
+
+    db.transaction((db) async {
+      final batch = db.batch();
+      uuidList.forEachIndexed((index, uuid) {
+        batch.update(
+          table,
+          {HabitDBCellKey.groupId: groupIdList[index]},
+          where: "${HabitDBCellKey.uuid} = ?",
+          whereArgs: [uuid],
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        );
+      });
+      batch.rawUpdate(
+        CustomSql.increaseMultiHabitsSyncDirtySql(
+          count: uuidList.length,
+          conflictAlgorithm: ConflictAlgorithm.rollback,
+        ),
+        uuidList,
+      );
+      await batch.commit();
+    }, exclusive: true);
+  }
+
   Future<int> updateSelectedHabitStatus(
     List<HabitUUID> uuidList,
     HabitStatus newStatus,

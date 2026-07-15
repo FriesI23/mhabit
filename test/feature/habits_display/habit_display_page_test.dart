@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/l10n/localizations.dart';
-import 'package:mhabit/models/habit_date.dart';
-import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
 import 'package:mhabit/pages/habits_display/_providers/habit_summary.dart';
@@ -41,92 +37,23 @@ import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/app_event.dart';
 import 'package:mhabit/providers/workflow/app_sync.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
-import 'package:mhabit/storage/db/handlers/habit.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final class _FailingHabitsDisplayAccess implements HabitsDisplayAccess {
+import '../../support/stub/app_sync.dart';
+import '../../support/stub/habits_display_access.dart';
+
+final class _FailingHabitsDisplayAccess extends StubHabitsDisplayAccess {
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async => throw StateError('load failed');
-
-  @override
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
-    required ChangeHabitStatusAction action,
-    FutureOr<dynamic> Function(ChangeHabitStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
-    required ChangeRecordStatusAction<HabitDate> preAction,
-    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-      List<ChangeRecordStatusResult> results,
-    )?
-    postActionBuilder,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<List<HabitUUID>> fixAndSaveSortPositions(
-    List<HabitSummaryData> habits, {
-    required num increaseStep,
-    required int decimalPlaces,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
-      throw UnimplementedError();
-
-  @override
-  Future<String?> loadHabitRecordReason(
-    HabitSummaryData data,
-    HabitRecordDate date,
-  ) => throw UnimplementedError();
-
-  @override
-  Future<void> repairHabitReminders({
-    required HabitReminderRepairParams params,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
-      throw UnimplementedError();
 }
 
-final class _FakeAppSyncWorkflowAccess extends ChangeNotifier
-    implements AppSyncWorkflowAccess {
-  @override
-  bool get canStartSync => true;
-
-  @override
-  Stream<AppSyncNeedConfirmEvent> get confirmEvents => const Stream.empty();
-
-  @override
-  Future? get syncProcessing => null;
-
-  @override
-  AppSyncStatusSnapshot? get syncStatus => null;
-
-  @override
-  Stream<String> get startSyncEvents => const Stream.empty();
-
-  @override
-  void onL10nUpdate(L10n? l10n) {}
-
-  @override
-  Future<void> startSync({Duration? initWait}) async {}
-
-  @override
-  void delayedStartTaskOnce({Duration delay = kAppSyncOnceDelay}) {}
-
-  @override
-  void cancelSync() {}
-}
+final class _FakeAppSyncWorkflowAccess extends StubAppSyncWorkflowAccess {}
 
 void _ignoreBool(bool _) {}
 

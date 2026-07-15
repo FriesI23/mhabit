@@ -92,6 +92,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
   Completer<void>? _horizonalScrolling;
   double _lastHorizonalScrollOffset = 0.0;
 
+  Timer? _expandGroupTimer;
+
   @override
   void initState() {
     appLog.build.debug(context, ex: ["init"]);
@@ -135,6 +137,7 @@ class HabitsTabPageState extends State<HabitsTabPage>
   @override
   void dispose() {
     appLog.build.debug(context, ex: ["dispose"], widget: widget);
+    _cancelExpandTimer();
     _scrollCalendarToStartSub.cancel();
     _scrollVisibilityDispatcher.dispose();
     super.dispose();
@@ -705,8 +708,23 @@ class HabitsTabPageState extends State<HabitsTabPage>
         ?.groupUUID;
   }
 
+  void _cancelExpandTimer() {
+    _expandGroupTimer?.cancel();
+    _expandGroupTimer = null;
+  }
+
+  void _startExpandTimer(String? groupUUID) {
+    _cancelExpandTimer();
+    _expandGroupTimer = Timer(const Duration(milliseconds: 600), () {
+      if (mounted) _vm.expandGroup(groupUUID);
+      _expandGroupTimer = null;
+    });
+  }
+
   bool _onHabitListReorderStart(int index, double dx, double dy) {
     if (!mounted) return false;
+
+    _cancelExpandTimer();
 
     final viewmodel = context.read<HabitSummaryViewModel>();
 
@@ -740,12 +758,22 @@ class HabitsTabPageState extends State<HabitsTabPage>
     final viewmodel = context.read<HabitSummaryViewModel>();
 
     if (context.read<HabitsGroupingViewModel>().isGroupingEnabled) {
-      final list = viewmodel.currentHabitList;
-      final sourceGroupUUID = _findEnclosingGroupUUID(list, index);
+      final item = viewmodel.getHabitBySortId(index);
+      if (item is! HabitSummaryDataSortCache) return false;
       final dropItem = viewmodel.getHabitBySortId(dropIndex);
-      if (dropItem is GroupHeaderSortCache) return false;
-      final targetGroupUUID = _findEnclosingGroupUUID(list, dropIndex);
-      if (sourceGroupUUID != targetGroupUUID) return false;
+      if (dropItem is GroupHeaderSortCache) {
+        if (item.data?.groupId == dropItem.groupUUID) {
+          return false;
+        }
+
+        final groupUUID = dropItem.groupUUID;
+        if (viewmodel.isGroupCollapsed(groupUUID)) {
+          _startExpandTimer(groupUUID);
+        }
+        if (dropIndex == 0) return false;
+      } else {
+        _cancelExpandTimer();
+      }
     }
 
     if (index != dropIndex && viewmodel.isInEditMode) {
@@ -758,8 +786,8 @@ class HabitsTabPageState extends State<HabitsTabPage>
     if (!mounted) return false;
 
     final viewmodel = context.read<HabitSummaryViewModel>();
-    if (index != dropIndex) {
-      final task = viewmodel.onHabitReorderComplate(index, dropIndex);
+
+    void finishReorder(Future<void> task) {
       viewmodel.exitEditMode(listen: false);
       task.whenComplete(() {
         if (!mounted) return;
@@ -775,6 +803,32 @@ class HabitsTabPageState extends State<HabitsTabPage>
         );
         context.maybeRead<AppSyncWorkflowAccess>()?.delayedStartTaskOnce();
       });
+    }
+
+    if (index != dropIndex) {
+      final groupingEnabled = context
+          .read<HabitsGroupingViewModel>()
+          .isGroupingEnabled;
+
+      if (groupingEnabled) {
+        final list = viewmodel.currentHabitList;
+        final dropItem = viewmodel.getHabitBySortId(dropIndex);
+        if (dropIndex == 0 && dropItem is GroupHeaderSortCache) return true;
+
+        final sourceGroupUUID = _findEnclosingGroupUUID(list, index);
+        final targetGroupUUID =
+            dropItem is GroupHeaderSortCache && index > dropIndex
+            ? _findEnclosingGroupUUID(list, dropIndex - 1)
+            : _findEnclosingGroupUUID(list, dropIndex);
+        if (sourceGroupUUID != targetGroupUUID) {
+          finishReorder(
+            viewmodel.onCrossGroupHabitMove(index, dropIndex, targetGroupUUID),
+          );
+          return true;
+        }
+      }
+
+      finishReorder(viewmodel.onHabitReorderComplate(index, dropIndex));
     } else if (!viewmodel.isInEditMode) {
       viewmodel.exitEditMode(listen: false);
     }

@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
-import 'package:mhabit/models/habit_date.dart';
-import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/common/_widgets/not_found_image.dart';
 import 'package:mhabit/pages/habits_status_changer/page.dart';
@@ -28,68 +24,20 @@ import 'package:mhabit/providers/app_ui/app_developer.dart';
 import 'package:mhabit/providers/app_ui/app_first_day.dart';
 import 'package:mhabit/providers/support/global.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
-import 'package:mhabit/storage/db/handlers/habit.dart';
 import 'package:mhabit/storage/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/stub/habits_display_access.dart';
+
 final class _FailingHabitStatusChangerAccess
-    implements HabitStatusChangerAccess {
+    extends StubHabitStatusChangerAccess {
   @override
   Future<HabitSummaryDataCollection> loadHabitSummaryCollectionData({
     HabitSummaryDataCollection? initedCollection,
     List<String>? habitsColmns,
     List<HabitUUID>? habitUUIDs,
   }) async => throw StateError('load failed');
-
-  @override
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
-    required ChangeHabitStatusAction action,
-    FutureOr<dynamic> Function(ChangeHabitStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
-    required ChangeRecordStatusAction<HabitDate> preAction,
-    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-      List<ChangeRecordStatusResult> results,
-    )?
-    postActionBuilder,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<List<HabitUUID>> fixAndSaveSortPositions(
-    List<HabitSummaryData> habits, {
-    required num increaseStep,
-    required int decimalPlaces,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) =>
-      throw UnimplementedError();
-
-  @override
-  Future<String?> loadHabitRecordReason(
-    HabitSummaryData data,
-    HabitRecordDate date,
-  ) => throw UnimplementedError();
-
-  @override
-  Future<void> saveChangedHabitRecords({
-    required Iterable<ChangeRecordStatusResult> records,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<void> repairHabitReminders({
-    required HabitReminderRepairParams params,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
-      throw UnimplementedError();
 }
 
 Future<ProfileViewModel> _loadProfile() async {

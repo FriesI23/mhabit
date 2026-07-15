@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mhabit/common/types.dart';
 import 'package:mhabit/models/habit_color.dart';
@@ -24,9 +22,10 @@ import 'package:mhabit/models/habit_repo_actions.dart';
 import 'package:mhabit/models/habit_summary.dart';
 import 'package:mhabit/pages/habits_status_changer/_providers/habit_status_changer.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
-import 'package:mhabit/storage/db/handlers/habit.dart';
 
-final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {
+import '../../../support/stub/habits_display_access.dart';
+
+final class _FakeHabitStatusChangerAccess extends StubHabitStatusChangerAccess {
   final HabitSummaryData seedData;
 
   List<HabitUUID>? lastHabitUuids;
@@ -45,58 +44,6 @@ final class _FakeHabitStatusChangerAccess implements HabitStatusChangerAccess {
     collection.addHabit(seedData, forceAdd: true);
     return collection;
   }
-
-  @override
-  Future<String?> loadHabitRecordReason(
-    HabitSummaryData data,
-    HabitRecordDate date,
-  ) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<HabitDBCell?> loadHabitDetail(HabitUUID uuid) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Iterable<ChangeHabitStatusResult>> changeHabitStatus({
-    required ChangeHabitStatusAction action,
-    FutureOr Function(ChangeHabitStatusResult result)? extraResolver,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Iterable<ChangeRecordStatusResult>> changeHabitRecordStatus({
-    required ChangeRecordStatusAction<HabitDate> preAction,
-    ChangeRecordStatusAction<ChangeRecordStatusResult> Function(
-      List<ChangeRecordStatusResult> results,
-    )?
-    postActionBuilder,
-    BeforeHabitRecordReminderUpdateCb? beforeReminderUpdate,
-    FutureOr<void> Function(ChangeRecordStatusResult result)? extraResolver,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<HabitUUID>> fixAndSaveSortPositions(
-    List<HabitSummaryData> habits, {
-    required num increaseStep,
-    required int decimalPlaces,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> repairHabitReminders({
-    required HabitReminderRepairParams params,
-  }) => Future.value();
-
-  @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
-      Future.value();
 
   @override
   Future<void> saveChangedHabitRecords({

@@ -284,6 +284,16 @@ abstract interface class HabitsDisplayAccess {
     required int decimalPlaces,
   });
 
+  /// Batch-updates [HabitDBCellKey.groupId] for the given habits.
+  ///
+  /// [uuids] and [groupIds] must have the same length.
+  /// Pass `null` entries in [groupIds] to clear the column
+  /// (uncategorized). Each row also bumps the sync dirty flag.
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  );
+
   Future<void> repairHabitReminders({
     required HabitReminderRepairParams params,
   });
@@ -698,6 +708,12 @@ class HabitsManager
 
     return changedUUIDs;
   }
+
+  @override
+  Future<void> updateHabitGroupIds(
+    List<HabitUUID> uuids,
+    List<String?> groupIds,
+  ) => habitDBHelper.updateSelectedHabitsGroupId(uuids, groupIds);
 
   Future<void> _updateHabitReminder(HabitSummaryData data) {
     if (!_resolveReminderStatus().isReady) return Future.value();

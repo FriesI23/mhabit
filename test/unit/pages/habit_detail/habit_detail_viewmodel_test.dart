@@ -27,7 +27,9 @@ import 'package:mhabit/pages/habit_detail/_providers/habit_detail.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-final class _FakeHabitDetailAccess implements HabitDetailAccess {
+import '../../../support/stub/habits_display_access.dart';
+
+final class _FakeHabitDetailAccess extends StubHabitDetailAccess {
   final HabitDetailData seedData;
   final String recordReason = 'detail-record-reason';
   final reminderRepairParamsList = <HabitReminderRepairParams>[];
@@ -135,10 +137,6 @@ final class _FakeHabitDetailAccess implements HabitDetailAccess {
     reminderRepairParamsList.add(params);
     return Future.value();
   }
-
-  @override
-  Future<void> refreshHabitReminders({HabitReminderRefreshParams? params}) =>
-      Future.value();
 }
 
 HabitSummaryData _buildHabitSummaryData({

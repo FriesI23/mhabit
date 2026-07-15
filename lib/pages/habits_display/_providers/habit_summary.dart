@@ -198,6 +198,10 @@ class HabitSummaryViewModel extends ChangeNotifier
     resortData();
   }
 
+  void expandGroup(String? groupUUID) {
+    if (_collapsedGroupUUIDs.remove(groupUUID)) resortData();
+  }
+
   @override
   void dispose() {
     if (!_mounted) return;
@@ -831,17 +835,6 @@ class HabitSummaryViewModel extends ChangeNotifier
     }
   }
 
-  /// Writes changed sort positions to the database via
-  /// [HabitsDisplayAccess.fixAndSaveSortPositions].
-  ///
-  /// When [_groupingEnabled] is true, only habits in the affected range
-  /// `[min(fromIndex, toIndex), max(fromIndex, toIndex)]` of
-  /// [currentHabitList] are reassigned — this naturally handles
-  /// within-group and cross-group drags without inspecting group
-  /// headers.
-  ///
-  /// When [_groupingEnabled] is false, all habits in
-  /// [currentHabitList] are reassigned.
   Future<void> _writeChangedSortPositionToDB({
     required int fromIndex,
     required int toIndex,
@@ -880,6 +873,50 @@ class HabitSummaryViewModel extends ChangeNotifier
   Future<void> onHabitReorderComplate(int index, int dropIndex) async {
     _applyHabitReorder(index, dropIndex);
     await _writeChangedSortPositionToDB(fromIndex: index, toIndex: dropIndex);
+  }
+
+  Future<void> onCrossGroupHabitMove(
+    int sourceIndex,
+    int targetIndex,
+    String? targetGroupUUID,
+  ) async {
+    final movedCache = currentHabitList[sourceIndex];
+    if (movedCache is! HabitSummaryDataSortCache) {
+      if (kDebugMode) {
+        throw StateError(
+          'Expected HabitSummaryDataSortCache at sourceIndex=$sourceIndex, '
+          'got ${movedCache.runtimeType}',
+        );
+      }
+      return;
+    }
+    final movedData = movedCache.data;
+    if (movedData == null) return;
+    final movedUUID = movedData.uuid;
+    final oldGroupId = movedData.groupId;
+
+    _applyHabitReorder(sourceIndex, targetIndex);
+    movedData.groupId = targetGroupUUID;
+
+    final targetGroupData = currentHabitList
+        .whereType<HabitSummaryDataSortCache>()
+        .map((e) => e.data)
+        .nonNulls
+        .where((d) => d.groupId == targetGroupUUID)
+        .toList();
+
+    if (targetGroupData.isNotEmpty) {
+      await _access.fixAndSaveSortPositions(
+        targetGroupData,
+        increaseStep: sortPositionConflictIncreaseStep,
+        decimalPlaces: sortPositionConflictDecimalPlaces,
+      );
+    }
+
+    if (oldGroupId != targetGroupUUID) {
+      await _access.updateHabitGroupIds([movedUUID], [targetGroupUUID]);
+    }
+    resortData();
   }
 
   Future<List<HabitStatusChangedRecord>> _changeHabitsStatus(
