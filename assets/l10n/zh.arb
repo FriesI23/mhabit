@@ -495,6 +495,14 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "修改主页面上每日记录的状态的点击行为。",
     "appSetting_openRecordStatusDialogOpTile_titleText": "打开详细记录",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "修改主页面上打开每日记录详情弹窗的点击行为。",
+    "appSetting_expandTimerDelayTile_titleText": "分组展开延迟",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "拖拽习惯到折叠的分组标题上时，自动展开分组的延迟时间。",
+    "appSetting_expandTimerDelay_default": "默认",
+    "appSetting_expandTimerDelay_fast": "快",
+    "appSetting_expandTimerDelay_slow": "慢",
     "appSetting_appThemeColorTile_titleText": "主题颜色",
     "appSetting_appThemeColorChosenDiloag_titleText": "选择主题颜色",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用壁纸主色（安卓 12 及以上）",

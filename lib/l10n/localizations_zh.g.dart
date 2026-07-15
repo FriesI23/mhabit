@@ -745,6 +745,22 @@ class L10nZh extends L10n {
       '修改主页面上打开每日记录详情弹窗的点击行为。';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => '分组展开延迟';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      '拖拽习惯到折叠的分组标题上时，自动展开分组的延迟时间。';
+
+  @override
+  String get appSetting_expandTimerDelay_default => '默认';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => '快';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => '慢';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => '主题颜色';
 
   @override

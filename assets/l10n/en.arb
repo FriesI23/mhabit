@@ -662,6 +662,18 @@
     "@appSetting_openRecordStatusDialogOpTile_titleText": {},
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "Modify the click behavior to open the detailed popup for daily records on main page.",
     "@appSetting_openRecordStatusDialogOpTile_subtitleText": {},
+    "appSetting_expandTimerDelayTile_titleText": "Group expand delay",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.",
+    "@appSetting_expandTimerDelayTile_subtitleText": {},
+    "appSetting_expandTimerDelay_default": "Default",
+    "@appSetting_expandTimerDelay_default": {},
+    "appSetting_expandTimerDelay_fast": "Fast",
+    "@appSetting_expandTimerDelay_fast": {},
+    "appSetting_expandTimerDelay_slow": "Slow",
+    "@appSetting_expandTimerDelay_slow": {},
     "appSetting_appThemeColorTile_titleText": "Theme Color",
     "@appSetting_appThemeColorTile_titleText": {},
     "appSetting_appThemeColorChosenDiloag_titleText": "Choose Theme Color",

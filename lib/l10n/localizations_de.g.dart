@@ -773,6 +773,22 @@ class L10nDe extends L10n {
       'Einstellung zur Anpassung des Tipp-Verhaltens, um das Pop-Up zur Modifikation eines Datenpunktes einer Gewohnheit zu öffnen.';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+
+  @override
+  String get appSetting_expandTimerDelay_default => 'Default';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => 'Fast';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => 'Slow';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => 'Farbe Schema';
 
   @override

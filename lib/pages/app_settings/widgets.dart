@@ -19,6 +19,7 @@ export '_widgets/app_setting_confirm_clear_db.dart';
 export '_widgets/app_setting_date_display_format.dart';
 export '_widgets/app_setting_develop_subgroup.dart';
 export '_widgets/app_setting_display_op_tile.dart';
+export '_widgets/app_setting_expand_timer_delay_tile.dart';
 export '_widgets/app_setting_first_day.dart';
 export '_widgets/app_setting_notify_tile.dart';
 export '_widgets/app_setting_reminder_tile.dart';

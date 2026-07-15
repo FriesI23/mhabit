@@ -1358,6 +1358,36 @@ abstract class L10n {
   /// **'Modify the click behavior to open the detailed popup for daily records on main page.'**
   String get appSetting_openRecordStatusDialogOpTile_subtitleText;
 
+  /// Title for the group expand timer delay setting tile
+  ///
+  /// In en, this message translates to:
+  /// **'Group expand delay'**
+  String get appSetting_expandTimerDelayTile_titleText;
+
+  /// No description provided for @appSetting_expandTimerDelayTile_subtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.'**
+  String get appSetting_expandTimerDelayTile_subtitleText;
+
+  /// No description provided for @appSetting_expandTimerDelay_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get appSetting_expandTimerDelay_default;
+
+  /// No description provided for @appSetting_expandTimerDelay_fast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get appSetting_expandTimerDelay_fast;
+
+  /// No description provided for @appSetting_expandTimerDelay_slow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get appSetting_expandTimerDelay_slow;
+
   /// No description provided for @appSetting_appThemeColorTile_titleText.
   ///
   /// In en, this message translates to:

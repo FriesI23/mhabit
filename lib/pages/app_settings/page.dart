@@ -39,6 +39,7 @@ import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_first_day.dart';
 import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/workflow/app_event.dart';
@@ -224,6 +225,11 @@ class _PageState extends State<_Page> with XShare {
     context
         .read<HabitRecordOpConfigViewModel>()
         .setOpenRecordStatusDialogAction(action);
+  }
+
+  void _onExpandTimerDelaySelected(GroupExpandTimerSpeed speed) {
+    if (!mounted) return;
+    context.read<GroupExpandTimerConfigViewModel>().setSpeed(speed);
   }
 
   void _onExportAllTilePressed(BuildContext context) async {
@@ -636,6 +642,26 @@ class _PageState extends State<_Page> with XShare {
                     )
                   : null,
               onSelected: _onOpenRecordStatusDialogSelected,
+            ),
+          ),
+        ),
+      ),
+      Selector<GroupExpandTimerConfigViewModel, GroupExpandTimerSpeed>(
+        selector: (context, vm) => vm.speed,
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, value, child) => L10nBuilder(
+          builder: (context, l10n) => LayoutBuilder(
+            builder: (context, constraints) => AppSettingExpandTimerDelayTile(
+              isLargeScreen:
+                  constraints.maxWidth >= kHabitLargeScreenAdaptWidth,
+              speed: value,
+              title: l10n != null
+                  ? Text(l10n.appSetting_expandTimerDelayTile_titleText)
+                  : null,
+              subtitle: l10n != null
+                  ? Text(l10n.appSetting_expandTimerDelayTile_subtitleText)
+                  : null,
+              onSelected: _onExpandTimerDelaySelected,
             ),
           ),
         ),

@@ -27,6 +27,7 @@ import '../../providers/app_ui/app_language.dart';
 import '../../providers/app_ui/app_launch_entry.dart';
 import '../../providers/app_ui/app_theme.dart';
 import '../../providers/app_ui/custom_color_history.dart';
+import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_record_scroll_behavior.dart';
 import '../../providers/support/animation_scale_sync.dart';
@@ -215,6 +216,10 @@ class AppProviders extends SingleChildStatelessWidget {
     ),
     ViewModelProxyProvider<ProfileViewModel, HabitRecordOpConfigViewModel>(
       create: (context) => HabitRecordOpConfigViewModel(),
+      update: (context, profile, previous) => previous..updateProfile(profile),
+    ),
+    ViewModelProxyProvider<ProfileViewModel, GroupExpandTimerConfigViewModel>(
+      create: (context) => GroupExpandTimerConfigViewModel(),
       update: (context, profile, previous) => previous..updateProfile(profile),
     ),
     ViewModelProxyProvider3<

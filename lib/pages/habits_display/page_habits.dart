@@ -43,6 +43,7 @@ import '../../providers/app_ui/app_compact_ui_switcher.dart';
 import '../../providers/app_ui/app_developer.dart';
 import '../../providers/app_ui/app_experimental_feature.dart';
 import '../../providers/app_ui/app_theme.dart';
+import '../../providers/app_ui/group_expand_timer_config.dart';
 import '../../providers/app_ui/habit_op_config.dart';
 import '../../providers/app_ui/habits_filter.dart';
 import '../../providers/app_ui/habits_grouping.dart';
@@ -713,9 +714,9 @@ class HabitsTabPageState extends State<HabitsTabPage>
     _expandGroupTimer = null;
   }
 
-  void _startExpandTimer(String? groupUUID) {
+  void _startExpandTimer(String? groupUUID, int delayMs) {
     _cancelExpandTimer();
-    _expandGroupTimer = Timer(const Duration(milliseconds: 600), () {
+    _expandGroupTimer = Timer(Duration(milliseconds: delayMs), () {
       if (mounted) _vm.expandGroup(groupUUID);
       _expandGroupTimer = null;
     });
@@ -768,7 +769,10 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
         final groupUUID = dropItem.groupUUID;
         if (viewmodel.isGroupCollapsed(groupUUID)) {
-          _startExpandTimer(groupUUID);
+          _startExpandTimer(
+            groupUUID,
+            context.read<GroupExpandTimerConfigViewModel>().expandDelayMs,
+          );
         }
         if (dropIndex == 0) return false;
       } else {

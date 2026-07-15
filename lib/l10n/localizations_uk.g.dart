@@ -773,6 +773,22 @@ class L10nUk extends L10n {
       'Змініть поведінку клацання, щоб відкрити докладне спливаюче вікно щоденних записів на головній сторінці.';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+
+  @override
+  String get appSetting_expandTimerDelay_default => 'Default';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => 'Fast';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => 'Slow';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => 'Колір теми';
 
   @override

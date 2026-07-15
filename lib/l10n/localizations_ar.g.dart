@@ -765,6 +765,22 @@ class L10nAr extends L10n {
       'تعديل أسلوب الضغط لعرض التقرير اليومي التفصيلي في الصفحة الرئيسية.';
 
   @override
+  String get appSetting_expandTimerDelayTile_titleText => 'Group expand delay';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      'Set how long to hover over a collapsed group header before it auto-expands during drag-and-drop.';
+
+  @override
+  String get appSetting_expandTimerDelay_default => 'Default';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => 'Fast';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => 'Slow';
+
+  @override
   String get appSetting_appThemeColorTile_titleText => 'لون المظهر';
 
   @override

@@ -66,6 +66,7 @@ class AppEntry extends StatelessWidget {
     DisplaySortModeProfileHandler.new,
     DisplayHabitsFilterProfileHandler.new,
     DisplayGroupingProfileHandler.new,
+    GroupExpandTimerDelayProfileHandler.new,
     DisplayCalendarScrollModeProfileHandler.new,
     DisplayCalendartBarOccupyPrtProfileHandler.new,
     ShowDateFormatProfileHandler.new,
