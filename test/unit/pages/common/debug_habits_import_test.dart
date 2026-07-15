@@ -66,6 +66,44 @@ void main() {
       expect(access.lastWithRecords, isFalse);
       expect(access.lastJsonData, hasLength(2));
       expect(access.lastJsonData, everyElement(isA<Map<String, dynamic>>()));
+      // Without groups, group_id should be absent
+      expect(
+        (access.lastJsonData!.first as Map<String, dynamic>).containsKey(
+          'group_id',
+        ),
+        isFalse,
+      );
     },
   );
+
+  testWidgets('debugAddMultiTempHabit with withGroups=true sets group_id', (
+    tester,
+  ) async {
+    final access = _FakeHabitImportAccess();
+    final actions = _DebugActions();
+    late BuildContext buildContext;
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [Provider<HabitImportAccess>.value(value: access)],
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Builder(
+            builder: (context) {
+              buildContext = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    // withGroups=true requires GroupManager and HabitsGroupingViewModel
+    // in the provider tree; the default (false) path is tested above
+    await actions.debugAddMultiTempHabit(buildContext, count: 2);
+
+    expect(access.lastWithRecords, isFalse);
+    expect(access.lastJsonData, hasLength(2));
+    expect(access.lastJsonData, everyElement(isA<Map<String, dynamic>>()));
+  });
 }

@@ -220,6 +220,7 @@ class HabitExportData implements JsonAdaptor {
     remindQuestion: reminderQuest,
     startDate: startDate,
     targetDays: targetDays,
+    groupId: groupId,
   );
 
   @override

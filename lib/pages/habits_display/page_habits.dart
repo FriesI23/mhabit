@@ -1016,8 +1016,12 @@ class HabitsTabPageState extends State<HabitsTabPage>
           sliver: EnhancedSafeArea.edgeToEdgeSafe(
             withSliver: true,
             child: HabitDisplayDevelopSliverList(
-              onAddCountHabitsPressed: (count) async {
-                await debugAddMultiTempHabit(context, count: count);
+              onAddCountHabitsPressed: (count, withGroups) async {
+                await debugAddMultiTempHabit(
+                  context,
+                  count: count,
+                  withGroups: withGroups,
+                );
                 if (!context.mounted) return;
                 context.read<AppEventBus>().push(
                   const ReloadDataEvent(

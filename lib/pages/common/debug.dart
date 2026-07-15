@@ -21,10 +21,13 @@ import 'package:provider/provider.dart';
 import '../../common/consts.dart';
 import '../../common/debug.dart';
 import '../../common/utils.dart';
+import '../../models/habit_color.dart';
 import '../../models/habit_date.dart';
 import '../../models/habit_export.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_freq.dart';
+import '../../providers/app_ui/habits_grouping.dart';
+import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../storage/db/handlers/habit.dart';
 import '../../utils/app_clock.dart';
@@ -44,21 +47,63 @@ SliverChildDelegate debugBuildSliverScrollDelegate({int? childCount}) {
 }
 
 mixin HabitsDisplayViewDebug {
+  static const _groupNames = ['Many', 'Medium', 'Few'];
+
   Future<void> debugAddMultiTempHabit(
     BuildContext context, {
     int count = 10,
+    bool withGroups = false,
   }) async {
     final access = context.read<HabitImportAccess>();
     final now = AppClock().now().millisecondsSinceEpoch ~/ onSecondMS;
     final rnd = Random();
     final freq = HabitFrequency.custom().toJson();
+
+    // Create groups if enabled
+    List<String>? groupUUIDs;
+    if (withGroups) {
+      final groupManager = context.read<GroupManager>();
+      final colorTypes = HabitColorType.values.toList(growable: false);
+      final timestamp = (now * onSecondMS).toString();
+      final created = await Future.wait(
+        _groupNames.indexed.map(
+          (entry) => groupManager.createGroup(
+            name: '${entry.$2} (Dev $timestamp)',
+            color: HabitColor.builtIn(colorTypes[entry.$1 % colorTypes.length]),
+          ),
+        ),
+      );
+      groupUUIDs = created.map((g) => g.uuid!).toList(growable: false);
+
+      final groupingVm = context.read<HabitsGroupingViewModel>();
+      if (!groupingVm.isGroupingEnabled) {
+        await groupingVm.setGroupingEnabled(true);
+      }
+    }
+
+    // Distribute habits across groups: many > medium > few when possible
+    final manyCount = (count / 2).ceil();
+    var mediumCount = ((count - manyCount) / 2).ceil();
+    if (mediumCount > 1 && mediumCount == count - manyCount - mediumCount) {
+      mediumCount++;
+    }
+    final boundaries = [manyCount, manyCount + mediumCount, count];
+
     final habits = <Object?>[];
-    for (var i = 0; i < count; i++) {
+    for (final i in Iterable.generate(count)) {
       final uuid = genHabitUUID();
       final meta = debugGetRandomHabitMeta(rnd);
+
+      // Determine which group this habit belongs to
+      String? groupId;
+      if (withGroups && groupUUIDs != null) {
+        groupId = groupUUIDs[boundaries.indexWhere((b) => i < b)];
+      }
+
       final dbCell = HabitDBCell(
         type: HabitType.normal.dbCode,
         uuid: uuid,
+        groupId: groupId,
         status: HabitStatus.activated.dbCode,
         name: meta.name,
         desc: meta.desc,

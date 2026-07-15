@@ -24,7 +24,7 @@ import '../../common/widgets.dart';
 import 'changelog_banner_sliver.dart';
 
 class HabitDisplayDevelopSliverList extends StatefulWidget {
-  final void Function(int count)? onAddCountHabitsPressed;
+  final void Function(int count, bool withGroups)? onAddCountHabitsPressed;
 
   const HabitDisplayDevelopSliverList({
     super.key,
@@ -37,13 +37,15 @@ class HabitDisplayDevelopSliverList extends StatefulWidget {
 
 class _HabitDisplayDevelopSliverList
     extends State<HabitDisplayDevelopSliverList> {
+  bool _withGroups = true;
+
   Widget _buildDebugHabitsButton(int count) {
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
       leading: const Icon(Icons.add),
       title: Text("Generate $count habits"),
-      onTap: () => widget.onAddCountHabitsPressed?.call(count),
+      onTap: () => widget.onAddCountHabitsPressed?.call(count, _withGroups),
     );
   }
 
@@ -111,6 +113,16 @@ class _HabitDisplayDevelopSliverList
     );
   }
 
+  Widget _buildGroupCheckbox() {
+    return CheckboxListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      value: _withGroups,
+      title: const Text('Use groups (Many, Medium, Few)'),
+      onChanged: (value) => setState(() => _withGroups = value!),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -126,6 +138,7 @@ class _HabitDisplayDevelopSliverList
             style: TextStyle(color: Theme.of(context).colorScheme.outline),
           ),
           children: [
+            _buildGroupCheckbox(),
             _buildDebugHabitsButton(1),
             _buildDebugHabitsButton(20),
             _buildDebugHabitsButton(100),
