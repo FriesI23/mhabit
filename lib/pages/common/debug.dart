@@ -63,6 +63,7 @@ mixin HabitsDisplayViewDebug {
     List<String>? groupUUIDs;
     if (withGroups) {
       final groupManager = context.read<GroupManager>();
+      final groupingVm = context.read<HabitsGroupingViewModel>();
       final colorTypes = HabitColorType.values.toList(growable: false);
       final timestamp = (now * onSecondMS).toString();
       final created = await Future.wait(
@@ -75,7 +76,6 @@ mixin HabitsDisplayViewDebug {
       );
       groupUUIDs = created.map((g) => g.uuid!).toList(growable: false);
 
-      final groupingVm = context.read<HabitsGroupingViewModel>();
       if (!groupingVm.isGroupingEnabled) {
         await groupingVm.setGroupingEnabled(true);
       }

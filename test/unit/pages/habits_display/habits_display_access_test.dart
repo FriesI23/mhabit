@@ -32,7 +32,7 @@ import 'package:mhabit/providers/workflow/group_manager.dart';
 import 'package:mhabit/providers/workflow/habits_manager.dart';
 import 'package:mhabit/storage/db/handlers/habit.dart';
 
-import '../../../support/stub/app_sync_stub.dart';
+import '../../../support/stub/app_sync.dart';
 import '../../../support/stub/habits_display_access.dart';
 
 final class _FakeHabitsDisplayAccess extends StubHabitsDisplayAccess {
