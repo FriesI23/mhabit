@@ -258,6 +258,13 @@
     "habitDisplay_mainMenu_showCompletedTileText": "顯示已完成",
     "habitDisplay_mainMenu_showActivedTileText": "顯示進行中",
     "habitDisplay_mainMenu_settingTileText": "設定",
+    "habitDisplay_groupType_name": "依名稱",
+    "habitDisplay_groupType_colorType": "依顏色",
+    "habitDisplay_groupType_createDate": "建立日期",
+    "habitDisplay_groupTypeDialog_title": "分組排序",
+    "habitDisplay_groupTypeDialog_confirm": "確認",
+    "habitDisplay_groupTypeDialog_cancel": "取消",
+    "habitDisplay_groupTypeDialog_none": "平鋪",
     "habitDisplay_sort_reverseText": "反向",
     "habitDisplay_sortDirection_asc": "（升冪）",
     "habitDisplay_sortDirection_Desc": "（降冪）",
@@ -466,6 +473,14 @@
     "appSetting_changeRecordStatusOpTile_subtitleText": "修改點選行為以變更主頁面上每日記錄的狀態。",
     "appSetting_openRecordStatusDialogOpTile_titleText": "開啟詳細記錄",
     "appSetting_openRecordStatusDialogOpTile_subtitleText": "修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。",
+    "appSetting_expandTimerDelayTile_titleText": "分組展開延遲",
+    "@appSetting_expandTimerDelayTile_titleText": {
+        "description": "Title for the group expand timer delay setting tile"
+    },
+    "appSetting_expandTimerDelayTile_subtitleText": "拖曳習慣到摺疊的分組標題上時，自動展開分組的延遲時間。",
+    "appSetting_expandTimerDelay_default": "預設",
+    "appSetting_expandTimerDelay_fast": "快",
+    "appSetting_expandTimerDelay_slow": "慢",
     "appSetting_appThemeColorTile_titleText": "主題顏色",
     "appSetting_appThemeColorChosenDiloag_titleText": "選擇主題顏色",
     "appSetting_appThemeColorChosenDialog_subTitleText_android": "使用桌布主色調 (Android 12+)",
@@ -869,5 +884,39 @@
     "changelog_view_full": "檢視完整更新日誌",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "habitGroup_uncategorized": "無分組",
+    "@habitGroup_uncategorized": {
+        "description": "Virtual group name for habits without a group"
+    },
+    "habitDetail_groupTile_title": "分組",
+    "@habitDetail_groupTile_title": {
+        "description": "Title for the group info tile on the habit detail page"
+    },
+    "habitEdit_groupTile_title": "分組",
+    "@habitEdit_groupTile_title": {
+        "description": "Title for the group selector tile on the habit edit page"
+    },
+    "habitEdit_groupPicker_hintText": "搜尋或建立分組",
+    "@habitEdit_groupPicker_hintText": {
+        "description": "Placeholder text for the group picker search field"
+    },
+    "habitEdit_groupPicker_noGroup": "無分組",
+    "@habitEdit_groupPicker_noGroup": {
+        "description": "Option text for selecting no group"
+    },
+    "habitEdit_groupPicker_createGroup": "建立「{name}」",
+    "@habitEdit_groupPicker_createGroup": {
+        "description": "Button text to create a new group with the given name",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "Work"
+            }
+        }
+    },
+    "habitEdit_groupPicker_loading": "分組載入中…",
+    "@habitEdit_groupPicker_loading": {
+        "description": "Placeholder text shown in the group picker while groups are loading"
     }
 }

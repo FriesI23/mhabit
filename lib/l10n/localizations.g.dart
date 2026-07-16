@@ -758,11 +758,47 @@ abstract class L10n {
   /// **'Settings'**
   String get habitDisplay_mainMenu_settingTileText;
 
-  /// Toggle label for enabling/disabling habit grouping display
+  /// No description provided for @habitDisplay_groupType_name.
   ///
   /// In en, this message translates to:
-  /// **'Grouping'**
-  String get habitDisplay_mainMenu_groupingTileText;
+  /// **'By Name'**
+  String get habitDisplay_groupType_name;
+
+  /// No description provided for @habitDisplay_groupType_colorType.
+  ///
+  /// In en, this message translates to:
+  /// **'By Color'**
+  String get habitDisplay_groupType_colorType;
+
+  /// No description provided for @habitDisplay_groupType_createDate.
+  ///
+  /// In en, this message translates to:
+  /// **'By Creation Date'**
+  String get habitDisplay_groupType_createDate;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Sort'**
+  String get habitDisplay_groupTypeDialog_title;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'confirm'**
+  String get habitDisplay_groupTypeDialog_confirm;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel'**
+  String get habitDisplay_groupTypeDialog_cancel;
+
+  /// No description provided for @habitDisplay_groupTypeDialog_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Flat'**
+  String get habitDisplay_groupTypeDialog_none;
 
   /// No description provided for @habitDisplay_sort_reverseText.
   ///

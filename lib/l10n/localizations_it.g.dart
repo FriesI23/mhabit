@@ -409,7 +409,25 @@ class L10nIt extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'Impostazioni';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+  String get habitDisplay_groupType_name => 'Per Nome';
+
+  @override
+  String get habitDisplay_groupType_colorType => 'Per Colore';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => 'Conferma';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'Annulla';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
   String get habitDisplay_sort_reverseText => 'Inverti';

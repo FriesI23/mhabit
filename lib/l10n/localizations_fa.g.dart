@@ -405,7 +405,25 @@ class L10nFa extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'تنظیمات';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+  String get habitDisplay_groupType_name => 'بر اساس نام';
+
+  @override
+  String get habitDisplay_groupType_colorType => 'بر اساس رنگ';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => 'تایید';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'لغو';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
   String get habitDisplay_sort_reverseText => 'معکوس';

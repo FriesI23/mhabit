@@ -408,7 +408,25 @@ class L10nHu extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'Beállítások';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+  String get habitDisplay_groupType_name => 'Név';
+
+  @override
+  String get habitDisplay_groupType_colorType => 'Szín';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => 'megerősítés';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'mégse';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
   String get habitDisplay_sort_reverseText => 'Fordított';

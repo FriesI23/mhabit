@@ -31,6 +31,7 @@ import '../../../models/habit_date.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_form.dart';
 import '../../../models/habit_group.dart';
+import '../../../models/habit_group_display.dart';
 import '../../../models/habit_repo_actions.dart';
 import '../../../models/habit_score.dart';
 import '../../../models/habit_stat.dart';
@@ -546,6 +547,14 @@ class HabitSummaryViewModel extends ChangeNotifier
     sortType: sortType,
   );
 
+  void updateGroupOptions(
+    HabitDisplayGroupType groupType,
+    HabitDisplaySortDirection groupDirection,
+  ) => _sortableCache = _sortableCache.copyWith(
+    groupType: groupType,
+    groupDirection: groupDirection,
+  );
+
   void updateHabitDisplayFilter(HabitsDisplayFilter newFilter) =>
       _sortableCache = _sortableCache.copyWith(filter: newFilter);
 
@@ -572,14 +581,21 @@ class HabitSummaryViewModel extends ChangeNotifier
       ),
     );
 
-    if (_groupingEnabled && (_groupCollection != null)) {
+    if (_groupingEnabled) {
+      if (_groupCollection == null) {
+        replaceWithUngroupedData();
+        return;
+      }
+      final groups = _groupCollection!.toList();
       final grouped = buildGroupedSortCacheList(
         data: _data,
-        groups: _groupCollection!.toList(),
+        groups: groups,
         collapsedUUIDs: _collapsedGroupUUIDs,
         filter: statusFilter,
         sortType: _sortableCache.sortType,
         sortDirection: _sortableCache.sortDirection,
+        groupType: _sortableCache.groupType,
+        groupDirection: _sortableCache.groupDirection,
       );
 
       // Degrade to ungrouped display when only the uncategorized
@@ -1066,12 +1082,16 @@ class _HabitsSortableCache {
   final HabitDisplaySortType sortType;
   final HabitDisplaySortDirection sortDirection;
   final HabitsDisplayFilter filter;
+  final HabitDisplayGroupType groupType;
+  final HabitDisplaySortDirection groupDirection;
   final List<HabitSortCache> lastSortedDataCache;
 
   const _HabitsSortableCache({
     required this.sortType,
     required this.sortDirection,
     required this.filter,
+    this.groupType = defaultGroupType,
+    this.groupDirection = defaultGroupSortDirection,
     this.lastSortedDataCache = const [],
   });
 

@@ -3,5 +3,9 @@
     "habitToday_appBar_title": "calendarPicker_clip_today",
     "habitDisplay_tab_today_label": "habitToday_appBar_title",
     "common_loadError_retryText": "habitDetail_notFoundRetryText",
-    "common_habitColorType_custom": "habitEdit_colorPicker_customSectionLabel"
+    "common_habitColorType_custom": "habitEdit_colorPicker_customSectionLabel",
+    "habitDisplay_groupType_name": "habitDisplay_sortType_name",
+    "habitDisplay_groupType_colorType": "habitDisplay_sortType_colorType",
+    "habitDisplay_groupTypeDialog_confirm": "habitDisplay_sortTypeDialog_confirm",
+    "habitDisplay_groupTypeDialog_cancel": "habitDisplay_sortTypeDialog_cancel"
 }

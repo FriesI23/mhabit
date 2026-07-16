@@ -404,7 +404,25 @@ class L10nNb extends L10n {
   String get habitDisplay_mainMenu_settingTileText => 'Settings';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+  String get habitDisplay_groupType_name => 'By Name';
+
+  @override
+  String get habitDisplay_groupType_colorType => 'By Color';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => 'confirm';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'cancel';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
   String get habitDisplay_sort_reverseText => 'Reverse';

@@ -20,6 +20,8 @@ abstract class _$_HabitsSortableCacheCWProxy {
     HabitDisplaySortType sortType,
     HabitDisplaySortDirection sortDirection,
     HabitsDisplayFilter filter,
+    HabitDisplayGroupType groupType,
+    HabitDisplaySortDirection groupDirection,
     List<HabitSortCache<dynamic>> lastSortedDataCache,
   });
 }
@@ -44,6 +46,8 @@ class _$_HabitsSortableCacheCWProxyImpl
     Object? sortType = const $CopyWithPlaceholder(),
     Object? sortDirection = const $CopyWithPlaceholder(),
     Object? filter = const $CopyWithPlaceholder(),
+    Object? groupType = const $CopyWithPlaceholder(),
+    Object? groupDirection = const $CopyWithPlaceholder(),
     Object? lastSortedDataCache = const $CopyWithPlaceholder(),
   }) {
     return _HabitsSortableCache(
@@ -60,6 +64,16 @@ class _$_HabitsSortableCacheCWProxyImpl
           ? _value.filter
           // ignore: cast_nullable_to_non_nullable
           : filter as HabitsDisplayFilter,
+      groupType: groupType == const $CopyWithPlaceholder() || groupType == null
+          ? _value.groupType
+          // ignore: cast_nullable_to_non_nullable
+          : groupType as HabitDisplayGroupType,
+      groupDirection:
+          groupDirection == const $CopyWithPlaceholder() ||
+              groupDirection == null
+          ? _value.groupDirection
+          // ignore: cast_nullable_to_non_nullable
+          : groupDirection as HabitDisplaySortDirection,
       lastSortedDataCache:
           lastSortedDataCache == const $CopyWithPlaceholder() ||
               lastSortedDataCache == null

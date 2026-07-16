@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show IconData;
 import 'package:tuple/tuple.dart';
 
+import '../../common/consts.dart';
 import '../../l10n/localizations.dart';
 import '../../logging/helper.dart';
 import '../../models/habit_display.dart';
@@ -35,10 +36,9 @@ class HabitsSortViewModel extends ChangeNotifier
     _sortMode = newProfile.getHandler<DisplaySortModeProfileHandler>();
   }
 
-  HabitDisplaySortType get sortType =>
-      _sortMode?.sortType ?? HabitDisplaySortType.manual;
+  HabitDisplaySortType get sortType => _sortMode?.sortType ?? defaultSortType;
   HabitDisplaySortDirection get sortDirection =>
-      _sortMode?.sortDirection ?? HabitDisplaySortDirection.asc;
+      _sortMode?.sortDirection ?? defaultSortDirection;
 
   Future<void> setNewSortMode({
     HabitDisplaySortType? sortType,

@@ -59,8 +59,14 @@ class PageProviders extends SingleChildStatelessWidget {
       post: (t, _, _, vm) => vm.resortData(),
     ),
     ViewModelProxyProvider<HabitsGroupingViewModel, HabitSummaryViewModel>(
-      update: (context, value, previous) =>
-          previous..updateGroupingEnabled(value.isGroupingEnabled),
+      update: (context, value, previous) {
+        previous.updateGroupingEnabled(value.isGroupingEnabled);
+        final groupType = value.groupType;
+        if (groupType != null) {
+          previous.updateGroupOptions(groupType, value.groupDirection);
+        }
+        return previous;
+      },
       post: (t, _, vm) => vm.resortData(),
     ),
     ViewModelProxyProvider<AppFirstDayViewModel, HabitSummaryViewModel>(

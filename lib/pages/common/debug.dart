@@ -26,7 +26,6 @@ import '../../models/habit_date.dart';
 import '../../models/habit_export.dart';
 import '../../models/habit_form.dart';
 import '../../models/habit_freq.dart';
-import '../../providers/app_ui/habits_grouping.dart';
 import '../../providers/workflow/group_manager.dart';
 import '../../providers/workflow/habits_manager.dart';
 import '../../storage/db/handlers/habit.dart';
@@ -63,7 +62,6 @@ mixin HabitsDisplayViewDebug {
     List<String>? groupUUIDs;
     if (withGroups) {
       final groupManager = context.read<GroupManager>();
-      final groupingVm = context.read<HabitsGroupingViewModel>();
       final colorTypes = HabitColorType.values.toList(growable: false);
       final timestamp = (now * onSecondMS).toString();
       final created = await Future.wait(
@@ -75,10 +73,6 @@ mixin HabitsDisplayViewDebug {
         ),
       );
       groupUUIDs = created.map((g) => g.uuid!).toList(growable: false);
-
-      if (!groupingVm.isGroupingEnabled) {
-        await groupingVm.setGroupingEnabled(true);
-      }
     }
 
     // Distribute habits across groups: many > medium > few when possible

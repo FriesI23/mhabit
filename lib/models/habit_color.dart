@@ -139,3 +139,14 @@ final class CustomHabitColor extends HabitColor {
   @override
   String toString() => 'CustomHabitColor($argb, tinted: $tinted)';
 }
+
+/// Null-safe comparison for two [HabitColor?] values, placing `null` after
+/// all non-null values.
+extension CompareNullableColor on HabitColor? {
+  int compareToNullable(HabitColor? other) {
+    if (this == null && other == null) return 0;
+    if (this == null) return 1;
+    if (other == null) return -1;
+    return this!.compareTo(other);
+  }
+}

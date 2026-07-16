@@ -63,6 +63,7 @@ import '../habit_detail/page.dart' as habit_detail;
 import '../habit_edit/page.dart' as habit_edit;
 import '../habits_status_changer/page.dart' as habits_status_changer;
 import '_providers/habit_summary.dart';
+import '_widgets/habit_display_group_type_picker.dart';
 import 'extensions.dart';
 import 'widgets.dart';
 
@@ -399,12 +400,15 @@ class HabitsTabPageState extends State<HabitsTabPage>
 
   void _openHabitSummaryMenuDialog() async {
     if (!mounted) return;
+    final groupingVM = context.read<HabitsGroupingViewModel>();
     final result = await showHabitDisplayMainMenuDialog(
       context: context,
       sortType: context.read<HabitsSortViewModel>().sortType,
       sortDirection: context.read<HabitsSortViewModel>().sortDirection,
+      groupType: groupingVM.groupType,
+      groupDirection: groupingVM.groupDirection,
       habitFilter: context.read<HabitsFilterViewModel>(),
-      grouping: context.read<HabitsGroupingViewModel>(),
+      grouping: groupingVM,
       appTheme: context.read<AppThemeViewModel>(),
     );
 
@@ -416,6 +420,11 @@ class HabitsTabPageState extends State<HabitsTabPage>
         await Future.delayed(const Duration(milliseconds: 300));
         if (!mounted) return;
         _openHabitSummarySortSelectorDialog();
+        break;
+      case HabitDisplayMainMenuDialogOpr.showGroupMenu:
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (!mounted) return;
+        _openHabitSummaryGroupSelectorDialog();
         break;
       case HabitDisplayMainMenuDialogOpr.openSettings:
         if (!mounted) return;
@@ -445,6 +454,27 @@ class HabitsTabPageState extends State<HabitsTabPage>
       sortType: result.item1,
       sortDirection: result.item2,
     );
+  }
+
+  void _openHabitSummaryGroupSelectorDialog() async {
+    if (!mounted) return;
+    final groupingVM = context.read<HabitsGroupingViewModel>();
+    final result = await showHabitDisplayGroupTypePickerDialog(
+      context: context,
+      groupType: groupingVM.groupType,
+      groupDirection: groupingVM.groupDirection,
+    );
+
+    if (!mounted || result == null) return;
+    final (groupType, groupDirection) = result;
+    if (groupType == null) {
+      groupingVM.disableGrouping();
+    } else {
+      groupingVM.setGroupMode(
+        groupType: groupType,
+        groupDirection: groupDirection,
+      );
+    }
   }
 
   void _openHabitRecordResonModifierDialog(

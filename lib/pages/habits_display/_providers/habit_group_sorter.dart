@@ -12,18 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import '../../../common/consts.dart';
 import '../../../extensions/iterable_extensions.dart';
+import '../../../models/habit_color.dart';
 import '../../../models/habit_display.dart';
 import '../../../models/habit_group.dart';
+import '../../../models/habit_group_display.dart';
 import '../../../models/habit_summary.dart';
 
 /// Builds a flat grouped sort-cache list from the given [data].
 ///
-/// Habits are grouped by their effective group ID (which resolves orphan
-/// group references to `null`), sorted by [sortType]/[sortDirection] within
-/// each group, and wrapped in [HabitSummaryDataSortCache]. Group headers
-/// ([GroupHeaderSortCache]) are inserted for each non-empty group plus an
-/// uncategorized section for ungrouped habits.
+/// Habits are always grouped by their effective group ID in [groups]
+/// (resolving orphan references to `null`). Groups are ordered according to
+/// [groupType]:
+/// - [HabitDisplayGroupType.name]: by group name, alphabetically.
+/// - [HabitDisplayGroupType.colorType]: by each group's [HabitGroupData.color].
+/// - [HabitDisplayGroupType.createDate]: by the order in [groups].
+///
+/// [groupDirection] controls the order direction for groups.
+/// Within each group, habits are sorted by [sortType]/[sortDirection].
 ///
 /// Groups with no habits are skipped. Collapsed groups (by
 /// [collapsedUUIDs]) only emit the header, omitting their habit items.
@@ -32,8 +39,10 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
   required List<HabitGroupData> groups,
   required Set<String?> collapsedUUIDs,
   HabitsDisplayFilter? filter,
-  HabitDisplaySortType sortType = HabitDisplaySortType.manual,
-  HabitDisplaySortDirection sortDirection = HabitDisplaySortDirection.asc,
+  HabitDisplaySortType sortType = defaultSortType,
+  HabitDisplaySortDirection sortDirection = defaultSortDirection,
+  HabitDisplayGroupType groupType = defaultGroupType,
+  HabitDisplaySortDirection groupDirection = defaultGroupSortDirection,
 }) {
   final result = <HabitSortCache<dynamic>>[];
 
@@ -44,7 +53,10 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
     habitByGroup.putIfAbsent(gid, () => []).add(habit);
   }
 
-  for (final group in groups) {
+  // Sort groups according to groupType, then apply groupDirection.
+  final orderedGroups = _orderGroups(groups, groupType, groupDirection);
+
+  for (final group in orderedGroups) {
     final gid = group.uuid;
     final habits = habitByGroup.remove(gid);
     if (habits == null || habits.isEmpty) continue;
@@ -89,6 +101,28 @@ List<HabitSortCache<dynamic>> buildGroupedSortCacheList({
   }
 
   return result;
+}
+
+/// Returns [groups] sorted according to [groupType] and [direction].
+List<HabitGroupData> _orderGroups(
+  List<HabitGroupData> groups,
+  HabitDisplayGroupType groupType,
+  HabitDisplaySortDirection direction,
+) {
+  final sorted = groups.toList();
+  final comparator = switch (groupType) {
+    HabitDisplayGroupType.name =>
+      (HabitGroupData a, HabitGroupData b) => a.name.compareTo(b.name),
+    HabitDisplayGroupType.colorType =>
+      (HabitGroupData a, HabitGroupData b) =>
+          a.color.compareToNullable(b.color),
+    HabitDisplayGroupType.createDate => null,
+  };
+  if (comparator != null) sorted.sort(comparator);
+  if (direction == HabitDisplaySortDirection.desc) {
+    return sorted.reversed.toList();
+  }
+  return sorted;
 }
 
 /// Applies [options] keyword/status/type filtering to [sorted].

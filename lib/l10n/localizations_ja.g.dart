@@ -395,7 +395,25 @@ class L10nJa extends L10n {
   String get habitDisplay_mainMenu_settingTileText => '設定';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => 'Grouping';
+  String get habitDisplay_groupType_name => '名前順';
+
+  @override
+  String get habitDisplay_groupType_colorType => '色順';
+
+  @override
+  String get habitDisplay_groupType_createDate => 'By Creation Date';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => 'Group Sort';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => '確認';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => 'キャンセル';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => 'Flat';
 
   @override
   String get habitDisplay_sort_reverseText => '反転';

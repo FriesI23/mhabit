@@ -25,6 +25,7 @@ import '../models/app_reminder_config.dart';
 import '../models/app_sync_options.dart';
 import '../models/habit_display.dart';
 import '../models/habit_form.dart';
+import '../models/habit_group_display.dart';
 import '../theme/color.dart';
 import 'enums.dart';
 
@@ -109,6 +110,8 @@ const appLocalizationsDelegates = <LocalizationsDelegate>[
 //#region app-setting
 const defaultSortType = HabitDisplaySortType.manual;
 const defaultSortDirection = HabitDisplaySortDirection.asc;
+const defaultGroupType = HabitDisplayGroupType.createDate;
+const defaultGroupSortDirection = HabitDisplaySortDirection.asc;
 const defaultHabitsRecordScrollBehavior = HabitsRecordScrollBehavior.scrollable;
 const defaultFirstDay = DateTime.monday;
 const defaultAppReminder = AppReminderConfig.off;
@@ -201,7 +204,7 @@ const kRecordZeroStatusIcon = Icons.close_sharp;
 //#region groups
 const noGroupIcon = Icons.circle_outlined;
 const defaultGroupIcon = Icons.circle;
-const hideGroupingIcon = Icons.hide_source;
+const hideGroupingIcon = Icons.segment;
 //#endregion
 
 //#region other

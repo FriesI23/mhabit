@@ -391,7 +391,25 @@ class L10nZh extends L10n {
   String get habitDisplay_mainMenu_settingTileText => '设置';
 
   @override
-  String get habitDisplay_mainMenu_groupingTileText => '分组显示';
+  String get habitDisplay_groupType_name => '名称';
+
+  @override
+  String get habitDisplay_groupType_colorType => '颜色';
+
+  @override
+  String get habitDisplay_groupType_createDate => '创建日期';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => '分组排序';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => '确定';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => '取消';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => '平铺';
 
   @override
   String get habitDisplay_sort_reverseText => '反向排序';
@@ -2162,6 +2180,27 @@ class L10nZhHant extends L10nZh {
   String get habitDisplay_mainMenu_settingTileText => '設定';
 
   @override
+  String get habitDisplay_groupType_name => '依名稱';
+
+  @override
+  String get habitDisplay_groupType_colorType => '依顏色';
+
+  @override
+  String get habitDisplay_groupType_createDate => '建立日期';
+
+  @override
+  String get habitDisplay_groupTypeDialog_title => '分組排序';
+
+  @override
+  String get habitDisplay_groupTypeDialog_confirm => '確認';
+
+  @override
+  String get habitDisplay_groupTypeDialog_cancel => '取消';
+
+  @override
+  String get habitDisplay_groupTypeDialog_none => '平鋪';
+
+  @override
   String get habitDisplay_sort_reverseText => '反向';
 
   @override
@@ -2516,6 +2555,22 @@ class L10nZhHant extends L10nZh {
   @override
   String get appSetting_openRecordStatusDialogOpTile_subtitleText =>
       '修改點選行為以開啟主頁面上每日記錄的詳細彈出視窗。';
+
+  @override
+  String get appSetting_expandTimerDelayTile_titleText => '分組展開延遲';
+
+  @override
+  String get appSetting_expandTimerDelayTile_subtitleText =>
+      '拖曳習慣到摺疊的分組標題上時，自動展開分組的延遲時間。';
+
+  @override
+  String get appSetting_expandTimerDelay_default => '預設';
+
+  @override
+  String get appSetting_expandTimerDelay_fast => '快';
+
+  @override
+  String get appSetting_expandTimerDelay_slow => '慢';
 
   @override
   String get appSetting_appThemeColorTile_titleText => '主題顏色';
@@ -3226,4 +3281,27 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get changelog_view_full => '檢視完整更新日誌';
+
+  @override
+  String get habitGroup_uncategorized => '無分組';
+
+  @override
+  String get habitDetail_groupTile_title => '分組';
+
+  @override
+  String get habitEdit_groupTile_title => '分組';
+
+  @override
+  String get habitEdit_groupPicker_hintText => '搜尋或建立分組';
+
+  @override
+  String get habitEdit_groupPicker_noGroup => '無分組';
+
+  @override
+  String habitEdit_groupPicker_createGroup(String name) {
+    return '建立「$name」';
+  }
+
+  @override
+  String get habitEdit_groupPicker_loading => '分組載入中…';
 }

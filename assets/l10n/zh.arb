@@ -283,10 +283,13 @@
     "habitDisplay_mainMenu_showCompletedTileText": "已完成",
     "habitDisplay_mainMenu_showActivedTileText": "进行中",
     "habitDisplay_mainMenu_settingTileText": "设置",
-    "habitDisplay_mainMenu_groupingTileText": "分组显示",
-    "@habitDisplay_mainMenu_groupingTileText": {
-        "description": "Toggle label for enabling/disabling habit grouping display"
-    },
+    "habitDisplay_groupType_name": "名称",
+    "habitDisplay_groupType_colorType": "颜色",
+    "habitDisplay_groupType_createDate": "创建日期",
+    "habitDisplay_groupTypeDialog_title": "分组排序",
+    "habitDisplay_groupTypeDialog_confirm": "确定",
+    "habitDisplay_groupTypeDialog_cancel": "取消",
+    "habitDisplay_groupTypeDialog_none": "平铺",
     "habitDisplay_sort_reverseText": "反向排序",
     "habitDisplay_sortDirection_asc": "(正序)",
     "habitDisplay_sortDirection_Desc": "(反序)",
