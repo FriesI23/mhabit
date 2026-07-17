@@ -33,7 +33,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "cs": [
@@ -453,7 +468,24 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_confirm",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "de": [
@@ -610,7 +642,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "es": [
@@ -692,7 +739,23 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "eu": [
@@ -1186,7 +1249,24 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_confirm",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "fa": [
@@ -1360,7 +1440,23 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "fr": [
@@ -1536,7 +1632,23 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "he": [
@@ -1563,7 +1675,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "hu": [
@@ -1600,7 +1727,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "it": [
@@ -1751,7 +1893,23 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "ja": [
@@ -1804,7 +1962,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "nb": [
@@ -2298,7 +2471,24 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_confirm",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "pl": [
@@ -2355,7 +2545,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "pt": [
@@ -2542,7 +2747,23 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleteDialog_cancel",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "ru": [
@@ -2599,7 +2820,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "tr": [
@@ -2635,7 +2871,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "uk": [
@@ -2672,7 +2923,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "vi": [
@@ -2709,7 +2975,22 @@
     "habitEdit_groupPicker_hintText",
     "habitEdit_groupPicker_noGroup",
     "habitEdit_groupPicker_createGroup",
-    "habitEdit_groupPicker_loading"
+    "habitEdit_groupPicker_loading",
+    "groupManage_appbar_title",
+    "groupManage_selectionAppbar_title",
+    "groupManage_emptyState_text",
+    "groupManage_deleteDialog_title",
+    "groupManage_deleteDialog_content",
+    "groupManage_deleted_snackbarText",
+    "groupManage_undo_snackbarAction",
+    "groupManage_editDialog_title",
+    "groupManage_createDialog_title",
+    "groupManage_nameRequired",
+    "groupManage_nameTooLong",
+    "groupManage_descTooLong",
+    "groupManage_sortTile_text",
+    "groupManage_sectionTitle_text",
+    "appSetting_manageGroups_subtitleText"
   ],
 
   "zh_Hant": [
@@ -2791,6 +3072,7 @@
     "channelName_appSyncing",
     "channelDesc_appSyncing",
     "channelName_appSyncFailed",
-    "channelDesc_appSyncFailed"
+    "channelDesc_appSyncFailed",
+    "groupManage_deleteDialog_cancel"
   ]
 }

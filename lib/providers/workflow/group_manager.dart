@@ -12,9 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
+
+import '../../common/rules.dart';
 import '../../common/types.dart';
 import '../../common/utils.dart';
+import '../../extensions/group_icon_extensions.dart';
+import '../../logging/helper.dart';
 import '../../models/group.dart';
+import '../../models/habit_color.dart';
+import '../../models/habit_group.dart';
 import '../../storage/db_helper_provider.dart';
 
 /// Manages Group CRUD at the business-logic layer.
@@ -28,33 +35,94 @@ class GroupManager with DBHelperLoadedMixin {
   Future<List<GroupDBCell>> loadAllActiveGroups() =>
       groupDBHelper.loadAllActiveGroups();
 
-  Future<GroupDBCell> createGroup({
+  /// Loads active groups as a [GroupCollection] domain snapshot.
+  ///
+  /// On [Exception], logs an error and returns `null` in release mode;
+  /// in debug mode the exception propagates to the caller.
+  Future<GroupCollection?> tryLoadGroupCollection() async {
+    try {
+      final cells = await loadAllActiveGroups();
+      return GroupCollection.fromDBQueryResult(cells);
+    } on Exception catch (e) {
+      appLog.load.error("GroupManager.loadGroupCollection", ex: ["failed", e]);
+      if (kDebugMode) rethrow;
+      return null;
+    }
+  }
+
+  Future<HabitGroupData> createGroup({
     required String name,
     String? desc,
-    int? icon,
+    GroupIcon? icon,
     GroupColor? color,
   }) async {
     // Block empty or whitespace-only name
     if (name.trim().isEmpty) {
       throw ArgumentError('Group name must not be empty');
     }
+    final safeName = groupNameRule.clamp(name);
+    final safeDesc = desc != null ? groupDescRule.clamp(desc) : null;
     final uuid = genHabitUUID();
     final cell = GroupDBCell(
       uuid: uuid,
-      name: name,
-      desc: desc,
-      icon: icon,
+      name: safeName,
+      desc: safeDesc,
+      icon: icon?.iconData.codePoint,
       color: color?.dbColorType.dbCode,
       customColor: color?.dbCustomColor,
       customColorTinted: color?.dbCustomColorTinted,
       status: 1,
     );
     await groupDBHelper.insertNewGroup(cell);
-    return cell;
+    return HabitGroupData.fromDBQueryCell(cell);
   }
 
   Future<void> updateGroup(GroupDBCell group) async {
     await groupDBHelper.updateExistGroup(group);
+  }
+
+  /// Domain-level update for a group by [uuid].
+  ///
+  /// Converts domain types back to raw DB fields.  [GroupDBCell.toJson]
+  /// always includes icon/color fields (including `null`) so that clearing
+  /// a previously-set icon or color works correctly.
+  Future<void> updateGroupData({
+    required String uuid,
+    required String name,
+    String? desc,
+    GroupIcon? icon,
+    HabitColor? color,
+  }) async {
+    final safeName = groupNameRule.clamp(name);
+    final rawDesc = (desc?.isEmpty ?? true) ? null : desc;
+    final safeDesc = rawDesc != null ? groupDescRule.clamp(rawDesc) : null;
+    await groupDBHelper.updateExistGroup(
+      GroupDBCell(
+        uuid: uuid,
+        name: safeName,
+        desc: safeDesc,
+        icon: icon?.iconData.codePoint,
+        color: color?.dbColorType.dbCode,
+        customColor: color?.dbCustomColor,
+        customColorTinted: color?.dbCustomColorTinted,
+      ),
+    );
+  }
+
+  Future<GroupDBCell?> loadGroupByUUID(String uuid) =>
+      groupDBHelper.loadGroupByUUID(uuid);
+
+  /// Loads a single group as a domain model by [uuid].
+  Future<HabitGroupData?> loadGroupDataByUUID(String uuid) async {
+    final cell = await loadGroupByUUID(uuid);
+    return cell != null ? HabitGroupData.fromDBQueryCell(cell) : null;
+  }
+
+  /// Restores a soft-deleted group (sets status back to active).
+  Future<void> restoreGroup(String uuid) async {
+    final cell = await loadGroupByUUID(uuid);
+    if (cell == null) return;
+    await updateGroup(cell.copyWith(status: 1));
   }
 
   Future<void> deleteGroup(String uuid) async {

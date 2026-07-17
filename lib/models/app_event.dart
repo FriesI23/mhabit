@@ -22,6 +22,7 @@ enum AppEventPageSource {
   habitDetail,
   habitEdit,
   habitStatusChanger,
+  groupManage,
 }
 
 enum AppEventFunctionSource {

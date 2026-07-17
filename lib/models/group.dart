@@ -60,13 +60,13 @@ class GroupDBCell with DBCell {
   final String? name;
   @JsonKey(name: GroupDBCellKey.desc)
   final String? desc;
-  @JsonKey(name: GroupDBCellKey.icon)
+  @JsonKey(name: GroupDBCellKey.icon, includeIfNull: true)
   final int? icon;
-  @JsonKey(name: GroupDBCellKey.color)
+  @JsonKey(name: GroupDBCellKey.color, includeIfNull: true)
   final int? color;
-  @JsonKey(name: GroupDBCellKey.customColor)
+  @JsonKey(name: GroupDBCellKey.customColor, includeIfNull: true)
   final int? customColor;
-  @JsonKey(name: GroupDBCellKey.customColorTinted)
+  @JsonKey(name: GroupDBCellKey.customColorTinted, includeIfNull: true)
   final int? customColorTinted;
   @JsonKey(name: GroupDBCellKey.status)
   final int? status;

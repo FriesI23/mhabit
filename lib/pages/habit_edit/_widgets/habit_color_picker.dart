@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +21,7 @@ import '../../../models/habit_color.dart';
 import '../../../models/habit_form.dart';
 import '../../../providers/app_ui/custom_color_history.dart';
 import '../../../theme/color.dart';
+import '../../../widgets/widgets.dart';
 
 Future<HabitColor?> showHabitColorPickerDialog({
   required BuildContext context,
@@ -102,76 +102,57 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
     Navigator.of(context).pop(color);
   }
 
-  // Deliberately does NOT embed `ColorPicker` inline in this dialog's own
-  // `SingleChildScrollView`/`Column` content tree. `ColorPicker`'s hex/RGB
-  // code field relies on a `DryIntrinsicWidth` layout workaround
+  // HabitColorWheelEditor wraps flex_color_picker's ColorPicker, whose
+  // hex/RGB code field relies on a `DryIntrinsicWidth` layout workaround
   // (flex_color_picker's own fix for flutter/flutter#71687) that is only
-  // exercised, by upstream, with `ColorPicker` as the *direct* content of
-  // its own dialog (`showPickerDialog`/`showColorPickerDialog`). Nesting it
-  // inside another scroll view + column broke that assumption and crashed
-  // layout with a "RenderBox was not laid out" assertion. Letting the
-  // picker own its own nested dialog avoids re-hosting its internal render
-  // tree in a context upstream never tests.
+  // exercised, by upstream, with the picker as the *direct* content of its
+  // own dialog.  Nesting it inside another scroll view + column would break
+  // that assumption and crash layout with a "RenderBox was not laid out"
+  // assertion.  Showing the editor in its own nested dialog avoids
+  // re-hosting the picker's internal render tree in a context upstream
+  // never tests.
   Future<void> _openCustomColorPicker(BuildContext context) async {
-    Color picked = _wheelColor;
-    // Drafted the same way `picked` is: only committed to `_selectAndClose`
-    // below if the user actually confirms the nested dialog. Living here
-    // (rather than as a toggle in the outer dialog, mutated separately) is
-    // what keeps the two in sync — the old outer-dialog toggle could be left
-    // in one state while the wheel still held a since-abandoned pick, so
-    // confirming reflected whichever was touched last instead of "what the
-    // user just picked".
-    var tintedDraft = _tinted;
-    final l10n = L10n.of(context);
-    final confirmed = await ColorPicker(
-      color: _wheelColor,
-      onColorChanged: (value) => picked = value,
-      pickersEnabled: const {
-        ColorPickerType.both: false,
-        ColorPickerType.primary: false,
-        ColorPickerType.accent: false,
-        ColorPickerType.bw: false,
-        ColorPickerType.custom: false,
-        ColorPickerType.customSecondary: false,
-        ColorPickerType.wheel: true,
-      },
-      // Alpha is always locked to 0xFF for habit colors: no opacity slider,
-      // and the confirmed ARGB is masked to full opacity regardless of what
-      // the wheel/hex inputs produce.
-      enableOpacity: false,
-      showColorCode: true,
-      colorCodeHasColor: true,
-      wheelDiameter: 200,
-      // `wheelSubheading` is the one slot flex_color_picker exposes inside
-      // its own wheel-picker content (rendered above the shade row, only
-      // while the wheel tab is active — the only tab this dialog enables),
-      // so the toggle lives right next to the color it affects instead of
-      // in the outer dialog. `StatefulBuilder` gives the switch its own
-      // local re-render without needing the outer `State`'s `setState` (that
-      // would rebuild the *outer* dialog, not this already-pushed nested
-      // route).
-      wheelSubheading: StatefulBuilder(
-        builder: (context, setLocalState) => SwitchListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            l10n?.habitEdit_colorPicker_tintToggleLabel ?? 'Tint to theme',
-          ),
-          subtitle: l10n == null
-              ? null
-              : Text(
-                  tintedDraft
-                      ? l10n.habitEdit_colorPicker_tintToggleOnHint
-                      : l10n.habitEdit_colorPicker_tintToggleOffHint,
+    // Only committed to `_selectAndClose` below if the user confirms.  The
+    // tint toggle lives inside HabitColorWheelEditor (not in the outer
+    // dialog), keeping the draft self-contained: the outer dialog never
+    // holds a stale pick or tint that could diverge from the wheel state.
+    HabitColor? draft;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final l10n = L10n.of(ctx);
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            title: l10n != null ? Text(l10n.habitEdit_colorPicker_title) : null,
+            content: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(ctx).height * 0.6,
+              ),
+              child: SingleChildScrollView(
+                child: HabitColorWheelEditor(
+                  initialColor: _wheelColor,
+                  initialTinted: _tinted,
+                  onChanged: (color) => setDialogState(() => draft = color),
                 ),
-          value: tintedDraft,
-          onChanged: (value) => setLocalState(() => tintedDraft = value),
-        ),
-      ),
-    ).showPickerDialog(context);
-    if (!confirmed || !context.mounted) return;
-    _selectAndClose(
-      HabitColor.custom(picked.toARGB32() | 0xFF000000, tinted: tintedDraft),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(l10n?.habitEdit_colorPicker_cancel ?? 'Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text(MaterialLocalizations.of(ctx).okButtonLabel),
+              ),
+            ],
+          ),
+        );
+      },
     );
+    if (confirmed == true && draft != null && mounted) {
+      _selectAndClose(draft!);
+    }
   }
 
   static String _hex(int argb) =>
@@ -180,103 +161,6 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
   static String _tintStateLabel(bool tinted, L10n? l10n) => tinted
       ? (l10n?.habitEdit_colorPicker_tintedLabel ?? 'Tinted')
       : (l10n?.habitEdit_colorPicker_untintedLabel ?? 'Not tinted');
-
-  /// A plain circle for an untinted color (it already renders close to the
-  /// raw selected value, so no extra marker is needed), or — when
-  /// [gradientFrom] is given — a circle gradient from the raw selected
-  /// value to [background] (the actual `_customScheme(...).primary` render
-  /// result) plus a small corner badge, visualizing the tint transformation
-  /// tinting applies. The badge exists because the gradient alone reads
-  /// weakly whenever the raw and tinted colors happen to be close in hue —
-  /// it gives tinted swatches a second, gradient-independent tell. Badge
-  /// colors are deliberately the swatch's own [background]/[onColor] pair
-  /// (already contrast-checked against each other by [CustomColors]) rather
-  /// than a new fixed palette choice. This is the swatch's *background
-  /// layer only*; callers stack interactive content (an `IconButton`, in
-  /// [_buildSwatch]) on top of it.
-  static Widget _colorPreviewCircle({
-    required double size,
-    required Color background,
-    Color? onColor,
-    Color? gradientFrom,
-  }) {
-    final circle = Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: gradientFrom == null ? background : null,
-        gradient: gradientFrom == null
-            ? null
-            : LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [gradientFrom, background],
-              ),
-      ),
-    );
-    if (gradientFrom == null) return circle;
-    final badgeSize = size * 0.42;
-    return Stack(
-      children: [
-        circle,
-        Positioned(
-          right: 0,
-          bottom: 0,
-          child: Container(
-            width: badgeSize,
-            height: badgeSize,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: onColor ?? Colors.black,
-            ),
-            child: Icon(
-              Icons.palette,
-              size: badgeSize * 0.62,
-              color: background,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSwatch(
-    BuildContext context, {
-    required Color background,
-    required Color? onColor,
-    required bool selected,
-    required VoidCallback onTap,
-    String? tooltip,
-    Color? gradientFrom,
-  }) {
-    final button = Stack(
-      alignment: Alignment.center,
-      children: [
-        _colorPreviewCircle(
-          size: _swatchExtent,
-          background: background,
-          onColor: onColor,
-          gradientFrom: gradientFrom,
-        ),
-        IconButton(
-          onPressed: onTap,
-          icon: selected ? const Icon(Icons.check) : const Icon(null),
-          isSelected: selected,
-          style: IconButton.styleFrom(
-            foregroundColor: onColor,
-            backgroundColor: Colors.transparent,
-            hoverColor: onColor?.withValues(alpha: 0.08),
-            focusColor: onColor?.withValues(alpha: 0.12),
-            highlightColor: onColor?.withValues(alpha: 0.12),
-            fixedSize: const Size.square(_swatchExtent),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-        ),
-      ],
-    );
-    return tooltip == null ? button : Tooltip(message: tooltip, child: button);
-  }
 
   // Width of the available content area, bounded to [_minContentWidth,
   // _maxContentWidth] via a `BoxConstraints` (the framework's own range
@@ -356,13 +240,13 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
   ) {
     final swatches = [
       for (final t in HabitColorType.values)
-        _buildSwatch(
-          context,
+        ColorSwatchButton(
           background: colorData?.getBuiltInColor(t) ?? Colors.transparent,
           onColor: colorData?.getBuiltInOnColor(t),
           selected: widget.color == HabitColor.builtIn(t),
           onTap: () => _selectAndClose(HabitColor.builtIn(t)),
           tooltip: HabitColorType.getColorName(t, l10n),
+          size: _swatchExtent,
         ),
     ];
     return _buildSwatchGrid(contentWidth, spacing, swatches);
@@ -380,17 +264,17 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
     if (history.isEmpty) return null;
     final swatches = [
       for (final entry in history)
-        _buildSwatch(
-          context,
+        ColorSwatchButton(
           background:
               colorData?.getColor(entry, brightness: brightness) ??
               Color(entry.argb),
           onColor: colorData?.getOnColor(entry, brightness: brightness),
+          gradientFrom: entry.tinted ? Color(entry.argb) : null,
           selected: widget.color == entry,
           onTap: () => _selectAndClose(entry),
           tooltip:
               '${_hex(entry.argb)} · ${_tintStateLabel(entry.tinted, l10n)}',
-          gradientFrom: entry.tinted ? Color(entry.argb) : null,
+          size: _swatchExtent,
         ),
     ];
     return Column(
@@ -431,7 +315,7 @@ class _HabitColorPickerDialogState extends State<HabitColorPickerDialog> {
         const SizedBox(height: _sectionSpacing),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: _colorPreviewCircle(
+          leading: ColorPreviewCircle(
             size: 40,
             background: previewColor,
             onColor: previewOnColor,

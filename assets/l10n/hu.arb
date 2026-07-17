@@ -1104,5 +1104,13 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "groupManage_deleteDialog_confirm": "Törlés",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "mégse",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
     }
 }

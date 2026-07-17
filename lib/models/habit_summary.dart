@@ -870,7 +870,10 @@ final class GroupHeaderSortCache extends HabitSortCache<GroupHeaderSortCache> {
   @override
   bool isSameContent(GroupHeaderSortCache? other) {
     if (other == null) return false;
-    return name == other.name && count == other.count;
+    return name == other.name &&
+        count == other.count &&
+        icon == other.icon &&
+        color == other.color;
   }
 }
 

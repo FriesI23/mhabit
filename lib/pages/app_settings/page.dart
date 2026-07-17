@@ -59,6 +59,7 @@ import '../app_debugger/page.dart' as app_debugger;
 import '../app_sync/page.dart' as app_sync;
 import '../common/widgets.dart';
 import '../expermental_features/page.dart' as exp_feature;
+import '../group_manage/page.dart' as group_manage;
 import 'providers.dart';
 import 'widgets.dart';
 
@@ -810,6 +811,28 @@ class _PageState extends State<_Page> with XShare {
       ),
     ];
 
+    Iterable<Widget> buildGroupsSubGroup(BuildContext context) => <Widget>[
+      GroupTitleListTile(
+        title: L10nBuilder(
+          builder: (context, l10n) => l10n != null
+              ? Text(l10n.groupManage_sectionTitle_text)
+              : const Text("Groups"),
+        ),
+      ),
+      L10nBuilder(
+        builder: (context, l10n) => ListTile(
+          title: l10n != null
+              ? Text(l10n.groupManage_appbar_title)
+              : const Text("Manage Groups"),
+          subtitle: l10n != null
+              ? Text(l10n.appSetting_manageGroups_subtitleText)
+              : const Text("Create, edit, and delete habit groups"),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => group_manage.naviToGroupManagePage(context: context),
+        ),
+      ),
+    ];
+
     Iterable<Widget> buildSyncSubGroup(BuildContext context) => <Widget>[
       GroupTitleListTile(
         title: L10nBuilder(
@@ -867,6 +890,7 @@ class _PageState extends State<_Page> with XShare {
           child: ListView(
             children: [
               ...buildSyncSubGroup(context),
+              ...buildGroupsSubGroup(context),
               ...buildDisplaySubGroup(context),
               ...buildOperationSubGroup(context),
               ...buildReminderSubGroup(context),

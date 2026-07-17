@@ -59,23 +59,6 @@ extension HabitSummaryDataExntesion on HabitSummaryData {
   }
 }
 
-extension on GroupManager {
-  /// Loads active groups as a [GroupCollection].
-  ///
-  /// On [Exception], logs an error and returns `null` in release mode;
-  /// in debug mode the exception propagates to the caller.
-  Future<GroupCollection?> tryLoadGroupCollection() async {
-    try {
-      final cells = await loadAllActiveGroups();
-      return GroupCollection.fromDBQueryResult(cells);
-    } on Exception catch (e) {
-      appLog.load.error("GroupManager.loadGroupCollection", ex: ["failed", e]);
-      if (kDebugMode) rethrow;
-      return null;
-    }
-  }
-}
-
 class HabitSummaryViewModel extends ChangeNotifier
     with PinnedAppbarMixin
     implements ProviderMounted, AppEventLoaded {

@@ -730,5 +730,9 @@
     "changelog_view_full": "View Full Changelog",
     "@changelog_view_full": {
         "description": "Button label inside the changelog dialog to toggle from current-version-only to full CHANGELOG.md content."
+    },
+    "groupManage_deleteDialog_confirm": "Elimina",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
     }
 }

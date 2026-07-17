@@ -918,5 +918,84 @@
     "habitEdit_groupPicker_loading": "分組載入中…",
     "@habitEdit_groupPicker_loading": {
         "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "groupManage_appbar_title": "管理分組",
+    "@groupManage_appbar_title": {
+        "description": "Title for the Group management page AppBar"
+    },
+    "groupManage_selectionAppbar_title": "已選擇 {count} 項",
+    "@groupManage_selectionAppbar_title": {
+        "description": "AppBar title in selection mode, {count} = number of selected groups",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_emptyState_text": "暫無分組\n點擊 + 建立你的第一個分組",
+    "@groupManage_emptyState_text": {
+        "description": "Empty state text shown when no groups exist"
+    },
+    "groupManage_deleteDialog_title": "刪除分組",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "關聯的習慣將變為未分類。撤銷計時器逾時後此操作不可復原。",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_confirm": "刪除",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "分組已刪除",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "復原",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "編輯分組",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createDialog_title": "建立分組",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "名稱為必填",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_nameTooLong": "名稱不能超過 {max} 個字元",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_descTooLong": "描述不應超過 {max} 個字元",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_sortTile_text": "排序分組",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "分組",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "appSetting_manageGroups_subtitleText": "建立、編輯和刪除習慣分組",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
     }
 }

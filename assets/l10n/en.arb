@@ -1594,5 +1594,88 @@
     "habitEdit_groupPicker_loading": "Loading groups…",
     "@habitEdit_groupPicker_loading": {
         "description": "Placeholder text shown in the group picker while groups are loading"
+    },
+    "groupManage_appbar_title": "Manage Groups",
+    "@groupManage_appbar_title": {
+        "description": "Title for the Group management page AppBar"
+    },
+    "groupManage_selectionAppbar_title": "{count} selected",
+    "@groupManage_selectionAppbar_title": {
+        "description": "AppBar title in selection mode, {count} = number of selected groups",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_emptyState_text": "No groups yet\nTap + to create your first group",
+    "@groupManage_emptyState_text": {
+        "description": "Empty state text shown when no groups exist"
+    },
+    "groupManage_deleteDialog_title": "Delete Group",
+    "@groupManage_deleteDialog_title": {
+        "description": "Title for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_content": "Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.",
+    "@groupManage_deleteDialog_content": {
+        "description": "Content body for the delete confirmation dialog"
+    },
+    "groupManage_deleteDialog_confirm": "Delete",
+    "@groupManage_deleteDialog_confirm": {
+        "description": "Confirm button text for delete dialog"
+    },
+    "groupManage_deleteDialog_cancel": "Cancel",
+    "@groupManage_deleteDialog_cancel": {
+        "description": "Cancel button text for delete dialog"
+    },
+    "groupManage_deleted_snackbarText": "Group deleted",
+    "@groupManage_deleted_snackbarText": {
+        "description": "SnackBar text after successful group deletion"
+    },
+    "groupManage_undo_snackbarAction": "Undo",
+    "@groupManage_undo_snackbarAction": {
+        "description": "SnackBar undo button text"
+    },
+    "groupManage_editDialog_title": "Edit Group",
+    "@groupManage_editDialog_title": {
+        "description": "Title for the group edit dialog"
+    },
+    "groupManage_createDialog_title": "Create Group",
+    "@groupManage_createDialog_title": {
+        "description": "Title for the group creation dialog"
+    },
+    "groupManage_nameRequired": "Name is required",
+    "@groupManage_nameRequired": {
+        "description": "Validation error when group name is empty"
+    },
+    "groupManage_nameTooLong": "Name must be ≤ {max} characters",
+    "@groupManage_nameTooLong": {
+        "description": "Validation error when group name exceeds max length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_descTooLong": "Description should be ≤ {max} characters",
+    "@groupManage_descTooLong": {
+        "description": "Validation warning when group description exceeds recommended length",
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "groupManage_sortTile_text": "Sort Groups",
+    "@groupManage_sortTile_text": {
+        "description": "Label for the sort selector entry"
+    },
+    "groupManage_sectionTitle_text": "Groups",
+    "@groupManage_sectionTitle_text": {
+        "description": "Section header text for Groups in Settings page"
+    },
+    "appSetting_manageGroups_subtitleText": "Create, edit, and delete habit groups",
+    "@appSetting_manageGroups_subtitleText": {
+        "description": "Subtitle for the Manage Groups tile in Settings"
     }
 }

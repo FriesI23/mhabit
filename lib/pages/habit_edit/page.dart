@@ -756,7 +756,7 @@ class _GroupFieldState extends State<_GroupField> {
 
     Future<String> onCreateGroup(String name) async {
       final groupManager = context.read<GroupManager>();
-      final groupUuid = (await groupManager.createGroup(name: name)).uuid!;
+      final groupUuid = (await groupManager.createGroup(name: name)).uuid;
       if (!context.mounted) return groupUuid;
       context.read<AppEventBus>().push(
         GroupChangedEvent(

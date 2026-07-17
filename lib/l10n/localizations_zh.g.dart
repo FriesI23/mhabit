@@ -1834,6 +1834,63 @@ class L10nZh extends L10n {
 
   @override
   String get habitEdit_groupPicker_loading => '分组加载中…';
+
+  @override
+  String get groupManage_appbar_title => '管理分组';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '已选择 $count 项';
+  }
+
+  @override
+  String get groupManage_emptyState_text => '暂无分组\n点击 + 创建你的第一个分组';
+
+  @override
+  String get groupManage_deleteDialog_title => '删除分组';
+
+  @override
+  String get groupManage_deleteDialog_content => '关联的习惯将变为未分类。撤销计时器超时后此操作不可恢复。';
+
+  @override
+  String get groupManage_deleteDialog_confirm => '删除';
+
+  @override
+  String get groupManage_deleteDialog_cancel => '取消';
+
+  @override
+  String get groupManage_deleted_snackbarText => '分组已删除';
+
+  @override
+  String get groupManage_undo_snackbarAction => '撤销';
+
+  @override
+  String get groupManage_editDialog_title => '编辑分组';
+
+  @override
+  String get groupManage_createDialog_title => '创建分组';
+
+  @override
+  String get groupManage_nameRequired => '名称为必填';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return '名称不能超过 $max 个字符';
+  }
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return '描述不应超过 $max 个字符';
+  }
+
+  @override
+  String get groupManage_sortTile_text => '排序分组';
+
+  @override
+  String get groupManage_sectionTitle_text => '分组';
+
+  @override
+  String get appSetting_manageGroups_subtitleText => '创建、编辑和删除习惯分组';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3304,4 +3361,58 @@ class L10nZhHant extends L10nZh {
 
   @override
   String get habitEdit_groupPicker_loading => '分組載入中…';
+
+  @override
+  String get groupManage_appbar_title => '管理分組';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '已選擇 $count 項';
+  }
+
+  @override
+  String get groupManage_emptyState_text => '暫無分組\n點擊 + 建立你的第一個分組';
+
+  @override
+  String get groupManage_deleteDialog_title => '刪除分組';
+
+  @override
+  String get groupManage_deleteDialog_content => '關聯的習慣將變為未分類。撤銷計時器逾時後此操作不可復原。';
+
+  @override
+  String get groupManage_deleteDialog_confirm => '刪除';
+
+  @override
+  String get groupManage_deleted_snackbarText => '分組已刪除';
+
+  @override
+  String get groupManage_undo_snackbarAction => '復原';
+
+  @override
+  String get groupManage_editDialog_title => '編輯分組';
+
+  @override
+  String get groupManage_createDialog_title => '建立分組';
+
+  @override
+  String get groupManage_nameRequired => '名稱為必填';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return '名稱不能超過 $max 個字元';
+  }
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return '描述不應超過 $max 個字元';
+  }
+
+  @override
+  String get groupManage_sortTile_text => '排序分組';
+
+  @override
+  String get groupManage_sectionTitle_text => '分組';
+
+  @override
+  String get appSetting_manageGroups_subtitleText => '建立、編輯和刪除習慣分組';
 }

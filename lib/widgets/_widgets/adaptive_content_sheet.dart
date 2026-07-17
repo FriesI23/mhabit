@@ -50,6 +50,7 @@ Future<T?> showAdaptiveContentSheet<T>({
   WidgetBuilder? pinnedContentBuilder,
   Widget? title,
   List<Widget>? actions,
+  List<Widget> Function(BuildContext context, bool isDialog)? actionsBuilder,
   bool showCloseButton = true,
   bool? sheetShowCloseButton,
   // Sheet scaffold
@@ -102,6 +103,8 @@ Future<T?> showAdaptiveContentSheet<T>({
           _ => true,
         };
 
+  final actionsList = actionsBuilder?.call(context, useDialog) ?? actions;
+
   return switch (useDialog) {
     true => showDialog<T>(
       context: context,
@@ -111,7 +114,7 @@ Future<T?> showAdaptiveContentSheet<T>({
         maxContentHeight: dialogMaxContentHeight,
         showScrollbar: dialogShowScrollbar,
         showCloseButton: showCloseButton,
-        actions: actions,
+        actions: actionsList,
         pinnedContentBuilder: pinnedContentBuilder,
         child: contentBuilder(dialogContext),
       ),
@@ -129,7 +132,7 @@ Future<T?> showAdaptiveContentSheet<T>({
         scrollPhysics: sheetScrollPhysics,
         padding: sheetPadding,
         sheetShowCloseButton: sheetShowCloseButton ?? showCloseButton,
-        actions: actions,
+        actions: actionsList,
         actionsAlign: sheetActionsAlign,
         titleAlignment: sheetTitleAlignment,
         pinnedContentBuilder: pinnedContentBuilder,

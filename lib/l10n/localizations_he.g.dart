@@ -1918,4 +1918,64 @@ class L10nHe extends L10n {
 
   @override
   String get habitEdit_groupPicker_loading => 'Loading groups…';
+
+  @override
+  String get groupManage_appbar_title => 'Manage Groups';
+
+  @override
+  String groupManage_selectionAppbar_title(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupManage_emptyState_text =>
+      'No groups yet\nTap + to create your first group';
+
+  @override
+  String get groupManage_deleteDialog_title => 'Delete Group';
+
+  @override
+  String get groupManage_deleteDialog_content =>
+      'Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.';
+
+  @override
+  String get groupManage_deleteDialog_confirm => 'מחיקה';
+
+  @override
+  String get groupManage_deleteDialog_cancel => 'ביטול';
+
+  @override
+  String get groupManage_deleted_snackbarText => 'Group deleted';
+
+  @override
+  String get groupManage_undo_snackbarAction => 'Undo';
+
+  @override
+  String get groupManage_editDialog_title => 'Edit Group';
+
+  @override
+  String get groupManage_createDialog_title => 'Create Group';
+
+  @override
+  String get groupManage_nameRequired => 'Name is required';
+
+  @override
+  String groupManage_nameTooLong(int max) {
+    return 'Name must be ≤ $max characters';
+  }
+
+  @override
+  String groupManage_descTooLong(int max) {
+    return 'Description should be ≤ $max characters';
+  }
+
+  @override
+  String get groupManage_sortTile_text => 'Sort Groups';
+
+  @override
+  String get groupManage_sectionTitle_text => 'Groups';
+
+  @override
+  String get appSetting_manageGroups_subtitleText =>
+      'Create, edit, and delete habit groups';
 }

@@ -72,7 +72,7 @@ mixin HabitsDisplayViewDebug {
           ),
         ),
       );
-      groupUUIDs = created.map((g) => g.uuid!).toList(growable: false);
+      groupUUIDs = created.map((g) => g.uuid).toList(growable: false);
     }
 
     // Distribute habits across groups: many > medium > few when possible

@@ -17,6 +17,7 @@ import 'package:mhabit/models/habit_color.dart';
 import 'package:mhabit/models/habit_date.dart';
 import 'package:mhabit/models/habit_form.dart';
 import 'package:mhabit/models/habit_freq.dart';
+import 'package:mhabit/models/habit_group.dart';
 import 'package:mhabit/models/habit_summary.dart';
 
 HabitSummaryData _habit({
@@ -151,6 +152,44 @@ void main() {
       final header = GroupHeaderSortCache(groupUUID: 'g1', name: 'A', count: 1);
       header.count = 5;
       expect(header.count, equals(5));
+    });
+
+    test('isSameContent returns false when icon differs', () {
+      final a = GroupHeaderSortCache(
+        groupUUID: 'g1',
+        name: 'A',
+        count: 3,
+        icon: GroupIcon.folder,
+      );
+      final b = GroupHeaderSortCache(
+        groupUUID: 'g1',
+        name: 'A',
+        count: 3,
+        icon: GroupIcon.star,
+      );
+      expect(a.isSameContent(b), isFalse);
+    });
+
+    test('isSameContent returns false when color differs', () {
+      final a = GroupHeaderSortCache(
+        groupUUID: 'g1',
+        name: 'A',
+        count: 3,
+        color: const HabitColor.builtIn(HabitColorType.cc1),
+      );
+      final b = GroupHeaderSortCache(
+        groupUUID: 'g1',
+        name: 'A',
+        count: 3,
+        color: const HabitColor.builtIn(HabitColorType.cc2),
+      );
+      expect(a.isSameContent(b), isFalse);
+    });
+
+    test('isSameContent returns true when icon and color both null', () {
+      final a = GroupHeaderSortCache(groupUUID: 'g1', name: 'A', count: 3);
+      final b = GroupHeaderSortCache(groupUUID: 'g1', name: 'A', count: 3);
+      expect(a.isSameContent(b), isTrue);
     });
   });
 }

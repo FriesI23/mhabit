@@ -141,9 +141,9 @@ Map<String, dynamic> _$GroupDBCellToJson(GroupDBCell instance) =>
       'uuid': ?instance.uuid,
       'name': ?instance.name,
       'desc': ?instance.desc,
-      'icon': ?instance.icon,
-      'color': ?instance.color,
-      'custom_color': ?instance.customColor,
-      'custom_color_tinted': ?instance.customColorTinted,
+      'icon': instance.icon,
+      'color': instance.color,
+      'custom_color': instance.customColor,
+      'custom_color_tinted': instance.customColorTinted,
       'status': ?instance.status,
     };

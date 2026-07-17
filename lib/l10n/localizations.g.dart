@@ -3130,6 +3130,108 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Loading groups…'**
   String get habitEdit_groupPicker_loading;
+
+  /// Title for the Group management page AppBar
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Groups'**
+  String get groupManage_appbar_title;
+
+  /// AppBar title in selection mode, {count} = number of selected groups
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String groupManage_selectionAppbar_title(int count);
+
+  /// Empty state text shown when no groups exist
+  ///
+  /// In en, this message translates to:
+  /// **'No groups yet\nTap + to create your first group'**
+  String get groupManage_emptyState_text;
+
+  /// Title for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get groupManage_deleteDialog_title;
+
+  /// Content body for the delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Associated habits will become uncategorized. This action cannot be undone after the undo timer expires.'**
+  String get groupManage_deleteDialog_content;
+
+  /// Confirm button text for delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get groupManage_deleteDialog_confirm;
+
+  /// Cancel button text for delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get groupManage_deleteDialog_cancel;
+
+  /// SnackBar text after successful group deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted'**
+  String get groupManage_deleted_snackbarText;
+
+  /// SnackBar undo button text
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get groupManage_undo_snackbarAction;
+
+  /// Title for the group edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get groupManage_editDialog_title;
+
+  /// Title for the group creation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get groupManage_createDialog_title;
+
+  /// Validation error when group name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get groupManage_nameRequired;
+
+  /// Validation error when group name exceeds max length
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be ≤ {max} characters'**
+  String groupManage_nameTooLong(int max);
+
+  /// Validation warning when group description exceeds recommended length
+  ///
+  /// In en, this message translates to:
+  /// **'Description should be ≤ {max} characters'**
+  String groupManage_descTooLong(int max);
+
+  /// Label for the sort selector entry
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Groups'**
+  String get groupManage_sortTile_text;
+
+  /// Section header text for Groups in Settings page
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get groupManage_sectionTitle_text;
+
+  /// Subtitle for the Manage Groups tile in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Create, edit, and delete habit groups'**
+  String get appSetting_manageGroups_subtitleText;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {
